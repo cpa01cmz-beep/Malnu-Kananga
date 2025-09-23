@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { MenuIcon } from './icons/MenuIcon';
 import { CloseIcon } from './icons/CloseIcon';
+import { ChatIcon } from './icons/ChatIcon'; // Import ChatIcon
 
 const NavLinks = () => (
     <>
@@ -14,11 +16,12 @@ const NavLinks = () => (
 
 interface HeaderProps {
     onLoginClick: () => void;
+    onChatClick: () => void; // New prop for chat
     isLoggedIn: boolean;
     onLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onLoginClick, isLoggedIn, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, onLogout }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -30,7 +33,6 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, isLoggedIn, onLogout }) =
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
     
-    // Close mobile menu if window is resized to desktop view
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth >= 768) {
@@ -75,9 +77,9 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, isLoggedIn, onLogout }) =
                         <NavLinks />
                     </nav>
 
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
                         {isLoggedIn ? (
-                             <div className="hidden sm:flex items-center space-x-4">
+                             <div className="hidden sm:flex items-center space-x-2">
                                 <a href="#" className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
                                     Portal
                                 </a>
@@ -86,9 +88,15 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, isLoggedIn, onLogout }) =
                                 </button>
                             </div>
                         ) : (
-                            <button onClick={onLoginClick} className="hidden sm:block bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
-                                Login
-                            </button>
+                            <div className="hidden sm:flex items-center space-x-2">
+                                <button onClick={onChatClick} className="flex items-center gap-2 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 px-4 py-2 rounded-full font-semibold text-sm hover:bg-green-200 dark:hover:bg-green-800 transition-colors">
+                                    <ChatIcon />
+                                    <span>Tanya AI</span>
+                                </button>
+                                <button onClick={onLoginClick} className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                    Login
+                                </button>
+                            </div>
                         )}
                         {/* Mobile Menu Button */}
                         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="Buka menu">
@@ -114,9 +122,14 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, isLoggedIn, onLogout }) =
                                     </button>
                                 </>
                             ) : (
-                                <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-green-600 text-white text-center px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
-                                    Login
-                                </button>
+                                <>
+                                     <button onClick={() => { onChatClick(); setIsMenuOpen(false); }} className="bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 w-full text-center px-5 py-2 rounded-full font-semibold text-sm">
+                                        Tanya AI
+                                    </button>
+                                    <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-green-600 text-white w-full text-center px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                        Login
+                                    </button>
+                                </>
                             )}
                          </div>
                     </nav>

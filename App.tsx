@@ -1,14 +1,15 @@
+
 import React, { useState } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
-import DocumentationPage from './components/DocumentationPage'; // Import the new page
+import DocumentationPage from './components/DocumentationPage';
 import DocumentTextIcon from './components/icons/DocumentTextIcon';
 import BuildingLibraryIcon from './components/icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './components/icons/ClipboardDocumentCheckIcon';
 import UsersIcon from './components/icons/UsersIcon';
 import InformationCircleIcon from './components/icons/InformationCircleIcon';
-import ChatWidget from './components/ChatWidget';
+import ChatWindow from './components/ChatWindow';
 
 
 const featuredPrograms = [
@@ -81,11 +82,12 @@ const relatedLinks = [
 const App: React.FC = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isDocsOpen, setIsDocsOpen] = useState(false); // State for documentation page
+  const [isDocsOpen, setIsDocsOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false); // State for chat window
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
-    setIsLoginOpen(false); // Close modal on successful login
+    setIsLoginOpen(false);
   };
 
   const handleLogout = () => {
@@ -95,7 +97,8 @@ const App: React.FC = () => {
   return (
     <div className="bg-gray-50 dark:bg-gray-900 w-full min-h-screen font-sans text-gray-800 dark:text-gray-200">
       <Header 
-        onLoginClick={() => setIsLoginOpen(true)} 
+        onLoginClick={() => setIsLoginOpen(true)}
+        onChatClick={() => setIsChatOpen(true)} // Pass chat handler to header
         isLoggedIn={isLoggedIn}
         onLogout={handleLogout}
       />
@@ -119,7 +122,7 @@ const App: React.FC = () => {
           {/* Hero Section */}
           <section id="home" className="relative min-h-dvh flex items-center justify-center text-center px-4 pt-24 pb-12 sm:pt-32">
             <div className="absolute inset-0 bg-gradient-to-b from-green-100/80 to-transparent dark:from-green-900/40 dark:to-transparent"></div>
-            <div className="relative z-10 animate-fade-in-up pb-20">
+            <div className="relative z-10 animate-fade-in-up">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-4">
                 MA Malnu Kananga
               </h1>
@@ -133,18 +136,6 @@ const App: React.FC = () => {
                 <a href="#profil" className="bg-white dark:bg-gray-700 text-green-600 dark:text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-50">
                   Jelajahi Profil
                 </a>
-              </div>
-            </div>
-            
-            {/* Chatbot CTA - Positioned within Hero */}
-            <div className="absolute bottom-0 left-0 right-0 bg-green-50 dark:bg-green-900/20 py-4 z-10">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <div className="flex items-center justify-center gap-3 text-green-800 dark:text-green-200">
-                      <InformationCircleIcon />
-                      <p className="text-sm sm:text-base font-medium text-center">
-                          Punya pertanyaan seputar sekolah? Coba tanyakan pada <span className="font-bold">Asisten AI</span> kami di pojok kanan bawah!
-                      </p>
-                  </div>
               </div>
             </div>
           </section>
@@ -255,7 +246,16 @@ const App: React.FC = () => {
       )}
 
       <Footer onDocsClick={() => setIsDocsOpen(true)} />
-      <ChatWidget />
+
+      {/* Conditionally render chat window */}
+      <div
+        className={`fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2.5rem)] max-w-sm h-[70vh] max-h-[600px] transition-all duration-300 ease-in-out ${
+          isChatOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
+        }`}
+      >
+        <ChatWindow isOpen={isChatOpen} closeChat={() => setIsChatOpen(false)} />
+      </div>
+
       <LoginModal 
         isOpen={isLoginOpen} 
         onClose={() => setIsLoginOpen(false)}

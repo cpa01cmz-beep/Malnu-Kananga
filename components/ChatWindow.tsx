@@ -1,10 +1,10 @@
 
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { ChatMessage } from '../types';
 import { Sender } from '../types';
 import { getAIResponseStream, initialGreeting } from '../services/geminiService';
 import { SendIcon } from './icons/SendIcon';
+import { CloseIcon } from './icons/CloseIcon'; // Import CloseIcon
 
 interface ChatWindowProps {
   isOpen: boolean;
@@ -42,20 +42,24 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat }) => {
     const userMessageText = input;
     const userMessage: ChatMessage = { id: Date.now().toString(), text: userMessageText, sender: Sender.User };
     
-    // Update UI dan riwayat
+    // Simpan riwayat *sebelum* mengirim
+    // FIX: Add explicit type to prevent type widening from 'user' to 'string'.
+    const currentHistory: {role: 'user' | 'model', parts: string}[] = [...history, { role: 'user', parts: userMessageText }];
+    
+    // Update UI
     setMessages(prev => [...prev, userMessage]);
-    setHistory(prev => [...prev, { role: 'user', parts: userMessageText }]);
     setInput('');
     setIsLoading(true);
-
+    
+    // Tambahkan placeholder AI ke UI
     const aiMessageId = (Date.now() + 1).toString();
     setMessages(prev => [...prev, { id: aiMessageId, text: '', sender: Sender.AI }]);
     
     let fullResponse = "";
     try {
-      const stream = getAIResponseStream(userMessageText, history);
+      // Kirim riwayat yang sudah diperbarui
+      const stream = getAIResponseStream(userMessageText, currentHistory.slice(0, -1)); // Kirim riwayat *sebelum* pesan pengguna saat ini
       for await (const chunk of stream) {
-        // Hapus "data: " jika ada (format SSE)
         const cleanedChunk = chunk.replace(/^data: /gm, '');
         fullResponse += cleanedChunk;
         setMessages(prev =>
@@ -69,15 +73,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat }) => {
       const errorMessage = "Maaf, terjadi kesalahan. Silakan coba lagi.";
       setMessages(prev =>
         prev.map(msg =>
-          // FIX: Corrected a typo from `aiMessageMessageId` to `aiMessageId`
           msg.id === aiMessageId ? { ...msg, text: errorMessage } : msg
         )
       );
-      fullResponse = errorMessage; // Simpan pesan error ke riwayat juga
+      fullResponse = errorMessage;
     } finally {
       setIsLoading(false);
-      // Tambahkan jawaban lengkap dari AI ke riwayat
-      setHistory(prev => [...prev, { role: 'model', parts: fullResponse }]);
+      // Update riwayat dengan state yang benar setelah selesai
+      setHistory([...currentHistory, { role: 'model', parts: fullResponse }]);
     }
   }, [input, isLoading, history]);
 
@@ -89,6 +92,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat }) => {
             <div className="w-3 h-3 bg-white rounded-full mr-2 animate-pulse"></div>
             <h2 className="font-bold text-lg">Asisten AI</h2>
         </div>
+        <button onClick={closeChat} className="p-1 rounded-full hover:bg-white/20" aria-label="Tutup obrolan">
+            <CloseIcon />
+        </button>
       </header>
 
       {/* Messages */}
