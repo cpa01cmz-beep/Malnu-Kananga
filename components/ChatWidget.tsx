@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import ChatWindow from './ChatWindow';
 import { ChatIcon } from './icons/ChatIcon';
@@ -13,7 +12,7 @@ const ChatWidget: React.FC = () => {
 
   return (
     <>
-      <div className="fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-50">
+      <div className="fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-50 transform translate-z-0">
         <button
           onClick={toggleChat}
           className="bg-green-600 text-white rounded-full p-4 shadow-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-50 transition-transform transform hover:scale-110"

@@ -82,7 +82,7 @@ const App: React.FC = () => {
       <main>
         {/* Hero Section */}
         <section id="home" className="relative min-h-[80vh] flex items-center justify-center text-center px-4 pt-24 pb-12 sm:pt-32">
-          <div className="absolute inset-0 bg-gradient-to-b from-green-100/50 to-gray-50 dark:from-green-900/20 dark:to-gray-900 opacity-50"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-green-100/80 to-transparent dark:from-green-900/40 dark:to-transparent"></div>
           <div className="relative z-10 animate-fade-in-up">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-4">
               MA Malnu Kananga
