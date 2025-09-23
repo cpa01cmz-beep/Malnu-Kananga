@@ -14,9 +14,11 @@ const NavLinks = () => (
 
 interface HeaderProps {
     onLoginClick: () => void;
+    isLoggedIn: boolean;
+    onLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onLoginClick }) => {
+const Header: React.FC<HeaderProps> = ({ onLoginClick, isLoggedIn, onLogout }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -26,6 +28,17 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick }) => {
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+    
+    // Close mobile menu if window is resized to desktop view
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 768) {
+                setIsMenuOpen(false);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     const headerClasses = `
@@ -63,9 +76,20 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick }) => {
                     </nav>
 
                     <div className="flex items-center space-x-4">
-                        <button onClick={onLoginClick} className="hidden sm:block bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
-                            Login
-                        </button>
+                        {isLoggedIn ? (
+                             <div className="hidden sm:flex items-center space-x-4">
+                                <a href="#" className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                    Portal
+                                </a>
+                                <button onClick={onLogout} className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                                    Logout
+                                </button>
+                            </div>
+                        ) : (
+                            <button onClick={onLoginClick} className="hidden sm:block bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                Login
+                            </button>
+                        )}
                         {/* Mobile Menu Button */}
                         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="Buka menu">
                             {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
@@ -77,11 +101,24 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick }) => {
             {/* Mobile Menu */}
             {isMenuOpen && (
                 <div className="md:hidden bg-white dark:bg-gray-800 shadow-lg mx-2 sm:mx-4 rounded-2xl mt-2 p-4">
-                    <nav className="flex flex-col space-y-4 font-medium">
+                    <nav className="flex flex-col space-y-4 font-medium text-center">
                         <NavLinks />
-                         <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-green-600 text-white text-center px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
-                            Login
-                        </button>
+                         <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-col space-y-3">
+                            {isLoggedIn ? (
+                                <>
+                                    <a href="#" className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                        Portal
+                                    </a>
+                                    <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-5 py-2 rounded-full font-semibold text-sm">
+                                        Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-green-600 text-white text-center px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                    Login
+                                </button>
+                            )}
+                         </div>
                     </nav>
                 </div>
             )}

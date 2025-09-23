@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onLoginSuccess: () => void;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [formState, setFormState] = useState<'idle' | 'loading' | 'success'>('idle');
+  const [error, setError] = useState(''); // State untuk pesan error
+
+  // Reset form when modal is closed
+  useEffect(() => {
+    if (!isOpen) {
+        setTimeout(() => {
+            setFormState('idle');
+            setEmail('');
+            setError(''); // Reset error juga
+        }, 300);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -23,21 +36,36 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       if (!email) return;
 
       setFormState('loading');
-      
-      // --- PANGGILAN KE BACKEND CLOUDFLARE WORKER ANDA DI SINI ---
-      // Contoh:
-      // await fetch('/api/request-login-link', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email })
-      // });
-      
-      // Simulasi penundaan jaringan
-      await new Promise(res => setTimeout(res, 1000));
-      
-      console.log('Magic Link request submitted for:', email);
-      setFormState('success');
+      setError(''); // Hapus error lama saat submit baru
+
+      try {
+        // --- GANTI URL INI DENGAN URL WORKER ANDA ---
+        const response = await fetch('https://malnu-api.<NAMA_SUBDOMAIN_ANDA>.workers.dev/request-login-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        
+        if (!response.ok) {
+            // Jika backend mengembalikan error (misal: 403 Forbidden untuk email tidak terdaftar)
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Gagal mengirim link.');
+        }
+
+        console.log('Magic Link request submitted for:', email);
+        setFormState('success');
+
+      } catch (err: any) {
+        setFormState('idle');
+        setError(err.message); // Tampilkan pesan error dari backend
+      }
   }
+
+  const handleCompleteLogin = () => {
+    // Di aplikasi nyata, halaman akan refresh setelah redirect dari magic link,
+    // dan status login akan terdeteksi dari cookie. Simulasi ini untuk UI.
+    onLoginSuccess();
+  };
 
   return (
     <div
@@ -60,8 +88,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         <div className="p-6">
           {formState === 'success' ? (
             <div className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-                  <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/50">
+                  <svg className="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
               </div>
@@ -70,7 +98,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                 Silakan periksa inbox email Anda di <strong>{email}</strong> untuk melanjutkan proses login.
               </p>
               <button
-                onClick={onClose}
+                onClick={handleCompleteLogin}
                 className="mt-6 w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 Selesai
@@ -83,7 +111,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                 >
-                  Alamat Email
+                  Alamat Email Terdaftar
                 </label>
                 <div className="mt-1">
                   <input
@@ -99,19 +127,23 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                   />
                 </div>
               </div>
+              
+              {error && (
+                <p className="text-sm text-red-600 dark:text-red-400 text-center">{error}</p>
+              )}
 
               <div>
                 <button
                   type="submit"
                   disabled={formState === 'loading'}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
                 >
-                  {formState === 'loading' ? 'Mengirim...' : 'Kirim Link Login'}
+                  {formState === 'loading' ? 'Memeriksa...' : 'Kirim Link Login'}
                 </button>
               </div>
 
               <p className="mt-4 text-center text-xs text-gray-500 dark:text-gray-400">
-                Masukkan email Anda untuk login atau mendaftar. Kami akan mengirimkan tautan ajaib sekali pakai untuk masuk tanpa password.
+                Hanya email yang terdaftar yang dapat menerima link login. Hubungi admin jika Anda mengalami masalah.
               </p>
             </form>
           )}
