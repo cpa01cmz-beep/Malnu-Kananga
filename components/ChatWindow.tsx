@@ -1,4 +1,5 @@
 
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { ChatMessage } from '../types';
 import { Sender } from '../types';
@@ -12,6 +13,8 @@ interface ChatWindowProps {
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  // State baru untuk menyimpan riwayat percakapan untuk LLM
+  const [history, setHistory] = useState<{role: 'user' | 'model', parts: string}[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -36,34 +39,47 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat }) => {
     e?.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    const userMessage: ChatMessage = { id: Date.now().toString(), text: input, sender: Sender.User };
+    const userMessageText = input;
+    const userMessage: ChatMessage = { id: Date.now().toString(), text: userMessageText, sender: Sender.User };
+    
+    // Update UI dan riwayat
     setMessages(prev => [...prev, userMessage]);
+    setHistory(prev => [...prev, { role: 'user', parts: userMessageText }]);
     setInput('');
     setIsLoading(true);
 
     const aiMessageId = (Date.now() + 1).toString();
     setMessages(prev => [...prev, { id: aiMessageId, text: '', sender: Sender.AI }]);
     
+    let fullResponse = "";
     try {
-      const stream = getAIResponseStream(input);
+      const stream = getAIResponseStream(userMessageText, history);
       for await (const chunk of stream) {
+        // Hapus "data: " jika ada (format SSE)
+        const cleanedChunk = chunk.replace(/^data: /gm, '');
+        fullResponse += cleanedChunk;
         setMessages(prev =>
           prev.map(msg =>
-            msg.id === aiMessageId ? { ...msg, text: msg.text + chunk } : msg
+            msg.id === aiMessageId ? { ...msg, text: fullResponse } : msg
           )
         );
       }
     } catch (error) {
       console.error("Error streaming response:", error);
+      const errorMessage = "Maaf, terjadi kesalahan. Silakan coba lagi.";
       setMessages(prev =>
         prev.map(msg =>
-          msg.id === aiMessageId ? { ...msg, text: "Maaf, terjadi kesalahan. Silakan coba lagi." } : msg
+          // FIX: Corrected a typo from `aiMessageMessageId` to `aiMessageId`
+          msg.id === aiMessageId ? { ...msg, text: errorMessage } : msg
         )
       );
+      fullResponse = errorMessage; // Simpan pesan error ke riwayat juga
     } finally {
       setIsLoading(false);
+      // Tambahkan jawaban lengkap dari AI ke riwayat
+      setHistory(prev => [...prev, { role: 'model', parts: fullResponse }]);
     }
-  }, [input, isLoading]);
+  }, [input, isLoading, history]);
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">

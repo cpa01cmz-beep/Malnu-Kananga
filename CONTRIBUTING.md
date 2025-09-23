@@ -1,0 +1,45 @@
+# Panduan Kontribusi
+
+Terima kasih atas minat Anda untuk berkontribusi pada proyek Website MA Malnu Kananga! Kontribusi Anda sangat kami hargai.
+
+## Cara Berkontribusi
+
+### Melaporkan Bug
+
+-   Jika Anda menemukan bug, silakan buat "Issue" baru di repositori GitHub.
+-   Jelaskan bug tersebut secara rinci, termasuk langkah-langkah untuk mereproduksinya, apa yang Anda harapkan terjadi, dan apa yang sebenarnya terjadi.
+-   Sertakan tangkapan layar atau video jika memungkinkan.
+
+### Menyarankan Fitur Baru
+
+-   Untuk menyarankan fitur baru, buat "Issue" baru dengan label `enhancement`.
+-   Jelaskan ide Anda sejelas mungkin dan mengapa fitur tersebut akan bermanfaat bagi proyek.
+
+### Proses Pull Request (PR)
+
+1.  **Fork Repositori**: Buat salinan (fork) dari repositori ini ke akun GitHub Anda.
+2.  **Buat Branch Baru**: Buat branch baru dari `main` untuk perubahan Anda. Gunakan nama branch yang deskriptif (misalnya, `feat/add-gallery-page` atau `fix/login-modal-bug`).
+3.  **Lakukan Perubahan**: Tulis kode Anda di branch yang baru dibuat.
+4.  **Commit Perubahan**: Buat commit untuk setiap perubahan logis yang Anda buat. Gunakan pesan commit yang jelas dan deskriptif.
+5.  **Push ke Fork**: Push perubahan Anda ke repositori fork Anda.
+6.  **Buat Pull Request**: Buka Pull Request dari branch Anda ke branch `main` repositori ini. Pastikan untuk menjelaskan perubahan yang Anda buat di deskripsi PR.
+
+## Panduan Gaya & Konvensi
+
+### Pesan Commit
+
+Kami mendorong penggunaan [Conventional Commits](https://www.conventionalcommits.org/). Ini membantu menjaga riwayat commit tetap terorganisir. Contoh:
+
+-   `feat: Menambahkan halaman galeri foto`
+-   `fix: Memperbaiki masalah tampilan header di mobile`
+-   `docs: Memperbarui README dengan instruksi backend`
+-   `style: Merapikan format kode di komponen Footer`
+-   `refactor: Mengubah cara state dikelola di App.tsx`
+
+### Gaya Kode
+
+-   **TypeScript/React**: Ikuti praktik terbaik React modern, seperti menggunakan *functional components* dan *hooks*. Gunakan TypeScript untuk semua komponen baru.
+-   **Styling**: Gunakan kelas utilitas dari **Tailwind CSS** untuk semua styling. Hindari penulisan CSS kustom kecuali benar-benar diperlukan.
+-   **Keterbacaan**: Tulis kode yang bersih dan mudah dibaca. Tambahkan komentar jika Anda menulis logika yang kompleks.
+
+Terima kasih sekali lagi atas kontribusi Anda!

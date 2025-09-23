@@ -12,8 +12,11 @@ const YoutubeIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-youtube"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2A29 29 0 0 0 23 11.75a29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
 );
 
+interface FooterProps {
+    onDocsClick: () => void;
+}
 
-const Footer: React.FC = () => {
+const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
     return (
         <footer id="kontak" className="bg-gradient-to-t from-green-100/80 to-transparent dark:from-green-900/40 dark:to-transparent border-t border-gray-200 dark:border-gray-700/50">
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -44,7 +47,7 @@ const Footer: React.FC = () => {
                     <div className="sm:justify-self-end">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Tautan Bermanfaat</h3>
                          <ul className="mt-2 space-y-1 text-base text-gray-500 dark:text-gray-400">
-                             <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">FAQ</a></li>
+                             <li><button onClick={onDocsClick} className="hover:text-green-600 dark:hover:text-green-400 text-left">Pusat Bantuan</button></li>
                              <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">Download</a></li>
                              <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">Kebijakan Privasi</a></li>
                              <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">Karir</a></li>

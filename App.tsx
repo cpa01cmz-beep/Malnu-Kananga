@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import ChatWidget from './components/ChatWidget';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import LoginModal from './components/LoginModal'; // Import the new modal
+import LoginModal from './components/LoginModal';
+import DocumentationPage from './components/DocumentationPage'; // Import the new page
 import DocumentTextIcon from './components/icons/DocumentTextIcon';
 import BuildingLibraryIcon from './components/icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './components/icons/ClipboardDocumentCheckIcon';
 import UsersIcon from './components/icons/UsersIcon';
 import InformationCircleIcon from './components/icons/InformationCircleIcon';
+import ChatWidget from './components/ChatWidget';
+
 
 const featuredPrograms = [
   {
@@ -79,6 +81,7 @@ const relatedLinks = [
 const App: React.FC = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isDocsOpen, setIsDocsOpen] = useState(false); // State for documentation page
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
@@ -251,12 +254,16 @@ const App: React.FC = () => {
         </main>
       )}
 
-      <Footer />
+      <Footer onDocsClick={() => setIsDocsOpen(true)} />
       <ChatWidget />
       <LoginModal 
         isOpen={isLoginOpen} 
         onClose={() => setIsLoginOpen(false)}
         onLoginSuccess={handleLoginSuccess}
+      />
+      <DocumentationPage 
+        isOpen={isDocsOpen} 
+        onClose={() => setIsDocsOpen(false)} 
       />
     </div>
   );

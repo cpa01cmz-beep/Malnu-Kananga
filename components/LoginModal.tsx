@@ -39,8 +39,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       setError(''); // Hapus error lama saat submit baru
 
       try {
-        // --- GANTI URL INI DENGAN URL WORKER ANDA ---
-        const response = await fetch('https://malnu-api.<NAMA_SUBDOMAIN_ANDA>.workers.dev/request-login-link', {
+        const response = await fetch('https://malnu-api.sulhi-cmz.workers.dev/request-login-link', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email })
