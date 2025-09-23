@@ -45,6 +45,7 @@ const Footer: React.FC = () => {
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Tautan Bermanfaat</h3>
                          <ul className="mt-2 space-y-1 text-base text-gray-500 dark:text-gray-400">
                              <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">FAQ</a></li>
+                             <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">Download</a></li>
                              <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">Kebijakan Privasi</a></li>
                              <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">Karir</a></li>
                              <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">Beasiswa</a></li>

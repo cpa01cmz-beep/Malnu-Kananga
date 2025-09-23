@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ChatWidget from './components/ChatWidget';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import LoginModal from './components/LoginModal'; // Import the new modal
 import DocumentTextIcon from './components/icons/DocumentTextIcon';
 import BuildingLibraryIcon from './components/icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './components/icons/ClipboardDocumentCheckIcon';
@@ -76,9 +77,11 @@ const relatedLinks = [
 
 
 const App: React.FC = () => {
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+
   return (
     <div className="bg-gray-50 dark:bg-gray-900 w-full min-h-screen font-sans text-gray-800 dark:text-gray-200">
-      <Header />
+      <Header onLoginClick={() => setIsLoginOpen(true)} />
       
       <main>
         {/* Hero Section */}
@@ -220,6 +223,7 @@ const App: React.FC = () => {
 
       <Footer />
       <ChatWidget />
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </div>
   );
 };

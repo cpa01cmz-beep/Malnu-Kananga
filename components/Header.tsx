@@ -7,12 +7,16 @@ const NavLinks = () => (
         <a href="#home" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Beranda</a>
         <a href="#profil" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Profil</a>
         <a href="#berita" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Berita</a>
-        <a href="#ppdb" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">PPDB</a>
-        <a href="#kontak" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Kontak</a>
+        <a href="#download" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Download</a>
+        <a href="#login-email" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Login Email</a>
     </>
 );
 
-const Header: React.FC = () => {
+interface HeaderProps {
+    onLoginClick: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onLoginClick }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -59,9 +63,9 @@ const Header: React.FC = () => {
                     </nav>
 
                     <div className="flex items-center space-x-4">
-                        <a href="#ppdb" className="hidden sm:block bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
-                            Pendaftaran
-                        </a>
+                        <button onClick={onLoginClick} className="hidden sm:block bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                            Login
+                        </button>
                         {/* Mobile Menu Button */}
                         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="Buka menu">
                             {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
@@ -75,9 +79,9 @@ const Header: React.FC = () => {
                 <div className="md:hidden bg-white dark:bg-gray-800 shadow-lg mx-2 sm:mx-4 rounded-2xl mt-2 p-4">
                     <nav className="flex flex-col space-y-4 font-medium">
                         <NavLinks />
-                         <a href="#ppdb" className="bg-green-600 text-white text-center px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
-                            Pendaftaran
-                        </a>
+                         <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-green-600 text-white text-center px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                            Login
+                        </button>
                     </nav>
                 </div>
             )}
