@@ -2,6 +2,10 @@ import React from 'react';
 import ChatWidget from './components/ChatWidget';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import DocumentTextIcon from './components/icons/DocumentTextIcon';
+import BuildingLibraryIcon from './components/icons/BuildingLibraryIcon';
+import ClipboardDocumentCheckIcon from './components/icons/ClipboardDocumentCheckIcon';
+import UsersIcon from './components/icons/UsersIcon';
 
 const featuredPrograms = [
   {
@@ -40,7 +44,35 @@ const latestNews = [
         category: 'Kegiatan',
         imageUrl: 'https://images.unsplash.com/photo-1618494955439-78a25c1b698a?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
     }
-]
+];
+
+const relatedLinks = [
+    {
+        name: 'RDM Malnu Kananga',
+        href: 'https://rdm.ma-malnukananga.sch.id',
+        icon: <DocumentTextIcon />,
+        color: 'bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400'
+    },
+    {
+        name: 'Kemenag RI',
+        href: 'https://kemenag.go.id',
+        icon: <BuildingLibraryIcon />,
+        color: 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400'
+    },
+    {
+        name: 'EMIS Pendis',
+        href: 'https://emis.kemenag.go.id',
+        icon: <ClipboardDocumentCheckIcon />,
+        color: 'bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400'
+    },
+    {
+        name: 'Simpatika',
+        href: 'https://simpatika.kemenag.go.id',
+        icon: <UsersIcon />,
+        color: 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400'
+    }
+];
+
 
 const App: React.FC = () => {
   return (
@@ -49,7 +81,7 @@ const App: React.FC = () => {
       
       <main>
         {/* Hero Section */}
-        <section className="relative min-h-[80vh] flex items-center justify-center text-center px-4 pt-24 pb-12 sm:pt-32">
+        <section id="home" className="relative min-h-[80vh] flex items-center justify-center text-center px-4 pt-24 pb-12 sm:pt-32">
           <div className="absolute inset-0 bg-gradient-to-b from-green-100/50 to-gray-50 dark:from-green-900/20 dark:to-gray-900 opacity-50"></div>
           <div className="relative z-10 animate-fade-in-up">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-4">
@@ -67,6 +99,28 @@ const App: React.FC = () => {
               </a>
             </div>
           </div>
+        </section>
+
+        {/* Related Links Section */}
+        <section id="tautan" className="py-12 sm:py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
+                    {relatedLinks.map((link) => (
+                        <a 
+                            key={link.name} 
+                            href={link.href} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="group flex flex-col items-center p-4 sm:p-6 bg-gray-100/50 dark:bg-gray-800/50 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:bg-white dark:hover:bg-gray-700"
+                        >
+                            <div className={`flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-full ${link.color} transition-colors duration-300`}>
+                                {link.icon}
+                            </div>
+                            <span className="mt-4 font-semibold text-center text-sm sm:text-base text-gray-700 dark:text-gray-200">{link.name}</span>
+                        </a>
+                    ))}
+                </div>
+            </div>
         </section>
 
         {/* Featured Programs Section */}
