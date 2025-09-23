@@ -6,6 +6,7 @@ import DocumentTextIcon from './components/icons/DocumentTextIcon';
 import BuildingLibraryIcon from './components/icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './components/icons/ClipboardDocumentCheckIcon';
 import UsersIcon from './components/icons/UsersIcon';
+import InformationCircleIcon from './components/icons/InformationCircleIcon';
 
 const featuredPrograms = [
   {
@@ -81,14 +82,14 @@ const App: React.FC = () => {
       
       <main>
         {/* Hero Section */}
-        <section id="home" className="relative min-h-[80vh] flex items-center justify-center text-center px-4 pt-24 pb-12 sm:pt-32">
+        <section id="home" className="relative min-h-dvh flex items-center justify-center text-center px-4 pt-24 pb-12 sm:pt-32">
           <div className="absolute inset-0 bg-gradient-to-b from-green-100/80 to-transparent dark:from-green-900/40 dark:to-transparent"></div>
-          <div className="relative z-10 animate-fade-in-up">
+          <div className="relative z-10 animate-fade-in-up pb-20">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-4">
               MA Malnu Kananga
             </h1>
             <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8">
-              Mencetak Generasi Islami yang Cerdas, Berakhlak Mulia, dan Berprestasi.
+              Mencetak generasi berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a href="#ppdb" className="bg-green-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-green-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-50">
@@ -97,6 +98,18 @@ const App: React.FC = () => {
               <a href="#profil" className="bg-white dark:bg-gray-700 text-green-600 dark:text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-400 focus:ring-opacity-50">
                 Jelajahi Profil
               </a>
+            </div>
+          </div>
+          
+          {/* Chatbot CTA - Positioned within Hero */}
+          <div className="absolute bottom-0 left-0 right-0 bg-green-50 dark:bg-green-900/20 py-4 z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-center gap-3 text-green-800 dark:text-green-200">
+                    <InformationCircleIcon />
+                    <p className="text-sm sm:text-base font-medium text-center">
+                        Punya pertanyaan seputar sekolah? Coba tanyakan pada <span className="font-bold">Asisten AI</span> kami di pojok kanan bawah!
+                    </p>
+                </div>
             </div>
           </div>
         </section>
@@ -122,9 +135,43 @@ const App: React.FC = () => {
                 </div>
             </div>
         </section>
+        
+        {/* Profile Section */}
+        <section id="profil" className="py-16 sm:py-24 bg-white dark:bg-gray-800/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Profil Madrasah</h2>
+              <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">Mengenal Lebih Dekat MA Malnu Kananga</p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-center">
+                <div className="lg:col-span-3 text-base text-gray-700 dark:text-gray-300 space-y-4 text-left sm:text-justify">
+                    <p>
+                        <strong>Madrasah Aliyah MALNU Kananga</strong> adalah lembaga pendidikan menengah atas swasta bernaung di bawah Kementerian Agama Republik Indonesia. Berlokasi di Jalan Desa Kananga Km. 0,5, Kecamatan Menes, Kabupaten Pandeglang, Banten, madrasah ini didirikan pada tahun 2000 dengan tujuan mencetak generasi berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.
+                    </p>
+                    <p>
+                        Kurikulum yang digunakan memadukan <strong>pendidikan salafiyah</strong> dengan <strong>pendidikan modern</strong>, termasuk pemantapan keterampilan abad 21 untuk menjawab kebutuhan masa depan.
+                    </p>
+                </div>
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-md border-l-4 border-green-500">
+                        <h3 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-2">Visi</h3>
+                        <p className="text-gray-700 dark:text-gray-200">Melahirkan peserta didik berakhlak mulia, akademis unggul, serta berjiwa wirausaha.</p>
+                    </div>
+                    <div className="p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-md border-l-4 border-green-500">
+                        <h3 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-2">Misi</h3>
+                        <ul className="list-disc list-inside text-gray-700 dark:text-gray-200 space-y-1">
+                            <li>Penguatan pendidikan agama Islam berlandaskan nilai salafiyah.</li>
+                            <li>Penerapan kurikulum nasional yang diperkaya dengan penguatan karakter.</li>
+                            <li>Pengembangan kompetensi literasi, numerasi, dan teknologi informasi.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </section>
 
         {/* Featured Programs Section */}
-        <section id="program" className="py-16 sm:py-24 bg-white dark:bg-gray-800/50">
+        <section id="program" className="py-16 sm:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Program Unggulan</h2>
@@ -132,7 +179,7 @@ const App: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredPrograms.map((program) => (
-                <div key={program.title} className="bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden transform hover:-translate-y-1">
+                <div key={program.title} className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden transform hover:-translate-y-1">
                   <img className="h-48 w-full object-cover" src={program.imageUrl} alt={program.title} />
                   <div className="p-6">
                     <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{program.title}</h3>
@@ -145,7 +192,7 @@ const App: React.FC = () => {
         </section>
 
         {/* Latest News Section */}
-        <section id="berita" className="py-16 sm:py-24">
+        <section id="berita" className="py-16 sm:py-24 bg-white dark:bg-gray-800/50">
              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                  <div className="text-center mb-12">
                      <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Berita & Kegiatan Terbaru</h2>

@@ -15,26 +15,41 @@ const YoutubeIcon = () => (
 
 const Footer: React.FC = () => {
     return (
-        <footer id="kontak" className="bg-white dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700/50">
+        <footer id="kontak" className="bg-gradient-to-t from-green-100/80 to-transparent dark:from-green-900/40 dark:to-transparent border-t border-gray-200 dark:border-gray-700/50">
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center sm:text-left">
+                    {/* Kontak */}
                     <div>
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">MA Malnu Kananga</h3>
                         <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
-                            Jl. Pendidikan No. 1, Kananga, Menes, Pandeglang, Banten 42262
+                            Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
+                        </p>
+                        <p className="mt-1 text-base text-gray-500 dark:text-gray-400">
+                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-green-600 dark:hover:text-green-400">info@ma-malnukananga.sch.id</a>
                         </p>
                     </div>
-                    <div className="md:justify-self-center">
-                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Tautan Cepat</h3>
-                         <ul className="mt-2 space-y-1">
-                            <li><a href="#program" className="text-base text-gray-500 dark:text-gray-400 hover:text-green-600">Program</a></li>
-                            <li><a href="#berita" className="text-base text-gray-500 dark:text-gray-400 hover:text-green-600">Berita</a></li>
-                            <li><a href="#ppdb" className="text-base text-gray-500 dark:text-gray-400 hover:text-green-600">PPDB</a></li>
-                         </ul>
+
+                    {/* Legalitas */}
+                    <div>
+                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Legalitas</h3>
+                         <ul className="mt-2 space-y-1 text-sm text-gray-500 dark:text-gray-400">
+                            <li><strong>No. SK. Pendirian:</strong> D/Wi/MA./101/2000</li>
+                            <li><strong>Tgl. SK. Pendirian:</strong> 20-09-2000</li>
+                            <li className="pt-1"><strong>No. SK Operasional:</strong> D/Wi/MA./101/2000</li>
+                            <li><strong>Tgl. SK Operasional:</strong> 20-09-2000</li>
+                        </ul>
                     </div>
-                    <div className="md:justify-self-end">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Ikuti Kami</h3>
-                        <div className="flex justify-center md:justify-start space-x-6 mt-2">
+
+                    {/* Tautan & Media Sosial */}
+                    <div className="sm:justify-self-end">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Tautan Bermanfaat</h3>
+                         <ul className="mt-2 space-y-1 text-base text-gray-500 dark:text-gray-400">
+                             <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">FAQ</a></li>
+                             <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">Kebijakan Privasi</a></li>
+                             <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">Karir</a></li>
+                             <li><a href="#" className="hover:text-green-600 dark:hover:text-green-400">Beasiswa</a></li>
+                         </ul>
+                        <div className="flex justify-center sm:justify-start space-x-6 mt-6">
                             <a href="#" className="text-gray-400 hover:text-green-600">
                                 <span className="sr-only">Facebook</span>
                                 <FacebookIcon />
