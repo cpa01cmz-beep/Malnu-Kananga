@@ -1,96 +1,75 @@
 # Website & Portal Siswa MA Malnu Kananga
 
-Selamat datang di repositori resmi untuk website Madrasah Aliyah Malnu Kananga. Proyek ini dibangun dengan pendekatan modern, mobile-first, dan terintegrasi dengan teknologi serverless untuk performa, keamanan, dan skalabilitas yang optimal.
+Selamat datang di repositori resmi untuk website Madrasah Aliyah Malnu Kananga. Proyek ini dibangun dengan pendekatan modern, mobile-first, dan terintegrasi dengan teknologi AI terkini untuk pengalaman pengguna yang interaktif.
 
 ## Ringkasan Fitur
 
 - **Website Publik**: Halaman informasi sekolah yang modern, responsif, dan cepat.
-- **Asisten AI**: Chatbot interaktif untuk menjawab pertanyaan umum (saat ini simulasi, lihat `TO-DO.md`).
-- **Sistem Login Passwordless**: Autentikasi aman menggunakan "Magic Link" tanpa perlu kata sandi.
+- **Asisten AI Cerdas (RAG)**: Chatbot interaktif ditenagai oleh **Google Gemini** yang mampu menjawab pertanyaan berdasarkan konten website.
+- **Sistem Login Tanpa Kata Sandi**: Autentikasi aman menggunakan "Magic Link" tanpa perlu kata sandi.
 - **Portal Siswa**: Area pribadi untuk siswa mengakses informasi akademik (dasar sudah ada, pengembangan lebih lanjut direncanakan).
 
 ## Tumpukan Teknologi (Tech Stack)
 
-Proyek ini menggunakan arsitektur JAMStack yang modern:
+Proyek ini menggunakan arsitektur hybrid yang modern:
 
 - **Frontend**:
     - **React**: Library utama untuk membangun antarmuka pengguna.
     - **TypeScript**: Untuk pengetikan statis yang kuat dan kode yang lebih mudah dipelihara.
     - **Tailwind CSS**: Framework CSS utility-first untuk desain yang cepat dan responsif.
+    - **Google Gemini API (`@google/genai`)**: Diintegrasikan langsung di frontend untuk kemampuan AI generatif.
 - **Backend (Serverless)**:
-    - **Cloudflare Workers**: Untuk logika backend, termasuk API autentikasi dan AI. File referensi: `worker.js`.
-    - **Cloudflare D1**: Database SQL untuk menyimpan data pengguna dan informasi lainnya.
-    - **Cloudflare Vectorize**: Database vektor untuk "memori" Asisten AI (direncanakan).
+    - **Cloudflare Workers**: Digunakan untuk logika backend seperti:
+        - API autentikasi "Magic Link".
+        - **API Pencarian Konteks (RAG)**: Endpoint khusus yang berkomunikasi dengan Vectorize untuk mengambil data relevan.
+    - **Cloudflare Vectorize**: Database vektor yang berfungsi sebagai "memori" atau "basis pengetahuan" untuk Asisten AI.
+    - **Cloudflare D1**: Database SQL untuk menyimpan data pengguna.
 - **Layanan Pendukung**:
-    - **MailChannels**: Digunakan melalui Worker untuk mengirim email "Magic Link" secara gratis.
-    - **Hosting**: Dirancang untuk di-deploy di platform seperti Cloudflare Pages atau GitHub Pages.
+    - **MailChannels**: Digunakan melalui Worker untuk mengirim email "Magic Link".
+    - **Hosting**: Dirancang untuk di-deploy di platform seperti Cloudflare Pages.
+
+## Arsitektur Asisten AI (RAG)
+
+Sistem AI kami menggunakan pola **Retrieval-Augmented Generation (RAG)**:
+1.  **Pertanyaan Pengguna**: Pengguna mengetik pertanyaan di jendela chat.
+2.  **Pengambilan Konteks (Retrieval)**: Frontend mengirim pertanyaan ke Cloudflare Worker. Worker mengubah pertanyaan menjadi vektor dan mencarikan dokumen yang paling mirip dari **Cloudflare Vectorize**. Hasil pencarian (konteks) dikembalikan ke frontend.
+3.  **Generasi Jawaban (Generation)**: Frontend menggabungkan pertanyaan asli pengguna dengan konteks yang diterima dari Worker. Prompt yang "diperkaya" ini kemudian dikirim ke **Google Gemini API**.
+4.  **Jawaban Cerdas**: Gemini menghasilkan jawaban yang relevan dan kontekstual berdasarkan informasi yang diberikan, yang kemudian ditampilkan kepada pengguna.
 
 ## Struktur Proyek
 
 ```
 .
-├── components/          # Komponen React yang dapat digunakan kembali (Header, Footer, Modal, dll.)
-│   ├── icons/           # Komponen ikon SVG.
-│   └── ...
-├── services/            # Logika untuk berinteraksi dengan layanan eksternal (mis. AI).
-├── index.html           # Titik masuk HTML utama aplikasi.
-├── index.tsx            # Titik masuk utama untuk aplikasi React.
-├── App.tsx              # Komponen root yang mengatur layout dan state utama.
-├── worker.js            # [Referensi] Kode backend untuk Cloudflare Worker.
-├── seeder-worker.js     # [Referensi] Kode untuk mengisi memori AI (Vectorize).
-├── TO-DO.md             # Rencana detail untuk implementasi fitur AI.
-├── README.md            # Anda sedang membaca ini.
-└── ...
+├── components/          # Komponen React (Header, ChatWindow, dll.)
+├── services/            # Logika interaksi dengan API (termasuk Gemini).
+├── index.html           # Titik masuk HTML utama.
+├── index.tsx            # Titik masuk utama aplikasi React.
+├── App.tsx              # Komponen root aplikasi.
+├── worker.js            # [Referensi] Kode backend Cloudflare Worker.
+└── README.md            # Anda sedang membaca ini.
 ```
 
 ## Persiapan & Setup
 
 ### Frontend
 
-Aplikasi ini dirancang sebagai modul ES6 sederhana yang diimpor langsung oleh `index.html`.
-
-1.  **URL Worker**: Pastikan untuk memperbarui URL API di `components/LoginModal.tsx` dan `services/geminiService.ts` agar menunjuk ke URL Cloudflare Worker Anda yang sudah di-deploy.
-    ```typescript
-    // Contoh di dalam components/LoginModal.tsx
-    const response = await fetch('https://malnu-api.sulhi-cmz.workers.dev/request-login-link', { ... });
-    ```
-2.  **Menjalankan**: Cukup buka file `index.html` di browser yang mendukung modul ES.
+1.  **API Key Gemini**: Aplikasi ini membutuhkan API Key dari Google AI Studio. Anda harus menyediakannya sebagai variabel lingkungan `process.env.API_KEY`.
+2.  **URL Worker**: Pastikan URL di `services/geminiService.ts` dan `components/LoginModal.tsx` menunjuk ke URL Cloudflare Worker Anda.
+3.  **Menjalankan**: Buka `index.html` di browser.
 
 ### Backend
 
 Backend berjalan sepenuhnya di Cloudflare.
 
-1.  **Kode**: Salin seluruh konten dari `worker.js` ke dalam editor kode Worker Anda di dashboard Cloudflare.
-2.  **Database**: Buat database Cloudflare D1 dan jalankan skema SQL di bawah ini:
-    ```sql
-    CREATE TABLE users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT NOT NULL UNIQUE,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    ```
-3.  **Binding**: Hubungkan (bind) database D1 ke Worker Anda dengan **Variable Name** `DB`.
-4.  **Deploy**: Deploy Worker Anda. Backend API Anda sekarang sudah aktif.
-
-## Roadmap & Saran Pengembangan
-
-Dokumen ini berfungsi sebagai panduan untuk pengembangan di masa depan.
-
-### Fitur Baru yang Disarankan
--   **Portal Siswa/Guru yang Lengkap**:
-    -   **Siswa**: Halaman untuk melihat nilai, absensi, jadwal pelajaran, dan mengunduh materi.
-    -   **Guru**: Fitur untuk menginput nilai, mengelola absensi, dan mengunggah materi pelajaran.
--   **Content Management System (CMS)**: Integrasi dengan Git-based CMS (seperti Decap CMS) agar staf non-teknis dapat memperbarui konten "Berita & Kegiatan" tanpa menyentuh kode.
--   **Kalender Acara Interaktif**: Halaman khusus yang menampilkan kalender acara sekolah, ujian, dan hari libur.
--   **Portal Orang Tua**: Akun terpisah bagi wali murid untuk memantau perkembangan akademik anak mereka.
-
-### Penyempurnaan & Optimalisasi Teknis
--   **Manajemen State**: Untuk aplikasi yang lebih kompleks, pertimbangkan menggunakan library state management seperti **Zustand** atau **Redux Toolkit** untuk mengelola state global (seperti status login) secara lebih efisien.
--   **Code Splitting / Lazy Loading**: Saat Portal Siswa/Guru berkembang, gunakan `React.lazy()` untuk memuat komponen halaman secara dinamis. Ini akan menjaga ukuran bundle awal tetap kecil dan waktu muat halaman utama tetap cepat.
--   **Optimalisasi Gambar**: Gunakan layanan seperti Cloudflare Images atau implementasikan atribut `srcset` pada tag `<img>` untuk menyajikan gambar dengan ukuran yang optimal sesuai perangkat pengguna.
--   **Aksesibilitas (a11y)**: Lakukan audit aksesibilitas penuh untuk memastikan semua elemen interaktif dapat diakses melalui keyboard, memiliki atribut ARIA yang sesuai, dan memenuhi standar WCAG 2.1 AA.
--   **Testing End-to-End**: Implementasikan framework testing seperti **Playwright** atau **Cypress** untuk mengotomatiskan pengujian alur kerja krusial (misalnya, proses login, interaksi chatbot).
--   **Progressive Web App (PWA)**: Ubah aplikasi menjadi PWA dengan menambahkan Service Worker dan Web App Manifest. Ini akan memungkinkan fungsionalitas offline dan pengalaman pengguna yang lebih baik di perangkat mobile.
+1.  **Kode**: Salin konten dari `worker.js` ke Worker Anda di Cloudflare.
+2.  **Database & Vectorize**:
+    - Buat database **Cloudflare D1** dan jalankan skema SQL untuk tabel `users`.
+    - Buat **Vectorize Index** untuk menyimpan data pengetahuan sekolah. Gunakan `seeder-worker.js` sebagai referensi untuk mengisi indeks ini.
+3.  **Binding**:
+    - Bind database D1 ke Worker Anda dengan nama variabel `DB`.
+    - Bind Vectorize Index Anda dengan nama variabel `VECTORIZE_INDEX`.
+    - Bind layanan **AI** dari Cloudflare dengan nama variabel `AI` (ini digunakan untuk membuat *embeddings*, bukan untuk chat).
+4.  **Deploy**: Deploy Worker Anda. API backend Anda sekarang sudah aktif.
 
 ## Kontribusi
 

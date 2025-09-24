@@ -1,10 +1,9 @@
-// worker.js - Kode backend lengkap dengan endpoint AI
+// worker.js - Kode backend disederhanakan untuk RAG Retriever
 
 export default {
   async fetch(request, env) {
-    // Menambahkan header CORS untuk mengizinkan permintaan dari website Anda
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*', // Ganti '*' dengan domain Anda untuk produksi
+      'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     };
@@ -15,64 +14,52 @@ export default {
 
     const url = new URL(request.url);
 
-    // --- Endpoint untuk AI Chat (BARU) ---
+    // --- Endpoint untuk RAG Context Retrieval (PENCARI INFO) ---
     if (url.pathname === '/api/chat' && request.method === 'POST') {
-      const { message, history } = await request.json();
+      try {
+        const { message } = await request.json();
 
-      // 1. Cari konteks relevan di Vectorize
-      const embeddings = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [message] });
-      const vectors = embeddings.data[0];
-      
-      const SIMILARITY_CUTOFF = 0.75;
-      const topK = 5;
-      
-      const vectorQuery = await env.VECTORIZE_INDEX.query(vectors, { topK, returnMetadata: true });
-      
-      let context = "";
-      if (vectorQuery.matches.length > 0) {
-        const relevantMatches = vectorQuery.matches.filter(match => match.score > SIMILARITY_CUTOFF);
-        if(relevantMatches.length > 0) {
-            context = "Konteks dari website sekolah:\n" + relevantMatches.map(match => match.metadata.text).join("\n\n---\n\n");
+        // 1. Ubah pertanyaan menjadi vektor
+        const embeddings = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [message] });
+        const vectors = embeddings.data[0];
+        
+        // 2. Cari vektor yang mirip di Vectorize
+        const SIMILARITY_CUTOFF = 0.75;
+        const topK = 3;
+        const vectorQuery = await env.VECTORIZE_INDEX.query(vectors, { topK, returnMetadata: true });
+        
+        let context = "";
+        if (vectorQuery.matches.length > 0) {
+          const relevantMatches = vectorQuery.matches.filter(match => match.score > SIMILARITY_CUTOFF);
+          if(relevantMatches.length > 0) {
+              // Gabungkan teks dari hasil yang relevan untuk jadi konteks
+              context = relevantMatches.map(match => match.metadata.text).join("\n\n---\n\n");
+          }
         }
+        
+        // 3. Kirim balik konteks sebagai JSON
+        return new Response(JSON.stringify({ context }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+
+      } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
       }
-
-      // 2. Buat prompt untuk LLM
-      const systemPrompt = `Anda adalah 'Asisten MA Malnu Kananga', chatbot AI yang ramah, sopan, dan sangat membantu, berbicara dalam Bahasa Indonesia. Tugas Anda adalah menjawab pertanyaan tentang sekolah MA Malnu Kananga berdasarkan konteks yang diberikan dari website sekolah. Jika konteks tidak cukup untuk menjawab, katakan Anda tidak memiliki informasi tersebut dan sarankan untuk menghubungi pihak sekolah. JANGAN menjawab pertanyaan di luar topik sekolah.`;
-      
-      const messages = [
-        { role: 'system', content: systemPrompt },
-        ...history, // Menambahkan riwayat percakapan sebelumnya
-        { role: 'user', content: `${message}\n\n${context}` }
-      ];
-
-      // 3. Panggil model AI (LLM) untuk generasi jawaban
-      const stream = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
-        messages,
-        stream: true
-      });
-      
-      return new Response(stream, {
-        headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' }
-      });
     }
 
-    // Endpoint untuk meminta link login
+    // --- Endpoint Login (Tidak berubah) ---
     if (url.pathname === '/request-login-link' && request.method === 'POST') {
-      // ... (kode login dari sebelumnya tetap di sini) ...
       try {
         const { email } = await request.json();
         if (!email) {
-          return new Response(JSON.stringify({ message: 'Email diperlukan.' }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
+          return new Response(JSON.stringify({ message: 'Email diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
         const userQuery = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
         if (!userQuery) {
-          return new Response(JSON.stringify({ message: 'Email tidak terdaftar.' }), {
-            status: 403,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          });
+          return new Response(JSON.stringify({ message: 'Email tidak terdaftar.' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
         const token = btoa(email + ":" + (Date.now() + 15 * 60 * 1000));
         const magicLink = `${new URL(request.url).origin}/verify-login?token=${token}`;
@@ -88,20 +75,13 @@ export default {
             }),
         });
         await fetch(send_request);
-        return new Response(JSON.stringify({ success: true, message: 'Link login telah dikirim.' }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return new Response(JSON.stringify({ success: true, message: 'Link login telah dikirim.' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       } catch (e) {
-        return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }
     
-    // Endpoint untuk verifikasi token dari link email
     if (url.pathname === '/verify-login') {
-      // ... (kode verifikasi dari sebelumnya tetap di sini) ...
        const token = url.searchParams.get('token');
         if (!token) return new Response('Token tidak valid atau hilang.', { status: 400 });
         try {

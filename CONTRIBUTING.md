@@ -18,7 +18,7 @@ Terima kasih atas minat Anda untuk berkontribusi pada proyek Website MA Malnu Ka
 ### Proses Pull Request (PR)
 
 1.  **Fork Repositori**: Buat salinan (fork) dari repositori ini ke akun GitHub Anda.
-2.  **Buat Branch Baru**: Buat branch baru dari `main` untuk perubahan Anda. Gunakan nama branch yang deskriptif (misalnya, `feat/add-gallery-page` atau `fix/login-modal-bug`).
+2.  **Buat Branch Baru**: Buat branch baru dari `main` untuk perubahan Anda. Gunakan nama branch yang deskriptif (misalnya, `fitur/tambah-halaman-galeri` atau `perbaikan/bug-modal-login`).
 3.  **Lakukan Perubahan**: Tulis kode Anda di branch yang baru dibuat.
 4.  **Commit Perubahan**: Buat commit untuk setiap perubahan logis yang Anda buat. Gunakan pesan commit yang jelas dan deskriptif.
 5.  **Push ke Fork**: Push perubahan Anda ke repositori fork Anda.
@@ -30,10 +30,10 @@ Terima kasih atas minat Anda untuk berkontribusi pada proyek Website MA Malnu Ka
 
 Kami mendorong penggunaan [Conventional Commits](https://www.conventionalcommits.org/). Ini membantu menjaga riwayat commit tetap terorganisir. Contoh:
 
--   `feat: Menambahkan halaman galeri foto`
--   `fix: Memperbaiki masalah tampilan header di mobile`
--   `docs: Memperbarui README dengan instruksi backend`
--   `style: Merapikan format kode di komponen Footer`
+-   `fitur: Menambahkan halaman galeri foto`
+-   `perbaikan: Memperbaiki masalah tampilan header di mobile`
+-   `dok: Memperbarui README dengan instruksi backend`
+-   `gaya: Merapikan format kode di komponen Footer`
 -   `refactor: Mengubah cara state dikelola di App.tsx`
 
 ### Gaya Kode
