@@ -3,6 +3,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 import type { FeaturedProgram, LatestNews } from '../types';
 
 // Initialize the Google AI client
+// FIX: The API key must be obtained from process.env.API_KEY as per the coding guidelines.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const workerUrl = 'https://malnu-api.sulhi-cmz.workers.dev/api/chat';
