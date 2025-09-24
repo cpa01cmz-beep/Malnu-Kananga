@@ -1,8 +1,9 @@
+// FIX: Import `Type` for JSON schema definition.
 import { GoogleGenAI, Type } from "@google/genai";
+// FIX: Import content types for the AI editor function.
 import type { FeaturedProgram, LatestNews } from '../types';
 
 // Initialize the Google AI client
-// FIX: Switched from `import.meta.env.VITE_API_KEY` to `process.env.API_KEY` to resolve TypeScript error and adhere to coding guidelines.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const workerUrl = 'https://malnu-api.sulhi-cmz.workers.dev/api/chat';
@@ -62,61 +63,80 @@ export async function* getAIResponseStream(message: string, history: {role: 'use
   }
 }
 
-export const initialGreeting = "Assalamualaikum! Saya Asisten AI MA Malnu Kananga. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?";
+// FIX: Added getAIEditorResponse function to handle content editing requests from SiteEditor.tsx.
+export async function getAIEditorResponse(
+    prompt: string,
+    currentContent: { featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }
+): Promise<{ featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }> {
+    const model = 'gemini-2.5-flash';
 
+    const systemInstruction = `You are an intelligent website content editor. Your task is to modify the provided JSON data based on the user's instruction.
+- You must only add, remove, or modify entries in the JSON.
+- Do not change the overall JSON structure.
+- For image URLs, if the user asks for a new item but does not provide an image, you can use an appropriate placeholder image URL from unsplash.com.
+- Ensure your response is only the modified JSON data, adhering to the provided schema.`;
 
-// New function for the AI Site Editor
-export async function getAIEditorResponse(prompt: string, currentContent: { featuredPrograms: FeaturedProgram[], latestNews: LatestNews[] }): Promise<any> {
-    const systemInstruction = `You are a helpful website content editor. The user will provide a request to modify the website's content. You must analyze the request and return the FULL updated content structure as a valid JSON object. Do not add any commentary or markdown formatting. Only output the JSON. The user request might be in Indonesian.`;
-    
-    const fullPrompt = `Here is the current website content:\n${JSON.stringify(currentContent, null, 2)}\n\nUser request: "${prompt}"\n\nPlease provide the complete and updated JSON object based on this request.`;
-    
-    const contentSchema = {
+    const fullPrompt = `Here is the current website content in JSON format:
+\`\`\`json
+${JSON.stringify(currentContent, null, 2)}
+\`\`\`
+
+Here is the user's request: "${prompt}"
+
+Please provide the updated JSON content.`;
+
+    const schema = {
         type: Type.OBJECT,
         properties: {
             featuredPrograms: {
                 type: Type.ARRAY,
+                description: 'List of featured school programs.',
                 items: {
                     type: Type.OBJECT,
                     properties: {
-                        title: { type: Type.STRING },
-                        description: { type: Type.STRING },
-                        imageUrl: { type: Type.STRING }
+                        title: { type: Type.STRING, description: 'The title of the program.' },
+                        description: { type: Type.STRING, description: 'A short description of the program.' },
+                        imageUrl: { type: Type.STRING, description: 'URL for the program image.' },
                     },
-                    required: ["title", "description", "imageUrl"]
-                }
+                },
             },
             latestNews: {
                 type: Type.ARRAY,
+                description: 'List of latest news articles.',
                 items: {
                     type: Type.OBJECT,
                     properties: {
-                        title: { type: Type.STRING },
-                        date: { type: Type.STRING },
-                        category: { type: Type.STRING },
-                        imageUrl: { type: Type.STRING }
+                        title: { type: Type.STRING, description: 'The headline of the news article.' },
+                        date: { type: Type.STRING, description: 'The publication date of the news.' },
+                        category: { type: Type.STRING, description: 'The category of the news (e.g., Prestasi, Sekolah).' },
+                        imageUrl: { type: Type.STRING, description: 'URL for the news image.' },
                     },
-                    required: ["title", "date", "category", "imageUrl"]
-                }
-            }
+                },
+            },
         },
-        required: ["featuredPrograms", "latestNews"]
     };
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model,
             contents: fullPrompt,
             config: {
                 systemInstruction,
                 responseMimeType: "application/json",
-                responseSchema: contentSchema,
-            }
+                responseSchema: schema,
+            },
         });
+        
         const jsonText = response.text.trim();
-        return JSON.parse(jsonText);
+        const cleanedJsonText = jsonText.replace(/^```json\s*/, '').replace(/```$/, '');
+        const newContent = JSON.parse(cleanedJsonText);
+        
+        return newContent;
     } catch (error) {
-        console.error("Error getting AI editor response:", error);
-        throw new Error("Gagal mendapatkan respons dari AI editor. Silakan coba lagi.");
+        console.error("Error calling Gemini API for content editing:", error);
+        throw new Error("Failed to get a valid response from the AI editor. Please try again.");
     }
 }
+
+
+export const initialGreeting = "Assalamualaikum! Saya Asisten AI MA Malnu Kananga. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?";

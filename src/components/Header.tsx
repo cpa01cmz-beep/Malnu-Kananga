@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { MenuIcon } from './icons/MenuIcon';
 import { CloseIcon } from './icons/CloseIcon';
-import { ChatIcon } from './icons/ChatIcon';
-import { SparklesIcon } from './icons/SparklesIcon'; // Import new icon
+import { ChatIcon } from './icons/ChatIcon'; // Import ChatIcon
 
 const NavLinks = () => (
     <>
@@ -17,13 +16,12 @@ const NavLinks = () => (
 
 interface HeaderProps {
     onLoginClick: () => void;
-    onChatClick: () => void;
-    onEditorClick: () => void; // New prop for editor
+    onChatClick: () => void; // New prop for chat
     isLoggedIn: boolean;
     onLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, onEditorClick, isLoggedIn, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, onLogout }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -82,10 +80,9 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, onEditorClic
                     <div className="flex items-center space-x-2">
                         {isLoggedIn ? (
                              <div className="hidden sm:flex items-center space-x-2">
-                                <button onClick={onEditorClick} className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
-                                    <SparklesIcon />
-                                    <span>AI Editor</span>
-                                </button>
+                                <a href="#" className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                    Portal
+                                </a>
                                 <button onClick={onLogout} className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                                     Logout
                                 </button>
@@ -117,10 +114,9 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, onEditorClic
                          <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-col space-y-3">
                             {isLoggedIn ? (
                                 <>
-                                    <button onClick={() => { onEditorClick(); setIsMenuOpen(false); }} className="flex items-center justify-center gap-2 bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
-                                        <SparklesIcon />
-                                        <span>AI Editor</span>
-                                    </button>
+                                    <a href="#" className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                        Portal
+                                    </a>
                                     <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-5 py-2 rounded-full font-semibold text-sm">
                                         Logout
                                     </button>

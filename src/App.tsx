@@ -9,11 +9,9 @@ import BuildingLibraryIcon from './components/icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './components/icons/ClipboardDocumentCheckIcon';
 import UsersIcon from './components/icons/UsersIcon';
 import ChatWindow from './components/ChatWindow';
-import SiteEditor from './components/SiteEditor'; // Import the new Site Editor
-import type { FeaturedProgram, LatestNews } from './types';
 
 
-const initialFeaturedPrograms: FeaturedProgram[] = [
+const featuredPrograms = [
   {
     title: 'Tahfidz Al-Qur\'an',
     description: 'Program intensif menghafal Al-Qur\'an dengan bimbingan ustadz/ustadzah berkompeten.',
@@ -31,7 +29,7 @@ const initialFeaturedPrograms: FeaturedProgram[] = [
   }
 ];
 
-const initialLatestNews: LatestNews[] = [
+const latestNews = [
     {
         title: 'MA Malnu Kananga Raih Juara 1 Lomba Cerdas Cermat Tingkat Kabupaten',
         date: '15 Juli 2024',
@@ -84,12 +82,7 @@ const App: React.FC = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDocsOpen, setIsDocsOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isEditorOpen, setIsEditorOpen] = useState(false); // State for Site Editor
-
-  // Move content to state to make it editable
-  const [featuredPrograms, setFeaturedPrograms] = useState<FeaturedProgram[]>(initialFeaturedPrograms);
-  const [latestNews, setLatestNews] = useState<LatestNews[]>(initialLatestNews);
+  const [isChatOpen, setIsChatOpen] = useState(false); // State for chat window
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
@@ -100,22 +93,11 @@ const App: React.FC = () => {
     setIsLoggedIn(false);
   };
 
-  const handleContentUpdate = (newContent: { featuredPrograms: FeaturedProgram[], latestNews: LatestNews[] }) => {
-    if (newContent.featuredPrograms) {
-      setFeaturedPrograms(newContent.featuredPrograms);
-    }
-    if (newContent.latestNews) {
-      setLatestNews(newContent.latestNews);
-    }
-    setIsEditorOpen(false); // Close editor after applying changes
-  };
-
   return (
     <div className="bg-gray-50 dark:bg-gray-900 w-full min-h-screen font-sans text-gray-800 dark:text-gray-200">
       <Header 
         onLoginClick={() => setIsLoginOpen(true)}
-        onChatClick={() => setIsChatOpen(true)}
-        onEditorClick={() => setIsEditorOpen(true)} // Pass editor handler
+        onChatClick={() => setIsChatOpen(true)} // Pass chat handler to header
         isLoggedIn={isLoggedIn}
         onLogout={handleLogout}
       />
@@ -126,10 +108,10 @@ const App: React.FC = () => {
                 <div className="text-center bg-white dark:bg-gray-800/50 p-8 rounded-2xl shadow-lg">
                     <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Portal Siswa</h1>
                     <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
-                      Selamat datang kembali! Gunakan tombol "AI Editor" di header untuk mencoba mengubah konten situs secara live.
+                      Selamat datang kembali! Area ini sedang dalam pengembangan.
                     </p>
                     <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                      Fitur portal lainnya seperti jadwal dan nilai akan segera tersedia.
+                      Fitur-fitur seperti jadwal pelajaran, nilai, dan materi akan segera tersedia di sini.
                     </p>
                 </div>
             </div>
@@ -272,13 +254,6 @@ const App: React.FC = () => {
       >
         <ChatWindow isOpen={isChatOpen} closeChat={() => setIsChatOpen(false)} />
       </div>
-
-      <SiteEditor
-        isOpen={isEditorOpen}
-        onClose={() => setIsEditorOpen(false)}
-        currentContent={{ featuredPrograms, latestNews }}
-        onUpdateContent={handleContentUpdate}
-      />
 
       <LoginModal 
         isOpen={isLoginOpen} 
