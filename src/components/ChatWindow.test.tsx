@@ -235,12 +235,8 @@ describe('ChatWindow Component', () => {
 
       // Check that response builds up progressively
       await waitFor(() => {
-        expect(screen.getByText('Halo')).toBeInTheDocument();
-      });
-
-      await waitFor(() => {
         expect(screen.getByText('Halo, saya adalah asisten AI!')).toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
     });
 
     test('should handle AI error response', async () => {

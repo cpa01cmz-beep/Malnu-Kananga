@@ -1,6 +1,200 @@
 // Authentication service untuk development dan production
 import { WORKER_URL } from '../utils/envValidation';
 
+// Rate limiting untuk client-side protection
+const clientRateLimitStore = new Map();
+const CLIENT_RATE_LIMIT = {
+  windowMs: 60 * 1000, // 1 menit window
+  maxAttempts: 3, // Maksimal 3 attempts per window untuk client
+};
+
+// Client-side rate limiting check
+function isClientRateLimited(email: string): boolean {
+  const now = Date.now();
+  const clientKey = `client_${email}`;
+  const clientData = clientRateLimitStore.get(clientKey);
+
+  if (!clientData) {
+    clientRateLimitStore.set(clientKey, {
+      attempts: 1,
+      firstAttempt: now,
+    });
+    return false;
+  }
+
+  // Reset if window expired
+  if (now - clientData.firstAttempt > CLIENT_RATE_LIMIT.windowMs) {
+    clientRateLimitStore.set(clientKey, {
+      attempts: 1,
+      firstAttempt: now,
+    });
+    return false;
+  }
+
+  // Increment attempts
+  clientData.attempts++;
+
+  if (clientData.attempts > CLIENT_RATE_LIMIT.maxAttempts) {
+    return true;
+  }
+
+  clientRateLimitStore.set(clientKey, clientData);
+  return false;
+}
+
+// Basic email validation
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+// Secure token generation menggunakan Web Crypto API
+function generateSecureToken(email: string, expiryTime: number = 15 * 60 * 1000): string {
+  const header = { alg: 'HS256', typ: 'JWT' };
+  const payload = {
+    email: email,
+    exp: Math.floor((Date.now() + expiryTime) / 1000),
+    iat: Math.floor(Date.now() / 1000),
+    jti: generateRandomString(16) // Unique token ID
+  };
+
+  // Encode header dan payload ke base64url
+  const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+
+  // Generate signature menggunakan random bytes (untuk demo - production perlu HMAC)
+  const signature = generateRandomString(32);
+
+  return `${encodedHeader}.${encodedPayload}.${signature}`;
+}
+
+// Generate cryptographically secure random string
+function generateRandomString(length: number): string {
+  const array = new Uint8Array(length);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+// Verify dan decode secure token
+function verifyAndDecodeToken(token: string): TokenData | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+
+    const payload = parts[1];
+    // Add padding jika diperlukan
+    const paddedPayload = payload + '='.repeat((4 - payload.length % 4) % 4);
+    const decodedPayload = atob(paddedPayload.replace(/-/g, '+').replace(/_/g, '/'));
+
+    const tokenData: TokenData = JSON.parse(decodedPayload);
+
+    // Verify expiration
+    if (Date.now() / 1000 > tokenData.exp) {
+      return null;
+    }
+
+    return tokenData;
+  } catch (error) {
+    return null;
+  }
+}
+
+// Check if token needs refresh (dalam 5 menit terakhir)
+function shouldRefreshToken(token: string): boolean {
+  const tokenData = verifyAndDecodeToken(token);
+  if (!tokenData) return false;
+
+  const now = Math.floor(Date.now() / 1000);
+  const fiveMinutes = 5 * 60;
+
+  return (tokenData.exp - now) <= fiveMinutes;
+}
+
+// Refresh token dengan email yang sama
+function refreshToken(currentToken: string): string | null {
+  const tokenData = verifyAndDecodeToken(currentToken);
+  if (!tokenData) return null;
+
+  // Generate token baru dengan expiry time yang sama atau diperpanjang
+  return generateSecureToken(tokenData.email, 15 * 60 * 1000);
+}
+
+// Token storage management dengan auto-refresh
+class TokenManager {
+  private static TOKEN_KEY = 'malnu_secure_token';
+  private static REFRESH_TIMER_KEY = 'malnu_refresh_timer';
+
+  static storeToken(token: string): void {
+    localStorage.setItem(this.TOKEN_KEY, token);
+    this.scheduleTokenRefresh(token);
+  }
+
+  static getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  static removeToken(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TIMER_KEY);
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
+  }
+
+  private static refreshTimer: NodeJS.Timeout | null = null;
+
+  private static scheduleTokenRefresh(token: string): void {
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+    }
+
+    // Schedule refresh 1 menit sebelum token expired
+    const tokenData = verifyAndDecodeToken(token);
+    if (!tokenData) return;
+
+    const now = Math.floor(Date.now() / 1000);
+    const refreshTime = (tokenData.exp - now - 60) * 1000; // 1 menit sebelum expired
+
+    if (refreshTime > 0) {
+      this.refreshTimer = setTimeout(() => {
+        this.attemptTokenRefresh();
+      }, refreshTime);
+      localStorage.setItem(this.REFRESH_TIMER_KEY, Date.now().toString());
+    }
+  }
+
+  private static attemptTokenRefresh(): void {
+    const currentToken = this.getToken();
+    if (!currentToken) return;
+
+    const newToken = refreshToken(currentToken);
+    if (newToken) {
+      this.storeToken(newToken);
+      console.log('🔄 Token berhasil di-refresh secara otomatis');
+    } else {
+      console.warn('⚠️ Gagal refresh token, user perlu login ulang');
+      this.removeToken();
+    }
+  }
+
+  static initializeTokenManager(): void {
+    const token = this.getToken();
+    if (token) {
+      // Check if token masih valid atau perlu refresh
+      if (shouldRefreshToken(token)) {
+        this.attemptTokenRefresh();
+      } else if (!verifyAndDecodeToken(token)) {
+        // Token sudah expired
+        this.removeToken();
+      } else {
+        // Token masih valid, schedule refresh jika diperlukan
+        this.scheduleTokenRefresh(token);
+      }
+    }
+  }
+}
+
 export interface User {
   id: number;
   email: string;
@@ -20,6 +214,21 @@ export interface LoginResponse {
 export interface VerifyResponse {
   success: boolean;
   user?: User;
+  message: string;
+  needsRefresh?: boolean;
+  refreshedToken?: string;
+}
+
+export interface TokenData {
+  email: string;
+  exp: number;
+  iat: number;
+  jti: string;
+}
+
+export interface RefreshTokenResponse {
+  success: boolean;
+  token?: string;
   message: string;
 }
 
@@ -120,10 +329,26 @@ class ProductionAuthService {
 // Main auth service yang memilih implementation berdasarkan environment
 export class AuthService {
   static async requestLoginLink(email: string): Promise<LoginResponse> {
+    // Client-side rate limiting
+    if (isClientRateLimited(email)) {
+      return {
+        success: false,
+        message: 'Terlalu banyak percobaan login. Silakan tunggu 1 menit sebelum mencoba lagi.'
+      };
+    }
+
+    // Basic email validation
+    if (!isValidEmail(email)) {
+      return {
+        success: false,
+        message: 'Format email tidak valid.'
+      };
+    }
+
     if (isDevelopment) {
-      // Development mode - simulate magic link
+      // Development mode - simulate magic link dengan secure token
       const user = LocalAuthService.findUserByEmail(email) || LocalAuthService.createUser(email);
-      const token = btoa(`${email}:${Date.now() + 15 * 60 * 1000}`); // 15 menit expiry
+      const token = generateSecureToken(email, 15 * 60 * 1000); // 15 menit expiry
       LocalAuthService.setCurrentUser(user);
 
       // Simulate email sending
@@ -137,15 +362,27 @@ export class AuthService {
   static async verifyLoginToken(token: string): Promise<VerifyResponse> {
     if (isDevelopment) {
       try {
-        const [email, expiry] = atob(token).split(':');
-        if (Date.now() > Number(expiry)) {
-          return { success: false, message: 'Token sudah kedaluwarsa' };
+        const tokenData = verifyAndDecodeToken(token);
+        if (!tokenData) {
+          return { success: false, message: 'Token tidak valid atau sudah kedaluwarsa' };
         }
 
-        const user = LocalAuthService.findUserByEmail(email);
+        const user = LocalAuthService.findUserByEmail(tokenData.email);
         if (user) {
           LocalAuthService.setCurrentUser(user);
-          return { success: true, user, message: 'Login berhasil' };
+          // Store token dengan refresh mechanism
+          TokenManager.storeToken(token);
+
+          // Check if token perlu refresh dalam waktu dekat
+          const needsRefresh = shouldRefreshToken(token);
+
+          return {
+            success: true,
+            user,
+            message: 'Login berhasil',
+            needsRefresh,
+            refreshedToken: needsRefresh ? refreshToken(token) || undefined : undefined
+          };
         } else {
           return { success: false, message: 'User tidak ditemukan' };
         }
@@ -157,11 +394,37 @@ export class AuthService {
     }
   }
 
-  static getCurrentUser(): User | null {
-    return isDevelopment ? LocalAuthService.getCurrentUser() : null; // Production perlu cookie handling
+  static async refreshCurrentToken(): Promise<RefreshTokenResponse> {
+    if (isDevelopment) {
+      const currentToken = TokenManager.getToken();
+      if (!currentToken) {
+        return { success: false, message: 'Tidak ada token aktif' };
+      }
+
+      const newToken = refreshToken(currentToken);
+      if (newToken) {
+        TokenManager.storeToken(newToken);
+        return { success: true, token: newToken, message: 'Token berhasil di-refresh' };
+      } else {
+        TokenManager.removeToken();
+        return { success: false, message: 'Token tidak valid, silakan login ulang' };
+      }
+    } else {
+      return { success: false, message: 'Token refresh hanya tersedia di development mode' };
+    }
   }
 
-  static logout(): void {
+  static getStoredToken(): string | null {
+    return TokenManager.getToken();
+  }
+
+  static isTokenExpiringSoon(): boolean {
+    const token = TokenManager.getToken();
+    return token ? shouldRefreshToken(token) : false;
+  }
+
+  static clearSession(): void {
+    TokenManager.removeToken();
     if (isDevelopment) {
       LocalAuthService.setCurrentUser(null);
     } else {
@@ -170,8 +433,37 @@ export class AuthService {
     }
   }
 
+  static getCurrentUser(): User | null {
+    return isDevelopment ? LocalAuthService.getCurrentUser() : null; // Production perlu cookie handling
+  }
+
+  static logout(): void {
+    this.clearSession();
+  }
+
   static isAuthenticated(): boolean {
-    return this.getCurrentUser() !== null;
+    const user = this.getCurrentUser();
+    const token = TokenManager.getToken();
+
+    if (!user || !token) {
+      return false;
+    }
+
+    // Check if token masih valid
+    const tokenData = verifyAndDecodeToken(token);
+    if (!tokenData) {
+      // Token expired, clear session
+      this.clearSession();
+      return false;
+    }
+
+    return true;
+  }
+
+  static initializeAuth(): void {
+    if (isDevelopment) {
+      TokenManager.initializeTokenManager();
+    }
   }
 }
 

@@ -1,6 +1,23 @@
 # Website & Portal Siswa MA Malnu Kananga
 
 Selamat datang di repositori resmi untuk website Madrasah Aliyah Malnu Kananga. Proyek ini dibangun dengan pendekatan modern, mobile-first, dan terintegrasi dengan teknologi AI terkini untuk pengalaman pengguna yang interaktif.
+## 🚀 Deploy Sekali Klik
+
+[![Deploy ke Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/sulhi/ma-malnu-kananga)
+
+**Deploy otomatis** ke Cloudflare dengan sekali klik! Button di atas akan:
+- ✅ Membuat semua resources Cloudflare (Pages, Workers, D1, Vectorize)
+- ✅ Deploy frontend dan backend secara otomatis
+- ✅ Konfigurasi environment variables
+- ✅ Seed database dengan konten awal
+
+### Prerequisites untuk One-Click Deploy:
+1. **GitHub Account** dengan repository ini
+2. **Cloudflare Account** dengan API token
+3. **Google Gemini API Key** (akan diminta selama setup)
+
+---
+
 
 ## Ringkasan Fitur
 

@@ -1,4 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { getErrorLoggingService, logErrorBoundary } from '../services/errorLoggingService';
 
 interface Props {
   children: ReactNode;
@@ -23,7 +24,20 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    // Gunakan error logging service untuk comprehensive error tracking
+    const errorLoggingService = getErrorLoggingService();
+
+    // Log error dengan metadata tambahan untuk debugging
+    errorLoggingService.logErrorBoundary(error, errorInfo, {
+      componentName: this.constructor.name,
+      props: Object.keys(this.props),
+      hasCustomFallback: !!this.props.fallback,
+      hasCustomErrorHandler: !!this.props.onError
+    }).catch(logError => {
+      // Fallback jika logging service gagal
+      console.error('ErrorBoundary caught an error:', error, errorInfo);
+      console.error('Error logging service juga gagal:', logError);
+    });
 
     this.setState({
       error,
@@ -34,9 +48,6 @@ class ErrorBoundary extends Component<Props, State> {
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
-
-    // In production, you might want to send this to an error tracking service
-    // trackError(error, { componentStack: errorInfo.componentStack });
   }
 
   private handleReset = () => {
@@ -93,19 +104,67 @@ class ErrorBoundary extends Component<Props, State> {
                 <summary className="cursor-pointer text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
                   Detail Error (Development)
                 </summary>
-                <div className="mt-3 p-3 bg-gray-100 dark:bg-gray-700 rounded text-xs text-gray-600 dark:text-gray-400 overflow-auto max-h-32">
+                <div className="mt-3 p-3 bg-gray-100 dark:bg-gray-700 rounded text-xs text-gray-600 dark:text-gray-400 overflow-auto max-h-64 space-y-3">
                   <div className="font-mono">
-                    <div className="text-red-600 dark:text-red-400 font-semibold">
+                    <div className="text-red-600 dark:text-red-400 font-semibold mb-2">
                       {this.state.error.name}: {this.state.error.message}
                     </div>
-                    <pre className="mt-2 whitespace-pre-wrap">
-                      {this.state.error.stack}
-                    </pre>
-                    {this.state.errorInfo && (
-                      <pre className="mt-2 text-yellow-600 dark:text-yellow-400">
-                        Component Stack: {this.state.errorInfo.componentStack}
+
+                    <div className="mb-3">
+                      <div className="text-blue-600 dark:text-blue-400 font-semibold mb-1">Stack Trace:</div>
+                      <pre className="whitespace-pre-wrap text-xs">
+                        {this.state.error.stack}
                       </pre>
+                    </div>
+
+                    {this.state.errorInfo && (
+                      <div className="mb-3">
+                        <div className="text-yellow-600 dark:text-yellow-400 font-semibold mb-1">Component Stack:</div>
+                        <pre className="whitespace-pre-wrap text-xs">
+                          {this.state.errorInfo.componentStack}
+                        </pre>
+                      </div>
                     )}
+
+                    <div className="mb-3">
+                      <div className="text-green-600 dark:text-green-400 font-semibold mb-1">Error Log Info:</div>
+                      <div className="text-xs space-y-1">
+                        <div>Session ID: <span className="font-mono">{getErrorLoggingService().getSessionId() || 'N/A'}</span></div>
+                        <div>URL: <span className="font-mono">{window.location.href}</span></div>
+                        <div>User Agent: <span className="font-mono text-xs">{navigator.userAgent}</span></div>
+                        <div>Timestamp: <span className="font-mono">{new Date().toISOString()}</span></div>
+                      </div>
+                    </div>
+
+                    <div className="mb-3">
+                      <div className="text-purple-600 dark:text-purple-400 font-semibold mb-1">Stored Error Count:</div>
+                      <div className="text-xs">
+                        {getErrorLoggingService().getStoredErrorLogs().length} errors logged in this session
+                      </div>
+                    </div>
+
+                    <div className="flex space-x-2 mt-3">
+                      <button
+                        onClick={() => {
+                          const logs = getErrorLoggingService().exportErrorLogs();
+                          console.log('All Error Logs:', JSON.parse(logs));
+                          alert('Error logs exported to console');
+                        }}
+                        className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded hover:bg-blue-200 dark:hover:bg-blue-800"
+                      >
+                        Export Logs
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          getErrorLoggingService().clearStoredErrorLogs();
+                          alert('Error logs cleared');
+                        }}
+                        className="text-xs bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 px-2 py-1 rounded hover:bg-red-200 dark:hover:bg-red-800"
+                      >
+                        Clear Logs
+                      </button>
+                    </div>
                   </div>
                 </div>
               </details>

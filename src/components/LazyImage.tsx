@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useWebP } from '../hooks/useWebP';
 
 interface LazyImageProps {
   src: string;
@@ -25,6 +26,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
   onError,
   priority = false
 }) => {
+  const { getOptimalSrc, supportsWebP } = useWebP();
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(priority);
   const [hasError, setHasError] = useState(false);
@@ -58,33 +60,6 @@ const LazyImage: React.FC<LazyImageProps> = ({
     return () => observer.disconnect();
   }, [src, priority]);
 
-  // WebP support detection
-  const [supportsWebP, setSupportsWebP] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const checkWebPSupport = async () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1;
-      canvas.height = 1;
-
-      const supportsWebP = canvas.toDataURL('image/webp').startsWith('data:image/webp');
-      setSupportsWebP(supportsWebP);
-    };
-
-    checkWebPSupport();
-  }, []);
-
-  // Generate WebP source jika didukung
-  const getOptimalSrc = (originalSrc: string) => {
-    if (!supportsWebP || hasError) return originalSrc;
-
-    // Convert image URL to WebP if it's a supported format
-    if (originalSrc.includes('unsplash.com') && supportsWebP) {
-      return originalSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
-    }
-
-    return originalSrc;
-  };
 
   const handleLoad = () => {
     setIsLoaded(true);
@@ -93,12 +68,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
 
   const handleError = () => {
     setHasError(true);
-    // Fallback to original format if WebP fails
-    if (supportsWebP && !hasError) {
-      setImgSrc(src); // Try original format
-    } else {
-      onError?.();
-    }
+    onError?.();
   };
 
   return (
@@ -143,7 +113,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
       {/* Main image */}
       <img
         ref={imgRef}
-        src={getOptimalSrc(imgSrc)}
+        src={getOptimalSrc(imgSrc, !hasError)}
         alt={alt}
         width={width}
         height={height}
