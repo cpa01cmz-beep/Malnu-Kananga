@@ -255,11 +255,88 @@ class LocalAuthService {
 
   static createUser(email: string, name?: string): User {
     const users = this.getUsers();
+
+    // Default users untuk testing berbagai role
+    const defaultUsers = [
+      {
+        id: 1,
+        email: 'admin@ma-malnukananga.sch.id',
+        name: 'Administrator',
+        role: 'admin',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_active: true
+      },
+      {
+        id: 2,
+        email: 'guru@ma-malnukananga.sch.id',
+        name: 'Dr. Siti Nurhaliza, M.Pd.',
+        role: 'teacher',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_active: true
+      },
+      {
+        id: 3,
+        email: 'siswa@ma-malnukananga.sch.id',
+        name: 'Ahmad Fauzi Rahman',
+        role: 'student',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_active: true
+      },
+      {
+        id: 4,
+        email: 'parent@ma-malnukananga.sch.id',
+        name: 'Bapak Ahmad Rahman',
+        role: 'parent',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_active: true
+      },
+      {
+        id: 5,
+        email: 'ayah@ma-malnukananga.sch.id',
+        name: 'Bapak Ahmad Fauzi',
+        role: 'parent',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_active: true
+      },
+      {
+        id: 6,
+        email: 'ibu@ma-malnukananga.sch.id',
+        name: 'Ibu Siti Aminah',
+        role: 'parent',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_active: true
+      }
+    ];
+
+    // Jika belum ada users, inisialisasi dengan default users
+    if (users.length === 0) {
+      this.saveUsers(defaultUsers);
+      return defaultUsers.find(u => u.email === email) || defaultUsers[0];
+    }
+
+    // Cari user yang sudah ada
+    const existingUser = users.find(user => user.email === email && user.is_active);
+    if (existingUser) {
+      return existingUser;
+    }
+
+    // Buat user baru dengan role berdasarkan email pattern
+    let role = 'student'; // default role
+    if (email.includes('admin')) role = 'admin';
+    else if (email.includes('guru') || email.includes('teacher')) role = 'teacher';
+    else if (email.includes('parent') || email.includes('ayah') || email.includes('ibu') || email.includes('wali')) role = 'parent';
+
     const newUser: User = {
       id: Date.now(), // Simple ID generation for demo
       email,
       name,
-      role: 'user',
+      role,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       is_active: true

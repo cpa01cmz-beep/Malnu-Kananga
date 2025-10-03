@@ -22,6 +22,23 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
     const { isMenuOpen, setIsMenuOpen } = useResponsiveMenu();
     const { handleTouchFeedback } = useTouchFeedback();
 
+    // Demo function untuk testing portal orang tua
+    const switchToParentDemo = () => {
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const parentUser = {
+                id: 4,
+                email: 'parent@ma-malnukananga.sch.id',
+                name: 'Bapak Ahmad Rahman',
+                role: 'parent',
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                is_active: true
+            };
+            localStorage.setItem('malnu_auth_current_user', JSON.stringify(parentUser));
+            window.location.reload();
+        }
+    };
+
     const headerClasses = `
         fixed top-0 left-0 right-0 z-40 transition-all duration-300
         ${isScrolled ? 'mt-0 rounded-none shadow-md' : 'mt-4 mx-2 sm:mx-4 rounded-full'}
@@ -46,19 +63,33 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
                     <DesktopNavigation />
 
                     <div className="flex items-center space-x-2">
-                        <AuthButtons
-                            isLoggedIn={isLoggedIn}
-                            onLoginClick={onLoginClick}
-                            onChatClick={onChatClick}
-                            onLogout={onLogout}
-                            onPortalClick={onPortalClick}
-                        />
-                        <div onTouchStart={handleTouchFeedback}>
-                          <MobileMenuButton
-                              isMenuOpen={isMenuOpen}
-                              onToggle={() => setIsMenuOpen(!isMenuOpen)}
-                          />
-                        </div>
+                       {isLoggedIn ? (
+                            <div className="hidden sm:flex items-center space-x-2">
+                               <a href="#" className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                   Portal
+                               </a>
+                               <button onClick={onLogout} className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                                   Logout
+                               </button>
+                           </div>
+                       ) : (
+                           <div className="hidden sm:flex items-center space-x-2">
+                               <button onClick={onChatClick} className="flex items-center gap-2 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 px-4 py-2 rounded-full font-semibold text-sm hover:bg-green-200 dark:hover:bg-green-800 transition-colors">
+                                   <ChatIcon />
+                                   <span>Tanya AI</span>
+                               </button>
+                               <button onClick={switchToParentDemo} className="flex items-center gap-2 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 px-4 py-2 rounded-full font-semibold text-sm hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
+                                   <span>👨‍👩‍👧‍👦 Demo Orang Tua</span>
+                               </button>
+                               <button onClick={onLoginClick} className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                   Login
+                               </button>
+                           </div>
+                       )}
+                       {/* Mobile Menu Button */}
+                       <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="Buka menu">
+                           {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
+                       </button>
                     </div>
                 </div>
             </div>
