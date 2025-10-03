@@ -64,7 +64,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat }) => {
         );
       }
     } catch (error) {
-      console.error("Error streaming response:", error);
       const errorMessage = "Maaf, terjadi kesalahan. Silakan coba lagi.";
       setMessages(prev =>
         prev.map(msg =>

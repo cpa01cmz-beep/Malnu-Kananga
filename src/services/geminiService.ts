@@ -1,6 +1,5 @@
-// FIX: Import `Type` for JSON schema definition.
+// Import Google AI SDK and content types
 import { GoogleGenAI, Type } from "@google/genai";
-// FIX: Import content types for the AI editor function.
 import type { FeaturedProgram, LatestNews } from '../types';
 
 // Initialize the Google AI client
@@ -26,7 +25,6 @@ export async function* getAIResponseStream(message: string, history: {role: 'use
         context = data.context;
     }
   } catch(e) {
-      console.error("Failed to fetch context from worker:", e);
       // We can still proceed without context, Gemini will do its best.
   }
 
@@ -58,12 +56,11 @@ export async function* getAIResponseStream(message: string, history: {role: 'use
       yield chunk.text;
     }
   } catch (error) {
-      console.error("Error calling Gemini API:", error);
       yield "Maaf, terjadi masalah saat menghubungi AI. Silakan coba lagi nanti.";
   }
 }
 
-// FIX: Added getAIEditorResponse function to handle content editing requests from SiteEditor.tsx.
+// Handle content editing requests from SiteEditor component
 export async function getAIEditorResponse(
     prompt: string,
     currentContent: { featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }
@@ -133,7 +130,6 @@ Please provide the updated JSON content.`;
         
         return newContent;
     } catch (error) {
-        console.error("Error calling Gemini API for content editing:", error);
         throw new Error("Failed to get a valid response from the AI editor. Please try again.");
     }
 }
