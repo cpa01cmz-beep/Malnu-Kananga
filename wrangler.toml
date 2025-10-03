@@ -1,0 +1,40 @@
+name = "malnu-api"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Environment variables untuk production
+[env.production.vars]
+# API_KEY akan di-set melalui Cloudflare dashboard atau CLI
+
+# Bindings untuk Cloudflare services
+[env.production]
+# AI binding untuk Cloudflare AI models
+[[env.production.ai]]
+# Vectorize index untuk RAG functionality
+[[env.production.vectorize]]
+index_name = "malnu-kananga-docs"
+# D1 Database untuk authentication
+[[env.production.d1_databases]]
+database_name = "malnu-kananga-auth"
+database_id = "your_database_id_here"
+
+# Development environment
+[env.preview.vars]
+# API_KEY untuk development
+
+[env.preview]
+[[env.preview.ai]]
+[[env.preview.vectorize]]
+index_name = "malnu-kananga-docs-preview"
+[[env.preview.d1_databases]]
+database_name = "malnu-kananga-auth-preview"
+database_id = "your_preview_database_id_here"
+
+# Build configuration
+[build]
+command = "npm run build"
+
+# Deployment configuration
+[build.upload]
+format = "service-worker"

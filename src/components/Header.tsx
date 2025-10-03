@@ -9,8 +9,7 @@ const NavLinks = () => (
         <a href="#home" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Beranda</a>
         <a href="#profil" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Profil</a>
         <a href="#berita" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Berita</a>
-        <a href="#download" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Download</a>
-        <a href="#login-email" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Login Email</a>
+        <a href="#kontak" className="text-gray-700 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors">Kontak</a>
     </>
 );
 
