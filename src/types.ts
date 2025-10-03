@@ -9,14 +9,14 @@ export interface ChatMessage {
   sender: Sender;
 }
 
-// FIX: Added FeaturedProgram interface to resolve import error.
+// Featured program data structure
 export interface FeaturedProgram {
   title: string;
   description: string;
   imageUrl: string;
 }
 
-// FIX: Added LatestNews interface to resolve import error.
+// Latest news data structure
 export interface LatestNews {
   title: string;
   date: string;

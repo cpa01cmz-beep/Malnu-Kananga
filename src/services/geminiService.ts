@@ -1,17 +1,21 @@
-// FIX: Import `Type` for JSON schema definition.
-import { GoogleGenAI, Type } from "@google/genai";
-// FIX: Import content types for the AI editor function.
-import type { FeaturedProgram, LatestNews } from '../types';
+// Import Google AI SDK and content types
+import { GoogleGenAI } from "@google/genai";
+import { MemoryBank, schoolMemoryBankConfig } from '../memory';
+import { API_KEY, WORKER_URL } from '../utils/envValidation';
 
 // Initialize the Google AI client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: API_KEY });
 
-const workerUrl = 'https://malnu-api.sulhi-cmz.workers.dev/api/chat';
+const workerUrl = `${WORKER_URL}/api/chat`;
+
+// Initialize memory bank for conversation history
+const memoryBank = new MemoryBank(schoolMemoryBankConfig);
 
 // This function implements the RAG pattern:
 // 1. Fetches relevant context from our Worker (which queries a vector DB).
 // 2. Augments the user's prompt with this context.
 // 3. Sends the augmented prompt to the Gemini model for a grounded response.
+// 4. Stores conversation in memory bank for future context.
 export async function* getAIResponseStream(message: string, history: {role: 'user' | 'model', parts: string}[]): AsyncGenerator<string> {
   let context = "";
   try {
@@ -26,14 +30,30 @@ export async function* getAIResponseStream(message: string, history: {role: 'use
         context = data.context;
     }
   } catch(e) {
-      console.error("Failed to fetch context from worker:", e);
       // We can still proceed without context, Gemini will do its best.
   }
 
-  // 2. Augment the user's message with the retrieved context
-  const augmentedMessage = context 
-    ? `Berdasarkan konteks berikut:\n---\n${context}\n---\n\nJawab pertanyaan ini: ${message}`
-    : message;
+  // 2. Get additional context from memory bank
+  let memoryContext = "";
+  try {
+    const relevantMemories = await memoryBank.getRelevantMemories(message, 3);
+    if (relevantMemories.length > 0) {
+      memoryContext = relevantMemories.map(m => m.content).join('\n---\n');
+    }
+  } catch (error) {
+    console.warn('Failed to get memory context:', error);
+  }
+
+  // 3. Augment the user's message with the retrieved context
+  let augmentedMessage = message;
+
+  if (context && memoryContext) {
+    augmentedMessage = `Berdasarkan konteks dari website sekolah:\n---\n${context}\n---\n\nDan konteks percakapan sebelumnya:\n---\n${memoryContext}\n---\n\nJawab pertanyaan ini: ${message}`;
+  } else if (context) {
+    augmentedMessage = `Berdasarkan konteks berikut:\n---\n${context}\n---\n\nJawab pertanyaan ini: ${message}`;
+  } else if (memoryContext) {
+    augmentedMessage = `Berdasarkan konteks percakapan sebelumnya:\n---\n${memoryContext}\n---\n\nJawab pertanyaan ini: ${message}`;
+  }
 
   // System instruction for the model
   const systemInstruction = `Anda adalah 'Asisten MA Malnu Kananga', chatbot AI yang ramah, sopan, dan sangat membantu, berbicara dalam Bahasa Indonesia. Tugas Anda adalah menjawab pertanyaan tentang sekolah MA Malnu Kananga berdasarkan konteks yang diberikan dari website sekolah. Jika konteks tidak cukup untuk menjawab, katakan Anda tidak memiliki informasi tersebut dan sarankan untuk menghubungi pihak sekolah. JANGAN menjawab pertanyaan di luar topik sekolah.`;
@@ -43,6 +63,8 @@ export async function* getAIResponseStream(message: string, history: {role: 'use
       ...history.map(h => ({ role: h.role, parts: [{ text: h.parts }] })),
       { role: 'user', parts: [{ text: augmentedMessage }] }
   ];
+
+  let fullResponse = "";
 
   try {
     // 3. Call the Gemini API with the augmented prompt and history
@@ -55,88 +77,88 @@ export async function* getAIResponseStream(message: string, history: {role: 'use
     });
 
     for await (const chunk of responseStream) {
+      fullResponse += chunk.text;
       yield chunk.text;
     }
+
+    // 4. Store conversation in memory bank for future context
+    try {
+      await memoryBank.addMemory(
+        `Pertanyaan: ${message}\nJawaban: ${fullResponse}`,
+        'conversation',
+        {
+          type: 'user_ai_interaction',
+          userMessage: message,
+          aiResponse: fullResponse,
+          timestamp: new Date().toISOString(),
+          contextUsed: !!context,
+          memoryContextUsed: !!memoryContext
+        }
+      );
+    } catch (memoryError) {
+      console.warn('Failed to store conversation in memory bank:', memoryError);
+    }
+
   } catch (error) {
-      console.error("Error calling Gemini API:", error);
       yield "Maaf, terjadi masalah saat menghubungi AI. Silakan coba lagi nanti.";
+
+      // Store failed interaction in memory bank
+      try {
+        await memoryBank.addMemory(
+          `Pertanyaan: ${message}\nError: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          'conversation',
+          {
+            type: 'failed_interaction',
+            userMessage: message,
+            error: error instanceof Error ? error.message : 'Unknown error',
+            timestamp: new Date().toISOString()
+          }
+        );
+      } catch (memoryError) {
+        console.warn('Failed to store error in memory bank:', memoryError);
+      }
   }
 }
 
-// FIX: Added getAIEditorResponse function to handle content editing requests from SiteEditor.tsx.
-export async function getAIEditorResponse(
-    prompt: string,
-    currentContent: { featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }
-): Promise<{ featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }> {
-    const model = 'gemini-2.5-flash';
 
-    const systemInstruction = `You are an intelligent website content editor. Your task is to modify the provided JSON data based on the user's instruction.
-- You must only add, remove, or modify entries in the JSON.
-- Do not change the overall JSON structure.
-- For image URLs, if the user asks for a new item but does not provide an image, you can use an appropriate placeholder image URL from unsplash.com.
-- Ensure your response is only the modified JSON data, adhering to the provided schema.`;
 
-    const fullPrompt = `Here is the current website content in JSON format:
-\`\`\`json
-${JSON.stringify(currentContent, null, 2)}
-\`\`\`
-
-Here is the user's request: "${prompt}"
-
-Please provide the updated JSON content.`;
-
-    const schema = {
-        type: Type.OBJECT,
-        properties: {
-            featuredPrograms: {
-                type: Type.ARRAY,
-                description: 'List of featured school programs.',
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        title: { type: Type.STRING, description: 'The title of the program.' },
-                        description: { type: Type.STRING, description: 'A short description of the program.' },
-                        imageUrl: { type: Type.STRING, description: 'URL for the program image.' },
-                    },
-                },
-            },
-            latestNews: {
-                type: Type.ARRAY,
-                description: 'List of latest news articles.',
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        title: { type: Type.STRING, description: 'The headline of the news article.' },
-                        date: { type: Type.STRING, description: 'The publication date of the news.' },
-                        category: { type: Type.STRING, description: 'The category of the news (e.g., Prestasi, Sekolah).' },
-                        imageUrl: { type: Type.STRING, description: 'URL for the news image.' },
-                    },
-                },
-            },
-        },
-    };
-
-    try {
-        const response = await ai.models.generateContent({
-            model,
-            contents: fullPrompt,
-            config: {
-                systemInstruction,
-                responseMimeType: "application/json",
-                responseSchema: schema,
-            },
-        });
-        
-        const jsonText = response.text.trim();
-        const cleanedJsonText = jsonText.replace(/^```json\s*/, '').replace(/```$/, '');
-        const newContent = JSON.parse(cleanedJsonText);
-        
-        return newContent;
-    } catch (error) {
-        console.error("Error calling Gemini API for content editing:", error);
-        throw new Error("Failed to get a valid response from the AI editor. Please try again.");
-    }
+// Memory bank utility functions
+export async function getConversationHistory(limit = 10) {
+  try {
+    return await memoryBank.searchMemories({
+      type: 'conversation',
+      limit,
+    });
+  } catch (error) {
+    console.error('Failed to get conversation history:', error);
+    return [];
+  }
 }
 
+export async function clearConversationHistory() {
+  try {
+    const conversations = await memoryBank.searchMemories({
+      type: 'conversation',
+    });
+
+    for (const conversation of conversations) {
+      await memoryBank.deleteMemory(conversation.id);
+    }
+
+    return conversations.length;
+  } catch (error) {
+    console.error('Failed to clear conversation history:', error);
+    throw error;
+  }
+}
+
+export async function getMemoryStats() {
+  try {
+    return await memoryBank.getStats();
+  } catch (error) {
+    console.error('Failed to get memory stats:', error);
+    return null;
+  }
+}
 
 export const initialGreeting = "Assalamualaikum! Saya Asisten AI MA Malnu Kananga. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?";
