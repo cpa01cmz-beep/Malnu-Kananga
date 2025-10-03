@@ -106,7 +106,7 @@ export const useKeyboardNavigation = () => {
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
+  }, []);
 
   return {
     handleKeyDown

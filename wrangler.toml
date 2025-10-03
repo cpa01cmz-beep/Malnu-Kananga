@@ -14,10 +14,11 @@ compatibility_flags = ["nodejs_compat"]
 # Vectorize index untuk RAG functionality
 [[env.production.vectorize]]
 index_name = "malnu-kananga-docs"
-# D1 Database untuk authentication
-[[env.production.d1_databases]]
-database_name = "malnu-kananga-auth"
-database_id = "your_database_id_here"
+# KV Storage untuk authentication (gratis di free plan)
+[[env.production.kv_namespaces]]
+binding = "KV"
+id = "your_kv_namespace_id_here"
+preview_id = "your_kv_preview_namespace_id_here"
 
 # Development environment
 [env.preview.vars]
@@ -27,9 +28,10 @@ database_id = "your_database_id_here"
 [[env.preview.ai]]
 [[env.preview.vectorize]]
 index_name = "malnu-kananga-docs-preview"
-[[env.preview.d1_databases]]
-database_name = "malnu-kananga-auth-preview"
-database_id = "your_preview_database_id_here"
+[[env.preview.kv_namespaces]]
+binding = "KV"
+id = "your_kv_namespace_id_here"
+preview_id = "your_kv_preview_namespace_id_here"
 
 # Build configuration
 [build]

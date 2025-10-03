@@ -49,7 +49,7 @@ export default defineConfig(({ command, mode }) => ({
     minify: 'esbuild',
 
     // Chunk size warnings
-    chunkSizeWarningLimit: 1000
+    chunkSizeWarningLimit: 500
   },
 
   // Development server optimizations

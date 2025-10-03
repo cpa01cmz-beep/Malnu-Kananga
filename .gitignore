@@ -23,3 +23,13 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Build outputs
+dist/
+.wrangler/
+
+# Deployment artifacts
+deployment-report.txt
+
+# Cloudflare specific
+.wrangler/

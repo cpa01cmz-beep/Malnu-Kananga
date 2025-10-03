@@ -162,16 +162,16 @@ describe('Header Component', () => {
         />
       );
 
+      // Initially menu should show "Buka menu"
       const menuButton = screen.getByLabelText('Buka menu');
 
-      // Initially menu should not be visible
-      expect(screen.queryByText('Beranda')).toBeInTheDocument(); // Desktop nav is always visible
+      // Desktop nav is always visible
+      expect(screen.queryByText('Beranda')).toBeInTheDocument();
 
       await user.click(menuButton);
 
-      // Mobile menu should now be visible (though in test environment it might not show all elements)
-      // We can test that the menu button changes to close icon
-      expect(screen.getByLabelText('Buka menu')).toBeInTheDocument(); // Button should still be there
+      // After clicking, the button should show "Tutup menu"
+      expect(screen.getByLabelText('Tutup menu')).toBeInTheDocument();
     });
   });
 

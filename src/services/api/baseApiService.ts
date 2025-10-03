@@ -232,16 +232,6 @@ class BaseApiService {
     }
   }
 
-  // Health check untuk API connectivity
-  async healthCheck(): Promise<boolean> {
-    try {
-      const response = await this.get('/health');
-      return response.success;
-    } catch {
-      return false;
-    }
-  }
-
   // Get base URL
   getBaseUrl(): string {
     return this.baseUrl;
