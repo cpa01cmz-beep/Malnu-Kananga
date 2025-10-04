@@ -76,7 +76,22 @@ jest.mock('../data/parentData', () => ({
       teacherComments: 'Ahmad Fauzi menunjukkan kemajuan yang baik',
       generatedAt: '2024-09-30'
     }
-  ]
+  ],
+  // Add the missing helper functions that ParentDashboard component uses
+  getUnreadMessages: jest.fn((messages) => messages.filter(m => !m.isRead)),
+  getPendingAssignments: jest.fn((assignments) => assignments.filter(a => a.status === 'assigned' || a.status === 'overdue')),
+  getUpcomingAssignments: jest.fn((assignments) => assignments.filter(a => {
+    const now = new Date();
+    const dueDate = new Date(a.dueDate);
+    return dueDate >= now && a.status === 'assigned';
+  })),
+  getAssignmentStats: jest.fn((assignments) => ({
+    total: assignments.length,
+    submitted: assignments.filter(a => a.status === 'submitted' || a.status === 'graded').length,
+    pending: assignments.filter(a => a.status === 'assigned').length,
+    overdue: assignments.filter(a => a.status === 'overdue').length,
+    averageScore: 0
+  }))
 }));
 
 describe('ParentDashboard Component', () => {
