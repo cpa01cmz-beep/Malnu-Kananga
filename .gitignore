@@ -1,6 +1,5 @@
 node_modules
 .roo/
-package-lock.json
 .idx/
 *.nix
 
