@@ -1,6 +1,7 @@
 node_modules
-.roo
-package-lock.json
+.roo/
+.idx/
+*.nix
 
 # Environment variables
 .env
