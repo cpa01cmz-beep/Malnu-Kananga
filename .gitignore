@@ -34,3 +34,7 @@ deployment-report.txt
 
 # Cloudflare specific
 .wrangler/
+
+# Auto-generated comment files
+issue_comments.json
+review_comments.json

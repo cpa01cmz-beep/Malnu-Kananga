@@ -22,9 +22,7 @@ export type {
   RelatedLink
 } from './contentApiService';
 
-// Remove duplicate FeaturedProgram type export - already available from contentApiService
 
-// Remove duplicate NewsItem type export - already available from contentApiService
 
 // API Error types
 export interface ApiError {
