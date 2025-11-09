@@ -22,9 +22,7 @@ export type {
   RelatedLink
 } from './contentApiService';
 
-export type {
-  FeaturedProgram as FeaturedProgramType
-} from './featuredProgramsService';
+// Remove duplicate FeaturedProgram type export - already available from contentApiService
 
 export type {
   LatestNews as NewsItemType
