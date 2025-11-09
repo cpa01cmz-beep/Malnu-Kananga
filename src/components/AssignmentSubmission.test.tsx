@@ -44,7 +44,7 @@ describe('AssignmentSubmission Component', () => {
         />
       );
 
-      expect(screen.getByText('Kumpulkan Tugas')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Kumpulkan Tugas' })).toBeInTheDocument();
       expect(screen.getByText('Laporan Praktikum Fisika')).toBeInTheDocument();
       expect(screen.getByText('Fisika')).toBeInTheDocument();
       expect(screen.getByText('Prof. Budi Santoso, M.T.')).toBeInTheDocument();
@@ -77,7 +77,7 @@ describe('AssignmentSubmission Component', () => {
       );
 
       expect(screen.getByText(mockAssignment.description)).toBeInTheDocument();
-      expect(screen.getByText('Instruksi:')).toBeInTheDocument();
+      expect(screen.getByText('Instruksi')).toBeInTheDocument();
       expect(screen.getByText(/Gunakan format laporan yang benar/)).toBeInTheDocument();
     });
   });
@@ -125,6 +125,9 @@ describe('AssignmentSubmission Component', () => {
     });
 
     test('should validate file type', () => {
+      // Mock console.error to avoid test output pollution
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
       render(
         <AssignmentSubmission
           assignment={mockAssignment}
@@ -146,9 +149,15 @@ describe('AssignmentSubmission Component', () => {
 
       // Should show validation error (alert in real implementation)
       expect(screen.getByText('Pilih File')).toBeInTheDocument();
+      
+      // Restore console.error
+      consoleSpy.mockRestore();
     });
 
     test('should validate file size', () => {
+      // Mock console.error to avoid test output pollution
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
       render(
         <AssignmentSubmission
           assignment={mockAssignment}
@@ -171,6 +180,9 @@ describe('AssignmentSubmission Component', () => {
 
       // Should show size validation error (alert in real implementation)
       expect(screen.getByText('Pilih File')).toBeInTheDocument();
+      
+      // Restore console.error
+      consoleSpy.mockRestore();
     });
   });
 
