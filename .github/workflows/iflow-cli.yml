@@ -33,7 +33,7 @@ jobs:
        contains(github.event.comment.body, '@iflow-cli /triage')) ||
       (github.event_name == 'workflow_dispatch' && inputs.issue_number)
     concurrency:
-      group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+      group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number }}
       cancel-in-progress: true
     runs-on: ubuntu-latest
     permissions:
@@ -79,19 +79,12 @@ jobs:
             1. List existing labels using `gh label list` and classify the
                issue by kind (bug, enhancement, documentation, cleanup, etc.)
                and priority (p0–p3). Apply labels using
-               `gh issue edit "$ISSUE_NUMBER" --add-label` and remove
-               any `status/needs-triage` label if present.
+               `gh issue edit "$ISSUE_NUMBER" --add-label`.
             2. Determine whether the issue requires an implementation.
             3. If implementation is required:
-               a. Create a new git branch named
-                  `iflow/issue-${{ env.ISSUE_NUMBER }}` using `git checkout -b`.
-               b. Analyse the repository to identify the files to modify or
-                  create. Generate production-ready code aligned with
-                  existing conventions.
-               c. Stage and commit the changes with a meaningful message
-                  referencing the issue number.
-               d. Push the branch.
-               e. Open a pull request referencing the issue.
+               a. Create a new git branch `iflow/issue-${{ env.ISSUE_NUMBER }}`.
+               b. Modify or create files to implement the feature/fix.
+               c. Commit, push, and open a PR referencing the issue.
 
             ## Guidelines
             * Use only existing labels.
@@ -142,17 +135,17 @@ jobs:
             1. `gh pr checkout $PR_NUMBER`.
             2. `git diff $BASE_REF...$HEAD_REF` to inspect changes.
             3. Review for quality, security, performance, and style.
-            4. Comment summary via
-               `gh pr comment $PR_NUMBER --body "<your review>"`.
+            4. Post summary via `gh pr comment $PR_NUMBER --body "<review>"`.
             ## Constraints
             * Do not merge the PR.
 
   apply_pr_changes:
-    if: github.event_name == 'pull_request_review_comment'
+    if: |
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' && inputs.pr_number)
     concurrency:
       group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
       cancel-in-progress: true
-
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -166,13 +159,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Run iFlow CLI to Apply Review Changes"
+      - name: Fetch all PR review comments
+        run: |
+          curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments" \
+            -o review_comments.json
+          echo "✅ Retrieved review comments"
+
+      - name: Fetch all issue comments (Conversation tab)
+        run: |
+          curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+            -o issue_comments.json
+          echo "✅ Retrieved issue comments"
+
+      - name: "Run iFlow CLI to Apply Review Changes (All Comments)"
         uses: iflow-ai/iflow-cli-action@v2.1.0
-        id: iflow_apply_review
+        id: iflow_apply_review_all
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          COMMENT_ID: ${{ github.event.comment.id }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
           REPOSITORY: ${{ github.repository }}
         with:
           api_key: ${{ secrets.IFLOW_API_KEY }}
@@ -181,57 +187,36 @@ jobs:
           prompt: |
             ## Role
             You are an autonomous AI maintainer for this repository.
-            You analyse each pull request review comment and decide whether
-            to apply code changes.
+            You analyze all comments (review + conversation) in the PR and
+            decide whether to apply safe, local changes.
 
             ## Context
             * Pull request number: `${{ env.PR_NUMBER }}`
-            * Review comment ID: `${{ env.COMMENT_ID }}`
             * Repository: `${{ env.REPOSITORY }}`
 
             ## Inputs
-            1. Fetch the review comment:
-               `gh api repos/${{ env.REPOSITORY }}/pulls/${{ env.PR_NUMBER }}/comments/${{ env.COMMENT_ID }}`
-            2. If needed, inspect:
-               - `gh api repos/${{ env.REPOSITORY }}/pulls/${{ env.PR_NUMBER }}/reviews`
-               - `gh api repos/${{ env.REPOSITORY }}/pulls/${{ env.PR_NUMBER }}/files`
-               - `git diff`
+            The combined data from:
+            - `review_comments.json` (code review)
+            - `issue_comments.json` (conversation)
 
-            ## When to APPLY changes
-            Apply edits if:
-            1. Comment includes a GitHub suggested change block.
-            2. Comment has concrete, local, technically sound instructions
-               that match the current diff and architecture.
-            3. Requests are limited to:
-               - small refactors
-               - doc or typing fixes
-               - tests
-               - safe security or performance fixes.
-
-            Steps:
+            ## Tasks
             1. `gh pr checkout $PR_NUMBER`.
-            2. Apply changes to targeted files only.
-            3. Run cheap checks if available (lint/tests).
-            4. If checks pass:
-               `git commit -am "Apply review suggestions from comment ${COMMENT_ID}"` and `git push`.
-            5. Optionally comment:
-               `gh pr comment $PR_NUMBER --body "Applied the suggested changes from this comment."`.
+            2. Iterate all comments, apply only valid suggestions:
+               - GitHub suggested change blocks
+               - Small, local refactors, doc fixes, or safe tweaks.
+            3. Run `git commit -am "Apply valid review suggestions"` and `git push`.
+            4. Post a summary comment:
+               `gh pr comment $PR_NUMBER --body "✅ Applied safe review suggestions automatically."`.
 
-            ## When to NOT apply
-            Do not change code if:
-            - komentar abstrak, hanya diskusi, atau tidak spesifik,
-            - bertentangan dengan arsitektur, keamanan, atau perilaku terdokumentasi,
-            - butuh perubahan besar atau keputusan produk baru,
-            - menyarankan melemahkan test atau security tanpa alasan kuat.
-
-            Jika tidak diterapkan:
-            - Tambahkan komentar singkat yang menjelaskan alasan atau minta klarifikasi.
+            ## When to skip
+            - Comment vague, abstract, or non-technical.
+            - Requests large or risky changes.
+            - Security, test, or CI modifications unless explicitly safe.
 
             ## Constraints
-            - Jangan expose secrets.
-            - Jangan ubah CI/workflow/access control kecuali diminta jelas dan aman.
-            - Jangan merge PR.
-            - Perubahan harus eksplisit, lokal, reversibel, dan bisa dites.
+            - Do not merge PR.
+            - Never expose secrets.
+            - Keep edits minimal, local, and reversible.
 
   maintenance:
     if: github.event_name == 'schedule'  
@@ -266,9 +251,9 @@ jobs:
             1. Scan for performance issues, deprecated APIs, and vulnerabilities.
             2. Refactor, remove dead code, and update dependencies where safe.
             3. Create branch `iflow/maintenance/${{ github.run_id }}`.
-            4. Commit with a descriptive message and open a PR via `gh pr create --fill`.
+            4. Commit and open a PR via `gh pr create --fill`.
 
             ## Guidelines
-            * Ikuti style dan struktur yang ada.
-            * Kelompokkan perubahan terkait.
-            * Dokumentasikan dampak perubahan besar.
+            * Follow existing style and structure.
+            * Group related changes.
+            * Document significant impacts.
