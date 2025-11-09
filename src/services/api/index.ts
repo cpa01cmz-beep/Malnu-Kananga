@@ -24,9 +24,7 @@ export type {
 
 // Remove duplicate FeaturedProgram type export - already available from contentApiService
 
-export type {
-  LatestNews as NewsItemType
-} from './newsService';
+// Remove duplicate NewsItem type export - already available from contentApiService
 
 // API Error types
 export interface ApiError {
