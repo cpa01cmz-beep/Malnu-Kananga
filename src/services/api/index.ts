@@ -4,7 +4,7 @@
 export { default as BaseApiService, baseApiService } from './baseApiService';
 export { default as StudentApiService, studentApiService } from './studentApiService';
 export { default as ContentApiService, contentApiService } from './contentApiService';
-export { default as FeaturedProgramsService, featuredProgramsService } from './featuredProgramsService';
+export { FeaturedProgramsApiService as FeaturedProgramsService, FeaturedProgramsApiService as featuredProgramsService } from './featuredProgramsService';
 export { default as NewsService, newsService } from './newsService';
 
 // Re-export types untuk kemudahan penggunaan
