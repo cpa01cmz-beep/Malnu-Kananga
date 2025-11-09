@@ -25,22 +25,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
     const { isMenuOpen, setIsMenuOpen } = useResponsiveMenu();
     const { handleTouchFeedback } = useTouchFeedback();
 
-    // Demo function untuk testing portal orang tua
-    const switchToParentDemo = () => {
-        if (typeof window !== 'undefined' && window.localStorage) {
-            const parentUser = {
-                id: 4,
-                email: 'parent@ma-malnukananga.sch.id',
-                name: 'Bapak Ahmad Rahman',
-                role: 'parent',
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-                is_active: true
-            };
-            localStorage.setItem('malnu_auth_current_user', JSON.stringify(parentUser));
-            window.location.reload();
-        }
-    };
+
 
     const headerClasses = `
         fixed top-0 left-0 right-0 z-40 transition-all duration-300
@@ -81,9 +66,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
                                    <ChatIcon />
                                    <span>Tanya AI</span>
                                </button>
-                               <button onClick={switchToParentDemo} className="flex items-center gap-2 bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 px-4 py-2 rounded-full font-semibold text-sm hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">
-                                   <span>👨‍👩‍👧‍👦 Demo Orang Tua</span>
-                               </button>
+
                                <button onClick={onLoginClick} className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
                                    Login
                                </button>
