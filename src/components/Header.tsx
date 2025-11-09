@@ -90,7 +90,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
                            </div>
                        )}
                        {/* Mobile Menu Button */}
-                       <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="Buka menu">
+                       <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label={isMenuOpen ? "Tutup menu" : "Buka menu"}>
                            {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
                        </button>
                     </div>
