@@ -166,7 +166,7 @@ export const reportError = async (
 };
 
 // Utility function untuk reporting errors dari try-catch blocks
-export const safeExecute = async <T>(
+export const safeExecute = async <T,>(
   fn: () => Promise<T> | T,
   context?: string,
   metadata?: Record<string, any>

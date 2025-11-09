@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
+import { WORKER_URL, NODE_ENV } from '../utils/envValidation';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -39,23 +40,38 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       setError(''); // Hapus error lama saat submit baru
 
       try {
-        const response = await fetch('https://malnu-api.sulhi-cmz.workers.dev/request-login-link', {
+        const workerUrl = WORKER_URL;
+
+        // Development mode validation
+        if (NODE_ENV === 'development' && workerUrl.includes('your-domain')) {
+          throw new Error('VITE_WORKER_URL belum dikonfigurasi. Silakan periksa file .env');
+        }
+
+        const response = await fetch(`${workerUrl}/request-login-link`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email })
         });
-        
+
         if (!response.ok) {
             // Jika backend mengembalikan error (misal: 403 Forbidden untuk email tidak terdaftar)
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Gagal mengirim link.');
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Gagal mengirim link. Status: ${response.status}`);
         }
 
         setFormState('success');
 
       } catch (err: any) {
         setFormState('idle');
-        setError(err.message); // Tampilkan pesan error dari backend
+
+        // Enhanced error messages for development
+        if (NODE_ENV === 'development' && err.message.includes('fetch')) {
+          setError('Tidak dapat terhubung ke server. Pastikan Cloudflare Worker sudah di-deploy.');
+        } else if (NODE_ENV === 'development' && err.message.includes('VITE_WORKER_URL')) {
+          setError(err.message);
+        } else {
+          setError(err.message || 'Terjadi kesalahan. Silakan coba lagi.');
+        }
       }
   }
 

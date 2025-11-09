@@ -4,6 +4,8 @@
 export { default as BaseApiService, baseApiService } from './baseApiService';
 export { default as StudentApiService, studentApiService } from './studentApiService';
 export { default as ContentApiService, contentApiService } from './contentApiService';
+export { FeaturedProgramsApiService as FeaturedProgramsService, FeaturedProgramsApiService as featuredProgramsService } from './featuredProgramsService';
+export { NewsApiService as NewsService, NewsApiService as newsService } from './newsService';
 
 // Re-export types untuk kemudahan penggunaan
 export type {
@@ -19,6 +21,8 @@ export type {
   NewsItem,
   RelatedLink
 } from './contentApiService';
+
+
 
 // API Error types
 export interface ApiError {

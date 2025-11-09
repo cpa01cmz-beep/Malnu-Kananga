@@ -5,6 +5,9 @@ import DesktopNavigation from './DesktopNavigation';
 import AuthButtons from './AuthButtons';
 import MobileMenuButton from './MobileMenuButton';
 import MobileMenu from './MobileMenu';
+import { ChatIcon } from './icons/ChatIcon';
+import { CloseIcon } from './icons/CloseIcon';
+import { MenuIcon } from './icons/MenuIcon';
 import { useScrollEffect } from '../hooks/useScrollEffect';
 import { useResponsiveMenu } from '../hooks/useResponsiveMenu';
 import { useTouchFeedback } from '../hooks/useTouchFeedback';
@@ -21,6 +24,8 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
     const isScrolled = useScrollEffect();
     const { isMenuOpen, setIsMenuOpen } = useResponsiveMenu();
     const { handleTouchFeedback } = useTouchFeedback();
+
+
 
     const headerClasses = `
         fixed top-0 left-0 right-0 z-40 transition-all duration-300
@@ -46,19 +51,31 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
                     <DesktopNavigation />
 
                     <div className="flex items-center space-x-2">
-                        <AuthButtons
-                            isLoggedIn={isLoggedIn}
-                            onLoginClick={onLoginClick}
-                            onChatClick={onChatClick}
-                            onLogout={onLogout}
-                            onPortalClick={onPortalClick}
-                        />
-                        <div onTouchStart={handleTouchFeedback}>
-                          <MobileMenuButton
-                              isMenuOpen={isMenuOpen}
-                              onToggle={() => setIsMenuOpen(!isMenuOpen)}
-                          />
-                        </div>
+                       {isLoggedIn ? (
+                            <div className="hidden sm:flex items-center space-x-2">
+                               <a href="#" className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                   Portal
+                               </a>
+                               <button onClick={onLogout} className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                                   Logout
+                               </button>
+                           </div>
+                       ) : (
+                           <div className="hidden sm:flex items-center space-x-2">
+                               <button onClick={onChatClick} className="flex items-center gap-2 bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 px-4 py-2 rounded-full font-semibold text-sm hover:bg-green-200 dark:hover:bg-green-800 transition-colors">
+                                   <ChatIcon />
+                                   <span>Tanya AI</span>
+                               </button>
+
+                               <button onClick={onLoginClick} className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
+                                   Login
+                               </button>
+                           </div>
+                       )}
+                       {/* Mobile Menu Button */}
+                       <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label={isMenuOpen ? "Tutup menu" : "Buka menu"}>
+                           {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
+                       </button>
                     </div>
                 </div>
             </div>

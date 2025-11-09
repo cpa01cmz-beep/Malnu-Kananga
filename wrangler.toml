@@ -10,28 +10,30 @@ compatibility_flags = ["nodejs_compat"]
 # Bindings untuk Cloudflare services
 [env.production]
 # AI binding untuk Cloudflare AI models
-[[env.production.ai]]
+ai = { binding = "AI" }
 # Vectorize index untuk RAG functionality
 [[env.production.vectorize]]
+binding = "VECTORIZE"
 index_name = "malnu-kananga-docs"
-# KV Storage untuk authentication (gratis di free plan)
-[[env.production.kv_namespaces]]
-binding = "KV"
-id = "your_kv_namespace_id_here"
-preview_id = "your_kv_preview_namespace_id_here"
+# D1 Database untuk authentication
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "malnu-kananga-auth"
+database_id = "your_database_id_here"
 
 # Development environment
 [env.preview.vars]
 # API_KEY untuk development
 
 [env.preview]
-[[env.preview.ai]]
+ai = { binding = "AI" }
 [[env.preview.vectorize]]
+binding = "VECTORIZE"
 index_name = "malnu-kananga-docs-preview"
-[[env.preview.kv_namespaces]]
-binding = "KV"
-id = "your_kv_namespace_id_here"
-preview_id = "your_kv_preview_namespace_id_here"
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "malnu-kananga-auth-preview"
+database_id = "your_preview_database_id_here"
 
 # Build configuration
 [build]

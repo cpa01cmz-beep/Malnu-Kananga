@@ -1,6 +1,7 @@
 node_modules
-.roo
-package-lock.json
+.roo/
+.idx/
+*.nix
 
 # Environment variables
 .env
@@ -33,3 +34,7 @@ deployment-report.txt
 
 # Cloudflare specific
 .wrangler/
+
+# Auto-generated comment files
+issue_comments.json
+review_comments.json
