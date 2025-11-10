@@ -411,7 +411,7 @@ function openDB() {
     request.onsuccess = () => resolve(request.result);
 
     request.onupgradeneeded = (event) => {
-      const db = event.target.result;
+      const db = (event.target as IDBOpenDBRequest).result;
 
       // Pending forms store
       if (!db.objectStoreNames.contains('pendingForms')) {
@@ -440,7 +440,7 @@ async function getPendingForms() {
   });
 }
 
-async function removePendingForm(id) {
+async function removePendingForm(id: string) {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(['pendingForms'], 'readwrite');

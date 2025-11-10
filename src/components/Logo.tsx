@@ -4,7 +4,7 @@ interface LogoProps {
   className?: string;
 }
 
-const Logo: React.FC<LogoProps> = ({ className = '' }) => {
+const Logo: React.FC<LogoProps> = React.memo(({ className = '' }) => {
   return (
     <div className={`flex items-center space-x-3 ${className}`}>
       <div className="flex-shrink-0 w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
@@ -16,6 +16,6 @@ const Logo: React.FC<LogoProps> = ({ className = '' }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Logo;

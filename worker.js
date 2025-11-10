@@ -60,7 +60,7 @@ function isRateLimited(clientIP) {
   return false;
 }
 
-function generateSecureToken(email, expiryTime = 15 * 60 * 1000) {
+async function generateSecureToken(email, expiryTime = 15 * 60 * 1000) {
   const header = { alg: 'HS256', typ: 'JWT' };
   const payload = {
     email: email,
@@ -72,8 +72,9 @@ function generateSecureToken(email, expiryTime = 15 * 60 * 1000) {
   const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-  // Generate signature menggunakan crypto.getRandomValues di Cloudflare Workers
-  const signature = generateRandomString(32);
+  // Generate signature using HMAC-SHA256 with secret key
+  const secret = SECRET_KEY || 'default-secret-key-for-worker';
+  const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
@@ -84,13 +85,55 @@ function generateRandomString(length) {
   return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
-function verifyAndDecodeToken(token) {
+// Generate HMAC signature using crypto.subtle
+async function generateHMACSignature(data, secret) {
+  // Convert data and secret to ArrayBuffers for Web Crypto API
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+  return Array.from(new Uint8Array(signature), byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+// Verify HMAC signature using crypto.subtle
+async function verifyHMACSignature(data, signature, secret) {
+  // Convert data and secret to ArrayBuffers for Web Crypto API
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['verify']
+  );
+  
+  // Convert signature from hex string to Uint8Array
+  const signatureBytes = new Uint8Array(signature.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+  
+  return await crypto.subtle.verify('HMAC', key, signatureBytes, encoder.encode(data));
+}
+
+async function verifyAndDecodeToken(token) {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
 
-    const payload = parts[1];
-    const paddedPayload = payload + '='.repeat((4 - payload.length % 4) % 4);
+    const [encodedHeader, encodedPayload, signature] = parts;
+    
+    // Verify signature using HMAC-SHA256
+    const secret = SECRET_KEY || 'default-secret-key-for-worker';
+    const isValid = await verifyHMACSignature(`${encodedHeader}.${encodedPayload}`, signature, secret);
+    
+    if (!isValid) {
+      return null; // Invalid signature
+    }
+
+    const paddedPayload = encodedPayload + '='.repeat((4 - encodedPayload.length % 4) % 4);
     const decodedPayload = atob(paddedPayload.replace(/-/g, '+').replace(/_/g, '/'));
 
     const tokenData = JSON.parse(decodedPayload);
@@ -223,9 +266,9 @@ export default {
           return new Response(JSON.stringify({ message: 'Format email tidak valid.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
 
-        // Simplified auth - accept any email for demo purposes
-        // TODO: Replace with proper KV storage or external database when available
-        const token = generateSecureToken(email, 15 * 60 * 1000);
+// Simplified auth - accept any email for demo purposes
+         // TODO: Replace with proper KV storage or external database when available
+         const token = await generateSecureToken(email, 15 * 60 * 1000);
         const magicLink = `${new URL(request.url).origin}/verify-login?token=${token}`;
         const emailBody = `<h1>Login ke Akun MA Malnu Kananga</h1><p>Klik tautan di bawah ini untuk masuk. Tautan ini hanya berlaku selama 15 menit.</p><a href="${magicLink}" style="padding: 10px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 5px;">Login Sekarang</a><p>Jika Anda tidak meminta link ini, abaikan email ini.</p>`;
         const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
@@ -250,12 +293,14 @@ export default {
         const token = url.searchParams.get('token');
         if (!token) return new Response('Token tidak valid atau hilang.', { status: 400 });
         try {
-            const tokenData = verifyAndDecodeToken(token);
-            if (!tokenData) {
-                return new Response('Link login sudah kedaluwarsa atau tidak valid. Silakan minta link baru.', { status: 400 });
-            }
+const tokenData = await verifyAndDecodeToken(token);
+             if (!tokenData) {
+                 return new Response('Link login sudah kedaluwarsa atau tidak valid. Silakan minta link baru.', { status: 400 });
+             }
             const headers = new Headers();
-            headers.set('Set-Cookie', `auth_session=${btoa(tokenData.email)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
+// Add __Host- prefix for more secure cookie (only works on HTTPS)
+             // Use the actual token instead of just the email to prevent session hijacking
+             headers.set('Set-Cookie', `__Host-auth_session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
             headers.set('Location', new URL(request.url).origin);
             return new Response(null, { status: 302, headers });
         } catch(e) {
