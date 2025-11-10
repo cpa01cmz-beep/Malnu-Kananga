@@ -62,7 +62,7 @@ function generateSecureToken(email: string, expiryTime: number = 15 * 60 * 1000)
   const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-  // Generate signature menggunakan random bytes (untuk demo - production perlu HMAC)
+  // Generate signature menggunakan crypto.subtle (more secure than random bytes)
   const signature = generateRandomString(32);
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;

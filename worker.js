@@ -255,7 +255,8 @@ export default {
                 return new Response('Link login sudah kedaluwarsa atau tidak valid. Silakan minta link baru.', { status: 400 });
             }
             const headers = new Headers();
-            headers.set('Set-Cookie', `auth_session=${btoa(tokenData.email)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
+            // Add __Host- prefix for more secure cookie (only works on HTTPS)
+            headers.set('Set-Cookie', `__Host-auth_session=${btoa(tokenData.email)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
             headers.set('Location', new URL(request.url).origin);
             return new Response(null, { status: 302, headers });
         } catch(e) {

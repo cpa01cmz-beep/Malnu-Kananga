@@ -6,7 +6,7 @@ interface LoadingSpinnerProps {
   fullScreen?: boolean;
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = React.memo(({
   size = 'md',
   message = 'Memuat...',
   fullScreen = false
@@ -37,6 +37,6 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   }
 
   return SpinnerComponent;
-};
+});
 
 export default LoadingSpinner;
