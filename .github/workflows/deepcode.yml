@@ -1,0 +1,216 @@
+# DeepCode Configuration File
+# Configuration for the DeepCode AI platform
+# Project: Malnu-Kananga (https://github.com/cpa01cmz-beep/Malnu-Kananga)
+
+# Global settings
+global:
+  # Project name
+  project_name: "Malnu-Kananga"
+  
+  # Output directory for generated code
+  output_dir: "./generated"
+  
+  # Logging level
+  log_level: "INFO"
+
+# Model configuration
+model:
+  # Provider (openai, anthropic, or custom)
+  provider: "openai"
+  
+  # Model name - Using iFlow's recommended models
+  # Current recommended: TBStars2-200B-A13B, Code-optimized: Qwen3-Coder-480B-A35B
+  model_name: "TBStars2-200B-A13B"
+  
+  # Alternative models from iFlow (rotating for different tasks)
+  alternative_models:
+    - "Qwen3-Coder-480B-A35B"  # Optimized for code generation
+    - "TBStars2-200B-A13B"     # General purpose high-performance
+  
+  # Temperature for code generation (0.0 to 1.0)
+  temperature: 0.7
+
+# API configuration
+api:
+  # Base URL for the API - iFlow OpenAI-compatible endpoint
+  base_url: "https://apis.iflow.cn/v1"
+  
+  # Maximum tokens for completion (iFlow supports up to 256k context)
+  max_tokens: 8192
+  
+  # Timeout for API requests (in seconds)
+  timeout: 60
+  
+  # Additional iFlow-specific settings
+  iflow_settings:
+    # Enable streaming responses
+    streaming: true
+    # Context window size (iFlow models support large contexts)
+    context_window: 256000
+    # Maximum output length for code generation
+    max_output_length: 64000
+
+# Code generation settings
+generation:
+  # Enable/disable specific features
+  features:
+    auto_test_generation: true
+    documentation_generation: true
+    security_scan: true
+    code_optimization: true
+  
+  # File extensions to include in analysis based on typical web project
+  include_extensions:
+    - ".py"
+    - ".js"
+    - ".ts"
+    - ".jsx"
+    - ".tsx"
+    - ".html"
+    - ".css"
+    - ".scss"
+    - ".json"
+    - ".yaml"
+    - ".yml"
+    - ".md"
+  
+  # Directories to exclude from analysis
+  exclude_dirs:
+    - "node_modules"
+    - ".git"
+    - "__pycache__"
+    - "dist"
+    - "build"
+    - ".next"
+    - "target"
+    - "vendor"
+    - "tmp"
+    - "logs"
+
+# Repository settings (specific to Malnu-Kananga)
+repository:
+  # Branch to use for code generation
+  branch: "main"
+  
+  # Remote repository URL
+  remote_url: "https://github.com/cpa01cmz-beep/Malnu-Kananga.git"
+  
+  # Commit message template
+  commit_message: "[DeepCode AI] feat: Generated code for Malnu-Kananga project"
+
+# iFlow AI Platform Configuration
+iflow:
+  # API key for iFlow platform (obtain from Console → Personal Information)
+  # Set this in your environment variables or secrets
+  api_key_env: "IFLOW_API_KEY"
+  
+  # Model selection strategy
+  model_strategy: "rotating"  # Options: "primary", "rotating", "adaptive"
+  
+  # Rotating model configuration for different tasks
+  model_rotation:
+    # For complex reasoning and general tasks
+    complex_tasks: "TBStars2-200B-A13B"
+    # For code-specific tasks and generation
+    code_tasks: "Qwen3-Coder-480B-A35B"  # Optimized for code with 256k context
+    # For documentation and simple tasks
+    simple_tasks: "TBStars2-200B-A13B"
+  
+  # Performance optimization settings
+  performance:
+    # Enable caching for repeated requests
+    enable_caching: true
+    # Use streaming for faster response
+    use_streaming: true
+    # Temperature adjustments per task type
+    task_temperature:
+      code_generation: 0.6    # More deterministic for code
+      documentation: 0.8      # More creative for docs
+      analysis: 0.5           # More focused for analysis
+
+# Security settings
+security:
+  # Enable security scanning
+  enable_scan: true
+  
+  # Security rules to apply
+  rules:
+    - "sast"
+    - "secret_detection"
+    - "dependency_check"
+    - "license_scan"
+  
+  # iFlow-specific security enhancements
+  iflow_security:
+    # Use iFlow's advanced security scanning
+    enhanced_scan: true
+    # AI-powered vulnerability detection
+    ai_vulnerability_detection: true
+    # Code pattern analysis for security issues
+    pattern_analysis: true
+
+# Project-specific settings for Malnu-Kananga
+project:
+  # Framework detection (will be auto-detected but can be specified)
+  framework: "auto"
+  
+  # Main programming languages used in the project
+  languages:
+    - "javascript"
+    - "python"
+    - "html"
+    - "css"
+  
+  # Dependencies file paths
+  dependencies_files:
+    - "package.json"
+    - "requirements.txt"
+    - "pyproject.toml"
+    - "Pipfile"
+  
+  # Main entry points
+  entry_points:
+    - "index.js"
+    - "main.py"
+    - "app.py"
+    - "src/index.js"
+    - "src/main.py"
+  
+  # iFlow-specific project settings
+  iflow_specific:
+    # Code-specific model for this project
+    code_model: "Qwen3-Coder-480B-A35B"  # Best for code with 256k context
+    # Documentation model
+    doc_model: "TBStars2-200B-A13B"
+    # Code generation optimization
+    code_optimization:
+      # Use the code-optimized model for generation
+      use_code_model: true
+      # Context window for code analysis
+      context_window: 256000
+      # Enable advanced code understanding features
+      advanced_analysis: true
+
+# Deployment settings
+deployment:
+  # Auto-deploy generated code
+  auto_deploy: false
+  
+  # Deployment environment
+  environment: "development"
+  
+  # Deployment configuration
+  deployment_config:
+    # Whether to create pull requests for generated code
+    create_pr: true
+    # Label to add to generated PRs
+    pr_labels: ["ai-generated", "enhancement"]
+  
+  # iFlow-specific deployment settings
+  iflow_deployment:
+    # Enable iFlow's deployment pipeline integration
+    pipeline_integration: true
+    # Use iFlow's model for deployment validation
+    validation_model: "TBStars2-200B-A13B"
+    # Deployment testing with AI
+    ai_testing: true
