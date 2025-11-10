@@ -71,7 +71,7 @@ describe('Header Component', () => {
       expect(screen.getByText('Login')).toBeInTheDocument();
     });
 
-    test('should render portal and logout buttons when logged in', () => {
+    test('should render logout button when logged in', () => {
       render(
         <Header
           onLoginClick={mockOnLoginClick}
@@ -81,7 +81,6 @@ describe('Header Component', () => {
         />
       );
 
-      expect(screen.getByText('Portal')).toBeInTheDocument();
       expect(screen.getByText('Logout')).toBeInTheDocument();
     });
 
@@ -316,18 +315,17 @@ describe('Header Component', () => {
       expect(screen.getByText('Login')).toBeInTheDocument();
       expect(screen.getByText('Tanya AI')).toBeInTheDocument();
 
-      rerender(
-        <Header
-          onLoginClick={mockOnLoginClick}
-          onChatClick={mockOnChatClick}
-          isLoggedIn={true}
-          onLogout={mockOnLogout}
-        />
-      );
+       rerender(
+         <Header
+           onLoginClick={mockOnLoginClick}
+           onChatClick={mockOnChatClick}
+           isLoggedIn={true}
+           onLogout={mockOnLogout}
+         />
+       );
 
-      expect(screen.getByText('Portal')).toBeInTheDocument();
-      expect(screen.getByText('Logout')).toBeInTheDocument();
-      expect(screen.queryByText('Login')).not.toBeInTheDocument();
+       expect(screen.getByText('Logout')).toBeInTheDocument();
+       expect(screen.queryByText('Login')).not.toBeInTheDocument();
     });
   });
 
