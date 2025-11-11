@@ -266,9 +266,9 @@ export default {
           return new Response(JSON.stringify({ message: 'Format email tidak valid.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
 
-// Simplified auth - accept any email for demo purposes
-         // TODO: Replace with proper KV storage or external database when available
-         const token = await generateSecureToken(email, 15 * 60 * 1000);
+        // Simplified auth - accept any email for demo purposes
+        // TODO: Replace with proper KV storage or external database when available
+        const token = await generateSecureToken(email, 15 * 60 * 1000);
         const magicLink = `${new URL(request.url).origin}/verify-login?token=${token}`;
         const emailBody = `<h1>Login ke Akun MA Malnu Kananga</h1><p>Klik tautan di bawah ini untuk masuk. Tautan ini hanya berlaku selama 15 menit.</p><a href="${magicLink}" style="padding: 10px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 5px;">Login Sekarang</a><p>Jika Anda tidak meminta link ini, abaikan email ini.</p>`;
         const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
