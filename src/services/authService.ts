@@ -168,16 +168,21 @@ class TokenManager {
 
   // Add cleanup listener for page unload
   private static initialized = false;
+  private static cleanupListener: (() => void) | null = null;
+  
   private static initializeCleanup(): void {
     if (this.initialized) return;
     
     // Clean up timer when page is unloaded
-    window.addEventListener('beforeunload', () => {
+    const cleanup = () => {
       if (this.refreshTimer) {
         clearTimeout(this.refreshTimer);
         this.refreshTimer = null;
       }
-    });
+    };
+    
+    window.addEventListener('beforeunload', cleanup);
+    this.cleanupListener = cleanup;
     
     this.initialized = true;
   }
@@ -198,6 +203,13 @@ class TokenManager {
     if (this.refreshTimer) {
       clearTimeout(this.refreshTimer);
       this.refreshTimer = null;
+    }
+    
+    // Remove event listener on cleanup
+    if (this.cleanupListener) {
+      window.removeEventListener('beforeunload', this.cleanupListener);
+      this.cleanupListener = null;
+      this.initialized = false;
     }
   }
 

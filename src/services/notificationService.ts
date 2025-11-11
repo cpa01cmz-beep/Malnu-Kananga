@@ -245,7 +245,7 @@ class NotificationService {
     const delay = reminderTime.getTime() - now.getTime();
 
     if (delay > 0) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         this.addNotification({
           title: 'Pengingat Jadwal',
           message: `Kelas ${scheduleItem.subject} akan dimulai dalam ${minutesBefore} menit`,
@@ -253,7 +253,16 @@ class NotificationService {
           priority: 'medium',
           actionUrl: '/portal?tab=schedule'
         });
+        
+        // Remove from scheduled reminders after execution
+        const index = this.scheduledReminders.indexOf(timeoutId);
+        if (index > -1) {
+          this.scheduledReminders.splice(index, 1);
+        }
       }, delay);
+      
+      // Track the scheduled reminder
+      this.scheduledReminders.push(timeoutId);
     }
   }
 
@@ -266,6 +275,7 @@ class NotificationService {
   }
 
   private static notificationCheckInterval: NodeJS.Timeout | null = null;
+  private static scheduledReminders: NodeJS.Timeout[] = [];
 
   // Initialize notification system
   static initialize(): void {
@@ -273,6 +283,9 @@ class NotificationService {
     if (this.notificationCheckInterval) {
       clearInterval(this.notificationCheckInterval);
     }
+    
+    // Clear scheduled reminders
+    this.clearScheduledReminders();
 
     // Request notification permission on load
     if (this.isBrowserNotificationSupported() && Notification.permission === 'default') {
@@ -294,6 +307,14 @@ class NotificationService {
       clearInterval(this.notificationCheckInterval);
       this.notificationCheckInterval = null;
     }
+    
+    this.clearScheduledReminders();
+  }
+  
+  // Clear all scheduled reminders
+  private static clearScheduledReminders(): void {
+    this.scheduledReminders.forEach(timeout => clearTimeout(timeout));
+    this.scheduledReminders = [];
   }
 
   // Schedule reminders for today's classes

@@ -132,7 +132,7 @@ export class MemoryBank implements MemoryServiceInterface {
   ): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      const index = listeners.indexOf(listener);
+      const index = listeners.indexOf(listener as Function);
       if (index > -1) {
         listeners.splice(index, 1);
       }
@@ -192,6 +192,9 @@ export class MemoryBank implements MemoryServiceInterface {
       clearInterval(this.cleanupInterval);
       this.cleanupInterval = null;
     }
+    
+    // Clear all event listeners
+    this.eventListeners.clear();
   }
 
   /**
