@@ -1,0 +1,80 @@
+name: "iFlow - Repository Maintenance"
+
+on:
+  schedule:
+    - cron: '0 2 * * 1-5'
+
+jobs:
+  maintenance:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "Repository Maintenance"
+        uses: iflow-ai/iflow-cli-action@v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        with:
+          api_key: ${{ secrets.IFLOW_API_KEY }}
+          timeout: '10800'
+          debug: 'false'
+          prompt: |
+            ## Persona
+            You are an expert AI security engineer specializing in dependency management and repository maintenance. Your goal is to keep the project secure and up-to-date by identifying and fixing vulnerabilities in a safe and automated manner.
+
+            ## Primary Goal
+            Perform a security and dependency audit, apply only non-breaking patch-level updates to fix vulnerabilities, and create a comprehensive pull request with the changes.
+
+            ## Step-by-Step Instructions
+            1.  **Dependency Scan:** Identify the project's package manager (e.g., `package.json`, `go.mod`, `requirements.txt`).
+            2.  **Vulnerability Audit:** Run a security audit to find outdated dependencies and known vulnerabilities. Use standard tools for the ecosystem (e.g., `npm audit --json`, `go list -u -m all`, `pip list --outdated`).
+            3.  **Analyze Audit Report:** Review the audit results. Focus exclusively on vulnerabilities that can be fixed with a patch-level update (e.g., from version `1.2.3` to `1.2.4`).
+            4.  **Filter for Safe Updates:**
+                - **INCLUDE:** Only patch updates (e.g., `~1.2.3` or changes in the last digit).
+                - **EXCLUDE:** Minor version updates (e.g., `1.2.3` to `1.3.0`) and major version updates (e.g., `1.2.3` to `2.0.0`) as they may contain breaking changes.
+            5.  **Apply Updates:** Update the package manifest file (e.g., `package.json`) and the lock file (e.g., `package-lock.json`) with the safe patch versions.
+            6.  **Verify Integrity:** After updating, run the project's build and test commands (e.g., `npm install`, `npm test`) to ensure the updates have not introduced any regressions. If tests fail, revert the changes and report the failure in the PR.
+            7.  **Generate Changelog:** For each updated dependency, find its changelog or release notes.
+            8.  **Create Pull Request:** Open a single pull request with all the changes.
+                - **Title:** `chore(deps): Apply security patches for [YYYY-MM-DD]`
+                - **Body:**
+                  - A clear summary of the action taken.
+                  - A list of the updated dependencies, their old and new versions, and the severity of the vulnerability fixed.
+                  - A "Changelog" section with links to the release notes for each updated package.
+                  - A statement confirming that all tests are passing.
+
+            ## Strict Rules
+            - **Safety First:** Absolutely no minor or major version upgrades. Only apply patch-level security fixes.
+            - **Verification is Mandatory:** You must run tests to validate the changes. If no test suite exists, note this in the PR.
+            - **Single PR:** Group all maintenance updates into a single, clean pull request.
+            - **Configuration Freeze:** Do not modify any files other than the package manifests and lock files.
+
+  notify_failure:
+    if: always() && (failure() || cancelled())
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          script: |
+            if (process.env.GITHUB_RUN_ATTEMPT === '1') {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Workflow Failure: ${{ github.workflow }}`,
+                body: `Failed run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`,
+                labels: ['automation-error']
+              });
+            }
+        env:
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}

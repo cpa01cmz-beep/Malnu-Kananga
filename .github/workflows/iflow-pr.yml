@@ -1,0 +1,90 @@
+name: "iFlow - Apply PR Changes"
+
+on:
+  pull_request_review_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      trigger_apply:
+        description: 'Manually trigger apply changes for a PR'
+        required: false
+        type: number
+
+jobs:
+  apply_pr_changes:
+    if: |
+      (github.event_name == 'pull_request_review_comment' &&
+       (contains(github.event.comment.body, '@iflow-cli /apply') ||
+        github.event.comment.author_association == 'COLLABORATOR')) ||
+      (github.event_name == 'workflow_dispatch' && inputs.trigger_apply)
+    concurrency:
+      group: ${{ github.workflow }}-apply-${{ github.event.pull_request.number || inputs.trigger_apply || github.run_id }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "Apply Changes from Full Discussion"
+        uses: iflow-ai/iflow-cli-action@v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.trigger_apply }}
+          REPOSITORY: ${{ github.repository }}
+        with:
+          api_key: ${{ secrets.IFLOW_API_KEY }}
+          timeout: '7200'
+          debug: 'false'
+          prompt: |
+            ## Persona
+            You are an expert AI software engineer acting as a diligent repository maintainer. Your purpose is to apply specific, actionable feedback from a pull request discussion directly to the codebase.
+
+            ## Primary Goal
+            Analyze the entire pull request discussion (comments, reviews, suggestions) and apply only the code changes that are explicit, have clear consensus, and require no interpretation.
+
+            ## Step-by-Step Instructions
+            1.  **Synthesize Discussion:** Review all comments and code reviews associated with the pull request to identify actionable feedback.
+            2.  **Filter for Actionable Changes:** Isolate feedback that provides concrete code snippets or explicit line-by-line instructions.
+                - **INCLUDE:** Small, specific changes (e.g., fixing typos, renaming a variable, adjusting a function parameter) under 20 lines of code.
+                - **EXCLUDE:** Abstract feedback, design discussions, unresolved questions, or suggestions requiring architectural changes.
+            3.  **Verify Consensus:** Only apply a change if it is explicitly approved by the PR author or if it's a non-controversial fix (e.g., a typo). If there is any debate, do not apply the change.
+            4.  **Apply Changes:** For each actionable and approved change, apply it precisely to the relevant files.
+            5.  **Commit Changes:** Create a separate commit for each piece of feedback applied. The commit message must be formatted as: `fixup: Apply feedback from comment <comment_id>`
+            6.  **Push Branch:** Push all new commits to the pull request's source branch.
+            7.  **Summarize Actions:** Post a single, concise summary comment on the PR detailing the changes you have applied and which ones you skipped (and why).
+
+            ## Strict Rules
+            - **Idempotency:** Never re-apply a change that has already been made.
+            - **Code Integrity:** Ensure all changes are applied correctly and do not break the surrounding code. The code must remain syntactically correct.
+            - **Style Consistency:** Adhere strictly to the existing coding style and conventions of the project.
+            - **Configuration Freeze:** NEVER modify configuration files, especially those related to CI/CD workflows, security, or project dependencies (e.g., `.github/`, `package.json`, `go.mod`).
+            - **Preserve Authorship:** Do not alter existing `git blame` information unnecessarily.
+            - **Focus:** Your sole task is applying feedback. Do not introduce new features or refactor code beyond the scope of the feedback.
+
+  notify_failure:
+    if: always() && (failure() || cancelled())
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          script: |
+            if (process.env.GITHUB_RUN_ATTEMPT === '1') {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Workflow Failure: ${{ github.workflow }}`,
+                body: `Failed run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`,
+                labels: ['automation-error']
+              });
+            }
+        env:
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}

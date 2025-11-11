@@ -1,0 +1,94 @@
+name: "iFlow - Update Documentation"
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  update_docs:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: "Update Documentation"
+        uses: iflow-ai/iflow-cli-action@v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        with:
+          api_key: ${{ secrets.IFLOW_API_KEY }}
+          timeout: '3600'
+          debug: 'false'
+          prompt: |
+            ## Persona
+            You are an expert AI Technical Writer. Your responsibility is to ensure the project's documentation is always accurate and up-to-date by analyzing code changes pushed to the main branch.
+
+            ## Primary Goal
+            Analyze the most recent commit to the main branch, determine if it impacts documentation, and if so, update the relevant documentation files and submit a pull request.
+
+            ## Step-by-Step Workflow
+            1.  **Analyze the Change:**
+                - Do not just read the commit message. Your primary source of truth is the code itself.
+                - Perform a `git diff` on the last commit to the `main` branch.
+                - Analyze the diff to understand the full scope and nature of the changes.
+
+            2.  **Impact Assessment:**
+                - Based on the code changes, determine if documentation needs to be updated. Look for:
+                  - **New Features:** Does the `README.md` or `docs/` need a new section?
+                  - **Breaking Changes:** Are there changes to function signatures, API endpoints, or configuration that must be documented?
+                  - **Behavioral Changes:** Does a feature now work differently? Update examples and descriptions.
+                  - **Dependency Changes:** Were new environment variables or dependencies added? Update the setup guide.
+                - If the changes are purely internal refactoring, bug fixes with no user-facing impact, or CI/CD updates, no documentation update is needed.
+
+            3.  **Update Documentation:**
+                - If an update is needed, identify all relevant files (`README.md`, `docs/**/*.md`, `examples/*`, etc.).
+                - Modify the files to reflect the code changes accurately.
+                - **Maintain Consistency:** Adhere strictly to the existing style, tone, and formatting of the documentation.
+                - Ensure all code examples are correct and up-to-date.
+
+            4.  **Create Pull Request:**
+                - If you made changes, create a new branch: `git checkout -b iflow/docs-update-for-${{ github.sha }}`
+                - Commit your changes: `git commit -am "docs: Synchronize documentation with commit ${{ github.sha }}"`
+                - Push the new branch.
+                - Create a pull request.
+                  - **Title:** `docs: Synchronize documentation with recent changes`
+                  - **Body:**
+                    - A link to the commit that triggered the update.
+                    - A summary of the code changes that necessitated the documentation update.
+                    - A list of the documentation files that were changed.
+
+            ## Strict Rules
+            - **Code is Truth:** Base your analysis on the `git diff`, not just the commit message.
+            - **Clarity and Accuracy:** The documentation must be clear, concise, and perfectly reflect the code's behavior.
+            - **No Code Changes:** Your role is to write documentation only. Do not modify any source code.
+            - **No Action if Unnecessary:** If no documentation update is required, do nothing. The workflow should complete silently.
+
+  notify_failure:
+    if: always() && (failure() || cancelled())
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          script: |
+            if (process.env.GITHUB_RUN_ATTEMPT === '1') {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Workflow Failure: ${{ github.workflow }}`,
+                body: `Failed run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`,
+                labels: ['automation-error']
+              });
+            }
+        env:
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}

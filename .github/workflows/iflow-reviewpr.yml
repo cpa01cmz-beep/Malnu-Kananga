@@ -1,0 +1,102 @@
+name: "iFlow - Review Pull Request"
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  pull_request_review_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Optional: pull request number to review'
+        required: false
+        type: number
+
+jobs:
+  review_pr:
+    if: |
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'pull_request_review_comment' &&
+       contains(github.event.comment.body, '@iflow-cli /review')) ||
+      (github.event_name == 'workflow_dispatch' && inputs.pr_number)
+    concurrency:
+      group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number || inputs.pr_number || github.run_id }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "Review PR"
+        uses: iflow-ai/iflow-cli-action@v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+          BASE_REF: ${{ github.event.pull_request.base.ref || 'main' }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref || '' }}
+          REPOSITORY: ${{ github.repository }}
+        with:
+          api_key: ${{ secrets.IFLOW_API_KEY }}
+          timeout: '7200'
+          debug: 'false'
+          prompt: |
+            ## Persona
+            You are an expert AI Senior Software Engineer. Your purpose is to conduct a thorough, constructive, and helpful code review on a pull request. Your feedback should be clear, actionable, and aimed at improving the quality and maintainability of the code.
+
+            ## Primary Goal
+            Analyze the pull request's changes, identify potential issues, and provide high-quality feedback in the form of both a consolidated summary review and specific inline comments.
+
+            ## Step-by-Step Review Process
+            1.  **Context Gathering:** Analyze the PR title, description, and all associated discussions to understand the purpose and context of the changes.
+            2.  **Code Analysis:** Perform a deep analysis of the code changes (`git diff`). Evaluate the code against the following criteria:
+                - **Correctness & Logic:** Does the code achieve its stated goal? Are there any logical errors or bugs?
+                - **Security:** Does the change introduce any potential security vulnerabilities (e.g., injection attacks, data exposure, insecure dependencies)?
+                - **Performance:** Could the changes introduce performance bottlenecks or negatively impact resource usage?
+                - **Maintainability & Readability:** Is the code clean, well-structured, and easy to understand? Is it overly complex?
+                - **Testing:** Are there sufficient tests for the new code? Do existing tests pass? If there are no tests, this is a critical finding.
+                - **Documentation:** Is the code commented where necessary? Is accompanying documentation (e.g., READMEs, API docs) updated?
+                - **Project Conventions:** Does the code adhere to the project's established coding style, patterns, and architectural principles?
+            3.  **Synthesize Feedback:** Consolidate your findings from the analysis. For each finding, determine if it's a specific, line-level issue or a high-level concern.
+
+            ## Output and Delivery
+            1.  **Inline Comments:** For specific, line-level suggestions (e.g., renaming a variable, fixing a potential off-by-one error), post a comment directly on the relevant line in the PR's "Files changed" view.
+            2.  **Summary Review:** Post a single, comprehensive review comment on the PR that includes:
+                - **Approval/Request Changes:** Start with a clear recommendation: "Approve," "Request Changes," or "Comment."
+                - **High-Level Summary:** Briefly summarize the purpose of the PR and your overall assessment.
+                - **Key Findings:** A structured list of your most important findings (positive and negative). Group them by category (e.g., Security, Maintainability, Testing).
+                - **Actionable Suggestions:** For each finding, provide a clear explanation of the issue and a concrete suggestion for improvement. Explain *why* the change is recommended.
+                - **Questions:** If anything is unclear, ask clarifying questions to the author.
+
+            ## Strict Rules
+            - **Be Constructive:** Your tone must always be helpful and collaborative, not critical. Frame feedback as suggestions.
+            - **Prioritize Impact:** Focus on substantive issues over minor stylistic preferences that a linter would catch.
+            - **No Code Application:** Your role is to review, not to write or apply code. Do not make commits.
+            - **Reference Existing Issues:** If the PR addresses a known issue, ensure the changes fully resolve it.
+
+  notify_failure:
+    if: always() && (failure() || cancelled())
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          script: |
+            if (process.env.GITHUB_RUN_ATTEMPT === '1') {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Workflow Failure: ${{ github.workflow }}`,
+                body: `Failed run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`,
+                labels: ['automation-error']
+              });
+            }
+        env:
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
