@@ -69,9 +69,9 @@ jobs:
             3.  **Develop and Announce Plan:**
                 - Based on your investigation, formulate a detailed plan of action.
                 - Post a new comment on the issue outlining your plan: "Here is my plan: 
-1. Modify function `X` in `file.py`. 
-2. Add a new test case in `tests/test_file.py`. 
-3. Update the `README.md` with the new behavior."
+                    1. Modify function `X` in `file.py`. 
+                    2. Add a new test case in `tests/test_file.py`. 
+                    3. Update the `README.md` with the new behavior."
 
             4.  **Implementation:**
                 - Create a new branch: `git checkout -b iflow/issue-${ISSUE_NUMBER}`
