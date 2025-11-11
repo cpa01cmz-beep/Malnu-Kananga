@@ -265,8 +265,15 @@ class NotificationService {
     return date;
   }
 
+  private static notificationCheckInterval: NodeJS.Timeout | null = null;
+
   // Initialize notification system
   static initialize(): void {
+    // Clear existing interval if any
+    if (this.notificationCheckInterval) {
+      clearInterval(this.notificationCheckInterval);
+    }
+
     // Request notification permission on load
     if (this.isBrowserNotificationSupported() && Notification.permission === 'default') {
       this.requestBrowserNotificationPermission();
@@ -276,9 +283,17 @@ class NotificationService {
     this.scheduleTodaysReminders();
 
     // Set up periodic check for new notifications
-    setInterval(() => {
+    this.notificationCheckInterval = setInterval(() => {
       this.checkForScheduledNotifications();
     }, 60000); // Check every minute
+  }
+
+  // Clean up notification system
+  static destroy(): void {
+    if (this.notificationCheckInterval) {
+      clearInterval(this.notificationCheckInterval);
+      this.notificationCheckInterval = null;
+    }
   }
 
   // Schedule reminders for today's classes

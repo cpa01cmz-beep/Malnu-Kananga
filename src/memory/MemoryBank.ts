@@ -161,10 +161,17 @@ export class MemoryBank implements MemoryServiceInterface {
   /**
    * Setup automatic cleanup if enabled
    */
+  private cleanupInterval: NodeJS.Timeout | null = null;
+
   private setupAutoCleanup(): void {
+    // Clear existing interval if any
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+    }
+
     if (this.config.enableAutoCleanup) {
       // Cleanup every hour if storage is near capacity
-      setInterval(async () => {
+      this.cleanupInterval = setInterval(async () => {
         try {
           const stats = await this.getStats();
           if (stats.totalMemories > (this.config.maxMemories || 1000) * (this.config.cleanupThreshold || 0.8)) {
@@ -174,6 +181,16 @@ export class MemoryBank implements MemoryServiceInterface {
           console.error('Auto-cleanup failed:', error);
         }
       }, 60 * 60 * 1000); // 1 hour
+    }
+  }
+
+  /**
+   * Clean up resources
+   */
+  public destroy(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
     }
   }
 
