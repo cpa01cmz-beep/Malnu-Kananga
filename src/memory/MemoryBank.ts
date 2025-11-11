@@ -167,6 +167,7 @@ export class MemoryBank implements MemoryServiceInterface {
     // Clear existing interval if any
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
     }
 
     if (this.config.enableAutoCleanup) {
