@@ -293,10 +293,10 @@ export default {
         const token = url.searchParams.get('token');
         if (!token) return new Response('Token tidak valid atau hilang.', { status: 400 });
         try {
-const tokenData = await verifyAndDecodeToken(token);
-             if (!tokenData) {
-                 return new Response('Link login sudah kedaluwarsa atau tidak valid. Silakan minta link baru.', { status: 400 });
-             }
+            const tokenData = await verifyAndDecodeToken(token);
+            if (!tokenData) {
+                return new Response('Link login sudah kedaluwarsa atau tidak valid. Silakan minta link baru.', { status: 400 });
+            }
             const headers = new Headers();
 // Add __Host- prefix for more secure cookie (only works on HTTPS)
              // Use the actual token instead of just the email to prevent session hijacking
