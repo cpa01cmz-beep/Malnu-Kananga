@@ -164,8 +164,31 @@ async function refreshToken(currentToken: string): Promise<string | null> {
 class TokenManager {
   private static TOKEN_KEY = 'malnu_secure_token';
   private static REFRESH_TIMER_KEY = 'malnu_refresh_timer';
+  private static refreshTimer: NodeJS.Timeout | null = null;
+
+  // Add cleanup listener for page unload
+  private static initialized = false;
+  private static cleanupListener: (() => void) | null = null;
+  
+  private static initializeCleanup(): void {
+    if (this.initialized) return;
+    
+    // Clean up timer when page is unloaded
+    const cleanup = () => {
+      if (this.refreshTimer) {
+        clearTimeout(this.refreshTimer);
+        this.refreshTimer = null;
+      }
+    };
+    
+    window.addEventListener('beforeunload', cleanup);
+    this.cleanupListener = cleanup;
+    
+    this.initialized = true;
+  }
 
   static async storeToken(token: string): Promise<void> {
+    this.initializeCleanup();
     localStorage.setItem(this.TOKEN_KEY, token);
     await this.scheduleTokenRefresh(token);
   }
@@ -181,9 +204,14 @@ class TokenManager {
       clearTimeout(this.refreshTimer);
       this.refreshTimer = null;
     }
+    
+    // Remove event listener on cleanup
+    if (this.cleanupListener) {
+      window.removeEventListener('beforeunload', this.cleanupListener);
+      this.cleanupListener = null;
+      this.initialized = false;
+    }
   }
-
-  private static refreshTimer: NodeJS.Timeout | null = null;
 
   private static async scheduleTokenRefresh(token: string): Promise<void> {
     if (this.refreshTimer) {

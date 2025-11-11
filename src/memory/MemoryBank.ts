@@ -132,7 +132,7 @@ export class MemoryBank implements MemoryServiceInterface {
   ): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      const index = listeners.indexOf(listener);
+      const index = listeners.indexOf(listener as Function);
       if (index > -1) {
         listeners.splice(index, 1);
       }
@@ -161,10 +161,18 @@ export class MemoryBank implements MemoryServiceInterface {
   /**
    * Setup automatic cleanup if enabled
    */
+  private cleanupInterval: NodeJS.Timeout | null = null;
+
   private setupAutoCleanup(): void {
+    // Clear existing interval if any
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
+    }
+
     if (this.config.enableAutoCleanup) {
       // Cleanup every hour if storage is near capacity
-      setInterval(async () => {
+      this.cleanupInterval = setInterval(async () => {
         try {
           const stats = await this.getStats();
           if (stats.totalMemories > (this.config.maxMemories || 1000) * (this.config.cleanupThreshold || 0.8)) {
@@ -175,6 +183,19 @@ export class MemoryBank implements MemoryServiceInterface {
         }
       }, 60 * 60 * 1000); // 1 hour
     }
+  }
+
+  /**
+   * Clean up resources
+   */
+  public destroy(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
+    }
+    
+    // Clear all event listeners
+    this.eventListeners.clear();
   }
 
   /**
