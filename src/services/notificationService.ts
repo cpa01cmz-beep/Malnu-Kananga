@@ -219,12 +219,11 @@ class NotificationService {
 
     const browserNotification = new Notification(notification.title, options);
 
-    // Auto-close after 5 seconds for non-urgent notifications
-    if (notification.priority !== 'urgent') {
-      setTimeout(() => {
-        browserNotification.close();
-      }, 5000);
-    }
+    // Track notification for cleanup
+    const notificationId = setTimeout(() => {
+      browserNotification.close();
+    }, 10000); // Auto-close after 10 seconds
+    this.scheduledReminders.push(notificationId);
 
     // Handle click
     browserNotification.onclick = () => {
@@ -233,6 +232,12 @@ class NotificationService {
         window.location.href = notification.actionUrl;
       }
       browserNotification.close();
+      
+      // Remove from scheduled reminders
+      const index = this.scheduledReminders.indexOf(notificationId);
+      if (index > -1) {
+        this.scheduledReminders.splice(index, 1);
+      }
     };
   }
 
