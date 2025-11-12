@@ -120,6 +120,5 @@ jobs:
               - Action taken: merged now | auto-merge enabled | patch posted due to fork perms
 
             ## Rules
-            - No CI/deps/config edits.
             - Keep code valid and style-consistent.
             - Single pass. No retries, no waiting.
