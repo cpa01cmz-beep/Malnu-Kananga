@@ -1,4 +1,4 @@
-name: "Free VPS Research – Simple"
+name: "Check PR"
 
 on:
   workflow_dispatch:
@@ -7,6 +7,10 @@ on:
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
+  actions: read
+  id-token: write
 
 jobs:
   research:
@@ -22,9 +26,10 @@ jobs:
         uses: google-github-actions/run-gemini-cli@v0.1.14
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           prompt: |
-            Search for public, free‑VPS offers (free tier, trials, developer credits). 
-            Output in Markdown with date (YYYY‑MM‑DD), list of offers (name, URL, what is free, limits, reliability score 1‑5).
+            Anda memiliki akses ke gh cli. Periksa pr terbuka dan issue terbuka. prioritaskan pr, jika tidak ada yang terbuka, maka bekerja dengan issue.  
+            Pilih satu pr paling penting, lihat semua komentar di percakapan, pertimbangkan untuk apply sesuai saran di komentar. merge pr.
           upload_artifacts: false
 
       - name: Write output to file
