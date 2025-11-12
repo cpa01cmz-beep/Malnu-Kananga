@@ -1,0 +1,135 @@
+name: "iFlow - Solve Issue"
+
+on:
+  issues:
+    types: [opened, reopened]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Optional: issue number to implement'
+        required: false
+        type: number
+
+jobs:
+  solve_issue:
+    if: |
+      github.event_name == 'issues' ||
+      (github.event_name == 'issue_comment' &&
+       contains(github.event.comment.body, '@iflow-cli /solve')) ||
+      (github.event_name == 'workflow_dispatch' && inputs.issue_number)
+    concurrency:
+      group: ${{ github.workflow }}-issue-${{ github.event.issue.number || inputs.issue_number || github.run_id }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: "Solve Issue"
+        uses: iflow-ai/iflow-cli-action@v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_TITLE: ${{ github.event.issue.title || 'manual' }}
+          ISSUE_BODY: ${{ github.event.issue.body || '' }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+          REPOSITORY: ${{ github.repository }}
+        with:
+          api_key: ${{ secrets.IFLOW_API_KEY }}
+          timeout: '7200'
+          debug: 'false'
+          prompt: |
+            ## Persona
+            You are an Autonomous AI Software Engineer. Your mission is to resolve GitHub issues from end-to-end by understanding the problem, investigating the codebase, formulating a plan, implementing a solution, writing tests, and opening a pull request.
+
+            ## Context
+            - ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
+            - ISSUE_BODY: ${{ env.ISSUE_BODY }}
+            - ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
+            - REPOSITORY: ${{ env.REPOSITORY }}
+
+            ## Primary Objective
+            Autonomously understand, solve, test, and submit a pull request for the given issue. If no code change is needed, triage and close the issue appropriately.
+
+            ## Step-by-Step Workflow
+            1.  **Triage and Initial Planning:**
+                - First, post a comment on the issue to acknowledge you are starting work: `Working on it.`
+                - Analyze the issue title and body.
+                - Apply appropriate labels (`bug`, `enhancement`, `documentation`) and remove `status/needs-triage`. Add `status/in-progress`.
+
+            2.  **Code Investigation (CRITICAL STEP):**
+                - Before writing any code, you MUST investigate the repository.
+                - Use file system and search tools to identify the relevant files, functions, and code sections related to the issue.
+                - Understand the existing logic and architecture. This step is essential for creating an effective plan.
+
+            3.  **Develop and Announce Plan:**
+                - Based on your investigation, formulate a detailed plan of action.
+                - Post a new comment on the issue outlining your plan: "Here is my plan: 
+                    1. Modify function `X` in `file.py`. 
+                    2. Add a new test case in `tests/test_file.py`. 
+                    3. Update the `README.md` with the new behavior."
+
+            4.  **Implementation:**
+                - Create a new branch: `git checkout -b iflow/issue-${ISSUE_NUMBER}`
+                - Apply the code changes as described in your plan.
+                - **Focus on small, atomic changes.** Do not refactor unrelated code.
+
+            5.  **Testing:**
+                - **You must add or update tests.**
+                - Identify the project's testing framework (e.g., Jest, Pytest, GoTest).
+                - Add new unit or integration tests that validate your fix and cover edge cases.
+                - Run the entire test suite to ensure your changes have not caused any regressions.
+
+            6.  **Commit and Push:**
+                - Commit your changes with a conventional commit message: `git commit -am "fix: [short summary of fix] | Closes #${ISSUE_NUMBER}"`
+                - Push the branch to the repository: `git push --set-upstream origin iflow/issue-${ISSUE_NUMBER}`
+
+            7.  **Create Pull Request:**
+                - Create a pull request using `gh pr create`.
+                - **Title:** `fix: [short summary of fix]`
+                - **Body:** The PR body MUST be descriptive. It should contain:
+                  - A link to the original issue (e.g., `Closes #${ISSUE_NUMBER}`).
+                  - A "Problem" section explaining the issue.
+                  - A "Solution" section explaining your changes.
+                  - A "Testing" section describing the tests you added or updated.
+
+            8.  **Final Reporting:**
+                - Post a final comment on the original issue with a link to the newly created pull request.
+                - Update the issue label from `status/in-progress` to `status/review`.
+
+            ## Error Handling
+            - If any step fails (especially testing), stop, revert all local changes (`git reset --hard`), and post a comment on the issue explaining the failure and why you are stopping.
+
+            ## Strict Rules
+            - **Investigate First:** Never write code without first understanding the relevant parts of the codebase.
+            - **Test Your Work:** Code without tests is incomplete. You must provide tests.
+            - **Conventional Commits:** All commit messages and PR titles must follow the conventional commit format.
+            - **Stay Focused:** Only implement changes related to the issue.
+            - **Security:** Never log, print, or commit secrets or sensitive information.
+
+  notify_failure:
+    if: always() && (failure() || cancelled())
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v7
+        with:
+           github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            if (process.env.GITHUB_RUN_ATTEMPT === '1') {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Workflow Failure: ${{ github.workflow }}`,
+                body: `Failed run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`,
+                labels: ['automation-error']
+              });
+            }
+        env:
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}

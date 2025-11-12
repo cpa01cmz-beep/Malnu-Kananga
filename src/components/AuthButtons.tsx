@@ -7,7 +7,6 @@ interface AuthButtonsProps {
   onLoginClick: () => void;
   onChatClick: () => void;
   onLogout: () => void;
-  onPortalClick?: () => void;
   showOnMobile?: boolean;
 }
 
@@ -16,7 +15,6 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({
   onLoginClick,
   onChatClick,
   onLogout,
-  onPortalClick,
   showOnMobile = false
 }) => {
   const mobileClasses = showOnMobile ? '' : 'hidden sm:flex';
@@ -26,13 +24,6 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({
   if (isLoggedIn) {
     return (
       <div className={`${mobileClasses} items-center space-x-2`}>
-        <button
-          onClick={onPortalClick}
-          onTouchStart={handleTouchFeedback}
-          className={`bg-blue-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-blue-700 active:bg-blue-800 transition-colors touch-optimized ${buttonClasses}`}
-        >
-          Portal
-        </button>
         <button
           onClick={onLogout}
           onTouchStart={handleTouchFeedback}

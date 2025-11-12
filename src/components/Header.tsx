@@ -17,13 +17,14 @@ interface HeaderProps {
     onChatClick: () => void;
     isLoggedIn: boolean;
     onLogout: () => void;
-    onPortalClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, onLogout, onPortalClick }) => {
+const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, onLogout }) => {
     const isScrolled = useScrollEffect();
     const { isMenuOpen, setIsMenuOpen } = useResponsiveMenu();
     const { handleTouchFeedback } = useTouchFeedback();
+
+
 
     const headerClasses = `
         fixed top-0 left-0 right-0 z-40 transition-all duration-300
@@ -51,9 +52,6 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
                     <div className="flex items-center space-x-2">
                        {isLoggedIn ? (
                             <div className="hidden sm:flex items-center space-x-2">
-                               <a href="#" className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
-                                   Portal
-                               </a>
                                <button onClick={onLogout} className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                                    Logout
                                </button>
@@ -64,6 +62,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
                                    <ChatIcon />
                                    <span>Tanya AI</span>
                                </button>
+
                                <button onClick={onLoginClick} className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
                                    Login
                                </button>
@@ -77,13 +76,12 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
                 </div>
             </div>
 
-            <MobileMenu
+             <MobileMenu
                 isOpen={isMenuOpen}
                 isLoggedIn={isLoggedIn}
                 onLoginClick={onLoginClick}
                 onChatClick={onChatClick}
                 onLogout={onLogout}
-                onPortalClick={onPortalClick}
                 onClose={() => setIsMenuOpen(false)}
             />
         </header>
