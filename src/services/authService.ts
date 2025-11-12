@@ -63,7 +63,11 @@ async function generateSecureToken(email: string, expiryTime: number = 15 * 60 *
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
 // Generate signature using HMAC-SHA256 with crypto.subtle (secure signature)
-   const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, import.meta.env.VITE_JWT_SECRET || 'default-secret-key-for-dev');
+    // In production, signature generation should be done server-side only
+    // This client-side implementation is for development/testing purposes only
+    // DO NOT use this for production authentication as it exposes the secret
+    const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+    const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
@@ -116,7 +120,9 @@ async function verifyAndDecodeToken(token: string): Promise<TokenData | null> {
     
     // Verify signature using HMAC-SHA256
     const data = `${encodedHeader}.${encodedPayload}`;
-    const secret = import.meta.env.VITE_JWT_SECRET || 'default-secret-key-for-dev';
+    // In production, token verification should be done server-side only
+    // This client-side implementation is for development/testing purposes only
+    const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
     const isValid = await verifyHMACSignature(data, signature, secret);
     
     if (!isValid) {
@@ -547,10 +553,10 @@ export class AuthService {
         return { success: false, message: 'Tidak ada token aktif' };
       }
 
-const newToken = await refreshToken(currentToken);
-       if (newToken) {
-         await TokenManager.storeToken(newToken);
-         return { success: true, token: newToken, message: 'Token berhasil di-refresh' };
+      const newToken = await refreshToken(currentToken);
+      if (newToken) {
+        await TokenManager.storeToken(newToken);
+        return { success: true, token: newToken, message: 'Token berhasil di-refresh' };
       } else {
         TokenManager.removeToken();
         return { success: false, message: 'Token tidak valid, silakan login ulang' };

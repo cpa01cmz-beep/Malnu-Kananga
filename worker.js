@@ -266,9 +266,9 @@ export default {
           return new Response(JSON.stringify({ message: 'Format email tidak valid.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
 
-// Simplified auth - accept any email for demo purposes
-         // TODO: Replace with proper KV storage or external database when available
-         const token = await generateSecureToken(email, 15 * 60 * 1000);
+        // Simplified auth - accept any email for demo purposes
+        // TODO: Replace with proper KV storage or external database when available
+        const token = await generateSecureToken(email, 15 * 60 * 1000);
         const magicLink = `${new URL(request.url).origin}/verify-login?token=${token}`;
         const emailBody = `<h1>Login ke Akun MA Malnu Kananga</h1><p>Klik tautan di bawah ini untuk masuk. Tautan ini hanya berlaku selama 15 menit.</p><a href="${magicLink}" style="padding: 10px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 5px;">Login Sekarang</a><p>Jika Anda tidak meminta link ini, abaikan email ini.</p>`;
         const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
@@ -293,19 +293,19 @@ export default {
         const token = url.searchParams.get('token');
         if (!token) return new Response('Token tidak valid atau hilang.', { status: 400 });
         try {
-const tokenData = await verifyAndDecodeToken(token);
-             if (!tokenData) {
-                 return new Response('Link login sudah kedaluwarsa atau tidak valid. Silakan minta link baru.', { status: 400 });
-             }
-            const headers = new Headers();
-// Add __Host- prefix for more secure cookie (only works on HTTPS)
+            const tokenData = await verifyAndDecodeToken(token);
+            if (!tokenData) {
+                return new Response('Link login sudah kedaluwarsa atau tidak valid. Silakan minta link baru.', { status: 400 });
+            }
+             const headers = new Headers();
+             // Add __Host- prefix for more secure cookie (only works on HTTPS)
              // Use the actual token instead of just the email to prevent session hijacking
              headers.set('Set-Cookie', `__Host-auth_session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
-            headers.set('Location', new URL(request.url).origin);
-            return new Response(null, { status: 302, headers });
-        } catch(e) {
-            return new Response('Token tidak valid atau rusak.', { status: 400 });
-        }
+             headers.set('Location', new URL(request.url).origin);
+             return new Response(null, { status: 302, headers });
+         } catch(e) {
+             return new Response('Token tidak valid atau rusak.', { status: 400 });
+         }
     }
 
     return new Response('Endpoint tidak ditemukan.', { status: 404, headers: corsHeaders });

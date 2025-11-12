@@ -33,7 +33,7 @@ jobs:
       - name: "Solve Issue"
         uses: iflow-ai/iflow-cli-action@v2.1.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_TITLE: ${{ github.event.issue.title || 'manual' }}
           ISSUE_BODY: ${{ github.event.issue.body || '' }}
           ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
@@ -120,7 +120,7 @@ jobs:
       - name: Create failure issue
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
+           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             if (process.env.GITHUB_RUN_ATTEMPT === '1') {
               await github.rest.issues.create({

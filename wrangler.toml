@@ -19,7 +19,7 @@ index_name = "malnu-kananga-docs"
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "malnu-kananga-auth"
-database_id = "your_database_id_here"
+database_id = "YOUR_ACTUAL_PRODUCTION_DATABASE_ID_HERE"
 
 # Development environment
 [env.preview.vars]
@@ -33,7 +33,7 @@ index_name = "malnu-kananga-docs-preview"
 [[env.preview.d1_databases]]
 binding = "DB"
 database_name = "malnu-kananga-auth-preview"
-database_id = "your_preview_database_id_here"
+database_id = "YOUR_ACTUAL_PREVIEW_DATABASE_ID_HERE"
 
 # Build configuration
 [build]
