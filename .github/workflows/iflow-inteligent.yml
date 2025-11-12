@@ -1,8 +1,10 @@
-name: "🧠 iflow intelijen adaptif"
+workflow ini, pada prompt, tugas no 7, hanya merencanakan, ini tidak berguna karena iflow cli berjalan di github action yang akan ditutup segera setelah selesai. 
+
+name: "🧠 iflow intelijen"
 
 on:
   schedule:
-    - cron: '0 */12 * * *'
+    - cron: '0 3 * * 1'
   workflow_dispatch:
 
 permissions:
@@ -58,60 +60,57 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download data artifacts from this run
+      - name: Download data artifacts
         uses: actions/download-artifact@v4
         with:
           name: repo-intel-data-${{ github.run_id }}
           path: ./intel
 
-      - name: Download previous self-improvement plan
-        id: prev_plan
-        run: |
-          mkdir -p intel/prev_plan
-          LATEST=$(gh run list --workflow "🧠 iflow intelijen adaptif" --json databaseId,status -L 10 | \
-                   jq '.[] | select(.status=="completed") | .databaseId' | head -n 1)
-          if [ -n "$LATEST" ]; then
-            gh run download $LATEST --name "self-improvement" --dir intel/prev_plan || echo "No previous plan"
-          fi
-
-      - name: Run iFlow CLI Agent for analysis and top-issue creation
+      - name: Run iFlow CLI Agent for analysis and auto-issue creation
         uses: iflow-ai/iflow-cli-action@v2.1.0
         with:
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: "7200"
           prompt: |
-            ## ROLE
-            You are an adaptive GitHub repository intelligence agent with write-access.
+            ## ROLE  
+            You are an autonomous GitHub repository intelligence agent with write-access.
 
-            ## CONTEXT
-            - Repository: ${{ github.repository }}
-            - CI/CD runs data: ./intel/gha_runs.json
-            - Open issues data: ./intel/open_issues.json
-            - PR history data: ./intel/recent_prs.json
-            - Previous self-improvement plan (if exists): ./intel/prev_plan
+            ## CONTEXT  
+            - Repository: ${{ github.repository }}  
+            - CI/CD runs data: ./intel/gha_runs.json  
+            - Open issues data: ./intel/open_issues.json  
+            - PR history data: ./intel/recent_prs.json  
             - Full repository code base is checked-out and available for deep analysis
 
-            ## TASKS
-            1. Deeply analyze the codebase: modules, dependencies, documentation, test coverage gaps, duplication, naming inconsistencies.
-            2. Analyze CI/CD logs: identify jobs with frequent failures, long durations (>10 minutes), reruns, unstable workflows.
-            3. Analyze issue/PR history: stale issues (open >60 days), PRs closed without merge, recurring bug patterns.
-            4. Generate findings:
-               - Bugs/inefficiencies (with description, location, impact)
-               - Improvement opportunities (with gap and suggestion)
-               - Feature ideas (at least two) with value proposition, rough implementation steps, estimated effort/impact
-            5. Select the **single most important finding** (highest priority/impact) and create one GitHub Issue only.
-            6. For improvement requiring workflow/config change: output unified-diff snippet targeting `.github/workflows/` or config files and commit or open PR if safe.
-            7. Self-improvement plan:
-               - Adjust thresholds, data to collect, or prompt refinements based on previous plan
-               - Save final plan to `intel/self_improvement_plan.json`
+            ## TASKS  
+            1. Deeply analyze the codebase: modules, dependencies, documentation, test coverage gaps, duplication, naming inconsistencies.  
+            2. Analyze CI/CD logs: identify jobs with frequent failures, long durations (>10 minutes), reruns, unstable workflows.  
+            3. Analyze issue/PR history: stale issues (open >60 days), PRs closed without merge, recurring bug patterns.  
+            4. Generate findings:  
+               - Bugs/inefficiencies (with description, location, impact)  
+               - Improvement opportunities (with gap and suggestion)  
+               - Feature ideas (at least two) with value proposition, rough implementation steps, estimated effort/impact  
+            5. Select 1 most important from findings and  **create a GitHub Issue** immediately.  
+               - use `gh issue create --title "<Issue Title>" --body "<Issue body>" --label "kind/bug,priority/high"` (or appropriate labels)  
+               - Category label must be one of `kind/bug`, `kind/enhancement`, `kind/documentation`, `kind/architecture`  
+               - Priority label must be one of `priority/critical`, `priority/high`, `priority/medium`, `priority/low`  
+            6. For improvement requiring workflow/config change: output unified-diff snippet targeting `.github/workflows/` or config files and commit or open PR if safe.  
+            7. Self-improvement plan: propose what additional data you will collect next time, what thresholds to adjust, how you will refine your prompt or analysis logic, save to `intel/self_improvement_plan.md`.
 
-            ## RULES
-            - Do not expose or log any secrets.
-            - Only create **one GitHub Issue** for the most critical finding.
-            - All code changes (issue creation, patches) must be small, atomic, maintainable.
+            ## RULES  
+            - Do not expose or log any secrets.  
+            - All code changes (issue creation, patches) must be small, atomic, maintainable.  
+            - When creating issues: ensure labels exist or propose their creation in the issue body.  
+            - Use `gh issue create` or `gh pr create` commands within the agent to perform creations.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload self-improvement plan artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: self-improvement-${{ github.run_id }}
-          path: intel/self_improvement_plan.json
+      - name: Save self-improvement plan as artifact
+        run: |
+          if [ -f intel/self_improvement_plan.md ]; then
+            echo "Uploading self-improvement plan..."
+            gh release create "self-improvement-${{ github.run_id }}" intel/self_improvement_plan.md --draft --notes "Self-improvement plan generated by iFlow agent"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
