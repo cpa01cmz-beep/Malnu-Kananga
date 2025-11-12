@@ -67,9 +67,33 @@ async function generateSecureToken(email: string, expiryTime: number = 15 * 60 *
     // This client-side implementation is for development/testing purposes only
     // DO NOT use this for production authentication as it exposes the secret
     const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+    
+    // For production, we'll make a request to the server to generate the signature
+    if (!isDevelopment) {
+      try {
+        const response = await fetch(`${WORKER_URL}/generate-signature`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data: `${encodedHeader}.${encodedPayload}` }),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to generate signature');
+        }
+        
+        const { signature } = await response.json();
+        return `${encodedHeader}.${encodedPayload}.${signature}`;
+      } catch (error) {
+        console.error('Error generating signature on server:', error);
+        throw new Error('Failed to generate secure token');
+      }
+    }
+    
+    // For development, continue with client-side signature generation
     const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
-
-  return `${encodedHeader}.${encodedPayload}.${signature}`;
+    return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
 
 // Generate cryptographically secure random string
@@ -123,10 +147,36 @@ async function verifyAndDecodeToken(token: string): Promise<TokenData | null> {
     // In production, token verification should be done server-side only
     // This client-side implementation is for development/testing purposes only
     const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
-    const isValid = await verifyHMACSignature(data, signature, secret);
     
-    if (!isValid) {
-      return null; // Invalid signature
+    // For production, we'll make a request to the server to verify the signature
+    if (!isDevelopment) {
+      try {
+        const response = await fetch(`${WORKER_URL}/verify-signature`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ data, signature }),
+        });
+        
+        if (!response.ok) {
+          return null; // Invalid signature
+        }
+        
+        const { isValid } = await response.json();
+        if (!isValid) {
+          return null; // Invalid signature
+        }
+      } catch (error) {
+        console.error('Error verifying signature on server:', error);
+        return null; // Invalid signature
+      }
+    } else {
+      // For development, continue with client-side signature verification
+      const isValid = await verifyHMACSignature(data, signature, secret);
+      if (!isValid) {
+        return null; // Invalid signature
+      }
     }
 
     // Add padding jika diperlukan
