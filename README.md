@@ -47,14 +47,14 @@ Proyek ini dilengkapi dengan lima workflow GitHub Actions untuk otomatisasi penu
 - Memberikan umpan balik konstruktif tentang koreksi, keamanan, dan kualitas kode
 - Dijalankan ketika pull request dibuka, dibuka kembali, atau disinkronkan
 
-### ⚠️ Permission Limitations
+### ⚠️ Batasan Izin Workflow
 
-**Important Note**: GitHub Apps have limitations when it comes to modifying workflow files. If you encounter permission errors when trying to push workflow changes, you may need to:
+**Catatan Penting**: GitHub Apps memiliki batasan saat mencoba memodifikasi file workflow. Jika Anda mengalami galat izin seperti `refusing to allow a GitHub App to create or update workflow ... without 'workflows' permission` saat mencoba mengirim perubahan pada file workflow, Anda mungkin perlu:
 
-1. Use a personal access token with `workflow` scope instead of the GitHub App
-2. Manually apply workflow changes if you have repository administrator permissions
+1. Gunakan _personal access token_ (PAT) dengan cakupan (`scope`) `workflow` sebagai ganti GitHub App.
+2. Terapkan perubahan workflow secara manual jika Anda memiliki izin administrator repositori.
 
-This limitation affects automated updates to files in the `.github/workflows/` directory.
+Batasan ini memengaruhi pembaruan otomatis pada file di direktori `.github/workflows/`.
 
 ---
 
