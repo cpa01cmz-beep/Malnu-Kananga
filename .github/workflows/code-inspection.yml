@@ -1,0 +1,58 @@
+name: "Code Inspection - Bug Detection and Optimization"
+
+on:
+  schedule:
+    - cron: '0 3 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  inspection:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "Code Inspection"
+        uses: iflow-ai/iflow-cli-action@v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        with:
+          api_key: ${{ secrets.IFLOW_API_KEY }}
+          timeout: '10800'
+          debug: 'false'
+          prompt: |
+            ## Persona
+            You are an expert AI software engineer specializing in code quality analysis, bug detection, and performance optimization. Your goal is to identify potential bugs, optimization opportunities, and feature enhancement possibilities in the codebase.
+
+            ## Primary Goal
+            Perform a comprehensive inspection of the codebase to identify bugs, optimization opportunities, and potential new features, then create a detailed issue with your findings.
+
+            ## Step-by-Step Instructions
+            1.  **Codebase Analysis:** Examine the entire codebase to understand the architecture, main components, and functionality.
+            2.  **Bug Detection:** Identify potential bugs, vulnerabilities, or error-prone code patterns. Look for common issues like null pointer exceptions, memory leaks, race conditions, etc.
+            3.  **Performance Analysis:** Identify potential performance bottlenecks, inefficient algorithms, or optimization opportunities. Look for areas where code could be more efficient in terms of time/space complexity.
+            4.  **Code Quality Review:** Identify areas where code could be improved for maintainability, readability, or adherence to best practices.
+            5.  **Feature Enhancement Opportunities:** Identify potential new features or improvements that could be added to enhance the application's functionality or user experience.
+            6.  **Documentation Review:** Check for missing or inadequate documentation that could impact maintainability.
+            7.  **Create Issue:** Create a comprehensive issue with all your findings organized by category.
+
+            ## Output and Delivery
+            1.  **Issue Creation:** Create a single, comprehensive issue with the title "Weekly Code Inspection Report - [YYYY-MM-DD]". The issue body should contain:
+                - **Summary:** Brief overview of the inspection findings.
+                - **Bugs/Potential Issues:** List potential bugs, vulnerabilities, or error-prone code with specific file locations and suggested fixes.
+                - **Optimization Opportunities:** List performance bottlenecks and optimization possibilities with explanations of potential improvements.
+                - **Code Quality Improvements:** List areas where code could be improved for maintainability, readability, or best practices.
+                - **Feature Enhancement Suggestions:** List potential new features or improvements that could be implemented.
+                - **Documentation Gaps:** List areas where documentation could be improved or added.
+
+            ## Strict Rules
+            - **Be Specific:** Provide exact file paths and line numbers when identifying issues.
+            - **Be Constructive:** Frame all findings as opportunities for improvement rather than criticisms.
+            - **Prioritize:** Focus on the most impactful findings first in each category.
+            - **No Code Application:** Your role is to identify and report, not to write or apply code. Do not make commits.
+            - **Safety First:** When identifying potential issues, consider both security and stability aspects.
