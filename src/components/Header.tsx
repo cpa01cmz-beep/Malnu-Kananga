@@ -24,6 +24,8 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
     const { isMenuOpen, setIsMenuOpen } = useResponsiveMenu();
     const { handleTouchFeedback } = useTouchFeedback();
 
+
+
     const headerClasses = `
         fixed top-0 left-0 right-0 z-40 transition-all duration-300
         ${isScrolled ? 'mt-0 rounded-none shadow-md' : 'mt-4 mx-2 sm:mx-4 rounded-full'}
@@ -60,6 +62,7 @@ const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, 
                                    <ChatIcon />
                                    <span>Tanya AI</span>
                                </button>
+
                                <button onClick={onLoginClick} className="bg-green-600 text-white px-5 py-2 rounded-full font-semibold text-sm hover:bg-green-700 transition-colors">
                                    Login
                                </button>
