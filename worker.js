@@ -297,15 +297,15 @@ export default {
             if (!tokenData) {
                 return new Response('Link login sudah kedaluwarsa atau tidak valid. Silakan minta link baru.', { status: 400 });
             }
-            const headers = new Headers();
-// Add __Host- prefix for more secure cookie (only works on HTTPS)
+             const headers = new Headers();
+             // Add __Host- prefix for more secure cookie (only works on HTTPS)
              // Use the actual token instead of just the email to prevent session hijacking
              headers.set('Set-Cookie', `__Host-auth_session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
-            headers.set('Location', new URL(request.url).origin);
-            return new Response(null, { status: 302, headers });
-        } catch(e) {
-            return new Response('Token tidak valid atau rusak.', { status: 400 });
-        }
+             headers.set('Location', new URL(request.url).origin);
+             return new Response(null, { status: 302, headers });
+         } catch(e) {
+             return new Response('Token tidak valid atau rusak.', { status: 400 });
+         }
     }
 
     return new Response('Endpoint tidak ditemukan.', { status: 404, headers: corsHeaders });
