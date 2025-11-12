@@ -1,5 +1,3 @@
-workflow ini, pada prompt, tugas no 7, hanya merencanakan, ini tidak berguna karena iflow cli berjalan di github action yang akan ditutup segera setelah selesai. 
-
 name: "🧠 iflow intelijen"
 
 on:
@@ -113,4 +111,5 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
