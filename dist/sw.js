@@ -410,8 +410,8 @@ function openDB() {
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
 
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
 
       // Pending forms store
       if (!db.objectStoreNames.contains('pendingForms')) {
@@ -440,12 +440,12 @@ async function getPendingForms() {
   });
 }
 
-async function removePendingForm(id) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['pendingForms'], 'readwrite');
-    const store = transaction.objectStore('pendingForms');
-    const request = store.delete(id);
+ async function removePendingForm(id) {
+   const db = await openDB();
+   return new Promise((resolve, reject) => {
+     const transaction = db.transaction(['pendingForms'], 'readwrite');
+     const store = transaction.objectStore('pendingForms');
+     const request = store.delete(id);
 
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
