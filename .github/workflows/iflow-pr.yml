@@ -1,6 +1,8 @@
 name: "iFlow - Apply PR Changes"
 
 on:
+  issue_comment:
+    types: [created]
   pull_request_review_comment:
     types: [created]
   workflow_dispatch:
@@ -13,34 +15,64 @@ on:
 jobs:
   apply_pr_changes:
     if: |
-      (github.event_name == 'pull_request_review_comment' &&
-       (contains(github.event.comment.body, '@iflow-cli /apply') ||
-        github.event.comment.author_association == 'COLLABORATOR')) ||
+      ((github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment') &&
+       contains(github.event.comment.body, '@iflow-cli /apply')) ||
       (github.event_name == 'workflow_dispatch' && inputs.trigger_apply)
     concurrency:
-      group: ${{ github.workflow }}-apply-${{ github.event.pull_request.number || inputs.trigger_apply || github.run_id }}
+      group: ${{ github.workflow }}-apply-${{ github.event.issue.number || github.event.pull_request.number || inputs.trigger_apply || github.run_id }}
       cancel-in-progress: true
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     permissions:
       contents: write
       pull-requests: write
-      issues: read
+
+    env:
+      PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number || inputs.trigger_apply }}
+      REPOSITORY: ${{ github.repository }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Validate PR context
+        run: |
+          if [ -z "${PR_NUMBER}" ]; then
+            echo "❌ Error: PR_NUMBER is missing or invalid."
+            exit 1
+          fi
+          echo "✅ Detected PR number: ${PR_NUMBER}"
+
+      - name: Fetch full PR discussion
+        id: fetch_pr
+        run: |
+          echo "📥 Fetching PR #${PR_NUMBER} discussion data..."
+          gh pr view ${PR_NUMBER} --comments --json comments,reviewThreads,reviewDecision,author,baseRefName,headRefName > pr_discussion.json
+          echo "✅ PR discussion data saved to pr_discussion.json"
+          echo "Discussion size: $(wc -c < pr_discussion.json) bytes"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: "Apply Changes from Full Discussion"
         uses: iflow-ai/iflow-cli-action@v2.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number || inputs.trigger_apply }}
-          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ env.PR_NUMBER }}
+          REPOSITORY: ${{ env.REPOSITORY }}
         with:
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: '7200'
           debug: 'false'
           prompt: |
+            ## Context
+            Below is the full discussion from PR #${{ env.PR_NUMBER }}:
+            ```
+            ${{ steps.fetch_pr.outputs }}
+            ```
+            Use it to apply explicit, approved, line-level feedback only.
+
             ## Persona
             You are an expert AI software engineer acting as a diligent repository maintainer. Your purpose is to apply specific, actionable feedback from a pull request discussion directly to the codebase.
 
@@ -60,8 +92,8 @@ jobs:
 
             ## Strict Rules
             - **Idempotency:** Never re-apply a change that has already been made.
-            - **Code Integrity:** Ensure all changes are applied correctly and do not break the surrounding code. The code must remain syntactically correct.
-            - **Style Consistency:** Adhere strictly to the existing coding style and conventions of the project.
-            - **Configuration Freeze:** NEVER modify configuration files, especially those related to CI/CD workflows, security, or project dependencies (e.g., `.github/`, `package.json`, `go.mod`).
-            - **Preserve Authorship:** Do not alter existing `git blame` information unnecessarily.
-            - **Focus:** Your sole task is applying feedback. Do not introduce new features or refactor code beyond the scope of the feedback.
+            - **Code Integrity:** Ensure all changes are applied correctly and do not break the surrounding code.
+            - **Style Consistency:** Follow the existing project style conventions.
+            - **Configuration Freeze:** Do not modify configuration files or workflows.
+            - **Preserve Authorship:** Keep existing `git blame` intact.
+            - **Focus:** Only apply feedback; no refactoring or new features.
