@@ -1,0 +1,43 @@
+name: "Reusable: Build and Test"
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: "Node.js version to use"
+        required: false
+        default: "18"
+        type: string
+      build-command:
+        description: "Command to build the application"
+        required: false
+        default: "npm run build"
+        type: string
+      test-command:
+        description: "Command to run tests"
+        required: false
+        default: "npm run test"
+        type: string
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    name: Build and Test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: ${{ inputs.test-command }}
+
+      - name: Build application
+        run: ${{ inputs.build-command }}
