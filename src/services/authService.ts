@@ -76,7 +76,7 @@ async function generateSecureToken(email: string, expiryTime: number = 15 * 60 *
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ data: `${encodedHeader}.${encodedPayload}`, secret: secret }),
+          body: JSON.stringify({ data: `${encodedHeader}.${encodedPayload}` }),
         });
         
         if (!response.ok) {
@@ -156,7 +156,7 @@ async function verifyAndDecodeToken(token: string): Promise<TokenData | null> {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ data, signature, secret }),
+          body: JSON.stringify({ data, signature }),
         });
         
         if (!response.ok) {
