@@ -13,7 +13,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: "Repository Maintenance"
@@ -55,3 +55,26 @@ jobs:
             - **Verification is Mandatory:** You must run tests to validate the changes. If no test suite exists, note this in the PR.
             - **Single PR:** Group all maintenance updates into a single, clean pull request.
             - **Configuration Freeze:** Do not modify any files other than the package manifests and lock files.
+
+  notify_failure:
+    if: always() && (failure() || cancelled())
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          script: |
+            if (process.env.GITHUB_RUN_ATTEMPT === '1') {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Workflow Failure: ${{ github.workflow }}`,
+                body: `Failed run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`,
+                labels: ['automation-error']
+              });
+            }
+        env:
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}

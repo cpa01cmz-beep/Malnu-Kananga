@@ -1,0 +1,33 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    # Look for `package.json` and `lock` files in the `root` directory
+    directory: "/"
+    # Check the npm registry for updates every day (weekdays)
+    schedule:
+      interval: "weekly"
+    # Allow up to 10 open pull requests for npm dependencies
+    open-pull-requests-limit: 10
+    # Add labels to pull requests
+    labels:
+      - "dependencies"
+      - "npm"
+    # Reviewers for the pull requests
+    reviewers:
+      - "sulhi"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    # Look for `.github/workflows` in the `root` directory
+    directory: "/"
+    # Check for updates every day (weekdays)
+    schedule:
+      interval: "weekly"
+    # Add labels to pull requests
+    labels:
+      - "dependencies"
+      - "github-actions"
+    # Reviewers for the pull requests
+    reviewers:
+      - "sulhi"

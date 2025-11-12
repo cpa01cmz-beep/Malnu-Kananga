@@ -1,0 +1,42 @@
+name: "Free VPS Research – Simple"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 1'
+
+permissions:
+  contents: write
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    env:
+      OUTPUT_FILE: free-vps.md
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Run Gemini CLI
+        id: run_research
+        uses: google-github-actions/run-gemini-cli@v0.1.14
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          prompt: |
+            Search for public, free‑VPS offers (free tier, trials, developer credits). 
+            Output in Markdown with date (YYYY‑MM‑DD), list of offers (name, URL, what is free, limits, reliability score 1‑5).
+          upload_artifacts: false
+
+      - name: Write output to file
+        run: |
+          echo "${{ steps.run_research.outputs.summary }}" > ${{ env.OUTPUT_FILE }}
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ${{ env.OUTPUT_FILE }}
+          if ! git diff --cached --quiet; then
+            git commit -m "Update free‑VPS list"
+            git push
+          fi
