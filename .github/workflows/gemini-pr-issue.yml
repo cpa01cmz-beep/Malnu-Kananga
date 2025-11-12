@@ -26,11 +26,10 @@ jobs:
         uses: google-github-actions/run-gemini-cli@v0.1.14
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          gemini_model: gemini.2-5.pro
           prompt: |
             Anda memiliki akses ke gh cli. Periksa pr terbuka dan issue terbuka. prioritaskan pr, jika tidak ada yang terbuka, maka bekerja dengan issue.  
             Pilih satu pr paling penting, lihat semua komentar di percakapan, pertimbangkan untuk apply sesuai saran di komentar. merge pr.
-          upload_artifacts: false
 
       - name: Write output to file
         run: |
