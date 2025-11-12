@@ -10,7 +10,6 @@ interface MobileMenuProps {
   onLoginClick: () => void;
   onChatClick: () => void;
   onLogout: () => void;
-  onPortalClick?: () => void;
   onClose: () => void;
 }
 
@@ -20,7 +19,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   onLoginClick,
   onChatClick,
   onLogout,
-  onPortalClick,
   onClose
 }) => {
   const { elementRef } = useTouchGestures({
@@ -49,7 +47,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
             onLoginClick={() => { onLoginClick(); onClose(); }}
             onChatClick={() => { onChatClick(); onClose(); }}
             onLogout={() => { onLogout(); onClose(); }}
-            onPortalClick={() => { onPortalClick?.(); onClose(); }}
+
             showOnMobile={true}
           />
         </div>
