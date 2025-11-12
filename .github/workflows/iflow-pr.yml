@@ -30,11 +30,17 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Validate PR context
+        run: |
+          if [ -z "${PR_NUMBER}" ]; then
+            echo "Error: PR_NUMBER is missing"
+            exit 1
+          fi
       - name: "Apply Changes from Full Discussion"
         uses: iflow-ai/iflow-cli-action@v2.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number || inputs.trigger_apply }}
+          PR_NUMBER: ${{ inputs.trigger_apply != '' && inputs.trigger_apply || github.event.pull_request.number }}
           REPOSITORY: ${{ github.repository }}
         with:
           api_key: ${{ secrets.IFLOW_API_KEY }}
