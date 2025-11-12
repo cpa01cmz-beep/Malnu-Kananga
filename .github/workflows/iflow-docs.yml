@@ -20,7 +20,7 @@ jobs:
       - name: "Update Documentation"
         uses: iflow-ai/iflow-cli-action@v2.1.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           REPOSITORY: ${{ github.repository }}
           COMMIT_MSG: ${{ github.event.head_commit.message }}
         with:

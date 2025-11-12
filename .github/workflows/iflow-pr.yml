@@ -53,12 +53,12 @@ jobs:
           echo "✅ PR discussion data saved to pr_discussion.json"
           echo "Discussion size: $(wc -c < pr_discussion.json) bytes"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: "Apply Changes from Full Discussion"
         uses: iflow-ai/iflow-cli-action@v2.1.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           PR_NUMBER: ${{ env.PR_NUMBER }}
           REPOSITORY: ${{ env.REPOSITORY }}
         with:
