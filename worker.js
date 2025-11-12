@@ -307,6 +307,36 @@ export default {
              return new Response('Token tidak valid atau rusak.', { status: 400 });
          }
     }
+    
+    // --- Endpoint untuk Generate Signature ---
+    if (url.pathname === '/generate-signature' && request.method === 'POST') {
+      try {
+        const { data, secret } = await request.json();
+        if (!data || !secret) {
+          return new Response(JSON.stringify({ message: 'Data dan secret diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+        }
+        
+        const signature = await generateHMACSignature(data, secret);
+        return new Response(JSON.stringify({ signature }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (e) {
+        return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+    
+    // --- Endpoint untuk Verify Signature ---
+    if (url.pathname === '/verify-signature' && request.method === 'POST') {
+      try {
+        const { data, signature, secret } = await request.json();
+        if (!data || !signature || !secret) {
+          return new Response(JSON.stringify({ message: 'Data, signature, dan secret diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+        }
+        
+        const isValid = await verifyHMACSignature(data, signature, secret);
+        return new Response(JSON.stringify({ isValid }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (e) {
+        return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
 
     return new Response('Endpoint tidak ditemukan.', { status: 404, headers: corsHeaders });
   },
