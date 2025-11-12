@@ -17,7 +17,7 @@ jobs:
     if: |
       github.event_name == 'issues' ||
       (github.event_name == 'issue_comment' &&
-       contains(github.event.comment.body, '@iflow-cli /solve')) ||
+       contains(github.event.comment.body, '/solve')) ||
       (github.event_name == 'workflow_dispatch' && inputs.issue_number)
     concurrency:
       group: ${{ github.workflow }}-issue-${{ github.event.issue.number || inputs.issue_number || github.run_id }}
@@ -27,17 +27,56 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+      actions: write
+      id-token: write
+      repository-projects: write
+      checks: write
+      discussions: write
+      
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: "Solve Issue"
+        uses: actions/checkout@v5
+
+      - name: Resolve issue context
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          ISSUE_NUMBER="${{ github.event.issue.number || inputs.issue_number }}"
+          if [[ "${{ github.event_name }}" == "issue_comment" ]]; then
+            # Optional override: '/solve #123'
+            refnum=$(printf "%s" "${{ github.event.comment.body }}" | grep -Eo '#[0-9]+' | head -1 | tr -d '#') || true
+            if [[ -n "${refnum:-}" ]]; then ISSUE_NUMBER="$refnum"; fi
+          fi
+
+          if [[ -z "${ISSUE_NUMBER:-}" ]]; then
+            echo "Issue number is required"; exit 1
+          fi
+
+          data=$(gh api repos/${{ github.repository }}/issues/$ISSUE_NUMBER)
+          title=$(jq -r '.title // "manual"' <<<"$data")
+          body=$(jq -r '.body // ""' <<<"$data")
+
+          {
+            echo "ISSUE_NUMBER=$ISSUE_NUMBER"
+            echo "REPOSITORY=${{ github.repository }}"
+            echo "ISSUE_TITLE<<__EOF__"
+            echo "$title"
+            echo "__EOF__"
+            echo "ISSUE_BODY<<__EOF__"
+            echo "$body"
+            echo "__EOF__"
+          } >> "$GITHUB_ENV"
+
+      - name: Solve Issue
         uses: iflow-ai/iflow-cli-action@v2.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          ISSUE_TITLE: ${{ github.event.issue.title || 'manual' }}
-          ISSUE_BODY: ${{ github.event.issue.body || '' }}
-          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
-          REPOSITORY: ${{ github.repository }}
+          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
+          ISSUE_BODY: ${{ env.ISSUE_BODY }}
+          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
+          REPOSITORY: ${{ env.REPOSITORY }}
         with:
           api_key: ${{ secrets.IFLOW_API_KEY }}
           timeout: '7200'

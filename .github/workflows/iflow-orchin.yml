@@ -1,0 +1,206 @@
+name: "iFlow - Orchestrator+ (Innovate)"
+
+on:
+  schedule:
+    - cron: '0 19 * * 0-4'   # 02:00 WIB weekdays
+  repository_dispatch:
+    types: [iflow.run, iflow.innovate]
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: "Verbose logs"
+        default: "false"
+      dry_run:
+        description: "Plan only (no branches/PRs)"
+        default: "false"
+      scope:
+        description: "Focus: workflows|deps|docs|labels|innovate"
+        default: "innovate"
+
+concurrency:
+  group: repo-orchestrator-${{ github.repository }}
+  cancel-in-progress: false
+
+# Naikkan ke write agar agent bisa re-run/disable workflow, upload SARIF, dsb.
+permissions:
+  actions: write
+  id-token: write
+  checks: write
+  contents: write
+  issues: write
+  pull-requests: write
+  security-events: write
+  repository-projects: write
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'repository_dispatch'
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN != '' && secrets.GH_TOKEN || github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
+      REPOSITORY: ${{ github.repository }}
+
+      # Ruang inovasi
+      IFLOW_DEBUG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug || 'false' }}
+      IFLOW_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run || 'false' }}
+      IFLOW_SCOPE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.scope || (github.event_name == 'repository_dispatch' && github.event.action || 'innovate') }}
+
+      IFLOW_BRANCH_PREFIX: 'iflow/'
+      IFLOW_LABEL: 'automation'
+      IFLOW_MEMORY: '.github/iflow/memory.md'
+      IFLOW_MEMORY_DIR: '.github/iflow'
+      IFLOW_SANDBOX_DIR: '.github/iflow/sandbox'
+      IFLOW_REUSABLE_DIR: '.github/workflows/_reusable'
+      IFLOW_ACTIONS_DIR: '.github/actions'
+      IFLOW_POLICIES_DIR: '.github/iflow/policies'
+      IFLOW_CAPABILITIES: >-
+        create_workflows,refactor_workflows,create_reusable,create_composite_actions,
+        scaffold_templates,release_automation,code_scanning,labels_projects,cache_management
+
+    steps:
+      - name: Harden runner (audit egress)
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git identity
+        run: |
+          git config user.name "iflow-bot"
+          git config user.email "iflow-bot@users.noreply.github.com"
+
+      - name: Toolbelt
+        env:
+          GH_TOKEN: ${{ env.GH_TOKEN }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq moreutils
+          gh --version
+          gh auth status || true
+          echo "GH_PROMPT_DISABLED=1" >> $GITHUB_ENV
+          echo "GH_DEBUG=${IFLOW_DEBUG}" >> $GITHUB_ENV
+          mkdir -p "${IFLOW_MEMORY_DIR}" "${IFLOW_SANDBOX_DIR}" "${IFLOW_REUSABLE_DIR}" "${IFLOW_ACTIONS_DIR}" "${IFLOW_POLICIES_DIR}"
+
+      - name: Baseline CI snapshot
+        env:
+          GH_TOKEN: ${{ env.GH_TOKEN }}
+        run: |
+          gh run list -L 50 --json databaseId,workflowName,duration,conclusion,createdAt \
+            | tee orchestrator-ci-baseline.json > /dev/null
+
+      - name: iFlow Orchestrator+
+        uses: iflow-ai/iflow-cli-action@v2.1.0
+        env:
+          GH_TOKEN: ${{ env.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          REPOSITORY: ${{ env.REPOSITORY }}
+
+          IFLOW_BRANCH_PREFIX: ${{ env.IFLOW_BRANCH_PREFIX }}
+          IFLOW_LABEL: ${{ env.IFLOW_LABEL }}
+          IFLOW_MEMORY: ${{ env.IFLOW_MEMORY }}
+          IFLOW_MEMORY_DIR: ${{ env.IFLOW_MEMORY_DIR }}
+          IFLOW_SANDBOX_DIR: ${{ env.IFLOW_SANDBOX_DIR }}
+          IFLOW_REUSABLE_DIR: ${{ env.IFLOW_REUSABLE_DIR }}
+          IFLOW_ACTIONS_DIR: ${{ env.IFLOW_ACTIONS_DIR }}
+          IFLOW_POLICIES_DIR: ${{ env.IFLOW_POLICIES_DIR }}
+          IFLOW_CAPABILITIES: ${{ env.IFLOW_CAPABILITIES }}
+
+          IFLOW_DEBUG: ${{ env.IFLOW_DEBUG }}
+          IFLOW_DRY_RUN: ${{ env.IFLOW_DRY_RUN }}
+          IFLOW_SCOPE: ${{ env.IFLOW_SCOPE }}
+        with:
+          api_key: ${{ secrets.IFLOW_API_KEY }}
+          timeout: '14400'
+          debug: ${{ env.IFLOW_DEBUG }}
+          prompt: |
+            ## Persona
+            You are an autonomous Repository Orchestrator/Planner/Manager. You maximize GitHub CLI (gh) and iFlow CLI. Objective: efficiency, reliability, security, maintainability. You have freedom to innovate inside guardrails.
+
+            ## Innovation Charter
+            You MAY:
+            - Create **new workflows** under `.github/workflows/` (prefixed `exp-` or reusable in `${IFLOW_REUSABLE_DIR}` via `workflow_call`).
+            - Create **composite actions** in `${IFLOW_ACTIONS_DIR}/<name>`.
+            - Create **sandbox assets** in `${IFLOW_SANDBOX_DIR}` for PoC.
+            - Introduce **release automation** (Release Drafter or equivalent), changelog jobs, version bumpers.
+            - Add **code scanning** scaffolding and upload SARIF if tools are added.
+            - Propose **branch protection** and rulesets via issues if not directly writable.
+            - Curate **policies/playbooks** in `${IFLOW_POLICIES_DIR}` and persist learnings in `${IFLOW_MEMORY}`.
+
+            You MUST:
+            - Never push to default; branch + PR only.
+            - Keep changes atomic, explained, and reversible.
+            - Avoid touching app code except for build determinism or CI-only refactors.
+
+            ## Tooling (use gh heavily)
+            - Runs: `gh run list/view --json ...`, calc baseline/after.
+            - Workflows: `gh api repos/{owner}/{repo}/actions/workflows`, `gh workflow run`, enable/disable as needed.
+            - Caches: `gh cache list/delete`.
+            - Labels/Projects: `gh label *`, `gh project *`.
+            - GraphQL for richer repo/workflow metadata.
+
+            ## Strategy
+            1) PLAN: full audit CI, caching, triggers, permissions, duplication; find reusable patterns.
+            2) EXECUTE:
+               - `ci:` Split/parallelize long jobs; extract reusable workflows; add matrix; add caches keyed by lockfiles.
+               - `ci:` Add **exp workflows** to trial new strategies (dispatchable), wire via `workflow_call`.
+               - `docs:` Add CODEOWNERS, templates, SECURITY.md, labeler, release-drafter config.
+               - `chore(deps):` Safe patch bumps with tests.
+               - `innovate:` Composite actions for common steps; auto-benchmark CI time.
+            3) VALIDATE: run trial via `gh workflow run` for new `exp-*` on branch; collect timings; post in PR.
+            4) SELF-IMPROVE: append lessons/backlog to `${IFLOW_MEMORY}` and `${IFLOW_POLICIES_DIR}`.
+
+            ## Scope selector
+            Honor IFLOW_SCOPE if provided; default to `innovate` which includes all categories plus experiments.
+
+            ## Required Outputs
+            - Planning issue link.
+            - List of PRs opened with category tags.
+            - CI time baseline vs after (numeric).
+            - If blocked by perms, create issues with concrete API calls/config needed.
+
+      - name: Lint changed workflows (static check)
+        if: always()
+        uses: reviewdog/action-actionlint@v1
+        with:
+          actionlint_flags: "-color"
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iflow-artifacts
+          path: |
+            orchestrator-ci-baseline.json
+            .github/iflow/**
+            **/orchestrator-report*.md
+            **/iflow*.log
+          if-no-files-found: ignore
+
+  notify_failure:
+    if: always() && (failure() || cancelled())
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GH_TOKEN != '' && secrets.GH_TOKEN || github.token }}
+          script: |
+            if (process.env.GITHUB_RUN_ATTEMPT === '1') {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Workflow Failure: ${{ github.workflow }}`,
+                body: `Failed run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`,
+                labels: ['automation-error']
+              });
+            }
+        env:
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}

@@ -1,0 +1,214 @@
+name: "iFlow - Repository Orchestrator"
+
+on:
+  schedule:
+    # Cron GitHub = UTC. 02:00 WIB = 19:00 UTC hari sebelumnya (Minggu–Kamis).
+    - cron: '0 19 * * 0-4'
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: "Enable verbose logs"
+        required: false
+        default: "false"
+      dry_run:
+        description: "Plan only. Do not open PRs"
+        required: false
+        default: "false"
+      scope:
+        description: "Optional focus area: workflows|deps|docs|labels"
+        required: false
+        default: ""
+
+concurrency:
+  group: repo-orchestrator-${{ github.repository }}
+  cancel-in-progress: false
+
+permissions:
+  actions: read
+  checks: read
+  contents: write
+  issues: write
+  pull-requests: write
+  security-events: read
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 200
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    permissions:
+      actions: read
+      checks: read
+      contents: write
+      issues: write
+      pull-requests: write
+      security-events: read
+    env:
+      # Prefer GH_TOKEN secret. Fallback ke token bawaan Actions.
+      GH_TOKEN: ${{ secrets.GH_TOKEN != '' && secrets.GH_TOKEN || github.token }}
+      GITHUB_TOKEN: ${{ github.token }}
+      REPOSITORY: ${{ github.repository }}
+      IFLOW_BRANCH_PREFIX: 'iflow/'
+      IFLOW_LABEL: 'automation'
+      IFLOW_MEMORY: '.github/iflow/memory.md'
+      IFLOW_DEBUG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug || 'false' }}
+      IFLOW_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run || 'false' }}
+      IFLOW_SCOPE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.scope || '' }}
+    steps:
+      # Opsional hardening runner untuk audit egress. Pin ke SHA di repo produksi.
+      - name: Harden runner (egress audit)
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Configure git identity
+        run: |
+          git config user.name "iflow-bot"
+          git config user.email "iflow-bot@users.noreply.github.com"
+
+      - name: Verify GitHub CLI
+        env:
+          GH_TOKEN: ${{ env.GH_TOKEN }}
+        run: |
+          gh --version
+          echo "auth status:"
+          gh auth status
+
+      - name: iFlow Orchestrator
+        uses: iflow-ai/iflow-cli-action@v2.1.0
+        env:
+          GH_TOKEN: ${{ env.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
+          REPOSITORY: ${{ env.REPOSITORY }}
+          IFLOW_BRANCH_PREFIX: ${{ env.IFLOW_BRANCH_PREFIX }}
+          IFLOW_LABEL: ${{ env.IFLOW_LABEL }}
+          IFLOW_MEMORY: ${{ env.IFLOW_MEMORY }}
+          IFLOW_DEBUG: ${{ env.IFLOW_DEBUG }}
+          IFLOW_DRY_RUN: ${{ env.IFLOW_DRY_RUN }}
+          IFLOW_SCOPE: ${{ env.IFLOW_SCOPE }}
+        with:
+          api_key: ${{ secrets.IFLOW_API_KEY }}
+          timeout: '10800'
+          debug: ${{ env.IFLOW_DEBUG }}
+          prompt: |
+            ## Persona
+            Act as Orchestrator/Planner/Manager. Expert in GitHub CLI (gh) and iFlow CLI. Goal: keep the repo efficient, effective, and aligned with GitHub best practices. Never push to the default branch; always branch + PR. You have broad autonomy within these guardrails.
+
+            ## Flags
+            - DRY_RUN: ${IFLOW_DRY_RUN}  # "true" => planning only, do not create branches/PRs
+            - SCOPE: ${IFLOW_SCOPE}      # limit focus if set: workflows|deps|docs|labels
+            - DEBUG: ${IFLOW_DEBUG}
+
+            ## High-level Strategy
+            1) PLAN: audit repo health, automation, security, CI, hygiene.
+            2) EXECUTE: minimal, scoped branches and PRs per category.
+            3) VALIDATE: CI green, automation efficient.
+            4) SELF-IMPROVE: persist learnings to "${IFLOW_MEMORY}" and reuse next runs.
+
+            ## Capabilities
+            You may call `gh` to:
+            - inspect workflows: `gh api repos/{owner}/{repo}/actions/workflows`
+            - inspect runs: `gh run list --limit 50`
+            - create issues/PRs/comments/labels/projects
+            - create branches and commits
+
+            You may edit files under:
+            - `.github/workflows/`
+            - `.github/ISSUE_TEMPLATE/`, `.github/PULL_REQUEST_TEMPLATE.md`
+            - `.github/labeler.yml`, `.github/dependabot.yml`
+            - `CODEOWNERS`, `SECURITY.md`
+            - language manifests/lockfiles only if required by CI fix or patch bump
+
+            Keep changes atomic and explained.
+
+            ## Primary Goals
+            - Efficiency: reduce CI time and redundancy via caching, matrix tuning, reusable workflows.
+            - Reliability: deterministic builds, pinned actions, required checks.
+            - Security: supply-chain hardening and least-privilege configs.
+            - Maintainability: ownership, templates, labels.
+
+            ## Required Audits
+            - Workflows:
+              * Pin actions by version or SHA; record rationale.
+              * Add per-workflow `concurrency` and least-privilege `permissions`.
+              * Add safe caching with lockfile keys.
+              * Minimize triggers; avoid `pull_request_target` unless justified.
+              * Split long jobs or extract to `workflow_call` if reusable.
+            - Dependencies:
+              * Audit ecosystem; apply safe patch updates. Separate PR for risky bumps with analysis.
+            - Repo standards:
+              * Ensure weekly `.github/dependabot.yml` for actions and ecosystems.
+              * Add `CODEOWNERS` with fallback owner.
+              * Add PR/Issue templates, labeler config, default labels.
+              * Add `SECURITY.md` with intake instructions.
+            - Protection:
+              * If lacking permission to change branch protection, open an issue with proposed rules and required checks.
+
+            ## Execution Rules
+            - Always create a planning issue: "Repo Orchestration Plan [YYYY-MM-DD]".
+            - One PR per category:
+              * `ci:` workflow improvements
+              * `chore(deps):` patch dependency updates
+              * `docs:` standards files
+            - Each PR must include:
+              * current vs proposed
+              * risk + rollback
+              * links to docs/release notes
+              * CI time before/after (from `gh run list`)
+            - If tests fail, isolate or revert and report in PR.
+            - Respect DRY_RUN flag.
+
+            ## Concrete Tasks (run now unless DRY_RUN=true)
+            1) Ensure `.github/dependabot.yml` covers detected ecosystems + `github-actions`, schedule weekly.
+            2) Pin actions in existing workflows to the latest safe version/commit.
+            3) Add `concurrency` + least-privilege `permissions` to each workflow.
+            4) Add build caches keyed by lockfiles; measure hit rate on last 20 runs.
+            5) Replace `pull_request_target` dengan `pull_request` kecuali ada alasan kuat.
+            6) Enforce frozen lockfile or equivalent in CI.
+            7) Add `CODEOWNERS`, PR template, Issue templates jika belum ada.
+            8) Patch-level deps update, jalankan test, buka satu PR.
+            9) Tulis/append "${IFLOW_MEMORY}" untuk lessons learned dan backlog.
+
+            ## Outputs
+            - Link planning issue, PR numbers, checklist perubahan.
+            - CI time baseline vs after.
+            - Jika terkendala permission, buat issue dengan langkah usulan.
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: iflow-artifacts
+          path: |
+            .github/iflow/**
+            **/orchestrator-report*.md
+            **/iflow*.log
+          if-no-files-found: ignore
+
+  notify_failure:
+    if: always() && (failure() || cancelled())
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create failure issue
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GH_TOKEN != '' && secrets.GH_TOKEN || github.token }}
+          script: |
+            if (process.env.GITHUB_RUN_ATTEMPT === '1') {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Workflow Failure: ${{ github.workflow }}`,
+                body: `Failed run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}`,
+                labels: ['automation-error']
+              });
+            }
+        env:
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
