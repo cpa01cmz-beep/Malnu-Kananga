@@ -49,7 +49,7 @@ function isValidEmail(email: string): boolean {
 }
 
 // Secure token generation menggunakan Web Crypto API
-function generateSecureToken(email: string, expiryTime: number = 15 * 60 * 1000): string {
+async function generateSecureToken(email: string, expiryTime: number = 15 * 60 * 1000): Promise<string> {
   const header = { alg: 'HS256', typ: 'JWT' };
   const payload = {
     email: email,
@@ -62,8 +62,12 @@ function generateSecureToken(email: string, expiryTime: number = 15 * 60 * 1000)
   const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-  // Generate signature menggunakan random bytes (untuk demo - production perlu HMAC)
-  const signature = generateRandomString(32);
+// Generate signature using HMAC-SHA256 with crypto.subtle (secure signature)
+    // In production, signature generation should be done server-side only
+    // This client-side implementation is for development/testing purposes only
+    // DO NOT use this for production authentication as it exposes the secret
+    const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+    const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
@@ -75,15 +79,58 @@ function generateRandomString(length: number): string {
   return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
+// Generate HMAC signature using crypto.subtle
+async function generateHMACSignature(data: string, secret: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+  return Array.from(new Uint8Array(signature), byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+// Verify HMAC signature using crypto.subtle
+async function verifyHMACSignature(data: string, signature: string, secret: string): Promise<boolean> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['verify']
+  );
+  
+  // Convert signature from hex string to Uint8Array
+  const signatureBytes = new Uint8Array(signature.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+  
+  return await crypto.subtle.verify('HMAC', key, signatureBytes, encoder.encode(data));
+}
+
 // Verify dan decode secure token
-function verifyAndDecodeToken(token: string): TokenData | null {
+async function verifyAndDecodeToken(token: string): Promise<TokenData | null> {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
 
-    const payload = parts[1];
+    const [encodedHeader, encodedPayload, signature] = parts;
+    
+    // Verify signature using HMAC-SHA256
+    const data = `${encodedHeader}.${encodedPayload}`;
+    // In production, token verification should be done server-side only
+    // This client-side implementation is for development/testing purposes only
+    const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+    const isValid = await verifyHMACSignature(data, signature, secret);
+    
+    if (!isValid) {
+      return null; // Invalid signature
+    }
+
     // Add padding jika diperlukan
-    const paddedPayload = payload + '='.repeat((4 - payload.length % 4) % 4);
+    const paddedPayload = encodedPayload + '='.repeat((4 - encodedPayload.length % 4) % 4);
     const decodedPayload = atob(paddedPayload.replace(/-/g, '+').replace(/_/g, '/'));
 
     const tokenData: TokenData = JSON.parse(decodedPayload);
@@ -100,8 +147,8 @@ function verifyAndDecodeToken(token: string): TokenData | null {
 }
 
 // Check if token needs refresh (dalam 5 menit terakhir)
-function shouldRefreshToken(token: string): boolean {
-  const tokenData = verifyAndDecodeToken(token);
+async function shouldRefreshToken(token: string): Promise<boolean> {
+  const tokenData = await verifyAndDecodeToken(token);
   if (!tokenData) return false;
 
   const now = Math.floor(Date.now() / 1000);
@@ -111,22 +158,45 @@ function shouldRefreshToken(token: string): boolean {
 }
 
 // Refresh token dengan email yang sama
-function refreshToken(currentToken: string): string | null {
-  const tokenData = verifyAndDecodeToken(currentToken);
+async function refreshToken(currentToken: string): Promise<string | null> {
+  const tokenData = await verifyAndDecodeToken(currentToken);
   if (!tokenData) return null;
 
   // Generate token baru dengan expiry time yang sama atau diperpanjang
-  return generateSecureToken(tokenData.email, 15 * 60 * 1000);
+  return await generateSecureToken(tokenData.email, 15 * 60 * 1000);
 }
 
 // Token storage management dengan auto-refresh
 class TokenManager {
   private static TOKEN_KEY = 'malnu_secure_token';
   private static REFRESH_TIMER_KEY = 'malnu_refresh_timer';
+  private static refreshTimer: NodeJS.Timeout | null = null;
 
-  static storeToken(token: string): void {
+  // Add cleanup listener for page unload
+  private static initialized = false;
+  private static cleanupListener: (() => void) | null = null;
+  
+  private static initializeCleanup(): void {
+    if (this.initialized) return;
+    
+    // Clean up timer when page is unloaded
+    const cleanup = () => {
+      if (this.refreshTimer) {
+        clearTimeout(this.refreshTimer);
+        this.refreshTimer = null;
+      }
+    };
+    
+    window.addEventListener('beforeunload', cleanup);
+    this.cleanupListener = cleanup;
+    
+    this.initialized = true;
+  }
+
+  static async storeToken(token: string): Promise<void> {
+    this.initializeCleanup();
     localStorage.setItem(this.TOKEN_KEY, token);
-    this.scheduleTokenRefresh(token);
+    await this.scheduleTokenRefresh(token);
   }
 
   static getToken(): string | null {
@@ -140,17 +210,22 @@ class TokenManager {
       clearTimeout(this.refreshTimer);
       this.refreshTimer = null;
     }
+    
+    // Remove event listener on cleanup
+    if (this.cleanupListener) {
+      window.removeEventListener('beforeunload', this.cleanupListener);
+      this.cleanupListener = null;
+      this.initialized = false;
+    }
   }
 
-  private static refreshTimer: NodeJS.Timeout | null = null;
-
-  private static scheduleTokenRefresh(token: string): void {
+  private static async scheduleTokenRefresh(token: string): Promise<void> {
     if (this.refreshTimer) {
       clearTimeout(this.refreshTimer);
     }
 
     // Schedule refresh 1 menit sebelum token expired
-    const tokenData = verifyAndDecodeToken(token);
+    const tokenData = await verifyAndDecodeToken(token);
     if (!tokenData) return;
 
     const now = Math.floor(Date.now() / 1000);
@@ -164,13 +239,13 @@ class TokenManager {
     }
   }
 
-  private static attemptTokenRefresh(): void {
+  private static async attemptTokenRefresh(): Promise<void> {
     const currentToken = this.getToken();
     if (!currentToken) return;
 
-    const newToken = refreshToken(currentToken);
+    const newToken = await refreshToken(currentToken);
     if (newToken) {
-      this.storeToken(newToken);
+      await this.storeToken(newToken);
       console.log('🔄 Token berhasil di-refresh secara otomatis');
     } else {
       console.warn('⚠️ Gagal refresh token, user perlu login ulang');
@@ -178,18 +253,18 @@ class TokenManager {
     }
   }
 
-  static initializeTokenManager(): void {
+  static async initializeTokenManager(): Promise<void> {
     const token = this.getToken();
     if (token) {
       // Check if token masih valid atau perlu refresh
-      if (shouldRefreshToken(token)) {
-        this.attemptTokenRefresh();
-      } else if (!verifyAndDecodeToken(token)) {
+      if (await shouldRefreshToken(token)) {
+        await this.attemptTokenRefresh();
+      } else if (!await verifyAndDecodeToken(token)) {
         // Token sudah expired
         this.removeToken();
       } else {
         // Token masih valid, schedule refresh jika diperlukan
-        this.scheduleTokenRefresh(token);
+        await this.scheduleTokenRefresh(token);
       }
     }
   }
@@ -425,7 +500,7 @@ export class AuthService {
     if (isDevelopment) {
       // Development mode - simulate magic link dengan secure token
       const user = LocalAuthService.findUserByEmail(email) || LocalAuthService.createUser(email);
-      const token = generateSecureToken(email, 15 * 60 * 1000); // 15 menit expiry
+      const token = await generateSecureToken(email, 15 * 60 * 1000); // 15 menit expiry
       LocalAuthService.setCurrentUser(user);
 
       // Simulate email sending
@@ -439,7 +514,7 @@ export class AuthService {
   static async verifyLoginToken(token: string): Promise<VerifyResponse> {
     if (isDevelopment) {
       try {
-        const tokenData = verifyAndDecodeToken(token);
+        const tokenData = await verifyAndDecodeToken(token);
         if (!tokenData) {
           return { success: false, message: 'Token tidak valid atau sudah kedaluwarsa' };
         }
@@ -448,17 +523,17 @@ export class AuthService {
         if (user) {
           LocalAuthService.setCurrentUser(user);
           // Store token dengan refresh mechanism
-          TokenManager.storeToken(token);
+          await TokenManager.storeToken(token);
 
           // Check if token perlu refresh dalam waktu dekat
-          const needsRefresh = shouldRefreshToken(token);
+          const needsRefresh = await shouldRefreshToken(token);
 
           return {
             success: true,
             user,
             message: 'Login berhasil',
             needsRefresh,
-            refreshedToken: needsRefresh ? refreshToken(token) || undefined : undefined
+            refreshedToken: needsRefresh ? await refreshToken(token) || undefined : undefined
           };
         } else {
           return { success: false, message: 'User tidak ditemukan' };
@@ -478,9 +553,9 @@ export class AuthService {
         return { success: false, message: 'Tidak ada token aktif' };
       }
 
-      const newToken = refreshToken(currentToken);
+      const newToken = await refreshToken(currentToken);
       if (newToken) {
-        TokenManager.storeToken(newToken);
+        await TokenManager.storeToken(newToken);
         return { success: true, token: newToken, message: 'Token berhasil di-refresh' };
       } else {
         TokenManager.removeToken();
@@ -518,7 +593,7 @@ export class AuthService {
     this.clearSession();
   }
 
-  static isAuthenticated(): boolean {
+  static async isAuthenticated(): Promise<boolean> {
     const user = this.getCurrentUser();
     const token = TokenManager.getToken();
 
@@ -527,7 +602,7 @@ export class AuthService {
     }
 
     // Check if token masih valid
-    const tokenData = verifyAndDecodeToken(token);
+    const tokenData = await verifyAndDecodeToken(token);
     if (!tokenData) {
       // Token expired, clear session
       this.clearSession();
@@ -537,9 +612,9 @@ export class AuthService {
     return true;
   }
 
-  static initializeAuth(): void {
+  static async initializeAuth(): Promise<void> {
     if (isDevelopment) {
-      TokenManager.initializeTokenManager();
+      await TokenManager.initializeTokenManager();
     }
   }
 }

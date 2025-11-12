@@ -219,12 +219,11 @@ class NotificationService {
 
     const browserNotification = new Notification(notification.title, options);
 
-    // Auto-close after 5 seconds for non-urgent notifications
-    if (notification.priority !== 'urgent') {
-      setTimeout(() => {
-        browserNotification.close();
-      }, 5000);
-    }
+    // Track notification for cleanup
+    const notificationId = setTimeout(() => {
+      browserNotification.close();
+    }, 10000); // Auto-close after 10 seconds
+    this.scheduledReminders.push(notificationId);
 
     // Handle click
     browserNotification.onclick = () => {
@@ -233,6 +232,12 @@ class NotificationService {
         window.location.href = notification.actionUrl;
       }
       browserNotification.close();
+      
+      // Remove from scheduled reminders
+      const index = this.scheduledReminders.indexOf(notificationId);
+      if (index > -1) {
+        this.scheduledReminders.splice(index, 1);
+      }
     };
   }
 
@@ -245,7 +250,7 @@ class NotificationService {
     const delay = reminderTime.getTime() - now.getTime();
 
     if (delay > 0) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         this.addNotification({
           title: 'Pengingat Jadwal',
           message: `Kelas ${scheduleItem.subject} akan dimulai dalam ${minutesBefore} menit`,
@@ -253,7 +258,16 @@ class NotificationService {
           priority: 'medium',
           actionUrl: '/portal?tab=schedule'
         });
+        
+        // Remove from scheduled reminders after execution
+        const index = this.scheduledReminders.indexOf(timeoutId);
+        if (index > -1) {
+          this.scheduledReminders.splice(index, 1);
+        }
       }, delay);
+      
+      // Track the scheduled reminder
+      this.scheduledReminders.push(timeoutId);
     }
   }
 
@@ -265,8 +279,19 @@ class NotificationService {
     return date;
   }
 
+  private static notificationCheckInterval: NodeJS.Timeout | null = null;
+  private static scheduledReminders: NodeJS.Timeout[] = [];
+
   // Initialize notification system
   static initialize(): void {
+    // Clear existing interval if any
+    if (this.notificationCheckInterval) {
+      clearInterval(this.notificationCheckInterval);
+    }
+    
+    // Clear scheduled reminders
+    this.clearScheduledReminders();
+
     // Request notification permission on load
     if (this.isBrowserNotificationSupported() && Notification.permission === 'default') {
       this.requestBrowserNotificationPermission();
@@ -276,9 +301,25 @@ class NotificationService {
     this.scheduleTodaysReminders();
 
     // Set up periodic check for new notifications
-    setInterval(() => {
+    this.notificationCheckInterval = setInterval(() => {
       this.checkForScheduledNotifications();
     }, 60000); // Check every minute
+  }
+
+  // Clean up notification system
+  static destroy(): void {
+    if (this.notificationCheckInterval) {
+      clearInterval(this.notificationCheckInterval);
+      this.notificationCheckInterval = null;
+    }
+    
+    this.clearScheduledReminders();
+  }
+  
+  // Clear all scheduled reminders
+  private static clearScheduledReminders(): void {
+    this.scheduledReminders.forEach(timeout => clearTimeout(timeout));
+    this.scheduledReminders = [];
   }
 
   // Schedule reminders for today's classes

@@ -18,6 +18,37 @@ Selamat datang di repositori resmi untuk website Madrasah Aliyah Malnu Kananga. 
 
 ---
 
+## 🤖 Otomatisasi dengan GitHub Actions
+
+Proyek ini dilengkapi dengan lima workflow GitHub Actions untuk otomatisasi penuh:
+
+### 1. iFlow - Solve Issue (`iflow-issue.yml`)
+- Secara otomatis menangani issue di repository ketika dibuka atau dikomentari
+- Dapat memahami permintaan, mengimplementasikan solusi, dan membuat pull request
+- Dijalankan ketika issue dibuka, dibuka kembali, atau dikomentari dengan `@iflow-cli /solve`
+
+### 2. iFlow - Update Documentation (`iflow-docs.yml`)
+- Secara otomatis memperbarui dokumentasi ketika ada perubahan di branch `main`
+- Menganalisis perubahan kode dan memperbarui file dokumentasi yang relevan
+- Dijalankan secara otomatis setiap kali ada push ke branch `main`
+
+### 3. iFlow - Repository Maintenance (`iflow-maintenance.yml`)
+- Menjalankan audit keamanan dan memperbarui dependensi secara berkala
+- Hanya menerapkan pembaruan patch-level untuk menghindari perubahan yang merusak
+- Dijalankan secara terjadwal setiap hari Senin-Jumat pukul 02:00 UTC
+
+### 4. iFlow - Apply PR Changes (`iflow-pr.yml`)
+- Menerapkan umpan balik kode dari komentar review pull request
+- Dapat menerapkan perubahan kecil seperti perbaikan typo atau penyesuaian parameter
+- Dijalankan ketika komentar PR mengandung `@iflow-cli /apply` atau oleh kolaborator
+
+### 5. iFlow - Review Pull Request (`iflow-reviewpr.yml`)
+- Secara otomatis melakukan code review terhadap pull request yang dibuka
+- Memberikan umpan balik konstruktif tentang koreksi, keamanan, dan kualitas kode
+- Dijalankan ketika pull request dibuka, dibuka kembali, atau disinkronkan
+
+---
+
 
 ## 🚀 Deployment Status: PRODUCTION READY
 
