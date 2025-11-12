@@ -19,7 +19,7 @@ jobs:
       - name: "Repository Maintenance"
         uses: iflow-ai/iflow-cli-action@v2.1.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           REPOSITORY: ${{ github.repository }}
         with:
           api_key: ${{ secrets.IFLOW_API_KEY }}
