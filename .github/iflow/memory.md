@@ -49,6 +49,9 @@ This file tracks the progress and lessons learned from the iFlow repository orch
 
 ### Next Steps
 - Test experimental workflow to measure performance improvements
+- Create PR with workflow improvements
+- Implement additional caching strategies
+- Review and optimize other workflows
 - Create PR with workflow improvements (pending permissions)
 - Implement additional caching strategies
 - Review and optimize other workflows
