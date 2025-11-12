@@ -307,6 +307,40 @@ export default {
              return new Response('Token tidak valid atau rusak.', { status: 400 });
          }
     }
+    
+    // --- Endpoint untuk Generate Signature ---
+    if (url.pathname === '/generate-signature' && request.method === 'POST') {
+      try {
+        const { data } = await request.json();
+        if (!data) {
+          return new Response(JSON.stringify({ message: 'Data diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+        }
+        
+        // Gunakan secret key yang disimpan di environment variable
+        const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+        const signature = await generateHMACSignature(data, secret);
+        return new Response(JSON.stringify({ signature }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (e) {
+        return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+    
+    // --- Endpoint untuk Verify Signature ---
+    if (url.pathname === '/verify-signature' && request.method === 'POST') {
+      try {
+        const { data, signature } = await request.json();
+        if (!data || !signature) {
+          return new Response(JSON.stringify({ message: 'Data dan signature diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+        }
+        
+        // Gunakan secret key yang disimpan di environment variable
+        const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+        const isValid = await verifyHMACSignature(data, signature, secret);
+        return new Response(JSON.stringify({ isValid }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (e) {
+        return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
 
     return new Response('Endpoint tidak ditemukan.', { status: 404, headers: corsHeaders });
   },
