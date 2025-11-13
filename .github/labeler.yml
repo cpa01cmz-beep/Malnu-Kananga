@@ -1,0 +1,34 @@
+# Configuration for labeler action
+# See documentation: https://github.com/actions/labeler
+
+# Label all pull requests that touch workflow files
+github-actions:
+  - .github/workflows/*
+  - .github/actions/*
+
+# Label pull requests that touch documentation
+documentation:
+  - README.md
+  - *.md
+  - docs/**
+  - .github/**
+
+# Label pull requests that touch source code
+source:
+  - src/**
+  - package.json
+  - package-lock.json
+  - tsconfig.json
+
+# Label pull requests that touch test files
+tests:
+  - src/**/*.test.*
+  - src/**/__tests__/**
+  - jest.config.js
+
+# Label pull requests that touch configuration files
+configuration:
+  - .gitignore
+  - .env.example
+  - vite.config.ts
+  - babel.config.js
