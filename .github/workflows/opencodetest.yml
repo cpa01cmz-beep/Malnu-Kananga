@@ -68,14 +68,12 @@ jobs:
           curl -fsSL https://opencode.ai/install | bash
           echo "$HOME/.opencode/bin" >> $GITHUB_PATH
 
-      - name: Run opencode agent manually
+      - name: Run OpenCode agent
         run: |
-          opencode run \
-            --command Analyze open pull requests and issues and decide which one to fix first \
+          opencode run "Analyze open pull requests and issues and decide which one to fix first" \
             --model iflowcn/qwen3-coder-plus \
-            --context ./pr_meta.json \
-            --context ./issue_meta.json \
+            --file ./pr_meta.json \
+            --file ./issue_meta.json \
             --share
         env:
           IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
-
