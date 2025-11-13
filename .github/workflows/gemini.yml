@@ -63,8 +63,8 @@ jobs:
           ACTION_LOGS=$(gh run list --limit 10 --json name,status,conclusion --template '{{range .}}{{- printf "- %s: %s (%s)\n" .name .status .conclusion}}{{end}}')
 
           # =================== BARIS YANG DIPERBAIKI DI BAWAH INI ===================
-          # Pull Request Terbuka (Detail penting) - Dengan template yang tangguh
-          OPEN_PRS=$(gh pr list --state open --limit 10 --json number,title,author,headRefName,baseRefName,comments,reviews,statusCheckRollup --template '{{range .}}{{- printf "### PR #%v: %s\n" .number .title}}{{- printf "*   **Cabang:** %s -> %s\n" .headRefName .baseRefName}}{{- printf "*   **Penulis:** %s\n" .author.login}}{{- if .reviews }}{{- printf "*   **Ulasan:**\n"}}{{range .reviews}}{{- printf "    - %s oleh %s\n" .state .author.login}}{{end}}{{end}}{{- if .comments }}{{- printf "*   **Komentar Terbaru:**\n"}}{{range .comments}}{{- printf "    - \"%s\" oleh %s\n" .body .author.login}}{{end}}{{end}}{{- printf "*   **Status Pemeriksaan:** %s\n" (if .statusCheckRollup}}{{.statusCheckRollup.state}}{{else}}"TIDAK ADA PEMERIKSAAN"{{end}}}}{{printf "\n"}}{{end}}')
+          # Pull Request Terbuka (Detail penting) - Dengan sintaks template Go yang benar
+          OPEN_PRS=$(gh pr list --state open --limit 10 --json number,title,author,headRefName,baseRefName,comments,reviews,statusCheckRollup --template '{{range .}}{{- printf "### PR #%v: %s\n" .number .title}}{{- printf "*   **Cabang:** %s -> %s\n" .headRefName .baseRefName}}{{- printf "*   **Penulis:** %s\n" .author.login}}{{- if .reviews }}{{- printf "*   **Ulasan:**\n"}}{{range .reviews}}{{- printf "    - %s oleh %s\n" .state .author.login}}{{end}}{{end}}{{- if .comments }}{{- printf "*   **Komentar Terbaru:**\n"}}{{range .comments}}{{- printf "    - \"%s\" oleh %s\n" .body .author.login}}{{end}}{{end}}{{- printf "*   **Status Pemeriksaan:** %s\n"}}{{if .statusCheckRollup}}{{.statusCheckRollup.state}}{{else}}"TIDAK ADA PEMERIKSAAN"{{end}}{{printf "\n"}}{{end}}')
           # =================== AKHIR DARI PERBAIKAN ===================
           
           if [ -z "$OPEN_PRS" ]; then OPEN_PRS="Tidak ada Pull Request yang terbuka."; fi
