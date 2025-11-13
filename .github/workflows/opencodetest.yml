@@ -71,7 +71,7 @@ jobs:
       - name: Run opencode agent manually
         run: |
           opencode run \
-            --command [Analyze open pull requests and issues and decide which one to fix first] \
+            --command Analyze open pull requests and issues and decide which one to fix first \
             --model iflowcn/qwen3-coder-plus \
             --context ./pr_meta.json \
             --context ./issue_meta.json \
