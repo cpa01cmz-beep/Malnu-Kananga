@@ -27,6 +27,10 @@ on:
       IFLOW_API_KEY:
         required: true
 
+# Add top-level permissions for least privilege
+permissions:
+  contents: read
+
 jobs:
   iflow-cli:
     runs-on: ubuntu-latest

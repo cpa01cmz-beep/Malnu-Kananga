@@ -5,6 +5,16 @@ on:
     - cron: '0 3 * * 1-5'
   workflow_dispatch:
 
+# Add top-level permissions for least privilege
+permissions:
+  contents: read
+  issues: write
+
+# Add concurrency settings to prevent overlapping runs
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   inspection:
     uses: ./.github/workflows/_reusable/iflow-cli.yml
@@ -15,6 +25,8 @@ jobs:
       timeout: '10800'
       debug: 'false'
       api_key: ${{ secrets.IFLOW_API_KEY }}
+    # Add timeout settings for jobs
+    timeout-minutes: 180
       prompt: |
         ## Persona
         You are an expert AI software engineer specializing in code quality analysis, bug detection, and performance optimization. Your goal is to identify potential bugs, optimization opportunities, and feature enhancement possibilities in the codebase.

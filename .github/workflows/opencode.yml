@@ -6,6 +6,15 @@ on:
   pull_request_review_comment:
     types: [created]
 
+# Add top-level permissions for least privilege
+permissions:
+  contents: read
+
+# Add concurrency settings to prevent overlapping runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   opencode:
     if: |
@@ -14,6 +23,8 @@ jobs:
       contains(github.event.comment.body, ' /oc') ||
       startsWith(github.event.comment.body, '/oc')
     runs-on: ubuntu-latest
+    # Add timeout settings for jobs
+    timeout-minutes: 30
     permissions:
       id-token: write
       contents: write
@@ -21,6 +32,12 @@ jobs:
       issues: write
       actions: read
     steps:
+      # Add harden-runner actions for security auditing
+      - name: Harden runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
