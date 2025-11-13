@@ -8,7 +8,15 @@ on:
   workflow_dispatch:
 
 jobs:
+  build-test:
+    uses: ./.github/workflows/_reusable/build-test.yml
+    with:
+      node-version: '18'
+      build-command: npm run build
+      test-command: npm run test
+
   deploy:
+    needs: build-test
     runs-on: ubuntu-latest
     name: Deploy to Cloudflare
 
