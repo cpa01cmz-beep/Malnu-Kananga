@@ -1,0 +1,38 @@
+name: "Reusable: Setup Node.js with npm caching"
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: "Node.js version to use"
+        required: false
+        default: "18"
+        type: string
+    outputs:
+      node-version:
+        description: "The Node.js version that was set up"
+        value: ${{ jobs.setup-node.outputs.node-version }}
+
+# Add top-level permissions for least privilege
+permissions:
+  contents: read
+
+jobs:
+  setup-node:
+    runs-on: ubuntu-latest
+    name: Setup Node.js with npm caching
+    outputs:
+      node-version: ${{ steps.setup.outputs.node-version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        id: setup
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci

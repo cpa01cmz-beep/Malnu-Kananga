@@ -1,0 +1,67 @@
+name: "Reusable: Build and Test"
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: "Node.js version to use"
+        required: false
+        default: "18"
+        type: string
+      build-command:
+        description: "Command to build the application"
+        required: false
+        default: "npm run build"
+        type: string
+      test-command:
+        description: "Command to run tests"
+        required: false
+        default: "npm run test"
+        type: string
+
+# Add top-level permissions for least privilege
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    name: Build and Test
+    # Add timeout settings for jobs
+    timeout-minutes: 15
+    
+    steps:
+      # Add harden-runner actions for security auditing
+      - name: Harden runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'npm'
+
+      # Add build artifact caching
+      - name: Cache build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            node_modules/.cache
+          key: ${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: ${{ inputs.test-command }}
+
+      - name: Build application
+        run: ${{ inputs.build-command }}

@@ -7,12 +7,42 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+# Add top-level permissions for least privilege
+permissions:
+  contents: read
+  deployments: write
+  issues: write
+  pull-requests: write
+
+# Add concurrency settings to prevent overlapping runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  build-test:
+    uses: ./.github/workflows/_reusable/build-test.yml
+    with:
+      node-version: '18'
+      build-command: npm run build
+      test-command: npm run test
+    # Add timeout settings for jobs
+    timeout-minutes: 15
+
   deploy:
+    needs: build-test
     runs-on: ubuntu-latest
     name: Deploy to Cloudflare
+    # Add timeout settings for jobs
+    timeout-minutes: 20
 
     steps:
+      # Add harden-runner actions for security auditing
+      - name: Harden runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
       - name: Checkout
         uses: actions/checkout@v5
 
@@ -21,6 +51,17 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+
+      # Add build artifact caching
+      - name: Cache build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            node_modules/.cache
+          key: ${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
 
       - name: Install dependencies
         run: npm ci
