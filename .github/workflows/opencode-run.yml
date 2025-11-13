@@ -42,6 +42,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
       REFLECT_FILE: .opencode-memory.json
+      TASK: ${{ github.event.inputs.task }}
 
     steps:
       - name: 🔒 Harden runner
@@ -78,41 +79,50 @@ jobs:
         run: |
           if [ -f "${REFLECT_FILE}" ]; then
             echo "Previous memory found, loading..."
-            cat ${REFLECT_FILE}
+            cat "${REFLECT_FILE}"
           else
-            echo "{}" > ${REFLECT_FILE}
+            echo "{}" > "${REFLECT_FILE}"
+            echo "No previous memory, initialized ${REFLECT_FILE}"
           fi
 
       - name: 🤖 Run OpenCode Self-Improving Agent
         run: |
-          PROMPT=$(cat <<EOF
-Anda adalah agen pengembang otonom bernama **OpenCode**, dibangun untuk belajar dari setiap eksekusi.
+          # fallback default jika TASK kosong
+          if [ -z "${TASK}" ]; then
+            TASK="Periksa PR terbaru, pastikan build berhasil, dan berikan rekomendasi perbaikan."
+          fi
 
-🎯 **Tujuan Anda**:
+          # buat prompt dinamis
+          PROMPT=$(cat <<EOF
+Anda adalah agen pengembang otonom bernama OpenCode, dibangun untuk belajar dari setiap eksekusi.
+
+🎯 Tujuan Anda:
 - Menganalisis isu dan PR terbuka
 - Memprioritaskan pekerjaan yang paling penting
 - Menyelesaikan tugas yang diberikan oleh pengguna atau perintah dispatch
 - Mengingat hasil sebelumnya untuk meningkatkan kinerja di masa depan
 
-🧠 **Kemampuan Khusus**:
-- Anda memiliki refleksi memori di file \`${REFLECT_FILE}\`
+🧠 Kemampuan Khusus:
+- Anda memiliki refleksi memori di file '${REFLECT_FILE}'
 - Anda dapat memperbarui memori ini dengan pelajaran baru (strategi, kesalahan, hasil baik)
 - Anda mampu menilai kinerja Anda sendiri
 
-🪄 **Tugas Saat Ini**:
-${{ github.event.inputs.task || 'Periksa PR terbaru, pastikan build berhasil, dan berikan rekomendasi perbaikan.' }}
+🪄 Tugas Saat Ini:
+${TASK}
 
 EOF
 )
 
-          echo "$PROMPT" > prompt.txt
+          echo "==== Prompt to OpenCode ===="
+          echo "$PROMPT"
 
-          opencode run "$(cat prompt.txt)" \
+          # Jalankan opencode dengan file metadata dan memori
+          opencode run "$PROMPT" \
             --model iflowcn/qwen3-coder-plus \
             --file ./pr_meta.json \
             --file ./issue_meta.json \
-            --file ${REFLECT_FILE} \
-            --reflect ${REFLECT_FILE} \
+            --file "${REFLECT_FILE}" \
+            --reflect "${REFLECT_FILE}" \
             --share
         env:
           IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
@@ -123,5 +133,7 @@ EOF
           echo "Saving reflection memory..."
           if [ -f "${REFLECT_FILE}" ]; then
             echo "✅ Updated memory saved"
-            cat ${REFLECT_FILE}
+            cat "${REFLECT_FILE}"
+          else
+            echo "No reflect file created."
           fi
