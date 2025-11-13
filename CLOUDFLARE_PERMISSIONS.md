@@ -27,6 +27,8 @@ Based on our investigation, here are the required permissions for Cloudflare API
 5. Restrict the token to specific resources if needed
 6. Save the token and use it for deployment
 
+**Note:** For enhanced security, it is highly recommended to apply the principle of least privilege. Restrict the token's permissions to only the specific accounts and zones required for deployment.
+
 ## Common Issues and Solutions
 
 1. "AI binding not found" - Ensure Vectorize permissions are granted
