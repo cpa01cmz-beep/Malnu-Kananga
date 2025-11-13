@@ -60,13 +60,9 @@ jobs:
       - name: Summarize collected metadata
         run: |
           echo "=== Open Pull Requests ==="
-          cat <<'EOF' | jq .
-${{ steps.collect_meta.outputs.pr_meta }}
-EOF
+          printf '%s\n' '${{ steps.collect_meta.outputs.pr_meta }}' | jq .
           echo "=== Open Issues ==="
-          cat <<'EOF' | jq .
-${{ steps.collect_meta.outputs.issue_meta }}
-EOF
+          printf '%s\n' '${{ steps.collect_meta.outputs.issue_meta }}' | jq .
 
       - name: Run opencode agent
         uses: sst/opencode/github@latest
