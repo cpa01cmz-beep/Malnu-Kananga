@@ -25,6 +25,17 @@ on:
         required: false
         type: number
 
+# Add top-level permissions for least privilege
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+# Add concurrency settings to prevent overlapping runs
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   triage_issue:
     if: |

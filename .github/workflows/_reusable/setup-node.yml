@@ -13,6 +13,10 @@ on:
         description: "The Node.js version that was set up"
         value: ${{ jobs.setup-node.outputs.node-version }}
 
+# Add top-level permissions for least privilege
+permissions:
+  contents: read
+
 jobs:
   setup-node:
     runs-on: ubuntu-latest
