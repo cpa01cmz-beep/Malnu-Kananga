@@ -192,7 +192,7 @@ jobs:
                 - Push the branch to the repository: `git push --set-upstream origin iflow/issue-${ISSUE_NUMBER}`
 
             7.  **Create Pull Request:**
-                - Create a pull request using `gh pr create`.
+                - Create a pull request using `gh pr create` with reference to issue.
                 - **Title:** `fix: [short summary of fix]`
                 - **Body:** The PR body MUST be descriptive. It should contain:
                   - A link to the original issue (e.g., `Closes #${ISSUE_NUMBER}`).
