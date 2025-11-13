@@ -5,18 +5,18 @@ Based on our investigation, here are the required permissions for Cloudflare API
 ## Worker Deployment Permissions
 
 1. Account Permissions:
-   - Workers Scripts: Edit
-   - Workers KV Storage: Edit (if using KV)
-   - Workers R2 Storage: Edit (if using R2)
-   - D1: Edit (for database access)
-   - Vectorize: Edit (for AI vector database)
+   - Workers Scripts: Edit (to deploy and update Worker code)
+   - Workers KV Storage: Edit (if your Worker uses KV namespaces)
+   - Workers R2 Storage: Edit (if your Worker uses R2 buckets)
+   - D1: Edit (if your Worker uses D1 databases)
+   - Vectorize: Edit (if your Worker uses Vectorize indexes)
 
 2. Zone Permissions:
-   - Workers Routes: Edit (for all zones)
+   - Workers Routes: Edit (to manage routes for all zones)
 
 3. User Permissions:
-   - User Details: Read
-   - Memberships: Read
+   - User Details: Read (for Wrangler CLI to identify your user)
+   - Memberships: Read (for Wrangler CLI to access account resources)
 
 ## How to Set Up Correct Permissions
 
