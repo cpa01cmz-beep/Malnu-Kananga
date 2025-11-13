@@ -51,7 +51,7 @@ jobs:
     with:
       timeout: '7200'
       debug: 'false'
-      api_key: ${{ secrets.IFLOW_API_KEY }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
       prompt: |
         ## Role
         You are an AI developer and project manager responsible for
@@ -107,7 +107,7 @@ jobs:
     with:
       timeout: '7200'
       debug: 'false'
-      api_key: ${{ secrets.IFLOW_API_KEY }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
       prompt: |
         ## Role
         You are an AI code reviewer for this repository.
@@ -140,7 +140,7 @@ jobs:
     with:
       timeout: '7200'
       debug: 'false'
-      api_key: ${{ secrets.IFLOW_API_KEY }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
       prompt: |
         ## Role
         You are an autonomous AI maintainer for this repository.
@@ -188,7 +188,7 @@ jobs:
     with:
       timeout: '10800'
       debug: 'false'
-      api_key: ${{ secrets.IFLOW_API_KEY }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
       prompt: |
         ## Role
         You are an AI architect and security engineer for this repository.
