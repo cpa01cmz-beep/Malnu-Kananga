@@ -33,34 +33,24 @@ jobs:
         with:
           fetch-depth: 20
 
-      # Langkah 2: Kumpulkan Konteks Komprehensif (Versi Final & Stabil)
-      - name: '2. Gather Comprehensive Repository Context (Final Stable Version)'
+      # Langkah 2: Kumpulkan Konteks Komprehensif
+      - name: '2. Gather Comprehensive Repository Context'
         id: context_gatherer
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           echo "Memulai pengumpulan konteks untuk repositori: $GITHUB_REPOSITORY"
-
           REPO_CONTEXT="### Konteks Repositori Utama\n*   **Repositori:** $GITHUB_REPOSITORY\n*   **Pemicu Aksi:** ${{ github.event_name }}\n*   **Aktor Pemicu:** ${{ github.actor }}\n*   **Judul PR (jika ada):** ${{ github.event.pull_request.title }}\n*   **Nomor PR (jika ada):** ${{ github.event.pull_request.number }}\n"
           COMMIT_HISTORY=$(git log --pretty=format:'- %h: %s oleh %an' -n 20)
           ACTION_LOGS=$(gh run list --limit 10 --json name,status,conclusion --template '{{range .}}{{- printf "- %s: %s (%s)\n" .name .status .conclusion}}{{end}}')
-
-          # Mengambil info PR tanpa status pemeriksaan untuk menghindari error.
           OPEN_PRS=$(gh pr list --state open --limit 10 --json number,title,author,headRefName,baseRefName,comments,reviews --template '{{range .}}{{- printf "### PR #%v: %s\n" .number .title}}{{- printf "*   **Cabang:** %s -> %s\n" .headRefName .baseRefName}}{{- printf "*   **Penulis:** %s\n" .author.login}}{{- if .reviews }}{{- printf "*   **Ulasan:**\n"}}{{range .reviews}}{{- printf "    - %s oleh %s\n" .state .author.login}}{{end}}{{end}}{{- if .comments }}{{- printf "*   **Komentar Terbaru:**\n"}}{{range .comments}}{{- printf "    - \"%s\" oleh %s\n" .body .author.login}}{{end}}{{end}}{{printf "\n"}}{{end}}')
           if [ -z "$OPEN_PRS" ]; then OPEN_PRS="Tidak ada Pull Request yang terbuka."; fi
-
-          # =================== BAGIAN YANG DIPERBAIKI ===================
-          # Menggunakan field 'comments' yang benar dan menghitung panjangnya dengan '(len .comments)'
           OPEN_ISSUES=$(gh issue list --state open --limit 5 --json number,title,author,comments --template '{{range .}}{{- printf "- **Isu #%v:** %s (oleh %s, %v komentar)\n" .number .title .author.login (len .comments)}}{{end}}')
-          # =================== AKHIR DARI PERBAIKAN ===================
-          
           if [ -z "$OPEN_ISSUES" ]; then OPEN_ISSUES="Tidak ada isu yang terbuka."; fi
-
           if [ ! -f .github/iflow/memory.md ]; then mkdir -p .github/iflow && touch .github/iflow/memory.md; fi
           AGENT_MEMORY=$(cat .github/iflow/memory.md)
           if [ -z "$AGENT_MEMORY" ]; then AGENT_MEMORY="Memori belum diinisialisasi. Ini adalah siklus pertama saya."; fi
-          
           {
             echo 'PROMPT<<EOF'
             echo "# Persona & Tujuan Utama"
@@ -119,21 +109,35 @@ jobs:
             echo "Sekarang, analisis semua informasi yang diberikan dan hasilkan objek JSON."
             echo "EOF"
           } >> "$GITHUB_ENV"
-          
           echo "Pengumpulan konteks selesai dan PROMPT telah diatur."
 
-      # Langkah 3: Jalankan Gemini CLI
+      # =================== BAGIAN YANG DIPERBAIKI ===================
+      # Langkah 3: Jalankan Gemini CLI dengan nama parameter 'gemini_model' yang benar
       - name: '3. Execute Gemini Agent'
         id: gemini_agent
         uses: google-github-actions/run-gemini-cli@v0.1.14
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          model: 'models/gemini-flash-lite-latest'
+          gemini_model: 'models/gemini-flash-lite-latest' # INI PERBAIKANNYA
           prompt: ${{ env.PROMPT }}
+      # =================== AKHIR DARI PERBAIKAN ===================
+
+      # Langkah 3.1: Validasi output dari Gemini
+      - name: '3.1. Validate Gemini Response'
+        id: validate_json
+        run: |
+          echo "Memvalidasi respons dari Gemini..."
+          GEMINI_RESPONSE='${{ steps.gemini_agent.outputs.gemini_response }}'
+          if ! echo "$GEMINI_RESPONSE" | jq -e 'has("pemikiran") and has("rencana_eksekusi") and has("memori_baru")'; then
+            echo "::error::Respons dari Gemini bukan JSON yang valid atau tidak memiliki kunci yang diperlukan."
+            echo "Respons yang diterima:"
+            echo "$GEMINI_RESPONSE"
+            exit 1
+          fi
+          echo "Respons Gemini valid."
 
       # Langkah 4: Perbarui Memori Agen
       - name: '4. Update Agent Memory'
-        id: memory_updater
         run: |
           echo "Memperbarui memori agen..."
           NEW_MEMORY=$(echo "${{ steps.gemini_agent.outputs.gemini_response }}" | jq -r .memori_baru)
