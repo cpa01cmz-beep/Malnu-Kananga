@@ -13,7 +13,7 @@ permissions:
 # Add concurrency settings to prevent overlapping runs
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   opencode:
