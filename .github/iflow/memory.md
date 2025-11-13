@@ -46,3 +46,4 @@
 - Investigate test failures with @google/genai update to determine if it's a compatibility issue or test problem
 - Consider setting up automated security scanning for dependencies
 - Review workflow performance metrics to identify further optimization opportunities
+- Apply CI workflow improvements from issue #99 to standardize action versions and improve caching
