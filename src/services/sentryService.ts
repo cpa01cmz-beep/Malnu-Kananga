@@ -2,7 +2,7 @@ import * as Sentry from "@sentry/react";
 import { BrowserTracing } from "@sentry/tracing";
 
 // Dapatkan DSN dari environment variable
-const SENTRY_DSN = process.env.REACT_APP_SENTRY_DSN;
+const SENTRY_DSN = process.env.VITE_SENTRY_DSN;
 
 interface SentryConfig {
   dsn: string;
