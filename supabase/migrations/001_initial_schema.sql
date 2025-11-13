@@ -1,12 +1,5 @@
 -- Supabase Database Migration for MA Malnu Kananga
 
--- Enable Row Level Security (RLS)
-ALTER TABLE student_profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE teacher_profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE parent_profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE announcements ENABLE ROW LEVEL SECURITY;
-ALTER TABLE assignments ENABLE ROW LEVEL SECURITY;
-
 -- Create student_profiles table
 CREATE TABLE IF NOT EXISTS student_profiles (
     id BIGSERIAL PRIMARY KEY,
@@ -179,3 +172,10 @@ CREATE INDEX IF NOT EXISTS idx_announcements_published ON announcements(publishe
 CREATE INDEX IF NOT EXISTS idx_assignments_class ON assignments(class);
 CREATE INDEX IF NOT EXISTS idx_assignments_due_date ON assignments(due_date);
 CREATE INDEX IF NOT EXISTS idx_assignments_created_by ON assignments(created_by);
+
+-- Enable Row Level Security (RLS) after all tables are created
+ALTER TABLE student_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE teacher_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE parent_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE announcements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE assignments ENABLE ROW LEVEL SECURITY;

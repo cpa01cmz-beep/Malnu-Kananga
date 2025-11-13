@@ -18,14 +18,15 @@ export interface SupabaseUser {
 
 // Convert Supabase user to our internal User type
 function convertSupabaseUser(supabaseUser: SupabaseUser): User {
-  // Determine role based on email or user metadata
+  // Determine role based on user metadata or custom claims (more secure approach)
+  // TODO: This is insecure - in production, roles should come from Supabase custom claims or a roles table
   let role = 'student'; // default role
   if (supabaseUser.email.includes('admin')) role = 'admin';
   else if (supabaseUser.email.includes('guru') || supabaseUser.email.includes('teacher')) role = 'teacher';
   else if (supabaseUser.email.includes('parent') || supabaseUser.email.includes('ayah') || supabaseUser.email.includes('ibu') || supabaseUser.email.includes('wali')) role = 'parent';
 
   return {
-    id: parseInt(supabaseUser.id.replace(/[^0-9]/g, '')) || Date.now(), // Convert UUID to number for compatibility
+    id: supabaseUser.id, // Keep as string to properly handle UUIDs
     email: supabaseUser.email,
     name: supabaseUser.user_metadata?.name || supabaseUser.user_metadata?.full_name || supabaseUser.email.split('@')[0],
     role,

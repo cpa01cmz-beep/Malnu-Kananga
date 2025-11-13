@@ -378,7 +378,7 @@ class TokenManager {
 }
 
 export interface User {
-  id: number;
+  id: string | number; // Support both string (UUID) and number IDs
   email: string;
   name?: string;
   role: string;
