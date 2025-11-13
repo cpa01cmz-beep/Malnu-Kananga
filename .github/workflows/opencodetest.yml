@@ -24,7 +24,7 @@ jobs:
       startsWith(github.event.comment.body, '/oc')
 
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     permissions:
       id-token: write
       contents: write
@@ -33,7 +33,7 @@ jobs:
       actions: write
 
     env:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }} # ✅ tambahkan ini di level job agar semua step bisa pakai `gh`
+      GH_TOKEN: ${{ github.token }}
 
     steps:
       - name: Harden runner
@@ -46,49 +46,34 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Identify open PRs or issues
-        id: find_targets
+      - name: Collect open PRs and issues metadata
+        id: collect_meta
         run: |
-          echo "Finding open pull requests and issues..."
-          prs=$(gh pr list --state open --json number --jq '.[].number' | tr '\n' ' ')
-          issues=$(gh issue list --state open --json number --jq '.[].number' | tr '\n' ' ')
-
+          echo "Collecting PR and issue context..."
+          pr_json=$(gh pr list --state open --json number,title,headRefName,author,labels,mergeable,url)
+          issue_json=$(gh issue list --state open --json number,title,labels,author,url)
           {
-            echo "pr_numbers<<EOF"
-            echo "$prs"
+            echo "pr_meta<<EOF"
+            echo "$pr_json"
             echo "EOF"
-            echo "issue_numbers<<EOF"
-            echo "$issues"
+            echo "issue_meta<<EOF"
+            echo "$issue_json"
             echo "EOF"
           } >> $GITHUB_OUTPUT
-          
-      - name: Process Pull Requests
-        if: steps.find_targets.outputs.pr_numbers != ''
-        run: |
-          echo "Processing PRs..."
-          for pr in ${{ steps.find_targets.outputs.pr_numbers }}; do
-            echo "Checking build for PR #$pr"
-            gh pr checkout $pr
-            npm install
-            npm run build || { echo "Build failed for PR #$pr"; exit 1; }
-            echo "✅ Build successful for PR #$pr"
-          done
 
-      - name: Process Issues (Label + Fix)
-        if: steps.find_targets.outputs.issue_numbers != ''
+      - name: Summarize collected metadata
         run: |
-          echo "Processing issues..."
-          for issue in ${{ steps.find_targets.outputs.issue_numbers }}; do
-            echo "Labelling issue #$issue"
-            gh issue edit $issue --add-label "needs-fix"
-            echo "Running auto fix for issue #$issue"
-            gh workflow run opencode.yml -f issue_number=$issue
-          done
+          echo "=== Open Pull Requests ==="
+          echo '${{ steps.collect_meta.outputs.pr_meta }}' | jq .
+          echo "=== Open Issues ==="
+          echo '${{ steps.collect_meta.outputs.issue_meta }}' | jq .
 
-      - name: Run opencode
+      - name: Run opencode agent
         uses: sst/opencode/github@latest
         env:
           IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
+          PR_META: ${{ steps.collect_meta.outputs.pr_meta }}
+          ISSUE_META: ${{ steps.collect_meta.outputs.issue_meta }}
         with:
           model: iflowcn/qwen3-coder-plus
           share: ${{ github.repository_visibility == 'public' }}
