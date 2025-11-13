@@ -443,7 +443,7 @@ class LocalAuthService {
     const defaultUsers = [
       {
         id: 1,
-        email: 'admin@ma-malnukanaga.sch.id',
+        email: 'admin@ma-malnukananga.sch.id',
         name: 'Administrator',
         role: 'admin',
         created_at: new Date().toISOString(),
