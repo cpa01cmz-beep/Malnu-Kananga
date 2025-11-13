@@ -52,17 +52,16 @@ jobs:
         id: collect_meta
         run: |
           echo "Collecting PRs and Issues metadata..."
-          prs=$(gh pr list --state open --json number,title,url,author,labels,headRefName,mergeable)
-          issues=$(gh issue list --state open --json number,title,url,author,labels)
-          echo "pr_meta=$(echo "$prs" | jq -c .)" >> $GITHUB_OUTPUT
-          echo "issue_meta=$(echo "$issues" | jq -c .)" >> $GITHUB_OUTPUT
+          gh pr list --state open --json number,title,url,author,labels,headRefName,mergeable > pr_meta.json
+          gh issue list --state open --json number,title,url,author,labels > issue_meta.json
+          echo "✅ Saved metadata to pr_meta.json and issue_meta.json"
 
       - name: Summarize collected metadata
         run: |
           echo "=== Open Pull Requests ==="
-          printf '%s\n' '${{ steps.collect_meta.outputs.pr_meta }}' | jq .
+          cat pr_meta.json | jq .
           echo "=== Open Issues ==="
-          printf '%s\n' '${{ steps.collect_meta.outputs.issue_meta }}' | jq .
+          cat issue_meta.json | jq .
 
       - name: Run opencode agent
         uses: sst/opencode/github@latest
