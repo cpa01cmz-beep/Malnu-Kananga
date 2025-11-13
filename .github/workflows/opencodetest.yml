@@ -64,7 +64,7 @@ jobs:
           cat issue_meta.json | jq .
 
       - name: Run opencode agent
-        uses: sst/opencode/github@latest
-        with:
-          model: iflowcn/qwen3-coder-plus
-          share: ${{ github.repository_visibility == 'public' }}
+        run: |
+          opencode run --model iflowcn/qwen3-coder-plus --context ./pr_meta.json --context ./issue_meta.json
+        env:
+          IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
