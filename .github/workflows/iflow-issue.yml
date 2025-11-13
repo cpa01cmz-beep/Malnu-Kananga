@@ -2,14 +2,13 @@ name: "iFlow - Solve Highest Priority Issue"
 
 on:
   schedule:
-    # Run every 30 minutes to check for highest priority issues
     - cron: '*/30 * * * *'
   workflow_dispatch:
     inputs:
       manual_issue_number:
-        description: 'Optional: manually specify an issue number to process (ignores priority selection)'
+        description: 'Optional: manually specify an issue number to process (leave empty to auto-select highest priority)'
         required: false
-        type: number
+        type: string
 
 jobs:
   solve_highest_priority_issue:
@@ -18,12 +17,11 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-      actions: write
-      id-token: write
-      repository-projects: write
-      checks: write
-      discussions: write
-      
+
+    defaults:
+      run:
+        shell: bash
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -35,105 +33,75 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Manual override via workflow_dispatch
-          if [[ "${{ github.event.inputs.manual_issue_number }}" != "" ]]; then
-            ISSUE_NUMBER="${{ github.event.inputs.manual_issue_number }}"
+          manual_number="${{ github.event.inputs.manual_issue_number || '' }}"
+
+          if [[ -n "$manual_number" ]]; then
+            echo "Manual override detected. Using issue #$manual_number"
+            echo "ISSUE_NUMBER=$manual_number" >> "$GITHUB_ENV"
             echo "MANUAL_OVERRIDE=true" >> "$GITHUB_ENV"
-            echo "Selected issue via manual input: $ISSUE_NUMBER" >> "$GITHUB_STEP_SUMMARY"
+            echo "Selected issue via manual input: #$manual_number" >> "$GITHUB_STEP_SUMMARY"
           else
-            # Fetch all open issues sorted by priority (p0, p1, p2, p3 - highest first)
-            echo "Fetching open issues sorted by priority..."
-            
-            # Get all open issues with priority labels
+            echo "🔍 Automatically selecting highest priority open issue..."
+
             issues=$(gh api graphql -f query='
-              query($owner: String!, $repo: String!, $labels: [String!]) {
+              query($owner: String!, $repo: String!) {
                 repository(owner: $owner, name: $repo) {
-                  issues(first: 100, states: OPEN, labels: $labels) {
+                  issues(first: 100, states: OPEN) {
                     nodes {
                       number
                       title
                       labels(first: 10) {
-                        nodes {
-                          name
-                        }
+                        nodes { name }
                       }
                     }
                   }
                 }
               }
-            ' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" -f labels="priority/p0,priority/p1,priority/p2,priority/p3" --jq '.data.repository.issues.nodes[] | "\(.number),\(.title),\(.labels.nodes[].name // "no-priority" | select(. | startswith("priority/p")))"' || true)
-            
+            ' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" --jq '
+              .data.repository.issues.nodes[]
+              | [.number, .title, (.labels.nodes[].name? // "no-priority")]
+              | @csv
+            ' || true)
+
             if [[ -z "$issues" ]]; then
-              echo "No issues with priority labels found, checking all open issues..."
-              # Get all open issues without requiring priority labels
-              issues=$(gh api graphql -f query='
-                query($owner: String!, $repo: String!, $labels: [String!]) {
-                  repository(owner: $owner, name: $repo) {
-                    issues(first: 100, states: OPEN) {
-                      nodes {
-                        number
-                        title
-                        labels(first: 10) {
-                          nodes {
-                            name
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              ' -f owner="${{ github.repository_owner }}" -f repo="${{ github.event.repository.name }}" --jq '.data.repository.issues.nodes[] | "\(.number),\(.title),\(.labels.nodes[].name // "no-priority" | select(. | startswith("priority/p")) // "no-priority")"' || true)
-            fi
-            
-            if [[ -z "$issues" ]]; then
-              echo "No open issues found in the repository"
+              echo "No open issues found."
               echo "SKIP_WORKFLOW=true" >> "$GITHUB_ENV"
               exit 0
             fi
-            
-            # Create a temporary file to sort issues by priority
+
             temp_file=$(mktemp)
-            while IFS= read -r line; do
-              if [[ -n "$line" ]]; then
-                number=$(echo "$line" | cut -d',' -f1)
-                title=$(echo "$line" | cut -d',' -f2)
-                priority=$(echo "$line" | cut -d',' -f3)
-                
-                # Map priority to numeric value for sorting (p0=0, p1=1, p2=2, p3=3, no-priority=4)
-                case "$priority" in
-                  "priority/p0") priority_val=0 ;;
-                  "priority/p1") priority_val=1 ;;
-                  "priority/p2") priority_val=2 ;;
-                  "priority/p3") priority_val=3 ;;
-                  *) priority_val=4 ;;
-                esac
-                
-                echo "$priority_val,$number,$title,$priority" >> "$temp_file"
-              fi
+            while IFS=, read -r number title label; do
+              label_clean=$(echo "$label" | tr -d '"')
+              case "$label_clean" in
+                priority/p0) val=0 ;;
+                priority/p1) val=1 ;;
+                priority/p2) val=2 ;;
+                priority/p3) val=3 ;;
+                *) val=4 ;;
+              esac
+              echo "$val,$number,$title,$label_clean" >> "$temp_file"
             done <<< "$issues"
-            
-            # Sort by priority (ascending, so lowest number is highest priority)
-            sorted_issues=$(sort -t',' -k1,1n "$temp_file")
-            
-            # Get the highest priority issue (first in sorted list)
-            first_issue=$(echo "$sorted_issues" | head -n1)
-            if [[ -n "$first_issue" ]]; then
-              ISSUE_NUMBER=$(echo "$first_issue" | cut -d',' -f2)
-              ISSUE_TITLE=$(echo "$first_issue" | cut -d',' -f3)
-              ISSUE_PRIORITY=$(echo "$first_issue" | cut -d',' -f4)
-              
-              echo "Selected highest priority issue: #$ISSUE_NUMBER ($ISSUE_PRIORITY) - $ISSUE_TITLE"
-              echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> "$GITHUB_ENV"
-              echo "ISSUE_TITLE=$ISSUE_TITLE" >> "$GITHUB_ENV"
-              echo "ISSUE_PRIORITY=$ISSUE_PRIORITY" >> "$GITHUB_ENV"
-              echo "Selected highest priority issue: #$ISSUE_NUMBER ($ISSUE_PRIORITY) - $ISSUE_TITLE" >> "$GITHUB_STEP_SUMMARY"
-            else
-              echo "No issues found to process"
+
+            selected=$(sort -t',' -k1,1n "$temp_file" | head -n1)
+            rm "$temp_file"
+
+            ISSUE_NUMBER=$(echo "$selected" | cut -d',' -f2)
+            ISSUE_TITLE=$(echo "$selected" | cut -d',' -f3)
+            ISSUE_PRIORITY=$(echo "$selected" | cut -d',' -f4)
+
+            if [[ -z "$ISSUE_NUMBER" ]]; then
+              echo "No valid issue found."
               echo "SKIP_WORKFLOW=true" >> "$GITHUB_ENV"
               exit 0
             fi
-            
-            rm "$temp_file"
+
+            {
+              echo "ISSUE_NUMBER=$ISSUE_NUMBER"
+              echo "ISSUE_TITLE=$ISSUE_TITLE"
+              echo "ISSUE_PRIORITY=$ISSUE_PRIORITY"
+            } >> "$GITHUB_ENV"
+
+            echo "✅ Selected highest priority issue: #$ISSUE_NUMBER ($ISSUE_PRIORITY)" >> "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: Get issue details
@@ -142,13 +110,19 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           set -euo pipefail
-          
-          data=$(gh api repos/${{ github.repository }}/issues/${{ env.ISSUE_NUMBER }})
+
+          if [[ -z "${ISSUE_NUMBER:-}" ]]; then
+            echo "❌ ISSUE_NUMBER is empty. Cannot fetch issue details."
+            exit 1
+          fi
+
+          echo "Fetching issue #${ISSUE_NUMBER}..."
+          data=$(gh api "repos/${{ github.repository }}/issues/${ISSUE_NUMBER}")
+
           title=$(jq -r '.title // "manual"' <<<"$data")
           body=$(jq -r '.body // ""' <<<"$data")
 
           {
-            echo "ISSUE_NUMBER=${{ env.ISSUE_NUMBER }}"
             echo "REPOSITORY=${{ github.repository }}"
             echo "ISSUE_TITLE<<__EOF__"
             echo "$title"
