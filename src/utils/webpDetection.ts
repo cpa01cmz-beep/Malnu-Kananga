@@ -29,10 +29,16 @@ const detectWebPSupport = (): Promise<boolean> => {
       canvas.height = 1;
 
       // Check if canvas supports WebP
-      const supportsWebP = canvas.toDataURL('image/webp').startsWith('data:image/webp');
-
-      webpSupport = supportsWebP;
-      resolveDetection(supportsWebP);
+      try {
+        const dataURL = canvas.toDataURL('image/webp');
+        const supportsWebP = dataURL.startsWith('data:image/webp');
+        webpSupport = supportsWebP;
+        resolveDetection(supportsWebP);
+      } catch (error) {
+        // If there's an error in toDataURL, assume no WebP support
+        webpSupport = false;
+        resolveDetection(false);
+      }
     });
 
     detectionPromise.then(resolve);
@@ -69,6 +75,21 @@ export const getOptimalImageSrc = (originalSrc: string, fallbackOnError: boolean
     return originalSrc;
   }
 
+  // Convert local PNG icons to WebP format
+  if (originalSrc.startsWith('/icons/') && originalSrc.endsWith('.png')) {
+    return originalSrc.replace(/\.png$/i, '.png.webp');
+  }
+
+  // Convert local PNG icons to WebP format
+  if (originalSrc.startsWith('/icons/') && originalSrc.endsWith('.png')) {
+    return originalSrc.replace(/\.png$/i, '.png.webp');
+  }
+
+  // Convert local PNG icons to WebP format
+  if (originalSrc.startsWith('/icons/') && originalSrc.endsWith('.png')) {
+    return originalSrc.replace(/\.png$/i, '.png.webp');
+  }
+
   // Convert Unsplash images to WebP format
   if (originalSrc.includes('unsplash.com')) {
     return originalSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
@@ -87,6 +108,11 @@ export const getOptimalImageSrcSync = (originalSrc: string): string => {
   // If not detected yet or doesn't support WebP, return original
   if (supportsWebP !== true) {
     return originalSrc;
+  }
+
+  // Convert local PNG icons to WebP format
+  if (originalSrc.startsWith('/icons/') && originalSrc.endsWith('.png')) {
+    return originalSrc.replace(/\.png$/i, '.png.webp');
   }
 
   // Convert Unsplash images to WebP format

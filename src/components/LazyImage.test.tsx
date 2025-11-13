@@ -41,7 +41,9 @@ describe('LazyImage dengan WebP Integration', () => {
 
   it('seharusnya menggunakan priority loading untuk above-the-fold images', () => {
     render(
-      <LazyImageWithProvider src="hero.jpg" alt="Hero image" />
+      <WebPProvider>
+        <LazyImage src="hero.jpg" alt="Hero image" priority={true} />
+      </WebPProvider>
     );
 
     const img = screen.getByRole('img');
