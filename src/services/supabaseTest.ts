@@ -1,7 +1,7 @@
 // Test Supabase Integration
-import { supabase } from './services/supabaseConfig';
-import { SupabaseAuthService } from './services/supabaseAuthService';
-import { SupabaseDatabaseService } from './services/supabaseDatabaseService';
+import { supabase } from './supabaseConfig';
+import { SupabaseAuthService } from './supabaseAuthService';
+import { SupabaseDatabaseService } from './supabaseDatabaseService';
 
 async function runSupabaseTests() {
   console.log('🧪 Running Supabase Integration Tests...\n');
