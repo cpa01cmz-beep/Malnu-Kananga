@@ -1,93 +1,220 @@
-name: Gemini Repository Orchestrator
+# Nama Alur Kerja: Orkestrator Repositori Cerdas Gemini
+# Dibuat untuk bertindak sebagai agen AI yang mengelola dan memelihara repositori.
+# Mampu belajar dan berkembang dari waktu ke waktu melalui file memori.
+name: 'Gemini: Intelligent Repository Orchestrator'
 
 on:
+  # 1. Jadwal: Berjalan secara otomatis setiap jam.
+  schedule:
+    - cron: '0 * * * *'
+
+  # 2. Dispatch Manual: Memungkinkan pemicuan manual dengan prompt kustom.
   workflow_dispatch:
     inputs:
-      prompt:
-        description: 'Prompt kustom untuk Gemini'
+      dispatch_prompt:
+        description: 'Instruksi atau tugas khusus untuk agen Gemini (opsional).'
         required: false
-        default: 'Jalankan tugas orkestrasi default Anda.'
-  schedule:
-    - cron: '0 * * * *' # Berjalan setiap jam
+        default: 'Jalankan siklus orkestrasi standar.'
+
+# Izin yang diperlukan untuk GITHUB_TOKEN agar agen dapat berinteraksi dengan repositori.
+# contents: write -> Untuk memperbarui file memori (memory.md).
+# pull-requests: write -> Untuk mengomentari, meninjau, dan menggabungkan PR.
+# issues: write -> Untuk memberi label dan mengomentari isu.
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
   orchestrate:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: write # Diperlukan untuk menulis ke memory.md dan menggabungkan PR
-      pull-requests: write # Diperlukan untuk berinteraksi dengan PR (komentar, merge)
-      issues: write # Diperlukan untuk berinteraksi dengan isu
-      actions: write # Diperlukan untuk membaca log alur kerja
-
+    
     steps:
-      - name: Checkout Repositori
+      # Langkah 1: Checkout kode repositori
+      # Diperlukan untuk mengakses file lokal seperti memory.md dan menjalankan perintah git.
+      - name: '1. Checkout Repository Code'
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Ambil semua riwayat untuk analisis commit yang lebih baik
+          fetch-depth: 20 # Mengambil 20 commit terakhir untuk konteks sejarah
 
-      - name: Siapkan Konteks Ringkas (Cerdas)
-        id: context
-        run: |
-          # Mengumpulkan informasi repositori dasar
-          REPO_CONTEXT="### Konteks Repositori: '${{ github.repository }}'\n"
-          REPO_CONTEXT+="- Cabang Default: ${{ github.event.repository.default_branch }}\n"
-          REPO_CONTEXT+="- URL Repositori: ${{ github.event.repository.html_url }}\n\n"
-
-          # Mengumpulkan ringkasan PR terbuka yang paling baru diperbarui (untuk menghindari batas node GraphQL)
-          # Hanya mengambil metadata, bukan body/komentar/commit penuh di awal
-          OPEN_PRS=$(gh pr list --state open --limit 20 --search "sort:updated-desc" --json number,title,author,labels,updatedAt,url,mergeable)
-          REPO_CONTEXT+="### Ringkasan Pull Request Terbuka (Terbaru):\n${OPEN_PRS}\n\n"
-
-          # Mengumpulkan ringkasan Isu terbuka yang paling baru diperbarui
-          OPEN_ISSUES=$(gh issue list --state open --limit 20 --search "sort:updated-desc" --json number,title,author,labels,updatedAt,url)
-          REPO_CONTEXT+="### Ringkasan Isu Terbuka (Terbaru):\n${OPEN_ISSUES}\n\n"
-
-          # Mengumpulkan riwayat commit terbaru
-          COMMIT_HISTORY=$(git log --oneline -n 20)
-          REPO_CONTEXT+="### Riwayat Commit Terbaru:\n${COMMIT_HISTORY}\n\n"
-
-          # Mengumpulkan log alur kerja terbaru
-          WORKFLOW_LOGS=$(gh run list --workflow gemini_orchestrator.yml --limit 5 --json name,status,conclusion,url,databaseId | jq -r '.[] | .url')
-          REPO_CONTEXT+="### Log Alur Kerja Terbaru (Orkestrator):\n${WORKFLOW_LOGS}\n\n"
-
-          echo "repo_context<<EOF" >> $GITHUB_OUTPUT
-          echo "$REPO_CONTEXT" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+      # Langkah 2: Kumpulkan Konteks Komprehensif
+      # Langkah ini menggunakan GitHub CLI (gh) dan git untuk membangun prompt yang kaya konteks.
+      # Semua informasi ini disimpan dalam variabel GITHUB_ENV untuk digunakan pada langkah berikutnya.
+      - name: '2. Gather Comprehensive Repository Context'
+        id: context_gatherer
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # Token bawaan GitHub untuk otentikasi gh
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          echo "Memulai pengumpulan konteks untuk repositori: $GITHUB_REPOSITORY"
+
+          # Konteks Dasar
+          REPO_CONTEXT="### Konteks Repositori Utama\n"
+          REPO_CONTEXT+="*   **Repositori:** $GITHUB_REPOSITORY\n"
+          REPO_CONTEXT+="*   **Pemicu Aksi:** ${{ github.event_name }}\n"
+          REPO_CONTEXT+="*   **Aktor Pemicu:** ${{ github.actor }}\n"
+          REPO_CONTEXT+="*   **Judul PR (jika ada):** ${{ github.event.pull_request.title }}\n"
+          REPO_CONTEXT+="*   **Nomor PR (jika ada):** ${{ github.event.pull_request.number }}\n"
+
+          # Sejarah Commit (20 terakhir)
+          COMMIT_HISTORY=$(git log --pretty=format:'- %h: %s oleh %an' -n 20)
           
-      - name: Jalankan Gemini CLI sebagai Orkestrator
+          # Status Alur Kerja Aksi (10 terakhir)
+          ACTION_LOGS=$(gh run list --limit 10 --json name,status,conclusion --template '{{range .}}{{- printf "- %s: %s (%s)\n" .name .status .conclusion}}{{end}}')
+
+          # Pull Request Terbuka (Detail penting)
+          OPEN_PRS=$(gh pr list --state open --limit 10 --json number,title,author,headRefName,baseRefName,comments,reviews,statusCheckRollup --template '{{range .}}{{- printf "### PR #%v: %s\n" .number .title}}{{- printf "*   **Cabang:** %s -> %s\n" .headRefName .baseRefName}}{{- printf "*   **Penulis:** %s\n" .author.login}}{{- if .reviews }}{{- printf "*   **Ulasan:**\n"}}{{range .reviews}}{{- printf "    - %s oleh %s\n" .state .author.login}}{{end}}{{end}}{{- if .comments }}{{- printf "*   **Komentar Terbaru:**\n"}}{{range .comments}}{{- printf "    - \"%s\" oleh %s\n" .body .author.login}}{{end}}{{end}}{{- if .statusCheckRollup }}{{- printf "*   **Status Pemeriksaan:** %s\n" .statusCheckRollup.state}}{{end}}{{printf "\n"}}{{end}}')
+          if [ -z "$OPEN_PRS" ]; then OPEN_PRS="Tidak ada Pull Request yang terbuka."; fi
+
+          # Isu Terbuka (5 terakhir)
+          OPEN_ISSUES=$(gh issue list --state open --limit 5 --json number,title,author,commentsCount --template '{{range .}}{{- printf "- **Isu #%v:** %s (oleh %s, %v komentar)\n" .number .title .author.login .commentsCount}}{{end}}')
+          if [ -z "$OPEN_ISSUES" ]; then OPEN_ISSUES="Tidak ada isu yang terbuka."; fi
+
+          # Membaca Memori Agen
+          # File ini harus ada, bahkan jika kosong.
+          if [ -f .github/iflow/memory.md ]; then
+            AGENT_MEMORY=$(cat .github/iflow/memory.md)
+          else
+            AGENT_MEMORY="Memori belum diinisialisasi. Ini adalah siklus pertama saya."
+          fi
+          
+          # Gabungkan semua konteks menjadi satu prompt besar
+          FINAL_PROMPT=$(cat <<EOF
+# Persona & Tujuan Utama
+Anda adalah Orkestrator Repositori AI yang sangat cerdas dan otonom. Anda hidup di dalam GitHub Actions. Misi Anda adalah menjaga kesehatan, efisiensi, dan kecepatan pengembangan repositori ini. Anda harus proaktif, belajar dari tindakan masa lalu, dan selalu bertujuan untuk meningkatkan alur kerja. Tujuan default Anda adalah meninjau semua Pull Request yang terbuka, menyelesaikan percakapan, dan menggabungkannya jika semua kriteria terpenuhi.
+
+# Instruksi Tugas Saat Ini
+${{ inputs.dispatch_prompt || 'Jalankan siklus orkestrasi standar: tinjau dan kelola PR dan isu yang terbuka.' }}
+
+# Konteks Saat Ini
+$REPO_CONTEXT
+
+## Sejarah Commit Terbaru
+\`\`\`
+$COMMIT_HISTORY
+\`\`\`
+
+## Log Alur Kerja Aksi Terbaru
+\`\`\`
+$ACTION_LOGS
+\`\`\`
+
+## Isu Terbuka
+$OPEN_ISSUES
+
+## Pull Request Terbuka
+$OPEN_PRS
+
+# Memori Jangka Panjang Anda
+*Baca bagian ini untuk memahami tindakan, keputusan, dan observasi masa lalu. Gunakan ini untuk membuat keputusan yang lebih baik dari waktu ke waktu.*
+---
+$AGENT_MEMORY
+---
+
+# Output yang Diperlukan (Format JSON yang Ketat)
+Anda HARUS merespons HANYA dengan objek JSON yang valid. Jangan tambahkan penjelasan atau teks lain di luar format JSON.
+Struktur JSON yang diperlukan adalah sebagai berikut:
+\`\`\`json
+{
+  "pemikiran": "Pikiran langkah-demi-langkah Anda di sini. Analisis semua konteks. Apa status repositori? PR mana yang membutuhkan perhatian? Apa rencana tindakan saya? Tinjau status pemeriksaan, ulasan, dan komentar pada setiap PR.",
+  "rencana_eksekusi": [
+    {
+      "deskripsi": "Deskripsi singkat dari perintah yang akan dijalankan.",
+      "perintah": "Perintah shell yang valid untuk dieksekusi, utamakan penggunaan 'gh cli'. Contoh: 'gh pr review 123 --approve --body \"Semua terlihat bagus!\"' atau 'gh pr merge 123 --squash --delete-branch'."
+    }
+  ],
+  "memori_baru": "Tulis di sini ringkasan tindakan Anda hari ini, keputusan yang dibuat, observasi penting, dan ide untuk perbaikan di masa depan. Ini akan menjadi masukan memori Anda untuk siklus berikutnya. Gunakan format Markdown."
+}
+\`\`\`
+
+# Aturan Kritis untuk Penggabungan PR (Merge):
+1.  **Status Hijau:** HANYA gabungkan PR jika `statusCheckRollup` adalah 'SUCCESS'.
+2.  **Tidak Ada Konflik:** Pastikan PR tidak memiliki konflik penggabungan. Konteks tidak menyediakan ini secara langsung, tetapi Anda dapat mengasumsikannya jika status pemeriksaan lolos.
+3.  **Ulasan Disetujui:** Prioritaskan PR yang telah memiliki ulasan yang disetujui, meskipun Anda juga memiliki wewenang untuk menyetujui.
+4.  **Selesaikan Komentar:** Sebelum menggabungkan, pastikan semua percakapan komentar telah diselesaikan atau dijawab. Anda dapat membalas komentar menggunakan 'gh pr comment'.
+
+Sekarang, analisis semua informasi yang diberikan dan hasilkan objek JSON.
+EOF
+)
+          # Menggunakan delimiter EOF untuk menangani konten multi-baris
+          echo "PROMPT<<EOF" >> $GITHUB_ENV
+          echo "$FINAL_PROMPT" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "Pengumpulan konteks selesai."
+
+      # Langkah 3: Jalankan Gemini CLI dengan Prompt yang Dibangun
+      # Menggunakan versi yang ditentukan dan model yang disukai.
+      # Hasil (objek JSON) dari Gemini akan disimpan dalam output langkah ini.
+      - name: '3. Execute Gemini Agent'
+        id: gemini_agent
         uses: google-github-actions/run-gemini-cli@v0.1.14
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          gemini_model: "gemini-flash-lite-latest"
-          prompt: |
-            Anda adalah Gemini, seorang orkestrator repositori AI yang cerdas dan otonom untuk repositori '${{ github.repository }}'. Misi Anda adalah untuk menjaga kesehatan, efisiensi, dan momentum pengembangan proyek ini. Anda harus belajar dan beradaptasi dari waktu ke waktu.
+          model: 'models/gemini-flash-lite-latest'
+          prompt: ${{ env.PROMPT }}
 
-            **Konteks Saat Ini:**
-            Berikut adalah snapshot komprehensif dari status repositori saat ini. Gunakan informasi ini untuk membuat keputusan yang terinformasi.
+      # Langkah 4: Perbarui Memori Agen
+      # Mengekstrak 'memori_baru' dari output JSON Gemini dan menimpanya ke file memory.md.
+      - name: '4. Update Agent Memory'
+        id: memory_updater
+        run: |
+          echo "Memperbarui memori agen..."
+          # Mengekstrak konten 'memori_baru' dari respons JSON
+          NEW_MEMORY=$(echo "${{ steps.gemini_agent.outputs.gemini_response }}" | jq -r .memori_baru)
+          
+          # Menulis memori baru ke file
+          echo -e "$NEW_MEMORY" > .github/iflow/memory.md
+          echo "Memori berhasil diperbarui."
 
-            ${{ steps.context.outputs.repo_context }}
+      # Langkah 5: Simpan Memori yang Diperbarui ke Repositori
+      # Melakukan commit dan push pada file memory.md yang diperbarui.
+      # Ini memastikan agen "mengingat" untuk eksekusi berikutnya.
+      - name: '5. Commit and Push Updated Memory'
+        run: |
+          git config --global user.name 'Gemini Orchestrator'
+          git config --global user.email 'gemini-orchestrator@github.actions'
+          
+          # Hanya commit jika ada perubahan pada file memori
+          if ! git diff --quiet .github/iflow/memory.md; then
+            git add .github/iflow/memory.md
+            git commit -m "🧠 CHORE: Memperbarui memori agen"
+            git push
+            echo "Memori yang diperbarui telah di-commit."
+          else
+            echo "Tidak ada pembaruan pada memori."
+          fi
 
-            **Memori Jangka Panjang Anda:**
-            File `.github/iflow/memory.md` adalah basis pengetahuan Anda. Tinjau untuk memahami keputusan masa lalu, pembelajaran, dan arahan proyek. Setelah setiap eksekusi, perbarui file ini dengan ringkasan tindakan Anda, alasan di baliknya, dan hasil apa pun. Ini sangat penting untuk evolusi Anda.
-
-            **Tugas Orkestrasi Default Anda:**
-            1.  **Analisis Menyeluruh:** Tinjau semua konteks yang diberikan di atas. Identifikasi PR yang macet, isu yang membutuhkan perhatian, atau anomali dalam riwayat commit atau log alur kerja.
-            2.  **Tinjau & Selesaikan Komentar PR:** Untuk setiap Pull Request yang terbuka:
-                *   Baca semua utas percakapan (komentar).
-                *   Pahami masalah atau pertanyaan yang diajukan.
-                *   Jika Anda dapat menyelesaikan komentar (misalnya, dengan memberikan penjelasan atau mengkonfirmasi perubahan kecil), lakukanlah dan selesaikan utas tersebut.
-                *   Jika perubahan kode diperlukan, berikan komentar yang jelas kepada penulis tentang apa yang perlu dilakukan.
-            3.  **Gabungkan PR yang Memenuhi Syarat:** Setelah meninjau PR, jika kondisi berikut terpenuhi, maka gabungkan PR tersebut:
-                *   Semua utas percakapan telah diselesaikan.
-                *   Status pemeriksaan CI/CD (status) berwarna hijau (sukses).
-                *   Tidak ada konflik penggabungan yang dilaporkan.
-                *   Telah disetujui oleh setidaknya satu peninjau (jika aturan cabang memerlukannya).
-            4.  **Perbarui Memori:** Catat semua tindakan yang Anda ambil, terutama PR yang Anda gabungkan atau komentari, dalam file `.github/iflow/memory.md`. Jelaskan *mengapa* Anda mengambil tindakan tersebut. Ini akan membantu Anda membuat keputusan yang lebih baik di masa depan.
-
-            **Prompt Eksekusi Saat Ini:**
-            ${{ github.event.inputs.prompt || 'Jalankan tugas orkestrasi default Anda.' }}
-          memory_file: '.github/iflow/memory.md'
-          github_token: ${{ secrets.GH_TOKEN }}
+      # Langkah 6: Jalankan Rencana Aksi
+      # Mengekstrak dan mengeksekusi setiap perintah dalam array 'rencana_eksekusi'.
+      # Ini adalah langkah di mana agen benar-benar melakukan tindakan di repositori.
+      - name: '6. Execute Action Plan'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # Diperlukan untuk perintah 'gh'
+        run: |
+          echo "Mengeksekusi rencana yang dihasilkan oleh Gemini..."
+          PLAN_JSON='${{ steps.gemini_agent.outputs.gemini_response }}'
+          
+          # Periksa apakah rencana eksekusi ada dan merupakan array
+          if echo "$PLAN_JSON" | jq -e '.rencana_eksekusi | length > 0' > /dev/null; then
+            # Loop melalui setiap perintah dalam rencana
+            for row in $(echo "${PLAN_JSON}" | jq -r '.rencana_eksekusi[] | @base64'); do
+              _jq() {
+                echo ${row} | base64 --decode | jq -r ${1}
+              }
+              
+              COMMAND=$(_jq '.perintah')
+              DESCRIPTION=$(_jq '.deskripsi')
+              
+              echo "➡️ Eksekusi: $DESCRIPTION"
+              echo "   \$ $COMMAND"
+              
+              # Eksekusi perintah
+              if ! eval "$COMMAND"; then
+                echo "⚠️  Perintah gagal dengan kode keluar $?. Lanjutkan ke perintah berikutnya."
+              fi
+              echo "--------------------------------"
+            done
+            echo "Eksekusi rencana selesai."
+          else
+            echo "Tidak ada rencana yang dapat dieksekusi yang dihasilkan oleh agen."
+          fi```
