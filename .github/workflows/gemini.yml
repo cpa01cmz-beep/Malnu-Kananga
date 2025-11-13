@@ -33,8 +33,8 @@ jobs:
         with:
           fetch-depth: 20
 
-      # Langkah 2: Kumpulkan Konteks Komprehensif (Versi Stabil)
-      - name: '2. Gather Comprehensive Repository Context (Stable Version)'
+      # Langkah 2: Kumpulkan Konteks Komprehensif (Versi Final & Stabil)
+      - name: '2. Gather Comprehensive Repository Context (Final Stable Version)'
         id: context_gatherer
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -46,14 +46,15 @@ jobs:
           COMMIT_HISTORY=$(git log --pretty=format:'- %h: %s oleh %an' -n 20)
           ACTION_LOGS=$(gh run list --limit 10 --json name,status,conclusion --template '{{range .}}{{- printf "- %s: %s (%s)\n" .name .status .conclusion}}{{end}}')
 
-          # =================== BAGIAN YANG DIPERBAIKI SECARA SIGNIFIKAN ===================
           # Mengambil info PR tanpa status pemeriksaan untuk menghindari error.
           OPEN_PRS=$(gh pr list --state open --limit 10 --json number,title,author,headRefName,baseRefName,comments,reviews --template '{{range .}}{{- printf "### PR #%v: %s\n" .number .title}}{{- printf "*   **Cabang:** %s -> %s\n" .headRefName .baseRefName}}{{- printf "*   **Penulis:** %s\n" .author.login}}{{- if .reviews }}{{- printf "*   **Ulasan:**\n"}}{{range .reviews}}{{- printf "    - %s oleh %s\n" .state .author.login}}{{end}}{{end}}{{- if .comments }}{{- printf "*   **Komentar Terbaru:**\n"}}{{range .comments}}{{- printf "    - \"%s\" oleh %s\n" .body .author.login}}{{end}}{{end}}{{printf "\n"}}{{end}}')
-          # =================== AKHIR DARI PERBAIKAN ===================
-          
           if [ -z "$OPEN_PRS" ]; then OPEN_PRS="Tidak ada Pull Request yang terbuka."; fi
 
-          OPEN_ISSUES=$(gh issue list --state open --limit 5 --json number,title,author,commentsCount --template '{{range .}}{{- printf "- **Isu #%v:** %s (oleh %s, %v komentar)\n" .number .title .author.login .commentsCount}}{{end}}')
+          # =================== BAGIAN YANG DIPERBAIKI ===================
+          # Menggunakan field 'comments' yang benar dan menghitung panjangnya dengan '(len .comments)'
+          OPEN_ISSUES=$(gh issue list --state open --limit 5 --json number,title,author,comments --template '{{range .}}{{- printf "- **Isu #%v:** %s (oleh %s, %v komentar)\n" .number .title .author.login (len .comments)}}{{end}}')
+          # =================== AKHIR DARI PERBAIKAN ===================
+          
           if [ -z "$OPEN_ISSUES" ]; then OPEN_ISSUES="Tidak ada isu yang terbuka."; fi
 
           if [ ! -f .github/iflow/memory.md ]; then mkdir -p .github/iflow && touch .github/iflow/memory.md; fi
