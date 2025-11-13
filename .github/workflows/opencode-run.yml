@@ -6,11 +6,11 @@ on:
   workflow_dispatch:
 
 permissions:
-      id-token: read
-      contents: read
-      pull-requests: read
-      issues: read
-      actions: read
+  id-token: read
+  contents: read
+  pull-requests: read
+  issues: read
+  actions: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number }}
