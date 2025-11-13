@@ -30,9 +30,9 @@ jobs:
       (github.event_name == 'workflow_dispatch' && (inputs.trigger_apply || inputs.pr_number))
     concurrency:
       group: ${{ github.workflow }}-apply-${{ github.event.pull_request.number || inputs.pr_number || inputs.trigger_apply || github.run_id }}
-      cancel-in-progress: true
+      cancel-in-progress: false
     uses: ./.github/workflows/_reusable/iflow-cli.yml
-    secrets:
+    env:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
       IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
     with:
