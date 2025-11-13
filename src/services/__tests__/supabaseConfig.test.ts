@@ -1,5 +1,5 @@
 // Simple test runner for Supabase integration
-import { supabase } from './supabaseConfig';
+import { supabase } from '../supabaseConfig';
 
 async function testSupabaseConnection() {
   console.log('Testing Supabase connection...');
