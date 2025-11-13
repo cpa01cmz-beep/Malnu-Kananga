@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react-swc'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => ({
@@ -18,7 +18,10 @@ export default defineConfig(({ command, mode }) => ({
           // Vendor chunks untuk better caching
           'react-vendor': ['react', 'react-dom'],
           'ui-vendor': ['@google/genai'],
-          'utils': ['uuid']
+          'utils': ['uuid'],
+          // Split larger components into separate chunks
+          'dashboard': ['./src/components/StudentDashboard', './src/components/TeacherDashboard', './src/components/ParentDashboard'],
+          'sections': ['./src/components/HeroSection', './src/components/PPDBSection', './src/components/ContactSection', './src/components/RelatedLinksSection', './src/components/ProfileSection', './src/components/FeaturedProgramsSection', './src/components/LatestNewsSection']
         },
 
         // Optimize chunk naming untuk better caching
@@ -46,7 +49,13 @@ export default defineConfig(({ command, mode }) => ({
 
     // Performance optimizations
     target: 'esnext',
-    minify: 'esbuild',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
 
     // Chunk size warnings
     chunkSizeWarningLimit: 500
