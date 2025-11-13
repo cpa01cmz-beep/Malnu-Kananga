@@ -94,7 +94,7 @@ jobs:
 
       - name: Run OpenCode agent
         run: |
-          opencode run "Act as an autonomous GitHub repository developer running inside a GitHub Actions environment; use gh CLI and the collected metadata files (pr_meta.json, issue_meta.json, gh_cli_version.txt, gh_action_env.txt, metadata_sources.json) to analyze open PRs/issues and decide what to do; follow docs: https://opencode.ai/docs/cli/#run-1 and https://cli.github.com/manual/gh_help_environment; do not modify workflows; if nothing to fix, propose improvements; limit actions to what can be completed safely in this CI run." \
+          opencode run "Kamu adalah developer otonom di GitHub Actions; jika ada issue, clone branch 'main', perbaiki, lalu buat PR; jika menangani PR, review seluruh komentar percakapan, terapkan saran bila perlu, pastikan build berhasil, lalu beri komentar hasil; jika tidak ada PR atau issue terbuka, analisa dokumen dan pastikan fitur website berfungsi; jangan ubah workflow; semua tindakan harus aman dan selesai dalam satu run." \
             --model iflowcn/qwen3-coder-plus \
             --file ./pr_meta.json \
             --file ./issue_meta.json \
