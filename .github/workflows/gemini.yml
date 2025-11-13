@@ -101,7 +101,7 @@ jobs:
 
       - name: 5. 🚀 Execute Gemini Orchestrator
         id: gemini_run
-        uses: google-github-actions/run-gemini-cli@latest
+        uses: google-github-actions/run-gemini-cli@v0.1.14
         with:
           gemini-api-key: ${{ secrets.GEMINI_API_KEY }} # Pastikan Anda telah mengatur rahasia ini
           model: "gemini-2.5-flash-lite"
