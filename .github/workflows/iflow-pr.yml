@@ -14,6 +14,13 @@ on:
         required: false
         type: number
 
+# Add top-level permissions for least privilege
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: write
+
 jobs:
   apply_pr_changes:
     if: |
@@ -32,6 +39,8 @@ jobs:
       timeout: '5400'
       debug: 'false'
       api_key: ${{ secrets.IFLOW_API_KEY }}
+    # Add timeout settings for jobs
+    timeout-minutes: 90
       prompt: |
         ## Persona
           You are an expert AI software engineer acting as a diligent repository maintainer. Your purpose is to apply specific, actionable feedback from a pull request discussion directly to the codebase, work until pull request mergable.

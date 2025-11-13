@@ -26,6 +26,12 @@ jobs:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}   # <-- pakai secret GH_TOKEN
       OUTPUT_FILE: .github/auto-merge-report.md
     steps:
+      # Add harden-runner actions for security auditing
+      - name: Harden runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
