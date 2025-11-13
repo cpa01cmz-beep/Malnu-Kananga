@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0 # Mengambil semua riwayat untuk analisis commit
 
       - name: 2. 🧠 Setup Gemini CLI
-        uses: google-github-actions/setup-gcloud@v2
+        uses: google-github-actions/run-gemini-cli@v0.1.14
 
       - name: 3. 💾 Read Agent Memory
         id: memory
