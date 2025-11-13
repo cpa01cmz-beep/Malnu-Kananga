@@ -39,7 +39,7 @@ jobs:
 
       # Langkah 2: Kumpulkan Konteks Komprehensif
       # Langkah ini menggunakan GitHub CLI (gh) dan git untuk membangun prompt yang kaya konteks.
-      # Semua informasi ini disimpan dalam variabel GITHUB_ENV untuk digunakan pada langkah berikutnya.
+      # Semua informasi ini disimpan dalam variabel lingkungan PROMPT untuk digunakan pada langkah berikutnya.
       - name: '2. Gather Comprehensive Repository Context'
         id: context_gatherer
         env:
@@ -70,77 +70,76 @@ jobs:
           OPEN_ISSUES=$(gh issue list --state open --limit 5 --json number,title,author,commentsCount --template '{{range .}}{{- printf "- **Isu #%v:** %s (oleh %s, %v komentar)\n" .number .title .author.login .commentsCount}}{{end}}')
           if [ -z "$OPEN_ISSUES" ]; then OPEN_ISSUES="Tidak ada isu yang terbuka."; fi
 
-          # Membaca Memori Agen
-          # File ini harus ada, bahkan jika kosong.
-          if [ -f .github/iflow/memory.md ]; then
-            AGENT_MEMORY=$(cat .github/iflow/memory.md)
-          else
-            AGENT_MEMORY="Memori belum diinisialisasi. Ini adalah siklus pertama saya."
+          # Membaca Memori Agen (Pastikan file ada)
+          if [ ! -f .github/iflow/memory.md ]; then
+            mkdir -p .github/iflow && touch .github/iflow/memory.md
           fi
+          AGENT_MEMORY=$(cat .github/iflow/memory.md)
+          if [ -z "$AGENT_MEMORY" ]; then AGENT_MEMORY="Memori belum diinisialisasi. Ini adalah siklus pertama saya."; fi
           
-          # Gabungkan semua konteks menjadi satu prompt besar
-          FINAL_PROMPT=$(cat <<EOF
-# Persona & Tujuan Utama
-Anda adalah Orkestrator Repositori AI yang sangat cerdas dan otonom. Anda hidup di dalam GitHub Actions. Misi Anda adalah menjaga kesehatan, efisiensi, dan kecepatan pengembangan repositori ini. Anda harus proaktif, belajar dari tindakan masa lalu, dan selalu bertujuan untuk meningkatkan alur kerja. Tujuan default Anda adalah meninjau semua Pull Request yang terbuka, menyelesaikan percakapan, dan menggabungkannya jika semua kriteria terpenuhi.
-
-# Instruksi Tugas Saat Ini
-${{ inputs.dispatch_prompt || 'Jalankan siklus orkestrasi standar: tinjau dan kelola PR dan isu yang terbuka.' }}
-
-# Konteks Saat Ini
-$REPO_CONTEXT
-
-## Sejarah Commit Terbaru
-\`\`\`
-$COMMIT_HISTORY
-\`\`\`
-
-## Log Alur Kerja Aksi Terbaru
-\`\`\`
-$ACTION_LOGS
-\`\`\`
-
-## Isu Terbuka
-$OPEN_ISSUES
-
-## Pull Request Terbuka
-$OPEN_PRS
-
-# Memori Jangka Panjang Anda
-*Baca bagian ini untuk memahami tindakan, keputusan, dan observasi masa lalu. Gunakan ini untuk membuat keputusan yang lebih baik dari waktu ke waktu.*
----
-$AGENT_MEMORY
----
-
-# Output yang Diperlukan (Format JSON yang Ketat)
-Anda HARUS merespons HANYA dengan objek JSON yang valid. Jangan tambahkan penjelasan atau teks lain di luar format JSON.
-Struktur JSON yang diperlukan adalah sebagai berikut:
-\`\`\`json
-{
-  "pemikiran": "Pikiran langkah-demi-langkah Anda di sini. Analisis semua konteks. Apa status repositori? PR mana yang membutuhkan perhatian? Apa rencana tindakan saya? Tinjau status pemeriksaan, ulasan, dan komentar pada setiap PR.",
-  "rencana_eksekusi": [
-    {
-      "deskripsi": "Deskripsi singkat dari perintah yang akan dijalankan.",
-      "perintah": "Perintah shell yang valid untuk dieksekusi, utamakan penggunaan 'gh cli'. Contoh: 'gh pr review 123 --approve --body \"Semua terlihat bagus!\"' atau 'gh pr merge 123 --squash --delete-branch'."
-    }
-  ],
-  "memori_baru": "Tulis di sini ringkasan tindakan Anda hari ini, keputusan yang dibuat, observasi penting, dan ide untuk perbaikan di masa depan. Ini akan menjadi masukan memori Anda untuk siklus berikutnya. Gunakan format Markdown."
-}
-\`\`\`
-
-# Aturan Kritis untuk Penggabungan PR (Merge):
-1.  **Status Hijau:** HANYA gabungkan PR jika `statusCheckRollup` adalah 'SUCCESS'.
-2.  **Tidak Ada Konflik:** Pastikan PR tidak memiliki konflik penggabungan. Konteks tidak menyediakan ini secara langsung, tetapi Anda dapat mengasumsikannya jika status pemeriksaan lolos.
-3.  **Ulasan Disetujui:** Prioritaskan PR yang telah memiliki ulasan yang disetujui, meskipun Anda juga memiliki wewenang untuk menyetujui.
-4.  **Selesaikan Komentar:** Sebelum menggabungkan, pastikan semua percakapan komentar telah diselesaikan atau dijawab. Anda dapat membalas komentar menggunakan 'gh pr comment'.
-
-Sekarang, analisis semua informasi yang diberikan dan hasilkan objek JSON.
-EOF
-)
-          # Menggunakan delimiter EOF untuk menangani konten multi-baris
-          echo "PROMPT<<EOF" >> $GITHUB_ENV
-          echo "$FINAL_PROMPT" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          echo "Pengumpulan konteks selesai."
+          # =================== PERBAIKAN DI BAWAH INI ===================
+          # Gabungkan semua konteks menjadi satu prompt besar dan set sebagai variabel lingkungan
+          # dengan menggunakan metode delimiter yang benar.
+          {
+            echo 'PROMPT<<EOF'
+            echo "# Persona & Tujuan Utama"
+            echo "Anda adalah Orkestrator Repositori AI yang sangat cerdas dan otonom. Anda hidup di dalam GitHub Actions. Misi Anda adalah menjaga kesehatan, efisiensi, dan kecepatan pengembangan repositori ini. Anda harus proaktif, belajar dari tindakan masa lalu, dan selalu bertujuan untuk meningkatkan alur kerja. Tujuan default Anda adalah meninjau semua Pull Request yang terbuka, menyelesaikan percakapan, dan menggabungkannya jika semua kriteria terpenuhi."
+            echo ""
+            echo "# Instruksi Tugas Saat Ini"
+            echo "${{ inputs.dispatch_prompt || 'Jalankan siklus orkestrasi standar: tinjau dan kelola PR dan isu yang terbuka.' }}"
+            echo ""
+            echo "# Konteks Saat Ini"
+            echo "$REPO_CONTEXT"
+            echo ""
+            echo "## Sejarah Commit Terbaru"
+            echo "\`\`\`"
+            echo "$COMMIT_HISTORY"
+            echo "\`\`\`"
+            echo ""
+            echo "## Log Alur Kerja Aksi Terbaru"
+            echo "\`\`\`"
+            echo "$ACTION_LOGS"
+            echo "\`\`\`"
+            echo ""
+            echo "## Isu Terbuka"
+            echo "$OPEN_ISSUES"
+            echo ""
+            echo "## Pull Request Terbuka"
+            echo "$OPEN_PRS"
+            echo ""
+            echo "# Memori Jangka Panjang Anda"
+            echo "*Baca bagian ini untuk memahami tindakan, keputusan, dan observasi masa lalu. Gunakan ini untuk membuat keputusan yang lebih baik dari waktu ke waktu.*"
+            echo "---"
+            echo "$AGENT_MEMORY"
+            echo "---"
+            echo ""
+            echo "# Output yang Diperlukan (Format JSON yang Ketat)"
+            echo "Anda HARUS merespons HANYA dengan objek JSON yang valid. Jangan tambahkan penjelasan atau teks lain di luar format JSON."
+            echo "Struktur JSON yang diperlukan adalah sebagai berikut:"
+            echo "\`\`\`json"
+            echo "{"
+            echo "  \"pemikiran\": \"Pikiran langkah-demi-langkah Anda di sini. Analisis semua konteks. Apa status repositori? PR mana yang membutuhkan perhatian? Apa rencana tindakan saya? Tinjau status pemeriksaan, ulasan, dan komentar pada setiap PR.\","
+            echo "  \"rencana_eksekusi\": ["
+            echo "    {"
+            echo "      \"deskripsi\": \"Deskripsi singkat dari perintah yang akan dijalankan.\","
+            echo "      \"perintah\": \"Perintah shell yang valid untuk dieksekusi, utamakan penggunaan 'gh cli'. Contoh: 'gh pr review 123 --approve --body \\\"Semua terlihat bagus!\\\"' atau 'gh pr merge 123 --squash --delete-branch'.\""
+            echo "    }"
+            echo "  ],"
+            echo "  \"memori_baru\": \"Tulis di sini ringkasan tindakan Anda hari ini, keputusan yang dibuat, observasi penting, dan ide untuk perbaikan di masa depan. Ini akan menjadi masukan memori Anda untuk siklus berikutnya. Gunakan format Markdown.\""
+            echo "}"
+            echo "\`\`\`"
+            echo ""
+            echo "# Aturan Kritis untuk Penggabungan PR (Merge):"
+            echo "1.  **Status Hijau:** HANYA gabungkan PR jika \`statusCheckRollup\` adalah 'SUCCESS'."
+            echo "2.  **Tidak Ada Konflik:** Pastikan PR tidak memiliki konflik penggabungan. Konteks tidak menyediakan ini secara langsung, tetapi Anda dapat mengasumsikannya jika status pemeriksaan lolos."
+            echo "3.  **Ulasan Disetujui:** Prioritaskan PR yang telah memiliki ulasan yang disetujui, meskipun Anda juga memiliki wewenang untuk menyetujui."
+            echo "4.  **Selesaikan Komentar:** Sebelum menggabungkan, pastikan semua percakapan komentar telah diselesaikan atau dijawab. Anda dapat membalas komentar menggunakan 'gh pr comment'."
+            echo ""
+            echo "Sekarang, analisis semua informasi yang diberikan dan hasilkan objek JSON."
+            echo "EOF"
+          } >> "$GITHUB_ENV"
+          
+          echo "Pengumpulan konteks selesai dan PROMPT telah diatur."
 
       # Langkah 3: Jalankan Gemini CLI dengan Prompt yang Dibangun
       # Menggunakan versi yang ditentukan dan model yang disukai.
@@ -217,4 +216,4 @@ EOF
             echo "Eksekusi rencana selesai."
           else
             echo "Tidak ada rencana yang dapat dieksekusi yang dihasilkan oleh agen."
-          fi```
+          fi
