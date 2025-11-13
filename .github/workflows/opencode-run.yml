@@ -1,4 +1,4 @@
-name: 🧠 OpenCode Self-Improving Agent
+name: OpenCode Self-Improving Agent
 
 on:
   issue_comment:
@@ -21,9 +21,7 @@ concurrency:
 
 jobs:
   opencode:
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.comment != null && (contains(github.event.comment.body, ' /opencode') || startsWith(github.event.comment.body, '/opencode') || contains(github.event.comment.body, ' /oc') || startsWith(github.event.comment.body, '/oc')))
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment' }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -41,37 +39,37 @@ jobs:
       TASK: ${{ github.event.inputs.task }}
 
     steps:
-      - name: 🔒 Harden runner
+      - name: Harden runner
         uses: step-security/harden-runner@v2
         with:
           egress-policy: audit
 
-      - name: 📦 Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v5
         with:
           fetch-depth: 2
 
-      - name: 🧮 Collect metadata from open PRs and Issues
+      - name: Collect metadata from open PRs and Issues
         id: collect_meta
         run: |
           echo "Collecting PRs and Issues metadata..."
           gh pr list --state open --json number,title,url,author,labels,headRefName,mergeable > pr_meta.json
           gh issue list --state open --json number,title,url,author,labels > issue_meta.json
-          echo "✅ Saved metadata to pr_meta.json and issue_meta.json"
+          echo "Saved metadata to pr_meta.json and issue_meta.json"
 
-      - name: 🧠 Summarize metadata
+      - name: Summarize metadata
         run: |
           echo "=== Open Pull Requests ==="
           jq . pr_meta.json || cat pr_meta.json
           echo "=== Open Issues ==="
           jq . issue_meta.json || cat issue_meta.json
 
-      - name: 🧩 Install OpenCode CLI
+      - name: Install OpenCode CLI
         run: |
           curl -fsSL https://opencode.ai/install | bash
           echo "$HOME/.opencode/bin" >> $GITHUB_PATH
 
-      - name: 📚 Load previous memory (if exists)
+      - name: Load previous memory (if exists)
         run: |
           if [ -f "${REFLECT_FILE}" ]; then
             echo "Previous memory found, loading..."
@@ -81,7 +79,7 @@ jobs:
             echo "No previous memory, initialized ${REFLECT_FILE}"
           fi
 
-      - name: 🤖 Run OpenCode Self-Improving Agent
+      - name: Run OpenCode Self-Improving Agent
         env:
           IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
         run: |
@@ -91,22 +89,22 @@ jobs:
           fi
 
           # buat prompt dinamis ke file untuk kejelasan
-          cat > /tmp/opencode_prompt.txt <<'PROMPT_EOF'
+          cat > /tmp/opencode_prompt.txt <<'EOF'
 Anda adalah agen pengembang otonom bernama OpenCode, dibangun untuk belajar dari setiap eksekusi.
 
-🎯 Tujuan Anda:
+Tujuan Anda:
 - Menganalisis isu dan PR terbuka
 - Memprioritaskan pekerjaan yang paling penting
 - Menyelesaikan tugas yang diberikan oleh pengguna atau perintah dispatch
 - Mengingat hasil sebelumnya untuk meningkatkan kinerja di masa depan
 
-🧠 Kemampuan Khusus:
+Kemampuan Khusus:
 - Anda memiliki refleksi memori di file '${REFLECT_FILE}'
 - Anda dapat memperbarui memori ini dengan pelajaran baru (strategi, kesalahan, hasil baik)
 - Anda mampu menilai kinerja Anda sendiri
 
-🪄 Tugas Saat Ini:
-PROMPT_EOF
+Tugas Saat Ini:
+EOF
 
           # tambahkan tugas dinamis di akhir prompt
           echo "${TASK}" >> /tmp/opencode_prompt.txt
@@ -123,12 +121,12 @@ PROMPT_EOF
             --reflect "${REFLECT_FILE}" \
             --share
 
-      - name: 💾 Save updated memory
+      - name: Save updated memory
         if: always()
         run: |
           echo "Saving reflection memory..."
           if [ -f "${REFLECT_FILE}" ]; then
-            echo "✅ Updated memory saved"
+            echo "Updated memory:"
             cat "${REFLECT_FILE}"
           else
             echo "No reflect file created."
