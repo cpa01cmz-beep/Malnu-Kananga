@@ -71,9 +71,11 @@ jobs:
       - name: Run opencode agent manually
         run: |
           opencode run \
+            "Analyze open pull requests and issues and decide which one to fix first" \
             --model iflowcn/qwen3-coder-plus \
             --context ./pr_meta.json \
-            --context ./issue_meta.json
+            --context ./issue_meta.json \
+            --share
         env:
           IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
 
