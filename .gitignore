@@ -38,3 +38,6 @@ deployment-report.txt
 # Auto-generated comment files
 issue_comments.json
 review_comments.json
+
+.iflow/
+gha-creds-*.json
