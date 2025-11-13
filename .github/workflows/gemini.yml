@@ -1,0 +1,93 @@
+name: Gemini Repository Orchestrator
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Prompt kustom untuk Gemini'
+        required: false
+        default: 'Jalankan tugas orkestrasi default Anda.'
+  schedule:
+    - cron: '0 * * * *' # Berjalan setiap jam
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write # Diperlukan untuk menulis ke memory.md dan menggabungkan PR
+      pull-requests: write # Diperlukan untuk berinteraksi dengan PR (komentar, merge)
+      issues: write # Diperlukan untuk berinteraksi dengan isu
+      actions: write # Diperlukan untuk membaca log alur kerja
+
+    steps:
+      - name: Checkout Repositori
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Ambil semua riwayat untuk analisis commit yang lebih baik
+
+      - name: Siapkan Konteks Ringkas (Cerdas)
+        id: context
+        run: |
+          # Mengumpulkan informasi repositori dasar
+          REPO_CONTEXT="### Konteks Repositori: '${{ github.repository }}'\n"
+          REPO_CONTEXT+="- Cabang Default: ${{ github.event.repository.default_branch }}\n"
+          REPO_CONTEXT+="- URL Repositori: ${{ github.event.repository.html_url }}\n\n"
+
+          # Mengumpulkan ringkasan PR terbuka yang paling baru diperbarui (untuk menghindari batas node GraphQL)
+          # Hanya mengambil metadata, bukan body/komentar/commit penuh di awal
+          OPEN_PRS=$(gh pr list --state open --limit 20 --search "sort:updated-desc" --json number,title,author,labels,updatedAt,url,mergeable)
+          REPO_CONTEXT+="### Ringkasan Pull Request Terbuka (Terbaru):\n${OPEN_PRS}\n\n"
+
+          # Mengumpulkan ringkasan Isu terbuka yang paling baru diperbarui
+          OPEN_ISSUES=$(gh issue list --state open --limit 20 --search "sort:updated-desc" --json number,title,author,labels,updatedAt,url)
+          REPO_CONTEXT+="### Ringkasan Isu Terbuka (Terbaru):\n${OPEN_ISSUES}\n\n"
+
+          # Mengumpulkan riwayat commit terbaru
+          COMMIT_HISTORY=$(git log --oneline -n 20)
+          REPO_CONTEXT+="### Riwayat Commit Terbaru:\n${COMMIT_HISTORY}\n\n"
+
+          # Mengumpulkan log alur kerja terbaru
+          WORKFLOW_LOGS=$(gh run list --workflow gemini_orchestrator.yml --limit 5 --json name,status,conclusion,url,databaseId | jq -r '.[] | .url')
+          REPO_CONTEXT+="### Log Alur Kerja Terbaru (Orkestrator):\n${WORKFLOW_LOGS}\n\n"
+
+          echo "repo_context<<EOF" >> $GITHUB_OUTPUT
+          echo "$REPO_CONTEXT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          
+      - name: Jalankan Gemini CLI sebagai Orkestrator
+        uses: google-github-actions/run-gemini-cli@v0.1.14
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          gemini_model: "gemini-flash-lite-latest"
+          prompt: |
+            Anda adalah Gemini, seorang orkestrator repositori AI yang cerdas dan otonom untuk repositori '${{ github.repository }}'. Misi Anda adalah untuk menjaga kesehatan, efisiensi, dan momentum pengembangan proyek ini. Anda harus belajar dan beradaptasi dari waktu ke waktu.
+
+            **Konteks Saat Ini:**
+            Berikut adalah snapshot komprehensif dari status repositori saat ini. Gunakan informasi ini untuk membuat keputusan yang terinformasi.
+
+            ${{ steps.context.outputs.repo_context }}
+
+            **Memori Jangka Panjang Anda:**
+            File `.github/iflow/memory.md` adalah basis pengetahuan Anda. Tinjau untuk memahami keputusan masa lalu, pembelajaran, dan arahan proyek. Setelah setiap eksekusi, perbarui file ini dengan ringkasan tindakan Anda, alasan di baliknya, dan hasil apa pun. Ini sangat penting untuk evolusi Anda.
+
+            **Tugas Orkestrasi Default Anda:**
+            1.  **Analisis Menyeluruh:** Tinjau semua konteks yang diberikan di atas. Identifikasi PR yang macet, isu yang membutuhkan perhatian, atau anomali dalam riwayat commit atau log alur kerja.
+            2.  **Tinjau & Selesaikan Komentar PR:** Untuk setiap Pull Request yang terbuka:
+                *   Baca semua utas percakapan (komentar).
+                *   Pahami masalah atau pertanyaan yang diajukan.
+                *   Jika Anda dapat menyelesaikan komentar (misalnya, dengan memberikan penjelasan atau mengkonfirmasi perubahan kecil), lakukanlah dan selesaikan utas tersebut.
+                *   Jika perubahan kode diperlukan, berikan komentar yang jelas kepada penulis tentang apa yang perlu dilakukan.
+            3.  **Gabungkan PR yang Memenuhi Syarat:** Setelah meninjau PR, jika kondisi berikut terpenuhi, maka gabungkan PR tersebut:
+                *   Semua utas percakapan telah diselesaikan.
+                *   Status pemeriksaan CI/CD (status) berwarna hijau (sukses).
+                *   Tidak ada konflik penggabungan yang dilaporkan.
+                *   Telah disetujui oleh setidaknya satu peninjau (jika aturan cabang memerlukannya).
+            4.  **Perbarui Memori:** Catat semua tindakan yang Anda ambil, terutama PR yang Anda gabungkan atau komentari, dalam file `.github/iflow/memory.md`. Jelaskan *mengapa* Anda mengambil tindakan tersebut. Ini akan membantu Anda membuat keputusan yang lebih baik di masa depan.
+
+            **Prompt Eksekusi Saat Ini:**
+            ${{ github.event.inputs.prompt || 'Jalankan tugas orkestrasi default Anda.' }}
+          memory_file: '.github/iflow/memory.md'
+          github_token: ${{ secrets.GH_TOKEN }}
