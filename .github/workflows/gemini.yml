@@ -26,49 +26,37 @@ jobs:
         with:
           fetch-depth: 0 # Ambil semua riwayat untuk analisis commit yang lebih baik
 
-      - name: Siapkan Konteks Komprehensif
+      - name: Siapkan Konteks Ringkas (Cerdas)
         id: context
         run: |
           # Mengumpulkan informasi repositori dasar
           REPO_CONTEXT="### Konteks Repositori: '${{ github.repository }}'\n"
-          REPO_CONTEXT+="- Deskripsi: ${{ github.event.repository.description }}\n"
           REPO_CONTEXT+="- Cabang Default: ${{ github.event.repository.default_branch }}\n"
           REPO_CONTEXT+="- URL Repositori: ${{ github.event.repository.html_url }}\n\n"
 
-          # Mengumpulkan detail Pull Request yang terbuka
-          OPEN_PRS=$(gh pr list --state open --json number,title,author,body,comments,reviews,commits,labels,updatedAt,url --limit 50)
-          REPO_CONTEXT+="### Pull Request Terbuka:\n${OPEN_PRS}\n\n"
+          # Mengumpulkan ringkasan PR terbuka yang paling baru diperbarui (untuk menghindari batas node GraphQL)
+          # Hanya mengambil metadata, bukan body/komentar/commit penuh di awal
+          OPEN_PRS=$(gh pr list --state open --limit 20 --search "sort:updated-desc" --json number,title,author,labels,updatedAt,url,mergeable)
+          REPO_CONTEXT+="### Ringkasan Pull Request Terbuka (Terbaru):\n${OPEN_PRS}\n\n"
 
-          # Mengumpulkan detail Pull Request yang ditutup (terbaru)
-          CLOSED_PRS=$(gh pr list --state closed --json number,title,author,merged,closedAt,url --limit 20)
-          REPO_CONTEXT+="### Pull Request yang Baru Ditutup:\n${CLOSED_PRS}\n\n"
-
-          # Mengumpulkan detail Isu yang terbuka
-          OPEN_ISSUES=$(gh issue list --state open --json number,title,author,body,comments,labels,updatedAt,url --limit 50)
-          REPO_CONTEXT+="### Isu Terbuka:\n${OPEN_ISSUES}\n\n"
-
-          # Mengumpulkan detail Isu yang ditutup (terbaru)
-          CLOSED_ISSUES=$(gh issue list --state closed --json number,title,author,closedAt,url --limit 20)
-          REPO_CONTEXT+="### Isu yang Baru Ditutup:\n${CLOSED_ISSUES}\n\n"
+          # Mengumpulkan ringkasan Isu terbuka yang paling baru diperbarui
+          OPEN_ISSUES=$(gh issue list --state open --limit 20 --search "sort:updated-desc" --json number,title,author,labels,updatedAt,url)
+          REPO_CONTEXT+="### Ringkasan Isu Terbuka (Terbaru):\n${OPEN_ISSUES}\n\n"
 
           # Mengumpulkan riwayat commit terbaru
           COMMIT_HISTORY=$(git log --oneline -n 20)
           REPO_CONTEXT+="### Riwayat Commit Terbaru:\n${COMMIT_HISTORY}\n\n"
 
-          # Mengumpulkan log alur kerja terbaru (5 yang terakhir gagal)
+          # Mengumpulkan log alur kerja terbaru
           WORKFLOW_LOGS=$(gh run list --workflow gemini_orchestrator.yml --limit 5 --json name,status,conclusion,url,databaseId | jq -r '.[] | .url')
           REPO_CONTEXT+="### Log Alur Kerja Terbaru (Orkestrator):\n${WORKFLOW_LOGS}\n\n"
-          
-          # Informasi lain yang relevan (opsional, bisa ditambahkan sesuai kebutuhan)
-          # REPO_CONTEXT+="\n### Diskusi:\n$(gh api repos/${{ github.repository }}/discussions)\n" # Memerlukan cakupan token yang sesuai
-          # REPO_CONTEXT+="\n### Wiki:\n(Cara untuk mengambil wiki di sini)\n"
 
           echo "repo_context<<EOF" >> $GITHUB_OUTPUT
           echo "$REPO_CONTEXT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
+          
       - name: Jalankan Gemini CLI sebagai Orkestrator
         uses: google-github-actions/run-gemini-cli@v0.1.14
         with:
