@@ -16,9 +16,6 @@ concurrency:
 
 jobs:
   opencode:
-    # Jalankan jika:
-    # - event = dispatch (manual)
-    # - atau komentar mengandung /opencode atau /oc
     if: |
       github.event_name == 'workflow_dispatch' ||
       contains(github.event.comment.body, ' /opencode') ||
@@ -34,6 +31,9 @@ jobs:
       pull-requests: write
       issues: write
       actions: write
+
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }} # ✅ tambahkan ini di level job agar semua step bisa pakai `gh`
 
     steps:
       - name: Harden runner
