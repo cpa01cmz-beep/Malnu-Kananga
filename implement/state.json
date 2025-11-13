@@ -43,7 +43,7 @@
   "projectContext": {
     "name": "Malnu-Kananga School Portal",
     "type": "React 19, TypeScript, Tailwind CSS, Cloudflare Workers",
-    "directory": "D:/09. repo cpa01.cmz/Malnu-Kananga",
+    "directory": ".",
     "lastUpdate": "2025-11-12T00:05:00Z"
   }
 }
