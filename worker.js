@@ -72,8 +72,8 @@ async function generateSecureToken(email, expiryTime = 15 * 60 * 1000) {
   const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-  // Generate signature using HMAC-SHA256 with secret key
-  const secret = SECRET_KEY || 'default-secret-key-for-worker';
+  // Generate signature using HMAC-SHA256 with secret key from environment
+  const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
   const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;
@@ -118,7 +118,7 @@ async function verifyHMACSignature(data, signature, secret) {
   return await crypto.subtle.verify('HMAC', key, signatureBytes, encoder.encode(data));
 }
 
-async function verifyAndDecodeToken(token) {
+async function verifyAndDecodeToken(token, env) {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
@@ -126,7 +126,7 @@ async function verifyAndDecodeToken(token) {
     const [encodedHeader, encodedPayload, signature] = parts;
     
     // Verify signature using HMAC-SHA256
-    const secret = SECRET_KEY || 'default-secret-key-for-worker';
+    const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
     const isValid = await verifyHMACSignature(`${encodedHeader}.${encodedPayload}`, signature, secret);
     
     if (!isValid) {
@@ -293,19 +293,19 @@ export default {
         const token = url.searchParams.get('token');
         if (!token) return new Response('Token tidak valid atau hilang.', { status: 400 });
         try {
-            const tokenData = await verifyAndDecodeToken(token);
+            const tokenData = await verifyAndDecodeToken(token, env);
             if (!tokenData) {
                 return new Response('Link login sudah kedaluwarsa atau tidak valid. Silakan minta link baru.', { status: 400 });
             }
-             const headers = new Headers();
-             // Add __Host- prefix for more secure cookie (only works on HTTPS)
-             // Use the actual token instead of just the email to prevent session hijacking
-             headers.set('Set-Cookie', `__Host-auth_session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
-             headers.set('Location', new URL(request.url).origin);
-             return new Response(null, { status: 302, headers });
-         } catch(e) {
-             return new Response('Token tidak valid atau rusak.', { status: 400 });
-         }
+            const headers = new Headers();
+            // Add __Host- prefix for more secure cookie (only works on HTTPS)
+            // Use the actual token instead of just the email to prevent session hijacking
+            headers.set('Set-Cookie', `__Host-auth_session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
+            headers.set('Location', new URL(request.url).origin);
+            return new Response(null, { status: 302, headers });
+        } catch(e) {
+            return new Response('Token tidak valid atau rusak.', { status: 400 });
+        }
     }
     
     // --- Endpoint untuk Generate Signature ---
