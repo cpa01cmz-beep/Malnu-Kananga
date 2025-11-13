@@ -21,6 +21,9 @@ jobs:
 
       - name: 2. 🧠 Setup Gemini CLI
         uses: google-github-actions/run-gemini-cli@v0.1.14
+        with:
+          gemini-api-key: ${{ secrets.GEMINI_API_KEY }} # Pastikan Anda telah mengatur rahasia ini
+          model: "gemini-2.5-flash-lite"        
 
       - name: 3. 💾 Read Agent Memory
         id: memory
