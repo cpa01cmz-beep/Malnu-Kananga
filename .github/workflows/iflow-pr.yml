@@ -1,93 +1,148 @@
-name: "iFlow - Apply PR Changes"
+name: "iFlow - PR Intelligence"
 
 on:
-  pull_request_review_comment:
-    types: [created]
+  schedule:
+    - cron: "0 */6 * * *" # setiap 6 jam
   workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'PR number to apply (optional)'
-        required: false
-        type: number
-      trigger_apply:
-        description: 'Trigger apply for PR (optional)'
-        required: false
-        type: number
 
-# Add top-level permissions for least privilege
 permissions:
-  contents: read
+  id-token: write
+  contents: write
   pull-requests: write
   issues: write
-  checks: write
+  actions: read
 
 jobs:
-  apply_pr_changes:
-    if: |
-      (github.event_name == 'pull_request_review_comment' &&
-       (contains(github.event.comment.body, '@iflow-cli /apply') ||
-        github.event.comment.author_association == 'COLLABORATOR')) ||
-      (github.event_name == 'workflow_dispatch' && (inputs.trigger_apply || inputs.pr_number))
-    concurrency:
-      group: ${{ github.workflow }}-apply-${{ github.event.pull_request.number || inputs.pr_number || inputs.trigger_apply || github.run_id }}
-      cancel-in-progress: false
-    uses: ./.github/workflows/_reusable/iflow-cli.yml
-    env:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
-    with:
-      timeout: '5400'
-      debug: 'false'
-      api_key: ${{ secrets.IFLOW_API_KEY }}
-      prompt: |
-        ## Persona
-          You are an expert AI software engineer acting as a diligent repository maintainer. Your purpose is to apply specific, actionable feedback from a pull request discussion directly to the codebase, work until pull request mergable.
+  gather_pr_data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
-        ## Context
-        - REPOSITORY=${{ env.REPOSITORY }}
-        - PR_NUMBER=${{ env.PR_NUMBER }}
+      - name: Collect open PR metadata
+        run: |
+          mkdir -p pr_intel
+          gh pr list --state open --json \
+            number,title,author,mergeable,mergeStateStatus,updatedAt,createdAt,headRefName,baseRefName,reviewDecision,isDraft \
+            > pr_intel/open_prs.json
 
-        ## Cost/Quota Constraints
-        - Minimize API calls and disk ops.
-        - Use targeted GraphQL/REST queries with specific fields and pagination cursors.
-        - Exit early if no actionable feedback.
+          count=$(jq '. | length' pr_intel/open_prs.json)
+          echo "Found $count open PRs."
 
-        ## Objectives
-        1) Parse full PR conversation (reviews, review comments, regular comments).
-        2) Select only explicit, consensus changes.
-        3) Apply changes on PR head branch, one commit per comment:
-           - Commit message: `fixup: Apply feedback from comment <comment_id>`
-        4) Resolve addressed review threads.
-        5) If PR is draft but ready, mark ready.
-        6) Re-request previous reviewers if changes were pushed.
-        7) Merge policy:
-           - If now mergeable and checks/approvals satisfied: `gh pr merge $PR_NUMBER --squash --delete-branch --body "Merged after applying explicit feedback."`
-           - Else: enable auto-merge once: `gh pr merge $PR_NUMBER --squash --auto --delete-branch`
-           - Do not poll/wait. No loops.
+          if [ "$count" -eq 0 ]; then
+            echo "No open PRs found. Skipping downstream job." >> $GITHUB_ENV
+            echo "skip_jobs=true" >> $GITHUB_ENV
+          else
+            echo "skip_jobs=false" >> $GITHUB_ENV
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
-        ## Detailed Steps
-        - Fetch PR metadata: headRefName, headRepository, baseRefName, isCrossRepository.
-        - If head repo != base repo and push is not permitted:
-          - Post a concise comment with a unified diff patch block for the author to apply.
-          - Stop without errors.
-        - Checkout PR branch: `gh pr checkout $PR_NUMBER`.
-        - Configure git identity if needed:
-          `git config user.name "github-actions[bot]"`
-          `git config user.email "41898282+github-actions[bot]@users.noreply.github.com"`
-        - Build actionable list from comments:
-          INCLUDE concrete snippets or exact line edits; EXCLUDE ambiguous/disputed.
-          Ensure idempotency by diffing before applying.
-        - Apply patches precisely, run a quick syntax check or build when available (fast path only).
-        - Push commits.
-        - Resolve threads fixed via GraphQL `resolveReviewThread`.
-        - Post one summary comment:
-          - Applied items (with comment ids)
-          - Skipped items + short reasons
-          - Action taken: merged now | auto-merge enabled | patch posted due to fork perms
+      - name: Upload PR intel
+        if: env.skip_jobs == 'false'
+        uses: actions/upload-artifact@v5
+        with:
+          name: pr-intel-data-${{ github.run_id }}
+          path: pr_intel/
 
-        ## Rules
-        - Keep code valid and style-consistent.
-        - Single pass. No retries, no waiting.
-    env:
-      REPOSITORY: ${{ github.repository }}
-      PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number || inputs.trigger_apply || github.run_id }}
+  smart_pr_agent:
+    needs: gather_pr_data
+    if: needs.gather_pr_data.outputs.skip_jobs != 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Download PR intel
+        uses: actions/download-artifact@v6
+        with:
+          name: pr-intel-data-${{ github.run_id }}
+          path: ./pr_intel
+
+      - name: Run iFlow CLI to handle problematic PRs
+        uses: iflow-ai/iflow-cli-action@v2.1.0
+        with:
+          api_key: ${{ secrets.IFLOW_API_KEY }}
+          timeout: "5400"
+          prompt: |
+            ## ROLE
+            You are an autonomous GitHub PR management agent.
+
+            ## CONTEXT
+            - Repository: ${{ github.repository }}
+            - Data: ./pr_intel/open_prs.json
+            - The repository is fully checked out and you have write access.
+
+            ## GOALS
+            Analyze all open PRs and automatically:
+            1. Detect the next actionable PR:
+               - Prioritize PRs that are mergeable but blocked by unresolved comments.
+               - Next, PRs that are out-of-date with base branch.
+               - Then, PRs with conflicts or failed checks.
+            2. If all PRs are "green" (mergeable, checks passed, no unresolved threads):
+               - Post one repository comment: "✅ All PRs are healthy. No action needed."
+               - Exit cleanly.
+            3. For the selected PR:
+               - Fetch full discussion, review comments, and status checks.
+               - Determine minimal actions to move PR toward merge readiness.
+               - Perform safe automated steps:
+                 - Update branch from base (if out of date): `gh pr update --rebase` or merge base.
+                 - Resolve clear resolved comments if applicable.
+                 - If there are unaddressed review comments with suggested code (```diff```), apply them.
+                 - If checks failing due to known transient issues, re-run workflows via `gh run rerun`.
+               - Re-request reviewers if new commits pushed.
+               - Attempt merge:
+                 - If mergeable now: `gh pr merge $PR_NUMBER --squash --delete-branch --body "Merged automatically after successful fix."`
+                 - Else: enable auto-merge if all conditions nearly satisfied.
+            4. Post a short summary comment in the PR:
+               - Actions taken
+               - Remaining blockers
+               - Whether auto-merge enabled or not
+
+            ## RULES
+            - Skip PRs marked as draft.
+            - Skip PRs with no changes or closed.
+            - Never delete code branches manually unless merged.
+            - Never expose secrets.
+            - Never run long polling loops.
+            - Keep commits atomic and clean.
+
+            ## OUTPUT
+            Write a concise JSON report at `pr_intel/action_summary.json` with:
+            {
+              "handled_pr": <PR number>,
+              "actions": ["update_branch", "apply_feedback", "enable_auto_merge"],
+              "status": "merged|auto_merge_enabled|skipped",
+              "timestamp": "<ISO8601>"
+            }
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+
+      - name: Upload summary
+        if: success()
+        uses: actions/upload-artifact@v5
+        with:
+          name: pr-action-summary-${{ github.run_id }}
+          path: pr_intel/action_summary.json
+
+      - name: Optional summary comment
+        if: success()
+        run: |
+          if [ -f pr_intel/action_summary.json ]; then
+            summary=$(cat pr_intel/action_summary.json | jq -r '.')
+            echo "Posting summary comment..."
+            pr=$(jq -r '.handled_pr' pr_intel/action_summary.json)
+            if [ "$pr" != "null" ]; then
+              gh pr comment "$pr" --body "🤖 **iFlow PR Agent Summary**  
+              \`\`\`json
+              $summary
+              \`\`\`"
+            fi
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
