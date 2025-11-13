@@ -1,90 +1,196 @@
-name: "Check PR"
+name: 🧠 AI Repository Orchestrator
 
 on:
-  workflow_dispatch:
-    inputs:
-      dry_run:
-        description: "Jalankan tanpa merge (hanya laporkan)"
-        type: boolean
-        default: false
   schedule:
-    - cron: "0 3 * * 1"
+    - cron: '0 * * * *' # Berjalan setiap jam
+  workflow_dispatch: # Memungkinkan pemicuan manual
 
 permissions:
   contents: write
   pull-requests: write
-
-concurrency:
-  group: check-pr
-  cancel-in-progress: true
+  issues: write
 
 jobs:
-  check-pr:
+  orchestrate:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}   # <-- pakai secret GH_TOKEN
-      OUTPUT_FILE: .github/auto-merge-report.md
     steps:
-      # Add harden-runner actions for security auditing
-      - name: Harden runner
-        uses: step-security/harden-runner@v2
-        with:
-          egress-policy: audit
-
-      - name: Checkout
+      - name: 1. 📚 Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN }}  # <-- pakai PAT untuk commit/push
+          fetch-depth: 0 # Mengambil semua riwayat untuk analisis commit
 
-      - name: Kumpulkan PR & issue
-        id: collect
+      - name: 2. 🧠 Setup Gemini CLI
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 3. 💾 Read Agent Memory
+        id: memory
         run: |
-          set -euo pipefail
-          gh pr list \
-            --state open \
-            --json number,title,isDraft,mergeable,reviewDecision,updatedAt,author,labels \
-            --limit 50 > pr.json
-
-          gh issue list \
-            --state open \
-            --json number,title,updatedAt,author,labels \
-            --limit 50 > issues.json
-
-          echo "PR_COUNT=$(jq 'length' pr.json)" >> "$GITHUB_ENV"
-          echo "pr_json=$(jq -c '.' pr.json)" >> "$GITHUB_OUTPUT"
-          echo "issue_json=$(jq -c '.' issues.json)" >> "$GITHUB_OUTPUT"
-
-      - name: Pilih kandidat PR
-        id: pick
-        run: |
-          set -euo pipefail
-          jq -r '
-            def pick:
-              map(select(.isDraft==false and .mergeable!="CONFLICTING")) as $all
-              | ([$all[] | select(.reviewDecision=="APPROVED")] ) as $approved
-              | (if ($approved|length)>0 then $approved else $all end)
-              | sort_by(.updatedAt) | reverse | .[0];
-            pick
-          ' pr.json > candidate.json || true
-
-          if [ -s candidate.json ] && [ "$(jq -r '.number' candidate.json)" != "null" ]; then
-            echo "PR_NUMBER=$(jq -r '.number' candidate.json)" >> "$GITHUB_ENV"
-            echo "PR_TITLE=$(jq -r '.title' candidate.json)" >> "$GITHUB_ENV"
+          if [ -f .github/iflow/memory.md ]; then
+            echo "memory_content=$(cat .github/iflow/memory.md | base64 -w 0)" >> $GITHUB_OUTPUT
+          else
+            echo "memory_content=" >> $GITHUB_OUTPUT
           fi
 
-      - name: Analisis dengan Gemini
-        id: run_research
-        continue-on-error: true
-        uses: google-github-actions/run-gemini-cli@v0.1.14
+      - name: 4. 📊 Gather Comprehensive Repository Context
+        id: repo_context
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          # Fungsi untuk mengubah daftar menjadi format markdown
+          to_markdown_list() {
+            while IFS= read -r line; do
+              echo "- $line"
+            done
+          }
+
+          # Informasi Repositori Dasar
+          REPO_NAME="${{ github.repository }}"
+          REPO_SETTINGS=$(gh api repos/${REPO_NAME} --jq '{name, description, visibility, default_branch, language: .language, topics: .topics | join(", "), has_issues, has_projects, has_wiki, has_discussions}')
+
+          # Analisis Log Alur Kerja
+          WORKFLOW_LOGS=$(gh run list --limit 10 --json name,status,conclusion,createdAt,updatedAt --jq '.[] | "\(.name) (\(.status)/\(.conclusion)) - \(.updatedAt)"' | to_markdown_list)
+
+          # Sejarah Commit
+          COMMIT_HISTORY=$(git log --oneline --graph --decorate --all -n 15 | to_markdown_list)
+
+          # Pull Requests Terbuka
+          OPEN_PRS=$(gh pr list --state open --limit 15 --json title,number,author,createdAt,updatedAt,mergeable --jq '.[] | "#\(.number) \(.title) by @\(.author.login) (Mergeable: \(.mergeable))"' | to_markdown_list)
+
+          # Pull Requests yang Ditutup/Digabungkan
+          CLOSED_PRS=$(gh pr list --state merged --limit 15 --json title,number,author,mergedAt,mergedBy --jq '.[] | "#\(.number) \(.title) by @\(.author.login) merged by @\(.mergedBy.login)"' | to_markdown_list)
+
+          # Isu Terbuka
+          OPEN_ISSUES=$(gh issue list --state open --limit 15 --json title,number,author,createdAt,updatedAt --jq '.[] | "#\(.number) \(.title) by @\(.author.login)"' | to_markdown_list)
+
+          # Isu yang Ditutup
+          CLOSED_ISSUES=$(gh issue list --state closed --limit 15 --json title,number,author,closedAt --jq '.[] | "#\(.number) \(.title) by @\(.author.login)"' | to_markdown_list)
+
+          # Menggabungkan semua konteks menjadi satu variabel
+          FULL_CONTEXT=$(cat <<EOF
+          **Repository:** ${REPO_NAME}
+          **Timestamp UTC:** $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          **Pengaturan Repositori:**
+          \`\`\`json
+          ${REPO_SETTINGS}
+          \`\`\`
+
+          **Log Alur Kerja Terbaru (Actions):**
+          ${WORKFLOW_LOGS:-"- Tidak ada log alur kerja yang ditemukan."}
+
+          **Sejarah Commit Terbaru:**
+          \`\`\`
+          ${COMMIT_HISTORY:-"- Tidak ada riwayat commit yang ditemukan."}
+          \`\`\`
+
+          **Pull Requests Terbuka:**
+          ${OPEN_PRS:-"- Tidak ada PR terbuka."}
+
+          **Pull Requests Terbaru yang Digabungkan:**
+          ${CLOSED_PRS:-"- Tidak ada PR yang baru digabungkan."}
+
+          **Isu Terbuka:**
+          ${OPEN_ISSUES:-"- Tidak ada isu terbuka."}
+
+          **Isu Terbaru yang Ditutup:**
+          ${CLOSED_ISSUES:-"- Tidak ada isu yang baru ditutup."}
+          EOF
+          )
+
+          echo "full_context_b64=$(echo "$FULL_CONTEXT" | base64 -w 0)" >> $GITHUB_OUTPUT
+
+      - name: 5. 🚀 Execute Gemini Orchestrator
+        id: gemini_run
+        uses: google-github-actions/run-gemini-cli@v1
         with:
-          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          gemini_model: gemini-2.5-pro
+          gemini-api-key: ${{ secrets.GEMINI_API_KEY }} # Pastikan Anda telah mengatur rahasia ini
+          model: "gemini-2.5-flash-lite"
           prompt: |
-            Anda adalah AI Agent yang mengelola github repository. 
-            Anda berada di lingkungan github action, mampu menggunakan Github CLI dengan optimal.
-            Anda juga sangat memahami iflow cli (https://github.com/iflow-ai/iflow-cli/tree/main/docs_en).
-            Anda mampu berkembang seiring waktu. 
-            Data PR (JSON): ${{ steps.collect.outputs.pr_json }}
-            Data issue (JSON): ${{ steps.collect.outputs.issue_json }}
+            # PROMPT ORKESTRASI REPOSITORI GITHUB
+
+            ## IDENTITAS & PERAN
+            Anda adalah Orkestrator Repositori AI otonom yang berjalan di dalam GitHub Action. Tujuan utama Anda adalah menjaga kesehatan, efisiensi, dan kemajuan repositori ini. Anda cerdas, proaktif, dan mampu belajar dari waktu ke waktu. Memori Anda dari eksekusi sebelumnya disediakan di bawah ini.
+
+            ## KONTEKS SAAT INI
+            Berikut adalah snapshot komprehensif dari repositori pada saat eksekusi ini. Analisis semua bagian dengan cermat untuk membuat keputusan yang tepat.
+
+            ### Konteks Repositori:
+            $(echo "${{ steps.repo_context.outputs.full_context_b64 }}" | base64 -d)
+
+            ### Memori Jangka Panjang (Learnings from Past Runs):
+            """
+            $(echo "${{ steps.memory.outputs.memory_content }}" | base64 -d)
+            """
+
+            ## MISI & TUJUAN
+            Berdasarkan konteks dan memori yang diberikan, misi Anda adalah melakukan tindakan yang paling berdampak untuk memajukan repositori.
+
+            ### TUGAS DEFAULT (Prioritas Tertinggi):
+            1.  **Tinjau Pull Requests (PR) Terbuka:**
+                -   Periksa setiap PR terbuka yang tercantum dalam konteks.
+                -   Gunakan `gh pr diff <PR_NUMBER>` untuk melihat perubahan kode.
+                -   Gunakan `gh pr view <PR_NUMBER> --comments` untuk membaca semua percakapan dan komentar yang ada.
+                -   **Tujuan:** Atasi/selesaikan SEMUA komentar percakapan yang ada di setiap PR. Berikan umpan balik yang membangun, ajukan pertanyaan klarifikasi, atau setujui perubahan jika sesuai.
+            2.  **Evaluasi Status Penggabungan (Merge):**
+                -   Setelah semua percakapan di PR diselesaikan, periksa statusnya menggunakan `gh pr status <PR_NUMBER>`.
+                -   **Kriteria Penggabungan:** Lanjutkan ke penggabungan HANYA JIKA SEMUA kondisi berikut terpenuhi:
+                    a.  Semua percakapan telah diselesaikan.
+                    b.  Pemeriksaan status CI/CD (GitHub Actions) semuanya "hijau" atau berhasil.
+                    c.  Tidak ada konflik penggabungan.
+            3.  **Lakukan Penggabungan:**
+                -   Jika semua kriteria terpenuhi, gabungkan PR menggunakan `gh pr merge <PR_NUMBER> --squash --delete-branch`. Gunakan metode *squash* untuk menjaga kebersihan riwayat commit.
+
+            ### TUGAS SEKUNDER (Jika tidak ada PR yang memerlukan tindakan):
+            -   Analisis Isu Terbuka: Apakah ada isu yang dapat ditutup, atau yang memerlukan label?
+            -   Identifikasi Pola: Apakah ada kegagalan alur kerja yang berulang? Atau jenis PR yang sering mengalami masalah? Catat ini dalam pembaruan memori Anda.
+            -   Saran Proaktif: Berdasarkan analisis Anda, sarankan perbaikan pada alur kerja, dokumentasi, atau proses pengembangan.
+
+            ## ATURAN INTERAKSI & OUTPUT
+            -   **Gunakan GitHub CLI (`gh`):** Semua interaksi dengan repositori (mengomentari PR, menggabungkan, dll.) HARUS dilakukan menggunakan perintah `gh`. Token `GH_TOKEN` telah disediakan untuk otentikasi.
+            -   **Format Output:** Respon Anda HARUS dalam format JSON yang berisi dua kunci:
+                1.  `actions`: Sebuah array string, di mana setiap string adalah perintah `gh` yang valid yang perlu dieksekusi.
+                2.  `memory_update`: Sebuah string markdown yang merangkum tindakan yang Anda ambil, pengamatan yang Anda buat, dan wawasan apa pun untuk meningkatkan eksekusi di masa mendatang. Ini akan disimpan dan diberikan kepada Anda pada proses berikutnya.
+
+            ### CONTOH OUTPUT:
+            ```json
+            {
+              "actions": [
+                "gh pr review 123 --approve -b \"Perubahan terlihat bagus, semua tes lulus. Siap untuk digabungkan.\"",
+                "gh pr merge 123 --squash --delete-branch"
+              ],
+              "memory_update": "Siklus ini berhasil meninjau dan menggabungkan PR #123. Mengamati bahwa pemeriksaan linting sering gagal pada PR awal; mungkin perlu menambahkan hook pre-commit untuk pengembang."
+            }
+            ```
+
+      - name: 6. ⚡️ Execute Actions and Update Memory
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          # Ekstrak dan jalankan perintah
+          ACTIONS=$(echo "${{ steps.gemini_run.outputs.response }}" | jq -r '.actions[]')
+          if [ -n "$ACTIONS" ]; then
+            echo "🚀 Executing Actions..."
+            while IFS= read -r action; do
+              echo "Executing: $action"
+              eval "$action"
+            done <<< "$ACTIONS"
+          else
+            echo "No actions to execute."
+          fi
+
+          # Perbarui file memori
+          MEMORY_UPDATE=$(echo "${{ steps.gemini_run.outputs.response }}" | jq -r '.memory_update')
+          if [ -n "$MEMORY_UPDATE" ]; then
+            echo "💾 Updating memory..."
+            mkdir -p .github/iflow
+            echo -e "## Update from $(date -u)\n\n$MEMORY_UPDATE\n\n---\n\n$(cat .github/iflow/memory.md 2>/dev/null)" > .github/iflow/memory.md
+
+            # Commit perubahan memori kembali ke repositori
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+            git add .github/iflow/memory.md
+            git commit -m "🧠 chore: Update AI agent memory" || echo "No memory changes to commit."
+            git push || echo "Failed to push memory update, might be up-to-date."
+          else
+            echo "No memory update provided."
+          fi
