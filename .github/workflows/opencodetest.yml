@@ -50,11 +50,18 @@ jobs:
         id: find_targets
         run: |
           echo "Finding open pull requests and issues..."
-          prs=$(gh pr list --state open --json number --jq '.[].number')
-          issues=$(gh issue list --state open --json number --jq '.[].number')
-          echo "pr_numbers=$prs" >> $GITHUB_OUTPUT
-          echo "issue_numbers=$issues" >> $GITHUB_OUTPUT
+          prs=$(gh pr list --state open --json number --jq '.[].number' | tr '\n' ' ')
+          issues=$(gh issue list --state open --json number --jq '.[].number' | tr '\n' ' ')
 
+          {
+            echo "pr_numbers<<EOF"
+            echo "$prs"
+            echo "EOF"
+            echo "issue_numbers<<EOF"
+            echo "$issues"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+          
       - name: Process Pull Requests
         if: steps.find_targets.outputs.pr_numbers != ''
         run: |
