@@ -2,6 +2,7 @@
 // Setup otomatis berdasarkan environment
 
 import { getErrorLoggingService, ErrorReportingOptions } from './errorLoggingService';
+import { initSentry } from './sentryService';
 
 interface ErrorMonitoringConfig {
   development: ErrorReportingOptions;
@@ -65,6 +66,9 @@ export function setupErrorMonitoring(customConfig?: Partial<ErrorReportingOption
 
   // Setup error logging service dengan konfigurasi
   const errorService = getErrorLoggingService(finalConfig);
+
+  // Inisialisasi Sentry untuk error tracking
+  initSentry();
 
   console.log(`Error monitoring diinisialisasi untuk environment: ${process.env.NODE_ENV || 'development'}`);
   console.log('Error monitoring config:', {
