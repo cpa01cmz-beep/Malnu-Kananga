@@ -1,0 +1,27 @@
+# Supabase CLI Configuration
+
+# Project setup
+project_id = "ma-malnu-kananga"
+
+# Database settings
+db_port = 54322
+db_major_version = 15
+
+# Studio settings
+studio_port = 54323
+
+# Inbucket settings
+inbucket_port = 54324
+
+# Realtime settings
+realtime_port = 54325
+
+# Auth settings
+auth_port = 54321
+auth_site_url = "http://localhost:3000"
+auth_redirect_urls = ["http://localhost:3000/*"]
+auth_jwt_expiry = 3600
+auth_refresh_token_expiry = 2592000
+
+# Functions settings
+functions_port = 54326
