@@ -1,4 +1,4 @@
-name: opencode
+name: opencode run
 
 on:
   issue_comment:
@@ -70,10 +70,10 @@ jobs:
 
       - name: Run OpenCode agent
         run: |
-          opencode run "Act as github repositoy devoloper, use gh cli. Be creative and innovative, think what u can do, if nothing then Analyze open pull requests and issues and decide which one to fix first. rule: dont fix workflow, your time is 10 minutes :D" \
+          opencode run "Act as github repositoy devoloper, use gh cli. Be creative and innovative, analyze all documentation, think what u can do, if nothing then Analyze open pull requests and issues and decide which one to fix first. rule: dont fix workflow, your time is 10 minutes :D" \
             --model iflowcn/qwen3-coder-plus \
             --file ./pr_meta.json \
             --file ./issue_meta.json \
-            --share
+            --share false
         env:
           IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
