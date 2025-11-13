@@ -1,0 +1,11 @@
+# Code Owners
+
+# Default owner for all files
+* @sulhi
+
+# Specific owners for different parts of the project
+.github/workflows/ @sulhi
+src/ @sulhi
+public/ @sulhi
+package.json @sulhi
+README.md @sulhi
