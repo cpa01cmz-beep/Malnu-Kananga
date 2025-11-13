@@ -89,6 +89,33 @@ curl https://malnu-api.your-subdomain.workers.dev/seed
 curl https://malnu-api.your-preview-subdomain.workers.dev/seed
 ```
 
+## 📊 Monitoring Setup
+
+### 1. Error Tracking (Sentry)
+
+Untuk setup error tracking dengan Sentry:
+
+1. Buat project di Sentry dashboard
+2. Dapatkan DSN key
+3. Set DSN sebagai environment variable:
+   ```bash
+   # Production
+   npx wrangler secret put SENTRY_DSN --env=production
+   
+   # Preview
+   npx wrangler secret put SENTRY_DSN --env=preview
+   ```
+
+4. Error tracking akan aktif secara otomatis di production environment
+
+### 2. Performance Monitoring
+
+Untuk setup performance monitoring:
+
+1. Tambahkan Web Vitals tracking di aplikasi frontend
+2. Setup custom metrics untuk user engagement
+3. Konfigurasi dashboard monitoring di platform pilihan (Google Analytics, etc.)
+
 ## ✅ Verifikasi Deployment
 
 Test semua endpoints:
@@ -161,3 +188,4 @@ Jika mengalami masalah deployment:
 
 *Dokumen deployment ini dibuat pada: 3 Oktober 2024*
 *Status: Production Ready*
+*Last Updated: 13 November 2025*
