@@ -1,32 +1,36 @@
-import React, { useState, Suspense, lazy } from 'react';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import MetaTags from './components/MetaTags';
-import MainContentRouter from './components/MainContentRouter';
-import ChatWindowContainer from './components/ChatWindowContainer';
-import ModalsContainer from './components/ModalsContainer';
-import ErrorBoundary from './components/ErrorBoundary';
-import { useKeyboardNavigation, useScreenReader } from './hooks/useKeyboardNavigation';
-import { useAuth } from './hooks/useAuth';
-import { WebPProvider } from './hooks/useWebP';
-import { setupErrorMonitoring } from './services/errorMonitoringConfig';
-import { queryClient } from './services/queryClient';
-import { SupabaseApiService } from './services/supabaseApiService';
-
-// Lazy load heavy components untuk code splitting
-const StudentDashboard = lazy(() => import('./components/StudentDashboard'));
-const TeacherDashboard = lazy(() => import('./components/TeacherDashboard'));
+import React, { useState, Suspense, lazy } from 'react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import MetaTags from './components/MetaTags';
+import MainContentRouter from './components/MainContentRouter';
+import ChatWindowContainer from './components/ChatWindowContainer';
+import ModalsContainer from './components/ModalsContainer';
+import ErrorBoundary from './components/ErrorBoundary';
+import { useKeyboardNavigation, useScreenReader } from './hooks/useKeyboardNavigation';
+import { useAuth } from './hooks/useAuth';
+import { WebPProvider } from './hooks/useWebP';
+import { setupErrorMonitoring } from './services/errorMonitoringConfig';
+import { queryClient } from './services/queryClient';
+import { SupabaseApiService } from './services/supabaseApiService';
+import { initGA4, trackEvent } from './utils/analytics';
+
+// Lazy load heavy components untuk code splitting
+const StudentDashboard = lazy(() => import('./components/StudentDashboard'));
+const TeacherDashboard = lazy(() => import('./components/TeacherDashboard'));
 const ParentDashboard = lazy(() => import('./components/ParentDashboard'));
 
-const App: React.FC = () => {
-  // Setup error monitoring untuk production dan development
-  React.useEffect(() => {
-    setupErrorMonitoring();
-    
-    // Initialize Supabase integration
-    SupabaseApiService.initialize();
+const App: React.FC = () => {
+  // Setup error monitoring untuk production dan development
+  React.useEffect(() => {
+    setupErrorMonitoring();
+    
+    // Initialize Supabase integration
+    SupabaseApiService.initialize();
+    
+    // Initialize Google Analytics 4
+    initGA4();
   }, []);
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -66,14 +70,24 @@ const App: React.FC = () => {
                 </a>
 
                 <Header
-                  onLoginClick={() => setIsLoginOpen(true)}
-                  onChatClick={() => setIsChatOpen(true)}
+                  onLoginClick={() => {
+                    setIsLoginOpen(true);
+                    trackEvent('click', 'navigation', 'login_button');
+                  }}
+                  onChatClick={() => {
+                    setIsChatOpen(true);
+                    trackEvent('click', 'navigation', 'chat_button');
+                  }}
                   isLoggedIn={isLoggedIn}
-                  onLogout={handleLogout}
+                  onLogout={() => {
+                    handleLogout();
+                    trackEvent('click', 'navigation', 'logout_button');
+                  }}
                   onPortalClick={() => {
                     if (isLoggedIn && currentUser) {
                       document.getElementById('main-content')?.scrollIntoView({ behavior: 'smooth' });
                       announceNavigation('Portal Dashboard');
+                      trackEvent('click', 'navigation', 'portal_button');
                     }
                   }}
                 />
@@ -84,11 +98,17 @@ const App: React.FC = () => {
                   onLogout={handleLogout}
                 />
 
-                <Footer onDocsClick={() => setIsDocsOpen(true)} />
+                <Footer onDocsClick={() => {
+                  setIsDocsOpen(true);
+                  trackEvent('click', 'navigation', 'docs_button');
+                }} />
 
                 <ChatWindowContainer
                   isOpen={isChatOpen}
-                  onClose={() => setIsChatOpen(false)}
+                  onClose={() => {
+                    setIsChatOpen(false);
+                    trackEvent('click', 'navigation', 'close_chat');
+                  }}
                 />
 
                 <ModalsContainer
@@ -96,7 +116,10 @@ const App: React.FC = () => {
                   isDocsOpen={isDocsOpen}
                   onLoginClose={() => setIsLoginOpen(false)}
                   onDocsClose={() => setIsDocsOpen(false)}
-                  onLoginSuccess={handleLoginSuccess}
+                  onLoginSuccess={(user) => {
+                    handleLoginSuccess(user);
+                    trackEvent('login', 'auth', 'login_success');
+                  }}
                 />
               </main>
             )}
