@@ -24,7 +24,8 @@ jobs:
       startsWith(github.event.comment.body, '/oc')
 
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
+
     permissions:
       id-token: write
       contents: write
@@ -34,6 +35,7 @@ jobs:
 
     env:
       GH_TOKEN: ${{ github.token }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
 
     steps:
       - name: Harden runner
@@ -46,20 +48,14 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Collect open PRs and issues metadata
+      - name: Collect metadata from open PRs and Issues
         id: collect_meta
         run: |
-          echo "Collecting PR and issue context..."
-          pr_json=$(gh pr list --state open --json number,title,headRefName,author,labels,mergeable,url)
-          issue_json=$(gh issue list --state open --json number,title,labels,author,url)
-          {
-            echo "pr_meta<<EOF"
-            echo "$pr_json"
-            echo "EOF"
-            echo "issue_meta<<EOF"
-            echo "$issue_json"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
+          echo "Collecting PRs and Issues metadata..."
+          prs=$(gh pr list --state open --json number,title,url,author,labels,headRefName,mergeable)
+          issues=$(gh issue list --state open --json number,title,url,author,labels)
+          echo "pr_meta=$(echo "$prs" | jq -c .)" >> $GITHUB_OUTPUT
+          echo "issue_meta=$(echo "$issues" | jq -c .)" >> $GITHUB_OUTPUT
 
       - name: Summarize collected metadata
         run: |
@@ -74,10 +70,6 @@ EOF
 
       - name: Run opencode agent
         uses: sst/opencode/github@latest
-        env:
-          IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
-          PR_META: ${{ steps.collect_meta.outputs.pr_meta }}
-          ISSUE_META: ${{ steps.collect_meta.outputs.issue_meta }}
         with:
           model: iflowcn/qwen3-coder-plus
           share: ${{ github.repository_visibility == 'public' }}
