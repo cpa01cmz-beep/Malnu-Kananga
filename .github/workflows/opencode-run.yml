@@ -1,8 +1,3 @@
-# name: opencode run
-# metadata sources:
-# - https://cli.github.com/manual/gh_help_environment
-# - https://opencode.ai/docs/cli/#run-1
-
 name: opencode run
 
 on:
@@ -65,23 +60,21 @@ jobs:
         id: collect_env
         run: |
           echo "Collecting GH CLI and runner environment metadata..."
-          # Basic GH CLI + runner info (see https://cli.github.com/manual/gh_help_environment)
           gh --version > gh_cli_version.txt || true
           gh auth status --show-token 2>/dev/null || gh auth status > gh_auth_status.txt || true
           uname -a > runner_uname.txt || true
           echo "GITHUB_REPOSITORY=${GITHUB_REPOSITORY}" > gh_action_env.txt
           echo "GITHUB_REF=${GITHUB_REF}" >> gh_action_env.txt
           echo "GITHUB_SHA=${GITHUB_SHA}" >> gh_action_env.txt
-          # record referenced docs as metadata sources for the agent
           cat > metadata_sources.json <<'EOF'
           {
             "gh_cli_help": "https://cli.github.com/manual/gh_help_environment",
             "opencode_cli_run": "https://opencode.ai/docs/cli/#run-1"
           }
           EOF
-          echo "✅ Saved environment metadata: gh_cli_version.txt, gh_auth_status.txt, runner_uname.txt, gh_action_env.txt, metadata_sources.json"
+          echo "✅ Saved environment metadata files."
 
-      - name: Summarize collected metadata (for logs)
+      - name: Summarize collected metadata
         run: |
           echo "=== Open Pull Requests ==="
           cat pr_meta.json | jq . || true
@@ -91,7 +84,7 @@ jobs:
           cat gh_cli_version.txt || true
           echo "=== Runner Info ==="
           cat runner_uname.txt || true
-          echo "=== GH Actions Env snippet ==="
+          echo "=== GH Env ==="
           cat gh_action_env.txt || true
 
       - name: Install OpenCode CLI
@@ -109,5 +102,3 @@ jobs:
             --file ./gh_action_env.txt \
             --file ./metadata_sources.json \
             --share false
-        env:
-          IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
