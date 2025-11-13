@@ -1,18 +1,18 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ErrorBoundary from '../components/ErrorBoundary';
-import * as sentryService from '../services/sentryService';
-
-// Mock Sentry service
-jest.mock('../services/sentryService', () => ({
-  captureErrorBoundary: jest.fn(),
-}));
 
 // Mock error logging service
 jest.mock('../services/errorLoggingService', () => ({
   getErrorLoggingService: () => ({
     logErrorBoundary: jest.fn().mockResolvedValue(undefined),
   }),
+  logErrorBoundary: jest.fn().mockResolvedValue(undefined),
+}));
+
+// Mock Sentry service
+jest.mock('../services/sentryService', () => ({
+  captureErrorBoundary: jest.fn(),
 }));
 
 // Test component that throws an error
@@ -20,37 +20,55 @@ const TestErrorComponent: React.FC = () => {
   throw new Error('Test error for Sentry integration');
 };
 
-// Test component that works fine
-const TestNormalComponent: React.FC = () => {
-  return <div>Normal Component</div>;
+// Test component that renders correctly
+const TestValidComponent: React.FC = () => {
+  return <div>Valid Component</div>;
 };
 
-describe('Sentry Integration', () => {
+describe('ErrorBoundary', () => {
   beforeEach(() => {
+    // Clear all mocks before each test
     jest.clearAllMocks();
+    
+    // Mock console.error to avoid noisy output
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    // Restore console.error
+    (console.error as jest.Mock).mockRestore();
+  });
+
+  it('should render children when no error occurs', () => {
+    render(
+      <ErrorBoundary>
+        <TestValidComponent />
+      </ErrorBoundary>
+    );
+
+    expect(screen.getByText('Valid Component')).toBeInTheDocument();
   });
 
   it('should capture error in Sentry when ErrorBoundary catches an error', () => {
-    // Mock console.error to avoid noisy output
-    jest.spyOn(console, 'error').mockImplementation(() => {});
-
-    const { getByText } = render(
+    const { captureErrorBoundary } = require('../services/sentryService');
+    
+    render(
       <ErrorBoundary>
         <TestErrorComponent />
       </ErrorBoundary>
     );
 
     // Check that the error boundary fallback is rendered
-    expect(getByText('Terjadi Kesalahan')).toBeInTheDocument();
+    expect(screen.getByText('Terjadi Kesalahan')).toBeInTheDocument();
     
     // Check that Sentry captureErrorBoundary was called
-    expect(sentryService.captureErrorBoundary).toHaveBeenCalledWith(
+    expect(captureErrorBoundary).toHaveBeenCalledWith(
       expect.any(Error),
       expect.any(String)
     );
     
     // Check that the error message is correct
-    expect(sentryService.captureErrorBoundary).toHaveBeenCalledWith(
+    expect(captureErrorBoundary).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'Test error for Sentry integration'
       }),
@@ -59,37 +77,44 @@ describe('Sentry Integration', () => {
   });
 
   it('should not call Sentry when no error occurs', () => {
+    const { captureErrorBoundary } = require('../services/sentryService');
+    
     render(
       <ErrorBoundary>
-        <TestNormalComponent />
+        <TestValidComponent />
       </ErrorBoundary>
     );
 
-    // Check that the normal component is rendered
-    expect(screen.getByText('Normal Component')).toBeInTheDocument();
+    expect(screen.getByText('Valid Component')).toBeInTheDocument();
     
     // Check that Sentry captureErrorBoundary was not called
-    expect(sentryService.captureErrorBoundary).not.toHaveBeenCalled();
+    expect(captureErrorBoundary).not.toHaveBeenCalled();
   });
 
   it('should allow user to reset the error boundary', () => {
-    // Mock console.error to avoid noisy output
-    jest.spyOn(console, 'error').mockImplementation(() => {});
-
-    const { getByText } = render(
-      <ErrorBoundary>
+    const onError = jest.fn();
+    
+    const { rerender } = render(
+      <ErrorBoundary onError={onError}>
         <TestErrorComponent />
       </ErrorBoundary>
     );
 
     // Check that the error boundary fallback is rendered
-    expect(getByText('Terjadi Kesalahan')).toBeInTheDocument();
-
+    expect(screen.getByText('Terjadi Kesalahan')).toBeInTheDocument();
+    
     // Click the "Coba Lagi" button
-    const tryAgainButton = getByText('Coba Lagi');
+    const tryAgainButton = screen.getByText('Coba Lagi');
     fireEvent.click(tryAgainButton);
-
-    // Check that the error boundary has been reset and shows children again
-    expect(getByText('Coba Lagi')).toBeInTheDocument();
+    
+    // Re-render with a valid component to test reset functionality
+    rerender(
+      <ErrorBoundary onError={onError}>
+        <TestValidComponent />
+      </ErrorBoundary>
+    );
+    
+    // Check that the valid component is now rendered
+    expect(screen.getByText('Valid Component')).toBeInTheDocument();
   });
 });
