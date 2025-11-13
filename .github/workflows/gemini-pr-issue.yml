@@ -68,7 +68,7 @@ jobs:
             echo "PR_TITLE=$(jq -r '.title' candidate.json)" >> "$GITHUB_ENV"
           fi
 
-      - name: Analisis dengan Gemini (opsional)
+      - name: Analisis dengan Gemini
         id: run_research
         continue-on-error: true
         uses: google-github-actions/run-gemini-cli@v0.1.14
@@ -76,54 +76,9 @@ jobs:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
           gemini_model: gemini-2.5-pro
           prompt: |
-            Anda adalah asisten CI. Ringkas dalam 5–10 baris:
-            1) PR mana yang paling layak di-merge dan alasannya.
-            2) Risiko atau perhatian utama.
-            3) Jika tidak ada PR siap, sarankan issue untuk dikerjakan.
+            Anda adalah AI Agent yang mengelola github repository. 
+            Anda berada di lingkungan github action, mampu menggunakan Github CLI dengan optimal.
+            Anda juga sangat memahami iflow cli (https://github.com/iflow-ai/iflow-cli/tree/main/docs_en).
+            Anda mampu berkembang seiring waktu. 
             Data PR (JSON): ${{ steps.collect.outputs.pr_json }}
             Data issue (JSON): ${{ steps.collect.outputs.issue_json }}
-
-      - name: Merge PR terpilih
-        if: env.PR_NUMBER && (github.event_name != 'workflow_dispatch' || inputs.dry_run == 'false')
-        run: |
-          set -euo pipefail
-          gh pr merge "$PR_NUMBER" --merge --delete-branch --body "Auto-merge via workflow #${{ github.run_id }}."
-          echo "MERGED=true" >> "$GITHUB_ENV"
-
-      - name: Tindak jika tidak ada PR siap
-        if: "!env.PR_NUMBER"
-        run: |
-          set -euo pipefail
-          if [ -s issues.json ] && [ "$(jq 'length' issues.json)" -gt 0 ]; then
-            ISSUE_NUMBER=$(jq -r 'sort_by(.updatedAt)|reverse|.[0].number' issues.json)
-            gh issue comment "$ISSUE_NUMBER" --body "Automasi: tidak ada PR yang siap di-merge. Meninjau issue ini berikutnya."
-            echo "ISSUE_WORKED=$ISSUE_NUMBER" >> "$GITHUB_ENV"
-          fi
-
-      - name: Tulis laporan
-        run: |
-          {
-            echo "# Laporan auto-merge $(date -u +'%Y-%m-%d %H:%M:%S') UTC"
-            echo "- Jumlah PR terbuka: ${PR_COUNT:-0}"
-            if [ -n "${PR_NUMBER:-}" ]; then
-              echo "- PR terpilih: #$PR_NUMBER — ${PR_TITLE:-}"
-              echo "- Status merge: ${MERGED:-false}"
-            else
-              echo "- Tidak ada PR yang siap di-merge."
-              echo "- Issue ditindaklanjuti: ${ISSUE_WORKED:-none}"
-            fi
-            echo
-            echo "## Ringkasan Gemini"
-            echo "${{ steps.run_research.outputs.text }}${{ steps.run_research.outputs.response }}${{ steps.run_research.outputs.summary }}"
-          } > "$OUTPUT_FILE"
-
-      - name: Commit dan push jika berubah
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add "$OUTPUT_FILE"
-          if ! git diff --cached --quiet; then
-            git commit -m "chore: laporan auto-merge"
-            git push
-          fi
