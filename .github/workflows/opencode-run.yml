@@ -23,11 +23,7 @@ jobs:
   opencode:
     if: |
       github.event_name == 'workflow_dispatch' ||
-      contains(github.event.comment.body, ' /opencode') ||
-      startsWith(github.event.comment.body, '/opencode') ||
-      contains(github.event.comment.body, ' /oc') ||
-      startsWith(github.event.comment.body, '/oc')
-
+      (github.event.comment != null && (contains(github.event.comment.body, ' /opencode') || startsWith(github.event.comment.body, '/opencode') || contains(github.event.comment.body, ' /oc') || startsWith(github.event.comment.body, '/oc')))
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -66,9 +62,9 @@ jobs:
       - name: 🧠 Summarize metadata
         run: |
           echo "=== Open Pull Requests ==="
-          cat pr_meta.json | jq .
+          jq . pr_meta.json || cat pr_meta.json
           echo "=== Open Issues ==="
-          cat issue_meta.json | jq .
+          jq . issue_meta.json || cat issue_meta.json
 
       - name: 🧩 Install OpenCode CLI
         run: |
@@ -86,14 +82,16 @@ jobs:
           fi
 
       - name: 🤖 Run OpenCode Self-Improving Agent
+        env:
+          IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
         run: |
           # fallback default jika TASK kosong
           if [ -z "${TASK}" ]; then
             TASK="Periksa PR terbaru, pastikan build berhasil, dan berikan rekomendasi perbaikan."
           fi
 
-          # buat prompt dinamis
-          PROMPT=$(cat <<EOF
+          # buat prompt dinamis ke file untuk kejelasan
+          cat > /tmp/opencode_prompt.txt <<'PROMPT_EOF'
 Anda adalah agen pengembang otonom bernama OpenCode, dibangun untuk belajar dari setiap eksekusi.
 
 🎯 Tujuan Anda:
@@ -108,24 +106,22 @@ Anda adalah agen pengembang otonom bernama OpenCode, dibangun untuk belajar dari
 - Anda mampu menilai kinerja Anda sendiri
 
 🪄 Tugas Saat Ini:
-${TASK}
+PROMPT_EOF
 
-EOF
-)
+          # tambahkan tugas dinamis di akhir prompt
+          echo "${TASK}" >> /tmp/opencode_prompt.txt
 
           echo "==== Prompt to OpenCode ===="
-          echo "$PROMPT"
+          cat /tmp/opencode_prompt.txt
 
           # Jalankan opencode dengan file metadata dan memori
-          opencode run "$PROMPT" \
+          opencode run "$(cat /tmp/opencode_prompt.txt)" \
             --model iflowcn/qwen3-coder-plus \
             --file ./pr_meta.json \
             --file ./issue_meta.json \
             --file "${REFLECT_FILE}" \
             --reflect "${REFLECT_FILE}" \
             --share
-        env:
-          IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
 
       - name: 💾 Save updated memory
         if: always()
