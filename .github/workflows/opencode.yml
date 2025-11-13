@@ -30,7 +30,7 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-      actions: read
+      actions: write
     steps:
       # Add harden-runner actions for security auditing
       - name: Harden runner
@@ -46,7 +46,7 @@ jobs:
       - name: Run opencode
         uses: sst/opencode/github@latest
         env:
-          IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+          IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY1 }}
         with:
           model: iflowcn/qwen3-coder-plus
           share: ${{ github.repository_visibility == 'public' }}
