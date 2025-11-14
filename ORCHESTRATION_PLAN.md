@@ -1,103 +1,83 @@
-# Repo Orchestration Plan [2025-11-13]
+# Repository Orchestration Plan
 
-## Overview
-This document outlines the orchestration plan for the MA Malnu Kananga repository as of November 13, 2025. The plan focuses on deployment, monitoring, and optimization tasks to ensure the application is production-ready.
+## Current State Analysis
 
-## Current Status
-Based on our analysis of TODO.md and other documentation, the application is 90% complete and production-ready with:
-- Complete student and teacher portals
-- Advanced AI features with RAG and memory bank
-- PWA implementation
-- Comprehensive testing
-- Full documentation
+### Workflows
+- 22 workflows identified in `.github/workflows/`
+- Several iFlow related workflows already in place
+- Reusable workflows exist in `.github/workflows/_reusable/`
+- Most workflows already have proper permissions and concurrency settings
 
-The current focus is on the optimization cycle (Week 2/4) with priority on:
-1. Resolving Cloudflare API token permissions issue
-2. Deploying worker.js to production environment
-3. Running vector database seeding process
-4. Configuring error tracking and performance monitoring
+### Dependencies
+- Dependabot configuration exists for npm and GitHub Actions
+- Weekly schedule in place with reviewers assigned
+- Current dependencies are reasonably up to date
 
-## Orchestration Tasks
+### Repository Standards
+- SECURITY.md exists
+- Issue templates exist
+- CODEOWNERS file exists
+- Labeler configuration in place
 
-### 1. Cloudflare Deployment
-- **Task**: Deploy Cloudflare Worker for AI functionality
-- **Status**: Blocked by API token permissions
-- **Action**: Resolve API token permissions and deploy worker.js
-- **Verification**: Test all endpoints (/api/chat, /request-login-link, /verify-login)
+## Optimization Opportunities
 
-### 2. Environment Configuration
-- **Task**: Setup production environment variables and API keys
-- **Status**: Completed
-- **Action**: Verify all environment variables are properly configured
-- **Verification**: Confirm AI responses working in production
+### CI Performance
+1. **Caching Strategy**:
+   - Current workflows have basic caching but could be optimized
+   - Add more specific cache keys based on lockfiles
+   - Consider caching node_modules directly for faster installs
 
-### 3. Database Seeding
-- **Task**: Run vector database seeding process
-- **Status**: Pending
-- **Action**: Execute /seed endpoint after worker deployment
-- **Verification**: Confirm knowledge base is populated
+2. **Workflow Parallelization**:
+   - Some workflows could benefit from job splitting
+   - Extract common steps to reusable workflows
 
-### 4. Monitoring Setup
-- **Task**: Configure error tracking (Sentry integration)
-- **Status**: Pending
-- **Action**: Implement Sentry integration for real-time error monitoring
-- **Verification**: Test error reporting functionality
+3. **Build Optimization**:
+   - Add build artifact caching
+   - Consider using npm cache action for faster dependency installation
 
-### 5. Performance Monitoring
-- **Task**: Implement basic performance monitoring
-- **Status**: Pending
-- **Action**: Setup Core Web Vitals tracking
-- **Verification**: Establish performance baseline
+### Security
+1. **Action Pinning**:
+   - Verify all actions are pinned to specific versions or SHAs
+   - Add verification for action integrity
 
-### 6. CI/CD Improvements
-- **Task**: Implement reusable workflows and caching strategies
-- **Status**: Completed
-- **Action**: Create reusable components for common workflow patterns
-- **Verification**: All workflows updated to use reusable components
+2. **Runner Hardening**:
+   - Most workflows already use harden-runner
+   - Ensure consistent egress policy application
 
-## Implementation Steps
+### Maintainability
+1. **Workflow Organization**:
+   - Consider grouping related workflows
+   - Add more descriptive workflow names
 
-1. Resolve Cloudflare API token permissions issue
-2. Deploy worker.js to production environment using wrangler
-3. Run vector database seeding process via /seed endpoint
-4. Implement Sentry integration for error tracking
-5. Setup performance monitoring for Core Web Vitals
-6. Implement CI/CD improvements with reusable workflows
-7. Verify all endpoints are working correctly
-8. Run validation tests to ensure production readiness
+2. **Documentation**:
+   - Update workflow documentation
+   - Add runbook for common workflow issues
+
+## Action Plan
+
+### Phase 1: Immediate Improvements (ci: prefix)
+1. Enhance caching strategy in build workflows
+2. Add build artifact caching
+3. Optimize node_modules caching
+4. Pin all actions to specific versions/SHAs
+
+### Phase 2: Dependency Updates (chore(deps): prefix)
+1. Attempt to update @google/genai after investigating test failures
+2. Update other dependencies as needed
+3. Run full test suite for each update
+
+### Phase 3: Documentation Improvements (docs: prefix)
+1. Update workflow documentation
+2. Add runbook for common workflow issues
+3. Improve CODEOWNERS coverage
+
+## Expected Benefits
+- Reduced CI build times through better caching
+- Improved security through action pinning
+- Better maintainability through documentation
+- More reliable builds through optimized workflows
 
 ## Success Metrics
-
-- Cloudflare Worker deployed and accessible
-- All AI endpoints functional
-- Vector database seeded with school content
-- Error tracking configured and reporting
-- Performance baseline established
-- CI/CD workflows optimized with reusable components
-- All core functionality verified in production environment
-
-## Risk Assessment
-
-- **High Risk**: API token permissions blocking deployment
-- **Medium Risk**: Performance issues affecting user experience
-- **Low Risk**: Monitoring setup complexity
-- **Low Risk**: CI/CD changes affecting existing workflows
-
-## Next Steps
-
-1. Immediate focus on resolving deployment blocker
-2. Proceed with monitoring and performance setup
-3. Complete CI/CD improvements implementation
-4. Complete validation testing
-5. Prepare for final production deployment phase
-
-## Recent Updates
-
-- Updated orchestration plan to reflect current status
-- Verified GitHub Actions workflows have proper concurrency and permissions
-- Confirmed dependabot configuration is up to date
-- Verified repository standards files (CODEOWNERS, SECURITY.md) are in place
-- Implemented CI/CD improvements with reusable workflows and caching strategies
-- Added comprehensive test suite for core components and services
-- Updated documentation for error tracking and performance monitoring setup
-- Completed implementation of reusable workflows for build, test, and deployment processes
+- CI build time reduction of at least 15%
+- Zero security vulnerabilities from unpinned actions
+- 100% of workflows with proper documentation
