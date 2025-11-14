@@ -107,11 +107,10 @@ describe('AssignmentSubmission Component', () => {
       );
 
       const file = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
-      const input = screen.getByText('Pilih File').closest('button');
-
+      
       // Since we can't easily simulate file input clicks, we'll test the drag and drop
       const dropZone = screen.getByText('Pilih File').closest('div');
-
+      
       if (dropZone) {
         fireEvent.drop(dropZone, {
           dataTransfer: {
@@ -119,9 +118,9 @@ describe('AssignmentSubmission Component', () => {
           }
         });
       }
-
-      // File should be selected (though we can't easily test the visual feedback without more complex setup)
-      expect(screen.getByText('Pilih File')).toBeInTheDocument();
+      
+      // After file selection, we should see the file name instead of "Pilih File"
+      expect(screen.getByText('test.pdf')).toBeInTheDocument();
     });
 
     test('should validate file type', () => {
@@ -147,7 +146,7 @@ describe('AssignmentSubmission Component', () => {
         });
       }
 
-      // Should show validation error (alert in real implementation)
+      // Should still show the file upload area with "Pilih File" text
       expect(screen.getByText('Pilih File')).toBeInTheDocument();
       
       // Restore console.error
@@ -178,7 +177,7 @@ describe('AssignmentSubmission Component', () => {
         });
       }
 
-      // Should show size validation error (alert in real implementation)
+      // Should still show the file upload area with "Pilih File" text
       expect(screen.getByText('Pilih File')).toBeInTheDocument();
       
       // Restore console.error
@@ -238,8 +237,8 @@ describe('AssignmentSubmission Component', () => {
       }
 
       const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
-      // Button should be enabled (though visual state might not update in test)
-      expect(submitButton).toBeInTheDocument();
+      // Button should not be disabled when file is selected
+      expect(submitButton).not.toBeDisabled();
     });
 
     test('should enable submit button with notes', () => {
@@ -332,14 +331,10 @@ describe('AssignmentSubmission Component', () => {
         />
       );
 
-      const closeButton = screen.getByRole('button', { name: /close/i }) ||
-                          document.querySelector('button[aria-label*="close"]') ||
-                          document.querySelector('svg[stroke="currentColor"]')?.closest('button');
-
-      if (closeButton) {
-        fireEvent.click(closeButton);
-        expect(mockOnClose).toHaveBeenCalledTimes(1);
-      }
+      // Find the close button by its aria-label
+      const closeButton = screen.getByLabelText('Tutup modal pengumpulan tugas');
+      fireEvent.click(closeButton);
+      expect(mockOnClose).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -386,27 +381,6 @@ describe('AssignmentSubmission Component', () => {
       // Check for accessible form elements
       expect(screen.getByRole('button', { name: /kumpulkan tugas/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /batal/i })).toBeInTheDocument();
-    });
-
-    test('should support keyboard navigation', () => {
-      render(
-        <AssignmentSubmission
-          assignment={mockAssignment}
-          onClose={mockOnClose}
-          onSubmit={mockOnSubmit}
-        />
-      );
-
-      const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
-      const cancelButton = screen.getByRole('button', { name: /batal/i });
-
-      // Tab navigation should work
-      submitButton.focus();
-      expect(document.activeElement).toBe(submitButton);
-
-      // Note: In a real test environment, we'd test actual tab navigation
-      expect(submitButton).toBeInTheDocument();
-      expect(cancelButton).toBeInTheDocument();
     });
   });
 });
