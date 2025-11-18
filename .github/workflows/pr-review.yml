@@ -92,7 +92,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'Checkout PR code'
-        uses: 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' # ratchet:actions/checkout@v4
+        uses: 'actions/checkout@71cf2267d89c5cb81562390fa70a37fa40b1305e' # ratchet:actions/checkout@v4
 
       - name: 'Get PR details (pull_request & workflow_dispatch)'
         id: 'get_pr'
@@ -160,7 +160,7 @@ jobs:
           } >> "${GITHUB_OUTPUT}"
 
       - name: 'Run iFLOW CLI PR Review'
-        uses: iflow-ai/iflow-cli-action@v2.0.0
+        uses: iflow-ai/iflow-cli-action@v2.1.0
         id: 'iflow_cli_pr_review'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

@@ -41,10 +41,10 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 'Run iFlow CLI Issue Triage'
-        uses: iflow-ai/iflow-cli-action@v2.0.0
+        uses: iflow-ai/iflow-cli-action@v2.1.0
         id: 'iflow_cli_issue_triage'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'

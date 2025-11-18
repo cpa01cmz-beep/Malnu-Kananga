@@ -22,7 +22,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # Ambil riwayat lengkap untuk analisis konteks yang lebih baik oleh Gemini
           fetch-depth: 0
