@@ -188,4 +188,4 @@ jobs:
           PROMPT
           )" \
             --model iflowcn/qwen3-coder-plus \
-            --share false
+            --share false \
