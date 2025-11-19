@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/26</span>
+                <span class='fraction'>0/29</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/18</span>
+                <span class='fraction'>0/21</span>
             </div>
         
             
@@ -773,33 +773,33 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// Mock data untuk portal siswa MA Malnu Kananga
 // Data ini akan digantikan dengan integrasi sistem informasi akademik yang sebenarnya
@@ -874,7 +874,7 @@ export interface Announcement {
 }
 &nbsp;
 // Mock student data (akan digantikan dengan data dari sistem akademik)
-export const currentStudent: Student = <span class="cstat-no" title="statement not covered" >{</span>
+export const <span class="cstat-no" title="statement not covered" >currentStudent: Student = {</span>
   id: 'STU001',
   name: 'Ahmad Fauzi Rahman',
   email: 'siswa@ma-malnukananga.sch.id',
@@ -889,7 +889,7 @@ export const currentStudent: Student = <span class="cstat-no" title="statement n
 };
 &nbsp;
 // Mock subjects untuk kelas XII IPA
-export const subjects: Subject[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >subjects: Subject[] = [</span>
   {
     id: 'SUBJ001',
     name: 'Matematika',
@@ -957,7 +957,7 @@ export const subjects: Subject[] = <span class="cstat-no" title="statement not c
 ];
 &nbsp;
 // Mock grades untuk semester 1 tahun akademik 2024/2025
-export const studentGrades: Grade[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >studentGrades: Grade[] = [</span>
   {
     id: 'GRD001',
     studentId: 'STU001',
@@ -1021,7 +1021,7 @@ export const studentGrades: Grade[] = <span class="cstat-no" title="statement no
 ];
 &nbsp;
 // Mock jadwal pelajaran untuk hari Senin
-export const weeklySchedule: ScheduleItem[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >weeklySchedule: ScheduleItem[] = [</span>
   {
     id: 'SCH001',
     day: 'Senin',
@@ -1075,7 +1075,7 @@ export const weeklySchedule: ScheduleItem[] = <span class="cstat-no" title="stat
 ];
 &nbsp;
 // Mock data absensi bulan Oktober 2024
-export const attendanceData: AttendanceRecord[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >attendanceData: AttendanceRecord[] = [</span>
   {
     id: 'ATT001',
     studentId: 'STU001',
@@ -1111,7 +1111,7 @@ export const attendanceData: AttendanceRecord[] = <span class="cstat-no" title="
 ];
 &nbsp;
 // Mock pengumuman untuk siswa
-export const announcements: Announcement[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >announcements: Announcement[] = [</span>
   {
     id: 'ANN001',
     title: 'Jadwal Ujian Tengah Semester',
@@ -1142,7 +1142,7 @@ export const announcements: Announcement[] = <span class="cstat-no" title="state
 ];
 &nbsp;
 // Helper functions untuk menghitung statistik akademik
-export function <span class="fstat-no" title="function not covered" >calculateGPA(</span>grades: Grade[]): number {
+<span class="cstat-no" title="statement not covered" >export function <span class="fstat-no" title="function not covered" >c</span>alculateGPA(</span>grades: Grade[]): number {
   const completedGrades = <span class="cstat-no" title="statement not covered" >grades.filter(<span class="fstat-no" title="function not covered" >grade </span>=&gt; <span class="cstat-no" title="statement not covered" >grade.status === 'Lulus' &amp;&amp; grade.gradePoint)</span>;</span>
 <span class="cstat-no" title="statement not covered" >  if (completedGrades.length === 0) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
 &nbsp;
@@ -1150,7 +1150,7 @@ export function <span class="fstat-no" title="function not covered" >calculateGP
 <span class="cstat-no" title="statement not covered" >  return Math.round((totalPoints / completedGrades.length) * 100) / 100;</span>
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >getAttendanceStats(</span>attendance: AttendanceRecord[]): {
+<span class="cstat-no" title="statement not covered" >export function <span class="fstat-no" title="function not covered" >g</span>etAttendanceStats(</span>attendance: AttendanceRecord[]): {
   total: number;
   present: number;
   absent: number;
@@ -1168,7 +1168,7 @@ export function <span class="fstat-no" title="function not covered" >getAttendan
 <span class="cstat-no" title="statement not covered" >  return { total, present, absent, sick, permitted, percentage };</span>
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >getUnreadAnnouncements(</span>announcements: Announcement[]): Announcement[] {
+<span class="cstat-no" title="statement not covered" >export function <span class="fstat-no" title="function not covered" >g</span>etUnreadAnnouncements(</span>announcements: Announcement[]): Announcement[] {
 <span class="cstat-no" title="statement not covered" >  return announcements.filter(<span class="fstat-no" title="function not covered" >announcement </span>=&gt; <span class="cstat-no" title="statement not covered" >!announcement.isRead)</span>;</span>
 }</pre></td></tr></table></pre>
 
@@ -1177,7 +1177,7 @@ export function <span class="fstat-no" title="function not covered" >getUnreadAn
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-19T10:46:20.357Z
+                at 2025-11-19T18:34:11.181Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1763549180426" clover="3.2.0">
-  <project timestamp="1763549180426" name="All files">
-    <metrics statements="3350" coveredstatements="412" conditionals="1955" coveredconditionals="174" methods="955" coveredmethods="84" elements="6260" coveredelements="670" complexity="0" loc="3350" ncloc="3350" packages="12" files="106" classes="106"/>
+<coverage generated="1763577251261" clover="3.2.0">
+  <project timestamp="1763577251261" name="All files">
+    <metrics statements="3619" coveredstatements="413" conditionals="1955" coveredconditionals="176" methods="998" coveredmethods="85" elements="6572" coveredelements="674" complexity="0" loc="3619" ncloc="3619" packages="12" files="108" classes="108"/>
     <package name="src">
-      <metrics statements="41" coveredstatements="3" conditionals="18" coveredconditionals="2" methods="15" coveredmethods="1"/>
+      <metrics statements="62" coveredstatements="3" conditionals="18" coveredconditionals="2" methods="18" coveredmethods="1"/>
       <file name="App.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/App.tsx">
-        <metrics statements="33" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <metrics statements="50" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="17" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
         <line num="20" count="0" type="stmt"/>
         <line num="21" count="0" type="stmt"/>
         <line num="22" count="0" type="stmt"/>
@@ -39,9 +55,14 @@
         <line num="118" count="0" type="stmt"/>
         <line num="120" count="0" type="stmt"/>
         <line num="121" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
       </file>
       <file name="index.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/index.tsx">
-        <metrics statements="5" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <metrics statements="9" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="8" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="9" count="0" type="stmt"/>
@@ -56,12 +77,14 @@
       </file>
     </package>
     <package name="src.components">
-      <metrics statements="745" coveredstatements="212" conditionals="555" coveredconditionals="122" methods="251" coveredmethods="49"/>
+      <metrics statements="849" coveredstatements="213" conditionals="555" coveredconditionals="124" methods="260" coveredmethods="50"/>
       <file name="AnnouncementsTab.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/AnnouncementsTab.tsx">
-        <metrics statements="3" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <metrics statements="5" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="10" count="0" type="stmt"/>
         <line num="13" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="51" count="0" type="stmt"/>
       </file>
       <file name="AssignmentSubmission.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/AssignmentSubmission.tsx">
         <metrics statements="62" coveredstatements="46" conditionals="50" coveredconditionals="27" methods="11" coveredmethods="7"/>
@@ -129,10 +152,12 @@
         <line num="322" count="1" type="stmt"/>
       </file>
       <file name="AttendanceTab.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/AttendanceTab.tsx">
-        <metrics statements="3" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <metrics statements="5" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
         <line num="17" count="0" type="stmt"/>
         <line num="43" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
       </file>
       <file name="AuthButtons.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/AuthButtons.tsx">
         <metrics statements="11" coveredstatements="10" conditionals="7" coveredconditionals="3" methods="1" coveredmethods="1"/>
@@ -199,14 +224,20 @@
         <line num="53" count="1" type="stmt"/>
       </file>
       <file name="ChatWindowContainer.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/ChatWindowContainer.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="6" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
         <line num="10" count="0" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
       </file>
       <file name="ContactSection.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/ContactSection.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="3" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
       </file>
       <file name="DesktopNavigation.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/DesktopNavigation.tsx">
         <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
@@ -218,7 +249,10 @@
         <line num="26" count="1" type="stmt"/>
       </file>
       <file name="DocumentationPage.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/DocumentationPage.tsx">
-        <metrics statements="8" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <metrics statements="12" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
         <line num="15" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
         <line num="17" count="0" type="stmt"/>
@@ -227,6 +261,7 @@
         <line num="41" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="43" count="0" type="stmt"/>
         <line num="52" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
       </file>
       <file name="ErrorBoundary.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/ErrorBoundary.tsx">
         <metrics statements="36" coveredstatements="21" conditionals="15" coveredconditionals="6" methods="13" coveredmethods="5"/>
@@ -268,13 +303,20 @@
         <line num="209" count="1" type="stmt"/>
       </file>
       <file name="FeaturedProgramsSection.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/FeaturedProgramsSection.tsx">
-        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <metrics statements="7" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
         <line num="6" count="0" type="stmt"/>
         <line num="15" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
       </file>
       <file name="FeedbackForm.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/FeedbackForm.tsx">
-        <metrics statements="29" coveredstatements="0" conditionals="19" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <metrics statements="33" coveredstatements="0" conditionals="19" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
         <line num="18" count="0" type="stmt"/>
         <line num="29" count="0" type="stmt"/>
@@ -304,9 +346,11 @@
         <line num="211" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="232" count="0" type="stmt"/>
         <line num="247" count="0" type="stmt"/>
+        <line num="279" count="0" type="stmt"/>
       </file>
       <file name="Footer.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/Footer.tsx">
-        <metrics statements="8" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <metrics statements="10" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="3" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
@@ -315,12 +359,15 @@
         <line num="12" count="0" type="stmt"/>
         <line num="19" count="0" type="stmt"/>
         <line num="20" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
       </file>
       <file name="GradesTab.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/GradesTab.tsx">
-        <metrics statements="3" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <metrics statements="5" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="10" count="0" type="stmt"/>
         <line num="18" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
       </file>
       <file name="Header.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/Header.tsx">
         <metrics statements="21" coveredstatements="20" conditionals="14" coveredconditionals="14" methods="3" coveredmethods="2"/>
@@ -347,7 +394,8 @@
         <line num="91" count="1" type="stmt"/>
       </file>
       <file name="HeroSection.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/HeroSection.tsx">
-        <metrics statements="10" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <metrics statements="12" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="3" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
@@ -358,12 +406,17 @@
         <line num="14" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="15" count="0" type="stmt"/>
         <line num="19" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
       </file>
       <file name="LatestNewsSection.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/LatestNewsSection.tsx">
-        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <metrics statements="7" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
         <line num="6" count="0" type="stmt"/>
         <line num="15" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
       </file>
       <file name="LazyImage.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/LazyImage.tsx">
         <metrics statements="28" coveredstatements="19" conditionals="37" coveredconditionals="24" methods="7" coveredmethods="3"/>
@@ -397,16 +450,21 @@
         <line num="147" count="1" type="stmt"/>
       </file>
       <file name="LoadingSpinner.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/LoadingSpinner.tsx">
-        <metrics statements="6" coveredstatements="0" conditionals="7" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="8" coveredstatements="0" conditionals="7" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
         <line num="21" count="0" type="stmt"/>
         <line num="31" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="32" count="0" type="stmt"/>
         <line num="39" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
       </file>
       <file name="LoginModal.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/LoginModal.tsx">
-        <metrics statements="38" coveredstatements="0" conditionals="32" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <metrics statements="42" coveredstatements="0" conditionals="32" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
         <line num="13" count="0" type="stmt"/>
@@ -445,6 +503,7 @@
         <line num="81" count="0" type="stmt"/>
         <line num="84" count="0" type="stmt"/>
         <line num="138" count="0" type="stmt"/>
+        <line num="179" count="0" type="stmt"/>
       </file>
       <file name="Logo.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/Logo.tsx">
         <metrics statements="4" coveredstatements="4" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
@@ -454,7 +513,9 @@
         <line num="21" count="1" type="stmt"/>
       </file>
       <file name="MainContentRouter.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/MainContentRouter.tsx">
-        <metrics statements="17" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="12" coveredmethods="0"/>
+        <metrics statements="20" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="21" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
         <line num="6" count="0" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
@@ -472,6 +533,7 @@
         <line num="37" count="0" type="cond" truecount="0" falsecount="4"/>
         <line num="38" count="0" type="stmt"/>
         <line num="51" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
       </file>
       <file name="MessageBubble.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/MessageBubble.tsx">
         <metrics statements="6" coveredstatements="6" conditionals="8" coveredconditionals="7" methods="1" coveredmethods="1"/>
@@ -483,9 +545,11 @@
         <line num="34" count="1" type="stmt"/>
       </file>
       <file name="MetaTags.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/MetaTags.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="7" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="4" coveredstatements="0" conditionals="7" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="13" count="0" type="stmt"/>
         <line num="22" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
       </file>
       <file name="MobileMenu.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/MobileMenu.tsx">
         <metrics statements="14" coveredstatements="11" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="1"/>
@@ -505,25 +569,38 @@
         <line num="66" count="1" type="stmt"/>
       </file>
       <file name="MobileMenuButton.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/MobileMenuButton.tsx">
-        <metrics statements="3" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="8" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
       </file>
       <file name="ModalsContainer.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/ModalsContainer.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
         <line num="13" count="0" type="stmt"/>
         <line num="20" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
       </file>
       <file name="NavigationTabs.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/NavigationTabs.tsx">
-        <metrics statements="4" coveredstatements="0" conditionals="5" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <metrics statements="6" coveredstatements="0" conditionals="5" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
         <line num="17" count="0" type="stmt"/>
         <line num="22" count="0" type="stmt"/>
         <line num="24" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
       </file>
       <file name="NotificationBell.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/NotificationBell.tsx">
-        <metrics statements="63" coveredstatements="0" conditionals="44" coveredconditionals="0" methods="22" coveredmethods="0"/>
+        <metrics statements="66" coveredstatements="0" conditionals="44" coveredconditionals="0" methods="22" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="10" count="0" type="stmt"/>
@@ -587,9 +664,11 @@
         <line num="146" count="0" type="stmt"/>
         <line num="187" count="0" type="stmt"/>
         <line num="201" count="0" type="stmt"/>
+        <line num="208" count="0" type="stmt"/>
       </file>
       <file name="OfflineIndicator.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/OfflineIndicator.tsx">
-        <metrics statements="28" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <metrics statements="30" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
         <line num="13" count="0" type="stmt"/>
@@ -618,78 +697,86 @@
         <line num="56" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="57" count="0" type="stmt"/>
         <line num="60" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
       </file>
       <file name="OverviewTab.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/OverviewTab.tsx">
-        <metrics statements="4" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <metrics statements="6" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="15" count="0" type="stmt"/>
         <line num="25" count="0" type="stmt"/>
         <line num="99" count="0" type="stmt"/>
         <line num="135" count="0" type="stmt"/>
+        <line num="157" count="0" type="stmt"/>
       </file>
       <file name="PPDBSection.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/PPDBSection.tsx">
-        <metrics statements="6" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <metrics statements="8" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="3" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
         <line num="6" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="7" count="0" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
       </file>
       <file name="ParentDashboard.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/ParentDashboard.tsx">
-        <metrics statements="45" coveredstatements="32" conditionals="62" coveredconditionals="30" methods="21" coveredmethods="18"/>
+        <metrics statements="45" coveredstatements="33" conditionals="62" coveredconditionals="32" methods="21" coveredmethods="19"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="21" count="1" type="stmt"/>
-        <line num="22" count="21" type="stmt"/>
-        <line num="23" count="21" type="stmt"/>
-        <line num="24" count="21" type="stmt"/>
-        <line num="25" count="21" type="stmt"/>
-        <line num="27" count="21" type="stmt"/>
+        <line num="22" count="22" type="stmt"/>
+        <line num="23" count="22" type="stmt"/>
+        <line num="24" count="22" type="stmt"/>
+        <line num="25" count="22" type="stmt"/>
+        <line num="27" count="22" type="stmt"/>
         <line num="29" count="15" type="stmt"/>
         <line num="30" count="0" type="stmt"/>
         <line num="31" count="0" type="stmt"/>
         <line num="32" count="0" type="stmt"/>
         <line num="35" count="15" type="stmt"/>
-        <line num="38" count="21" type="stmt"/>
+        <line num="38" count="22" type="stmt"/>
         <line num="39" count="1" type="stmt"/>
-        <line num="42" count="21" type="stmt"/>
-        <line num="43" count="22" type="stmt"/>
-        <line num="50" count="21" type="stmt"/>
+        <line num="42" count="22" type="stmt"/>
+        <line num="43" count="23" type="stmt"/>
+        <line num="50" count="22" type="stmt"/>
         <line num="51" count="3" type="cond" truecount="1" falsecount="4"/>
         <line num="52" count="3" type="stmt"/>
         <line num="53" count="0" type="stmt"/>
         <line num="54" count="0" type="stmt"/>
         <line num="55" count="0" type="stmt"/>
         <line num="56" count="0" type="stmt"/>
-        <line num="60" count="21" type="stmt"/>
-        <line num="61" count="15" type="cond" truecount="1" falsecount="4"/>
+        <line num="60" count="22" type="stmt"/>
+        <line num="61" count="16" type="cond" truecount="1" falsecount="4"/>
         <line num="62" count="0" type="stmt"/>
         <line num="63" count="0" type="stmt"/>
-        <line num="64" count="15" type="stmt"/>
+        <line num="64" count="16" type="stmt"/>
         <line num="65" count="0" type="stmt"/>
         <line num="66" count="0" type="stmt"/>
-        <line num="70" count="21" type="stmt"/>
-        <line num="79" count="63" type="stmt"/>
-        <line num="111" count="105" type="stmt"/>
-        <line num="113" count="6" type="stmt"/>
+        <line num="70" count="22" type="stmt"/>
+        <line num="79" count="66" type="stmt"/>
+        <line num="111" count="110" type="stmt"/>
+        <line num="113" count="7" type="stmt"/>
         <line num="188" count="0" type="stmt"/>
         <line num="211" count="15" type="stmt"/>
         <line num="232" count="1" type="stmt"/>
         <line num="282" count="3" type="cond" truecount="2" falsecount="0"/>
         <line num="292" count="3" type="stmt"/>
         <line num="300" count="3" type="stmt"/>
-        <line num="359" count="0" type="stmt"/>
+        <line num="359" count="1" type="stmt"/>
         <line num="386" count="2" type="stmt"/>
         <line num="417" count="2" type="stmt"/>
         <line num="468" count="1" type="stmt"/>
       </file>
       <file name="ProfileSection.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/ProfileSection.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="3" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
       </file>
       <file name="PwaInstallPrompt.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/PwaInstallPrompt.tsx">
-        <metrics statements="44" coveredstatements="0" conditionals="13" coveredconditionals="0" methods="9" coveredmethods="0"/>
+        <metrics statements="46" coveredstatements="0" conditionals="13" coveredconditionals="0" methods="9" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="10" count="0" type="stmt"/>
@@ -734,24 +821,42 @@
         <line num="82" count="0" type="cond" truecount="0" falsecount="5"/>
         <line num="83" count="0" type="stmt"/>
         <line num="86" count="0" type="stmt"/>
+        <line num="140" count="0" type="stmt"/>
       </file>
       <file name="RelatedLinksSection.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/RelatedLinksSection.tsx">
-        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
       </file>
       <file name="ScheduleTab.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/ScheduleTab.tsx">
-        <metrics statements="6" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <metrics statements="8" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
         <line num="15" count="0" type="stmt"/>
         <line num="24" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
       </file>
       <file name="StudentDashboard.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/StudentDashboard.tsx">
-        <metrics statements="45" coveredstatements="0" conditionals="25" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <metrics statements="58" coveredstatements="0" conditionals="25" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
         <line num="28" count="0" type="stmt"/>
         <line num="29" count="0" type="stmt"/>
         <line num="30" count="0" type="stmt"/>
@@ -797,9 +902,17 @@
         <line num="111" count="0" type="stmt"/>
         <line num="119" count="0" type="stmt"/>
         <line num="179" count="0" type="stmt"/>
+        <line num="187" count="0" type="stmt"/>
       </file>
       <file name="StudentDashboardApi.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/StudentDashboardApi.tsx">
-        <metrics statements="62" coveredstatements="0" conditionals="79" coveredconditionals="0" methods="20" coveredmethods="0"/>
+        <metrics statements="70" coveredstatements="0" conditionals="79" coveredconditionals="0" methods="20" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
         <line num="29" count="0" type="stmt"/>
         <line num="30" count="0" type="stmt"/>
         <line num="31" count="0" type="stmt"/>
@@ -862,14 +975,23 @@
         <line num="430" count="0" type="stmt"/>
         <line num="498" count="0" type="stmt"/>
         <line num="537" count="0" type="stmt"/>
+        <line num="545" count="0" type="stmt"/>
       </file>
       <file name="StudentDashboardHeader.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/StudentDashboardHeader.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
         <line num="10" count="0" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
       </file>
       <file name="TeacherDashboard.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/TeacherDashboard.tsx">
-        <metrics statements="32" coveredstatements="0" conditionals="26" coveredconditionals="0" methods="19" coveredmethods="0"/>
+        <metrics statements="38" coveredstatements="0" conditionals="26" coveredconditionals="0" methods="19" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
         <line num="24" count="0" type="stmt"/>
         <line num="25" count="0" type="stmt"/>
         <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -902,9 +1024,11 @@
         <line num="396" count="0" type="stmt"/>
         <line num="397" count="0" type="stmt"/>
         <line num="530" count="0" type="stmt"/>
+        <line num="555" count="0" type="stmt"/>
       </file>
       <file name="ToastNotification.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/ToastNotification.tsx">
-        <metrics statements="31" coveredstatements="0" conditionals="19" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <metrics statements="33" coveredstatements="0" conditionals="19" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="10" count="0" type="stmt"/>
         <line num="15" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
@@ -936,10 +1060,11 @@
         <line num="64" count="0" type="stmt"/>
         <line num="99" count="0" type="stmt"/>
         <line num="100" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
       </file>
     </package>
     <package name="src.components.icons">
-      <metrics statements="28" coveredstatements="12" conditionals="2" coveredconditionals="0" methods="10" coveredmethods="0"/>
+      <metrics statements="35" coveredstatements="12" conditionals="2" coveredconditionals="0" methods="10" coveredmethods="0"/>
       <file name="BuildingLibraryIcon.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/icons/BuildingLibraryIcon.tsx">
         <metrics statements="4" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
@@ -948,12 +1073,14 @@
         <line num="16" count="1" type="stmt"/>
       </file>
       <file name="ChatIcon.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/icons/ChatIcon.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
       </file>
       <file name="ChevronDownIcon.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/icons/ChevronDownIcon.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="3" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
       </file>
@@ -965,7 +1092,8 @@
         <line num="17" count="1" type="stmt"/>
       </file>
       <file name="CloseIcon.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/icons/CloseIcon.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
       </file>
@@ -977,17 +1105,21 @@
         <line num="16" count="1" type="stmt"/>
       </file>
       <file name="InformationCircleIcon.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/icons/InformationCircleIcon.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="3" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
       </file>
       <file name="MenuIcon.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/icons/MenuIcon.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="3" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
       </file>
       <file name="SendIcon.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/icons/SendIcon.tsx">
-        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
       </file>
@@ -1000,7 +1132,7 @@
       </file>
     </package>
     <package name="src.data">
-      <metrics statements="66" coveredstatements="8" conditionals="34" coveredconditionals="0" methods="27" coveredmethods="0"/>
+      <metrics statements="76" coveredstatements="8" conditionals="34" coveredconditionals="0" methods="27" coveredmethods="0"/>
       <file name="featuredPrograms.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/data/featuredPrograms.ts">
         <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="3" count="1" type="stmt"/>
@@ -1010,20 +1142,24 @@
         <line num="3" count="1" type="stmt"/>
       </file>
       <file name="parentData.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/data/parentData.ts">
-        <metrics statements="21" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="12" coveredmethods="0"/>
+        <metrics statements="25" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="12" coveredmethods="0"/>
         <line num="92" count="0" type="stmt"/>
         <line num="106" count="0" type="stmt"/>
         <line num="130" count="0" type="stmt"/>
         <line num="179" count="0" type="stmt"/>
         <line num="219" count="0" type="stmt"/>
+        <line num="256" count="0" type="stmt"/>
         <line num="257" count="0" type="stmt"/>
+        <line num="260" count="0" type="stmt"/>
         <line num="261" count="0" type="stmt"/>
         <line num="262" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="266" count="0" type="cond" truecount="0" falsecount="1"/>
         <line num="267" count="0" type="stmt"/>
         <line num="268" count="0" type="stmt"/>
         <line num="270" count="0" type="stmt"/>
         <line num="271" count="0" type="stmt"/>
         <line num="272" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="276" count="0" type="stmt"/>
         <line num="283" count="0" type="stmt"/>
         <line num="284" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="285" count="0" type="stmt"/>
@@ -1043,17 +1179,19 @@
         <line num="14" count="1" type="stmt"/>
       </file>
       <file name="studentData.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/data/studentData.ts">
-        <metrics statements="18" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <metrics statements="21" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="10" coveredmethods="0"/>
         <line num="74" count="0" type="stmt"/>
         <line num="89" count="0" type="stmt"/>
         <line num="157" count="0" type="stmt"/>
         <line num="221" count="0" type="stmt"/>
         <line num="275" count="0" type="stmt"/>
         <line num="311" count="0" type="stmt"/>
+        <line num="342" count="0" type="stmt"/>
         <line num="343" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="344" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="346" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="347" count="0" type="stmt"/>
+        <line num="350" count="0" type="stmt"/>
         <line num="358" count="0" type="stmt"/>
         <line num="359" count="0" type="stmt"/>
         <line num="360" count="0" type="stmt"/>
@@ -1061,23 +1199,27 @@
         <line num="362" count="0" type="stmt"/>
         <line num="363" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="365" count="0" type="stmt"/>
+        <line num="368" count="0" type="stmt"/>
         <line num="369" count="0" type="stmt"/>
       </file>
       <file name="teacherData.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/data/teacherData.ts">
-        <metrics statements="19" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <metrics statements="22" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="5" coveredmethods="0"/>
         <line num="52" count="0" type="stmt"/>
         <line num="65" count="0" type="stmt"/>
         <line num="96" count="0" type="stmt"/>
         <line num="145" count="0" type="stmt"/>
         <line num="173" count="0" type="stmt"/>
         <line num="182" count="0" type="stmt"/>
+        <line num="192" count="0" type="stmt"/>
         <line num="193" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="194" count="0" type="stmt"/>
         <line num="195" count="0" type="stmt"/>
+        <line num="198" count="0" type="stmt"/>
         <line num="203" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="204" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="205" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="206" count="0" type="stmt"/>
+        <line num="209" count="0" type="stmt"/>
         <line num="215" count="0" type="stmt"/>
         <line num="217" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="218" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -1087,9 +1229,32 @@
       </file>
     </package>
     <package name="src.hooks">
-      <metrics statements="472" coveredstatements="104" conditionals="174" coveredconditionals="26" methods="127" coveredmethods="26"/>
+      <metrics statements="504" coveredstatements="104" conditionals="174" coveredconditionals="26" methods="143" coveredmethods="26"/>
+      <file name="useApi.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/hooks/useApi.ts">
+        <metrics statements="17" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="16" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+      </file>
       <file name="useApiQueries.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/hooks/useApiQueries.ts">
-        <metrics statements="80" coveredstatements="0" conditionals="29" coveredconditionals="0" methods="37" coveredmethods="0"/>
+        <metrics statements="84" coveredstatements="0" conditionals="29" coveredconditionals="0" methods="37" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
         <line num="26" count="0" type="stmt"/>
         <line num="27" count="0" type="cond" truecount="0" falsecount="4"/>
         <line num="28" count="0" type="stmt"/>
@@ -1170,9 +1335,12 @@
         <line num="305" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="306" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="311" count="0" type="stmt"/>
+        <line num="317" count="0" type="stmt"/>
       </file>
       <file name="useAuth.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/hooks/useAuth.ts">
-        <metrics statements="11" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <metrics statements="13" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
         <line num="6" count="0" type="stmt"/>
@@ -1226,7 +1394,10 @@
         <line num="67" count="250" type="stmt"/>
       </file>
       <file name="useErrorReporting.tsx" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/hooks/useErrorReporting.tsx">
-        <metrics statements="49" coveredstatements="0" conditionals="22" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <metrics statements="54" coveredstatements="0" conditionals="22" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="1"/>
         <line num="24" count="0" type="stmt"/>
         <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="27" count="0" type="stmt"/>
@@ -1264,6 +1435,7 @@
         <line num="119" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="120" count="0" type="stmt"/>
         <line num="125" count="0" type="stmt"/>
+        <line num="138" count="0" type="stmt"/>
         <line num="142" count="0" type="stmt"/>
         <line num="143" count="0" type="stmt"/>
         <line num="148" count="0" type="stmt"/>
@@ -1276,9 +1448,11 @@
         <line num="175" count="0" type="stmt"/>
         <line num="177" count="0" type="stmt"/>
         <line num="182" count="0" type="stmt"/>
+        <line num="186" count="0" type="stmt"/>
       </file>
       <file name="useKeyboardNavigation.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/hooks/useKeyboardNavigation.ts">
-        <metrics statements="106" coveredstatements="0" conditionals="42" coveredconditionals="0" methods="20" coveredmethods="0"/>
+        <metrics statements="107" coveredstatements="0" conditionals="42" coveredconditionals="0" methods="20" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
         <line num="7" count="0" type="cond" truecount="0" falsecount="8"/>
@@ -1387,7 +1561,10 @@
         <line num="211" count="0" type="stmt"/>
       </file>
       <file name="useMemoryBank.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/hooks/useMemoryBank.ts">
-        <metrics statements="51" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="13" coveredmethods="0"/>
+        <metrics statements="54" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="13" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="10" count="0" type="stmt"/>
@@ -1569,12 +1746,12 @@
         <line num="2" count="2" type="stmt"/>
         <line num="12" count="2" type="stmt"/>
         <line num="19" count="2" type="stmt"/>
-        <line num="20" count="10" type="stmt"/>
-        <line num="21" count="10" type="stmt"/>
-        <line num="23" count="10" type="stmt"/>
-        <line num="25" count="10" type="cond" truecount="2" falsecount="0"/>
-        <line num="26" count="8" type="stmt"/>
-        <line num="27" count="8" type="stmt"/>
+        <line num="20" count="12" type="stmt"/>
+        <line num="21" count="12" type="stmt"/>
+        <line num="23" count="12" type="stmt"/>
+        <line num="25" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="9" type="stmt"/>
+        <line num="27" count="9" type="stmt"/>
         <line num="31" count="2" type="stmt"/>
         <line num="33" count="2" type="stmt"/>
         <line num="35" count="2" type="stmt"/>
@@ -1582,22 +1759,24 @@
         <line num="39" count="0" type="stmt"/>
         <line num="40" count="0" type="stmt"/>
         <line num="41" count="0" type="stmt"/>
-        <line num="45" count="10" type="cond" truecount="1" falsecount="0"/>
-        <line num="46" count="10" type="stmt"/>
-        <line num="49" count="10" type="stmt"/>
-        <line num="55" count="10" type="stmt"/>
+        <line num="45" count="12" type="cond" truecount="1" falsecount="0"/>
+        <line num="46" count="11" type="stmt"/>
+        <line num="49" count="12" type="stmt"/>
+        <line num="55" count="12" type="stmt"/>
         <line num="63" count="2" type="stmt"/>
-        <line num="64" count="10" type="stmt"/>
-        <line num="66" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="64" count="11" type="stmt"/>
+        <line num="66" count="11" type="cond" truecount="1" falsecount="1"/>
         <line num="67" count="0" type="stmt"/>
-        <line num="70" count="10" type="stmt"/>
+        <line num="70" count="11" type="stmt"/>
         <line num="73" count="2" type="stmt"/>
       </file>
     </package>
     <package name="src.memory">
-      <metrics statements="58" coveredstatements="0" conditionals="21" coveredconditionals="0" methods="19" coveredmethods="0"/>
+      <metrics statements="68" coveredstatements="0" conditionals="21" coveredconditionals="0" methods="24" coveredmethods="0"/>
       <file name="MemoryBank.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/memory/MemoryBank.ts">
-        <metrics statements="53" coveredstatements="0" conditionals="21" coveredconditionals="0" methods="18" coveredmethods="0"/>
+        <metrics statements="55" coveredstatements="0" conditionals="21" coveredconditionals="0" methods="18" coveredmethods="0"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
         <line num="17" count="0" type="stmt"/>
         <line num="18" count="0" type="stmt"/>
         <line num="19" count="0" type="stmt"/>
@@ -1653,18 +1832,31 @@
         <line num="213" count="0" type="stmt"/>
       </file>
       <file name="config.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/memory/config.ts">
-        <metrics statements="5" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="18" count="0" type="stmt"/>
         <line num="19" count="0" type="stmt"/>
         <line num="21" count="0" type="stmt"/>
         <line num="38" count="0" type="stmt"/>
       </file>
+      <file name="index.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/memory/index.ts">
+        <metrics statements="7" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+      </file>
     </package>
     <package name="src.memory.services">
-      <metrics statements="92" coveredstatements="0" conditionals="43" coveredconditionals="0" methods="22" coveredmethods="0"/>
+      <metrics statements="94" coveredstatements="0" conditionals="43" coveredconditionals="0" methods="22" coveredmethods="0"/>
       <file name="MemoryService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/memory/services/MemoryService.ts">
-        <metrics statements="92" coveredstatements="0" conditionals="43" coveredconditionals="0" methods="22" coveredmethods="0"/>
+        <metrics statements="94" coveredstatements="0" conditionals="43" coveredconditionals="0" methods="22" coveredmethods="0"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
         <line num="17" count="0" type="stmt"/>
         <line num="18" count="0" type="stmt"/>
         <line num="21" count="0" type="stmt"/>
@@ -1760,9 +1952,10 @@
       </file>
     </package>
     <package name="src.memory.storage">
-      <metrics statements="183" coveredstatements="0" conditionals="80" coveredconditionals="0" methods="40" coveredmethods="0"/>
+      <metrics statements="185" coveredstatements="0" conditionals="80" coveredconditionals="0" methods="40" coveredmethods="0"/>
       <file name="CloudStorageAdapter.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/memory/storage/CloudStorageAdapter.ts">
-        <metrics statements="92" coveredstatements="0" conditionals="46" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <metrics statements="93" coveredstatements="0" conditionals="46" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <line num="18" count="0" type="stmt"/>
         <line num="19" count="0" type="stmt"/>
         <line num="20" count="0" type="stmt"/>
         <line num="21" count="0" type="stmt"/>
@@ -1857,7 +2050,8 @@
         <line num="281" count="0" type="stmt"/>
       </file>
       <file name="LocalStorageAdapter.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/memory/storage/LocalStorageAdapter.ts">
-        <metrics statements="91" coveredstatements="0" conditionals="34" coveredconditionals="0" methods="25" coveredmethods="0"/>
+        <metrics statements="92" coveredstatements="0" conditionals="34" coveredconditionals="0" methods="25" coveredmethods="0"/>
+        <line num="7" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="12" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -1952,10 +2146,12 @@
       </file>
     </package>
     <package name="src.memory.utils">
-      <metrics statements="104" coveredstatements="0" conditionals="73" coveredconditionals="0" methods="29" coveredmethods="0"/>
+      <metrics statements="117" coveredstatements="0" conditionals="73" coveredconditionals="0" methods="29" coveredmethods="0"/>
       <file name="memoryUtils.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/memory/utils/memoryUtils.ts">
-        <metrics statements="104" coveredstatements="0" conditionals="73" coveredconditionals="0" methods="29" coveredmethods="0"/>
+        <metrics statements="117" coveredstatements="0" conditionals="73" coveredconditionals="0" methods="29" coveredmethods="0"/>
+        <line num="11" count="0" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
         <line num="23" count="0" type="stmt"/>
         <line num="26" count="0" type="stmt"/>
         <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -1976,6 +2172,7 @@
         <line num="60" count="0" type="cond" truecount="0" falsecount="4"/>
         <line num="61" count="0" type="stmt"/>
         <line num="65" count="0" type="stmt"/>
+        <line num="71" count="0" type="cond" truecount="0" falsecount="1"/>
         <line num="72" count="0" type="stmt"/>
         <line num="79" count="0" type="stmt"/>
         <line num="83" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -1985,22 +2182,26 @@
         <line num="92" count="0" type="stmt"/>
         <line num="93" count="0" type="stmt"/>
         <line num="95" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
         <line num="102" count="0" type="stmt"/>
         <line num="103" count="0" type="stmt"/>
         <line num="105" count="0" type="stmt"/>
         <line num="106" count="0" type="stmt"/>
         <line num="108" count="0" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
         <line num="119" count="0" type="stmt"/>
         <line num="120" count="0" type="stmt"/>
         <line num="124" count="0" type="stmt"/>
         <line num="125" count="0" type="stmt"/>
         <line num="126" count="0" type="stmt"/>
+        <line num="132" count="0" type="stmt"/>
         <line num="133" count="0" type="stmt"/>
         <line num="134" count="0" type="stmt"/>
         <line num="135" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="136" count="0" type="stmt"/>
         <line num="138" count="0" type="stmt"/>
         <line num="139" count="0" type="stmt"/>
+        <line num="146" count="0" type="stmt"/>
         <line num="153" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="154" count="0" type="stmt"/>
         <line num="163" count="0" type="stmt"/>
@@ -2011,7 +2212,9 @@
         <line num="171" count="0" type="stmt"/>
         <line num="172" count="0" type="stmt"/>
         <line num="174" count="0" type="stmt"/>
+        <line num="186" count="0" type="stmt"/>
         <line num="187" count="0" type="stmt"/>
+        <line num="204" count="0" type="stmt"/>
         <line num="205" count="0" type="stmt"/>
         <line num="206" count="0" type="stmt"/>
         <line num="209" count="0" type="cond" truecount="0" falsecount="4"/>
@@ -2028,10 +2231,12 @@
         <line num="223" count="0" type="stmt"/>
         <line num="227" count="0" type="stmt"/>
         <line num="229" count="0" type="stmt"/>
+        <line num="235" count="0" type="stmt"/>
         <line num="236" count="0" type="stmt"/>
         <line num="237" count="0" type="stmt"/>
         <line num="238" count="0" type="stmt"/>
         <line num="240" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="246" count="0" type="stmt"/>
         <line num="247" count="0" type="stmt"/>
         <line num="248" count="0" type="stmt"/>
         <line num="250" count="0" type="stmt"/>
@@ -2054,7 +2259,9 @@
         <line num="283" count="0" type="stmt"/>
         <line num="286" count="0" type="stmt"/>
         <line num="289" count="0" type="stmt"/>
+        <line num="295" count="0" type="stmt"/>
         <line num="296" count="0" type="stmt"/>
+        <line num="306" count="0" type="stmt"/>
         <line num="307" count="0" type="stmt"/>
         <line num="308" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="309" count="0" type="stmt"/>
@@ -2062,9 +2269,11 @@
       </file>
     </package>
     <package name="src.services">
-      <metrics statements="1108" coveredstatements="40" conditionals="599" coveredconditionals="10" methods="251" coveredmethods="2"/>
+      <metrics statements="1152" coveredstatements="40" conditionals="599" coveredconditionals="10" methods="251" coveredmethods="2"/>
       <file name="authService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/authService.ts">
-        <metrics statements="272" coveredstatements="0" conditionals="160" coveredconditionals="0" methods="47" coveredmethods="0"/>
+        <metrics statements="276" coveredstatements="0" conditionals="160" coveredconditionals="0" methods="47" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
         <line num="6" count="0" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
@@ -2263,6 +2472,7 @@
         <line num="580" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="583" count="0" type="stmt"/>
         <line num="584" count="0" type="stmt"/>
+        <line num="590" count="0" type="stmt"/>
         <line num="593" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="594" count="0" type="stmt"/>
         <line num="601" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -2337,9 +2547,10 @@
         <line num="757" count="0" type="stmt"/>
         <line num="761" count="0" type="cond" truecount="0" falsecount="4"/>
         <line num="762" count="0" type="stmt"/>
+        <line num="768" count="0" type="stmt"/>
       </file>
       <file name="errorLoggingService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/errorLoggingService.ts">
-        <metrics statements="97" coveredstatements="0" conditionals="67" coveredconditionals="0" methods="23" coveredmethods="0"/>
+        <metrics statements="99" coveredstatements="0" conditionals="67" coveredconditionals="0" methods="23" coveredmethods="0"/>
         <line num="31" count="0" type="stmt"/>
         <line num="32" count="0" type="stmt"/>
         <line num="33" count="0" type="stmt"/>
@@ -2428,18 +2639,22 @@
         <line num="265" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="268" count="0" type="stmt"/>
         <line num="273" count="0" type="stmt"/>
+        <line num="275" count="0" type="stmt"/>
         <line num="276" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="277" count="0" type="stmt"/>
         <line num="278" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="279" count="0" type="stmt"/>
         <line num="282" count="0" type="stmt"/>
+        <line num="286" count="0" type="stmt"/>
         <line num="289" count="0" type="stmt"/>
         <line num="290" count="0" type="stmt"/>
         <line num="293" count="0" type="stmt"/>
         <line num="294" count="0" type="stmt"/>
       </file>
       <file name="errorMonitoringConfig.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/errorMonitoringConfig.ts">
-        <metrics statements="45" coveredstatements="0" conditionals="24" coveredconditionals="0" methods="12" coveredmethods="0"/>
+        <metrics statements="50" coveredstatements="0" conditionals="24" coveredconditionals="0" methods="12" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
         <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="47" count="0" type="stmt"/>
@@ -2447,6 +2662,7 @@
         <line num="50" count="0" type="stmt"/>
         <line num="51" count="0" type="stmt"/>
         <line num="54" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
         <line num="59" count="0" type="stmt"/>
         <line num="62" count="0" type="stmt"/>
         <line num="68" count="0" type="stmt"/>
@@ -2485,6 +2701,8 @@
         <line num="159" count="0" type="stmt"/>
         <line num="165" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="166" count="0" type="stmt"/>
+        <line num="170" count="0" type="stmt"/>
+        <line num="171" count="0" type="stmt"/>
       </file>
       <file name="geminiService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/geminiService.ts">
         <metrics statements="61" coveredstatements="40" conditionals="17" coveredconditionals="10" methods="6" coveredmethods="2"/>
@@ -2551,7 +2769,7 @@
         <line num="164" count="1" type="stmt"/>
       </file>
       <file name="localDatabase.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/localDatabase.ts">
-        <metrics statements="47" coveredstatements="0" conditionals="20" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <metrics statements="48" coveredstatements="0" conditionals="20" coveredconditionals="0" methods="14" coveredmethods="0"/>
         <line num="16" count="0" type="stmt"/>
         <line num="17" count="0" type="stmt"/>
         <line num="21" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -2599,9 +2817,11 @@
         <line num="152" count="0" type="stmt"/>
         <line num="158" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="159" count="0" type="stmt"/>
+        <line num="162" count="0" type="stmt"/>
       </file>
       <file name="messagingService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/messagingService.ts">
-        <metrics statements="32" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="17" coveredmethods="0"/>
+        <metrics statements="34" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="17" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
         <line num="27" count="0" type="stmt"/>
         <line num="28" count="0" type="stmt"/>
         <line num="59" count="0" type="stmt"/>
@@ -2634,9 +2854,10 @@
         <line num="237" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="238" count="0" type="stmt"/>
         <line num="243" count="0" type="stmt"/>
+        <line num="247" count="0" type="stmt"/>
       </file>
       <file name="notificationService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/notificationService.ts">
-        <metrics statements="123" coveredstatements="0" conditionals="75" coveredconditionals="0" methods="33" coveredmethods="0"/>
+        <metrics statements="124" coveredstatements="0" conditionals="75" coveredconditionals="0" methods="33" coveredmethods="0"/>
         <line num="31" count="0" type="stmt"/>
         <line num="32" count="0" type="stmt"/>
         <line num="35" count="0" type="stmt"/>
@@ -2760,9 +2981,10 @@
         <line num="356" count="0" type="stmt"/>
         <line num="369" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="370" count="0" type="stmt"/>
+        <line num="373" count="0" type="stmt"/>
       </file>
       <file name="pwaService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/pwaService.ts">
-        <metrics statements="119" coveredstatements="0" conditionals="39" coveredconditionals="0" methods="34" coveredmethods="0"/>
+        <metrics statements="120" coveredstatements="0" conditionals="39" coveredconditionals="0" methods="34" coveredmethods="0"/>
         <line num="12" count="0" type="stmt"/>
         <line num="13" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
@@ -2882,9 +3104,11 @@
         <line num="313" count="0" type="stmt"/>
         <line num="327" count="0" type="stmt"/>
         <line num="331" count="0" type="stmt"/>
+        <line num="335" count="0" type="stmt"/>
       </file>
       <file name="queryClient.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/queryClient.ts">
-        <metrics statements="35" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="20" coveredmethods="0"/>
+        <metrics statements="37" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="20" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
@@ -2920,11 +3144,15 @@
         <line num="149" count="0" type="stmt"/>
         <line num="154" count="0" type="stmt"/>
         <line num="159" count="0" type="stmt"/>
+        <line num="163" count="0" type="stmt"/>
       </file>
       <file name="sentryService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/sentryService.ts">
-        <metrics statements="23" coveredstatements="0" conditionals="15" coveredconditionals="0" methods="11" coveredmethods="0"/>
+        <metrics statements="34" coveredstatements="0" conditionals="15" coveredconditionals="0" methods="11" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
         <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="35" count="0" type="stmt"/>
         <line num="36" count="0" type="stmt"/>
@@ -2936,19 +3164,30 @@
         <line num="56" count="0" type="stmt"/>
         <line num="63" count="0" type="stmt"/>
         <line num="67" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
         <line num="72" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
         <line num="81" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
         <line num="86" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
         <line num="91" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
         <line num="96" count="0" type="stmt"/>
+        <line num="104" count="0" type="cond" truecount="0" falsecount="1"/>
         <line num="105" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
         <line num="110" count="0" type="stmt"/>
         <line num="111" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="112" count="0" type="stmt"/>
         <line num="114" count="0" type="stmt"/>
+        <line num="118" count="0" type="stmt"/>
       </file>
       <file name="supabaseApiService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/supabaseApiService.ts">
-        <metrics statements="36" coveredstatements="0" conditionals="36" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <metrics statements="40" coveredstatements="0" conditionals="36" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
         <line num="19" count="0" type="stmt"/>
@@ -2985,14 +3224,17 @@
         <line num="115" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="116" count="0" type="stmt"/>
         <line num="125" count="0" type="stmt"/>
+        <line num="129" count="0" type="stmt"/>
       </file>
       <file name="supabaseAuthService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/supabaseAuthService.ts">
-        <metrics statements="54" coveredstatements="0" conditionals="39" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <metrics statements="57" coveredstatements="0" conditionals="39" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
         <line num="23" count="0" type="stmt"/>
         <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="25" count="0" type="cond" truecount="0" falsecount="4"/>
         <line num="26" count="0" type="cond" truecount="0" falsecount="6"/>
         <line num="28" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
         <line num="43" count="0" type="stmt"/>
         <line num="44" count="0" type="stmt"/>
         <line num="51" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -3042,9 +3284,13 @@
         <line num="182" count="0" type="stmt"/>
         <line num="187" count="0" type="stmt"/>
         <line num="188" count="0" type="stmt"/>
+        <line num="196" count="0" type="stmt"/>
       </file>
       <file name="supabaseConfig.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/supabaseConfig.ts">
-        <metrics statements="37" coveredstatements="0" conditionals="43" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="40" coveredstatements="0" conditionals="43" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
         <line num="19" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="22" count="0" type="stmt"/>
@@ -3084,7 +3330,9 @@
         <line num="101" count="0" type="stmt"/>
       </file>
       <file name="supabaseDatabaseService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/supabaseDatabaseService.ts">
-        <metrics statements="111" coveredstatements="0" conditionals="44" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <metrics statements="114" coveredstatements="0" conditionals="44" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
         <line num="67" count="0" type="stmt"/>
         <line num="68" count="0" type="stmt"/>
         <line num="74" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -3196,9 +3444,11 @@
         <line num="355" count="0" type="stmt"/>
         <line num="358" count="0" type="stmt"/>
         <line num="360" count="0" type="stmt"/>
+        <line num="365" count="0" type="stmt"/>
       </file>
       <file name="supabaseTest.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/supabaseTest.ts">
-        <metrics statements="16" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="18" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="2" count="0" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
@@ -3215,12 +3465,14 @@
         <line num="34" count="0" type="stmt"/>
         <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="40" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
       </file>
     </package>
     <package name="src.services.api">
-      <metrics statements="359" coveredstatements="0" conditionals="282" coveredconditionals="0" methods="151" coveredmethods="0"/>
+      <metrics statements="382" coveredstatements="0" conditionals="282" coveredconditionals="0" methods="161" coveredmethods="0"/>
       <file name="baseApiService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/api/baseApiService.ts">
-        <metrics statements="58" coveredstatements="0" conditionals="50" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <metrics statements="60" coveredstatements="0" conditionals="50" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
         <line num="22" count="0" type="stmt"/>
         <line num="23" count="0" type="stmt"/>
         <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -3279,9 +3531,11 @@
         <line num="228" count="0" type="stmt"/>
         <line num="237" count="0" type="stmt"/>
         <line num="242" count="0" type="stmt"/>
+        <line num="243" count="0" type="stmt"/>
       </file>
       <file name="contentApiService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/api/contentApiService.ts">
-        <metrics statements="27" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="18" coveredmethods="0"/>
+        <metrics statements="29" coveredstatements="0" conditionals="9" coveredconditionals="0" methods="18" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
         <line num="46" count="0" type="stmt"/>
         <line num="51" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="52" count="0" type="stmt"/>
@@ -3309,9 +3563,12 @@
         <line num="132" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="134" count="0" type="stmt"/>
         <line num="139" count="0" type="stmt"/>
+        <line num="140" count="0" type="stmt"/>
       </file>
       <file name="featuredProgramsService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/api/featuredProgramsService.ts">
-        <metrics statements="54" coveredstatements="0" conditionals="44" coveredconditionals="0" methods="25" coveredmethods="0"/>
+        <metrics statements="58" coveredstatements="0" conditionals="44" coveredconditionals="0" methods="25" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
         <line num="19" count="0" type="stmt"/>
@@ -3325,6 +3582,7 @@
         <line num="50" count="0" type="stmt"/>
         <line num="54" count="0" type="stmt"/>
         <line num="74" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
         <line num="83" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="84" count="0" type="stmt"/>
         <line num="86" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -3366,9 +3624,15 @@
         <line num="156" count="0" type="stmt"/>
         <line num="158" count="0" type="stmt"/>
         <line num="159" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="165" count="0" type="stmt"/>
       </file>
       <file name="index.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/api/index.ts">
-        <metrics statements="14" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <metrics statements="19" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
         <line num="36" count="0" type="stmt"/>
         <line num="44" count="0" type="stmt"/>
         <line num="50" count="0" type="stmt"/>
@@ -3385,8 +3649,10 @@
         <line num="74" count="0" type="stmt"/>
       </file>
       <file name="newsService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/api/newsService.ts">
-        <metrics statements="60" coveredstatements="0" conditionals="50" coveredconditionals="0" methods="29" coveredmethods="0"/>
+        <metrics statements="64" coveredstatements="0" conditionals="50" coveredconditionals="0" methods="29" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
         <line num="17" count="0" type="stmt"/>
         <line num="22" count="0" type="stmt"/>
@@ -3401,6 +3667,7 @@
         <line num="58" count="0" type="stmt"/>
         <line num="62" count="0" type="stmt"/>
         <line num="85" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
         <line num="94" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="95" count="0" type="stmt"/>
         <line num="97" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -3446,9 +3713,11 @@
         <line num="176" count="0" type="stmt"/>
         <line num="178" count="0" type="stmt"/>
         <line num="179" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="185" count="0" type="stmt"/>
       </file>
       <file name="studentApiService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/api/studentApiService.ts">
-        <metrics statements="44" coveredstatements="0" conditionals="43" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <metrics statements="46" coveredstatements="0" conditionals="43" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
         <line num="74" count="0" type="stmt"/>
         <line num="79" count="0" type="stmt"/>
         <line num="84" count="0" type="stmt"/>
@@ -3493,10 +3762,13 @@
         <line num="170" count="0" type="stmt"/>
         <line num="175" count="0" type="stmt"/>
         <line num="180" count="0" type="stmt"/>
+        <line num="181" count="0" type="stmt"/>
       </file>
       <file name="studentService.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/api/studentService.ts">
-        <metrics statements="102" coveredstatements="0" conditionals="80" coveredconditionals="0" methods="51" coveredmethods="0"/>
+        <metrics statements="106" coveredstatements="0" conditionals="80" coveredconditionals="0" methods="51" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
         <line num="17" count="0" type="stmt"/>
         <line num="21" count="0" type="stmt"/>
@@ -3534,6 +3806,7 @@
         <line num="190" count="0" type="stmt"/>
         <line num="194" count="0" type="stmt"/>
         <line num="198" count="0" type="stmt"/>
+        <line num="203" count="0" type="stmt"/>
         <line num="207" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="208" count="0" type="stmt"/>
         <line num="210" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -3598,10 +3871,11 @@
         <line num="340" count="0" type="stmt"/>
         <line num="341" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="343" count="0" type="stmt"/>
+        <line num="348" count="0" type="stmt"/>
       </file>
     </package>
     <package name="src.utils">
-      <metrics statements="94" coveredstatements="33" conditionals="74" coveredconditionals="14" methods="13" coveredmethods="6"/>
+      <metrics statements="95" coveredstatements="33" conditionals="74" coveredconditionals="14" methods="13" coveredmethods="6"/>
       <file name="analytics.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/utils/analytics.ts">
         <metrics statements="9" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="3" coveredmethods="0"/>
         <line num="9" count="0" type="stmt"/>
@@ -3615,13 +3889,14 @@
         <line num="31" count="0" type="stmt"/>
       </file>
       <file name="envValidation.ts" path="/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/utils/envValidation.ts">
-        <metrics statements="36" coveredstatements="0" conditionals="36" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <metrics statements="37" coveredstatements="0" conditionals="36" coveredconditionals="0" methods="3" coveredmethods="0"/>
         <line num="10" count="0" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
         <line num="18" count="0" type="cond" truecount="0" falsecount="5"/>
         <line num="19" count="0" type="stmt"/>
         <line num="22" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="25" count="0" type="stmt"/>
         <line num="27" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="30" count="0" type="stmt"/>
         <line num="37" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -3680,19 +3955,19 @@
         <line num="52" count="2" type="stmt"/>
         <line num="53" count="2" type="stmt"/>
         <line num="60" count="2" type="stmt"/>
-        <line num="61" count="20" type="stmt"/>
+        <line num="61" count="23" type="stmt"/>
         <line num="70" count="2" type="cond" truecount="0" falsecount="1"/>
-        <line num="71" count="10" type="stmt"/>
-        <line num="74" count="10" type="cond" truecount="5" falsecount="0"/>
+        <line num="71" count="11" type="stmt"/>
+        <line num="74" count="11" type="cond" truecount="5" falsecount="0"/>
         <line num="75" count="6" type="stmt"/>
-        <line num="79" count="4" type="cond" truecount="2" falsecount="2"/>
+        <line num="79" count="5" type="cond" truecount="2" falsecount="2"/>
         <line num="80" count="0" type="stmt"/>
-        <line num="84" count="4" type="cond" truecount="2" falsecount="2"/>
+        <line num="84" count="5" type="cond" truecount="2" falsecount="2"/>
         <line num="85" count="0" type="stmt"/>
-        <line num="89" count="4" type="cond" truecount="2" falsecount="2"/>
+        <line num="89" count="5" type="cond" truecount="2" falsecount="2"/>
         <line num="90" count="0" type="stmt"/>
-        <line num="94" count="4" type="cond" truecount="1" falsecount="1"/>
-        <line num="95" count="4" type="stmt"/>
+        <line num="94" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="95" count="5" type="stmt"/>
         <line num="98" count="0" type="stmt"/>
         <line num="105" count="2" type="stmt"/>
         <line num="106" count="0" type="stmt"/>

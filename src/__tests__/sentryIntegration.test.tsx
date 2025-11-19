@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ErrorBoundary from '../components/ErrorBoundary';
 
 // Mock error logging service
@@ -114,7 +114,9 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
     
-    // Check that the valid component is now rendered
-    expect(screen.getByText('Valid Component')).toBeInTheDocument();
+    // Wait for state update and check that the valid component is now rendered
+    waitFor(() => {
+      expect(screen.getByText('Valid Component')).toBeInTheDocument();
+    });
   });
 });
