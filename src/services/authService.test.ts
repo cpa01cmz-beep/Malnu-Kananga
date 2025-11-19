@@ -6,6 +6,20 @@ jest.mock('../utils/envValidation', () => ({
   WORKER_URL: 'http://localhost:8787'
 }));
 
+// Mock import.meta.env for testing
+const originalImportMeta = global.import.meta;
+beforeAll(() => {
+  global.import.meta = {
+    env: {
+      DEV: false
+    }
+  };
+});
+
+afterAll(() => {
+  global.import.meta = originalImportMeta;
+});
+
 // Mock fetch for testing
 global.fetch = jest.fn();
 
@@ -38,22 +52,22 @@ describe('AuthService', () => {
 
     it('should request login link in development mode', async () => {
       // Mock development mode
-      const originalDev = import.meta.env.DEV;
-      import.meta.env.DEV = true;
+      const originalDev = global.import.meta.env.DEV;
+      global.import.meta.env.DEV = true;
 
       const result = await AuthService.requestLoginLink('test@example.com');
       expect(result.success).toBe(true);
       
       // Restore original env
-      import.meta.env.DEV = originalDev;
+      global.import.meta.env.DEV = originalDev;
     });
   });
 
   describe('verifyLoginToken', () => {
     it('should verify token in development mode', async () => {
       // Mock development mode
-      const originalDev = import.meta.env.DEV;
-      import.meta.env.DEV = true;
+      const originalDev = global.import.meta.env.DEV;
+      global.import.meta.env.DEV = true;
 
       // Create a user first
       const user = LocalAuthService.createUser('test@example.com', 'Test User');
@@ -73,27 +87,27 @@ describe('AuthService', () => {
       expect(result.user).toEqual(user);
       
       // Restore original env
-      import.meta.env.DEV = originalDev;
+      global.import.meta.env.DEV = originalDev;
     });
 
     it('should reject invalid token', async () => {
       // Mock development mode
-      const originalDev = import.meta.env.DEV;
-      import.meta.env.DEV = true;
+      const originalDev = global.import.meta.env.DEV;
+      global.import.meta.env.DEV = true;
 
       const result = await AuthService.verifyLoginToken('invalid.token.here');
       expect(result.success).toBe(false);
       
       // Restore original env
-      import.meta.env.DEV = originalDev;
+      global.import.meta.env.DEV = originalDev;
     });
   });
 
   describe('refreshCurrentToken', () => {
     it('should refresh token in development mode', async () => {
       // Mock development mode
-      const originalDev = import.meta.env.DEV;
-      import.meta.env.DEV = true;
+      const originalDev = global.import.meta.env.DEV;
+      global.import.meta.env.DEV = true;
 
       // Create a user and get a token
       LocalAuthService.createUser('test@example.com', 'Test User');
@@ -110,7 +124,7 @@ describe('AuthService', () => {
       expect(result.token).not.toBe(token);
       
       // Restore original env
-      import.meta.env.DEV = originalDev;
+      global.import.meta.env.DEV = originalDev;
     });
   });
 });
@@ -122,8 +136,8 @@ describe('ProductionAuthService', () => {
 
   it('should make request to server for signature generation', async () => {
     // Mock production mode
-    const originalDev = import.meta.env.DEV;
-    import.meta.env.DEV = false;
+    const originalDev = global.import.meta.env.DEV;
+    global.import.meta.env.DEV = false;
 
     // Mock fetch response
     (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -136,6 +150,6 @@ describe('ProductionAuthService', () => {
     // This would require a more complex setup to test properly
     
     // Restore original env
-    import.meta.env.DEV = originalDev;
+    global.import.meta.env.DEV = originalDev;
   });
 });
