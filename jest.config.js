@@ -8,17 +8,18 @@ export default {
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: false
+      tsconfig: {
+        target: 'es2017',
+        module: 'commonjs'
+      }
     }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
-      presets: [['@babel/preset-env', { modules: 'commonjs' }]]
+      presets: [['@babel/preset-env', { modules: 'commonjs', targets: { node: 'current' } }]]
     }]
   },
-  globals: {
-    'ts-jest': {
-      useESM: false
-    }
-  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(.*\\.mjs$))'
+  ],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',
     '<rootDir>/src/**/*.(test|spec).(ts|tsx|js)'

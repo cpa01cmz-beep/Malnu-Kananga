@@ -20,6 +20,13 @@ document.createElement = jest.fn((tagName) => {
   return originalCreateElement.call(document, tagName);
 });
 
+// Mock HTMLCanvasElement.prototype.toDataURL to prevent jsdom errors
+Object.defineProperty(HTMLCanvasElement.prototype, 'toDataURL', {
+  writable: true,
+  configurable: true,
+  value: jest.fn(() => 'data:image/webp;base64,mockWebPData')
+});
+
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import { WebPProvider, useWebP } from './useWebP';
@@ -62,13 +69,17 @@ describe('WebPProvider dan useWebP Hook', () => {
     }).not.toThrow();
   });
 
-  it('seharusnya tidak menampilkan error "useWebP must be used within a WebPProvider"', () => {
+  it('seharusnya tidak menampilkan error "useWebP must be used within a WebPProvider"', async () => {
     // Test bahwa component dapat menggunakan useWebP hook tanpa error
-    render(
-      <WebPProvider>
-        <TestComponent />
-      </WebPProvider>
-    );
+    await act(async () => {
+      render(
+        <WebPProvider>
+          <TestComponent />
+        </WebPProvider>
+      );
+      
+      await new Promise(resolve => setTimeout(resolve, 50));
+    });
 
     // Jika sampai di sini tanpa error, berarti test berhasil
     expect(screen.getByTestId('webp-status')).toBeInTheDocument();
@@ -76,14 +87,14 @@ describe('WebPProvider dan useWebP Hook', () => {
   });
 
   it('seharusnya memberikan WebP support status', async () => {
-    render(
-      <WebPProvider>
-        <TestComponent />
-      </WebPProvider>
-    );
-
-    // Tunggu hingga loading selesai
     await act(async () => {
+      render(
+        <WebPProvider>
+          <TestComponent />
+        </WebPProvider>
+      );
+      
+      // Tunggu hingga loading selesai
       await new Promise(resolve => setTimeout(resolve, 100));
     });
 
@@ -91,12 +102,16 @@ describe('WebPProvider dan useWebP Hook', () => {
     expect(statusElement.textContent).toBe('supported');
   });
 
-  it('seharusnya mengoptimalkan URL gambar untuk WebP', () => {
-    render(
-      <WebPProvider>
-        <TestComponent />
-      </WebPProvider>
-    );
+  it('seharusnya mengoptimalkan URL gambar untuk WebP', async () => {
+    await act(async () => {
+      render(
+        <WebPProvider>
+          <TestComponent />
+        </WebPProvider>
+      );
+      
+      await new Promise(resolve => setTimeout(resolve, 50));
+    });
 
     const srcElement = screen.getByTestId('optimal-src');
     const optimizedSrc = srcElement.textContent;
@@ -111,14 +126,14 @@ describe('WebPProvider dan useWebP Hook', () => {
       throw new Error('Canvas error');
     });
 
-    render(
-      <WebPProvider>
-        <TestComponent />
-      </WebPProvider>
-    );
-
-    // Tunggu hingga error handling selesai
     await act(async () => {
+      render(
+        <WebPProvider>
+          <TestComponent />
+        </WebPProvider>
+      );
+      
+      // Tunggu hingga error handling selesai
       await new Promise(resolve => setTimeout(resolve, 200));
     });
 
