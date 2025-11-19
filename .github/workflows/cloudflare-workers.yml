@@ -1,7 +1,6 @@
 name: Cloudflare Workers Manager
 
 on:
-  schedule:
   workflow_dispatch:
 
 permissions:
