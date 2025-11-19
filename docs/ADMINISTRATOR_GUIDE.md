@@ -2,18 +2,33 @@
 
 ## 🎯 Selamat Datang, Administrator!
 
-Portal administrator MA Malnu Kananga adalah pusat kontrol sistem untuk mengelola seluruh operasional sekolah secara digital.
+Portal administrator MA Malnu Kananga adalah pusat kontrol sistem untuk mengelola seluruh operasional sekolah secara digital. Sistem ini dibangun dengan arsitektur modern menggunakan Cloudflare Workers dan React untuk memberikan pengalaman administrasi yang optimal.
+
+### 🌟 Fitur Utama Portal Administrator
+- **Dashboard Real-time**: Monitor sistem dan aktivitas pengguna secara langsung
+- **Manajemen Pengguna**: Kelola data siswa, guru, staff, dan orang tua
+- **Sistem Akademik**: Kelola kurikulum, penilaian, dan jadwal
+- **AI Assistant**: Monitor dan kelola knowledge base AI
+- **Analytics & Reporting**: Generate laporan komprehensif
+- **Security Management**: Kontrol akses dan monitor keamanan
 
 ---
 
 ## 🚀 Akses Portal Administrator
 
 ### 1. Login ke Sistem
-1. Buka aplikasi MA Malnu Kananga
+1. Buka aplikasi MA Malnu Kananga di browser
 2. Masukkan email administrator: `admin@ma-malnukananga.sch.id`
 3. Klik "Kirim Magic Link"
-4. Periksa email dan klik link login
-5. Anda akan diarahkan ke dashboard administrator
+4. Periksa email (termasuk folder spam) dan klik link login
+5. Link akan expired dalam 15 menit
+6. Anda akan diarahkan ke dashboard administrator
+
+**📝 Catatan Penting**:
+- Gunakan browser yang mendukung (Chrome, Firefox, Safari, Edge)
+- Pastikan koneksi internet stabil
+- Magic link menggunakan sistem token JWT yang aman
+- Session akan otomatis logout setelah 8 jam tidak aktif
 
 ### 2. Dashboard Administrator Overview
 Setelah login, Anda akan melihat:
