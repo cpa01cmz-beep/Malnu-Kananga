@@ -111,14 +111,14 @@ describe('WebPProvider dan useWebP Hook', () => {
       throw new Error('Canvas error');
     });
 
-    render(
-      <WebPProvider>
-        <TestComponent />
-      </WebPProvider>
-    );
-
-    // Tunggu hingga error handling selesai
     await act(async () => {
+      render(
+        <WebPProvider>
+          <TestComponent />
+        </WebPProvider>
+      );
+      
+      // Tunggu hingga error handling selesai
       await new Promise(resolve => setTimeout(resolve, 200));
     });
 

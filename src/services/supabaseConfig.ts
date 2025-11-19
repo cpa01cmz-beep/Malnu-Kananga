@@ -13,17 +13,20 @@ interface SupabaseEnvironmentConfig {
 
 // Update environment validation to include Supabase variables
 export function validateSupabaseEnvironment(): SupabaseEnvironmentConfig {
-  const baseEnv = validateEnvironment(); // Get base environment config
-
   // Check if running in Jest test environment
   const isTestEnv = process.env.JEST_WORKER_ID !== undefined || process.env.NODE_ENV === 'test';
 
   // Use process.env directly for Jest compatibility
   const config = {
-    SUPABASE_URL: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || '',
-    SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '',
-    NODE_ENV: process.env.NODE_ENV || 'development'
+    SUPABASE_URL: isTestEnv ? 'https://test.supabase.co' : (process.env.SUPABASE_URL || ''),
+    SUPABASE_ANON_KEY: isTestEnv ? 'test-anon-key' : (process.env.SUPABASE_ANON_KEY || ''),
+    NODE_ENV: process.env.NODE_ENV || 'development',
   };
+
+  // Skip security warnings and validations in test environment
+  if (isTestEnv) {
+    return config;
+  }
 
   // Skip security warnings and validations in test environment
   if (isTestEnv) {

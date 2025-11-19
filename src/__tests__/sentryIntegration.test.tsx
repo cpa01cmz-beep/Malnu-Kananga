@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import ErrorBoundary from '../components/ErrorBoundary';
 
 // Mock error logging service
@@ -103,16 +103,18 @@ describe('ErrorBoundary', () => {
     // Check that the error boundary fallback is rendered
     expect(screen.getByText('Terjadi Kesalahan')).toBeInTheDocument();
     
-    // Click the "Coba Lagi" button
+    // Click the "Coba Lagi" button to reset
     const tryAgainButton = screen.getByText('Coba Lagi');
     fireEvent.click(tryAgainButton);
     
-    // Re-render with a valid component to test reset functionality
-    rerender(
-      <ErrorBoundary onError={onError}>
-        <TestValidComponent />
-      </ErrorBoundary>
-    );
+    // Force a re-render by updating state to trigger reset
+    act(() => {
+      rerender(
+        <ErrorBoundary onError={onError}>
+          <TestValidComponent />
+        </ErrorBoundary>
+      );
+    });
     
     // Check that the valid component is now rendered
     expect(screen.getByText('Valid Component')).toBeInTheDocument();

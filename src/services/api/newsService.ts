@@ -5,7 +5,7 @@ import { BaseApiService, ApiResponse } from './baseApiService';
 import type { LatestNews } from '../../types';
 
 // Development mode - menggunakan mock data untuk testing
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 export class NewsService extends BaseApiService {
   constructor() {
