@@ -1,18 +1,37 @@
 import { AuthService, LocalAuthService } from './authService';
-import { WORKER_URL } from '../utils/envValidation';
 
-// Mock the WORKER_URL
+// Mock the entire envValidation module
 jest.mock('../utils/envValidation', () => ({
-  WORKER_URL: 'http://localhost:8787'
+  validateEnvironment: jest.fn(() => ({
+    VITE_API_KEY: 'test_api_key_placeholder',
+    VITE_WORKER_URL: 'https://test-worker.example.com',
+    NODE_ENV: 'test'
+  })),
+  WORKER_URL: 'https://test-worker.example.com',
+  API_KEY: 'test_api_key_placeholder',
+  NODE_ENV: 'test',
+  env: {
+    VITE_API_KEY: 'test_api_key_placeholder',
+    VITE_WORKER_URL: 'https://test-worker.example.com',
+    NODE_ENV: 'test'
+  }
 }));
+
+// Mock fetch globally
+global.fetch = jest.fn();
 
 // Mock fetch for testing
 global.fetch = jest.fn();
 
 describe('AuthService', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
     localStorage.clear();
+    jest.clearAllMocks();
+    // Mock fetch to return successful response by default
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ success: true })
+    });
   });
 
   describe('requestLoginLink', () => {
@@ -70,9 +89,9 @@ describe('AuthService', () => {
 
   describe('refreshCurrentToken', () => {
     it('should refresh token in development mode', async () => {
-      // Mock development mode
-      const originalDev = import.meta.env.DEV;
-      import.meta.env.DEV = true;
+      // Mock development mode using vi.hoisted for Vitest compatibility
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'development';
 
       // Create a user and get a token
       LocalAuthService.createUser('test@example.com', 'Test User');
@@ -89,7 +108,7 @@ describe('AuthService', () => {
       expect(result.token).not.toBe(token);
       
       // Restore original env
-      import.meta.env.DEV = originalDev;
+      process.env.NODE_ENV = originalEnv;
     });
   });
 });
@@ -101,8 +120,8 @@ describe('ProductionAuthService', () => {
 
   it('should make request to server for signature generation', async () => {
     // Mock production mode
-    const originalDev = import.meta.env.DEV;
-    import.meta.env.DEV = false;
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
 
     // Mock fetch response
     (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -115,6 +134,6 @@ describe('ProductionAuthService', () => {
     // This would require a more complex setup to test properly
     
     // Restore original env
-    import.meta.env.DEV = originalDev;
+    process.env.NODE_ENV = originalEnv;
   });
 });

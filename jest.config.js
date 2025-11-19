@@ -1,5 +1,5 @@
 export default {
-  preset: 'ts-jest',
+  preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   moduleNameMapper: {
@@ -8,16 +8,19 @@ export default {
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: false
+      tsconfig: {
+        target: 'es2017',
+        module: 'commonjs'
+      }
     }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
-      presets: [['@babel/preset-env', { modules: 'commonjs' }]]
+      presets: [['@babel/preset-env', { 
+        modules: 'commonjs',
+        targets: {
+          node: 'current'
+        }
+      }]]
     }]
-  },
-  globals: {
-    'ts-jest': {
-      useESM: false
-    }
   },
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',
