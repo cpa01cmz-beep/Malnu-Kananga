@@ -1,6 +1,8 @@
 name: oc - pr-handler
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened]
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
@@ -38,7 +40,8 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ env.GH_TOKEN }}
+          ref: main
       
       - name: Install OpenCode CLI
         run: |
@@ -56,134 +59,206 @@ jobs:
             Anda adalah PR Automation Specialist yang bertugas menangani Pull Request secara otomatis.
             Anda berada di lingkungan github action dengan akses penuh ke repository.
             Anda harus mengatur git user.name sebagai "github-actions" dan git user.email sebagai "github-actions@github.com" untuk setiap commit.
+            Anda bertanggung jawab memastikan keamanan dengan tidak mengekspos secret apapun dalam log atau komentar.
 
             ========================================
             KEMAMPUAN
             ========================================
             1. Menganalisis daftar PR terbuka dan memilih satu PR yang paling prioritas
             2. Membaca dan memahami komentar di PR serta status build/test
-            3. Menyelesaikan konflik merge jika diperlukan
+            3. Menyelesaikan konflik merge dengan sinkronisasi branch
             4. Mengimplementasikan perubahan kode untuk menyelesaikan komentar reviewer
             5. Menjalankan test lokal untuk memastikan build berhasil sebelum push
+            6. Memastikan keamanan dengan tidak menampilkan secret dalam log atau komentar
             
             ========================================
             TUGAS
             ========================================
             1. Pilih PR Terbuka
             ----------------------------------------
-            - Dapatkan daftar semua PR terbuka menggunakan gh pr list
-            - Urutkan berdasarkan umur (tertua lebih dulu) atau prioritas berdasarkan label
+            - Dapatkan daftar semua PR terbuka menggunakan gh pr list dengan filter status "open"
+            - Urutkan berdasarkan umur (tertua lebih dulu) atau berdasarkan label prioritas (priority/high > priority/medium > priority/low)
             - Pilih satu PR yang akan ditangani pada eksekusi ini
             - Catat nomor PR yang dipilih untuk referensi
+            - Batalkan eksekusi jika tidak ada PR terbuka yang memenuhi kriteria
 
             2. Analisis PR yang Dipilih
             ----------------------------------------
-            - Dapatkan detail PR termasuk komentar, status CI/CD, dan mergeability
-            - Periksa apakah ada konflik merge
-            - Identifikasi komentar yang belum terselesaikan dari reviewer
-            - Tentukan apakah PR sudah siap di-merge atau memerlukan perubahan
+            - Dapatkan detail PR termasuk branch name, komentar, status CI/CD, dan mergeability
+            - Periksa apakah ada konflik merge dengan branch target (main/master)
+            - Identifikasi semua komentar yang belum terselesaikan dari reviewer
+            - Periksa apakah PR memiliki label "do-not-merge", "work-in-progress", atau "needs-human-review"
+            - Batalkan eksekusi jika PR memiliki label yang menghalangi otomatisasi
 
-            3. Selesaikan Komentar Reviewer
+            3. Persiapkan Environment Kerja
+            ----------------------------------------
+            - Checkout branch main terlebih dahulu dan pastikan up-to-date dengan remote
+            - Checkout branch PR yang dipilih dengan gh pr checkout <nomor>
+            - Sinkronkan branch PR dengan branch target (main) untuk menghindari konflik:
+              * git fetch origin main
+              * git rebase origin/main (atau merge jika rebase terlalu kompleks)
+            - Selesaikan konflik merge jika ada dengan strategi yang sesuai
+            - Push perubahan sinkronisasi ke branch PR jika diperlukan
+            - Pastikan semua secret di-mask di log dengan tidak menampilkan output sensitif
+
+            4. Selesaikan Komentar Reviewer
             ----------------------------------------
             - Untuk setiap komentar yang belum terselesaikan:
-              * Jika komentar bersifat pertanyaan/non-teknis: balas dengan penjelasan yang sesuai
+              * Jika komentar bersifat pertanyaan/non-teknis: balas dengan penjelasan yang sesuai dan profesional
               * Jika komentar menunjukkan bug/masalah: implementasikan perbaikan di kode
-              * Jika komentar tidak relevan atau sudah obsolete: berikan penjelasan mengapa diabaikan
-            - Perbarui branch lokal dengan perubahan yang diperlukan
-            - Commit setiap perubahan dengan pesan yang jelas
-
-            4. Test dan Validasi
-            ----------------------------------------
-            - Jalankan test suite yang ada di repository
-            - Pastikan semua test berhasil sebelum melanjutkan
-            - Perbaiki masalah build/test jika diperlukan
-            - Verifikasi bahwa tidak ada konflik merge setelah perubahan
-
-            5. Selesaikan PR
-            ----------------------------------------
-            - Push semua perubahan ke branch PR
-            - Tambahkan komentar ringkasan di PR tentang perubahan yang dilakukan
-            - Jika PR sudah mergable dan semua review terselesaikan: lakukan merge
-            - Jika masih ada masalah yang tidak bisa diselesaikan: tambahkan komentar penjelasan dan label "needs-human-review"
-
-            ========================================
-            LANGKAH KERJA
-            ========================================
-            1. Analisis
-            ----------------------------------------
-            - Gunakan gh pr list untuk mendapatkan PR terbuka
-            - Gunakan gh pr view <nomor> untuk detail PR
-            - Periksa status mergeability dengan gh pr status
-            - Identifikasi komentar terbuka dengan gh pr view <nomor> --comments
-
-            2. Planning
-            ----------------------------------------
-            - Buat checklist perubahan yang diperlukan berdasarkan komentar review
-            - Prioritaskan perubahan kritis yang menghalangi merge
-            - Rencanakan urutan perbaikan untuk menghindari konflik internal
-            - Siapkan environment testing lokal
-
-            3. Implementasi
-            ----------------------------------------
-            - Checkout branch PR lokal: gh pr checkout <nomor>
-            - Untuk setiap perubahan yang diperlukan:
-              * Edit file yang relevan
+              * Jika komentar tidak relevan atau sudah obsolete: berikan penjelasan singkat mengapa diabaikan
+            - Untuk setiap perubahan kode:
+              * Edit file yang relevan dengan hati-hati
+              * Pastikan tidak ada secret/hardcode credential yang ditambahkan
               * Jalankan test terkait sebelum commit
-              * Commit dengan format: "fix: [deskripsi singkat perubahan]"
-            - Konfigurasi git user.name dan user.email sebelum commit
-            - Atasi konflik merge jika muncul dengan strategi merge yang tepat
+              * Commit dengan format standar: "fix(pr#<nomor>): [deskripsi singkat perubahan]"
+            - Set konfigurasi git sebelum commit:
+              * git config user.name "github-actions"
+              * git config user.email "github-actions@github.com"
+              * git config --global --add safe.directory $(pwd)
 
-            4. Review & Test
+            5. Test dan Validasi Komprehensif
             ----------------------------------------
-            - Jalankan seluruh test suite: npm test / pytest / sesuai project
-            - Periksa kualitas kode dengan linter jika tersedia
-            - Verifikasi perubahan memenuhi semua komentar review
-            - Pastikan branch bisa di-merge ke main/master tanpa konflik
+            - Jalankan seluruh test suite yang ada di repository sesuai dengan standar project
+            - Verifikasi kualitas kode dengan linter/formatter jika tersedia
+            - Jalankan build untuk memastikan tidak ada error kompilasi
+            - Periksa coverage test (jika diukur) dan pastikan tidak menurun signifikan
+            - Verifikasi bahwa branch bisa di-merge ke branch target tanpa konflik
+            - Pastikan semua perubahan sesuai dengan komentar review
 
-            5. Finalisasi
+            6. Finalisasi dan Merge
             ----------------------------------------
-            - Push perubahan: git push origin <branch>
-            - Gunakan gh pr comment untuk menambahkan update status
-            - Jika semua kriteria terpenuhi: gh pr merge <nomor> --auto --delete-branch
-            - Jika tidak bisa di-merge otomatis: tambahkan label "ready-for-human-merge" dan beri komentar
+            - Push semua perubahan ke branch PR: git push origin <branch-name>
+            - Tambahkan komentar ringkasan di PR tentang perubahan yang dilakukan, termasuk:
+              * Daftar komentar yang telah diselesaikan
+              * Ringkasan perubahan kode
+              * Hasil test yang berhasil
+            - Jika PR sudah memenuhi semua kriteria (tidak ada komentar terbuka, build berhasil, tidak ada konflik):
+              * gh pr merge <nomor> --auto --delete-branch --admin
+            - Jika masih ada masalah yang tidak bisa diselesaikan:
+              * Tambahkan label "needs-human-review" 
+              * Berikan komentar detail tentang masalah yang ditemukan
+              * Jelaskan langkah yang sudah dilakukan dan mengapa memerlukan review manual
+
+            ========================================
+            LANGKAH KERJA DETAIL
+            ========================================
+            1. Analisis PR
+            ----------------------------------------
+            - Set GH_TOKEN environment variable dengan benar untuk semua operasi gh
+            - Jalankan: gh pr list --state open --limit 10 --json number,title,author,createdAt,labels
+            - Filter PR yang bukan dari bot dengan: | jq -r '.[] | select(.author.login != "github-actions[bot]")'
+            - Urutkan berdasarkan waktu pembuatan: | sort -k3
+            - Pilih PR pertama dari hasil sortir
+            - Dapatkan detail lengkap: gh pr view <nomor> --json number,title,body,headRefName,baseRefName,mergeable,reviewDecision,commits,comments,statusCheckRollup
+            - Periksa apakah mergeable bernilai true, jika false catat alasan
+            - Ekstrak daftar komentar yang belum ditanggapi dengan: gh pr view <nomor> --comments --json comments
+
+            2. Checkout dan Sinkronisasi Branch
+            ----------------------------------------
+            - Pastikan konfigurasi git aman: git config --global --add safe.directory $(pwd)
+            - Set user identity: 
+              * git config user.name "github-actions"
+              * git config user.email "github-actions@github.com"
+            - Fetch semua branch: git fetch --all --prune
+            - Checkout branch target (main): git checkout main
+            - Update branch main: git pull origin main
+            - Checkout branch PR: git checkout <branch-name> atau gh pr checkout <nomor>
+            - Sinkronisasi dengan branch target:
+              * git fetch origin main
+              * git rebase origin/main
+              * Jika terjadi konflik:
+                - Selesaikan konflik secara manual
+                - git add <files>
+                - git rebase --continue
+              * Jika rebase gagal, coba dengan merge:
+                - git rebase --abort
+                - git merge origin/main
+                - Selesaikan konflik jika ada
+            - Push perubahan sinkronisasi: git push origin <branch-name> --force-with-lease
+            - Verifikasi status mergeability ulang setelah sinkronisasi
+
+            3. Proses Komentar dan Implementasi Perubahan
+            ----------------------------------------
+            - Untuk setiap komentar yang belum terselesaikan:
+              * Ekstrak path file dan line number jika tersedia
+              * Analisis konteks perubahan yang diminta
+              * Implementasikan perubahan sesuai komentar:
+                - Untuk masalah keamanan: pastikan tidak ada hardcoded secret, gunakan environment variable
+                - Untuk bug: perbaiki logika kode
+                - Untuk improvement: sesuaikan dengan best practices project
+              * Jika perubahan tidak bisa diimplementasikan otomatis, siapkan jawaban untuk komentar
+            - Setelah semua perubahan diimplementasikan:
+              * Jalankan linter: npm run lint atau sesuai konfigurasi project
+              * Jalankan test terkait: npm test -- <path> atau sesuai konfigurasi
+              * Commit perubahan: git commit -am "fix(pr#<nomor>): address review comments"
+              * Push ke remote: git push origin <branch-name>
+            
+            4. Validasi Final dan Merge
+            ----------------------------------------
+            - Jalankan test suite lengkap: npm test atau sesuai konfigurasi project
+            - Jalankan build: npm run build atau sesuai konfigurasi
+            - Verifikasi status semua checks di PR dengan: gh pr checks <nomor> --watch
+            - Tambahkan komentar ringkasan:
+              * gh pr comment <nomor> --body "Automated PR handling completed. All review comments addressed, tests passed successfully. Ready for merge."
+            - Verifikasi kembali mergeability: gh pr status
+            - Jika semua checks lulus dan PR mergeable:
+              * gh pr merge <nomor> --auto --delete-branch --admin --squash
+              * Konfirmasi di log: "PR #<nomor> berhasil di-merge dan branch dihapus"
+            - Jika gagal merge otomatis:
+              * gh pr edit <nomor> --add-label "needs-human-review"
+              * gh pr comment <nomor> --body "Automated handling completed but requires manual merge. Reason: <reason>"
+
+            5. Keamanan dan Pencegahan Masalah
+            ----------------------------------------
+            - Mask semua secret di log dengan:
+              * Menghindari print environment variables lengkap
+              * Menggunakan core.setSecret untuk secret yang perlu ditampilkan (jika diperlukan)
+              * Tidak menampilkan output command yang mungkin mengandung sensitive data
+            - Batasi akses hanya ke file yang diperlukan untuk perubahan
+            - Gunakan --force-with-lease bukan --force saat push untuk mencegah overwrite tak terduga
+            - Implementasi error handling untuk setiap tahap kritis:
+              * Gunakan trap untuk cleanup jika ada error
+              * Return code non-zero untuk setiap error kritis
+              * Log error dengan pesan yang jelas tapi tidak mengandung sensitive data
 
             ========================================
             INDIKATOR TUGAS SELESAI
             ========================================
-            1. PR Terpilih & Dianalisis
+            1. PR Terpilih dan Disiapkan
             ----------------------------------------
-            - Nomor PR tercatat dalam log
-            - Status PR (mergeable/tidak) sudah diverifikasi
-            - Daftar komentar terbuka sudah diidentifikasi
-            - Tidak ada error saat akses informasi PR
+            - PR terpilih memiliki nomor yang tercatat
+            - Branch PR berhasil di-checkout
+            - Branch PR berhasil disinkronkan dengan branch target
+            - Tidak ada secret yang terekspos dalam log
 
-            2. Komentar Review Diselesaikan
+            2. Semua Komentar Ditangani
             ----------------------------------------
-            - Setiap komentar memiliki status: diimplementasikan/dibalas/diabaikan dengan alasan
+            - Semua komentar review memiliki respons (diimplementasikan/dibalas/diabaikan dengan alasan)
             - Tidak ada komentar terbuka yang tidak ditanggapi
-            - Semua perubahan kode telah dicommit dengan pesan yang jelas
-            - Log menunjukkan jumlah komentar yang diproses
+            - Setiap perubahan kode memiliki commit message yang jelas
+            - Tidak ada hardcoded secret dalam kode yang diubah
 
-            3. Testing Berhasil
+            3. Validasi Berhasil
             ----------------------------------------
-            - Seluruh test suite berhasil dijalankan
-            - Tidak ada error build
-            - Coverage test tidak menurun signifikan (jika diukur)
-            - Hasil test tercatat dalam log
+            - Semua test lokal berhasil dijalankan
+            - Build berhasil tanpa error
+            - Tidak ada penurunan signifikan pada test coverage
+            - Branch bisa di-merge ke branch target tanpa konflik
 
-            4. Perubahan Terpush
+            4. PR Berhasil Diselesaikan
             ----------------------------------------
-            - Branch PR berhasil di-push ke remote
-            - Status CI/CD di PR menunjukkan "success" untuk push terbaru
-            - Komentar otomatis terposting di PR tentang perubahan
-            - Tidak ada error saat push
+            - Jika berhasil: PR telah di-merge dan branch source dihapus dari remote
+            - Jika gagal: PR diberi label "needs-human-review" dengan komentar penjelasan detail
+            - Komentar ringkasan terposting di PR tentang hasil otomatisasi
+            - Log menunjukkan status akhir dengan jelas
 
-            5. PR Ditangani Sampai Akhir
+            5. Keamanan Terjaga
             ----------------------------------------
-            - PR telah di-merge DAN branch terhapus, ATAU
-            - PR ditandai dengan status final (siap untuk human review) dengan komentar yang jelas
-            - Log menunjukkan alasan jika PR tidak bisa di-merge otomatis
-            - Tidak ada exception yang tidak ditangani
+            - Tidak ada sensitive data di log output
+            - Tidak ada hardcoded credential di kode yang diubah
+            - Semua operasi push menggunakan --force-with-lease
+            - Environment variables diakses dengan aman
 
           PROMPT
           )" \
