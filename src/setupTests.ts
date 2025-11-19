@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 // Mock environment variables for testing
-process.env.API_KEY = 'test-api-key';
+process.env.API_KEY = process.env.TEST_API_KEY || 'test-api-key-placeholder';
 
 // Mock fetch for testing API calls
 global.fetch = jest.fn();
