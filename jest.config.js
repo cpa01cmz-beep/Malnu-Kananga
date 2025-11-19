@@ -1,6 +1,7 @@
 export default {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
+  setupFiles: ['<rootDir>/src/__mocks__/importMetaMock.js'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
@@ -8,16 +9,14 @@ export default {
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: false
+      useESM: false,
+      tsconfig: {
+        target: 'ES2017'
+      }
     }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
-      presets: [['@babel/preset-env', { modules: 'commonjs' }]]
+      presets: [['@babel/preset-env', { modules: 'commonjs', targets: { node: 'current' } }]]
     }]
-  },
-  globals: {
-    'ts-jest': {
-      useESM: false
-    }
   },
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/47</span>
+                <span class='fraction'>0/60</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/45</span>
+                <span class='fraction'>0/58</span>
             </div>
         
             
@@ -249,7 +249,8 @@
 <a name='L184'></a><a href='#L184'>184</a>
 <a name='L185'></a><a href='#L185'>185</a>
 <a name='L186'></a><a href='#L186'>186</a>
-<a name='L187'></a><a href='#L187'>187</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L187'></a><a href='#L187'>187</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -260,17 +261,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -435,8 +435,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useState, useEffect } from 'react';
-import {
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import React, { useState, useEffect } from 'react';</span>
+<span class="cstat-no" title="statement not covered" >import {</span>
   currentStudent,
   studentGrades,
   weeklySchedule,
@@ -447,16 +447,16 @@ import {
   getUnreadAnnouncements,
   type Announcement
 } from '../data/studentData';
-import { AuthService } from '../services/authService';
-import { NotificationService, NotificationItem } from '../services/notificationService';
-import StudentDashboardHeader from './StudentDashboardHeader';
-import NavigationTabs from './NavigationTabs';
-import OverviewTab from './OverviewTab';
-import GradesTab from './GradesTab';
-import ScheduleTab from './ScheduleTab';
-import AttendanceTab from './AttendanceTab';
-import AnnouncementsTab from './AnnouncementsTab';
-import ToastNotification from './ToastNotification';
+<span class="cstat-no" title="statement not covered" >import { AuthService } from '../services/authService';</span>
+<span class="cstat-no" title="statement not covered" >import { NotificationService, NotificationItem } from '../services/notificationService';</span>
+<span class="cstat-no" title="statement not covered" >import StudentDashboardHeader from './StudentDashboardHeader';</span>
+<span class="cstat-no" title="statement not covered" >import NavigationTabs from './NavigationTabs';</span>
+<span class="cstat-no" title="statement not covered" >import OverviewTab from './OverviewTab';</span>
+<span class="cstat-no" title="statement not covered" >import GradesTab from './GradesTab';</span>
+<span class="cstat-no" title="statement not covered" >import ScheduleTab from './ScheduleTab';</span>
+<span class="cstat-no" title="statement not covered" >import AttendanceTab from './AttendanceTab';</span>
+<span class="cstat-no" title="statement not covered" >import AnnouncementsTab from './AnnouncementsTab';</span>
+<span class="cstat-no" title="statement not covered" >import ToastNotification from './ToastNotification';</span>
 &nbsp;
 interface StudentDashboardProps {
   onLogout: () =&gt; void;
@@ -621,14 +621,14 @@ const StudentDashboard: React.FC&lt;StudentDashboardProps&gt; = <span class="cst
   );
 };
 &nbsp;
-export default StudentDashboard;</pre></td></tr></table></pre>
+<span class="cstat-no" title="statement not covered" >export default StudentDashboard;</span></pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-19T10:46:20.357Z
+                at 2025-11-19T23:38:34.482Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

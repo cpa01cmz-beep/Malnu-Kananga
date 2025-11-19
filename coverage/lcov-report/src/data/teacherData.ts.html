@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/27</span>
+                <span class='fraction'>0/30</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/19</span>
+                <span class='fraction'>0/22</span>
             </div>
         
             
@@ -478,24 +478,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -562,7 +562,7 @@ export interface GradeInput {
 }
 &nbsp;
 // Mock data guru
-export const currentTeacher: Teacher = <span class="cstat-no" title="statement not covered" >{</span>
+export const <span class="cstat-no" title="statement not covered" >currentTeacher: Teacher = {</span>
   id: 'TCH001',
   name: 'Dr. Siti Nurhaliza, M.Pd.',
   email: 'guru@ma-malnukananga.sch.id',
@@ -575,7 +575,7 @@ export const currentTeacher: Teacher = <span class="cstat-no" title="statement n
 };
 &nbsp;
 // Mock data kelas yang diajar
-export const teacherClasses: Class[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >teacherClasses: Class[] = [</span>
   {
     id: 'CLS001',
     name: 'XII IPA 1',
@@ -606,7 +606,7 @@ export const teacherClasses: Class[] = <span class="cstat-no" title="statement n
 ];
 &nbsp;
 // Mock data siswa untuk input nilai
-export const classStudents: StudentRecord[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >classStudents: StudentRecord[] = [</span>
   {
     id: 'STU001',
     name: 'Ahmad Fauzi Rahman',
@@ -655,7 +655,7 @@ export const classStudents: StudentRecord[] = <span class="cstat-no" title="stat
 ];
 &nbsp;
 // Template untuk input nilai
-export const gradeInputTemplate: Omit&lt;GradeInput, 'id' | 'studentId' | 'studentName' | 'submittedAt'&gt; = <span class="cstat-no" title="statement not covered" >{</span>
+export const <span class="cstat-no" title="statement not covered" >gradeInputTemplate: Omit&lt;GradeInput, 'id' | 'studentId' | 'studentName' | 'submittedAt'&gt; = {</span>
   subject: 'Matematika',
   classId: 'CLS001',
   midtermScore: undefined,
@@ -683,7 +683,7 @@ export interface MonthlyData {
   averageGrade: number;
 }
 &nbsp;
-export const schoolStats: SchoolStats = <span class="cstat-no" title="statement not covered" >{</span>
+export const <span class="cstat-no" title="statement not covered" >schoolStats: SchoolStats = {</span>
   totalStudents: 450,
   totalTeachers: 28,
   totalClasses: 18,
@@ -692,7 +692,7 @@ export const schoolStats: SchoolStats = <span class="cstat-no" title="statement 
   graduationRate: 96.8
 };
 &nbsp;
-export const monthlyTrends: MonthlyData[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >monthlyTrends: MonthlyData[] = [</span>
   { month: 'Jul', newStudents: 45, attendance: 94.2, averageGrade: 81.5 },
   { month: 'Agu', newStudents: 12, attendance: 93.8, averageGrade: 82.1 },
   { month: 'Sep', newStudents: 8, attendance: 95.1, averageGrade: 83.2 },
@@ -702,13 +702,13 @@ export const monthlyTrends: MonthlyData[] = <span class="cstat-no" title="statem
 ];
 &nbsp;
 // Helper functions untuk teacher dashboard
-export function <span class="fstat-no" title="function not covered" >calculateClassAverage(</span>students: StudentRecord[]): number {
+<span class="cstat-no" title="statement not covered" >export function <span class="fstat-no" title="function not covered" >c</span>alculateClassAverage(</span>students: StudentRecord[]): number {
 <span class="cstat-no" title="statement not covered" >  if (students.length === 0) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
   const total = <span class="cstat-no" title="statement not covered" >students.reduce(<span class="fstat-no" title="function not covered" >(s</span>um, student) =&gt; <span class="cstat-no" title="statement not covered" >sum + student.averageGrade,</span> 0);</span>
 <span class="cstat-no" title="statement not covered" >  return Math.round((total / students.length) * 10) / 10;</span>
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >getAttendanceStatus(</span>attendanceRate: number): {
+<span class="cstat-no" title="statement not covered" >export function <span class="fstat-no" title="function not covered" >g</span>etAttendanceStatus(</span>attendanceRate: number): {
   status: 'excellent' | 'good' | 'average' | 'poor';
   color: string;
   label: string;
@@ -719,7 +719,7 @@ export function <span class="fstat-no" title="function not covered" >getAttendan
 <span class="cstat-no" title="statement not covered" >  return { status: 'poor', color: 'text-red-600', label: 'Perlu Perhatian' };</span>
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >getGradeDistribution(</span>students: StudentRecord[]): {
+<span class="cstat-no" title="statement not covered" >export function <span class="fstat-no" title="function not covered" >g</span>etGradeDistribution(</span>students: StudentRecord[]): {
   excellent: number;
   good: number;
   average: number;
@@ -742,7 +742,7 @@ export function <span class="fstat-no" title="function not covered" >getGradeDis
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-19T10:46:20.357Z
+                at 2025-11-19T23:38:34.482Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
