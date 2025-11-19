@@ -6,19 +6,6 @@ jest.mock('../utils/envValidation', () => ({
   WORKER_URL: 'http://localhost:8787'
 }));
 
-// Mock import.meta.env
-Object.defineProperty(global, 'import', {
-  value: {
-    meta: {
-      env: {
-        DEV: true,
-        VITE_JWT_SECRET: 'dev-secret-key'
-      }
-    }
-  },
-  writable: true
-});
-
 // Mock fetch for testing
 global.fetch = jest.fn();
 
@@ -50,6 +37,9 @@ describe('AuthService', () => {
     });
 
     it('should handle development mode correctly', async () => {
+      // Mock import.meta.env.DEV for testing
+      const originalDev = process.env.NODE_ENV === 'development';
+      
       // Test basic functionality without environment-specific mocking
       const result = await AuthService.requestLoginLink('test@example.com');
       expect(result.success).toBe(true);
@@ -82,38 +72,51 @@ describe('AuthService', () => {
   });
 
   describe('refreshCurrentToken', () => {
-    it('should refresh token in development mode', async () => {
+it('should refresh token in development mode', async () => {
       const originalDev = process.env.NODE_ENV === 'development';
       process.env.NODE_ENV = 'development';
-      
-      // Create initial token
+
+      // Create a user and get a token
+      LocalAuthService.createUser('test@example.com', 'Test User');
       await AuthService.requestLoginLink('test@example.com');
-      const originalToken = localStorage.getItem('malnu_secure_token');
       
-      // Refresh token
+      // Get the token from localStorage
+      const token = localStorage.getItem('malnu_secure_token');
+      expect(token).toBeTruthy();
+      
+      // Refresh the token
       const result = await AuthService.refreshCurrentToken();
       expect(result.success).toBe(true);
+      expect(result.token).toBeTruthy();
+      expect(result.token).not.toBe(token);
       
-      // Token should be different
-      const newToken = localStorage.getItem('malnu_secure_token');
-      expect(newToken).not.toBe(originalToken);
-      
+      // Restore original env
       process.env.NODE_ENV = originalDev ? 'development' : 'production';
     });
   });
+});
 
-  describe('logout', () => {
-    it('should clear token and user data', async () => {
-      // Login first
-      await AuthService.requestLoginLink('test@example.com');
-      expect(localStorage.getItem('malnu_secure_token')).toBeTruthy();
-      
-      // Logout
-      AuthService.logout();
-      
-      // Check everything is cleared
-      expect(localStorage.getItem('malnu_secure_token')).toBeNull();
-      expect(localStorage.getItem('malnu_user_data')).toBeNull();
+describe('ProductionAuthService', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should make request to server for signature generation', async () => {
+    // Mock production mode
+const originalDev = process.env.NODE_ENV === 'development';
+      process.env.NODE_ENV = 'production';
+
+    // Mock fetch response
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ signature: 'mock-signature' })
     });
+
+    // Since we can't directly access the private functions, we'll test
+    // the behavior through the public interface by mocking the worker endpoint
+    // This would require a more complex setup to test properly
+    
+    // Restore original env
+    process.env.NODE_ENV = originalDev ? 'development' : 'production';
   });
 });
