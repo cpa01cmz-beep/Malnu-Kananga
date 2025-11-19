@@ -12,6 +12,9 @@ MA Malnu Kananga API provides comprehensive endpoints for authentication, AI cha
 - **Content-Type**: `application/json`
 - **Authentication**: JWT Token (Magic Link System)
 - **Rate Limiting**: 15 requests per 15 minutes per IP
+- **CORS**: Enabled for all origins in development
+- **Timeout**: 10 seconds per request
+- **Retry Policy**: 3 attempts with exponential backoff
 
 ### Environment Variables
 ```typescript
@@ -21,6 +24,16 @@ API_CONFIG = {
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000
 }
+
+// Required Environment Variables
+API_KEY=your_gemini_api_key_here
+SECRET_KEY=your_jwt_secret_key
+NODE_ENV=production
+
+// Optional Environment Variables
+VITE_ENABLE_PWA=true
+VITE_ENABLE_AI_CHAT=true
+VITE_ENABLE_ANALYTICS=false
 ```
 
 ## 🔐 Authentication API

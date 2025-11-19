@@ -4,6 +4,30 @@
 
 This comprehensive troubleshooting guide covers common issues, their solutions, and frequently asked questions for all user types.
 
+### 📊 System Status Overview
+
+Before troubleshooting, check current system status:
+- **Status Page**: https://status.ma-malnukananga.sch.id
+- **Health Check**: https://malnu-api.sulhi-cmz.workers.dev/health
+- **API Documentation**: https://malnu-api.sulhi-cmz.workers.dev/docs
+
+### 🔧 Quick Diagnosis Tools
+
+Use these browser developer tools for quick diagnosis:
+```javascript
+// Check API connectivity
+fetch('https://malnu-api.sulhi-cmz.workers.dev/health')
+  .then(r => r.json())
+  .then(console.log);
+
+// Check authentication status
+console.log('Token:', localStorage.getItem('malnu_secure_token'));
+console.log('User:', localStorage.getItem('malnu_auth_current_user'));
+
+// Check service worker status
+navigator.serviceWorker.getRegistrations().then(console.log);
+```
+
 ---
 
 ## 🔐 Authentication Issues

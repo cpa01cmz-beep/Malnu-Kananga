@@ -69,6 +69,13 @@ malnu-kananga/
 - **npm**: Latest version or yarn
 - **Git**: For version control
 - **VS Code**: Recommended IDE with extensions
+- **Cloudflare CLI**: `npm install -g wrangler`
+- **Google Gemini API Key**: Required for AI functionality
+
+**System Requirements:**
+- **RAM**: Minimum 4GB (8GB recommended)
+- **Storage**: 2GB free space
+- **OS**: Windows 10+, macOS 10.15+, Ubuntu 18.04+
 
 **VS Code Extensions (Recommended):**
 ```json
@@ -111,6 +118,18 @@ cp .env.example .env
 4. **Start Development Server**
 ```bash
 npm run dev -- --port 9000
+```
+
+5. **Setup Cloudflare Workers**
+```bash
+# Login to Cloudflare
+wrangler login
+
+# Deploy worker for development
+wrangler deploy --env=development
+
+# Seed vector database (one-time setup)
+curl https://your-worker.workers.dev/seed
 ```
 
 5. **Verify Installation**
