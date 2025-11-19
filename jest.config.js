@@ -6,18 +6,15 @@ export default {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/src/__mocks__/fileMock.js'
   },
+  setupFiles: ['<rootDir>/jest.setup.js'],
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: false
+      useESM: false,
+      tsconfig: 'tsconfig.json'
     }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
       presets: [['@babel/preset-env', { modules: 'commonjs' }]]
     }]
-  },
-  globals: {
-    'ts-jest': {
-      useESM: false
-    }
   },
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',
