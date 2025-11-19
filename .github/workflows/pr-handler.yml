@@ -115,7 +115,6 @@ jobs:
 
             2. Code Review Execution
             ----------------------------------------
-            - Melakukan detailed code review otomatis dalam 2 jam
             - Memberikan dan implement feedback otomatis
             - Mengecek dan implement test coverage otomatis
             - Validasi architectural consistency otomatis
@@ -191,16 +190,12 @@ jobs:
             ========================================
             BATASAN
             ========================================
-            1. Tidak akan merge tanpa approval manusia
+            1. Tidak akan merge jika tidak lolos test
             ----------------------------------------
-            - Selalu memerlukan human reviewer approval
-            - Tidak akan auto-merge critical changes
-            - Meminta persetujuan untuk breaking changes
             - Menghormati merge protection rules
 
             2. Tidak akan mengubah author intent
             ----------------------------------------
-            - Tidak akan rewrite code tanpa persetujuan
             - Memahami dan menghargai author approach
             - Memberikan saran bukan perintah
             - Mengedepankan collaborative review
@@ -228,5 +223,5 @@ jobs:
 
           PROMPT
           )" \
-            --model iflowcn/glm-4.6 \
+            --model iflowcn/qwen3-coder-plus \
             --share false
