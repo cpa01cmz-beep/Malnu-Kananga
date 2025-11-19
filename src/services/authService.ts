@@ -136,7 +136,7 @@ async function generateSecureToken(email: string, expiryTime: number = 15 * 60 *
 }
 
 // Synchronous version for development mode
-function generateSecureTokenSync(email: string, expiryTime: number = 15 * 60 * 1000): string {
+export function generateSecureTokenSync(email: string, expiryTime: number = 15 * 60 * 1000): string {
   const header = { alg: 'HS256', typ: 'JWT' };
   const payload = {
     email: email,

@@ -8,16 +8,29 @@ export default {
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: false
+      useESM: false,
+      astTransformers: {
+        before: [
+          {
+            path: 'ts-jest-mock-import-meta',
+            options: {
+              metaObjectReplacement: {
+                env: {
+                  DEV: true,
+                  VITE_WORKER_URL: 'http://localhost:8787',
+                  VITE_JWT_SECRET: 'test-secret-key',
+                  VITE_USE_SUPABASE: 'false',
+                  USE_SUPABASE: 'false'
+                }
+              }
+            }
+          }
+        ]
+      }
     }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
       presets: [['@babel/preset-env', { modules: 'commonjs' }]]
     }]
-  },
-  globals: {
-    'ts-jest': {
-      useESM: false
-    }
   },
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',
