@@ -1,23 +1,29 @@
 export default {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
+  setupFiles: ['<rootDir>/src/__mocks__/importMetaMock.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.json',
+      useESM: false
+    }
+  },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/src/__mocks__/fileMock.js'
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(.*\\.mjs$))'
+  ],
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: false
+      useESM: false,
+      tsconfig: 'tsconfig.json'
     }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
       presets: [['@babel/preset-env', { modules: 'commonjs' }]]
     }]
-  },
-  globals: {
-    'ts-jest': {
-      useESM: false
-    }
   },
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',

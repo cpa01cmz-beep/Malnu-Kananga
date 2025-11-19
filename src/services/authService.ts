@@ -105,7 +105,7 @@ async function generateSecureToken(email: string, expiryTime: number = 15 * 60 *
   // In production, signature generation should be done server-side only
   // This client-side implementation is for development/testing purposes only
   // DO NOT use this for production authentication as it exposes the secret
-  const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+  const secret = isDevelopment ? ((globalThis as any).import?.meta?.env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
   // For production, we'll make a request to the server to generate the signature
   if (!isDevelopment) {
@@ -181,7 +181,7 @@ function verifyAndDecodeToken(token: string): TokenData | null {
     const data = `${encodedHeader}.${encodedPayload}`;
     // In production, token verification should be done server-side only
     // This client-side implementation is for development/testing purposes only
-    const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+const secret = isDevelopment ? ((globalThis as any).import?.meta?.env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
     // For production, we'll make a request to the server to verify the signature
     if (!isDevelopment) {
@@ -415,8 +415,8 @@ export interface RefreshTokenResponse {
 }
 
 // Development mode - menggunakan local storage untuk testing
-const isDevelopment = import.meta.env.DEV;
-const useSupabase = import.meta.env.VITE_USE_SUPABASE === 'true' || import.meta.env.USE_SUPABASE === 'true';
+const isDevelopment = process.env.NODE_ENV === 'development' || (globalThis as any).import?.meta?.env?.DEV;
+const useSupabase = (globalThis as any).import?.meta?.env?.VITE_USE_SUPABASE === 'true' || (globalThis as any).import?.meta?.env?.USE_SUPABASE === 'true';
 
 class LocalAuthService {
   private static USERS_KEY = 'malnu_auth_users';
