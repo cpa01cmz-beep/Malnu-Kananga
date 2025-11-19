@@ -251,7 +251,7 @@ describe('AuthService', () => {
 **Component Structure:**
 ```typescript
 // ComponentName.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ComponentNameProps } from './types';
 import './ComponentName.css';
 
@@ -260,24 +260,61 @@ export const ComponentName: React.FC<ComponentNameProps> = ({
   prop2,
   onAction
 }) => {
-  const [state, setState] = useState(initialState);
+  const [state, setState] = useState<ComponentState>({
+    data: [],
+    loading: false,
+    error: null
+  });
+
+  // Use useCallback for performance optimization
+  const handleClick = useCallback(() => {
+    onAction?.(state.data);
+  }, [state.data, onAction]);
 
   useEffect(() => {
-    // Side effects
+    // Side effects with cleanup
+    let isMounted = true;
+    
+    const fetchData = async () => {
+      try {
+        setState(prev => ({ ...prev, loading: true, error: null }));
+        const response = await apiCall();
+        if (isMounted) {
+          setState(prev => ({ ...prev, data: response, loading: false }));
+        }
+      } catch (error) {
+        if (isMounted) {
+          setState(prev => ({ 
+            ...prev, 
+            error: error.message, 
+            loading: false 
+          }));
+        }
+      }
+    };
+
+    fetchData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [dependencies]);
 
-  const handleClick = () => {
-    onAction?.(data);
-  };
+  if (state.loading) return <LoadingSpinner />;
+  if (state.error) return <ErrorMessage error={state.error} />;
 
   return (
-    <div className="component-name">
+    <div className="component-name" role="region" aria-label="Component Name">
+      <h2>{prop1}</h2>
+      <button onClick={handleClick} disabled={!state.data.length}>
+        Action
+      </button>
       {/* JSX content */}
     </div>
   );
 };
 
-export default ComponentName;
+export default React.memo(ComponentName);
 ```
 
 **Types Definition:**
@@ -286,7 +323,9 @@ export default ComponentName;
 export interface ComponentNameProps {
   prop1: string;
   prop2?: number; // Optional prop
-  onAction?: (data: SomeType) => void; // Optional callback
+  onAction?: (data: SomeType[]) => void; // Optional callback
+  children?: React.ReactNode;
+  className?: string;
 }
 
 export interface ComponentState {
@@ -294,6 +333,299 @@ export interface ComponentState {
   loading: boolean;
   error: string | null;
 }
+
+export interface SomeType {
+  id: string;
+  name: string;
+  value: number;
+  createdAt: string;
+}
+```
+
+### Real-World Component Examples
+
+#### 1. Data Fetching Component
+```typescript
+// StudentList.tsx
+import React, { useState, useEffect } from 'react';
+import { StudentApiService } from '../services/api/studentApiService';
+
+interface StudentListProps {
+  classId: string;
+  onStudentSelect?: (student: Student) => void;
+}
+
+export const StudentList: React.FC<StudentListProps> = ({
+  classId,
+  onStudentSelect
+}) => {
+  const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadStudents = async () => {
+      try {
+        setLoading(true);
+        const data = await StudentApiService.getStudentsByClass(classId);
+        setStudents(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStudents();
+  }, [classId]);
+
+  if (loading) return <div>Loading students...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div className="student-list">
+      <h3>Daftar Siswa</h3>
+      <ul>
+        {students.map(student => (
+          <li key={student.id}>
+            <button 
+              onClick={() => onStudentSelect?.(student)}
+              className="student-item"
+            >
+              {student.name}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+```
+
+#### 2. Form Component with Validation
+```typescript
+// GradeForm.tsx
+import React, { useState } from 'react';
+
+interface GradeFormProps {
+  studentId: string;
+  subject: string;
+  onSubmit: (grades: GradeData) => void;
+}
+
+interface GradeData {
+  uts: number;
+  uas: number;
+  tugas: number;
+  kehadiran: number;
+}
+
+export const GradeForm: React.FC<GradeFormProps> = ({
+  studentId,
+  subject,
+  onSubmit
+}) => {
+  const [formData, setFormData] = useState<GradeData>({
+    uts: 0,
+    uas: 0,
+    tugas: 0,
+    kehadiran: 0
+  });
+  
+  const [errors, setErrors] = useState<Partial<GradeData>>({});
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<GradeData> = {};
+    
+    if (formData.uts < 0 || formData.uts > 100) {
+      newErrors.uts = 'Nilai UTS harus antara 0-100';
+    }
+    if (formData.uas < 0 || formData.uas > 100) {
+      newErrors.uas = 'Nilai UAS harus antara 0-100';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateForm()) {
+      onSubmit(formData);
+    }
+  };
+
+  const handleInputChange = (field: keyof GradeData, value: string) => {
+    const numValue = parseInt(value) || 0;
+    setFormData(prev => ({ ...prev, [field]: numValue }));
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="grade-form">
+      <h4>Input Nilai - {subject}</h4>
+      
+      <div className="form-group">
+        <label>Nilai UTS:</label>
+        <input
+          type="number"
+          min="0"
+          max="100"
+          value={formData.uts}
+          onChange={(e) => handleInputChange('uts', e.target.value)}
+          className={errors.uts ? 'error' : ''}
+        />
+        {errors.uts && <span className="error-message">{errors.uts}</span>}
+      </div>
+
+      <div className="form-group">
+        <label>Nilai UAS:</label>
+        <input
+          type="number"
+          min="0"
+          max="100"
+          value={formData.uas}
+          onChange={(e) => handleInputChange('uas', e.target.value)}
+          className={errors.uas ? 'error' : ''}
+        />
+        {errors.uas && <span className="error-message">{errors.uas}</span>}
+      </div>
+
+      <button type="submit" className="btn-primary">
+        Simpan Nilai
+      </button>
+    </form>
+  );
+};
+```
+
+#### 3. AI Chat Component
+```typescript
+// ChatWindow.tsx
+import React, { useState, useRef, useEffect } from 'react';
+import { GeminiService } from '../services/geminiService';
+
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
+
+export const ChatWindow: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || isLoading) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: inputValue,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue('');
+    setIsLoading(true);
+
+    try {
+      const aiResponse = await GeminiService.getAIResponse(inputValue, messages);
+      
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: aiResponse,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'Maaf, terjadi kesalahan. Silakan coba lagi.',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  return (
+    <div className="chat-window">
+      <div className="chat-header">
+        <h3>Asisten AI MA Malnu Kananga</h3>
+      </div>
+      
+      <div className="chat-messages">
+        {messages.map(message => (
+          <div
+            key={message.id}
+            className={`message ${message.role}`}
+          >
+            <div className="message-content">
+              {message.content}
+            </div>
+            <div className="message-time">
+              {message.timestamp.toLocaleTimeString('id-ID')}
+            </div>
+          </div>
+        ))}
+        {isLoading && (
+          <div className="message assistant">
+            <div className="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      <div className="chat-input">
+        <textarea
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder="Ketik pesan Anda..."
+          disabled={isLoading}
+          rows={2}
+        />
+        <button
+          onClick={handleSendMessage}
+          disabled={!inputValue.trim() || isLoading}
+          className="send-button"
+        >
+          Kirim
+        </button>
+      </div>
+    </div>
+  );
+};
 ```
 
 ### Best Practices
@@ -303,6 +635,11 @@ export interface ComponentState {
 3. **Implement proper error boundaries** for error handling
 4. **Use React.memo** for performance optimization
 5. **Follow accessibility guidelines** (ARIA labels, semantic HTML)
+6. **Implement proper loading states** and error handling
+7. **Use useCallback and useMemo** for expensive operations
+8. **Clean up side effects** in useEffect return functions
+9. **Validate props** and provide default values
+10. **Write tests** for all components (aim for 80%+ coverage)
 
 ### Custom Hooks
 

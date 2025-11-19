@@ -285,6 +285,9 @@ if (performance.memory) {
    
    # Fix common issues
    npm run type-check
+   
+   # Check specific file
+   npx tsc --noEmit src/components/ProblematicComponent.tsx
    ```
 
 2. **Missing Dependencies**
@@ -292,12 +295,28 @@ if (performance.memory) {
    # Clean install
    rm -rf node_modules package-lock.json
    npm install
+   
+   # Check for peer dependency conflicts
+   npm ls
    ```
 
 3. **Import Errors**
    ```bash
    # Check for circular dependencies
    npx madge --circular src/
+   
+   # Check for missing exports
+   npx tsc --noEmit --traceResolution
+   ```
+
+4. **Vite Build Issues**
+   ```bash
+   # Check Vite configuration
+   npx vite build --mode production --debug
+   
+   # Clear Vite cache
+   rm -rf node_modules/.vite
+   npm run build
    ```
 
 ### ❌ Test Failures
@@ -317,12 +336,90 @@ npm run test:coverage
 
 # Debug specific test
 node --inspect-brk node_modules/.bin/jest --runInBand AuthService.test.ts
+
+# Run tests with coverage for specific file
+npm test -- --coverage --collectCoverageFrom="src/services/*"
 ```
 
 **Common Test Issues**:
 1. **Mock Failures**: Update mock implementations
+   ```typescript
+   // Fix mock implementation
+   jest.mock('./authService', () => ({
+     AuthService: {
+       requestLoginLink: jest.fn().mockResolvedValue({ success: true })
+     }
+   }));
+   ```
+
 2. **Async Issues**: Add proper await/async handling
+   ```typescript
+   // Fix async test
+   it('should handle async operation', async () => {
+     const result = await someAsyncFunction();
+     expect(result).toBeDefined();
+   });
+   ```
+
 3. **Environment Variables**: Set test environment variables
+   ```bash
+   # Set test environment
+   NODE_ENV=test npm test
+   
+   # Or create .env.test file
+   cp .env.example .env.test
+   # Edit .env.test with test values
+   ```
+
+### ❌ Development Server Issues
+
+**Problem**: Development server not starting or crashing
+
+**Debug Steps**:
+```bash
+# Check port availability
+lsof -i :9000
+
+# Start with debug output
+npm run dev -- --debug --port 9000
+
+# Check Vite configuration
+npx vite --config vite.config.ts --debug
+
+# Clear all caches
+rm -rf node_modules/.vite dist
+npm run dev
+```
+
+**Common Issues**:
+1. **Port Conflicts**: Kill existing processes or use different port
+2. **Hot Reload Issues**: Check file watchers and permissions
+3. **Memory Issues**: Increase Node.js memory limit
+   ```bash
+   NODE_OPTIONS="--max-old-space-size=4096" npm run dev
+   ```
+
+### ❌ ESLint/Prettier Issues
+
+**Problem**: Code formatting or linting errors
+
+**Solutions**:
+```bash
+# Check ESLint configuration
+npx eslint --print-config src/App.tsx
+
+# Fix ESLint issues automatically
+npm run lint -- --fix
+
+# Check Prettier configuration
+npx prettier --check src/
+
+# Format code
+npm run format
+
+# Debug specific file
+npx eslint src/components/ProblematicComponent.tsx --verbose
+```
 
 ---
 
@@ -566,6 +663,129 @@ A: Modify the authentication service and update the role-based access control in
 
 ---
 
+## 🔍 Debugging Tools & Techniques
+
+### Browser Developer Tools
+
+**Chrome DevTools Shortcuts**:
+- `F12` or `Ctrl+Shift+I` - Open DevTools
+- `Ctrl+Shift+J` - Open Console directly
+- `Ctrl+Shift+C` - Element inspector
+- `Ctrl+Shift+P` - Command palette
+
+**Useful Console Commands**:
+```javascript
+// Check authentication status
+localStorage.getItem('malnu_secure_token');
+localStorage.getItem('malnu_auth_current_user');
+
+// Check service worker registration
+navigator.serviceWorker.getRegistrations();
+
+// Monitor network requests
+// Go to Network tab, filter by XHR/Fetch
+
+// Check performance metrics
+performance.getEntriesByType('navigation');
+
+// Debug React components (with React DevTools)
+// Install React Developer Tools extension
+```
+
+### Network Debugging
+
+**API Request Debugging**:
+```bash
+# Test API endpoints directly
+curl -X GET "https://malnu-api.workers.dev/health" -v
+
+# Test with authentication
+curl -X GET "https://malnu-api.workers.dev/api/student/123" \
+  -H "Authorization: Bearer YOUR_TOKEN" -v
+
+# Monitor network in browser
+# Network tab -> Filter by API -> Check headers/response
+```
+
+**Common Network Issues**:
+1. **CORS Errors**: Check worker CORS headers
+2. **Timeout Issues**: Check network connectivity and API response times
+3. **Authentication Failures**: Verify token format and expiration
+
+### Performance Debugging
+
+**Frontend Performance**:
+```javascript
+// Measure component render time
+console.time('ComponentRender');
+// Component renders
+console.timeEnd('ComponentRender');
+
+// Monitor memory usage
+setInterval(() => {
+  if (performance.memory) {
+    console.log('Memory:', {
+      used: Math.round(performance.memory.usedJSHeapSize / 1048576) + ' MB',
+      total: Math.round(performance.memory.totalJSHeapSize / 1048576) + ' MB'
+    });
+  }
+}, 10000);
+
+// Check bundle size in Network tab
+// Look for large JavaScript files
+```
+
+**Backend Performance**:
+```bash
+# Monitor worker logs
+wrangler tail --env=production
+
+# Check worker metrics
+curl "https://malnu-api.workers.dev/metrics" \
+  -H "Authorization: Bearer ADMIN_TOKEN"
+
+# Database performance
+wrangler d1 execute malnu-kananga-db --command="EXPLAIN QUERY PLAN SELECT * FROM users"
+```
+
+### Error Monitoring
+
+**Client-Side Error Tracking**:
+```javascript
+// Global error handler
+window.addEventListener('error', (event) => {
+  console.error('Global error:', {
+    message: event.message,
+    filename: event.filename,
+    lineno: event.lineno,
+    colno: event.colno,
+    error: event.error
+  });
+});
+
+// Unhandled promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+});
+
+// React Error Boundary usage
+// Check ErrorBoundary component for error logging
+```
+
+**Server-Side Error Tracking**:
+```bash
+# Check worker logs for errors
+wrangler tail --env=production --since="1h"
+
+# Filter error logs
+wrangler tail --env=production | grep ERROR
+
+# Check specific error patterns
+wrangler tail --env=production | grep -E "(500|404|403)"
+```
+
+---
+
 ## 📞 Getting Help
 
 ### 🆘 Support Channels
@@ -575,16 +795,45 @@ A: Modify the authentication service and update the role-based access control in
 - **Phone**: (0253) 1234567
 - **WhatsApp**: +62 812-3456-7890
 - **Office**: Jl. Desa Kananga Km. 0,5, Menes, Pandeglang
+- **Help Center**: https://help.ma-malnukananga.sch.id
 
 **For Developers**:
 - **GitHub Issues**: https://github.com/your-repo/issues
 - **Documentation**: https://docs.ma-malnukananga.sch.id
 - **Developer Chat**: Discord/Slack channel
+- **Stack Overflow**: Tag with `ma-malnu-kananga`
+- **API Status**: https://status.ma-malnukananga.sch.id
 
 **For Administrators**:
 - **Emergency Hotline**: 24/7 available
 - **Admin Portal**: https://admin.ma-malnukananga.sch.id
 - **Technical Support**: tech@ma-malnukananga.sch.id
+- **Documentation**: [Administrator Guide](./ADMINISTRATOR_GUIDE.md)
+
+### 📋 Emergency Contacts
+
+**Critical System Outages**:
+- **On-Call Engineer**: +62 812-3456-7890 (24/7)
+- **System Administrator**: admin@ma-malnukananga.sch.id
+- **Infrastructure Team**: infrastructure@ma-malnukananga.sch.id
+
+**Security Incidents**:
+- **Security Team**: security@ma-malnukananga.sch.id
+- **Emergency Hotline**: +62 812-3456-7891
+- **Report Security Issue**: security@ma-malnukananga.sch.id
+
+### 🎯 Escalation Process
+
+**Level 1 Support**: Basic troubleshooting and user guidance
+**Level 2 Support**: Technical issues and API problems
+**Level 3 Support**: System architecture and infrastructure issues
+**Level 4 Support**: Security incidents and emergency response
+
+**Response Times**:
+- **Critical**: 1 hour response time
+- **High**: 4 hours response time
+- **Medium**: 24 hours response time
+- **Low**: 72 hours response time
 
 ### 📋 Reporting Issues
 
@@ -667,7 +916,7 @@ Any other relevant information
 - [API Documentation](./API_DOCUMENTATION.md)
 - [Developer Guide](./DEVELOPER_GUIDE.md)
 - [Administrator Guide](./ADMINISTRATOR_GUIDE.md)
-- [User Guides](./USER_GUIDE_STUDENT.md)
+- [User Guides](../USER_GUIDE_STUDENT.md)
 
 ### 🔗 External Resources
 - [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)

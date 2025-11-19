@@ -649,11 +649,20 @@ const aiStream = GeminiService.getAIResponseStream('Hello!', []);
 for await (const chunk of aiStream) {
   console.log(chunk);
 }
+
+// Student Data
+const studentData = await StudentApiService.getStudentData('student_123');
+const grades = await StudentApiService.getStudentGrades('student_123');
+
+// Teacher Operations
+const classes = await TeacherApiService.getTeacherClasses('teacher_456');
+await TeacherApiService.submitGrades('teacher_456', gradeData);
 ```
 
 ### Python
 ```python
 import requests
+import json
 
 # Authentication
 response = requests.post(
@@ -666,6 +675,55 @@ response = requests.post(
   'https://malnu-api.sulhi-cmz.workers.dev/api/chat',
   json={'message': 'Apa saja program unggulan sekolah?'}
 )
+
+# Student Data with Authentication
+headers = {'Authorization': f'Bearer {token}'}
+response = requests.get(
+  'https://malnu-api.sulhi-cmz.workers.dev/api/student/123',
+  headers=headers
+)
+student_data = response.json()
+
+# Submit Grades
+grades_data = {
+  "class_id": 1,
+  "subject": "Matematika",
+  "grades": [
+    {"student_id": 1, "uts": 85, "uas": 88, "tugas": 90}
+  ]
+}
+response = requests.post(
+  'https://malnu-api.sulhi-cmz.workers.dev/api/teacher/456/grades',
+  headers=headers,
+  json=grades_data
+)
+```
+
+### cURL Examples
+```bash
+# Request Magic Link
+curl -X POST https://malnu-api.sulhi-cmz.workers.dev/request-login-link \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com"}'
+
+# Verify Login Token
+curl -X GET "https://malnu-api.sulhi-cmz.workers.dev/verify-login?token=YOUR_JWT_TOKEN"
+
+# AI Chat
+curl -X POST https://malnu-api.sulhi-cmz.workers.dev/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Apa program unggulan sekolah?"}'
+
+# Get Student Data (Authenticated)
+curl -X GET https://malnu-api.sulhi-cmz.workers.dev/api/student/123 \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# Health Check
+curl https://malnu-api.sulhi-cmz.workers.dev/health
+
+# System Metrics (Admin Only)
+curl -X GET https://malnu-api.sulhi-cmz.workers.dev/metrics \
+  -H "Authorization: Bearer ADMIN_JWT_TOKEN"
 ```
 
 ## 🔄 Webhooks
@@ -675,6 +733,9 @@ response = requests.post(
 - `user.logout`: User logout
 - `grade.submitted`: Nilai disubmit
 - `attendance.recorded`: Absensi dicatat
+- `content.updated`: Konten website diperbarui
+- `ai.chat.started`: Sesi AI chat dimulai
+- `system.maintenance`: Maintenance sistem dimulai
 
 ### Webhook Configuration
 ```http
@@ -689,6 +750,30 @@ Content-Type: application/json
 }
 ```
 
+**Response:**
+```json
+{
+  "success": true,
+  "webhook_id": "wh_123456",
+  "events": ["user.login", "grade.submitted"],
+  "status": "active"
+}
+```
+
+### Webhook Payload Example
+```json
+{
+  "event": "user.login",
+  "timestamp": "2024-11-01T10:30:00Z",
+  "data": {
+    "user_id": 123,
+    "email": "user@example.com",
+    "role": "student",
+    "ip_address": "192.168.1.1"
+  }
+}
+```
+
 ## 📊 Monitoring & Logging
 
 ### Health Check Endpoints
@@ -696,6 +781,29 @@ Content-Type: application/json
 - `/health/ai` - AI service status
 - `/health/database` - Database connectivity
 - `/health/vectorize` - Vector database status
+- `/health/cache` - Cache system status
+- `/metrics` - System metrics and performance
+
+### Health Check Response
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-11-01T10:30:00Z",
+  "version": "1.0.0",
+  "uptime": 86400,
+  "services": {
+    "ai": "operational",
+    "database": "operational",
+    "vectorize": "operational",
+    "cache": "operational"
+  },
+  "metrics": {
+    "requests_per_minute": 45,
+    "error_rate": 0.01,
+    "response_time_ms": 120
+  }
+}
+```
 
 ### Logging Format
 ```json
@@ -706,7 +814,43 @@ Content-Type: application/json
   "message": "User login successful",
   "user_id": 123,
   "ip": "192.168.1.1",
-  "request_id": "req_123456"
+  "request_id": "req_123456",
+  "duration_ms": 150,
+  "endpoint": "/verify-login"
+}
+```
+
+### System Metrics
+```http
+GET /metrics
+Authorization: Bearer {admin_token}
+```
+
+**Response:**
+```json
+{
+  "system": {
+    "uptime_seconds": 86400,
+    "memory_usage_mb": 128,
+    "cpu_usage_percent": 15.5
+  },
+  "api": {
+    "total_requests": 15000,
+    "requests_per_minute": 45,
+    "error_rate_percent": 0.01,
+    "average_response_time_ms": 120
+  },
+  "ai": {
+    "total_queries": 2500,
+    "queries_per_minute": 8,
+    "success_rate_percent": 98.5,
+    "average_response_time_ms": 800
+  },
+  "database": {
+    "connection_pool_active": 5,
+    "query_time_avg_ms": 25,
+    "total_queries": 50000
+  }
 }
 ```
 
