@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   gather_data:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     permissions:
       contents: read
       issues: read
@@ -52,7 +52,7 @@ jobs:
 
   analyse_and_create_issues:
     needs: gather_data
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v5
         with:

@@ -28,7 +28,7 @@ jobs:
 
   deploy:
     needs: build-test
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-24.04-arm
     name: Deploy to Cloudflare
     timeout-minutes: 20
 

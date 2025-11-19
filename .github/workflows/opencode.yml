@@ -22,7 +22,7 @@ jobs:
       startsWith(github.event.comment.body, '/opencode') ||
       contains(github.event.comment.body, ' /oc') ||
       startsWith(github.event.comment.body, '/oc')
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-24.04-arm
     # Add timeout settings for jobs
     timeout-minutes: 30
     permissions:

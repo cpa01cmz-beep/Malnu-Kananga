@@ -24,7 +24,7 @@ jobs:
       contains(github.event.comment.body, ' /tolong') ||
       startsWith(github.event.comment.body, '/tolong')
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 30
 
     permissions:

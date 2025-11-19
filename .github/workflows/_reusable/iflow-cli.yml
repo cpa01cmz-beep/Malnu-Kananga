@@ -33,7 +33,7 @@ permissions:
 
 jobs:
   iflow-cli:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-24.04-arm
     name: iFlow CLI Action
     steps:
       - name: Checkout repository
