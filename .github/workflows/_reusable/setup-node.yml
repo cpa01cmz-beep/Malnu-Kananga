@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   setup-node:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     name: Setup Node.js with npm caching
     outputs:
       node-version: ${{ steps.setup.outputs.node-version }}

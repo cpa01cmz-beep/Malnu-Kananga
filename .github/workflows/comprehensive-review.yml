@@ -12,7 +12,7 @@ on:
 
 jobs:
   security-review:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     permissions:
       contents: read
       pull-requests: write
@@ -90,7 +90,7 @@ jobs:
             - **Verify Security Controls**: Check that security measures are properly implemented and effective
 
   performance-review:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     permissions:
       contents: read
       pull-requests: write
@@ -174,7 +174,7 @@ jobs:
             - **Verify Performance Controls**: Check that performance measures are properly implemented
 
   quality-review:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     permissions:
       contents: read
       pull-requests: write
@@ -264,7 +264,7 @@ jobs:
             - **Verify Quality Controls**: Check that quality measures are properly implemented
 
   architecture-review:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     permissions:
       contents: read
       pull-requests: write
