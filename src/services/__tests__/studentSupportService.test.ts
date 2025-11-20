@@ -3,10 +3,7 @@ import { StudentSupportService } from '../studentSupportService';
 
 describe('StudentSupportService', () => {
   beforeEach(() => {
-    // Clear localStorage before each test
     localStorage.clear();
-    
-    // Re-initialize the service
     StudentSupportService.initialize();
   });
 
@@ -29,14 +26,6 @@ describe('StudentSupportService', () => {
       expect(ticket.priority).toBe('medium');
       expect(ticket.status).toBe('open');
       expect(ticket.timestamp).toBeDefined();
-<<<<<<< HEAD
-    });
-
-    it('should process tickets automatically for common issues', () => {
-      // Initialize knowledge base first
-      StudentSupportService.initialize();
-      
-=======
       expect(ticket.lastUpdated).toBeDefined();
     });
 
@@ -50,7 +39,6 @@ describe('StudentSupportService', () => {
         tags: ['login', 'access']
       });
 
-      // Check if ticket was processed automatically
       const tickets = StudentSupportService.getSupportTickets();
       const processedTicket = tickets.find(t => t.id === ticket.id);
       
@@ -64,8 +52,7 @@ describe('StudentSupportService', () => {
     it('should update student progress with new data', () => {
       const progressData = {
         academicMetrics: {
-<<<<<<< HEAD
-          gpa: 85, // Using percentage scale (0-100) as per service logic
+          gpa: 85,
           attendanceRate: 85,
           assignmentCompletion: 90,
           subjectPerformance: { math: 85, science: 78 }
@@ -82,7 +69,6 @@ describe('StudentSupportService', () => {
 
       const progress = StudentSupportService.getStudentProgress('STU001');
       expect(progress).toBeDefined();
-<<<<<<< HEAD
       expect(progress?.academicMetrics.gpa).toBe(85);
       expect(progress?.studentId).toBe('STU001');
       expect(progress?.riskFactors.lowGrades).toBe(false);
@@ -93,7 +79,6 @@ describe('StudentSupportService', () => {
         academicMetrics: {
           gpa: 2.5,
           attendanceRate: 75,
-<<<<<<< HEAD
           assignmentCompletion: 60,
           subjectPerformance: {}
         },
@@ -115,7 +100,6 @@ describe('StudentSupportService', () => {
   describe('addSupportResource', () => {
     it('should add new support resource', () => {
       const resource = StudentSupportService.addSupportResource({
-<<<<<<< HEAD
         title: 'Tutorial Matematika',
         description: 'Panduan lengkap belajar matematika',
         category: 'tutorial',
@@ -133,7 +117,6 @@ describe('StudentSupportService', () => {
     });
 
     it('should retrieve resources by category', () => {
-      // Add test resource
       StudentSupportService.addSupportResource({
         title: 'Tutorial Login',
         description: 'Cara login ke portal',
@@ -153,7 +136,6 @@ describe('StudentSupportService', () => {
 
   describe('getSupportAnalytics', () => {
     it('should return correct analytics', () => {
-      // Create some test tickets
       StudentSupportService.createSupportTicket({
         studentId: 'STU001',
         category: 'academic',
@@ -211,7 +193,6 @@ describe('StudentSupportService', () => {
         rating: 0
       });
 
-      // Rate the resource
       StudentSupportService.rateResource(resource.id, 5);
       
       const resources = StudentSupportService.getSupportResources();
