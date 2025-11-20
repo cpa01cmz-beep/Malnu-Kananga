@@ -9,7 +9,7 @@ Portal siswa MA Malnu Kananga adalah platform digital untuk mengakses informasi 
 ## 🚀 Memulai Portal Siswa
 
 ### 1. Login ke Portal
-1. Buka website MA Malnu Kananga di browser (https://ma-malnukananga.sch.id)
+1. Buka website MA Malnu Kananga di browser (http://localhost:9000 untuk development, https://ma-malnukananga.sch.id untuk production)
 2. Masukkan email siswa yang terdaftar
 3. Klik "Kirim Magic Link"
 4. Periksa email (termasuk folder spam) dan klik link login

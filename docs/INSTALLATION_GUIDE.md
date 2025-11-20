@@ -32,7 +32,7 @@ Panduan lengkap untuk instalasi dan setup sistem portal MA Malnu Kananga. Guide 
 
 ```bash
 # Clone repository
-git clone https://github.com/ma-malnukananga/ma-malnu-kananga.git
+git clone https://github.com/sulhi/ma-malnu-kananga.git
 cd ma-malnu-kananga
 
 # Verify branch
@@ -280,6 +280,27 @@ wrangler pages deploy dist --compatibility-date=2024-01-01
 #    - Node.js version: 18
 ```
 
+#### Step 6: Seed Vector Database (Critical)
+
+```bash
+# Seed vector database dengan data sekolah
+curl https://malnu-kananga.your-subdomain.workers.dev/seed
+
+# Expected response:
+# Successfully seeded 50 documents.
+
+# Verify seeding worked
+curl -X POST https://malnu-kananga.your-subdomain.workers.dev/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Apa saja program unggulan sekolah?"}'
+```
+
+**⚠️ Important Notes:**
+- Vector database seeding MUST be done once after worker deployment
+- Without seeding, AI chat will have no context and cannot answer questions
+- Current document count: 50 school information entries
+- Documents include: PPDB info, school programs, location, contact details
+
 ---
 
 ## 🔐 Security Configuration
@@ -298,6 +319,15 @@ NODE_ENV=production
 VITE_APP_ENV=production
 
 # Security Headers (otomatis ditambahkan)
+```
+
+**Required Secrets for Production:**
+- `API_KEY`: Google Gemini AI API key (required for chat functionality)
+- `SECRET_KEY`: HMAC secret key for JWT token signing (auto-generated if not provided)
+
+**Optional Environment Variables:**
+- `NODE_ENV`: Set to "production" for production mode
+- `VITE_WORKER_URL`: Override worker URL for frontend configuration
 X-Content-Type-Options: nosniff
 X-Frame-Options: DENY
 X-XSS-Protection: 1; mode=block
@@ -475,7 +505,7 @@ wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 - [Vite Documentation](https://vitejs.dev/)
 
 ### Community Support
-- **GitHub Issues**: [Report issues](https://github.com/ma-malnukananga/ma-malnu-kananga/issues)
+- **GitHub Issues**: [Report issues](https://github.com/sulhi/ma-malnu-kananga/issues)
 - **Email Support**: support@ma-malnukananga.sch.id
 - **Documentation Feedback**: docs@ma-malnukananga.sch.id
 

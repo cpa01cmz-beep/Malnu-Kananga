@@ -7,13 +7,29 @@ This comprehensive troubleshooting guide covers common issues, their solutions, 
 ### 📊 System Status Overview
 
 Before troubleshooting, check current system status:
-- **Status Page**: https://status.ma-malnukananga.sch.id
+- **Status Page**: https://status.ma-malnukananga.sch.id (planned)
 - **Health Check**: Test endpoints directly (health endpoint not yet implemented)
 - **API Documentation**: Available in repository docs/API_DOCUMENTATION.md
 - **System Uptime**: 99.9% (SLA guaranteed)
 - **Last Maintenance**: November 20, 2024
 - **Current Version**: v1.2.0
 - **Known Issues**: Health check endpoint not implemented, use direct endpoint testing
+
+### 🚨 Critical Deployment Issues (November 2024)
+
+#### Current Known Issues:
+1. **Health Check Endpoint**: `/health` endpoint referenced in docs but not implemented in worker.js
+2. **Token Refresh**: `/refresh-token` endpoint referenced but not fully implemented  
+3. **Logout Endpoint**: `/logout` endpoint referenced but not fully implemented
+4. **Vector Database**: Must be seeded once after deployment using `/seed` endpoint
+
+#### Working Endpoints (Verified):
+- ✅ `/seed` - Vector database seeding (50 documents)
+- ✅ `/api/chat` - AI chat with RAG system
+- ✅ `/request-login-link` - Magic link authentication with rate limiting
+- ✅ `/verify-login` - JWT token verification
+- ✅ `/generate-signature` - HMAC signature generation
+- ✅ `/verify-signature` - HMAC signature verification
 
 #### 🔍 Finding Your API URL
 The actual API URL depends on your Cloudflare Worker deployment:
@@ -89,8 +105,89 @@ Tambahkan domain ke whitelist:
 
 #### 4. Request New Link
 - Tunggu 2 menit sebelum request ulang
-- Rate limit: 5 request per 15 menit
+- Rate limit: 5 request per 15 menit (enforced by IP-based limiting)
 - Clear browser cache sebelum request baru
+- Check if IP is blocked (30-minute block after 5 failed attempts)
+
+#### 5. Rate Limiting Issues
+**Symptoms:**
+- "Terlalu banyak percobaan login" error message
+- Unable to request magic link after multiple attempts
+- IP temporarily blocked
+
+**Solutions:**
+- Wait 30 minutes for automatic block reset
+- Use different network/VPN if available
+- Contact administrator for manual block removal
+- Check if multiple users sharing same IP
+
+---
+
+## 🚀 Deployment Issues
+
+### ❌ Worker Deployment Fails
+
+**Symptoms:**
+- `wrangler deploy` command fails
+- Permission errors during deployment
+- Missing resources (D1, Vectorize)
+
+**Solutions:**
+
+#### 1. Check API Token Permissions
+```bash
+# Verify wrangler authentication
+wrangler whoami
+
+# Re-authenticate if needed
+wrangler auth login
+
+# Check token permissions in Cloudflare dashboard:
+# - Account: Cloudflare Workers:Edit
+# - Account: Zone:Zone Settings:Edit
+# - Account: Account Settings:Read
+```
+
+#### 2. Create Required Resources
+```bash
+# Create D1 database
+wrangler d1 create malnu-kananga-db
+
+# Create Vectorize index  
+wrangler vectorize create malnu-kananga-index \
+  --dimensions=768 \
+  --metric=cosine
+
+# Update wrangler.toml with returned IDs
+```
+
+#### 3. Verify wrangler.toml Configuration
+```toml
+name = "malnu-kananga"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "malnu-kananga-db"
+database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+[[vectorize]]
+binding = "VECTORIZE_INDEX"
+index_name = "malnu-kananga-index"
+
+[vars]
+NODE_ENV = "production"
+```
+
+#### 4. Set Required Secrets
+```bash
+# Set Google Gemini API key
+wrangler secret put API_KEY
+
+# Set JWT secret (optional, will auto-generate)
+wrangler secret put SECRET_KEY
+```
 
 #### 5. Technical Checks
 ```javascript
@@ -98,6 +195,66 @@ Tambahkan domain ke whitelist:
 // Use direct email testing instead
 fetch('https://malnu-api.sulhi-cmz.workers.dev/request-login-link', {
   method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email: 'test@example.com' })
+})
+.then(r => r.json())
+.then(console.log);
+```
+
+---
+
+## 🤖 AI Chat Issues
+
+### ❌ AI Assistant Not Responding
+
+**Symptoms:**
+- Chat window shows "Loading..." indefinitely
+- AI responses are generic or irrelevant
+- Error messages when sending messages
+
+**Solutions:**
+
+#### 1. Check Vector Database Seeding
+```bash
+# Check if vector database is seeded
+curl https://your-worker-url.workers.dev/seed
+
+# Expected response: "Successfully seeded 50 documents."
+# If error: Database needs seeding
+```
+
+#### 2. Verify API Key Configuration
+```bash
+# Check if API_KEY is set in worker secrets
+wrangler secret list
+
+# If missing, set the API key:
+wrangler secret put API_KEY
+# Enter your Google Gemini API key when prompted
+```
+
+#### 3. Test AI Endpoint Directly
+```javascript
+// Test AI chat endpoint
+fetch('https://your-worker-url.workers.dev/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ message: 'Apa program unggulan sekolah?' })
+})
+.then(r => r.json())
+.then(console.log);
+```
+
+#### 4. Check Vector Similarity Threshold
+- Current threshold: 0.75 (minimum similarity score)
+- If no documents meet threshold, AI will have no context
+- Solution: Add more relevant documents to vector database
+
+#### 5. Verify Google Gemini API Access
+- Check API key validity in Google AI Studio
+- Monitor API usage limits (free tier has quotas)
+- Ensure billing is enabled if exceeding free limits
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ email: 'test@example.com' })
 })
@@ -608,7 +765,7 @@ curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/api/chat" \
 ### 🚨 System Outage
 
 **Immediate Actions**:
-1. **Check Status Page**: https://status.ma-malnukananga.sch.id
+1. **Check Status Page**: https://status.ma-malnukananga.sch.id (planned)
 2. **Notify Users**: Send announcement via alternative channels
 3. **Start Recovery**: Follow disaster recovery procedures
 
@@ -708,13 +865,13 @@ A: Modify the authentication service and update the role-based access control in
 - **Office**: Jl. Desa Kananga Km. 0,5, Menes, Pandeglang
 
 **For Developers**:
-- **GitHub Issues**: https://github.com/your-repo/issues
-- **Documentation**: https://docs.ma-malnukananga.sch.id
+- **GitHub Issues**: https://github.com/sulhi/ma-malnu-kananga/issues
+- **Documentation**: Available in repository docs/ folder
 - **Developer Chat**: Discord/Slack channel
 
 **For Administrators**:
 - **Emergency Hotline**: 24/7 available
-- **Admin Portal**: https://admin.ma-malnukananga.sch.id
+- **Admin Portal**: https://admin.ma-malnukananga.sch.id (planned)
 - **Technical Support**: tech@ma-malnukananga.sch.id
 
 ### 📋 Reporting Issues
@@ -807,9 +964,9 @@ Any other relevant information
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 
 ### 🎓 Training Materials
-- [Video Tutorials](https://training.ma-malnukananga.sch.id)
-- [Best Practices Guide](https://bestpractices.ma-malnukananga.sch.id)
-- [Security Guidelines](https://security.ma-malnukananga.sch.id)
+- [Video Tutorials](https://training.ma-malnukananga.sch.id) (planned)
+- [Best Practices Guide](https://bestpractices.ma-malnukananga.sch.id) (planned)
+- [Security Guidelines](https://security.ma-malnukananga.sch.id) (planned)
 
 ---
 
