@@ -170,8 +170,8 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 ## 🌐 Access Formats
 
 ### 📖 Online Documentation
-- **Web Version**: https://docs.ma-malnukananga.sch.id
-- **GitHub Repository**: https://github.com/ma-malnukananga/docs
+- **Web Version**: https://docs.ma-malnukananga.sch.id (planned)
+- **GitHub Repository**: https://github.com/sulhi/ma-malnu-kananga/tree/main/docs
 - **Interactive**: Search, bookmarks, cross-references
 
 ### 📱 Mobile Access
@@ -221,9 +221,9 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 
 ### 📬 Feedback Channels
 - **Email**: docs@ma-malnukananga.sch.id
-- **GitHub Issues**: https://github.com/ma-malnukananga/docs/issues
-- **User Feedback Form**: Available di setiap halaman
-- **Community Forum**: Diskusi dengan pengguna lain
+- **GitHub Issues**: https://github.com/sulhi/ma-malnu-kananga/issues
+- **User Feedback Form**: Available di setiap halaman (planned)
+- **Community Forum**: Diskusi dengan pengguna lain (planned)
 
 ### 📊 Documentation Metrics
 - **Usage Analytics**: Track popular pages and topics

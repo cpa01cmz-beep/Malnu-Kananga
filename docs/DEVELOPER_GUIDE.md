@@ -96,7 +96,7 @@ malnu-kananga/
 
 1. **Clone Repository**
 ```bash
-git clone https://github.com/your-username/malnu-kananga.git
+git clone https://github.com/sulhi/ma-malnu-kananga.git
 cd malnu-kananga
 ```
 
@@ -173,7 +173,7 @@ VITE_WORKER_URL=https://malnu-api.sulhi-cmz.workers.dev
 **Development Environment**:
 ```bash
 # 1. Clone repository
-git clone https://github.com/ma-malnukananga/malnu-kananga.git
+git clone https://github.com/sulhi/ma-malnu-kananga.git
 cd malnu-kananga
 
 # 2. Install dependencies

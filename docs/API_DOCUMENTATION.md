@@ -185,6 +185,14 @@ Content-Type: application/json
 }
 ```
 
+**Implementation Details:**
+- Vector similarity threshold: 0.75 (minimum score for context retrieval)
+- Embedding model: @cf/baai/bge-base-en-v1.5 (768 dimensions)
+- AI model: Google Gemini (configured via API_KEY environment variable)
+- Language: All responses in Indonesian (Bahasa Indonesia)
+- Context: Retrieved from 50+ school information documents
+- Error handling: Graceful fallback when AI services unavailable
+
 ### Seed Vector Database
 ```http
 GET /seed
@@ -201,6 +209,8 @@ Successfully seeded 50 documents.
 - Inserts documents in batches of 100 for optimal performance
 - Must be run once after worker deployment
 - Documents include: school programs, PPDB info, location, contact details
+- Current document count: 50 school information entries
+- Document IDs: ppdb-1, ppdb-2, lokasi-1, kontak-1, plus 46 other entries
 
 ### Health Check
 ```http
@@ -804,7 +814,7 @@ Content-Type: application/json
 
 ### Available Endpoints
 - `/request-login-link` - Request magic link authentication
-- `/verify-login` - Verify JWT token from magic link
+- `/verify-login` - Verify JWT token from magic link  
 - `/refresh-token` - Refresh authentication token
 - `/logout` - User logout
 - `/api/chat` - AI chat with RAG system
@@ -815,6 +825,18 @@ Content-Type: application/json
 ### Health Check Endpoints
 - `/health` - Overall system health (planned, not yet implemented)
 - Direct endpoint testing recommended for current health verification
+
+### Current Implementation Status
+Based on worker.js analysis, the following endpoints are fully implemented:
+- ✅ `/seed` - Vector database seeding with batch processing (100 docs per batch)
+- ✅ `/api/chat` - RAG chat with vector similarity search (>0.75 threshold)
+- ✅ `/request-login-link` - Magic link with rate limiting (5 attempts/15min)
+- ✅ `/verify-login` - JWT token verification with HMAC-SHA256
+- ✅ `/generate-signature` - HMAC signature generation
+- ✅ `/verify-signature` - HMAC signature verification
+- ⚠️ `/refresh-token` - Referenced but not fully implemented
+- ⚠️ `/logout` - Referenced but not fully implemented
+- ❌ `/health` - Not implemented
 
 ### Logging Format
 ```json
@@ -835,8 +857,8 @@ Content-Type: application/json
 
 For API support and questions:
 - **Email**: api-support@ma-malnukananga.sch.id
-- **Documentation**: https://docs.ma-malnukananga.sch.id
-- **Status Page**: https://status.ma-malnukananga.sch.id
+- **Documentation**: Available in repository docs/ folder
+- **Status Page**: https://status.ma-malnukananga.sch.id (planned)
 
 ---
 
