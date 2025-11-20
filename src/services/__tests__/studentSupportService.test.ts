@@ -29,14 +29,6 @@ describe('StudentSupportService', () => {
       expect(ticket.priority).toBe('medium');
       expect(ticket.status).toBe('open');
       expect(ticket.timestamp).toBeDefined();
-<<<<<<< HEAD
-    });
-
-    it('should process tickets automatically for common issues', () => {
-      // Initialize knowledge base first
-      StudentSupportService.initialize();
-      
-=======
       expect(ticket.lastUpdated).toBeDefined();
     });
 
@@ -64,7 +56,6 @@ describe('StudentSupportService', () => {
     it('should update student progress with new data', () => {
       const progressData = {
         academicMetrics: {
-<<<<<<< HEAD
           gpa: 85, // Using percentage scale (0-100) as per service logic
           attendanceRate: 85,
           assignmentCompletion: 90,
@@ -82,7 +73,6 @@ describe('StudentSupportService', () => {
 
       const progress = StudentSupportService.getStudentProgress('STU001');
       expect(progress).toBeDefined();
-<<<<<<< HEAD
       expect(progress?.academicMetrics.gpa).toBe(85);
       expect(progress?.studentId).toBe('STU001');
       expect(progress?.riskFactors.lowGrades).toBe(false);
@@ -93,7 +83,6 @@ describe('StudentSupportService', () => {
         academicMetrics: {
           gpa: 2.5,
           attendanceRate: 75,
-<<<<<<< HEAD
           assignmentCompletion: 60,
           subjectPerformance: {}
         },
@@ -115,7 +104,6 @@ describe('StudentSupportService', () => {
   describe('addSupportResource', () => {
     it('should add new support resource', () => {
       const resource = StudentSupportService.addSupportResource({
-<<<<<<< HEAD
         title: 'Tutorial Matematika',
         description: 'Panduan lengkap belajar matematika',
         category: 'tutorial',
