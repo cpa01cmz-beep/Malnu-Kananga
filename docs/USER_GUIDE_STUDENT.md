@@ -9,19 +9,34 @@ Portal siswa MA Malnu Kananga adalah platform digital untuk mengakses informasi 
 ## 🚀 Memulai Portal Siswa
 
 ### 1. Login ke Portal
-1. Buka website MA Malnu Kananga di browser
+1. Buka website MA Malnu Kananga di browser (https://ma-malnukananga.sch.id)
 2. Masukkan email siswa yang terdaftar
 3. Klik "Kirim Magic Link"
-4. Periksa email dan klik link login
-5. Anda akan masuk ke dashboard siswa
+4. Periksa email (termasuk folder spam) dan klik link login
+5. Link berlaku selama 15 menit
+6. Anda akan masuk ke dashboard siswa
+
+#### ⚠️ Troubleshooting Login
+- **Email tidak diterima**: Periksa folder spam/promosi
+- **Link kadaluarsa**: Request magic link baru
+- **Login gagal**: Pastikan email terdaftar di sistem
+- **Akses diblokir**: Tunggu 30 menit jika terlalu banyak percobaan
 
 ### 2. Dashboard Siswa Overview
 Setelah login, Anda akan melihat:
-- **Informasi Pribadi**: Nama, kelas, NISN
-- **Statistik Akademik**: IPK, kehadiran, prestasi
-- **Jadwal Hari Ini**: Mata pelajaran dan jam pelajaran
-- **Pengumuman Terbaru**: Informasi penting sekolah
-- **AI Assistant**: Tanya jawab tentang sekolah
+- **Informasi Pribadi**: Nama, kelas, NISN, email
+- **Statistik Akademik**: IPK, kehadiran, ranking kelas
+- **Jadwal Hari Ini**: Mata pelajaran dan jam pelajaran real-time
+- **Pengumuman Terbaru**: Informasi penting sekolah dengan prioritas
+- **AI Assistant**: Tanya jawab tentang sekolah dengan RAG technology
+- **Quick Actions**: Akses cepat ke fitur penting
+- **Recent Activities**: Aktivitas terakhir di portal
+
+#### 🆕 Fitur Baru Dashboard
+- **Real-time Updates**: Data diperbarui secara otomatis
+- **Mobile Responsive**: Optimal di smartphone dan tablet
+- **Dark Mode**: Mode gelap untuk kenyamanan mata
+- **PWA Support**: Install sebagai aplikasi mobile
 
 ---
 

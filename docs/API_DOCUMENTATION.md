@@ -7,15 +7,16 @@ MA Malnu Kananga API provides comprehensive endpoints for authentication, AI cha
 ## 🏗️ Architecture
 
 ### Base Configuration
-- **Base URL**: `https://malnu-api.sulhi-cmz.workers.dev`
+- **Base URL**: `https://malnu-api.sulhi-cmz.workers.dev` (Note: URL may vary based on deployment)
 - **API Version**: v1
 - **Content-Type**: `application/json`
-- **Authentication**: JWT Token (Magic Link System)
+- **Authentication**: JWT Token (Magic Link System) with HMAC-SHA256 signing
 - **Rate Limiting**: 5 requests per 15 minutes per IP (authentication), 20 requests per minute (chat), 100 requests per minute (data APIs)
 - **CORS**: Enabled for all origins in development, restricted in production
 - **Timeout**: 10 seconds per request
 - **Retry Policy**: 3 attempts with exponential backoff
-- **Status**: Production Ready
+- **Security**: IP-based rate limiting, secure token generation with Web Crypto API
+- **Status**: Production Ready (Check actual deployment URL in environment)
 
 ### Environment Variables
 ```typescript
@@ -27,19 +28,24 @@ API_CONFIG = {
 }
 
 // Required Environment Variables (Cloudflare Workers Secrets)
-API_KEY=your_gemini_api_key_here
-SECRET_KEY=your_jwt_secret_key
-NODE_ENV=production
+API_KEY=your_gemini_api_key_here          # Google Gemini AI API key
+SECRET_KEY=your_jwt_secret_key            # HMAC secret key for JWT signing
+NODE_ENV=production                       # Environment mode
 
 // Optional Environment Variables
-VITE_ENABLE_PWA=true
-VITE_ENABLE_AI_CHAT=true
-VITE_ENABLE_ANALYTICS=false
-VITE_WORKER_URL=https://malnu-api.sulhi-cmz.workers.dev
+VITE_ENABLE_PWA=true                     # Enable PWA features
+VITE_ENABLE_AI_CHAT=true                  # Enable AI chat functionality
+VITE_ENABLE_ANALYTICS=false               # Enable analytics tracking
+VITE_WORKER_URL=https://malnu-api.sulhi-cmz.workers.dev  # Worker URL override
 
 // Development Environment Variables
-VITE_DEV_MODE=true
-VITE_JWT_SECRET=dev-secret-key
+VITE_DEV_MODE=true                        # Development mode flag
+VITE_JWT_SECRET=dev-secret-key            # Development JWT secret (use only in dev)
+
+// Rate Limiting Configuration (built-in)
+RATE_LIMIT_WINDOW_MS=900000               # 15 minutes in milliseconds
+RATE_LIMIT_MAX_ATTEMPTS=5                 # Max attempts per window
+RATE_LIMIT_BLOCK_DURATION=1800000         # 30 minutes block duration
 ```
 
 ## 🔐 Authentication API
@@ -60,7 +66,8 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "message": "Link login telah dikirim ke email Anda"
+  "message": "Link login telah dikirim ke email Anda",
+  "expires_in": 900
 }
 ```
 
@@ -68,9 +75,18 @@ Content-Type: application/json
 ```json
 {
   "success": false,
-  "message": "Format email tidak valid"
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Terlalu banyak percobaan login. Silakan coba lagi dalam 30 menit.",
+    "retry_after": 1800
+  }
 }
 ```
+
+**Rate Limiting:**
+- Maximum 5 requests per 15 minutes per IP address
+- Automatic 30-minute block on limit exceeded
+- Uses Cloudflare CF-Connecting-IP header for IP detection
 
 #### Verify Login Token
 ```http
@@ -90,9 +106,30 @@ GET /verify-login?token={jwt_token}
     "updated_at": "2024-01-01T00:00:00Z",
     "is_active": true
   },
+  "token": {
+    "expires_at": "2024-01-01T00:15:00Z",
+    "type": "magic_link"
+  },
   "message": "Login berhasil"
 }
 ```
+
+**Error Response:**
+```json
+{
+  "success": false,
+  "error": {
+    "code": "TOKEN_EXPIRED",
+    "message": "Token telah kedaluwarsa. Silakan request link login baru."
+  }
+}
+```
+
+**Token Security:**
+- JWT tokens signed with HMAC-SHA256
+- 15-minute expiry by default
+- Includes jti (JWT ID) for token tracking
+- Uses Web Crypto API for secure signature generation
 
 #### Token Refresh
 ```http
