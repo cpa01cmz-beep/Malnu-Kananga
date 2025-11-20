@@ -5,7 +5,7 @@ import { initializeWebPDetection, getWebPSupport, getOptimalImageSrc } from '../
 interface WebPContextType {
   supportsWebP: boolean | null;
   isLoading: boolean;
-  getOptimalSrc: (src: string, fallbackOnError?: boolean) => string;
+  getOptimalSrc: (src: string) => string;
 }
 
 // Create context
@@ -42,8 +42,8 @@ export const WebPProvider: React.FC<WebPProviderProps> = ({ children }) => {
       });
   }, []);
 
-  const getOptimalSrc = (src: string, fallbackOnError: boolean = true): string => {
-    return getOptimalImageSrc(src, fallbackOnError);
+  const getOptimalSrc = (src: string): string => {
+    return getOptimalImageSrc(src, true);
   };
 
   const contextValue: WebPContextType = {
