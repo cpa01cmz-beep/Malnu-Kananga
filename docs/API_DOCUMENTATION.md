@@ -7,7 +7,7 @@ MA Malnu Kananga API provides comprehensive endpoints for authentication, AI cha
 ## 🏗️ Architecture
 
 ### Base Configuration
-- **Base URL**: `https://malnu-api.sulhi-cmz.workers.dev` (Note: URL may vary based on deployment)
+- **Base URL**: `https://malnu-api.sulhi-cmz.workers.dev` (Worker name: malnu-api)
 - **API Version**: v1
 - **Content-Type**: `application/json`
 - **Authentication**: JWT Token (Magic Link System) with HMAC-SHA256 signing
@@ -862,7 +862,7 @@ For API support and questions:
 
 ---
 
-*API Documentation Version: 1.1.0*  
+*API Documentation Version: 1.2.0*  
 *Last Updated: November 20, 2024*  
 *Base URL: https://malnu-api.sulhi-cmz.workers.dev*  
 *System Status: Production Ready*  
