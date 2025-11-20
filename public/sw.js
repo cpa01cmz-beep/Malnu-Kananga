@@ -1,6 +1,7 @@
 // Service Worker untuk MA Malnu Kananga PWA
 // Mengimplementasikan caching strategies untuk offline functionality
 
+/* global self, console, caches */
 const CACHE_NAME = 'ma-malnu-kananga-v1.0.0';
 const RUNTIME_CACHE = 'ma-malnu-runtime-v1.0.0';
 
@@ -76,6 +77,8 @@ self.addEventListener('fetch', (event) => {
 
 // Main request handler dengan different strategies
 async function handleRequest(request) {
+  const url = new URL(request.url);
+
   try {
     // Strategy 1: Cache-First untuk static assets
     if (isStaticAsset(request)) {

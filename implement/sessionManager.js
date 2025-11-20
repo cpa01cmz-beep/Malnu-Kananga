@@ -3,6 +3,7 @@
  * Manages the state of implementation sessions
  */
 
+/* global console */
 import fs from 'fs/promises';
 
 class SessionManager {
