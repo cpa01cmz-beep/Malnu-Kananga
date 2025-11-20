@@ -8,8 +8,7 @@
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
-/* global console, process */
-
+const PROJECT_NAME = 'ma-malnu-kananga';
 const DB_NAME = 'malnu-kananga-auth';
 const VECTORIZE_NAME = 'malnu-kananga-docs';
 
@@ -21,7 +20,7 @@ class CloudflareResourceManager {
   checkPrerequisites() {
     try {
       execSync('npx wrangler --version', { stdio: 'pipe' });
-    } catch {
+    } catch (error) {
       console.error('❌ Wrangler CLI tidak ditemukan. Install dengan: npm install -g wrangler');
       process.exit(1);
     }
@@ -56,7 +55,7 @@ class CloudflareResourceManager {
           'Menjalankan migration database'
         );
       }
-    } catch {
+    } catch (error) {
       console.log('ℹ️  Database mungkin sudah ada, melanjutkan...');
     }
   }
@@ -70,7 +69,7 @@ class CloudflareResourceManager {
         `npx wrangler vectorize create ${VECTORIZE_NAME} --dimensions=768 --metric=cosine`,
         'Membuat Vectorize index'
       );
-    } catch {
+    } catch (error) {
       console.log('ℹ️  Vectorize index mungkin sudah ada, melanjutkan...');
     }
   }
