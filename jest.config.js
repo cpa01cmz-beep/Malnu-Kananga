@@ -8,7 +8,8 @@ export default {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^./authService$': '<rootDir>/src/__mocks__/authService.ts',
     '^../services/authService$': '<rootDir>/src/__mocks__/authService.ts',
-    '^../utils/envValidation$': '<rootDir>/src/__mocks__/envValidation.js'
+    '^../utils/envValidation$': '<rootDir>/src/__mocks__/envValidation.js',
+    '^uuid$': '<rootDir>/src/__mocks__/uuid.js'
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {

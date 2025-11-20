@@ -2,7 +2,9 @@
   "env": {
     "browser": true,
     "es2021": true,
-    "node": true
+    "node": true,
+    "jest": true,
+    "serviceworker": true
   },
   "extends": [
     "eslint:recommended",
@@ -32,9 +34,13 @@
     "react/prop-types": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "warn",
-    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
     "jsx-a11y/click-events-have-key-events": "warn",
-    "jsx-a11y/no-static-element-interactions": "warn"
+    "jsx-a11y/no-static-element-interactions": "warn",
+    "no-console": "off",
+    "no-unused-vars": "off",
+    "no-undef": "off",
+    "no-redeclare": "off"
   },
   "settings": {
     "react": {
@@ -46,21 +52,18 @@
     "node_modules/",
     "build/",
     "*.config.*",
-    "implement/",
     "coverage/",
-    "public/",
-    "scripts/",
     "src/__mocks__/",
     "src/__tests__/",
     "worker.js",
     "worker-extended.js",
+    "implement/",
+    "public/",
+    "scripts/",
     "docManager.js",
     "sessionManager.js",
     "test-docs.js",
     "setup-cloudflare-resources.js",
     "cli.js"
-  ],
-  "rules": {
-    "no-undef": "warn"
-  }
+  ]
 }
