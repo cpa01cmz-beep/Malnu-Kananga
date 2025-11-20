@@ -68,21 +68,16 @@ export const getWebPSupport = (): boolean | null => {
  * @returns Optimized image URL
  */
 export const getOptimalImageSrc = (originalSrc: string, fallbackOnError: boolean = true): string => {
+  // If originalSrc is null/undefined/empty, return as is
+  if (!originalSrc) {
+    return originalSrc || '';
+  }
+
   const supportsWebP = getWebPSupport();
 
   // If detection not initialized or WebP not supported, return original
   if (supportsWebP === null || !supportsWebP || fallbackOnError === false) {
     return originalSrc;
-  }
-
-  // Convert local PNG icons to WebP format
-  if (originalSrc.startsWith('/icons/') && originalSrc.endsWith('.png')) {
-    return originalSrc.replace(/\.png$/i, '.png.webp');
-  }
-
-  // Convert local PNG icons to WebP format
-  if (originalSrc.startsWith('/icons/') && originalSrc.endsWith('.png')) {
-    return originalSrc.replace(/\.png$/i, '.png.webp');
   }
 
   // Convert local PNG icons to WebP format
@@ -123,9 +118,18 @@ export const getOptimalImageSrcSync = (originalSrc: string): string => {
   return originalSrc;
 };
 
+/**
+ * For testing purposes only - resets WebP detection cache
+ */
+export const resetWebPDetectionCache = (): void => {
+  webpSupport = null;
+  detectionPromise = null;
+};
+
 export default {
   initializeWebPDetection,
   getWebPSupport,
   getOptimalImageSrc,
-  getOptimalImageSrcSync
+  getOptimalImageSrcSync,
+  resetWebPDetectionCache
 };
