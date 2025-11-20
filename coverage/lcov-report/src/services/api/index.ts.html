@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/15</span>
+                <span class='fraction'>0/33</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>0/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/14</span>
+                <span class='fraction'>0/19</span>
             </div>
         
             
@@ -150,11 +150,11 @@
 <a name='L85'></a><a href='#L85'>85</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -234,11 +234,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// API Services Index untuk MA Malnu Kananga
 // Centralized export untuk semua API services
 &nbsp;
-export { default as BaseApiService, baseApiService } from './baseApiService';
-export { default as StudentApiService, studentApiService } from './studentApiService';
-export { default as ContentApiService, contentApiService } from './contentApiService';
-export { FeaturedProgramsApiService as FeaturedProgramsService, FeaturedProgramsApiService as featuredProgramsService } from './featuredProgramsService';
-export { NewsApiService as NewsService, NewsApiService as newsService } from './newsService';
+<span class="cstat-no" title="statement not covered" >export { <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >d</span>efault </span>as BaseApiService,</span> <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >baseApiService </span>} from './baseApiService';</span>
+<span class="cstat-no" title="statement not covered" >export { <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >d</span>efault </span>as StudentApiService,</span> <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >studentApiService </span>} from './studentApiService';</span>
+<span class="cstat-no" title="statement not covered" >export { <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >d</span>efault </span>as ContentApiService,</span> <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >contentApiService </span>} from './contentApiService';</span>
+<span class="cstat-no" title="statement not covered" >export { <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >F</span>eaturedProgramsApiService </span>as FeaturedProgramsService,</span> <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >FeaturedProgramsApiService </span>as featuredProgramsService </span>} from './featuredProgramsService';
+<span class="cstat-no" title="statement not covered" >export { <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >N</span>ewsApiService </span>as NewsService,</span> <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >NewsApiService </span>as newsService </span>} from './newsService';
 &nbsp;
 // Re-export types untuk kemudahan penggunaan
 export type {
@@ -266,7 +266,7 @@ export interface ApiError {
 }
 &nbsp;
 // API Configuration
-export const API_CONFIG = <span class="cstat-no" title="statement not covered" >{</span>
+export const <span class="cstat-no" title="statement not covered" >API_CONFIG = {</span>
   BASE_URL: import.meta.env.VITE_WORKER_URL || 'https://malnu-api.sulhi-cmz.workers.dev',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
@@ -274,18 +274,18 @@ export const API_CONFIG = <span class="cstat-no" title="statement not covered" >
 } as const;
 &nbsp;
 // Utility functions untuk API
-export const createApiError = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(m</span>essage: string, statusCode?: number, code?: string): ApiError =&gt; (<span class="cstat-no" title="statement not covered" >{</span></span>
+export const <span class="cstat-no" title="statement not covered" >createApiError = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>m</span>essage: string, statusCode?: number, code?: string): ApiError =&gt; (<span class="cstat-no" title="statement not covered" >{</span></span>
   message,
   statusCode,
   code,
 });
 &nbsp;
-export const isApiError = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(e</span>rror: any): error is ApiError =&gt; {</span>
+export const <span class="cstat-no" title="statement not covered" >isApiError = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>e</span>rror: any): error is ApiError =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >  return error &amp;&amp; typeof error.message === 'string';</span>
 };
 &nbsp;
 // API Health check utility
-export const checkApiHealth = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async </span>(): Promise&lt;boolean&gt; =&gt; {</span>
+export const <span class="cstat-no" title="statement not covered" >checkApiHealth = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >a</span>sync </span>(): Promise&lt;boolean&gt; =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
     const response = <span class="cstat-no" title="statement not covered" >await fetch(`${API_CONFIG.BASE_URL}/health`, {</span>
       method: 'GET',
@@ -300,7 +300,7 @@ export const checkApiHealth = <span class="cstat-no" title="statement not covere
 };
 &nbsp;
 // API Status enum
-<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >export </span>enum ApiStatus {</span>
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >export enum A</span>piStatus {</span>
 <span class="cstat-no" title="statement not covered" >  IDLE = 'idle',</span>
 <span class="cstat-no" title="statement not covered" >  LOADING = 'loading',</span>
 <span class="cstat-no" title="statement not covered" >  SUCCESS = 'success',</span>
@@ -322,7 +322,7 @@ export interface ApiHookState&lt;T&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-19T10:46:20.357Z
+                at 2025-11-20T00:57:51.967Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

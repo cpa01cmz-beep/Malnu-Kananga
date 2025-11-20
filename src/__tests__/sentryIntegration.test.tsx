@@ -103,11 +103,12 @@ describe('ErrorBoundary', () => {
     // Check that the error boundary fallback is rendered
     expect(screen.getByText('Terjadi Kesalahan')).toBeInTheDocument();
     
-    // Click the "Coba Lagi" button
+    // Click the "Coba Lagi" button to reset error state
     const tryAgainButton = screen.getByText('Coba Lagi');
     fireEvent.click(tryAgainButton);
     
     // Re-render with a valid component to test reset functionality
+    // The error boundary should now render the valid component since error state is reset
     rerender(
       <ErrorBoundary onError={onError}>
         <TestValidComponent />

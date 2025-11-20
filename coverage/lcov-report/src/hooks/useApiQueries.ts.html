@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/80</span>
+                <span class='fraction'>0/100</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/80</span>
+                <span class='fraction'>0/84</span>
             </div>
         
             
@@ -404,9 +404,8 @@
 <a name='L339'></a><a href='#L339'>339</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -420,6 +419,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -717,7 +717,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -742,8 +742,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// Custom React Query hooks untuk API services
 // Implementasi dengan caching, retry logic, dan request deduplication
 &nbsp;
-import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
-import {
+<span class="cstat-no" title="statement not covered" >import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';</span>
+<span class="cstat-no" title="statement not covered" >import {</span>
   studentApiService,
   contentApiService,
   Student,
@@ -757,7 +757,7 @@ import {
   ApiResponse,
   ApiError
 } from '../services/api';
-import { queryKeys } from '../services/queryClient';
+<span class="cstat-no" title="statement not covered" >import { queryKeys } from '../services/queryClient';</span>
 &nbsp;
 // Types untuk API responses
 type ApiData&lt;T&gt; = T | null;
@@ -774,7 +774,7 @@ const handleApiResponse = <span class="cstat-no" title="statement not covered" >
 // ==================== STUDENT API HOOKS ====================
 &nbsp;
 // Get current student profile
-export const useCurrentStudent = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useCurrentStudent = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   options?: Omit&lt;UseQueryOptions&lt;Student | null, Error, Student | null, readonly unknown[]&gt;, 'queryKey' | 'queryFn'&gt;
 ) =&gt; {
 <span class="cstat-no" title="statement not covered" >  return useQuery({</span>
@@ -788,7 +788,7 @@ export const useCurrentStudent = <span class="cstat-no" title="statement not cov
 };
 &nbsp;
 // Get student grades dengan filtering
-export const useStudentGrades = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useStudentGrades = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   studentId?: string,
   semester?: number,
   academicYear?: string,
@@ -806,7 +806,7 @@ export const useStudentGrades = <span class="cstat-no" title="statement not cove
 };
 &nbsp;
 // Get attendance records dengan filtering
-export const useAttendanceRecords = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useAttendanceRecords = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   studentId?: string,
   month?: number,
   year?: number,
@@ -824,7 +824,7 @@ export const useAttendanceRecords = <span class="cstat-no" title="statement not 
 };
 &nbsp;
 // Get class schedule
-export const useClassSchedule = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useClassSchedule = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   studentId?: string,
   day?: string,
   options?: Omit&lt;UseQueryOptions&lt;ScheduleItem[], Error, ScheduleItem[], readonly unknown[]&gt;, 'queryKey' | 'queryFn'&gt;
@@ -840,7 +840,7 @@ export const useClassSchedule = <span class="cstat-no" title="statement not cove
 };
 &nbsp;
 // Get academic statistics
-export const useAcademicStats = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useAcademicStats = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   studentId?: string,
   semester?: number,
   options?: Omit&lt;UseQueryOptions&lt;AcademicStats | null, Error, AcademicStats | null, readonly unknown[]&gt;, 'queryKey' | 'queryFn'&gt;
@@ -857,7 +857,7 @@ export const useAcademicStats = <span class="cstat-no" title="statement not cove
 };
 &nbsp;
 // Get student announcements
-export const useStudentAnnouncements = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useStudentAnnouncements = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   studentId?: string,
   unreadOnly: boolean = <span class="branch-0 cbranch-no" title="branch not covered" >false,</span>
   options?: Omit&lt;UseQueryOptions&lt;any[], Error, any[], readonly unknown[]&gt;, 'queryKey' | 'queryFn'&gt;
@@ -874,7 +874,7 @@ export const useStudentAnnouncements = <span class="cstat-no" title="statement n
 };
 &nbsp;
 // Get progress report
-export const useProgressReport = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useProgressReport = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   studentId?: string,
   semester?: number,
   options?: Omit&lt;UseQueryOptions&lt;any | null, Error, any | null, readonly unknown[]&gt;, 'queryKey' | 'queryFn'&gt;
@@ -891,7 +891,7 @@ export const useProgressReport = <span class="cstat-no" title="statement not cov
 };
 &nbsp;
 // Search students (untuk admin/teacher)
-export const useSearchStudents = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useSearchStudents = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   query: string,
   classId?: string,
   options?: Omit&lt;UseQueryOptions&lt;Student[], Error, Student[], readonly unknown[]&gt;, 'queryKey' | 'queryFn'&gt;
@@ -909,7 +909,7 @@ export const useSearchStudents = <span class="cstat-no" title="statement not cov
 };
 &nbsp;
 // Get students by class (untuk teacher)
-export const useStudentsByClass = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useStudentsByClass = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   classId: string,
   options?: Omit&lt;UseQueryOptions&lt;Student[], Error, Student[], readonly unknown[]&gt;, 'queryKey' | 'queryFn'&gt;
 ) =&gt; {
@@ -927,7 +927,7 @@ export const useStudentsByClass = <span class="cstat-no" title="statement not co
 // ==================== CONTENT API HOOKS ====================
 &nbsp;
 // Get featured programs
-export const useFeaturedPrograms = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useFeaturedPrograms = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   options?: Omit&lt;UseQueryOptions&lt;FeaturedProgram[], Error, FeaturedProgram[], readonly unknown[]&gt;, 'queryKey' | 'queryFn'&gt;
 ) =&gt; {
 <span class="cstat-no" title="statement not covered" >  return useQuery({</span>
@@ -942,7 +942,7 @@ export const useFeaturedPrograms = <span class="cstat-no" title="statement not c
 };
 &nbsp;
 // Get latest news
-export const useLatestNews = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useLatestNews = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   options?: Omit&lt;UseQueryOptions&lt;NewsItem[], Error, NewsItem[], readonly unknown[]&gt;, 'queryKey' | 'queryFn'&gt;
 ) =&gt; {
 <span class="cstat-no" title="statement not covered" >  return useQuery({</span>
@@ -957,7 +957,7 @@ export const useLatestNews = <span class="cstat-no" title="statement not covered
 };
 &nbsp;
 // Get related links
-export const useRelatedLinks = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useRelatedLinks = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   options?: Omit&lt;UseQueryOptions&lt;RelatedLink[], Error, RelatedLink[], readonly unknown[]&gt;, 'queryKey' | 'queryFn'&gt;
 ) =&gt; {
 <span class="cstat-no" title="statement not covered" >  return useQuery({</span>
@@ -974,7 +974,7 @@ export const useRelatedLinks = <span class="cstat-no" title="statement not cover
 // ==================== MUTATION HOOKS ====================
 &nbsp;
 // Update student profile mutation
-export const useUpdateStudentProfile = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useUpdateStudentProfile = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   options?: UseMutationOptions&lt;Student, Error, Partial&lt;Student&gt;, unknown&gt;
 ) =&gt; {
   const queryClient = <span class="cstat-no" title="statement not covered" >useQueryClient();</span>
@@ -995,7 +995,7 @@ export const useUpdateStudentProfile = <span class="cstat-no" title="statement n
 };
 &nbsp;
 // Submit grades mutation (untuk teacher)
-export const useSubmitGrades = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useSubmitGrades = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   options?: UseMutationOptions&lt;Grade[], Error, Omit&lt;Grade, 'id' | 'submittedAt'&gt;[], unknown&gt;
 ) =&gt; {
   const queryClient = <span class="cstat-no" title="statement not covered" >useQueryClient();</span>
@@ -1015,7 +1015,7 @@ export const useSubmitGrades = <span class="cstat-no" title="statement not cover
 };
 &nbsp;
 // Record attendance mutation (untuk teacher)
-export const useRecordAttendance = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useRecordAttendance = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   options?: UseMutationOptions&lt;AttendanceRecord[], Error, Omit&lt;AttendanceRecord, 'id' | 'recordedAt'&gt;[], unknown&gt;
 ) =&gt; {
   const queryClient = <span class="cstat-no" title="statement not covered" >useQueryClient();</span>
@@ -1035,7 +1035,7 @@ export const useRecordAttendance = <span class="cstat-no" title="statement not c
 };
 &nbsp;
 // Mark announcement as read mutation
-export const useMarkAnnouncementAsRead = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span>
+export const <span class="cstat-no" title="statement not covered" >useMarkAnnouncementAsRead = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span></span></span>
   options?: UseMutationOptions&lt;void, Error, string, unknown&gt;
 ) =&gt; {
   const queryClient = <span class="cstat-no" title="statement not covered" >useQueryClient();</span>
@@ -1055,7 +1055,7 @@ export const useMarkAnnouncementAsRead = <span class="cstat-no" title="statement
   });
 };
 &nbsp;
-export default {
+<span class="cstat-no" title="statement not covered" >export default {</span>
   // Student hooks
   useCurrentStudent,
   useStudentGrades,
@@ -1084,7 +1084,7 @@ export default {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-19T10:46:20.357Z
+                at 2025-11-20T00:57:51.967Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
