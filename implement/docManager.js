@@ -4,7 +4,6 @@
  */
 
 import fs from 'fs/promises';
-import path from 'path';
 
 class DocumentationManager {
   constructor() {
@@ -30,9 +29,8 @@ class DocumentationManager {
   /**
    * Generate documentation for a specific module
    * @param {string} modulePath - Path to the module
-   * @param {string} outputPath - Where to save the documentation
    */
-  async generateDocumentation(modulePath, outputPath) {
+  async generateDocumentation(modulePath) {
     console.log(`Generating documentation for ${modulePath}...`);
     // This would implement actual documentation generation
     return true;
@@ -40,9 +38,8 @@ class DocumentationManager {
 
   /**
    * Check if documentation is up to date with code
-   * @param {string} modulePath - Path to the module
    */
-  async isDocumentationUpToDate(modulePath) {
+  async isDocumentationUpToDate() {
     // This would implement actual comparison logic
     return true;
   }
@@ -57,7 +54,7 @@ class DocumentationManager {
       try {
         const data = await fs.readFile(this.docRegistry, 'utf8');
         registry = JSON.parse(data);
-      } catch (error) {
+      } catch {
         // Registry doesn't exist yet, create new
         registry = {
           createdAt: new Date().toISOString(),
