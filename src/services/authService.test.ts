@@ -70,9 +70,9 @@ describe('AuthService', () => {
 
   describe('refreshCurrentToken', () => {
     it('should refresh token in development mode', async () => {
-      // Mock development mode
-      const originalDev = import.meta.env.DEV;
-      import.meta.env.DEV = true;
+      // Mock development mode using process.env
+      const originalDev = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'development';
 
       // Create a user and get a token
       LocalAuthService.createUser('test@example.com', 'Test User');
@@ -89,7 +89,7 @@ describe('AuthService', () => {
       expect(result.token).not.toBe(token);
       
       // Restore original env
-      import.meta.env.DEV = originalDev;
+      process.env.NODE_ENV = originalDev;
     });
   });
 });
@@ -100,9 +100,9 @@ describe('ProductionAuthService', () => {
   });
 
   it('should make request to server for signature generation', async () => {
-    // Mock production mode
-    const originalDev = import.meta.env.DEV;
-    import.meta.env.DEV = false;
+    // Mock production mode using process.env
+    const originalDev = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
 
     // Mock fetch response
     (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -115,6 +115,6 @@ describe('ProductionAuthService', () => {
     // This would require a more complex setup to test properly
     
     // Restore original env
-    import.meta.env.DEV = originalDev;
+    process.env.NODE_ENV = originalDev;
   });
 });
