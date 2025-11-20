@@ -12,6 +12,7 @@ import {
 } from '../data/studentData';
 import { AuthService } from '../services/authService';
 import { NotificationService, NotificationItem } from '../services/notificationService';
+import { StudentSupportService } from '../services/studentSupportService';
 import StudentDashboardHeader from './StudentDashboardHeader';
 import NavigationTabs from './NavigationTabs';
 import OverviewTab from './OverviewTab';
@@ -20,13 +21,15 @@ import ScheduleTab from './ScheduleTab';
 import AttendanceTab from './AttendanceTab';
 import AnnouncementsTab from './AnnouncementsTab';
 import ToastNotification from './ToastNotification';
+import StudentSupportDashboard from './StudentSupportDashboard';
+import StudentProgressMonitor from './StudentProgressMonitor';
 
 interface StudentDashboardProps {
   onLogout: () => void;
 }
 
 const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'grades' | 'schedule' | 'attendance' | 'announcements'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'grades' | 'schedule' | 'attendance' | 'announcements' | 'support' | 'progress'>('overview');
   const [currentToast, setCurrentToast] = useState<NotificationItem | null>(null);
 
   // Calculate statistics
@@ -59,6 +62,34 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
       window.removeEventListener('showNotification', handleNewNotification as EventListener);
     };
   }, []);
+
+  // Initialize student support system
+  useEffect(() => {
+    // Initialize student progress tracking
+    StudentSupportService.updateStudentProgress(currentStudent.id, {
+      academicMetrics: {
+        gpa: gpa,
+        attendanceRate: attendanceStats.percentage,
+        assignmentCompletion: 85, // Sample data
+        subjectPerformance: studentGrades.reduce((acc, grade) => {
+          acc[grade.subject] = parseInt(grade.score);
+          return acc;
+        }, {} as Record<string, number>)
+      },
+      engagementMetrics: {
+        portalLoginFrequency: 5, // Sample data
+        featureUsage: {
+          overview: 10,
+          grades: 8,
+          schedule: 6,
+          attendance: 4,
+          announcements: 7
+        },
+        supportRequestsCount: 0,
+        lastActiveDate: new Date().toISOString()
+      }
+    });
+  }, [gpa, attendanceStats.percentage, studentGrades, currentStudent.id]);
 
   // Add some sample notifications for demonstration
   useEffect(() => {
@@ -113,7 +144,9 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     { id: 'grades', name: 'Nilai', icon: '📊' },
     { id: 'schedule', name: 'Jadwal', icon: '📅' },
     { id: 'attendance', name: 'Absensi', icon: '✅' },
-    { id: 'announcements', name: `Pengumuman ${unreadAnnouncements.length > 0 ? `(${unreadAnnouncements.length})` : ''}`, icon: '📢' }
+    { id: 'announcements', name: `Pengumuman ${unreadAnnouncements.length > 0 ? `(${unreadAnnouncements.length})` : ''}`, icon: '📢' },
+    { id: 'support', name: 'Dukungan', icon: '🎓' },
+    { id: 'progress', name: 'Progress', icon: '📈' }
   ];
 
   return (
@@ -169,6 +202,14 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             announcements={announcements}
             formatDate={formatDate}
           />
+        )}
+
+        {activeTab === 'support' && (
+          <StudentSupportDashboard studentId={currentStudent.id} />
+        )}
+
+        {activeTab === 'progress' && (
+          <StudentProgressMonitor studentId={currentStudent.id} />
         )}
       </div>
 
