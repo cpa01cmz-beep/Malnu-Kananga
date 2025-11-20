@@ -40,7 +40,7 @@ async function showStatus() {
     globalConsole.log('Completed Steps:', state.progress.completedSteps.length, '/', state.progress.totalSteps);
     globalConsole.log('Project:', state.projectContext.name);
   } catch (error) {
-    // eslint-disable-next-line no-console
+     
     console.error('Error reading session state:', error.message);
   }
 }
