@@ -50,11 +50,17 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 - **Fitur**: Code structure, best practices, CI/CD pipeline
 - **Level**: Advanced
 
-#### 🚀 [Installation Guide](./INSTALLATION_GUIDE.md)
-- **Target**: Developer, system administrator
-- **Topik**: Development setup, production deployment, configuration
-- **Fitur**: Step-by-step installation, environment setup, deployment checklist
+#### 🚀 [Deployment Guide](./DEPLOYMENT_GUIDE.md)
+- **Target**: Developer, system administrator, DevOps
+- **Topik**: Complete deployment process, Cloudflare setup, production configuration
+- **Fitur**: Step-by-step deployment, environment setup, monitoring, troubleshooting
 - **Level**: Intermediate to Advanced
+
+#### 🏗️ [System Architecture](./SYSTEM_ARCHITECTURE.md)
+- **Target**: Developer, system architect, technical lead
+- **Topik**: System design, infrastructure, scalability, security
+- **Fitur**: Architecture diagrams, component design, technology stack, future plans
+- **Level**: Advanced
 
 #### 🔧 [Troubleshooting Guide](./TROUBLESHOOTING_GUIDE.md)
 - **Target**: All users, technical support
@@ -97,6 +103,8 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 | API Documentation | Developer | Advanced | As needed |
 | Developer Guide | Developer | Advanced | Quarterly |
 | Installation Guide | Developer, SysAdmin | Intermediate | Quarterly |
+| Deployment Guide | DevOps, SysAdmin | Advanced | Quarterly |
+| System Architecture | Developer, Architect | Advanced | Quarterly |
 | Troubleshooting Guide | All | All | As needed |
 
 ---
@@ -229,10 +237,12 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 
 ### 📚 Essential Reading
 - [Getting Started Guide](./USER_GUIDE_STUDENT.md#quick-start)
-- [System Requirements](./INSTALLATION_GUIDE.md#system-requirements)
-- [Installation Steps](./INSTALLATION_GUIDE.md#development-setup)
+- [System Requirements](./DEPLOYMENT_GUIDE.md#prerequisites)
+- [Installation Steps](./DEPLOYMENT_GUIDE.md#environment-setup)
 - [Common Issues](./TROUBLESHOOTING_GUIDE.md#common-issues)
 - [API Quick Reference](./API_DOCUMENTATION.md#quick-reference)
+- [System Architecture](./SYSTEM_ARCHITECTURE.md#high-level-architecture)
+- [Deployment Guide](./DEPLOYMENT_GUIDE.md#production-deployment)
 
 ### 🚀 Popular Pages
 - [Login Instructions](./USER_GUIDE_STUDENT.md#login-ke-portal)
@@ -242,10 +252,12 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 
 ### 🔧 Technical Resources
 - [API Endpoints](./API_DOCUMENTATION.md#authentication-api)
-- [Development Setup](./INSTALLATION_GUIDE.md#development-setup)
-- [Installation Guide](./INSTALLATION_GUIDE.md#production-deployment)
-- [Deployment Guide](./INSTALLATION_GUIDE.md#option-1-one-click-deploy-recommended)
+- [Development Setup](./DEPLOYMENT_GUIDE.md#local-development-setup)
+- [Installation Guide](./DEPLOYMENT_GUIDE.md#cloudflare-infrastructure-setup)
+- [Deployment Guide](./DEPLOYMENT_GUIDE.md#production-deployment)
+- [System Architecture](./SYSTEM_ARCHITECTURE.md)
 - [Troubleshooting](./TROUBLESHOOTING_GUIDE.md#emergency-procedures)
+- [Changelog](../CHANGELOG.md)
 
 ---
 
