@@ -51,11 +51,9 @@ describe('Gemini Service', () => {
       (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Hello' };
-            yield { text: () => ' world' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Hello' };
+          yield { text: ' world' };
         }
       };
 
@@ -80,10 +78,8 @@ describe('Gemini Service', () => {
       (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Fallback response' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Fallback response' };
         }
       };
 
@@ -132,10 +128,8 @@ describe('Gemini Service', () => {
       (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Response with context' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Response with context' };
         }
       };
 
@@ -164,10 +158,8 @@ describe('Gemini Service', () => {
       });
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Indonesian response' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Indonesian response' };
         }
       };
 
@@ -197,10 +189,8 @@ describe('Gemini Service', () => {
       (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'No context response' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'No context response' };
         }
       };
 
@@ -249,10 +239,8 @@ describe('Gemini Service', () => {
       });
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Error handled' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Error handled' };
         }
       };
 
@@ -277,10 +265,8 @@ describe('Gemini Service', () => {
       (global.fetch as jest.Mock).mockRejectedValue(new Error('Timeout'));
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Timeout handled' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Timeout handled' };
         }
       };
 

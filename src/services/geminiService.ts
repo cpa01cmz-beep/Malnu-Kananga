@@ -141,6 +141,11 @@ export async function clearConversationHistory() {
       type: 'conversation',
     });
 
+    // Handle case where searchMemories returns undefined or null
+    if (!conversations || !Array.isArray(conversations)) {
+      return 0;
+    }
+
     for (const conversation of conversations) {
       await memoryBank.deleteMemory(conversation.id);
     }
