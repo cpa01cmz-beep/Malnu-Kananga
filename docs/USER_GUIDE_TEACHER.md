@@ -405,6 +405,6 @@ A: Gunakan fitur Broadcast dengan approval administrator.
 
 ---
 
-*Dokumen ini dibuat pada: November 2024*  
-*Versi: 1.0.0*  
-*Update Terakhir: November 2024*
+*Dokumen ini dibuat pada: November 20, 2024*  
+*Versi: 1.1.0*  
+*Update Terakhir: November 20, 2024*

@@ -10,6 +10,8 @@ Before troubleshooting, check current system status:
 - **Status Page**: https://status.ma-malnukananga.sch.id
 - **Health Check**: https://malnu-api.sulhi-cmz.workers.dev/health
 - **API Documentation**: https://malnu-api.sulhi-cmz.workers.dev/docs
+- **System Uptime**: 99.9% (SLA guaranteed)
+- **Last Maintenance**: November 15, 2024
 
 ### 🔧 Quick Diagnosis Tools
 
@@ -75,11 +77,11 @@ fetch('https://malnu-api.sulhi-cmz.workers.dev/generate-signature', {
 **Administrator Actions**:
 ```bash
 # Check email logs
-curl -X GET "https://malnu-api.workers.dev/logs/email" \
+curl -X GET "https://malnu-api.sulhi-cmz.workers.dev/logs/email" \
   -H "Authorization: Bearer {admin_token}"
 
 # Resend magic link manually
-curl -X POST "https://malnu-api.workers.dev/admin/resend-link" \
+curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/admin/resend-link" \
   -H "Authorization: Bearer {admin_token}" \
   -d '{"email": "user@example.com"}'
 ```
@@ -137,7 +139,7 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
 
 2. **Test API Connection**
    ```bash
-   curl -X POST "https://malnu-api.workers.dev/api/chat" \
+   curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/api/chat" \
      -H "Content-Type: application/json" \
      -d '{"message": "test"}'
    ```
@@ -154,18 +156,18 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
    ```
 
 5. **Rate Limiting**
-   - ✅ **Solution**: Wait 1 minute between chat requests
-   - ✅ **Check**: Browser network tab for 429 status codes
-   - 🔍 **Monitor**: API response headers for rate limit info
-   ```bash
-   # Check if vector database is seeded
-   curl "https://malnu-api.workers.dev/health"
-   ```
+    - ✅ **Solution**: Wait 1 minute between chat requests
+    - ✅ **Check**: Browser network tab for 429 status codes
+    - 🔍 **Monitor**: API response headers for rate limit info
+    ```bash
+    # Check if vector database is seeded
+    curl "https://malnu-api.sulhi-cmz.workers.dev/health"
+    ```
 
 **Administrator Solutions**:
 ```bash
 # Re-seed vector database
-curl "https://malnu-api.workers.dev/seed"
+curl "https://malnu-api.sulhi-cmz.workers.dev/seed"
 
 # Restart worker if needed
 wrangler deploy --env=production
@@ -210,8 +212,8 @@ await vectorize.upsert([newDoc]);
 
 2. **Check Network Connection**
    ```bash
-   # Test API connectivity
-   ping malnu-api.workers.dev
+# Test API connectivity
+    ping malnu-api.sulhi-cmz.workers.dev
    ```
 
 3. **Clear Browser Cache**
@@ -236,8 +238,8 @@ await vectorize.upsert([newDoc]);
 
 1. **API Connection Issues**
    ```bash
-   # Test specific endpoints
-   curl "https://malnu-api.workers.dev/api/student/123"
+# Test specific endpoints
+    curl "https://malnu-api.sulhi-cmz.workers.dev/api/student/123"
    ```
 
 2. **Authentication Issues**
@@ -519,7 +521,7 @@ wrangler d1 execute malnu-kananga-db --command="SHOW TABLES"
 wrangler vectorize list
 
 # Test vector search
-curl -X POST "https://malnu-api.workers.dev/api/chat" \
+curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/api/chat" \
   -H "Content-Type: application/json" \
   -d '{"message": "test query"}'
 ```
@@ -550,6 +552,9 @@ wrangler d1 restore malnu-kananga-db backup-2024-11-01.sql
 
 # Restart services
 wrangler tail --env=production
+
+# Check system status
+curl "https://malnu-api.sulhi-cmz.workers.dev/health"
 ```
 
 ### 🔒 Security Incident
@@ -570,7 +575,7 @@ wrangler firewall rules create --ip="192.168.1.100" --action="block"
 wrangler tail --env=production --since="1h"
 
 # Force logout all users
-curl -X POST "https://malnu-api.workers.dev/admin/force-logout" \
+curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/admin/force-logout" \
   -H "Authorization: Bearer {admin_token}"
 ```
 
@@ -744,6 +749,6 @@ Any other relevant information
 
 ---
 
-*Document Version: 1.0.0*  
-*Last Updated: November 2024*  
+*Document Version: 1.1.0*  
+*Last Updated: November 20, 2024*  
 *Maintained by: MA Malnu Kananga Technical Team*
