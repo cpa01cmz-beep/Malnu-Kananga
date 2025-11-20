@@ -5,6 +5,8 @@
 
 import fs from 'fs/promises';
 
+/* global console */
+
 class SessionManager {
   constructor() {
     this.stateFile = './state.json';
