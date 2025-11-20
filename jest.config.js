@@ -11,7 +11,10 @@ export default {
       useESM: false,
       tsconfig: {
         target: 'es2017',
-        module: 'commonjs'
+        module: 'commonjs',
+        jsx: 'react-jsx',
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true
       }
     }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
@@ -23,15 +26,7 @@ export default {
       }]]
     }]
   },
-  globals: {
-    'ts-jest': {
-      useESM: false,
-      tsconfig: {
-        target: 'es2017',
-        module: 'commonjs'
-      }
-    }
-  },
+  extensionsToTreatAsEsm: [],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',
     '<rootDir>/src/**/*.(test|spec).(ts|tsx|js)'
@@ -41,5 +36,17 @@ export default {
     '!src/**/*.d.ts',
     '!src/main.tsx',
     '!src/vite-env.d.ts'
-  ]
+  ],
+  globals: {
+    'ts-jest': {
+      useESM: false,
+      tsconfig: {
+        target: 'es2017',
+        module: 'commonjs',
+        jsx: 'react-jsx',
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true
+      }
+    }
+  }
 };
