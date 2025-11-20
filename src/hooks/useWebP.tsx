@@ -40,7 +40,7 @@ export const WebPProvider: React.FC<WebPProviderProps> = ({ children }) => {
         setSupportsWebP(false); // Fallback to false on error
         setIsLoading(false);
       });
-  }, [supportsWebP]);
+  }, []);
 
   const getOptimalSrc = (src: string, fallbackOnError: boolean = true): string => {
     return getOptimalImageSrc(src, fallbackOnError);
