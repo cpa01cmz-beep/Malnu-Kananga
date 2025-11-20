@@ -8,7 +8,7 @@
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
-const PROJECT_NAME = 'ma-malnu-kananga';
+// const PROJECT_NAME = 'ma-malnu-kananga';
 const DB_NAME = 'malnu-kananga-auth';
 const VECTORIZE_NAME = 'malnu-kananga-docs';
 
