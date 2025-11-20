@@ -1,5 +1,20 @@
 // Provides 24/7 automated support for students
 
+export interface SupportRequest {
+  id: string;
+  studentId: string;
+  type: 'academic' | 'technical' | 'administrative' | 'personal';
+  category: string;
+  title: string;
+  description: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: 'pending' | 'in_progress' | 'resolved' | 'escalated';
+  createdAt: string;
+  updatedAt: string;
+  resolution?: string;
+  tags?: string[];
+}
+
 export interface SupportTicket {
   id: string;
   studentId: string;
@@ -19,39 +34,31 @@ export interface SupportTicket {
 export interface SupportResource {
   id: string;
   title: string;
-  description: string;
-  category: 'guide' | 'tutorial' | 'faq' | 'template' | 'tool';
-  type: 'text' | 'video' | 'interactive' | 'download';
+  content: string;
+  category: string;
+  type: 'guide' | 'video' | 'document' | 'tool';
   url?: string;
-  content?: string;
   tags: string[];
   difficulty: 'beginner' | 'intermediate' | 'advanced';
-  estimatedTime: number; // minutes
-  rating: number;
-  usageCount: number;
+  rating?: number;
+  usageCount?: number;
 }
 
 export interface StudentProgress {
   studentId: string;
   academicMetrics: {
     gpa: number;
+    gradeTrend: 'improving' | 'stable' | 'declining';
     attendanceRate: number;
     assignmentCompletion: number;
-    subjectPerformance: Record<string, number>;
   };
   engagementMetrics: {
-    portalLoginFrequency: number;
-    featureUsage: Record<string, number>;
-    supportRequestsCount: number;
-    lastActiveDate: string;
+    loginFrequency: number;
+    resourceAccess: number;
+    supportRequests: number;
+    participationScore: number;
   };
-  riskFactors: {
-    lowGrades: boolean;
-    poorAttendance: boolean;
-    lowEngagement: boolean;
-    frequentSupportRequests: boolean;
-  };
-  recommendations: string[];
+  riskLevel: 'low' | 'medium' | 'high';
   lastUpdated: string;
 }
 
@@ -70,7 +77,7 @@ export interface SupportAutomation {
 }
 
 class StudentSupportService {
-  private static TICKETS_KEY = 'malnu_support_tickets';
+  private static REQUESTS_KEY = 'malnu_support_requests';
   private static RESOURCES_KEY = 'malnu_support_resources';
   private static PROGRESS_KEY = 'malnu_student_progress';
   private static AUTOMATION_KEY = 'malnu_support_automation';
@@ -247,108 +254,121 @@ class StudentSupportService {
     localStorage.setItem(this.AUTOMATION_KEY, JSON.stringify(automationRules));
   }
 
-  // Create support ticket
-  static createSupportTicket(ticket: Omit<SupportTicket, 'id' | 'timestamp' | 'lastUpdated' | 'status'>): SupportTicket {
-    const tickets = this.getSupportTickets();
-    const newTicket: SupportTicket = {
-      ...ticket,
-      id: `ticket_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: new Date().toISOString(),
-      lastUpdated: new Date().toISOString(),
-      status: 'open'
+  // Create support request
+  static createSupportRequest(
+    studentId: string,
+    type: SupportRequest['type'],
+    category: string,
+    title: string,
+    description: string,
+    priority: SupportRequest['priority']
+  ): SupportRequest {
+    const requests = this.getSupportRequests();
+    const newRequest: SupportRequest = {
+      id: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      studentId,
+      type,
+      category,
+      title,
+      description,
+      priority,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      tags: []
     };
 
-    tickets.unshift(newTicket);
-    this.saveSupportTickets(tickets);
+    requests.unshift(newRequest);
+    this.saveSupportRequests(requests);
 
-    // Process ticket automatically
-    this.processTicketAutomatically(newTicket);
+    // Process request automatically
+    this.processRequestAutomatically(newRequest);
 
-    return newTicket;
+    return newRequest;
   }
 
-  // Get all support tickets
-  static getSupportTickets(): SupportTicket[] {
-    const tickets = localStorage.getItem(this.TICKETS_KEY);
-    return tickets ? JSON.parse(tickets) : [];
+  // Get all support requests
+  static getSupportRequests(): SupportRequest[] {
+    const requests = localStorage.getItem(this.REQUESTS_KEY);
+    return requests ? JSON.parse(requests) : [];
   }
 
-  // Save support tickets
-  private static saveSupportTickets(tickets: SupportTicket[]): void {
-    localStorage.setItem(this.TICKETS_KEY, JSON.stringify(tickets));
+  // Save support requests
+  private static saveSupportRequests(requests: SupportRequest[]): void {
+    localStorage.setItem(this.REQUESTS_KEY, JSON.stringify(requests));
   }
 
-  // Process ticket automatically
-  private static processTicketAutomatically(ticket: SupportTicket): void {
+  // Process request automatically
+  private static processRequestAutomatically(request: SupportRequest): void {
     const knowledgeBase = JSON.parse(localStorage.getItem(this.KNOWLEDGE_BASE_KEY) || '{}');
     
     // Try to find automated solution
     const matchingIssue = knowledgeBase.commonIssues?.find((issue: any) => 
       issue.keywords.some((keyword: string) => 
-        ticket.subject.toLowerCase().includes(keyword) || 
-        ticket.description.toLowerCase().includes(keyword)
+        request.title.toLowerCase().includes(keyword) || 
+        request.description.toLowerCase().includes(keyword)
       )
     );
 
     if (matchingIssue && matchingIssue.automatedResponse) {
-      // Update ticket with automated response
-      const tickets = this.getSupportTickets();
-      const ticketIndex = tickets.findIndex(t => t.id === ticket.id);
+      // Update request with automated response
+      const requests = this.getSupportRequests();
+      const requestIndex = requests.findIndex(r => r.id === request.id);
       
-      if (ticketIndex !== -1) {
-        tickets[ticketIndex].status = 'in_progress';
-        tickets[ticketIndex].lastUpdated = new Date().toISOString();
-        tickets[ticketIndex].resolution = matchingIssue.solution;
-        this.saveSupportTickets(tickets);
+      if (requestIndex !== -1) {
+        requests[requestIndex].status = 'in_progress';
+        requests[requestIndex].updatedAt = new Date().toISOString();
+        requests[requestIndex].resolution = matchingIssue.solution;
+        this.saveSupportRequests(requests);
 
         // Send automated response notification
-        this.sendAutomatedResponse(ticket, matchingIssue.solution);
+        this.sendAutomatedResponse(request, matchingIssue.solution);
       }
     }
 
     // Check if escalation is needed
-    if (matchingIssue && this.shouldEscalate(ticket, matchingIssue)) {
-      this.escalateTicket(ticket);
+    if (matchingIssue && this.shouldEscalate(request, matchingIssue)) {
+      this.escalateRequest(request);
     }
   }
 
-  // Check if ticket should be escalated
-  private static shouldEscalate(ticket: SupportTicket, issue: any): boolean {
-    const similarTickets = this.getSupportTickets().filter(t => 
-      t.category === ticket.category && 
-      t.studentId === ticket.studentId &&
-      t.timestamp > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // Last 7 days
+  // Check if request should be escalated
+  private static shouldEscalate(request: SupportRequest, issue: any): boolean {
+    const similarRequests = this.getSupportRequests().filter(r => 
+      r.type === request.type && 
+      r.studentId === request.studentId &&
+      r.createdAt > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // Last 7 days
     );
 
-    return similarTickets.length >= issue.escalationThreshold;
+    return similarRequests.length >= issue.escalationThreshold;
   }
 
-  // Escalate ticket to human support
-  private static escalateTicket(ticket: SupportTicket): void {
-    const tickets = this.getSupportTickets();
-    const ticketIndex = tickets.findIndex(t => t.id === ticket.id);
+  // Escalate request to human support
+  private static escalateRequest(request: SupportRequest): void {
+    const requests = this.getSupportRequests();
+    const requestIndex = requests.findIndex(r => r.id === request.id);
     
-    if (ticketIndex !== -1) {
-      tickets[ticketIndex].status = 'escalated';
-      tickets[ticketIndex].priority = 'high';
-      tickets[ticketIndex].lastUpdated = new Date().toISOString();
-      this.saveSupportTickets(tickets);
+    if (requestIndex !== -1) {
+      requests[requestIndex].status = 'escalated';
+      requests[requestIndex].priority = 'high';
+      requests[requestIndex].updatedAt = new Date().toISOString();
+      this.saveSupportRequests(requests);
 
       // Notify support team
-      this.notifySupportTeam(tickets[ticketIndex]);
+      this.notifySupportTeam(requests[requestIndex]);
     }
   }
 
   // Send automated response
-  private static sendAutomatedResponse(ticket: SupportTicket, solution: string): void {
+  private static sendAutomatedResponse(request: SupportRequest, solution: string): void {
     // This would integrate with the notification system
-    console.log(`Automated response for ticket ${ticket.id}: ${solution}`);
+    console.log(`Automated response for request ${request.id}: ${solution}`);
   }
 
   // Notify support team
-  private static notifySupportTeam(ticket: SupportTicket): void {
+  private static notifySupportTeam(request: SupportRequest): void {
     // This would send notification to human support staff
-    console.log(`Escalated ticket ${ticket.id} requires human intervention`);
+    console.log(`Escalated request ${request.id} requires human intervention`);
   }
 
   // Update student progress
@@ -358,23 +378,17 @@ class StudentSupportService {
       studentId,
       academicMetrics: {
         gpa: 0,
+        gradeTrend: 'stable' as const,
         attendanceRate: 0,
-        assignmentCompletion: 0,
-        subjectPerformance: {}
+        assignmentCompletion: 0
       },
       engagementMetrics: {
-        portalLoginFrequency: 0,
-        featureUsage: {},
-        supportRequestsCount: 0,
-        lastActiveDate: new Date().toISOString()
+        loginFrequency: 0,
+        resourceAccess: 0,
+        supportRequests: 0,
+        participationScore: 0
       },
-      riskFactors: {
-        lowGrades: false,
-        poorAttendance: false,
-        lowEngagement: false,
-        frequentSupportRequests: false
-      },
-      recommendations: [],
+      riskLevel: 'low' as const,
       lastUpdated: new Date().toISOString()
     };
 
@@ -384,11 +398,8 @@ class StudentSupportService {
       lastUpdated: new Date().toISOString()
     };
 
-    // Update risk factors
-    updatedProgress.riskFactors = this.assessRiskFactors(updatedProgress);
-
-    // Generate recommendations
-    updatedProgress.recommendations = this.generateRecommendations(updatedProgress);
+    // Update risk level
+    updatedProgress.riskLevel = this.assessRiskLevel(updatedProgress);
 
     allProgress[studentId] = updatedProgress;
     localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(allProgress));
@@ -409,41 +420,18 @@ class StudentSupportService {
     return allProgress[studentId] || null;
   }
 
-  // Assess risk factors
-  private static assessRiskFactors(progress: StudentProgress): StudentProgress['riskFactors'] {
-    return {
-      lowGrades: progress.academicMetrics.gpa < 70,
-      poorAttendance: progress.academicMetrics.attendanceRate < 80,
-      lowEngagement: progress.engagementMetrics.portalLoginFrequency < 3, // per week
-      frequentSupportRequests: progress.engagementMetrics.supportRequestsCount > 5 // per month
-    };
-  }
+  // Assess risk level
+  private static assessRiskLevel(progress: StudentProgress): StudentProgress['riskLevel'] {
+    let riskScore = 0;
 
-  // Generate recommendations
-  private static generateRecommendations(progress: StudentProgress): string[] {
-    const recommendations: string[] = [];
+    if (progress.academicMetrics.gpa < 70) riskScore += 2;
+    if (progress.academicMetrics.attendanceRate < 80) riskScore += 2;
+    if (progress.engagementMetrics.loginFrequency < 3) riskScore += 1;
+    if (progress.engagementMetrics.supportRequests > 5) riskScore += 1;
 
-    if (progress.riskFactors.lowGrades) {
-      recommendations.push('Pertimbangkan untuk mengikuti bimbingan belajar tambahan');
-      recommendations.push('Hubungi guru mata pelajaran untuk konsultasi');
-    }
-
-    if (progress.riskFactors.poorAttendance) {
-      recommendations.push('Pastikan jadwal kehadiran konsisten');
-      recommendations.push('Hubungi pihak sekolah jika ada kendala transportasi');
-    }
-
-    if (progress.riskFactors.lowEngagement) {
-      recommendations.push('Manfaatkan fitur portal secara maksimal');
-      recommendations.push('Ikuti kegiatan ekstrakurikuler yang tersedia');
-    }
-
-    if (progress.riskFactors.frequentSupportRequests) {
-      recommendations.push('Ikuti tutorial penggunaan portal yang tersedia');
-      recommendations.push('Hubungi Guru BK untuk bimbingan teknis');
-    }
-
-    return recommendations;
+    if (riskScore >= 4) return 'high';
+    if (riskScore >= 2) return 'medium';
+    return 'low';
   }
 
   // Check automation rules
@@ -471,12 +459,8 @@ class StudentSupportService {
         if (triggerConfig.metric === 'attendance') {
           return progress.academicMetrics.attendanceRate < triggerConfig.threshold;
         }
-        if (triggerConfig.metric === 'last_login') {
-          const daysSinceLogin = Math.floor(
-            (Date.now() - new Date(progress.engagementMetrics.lastActiveDate).getTime()) / 
-            (1000 * 60 * 60 * 24)
-          );
-          return daysSinceLogin > triggerConfig.threshold;
+        if (triggerConfig.metric === 'engagement') {
+          return progress.engagementMetrics.loginFrequency < triggerConfig.threshold;
         }
         break;
     }
@@ -493,14 +477,14 @@ class StudentSupportService {
           console.log(`Notification: ${action.config.message}`);
           break;
         case 'ticket_creation':
-          this.createSupportTicket({
-            studentId: progress.studentId,
-            category: action.config.category,
-            priority: action.config.priority,
-            subject: `Automated: ${rule.name}`,
-            description: `System detected: ${rule.description}`,
-            tags: ['automated', rule.id]
-          });
+          this.createSupportRequest(
+            progress.studentId,
+            action.config.category || 'academic',
+            'automated',
+            `Automated: ${rule.name}`,
+            `System detected: ${rule.description}`,
+            action.config.priority || 'medium'
+          );
           break;
         case 'escalation':
           // Escalate to appropriate staff
@@ -521,19 +505,26 @@ class StudentSupportService {
 
   // Initialize progress tracking
   private static initializeProgressTracking(): void {
-    // Track portal usage
-    if (typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', () => {
-        const studentId = 'current_student'; // This would come from auth
-        const currentProgress = this.getStudentProgress(studentId);
-        
-        if (currentProgress) {
-          currentProgress.engagementMetrics.lastActiveDate = new Date().toISOString();
-          currentProgress.engagementMetrics.portalLoginFrequency += 1;
-          this.updateStudentProgress(studentId, currentProgress);
-        }
-      });
-    }
+    // Initialize sample data for testing
+    const sampleProgress: StudentProgress = {
+      studentId: 'STU001',
+      academicMetrics: {
+        gpa: 3.2,
+        gradeTrend: 'stable',
+        attendanceRate: 85,
+        assignmentCompletion: 90
+      },
+      engagementMetrics: {
+        loginFrequency: 4,
+        resourceAccess: 12,
+        supportRequests: 2,
+        participationScore: 75
+      },
+      riskLevel: 'low',
+      lastUpdated: new Date().toISOString()
+    };
+
+    this.updateStudentProgress('STU001', sampleProgress);
   }
 
   // Start automated monitoring
@@ -554,18 +545,16 @@ class StudentSupportService {
     const allProgress = this.getAllStudentProgress();
     
     Object.values(allProgress).forEach(progress => {
-      const hasRiskFactors = Object.values(progress.riskFactors).some(risk => risk);
-      
-      if (hasRiskFactors) {
-        // Create intervention ticket
-        this.createSupportTicket({
-          studentId: progress.studentId,
-          category: 'academic',
-          priority: 'medium',
-          subject: 'At-Risk Student Intervention',
-          description: `Student identified as at-risk: ${progress.recommendations.join(', ')}`,
-          tags: ['at-risk', 'automated', 'intervention']
-        });
+      if (progress.riskLevel === 'high') {
+        // Create intervention request
+        this.createSupportRequest(
+          progress.studentId,
+          'academic',
+          'intervention',
+          'At-Risk Student Intervention',
+          `Student identified as at-risk with ${progress.riskLevel} risk level`,
+          'medium'
+        );
       }
     });
   }
@@ -576,16 +565,94 @@ class StudentSupportService {
     console.log('Updating engagement metrics...');
   }
 
+  // Get relevant resources
+  static getRelevantResources(searchTerm?: string): SupportResource[] {
+    const resources = this.getSupportResources();
+    
+    if (!searchTerm) return resources;
+
+    return resources.filter(resource =>
+      resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      resource.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  }
+
   // Get support resources
   static getSupportResources(category?: string): SupportResource[] {
     const resources = localStorage.getItem(this.RESOURCES_KEY);
-    let allResources: SupportResource[] = resources ? JSON.parse(resources) : [];
+    let allResources: SupportResource[] = resources ? JSON.parse(resources) : this.initializeSampleResources();
 
     if (category) {
       allResources = allResources.filter(r => r.category === category);
     }
 
-    return allResources.sort((a, b) => b.rating - a.rating);
+    return allResources.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  }
+
+  // Initialize sample resources
+  private static initializeSampleResources(): SupportResource[] {
+    const sampleResources: SupportResource[] = [
+      {
+        id: 'res_001',
+        title: 'Panduan Login Magic Link',
+        content: 'Cara menggunakan fitur Magic Link untuk login tanpa password ke portal siswa',
+        category: 'technical',
+        type: 'guide',
+        tags: ['login', 'magic-link', 'akses'],
+        difficulty: 'beginner',
+        rating: 4.5,
+        usageCount: 25
+      },
+      {
+        id: 'res_002',
+        title: 'Tutorial Melihat Nilai',
+        content: 'Langkah demi langkah cara melihat nilai semester dan mata pelajaran',
+        category: 'academic',
+        type: 'video',
+        url: 'https://example.com/nilai-tutorial',
+        tags: ['nilai', 'grade', 'tutorial'],
+        difficulty: 'beginner',
+        rating: 4.2,
+        usageCount: 18
+      },
+      {
+        id: 'res_003',
+        title: 'Tips Belajar Efektif',
+        content: 'Strategi dan teknik belajar yang efektif untuk meningkatkan pemahaman',
+        category: 'academic',
+        type: 'document',
+        tags: ['belajar', 'studi', 'efektif'],
+        difficulty: 'intermediate',
+        rating: 4.8,
+        usageCount: 32
+      },
+      {
+        id: 'res_004',
+        title: 'Panduan Penggunaan Portal',
+        content: 'Panduan lengkap penggunaan fitur-fitur portal siswa',
+        category: 'technical',
+        type: 'guide',
+        tags: ['portal', 'panduan', 'fitur'],
+        difficulty: 'beginner',
+        rating: 4.0,
+        usageCount: 45
+      },
+      {
+        id: 'res_005',
+        title: 'Cara Menghubungi Guru BK',
+        content: 'Prosedur dan kontak untuk menghubungi Guru Bimbingan Konseling',
+        category: 'administrative',
+        type: 'document',
+        tags: ['guru-bk', 'konseling', 'kontak'],
+        difficulty: 'beginner',
+        rating: 3.9,
+        usageCount: 12
+      }
+    ];
+
+    localStorage.setItem(this.RESOURCES_KEY, JSON.stringify(sampleResources));
+    return sampleResources;
   }
 
   // Add support resource
@@ -610,10 +677,10 @@ class StudentSupportService {
     const resourceIndex = resources.findIndex(r => r.id === resourceId);
     
     if (resourceIndex !== -1) {
-      resources[resourceIndex].usageCount += 1;
+      resources[resourceIndex].usageCount = (resources[resourceIndex].usageCount || 0) + 1;
       // Update average rating
-      const currentRating = resources[resourceIndex].rating;
-      const usageCount = resources[resourceIndex].usageCount;
+      const currentRating = resources[resourceIndex].rating || 0;
+      const usageCount = resources[resourceIndex].usageCount || 1;
       resources[resourceIndex].rating = ((currentRating * (usageCount - 1)) + rating) / usageCount;
       
       localStorage.setItem(this.RESOURCES_KEY, JSON.stringify(resources));
@@ -622,44 +689,42 @@ class StudentSupportService {
 
   // Get support analytics
   static getSupportAnalytics(): any {
-    const tickets = this.getSupportTickets();
+    const requests = this.getSupportRequests();
     const allProgress = this.getAllStudentProgress();
 
     return {
-      totalTickets: tickets.length,
-      openTickets: tickets.filter(t => t.status === 'open').length,
-      resolvedTickets: tickets.filter(t => t.status === 'resolved').length,
-      escalatedTickets: tickets.filter(t => t.status === 'escalated').length,
-      averageResolutionTime: this.calculateAverageResolutionTime(tickets),
-      categoryBreakdown: this.getCategoryBreakdown(tickets),
-      atRiskStudents: Object.values(allProgress).filter(p => 
-        Object.values(p.riskFactors).some(risk => risk)
-      ).length,
+      totalRequests: requests.length,
+      pendingRequests: requests.filter(r => r.status === 'pending').length,
+      resolvedRequests: requests.filter(r => r.status === 'resolved').length,
+      escalatedRequests: requests.filter(r => r.status === 'escalated').length,
+      averageResolutionTime: this.calculateAverageResolutionTime(requests),
+      categoryBreakdown: this.getCategoryBreakdown(requests),
+      atRiskStudents: Object.values(allProgress).filter(p => p.riskLevel === 'high').length,
       totalStudents: Object.keys(allProgress).length
     };
   }
 
   // Calculate average resolution time
-  private static calculateAverageResolutionTime(tickets: SupportTicket[]): number {
-    const resolvedTickets = tickets.filter(t => t.status === 'resolved');
+  private static calculateAverageResolutionTime(requests: SupportRequest[]): number {
+    const resolvedRequests = requests.filter(r => r.status === 'resolved');
     
-    if (resolvedTickets.length === 0) return 0;
+    if (resolvedRequests.length === 0) return 0;
 
-    const totalTime = resolvedTickets.reduce((sum, ticket) => {
-      const created = new Date(ticket.timestamp).getTime();
-      const resolved = new Date(ticket.lastUpdated).getTime();
+    const totalTime = resolvedRequests.reduce((sum, request) => {
+      const created = new Date(request.createdAt).getTime();
+      const resolved = new Date(request.updatedAt).getTime();
       return sum + (resolved - created);
     }, 0);
 
-    return totalTime / resolvedTickets.length / (1000 * 60 * 60); // hours
+    return totalTime / resolvedRequests.length / (1000 * 60 * 60); // hours
   }
 
   // Get category breakdown
-  private static getCategoryBreakdown(tickets: SupportTicket[]): Record<string, number> {
+  private static getCategoryBreakdown(requests: SupportRequest[]): Record<string, number> {
     const breakdown: Record<string, number> = {};
     
-    tickets.forEach(ticket => {
-      breakdown[ticket.category] = (breakdown[ticket.category] || 0) + 1;
+    requests.forEach(request => {
+      breakdown[request.type] = (breakdown[request.type] || 0) + 1;
     });
 
     return breakdown;
@@ -668,7 +733,7 @@ class StudentSupportService {
   // Generate support report
   static generateSupportReport(timeFrame: 'daily' | 'weekly' | 'monthly'): any {
     const analytics = this.getSupportAnalytics();
-    const tickets = this.getSupportTickets();
+    const requests = this.getSupportRequests();
     const resources = this.getSupportResources();
 
     const now = new Date();
@@ -686,32 +751,32 @@ class StudentSupportService {
         break;
     }
 
-    const periodTickets = tickets.filter(t => 
-      new Date(t.timestamp) >= startDate
+    const periodRequests = requests.filter(r => 
+      new Date(r.createdAt) >= startDate
     );
 
     return {
       timeFrame,
       period: startDate.toISOString().split('T')[0] + ' to ' + now.toISOString().split('T')[0],
-      totalTickets: periodTickets.length,
-      resolvedTickets: periodTickets.filter(t => t.status === 'resolved').length,
-      averageResolutionTime: this.calculateAverageResolutionTime(periodTickets),
-      topIssues: this.getTopIssues(periodTickets),
+      totalRequests: periodRequests.length,
+      resolvedRequests: periodRequests.filter(r => r.status === 'resolved').length,
+      averageResolutionTime: this.calculateAverageResolutionTime(periodRequests),
+      topIssues: this.getTopIssues(periodRequests),
       studentSatisfaction: this.calculateStudentSatisfaction(resources),
       recommendations: this.generateSystemRecommendations(analytics)
     };
   }
 
   // Get top issues
-  private static getTopIssues(tickets: SupportTicket[]): Array<{subject: string, count: number}> {
+  private static getTopIssues(requests: SupportRequest[]): Array<{title: string, count: number}> {
     const issueCounts: Record<string, number> = {};
     
-    tickets.forEach(ticket => {
-      issueCounts[ticket.subject] = (issueCounts[ticket.subject] || 0) + 1;
+    requests.forEach(request => {
+      issueCounts[request.title] = (issueCounts[request.title] || 0) + 1;
     });
 
     return Object.entries(issueCounts)
-      .map(([subject, count]) => ({ subject, count }))
+      .map(([title, count]) => ({ title, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
   }
@@ -728,12 +793,12 @@ class StudentSupportService {
   private static generateSystemRecommendations(analytics: any): string[] {
     const recommendations: string[] = [];
 
-    if (analytics.escalatedTickets > analytics.totalTickets * 0.2) {
+    if (analytics.escalatedRequests > analytics.totalRequests * 0.2) {
       recommendations.push('Pertimbangkan untuk menambah staf support');
     }
 
     if (analytics.averageResolutionTime > 24) {
-      recommendations.push('Optimalkan proses resolusi ticket');
+      recommendations.push('Optimalkan proses resolusi permintaan');
     }
 
     if (analytics.atRiskStudents > analytics.totalStudents * 0.3) {
