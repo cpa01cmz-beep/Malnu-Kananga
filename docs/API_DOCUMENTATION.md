@@ -11,7 +11,7 @@ MA Malnu Kananga API provides comprehensive endpoints for authentication, AI cha
 - **API Version**: v1
 - **Content-Type**: `application/json`
 - **Authentication**: JWT Token (Magic Link System)
-- **Rate Limiting**: 15 requests per 15 minutes per IP
+- **Rate Limiting**: 5 requests per 15 minutes per IP (authentication), 20 requests per minute (chat)
 - **CORS**: Enabled for all origins in development
 - **Timeout**: 10 seconds per request
 - **Retry Policy**: 3 attempts with exponential backoff
@@ -626,6 +626,7 @@ X-RateLimit-Reset: 1640995200
 - **Chat API**: 20 requests per minute
 - **Data APIs**: 100 requests per minute
 - **Content APIs**: 50 requests per minute
+- **Signature APIs**: 10 requests per minute
 
 ## 🧪 Testing
 
@@ -679,6 +680,43 @@ response = requests.post(
   'https://malnu-api.sulhi-cmz.workers.dev/api/chat',
   json={'message': 'Apa saja program unggulan sekolah?'}
 )
+```
+
+## 🔐 Signature API
+
+### Generate HMAC Signature
+```http
+POST /generate-signature
+Content-Type: application/json
+
+{
+  "data": "string_to_sign"
+}
+```
+
+**Response:**
+```json
+{
+  "signature": "hmac_signature_hash"
+}
+```
+
+### Verify HMAC Signature
+```http
+POST /verify-signature
+Content-Type: application/json
+
+{
+  "data": "string_to_verify",
+  "signature": "hmac_signature_hash"
+}
+```
+
+**Response:**
+```json
+{
+  "isValid": true
+}
 ```
 
 ## 🔄 Webhooks

@@ -26,6 +26,18 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
 
 // Check service worker status
 navigator.serviceWorker.getRegistrations().then(console.log);
+
+// Check rate limiting status
+fetch('https://malnu-api.sulhi-cmz.workers.dev/health')
+  .then(r => r.json())
+  .then(data => console.log('Rate Limit:', data.rateLimit));
+
+// Test signature generation
+fetch('https://malnu-api.sulhi-cmz.workers.dev/generate-signature', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ data: 'test' })
+}).then(r => r.json()).then(console.log);
 ```
 
 ---
@@ -48,6 +60,12 @@ navigator.serviceWorker.getRegistrations().then(console.log);
 
 3. **Email Server Delay**
    - ✅ **Solution**: Wait 2-3 minutes, then request again
+   - ⚠️ **Note**: Magic links expire after 15 minutes
+
+4. **Rate Limiting**
+   - ✅ **Solution**: Wait 15 minutes before requesting again
+   - ✅ **Prevention**: Limit login attempts to avoid rate limit
+   - 🔍 **Check**: Browser console for "429 Too Many Requests" errors
    - ✅ **Prevention**: Monitor email delivery metrics
 
 4. **Invalid Email Domain**
@@ -130,6 +148,15 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
    - Check API quota usage
 
 4. **Vector Database Status**
+   ```bash
+   # Check if vector database is seeded
+   curl https://malnu-api.sulhi-cmz.workers.dev/health
+   ```
+
+5. **Rate Limiting**
+   - ✅ **Solution**: Wait 1 minute between chat requests
+   - ✅ **Check**: Browser network tab for 429 status codes
+   - 🔍 **Monitor**: API response headers for rate limit info
    ```bash
    # Check if vector database is seeded
    curl "https://malnu-api.workers.dev/health"
@@ -220,6 +247,11 @@ await vectorize.upsert([newDoc]);
      console.log('Authenticated:', isAuth);
    });
    ```
+
+3. **Rate Limiting**
+   - ✅ **Check**: Network tab for 429 status codes
+   - ✅ **Solution**: Wait before making new requests
+   - 🔍 **Monitor**: X-RateLimit headers in API responses
 
 3. **Database Connection**
    ```bash
