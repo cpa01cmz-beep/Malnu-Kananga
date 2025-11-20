@@ -45,6 +45,8 @@
     "dist/",
     "node_modules/",
     "build/",
-    "*.config.*"
+    "*.config.*",
+    "implement/",
+    "coverage/"
   ]
 }
