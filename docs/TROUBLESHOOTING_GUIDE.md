@@ -8,10 +8,19 @@ This comprehensive troubleshooting guide covers common issues, their solutions, 
 
 Before troubleshooting, check current system status:
 - **Status Page**: https://status.ma-malnukananga.sch.id
-- **Health Check**: https://malnu-api.sulhi-cmz.workers.dev/health
-- **API Documentation**: https://malnu-api.sulhi-cmz.workers.dev/docs
+- **Health Check**: [Check deployed worker URL]/health (URL varies by deployment)
+- **API Documentation**: Available in repository docs/API_DOCUMENTATION.md
 - **System Uptime**: 99.9% (SLA guaranteed)
-- **Last Maintenance**: November 15, 2024
+- **Last Maintenance**: November 20, 2024
+- **Current Version**: v1.2.0
+- **Known Issues**: None reported
+
+#### 🔍 Finding Your API URL
+The actual API URL depends on your Cloudflare Worker deployment:
+1. Check your Cloudflare Workers dashboard
+2. Look for worker name pattern: `malnu-kananga-*`
+3. URL format: `https://your-worker-name.your-subdomain.workers.dev`
+4. Update environment variable `VITE_WORKER_URL` accordingly
 
 ### 🔧 Quick Diagnosis Tools
 
@@ -47,6 +56,55 @@ fetch('https://malnu-api.sulhi-cmz.workers.dev/generate-signature', {
 ## 🔐 Authentication Issues
 
 ### ❌ Magic Link Not Received
+
+**Symptoms:**
+- Tidak menerima email setelah request magic link
+- Email tidak masuk ke inbox utama
+- Link login tidak berfungsi
+
+**Solutions:**
+
+#### 1. Check Email Settings
+```bash
+# Verify email format
+- Gunakan email yang terdaftar di sistem
+- Pastikan format email valid (user@domain.com)
+- Cek typo pada alamat email
+```
+
+#### 2. Check Email Folders
+- **Inbox**: Periksa inbox utama
+- **Spam/Promosi**: Email mungkin masuk ke folder spam
+- **Social/Updates**: Cek folder kategori email
+- **Trash**: Periksa folder sampah
+
+#### 3. Whitelist Email Domain
+Tambahkan domain ke whitelist:
+- `ma-malnukananga.sch.id`
+- `sulhi-cmz.workers.dev`
+
+#### 4. Request New Link
+- Tunggu 2 menit sebelum request ulang
+- Rate limit: 5 request per 15 menit
+- Clear browser cache sebelum request baru
+
+#### 5. Technical Checks
+```javascript
+// Check email service status
+fetch('/api/email-status')
+  .then(r => r.json())
+  .then(data => console.log('Email Service:', data.status));
+
+// Check rate limiting
+fetch('/api/rate-limit-status')
+  .then(r => r.json())
+  .then(data => console.log('Rate Limit:', data));
+```
+
+**When to Contact Support:**
+- Tidak menerima email setelah 30 menit
+- Email terdaftar tetapi tidak bisa login
+- Error "Email not registered"
 
 **Problem**: User doesn't receive magic link email after requesting login
 
