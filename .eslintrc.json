@@ -53,14 +53,6 @@
     "src/__mocks__/",
     "src/__tests__/",
     "worker.js",
-    "worker-extended.js",
-    "docManager.js",
-    "sessionManager.js",
-    "test-docs.js",
-    "setup-cloudflare-resources.js",
-    "cli.js"
-  ],
-  "rules": {
-    "no-undef": "warn"
-  }
+    "worker-extended.js"
+  ]
 }
