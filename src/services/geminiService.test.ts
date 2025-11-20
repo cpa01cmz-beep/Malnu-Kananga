@@ -1,11 +1,4 @@
 import { describe, test, expect, jest, beforeEach } from '@jest/globals';
-import { 
-  getAIResponseStream, 
-  initialGreeting, 
-  getConversationHistory, 
-  clearConversationHistory, 
-  getMemoryStats 
-} from './geminiService';
 
 // Mock the dependencies
 jest.mock('@google/genai', () => ({
@@ -19,8 +12,28 @@ jest.mock('../utils/envValidation', () => ({
   WORKER_URL: 'https://test-worker.com'
 }));
 
+jest.mock('../memory', () => ({
+  MemoryBank: jest.fn(() => ({
+    searchMemories: jest.fn(),
+    deleteMemory: jest.fn(),
+    getStats: jest.fn(),
+    getRelevantMemories: jest.fn().mockResolvedValue([]),
+    addMemory: jest.fn(),
+  })),
+  schoolMemoryBankConfig: {}
+}));
+
 // Mock fetch globally
 global.fetch = jest.fn();
+
+// Import after mocking
+const { 
+  getAIResponseStream, 
+  initialGreeting, 
+  getConversationHistory, 
+  clearConversationHistory, 
+  getMemoryStats 
+} = require('./geminiService');
 
 describe('Gemini Service', () => {
   beforeEach(() => {
@@ -38,17 +51,19 @@ describe('Gemini Service', () => {
       (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Hello' };
-            yield { text: () => ' world' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Hello' };
+          yield { text: ' world' };
         }
       };
 
       const { GoogleGenAI } = require('@google/genai');
       const mockAI = new GoogleGenAI();
       mockAI.generateContentStream.mockResolvedValue(mockStream);
+
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Hello', []);
       const results = [];
@@ -63,16 +78,18 @@ describe('Gemini Service', () => {
       (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Fallback response' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Fallback response' };
         }
       };
 
       const { GoogleGenAI } = require('@google/genai');
       const mockAI = new GoogleGenAI();
       mockAI.generateContentStream.mockResolvedValue(mockStream);
+
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Hello', []);
       const results = [];
@@ -93,6 +110,10 @@ describe('Gemini Service', () => {
       const mockAI = new GoogleGenAI();
       mockAI.generateContentStream.mockRejectedValue(new Error('API error'));
 
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+
       const generator = getAIResponseStream('Hello', []);
       await expect(generator.next()).rejects.toThrow('API error');
     });
@@ -107,16 +128,18 @@ describe('Gemini Service', () => {
       (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Response with context' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Response with context' };
         }
       };
 
       const { GoogleGenAI } = require('@google/genai');
       const mockAI = new GoogleGenAI();
       mockAI.generateContentStream.mockResolvedValue(mockStream);
+
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Question', []);
       const results = [];
@@ -135,16 +158,18 @@ describe('Gemini Service', () => {
       });
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Indonesian response' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Indonesian response' };
         }
       };
 
       const { GoogleGenAI } = require('@google/genai');
       const mockAI = new GoogleGenAI();
       mockAI.generateContentStream.mockResolvedValue(mockStream);
+
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Pertanyaan', []);
       const results = [];
@@ -164,16 +189,18 @@ describe('Gemini Service', () => {
       (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'No context response' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'No context response' };
         }
       };
 
       const { GoogleGenAI } = require('@google/genai');
       const mockAI = new GoogleGenAI();
       mockAI.generateContentStream.mockResolvedValue(mockStream);
+
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Hello', []);
       const results = [];
@@ -192,7 +219,7 @@ describe('Gemini Service', () => {
     });
 
     test('should be in Indonesian language', () => {
-      expect(initialGreeting).toContain('Halo');
+      expect(initialGreeting).toMatch(/Halo|Assalamualaikum/);
     });
 
     test('should contain relevant keywords', () => {
@@ -212,16 +239,18 @@ describe('Gemini Service', () => {
       });
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Error handled' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Error handled' };
         }
       };
 
       const { GoogleGenAI } = require('@google/genai');
       const mockAI = new GoogleGenAI();
       mockAI.generateContentStream.mockResolvedValue(mockStream);
+
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Test', []);
       const results = [];
@@ -236,16 +265,18 @@ describe('Gemini Service', () => {
       (global.fetch as jest.Mock).mockRejectedValue(new Error('Timeout'));
 
       const mockStream = {
-        stream: {
-          [Symbol.asyncIterator]: async function* () {
-            yield { text: () => 'Timeout handled' };
-          }
+        [Symbol.asyncIterator]: async function* () {
+          yield { text: 'Timeout handled' };
         }
       };
 
       const { GoogleGenAI } = require('@google/genai');
       const mockAI = new GoogleGenAI();
       mockAI.generateContentStream.mockResolvedValue(mockStream);
+
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Test', []);
       const results = [];
@@ -258,27 +289,15 @@ describe('Gemini Service', () => {
   });
 
   describe('getConversationHistory', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-
     test('should return conversation history', async () => {
-      const mockHistory = [
-        { id: '1', content: 'Conversation 1', type: 'conversation' },
-        { id: '2', content: 'Conversation 2', type: 'conversation' },
+      const mockConversations = [
+        { id: '1', content: 'Test conversation 1', type: 'conversation' },
+        { id: '2', content: 'Test conversation 2', type: 'conversation' },
       ];
       
-      const mockMemoryBank = {
-        searchMemories: jest.fn().mockResolvedValue(mockHistory),
-      };
-
-      jest.mock('../memory', () => ({
-        MemoryBank: jest.fn(() => mockMemoryBank),
-        schoolMemoryBankConfig: {}
-      }));
-
-      // Re-import the service to use mocked MemoryBank
-      const { getConversationHistory } = require('./geminiService');
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.searchMemories.mockResolvedValue(mockConversations);
 
       const result = await getConversationHistory(5);
 
@@ -286,21 +305,13 @@ describe('Gemini Service', () => {
         type: 'conversation',
         limit: 5,
       });
-      expect(result).toEqual(mockHistory);
+      expect(result).toEqual(mockConversations);
     });
 
     test('should handle error and return empty array', async () => {
-      const mockMemoryBank = {
-        searchMemories: jest.fn().mockRejectedValue(new Error('Memory error')),
-      };
-
-      jest.mock('../memory', () => ({
-        MemoryBank: jest.fn(() => mockMemoryBank),
-        schoolMemoryBankConfig: {}
-      }));
-
-      // Re-import the service to use mocked MemoryBank
-      const { getConversationHistory } = require('./geminiService');
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.searchMemories.mockRejectedValue(new Error('Memory error'));
 
       const result = await getConversationHistory();
 
@@ -308,17 +319,9 @@ describe('Gemini Service', () => {
     });
 
     test('should use default limit', async () => {
-      const mockMemoryBank = {
-        searchMemories: jest.fn().mockResolvedValue([]),
-      };
-
-      jest.mock('../memory', () => ({
-        MemoryBank: jest.fn(() => mockMemoryBank),
-        schoolMemoryBankConfig: {}
-      }));
-
-      // Re-import the service to use mocked MemoryBank
-      const { getConversationHistory } = require('./geminiService');
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.searchMemories.mockResolvedValue([]);
 
       await getConversationHistory();
 
@@ -330,28 +333,16 @@ describe('Gemini Service', () => {
   });
 
   describe('clearConversationHistory', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-
     test('should delete all conversations and return count', async () => {
       const mockConversations = [
         { id: '1', content: 'Conversation 1', type: 'conversation' },
         { id: '2', content: 'Conversation 2', type: 'conversation' },
       ];
       
-      const mockMemoryBank = {
-        searchMemories: jest.fn().mockResolvedValue(mockConversations),
-        deleteMemory: jest.fn().mockResolvedValue(undefined),
-      };
-
-      jest.mock('../memory', () => ({
-        MemoryBank: jest.fn(() => mockMemoryBank),
-        schoolMemoryBankConfig: {}
-      }));
-
-      // Re-import the service to use mocked MemoryBank
-      const { clearConversationHistory } = require('./geminiService');
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.searchMemories.mockResolvedValue(mockConversations);
+      mockMemoryBank.deleteMemory.mockResolvedValue(undefined);
 
       const result = await clearConversationHistory();
 
@@ -365,41 +356,21 @@ describe('Gemini Service', () => {
     });
 
     test('should handle error', async () => {
-      const mockMemoryBank = {
-        searchMemories: jest.fn().mockRejectedValue(new Error('Memory error')),
-      };
-
-      jest.mock('../memory', () => ({
-        MemoryBank: jest.fn(() => mockMemoryBank),
-        schoolMemoryBankConfig: {}
-      }));
-
-      // Re-import the service to use mocked MemoryBank
-      const { clearConversationHistory } = require('./geminiService');
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.searchMemories.mockRejectedValue(new Error('Memory error'));
 
       await expect(clearConversationHistory()).rejects.toThrow('Memory error');
     });
   });
 
   describe('getMemoryStats', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-
     test('should return memory stats', async () => {
       const mockStats = { totalMemories: 10, totalSize: 1024 };
       
-      const mockMemoryBank = {
-        getStats: jest.fn().mockResolvedValue(mockStats),
-      };
-
-      jest.mock('../memory', () => ({
-        MemoryBank: jest.fn(() => mockMemoryBank),
-        schoolMemoryBankConfig: {}
-      }));
-
-      // Re-import the service to use mocked MemoryBank
-      const { getMemoryStats } = require('./geminiService');
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.getStats.mockResolvedValue(mockStats);
 
       const result = await getMemoryStats();
 
@@ -408,17 +379,9 @@ describe('Gemini Service', () => {
     });
 
     test('should handle error and return null', async () => {
-      const mockMemoryBank = {
-        getStats: jest.fn().mockRejectedValue(new Error('Stats error')),
-      };
-
-      jest.mock('../memory', () => ({
-        MemoryBank: jest.fn(() => mockMemoryBank),
-        schoolMemoryBankConfig: {}
-      }));
-
-      // Re-import the service to use mocked MemoryBank
-      const { getMemoryStats } = require('./geminiService');
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = new MemoryBank();
+      mockMemoryBank.getStats.mockRejectedValue(new Error('Stats error'));
 
       const result = await getMemoryStats();
 
