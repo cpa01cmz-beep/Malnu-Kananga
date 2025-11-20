@@ -1,6 +1,7 @@
 // Service Worker untuk MA Malnu Kananga PWA
 // Mengimplementasikan caching strategies untuk offline functionality
 
+/* global self, console, caches */
 const CACHE_NAME = 'ma-malnu-kananga-v1.0.0';
 const RUNTIME_CACHE = 'ma-malnu-runtime-v1.0.0';
 
