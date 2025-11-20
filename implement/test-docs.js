@@ -6,6 +6,8 @@
 
 import DocumentationManager from './docManager.js';
 
+/* global console */
+
 async function testDocManager() {
   console.log('Testing Documentation Manager...');
   
