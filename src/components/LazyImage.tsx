@@ -26,7 +26,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
   onError,
   priority = false
 }) => {
-  const { getOptimalSrc, supportsWebP } = useWebP();
+  const { getOptimalSrc } = useWebP();
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(priority);
   const [hasError, setHasError] = useState(false);
@@ -113,7 +113,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
       {/* Main image */}
       <img
         ref={imgRef}
-        src={getOptimalSrc(imgSrc, !hasError)}
+        src={imgSrc ? getOptimalSrc(imgSrc) : ''}
         alt={alt}
         width={width}
         height={height}

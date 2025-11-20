@@ -40,6 +40,7 @@ async function showStatus() {
     globalConsole.log('Completed Steps:', state.progress.completedSteps.length, '/', state.progress.totalSteps);
     globalConsole.log('Project:', state.projectContext.name);
   } catch (error) {
+     
     console.error('Error reading session state:', error.message);
   }
 }

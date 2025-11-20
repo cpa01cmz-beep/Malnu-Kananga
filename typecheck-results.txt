@@ -1,0 +1,665 @@
+src/App.tsx(6,1): error TS6133: 'MetaTags' is declared but its value is never read.
+src/App.tsx(52,14): error TS2801: This condition will always return true since this 'Promise<boolean>' is always defined.
+src/App.tsx(81,19): error TS2322: Type 'Promise<boolean>' is not assignable to type 'boolean'.
+src/App.tsx(87,25): error TS2801: This condition will always return true since this 'Promise<boolean>' is always defined.
+src/App.tsx(96,19): error TS2322: Type 'Promise<boolean>' is not assignable to type 'boolean'.
+src/App.tsx(119,19): error TS2322: Type '(user: any) => void' is not assignable to type '() => void'.
+  Target signature provides too few arguments. Expected 1 or more, but got 0.
+src/App.tsx(119,36): error TS7006: Parameter 'user' implicitly has an 'any' type.
+src/App.tsx(120,40): error TS2554: Expected 0 arguments, but got 1.
+src/__mocks__/authService.ts(2,1): error TS6133: 'WORKER_URL' is declared but its value is never read.
+src/__mocks__/authService.ts(164,39): error TS6133: 'token' is declared but its value is never read.
+src/__mocks__/authService.ts(276,33): error TS6133: 'email' is declared but its value is never read.
+src/__mocks__/authService.ts(282,31): error TS2322: Type 'User | null' is not assignable to type 'User | undefined'.
+  Type 'null' is not assignable to type 'User | undefined'.
+src/__tests__/sentryIntegration.test.tsx(2,26): error TS6133: 'fireEvent' is declared but its value is never read.
+src/components/AssignmentSubmission.test.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/AssignmentSubmission.test.tsx(47,72): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(48,60): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(49,42): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(50,60): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(62,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(63,42): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(64,49): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(65,60): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(66,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(67,39): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(79,60): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(80,45): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(81,69): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(95,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(96,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(97,64): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(123,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(150,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(181,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(201,29): error TS2339: Property 'toHaveValue' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(216,28): error TS2339: Property 'toBeDisabled' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(241,32): error TS2339: Property 'toBeDisabled' does not exist on type 'JestMatchers<void, HTMLElement>'.
+src/components/AssignmentSubmission.test.tsx(257,32): error TS2339: Property 'toBeDisabled' does not exist on type 'JestMatchers<void, HTMLElement>'.
+src/components/AssignmentSubmission.test.tsx(306,51): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(307,28): error TS2339: Property 'toBeDisabled' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(343,38): error TS2345: Argument of type 'Error' is not assignable to parameter of type 'never'.
+src/components/AssignmentSubmission.test.tsx(382,72): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.test.tsx(383,62): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/AssignmentSubmission.tsx(2,37): error TS6133: 'parentChildren' is declared but its value is never read.
+src/components/AttendanceTab.tsx(2,28): error TS2724: '"../data/studentData"' has no exported member named 'AttendanceStats'. Did you mean 'getAttendanceStats'?
+src/components/ChatWindow.test.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/ChatWindow.test.tsx(2,26): error TS6133: 'fireEvent' is declared but its value is never read.
+src/components/ChatWindow.test.tsx(5,1): error TS6133: 'Sender' is declared but its value is never read.
+src/components/ChatWindow.test.tsx(31,3): error TS2322: Type 'typeof IntersectionObserver' is not assignable to type '{ new (callback: IntersectionObserverCallback, options?: IntersectionObserverInit | undefined): IntersectionObserver; prototype: IntersectionObserver; }'.
+  Types of property 'prototype' are incompatible.
+    Type 'IntersectionObserver' is missing the following properties from type 'IntersectionObserver': root, rootMargin, thresholds, takeRecords
+src/components/ChatWindow.tsx(17,11): error TS2339: Property 'elementRef' does not exist on type 'RefObject<HTMLElement | null>'.
+src/components/ErrorBoundary.test.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/ErrorBoundary.tsx(2,34): error TS6133: 'logErrorBoundary' is declared but its value is never read.
+src/components/ErrorBoundary.tsx(32,49): error TS2345: Argument of type 'ErrorInfo' is not assignable to parameter of type '{ componentStack: string; }'.
+  Types of property 'componentStack' are incompatible.
+    Type 'string | null | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/components/ErrorBoundary.tsx(44,33): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/components/Header.test.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/Header.test.tsx(2,37): error TS6133: 'waitFor' is declared but its value is never read.
+src/components/Header.tsx(5,1): error TS6133: 'AuthButtons' is declared but its value is never read.
+src/components/Header.tsx(6,1): error TS6133: 'MobileMenuButton' is declared but its value is never read.
+src/components/Header.tsx(25,11): error TS6133: 'handleTouchFeedback' is declared but its value is never read.
+src/components/HeroSection.tsx(7,16): error TS2339: Property 'announceNavigation' does not exist on type 'Window & typeof globalThis'.
+src/components/HeroSection.tsx(8,14): error TS2339: Property 'announceNavigation' does not exist on type 'Window & typeof globalThis'.
+src/components/HeroSection.tsx(14,16): error TS2339: Property 'announceNavigation' does not exist on type 'Window & typeof globalThis'.
+src/components/HeroSection.tsx(15,14): error TS2339: Property 'announceNavigation' does not exist on type 'Window & typeof globalThis'.
+src/components/LazyImage.tsx(29,26): error TS6133: 'supportsWebP' is declared but its value is never read.
+src/components/LazyImage.tsx(116,28): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/MobileMenu.tsx(24,11): error TS2339: Property 'elementRef' does not exist on type 'RefObject<HTMLElement | null>'.
+src/components/ModalsContainer.tsx(1,17): error TS6133: 'Suspense' is declared but its value is never read.
+src/components/NotificationBell.tsx(8,60): error TS6133: 'onNotificationClick' is declared but its value is never read.
+src/components/OfflineIndicator.tsx(12,10): error TS6133: 'isOnline' is declared but its value is never read.
+src/components/OverviewTab.tsx(2,40): error TS2724: '"../data/studentData"' has no exported member named 'AttendanceStats'. Did you mean 'getAttendanceStats'?
+src/components/PPDBSection.tsx(6,16): error TS2339: Property 'announceNavigation' does not exist on type 'Window & typeof globalThis'.
+src/components/PPDBSection.tsx(7,14): error TS2339: Property 'announceNavigation' does not exist on type 'Window & typeof globalThis'.
+src/components/ParentDashboard.test.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/ParentDashboard.test.tsx(2,37): error TS6133: 'waitFor' is declared but its value is never read.
+src/components/ParentDashboard.test.tsx(81,44): error TS18046: 'messages' is of type 'unknown'.
+src/components/ParentDashboard.test.tsx(81,60): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/components/ParentDashboard.test.tsx(82,51): error TS18046: 'assignments' is of type 'unknown'.
+src/components/ParentDashboard.test.tsx(82,70): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/components/ParentDashboard.test.tsx(83,52): error TS18046: 'assignments' is of type 'unknown'.
+src/components/ParentDashboard.test.tsx(83,71): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/components/ParentDashboard.test.tsx(89,12): error TS18046: 'assignments' is of type 'unknown'.
+src/components/ParentDashboard.test.tsx(90,16): error TS18046: 'assignments' is of type 'unknown'.
+src/components/ParentDashboard.test.tsx(90,35): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/components/ParentDashboard.test.tsx(91,14): error TS18046: 'assignments' is of type 'unknown'.
+src/components/ParentDashboard.test.tsx(91,33): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/components/ParentDashboard.test.tsx(92,14): error TS18046: 'assignments' is of type 'unknown'.
+src/components/ParentDashboard.test.tsx(92,33): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/components/ParentDashboard.test.tsx(108,52): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(109,70): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(115,47): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(116,42): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(117,43): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(118,47): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(119,43): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(125,54): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(126,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(127,49): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(134,48): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(138,71): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(139,49): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(148,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(155,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(156,60): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(163,56): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(164,71): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(171,52): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(172,64): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(188,41): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(195,47): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(205,39): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(206,39): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(207,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(209,41): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(217,60): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(218,69): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(219,86): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.test.tsx(234,52): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Matchers<void, HTMLElement> & SnapshotMatchers<void, HTMLElement> & Inverse<JestMatchers<void, HTMLElement>> & PromiseMatchers<...>'.
+src/components/ParentDashboard.tsx(11,3): error TS6133: 'getAssignmentStats' is declared but its value is never read.
+src/components/ParentDashboard.tsx(12,8): error TS6133: 'Assignment' is declared but its value is never read.
+src/components/ParentDashboard.tsx(13,8): error TS6133: 'Message' is declared but its value is never read.
+src/components/ParentDashboard.tsx(14,8): error TS6133: 'AcademicReport' is declared but its value is never read.
+src/components/PwaInstallPrompt.tsx(13,10): error TS6133: 'isAndroid' is declared but its value is never read.
+src/components/StudentDashboard.tsx(11,8): error TS6133: 'Announcement' is declared but its value is never read.
+src/components/StudentDashboard.tsx(75,21): error TS2551: Property 'subject' does not exist on type 'Grade'. Did you mean 'subjectId'?
+src/components/StudentDashboard.tsx(75,47): error TS2339: Property 'score' does not exist on type 'Grade'.
+src/components/StudentDashboard.tsx(162,9): error TS2322: Type 'Dispatch<SetStateAction<"progress" | "schedule" | "attendance" | "grades" | "announcements" | "overview" | "support">>' is not assignable to type '(tabId: string) => void'.
+  Types of parameters 'value' and 'tabId' are incompatible.
+    Type 'string' is not assignable to type 'SetStateAction<"progress" | "schedule" | "attendance" | "grades" | "announcements" | "overview" | "support">'.
+src/components/StudentDashboardApi.tsx(6,8): error TS6133: 'Student' is declared but its value is never read.
+src/components/StudentDashboardApi.tsx(10,8): error TS6133: 'Announcement' is declared but its value is never read.
+src/components/StudentDashboardApi.tsx(13,10): error TS6133: 'NotificationService' is declared but its value is never read.
+src/components/StudentDashboardApi.tsx(15,3): error TS2305: Module '"../hooks/useApi"' has no exported member 'useStudentProfile'.
+src/components/StudentDashboardApi.tsx(37,12): error TS6133: 'profileError' is declared but its value is never read.
+src/components/StudentDashboardApi.tsx(38,16): error TS6133: 'profileSuccess' is declared but its value is never read.
+src/components/StudentDashboardApi.tsx(44,12): error TS6133: 'gradesError' is declared but its value is never read.
+src/components/StudentDashboardApi.tsx(50,12): error TS6133: 'attendanceError' is declared but its value is never read.
+src/components/StudentDashboardApi.tsx(56,12): error TS6133: 'scheduleError' is declared but its value is never read.
+src/components/StudentDashboardApi.tsx(59,9): error TS6198: All destructured elements are unused.
+src/components/StudentDashboardApi.tsx(81,9): error TS7034: Variable 'announcements' implicitly has type 'any[]' in some locations where its type cannot be determined.
+src/components/StudentDashboardApi.tsx(83,37): error TS2345: Argument of type 'import("/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/api/studentApiService").Grade[]' is not assignable to parameter of type 'import("/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/data/studentData").Grade[]'.
+  Type 'import("/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/api/studentApiService").Grade' is not assignable to type 'import("/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/data/studentData").Grade'.
+    Types of property 'status' are incompatible.
+      Type '"draft" | "submitted" | "approved"' is not assignable to type '"Lulus" | "Tidak Lulus" | "Belum Selesai"'.
+        Type '"draft"' is not assignable to type '"Lulus" | "Tidak Lulus" | "Belum Selesai"'.
+src/components/StudentDashboardApi.tsx(85,54): error TS7005: Variable 'announcements' implicitly has an 'any[]' type.
+src/components/StudentDashboardApi.tsx(336,39): error TS2345: Argument of type '(grade: Grade) => JSX.Element' is not assignable to parameter of type '(value: Grade, index: number, array: Grade[]) => Element'.
+  Types of parameters 'grade' and 'value' are incompatible.
+    Type 'import("/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/api/studentApiService").Grade' is not assignable to type 'import("/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/data/studentData").Grade'.
+      Types of property 'status' are incompatible.
+        Type '"draft" | "submitted" | "approved"' is not assignable to type '"Lulus" | "Tidak Lulus" | "Belum Selesai"'.
+          Type '"draft"' is not assignable to type '"Lulus" | "Tidak Lulus" | "Belum Selesai"'.
+src/components/StudentDashboardApi.tsx(373,38): error TS2345: Argument of type '(grade: Grade) => JSX.Element' is not assignable to parameter of type '(value: Grade, index: number, array: Grade[]) => Element'.
+  Types of parameters 'grade' and 'value' are incompatible.
+    Type 'import("/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/api/studentApiService").Grade' is not assignable to type 'import("/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/data/studentData").Grade'.
+      Types of property 'status' are incompatible.
+        Type '"draft" | "submitted" | "approved"' is not assignable to type '"Lulus" | "Tidak Lulus" | "Belum Selesai"'.
+          Type '"draft"' is not assignable to type '"Lulus" | "Tidak Lulus" | "Belum Selesai"'.
+src/components/StudentProgressMonitor.tsx(11,10): error TS6133: 'selectedTimeframe' is declared but its value is never read.
+src/components/StudentProgressMonitor.tsx(11,29): error TS6133: 'setSelectedTimeframe' is declared but its value is never read.
+src/components/StudentSupport.tsx(5,10): error TS2724: '"../services/studentSupportService"' has no exported member named 'studentSupportService'. Did you mean 'StudentSupportService'?
+src/components/StudentSupport.tsx(5,33): error TS2305: Module '"../services/studentSupportService"' has no exported member 'SupportRequest'.
+src/components/StudentSupport.tsx(33,40): error TS7006: Parameter 'req' implicitly has an 'any' type.
+src/components/StudentSupport.tsx(161,92): error TS2339: Property 'riskLevel' does not exist on type 'StudentProgress'.
+src/components/StudentSupport.tsx(162,39): error TS2339: Property 'riskLevel' does not exist on type 'StudentProgress'.
+src/components/StudentSupport.tsx(275,26): error TS2367: This comparison appears to be unintentional because the types '"text" | "video" | "interactive" | "download"' and '"guide"' have no overlap.
+src/components/StudentSupport.tsx(277,26): error TS2367: This comparison appears to be unintentional because the types '"text" | "interactive" | "download"' and '"document"' have no overlap.
+src/components/StudentSupport.tsx(325,59): error TS2339: Property 'gradeTrend' does not exist on type '{ gpa: number; attendanceRate: number; assignmentCompletion: number; subjectPerformance: Record<string, number>; }'.
+src/components/StudentSupport.tsx(326,59): error TS2339: Property 'gradeTrend' does not exist on type '{ gpa: number; attendanceRate: number; assignmentCompletion: number; subjectPerformance: Record<string, number>; }'.
+src/components/StudentSupport.tsx(328,60): error TS2339: Property 'gradeTrend' does not exist on type '{ gpa: number; attendanceRate: number; assignmentCompletion: number; subjectPerformance: Record<string, number>; }'.
+src/components/StudentSupport.tsx(329,60): error TS2339: Property 'gradeTrend' does not exist on type '{ gpa: number; attendanceRate: number; assignmentCompletion: number; subjectPerformance: Record<string, number>; }'.
+src/components/StudentSupport.tsx(349,110): error TS2339: Property 'loginFrequency' does not exist on type '{ portalLoginFrequency: number; featureUsage: Record<string, number>; supportRequestsCount: number; lastActiveDate: string; }'.
+src/components/StudentSupport.tsx(353,111): error TS2339: Property 'resourceAccess' does not exist on type '{ portalLoginFrequency: number; featureUsage: Record<string, number>; supportRequestsCount: number; lastActiveDate: string; }'.
+src/components/StudentSupport.tsx(357,112): error TS2551: Property 'supportRequests' does not exist on type '{ portalLoginFrequency: number; featureUsage: Record<string, number>; supportRequestsCount: number; lastActiveDate: string; }'. Did you mean 'supportRequestsCount'?
+src/components/StudentSupport.tsx(361,112): error TS2339: Property 'participationScore' does not exist on type '{ portalLoginFrequency: number; featureUsage: Record<string, number>; supportRequestsCount: number; lastActiveDate: string; }'.
+src/components/StudentSupport.tsx(368,37): error TS2339: Property 'riskLevel' does not exist on type 'StudentProgress'.
+src/components/StudentSupport.tsx(369,37): error TS2339: Property 'riskLevel' does not exist on type 'StudentProgress'.
+src/components/StudentSupport.tsx(373,39): error TS2339: Property 'riskLevel' does not exist on type 'StudentProgress'.
+src/components/StudentSupport.tsx(374,39): error TS2339: Property 'riskLevel' does not exist on type 'StudentProgress'.
+src/components/StudentSupport.tsx(376,56): error TS2339: Property 'riskLevel' does not exist on type 'StudentProgress'.
+src/components/StudentSupportPage.tsx(2,8): error TS2613: Module '"/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/studentSupportService"' has no default export. Did you mean to use 'import { StudentSupportService } from "/home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/studentSupportService"' instead?
+src/components/TeacherDashboard.tsx(11,8): error TS6133: 'Teacher' is declared but its value is never read.
+src/components/TeacherDashboard.tsx(12,8): error TS6133: 'Class' is declared but its value is never read.
+src/components/TeacherDashboard.tsx(13,8): error TS6133: 'StudentRecord' is declared but its value is never read.
+src/components/TeacherDashboard.tsx(39,9): error TS6133: 'handleGradeInput' is declared but its value is never read.
+src/components/TeacherDashboard.tsx(51,43): error TS6133: 'studentId' is declared but its value is never read.
+src/components/__tests__/StudentSupport.test.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/data/relatedLinks.test.tsx(42,11): error TS6133: 'colorPattern' is declared but its value is never read.
+src/hooks/useApiQueries.ts(16,3): error TS2305: Module '"../services/api"' has no exported member 'ApiResponse'.
+src/hooks/useApiQueries.ts(22,6): error TS6196: 'ApiData' is declared but never used.
+src/hooks/useApiQueries.ts(23,6): error TS6196: 'ApiErrorType' is declared but never used.
+src/hooks/useApiQueries.ts(41,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<Student | null, Error, Student | null, readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Type '() => Promise<unknown>' is not assignable to type 'QueryFunction<Student | null, readonly unknown[]>'.
+      Type 'Promise<unknown>' is not assignable to type 'Student | Promise<Student | null> | null'.
+        Type 'Promise<unknown>' is not assignable to type 'Promise<Student | null>'.
+          Type 'unknown' is not assignable to type 'Student | null'.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<Student | null, Error, Student | null, readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<unknown>' is not assignable to type 'unique symbol | QueryFunction<Student | null, readonly unknown[], never> | undefined'.
+      Type '() => Promise<unknown>' is not assignable to type 'QueryFunction<Student | null, readonly unknown[], never>'.
+        Type 'Promise<unknown>' is not assignable to type 'Student | Promise<Student | null> | null'.
+          Type 'Promise<unknown>' is not assignable to type 'Promise<Student | null>'.
+            Type 'unknown' is not assignable to type 'Student | null'.
+  Overload 3 of 3, '(options: UseQueryOptions<Student | null, Error, Student | null, readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<unknown>' is not assignable to type 'unique symbol | QueryFunction<Student | null, readonly unknown[], never> | undefined'.
+      Type '() => Promise<unknown>' is not assignable to type 'QueryFunction<Student | null, readonly unknown[], never>'.
+        Type 'Promise<unknown>' is not assignable to type 'Student | Promise<Student | null> | null'.
+          Type 'Promise<unknown>' is not assignable to type 'Promise<Student | null>'.
+            Type 'unknown' is not assignable to type 'Student | null'.
+src/hooks/useApiQueries.ts(58,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<Grade[], Error, Grade[], readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<Grade[], Error>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'QueryFunction<Grade[], readonly unknown[]>'.
+      Type 'Promise<{}>' is not assignable to type 'Grade[] | Promise<Grade[]>'.
+        Type 'Promise<{}>' is not assignable to type 'Promise<Grade[]>'.
+          Type '{}' is missing the following properties from type 'Grade[]': length, pop, push, concat, and 28 more.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<Grade[], Error, Grade[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<Grade[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<Grade[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'Grade[] | Promise<Grade[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<Grade[]>'.
+            Type '{}' is missing the following properties from type 'Grade[]': length, pop, push, concat, and 28 more.
+  Overload 3 of 3, '(options: UseQueryOptions<Grade[], Error, Grade[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<Grade[], Error>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<Grade[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<Grade[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'Grade[] | Promise<Grade[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<Grade[]>'.
+            Type '{}' is missing the following properties from type 'Grade[]': length, pop, push, concat, and 28 more.
+src/hooks/useApiQueries.ts(76,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<AttendanceRecord[], Error, AttendanceRecord[], readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'QueryFunction<AttendanceRecord[], readonly unknown[]>'.
+      Type 'Promise<{}>' is not assignable to type 'AttendanceRecord[] | Promise<AttendanceRecord[]>'.
+        Type 'Promise<{}>' is not assignable to type 'Promise<AttendanceRecord[]>'.
+          Type '{}' is missing the following properties from type 'AttendanceRecord[]': length, pop, push, concat, and 28 more.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<AttendanceRecord[], Error, AttendanceRecord[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<AttendanceRecord[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<AttendanceRecord[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'AttendanceRecord[] | Promise<AttendanceRecord[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<AttendanceRecord[]>'.
+            Type '{}' is missing the following properties from type 'AttendanceRecord[]': length, pop, push, concat, and 28 more.
+  Overload 3 of 3, '(options: UseQueryOptions<AttendanceRecord[], Error, AttendanceRecord[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<AttendanceRecord[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<AttendanceRecord[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'AttendanceRecord[] | Promise<AttendanceRecord[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<AttendanceRecord[]>'.
+            Type '{}' is missing the following properties from type 'AttendanceRecord[]': length, pop, push, concat, and 28 more.
+src/hooks/useApiQueries.ts(93,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<ScheduleItem[], Error, ScheduleItem[], readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'QueryFunction<ScheduleItem[], readonly unknown[]>'.
+      Type 'Promise<{}>' is not assignable to type 'ScheduleItem[] | Promise<ScheduleItem[]>'.
+        Type 'Promise<{}>' is not assignable to type 'Promise<ScheduleItem[]>'.
+          Type '{}' is missing the following properties from type 'ScheduleItem[]': length, pop, push, concat, and 28 more.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<ScheduleItem[], Error, ScheduleItem[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<ScheduleItem[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<ScheduleItem[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'ScheduleItem[] | Promise<ScheduleItem[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<ScheduleItem[]>'.
+            Type '{}' is missing the following properties from type 'ScheduleItem[]': length, pop, push, concat, and 28 more.
+  Overload 3 of 3, '(options: UseQueryOptions<ScheduleItem[], Error, ScheduleItem[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<ScheduleItem[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<ScheduleItem[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'ScheduleItem[] | Promise<ScheduleItem[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<ScheduleItem[]>'.
+            Type '{}' is missing the following properties from type 'ScheduleItem[]': length, pop, push, concat, and 28 more.
+src/hooks/useApiQueries.ts(109,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<AcademicStats | null, Error, AcademicStats | null, readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Type '() => Promise<unknown>' is not assignable to type 'QueryFunction<AcademicStats | null, readonly unknown[]>'.
+      Type 'Promise<unknown>' is not assignable to type 'AcademicStats | Promise<AcademicStats | null> | null'.
+        Type 'Promise<unknown>' is not assignable to type 'Promise<AcademicStats | null>'.
+          Type 'unknown' is not assignable to type 'AcademicStats | null'.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<AcademicStats | null, Error, AcademicStats | null, readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<unknown>' is not assignable to type 'unique symbol | QueryFunction<AcademicStats | null, readonly unknown[], never> | undefined'.
+      Type '() => Promise<unknown>' is not assignable to type 'QueryFunction<AcademicStats | null, readonly unknown[], never>'.
+        Type 'Promise<unknown>' is not assignable to type 'AcademicStats | Promise<AcademicStats | null> | null'.
+          Type 'Promise<unknown>' is not assignable to type 'Promise<AcademicStats | null>'.
+            Type 'unknown' is not assignable to type 'AcademicStats | null'.
+  Overload 3 of 3, '(options: UseQueryOptions<AcademicStats | null, Error, AcademicStats | null, readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<unknown>' is not assignable to type 'unique symbol | QueryFunction<AcademicStats | null, readonly unknown[], never> | undefined'.
+      Type '() => Promise<unknown>' is not assignable to type 'QueryFunction<AcademicStats | null, readonly unknown[], never>'.
+        Type 'Promise<unknown>' is not assignable to type 'AcademicStats | Promise<AcademicStats | null> | null'.
+          Type 'Promise<unknown>' is not assignable to type 'Promise<AcademicStats | null>'.
+            Type 'unknown' is not assignable to type 'AcademicStats | null'.
+src/hooks/useApiQueries.ts(126,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<any[], Error, any[], readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<any[], Error>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'QueryFunction<any[], readonly unknown[]>'.
+      Type 'Promise<{}>' is not assignable to type 'any[] | Promise<any[]>'.
+        Type 'Promise<{}>' is not assignable to type 'Promise<any[]>'.
+          Type '{}' is missing the following properties from type 'any[]': length, pop, push, concat, and 28 more.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<any[], Error, any[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<any[], Error>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<any[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<any[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'any[] | Promise<any[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<any[]>'.
+            Type '{}' is missing the following properties from type 'any[]': length, pop, push, concat, and 28 more.
+  Overload 3 of 3, '(options: UseQueryOptions<any[], Error, any[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<any[], Error>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<any[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<any[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'any[] | Promise<any[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<any[]>'.
+            Type '{}' is missing the following properties from type 'any[]': length, pop, push, concat, and 28 more.
+src/hooks/useApiQueries.ts(160,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<Student[], Error, Student[], readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'QueryFunction<Student[], readonly unknown[]>'.
+      Type 'Promise<{}>' is not assignable to type 'Student[] | Promise<Student[]>'.
+        Type 'Promise<{}>' is not assignable to type 'Promise<Student[]>'.
+          Type '{}' is missing the following properties from type 'Student[]': length, pop, push, concat, and 28 more.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<Student[], Error, Student[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<Student[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<Student[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'Student[] | Promise<Student[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<Student[]>'.
+            Type '{}' is missing the following properties from type 'Student[]': length, pop, push, concat, and 28 more.
+  Overload 3 of 3, '(options: UseQueryOptions<Student[], Error, Student[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<Student[], Error>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<Student[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<Student[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'Student[] | Promise<Student[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<Student[]>'.
+            Type '{}' is missing the following properties from type 'Student[]': length, pop, push, concat, and 28 more.
+src/hooks/useApiQueries.ts(177,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<Student[], Error, Student[], readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'QueryFunction<Student[], readonly unknown[]>'.
+      Type 'Promise<{}>' is not assignable to type 'Student[] | Promise<Student[]>'.
+        Type 'Promise<{}>' is not assignable to type 'Promise<Student[]>'.
+          Type '{}' is missing the following properties from type 'Student[]': length, pop, push, concat, and 28 more.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<Student[], Error, Student[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<Student[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<Student[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'Student[] | Promise<Student[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<Student[]>'.
+            Type '{}' is missing the following properties from type 'Student[]': length, pop, push, concat, and 28 more.
+  Overload 3 of 3, '(options: UseQueryOptions<Student[], Error, Student[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<Student[], Error>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<Student[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<Student[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'Student[] | Promise<Student[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<Student[]>'.
+            Type '{}' is missing the following properties from type 'Student[]': length, pop, push, concat, and 28 more.
+src/hooks/useApiQueries.ts(194,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<FeaturedProgram[], Error, FeaturedProgram[], readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'QueryFunction<FeaturedProgram[], readonly unknown[]>'.
+      Type 'Promise<{}>' is not assignable to type 'FeaturedProgram[] | Promise<FeaturedProgram[]>'.
+        Type 'Promise<{}>' is not assignable to type 'Promise<FeaturedProgram[]>'.
+          Type '{}' is missing the following properties from type 'FeaturedProgram[]': length, pop, push, concat, and 28 more.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<FeaturedProgram[], Error, FeaturedProgram[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<FeaturedProgram[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<FeaturedProgram[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'FeaturedProgram[] | Promise<FeaturedProgram[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<FeaturedProgram[]>'.
+            Type '{}' is missing the following properties from type 'FeaturedProgram[]': length, pop, push, concat, and 28 more.
+  Overload 3 of 3, '(options: UseQueryOptions<FeaturedProgram[], Error, FeaturedProgram[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<FeaturedProgram[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<FeaturedProgram[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'FeaturedProgram[] | Promise<FeaturedProgram[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<FeaturedProgram[]>'.
+            Type '{}' is missing the following properties from type 'FeaturedProgram[]': length, pop, push, concat, and 28 more.
+src/hooks/useApiQueries.ts(209,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<NewsItem[], Error, NewsItem[], readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'QueryFunction<NewsItem[], readonly unknown[]>'.
+      Type 'Promise<{}>' is not assignable to type 'NewsItem[] | Promise<NewsItem[]>'.
+        Type 'Promise<{}>' is not assignable to type 'Promise<NewsItem[]>'.
+          Type '{}' is missing the following properties from type 'NewsItem[]': length, pop, push, concat, and 28 more.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<NewsItem[], Error, NewsItem[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<NewsItem[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<NewsItem[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'NewsItem[] | Promise<NewsItem[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<NewsItem[]>'.
+            Type '{}' is missing the following properties from type 'NewsItem[]': length, pop, push, concat, and 28 more.
+  Overload 3 of 3, '(options: UseQueryOptions<NewsItem[], Error, NewsItem[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<NewsItem[], Error>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<NewsItem[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<NewsItem[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'NewsItem[] | Promise<NewsItem[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<NewsItem[]>'.
+            Type '{}' is missing the following properties from type 'NewsItem[]': length, pop, push, concat, and 28 more.
+src/hooks/useApiQueries.ts(224,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<RelatedLink[], Error, RelatedLink[], readonly unknown[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'QueryFunction<RelatedLink[], readonly unknown[]>'.
+      Type 'Promise<{}>' is not assignable to type 'RelatedLink[] | Promise<RelatedLink[]>'.
+        Type 'Promise<{}>' is not assignable to type 'Promise<RelatedLink[]>'.
+          Type '{}' is missing the following properties from type 'RelatedLink[]': length, pop, push, concat, and 28 more.
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<RelatedLink[], Error, RelatedLink[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<RelatedLink[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<RelatedLink[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'RelatedLink[] | Promise<RelatedLink[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<RelatedLink[]>'.
+            Type '{}' is missing the following properties from type 'RelatedLink[]': length, pop, push, concat, and 28 more.
+  Overload 3 of 3, '(options: UseQueryOptions<RelatedLink[], Error, RelatedLink[], readonly unknown[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '() => Promise<{}>' is not assignable to type 'unique symbol | QueryFunction<RelatedLink[], readonly unknown[], never> | undefined'.
+      Type '() => Promise<{}>' is not assignable to type 'QueryFunction<RelatedLink[], readonly unknown[], never>'.
+        Type 'Promise<{}>' is not assignable to type 'RelatedLink[] | Promise<RelatedLink[]>'.
+          Type 'Promise<{}>' is not assignable to type 'Promise<RelatedLink[]>'.
+            Type '{}' is missing the following properties from type 'RelatedLink[]': length, pop, push, concat, and 28 more.
+src/hooks/useApiQueries.ts(242,5): error TS2322: Type '(updates: Partial<Student>) => Promise<{}>' is not assignable to type 'MutationFunction<Student, Partial<Student>>'.
+  Type 'Promise<{}>' is not assignable to type 'Promise<Student>'.
+    Type '{}' is missing the following properties from type 'Student': id, name, email, class, and 7 more.
+src/hooks/useApiQueries.ts(263,5): error TS2322: Type '(grades: Omit<Grade, "id" | "submittedAt">[]) => Promise<{}>' is not assignable to type 'MutationFunction<Grade[], Omit<Grade, "id" | "submittedAt">[]>'.
+  Type 'Promise<{}>' is not assignable to type 'Promise<Grade[]>'.
+    Type '{}' is missing the following properties from type 'Grade[]': length, pop, push, concat, and 28 more.
+src/hooks/useApiQueries.ts(283,5): error TS2322: Type '(attendance: Omit<AttendanceRecord, "id" | "recordedAt">[]) => Promise<{}>' is not assignable to type 'MutationFunction<AttendanceRecord[], Omit<AttendanceRecord, "id" | "recordedAt">[]>'.
+  Type 'Promise<{}>' is not assignable to type 'Promise<AttendanceRecord[]>'.
+    Type '{}' is missing the following properties from type 'AttendanceRecord[]': length, pop, push, concat, and 28 more.
+src/hooks/useApiQueries.ts(309,20): error TS6133: 'announcementId' is declared but its value is never read.
+src/hooks/useAuth.ts(1,20): error TS6133: 'useEffect' is declared but its value is never read.
+src/hooks/useAuth.ts(6,63): error TS2345: Argument of type 'Promise<User | null>' is not assignable to parameter of type 'User | (() => User | null) | null'.
+src/hooks/useAuth.ts(9,19): error TS2345: Argument of type 'boolean' is not assignable to parameter of type 'SetStateAction<Promise<boolean>>'.
+src/hooks/useAuth.ts(10,20): error TS2345: Argument of type 'Promise<User | null>' is not assignable to parameter of type 'SetStateAction<User | null>'.
+src/hooks/useAuth.ts(15,19): error TS2345: Argument of type 'boolean' is not assignable to parameter of type 'SetStateAction<Promise<boolean>>'.
+src/hooks/useErrorReporting.tsx(120,9): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(this: WindowEventHandlers, ev: PromiseRejectionEvent): any', gave the following error.
+    The 'this' context of type 'void' is not assignable to method's 'this' of type 'WindowEventHandlers'.
+  Overload 2 of 2, '(this: Window, ev: PromiseRejectionEvent): any', gave the following error.
+    The 'this' context of type 'void' is not assignable to method's 'this' of type 'Window'.
+src/hooks/useTouchFeedback.test.tsx(37,24): error TS2352: Conversion of type '{ currentTarget: HTMLDivElement; }' to type 'TouchEvent<HTMLElement>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ currentTarget: HTMLDivElement; }' is missing the following properties from type 'TouchEvent<HTMLElement>': altKey, changedTouches, ctrlKey, getModifierState, and 20 more.
+src/hooks/useTouchFeedback.test.tsx(51,24): error TS2352: Conversion of type '{ currentTarget: HTMLDivElement; }' to type 'TouchEvent<HTMLElement>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ currentTarget: HTMLDivElement; }' is missing the following properties from type 'TouchEvent<HTMLElement>': altKey, changedTouches, ctrlKey, getModifierState, and 20 more.
+src/hooks/useTouchFeedback.test.tsx(67,24): error TS2352: Conversion of type '{ currentTarget: HTMLDivElement; }' to type 'TouchEvent<HTMLElement>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ currentTarget: HTMLDivElement; }' is missing the following properties from type 'TouchEvent<HTMLElement>': altKey, changedTouches, ctrlKey, getModifierState, and 20 more.
+src/hooks/useTouchFeedback.test.tsx(92,24): error TS2352: Conversion of type '{ currentTarget: HTMLDivElement; }' to type 'TouchEvent<HTMLElement>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ currentTarget: HTMLDivElement; }' is missing the following properties from type 'TouchEvent<HTMLElement>': altKey, changedTouches, ctrlKey, getModifierState, and 20 more.
+src/hooks/useTouchFeedback.test.tsx(111,24): error TS2352: Conversion of type '{ currentTarget: HTMLDivElement; }' to type 'TouchEvent<HTMLElement>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ currentTarget: HTMLDivElement; }' is missing the following properties from type 'TouchEvent<HTMLElement>': altKey, changedTouches, ctrlKey, getModifierState, and 20 more.
+src/hooks/useTouchFeedback.test.tsx(143,24): error TS2352: Conversion of type '{ currentTarget: HTMLDivElement; }' to type 'TouchEvent<HTMLElement>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ currentTarget: HTMLDivElement; }' is missing the following properties from type 'TouchEvent<HTMLElement>': altKey, changedTouches, ctrlKey, getModifierState, and 20 more.
+src/hooks/useTouchFeedback.test.tsx(159,24): error TS2352: Conversion of type '{ currentTarget: HTMLDivElement; }' to type 'TouchEvent<HTMLElement>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ currentTarget: HTMLDivElement; }' is missing the following properties from type 'TouchEvent<HTMLElement>': altKey, changedTouches, ctrlKey, getModifierState, and 20 more.
+src/hooks/useTouchFeedback.test.tsx(175,24): error TS2352: Conversion of type '{ currentTarget: HTMLDivElement; }' to type 'TouchEvent<HTMLElement>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ currentTarget: HTMLDivElement; }' is missing the following properties from type 'TouchEvent<HTMLElement>': altKey, changedTouches, ctrlKey, getModifierState, and 20 more.
+src/hooks/useTouchFeedback.test.tsx(205,24): error TS2352: Conversion of type '{ currentTarget: HTMLDivElement; }' to type 'TouchEvent<HTMLElement>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ currentTarget: HTMLDivElement; }' is missing the following properties from type 'TouchEvent<HTMLElement>': altKey, changedTouches, ctrlKey, getModifierState, and 20 more.
+src/hooks/useTouchFeedback.test.tsx(238,24): error TS2352: Conversion of type '{ currentTarget: HTMLDivElement; }' to type 'TouchEvent<HTMLElement>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ currentTarget: HTMLDivElement; }' is missing the following properties from type 'TouchEvent<HTMLElement>': altKey, changedTouches, ctrlKey, getModifierState, and 20 more.
+src/hooks/useTouchGestures.test.tsx(20,5): error TS2322: Type '{ clientX: number; clientY: number; identifier: number; force: number; pageX: number; pageY: number; radiusX: number; radiusY: number; rotationAngle: number; target: HTMLDivElement; }[]' is not assignable to type 'Touch[]'.
+  Type '{ clientX: number; clientY: number; identifier: number; force: number; pageX: number; pageY: number; radiusX: number; radiusY: number; rotationAngle: number; target: HTMLDivElement; }' is missing the following properties from type 'Touch': screenX, screenY
+src/hooks/useTouchGestures.test.tsx(21,5): error TS2322: Type '{ clientX: number; clientY: number; identifier: number; force: number; pageX: number; pageY: number; radiusX: number; radiusY: number; rotationAngle: number; target: HTMLDivElement; }[]' is not assignable to type 'Touch[]'.
+  Type '{ clientX: number; clientY: number; identifier: number; force: number; pageX: number; pageY: number; radiusX: number; radiusY: number; rotationAngle: number; target: HTMLDivElement; }' is missing the following properties from type 'Touch': screenX, screenY
+src/memory/MemoryBank.ts(76,32): error TS2345: Argument of type 'void' is not assignable to parameter of type 'Memory'.
+src/memory/services/MemoryService.ts(107,15): error TS6133: 'metadata' is declared but its value is never read.
+src/memory/services/MemoryService.ts(146,9): error TS2416: Property 'cleanup' in type 'MemoryService' is not assignable to the same property in base type 'MemoryServiceInterface'.
+  Type '() => Promise<number>' is not assignable to type '() => Promise<void>'.
+    Type 'Promise<number>' is not assignable to type 'Promise<void>'.
+      Type 'number' is not assignable to type 'void'.
+src/memory/services/MemoryService.ts(165,11): error TS6133: 'memoriesToKeep' is declared but its value is never read.
+src/services/__tests__/studentSupportService.test.ts(114,9): error TS2353: Object literal may only specify known properties, and 'rating' does not exist in type 'Omit<SupportResource, "id" | "usageCount" | "rating">'.
+src/services/__tests__/studentSupportService.test.ts(133,9): error TS2353: Object literal may only specify known properties, and 'rating' does not exist in type 'Omit<SupportResource, "id" | "usageCount" | "rating">'.
+src/services/__tests__/studentSupportService.test.ts(199,9): error TS2353: Object literal may only specify known properties, and 'rating' does not exist in type 'Omit<SupportResource, "id" | "usageCount" | "rating">'.
+src/services/__tests__/supabaseConfig.test.ts(82,13): error TS6198: All destructured elements are unused.
+src/services/__tests__/supabaseConfig.test.ts(102,14): error TS6198: All destructured elements are unused.
+src/services/api/baseApiService.ts(48,38): error TS18048: 'retries' is possibly 'undefined'.
+src/services/api/baseApiService.ts(81,23): error TS18048: 'retries' is possibly 'undefined'.
+src/services/api/baseApiService.ts(82,28): error TS18048: 'retryDelay' is possibly 'undefined'.
+src/services/api/baseApiService.ts(87,11): error TS2454: Variable 'lastError' is used before being assigned.
+src/services/api/featuredProgramsService.ts(4,10): error TS2724: '"./baseApiService"' has no exported member named 'BaseApiService'. Did you mean 'baseApiService'?
+src/services/api/featuredProgramsService.ts(14,17): error TS2339: Property 'withRetry' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(14,38): error TS2339: Property 'get' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(19,17): error TS2339: Property 'withRetry' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(19,38): error TS2339: Property 'get' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(24,17): error TS2339: Property 'withRetry' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(24,38): error TS2339: Property 'post' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(29,17): error TS2339: Property 'withRetry' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(29,38): error TS2339: Property 'put' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(34,17): error TS2339: Property 'withRetry' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(34,45): error TS2558: Expected 0 type arguments, but got 1.
+src/services/api/featuredProgramsService.ts(39,17): error TS2339: Property 'withRetry' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(39,38): error TS2339: Property 'get' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(83,9): error TS2304: Cannot find name 'isDevelopment'.
+src/services/api/featuredProgramsService.ts(91,9): error TS2304: Cannot find name 'isDevelopment'.
+src/services/api/featuredProgramsService.ts(92,32): error TS2339: Property 'getAll' does not exist on type 'FeaturedProgramsService | LocalFeaturedProgramsService'.
+  Property 'getAll' does not exist on type 'LocalFeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(94,48): error TS2339: Property 'getAll' does not exist on type 'FeaturedProgramsService | LocalFeaturedProgramsService'.
+  Property 'getAll' does not exist on type 'LocalFeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(100,9): error TS2304: Cannot find name 'isDevelopment'.
+src/services/api/featuredProgramsService.ts(102,23): error TS2339: Property 'find' does not exist on type 'Promise<FeaturedProgram[]>'.
+src/services/api/featuredProgramsService.ts(102,28): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/services/api/featuredProgramsService.ts(104,48): error TS2339: Property 'getById' does not exist on type 'FeaturedProgramsService | LocalFeaturedProgramsService'.
+  Property 'getById' does not exist on type 'LocalFeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(110,9): error TS2304: Cannot find name 'isDevelopment'.
+src/services/api/featuredProgramsService.ts(114,9): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'FeaturedProgram'.
+src/services/api/featuredProgramsService.ts(116,16): error TS2339: Property 'push' does not exist on type 'Promise<FeaturedProgram[]>'.
+src/services/api/featuredProgramsService.ts(117,25): error TS2339: Property 'saveAll' does not exist on type 'FeaturedProgramsService | LocalFeaturedProgramsService'.
+  Property 'saveAll' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(120,48): error TS2339: Property 'create' does not exist on type 'FeaturedProgramsService | LocalFeaturedProgramsService'.
+  Property 'create' does not exist on type 'LocalFeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(126,9): error TS2304: Cannot find name 'isDevelopment'.
+src/services/api/featuredProgramsService.ts(128,30): error TS2339: Property 'findIndex' does not exist on type 'Promise<FeaturedProgram[]>'.
+src/services/api/featuredProgramsService.ts(128,40): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/services/api/featuredProgramsService.ts(131,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Promise<FeaturedProgram[]>'.
+src/services/api/featuredProgramsService.ts(131,30): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Promise<FeaturedProgram[]>'.
+src/services/api/featuredProgramsService.ts(132,25): error TS2339: Property 'saveAll' does not exist on type 'FeaturedProgramsService | LocalFeaturedProgramsService'.
+  Property 'saveAll' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(133,14): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Promise<FeaturedProgram[]>'.
+src/services/api/featuredProgramsService.ts(135,48): error TS2339: Property 'update' does not exist on type 'FeaturedProgramsService | LocalFeaturedProgramsService'.
+  Property 'update' does not exist on type 'LocalFeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(141,9): error TS2304: Cannot find name 'isDevelopment'.
+src/services/api/featuredProgramsService.ts(143,41): error TS2339: Property 'filter' does not exist on type 'Promise<FeaturedProgram[]>'.
+src/services/api/featuredProgramsService.ts(143,48): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/services/api/featuredProgramsService.ts(144,48): error TS2339: Property 'length' does not exist on type 'Promise<FeaturedProgram[]>'.
+src/services/api/featuredProgramsService.ts(146,25): error TS2339: Property 'saveAll' does not exist on type 'FeaturedProgramsService | LocalFeaturedProgramsService'.
+  Property 'saveAll' does not exist on type 'FeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(149,48): error TS2339: Property 'delete' does not exist on type 'FeaturedProgramsService | LocalFeaturedProgramsService'.
+  Property 'delete' does not exist on type 'LocalFeaturedProgramsService'.
+src/services/api/featuredProgramsService.ts(155,9): error TS2304: Cannot find name 'isDevelopment'.
+src/services/api/featuredProgramsService.ts(158,48): error TS2339: Property 'getActive' does not exist on type 'FeaturedProgramsService | LocalFeaturedProgramsService'.
+  Property 'getActive' does not exist on type 'LocalFeaturedProgramsService'.
+src/services/api/index.ts(37,25): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/services/api/newsService.ts(4,10): error TS2724: '"./baseApiService"' has no exported member named 'BaseApiService'. Did you mean 'baseApiService'?
+src/services/api/newsService.ts(8,35): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/services/api/newsService.ts(17,17): error TS2339: Property 'withRetry' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(17,38): error TS2339: Property 'get' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(22,17): error TS2339: Property 'withRetry' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(22,38): error TS2339: Property 'get' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(27,17): error TS2339: Property 'withRetry' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(27,38): error TS2339: Property 'post' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(32,17): error TS2339: Property 'withRetry' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(32,38): error TS2339: Property 'put' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(37,17): error TS2339: Property 'withRetry' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(37,45): error TS2558: Expected 0 type arguments, but got 1.
+src/services/api/newsService.ts(42,17): error TS2339: Property 'withRetry' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(42,38): error TS2339: Property 'get' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(47,17): error TS2339: Property 'withRetry' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(47,38): error TS2339: Property 'get' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(103,32): error TS2339: Property 'getAll' does not exist on type 'NewsService | LocalNewsService'.
+  Property 'getAll' does not exist on type 'LocalNewsService'.
+src/services/api/newsService.ts(105,48): error TS2339: Property 'getAll' does not exist on type 'NewsService | LocalNewsService'.
+  Property 'getAll' does not exist on type 'LocalNewsService'.
+src/services/api/newsService.ts(113,19): error TS2339: Property 'find' does not exist on type 'Promise<LatestNews[]>'.
+src/services/api/newsService.ts(113,24): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/services/api/newsService.ts(115,48): error TS2339: Property 'getById' does not exist on type 'NewsService | LocalNewsService'.
+  Property 'getById' does not exist on type 'LocalNewsService'.
+src/services/api/newsService.ts(125,9): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'LatestNews'.
+src/services/api/newsService.ts(127,16): error TS2339: Property 'push' does not exist on type 'Promise<LatestNews[]>'.
+src/services/api/newsService.ts(128,25): error TS2339: Property 'saveAll' does not exist on type 'NewsService | LocalNewsService'.
+  Property 'saveAll' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(131,48): error TS2339: Property 'create' does not exist on type 'NewsService | LocalNewsService'.
+  Property 'create' does not exist on type 'LocalNewsService'.
+src/services/api/newsService.ts(139,30): error TS2339: Property 'findIndex' does not exist on type 'Promise<LatestNews[]>'.
+src/services/api/newsService.ts(139,40): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/services/api/newsService.ts(142,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Promise<LatestNews[]>'.
+src/services/api/newsService.ts(142,30): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Promise<LatestNews[]>'.
+src/services/api/newsService.ts(143,25): error TS2339: Property 'saveAll' does not exist on type 'NewsService | LocalNewsService'.
+  Property 'saveAll' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(144,14): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Promise<LatestNews[]>'.
+src/services/api/newsService.ts(146,48): error TS2339: Property 'update' does not exist on type 'NewsService | LocalNewsService'.
+  Property 'update' does not exist on type 'LocalNewsService'.
+src/services/api/newsService.ts(154,37): error TS2339: Property 'filter' does not exist on type 'Promise<LatestNews[]>'.
+src/services/api/newsService.ts(154,44): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/services/api/newsService.ts(155,44): error TS2339: Property 'length' does not exist on type 'Promise<LatestNews[]>'.
+src/services/api/newsService.ts(157,25): error TS2339: Property 'saveAll' does not exist on type 'NewsService | LocalNewsService'.
+  Property 'saveAll' does not exist on type 'NewsService'.
+src/services/api/newsService.ts(160,48): error TS2339: Property 'delete' does not exist on type 'NewsService | LocalNewsService'.
+  Property 'delete' does not exist on type 'LocalNewsService'.
+src/services/api/newsService.ts(167,28): error TS2339: Property 'filter' does not exist on type 'Promise<LatestNews[]>'.
+src/services/api/newsService.ts(167,35): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/services/api/newsService.ts(169,48): error TS2339: Property 'getByCategory' does not exist on type 'NewsService | LocalNewsService'.
+  Property 'getByCategory' does not exist on type 'LocalNewsService'.
+src/services/api/newsService.ts(178,48): error TS2339: Property 'getActive' does not exist on type 'NewsService | LocalNewsService'.
+  Property 'getActive' does not exist on type 'LocalNewsService'.
+src/services/api/studentService.ts(4,10): error TS2724: '"./baseApiService"' has no exported member named 'BaseApiService'. Did you mean 'baseApiService'?
+src/services/api/studentService.ts(5,15): error TS2305: Module '"../../types"' has no exported member 'Student'.
+src/services/api/studentService.ts(5,24): error TS2305: Module '"../../types"' has no exported member 'Grade'.
+src/services/api/studentService.ts(5,31): error TS2305: Module '"../../types"' has no exported member 'ScheduleItem'.
+src/services/api/studentService.ts(5,45): error TS2305: Module '"../../types"' has no exported member 'AttendanceRecord'.
+src/services/api/studentService.ts(8,35): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/services/api/studentService.ts(17,17): error TS2339: Property 'withRetry' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(17,38): error TS2339: Property 'get' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(21,17): error TS2339: Property 'withRetry' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(21,38): error TS2339: Property 'get' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(25,17): error TS2339: Property 'withRetry' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(25,38): error TS2339: Property 'post' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(29,17): error TS2339: Property 'withRetry' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(29,38): error TS2339: Property 'put' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(33,17): error TS2339: Property 'withRetry' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(33,45): error TS2558: Expected 0 type arguments, but got 1.
+src/services/api/studentService.ts(38,17): error TS2339: Property 'withRetry' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(38,38): error TS2339: Property 'get' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(46,17): error TS2339: Property 'withRetry' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(46,38): error TS2339: Property 'get' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(51,17): error TS2339: Property 'withRetry' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(51,38): error TS2339: Property 'get' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(56,17): error TS2339: Property 'withRetry' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(56,38): error TS2339: Property 'get' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(217,32): error TS2339: Property 'getStudents' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'getStudents' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(219,48): error TS2339: Property 'getAll' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'getAll' does not exist on type 'LocalStudentService'.
+src/services/api/studentService.ts(227,23): error TS2339: Property 'find' does not exist on type 'Promise<Student[]>'.
+src/services/api/studentService.ts(227,28): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/services/api/studentService.ts(229,48): error TS2339: Property 'getById' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'getById' does not exist on type 'LocalStudentService'.
+src/services/api/studentService.ts(241,16): error TS2339: Property 'push' does not exist on type 'Promise<Student[]>'.
+src/services/api/studentService.ts(242,25): error TS2339: Property 'saveStudents' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'saveStudents' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(245,48): error TS2339: Property 'create' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'create' does not exist on type 'LocalStudentService'.
+src/services/api/studentService.ts(253,30): error TS2339: Property 'findIndex' does not exist on type 'Promise<Student[]>'.
+src/services/api/studentService.ts(253,40): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/services/api/studentService.ts(256,7): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Promise<Student[]>'.
+src/services/api/studentService.ts(256,30): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Promise<Student[]>'.
+src/services/api/studentService.ts(257,25): error TS2339: Property 'saveStudents' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'saveStudents' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(258,14): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type 'Promise<Student[]>'.
+src/services/api/studentService.ts(260,48): error TS2339: Property 'update' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'update' does not exist on type 'LocalStudentService'.
+src/services/api/studentService.ts(268,41): error TS2339: Property 'filter' does not exist on type 'Promise<Student[]>'.
+src/services/api/studentService.ts(268,48): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/services/api/studentService.ts(269,48): error TS2339: Property 'length' does not exist on type 'Promise<Student[]>'.
+src/services/api/studentService.ts(271,25): error TS2339: Property 'saveStudents' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'saveStudents' does not exist on type 'StudentService'.
+src/services/api/studentService.ts(274,48): error TS2339: Property 'delete' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'delete' does not exist on type 'LocalStudentService'.
+src/services/api/studentService.ts(282,32): error TS2339: Property 'getGrades' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'getGrades' does not exist on type 'LocalStudentService'.
+src/services/api/studentService.ts(282,51): error TS7006: Parameter 'g' implicitly has an 'any' type.
+src/services/api/studentService.ts(284,48): error TS2339: Property 'getGrades' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'getGrades' does not exist on type 'LocalStudentService'.
+src/services/api/studentService.ts(292,32): error TS2339: Property 'getAttendance' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'getAttendance' does not exist on type 'LocalStudentService'.
+src/services/api/studentService.ts(292,55): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/services/api/studentService.ts(294,48): error TS2339: Property 'getAttendance' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'getAttendance' does not exist on type 'LocalStudentService'.
+src/services/api/studentService.ts(302,32): error TS2339: Property 'getSchedule' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'getSchedule' does not exist on type 'LocalStudentService'.
+src/services/api/studentService.ts(304,48): error TS2339: Property 'getSchedule' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'getSchedule' does not exist on type 'LocalStudentService'.
+src/services/api/studentService.ts(312,28): error TS2339: Property 'filter' does not exist on type 'Promise<Student[]>'.
+src/services/api/studentService.ts(312,35): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/services/api/studentService.ts(314,48): error TS2339: Property 'getByClass' does not exist on type 'StudentService | LocalStudentService'.
+  Property 'getByClass' does not exist on type 'LocalStudentService'.
+src/services/authService.test.ts(2,1): error TS6133: 'WORKER_URL' is declared but its value is never read.
+src/services/authService.ts(74,16): error TS6133: 'verifyHMACSignature' is declared but its value is never read.
+src/services/authService.ts(108,47): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/services/authService.ts(184,11): error TS6133: 'secret' is declared but its value is never read.
+src/services/authService.ts(184,49): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/services/authService.ts(418,35): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/services/authService.ts(419,33): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/services/authService.ts(419,81): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/services/geminiService.test.ts(29,1): error TS6133: 'GoogleGenAI' is declared but its value is never read.
+src/services/geminiService.test.ts(40,9): error TS6133: 'mockWorkerUrl' is declared but its value is never read.
+src/services/geminiService.test.ts(55,5): error TS2322: Type '() => typeof jest' is not assignable to type '{ (input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>; (input: string | URL | Request, init?: RequestInit | undefined): Promise<...>; }'.
+  Type 'typeof jest' is missing the following properties from type 'Promise<Response>': then, catch, finally, [Symbol.toStringTag]
+src/services/geminiService.test.ts(159,24): error TS6133: 'chunk' is declared but its value is never read.
+src/services/geminiService.test.ts(186,24): error TS6133: 'chunk' is declared but its value is never read.
+src/services/geminiService.test.ts(213,24): error TS6133: 'chunk' is declared but its value is never read.
+src/services/geminiService.ts(81,13): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/services/localDatabase.ts(158,17): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/services/messagingService.ts(27,18): error TS6133: 'conversations' is declared but its value is never read.
+src/services/messagingService.ts(84,11): error TS6133: 'conversationsMap' is declared but its value is never read.
+src/services/messagingService.ts(113,22): error TS6133: 'conversationId' is declared but its value is never read.
+src/services/pwaService.ts(127,31): error TS2339: Property 'sync' does not exist on type 'ServiceWorkerRegistration'.
+src/services/pwaService.ts(308,23): error TS6133: 'registration' is declared but its value is never read.
+src/services/pwaService.ts(318,9): error TS2353: Object literal may only specify known properties, and 'actions' does not exist in type 'NotificationOptions'.
+src/services/queryClient.ts(81,3): error TS2561: Object literal may only specify known properties, but 'defaultQueryOptions' does not exist in type 'QueryClientConfig'. Did you mean to write 'defaultOptions'?
+src/services/queryClient.ts(85,23): error TS7006: Parameter 'previousData' implicitly has an 'any' type.
+src/services/supabaseApiService.ts(115,18): error TS2367: This comparison appears to be unintentional because the types '"INITIAL_SESSION" | "MFA_CHALLENGE_VERIFIED"' and '"MFA_CHALLENGE"' have no overlap.
+src/services/supabaseConfig.ts(16,9): error TS6133: 'baseEnv' is declared but its value is never read.
+src/services/supabaseDatabaseService.ts(3,1): error TS6133: 'User' is declared but its value is never read.
+src/services/supabaseTest.ts(3,1): error TS6133: 'SupabaseAuthService' is declared but its value is never read.
+src/services/supabaseTest.ts(4,1): error TS6133: 'SupabaseDatabaseService' is declared but its value is never read.
+src/services/supabaseTest.ts(12,13): error TS6133: 'data' is declared but its value is never read.
+src/utils/envValidation.ts(16,7): error TS6133: 'getEnvVar' is declared but its value is never read.

@@ -12,7 +12,10 @@ jest.mock('@google/genai', () => ({
 jest.mock('../memory', () => ({
   MemoryBank: jest.fn().mockImplementation(() => ({
     getRelevantMemories: jest.fn().mockResolvedValue([]),
-    addMemory: jest.fn().mockResolvedValue(undefined)
+    addMemory: jest.fn().mockResolvedValue(undefined),
+    searchMemories: jest.fn().mockResolvedValue([]),
+    deleteMemory: jest.fn().mockResolvedValue(undefined),
+    getStats: jest.fn().mockResolvedValue({ totalMemories: 0, totalSize: 0 })
   })),
   schoolMemoryBankConfig: {}
 }));
@@ -24,7 +27,13 @@ jest.mock('../utils/envValidation', () => ({
 }));
 
 import { GoogleGenAI } from '@google/genai';
-import { getAIResponseStream, initialGreeting } from './geminiService';
+import { 
+  getAIResponseStream, 
+  getConversationHistory, 
+  clearConversationHistory, 
+  getMemoryStats,
+  initialGreeting 
+} from './geminiService';
 
 describe('Gemini Service', () => {
   const mockApiKey = 'test-api-key';
@@ -278,6 +287,107 @@ describe('Gemini Service', () => {
       }
 
       expect(result).toEqual(['Maaf, terjadi masalah saat menghubungi AI. Silakan coba lagi nanti.']);
+    });
+  });
+
+  describe('getConversationHistory', () => {
+    test('should return conversation history', async () => {
+      const mockHistory = [
+        { id: '1', content: 'Conversation 1', type: 'conversation' },
+        { id: '2', content: 'Conversation 2', type: 'conversation' },
+      ];
+      
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = MemoryBank();
+      mockMemoryBank.searchMemories.mockResolvedValue(mockHistory);
+
+      const result = await getConversationHistory(5);
+
+      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
+        type: 'conversation',
+        limit: 5,
+      });
+      expect(result).toEqual(mockHistory);
+    });
+
+    test('should handle error and return empty array', async () => {
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = MemoryBank();
+      mockMemoryBank.searchMemories.mockRejectedValue(new Error('Memory error'));
+
+      const result = await getConversationHistory();
+
+      expect(result).toEqual([]);
+    });
+
+    test('should use default limit', async () => {
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = MemoryBank();
+      mockMemoryBank.searchMemories.mockResolvedValue([]);
+
+      await getConversationHistory();
+
+      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
+        type: 'conversation',
+        limit: 10,
+      });
+    });
+  });
+
+  describe('clearConversationHistory', () => {
+    test('should delete all conversations and return count', async () => {
+      const mockConversations = [
+        { id: '1', content: 'Conversation 1', type: 'conversation' },
+        { id: '2', content: 'Conversation 2', type: 'conversation' },
+      ];
+      
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = MemoryBank();
+      mockMemoryBank.searchMemories.mockResolvedValue(mockConversations);
+      mockMemoryBank.deleteMemory.mockResolvedValue(undefined);
+
+      const result = await clearConversationHistory();
+
+      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
+        type: 'conversation',
+      });
+      expect(mockMemoryBank.deleteMemory).toHaveBeenCalledTimes(2);
+      expect(mockMemoryBank.deleteMemory).toHaveBeenCalledWith('1');
+      expect(mockMemoryBank.deleteMemory).toHaveBeenCalledWith('2');
+      expect(result).toBe(2);
+    });
+
+    test('should handle error', async () => {
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = MemoryBank();
+      mockMemoryBank.searchMemories.mockRejectedValue(new Error('Memory error'));
+
+      await expect(clearConversationHistory()).rejects.toThrow('Memory error');
+    });
+  });
+
+  describe('getMemoryStats', () => {
+    test('should return memory stats', async () => {
+      const mockStats = { totalMemories: 10, totalSize: 1024 };
+      
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = MemoryBank();
+      mockMemoryBank.getStats.mockResolvedValue(mockStats);
+
+      const result = await getMemoryStats();
+
+      expect(mockMemoryBank.getStats).toHaveBeenCalled();
+      expect(result).toEqual(mockStats);
+    });
+
+    test('should handle error and return null', async () => {
+      const { MemoryBank } = require('../memory');
+      const mockMemoryBank = MemoryBank();
+      mockMemoryBank.getStats.mockRejectedValue(new Error('Memory error'));
+
+      const result = await getMemoryStats();
+
+      expect(result).toBeNull();
     });
   });
 });

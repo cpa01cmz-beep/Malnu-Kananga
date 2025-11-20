@@ -3,10 +3,7 @@ import { StudentSupportService } from '../studentSupportService';
 
 describe('StudentSupportService', () => {
   beforeEach(() => {
-    // Clear localStorage before each test
     localStorage.clear();
-    
-    // Re-initialize the service
     StudentSupportService.initialize();
   });
 
@@ -42,7 +39,6 @@ describe('StudentSupportService', () => {
         tags: ['login', 'access']
       });
 
-      // Check if ticket was processed automatically
       const tickets = StudentSupportService.getSupportTickets();
       const processedTicket = tickets.find(t => t.id === ticket.id);
       
@@ -56,7 +52,7 @@ describe('StudentSupportService', () => {
     it('should update student progress with new data', () => {
       const progressData = {
         academicMetrics: {
-          gpa: 85, // Using percentage scale (0-100) as per service logic
+          gpa: 85,
           attendanceRate: 85,
           assignmentCompletion: 90,
           subjectPerformance: { math: 85, science: 78 }
@@ -121,7 +117,6 @@ describe('StudentSupportService', () => {
     });
 
     it('should retrieve resources by category', () => {
-      // Add test resource
       StudentSupportService.addSupportResource({
         title: 'Tutorial Login',
         description: 'Cara login ke portal',
@@ -141,7 +136,6 @@ describe('StudentSupportService', () => {
 
   describe('getSupportAnalytics', () => {
     it('should return correct analytics', () => {
-      // Create some test tickets
       StudentSupportService.createSupportTicket({
         studentId: 'STU001',
         category: 'academic',
@@ -199,7 +193,6 @@ describe('StudentSupportService', () => {
         rating: 0
       });
 
-      // Rate the resource
       StudentSupportService.rateResource(resource.id, 5);
       
       const resources = StudentSupportService.getSupportResources();
