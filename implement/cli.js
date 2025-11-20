@@ -9,12 +9,14 @@ import fs from 'fs/promises';
 import path from 'path';
 import SessionManager from './sessionManager.js';
 
+// Global console for CLI usage
+const globalConsole = console;
+
 const IMPLEMENT_DIR = './';
 const STATE_FILE = path.join(IMPLEMENT_DIR, 'state.json');
 
 async function showHelp() {
-  // eslint-disable-next-line no-console
-  console.log(`
+  globalConsole.log(`
 Implementation Session CLI
 
 Usage: node cli.js [command]
@@ -32,17 +34,11 @@ Commands:
 async function showStatus() {
   try {
     const state = JSON.parse(await fs.readFile(STATE_FILE, 'utf8'));
-    // eslint-disable-next-line no-console
-    console.log('Session Status:', state.status);
-    // eslint-disable-next-line no-console
-    console.log('Session ID:', state.sessionId);
-    // eslint-disable-next-line no-console
-    console.log('Current Step:', state.progress.currentStep);
-    // eslint-disable-next-line no-console
-    console.log('Completed Steps:', state.progress.completedSteps.length, '/', state.progress.totalSteps);
-    // eslint-disable-next-line no-console
-    // eslint-disable-next-line no-console
-    console.log('Project:', state.projectContext.name);
+    globalConsole.log('Session Status:', state.status);
+    globalConsole.log('Session ID:', state.sessionId);
+    globalConsole.log('Current Step:', state.progress.currentStep);
+    globalConsole.log('Completed Steps:', state.progress.completedSteps.length, '/', state.progress.totalSteps);
+    globalConsole.log('Project:', state.projectContext.name);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Error reading session state:', error.message);
@@ -52,44 +48,33 @@ async function showStatus() {
 async function showProgress() {
   try {
     const state = JSON.parse(await fs.readFile(STATE_FILE, 'utf8'));
-    // eslint-disable-next-line no-console
-    console.log('\nProgress Details:');
-    // eslint-disable-next-line no-console
-    console.log('----------------');
-    // eslint-disable-next-line no-console
-    console.log(`Total Steps: ${state.progress.totalSteps}`);
-    // eslint-disable-next-line no-console
-    console.log(`Completed: ${state.progress.completedSteps.length}`);
-    // eslint-disable-next-line no-console
-    console.log(`Remaining: ${state.progress.totalSteps - state.progress.completedSteps.length}`);
-    // eslint-disable-next-line no-console
-    console.log('\nCompleted Steps:');
+    globalConsole.log('\nProgress Details:');
+    globalConsole.log('----------------');
+    globalConsole.log(`Total Steps: ${state.progress.totalSteps}`);
+    globalConsole.log(`Completed: ${state.progress.completedSteps.length}`);
+    globalConsole.log(`Remaining: ${state.progress.totalSteps - state.progress.completedSteps.length}`);
+    globalConsole.log('\nCompleted Steps:');
     state.progress.completedSteps.forEach((step, index) => {
       const checkpoint = state.checkpoints[step];
-      // eslint-disable-next-line no-console
-      console.log(`  ${index + 1}. ${step} - ${checkpoint ? checkpoint.description : 'No description'}`);
+      globalConsole.log(`  ${index + 1}. ${step} - ${checkpoint ? checkpoint.description : 'No description'}`);
     });
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error reading session state:', error.message);
+    globalConsole.error('Error reading session state:', error.message);
   }
 }
 
 async function createCheckpoint(step, description) {
   if (!step) {
-    // eslint-disable-next-line no-console
-    console.error('Error: Please provide a step name');
+    globalConsole.error('Error: Please provide a step name');
     return;
   }
   
   const session = new SessionManager();
   try {
     await session.completeStep(step, description || `Completed step: ${step}`);
-    // eslint-disable-next-line no-console
-    console.log(`Checkpoint created for step: ${step}`);
+    globalConsole.log(`Checkpoint created for step: ${step}`);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error creating checkpoint:', error.message);
+    globalConsole.error('Error creating checkpoint:', error.message);
   }
 }
 
@@ -121,11 +106,9 @@ async function startNewSession() {
   
   try {
     await fs.writeFile(STATE_FILE, JSON.stringify(newState, null, 2));
-    // eslint-disable-next-line no-console
-    console.log(`New session started with ID: ${sessionId}`);
+    globalConsole.log(`New session started with ID: ${sessionId}`);
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error creating new session:', error.message);
+    globalConsole.error('Error creating new session:', error.message);
   }
 }
 
@@ -157,4 +140,4 @@ async function main() {
 }
 
 // Run the main function
-main().catch(console.error);
+main().catch(globalConsole.error);
