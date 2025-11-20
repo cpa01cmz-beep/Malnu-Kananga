@@ -21,8 +21,9 @@ This comprehensive guide covers the complete deployment process for the MA Malnu
 - **VS Code** (Recommended): With extensions for React, TypeScript, and Cloudflare
 
 ### Required API Keys
-- **Google Gemini API Key**: For AI chat functionality
+- **Google Gemini API Key**: For AI chat functionality (required)
 - **Cloudflare API Token**: With appropriate permissions
+- **SECRET_KEY**: HMAC secret key for JWT signing (required)
 - **Custom Domain DNS** (Optional): If using custom domain
 
 ---
@@ -53,6 +54,9 @@ nano .env
 ```bash
 # Required for AI functionality
 API_KEY=your_google_gemini_api_key_here
+
+# Required for authentication
+SECRET_KEY=your_jwt_secret_key_here
 
 # Application configuration
 NODE_ENV=development
@@ -157,25 +161,29 @@ wrangler vectorize create malnu-kananga-index \
 ### 4. Update Wrangler Configuration
 ```toml
 # wrangler.toml
-name = "malnu-kananga"
+name = "malnu-api"
 main = "worker.js"
 compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
 
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
-database_name = "malnu-kananga-db"
+database_name = "malnu-kananga-auth"
 database_id = "your-database-id-here"
 
 # Vectorize binding
 [[vectorize]]
-binding = "VECTORIZE_INDEX"
-index_name = "malnu-kananga-index"
+binding = "VECTORIZE"
+index_name = "malnu-kananga-docs"
+
+# AI binding
+ai = { binding = "AI" }
 
 # Environment variables
 [vars]
-API_KEY = "your_gemini_api_key"
 NODE_ENV = "production"
+# API_KEY and SECRET_KEY should be set as secrets
 ```
 
 ---
@@ -626,7 +634,7 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 ---
 
 **Deployment Guide**  
-*Version: 1.1.0*  
+*Version: 1.2.0*  
 *Last Updated: November 20, 2024*  
 *Deployment Team: MA Malnu Kananga DevOps*  
 *Next Review: December 2024*
