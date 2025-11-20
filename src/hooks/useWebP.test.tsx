@@ -82,7 +82,7 @@ describe('WebPProvider dan useWebP Hook', () => {
       </WebPProvider>
     );
 
-    // Tunggu hingga loading selesai
+    // Tunggu hingga loading selesai dengan act
     await act(async () => {
       await new Promise(resolve => setTimeout(resolve, 100));
     });
@@ -111,11 +111,14 @@ describe('WebPProvider dan useWebP Hook', () => {
       throw new Error('Canvas error');
     });
 
-    render(
-      <WebPProvider>
-        <TestComponent />
-      </WebPProvider>
-    );
+    // Render dengan act untuk menangani state updates
+    await act(async () => {
+      render(
+        <WebPProvider>
+          <TestComponent />
+        </WebPProvider>
+      );
+    });
 
     // Tunggu hingga error handling selesai
     await act(async () => {

@@ -12,6 +12,28 @@ mockIntersectionObserver.mockReturnValue({
 });
 window.IntersectionObserver = mockIntersectionObserver;
 
+// Mock canvas toDataURL untuk WebP detection
+const mockCanvas = {
+  toDataURL: jest.fn(() => 'data:image/webp;base64,mockWebPData'),
+  width: 1,
+  height: 1
+};
+
+Object.defineProperty(mockCanvas, 'toDataURL', {
+  writable: true,
+  configurable: true,
+  value: jest.fn(() => 'data:image/webp;base64,mockWebPData')
+});
+
+// Mock document.createElement untuk canvas
+const originalCreateElement = document.createElement;
+document.createElement = jest.fn((tagName) => {
+  if (tagName === 'canvas') {
+    return mockCanvas as any;
+  }
+  return originalCreateElement.call(document, tagName);
+});
+
 // Wrapper component untuk menyediakan WebP context
 const LazyImageWithProvider: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
   <WebPProvider>
@@ -22,6 +44,12 @@ const LazyImageWithProvider: React.FC<{ src: string; alt: string }> = ({ src, al
 describe('LazyImage dengan WebP Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCanvas.toDataURL.mockReturnValue('data:image/webp;base64,mockWebPData');
+  });
+
+  afterAll(() => {
+    // Restore original createElement setelah semua tests
+    document.createElement = originalCreateElement;
   });
 
   it('seharusnya render tanpa error dengan WebP provider', () => {
@@ -31,7 +59,7 @@ describe('LazyImage dengan WebP Integration', () => {
   });
 
   it('seharusnya menggunakan WebP detection tanpa error provider', () => {
-    render(<LazyImageWithProvider src="test.jpg" alt="Test image" />);
+    render(<LazyImageWithProvider src="https://example.com/test.jpg" alt="Test image" />);
 
     // Component seharusnya render tanpa error
     const img = screen.getByRole('img');
@@ -61,7 +89,7 @@ describe('LazyImage dengan WebP Integration', () => {
 
   it('seharusnya menangani error gambar dengan fallback', () => {
     render(
-      <LazyImageWithProvider src="broken-image.jpg" alt="Broken image" />
+      <LazyImageWithProvider src="https://example.com/broken-image.jpg" alt="Broken image" />
     );
 
     const img = screen.getByRole('img');

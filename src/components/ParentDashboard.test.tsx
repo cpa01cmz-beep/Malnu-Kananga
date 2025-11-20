@@ -109,15 +109,15 @@ describe('ParentDashboard Component', () => {
       expect(screen.getByText('Selamat datang, Bapak Ahmad Rahman')).toBeInTheDocument();
     });
 
-    test('should render navigation tabs', () => {
-      render(<ParentDashboard onLogout={mockOnLogout} />);
+      test('should render navigation tabs', () => {
+        render(<ParentDashboard onLogout={mockOnLogout} />);
 
-      expect(screen.getByText('Ringkasan')).toBeInTheDocument();
-      expect(screen.getByText('Anak')).toBeInTheDocument();
-      expect(screen.getByText('Tugas')).toBeInTheDocument();
-      expect(screen.getByText('Pesan (1)')).toBeInTheDocument(); // More specific for navigation tab
-      expect(screen.getByText('Rapor')).toBeInTheDocument();
-    });
+        expect(screen.getByText('Ringkasan')).toBeInTheDocument();
+        expect(screen.getByText('Anak')).toBeInTheDocument();
+        expect(screen.getByText('Tugas')).toBeInTheDocument();
+        expect(screen.getByText('Pesan (1)')).toBeInTheDocument(); // More specific for navigation tab
+        expect(screen.getByText('Rapor')).toBeInTheDocument();
+      });
 
     test('should render overview tab by default', () => {
       render(<ParentDashboard onLogout={mockOnLogout} />);
@@ -127,16 +127,17 @@ describe('ParentDashboard Component', () => {
       expect(screen.getByText('Tugas Pending')).toBeInTheDocument();
     });
 
-    test('should render children information in overview', () => {
-      render(<ParentDashboard onLogout={mockOnLogout} />);
+      test('should render children information in overview', () => {
+        render(<ParentDashboard onLogout={mockOnLogout} />);
 
-      // Check that we have 1 active child displayed in stats
-      expect(screen.getByText('Anak Aktif')).toBeInTheDocument();
-      // Use getAllByText for the number "1" since it appears multiple times
-      expect(screen.getAllByText('1')).toHaveLength(3); // Should appear in 3 stats cards
-      // Check that messages show the child's name in the overview
-      expect(screen.getByText('Perkembangan Akademik Ahmad Fauzi')).toBeInTheDocument();
-    });
+        // Check that we have 1 active child displayed in stats
+        expect(screen.getByText('Anak Aktif')).toBeInTheDocument();
+        // Use getAllByText for the number "1" since it appears multiple times
+        expect(screen.getAllByText('1')).toHaveLength(3); // Should appear in 3 stats cards
+        // Check that messages show the child's name in the overview
+        expect(screen.getByText('Perkembangan Akademik Ahmad Fauzi')).toBeInTheDocument();
+        expect(screen.getByText(/Ahmad Fauzi/)).toBeInTheDocument();
+      });
   });
 
   describe('Tab Navigation', () => {
@@ -155,13 +156,13 @@ describe('ParentDashboard Component', () => {
       expect(screen.getByText('Laporan Praktikum Fisika')).toBeInTheDocument();
     });
 
-    test('should switch to messages tab when clicked', () => {
-      render(<ParentDashboard onLogout={mockOnLogout} />);
+      test('should switch to messages tab when clicked', () => {
+        render(<ParentDashboard onLogout={mockOnLogout} />);
 
-      fireEvent.click(screen.getByText('Pesan (1)')); // More specific selector
-      expect(screen.getByText('Pesan & Komunikasi')).toBeInTheDocument();
-      expect(screen.getByText('Perkembangan Akademik Ahmad Fauzi')).toBeInTheDocument();
-    });
+        fireEvent.click(screen.getByText('Pesan (1)')); // More specific selector
+        expect(screen.getByText('Pesan & Komunikasi')).toBeInTheDocument();
+        expect(screen.getByText('Perkembangan Akademik Ahmad Fauzi')).toBeInTheDocument();
+      });
 
     test('should switch to reports tab when clicked', () => {
       render(<ParentDashboard onLogout={mockOnLogout} />);

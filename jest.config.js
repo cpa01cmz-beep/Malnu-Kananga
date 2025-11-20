@@ -4,29 +4,45 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/src/__mocks__/fileMock.js'
+    '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/src/__mocks__/fileMock.js',
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^./authService$': '<rootDir>/src/__mocks__/authService.ts',
+    '^../services/authService$': '<rootDir>/src/__mocks__/authService.ts',
+    '^../utils/envValidation$': '<rootDir>/src/__mocks__/envValidation.js'
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: false
+      tsconfig: {
+        target: 'es2017',
+        module: 'commonjs',
+        jsx: 'react-jsx',
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true
+      }
     }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
-      presets: [['@babel/preset-env', { modules: 'commonjs' }]]
+      presets: [['@babel/preset-env', { 
+        modules: 'commonjs',
+        targets: {
+          node: 'current'
+        }
+      }]]
     }]
   },
+  testEnvironmentOptions: {
+    customExportConditions: ['node', 'node-addons']
+  },
+  extensionsToTreatAsEsm: [],
   globals: {
     'ts-jest': {
-      useESM: false
+      useESM: false,
+      tsconfig: {
+        target: 'es2017',
+        module: 'commonjs',
+        jsx: 'react-jsx',
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true
+      }
     }
-  },
-  testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',
-    '<rootDir>/src/**/*.(test|spec).(ts|tsx|js)'
-  ],
-  collectCoverageFrom: [
-    'src/**/*.(ts|tsx)',
-    '!src/**/*.d.ts',
-    '!src/main.tsx',
-    '!src/vite-env.d.ts'
-  ]
+  }
 };
