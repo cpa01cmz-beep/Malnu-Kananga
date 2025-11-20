@@ -11,8 +11,8 @@ MA Malnu Kananga API provides comprehensive endpoints for authentication, AI cha
 - **API Version**: v1
 - **Content-Type**: `application/json`
 - **Authentication**: JWT Token (Magic Link System) with HMAC-SHA256 signing
-- **Rate Limiting**: 5 requests per 15 minutes per IP (authentication), 20 requests per minute (chat), 100 requests per minute (data APIs)
-- **CORS**: Enabled for all origins in development, restricted in production
+- **Rate Limiting**: 5 requests per 15 minutes per IP (authentication), unlimited for chat and data APIs
+- **CORS**: Enabled for all origins (`Access-Control-Allow-Origin: *`)
 - **Timeout**: 10 seconds per request
 - **Retry Policy**: 3 attempts with exponential backoff
 - **Security**: IP-based rate limiting, secure token generation with Web Crypto API
@@ -46,6 +46,11 @@ VITE_JWT_SECRET=dev-secret-key            # Development JWT secret (use only in 
 RATE_LIMIT_WINDOW_MS=900000               # 15 minutes in milliseconds
 RATE_LIMIT_MAX_ATTEMPTS=5                 # Max attempts per window
 RATE_LIMIT_BLOCK_DURATION=1800000         # 30 minutes block duration
+
+// Cloudflare Workers Bindings (auto-configured)
+AI=@cf/baai/bge-base-en-v1.5              # AI model for embeddings
+VECTORIZE_INDEX=malnu-kananga-index       # Vector database index
+DB=malnu-kananga-db                       # D1 database binding
 ```
 
 ## 🔐 Authentication API
@@ -186,13 +191,16 @@ GET /seed
 ```
 
 **Response:**
-```json
-{
-  "success": true,
-  "message": "Vector database berhasil di-seed",
-  "documents_count": 150
-}
 ```
+Successfully seeded 50 documents.
+```
+
+**Description:**
+- Seeds the vector database with school information documents
+- Uses Cloudflare AI embeddings model (@cf/baai/bge-base-en-v1.5)
+- Inserts documents in batches of 100 for optimal performance
+- Must be run once after worker deployment
+- Documents include: school programs, PPDB info, location, contact details
 
 ### Health Check
 ```http
@@ -211,6 +219,8 @@ GET /health
   }
 }
 ```
+
+**Note**: This endpoint is referenced in documentation but may not be implemented in current worker.js. Use direct endpoint testing for health verification.
 
 ## 📊 Student API
 
@@ -666,9 +676,10 @@ X-RateLimit-Reset: 1640995200
 
 ### Rate Limits by Endpoint
 - **Authentication**: 5 requests per 15 minutes
-- **Chat API**: 20 requests per minute
-- **Data APIs**: 100 requests per minute
-- **Content APIs**: 50 requests per minute
+- **Chat API**: No rate limiting (unlimited)
+- **Data APIs**: No rate limiting (unlimited)
+- **Content APIs**: No rate limiting (unlimited)
+- **Seed Endpoint**: No rate limiting (admin use only)
 - **Signature APIs**: 10 requests per minute
 
 ## 🧪 Testing
@@ -680,7 +691,7 @@ curl -X POST https://malnu-api.sulhi-cmz.workers.dev/request-login-link \
   -H "Content-Type: application/json" \
   -d '{"email": "test@example.com"}'
 
-# 2. Verify token (gunakan token dari response)
+# 2. Verify token (gunakan token dari email)
 curl -X GET "https://malnu-api.sulhi-cmz.workers.dev/verify-login?token=YOUR_TOKEN"
 ```
 
@@ -689,6 +700,12 @@ curl -X GET "https://malnu-api.sulhi-cmz.workers.dev/verify-login?token=YOUR_TOK
 curl -X POST https://malnu-api.sulhi-cmz.workers.dev/api/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Apa saja program unggulan sekolah?"}'
+```
+
+### Test Vector Database Seeding
+```bash
+# Seed vector database (run once after deployment)
+curl -X GET https://malnu-api.sulhi-cmz.workers.dev/seed
 ```
 
 ## 📝 SDK Examples
@@ -785,11 +802,19 @@ Content-Type: application/json
 
 ## 📊 Monitoring & Logging
 
+### Available Endpoints
+- `/request-login-link` - Request magic link authentication
+- `/verify-login` - Verify JWT token from magic link
+- `/refresh-token` - Refresh authentication token
+- `/logout` - User logout
+- `/api/chat` - AI chat with RAG system
+- `/seed` - Seed vector database with school data
+- `/generate-signature` - Generate HMAC signature
+- `/verify-signature` - Verify HMAC signature
+
 ### Health Check Endpoints
-- `/health` - Overall system health
-- `/health/ai` - AI service status
-- `/health/database` - Database connectivity
-- `/health/vectorize` - Vector database status
+- `/health` - Overall system health (planned, not yet implemented)
+- Direct endpoint testing recommended for current health verification
 
 ### Logging Format
 ```json

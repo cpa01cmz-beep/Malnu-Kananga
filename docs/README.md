@@ -50,6 +50,12 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 - **Fitur**: Code structure, best practices, CI/CD pipeline
 - **Level**: Advanced
 
+#### 🚀 [Installation Guide](./INSTALLATION_GUIDE.md)
+- **Target**: Developer, system administrator
+- **Topik**: Development setup, production deployment, configuration
+- **Fitur**: Step-by-step installation, environment setup, deployment checklist
+- **Level**: Intermediate to Advanced
+
 #### 🔧 [Troubleshooting Guide](./TROUBLESHOOTING_GUIDE.md)
 - **Target**: All users, technical support
 - **Topik**: Common issues, solutions, FAQ, emergency procedures
@@ -68,9 +74,9 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 
 ### 🔧 Technical Users
 1. **API Integration**: Lihat API Documentation
-2. **Development Setup**: Ikuti Developer Guide
+2. **Development Setup**: Ikuti Installation Guide & Developer Guide
 3. **System Architecture**: Review Developer Guide
-4. **Deployment**: Check Developer Guide & Troubleshooting
+4. **Deployment**: Check Installation Guide & Troubleshooting
 
 ### 📚 Power Users
 1. **Advanced Features**: Lihat Panduan Administrator
@@ -90,6 +96,7 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 | Administrator Guide | Admin | Advanced | Quarterly |
 | API Documentation | Developer | Advanced | As needed |
 | Developer Guide | Developer | Advanced | Quarterly |
+| Installation Guide | Developer, SysAdmin | Intermediate | Quarterly |
 | Troubleshooting Guide | All | All | As needed |
 
 ---
@@ -222,7 +229,8 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 
 ### 📚 Essential Reading
 - [Getting Started Guide](./USER_GUIDE_STUDENT.md#quick-start)
-- [System Requirements](./DEVELOPER_GUIDE.md#prerequisites)
+- [System Requirements](./INSTALLATION_GUIDE.md#system-requirements)
+- [Installation Steps](./INSTALLATION_GUIDE.md#development-setup)
 - [Common Issues](./TROUBLESHOOTING_GUIDE.md#common-issues)
 - [API Quick Reference](./API_DOCUMENTATION.md#quick-reference)
 
@@ -234,8 +242,9 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 
 ### 🔧 Technical Resources
 - [API Endpoints](./API_DOCUMENTATION.md#authentication-api)
-- [Development Setup](./DEVELOPER_GUIDE.md#development-setup)
-- [Deployment Guide](./DEVELOPER_GUIDE.md#deployment)
+- [Development Setup](./INSTALLATION_GUIDE.md#development-setup)
+- [Installation Guide](./INSTALLATION_GUIDE.md#production-deployment)
+- [Deployment Guide](./INSTALLATION_GUIDE.md#option-1-one-click-deploy-recommended)
 - [Troubleshooting](./TROUBLESHOOTING_GUIDE.md#emergency-procedures)
 
 ---

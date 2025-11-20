@@ -8,12 +8,12 @@ This comprehensive troubleshooting guide covers common issues, their solutions, 
 
 Before troubleshooting, check current system status:
 - **Status Page**: https://status.ma-malnukananga.sch.id
-- **Health Check**: [Check deployed worker URL]/health (URL varies by deployment)
+- **Health Check**: Test endpoints directly (health endpoint not yet implemented)
 - **API Documentation**: Available in repository docs/API_DOCUMENTATION.md
 - **System Uptime**: 99.9% (SLA guaranteed)
 - **Last Maintenance**: November 20, 2024
 - **Current Version**: v1.2.0
-- **Known Issues**: None reported
+- **Known Issues**: Health check endpoint not implemented, use direct endpoint testing
 
 #### 🔍 Finding Your API URL
 The actual API URL depends on your Cloudflare Worker deployment:
@@ -26,8 +26,12 @@ The actual API URL depends on your Cloudflare Worker deployment:
 
 Use these browser developer tools for quick diagnosis:
 ```javascript
-// Check API connectivity
-fetch('https://malnu-api.sulhi-cmz.workers.dev/health')
+// Check API connectivity (test available endpoints)
+fetch('https://malnu-api.sulhi-cmz.workers.dev/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ message: 'test' })
+})
   .then(r => r.json())
   .then(console.log);
 
@@ -38,10 +42,10 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
 // Check service worker status
 navigator.serviceWorker.getRegistrations().then(console.log);
 
-// Check rate limiting status
-fetch('https://malnu-api.sulhi-cmz.workers.dev/health')
-  .then(r => r.json())
-  .then(data => console.log('Rate Limit:', data.rateLimit));
+// Test vector database seeding
+fetch('https://malnu-api.sulhi-cmz.workers.dev/seed')
+  .then(r => r.text())
+  .then(console.log);
 
 // Test signature generation
 fetch('https://malnu-api.sulhi-cmz.workers.dev/generate-signature', {
@@ -90,15 +94,17 @@ Tambahkan domain ke whitelist:
 
 #### 5. Technical Checks
 ```javascript
-// Check email service status
-fetch('/api/email-status')
+// Check email service status (endpoint not implemented)
+// Use direct email testing instead
+fetch('https://malnu-api.sulhi-cmz.workers.dev/request-login-link', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email: 'test@example.com' })
+})
   .then(r => r.json())
-  .then(data => console.log('Email Service:', data.status));
+  .then(data => console.log('Email Service Response:', data));
 
-// Check rate limiting
-fetch('/api/rate-limit-status')
-  .then(r => r.json())
-  .then(data => console.log('Rate Limit:', data));
+// Check rate limiting by attempting multiple requests
 ```
 
 **When to Contact Support:**
@@ -134,14 +140,15 @@ fetch('/api/rate-limit-status')
 
 **Administrator Actions**:
 ```bash
-# Check email logs
-curl -X GET "https://malnu-api.sulhi-cmz.workers.dev/logs/email" \
-  -H "Authorization: Bearer {admin_token}"
+# Test email service manually
+curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/request-login-link" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@example.com"}'
 
-# Resend magic link manually
-curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/admin/resend-link" \
-  -H "Authorization: Bearer {admin_token}" \
-  -d '{"email": "user@example.com"}'
+# Check worker logs
+wrangler tail
+
+# Monitor rate limiting in production
 ```
 
 ### ❌ Magic Link Expired
@@ -208,24 +215,29 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
    - Check API quota usage
 
 4. **Vector Database Status**
-   ```bash
-   # Check if vector database is seeded
-   curl https://malnu-api.sulhi-cmz.workers.dev/health
-   ```
-
-5. **Rate Limiting**
-    - ✅ **Solution**: Wait 1 minute between chat requests
-    - ✅ **Check**: Browser network tab for 429 status codes
-    - 🔍 **Monitor**: API response headers for rate limit info
     ```bash
     # Check if vector database is seeded
-    curl "https://malnu-api.sulhi-cmz.workers.dev/health"
+    curl https://malnu-api.sulhi-cmz.workers.dev/seed
+    ```
+
+5. **Rate Limiting**
+     - ✅ **Solution**: Wait 1 minute between chat requests (if applicable)
+     - ✅ **Check**: Browser network tab for 429 status codes
+     - 🔍 **Monitor**: API response headers for rate limit info
+    ```bash
+    # Test chat endpoint directly
+    curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/api/chat" \
+      -H "Content-Type: application/json" \
+      -d '{"message": "Apa program unggulan sekolah?"}'
     ```
 
 **Administrator Solutions**:
 ```bash
 # Re-seed vector database
 curl "https://malnu-api.sulhi-cmz.workers.dev/seed"
+
+# Check worker logs
+wrangler tail
 
 # Restart worker if needed
 wrangler deploy --env=production
