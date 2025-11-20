@@ -47,6 +47,12 @@
     "build/",
     "*.config.*",
     "implement/",
-    "coverage/"
+    "coverage/",
+    "public/",
+    "scripts/",
+    "src/__mocks__/",
+    "src/__tests__/",
+    "worker.js",
+    "worker-extended.js"
   ]
 }
