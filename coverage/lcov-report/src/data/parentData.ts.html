@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/26</span>
+                <span class='fraction'>0/30</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>0/20</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/21</span>
+                <span class='fraction'>0/25</span>
             </div>
         
             
@@ -611,19 +611,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -631,7 +621,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -740,7 +740,7 @@ export interface AcademicReport {
 }
 &nbsp;
 // Mock data untuk orang tua
-export const currentParent: Parent = <span class="cstat-no" title="statement not covered" >{</span>
+export const <span class="cstat-no" title="statement not covered" >currentParent: Parent = {</span>
   id: 'PAR001',
   name: 'Bapak Ahmad Rahman',
   email: 'parent@ma-malnukananga.sch.id',
@@ -754,7 +754,7 @@ export const currentParent: Parent = <span class="cstat-no" title="statement not
 };
 &nbsp;
 // Mock data anak yang dipantau
-export const parentChildren: Child[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >parentChildren: Child[] = [</span>
   {
     id: 'CHD001',
     name: 'Ahmad Fauzi Rahman',
@@ -778,7 +778,7 @@ export const parentChildren: Child[] = <span class="cstat-no" title="statement n
 ];
 &nbsp;
 // Mock data tugas untuk anak
-export const assignmentsData: Assignment[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >assignmentsData: Assignment[] = [</span>
   {
     id: 'ASG001',
     title: 'Laporan Praktikum Fisika',
@@ -827,7 +827,7 @@ export const assignmentsData: Assignment[] = <span class="cstat-no" title="state
 ];
 &nbsp;
 // Mock data pesan
-export const messagesData: Message[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >messagesData: Message[] = [</span>
   {
     id: 'MSG001',
     from: {
@@ -867,7 +867,7 @@ export const messagesData: Message[] = <span class="cstat-no" title="statement n
 ];
 &nbsp;
 // Mock data rapor akademik
-export const academicReports: AcademicReport[] = <span class="cstat-no" title="statement not covered" >[</span>
+export const <span class="cstat-no" title="statement not covered" >academicReports: AcademicReport[] = [</span>
   {
     id: 'RPT001',
     studentId: 'STU001',
@@ -904,17 +904,17 @@ export const academicReports: AcademicReport[] = <span class="cstat-no" title="s
 ];
 &nbsp;
 // Helper functions untuk portal orang tua
-export function <span class="fstat-no" title="function not covered" >getUnreadMessages(</span>messages: Message[]): Message[] {
+<span class="cstat-no" title="statement not covered" >export function <span class="fstat-no" title="function not covered" >g</span>etUnreadMessages(</span>messages: Message[]): Message[] {
 <span class="cstat-no" title="statement not covered" >  return messages.filter(<span class="fstat-no" title="function not covered" >message </span>=&gt; <span class="cstat-no" title="statement not covered" >!message.isRead)</span>;</span>
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >getPendingAssignments(</span>assignments: Assignment[]): Assignment[] {
+<span class="cstat-no" title="statement not covered" >export function <span class="fstat-no" title="function not covered" >g</span>etPendingAssignments(</span>assignments: Assignment[]): Assignment[] {
 <span class="cstat-no" title="statement not covered" >  return assignments.filter(<span class="fstat-no" title="function not covered" >assignment </span>=&gt;</span>
 <span class="cstat-no" title="statement not covered" >    assignment.status === 'assigned' || assignment.status === 'overdue'</span>
   );
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >getUpcomingAssignments(</span>assignments: Assignment[], days: number = <span class="branch-0 cbranch-no" title="branch not covered" >7)</span>: Assignment[] {
+<span class="cstat-no" title="statement not covered" >export function <span class="fstat-no" title="function not covered" >g</span>etUpcomingAssignments(</span>assignments: Assignment[], days: number = <span class="branch-0 cbranch-no" title="branch not covered" >7)</span>: Assignment[] {
   const now = <span class="cstat-no" title="statement not covered" >new Date();</span>
   const futureDate = <span class="cstat-no" title="statement not covered" >new Date(now.getTime() + (days * 24 * 60 * 60 * 1000));</span>
 &nbsp;
@@ -924,7 +924,7 @@ export function <span class="fstat-no" title="function not covered" >getUpcoming
   });
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >getAssignmentStats(</span>assignments: Assignment[]): {
+<span class="cstat-no" title="statement not covered" >export function <span class="fstat-no" title="function not covered" >g</span>etAssignmentStats(</span>assignments: Assignment[]): {
   total: number;
   submitted: number;
   pending: number;
@@ -936,9 +936,9 @@ export function <span class="fstat-no" title="function not covered" >getAssignme
   const pending = <span class="cstat-no" title="statement not covered" >assignments.filter(<span class="fstat-no" title="function not covered" >a </span>=&gt; <span class="cstat-no" title="statement not covered" >a.status === 'assigned')</span>.length;</span>
   const overdue = <span class="cstat-no" title="statement not covered" >assignments.filter(<span class="fstat-no" title="function not covered" >a </span>=&gt; <span class="cstat-no" title="statement not covered" >a.status === 'overdue')</span>.length;</span>
 &nbsp;
-  const gradedAssignments = <span class="cstat-no" title="statement not covered" >assignments.filter(<span class="fstat-no" title="function not covered" >a </span>=&gt; <span class="cstat-no" title="statement not covered" >a.submission?.score !== undefined)</span>;</span>
+  const gradedAssignments = <span class="cstat-no" title="statement not covered" >assignments.filter(<span class="fstat-no" title="function not covered" >a </span>=&gt; <span class="cstat-no" title="statement not covered" >a.submission?.score !== undefined);</span></span>
   const averageScore = <span class="cstat-no" title="statement not covered" >gradedAssignments.length &gt; 0</span>
-    ? gradedAssignments.reduce(<span class="fstat-no" title="function not covered" >(s</span>um, a) =&gt; <span class="cstat-no" title="statement not covered" >sum + (a.submission?.score || 0),</span> 0) / gradedAssignments.length
+    ? gradedAssignments.reduce(<span class="fstat-no" title="function not covered" >(s</span>um, a) =&gt; <span class="cstat-no" title="statement not covered" >sum + (a.submission?.score || 0), 0</span>) / gradedAssignments.length
     : 0;
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  return { total, submitted, pending, overdue, averageScore: Math.round(averageScore * 10) / 10 };</span>
@@ -949,7 +949,7 @@ export function <span class="fstat-no" title="function not covered" >getAssignme
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-19T10:46:20.357Z
+                at 2025-11-20T00:57:51.967Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

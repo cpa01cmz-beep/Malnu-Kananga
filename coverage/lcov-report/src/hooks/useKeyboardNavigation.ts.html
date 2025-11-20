@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/107</span>
+                <span class='fraction'>0/112</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/42</span>
+                <span class='fraction'>0/118</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/106</span>
+                <span class='fraction'>0/107</span>
             </div>
         
             
@@ -278,7 +278,7 @@
 <a name='L213'></a><a href='#L213'>213</a>
 <a name='L214'></a><a href='#L214'>214</a>
 <a name='L215'></a><a href='#L215'>215</a>
-<a name='L216'></a><a href='#L216'>216</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L216'></a><a href='#L216'>216</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -493,10 +493,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useEffect, useCallback } from 'react';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import { useEffect, useCallback } from 'react';</span>
 &nbsp;
 // Custom hook untuk keyboard navigation
-export const useKeyboardNavigation = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
+export const <span class="cstat-no" title="statement not covered" >useKeyboardNavigation = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>) =</span>&gt; {</span>
   const handleKeyDown = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >(e</span>vent: KeyboardEvent) =&gt; {</span>
     // Handle common keyboard shortcuts
 <span class="cstat-no" title="statement not covered" >    switch (event.key) {</span>
@@ -559,7 +559,7 @@ export const useKeyboardNavigation = <span class="cstat-no" title="statement not
           const menuItems = <span class="cstat-no" title="statement not covered" >menu.querySelectorAll('[role="menuitem"]');</span>
           const currentIndex = <span class="cstat-no" title="statement not covered" >Array.from(menuItems).indexOf(document.activeElement);</span>
           const nextIndex = <span class="cstat-no" title="statement not covered" >(currentIndex + 1) % menuItems.length;</span>
-          (<span class="cstat-no" title="statement not covered" >menuItems[nextIndex] as HTMLElement)?.focus();</span>
+<span class="cstat-no" title="statement not covered" >          (menuItems[nextIndex] as HTMLElement)?.focus();</span>
         }
 <span class="cstat-no" title="statement not covered" >        break;</span>
 &nbsp;
@@ -571,7 +571,7 @@ export const useKeyboardNavigation = <span class="cstat-no" title="statement not
           const menuItems = <span class="cstat-no" title="statement not covered" >menu.querySelectorAll('[role="menuitem"]');</span>
           const currentIndex = <span class="cstat-no" title="statement not covered" >Array.from(menuItems).indexOf(document.activeElement);</span>
           const prevIndex = <span class="cstat-no" title="statement not covered" >currentIndex === 0 ? menuItems.length - 1 : currentIndex - 1;</span>
-          (<span class="cstat-no" title="statement not covered" >menuItems[prevIndex] as HTMLElement)?.focus();</span>
+<span class="cstat-no" title="statement not covered" >          (menuItems[prevIndex] as HTMLElement)?.focus();</span>
         }
 <span class="cstat-no" title="statement not covered" >        break;</span>
 &nbsp;
@@ -609,7 +609,7 @@ export const useKeyboardNavigation = <span class="cstat-no" title="statement not
 };
 &nbsp;
 // Hook untuk focus management
-export const useFocusManagement = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
+export const <span class="cstat-no" title="statement not covered" >useFocusManagement = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>) =</span>&gt; {</span>
   const trapFocus = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >(c</span>ontainer: HTMLElement) =&gt; {</span>
     const focusableElements = <span class="cstat-no" title="statement not covered" >container.querySelectorAll(</span>
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -655,7 +655,7 @@ export const useFocusManagement = <span class="cstat-no" title="statement not co
 };
 &nbsp;
 // Hook untuk screen reader announcements
-export const useScreenReader = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
+export const <span class="cstat-no" title="statement not covered" >useScreenReader = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>) =</span>&gt; {</span>
   const announce = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >(m</span>essage: string, priority: 'polite' | 'assertive' = <span class="branch-0 cbranch-no" title="branch not covered" >'polite')</span> =&gt; {</span>
     const announcement = <span class="cstat-no" title="statement not covered" >document.createElement('div');</span>
 <span class="cstat-no" title="statement not covered" >    announcement.setAttribute('aria-live', priority);</span>
@@ -692,7 +692,7 @@ export const useScreenReader = <span class="cstat-no" title="statement not cover
 };
 &nbsp;
 // Hook untuk reduced motion preferences
-export const useReducedMotion = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =</span>&gt; {</span>
+export const <span class="cstat-no" title="statement not covered" >useReducedMotion = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>) =</span>&gt; {</span>
   const prefersReducedMotion = <span class="cstat-no" title="statement not covered" >window.matchMedia('(prefers-reduced-motion: reduce)').matches;</span>
 &nbsp;
   const getAnimationDuration = <span class="cstat-no" title="statement not covered" >useCallback(<span class="fstat-no" title="function not covered" >(d</span>uration: number) =&gt; {</span>
@@ -715,7 +715,7 @@ export const useReducedMotion = <span class="cstat-no" title="statement not cove
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-19T10:46:20.357Z
+                at 2025-11-20T00:57:51.967Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -8,15 +8,28 @@ export default {
   },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      useESM: false
+      useESM: false,
+      tsconfig: {
+        target: 'es2017',
+        module: 'commonjs'
+      }
     }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
-      presets: [['@babel/preset-env', { modules: 'commonjs' }]]
+      presets: [['@babel/preset-env', { 
+        modules: 'commonjs',
+        targets: {
+          node: 'current'
+        }
+      }]]
     }]
   },
   globals: {
     'ts-jest': {
-      useESM: false
+      useESM: false,
+      tsconfig: {
+        target: 'es2017',
+        module: 'commonjs'
+      }
     }
   },
   testMatch: [
