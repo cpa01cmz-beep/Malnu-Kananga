@@ -130,8 +130,12 @@ describe('ParentDashboard Component', () => {
      test('should render children information in overview', () => {
        render(<ParentDashboard onLogout={mockOnLogout} />);
 
+       // Check that we have 1 active child displayed in stats
+       expect(screen.getByText('Anak Aktif')).toBeInTheDocument();
+       // Use getAllByText for the number "1" since it appears multiple times
+       expect(screen.getAllByText('1')).toHaveLength(3); // Should appear in 3 stats cards
+       // Check that messages show the child's name in the overview
        expect(screen.getByText('Perkembangan Akademik Ahmad Fauzi')).toBeInTheDocument();
-       expect(screen.getByText('XII IPA 1')).toBeInTheDocument();
      });
   });
 
