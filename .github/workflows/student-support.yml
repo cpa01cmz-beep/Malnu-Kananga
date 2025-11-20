@@ -4,7 +4,6 @@ on:
   schedule:
     - cron: '0 7 * * 1-5'  # Weekdays at 7 AM
     - cron: '0 16 * * 1-5'  # Weekdays at 4 PM
-    - cron: '*/15 * * * *'  # Every 15 minutes for urgent support
   workflow_dispatch:
 
 permissions:
