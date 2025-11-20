@@ -23,6 +23,7 @@ document.createElement = jest.fn((tagName) => {
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import { WebPProvider, useWebP } from './useWebP';
+import { resetWebPDetectionCache } from '../utils/webpDetection';
 
 // Test component yang menggunakan useWebP hook
 const TestComponent: React.FC = () => {
@@ -106,6 +107,9 @@ describe('WebPProvider dan useWebP Hook', () => {
   });
 
   it('seharusnya menangani error detection dengan fallback', async () => {
+    // Reset the WebP detection cache before the test
+    resetWebPDetectionCache();
+
     // Mock error pada WebP detection
     mockCanvas.toDataURL.mockImplementation(() => {
       throw new Error('Canvas error');
