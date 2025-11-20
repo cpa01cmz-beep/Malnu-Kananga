@@ -32,17 +32,5 @@ export default {
   testEnvironmentOptions: {
     customExportConditions: ['node', 'node-addons']
   },
-  extensionsToTreatAsEsm: [],
-  globals: {
-    'ts-jest': {
-      useESM: false,
-      tsconfig: {
-        target: 'es2017',
-        module: 'commonjs',
-        jsx: 'react-jsx',
-        esModuleInterop: true,
-        allowSyntheticDefaultImports: true
-      }
-    }
-  }
+  extensionsToTreatAsEsm: []
 };
