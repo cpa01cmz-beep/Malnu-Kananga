@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+/* eslint-disable */
+>>>>>>> 17623c3 (Fix ESLint issues in implement and scripts directories (#155))
 var jumpToCode = (function init() {
     // Classes of code we would like to highlight in the file view
     var missingCoverageClasses = ['.cbranch-no', '.cstat-no', '.fstat-no'];
