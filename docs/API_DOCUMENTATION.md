@@ -11,10 +11,11 @@ MA Malnu Kananga API provides comprehensive endpoints for authentication, AI cha
 - **API Version**: v1
 - **Content-Type**: `application/json`
 - **Authentication**: JWT Token (Magic Link System)
-- **Rate Limiting**: 5 requests per 15 minutes per IP (authentication), 20 requests per minute (chat)
-- **CORS**: Enabled for all origins in development
+- **Rate Limiting**: 5 requests per 15 minutes per IP (authentication), 20 requests per minute (chat), 100 requests per minute (data APIs)
+- **CORS**: Enabled for all origins in development, restricted in production
 - **Timeout**: 10 seconds per request
 - **Retry Policy**: 3 attempts with exponential backoff
+- **Status**: Production Ready
 
 ### Environment Variables
 ```typescript
@@ -25,7 +26,7 @@ API_CONFIG = {
   RETRY_DELAY: 1000
 }
 
-// Required Environment Variables
+// Required Environment Variables (Cloudflare Workers Secrets)
 API_KEY=your_gemini_api_key_here
 SECRET_KEY=your_jwt_secret_key
 NODE_ENV=production
@@ -34,6 +35,11 @@ NODE_ENV=production
 VITE_ENABLE_PWA=true
 VITE_ENABLE_AI_CHAT=true
 VITE_ENABLE_ANALYTICS=false
+VITE_WORKER_URL=https://malnu-api.sulhi-cmz.workers.dev
+
+// Development Environment Variables
+VITE_DEV_MODE=true
+VITE_JWT_SECRET=dev-secret-key
 ```
 
 ## 🔐 Authentication API
@@ -772,6 +778,6 @@ For API support and questions:
 
 ---
 
-*API Documentation Version: 1.0.0*  
-*Last Updated: November 2024*  
+*API Documentation Version: 1.1.0*  
+*Last Updated: November 20, 2024*  
 *Base URL: https://malnu-api.sulhi-cmz.workers.dev*

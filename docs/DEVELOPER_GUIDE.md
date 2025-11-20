@@ -129,7 +129,7 @@ wrangler login
 wrangler deploy --env=development
 
 # Seed vector database (one-time setup)
-curl https://your-worker.workers.dev/seed
+curl https://malnu-api.sulhi-cmz.workers.dev/seed
 ```
 
 5. **Verify Installation**
@@ -160,9 +160,53 @@ VITE_ENABLE_ANALYTICS=false
 **Production:**
 ```bash
 # Set via Cloudflare Workers secrets
-API_KEY=production_gemini_key
-SECRET_KEY=jwt_secret_key
+wrangler secret put API_KEY
+wrangler secret put SECRET_KEY
+
+# Environment variables
 NODE_ENV=production
+VITE_WORKER_URL=https://malnu-api.sulhi-cmz.workers.dev
+```
+
+### Environment Setup Guide
+
+**Development Environment**:
+```bash
+# 1. Clone repository
+git clone https://github.com/ma-malnukananga/malnu-kananga.git
+cd malnu-kananga
+
+# 2. Install dependencies
+npm install
+
+# 3. Setup environment
+cp .env.example .env
+# Edit .env with your API keys
+
+# 4. Start development server
+npm run dev
+```
+
+**Production Environment**:
+```bash
+# 1. Install Wrangler CLI
+npm install -g wrangler
+
+# 2. Login to Cloudflare
+wrangler login
+
+# 3. Set secrets
+wrangler secret put API_KEY
+# Enter your Gemini API key when prompted
+
+wrangler secret put SECRET_KEY
+# Enter your JWT secret key
+
+# 4. Deploy worker
+wrangler deploy --env=production
+
+# 5. Seed vector database
+curl https://malnu-api.sulhi-cmz.workers.dev/seed
 ```
 
 ---
@@ -665,7 +709,7 @@ wrangler deploy
 wrangler deploy --env=production
 
 # Seed vector database
-curl https://your-worker.workers.dev/seed
+curl https://malnu-api.sulhi-cmz.workers.dev/seed
 ```
 
 ---
@@ -950,5 +994,5 @@ npm test -- --verbose
 
 ---
 
-*Developer Guide Version: 1.0.0*  
-*Last Updated: November 2024*
+*Developer Guide Version: 1.1.0*  
+*Last Updated: November 20, 2024*
