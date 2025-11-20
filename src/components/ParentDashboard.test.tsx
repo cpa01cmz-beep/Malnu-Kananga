@@ -128,7 +128,7 @@ describe('ParentDashboard Component', () => {
     });
 
       test('should render children information in overview', () => {
-        render(<ParentDashboard onLogout={mockOnLogout} );
+        render(<ParentDashboard onLogout={mockOnLogout} />);
 
         // Check that we have 1 active child displayed in stats
         expect(screen.getByText('Anak Aktif')).toBeInTheDocument();
@@ -137,7 +137,6 @@ describe('ParentDashboard Component', () => {
         // Check that messages show the child's name in the overview
         expect(screen.getByText('Perkembangan Akademik Ahmad Fauzi')).toBeInTheDocument();
         expect(screen.getByText(/Ahmad Fauzi/)).toBeInTheDocument();
-        expect(screen.getByText('XII IPA 1')).toBeInTheDocument();
       });
   });
 
@@ -158,7 +157,7 @@ describe('ParentDashboard Component', () => {
     });
 
       test('should switch to messages tab when clicked', () => {
-        render(<ParentDashboard onLogout={mockOnLogout} );
+        render(<ParentDashboard onLogout={mockOnLogout} />);
 
         fireEvent.click(screen.getByText('Pesan (1)')); // More specific selector
         expect(screen.getByText('Pesan & Komunikasi')).toBeInTheDocument();

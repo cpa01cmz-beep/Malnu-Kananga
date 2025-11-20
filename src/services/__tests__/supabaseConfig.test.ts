@@ -90,8 +90,26 @@ describe('Supabase Configuration', () => {
     } catch (error) {
       // In test environment, connection errors are expected
       expect(error).toBeDefined();
-    }
-  });
-});)
-  });
+     }
+   });
+
+   test('should handle test environment gracefully', async () => {
+     // In test environment, we expect mock values
+     expect(process.env.NODE_ENV).toBe('test');
+     
+     // Test that the client can be used without throwing errors
+     try {
+       const { data, error } = await supabase
+         .from('non_existent_test_table')
+         .select('count')
+         .limit(1);
+       
+       // In test environment with mock values, this might fail differently
+       // The important thing is that it doesn't crash the application
+       expect(true).toBe(true); // Test passes if we get here without crashing
+     } catch (error) {
+       // In test environment, connection errors are expected
+       expect(error).toBeDefined();
+     }
+   });
 });

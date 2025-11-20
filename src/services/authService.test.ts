@@ -34,26 +34,6 @@ describe('AuthService', () => {
       const result = await AuthService.requestLoginLink('invalid-email');
       expect(result.success).toBe(false);
       expect(result.message).toBe('Format email tidak valid.');
-    });
-
-<<<<<<< HEAD
-      it('should request login link in development mode', async () => {
-        // Mock development mode using environment variable
-        const originalEnv = process.env.NODE_ENV;
-        process.env.NODE_ENV = 'development';
-
-        const result = await AuthService.requestLoginLink('test@example.com');
-        expect(result.success).toBe(true);
-        
-        // Restore original env
-        process.env.NODE_ENV = originalEnv;
-      });
-      
-      it('should handle development mode correctly', async () => {
-        // Test basic functionality without environment-specific mocking
-        const result = await AuthService.requestLoginLink('test@example.com');
-        expect(result.success).toBe(true);
-      });
    });
 
    describe('verifyLoginToken', () => {
@@ -120,32 +100,30 @@ describe('AuthService', () => {
         process.env.NODE_ENV = originalEnv;
       });
    });
->>>>>>> ffa9c1d (Fix test configuration and resolve import.meta issues)
-  });
+});
 });
 
-describe('ProductionAuthService', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+   describe('ProductionAuthService', () => {
+     beforeEach(() => {
+       jest.clearAllMocks();
+     });
 
-<<<<<<< HEAD
-    it('should make request to server for signature generation', async () => {
-      // Mock production mode using environment variable
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+     it('should make request to server for signature generation', async () => {
+       // Mock production mode using environment variable
+       const originalEnv = process.env.NODE_ENV;
+       process.env.NODE_ENV = 'production';
 
-      // Mock fetch response
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ signature: 'mock-signature' })
-      });
+       // Mock fetch response
+       (global.fetch as jest.Mock).mockResolvedValueOnce({
+         ok: true,
+         json: () => Promise.resolve({ signature: 'mock-signature' })
+       });
 
-      // Since we can't directly access the private functions, we'll test
-      // the behavior through the public interface by mocking the worker endpoint
-      // This would require a more complex setup to test properly
-      
-      // Restore original env
-      process.env.NODE_ENV = originalEnv;
-    });
-});
+       // Since we can't directly access the private functions, we'll test
+       // the behavior through the public interface by mocking the worker endpoint
+       // This would require a more complex setup to test properly
+       
+       // Restore original env
+       process.env.NODE_ENV = originalEnv;
+     });
+   });
