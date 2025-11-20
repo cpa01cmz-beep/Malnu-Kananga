@@ -5,8 +5,6 @@
 
 import fs from 'fs/promises';
 
-/* global console */
-
 class DocumentationManager {
   constructor() {
     this.docsDir = '../docs';
@@ -31,7 +29,6 @@ class DocumentationManager {
   /**
    * Generate documentation for a specific module
    * @param {string} modulePath - Path to the module
-   * @param {string} outputPath - Where to save the documentation
    */
   async generateDocumentation(modulePath) {
     console.log(`Generating documentation for ${modulePath}...`);
@@ -41,7 +38,6 @@ class DocumentationManager {
 
   /**
    * Check if documentation is up to date with code
-   * @param {string} modulePath - Path to the module
    */
   async isDocumentationUpToDate() {
     // This would implement actual comparison logic
