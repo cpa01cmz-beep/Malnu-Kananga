@@ -4,6 +4,7 @@
  * Test script for documentation manager
  */
 
+/* global console */
 import DocumentationManager from './docManager.js';
 
 async function testDocManager() {
