@@ -312,6 +312,6 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 
 ---
 
-*Documentation Index Version: 1.1.0*  
+*Documentation Index Version: 1.2.0*  
 *Last Updated: November 20, 2024*  
 *Maintained by: MA Malnu Kananga Documentation Team*
