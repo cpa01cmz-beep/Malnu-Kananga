@@ -58,9 +58,10 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch event - implement caching strategies
+/* global self, URL, location, fetch, Response */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
+  const requestUrl = new URL(request.url);
 
   // Skip non-GET requests
   if (request.method !== 'GET') {
@@ -68,7 +69,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Skip cross-origin requests (kecuali untuk API)
-  if (url.origin !== location.origin && !url.hostname.includes('malnu-api')) {
+  if (requestUrl.origin !== location.origin && !requestUrl.hostname.includes('malnu-api')) {
     return;
   }
 
@@ -77,7 +78,7 @@ self.addEventListener('fetch', (event) => {
 
 // Main request handler dengan different strategies
 async function handleRequest(request) {
-  const url = new URL(request.url);
+  const requestUrl = new URL(request.url);
 
   try {
     // Strategy 1: Cache-First untuk static assets

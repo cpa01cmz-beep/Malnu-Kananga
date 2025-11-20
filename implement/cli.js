@@ -10,13 +10,13 @@ import path from 'path';
 import SessionManager from './sessionManager.js';
 
 // Global console for CLI usage
-const globalConsole = console;
+/* global console */
 
 const IMPLEMENT_DIR = './';
 const STATE_FILE = path.join(IMPLEMENT_DIR, 'state.json');
 
 async function showHelp() {
-  globalConsole.log(`
+  console.log(`
 Implementation Session CLI
 
 Usage: node cli.js [command]
@@ -38,9 +38,10 @@ async function showStatus() {
     globalConsole.log('Session ID:', state.sessionId);
     globalConsole.log('Current Step:', state.progress.currentStep);
     globalConsole.log('Completed Steps:', state.progress.completedSteps.length, '/', state.progress.totalSteps);
-    globalConsole.log('Project:', state.projectContext.name);
+    console.log('Project:', state.projectContext.name);
   } catch (error) {
      
+    /* global process */
     console.error('Error reading session state:', error.message);
   }
 }
@@ -48,15 +49,15 @@ async function showStatus() {
 async function showProgress() {
   try {
     const state = JSON.parse(await fs.readFile(STATE_FILE, 'utf8'));
-    globalConsole.log('\nProgress Details:');
-    globalConsole.log('----------------');
-    globalConsole.log(`Total Steps: ${state.progress.totalSteps}`);
-    globalConsole.log(`Completed: ${state.progress.completedSteps.length}`);
-    globalConsole.log(`Remaining: ${state.progress.totalSteps - state.progress.completedSteps.length}`);
-    globalConsole.log('\nCompleted Steps:');
+    console.log('\nProgress Details:');
+    console.log('----------------');
+    console.log(`Total Steps: ${state.progress.totalSteps}`);
+    console.log(`Completed: ${state.progress.completedSteps.length}`);
+    console.log(`Remaining: ${state.progress.totalSteps - state.progress.completedSteps.length}`);
+    console.log('\nCompleted Steps:');
     state.progress.completedSteps.forEach((step, index) => {
       const checkpoint = state.checkpoints[step];
-      globalConsole.log(`  ${index + 1}. ${step} - ${checkpoint ? checkpoint.description : 'No description'}`);
+      console.log(`  ${index + 1}. ${step} - ${checkpoint ? checkpoint.description : 'No description'}`);
     });
   } catch (error) {
     globalConsole.error('Error reading session state:', error.message);
@@ -106,13 +107,14 @@ async function startNewSession() {
   
   try {
     await fs.writeFile(STATE_FILE, JSON.stringify(newState, null, 2));
-    globalConsole.log(`New session started with ID: ${sessionId}`);
+    console.log(`New session started with ID: ${sessionId}`);
   } catch (error) {
-    globalConsole.error('Error creating new session:', error.message);
+    console.error('Error creating new session:', error.message);
   }
 }
 
 async function main() {
+  /* global process */
   const args = process.argv.slice(2);
   const command = args[0];
 
