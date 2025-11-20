@@ -76,6 +76,7 @@ self.addEventListener('fetch', (event) => {
 
 // Main request handler dengan different strategies
 async function handleRequest(request) {
+  const url = new URL(request.url);
 
   try {
     // Strategy 1: Cache-First untuk static assets
@@ -214,7 +215,7 @@ async function networkFirstWithCacheFallback(request) {
     }
 
     throw new Error('Network response not ok');
-  } catch {
+  } catch (error) {
     console.log('[SW] Image network failed, trying cache...');
 
     const cachedResponse = await caches.match(request);
@@ -369,8 +370,8 @@ async function syncFormData() {
         console.error('[SW] Form sync failed:', error);
       }
     }
-  } catch {
-    console.error('[SW] Background sync failed');
+  } catch (error) {
+    console.error('[SW] Background sync failed:', error);
   }
 }
 
@@ -378,7 +379,7 @@ async function syncFormData() {
 async function syncChatMessages() {
   try {
     // Get pending chat messages from IndexedDB
-    const pendingMessages = []; // Placeholder for getPendingChatMessages()
+    const pendingMessages = await getPendingChatMessages();
 
     for (const message of pendingMessages) {
       try {
@@ -389,15 +390,15 @@ async function syncChatMessages() {
         });
 
         if (response.ok) {
-          // await removePendingChatMessage(message.id); // Placeholder
+          await removePendingChatMessage(message.id);
           console.log('[SW] Chat message synced successfully:', message.id);
         }
       } catch (error) {
         console.error('[SW] Chat sync failed:', error);
       }
     }
-  } catch {
-    console.error('[SW] Chat sync failed');
+  } catch (error) {
+    console.error('[SW] Chat sync failed:', error);
   }
 }
 
@@ -491,7 +492,7 @@ self.addEventListener('notificationclick', (event) => {
 
   if (event.action === 'explore') {
     event.waitUntil(
-      self.clients.openWindow('/')
+      clients.openWindow('/')
     );
   }
 });
