@@ -34,10 +34,10 @@ Commands:
 async function showStatus() {
   try {
     const state = JSON.parse(await fs.readFile(STATE_FILE, 'utf8'));
-    globalConsole.log('Session Status:', state.status);
-    globalConsole.log('Session ID:', state.sessionId);
-    globalConsole.log('Current Step:', state.progress.currentStep);
-    globalConsole.log('Completed Steps:', state.progress.completedSteps.length, '/', state.progress.totalSteps);
+    console.log('Session Status:', state.status);
+    console.log('Session ID:', state.sessionId);
+    console.log('Current Step:', state.progress.currentStep);
+    console.log('Completed Steps:', state.progress.completedSteps.length, '/', state.progress.totalSteps);
     console.log('Project:', state.projectContext.name);
   } catch (error) {
      
