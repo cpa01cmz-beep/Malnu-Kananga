@@ -3,7 +3,9 @@ import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 // Mock the dependencies
 jest.mock('@google/genai', () => ({
   GoogleGenAI: jest.fn().mockImplementation(() => ({
-    generateContentStream: jest.fn()
+    models: {
+      generateContentStream: jest.fn()
+    }
   }))
 }));
 
@@ -59,13 +61,12 @@ test('should handle successful response with context', async () => {
 
       // Mock the GoogleGenAI constructor and its methods
       const mockGenerateContentStream = jest.fn().mockResolvedValue(mockStream);
-      const mockModels = { generateContentStream: mockGenerateContentStream };
       
       const { GoogleGenAI } = require('@google/genai');
-      jest.mock('@google/genai', () => ({
-        GoogleGenAI: jest.fn().mockImplementation(() => ({
-          models: mockModels
-        }))
+      GoogleGenAI.mockImplementation(() => ({
+        models: {
+          generateContentStream: mockGenerateContentStream
+        }
       }));
 
       const { MemoryBank } = require('../memory');
