@@ -1,27 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { useTouchGestures } from './useTouchGestures';
 
-// Mock touch events
-const createTouchEvent = (type: string, touches: Array<{ clientX: number; clientY: number }>) => {
-  const touchList = touches.map(touch => ({
-    clientX: touch.clientX,
-    clientY: touch.clientY,
-    identifier: 0,
-    force: 1,
-    pageX: touch.clientX,
-    pageY: touch.clientY,
-    radiusX: 1,
-    radiusY: 1,
-    rotationAngle: 0,
-    target: document.createElement('div'),
-  }));
-
-  return new TouchEvent(type, {
-    touches: type === 'touchend' ? [] : touchList,
-    changedTouches: touchList,
-  });
-};
-
 describe('useTouchGestures', () => {
   let mockElement: HTMLDivElement;
   let onSwipeLeft: jest.Mock;
@@ -42,7 +21,6 @@ describe('useTouchGestures', () => {
     onTap = jest.fn();
     onLongPress = jest.fn();
 
-    // Mock setTimeout dan clearTimeout
     jest.useFakeTimers();
   });
 
@@ -64,18 +42,44 @@ describe('useTouchGestures', () => {
       useTouchGestures({ onSwipeRight })
     );
 
-    // Attach ref ke mock element
     act(() => {
       result.current.current = mockElement;
     });
 
-    // Simulasi swipe right (dari kiri ke kanan)
-    const touchStart = createTouchEvent('touchstart', [{ clientX: 100, clientY: 200 }]);
-    const touchEnd = createTouchEvent('touchend', [{ clientX: 200, clientY: 200 }]);
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 100,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 100,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    const touchEndEvent = new TouchEvent('touchend', {
+      changedTouches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
 
     act(() => {
-      mockElement.dispatchEvent(touchStart);
-      mockElement.dispatchEvent(touchEnd);
+      mockElement.dispatchEvent(touchStartEvent);
+      jest.advanceTimersByTime(10);
+      mockElement.dispatchEvent(touchEndEvent);
     });
 
     expect(onSwipeRight).toHaveBeenCalledTimes(1);
@@ -90,13 +94,40 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    // Simulasi swipe left (dari kanan ke kiri)
-    const touchStart = createTouchEvent('touchstart', [{ clientX: 200, clientY: 200 }]);
-    const touchEnd = createTouchEvent('touchend', [{ clientX: 100, clientY: 200 }]);
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    const touchEndEvent = new TouchEvent('touchend', {
+      changedTouches: [{
+        clientX: 100,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 100,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
 
     act(() => {
-      mockElement.dispatchEvent(touchStart);
-      mockElement.dispatchEvent(touchEnd);
+      mockElement.dispatchEvent(touchStartEvent);
+      jest.advanceTimersByTime(10);
+      mockElement.dispatchEvent(touchEndEvent);
     });
 
     expect(onSwipeLeft).toHaveBeenCalledTimes(1);
@@ -111,13 +142,40 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    // Simulasi swipe up (dari bawah ke atas)
-    const touchStart = createTouchEvent('touchstart', [{ clientX: 200, clientY: 300 }]);
-    const touchEnd = createTouchEvent('touchend', [{ clientX: 200, clientY: 200 }]);
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 300,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 300,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    const touchEndEvent = new TouchEvent('touchend', {
+      changedTouches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
 
     act(() => {
-      mockElement.dispatchEvent(touchStart);
-      mockElement.dispatchEvent(touchEnd);
+      mockElement.dispatchEvent(touchStartEvent);
+      jest.advanceTimersByTime(10);
+      mockElement.dispatchEvent(touchEndEvent);
     });
 
     expect(onSwipeUp).toHaveBeenCalledTimes(1);
@@ -132,13 +190,40 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    // Simulasi swipe down (dari atas ke bawah)
-    const touchStart = createTouchEvent('touchstart', [{ clientX: 200, clientY: 200 }]);
-    const touchEnd = createTouchEvent('touchend', [{ clientX: 200, clientY: 300 }]);
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    const touchEndEvent = new TouchEvent('touchend', {
+      changedTouches: [{
+        clientX: 200,
+        clientY: 300,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 300,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
 
     act(() => {
-      mockElement.dispatchEvent(touchStart);
-      mockElement.dispatchEvent(touchEnd);
+      mockElement.dispatchEvent(touchStartEvent);
+      jest.advanceTimersByTime(10);
+      mockElement.dispatchEvent(touchEndEvent);
     });
 
     expect(onSwipeDown).toHaveBeenCalledTimes(1);
@@ -153,13 +238,40 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    // Simulasi tap (sentuhan cepat dengan pergerakan minimal)
-    const touchStart = createTouchEvent('touchstart', [{ clientX: 200, clientY: 200 }]);
-    const touchEnd = createTouchEvent('touchend', [{ clientX: 205, clientY: 205 }]);
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    const touchEndEvent = new TouchEvent('touchend', {
+      changedTouches: [{
+        clientX: 205,
+        clientY: 205,
+        identifier: 0,
+        force: 1,
+        pageX: 205,
+        pageY: 205,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
 
     act(() => {
-      mockElement.dispatchEvent(touchStart);
-      mockElement.dispatchEvent(touchEnd);
+      mockElement.dispatchEvent(touchStartEvent);
+      jest.advanceTimersByTime(10);
+      mockElement.dispatchEvent(touchEndEvent);
     });
 
     expect(onTap).toHaveBeenCalledTimes(1);
@@ -174,15 +286,23 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    // Simulasi long press
-    const touchStart = createTouchEvent('touchstart', [{ clientX: 200, clientY: 200 }]);
-
-    act(() => {
-      mockElement.dispatchEvent(touchStart);
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
     });
 
-    // Fast forward waktu untuk trigger long press
     act(() => {
+      mockElement.dispatchEvent(touchStartEvent);
       jest.advanceTimersByTime(500);
     });
 
@@ -198,17 +318,39 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    // Simulasi sentuhan dengan pergerakan
-    const touchStart = createTouchEvent('touchstart', [{ clientX: 200, clientY: 200 }]);
-    const touchMove = createTouchEvent('touchmove', [{ clientX: 220, clientY: 200 }]);
-
-    act(() => {
-      mockElement.dispatchEvent(touchStart);
-      mockElement.dispatchEvent(touchMove);
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
     });
 
-    // Fast forward waktu - long press seharusnya tidak tertrigger
+    const touchMoveEvent = new TouchEvent('touchmove', {
+      touches: [{
+        clientX: 220,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 220,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
     act(() => {
+      mockElement.dispatchEvent(touchStartEvent);
+      mockElement.dispatchEvent(touchMoveEvent);
       jest.advanceTimersByTime(500);
     });
 
@@ -219,7 +361,7 @@ describe('useTouchGestures', () => {
     const { result } = renderHook(() => 
       useTouchGestures({ 
         onSwipeRight,
-        minSwipeDistance: 100 // Jarak minimum yang lebih besar
+        minSwipeDistance: 100
       })
     );
 
@@ -227,13 +369,40 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    // Simulasi swipe dengan jarak kurang dari minimum
-    const touchStart = createTouchEvent('touchstart', [{ clientX: 100, clientY: 200 }]);
-    const touchEnd = createTouchEvent('touchend', [{ clientX: 150, clientY: 200 }]); // Jarak 50px
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 100,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 100,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    const touchEndEvent = new TouchEvent('touchend', {
+      changedTouches: [{
+        clientX: 150,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 150,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
 
     act(() => {
-      mockElement.dispatchEvent(touchStart);
-      mockElement.dispatchEvent(touchEnd);
+      mockElement.dispatchEvent(touchStartEvent);
+      jest.advanceTimersByTime(10);
+      mockElement.dispatchEvent(touchEndEvent);
     });
 
     expect(onSwipeRight).not.toHaveBeenCalled();
@@ -243,7 +412,7 @@ describe('useTouchGestures', () => {
     const { result } = renderHook(() => 
       useTouchGestures({ 
         onSwipeRight,
-        maxSwipeTime: 200 // Waktu maksimum yang lebih singkat
+        maxSwipeTime: 200
       })
     );
 
@@ -251,21 +420,40 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    const touchStart = createTouchEvent('touchstart', [{ clientX: 100, clientY: 200 }]);
-    
-    act(() => {
-      mockElement.dispatchEvent(touchStart);
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 100,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 100,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
     });
 
-    // Tunggu lebih lama dari maxSwipeTime
+    const touchEndEvent = new TouchEvent('touchend', {
+      changedTouches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
     act(() => {
+      mockElement.dispatchEvent(touchStartEvent);
       jest.advanceTimersByTime(300);
-    });
-
-    const touchEnd = createTouchEvent('touchend', [{ clientX: 200, clientY: 200 }]);
-
-    act(() => {
-      mockElement.dispatchEvent(touchEnd);
+      mockElement.dispatchEvent(touchEndEvent);
     });
 
     expect(onSwipeRight).not.toHaveBeenCalled();
@@ -275,7 +463,7 @@ describe('useTouchGestures', () => {
     const { result } = renderHook(() => 
       useTouchGestures({ 
         onLongPress,
-        longPressDelay: 1000 // Delay 1 detik
+        longPressDelay: 1000
       })
     );
 
@@ -283,20 +471,28 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    const touchStart = createTouchEvent('touchstart', [{ clientX: 200, clientY: 200 }]);
-
-    act(() => {
-      mockElement.dispatchEvent(touchStart);
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
     });
 
-    // Fast forward 500ms - seharusnya belum tertrigger
     act(() => {
+      mockElement.dispatchEvent(touchStartEvent);
       jest.advanceTimersByTime(500);
     });
 
     expect(onLongPress).not.toHaveBeenCalled();
 
-    // Fast forward 500ms lagi - total 1000ms
     act(() => {
       jest.advanceTimersByTime(500);
     });
@@ -333,16 +529,27 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    const touchStart = createTouchEvent('touchstart', [{ clientX: 200, clientY: 200 }]);
-
-    act(() => {
-      mockElement.dispatchEvent(touchStart);
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
     });
 
-    // Unmount sebelum long press tertrigger
+    act(() => {
+      mockElement.dispatchEvent(touchStartEvent);
+    });
+
     unmount();
 
-    // Fast forward - long press seharusnya tidak tertrigger karena sudah dibersihkan
     act(() => {
       jest.advanceTimersByTime(500);
     });
@@ -359,11 +566,23 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    // Langsung dispatch touch end tanpa touch start
-    const touchEnd = createTouchEvent('touchend', [{ clientX: 200, clientY: 200 }]);
+    const touchEndEvent = new TouchEvent('touchend', {
+      changedTouches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
 
     act(() => {
-      mockElement.dispatchEvent(touchEnd);
+      mockElement.dispatchEvent(touchEndEvent);
     });
 
     expect(onTap).not.toHaveBeenCalled();
@@ -382,13 +601,40 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
-    // Test tap
-    const tapStart = createTouchEvent('touchstart', [{ clientX: 200, clientY: 200 }]);
-    const tapEnd = createTouchEvent('touchend', [{ clientX: 205, clientY: 205 }]);
+    const tapStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    const tapEndEvent = new TouchEvent('touchend', {
+      changedTouches: [{
+        clientX: 205,
+        clientY: 205,
+        identifier: 0,
+        force: 1,
+        pageX: 205,
+        pageY: 205,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
 
     act(() => {
-      mockElement.dispatchEvent(tapStart);
-      mockElement.dispatchEvent(tapEnd);
+      mockElement.dispatchEvent(tapStartEvent);
+      jest.advanceTimersByTime(10);
+      mockElement.dispatchEvent(tapEndEvent);
     });
 
     expect(onTap).toHaveBeenCalledTimes(1);
@@ -397,13 +643,40 @@ describe('useTouchGestures', () => {
 
     jest.clearAllMocks();
 
-    // Test swipe
-    const swipeStart = createTouchEvent('touchstart', [{ clientX: 100, clientY: 200 }]);
-    const swipeEnd = createTouchEvent('touchend', [{ clientX: 200, clientY: 200 }]);
+    const swipeStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 100,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 100,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    const swipeEndEvent = new TouchEvent('touchend', {
+      changedTouches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
 
     act(() => {
-      mockElement.dispatchEvent(swipeStart);
-      mockElement.dispatchEvent(swipeEnd);
+      mockElement.dispatchEvent(swipeStartEvent);
+      jest.advanceTimersByTime(10);
+      mockElement.dispatchEvent(swipeEndEvent);
     });
 
     expect(onSwipeRight).toHaveBeenCalledTimes(1);

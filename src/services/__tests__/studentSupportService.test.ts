@@ -7,44 +7,44 @@ describe('StudentSupportService', () => {
     StudentSupportService.initialize();
   });
 
-  describe('createSupportTicket', () => {
-    it('should create a new support ticket with correct properties', () => {
-      const ticket = StudentSupportService.createSupportTicket({
-        studentId: 'STU001',
-        category: 'academic',
-        priority: 'medium',
-        subject: 'Bantuan Matematika',
-        description: 'Saya kesulitan dengan kalkulus',
-        tags: ['math', 'help']
-      });
+  describe('createSupportRequest', () => {
+    it('should create a new support request with correct properties', () => {
+      const request = StudentSupportService.createSupportRequest(
+        'STU001',
+        'academic',
+        'math',
+        'Bantuan Matematika',
+        'Saya kesulitan dengan kalkulus',
+        'medium'
+      );
 
-      expect(ticket.id).toBeDefined();
-      expect(ticket.studentId).toBe('STU001');
-      expect(ticket.category).toBe('academic');
-      expect(ticket.subject).toBe('Bantuan Matematika');
-      expect(ticket.description).toBe('Saya kesulitan dengan kalkulus');
-      expect(ticket.priority).toBe('medium');
-      expect(ticket.status).toBe('open');
-      expect(ticket.timestamp).toBeDefined();
-      expect(ticket.lastUpdated).toBeDefined();
+      expect(request.id).toBeDefined();
+      expect(request.studentId).toBe('STU001');
+      expect(request.type).toBe('academic');
+      expect(request.title).toBe('Bantuan Matematika');
+      expect(request.description).toBe('Saya kesulitan dengan kalkulus');
+      expect(request.priority).toBe('medium');
+      expect(request.status).toBe('pending');
+      expect(request.createdAt).toBeDefined();
+      expect(request.updatedAt).toBeDefined();
     });
 
-    it('should process tickets automatically for common issues', () => {
-      const ticket = StudentSupportService.createSupportTicket({
-        studentId: 'STU001',
-        category: 'technical',
-        priority: 'medium',
-        subject: 'Masalah login',
-        description: 'Saya tidak bisa login ke portal',
-        tags: ['login', 'access']
-      });
+    it('should process requests automatically for common issues', () => {
+      const request = StudentSupportService.createSupportRequest(
+        'STU001',
+        'technical',
+        'login',
+        'Masalah login',
+        'Saya tidak bisa login ke portal',
+        'medium'
+      );
 
-      const tickets = StudentSupportService.getSupportTickets();
-      const processedTicket = tickets.find(t => t.id === ticket.id);
+      const requests = StudentSupportService.getSupportRequests();
+      const processedRequest = requests.find(r => r.id === request.id);
       
-      expect(processedTicket).toBeDefined();
-      expect(processedTicket?.status).toBe('in_progress');
-      expect(processedTicket?.resolution).toBeDefined();
+      expect(processedRequest).toBeDefined();
+      expect(processedRequest?.status).toBe('in_progress');
+      expect(processedRequest?.resolution).toBeDefined();
     });
   });
 
@@ -53,15 +53,15 @@ describe('StudentSupportService', () => {
       const progressData = {
         academicMetrics: {
           gpa: 85,
+          gradeTrend: 'improving' as const,
           attendanceRate: 85,
-          assignmentCompletion: 90,
-          subjectPerformance: { math: 85, science: 78 }
+          assignmentCompletion: 90
         },
         engagementMetrics: {
-          portalLoginFrequency: 5,
-          featureUsage: { dashboard: 10, grades: 5 },
-          supportRequestsCount: 2,
-          lastActiveDate: new Date().toISOString()
+          loginFrequency: 5,
+          resourceAccess: 10,
+          supportRequests: 2,
+          participationScore: 75
         }
       };
 
@@ -71,29 +71,29 @@ describe('StudentSupportService', () => {
       expect(progress).toBeDefined();
       expect(progress?.academicMetrics.gpa).toBe(85);
       expect(progress?.studentId).toBe('STU001');
-      expect(progress?.riskFactors.lowGrades).toBe(false);
+      expect(progress?.riskLevel).toBe('low');
     });
 
     it('should create new progress record if none exists', () => {
       StudentSupportService.updateStudentProgress('STU002', {
         academicMetrics: {
           gpa: 2.5,
+          gradeTrend: 'declining' as const,
           attendanceRate: 75,
-          assignmentCompletion: 60,
-          subjectPerformance: {}
+          assignmentCompletion: 60
         },
         engagementMetrics: {
-          portalLoginFrequency: 1,
-          featureUsage: {},
-          supportRequestsCount: 0,
-          lastActiveDate: new Date().toISOString()
+          loginFrequency: 1,
+          resourceAccess: 2,
+          supportRequests: 0,
+          participationScore: 50
         }
       });
 
       const progress = StudentSupportService.getStudentProgress('STU002');
       expect(progress).toBeDefined();
       expect(progress?.studentId).toBe('STU002');
-      expect(progress?.riskFactors.lowGrades).toBe(true);
+      expect(progress?.riskLevel).toBe('high');
     });
   });
 
@@ -101,13 +101,11 @@ describe('StudentSupportService', () => {
     it('should add new support resource', () => {
       const resource = StudentSupportService.addSupportResource({
         title: 'Tutorial Matematika',
-        description: 'Panduan lengkap belajar matematika',
-        category: 'tutorial',
+        content: 'Panduan lengkap belajar matematika',
+        category: 'academic',
         type: 'video',
         tags: ['math', 'tutorial'],
-        difficulty: 'beginner',
-        estimatedTime: 30,
-        rating: 0
+        difficulty: 'beginner'
       });
 
       expect(resource.id).toBeDefined();
@@ -119,47 +117,49 @@ describe('StudentSupportService', () => {
     it('should retrieve resources by category', () => {
       StudentSupportService.addSupportResource({
         title: 'Tutorial Login',
-        description: 'Cara login ke portal',
-        category: 'guide',
-        type: 'text',
+        content: 'Cara login ke portal',
+        category: 'technical',
+        type: 'guide',
         tags: ['login', 'guide'],
-        difficulty: 'beginner',
-        estimatedTime: 5,
-        rating: 0
+        difficulty: 'beginner'
       });
 
-      const guides = StudentSupportService.getSupportResources('guide');
+      const guides = StudentSupportService.getSupportResources('technical');
       expect(guides.length).toBeGreaterThan(0);
-      expect(guides[0].category).toBe('guide');
+      expect(guides[0].category).toBe('technical');
     });
   });
 
   describe('getSupportAnalytics', () => {
     it('should return correct analytics', () => {
-      StudentSupportService.createSupportTicket({
-        studentId: 'STU001',
-        category: 'academic',
-        priority: 'medium',
-        subject: 'Test 1',
-        description: 'Description 1',
-        tags: []
-      });
+      // Clear existing data first
+      localStorage.clear();
+      StudentSupportService.initialize();
       
-      StudentSupportService.createSupportTicket({
-        studentId: 'STU002',
-        category: 'technical',
-        priority: 'high',
-        subject: 'Test 2',
-        description: 'Description 2',
-        tags: []
-      });
+      StudentSupportService.createSupportRequest(
+        'STU001',
+        'academic',
+        'test',
+        'Test 1',
+        'Description 1',
+        'medium'
+      );
+      
+      StudentSupportService.createSupportRequest(
+        'STU002',
+        'technical',
+        'test',
+        'Test 2',
+        'Description 2',
+        'high'
+      );
       
       const analytics = StudentSupportService.getSupportAnalytics();
       
-      expect(analytics.totalTickets).toBe(2);
-      expect(analytics.openTickets).toBeGreaterThanOrEqual(0);
-      expect(analytics.resolvedTickets).toBeGreaterThanOrEqual(0);
-      expect(analytics.escalatedTickets).toBeGreaterThanOrEqual(0);
+      expect(analytics.totalRequests).toBeGreaterThanOrEqual(2);
+      expect(analytics.pendingRequests).toBeGreaterThanOrEqual(0);
+      expect(analytics.resolvedRequests).toBeGreaterThanOrEqual(0);
+      expect(analytics.escalatedRequests).toBeGreaterThanOrEqual(0);
       expect(analytics.categoryBreakdown).toBeDefined();
     });
   });
@@ -171,12 +171,12 @@ describe('StudentSupportService', () => {
       
       expect(dailyReport.timeFrame).toBe('daily');
       expect(dailyReport.period).toBeDefined();
-      expect(dailyReport.totalTickets).toBeDefined();
+      expect(dailyReport.totalRequests).toBeDefined();
       expect(dailyReport.recommendations).toBeDefined();
       
       expect(weeklyReport.timeFrame).toBe('weekly');
       expect(weeklyReport.period).toBeDefined();
-      expect(weeklyReport.totalTickets).toBeDefined();
+      expect(weeklyReport.totalRequests).toBeDefined();
     });
   });
 
@@ -184,13 +184,11 @@ describe('StudentSupportService', () => {
     it('should update resource rating and usage count', () => {
       const resource = StudentSupportService.addSupportResource({
         title: 'Test Resource',
-        description: 'Test description',
-        category: 'guide',
-        type: 'text',
+        content: 'Test description',
+        category: 'technical',
+        type: 'guide',
         tags: ['test'],
-        difficulty: 'beginner',
-        estimatedTime: 10,
-        rating: 0
+        difficulty: 'beginner'
       });
 
       StudentSupportService.rateResource(resource.id, 5);

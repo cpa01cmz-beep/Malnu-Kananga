@@ -1,9 +1,12 @@
 import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 
 // Mock the dependencies
+const mockGenerateContentStream = jest.fn();
+const mockModels = { generateContentStream: mockGenerateContentStream };
+
 jest.mock('@google/genai', () => ({
   GoogleGenAI: jest.fn().mockImplementation(() => ({
-    generateContentStream: jest.fn()
+    models: mockModels
   }))
 }));
 
@@ -12,19 +15,26 @@ jest.mock('../utils/envValidation', () => ({
   WORKER_URL: 'https://test-worker.com'
 }));
 
+const mockSearchMemories = jest.fn();
+const mockDeleteMemory = jest.fn();
+const mockGetStats = jest.fn();
+const mockGetRelevantMemories = jest.fn().mockResolvedValue([]);
+const mockAddMemory = jest.fn();
+
 jest.mock('../memory', () => ({
   MemoryBank: jest.fn(() => ({
-    searchMemories: jest.fn(),
-    deleteMemory: jest.fn(),
-    getStats: jest.fn(),
-    getRelevantMemories: jest.fn().mockResolvedValue([]),
-    addMemory: jest.fn(),
+    searchMemories: mockSearchMemories,
+    deleteMemory: mockDeleteMemory,
+    getStats: mockGetStats,
+    getRelevantMemories: mockGetRelevantMemories,
+    addMemory: mockAddMemory,
   })),
   schoolMemoryBankConfig: {}
 }));
 
 // Mock fetch globally
-global.fetch = jest.fn();
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
 
 // Import after mocking
 const { 
@@ -38,6 +48,13 @@ const {
 describe('Gemini Service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFetch.mockClear();
+    mockGenerateContentStream.mockClear();
+    mockSearchMemories.mockClear();
+    mockDeleteMemory.mockClear();
+    mockGetStats.mockClear();
+    mockGetRelevantMemories.mockClear();
+    mockAddMemory.mockClear();
   });
 
   describe('getAIResponseStream', () => {
@@ -48,7 +65,7 @@ test('should handle successful response with context', async () => {
         json: jest.fn().mockResolvedValue({ context: mockContext })
       };
       
-      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      mockFetch.mockResolvedValue(mockResponse);
 
       const mockStream = {
         [Symbol.asyncIterator]: async function* () {
@@ -57,20 +74,8 @@ test('should handle successful response with context', async () => {
         }
       };
 
-      // Mock the GoogleGenAI constructor and its methods
-      const mockGenerateContentStream = jest.fn().mockResolvedValue(mockStream);
-      const mockModels = { generateContentStream: mockGenerateContentStream };
-      
-      const { GoogleGenAI } = require('@google/genai');
-      jest.mock('@google/genai', () => ({
-        GoogleGenAI: jest.fn().mockImplementation(() => ({
-          models: mockModels
-        }))
-      }));
-
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGenerateContentStream.mockResolvedValue(mockStream);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Hello', []);
       const results = [];
@@ -82,21 +87,21 @@ test('should handle successful response with context', async () => {
     });
 
     test('should handle Google AI API error', async () => {
-      (global.fetch as jest.Mock).mockResolvedValue({
+      mockFetch.mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue({ context: 'context' })
       });
 
-      const { GoogleGenAI } = require('@google/genai');
-      const mockAI = new GoogleGenAI();
-      (mockAI.models || { generateContentStream: jest.fn() }).generateContentStream.mockRejectedValue(new Error('API error'));
-
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGenerateContentStream.mockRejectedValue(new Error('API error'));
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Hello', []);
-      await expect(generator.next()).rejects.toThrow('API error');
+      const results = [];
+      for await (const chunk of generator) {
+        results.push(chunk);
+      }
+
+      expect(results).toEqual(['Maaf, terjadi masalah saat menghubungi AI. Silakan coba lagi nanti.']);
     });
 
     test('should include context in prompt when available', async () => {
@@ -106,7 +111,7 @@ test('should handle successful response with context', async () => {
         json: jest.fn().mockResolvedValue({ context: mockContext })
       };
       
-      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      mockFetch.mockResolvedValue(mockResponse);
 
       const mockStream = {
         [Symbol.asyncIterator]: async function* () {
@@ -114,13 +119,8 @@ test('should handle successful response with context', async () => {
         }
       };
 
-      const { GoogleGenAI } = require('@google/genai');
-      const mockAI = new GoogleGenAI();
-      (mockAI.models || { generateContentStream: jest.fn() }).generateContentStream.mockResolvedValue(mockStream);
-
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGenerateContentStream.mockResolvedValue(mockStream);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Question', []);
       const results = [];
@@ -128,12 +128,12 @@ test('should handle successful response with context', async () => {
         results.push(chunk);
       }
 
-      expect((mockAI.models || { generateContentStream: jest.fn() }).generateContentStream).toHaveBeenCalled();
+      expect(mockGenerateContentStream).toHaveBeenCalled();
       expect(results).toEqual(['Response with context']);
     });
 
     test('should use correct system instruction in Indonesian', async () => {
-      (global.fetch as jest.Mock).mockResolvedValue({
+      mockFetch.mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue({ context: '' })
       });
@@ -144,13 +144,8 @@ test('should handle successful response with context', async () => {
         }
       };
 
-      const { GoogleGenAI } = require('@google/genai');
-      const mockAI = new GoogleGenAI();
-      (mockAI.models || { generateContentStream: jest.fn() }).generateContentStream.mockResolvedValue(mockStream);
-
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGenerateContentStream.mockResolvedValue(mockStream);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Pertanyaan', []);
       const results = [];
@@ -167,7 +162,7 @@ test('should handle successful response with context', async () => {
         json: jest.fn().mockResolvedValue({ context: '' })
       };
       
-      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      mockFetch.mockResolvedValue(mockResponse);
 
       const mockStream = {
         [Symbol.asyncIterator]: async function* () {
@@ -175,13 +170,8 @@ test('should handle successful response with context', async () => {
         }
       };
 
-      const { GoogleGenAI } = require('@google/genai');
-      const mockAI = new GoogleGenAI();
-      (mockAI.models || { generateContentStream: jest.fn() }).generateContentStream.mockResolvedValue(mockStream);
-
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGenerateContentStream.mockResolvedValue(mockStream);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Hello', []);
       const results = [];
@@ -214,7 +204,7 @@ test('should handle successful response with context', async () => {
 
   describe('Error Handling', () => {
     test('should handle malformed API response', async () => {
-      (global.fetch as jest.Mock).mockResolvedValue({
+      mockFetch.mockResolvedValue({
         ok: true,
         json: jest.fn().mockRejectedValue(new Error('Invalid JSON'))
       });
@@ -225,13 +215,8 @@ test('should handle successful response with context', async () => {
         }
       };
 
-      const { GoogleGenAI } = require('@google/genai');
-      const mockAI = new GoogleGenAI();
-      (mockAI.models || { generateContentStream: jest.fn() }).generateContentStream.mockResolvedValue(mockStream);
-
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGenerateContentStream.mockResolvedValue(mockStream);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Test', []);
       const results = [];
@@ -243,7 +228,7 @@ test('should handle successful response with context', async () => {
     });
 
     test('should handle network timeout', async () => {
-      (global.fetch as jest.Mock).mockRejectedValue(new Error('Timeout'));
+      mockFetch.mockRejectedValue(new Error('Timeout'));
 
       const mockStream = {
         [Symbol.asyncIterator]: async function* () {
@@ -251,13 +236,8 @@ test('should handle successful response with context', async () => {
         }
       };
 
-      const { GoogleGenAI } = require('@google/genai');
-      const mockAI = new GoogleGenAI();
-      (mockAI.models || { generateContentStream: jest.fn() }).generateContentStream.mockResolvedValue(mockStream);
-
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGenerateContentStream.mockResolvedValue(mockStream);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Test', []);
       const results = [];
@@ -276,13 +256,11 @@ test('should handle successful response with context', async () => {
         { id: '2', content: 'Test conversation 2', type: 'conversation' },
       ];
       
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.searchMemories.mockResolvedValue(mockConversations);
+      mockSearchMemories.mockResolvedValue(mockConversations);
 
       const result = await getConversationHistory(5);
 
-      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
+      expect(mockSearchMemories).toHaveBeenCalledWith({
         type: 'conversation',
         limit: 5,
       });
@@ -290,9 +268,7 @@ test('should handle successful response with context', async () => {
     });
 
     test('should handle error and return empty array', async () => {
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.searchMemories.mockRejectedValue(new Error('Memory error'));
+      mockSearchMemories.mockRejectedValue(new Error('Memory error'));
 
       const result = await getConversationHistory();
 
@@ -300,13 +276,11 @@ test('should handle successful response with context', async () => {
     });
 
     test('should use default limit', async () => {
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.searchMemories.mockResolvedValue([]);
+      mockSearchMemories.mockResolvedValue([]);
 
       await getConversationHistory();
 
-      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
+      expect(mockSearchMemories).toHaveBeenCalledWith({
         type: 'conversation',
         limit: 10,
       });
@@ -320,26 +294,22 @@ test('should handle successful response with context', async () => {
         { id: '2', content: 'Conversation 2', type: 'conversation' },
       ];
       
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.searchMemories.mockResolvedValue(mockConversations);
-      mockMemoryBank.deleteMemory.mockResolvedValue(undefined);
+      mockSearchMemories.mockResolvedValue(mockConversations);
+      mockDeleteMemory.mockResolvedValue(undefined);
 
       const result = await clearConversationHistory();
 
-      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
+      expect(mockSearchMemories).toHaveBeenCalledWith({
         type: 'conversation',
       });
-      expect(mockMemoryBank.deleteMemory).toHaveBeenCalledTimes(2);
-      expect(mockMemoryBank.deleteMemory).toHaveBeenCalledWith('1');
-      expect(mockMemoryBank.deleteMemory).toHaveBeenCalledWith('2');
+      expect(mockDeleteMemory).toHaveBeenCalledTimes(2);
+      expect(mockDeleteMemory).toHaveBeenCalledWith('1');
+      expect(mockDeleteMemory).toHaveBeenCalledWith('2');
       expect(result).toBe(2);
     });
 
     test('should handle error', async () => {
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.searchMemories.mockRejectedValue(new Error('Memory error'));
+      mockSearchMemories.mockRejectedValue(new Error('Memory error'));
 
       await expect(clearConversationHistory()).rejects.toThrow('Memory error');
     });
@@ -349,20 +319,16 @@ test('should handle successful response with context', async () => {
     test('should return memory stats', async () => {
       const mockStats = { totalMemories: 10, totalSize: 1024 };
       
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.getStats.mockResolvedValue(mockStats);
+      mockGetStats.mockResolvedValue(mockStats);
 
       const result = await getMemoryStats();
 
-      expect(mockMemoryBank.getStats).toHaveBeenCalled();
+      expect(mockGetStats).toHaveBeenCalled();
       expect(result).toEqual(mockStats);
     });
 
     test('should handle error and return null', async () => {
-      const { MemoryBank } = require('../memory');
-      const mockMemoryBank = new MemoryBank();
-      mockMemoryBank.getStats.mockRejectedValue(new Error('Stats error'));
+      mockGetStats.mockRejectedValue(new Error('Stats error'));
 
       const result = await getMemoryStats();
 
