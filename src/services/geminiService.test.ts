@@ -62,10 +62,8 @@ test('should handle successful response with context', async () => {
       const mockModels = { generateContentStream: mockGenerateContentStream };
       
       const { GoogleGenAI } = require('@google/genai');
-      jest.mock('@google/genai', () => ({
-        GoogleGenAI: jest.fn().mockImplementation(() => ({
-          models: mockModels
-        }))
+      GoogleGenAI.mockImplementation(() => ({
+        models: mockModels
       }));
 
       const { MemoryBank } = require('../memory');
@@ -88,15 +86,24 @@ test('should handle successful response with context', async () => {
       });
 
       const { GoogleGenAI } = require('@google/genai');
-      const mockAI = new GoogleGenAI();
-      (mockAI.models || { generateContentStream: jest.fn() }).generateContentStream.mockRejectedValue(new Error('API error'));
+      const mockGenerateContentStream = jest.fn().mockRejectedValue(new Error('API error'));
+      const mockModels = { generateContentStream: mockGenerateContentStream };
+      
+      GoogleGenAI.mockImplementation(() => ({
+        models: mockModels
+      }));
 
       const { MemoryBank } = require('../memory');
       const mockMemoryBank = new MemoryBank();
       mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Hello', []);
-      await expect(generator.next()).rejects.toThrow('API error');
+      const results = [];
+      for await (const chunk of generator) {
+        results.push(chunk);
+      }
+
+      expect(results).toEqual(['Maaf, terjadi masalah saat menghubungi AI. Silakan coba lagi nanti.']);
     });
 
     test('should include context in prompt when available', async () => {
