@@ -4,7 +4,8 @@
     "es2021": true,
     "node": true,
     "jest": true,
-    "serviceworker": true
+    "serviceworker": true,
+    "webextensions": true
   },
   "extends": [
     "eslint:recommended",
@@ -38,9 +39,9 @@
     "jsx-a11y/click-events-have-key-events": "warn",
     "jsx-a11y/no-static-element-interactions": "warn",
     "no-console": "off",
-    "no-unused-vars": "off",
+    "no-unused-vars": "error",
     "no-undef": "off",
-    "no-redeclare": "off"
+    "no-redeclare": "error"
   },
   "settings": {
     "react": {
@@ -54,7 +55,9 @@
     "*.config.*",
     "coverage/",
     "src/__mocks__/",
+    "src/**/*.test.*",
     "src/__tests__/",
+    "src/types/global.d.ts",
     "worker.js",
     "worker-extended.js",
     "implement/",
