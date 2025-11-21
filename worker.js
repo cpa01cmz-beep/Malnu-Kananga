@@ -1,4 +1,5 @@
 // worker.js - Kode backend GABUNGAN untuk Login, RAG Retriever, dan Seeder
+/* global Response */
 
 // --- SECURITY UTILITIES ---
 
@@ -73,7 +74,7 @@ async function generateSecureToken(email, expiryTime = 15 * 60 * 1000) {
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
   // Generate signature using HMAC-SHA256 with secret key from environment
-  const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+  const secret = (typeof env !== 'undefined' && env.SECRET_KEY) || 'default-secret-key-for-worker';
   const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;

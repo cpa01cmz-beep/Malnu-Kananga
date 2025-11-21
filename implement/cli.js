@@ -11,6 +11,7 @@ import SessionManager from './sessionManager.js';
 
 // Global console for CLI usage
 /* global console */
+const globalConsole = console;
 
 const IMPLEMENT_DIR = './';
 const STATE_FILE = path.join(IMPLEMENT_DIR, 'state.json');
