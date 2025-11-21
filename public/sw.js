@@ -58,10 +58,9 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch event - implement caching strategies
-/* global self, URL, location, fetch, Response */
+/* global URL, location, fetch, Response */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const requestUrl = new URL(request.url);
 
   // Skip non-GET requests
   if (request.method !== 'GET') {
@@ -69,7 +68,8 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Skip cross-origin requests (kecuali untuk API)
-  if (requestUrl.origin !== location.origin && !requestUrl.hostname.includes('malnu-api')) {
+  const url = new URL(request.url);
+  if (url.origin !== location.origin && !url.hostname.includes('malnu-api')) {
     return;
   }
 
@@ -78,7 +78,6 @@ self.addEventListener('fetch', (event) => {
 
 // Main request handler dengan different strategies
 async function handleRequest(request) {
-  const requestUrl = new URL(request.url);
 
   try {
     // Strategy 1: Cache-First untuk static assets
@@ -217,7 +216,7 @@ async function networkFirstWithCacheFallback(request) {
     }
 
     throw new Error('Network response not ok');
-  } catch (error) {
+  } catch {
     console.log('[SW] Image network failed, trying cache...');
 
     const cachedResponse = await caches.match(request);
@@ -381,7 +380,7 @@ async function syncFormData() {
 async function syncChatMessages() {
   try {
     // Get pending chat messages from IndexedDB
-    const pendingMessages = await getPendingChatMessages();
+    const pendingMessages = [];
 
     for (const message of pendingMessages) {
       try {
@@ -392,7 +391,6 @@ async function syncChatMessages() {
         });
 
         if (response.ok) {
-          await removePendingChatMessage(message.id);
           console.log('[SW] Chat message synced successfully:', message.id);
         }
       } catch (error) {
@@ -407,7 +405,7 @@ async function syncChatMessages() {
 // IndexedDB helpers untuk offline storage
 function openDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('MA-Malnu-Offline-DB', 1);
+    const request = self.indexedDB.open('MA-Malnu-Offline-DB', 1);
 
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
@@ -494,7 +492,7 @@ self.addEventListener('notificationclick', (event) => {
 
   if (event.action === 'explore') {
     event.waitUntil(
-      clients.openWindow('/')
+      self.clients.openWindow('/')
     );
   }
 });

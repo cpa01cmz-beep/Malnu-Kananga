@@ -60,22 +60,22 @@ async function showProgress() {
       console.log(`  ${index + 1}. ${step} - ${checkpoint ? checkpoint.description : 'No description'}`);
     });
   } catch (error) {
-    globalConsole.error('Error reading session state:', error.message);
+    console.error('Error reading session state:', error.message);
   }
 }
 
 async function createCheckpoint(step, description) {
   if (!step) {
-    globalConsole.error('Error: Please provide a step name');
+    console.error('Error: Please provide a step name');
     return;
   }
   
   const session = new SessionManager();
   try {
     await session.completeStep(step, description || `Completed step: ${step}`);
-    globalConsole.log(`Checkpoint created for step: ${step}`);
+    console.log(`Checkpoint created for step: ${step}`);
   } catch (error) {
-    globalConsole.error('Error creating checkpoint:', error.message);
+    console.error('Error creating checkpoint:', error.message);
   }
 }
 
@@ -114,7 +114,6 @@ async function startNewSession() {
 }
 
 async function main() {
-  /* global process */
   const args = process.argv.slice(2);
   const command = args[0];
 
@@ -142,4 +141,4 @@ async function main() {
 }
 
 // Run the main function
-main().catch(globalConsole.error);
+main().catch(console.error);
