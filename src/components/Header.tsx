@@ -2,7 +2,6 @@
 import React from 'react';
 import Logo from './Logo';
 import DesktopNavigation from './DesktopNavigation';
-import AuthButtons from './AuthButtons';
 import MobileMenuButton from './MobileMenuButton';
 import MobileMenu from './MobileMenu';
 import { ChatIcon } from './icons/ChatIcon';
@@ -17,12 +16,13 @@ interface HeaderProps {
     onChatClick: () => void;
     isLoggedIn: boolean;
     onLogout: () => void;
+    onPortalClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, onLogout, onPortalClick }) => {
     const isScrolled = useScrollEffect();
     const { isMenuOpen, setIsMenuOpen } = useResponsiveMenu();
-    const { handleTouchFeedback } = useTouchFeedback();
+    
 
 
 
