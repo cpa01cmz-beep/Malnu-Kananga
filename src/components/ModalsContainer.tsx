@@ -7,7 +7,7 @@ interface ModalsContainerProps {
   isDocsOpen: boolean;
   onLoginClose: () => void;
   onDocsClose: () => void;
-  onLoginSuccess: () => void;
+  onLoginSuccess: (user?: any) => void;
 }
 
 const ModalsContainer: React.FC<ModalsContainerProps> = ({

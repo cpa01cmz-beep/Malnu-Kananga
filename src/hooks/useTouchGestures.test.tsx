@@ -75,6 +75,8 @@ describe('useTouchGestures', () => {
 
     act(() => {
       mockElement.dispatchEvent(touchStart);
+      // Advance timers to simulate realistic timing
+      jest.advanceTimersByTime(100);
       mockElement.dispatchEvent(touchEnd);
     });
 
@@ -96,6 +98,7 @@ describe('useTouchGestures', () => {
 
     act(() => {
       mockElement.dispatchEvent(touchStart);
+      jest.advanceTimersByTime(100);
       mockElement.dispatchEvent(touchEnd);
     });
 
@@ -117,6 +120,7 @@ describe('useTouchGestures', () => {
 
     act(() => {
       mockElement.dispatchEvent(touchStart);
+      jest.advanceTimersByTime(100);
       mockElement.dispatchEvent(touchEnd);
     });
 
@@ -138,6 +142,7 @@ describe('useTouchGestures', () => {
 
     act(() => {
       mockElement.dispatchEvent(touchStart);
+      jest.advanceTimersByTime(100);
       mockElement.dispatchEvent(touchEnd);
     });
 
@@ -159,6 +164,7 @@ describe('useTouchGestures', () => {
 
     act(() => {
       mockElement.dispatchEvent(touchStart);
+      jest.advanceTimersByTime(50); // Quick tap under 200ms
       mockElement.dispatchEvent(touchEnd);
     });
 
@@ -179,11 +185,7 @@ describe('useTouchGestures', () => {
 
     act(() => {
       mockElement.dispatchEvent(touchStart);
-    });
-
-    // Fast forward waktu untuk trigger long press
-    act(() => {
-      jest.advanceTimersByTime(500);
+      jest.advanceTimersByTime(500); // Trigger long press
     });
 
     expect(onLongPress).toHaveBeenCalledTimes(1);
@@ -305,6 +307,7 @@ describe('useTouchGestures', () => {
   });
 
   it('seharusnya membersihkan event listeners saat unmount', () => {
+    const addEventListenerSpy = jest.spyOn(mockElement, 'addEventListener');
     const removeEventListenerSpy = jest.spyOn(mockElement, 'removeEventListener');
 
     const { result, unmount } = renderHook(() => 
@@ -315,12 +318,18 @@ describe('useTouchGestures', () => {
       result.current.current = mockElement;
     });
 
+    // Verify event listeners were added
+    expect(addEventListenerSpy).toHaveBeenCalledWith('touchstart', expect.any(Function), expect.any(Object));
+    expect(addEventListenerSpy).toHaveBeenCalledWith('touchend', expect.any(Function), expect.any(Object));
+    expect(addEventListenerSpy).toHaveBeenCalledWith('touchmove', expect.any(Function), expect.any(Object));
+
     unmount();
 
     expect(removeEventListenerSpy).toHaveBeenCalledWith('touchstart', expect.any(Function));
     expect(removeEventListenerSpy).toHaveBeenCalledWith('touchend', expect.any(Function));
     expect(removeEventListenerSpy).toHaveBeenCalledWith('touchmove', expect.any(Function));
 
+    addEventListenerSpy.mockRestore();
     removeEventListenerSpy.mockRestore();
   });
 
@@ -388,6 +397,7 @@ describe('useTouchGestures', () => {
 
     act(() => {
       mockElement.dispatchEvent(tapStart);
+      jest.advanceTimersByTime(50); // Quick tap
       mockElement.dispatchEvent(tapEnd);
     });
 
@@ -403,6 +413,7 @@ describe('useTouchGestures', () => {
 
     act(() => {
       mockElement.dispatchEvent(swipeStart);
+      jest.advanceTimersByTime(100); // Swipe timing
       mockElement.dispatchEvent(swipeEnd);
     });
 
