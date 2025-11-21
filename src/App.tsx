@@ -94,9 +94,9 @@ const App: React.FC = () => {
                    }}
                 />
 
-                <MainContentRouter
-                  isLoggedIn={Boolean(isLoggedIn)}
-                  currentUser={currentUser}
+                 <MainContentRouter
+                   isLoggedIn={Boolean(isLoggedIn)}
+                   currentUser={currentUser}
                   onLogout={handleLogout}
                 />
 
