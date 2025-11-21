@@ -20,7 +20,7 @@ class CloudflareResourceManager {
   checkPrerequisites() {
     try {
       execSync('npx wrangler --version', { stdio: 'pipe' });
-    } catch (error) {
+    } catch {
       console.error('❌ Wrangler CLI tidak ditemukan. Install dengan: npm install -g wrangler');
       process.exit(1);
     }
@@ -55,7 +55,7 @@ class CloudflareResourceManager {
           'Menjalankan migration database'
         );
       }
-    } catch (error) {
+    } catch {
       console.log('ℹ️  Database mungkin sudah ada, melanjutkan...');
     }
   }
