@@ -18,9 +18,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLoading = fals
             : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-lg'
         }`}
       >
-        {message.text}
+        <div className="whitespace-pre-wrap break-words">
+          {message.text}
+        </div>
         {isLoading && !message.text && (
-          <div className="flex items-center justify-center space-x-1">
+          <div className="flex items-center justify-center space-x-1 py-1">
             <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0s'}}></span>
             <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
             <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></span>
