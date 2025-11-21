@@ -4,11 +4,18 @@
  * Test script for documentation manager
  */
 
-/* global console */
 import DocumentationManager from './docManager.js';
 
+// CLI console wrapper
+/* global console */
+const cliConsole = {
+  log: (...args) => console.log(...args),
+  error: (...args) => console.error(...args),
+  warn: (...args) => console.warn(...args)
+};
+
 async function testDocManager() {
-  console.log('Testing Documentation Manager...');
+  cliConsole.log('Testing Documentation Manager...');
   
   const docManager = new DocumentationManager();
   

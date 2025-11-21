@@ -3,8 +3,15 @@
  * Manages the state of implementation sessions
  */
 
-/* global console */
 import fs from 'fs/promises';
+
+// CLI console wrapper
+/* global console */
+const cliConsole = {
+  log: (...args) => console.log(...args),
+  error: (...args) => console.error(...args),
+  warn: (...args) => console.warn(...args)
+};
 
 class SessionManager {
   constructor() {
@@ -22,7 +29,7 @@ class SessionManager {
       this.state = JSON.parse(data);
       return this.state;
     } catch (error) {
-      console.error('Error loading session state:', error);
+      cliConsole.error('Error loading session state:', error);
       throw error;
     }
   }
@@ -34,7 +41,7 @@ class SessionManager {
     try {
       await fs.writeFile(this.stateFile, JSON.stringify(this.state, null, 2));
     } catch (error) {
-      console.error('Error saving session state:', error);
+      cliConsole.error('Error saving session state:', error);
       throw error;
     }
   }

@@ -10,13 +10,18 @@ import path from 'path';
 import SessionManager from './sessionManager.js';
 
 // Global console for CLI operations
-global.globalConsole = console;
-
-// Global console for CLI usage
-/* global console */
+/* global console, process */
 
 const IMPLEMENT_DIR = './';
 const STATE_FILE = path.join(IMPLEMENT_DIR, 'state.json');
+
+// CLI console wrapper  
+/* global console */
+const cliConsole = {
+  log: (...args) => console.log(...args),
+  error: (...args) => console.error(...args),
+  warn: (...args) => console.warn(...args)
+};
 
 async function showHelp() {
   console.log(`
@@ -37,15 +42,13 @@ Commands:
 async function showStatus() {
   try {
     const state = JSON.parse(await fs.readFile(STATE_FILE, 'utf8'));
-    console.log('Session Status:', state.status);
-    console.log('Session ID:', state.sessionId);
-    console.log('Current Step:', state.progress.currentStep);
-    console.log('Completed Steps:', state.progress.completedSteps.length, '/', state.progress.totalSteps);
-    console.log('Project:', state.projectContext.name);
+    cliConsole.log('Session Status:', state.status);
+    cliConsole.log('Session ID:', state.sessionId);
+    cliConsole.log('Current Step:', state.progress.currentStep);
+    cliConsole.log('Completed Steps:', state.progress.completedSteps.length, '/', state.progress.totalSteps);
+    cliConsole.log('Project:', state.projectContext.name);
   } catch (error) {
-     
-    /* global process */
-    console.error('Error reading session state:', error.message);
+    cliConsole.error('Error reading session state:', error.message);
   }
 }
 
@@ -103,7 +106,7 @@ async function startNewSession() {
     projectContext: {
       name: "Malnu-Kananga School Portal",
       type: "React 19, TypeScript, Tailwind CSS, Cloudflare Workers",
-      directory: process.cwd(),
+      directory: '.',
       lastUpdate: new Date().toISOString()
     }
   };

@@ -3,8 +3,15 @@
  * Manages documentation synchronization with code changes
  */
 
-/* global console */
 import fs from 'fs/promises';
+
+// CLI console wrapper
+/* global console */
+const cliConsole = {
+  log: (...args) => console.log(...args),
+  error: (...args) => console.error(...args),
+  warn: (...args) => console.warn(...args)
+};
 
 class DocumentationManager {
   constructor() {
@@ -17,7 +24,7 @@ class DocumentationManager {
    * Scan the codebase for documentation needs
    */
   async scanCodebase() {
-    console.log('Scanning codebase for documentation needs...');
+    cliConsole.log('Scanning codebase for documentation needs...');
     // This would implement actual scanning logic
     return {
       components: 15,
@@ -30,10 +37,9 @@ class DocumentationManager {
   /**
    * Generate documentation for a specific module
    * @param {string} modulePath - Path to the module
-   * @param {string} outputPath - Where to save the documentation
    */
   async generateDocumentation(modulePath) {
-    console.log(`Generating documentation for ${modulePath}...`);
+    cliConsole.log(`Generating documentation for ${modulePath}...`);
     // This would implement actual documentation generation
     return true;
   }
@@ -72,7 +78,7 @@ class DocumentationManager {
 
       await fs.writeFile(this.docRegistry, JSON.stringify(registry, null, 2));
     } catch (error) {
-      console.error('Error updating documentation registry:', error);
+      cliConsole.error('Error updating documentation registry:', error);
       throw error;
     }
   }
