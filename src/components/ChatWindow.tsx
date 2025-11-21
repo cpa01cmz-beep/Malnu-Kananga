@@ -3,6 +3,7 @@ import React from 'react';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
+import ConnectionStatus from './ConnectionStatus';
 import { useChatLogic } from '../hooks/useChatLogic';
 import { useTouchGestures } from '../hooks/useTouchGestures';
 
@@ -29,6 +30,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat }) => {
       className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden touch-optimized"
     >
       <ChatHeader onClose={closeChat} />
+      
+      {/* Connection Status */}
+      <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+        <ConnectionStatus />
+      </div>
+      
       <ChatMessages messages={messages} isLoading={isLoading} />
       <ChatInput
         input={input}
