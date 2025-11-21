@@ -32,7 +32,7 @@ export interface Grade {
   attendanceScore?: number;
   finalGrade?: string;
   gradePoint?: number;
-  status: 'draft' | 'submitted' | 'approved';
+  status: 'Lulus' | 'Tidak Lulus' | 'Belum Selesai';
   submittedAt?: string;
   submittedBy?: string;
 }
