@@ -9,7 +9,7 @@ import prettier from 'eslint-config-prettier';
 export default [
   js.configs.recommended,
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['src/**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -44,6 +44,50 @@ export default [
       react: {
         version: 'detect',
       },
+    },
+  },
+  {
+    files: ['scripts/**/*.js', 'implement/**/*.js', 'public/**/*.js'],
+    languageOptions: {
+      globals: {
+        console: true,
+        process: true,
+        module: true,
+        require: true,
+        __dirname: true,
+        __filename: true,
+        Buffer: true,
+        global: true,
+        setTimeout: true,
+        clearTimeout: true,
+        setInterval: true,
+        clearInterval: true,
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
+  {
+    files: ['src/**/__tests__/**/*.{ts,tsx}', 'src/**/*.{test,spec}.{ts,tsx}'],
+    languageOptions: {
+      globals: {
+        describe: true,
+        it: true,
+        test: true,
+        expect: true,
+        beforeEach: true,
+        afterEach: true,
+        beforeAll: true,
+        afterAll: true,
+        jest: true,
+        global: true,
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
   {

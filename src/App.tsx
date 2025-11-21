@@ -3,7 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import MetaTags from './components/MetaTags';
+
 import MainContentRouter from './components/MainContentRouter';
 import ChatWindowContainer from './components/ChatWindowContainer';
 import ModalsContainer from './components/ModalsContainer';
@@ -116,8 +116,8 @@ const App: React.FC = () => {
                   isDocsOpen={isDocsOpen}
                   onLoginClose={() => setIsLoginOpen(false)}
                   onDocsClose={() => setIsDocsOpen(false)}
-                  onLoginSuccess={(user) => {
-                    handleLoginSuccess(user);
+                  onLoginSuccess={() => {
+                    handleLoginSuccess();
                     trackEvent('login', 'auth', 'login_success');
                   }}
                 />
