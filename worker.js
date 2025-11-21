@@ -131,6 +131,9 @@ function generateSupportRecommendations(riskAssessment) {
 
 // --- SECURITY UTILITIES ---
 
+// Global declarations for Cloudflare Worker environment
+global.globalConsole = console;
+
 // Rate limiting storage (in production, use KV storage or external Redis)
 const rateLimitStore = new Map();
 
