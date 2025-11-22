@@ -1,5 +1,7 @@
 // worker.js - Kode backend GABUNGAN untuk Login, RAG Retriever, dan Seeder
 
+import { SecurityMiddleware } from './security-middleware.js';
+
 // --- STUDENT SUPPORT UTILITIES ---
 
 function categorizeSupportResponse(message, response) {
@@ -299,14 +301,49 @@ const documents = [
 
 export default {
   async fetch(request, env) {
+    // Get client ID for rate limiting
+    const clientId = SecurityMiddleware.getClientId(request);
+    const url = new URL(request.url);
+    
+    // Apply rate limiting
+    const rateLimitResult = SecurityMiddleware.checkRateLimit(clientId, url.pathname);
+    if (!rateLimitResult.allowed) {
+      return new Response(JSON.stringify({ 
+        error: 'Rate limit exceeded',
+        resetTime: rateLimitResult.resetTime 
+      }), {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+          'X-RateLimit-Reset': rateLimitResult.resetTime?.toString() || ''
+        }
+      });
+    }
+
+    // Secure CORS configuration - restrict to specific domains
+    const origin = request.headers.get('Origin');
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://ma-malnukananga.sch.id',
+      'https://www.ma-malnukananga.sch.id'
+    ];
+    
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Max-Age': '86400',
+      ...SecurityMiddleware.getSecurityHeaders()
     };
 
     if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, { 
+        status: 200,
+        headers: corsHeaders 
+      });
     }
 
     const url = new URL(request.url);
@@ -340,7 +377,17 @@ export default {
     // --- Endpoint untuk RAG Context Retrieval (PENCARI INFO) ---
     if (url.pathname === '/api/chat' && request.method === 'POST') {
       try {
-        const { message } = await request.json();
+        const body = await request.json();
+        
+        // Input validation
+        if (!body.message || typeof body.message !== 'string' || body.message.length > 1000) {
+          return new Response(JSON.stringify({ error: 'Invalid message format or length' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        
+        const { message } = body;
         const embeddings = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [message] });
         const vectors = embeddings.data[0];
         
@@ -371,7 +418,24 @@ export default {
     // --- Endpoint Student Support AI ---
     if (url.pathname === '/api/student-support' && request.method === 'POST') {
       try {
-        const { studentId, message, category, context } = await request.json();
+        const body = await request.json();
+        
+        // Input validation
+        if (!body.message || typeof body.message !== 'string' || body.message.length > 1000) {
+          return new Response(JSON.stringify({ error: 'Invalid message format or length' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        
+        if (body.studentId && (typeof body.studentId !== 'string' || body.studentId.length > 50)) {
+          return new Response(JSON.stringify({ error: 'Invalid student ID format' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        
+        const { studentId, message, category, context } = body;
         
         // Enhanced context for student support
         let supportContext = `Konteks Dukungan Siswa:
