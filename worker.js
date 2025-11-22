@@ -1,5 +1,10 @@
 // worker.js - Kode backend GABUNGAN untuk Login, RAG Retriever, dan Seeder
 
+// Cloudflare Worker environment globals
+global.Headers = Headers;
+global.URL = URL;
+global.Response = Response;
+
 // --- STUDENT SUPPORT UTILITIES ---
 
 function categorizeSupportResponse(message, response) {
