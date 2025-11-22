@@ -88,6 +88,13 @@ declare global {
   var BeforeUnloadEvent: typeof BeforeUnloadEvent;
   var PageShowEvent: typeof PageShowEvent;
   var PageHideEvent: typeof PageHideEvent;
+  var EventListener: typeof EventListener;
+  var HeadersInit: typeof HeadersInit;
+  var AbortSignal: typeof AbortSignal;
+  var URLSearchParams: typeof URLSearchParams;
+  var NodeJS: typeof NodeJS;
+  var React: typeof React;
+  var global: typeof global;
 }
 
 export {};
