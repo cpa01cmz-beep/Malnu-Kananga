@@ -61,7 +61,6 @@ self.addEventListener('activate', (event) => {
 /* global self, URL, location, fetch, Response */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const requestUrl = new URL(request.url);
 
   // Skip non-GET requests
   if (request.method !== 'GET') {
@@ -217,7 +216,7 @@ async function networkFirstWithCacheFallback(request) {
     }
 
     throw new Error('Network response not ok');
-  } catch (error) {
+  } catch {
     console.log('[SW] Image network failed, trying cache...');
 
     const cachedResponse = await caches.match(request);
