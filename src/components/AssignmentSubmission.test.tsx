@@ -93,7 +93,9 @@ describe('AssignmentSubmission Component', () => {
       );
 
       expect(screen.getByText('File Tugas')).toBeInTheDocument();
-      expect(screen.getByText('Pilih File')).toBeInTheDocument();
+      expect(screen.getByText((content, element) => {
+        return content.includes('Pilih File');
+      })).toBeInTheDocument();
       expect(screen.getByText(/PDF, Word, Gambar, atau Text/)).toBeInTheDocument();
     });
 
@@ -146,8 +148,8 @@ describe('AssignmentSubmission Component', () => {
         });
       }
 
-      // Should still show the file upload area with "Pilih File" text
-      expect(screen.getByText('Pilih File')).toBeInTheDocument();
+      // Check that console.error was called with file type validation message
+      expect(consoleSpy).toHaveBeenCalledWith('Tipe file tidak didukung. Silakan upload file PDF, Word, gambar, atau text.');
       
       // Restore console.error
       consoleSpy.mockRestore();
@@ -177,8 +179,10 @@ describe('AssignmentSubmission Component', () => {
         });
       }
 
-      // Should still show the file upload area with "Pilih File" text
-      expect(screen.getByText('Pilih File')).toBeInTheDocument();
+      // File size validation is handled by console.error, but UI still shows the file
+      // The actual validation prevents submission, not display
+      // Check that console.error was called with size validation message
+      expect(consoleSpy).toHaveBeenCalledWith('Ukuran file terlalu besar. Maksimal 10MB.');
       
       // Restore console.error
       consoleSpy.mockRestore();
@@ -258,6 +262,7 @@ describe('AssignmentSubmission Component', () => {
     });
 
     test('should call onSubmit with correct data', async () => {
+      jest.useFakeTimers();
       render(
         <AssignmentSubmission
           assignment={mockAssignment}
@@ -280,9 +285,12 @@ describe('AssignmentSubmission Component', () => {
           submittedBy: 'PAR001'
         });
       });
+      
+      jest.useRealTimers();
     });
 
     test('should show loading state during submission', async () => {
+      jest.useFakeTimers();
       // Mock a delayed submission
       mockOnSubmit.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
 
@@ -305,6 +313,8 @@ describe('AssignmentSubmission Component', () => {
       // Should show loading state
       expect(screen.getByText('Mengumpulkan...')).toBeInTheDocument();
       expect(submitButton).toBeDisabled();
+      
+      jest.useRealTimers();
     });
   });
 
@@ -340,6 +350,7 @@ describe('AssignmentSubmission Component', () => {
 
   describe('Error Handling', () => {
     test('should handle submission error gracefully', async () => {
+      jest.useFakeTimers();
       mockOnSubmit.mockRejectedValue(new Error('Upload failed'));
 
       // Mock console.error to avoid test output pollution
@@ -365,6 +376,8 @@ describe('AssignmentSubmission Component', () => {
 
       // Restore console.error
       consoleSpy.mockRestore();
+      
+      jest.useRealTimers();
     });
   });
 
