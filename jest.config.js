@@ -33,5 +33,14 @@ export default {
   testEnvironmentOptions: {
     customExportConditions: ['node', 'node-addons']
   },
-  extensionsToTreatAsEsm: []
+  extensionsToTreatAsEsm: [],
+  globals: {
+    'ts-jest': {
+      useESM: false
+    }
+  },
+  testTimeout: 10000,
+  fakeTimers: {
+    enableGlobally: true
+  }
 };
