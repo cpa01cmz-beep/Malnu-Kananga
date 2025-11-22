@@ -61,6 +61,11 @@ export default [
         beforeAll: true,
         afterAll: true,
         jest: true,
+        setTimeout: true,
+        clearTimeout: true,
+        setInterval: true,
+        clearInterval: true,
+        require: true,
       },
     },
     plugins: {

@@ -303,7 +303,7 @@ describe('AssignmentSubmission Component', () => {
       jest.useFakeTimers();
       
       // Mock a delayed submission
-      mockOnSubmit.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+      mockOnSubmit.mockImplementation(() => new Promise(resolve => global.setTimeout(resolve, 100)));
 
       render(
         <AssignmentSubmission
