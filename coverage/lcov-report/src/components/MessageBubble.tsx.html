@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>4/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.5% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>7/8</span>
+                <span class='fraction'>0/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>4/6</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -96,7 +96,9 @@
 <a name='L31'></a><a href='#L31'>31</a>
 <a name='L32'></a><a href='#L32'>32</a>
 <a name='L33'></a><a href='#L33'>33</a>
-<a name='L34'></a><a href='#L34'>34</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -105,9 +107,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">302x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">302x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -137,10 +141,10 @@ interface MessageBubbleProps {
   isLoading?: boolean;
 }
 &nbsp;
-const MessageBubble: React.FC&lt;MessageBubbleProps&gt; = ({ message, isLoading = <span class="branch-0 cbranch-no" title="branch not covered" >false </span>}) =&gt; {
-  const isUser = message.sender === Sender.User;
+const MessageBubble: React.FC&lt;MessageBubbleProps&gt; = <span class="fstat-no" title="function not covered" >({</span> message, isLoading = <span class="branch-0 cbranch-no" title="branch not covered" >false </span>}) =&gt; {
+  const isUser = <span class="cstat-no" title="statement not covered" >message.sender === Sender.User;</span>
 &nbsp;
-  return (
+<span class="cstat-no" title="statement not covered" >  return (</span>
     &lt;div className={`flex items-end max-w-xs md:max-w-md gap-2 ${isUser ? 'self-end flex-row-reverse' : 'self-start'}`}&gt;
       &lt;div
         className={`rounded-2xl p-3 text-sm md:text-base ${
@@ -149,9 +153,11 @@ const MessageBubble: React.FC&lt;MessageBubbleProps&gt; = ({ message, isLoading 
             : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-lg'
         }`}
       &gt;
-        {message.text}
+        &lt;div className="whitespace-pre-wrap break-words"&gt;
+          {message.text}
+        &lt;/div&gt;
         {isLoading &amp;&amp; !message.text &amp;&amp; (
-          &lt;div className="flex items-center justify-center space-x-1"&gt;
+          &lt;div className="flex items-center justify-center space-x-1 py-1"&gt;
             &lt;span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0s'}}&gt;&lt;/span&gt;
             &lt;span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}&gt;&lt;/span&gt;
             &lt;span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}&gt;&lt;/span&gt;
@@ -169,7 +175,7 @@ export default MessageBubble;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-20T04:21:49.428Z
+                at 2025-11-22T08:15:57.717Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

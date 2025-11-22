@@ -10,7 +10,7 @@ interface ChatInputProps {
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ input, onInputChange, onSend, isLoading }) => {
-  const { handleTouchFeedback: _handleTouchFeedback } = useTouchFeedback();
+  const { handleTouchFeedback } = useTouchFeedback();
 
   return (
     <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
