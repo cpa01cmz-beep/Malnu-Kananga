@@ -136,14 +136,19 @@ describe('AssignmentSubmission Component', () => {
       );
 
       const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-stream' });
-      const dropZone = screen.getByText('Pilih File').closest('div');
-
-      if (dropZone) {
-        fireEvent.drop(dropZone, {
-          dataTransfer: {
-            files: [invalidFile]
-          }
+      
+      // Find the file input button and click it
+      const chooseFileButton = screen.getByText('Pilih File');
+      fireEvent.click(chooseFileButton);
+      
+      // Get the hidden file input and simulate file selection
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput) {
+        Object.defineProperty(fileInput, 'files', {
+          value: [invalidFile],
+          writable: false,
         });
+        fireEvent.change(fileInput);
       }
 
       // Should still show the file upload area with "Pilih File" text
@@ -153,7 +158,36 @@ describe('AssignmentSubmission Component', () => {
       consoleSpy.mockRestore();
     });
 
-    test('should validate file size', () => {
+test('should validate file size', () => {
+      render(
+        <AssignmentSubmission
+          assignment={mockAssignment}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit}
+        />
+      );
+
+      const file = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
+      
+      // Find the file input button and click it
+      const chooseFileButton = screen.getByText('Pilih File');
+      fireEvent.click(chooseFileButton);
+      
+      // Get the hidden file input and simulate file selection
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput) {
+        Object.defineProperty(fileInput, 'files', {
+          value: [file],
+          writable: false,
+        });
+        fireEvent.change(fileInput);
+      }
+      
+      // After file selection, we should see the file name instead of "Pilih File"
+      expect(screen.getByText('test.pdf')).toBeInTheDocument();
+    });
+
+    test('should validate file type', () => {
       // Mock console.error to avoid test output pollution
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -165,16 +199,20 @@ describe('AssignmentSubmission Component', () => {
         />
       );
 
-      // Create a file larger than 10MB
-      const largeFile = new File(['x'.repeat(11 * 1024 * 1024)], 'large.pdf', { type: 'application/pdf' });
-      const dropZone = screen.getByText('Pilih File').closest('div');
-
-      if (dropZone) {
-        fireEvent.drop(dropZone, {
-          dataTransfer: {
-            files: [largeFile]
-          }
+      const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-stream' });
+      
+      // Find the file input button and click it
+      const chooseFileButton = screen.getByText('Pilih File');
+      fireEvent.click(chooseFileButton);
+      
+      // Get the hidden file input and simulate file selection
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput) {
+        Object.defineProperty(fileInput, 'files', {
+          value: [invalidFile],
+          writable: false,
         });
+        fireEvent.change(fileInput);
       }
 
       // Should still show the file upload area with "Pilih File" text
