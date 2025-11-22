@@ -167,18 +167,21 @@ describe('AssignmentSubmission Component', () => {
 
       // Create a file larger than 10MB
       const largeFile = new File(['x'.repeat(11 * 1024 * 1024)], 'large.pdf', { type: 'application/pdf' });
-      const dropZone = screen.getByText('Pilih File').closest('div');
+      
+      // Find the file upload area by looking for the input or drop zone
+      const fileInput = screen.getByRole('button', { name: /pilih file/i }) || 
+                       screen.getByText('Pilih File').closest('div');
 
-      if (dropZone) {
-        fireEvent.drop(dropZone, {
+      if (fileInput) {
+        fireEvent.drop(fileInput, {
           dataTransfer: {
             files: [largeFile]
           }
         });
       }
 
-      // Should still show the file upload area with "Pilih File" text
-      expect(screen.getByText('Pilih File')).toBeInTheDocument();
+      // Should still show the file upload area
+      expect(screen.getByText(/pilih file/i)).toBeInTheDocument();
       
       // Restore console.error
       consoleSpy.mockRestore();
@@ -258,6 +261,8 @@ describe('AssignmentSubmission Component', () => {
     });
 
     test('should call onSubmit with correct data', async () => {
+      jest.useFakeTimers();
+      
       render(
         <AssignmentSubmission
           assignment={mockAssignment}
@@ -280,9 +285,13 @@ describe('AssignmentSubmission Component', () => {
           submittedBy: 'PAR001'
         });
       });
+      
+      jest.useRealTimers();
     });
 
     test('should show loading state during submission', async () => {
+      jest.useFakeTimers();
+      
       // Mock a delayed submission
       mockOnSubmit.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
 
@@ -305,6 +314,8 @@ describe('AssignmentSubmission Component', () => {
       // Should show loading state
       expect(screen.getByText('Mengumpulkan...')).toBeInTheDocument();
       expect(submitButton).toBeDisabled();
+      
+      jest.useRealTimers();
     });
   });
 
@@ -340,6 +351,8 @@ describe('AssignmentSubmission Component', () => {
 
   describe('Error Handling', () => {
     test('should handle submission error gracefully', async () => {
+      jest.useFakeTimers();
+      
       mockOnSubmit.mockRejectedValue(new Error('Upload failed'));
 
       // Mock console.error to avoid test output pollution
@@ -365,6 +378,8 @@ describe('AssignmentSubmission Component', () => {
 
       // Restore console.error
       consoleSpy.mockRestore();
+      
+      jest.useRealTimers();
     });
   });
 
