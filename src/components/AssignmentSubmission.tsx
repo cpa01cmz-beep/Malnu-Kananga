@@ -4,11 +4,7 @@ import { Assignment, currentParent } from '../data/parentData';
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (submissionData: {
-    file?: File;
-    notes?: string;
-    submittedBy: string;
-  }) => void;
+  onSubmit: () => void;
 }
 
 const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
