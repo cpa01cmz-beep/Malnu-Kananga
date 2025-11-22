@@ -37,7 +37,9 @@ export interface Grade {
   attendanceScore?: number;
   finalGrade?: string;
   gradePoint?: number;
-  status: 'Lulus' | 'Tidak Lulus' | 'Belum Selesai';
+  status: 'Lulus' | 'Tidak Lulus' | 'Belum Selesai' | 'draft' | 'submitted' | 'approved';
+  submittedAt?: string;
+  submittedBy?: string;
 }
 
 export interface ScheduleItem {

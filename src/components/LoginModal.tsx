@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import { WORKER_URL, NODE_ENV } from '../utils/envValidation';
+import { User } from '../services/authService';
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLoginSuccess: () => void;
+  onLoginSuccess: (user: User) => void;
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
@@ -78,7 +79,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
   const handleCompleteLogin = () => {
     // Di aplikasi nyata, halaman akan refresh setelah redirect dari magic link,
     // dan status login akan terdeteksi dari cookie. Simulasi ini untuk UI.
-    onLoginSuccess();
+    const mockUser: User = {
+      id: 'mock-user-id',
+      email: email,
+      name: 'Mock User',
+      role: 'student'
+    };
+    onLoginSuccess(mockUser);
   };
 
   return (

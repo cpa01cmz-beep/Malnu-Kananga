@@ -72,12 +72,12 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
         attendanceRate: attendanceStats.percentage,
         assignmentCompletion: 85, // Sample data
         subjectPerformance: studentGrades.reduce((acc, grade) => {
-          acc[grade.subject] = parseInt(grade.score);
+          acc[grade.subjectName] = grade.finalGrade || '0';
           return acc;
-        }, {} as Record<string, number>)
+        }, {} as Record<string, string>)
       },
       engagementMetrics: {
-        portalLoginFrequency: 5, // Sample data
+        loginFrequency: 5, // Sample data
         featureUsage: {
           overview: 10,
           grades: 8,
