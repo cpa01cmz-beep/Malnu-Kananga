@@ -2,18 +2,6 @@ export default {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
-  globals: {
-    'ts-jest': {
-      tsconfig: {
-        target: 'es2017',
-        module: 'commonjs',
-        jsx: 'react-jsx',
-        esModuleInterop: true,
-        allowSyntheticDefaultImports: true,
-        types: ['jest', 'node']
-      }
-    }
-  },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/src/__mocks__/fileMock.js',
@@ -46,5 +34,13 @@ export default {
     customExportConditions: ['node', 'node-addons']
   },
   extensionsToTreatAsEsm: [],
-  
+  globals: {
+    'ts-jest': {
+      useESM: false
+    }
+  },
+  testTimeout: 10000,
+  fakeTimers: {
+    enableGlobally: true
+  }
 };
