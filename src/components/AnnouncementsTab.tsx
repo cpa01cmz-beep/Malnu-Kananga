@@ -3,7 +3,7 @@ import { Announcement } from '../data/studentData';
 
 interface AnnouncementsTabProps {
   announcements: Announcement[];
-  formatDate: (dateString: string) => string;
+  formatDate: () => string;
 }
 
 const AnnouncementsTab: React.FC<AnnouncementsTabProps> = ({ announcements, formatDate }) => {

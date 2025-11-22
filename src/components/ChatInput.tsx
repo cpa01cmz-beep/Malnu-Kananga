@@ -5,12 +5,12 @@ import { useTouchFeedback } from '../hooks/useTouchFeedback';
 interface ChatInputProps {
   input: string;
   onInputChange: (value: string) => void;
-  onSend: (e?: React.FormEvent) => void;
+  onSend: (_e?: React.FormEvent) => void;
   isLoading: boolean;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({ input, onInputChange, onSend, isLoading }) => {
-  const { handleTouchFeedback } = useTouchFeedback();
+  const { handleTouchFeedback: _handleTouchFeedback } = useTouchFeedback();
 
   return (
     <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
