@@ -205,7 +205,7 @@ async function generateSecureToken(email, expiryTime = 15 * 60 * 1000) {
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
   // Generate signature using HMAC-SHA256 with secret key from environment
-  const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+  const secret = env.SECRET_KEY;
   const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;
@@ -258,7 +258,7 @@ async function verifyAndDecodeToken(token, env) {
     const [encodedHeader, encodedPayload, signature] = parts;
     
     // Verify signature using HMAC-SHA256
-    const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+    const secret = env.SECRET_KEY;
     const isValid = await verifyHMACSignature(`${encodedHeader}.${encodedPayload}`, signature, secret);
     
     if (!isValid) {
@@ -579,7 +579,7 @@ Respons:`;
         }
         
         // Gunakan secret key yang disimpan di environment variable
-        const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+        const secret = env.SECRET_KEY;
         const signature = await generateHMACSignature(data, secret);
         return new Response(JSON.stringify({ signature }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       } catch (e) {
@@ -596,7 +596,7 @@ Respons:`;
         }
         
         // Gunakan secret key yang disimpan di environment variable
-        const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+        const secret = env.SECRET_KEY;
         const isValid = await verifyHMACSignature(data, signature, secret);
         return new Response(JSON.stringify({ isValid }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       } catch (e) {
