@@ -5,6 +5,7 @@
  * Script untuk membuat semua resources Cloudflare yang diperlukan
  */
 
+/* global console process */
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
@@ -20,7 +21,7 @@ class CloudflareResourceManager {
   checkPrerequisites() {
     try {
       execSync('npx wrangler --version', { stdio: 'pipe' });
-    } catch (error) {
+    } catch {
       console.error('❌ Wrangler CLI tidak ditemukan. Install dengan: npm install -g wrangler');
       process.exit(1);
     }

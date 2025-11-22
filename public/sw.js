@@ -1,7 +1,7 @@
 // Service Worker untuk MA Malnu Kananga PWA
 // Mengimplementasikan caching strategies untuk offline functionality
 
-/* global self, console, caches */
+/* global self, console, caches, indexedDB, clients, getPendingChatMessages, removePendingChatMessage */
 const CACHE_NAME = 'ma-malnu-kananga-v1.0.0';
 const RUNTIME_CACHE = 'ma-malnu-runtime-v1.0.0';
 
@@ -61,7 +61,6 @@ self.addEventListener('activate', (event) => {
 /* global self, URL, location, fetch, Response */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const requestUrl = new URL(request.url);
 
   // Skip non-GET requests
   if (request.method !== 'GET') {
@@ -217,7 +216,7 @@ async function networkFirstWithCacheFallback(request) {
     }
 
     throw new Error('Network response not ok');
-  } catch (error) {
+  } catch {
     console.log('[SW] Image network failed, trying cache...');
 
     const cachedResponse = await caches.match(request);

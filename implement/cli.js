@@ -10,10 +10,11 @@ import path from 'path';
 import SessionManager from './sessionManager.js';
 
 // Global console for CLI operations
+/* global global */
 global.globalConsole = console;
 
 // Global console for CLI usage
-/* global console */
+/* global console process */
 
 const IMPLEMENT_DIR = './';
 const STATE_FILE = path.join(IMPLEMENT_DIR, 'state.json');
@@ -117,7 +118,6 @@ async function startNewSession() {
 }
 
 async function main() {
-  /* global process */
   const args = process.argv.slice(2);
   const command = args[0];
 
