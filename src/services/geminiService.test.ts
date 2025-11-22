@@ -22,7 +22,7 @@ const mockGetRelevantMemories = jest.fn().mockResolvedValue([]);
 const mockAddMemory = jest.fn();
 
 jest.mock('../memory', () => ({
-  MemoryBank: jest.fn(() => ({
+  MemoryBank: jest.fn().mockImplementation(() => ({
     searchMemories: mockSearchMemories,
     deleteMemory: mockDeleteMemory,
     getStats: mockGetStats,
@@ -36,13 +36,13 @@ jest.mock('../memory', () => ({
 global.fetch = jest.fn();
 
 // Import after mocking
-const { 
+import { 
   getAIResponseStream, 
   initialGreeting, 
   getConversationHistory, 
   clearConversationHistory, 
   getMemoryStats 
-} = require('./geminiService');
+} from './geminiService';
 
 describe('Gemini Service', () => {
   beforeEach(() => {
