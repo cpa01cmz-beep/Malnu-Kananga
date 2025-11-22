@@ -10,7 +10,11 @@ import path from 'path';
 import SessionManager from './sessionManager.js';
 
 // Global console for CLI operations
-global.globalConsole = console;
+if (typeof global === 'undefined') {
+  globalThis.globalConsole = console;
+} else {
+  global.globalConsole = console;
+}
 
 // Global console for CLI usage
 /* global console */
