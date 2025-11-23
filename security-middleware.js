@@ -5,13 +5,23 @@ class SecurityMiddleware {
     this.rateLimitStore = new Map();
   }
 
-  // Rate limiting implementation
-  isRateLimitExceeded(clientId, limit = 100, windowMs = 60000) {
+  // Enhanced rate limiting with different limits per endpoint
+  isRateLimitExceeded(clientId, limit = 100, windowMs = 60000, endpoint = 'default') {
     const now = Date.now();
-    const clientData = this.rateLimitStore.get(clientId);
+    const key = `${clientId}:${endpoint}`;
+    const clientData = this.rateLimitStore.get(key);
+
+    // Different limits for different endpoints
+    const limits = {
+      'login': 3,      // 3 attempts per minute
+      'api': 50,       // 50 requests per minute
+      'default': 100   // 100 requests per minute
+    };
+    
+    const effectiveLimit = limits[endpoint] || limit;
 
     if (!clientData) {
-      this.rateLimitStore.set(clientId, {
+      this.rateLimitStore.set(key, {
         count: 1,
         resetTime: now + windowMs
       });
@@ -19,7 +29,7 @@ class SecurityMiddleware {
     }
 
     if (now > clientData.resetTime) {
-      this.rateLimitStore.set(clientId, {
+      this.rateLimitStore.set(key, {
         count: 1,
         resetTime: now + windowMs
       });
@@ -27,25 +37,45 @@ class SecurityMiddleware {
     }
 
     clientData.count++;
-    return clientData.count > limit;
+    return clientData.count > effectiveLimit;
   }
 
-  // Input validation and sanitization
+  // Enhanced input validation and sanitization
   validateInput(data, type = 'string') {
     if (type === 'email') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(data);
+      return emailRegex.test(data) && data.length <= 254;
     }
     
     if (type === 'string') {
-      // Basic XSS prevention
+      // Enhanced XSS prevention
       return typeof data === 'string' && 
-             !data.includes('<script>') && 
-             !data.includes('javascript:') &&
-             data.length < 10000;
+             data.length > 0 && 
+             data.length <= 10000 &&
+             !/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi.test(data) &&
+             !/javascript:/gi.test(data) &&
+             !/on\w+\s*=/gi.test(data) &&
+             !/data:text\/html/gi.test(data);
+    }
+    
+    if (type === 'number') {
+      return !isNaN(data) && isFinite(data);
     }
     
     return false;
+  }
+
+  // SQL injection prevention
+  sanitizeSqlInput(input) {
+    if (typeof input !== 'string') return input;
+    
+    // Remove common SQL injection patterns
+    return input.replace(/['"\\;]/g, '')
+               .replace(/--/g, '')
+               .replace(/\/\*/g, '')
+               .replace(/\*\//g, '')
+               .replace(/\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b/gi, '')
+               .trim();
   }
 
   // Security headers
