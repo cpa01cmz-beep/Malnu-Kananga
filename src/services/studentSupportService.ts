@@ -801,7 +801,7 @@ class StudentSupportService {
   }
 
   // Calculate days since last login
-  private static calculateDaysSinceLastLogin(studentId: string): number {
+  private static calculateDaysSinceLastLogin(_studentId: string): number {
     // This would integrate with actual login tracking system
     // For now, return mock data
     return Math.floor(Math.random() * 14);
@@ -1043,7 +1043,7 @@ class StudentSupportService {
   private static calculateStudentSatisfaction(resources: SupportResource[]): number {
     if (resources.length === 0) return 0;
 
-    const totalRating = resources.reduce((sum, resource) => sum + resource.rating, 0);
+    const totalRating = resources.reduce((sum, resource) => sum + (resource.rating || 0), 0);
     return totalRating / resources.length;
   }
 
