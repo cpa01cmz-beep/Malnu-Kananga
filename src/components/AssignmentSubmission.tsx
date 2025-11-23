@@ -3,14 +3,17 @@ import { Assignment, currentParent } from '../data/parentData';
 
 
 
+
+interface SubmissionData {
+  file?: File;
+  notes?: string;
+  submittedBy: string;
+}
+
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (_assignmentId: string, _submissionData: {
-    file?: File;
-    notes?: string;
-    submittedBy: string;
-  }) => Promise<void>;
+   onSubmit: (_submissionData: SubmissionData) => Promise<void>;
 }
 
 const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
@@ -22,7 +25,7 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileSelect = (file: File) => {
     // Validate file type
@@ -79,11 +82,12 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
     setIsSubmitting(true);
 
     try {
-      await onSubmit(assignment.id, {
+      const submissionData: SubmissionData = {
         file: selectedFile || undefined,
         notes: notes.trim() || undefined,
         submittedBy: currentParent.id
-      });
+      };
+      await onSubmit(submissionData);
 
       // Close modal after successful submission
       onClose();

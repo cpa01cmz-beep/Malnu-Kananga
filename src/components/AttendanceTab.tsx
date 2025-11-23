@@ -4,8 +4,8 @@ import { AttendanceRecord, AttendanceStats } from '../data/studentData';
 interface AttendanceTabProps {
   attendanceData: AttendanceRecord[];
   attendanceStats: AttendanceStats;
-  formatDate: (_date: string) => string;
-  getAttendanceColor: (_status: string) => string;
+  formatDate: (date: string) => string;
+  getAttendanceColor: (status: string) => string;
 }
 
 const AttendanceTab: React.FC<AttendanceTabProps> = ({
@@ -14,6 +14,7 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
   formatDate,
   getAttendanceColor
 }) => {
+  // Note: formatDate and getAttendanceColor are passed as props and used in JSX
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
       <div className="p-6 border-b border-gray-200 dark:border-gray-700">

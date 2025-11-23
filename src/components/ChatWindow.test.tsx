@@ -5,8 +5,18 @@ import userEvent from '@testing-library/user-event';
 import ChatWindow from './ChatWindow';
 import { ChatProvider } from '../contexts/ChatContext';
 declare global {
-  var ResizeObserver: any;
-  var IntersectionObserver: any;
+  var ResizeObserver: {
+    new(): ResizeObserver;
+    observe(): void;
+    unobserve(): void;
+    disconnect(): void;
+  };
+  var IntersectionObserver: {
+    new(): IntersectionObserver;
+    observe(): void;
+    unobserve(): void;
+    disconnect(): void;
+  };
 }
 
 // Wrapper component to provide ChatContext to tests
