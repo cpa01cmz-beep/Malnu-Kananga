@@ -1,5 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { getErrorLoggingService, logErrorBoundary } from '../services/errorLoggingService';
+import { getErrorLoggingService } from '../services/errorLoggingService';
 import { captureErrorBoundary } from '../services/sentryService';
 
 interface Props {
@@ -34,10 +34,10 @@ class ErrorBoundary extends Component<Props, State> {
       props: Object.keys(this.props),
       hasCustomFallback: !!this.props.fallback,
       hasCustomErrorHandler: !!this.props.onError
-    }).catch(logError => {
+    }).catch((logErrorValue) => {
       // Fallback jika logging service gagal
       console.error('ErrorBoundary caught an error:', error, errorInfo);
-      console.error('Error logging service juga gagal:', logError);
+      console.error('Error logging service juga gagal:', logErrorValue);
     });
 
     // Kirim error ke Sentry
@@ -152,7 +152,7 @@ class ErrorBoundary extends Component<Props, State> {
                         onClick={() => {
                           const logs = getErrorLoggingService().exportErrorLogs();
                           console.log('All Error Logs:', JSON.parse(logs));
-                          alert('Error logs exported to console');
+                          window.alert('Error logs exported to console');
                         }}
                         className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded hover:bg-blue-200 dark:hover:bg-blue-800"
                       >
@@ -162,7 +162,7 @@ class ErrorBoundary extends Component<Props, State> {
                       <button
                         onClick={() => {
                           getErrorLoggingService().clearStoredErrorLogs();
-                          alert('Error logs cleared');
+                          window.alert('Error logs cleared');
                         }}
                         className="text-xs bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 px-2 py-1 rounded hover:bg-red-200 dark:hover:bg-red-800"
                       >
