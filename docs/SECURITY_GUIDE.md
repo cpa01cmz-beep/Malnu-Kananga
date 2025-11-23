@@ -19,6 +19,9 @@ Dokumentasi ini menjelaskan implementasi keamanan sistem MA Malnu Kananga, menca
 - **Session Management**: Secure session handling with expiration
 - **Input Validation**: Comprehensive input sanitization and validation
 - **Rate Limiting**: IP-based rate limiting to prevent abuse
+- **CSRF Protection**: Cross-Site Request Forgery protection with double-submit cookies
+- **Security Headers**: Content Security Policy (CSP) and security headers implementation
+- **Environment Validation**: Robust environment variable validation system
 
 #### Layer 3: Data Security
 - **Encryption at Rest**: Data encrypted in Cloudflare D1 database
@@ -48,6 +51,9 @@ Dokumentasi ini menjelaskan implementasi keamanan sistem MA Malnu Kananga, menca
 - **One-Time Use**: Tokens become invalid after first use
 - **Rate Limiting**: 5 attempts per 15 minutes per IP
 - **Secure Signing**: HMAC-SHA256 signature for JWT tokens
+- **CSRF Protection**: Double-submit cookie pattern for state-changing requests
+- **Environment Validation**: Mandatory SECRET_KEY validation for JWT operations
+- **Secure Headers**: Comprehensive security headers on all responses
 
 #### JWT Token Structure
 ```json
@@ -98,6 +104,64 @@ Dokumentasi ini menjelaskan implementasi keamanan sistem MA Malnu Kananga, menca
 - **Chat API**: No rate limiting (unlimited for user experience)
 - **Data APIs**: No rate limiting (internal use)
 - **Signature APIs**: 10 requests per minute
+
+### CSRF Protection Implementation
+
+#### Double-Submit Cookie Pattern
+- **CSRF Token**: Generated server-side and stored in HTTP-only cookie
+- **Request Validation**: Token validated on all state-changing requests
+- **Secure Cookies**: CSRF cookies set with Secure, HttpOnly, and SameSite attributes
+- **Token Rotation**: Tokens rotate on each successful authentication
+
+#### Protected Endpoints
+All POST, PUT, DELETE, and PATCH endpoints require CSRF protection:
+- `/request-login-link`
+- `/verify-login-token`
+- `/update-profile`
+- `/submit-grade`
+- `/send-message`
+- `/admin/*` (all admin endpoints)
+
+#### Implementation Details
+```javascript
+// CSRF Middleware Implementation
+const csrfProtection = {
+  generateToken: () => crypto.randomUUID(),
+  validateToken: (requestToken, cookieToken) => requestToken === cookieToken,
+  setCookie: (token) => `csrf_token=${token}; Secure; HttpOnly; SameSite=Strict`
+}
+```
+
+### Security Headers Implementation
+
+#### Content Security Policy (CSP)
+```
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://generativelanguage.googleapis.com
+```
+
+#### Additional Security Headers
+- **X-Frame-Options**: `DENY` - Prevents clickjacking
+- **X-Content-Type-Options**: `nosniff` - Prevents MIME type sniffing
+- **X-XSS-Protection**: `1; mode=block` - XSS protection
+- **Referrer-Policy**: `strict-origin-when-cross-origin` - Controls referrer information
+- **Permissions-Policy**: Controls browser feature access
+
+### Environment Security
+
+#### Required Environment Variables
+```bash
+# Security Configuration
+SECRET_KEY=your_super_secret_key_here          # Required for JWT signing
+API_KEY=your_gemini_api_key_here               # Google Gemini API key
+NODE_ENV=production                            # Environment mode
+VITE_APP_ENV=production                        # Frontend environment
+```
+
+#### Environment Validation
+- **SECRET_KEY Validation**: Mandatory 32+ character secret key
+- **API Key Validation**: Validates Google Gemini API key format
+- **Environment Checks**: Ensures production environment has proper security settings
+- **Runtime Validation**: Continuous validation of critical security parameters
 
 ### CORS Configuration
 ```javascript
