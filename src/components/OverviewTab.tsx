@@ -1,10 +1,10 @@
 import React from 'react';
-import { Student, Grade, ScheduleItem, getAttendanceStats, AttendanceStats } from '../data/studentData';
+import { Student, Grade, ScheduleItem, getAttendanceStats } from '../data/studentData';
 
 interface OverviewTabProps {
   student: Student;
   gpa: number;
-  attendanceStats: AttendanceStats;
+  attendanceStats: ReturnType<typeof getAttendanceStats>;
   todaySchedule: ScheduleItem[];
   recentGrades: Grade[];
   today: string;
