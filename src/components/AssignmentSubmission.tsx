@@ -10,7 +10,7 @@ declare global {
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (assignmentId: string, submissionData: {
+  onSubmit: (_assignmentId: string, _submissionData: {
     file?: File;
     notes?: string;
     submittedBy: string;
