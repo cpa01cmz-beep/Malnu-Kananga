@@ -1,16 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { Assignment, currentParent } from '../data/parentData';
 
-declare global {
-  interface Window {
-    HTMLInputElement: any;
-  }
-}
+
 
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (assignmentId: string, submissionData: {
+  onSubmit: (submissionData: {
     file?: File;
     notes?: string;
     submittedBy: string;
@@ -82,12 +78,14 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
 
     setIsSubmitting(true);
 
+    const submissionData = {
+      file: selectedFile || undefined,
+      notes: notes.trim() || undefined,
+      submittedBy: currentParent.id
+    };
+
     try {
-      await onSubmit(assignment.id, {
-        file: selectedFile || undefined,
-        notes: notes.trim() || undefined,
-        submittedBy: currentParent.id
-      });
+      await onSubmit(submissionData);
 
       // Close modal after successful submission
       onClose();
