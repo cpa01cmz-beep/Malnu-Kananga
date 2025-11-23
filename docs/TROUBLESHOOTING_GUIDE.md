@@ -12,7 +12,7 @@ Before troubleshooting, check current system status:
 - **API Documentation**: Available in repository docs/API_DOCUMENTATION.md
 - **System Uptime**: 99.9% (SLA guaranteed)
 - **Last Maintenance**: November 20, 2024
-- **Current Version**: v1.2.0 (Latest)
+- **Current Version**: v1.3.0 (Latest)
 - **Known Issues**: Health check endpoint not implemented, use direct endpoint testing
 
 ### 🚨 Critical Deployment Issues (November 2025)
@@ -23,6 +23,7 @@ Before troubleshooting, check current system status:
 3. **Logout Endpoint**: `/logout` endpoint referenced but not fully implemented
 4. **Vector Database**: Must be seeded once after deployment using `/seed` endpoint
 5. **Student Data APIs**: Multiple student/teacher/parent endpoints documented but not implemented
+6. **CSRF Token Issues**: New CSRF protection may cause 403 errors if tokens not properly handled
 
 #### Working Endpoints (Verified):
 - ✅ `/seed` - Vector database seeding (50 documents, batch processing)
@@ -79,6 +80,108 @@ fetch('https://malnu-api.sulhi-cmz.workers.dev/generate-signature', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ data: 'test' })
 }).then(r => r.json()).then(console.log);
+```
+
+---
+
+## 🛡️ Security Issues
+
+### ❌ CSRF Token Validation Failed (403 Forbidden)
+
+**Symptoms:**
+- API requests returning 403 Forbidden errors
+- "CSRF token validation failed" error messages
+- Form submissions not working after security update
+
+**Solutions:**
+
+#### 1. Check CSRF Token Implementation
+```javascript
+// Ensure CSRF token is included in headers
+const csrfToken = getCookie('csrf_token'); // Get from HTTP-only cookie
+fetch('/api/endpoint', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-CSRF-Token': csrfToken
+  },
+  body: JSON.stringify(data)
+});
+```
+
+#### 2. Verify Cookie Settings
+- Check that `csrf_token` cookie is set by the server
+- Ensure cookie has `Secure`, `HttpOnly`, and `SameSite` attributes
+- Verify cookie is accessible via JavaScript for header inclusion
+
+#### 3. Debug CSRF Flow
+```javascript
+// Debug CSRF token presence
+console.log('CSRF Cookie:', document.cookie);
+console.log('CSRF Token in Header:', headers['X-CSRF-Token']);
+
+// Test CSRF validation
+fetch('/api/test-csrf', {
+  method: 'POST',
+  headers: { 'X-CSRF-Token': getCookie('csrf_token') }
+}).then(r => r.json()).then(console.log);
+```
+
+### ❌ Security Headers Blocking Resources
+
+**Symptoms:**
+- Images, scripts, or styles not loading
+- Console errors about Content Security Policy violations
+- External resources being blocked
+
+**Solutions:**
+
+#### 1. Check CSP Violations
+```javascript
+// Monitor CSP violations in browser console
+// Look for errors like: "Refused to load image because it violates CSP"
+```
+
+#### 2. Update CSP Configuration
+- Contact administrator to update Content Security Policy
+- Ensure all required domains are whitelisted in CSP
+- Use `nonce-` or `hash-` for inline scripts when necessary
+
+#### 3. Verify Resource URLs
+- Ensure all external resources use HTTPS
+- Check that resource domains are included in CSP `connect-src`, `img-src`, etc.
+
+### ❌ Environment Variable Validation Failed
+
+**Symptoms:**
+- "Environment validation failed" errors
+- Application not starting in production
+- Missing SECRET_KEY or API_KEY errors
+
+**Solutions:**
+
+#### 1. Verify Required Environment Variables
+```bash
+# Check all required variables are set
+echo $SECRET_KEY    # Should be 32+ characters
+echo $API_KEY       # Should be valid Gemini API key
+echo $NODE_ENV      # Should be "production"
+```
+
+#### 2. Update Environment Configuration
+```bash
+# Add missing variables to .env or Cloudflare Workers secrets
+SECRET_KEY=your_super_secret_key_here_32_chars_min
+API_KEY=AIzaSyC_your_gemini_api_key_here
+NODE_ENV=production
+```
+
+#### 3. Validate Environment
+```bash
+# Run environment validation
+npm run env:validate
+# Or check worker logs for validation errors
+wrangler tail
 ```
 
 ---
@@ -1079,6 +1182,6 @@ Any other relevant information
 
 ---
 
-*Document Version: 1.2.0*  
+*Document Version: 1.3.0*  
 *Last Updated: November 20, 2024*  
 *Maintained by: MA Malnu Kananga Technical Team*

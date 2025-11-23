@@ -16,6 +16,8 @@ MA Malnu Kananga API provides comprehensive endpoints for authentication, AI cha
 - **Timeout**: 10 seconds per request
 - **Retry Policy**: 3 attempts with exponential backoff
 - **Security**: IP-based rate limiting, secure token generation with Web Crypto API
+- **CSRF Protection**: Double-submit cookie pattern for state-changing requests
+- **Security Headers**: Content Security Policy (CSP) and comprehensive security headers
 - **Status**: Production Ready (Check actual deployment URL in environment)
 
 ### Environment Variables
@@ -61,6 +63,7 @@ DB=malnu-kananga-db                       # D1 database binding
 ```http
 POST /request-login-link
 Content-Type: application/json
+X-CSRF-Token: {csrf_token_from_cookie}
 
 {
   "email": "user@example.com"
@@ -93,9 +96,24 @@ Content-Type: application/json
 - Automatic 30-minute block on limit exceeded
 - Uses Cloudflare CF-Connecting-IP header for IP detection
 
+**CSRF Protection:**
+- Requires valid CSRF token in `X-CSRF-Token` header
+- CSRF token must match the value stored in HTTP-only cookie
+- Tokens are rotated on each successful authentication
+- Failed CSRF validation results in 403 Forbidden response
+
+**Security Headers:**
+All API responses include comprehensive security headers:
+- `Content-Security-Policy`: Restricts resource loading
+- `X-Frame-Options: DENY`: Prevents clickjacking
+- `X-Content-Type-Options: nosniff`: Prevents MIME sniffing
+- `X-XSS-Protection: 1; mode=block`: XSS protection
+- `Referrer-Policy: strict-origin-when-cross-origin`
+
 #### Verify Login Token
 ```http
 GET /verify-login?token={jwt_token}
+X-CSRF-Token: {csrf_token_from_cookie}
 ```
 
 **Response:**
@@ -973,7 +991,7 @@ For API support and questions:
 
 ---
 
-*API Documentation Version: 1.2.0*  
+*API Documentation Version: 1.3.0*  
 *Last Updated: November 22, 2024*  
 *Base URL: https://malnu-api.sulhi-cmz.workers.dev*  
 *System Status: Production Ready*  
