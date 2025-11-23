@@ -1,7 +1,8 @@
 // worker.js - Kode backend GABUNGAN untuk Login, RAG Retriever, dan Seeder
 /// <reference types="@cloudflare/workers-types" />
+import SecurityMiddleware from './security-middleware.js';
 
-// --- STUDENT SUPPORT UTILITIES ---
+// --- SECURITY INITIALIZATION ---
 
 function categorizeSupportResponse(message, response) {
   const lowerMessage = message.toLowerCase();
@@ -205,8 +206,11 @@ async function generateSecureToken(email, expiryTime = 15 * 60 * 1000) {
   const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-  // Generate signature using HMAC-SHA256 with secret key from environment
-  const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+  // Generate signature using HMAC-SHA256 with secure secret key from environment
+  if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
+    throw new Error('Secure SECRET_KEY environment variable required for production');
+  }
+  const secret = env.SECRET_KEY;
   const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;
@@ -258,8 +262,11 @@ async function verifyAndDecodeToken(token, env) {
 
     const [encodedHeader, encodedPayload, signature] = parts;
     
-    // Verify signature using HMAC-SHA256
-    const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+    // Verify signature using HMAC-SHA256 with secure secret
+    if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
+      throw new Error('Secure SECRET_KEY environment variable required for production');
+    }
+    const secret = env.SECRET_KEY;
     const isValid = await verifyHMACSignature(`${encodedHeader}.${encodedPayload}`, signature, secret);
     
     if (!isValid) {
@@ -300,10 +307,37 @@ const documents = [
 
 export default {
   async fetch(request, env) {
+    // Initialize security middleware
+    const security = new SecurityMiddleware(env);
+    const clientId = security.getClientId(request);
+    
+    // Apply rate limiting to all requests
+    if (security.isRateLimitExceeded(clientId, 100, 60000)) {
+      return new Response('Rate limit exceeded', { 
+        status: 429,
+        headers: {
+          'Retry-After': '60',
+          ...security.getSecurityHeaders()
+        }
+      });
+    }
+
+    // Secure CORS configuration - restrict to specific domains
+    const allowedOrigins = [
+      'https://ma-malnukananga.sch.id',
+      'https://www.ma-malnukananga.sch.id',
+      'http://localhost:3000', // Development only
+      'http://localhost:5173'  // Vite default port
+    ];
+    
+    const origin = request.headers.get('Origin');
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Max-Age': '86400',
+      ...security.getSecurityHeaders()
     };
 
     if (request.method === 'OPTIONS') {
