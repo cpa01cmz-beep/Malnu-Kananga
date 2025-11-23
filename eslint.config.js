@@ -90,14 +90,13 @@ export default [
         ServiceWorkerRegistration: true,
         IDBDatabase: true,
         indexedDB: true,
-        IDBOpenDBRequest: true,
+IDBOpenDBRequest: true,
         isDevelopment: true,
         crypto: true,
+        ResizeObserver: true,
         TextEncoder: true,
         btoa: true,
         atob: true,
-<<<<<<< HEAD
-=======
         Request: true,
         RequestInit: true,
         AbortController: true,
@@ -108,7 +107,6 @@ export default [
         indexedDB: true,
         IDBOpenDBRequest: true,
         isDevelopment: true,
->>>>>>> 1c77b54 (fix(pr#295): address critical lint errors and test issues)
       },
     },
     plugins: {

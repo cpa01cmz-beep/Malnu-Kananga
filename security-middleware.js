@@ -99,6 +99,7 @@ class SecurityMiddleware {
     
     // Remove potentially dangerous characters
     let sanitized = data
+      // eslint-disable-next-line no-control-regex
       .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters
       .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
       .trim();
