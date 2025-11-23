@@ -1,4 +1,5 @@
 // worker.js - Kode backend GABUNGAN untuk Login, RAG Retriever, dan Seeder
+/// <reference types="@cloudflare/workers-types" />
 
 // --- STUDENT SUPPORT UTILITIES ---
 
