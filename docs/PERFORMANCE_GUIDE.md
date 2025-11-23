@@ -283,7 +283,7 @@ class DatabaseManager {
 #### Level 1: Browser Caching
 ```typescript
 // Service worker untuk offline capability
-const CACHE_NAME = 'malnu-kananga-v1.2.0';
+const CACHE_NAME = 'malnu-kananga-v1.3.0';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -304,7 +304,7 @@ self.addEventListener('install', (event) => {
 // Cache headers untuk static assets
 const cacheHeaders = {
   'Cache-Control': 'public, max-age=31536000, immutable',
-  'ETag': 'v1.2.0',
+  'ETag': 'v1.3.0',
   'Last-Modified': new Date().toUTCString()
 };
 

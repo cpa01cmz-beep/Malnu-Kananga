@@ -86,6 +86,10 @@ class SecurityMiddleware {
       return /^[a-zA-Z0-9\-_]{1,50}$/.test(data);
     }
     
+    if (type === 'number') {
+      return !isNaN(data) && isFinite(data);
+    }
+    
     return false;
   }
 
