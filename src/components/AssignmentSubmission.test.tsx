@@ -302,7 +302,7 @@ describe('AssignmentSubmission Component', () => {
     test('should show loading state during submission', async () => {
       jest.useFakeTimers();
       
-      // Mock a delayed submission
+// Mock a delayed submission
        mockOnSubmit.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
 
       render(
