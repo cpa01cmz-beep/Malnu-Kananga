@@ -17,6 +17,7 @@ declare global {
   var navigator: Navigator;
   var document: Document;
   var window: Window;
+  var global: typeof globalThis;
   var alert: (message?: any) => void;
   var confirm: (message?: string) => boolean;
   var prompt: (message?: string, _default?: string) => string | null;
@@ -88,6 +89,11 @@ declare global {
   var BeforeUnloadEvent: typeof BeforeUnloadEvent;
   var PageShowEvent: typeof PageShowEvent;
   var PageHideEvent: typeof PageHideEvent;
+  var EventListener: typeof EventListener;
+  var NodeJS: typeof NodeJS;
+  var HeadersInit: typeof HeadersInit;
+  var AbortSignal: typeof AbortSignal;
+  var React: typeof React;
 }
 
 export {};
