@@ -1,15 +1,20 @@
 import React, { useState, useRef } from 'react';
 import { Assignment, currentParent } from '../data/parentData';
 
+declare global {
+  interface Window {
+    HTMLInputElement: any;
+  }
+}
+
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-onSubmit: (_data: {
+  onSubmit: (assignmentId: string, submissionData: {
     file?: File;
     notes?: string;
     submittedBy: string;
-    submissionDate: string;
-  }) => void;
+  }) => Promise<void>;
 }
 
 const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
@@ -21,7 +26,7 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (file: File) => {
     // Validate file type

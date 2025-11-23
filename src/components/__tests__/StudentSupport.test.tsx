@@ -1,7 +1,12 @@
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import StudentSupport from '../StudentSupport';
+
+declare global {
+  var alert: jest.Mock;
+}
 
 // Mock window.alert
 (global as any).alert = jest.fn();

@@ -34,10 +34,10 @@ class ErrorBoundary extends Component<Props, State> {
       props: Object.keys(this.props),
       hasCustomFallback: !!this.props.fallback,
       hasCustomErrorHandler: !!this.props.onError
-    }).catch(logError => {
+    }).catch((logErrorValue) => {
       // Fallback jika logging service gagal
       console.error('ErrorBoundary caught an error:', error, errorInfo);
-      console.error('Error logging service juga gagal:', logError);
+      console.error('Error logging service juga gagal:', logErrorValue);
     });
 
     // Kirim error ke Sentry
