@@ -16,11 +16,23 @@ const documents = [
 
 export default {
   async fetch(request, env) {
-    const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    };
+// Secure CORS configuration - restrict to specific domains
+  const allowedOrigins = [
+    'https://ma-malnukananga.sch.id',
+    'https://www.ma-malnukananga.sch.id',
+    'http://localhost:3000', // Development only
+    'http://localhost:5173'  // Vite default port
+  ];
+  
+  const origin = request.headers.get('Origin');
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Max-Age': '86400',
+    ...security.getSecurityHeaders()
+  };
 
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
