@@ -189,6 +189,8 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
             </label>
 
             <div
+              role="button"
+              tabIndex={0}
               className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
                 dragActive
                   ? 'border-green-400 bg-green-50 dark:bg-green-900/20'

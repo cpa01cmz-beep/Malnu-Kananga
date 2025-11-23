@@ -4,7 +4,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ChatWindow from './ChatWindow';
 import { ChatProvider } from '../contexts/ChatContext';
-
 declare global {
   var ResizeObserver: any;
   var IntersectionObserver: any;
