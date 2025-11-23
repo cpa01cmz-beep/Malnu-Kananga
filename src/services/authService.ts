@@ -107,27 +107,10 @@ async function generateSecureToken(email: string, expiryTime: number = 15 * 60 *
   // DO NOT use this for production authentication as it exposes the secret
   const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
-  // For production, we'll make a request to the server to generate the signature
+  // SECURITY: Client-side signature generation disabled for production
   if (!isDevelopment) {
-    try {
-      const response = await fetch(`${WORKER_URL}/generate-signature`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: `${encodedHeader}.${encodedPayload}` }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate signature');
-      }
-
-      const { signature } = await response.json();
-      return `${encodedHeader}.${encodedPayload}.${signature}`;
-    } catch (error) {
-      console.error('Error generating signature on server:', error);
-      throw new Error('Failed to generate secure token');
-    }
+    console.error('SECURITY: Client-side JWT generation not allowed in production');
+    throw new Error('Authentication must be handled server-side in production');
   }
 
   // For development, continue with client-side signature generation
@@ -183,11 +166,9 @@ function verifyAndDecodeToken(token: string): TokenData | null {
     // This client-side implementation is for development/testing purposes only
     const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
-    // For production, we'll make a request to the server to verify the signature
+    // SECURITY: Client-side token verification disabled for production
     if (!isDevelopment) {
-      // In a real implementation, this would be an async function
-      // For now, we'll return null for production paths that require server calls
-      console.warn('Server-side token verification required in production.');
+      console.error('SECURITY: Client-side token verification not allowed in production');
       return null;
     } else {
       // For development, continue with client-side signature verification
