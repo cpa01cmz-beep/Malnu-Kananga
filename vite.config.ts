@@ -11,8 +11,8 @@ export default defineConfig(({ command, mode }) => ({
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
   },
   build: {
-    // Enable source maps for production debugging
-    sourcemap: mode === 'production',
+    // Enable source maps for production debugging (security consideration)
+    sourcemap: mode === 'development',
 
     // Optimize chunk size
     rollupOptions: {
