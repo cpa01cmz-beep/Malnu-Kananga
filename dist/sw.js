@@ -380,8 +380,7 @@ async function syncFormData() {
 async function syncChatMessages() {
   try {
     // Get pending chat messages from IndexedDB
-    /* global getPendingChatMessages, removePendingChatMessage */
-    const pendingMessages = await getPendingChatMessages();
+    const pendingMessages = await getStoredChatMessages();
 
     for (const message of pendingMessages) {
       try {
@@ -392,7 +391,7 @@ async function syncChatMessages() {
         });
 
         if (response.ok) {
-          await removePendingChatMessage(message.id);
+          await removeStoredChatMessage(message.id);
           console.log('[SW] Chat message synced successfully:', message.id);
         }
       } catch (error) {
@@ -448,6 +447,30 @@ async function removePendingForm(id) {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(['pendingForms'], 'readwrite');
     const store = transaction.objectStore('pendingForms');
+    const request = store.delete(id);
+
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+  });
+}
+
+async function getStoredChatMessages() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(['pendingChatMessages'], 'readonly');
+    const store = transaction.objectStore('pendingChatMessages');
+    const request = store.getAll();
+
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+  });
+}
+
+async function removeStoredChatMessage(id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(['pendingChatMessages'], 'readwrite');
+    const store = transaction.objectStore('pendingChatMessages');
     const request = store.delete(id);
 
     request.onerror = () => reject(request.error);
