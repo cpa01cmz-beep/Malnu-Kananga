@@ -136,12 +136,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 For questions about this changelog or to report issues:
 - **GitHub Issues**: [Create Issue](https://github.com/ma-malnukananga/school-portal/issues)
 - **Email**: support@ma-malnukananga.sch.id
-- **Documentation**: [Full Documentation](./docs/README.md)
+- **Documentation**: [Full Documentation](./README.md)
 
 ---
 
 **CHANGELOG - MA Malnu Kananga School Portal**
 
-*Last Updated: November 20, 2024*  
+*Last Updated: November 22, 2024*  
 *Maintained by: MA Malnu Kananga Development Team*  
 *Format: Keep a Changelog 1.0.0*
