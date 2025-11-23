@@ -25,10 +25,21 @@
     "HTMLDivElement": "readonly",
     "HTMLImageElement": "readonly",
     "HTMLTextAreaElement": "readonly",
+    "HTMLFormElement": "readonly",
+    "HTMLElement": "readonly",
+    "TouchEvent": "readonly",
+    "IntersectionObserver": "readonly",
+    "EventListener": "readonly",
+    "AbortSignal": "readonly",
+    "HeadersInit": "readonly",
+    "URLSearchParams": "readonly",
+    "NodeJS": "readonly",
     "Event": "readonly",
     "navigator": "readonly",
     "global": "readonly",
     "module": "readonly",
+    "self": "readonly",
+    "caches": "readonly",
     "jest": "readonly",
     "describe": "readonly",
     "it": "readonly",
@@ -110,5 +121,16 @@
     "test-docs.js",
     "setup-cloudflare-resources.js",
     "cli.js"
+  ],
+  "overrides": [
+    {
+      "files": ["*.test.*", "src/__tests__/**/*"],
+      "env": {
+        "jest": true
+      },
+      "globals": {
+        "global": "writable"
+      }
+    }
   ]
 }
