@@ -1,6 +1,139 @@
 // worker.js - Kode backend GABUNGAN untuk Login, RAG Retriever, dan Seeder
+/// <reference types="@cloudflare/workers-types" />
+
+// --- STUDENT SUPPORT UTILITIES ---
+
+function categorizeSupportResponse(message, response) {
+  const lowerMessage = message.toLowerCase();
+  const lowerResponse = response.toLowerCase();
+  
+  // Academic support
+  if (lowerMessage.includes('nilai') || lowerMessage.includes('tugas') || lowerMessage.includes('belajar') || 
+      lowerMessage.includes('ujian') || lowerMessage.includes('mata pelajaran')) {
+    return 'academic';
+  }
+  
+  // Technical support
+  if (lowerMessage.includes('login') || lowerMessage.includes('password') || lowerMessage.includes('akses') ||
+      lowerMessage.includes('error') || lowerMessage.includes('tidak bisa') || lowerMessage.includes('gagal')) {
+    return 'technical';
+  }
+  
+  // Administrative support
+  if (lowerMessage.includes('jadwal') || lowerMessage.includes('absen') || lowerMessage.includes('administrasi') ||
+      lowerMessage.includes('surat') || lowerMessage.includes('dokumen')) {
+    return 'administrative';
+  }
+  
+  // Personal/Wellness support
+  if (lowerMessage.includes('stress') || lowerMessage.includes('cemas') || lowerMessage.includes('bantuan') ||
+      lowerMessage.includes('masalah') || lowerMessage.includes('kesulitan')) {
+    return 'personal';
+  }
+  
+  return 'general';
+}
+
+function analyzeStudentRisk(metrics) {
+  let riskScore = 0;
+  const riskFactors = [];
+  
+  // Academic risk factors
+  if (metrics.gpa && metrics.gpa < 70) {
+    riskScore += 3;
+    riskFactors.push('IPK rendah');
+  }
+  
+  if (metrics.attendanceRate && metrics.attendanceRate < 80) {
+    riskScore += 2;
+    riskFactors.push('Kehadiran rendah');
+  }
+  
+  if (metrics.assignmentCompletion && metrics.assignmentCompletion < 75) {
+    riskScore += 2;
+    riskFactors.push('Penyelesaian tugas rendah');
+  }
+  
+  // Engagement risk factors
+  if (metrics.loginFrequency && metrics.loginFrequency < 3) {
+    riskScore += 1;
+    riskFactors.push('Login jarang');
+  }
+  
+  if (metrics.lastLoginDays && metrics.lastLoginDays > 7) {
+    riskScore += 2;
+    riskFactors.push('Tidak login seminggu');
+  }
+  
+  if (metrics.supportRequests && metrics.supportRequests > 5) {
+    riskScore += 1;
+    riskFactors.push('Banyak permintaan support');
+  }
+  
+  // Determine risk level
+  let riskLevel = 'low';
+  if (riskScore >= 6) riskLevel = 'high';
+  else if (riskScore >= 3) riskLevel = 'medium';
+  
+  return {
+    riskLevel,
+    riskScore,
+    riskFactors,
+    urgency: riskLevel === 'high' ? 'immediate' : riskLevel === 'medium' ? 'soon' : 'routine'
+  };
+}
+
+function generateSupportRecommendations(riskAssessment) {
+  const recommendations = [];
+  
+  switch (riskAssessment.riskLevel) {
+    case 'high':
+      recommendations.push({
+        action: 'immediate_intervention',
+        description: 'Segera hubungi siswa dan orang tua',
+        priority: 'urgent',
+        assignTo: 'guidance_counselor'
+      });
+      recommendations.push({
+        action: 'create_support_plan',
+        description: 'Buat rencana dukungan personal',
+        priority: 'high',
+        assignTo: 'academic_coordinator'
+      });
+      break;
+      
+    case 'medium':
+      recommendations.push({
+        action: 'schedule_checkin',
+        description: 'Jadwalkan pertemuan dengan guru BK',
+        priority: 'medium',
+        assignTo: 'guidance_counselor'
+      });
+      recommendations.push({
+        action: 'provide_resources',
+        description: 'Berikan resources pembelajaran tambahan',
+        priority: 'medium',
+        assignTo: 'subject_teachers'
+      });
+      break;
+      
+    case 'low':
+      recommendations.push({
+        action: 'monitor_progress',
+        description: 'Monitor progress secara berkala',
+        priority: 'low',
+        assignTo: 'system_automated'
+      });
+      break;
+  }
+  
+  return recommendations;
+}
 
 // --- SECURITY UTILITIES ---
+
+// Global declarations for Cloudflare Worker environment
+global.globalConsole = console;
 
 // Rate limiting storage (in production, use KV storage or external Redis)
 const rateLimitStore = new Map();
@@ -225,6 +358,136 @@ export default {
         }
         
         return new Response(JSON.stringify({ context }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+
+      } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+    // --- Endpoint Student Support AI ---
+    if (url.pathname === '/api/student-support' && request.method === 'POST') {
+      try {
+        const { studentId, message, category, context } = await request.json();
+        
+        // Enhanced context for student support
+        let supportContext = `Konteks Dukungan Siswa:
+Student ID: ${studentId || 'unknown'}
+Kategori: ${category || 'general'}
+Pesan: ${message || ''}
+
+`;
+        
+        if (context) {
+          supportContext += `Konteks Tambahan:
+${JSON.stringify(context, null, 2)}
+
+`;
+        }
+
+        // Get relevant documents from vector database
+        const embeddings = await env.AI.run('@cf/baai/bge-base-en-v1.5', { 
+          text: [supportContext + message] 
+        });
+        const vectors = embeddings.data[0];
+        
+        const SIMILARITY_CUTOFF = 0.7; // Lower threshold for support queries
+        const topK = 5; // More results for comprehensive support
+        const vectorQuery = await env.VECTORIZE_INDEX.query(vectors, { topK, returnMetadata: true });
+        
+        let retrievedContext = "";
+        if (vectorQuery.matches.length > 0) {
+          const relevantMatches = vectorQuery.matches.filter(match => match.score > SIMILARITY_CUTOFF);
+          if(relevantMatches.length > 0) {
+            retrievedContext = relevantMatches.map(match => 
+              `Dokumen (relevansi: ${(match.score * 100).toFixed(1)}%):\n${match.metadata.text}`
+            ).join("\n\n---\n\n");
+          }
+        }
+
+        // Generate AI response with context
+        const aiPrompt = `Anda adalah Student Support AI untuk MA Malnu Kananga. Berikan respons yang membantu, empatik, dan solutif dalam Bahasa Indonesia.
+
+${retrievedContext ? `Konteks Relevan:\n${retrievedContext}\n\n` : ''}
+
+Permintaan Siswa:
+${supportContext}
+
+Berikan respons yang:
+1. Empatik dan mendukung
+2. Memberikan solusi praktis
+3. Menyarankan resources yang relevan
+4. Menjelaskan langkah-langkah jelas
+5. Menawarkan bantuan lanjutan jika needed
+
+Respons:`;
+
+        const aiResponse = await env.AI.run('@cf/google/gemma-7b-it-lora', {
+          prompt: aiPrompt,
+          max_tokens: 500,
+          temperature: 0.7
+        });
+
+        const responseText = aiResponse.response || 'Maaf, saya tidak dapat memproses permintaan Anda saat ini.';
+
+        // Categorize the response for automation
+        const responseCategory = categorizeSupportResponse(message, responseText);
+        
+        return new Response(JSON.stringify({ 
+          response: responseText,
+          category: responseCategory,
+          contextUsed: retrievedContext.length > 0,
+          confidence: vectorQuery.matches.length > 0 ? Math.max(...vectorQuery.matches.map(m => m.score)) : 0
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+
+      } catch (e) {
+        return new Response(JSON.stringify({ 
+          error: e.message,
+          fallback: 'Terjadi kesalahan sistem. Silakan coba lagi atau hubungi support manual.'
+        }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
+    // --- Endpoint untuk Proactive Support Monitoring ---
+    if (url.pathname === '/api/support-monitoring' && request.method === 'POST') {
+      try {
+        const { studentMetrics } = await request.json();
+        
+        // Analyze student metrics for risk assessment
+        const riskAssessment = analyzeStudentRisk(studentMetrics);
+        
+        // Get proactive resources if needed
+        let proactiveResources = [];
+        if (riskAssessment.riskLevel !== 'low') {
+          const contextPrompt = `Siswa membutuhkan bantuan proaktif. Metrik: ${JSON.stringify(studentMetrics)}`;
+          const embeddings = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [contextPrompt] });
+          const vectors = embeddings.data[0];
+          
+          const vectorQuery = await env.VECTORIZE_INDEX.query(vectors, { topK: 3, returnMetadata: true });
+          
+          proactiveResources = vectorQuery.matches
+            .filter(match => match.score > 0.6)
+            .map(match => ({
+              content: match.metadata.text,
+              relevance: match.score,
+              type: 'resource'
+            }));
+        }
+
+        return new Response(JSON.stringify({
+          riskAssessment,
+          proactiveResources,
+          recommendations: generateSupportRecommendations(riskAssessment)
+        }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
