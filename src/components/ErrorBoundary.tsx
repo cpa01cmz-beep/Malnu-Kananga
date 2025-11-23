@@ -5,7 +5,7 @@ import { captureErrorBoundary } from '../services/sentryService';
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  onError?: (_error: Error, _errorInfo: ErrorInfo) => void;
 }
 
 interface State {
@@ -186,7 +186,7 @@ class ErrorBoundary extends Component<Props, State> {
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
   fallback?: ReactNode,
-  onError?: (error: Error, errorInfo: ErrorInfo) => void
+  onError?: (_error: Error, _errorInfo: ErrorInfo) => void
 ) {
   const WrappedComponent = (props: P) => (
     <ErrorBoundary fallback={fallback} onError={onError}>

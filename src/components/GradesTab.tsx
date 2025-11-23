@@ -5,7 +5,7 @@ import { Grade } from '../data/studentData';
 
 interface GradesTabProps {
   grades: Grade[];
-  getGradeColor: (gradeValue: string) => string;
+  getGradeColor: (_gradeValue: string) => string;
 }
 
 const GradesTab: React.FC<GradesTabProps> = ({ grades, getGradeColor }) => {
