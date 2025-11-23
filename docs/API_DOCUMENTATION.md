@@ -1009,12 +1009,12 @@ Based on worker.js analysis (November 23, 2025), the following endpoints are ful
 - Risk assessment algorithm with multiple factors (GPA, attendance, engagement)
 
 #### ❌ Documented But Not Implemented (16+ endpoints)
-- **Authentication Extensions**: `/refresh-token`, `/logout`
-- **Student Data APIs**: `/api/student/{student_id}`, `/api/student/{student_id}/grades`, `/api/student/{student_id}/schedule`, `/api/student/{student_id}/attendance`
-- **Teacher APIs**: `/api/teacher/{teacher_id}/classes`, `/api/teacher/{teacher_id}/grades`, `/api/teacher/{teacher_id}/attendance`
-- **Parent APIs**: `/api/parent/{parent_id}/children`, `/api/parent/{parent_id}/child/{child_id}/report`
-- **Content Management**: `/api/content/featured-programs`, `/api/content/news`, `/api/content/announcements`
-- **System APIs**: `/api/analytics/dashboard`, `/api/messaging/*`, `/api/webhooks/subscribe`
+- **Authentication Extensions**: `/refresh-token`, `/logout` (documented but not coded)
+- **Student Data APIs**: `/api/student/{student_id}`, `/api/student/{student_id}/grades`, `/api/student/{student_id}/schedule`, `/api/student/{student_id}/attendance` (core functionality missing)
+- **Teacher APIs**: `/api/teacher/{teacher_id}/classes`, `/api/teacher/{teacher_id}/grades`, `/api/teacher/{teacher_id}/attendance` (academic workflow not implemented)
+- **Parent APIs**: `/api/parent/{parent_id}/children`, `/api/parent/{parent_id}/child/{child_id}/report` (parent portal incomplete)
+- **Content Management**: `/api/content/featured-programs`, `/api/content/news`, `/api/content/announcements` (static data only)
+- **System APIs**: `/api/analytics/dashboard`, `/api/messaging/*`, `/api/webhooks/subscribe` (advanced features not implemented)
 
 #### ⚠️ Implementation Gap Analysis
 - **Documentation Coverage**: 25+ endpoints documented, only 9 implemented (36% implementation rate)
@@ -1067,7 +1067,7 @@ For API support and questions:
 
 ---
 
-*API Documentation Version: 1.2.0*  
+*API Documentation Version: 1.3.1*  
 *Last Updated: November 23, 2025*  
 *Base URL: https://malnu-api.sulhi-cmz.workers.dev*  
 *System Status: Production Ready*  
