@@ -3,7 +3,7 @@
 
 declare global {
   interface Window {
-    // Add any custom window properties here
+    announceNavigation?: (message: string) => void;
   }
   
   var console: Console;
