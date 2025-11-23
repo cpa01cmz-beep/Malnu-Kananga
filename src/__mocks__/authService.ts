@@ -1,5 +1,4 @@
 // Mock for authService that handles import.meta in test environment
-import { WORKER_URL } from '../utils/envValidation';
 
 // Rate limiting untuk client-side protection
 const clientRateLimitStore = new Map();
@@ -161,7 +160,7 @@ class TokenManager {
     localStorage.removeItem(this.REFRESH_TIMER_KEY);
   }
 
-  private static scheduleTokenRefresh(token: string): void {
+  private static scheduleTokenRefresh(_token: string): void {
     // In test environment, we don't schedule actual refreshes
     // Just store the refresh timer info
     localStorage.setItem(this.REFRESH_TIMER_KEY, Date.now().toString());
@@ -273,13 +272,13 @@ class LocalAuthService {
 
 // Mock for SupabaseAuthService
 class SupabaseAuthService {
-  static async requestLoginLink(email: string): Promise<LoginResponse> {
+  static async requestLoginLink(_email: string): Promise<LoginResponse> {
     return { success: true, message: 'Link login telah dikirim ke email Anda' };
   }
 
   static async verifySession(): Promise<VerifyResponse> {
     const user = LocalAuthService.getCurrentUser();
-    return { success: !!user, user, message: user ? 'Session valid' : 'No valid session' };
+    return { success: !!user, user: user || undefined, message: user ? 'Session valid' : 'No valid session' };
   }
 
   static async refreshSession(): Promise<RefreshTokenResponse> {

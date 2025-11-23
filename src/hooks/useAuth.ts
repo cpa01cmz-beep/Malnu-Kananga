@@ -2,8 +2,17 @@ import { useState, useEffect } from 'react';
 import { AuthService, User } from '../services/authService';
 
 export const useAuth = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(AuthService.isAuthenticated());
-  const [currentUser, setCurrentUser] = useState<User | null>(AuthService.getCurrentUser());
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authenticated = await AuthService.isAuthenticated();
+      setIsLoggedIn(authenticated);
+      setCurrentUser(AuthService.getCurrentUser());
+    };
+    checkAuth();
+  }, []);
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);

@@ -4,7 +4,7 @@ import { Assignment, currentParent } from '../data/parentData';
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (submissionData: {
+  onSubmit: (data: {
     file?: File;
     notes?: string;
     submittedBy: string;
