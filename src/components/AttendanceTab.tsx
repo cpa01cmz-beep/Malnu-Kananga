@@ -4,7 +4,7 @@ import { AttendanceRecord, AttendanceStats } from '../data/studentData';
 interface AttendanceTabProps {
   attendanceData: AttendanceRecord[];
   attendanceStats: AttendanceStats;
-  formatDate: (_dateString: string) => string;
+  formatDate: (_date: string) => string;
   getAttendanceColor: (_status: string) => string;
 }
 

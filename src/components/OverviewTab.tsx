@@ -8,8 +8,8 @@ interface OverviewTabProps {
   todaySchedule: ScheduleItem[];
   recentGrades: Grade[];
   today: string;
-  formatDate: (dateString: string) => string;
-  getGradeColor: (grade: string) => string;
+  formatDate: (date: string) => string;
+  getGradeColor: (gradeValue: string) => string;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({

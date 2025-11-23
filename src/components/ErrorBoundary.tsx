@@ -1,5 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { getErrorLoggingService, logErrorBoundary } from '../services/errorLoggingService';
+import { getErrorLoggingService } from '../services/errorLoggingService';
 import { captureErrorBoundary } from '../services/sentryService';
 
 interface Props {
@@ -34,10 +34,10 @@ class ErrorBoundary extends Component<Props, State> {
       props: Object.keys(this.props),
       hasCustomFallback: !!this.props.fallback,
       hasCustomErrorHandler: !!this.props.onError
-    }).catch(logError => {
+    }).catch((logErrorValue) => {
       // Fallback jika logging service gagal
       console.error('ErrorBoundary caught an error:', error, errorInfo);
-      console.error('Error logging service juga gagal:', logError);
+      console.error('Error logging service juga gagal:', logErrorValue);
     });
 
     // Kirim error ke Sentry
