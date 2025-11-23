@@ -620,6 +620,6 @@ npm run type-check
 
 ---
 
-*Guide Version: 1.0.0*  
+*Guide Version: 1.2.0*  
 *Last Updated: November 23, 2025*  
 *Maintained by: MA Malnu Kananga Technical Team*
