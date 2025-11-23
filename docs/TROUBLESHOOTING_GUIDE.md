@@ -15,21 +15,31 @@ Before troubleshooting, check current system status:
 - **Current Version**: v1.2.0 (Latest)
 - **Known Issues**: Health check endpoint not implemented, use direct endpoint testing
 
-### 🚨 Critical Deployment Issues (November 2024)
+### 🚨 Critical Deployment Issues (November 2025)
 
 #### Current Known Issues:
 1. **Health Check Endpoint**: `/health` endpoint referenced in docs but not implemented in worker.js
 2. **Token Refresh**: `/refresh-token` endpoint referenced but not fully implemented  
 3. **Logout Endpoint**: `/logout` endpoint referenced but not fully implemented
 4. **Vector Database**: Must be seeded once after deployment using `/seed` endpoint
+5. **Student Data APIs**: Multiple student/teacher/parent endpoints documented but not implemented
 
 #### Working Endpoints (Verified):
-- ✅ `/seed` - Vector database seeding (50 documents)
-- ✅ `/api/chat` - AI chat with RAG system
-- ✅ `/request-login-link` - Magic link authentication with rate limiting
-- ✅ `/verify-login` - JWT token verification
+- ✅ `/seed` - Vector database seeding (50 documents, batch processing)
+- ✅ `/api/chat` - AI chat with RAG system (0.75 similarity threshold)
+- ✅ `/request-login-link` - Magic link authentication with rate limiting (5 attempts/15min)
+- ✅ `/verify-login` - JWT token verification with secure cookies
 - ✅ `/generate-signature` - HMAC signature generation
 - ✅ `/verify-signature` - HMAC signature verification
+- ✅ `/api/student-support` - Enhanced student support AI with risk categorization
+- ✅ `/api/support-monitoring` - Proactive support monitoring with risk assessment
+
+#### Implementation Status (November 2025):
+- **Authentication System**: 100% operational
+- **AI & RAG System**: 100% operational with student support features
+- **Student Data Management**: 0% (not implemented)
+- **Content Management**: 0% (not implemented)
+- **Analytics & Reporting**: 0% (not implemented)
 
 #### 🔍 Finding Your API URL
 The actual API URL depends on your Cloudflare Worker deployment:
@@ -276,24 +286,34 @@ fetch('https://your-worker-url.workers.dev/api/chat', {
 1. **Email Address Typo**
    - ✅ **Solution**: Double-check email spelling
    - ✅ **Prevention**: Use email validation in frontend
+   - 🔍 **Debug**: Check browser console for validation errors
 
 2. **Email in Spam Folder**
    - ✅ **Solution**: Check spam/junk folder
    - ✅ **Prevention**: Add noreply@ma-malnukananga.sch.id to contacts
+   - 📧 **Email Details**: From "MA Malnu Kananga" <noreply@ma-malnukananga.sch.id>
 
 3. **Email Server Delay**
    - ✅ **Solution**: Wait 2-3 minutes, then request again
    - ⚠️ **Note**: Magic links expire after 15 minutes
+   - ⏱️ **Expected Delivery**: Usually within 30 seconds
 
 4. **Rate Limiting**
    - ✅ **Solution**: Wait 15 minutes before requesting again
    - ✅ **Prevention**: Limit login attempts to avoid rate limit
    - 🔍 **Check**: Browser console for "429 Too Many Requests" errors
-   - ✅ **Prevention**: Monitor email delivery metrics
+   - 📊 **Limits**: 5 requests per 15 minutes per IP address
+   - 🚫 **Block Duration**: 30 minutes automatic block
 
-4. **Invalid Email Domain**
+5. **Invalid Email Domain**
    - ✅ **Solution**: Use registered school email
    - ✅ **Prevention**: Validate domain against whitelist
+   - 🏫 **Accepted Domains**: ma-malnukananga.sch.id, gmail.com, yahoo.com
+
+6. **MailChannels Service Issues**
+   - ✅ **Solution**: Test email service manually
+   - 🔧 **Manual Test**: `curl -X POST "https://api.mailchannels.net/tx/v1/send" ...`
+   - 📈 **Monitoring**: Check worker logs for email delivery status
 
 **Administrator Actions**:
 ```bash
@@ -357,25 +377,53 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
    ```bash
    # Verify API key is set
    wrangler secret list --env=production
+   
+   # Check API key format
+   echo $API_KEY | grep -E "^AIzaSy"
    ```
 
 2. **Test API Connection**
    ```bash
+   # Test worker endpoint
    curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/api/chat" \
      -H "Content-Type: application/json" \
      -d '{"message": "test"}'
+   
+   # Test Gemini API directly
+   curl -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"contents":[{"parts":[{"text":"test"}]}]}'
    ```
 
 3. **Check Rate Limits**
-   - Gemini API has rate limits
-   - Wait 1 minute between requests
-   - Check API quota usage
+   - Gemini API has rate limits (free tier: 60 requests per minute)
+   - Wait 1 minute between requests if rate limited
+   - Check API quota usage in Google AI Studio
+   - 🔍 **Error**: "Resource has been exhausted" indicates quota exceeded
 
 4. **Vector Database Status**
     ```bash
     # Check if vector database is seeded
     curl https://malnu-api.sulhi-cmz.workers.dev/seed
+    
+    # Expected response: "Successfully seeded 50 documents."
+    # If error: Database needs seeding or vectorize index not configured
     ```
+
+5. **Check Vector Similarity Threshold**
+   - Current threshold: 0.75 for general chat, 0.7 for support queries
+   - If no documents meet threshold, AI will have no context
+   - 🔍 **Debug**: Check if context is returned in API response
+   - 💡 **Solution**: Add more relevant documents or lower threshold
+
+6. **Verify Worker Configuration**
+   ```bash
+   # Check vectorize index
+   wrangler vectorize list
+   
+   # Check AI model binding
+   wrangler tail --env=production
+   ```
 
 5. **Rate Limiting**
      - ✅ **Solution**: Wait 1 minute between chat requests (if applicable)
@@ -570,6 +618,9 @@ if (performance.memory) {
    
    # Fix common issues
    npm run type-check
+   
+   # Check for specific errors
+   npx tsc --noEmit --pretty
    ```
 
 2. **Missing Dependencies**
@@ -577,12 +628,36 @@ if (performance.memory) {
    # Clean install
    rm -rf node_modules package-lock.json
    npm install
+   
+   # Check for peer dependency conflicts
+   npm ls --depth=0
    ```
 
 3. **Import Errors**
    ```bash
    # Check for circular dependencies
    npx madge --circular src/
+   
+   # Check for missing exports
+   npx tsc --noEmit --traceResolution
+   ```
+
+4. **Environment Variable Issues**
+   ```bash
+   # Check if .env file exists
+   ls -la .env
+   
+   # Validate environment variables
+   npm run env:validate
+   ```
+
+5. **Vite Configuration Issues**
+   ```bash
+   # Check Vite configuration
+   npx vite --debug --mode production
+   
+   # Test build with verbose output
+   npm run build -- --debug
    ```
 
 ### ❌ Test Failures
@@ -602,12 +677,29 @@ npm run test:coverage
 
 # Debug specific test
 node --inspect-brk node_modules/.bin/jest --runInBand AuthService.test.ts
+
+# Run tests with coverage for specific file
+npm test -- --coverage --testPathPattern=authService
 ```
 
 **Common Test Issues**:
-1. **Mock Failures**: Update mock implementations
+1. **Mock Failures**: Update mock implementations in `src/__mocks__/`
 2. **Async Issues**: Add proper await/async handling
-3. **Environment Variables**: Set test environment variables
+3. **Environment Variables**: Set test environment variables in setup files
+4. **Import Path Issues**: Check relative vs absolute imports
+5. **TypeScript Compilation**: Ensure test files are included in tsconfig.json
+
+**Test Environment Setup**:
+```bash
+# Check Jest configuration
+cat jest.config.js
+
+# Verify test setup
+cat setupTests.ts
+
+# Check environment variables for tests
+cat .env.test
+```
 
 ---
 
@@ -952,21 +1044,32 @@ Any other relevant information
 ## 📚 Additional Resources
 
 ### 📖 Documentation
-- [API Documentation](./API_DOCUMENTATION.md)
-- [Developer Guide](./DEVELOPER_GUIDE.md)
-- [Administrator Guide](./ADMINISTRATOR_GUIDE.md)
-- [User Guides](./USER_GUIDE_STUDENT.md)
+- [API Documentation](./API_DOCUMENTATION.md) - Complete API reference
+- [Quick Start Guide](./QUICK_START_GUIDE.md) - 5-minute setup guide
+- [Installation Guide](./INSTALLATION_GUIDE.md) - Detailed setup instructions
+- [Environment Validation](./ENVIRONMENT_VALIDATION.md) - Environment troubleshooting
+- [Developer Guide](./DEVELOPER_GUIDE.md) - Development best practices
+- [Administrator Guide](./ADMINISTRATOR_GUIDE.md) - System administration
+- [User Guides](./USER_GUIDE_STUDENT.md) - End-user documentation
 
 ### 🔗 External Resources
 - [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
+- [Cloudflare D1 Documentation](https://developers.cloudflare.com/d1/)
+- [Cloudflare Vectorize Documentation](https://developers.cloudflare.com/vectorize/)
 - [Google Gemini API Documentation](https://ai.google.dev/docs)
 - [React Documentation](https://react.dev/)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Vite Documentation](https://vitejs.dev/)
 
 ### 🎓 Training Materials
 - [Video Tutorials](https://training.ma-malnukananga.sch.id) (planned)
 - [Best Practices Guide](https://bestpractices.ma-malnukananga.sch.id) (planned)
 - [Security Guidelines](https://security.ma-malnukananga.sch.id) (planned)
+
+### 🛠️ Development Tools
+- [Node.js Version Manager](https://github.com/nvm-sh/nvm) - Manage Node.js versions
+- [Cloudflare Wrangler](https://developers.cloudflare.com/workers/wrangler/) - Worker deployment
+- [Google AI Studio](https://makersuite.google.com/app/apikey) - API key management
 
 ---
 
