@@ -25,12 +25,17 @@ Portal siswa MA Malnu Kananga adalah platform digital untuk mengakses informasi 
 ### 2. Dashboard Siswa Overview
 Setelah login, Anda akan melihat:
 - **Informasi Pribadi**: Nama, kelas, NISN, email
-- **Statistik Akademik**: IPK, kehadiran, ranking kelas
-- **Jadwal Hari Ini**: Mata pelajaran dan jam pelajaran real-time
+- **Statistik Akademik**: IPK, kehadiran, ranking kelas (📝 *Data demo untuk development*)
+- **Jadwal Hari Ini**: Mata pelajaran dan jam pelajaran (📝 *Data demo untuk development*)
 - **Pengumuman Terbaru**: Informasi penting sekolah dengan prioritas
-- **AI Assistant**: Tanya jawab tentang sekolah dengan RAG technology
+- **AI Assistant**: Tanya jawab tentang sekolah dengan RAG technology ✅ *Aktif*
 - **Quick Actions**: Akses cepat ke fitur penting
 - **Recent Activities**: Aktivitas terakhir di portal
+
+#### ⚠️ Status Fitur Saat Ini
+- **✅ Aktif**: Login system, AI Assistant, PWA features
+- **📝 Development**: Data akademik (nilai, jadwal, kehadiran) menggunakan data demo
+- **🚧 Coming Soon**: Real-time data integration dengan sistem sekolah
 
 #### 🆕 Fitur Baru Dashboard
 - **Real-time Updates**: Data diperbarui secara otomatis
@@ -48,6 +53,11 @@ Setelah login, Anda akan melihat:
 1. Klik menu **"Jadwal"** di sidebar
 2. Pilih periode (hari ini/minggu ini/bulan ini)
 3. Lihat detail jadwal:
+
+#### ⚠️ Catatan Penting
+- **Status**: 📝 *Data demo untuk development*
+- **Saat ini**: Jadwal menggunakan data contoh, belum terintegrasi dengan sistem sekolah
+- **Rencana**: Integrasi real-time dengan jadwal aktual sekolah
    - **Mata Pelajaran**: Nama mata pelajaran
    - **Guru Pengajar**: Nama guru
    - **Ruang**: Lokasi kelas
@@ -135,6 +145,12 @@ Setelah login, Anda akan melihat:
 - **Pesan Terkirim**: Riwayat pesan yang dikirim
 - **Draft**: Pesan yang belum dikirim
 - **Notifikasi**: Alert untuk pesan baru
+
+#### ⚠️ Status Fitur Messaging
+- **Status**: 🚧 *Dalam pengembangan*
+- **Saat ini**: Fitur messaging belum terintegrasi dengan sistem sekolah
+- **Alternatif**: Kontak guru langsung atau melalui admin sekolah
+- **Rencana**: Integrasi real-time messaging system
 
 ---
 
@@ -310,7 +326,7 @@ A: Ya, untuk keperluan improvement layanan dan personalisasi.
 ---
 
 *Dokumen ini dibuat pada: November 20, 2024*  
-*Versi: 1.1.0*  
-*Update Terakhir: November 20, 2024*  
-*System Version: Production Ready v1.1.0*  
+*Versi: 1.2.0*  
+*Update Terakhir: November 23, 2025*  
+*System Version: Production Ready v1.2.0*  
 *AI Features: RAG System with Google Gemini Integration*

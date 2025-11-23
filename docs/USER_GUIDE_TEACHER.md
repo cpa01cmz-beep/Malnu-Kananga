@@ -18,10 +18,15 @@ Portal guru MA Malnu Kananga adalah platform digital untuk mengelola pembelajara
 ### 2. Dashboard Guru Overview
 Setelah login, Anda akan melihat:
 - **Informasi Guru**: Nama, NIP, mata pelajaran yang diampu
-- **Statistik Mengajar**: Total kelas, total siswa, jam mengajar
-- **Jadwal Hari Ini**: Kelas yang akan diajar hari ini
+- **Statistik Mengajar**: Total kelas, total siswa, jam mengajar (📝 *Data demo*)
+- **Jadwal Hari Ini**: Kelas yang akan diajar hari ini (📝 *Data demo*)
 - **Task List**: Tugas yang perlu diselesaikan
 - **Quick Actions**: Aksi cepat untuk input nilai dan absensi
+
+#### ⚠️ Status Fitur Saat Ini
+- **✅ Aktif**: Login system, AI Assistant, dashboard interface
+- **📝 Development**: Data kelas, jadwal, dan siswa menggunakan data demo
+- **🚧 Coming Soon**: Real-time integration dengan sistem akademik sekolah
 
 ---
 
@@ -48,6 +53,12 @@ Setelah login, Anda akan melihat:
 #### Proses Input Nilai
 1. Pilih kelas dari menu **"Kelas Saya"**
 2. Klik **"Input Nilai"** pada kelas yang dipilih
+
+#### ⚠️ Status Fitur Input Nilai
+- **Status**: 📝 *Demo mode untuk development*
+- **Saat ini**: Sistem input nilai menggunakan data contoh
+- **Rencana**: Integrasi dengan sistem nilai sekolah yang sebenarnya
+- **Fitur yang akan datang**: Auto-calculation, grade validation, reporting
 3. Pilih jenis penilaian:
    - **UTS**: Ujian Tengah Semester
    - **UAS**: Ujian Akhir Semester
@@ -406,7 +417,7 @@ A: Gunakan fitur Broadcast dengan approval administrator.
 ---
 
 *Dokumen ini dibuat pada: November 20, 2024*  
-*Versi: 1.1.0*  
-*Update Terakhir: November 20, 2024*  
-*System Version: Production Ready v1.1.0*  
+*Versi: 1.2.0*  
+*Update Terakhir: November 23, 2025*  
+*System Version: Production Ready v1.2.0*  
 *AI Features: Advanced Teaching Assistant with Content Generation*

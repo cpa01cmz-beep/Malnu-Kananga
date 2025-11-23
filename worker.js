@@ -603,6 +603,67 @@ Respons:`;
       }
     }
 
+    // --- Health Check Endpoint ---
+    if (url.pathname === '/health' && request.method === 'GET') {
+      try {
+        const healthStatus = {
+          status: 'healthy',
+          timestamp: new Date().toISOString(),
+          services: {
+            ai: 'operational',
+            database: 'operational', 
+            vectorize: 'operational'
+          },
+          version: '1.2.0',
+          environment: env.NODE_ENV || 'development'
+        };
+
+        // Test AI service availability
+        try {
+          await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: ['health check'] });
+          healthStatus.services.ai = 'operational';
+        } catch (aiError) {
+          healthStatus.services.ai = 'degraded';
+          healthStatus.status = 'degraded';
+        }
+
+        // Test Vectorize service availability
+        try {
+          await env.VECTORIZE_INDEX.query([0.1, 0.2, 0.3], { topK: 1 });
+          healthStatus.services.vectorize = 'operational';
+        } catch (vectorError) {
+          healthStatus.services.vectorize = 'degraded';
+          healthStatus.status = 'degraded';
+        }
+
+        // Test D1 database availability
+        try {
+          await env.DB.prepare('SELECT 1').first();
+          healthStatus.services.database = 'operational';
+        } catch (dbError) {
+          healthStatus.services.database = 'degraded';
+          healthStatus.status = 'degraded';
+        }
+
+        const statusCode = healthStatus.status === 'healthy' ? 200 : 503;
+        
+        return new Response(JSON.stringify(healthStatus), {
+          status: statusCode,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+
+      } catch (e) {
+        return new Response(JSON.stringify({ 
+          status: 'unhealthy',
+          timestamp: new Date().toISOString(),
+          error: e.message 
+        }), {
+          status: 503,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+    }
+
     // --- Endpoint Login ---
     if (url.pathname === '/request-login-link' && request.method === 'POST') {
       try {
