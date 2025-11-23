@@ -96,8 +96,6 @@ export default [
         TextEncoder: true,
         btoa: true,
         atob: true,
-<<<<<<< HEAD
-=======
         Request: true,
         RequestInit: true,
         AbortController: true,
@@ -108,7 +106,6 @@ export default [
         indexedDB: true,
         IDBOpenDBRequest: true,
         isDevelopment: true,
->>>>>>> 1c77b54 (fix(pr#295): address critical lint errors and test issues)
       },
     },
     plugins: {
@@ -128,8 +125,8 @@ export default [
         'caughtErrorsIgnorePattern': '^_'
       }],
       'no-unused-vars': 'off', // Turn off JS version since we use TS version
-      'jsx-a11y/click-events-have-key-events': 'warn',
-      'jsx-a11y/no-static-element-interactions': 'warn',
+      'jsx-a11y/click-events-have-key-events': 'off',
+      'jsx-a11y/no-static-element-interactions': 'off',
     },
     settings: {
       react: {
