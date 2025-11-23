@@ -469,5 +469,5 @@ Setelah login, Anda akan melihat:
 ---
 
 *Dokumen ini dibuat pada: November 20, 2024*  
-*Versi: 1.1.0*  
-*Update Terakhir: November 20, 2024*
+*Versi: 1.1.1*  
+*Update Terakhir: November 23, 2025*

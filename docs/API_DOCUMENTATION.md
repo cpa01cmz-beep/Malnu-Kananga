@@ -1067,7 +1067,7 @@ For API support and questions:
 
 ---
 
-*API Documentation Version: 1.2.0*  
+*API Documentation Version: 1.2.1*  
 *Last Updated: November 23, 2025*  
 *Base URL: https://malnu-api.sulhi-cmz.workers.dev*  
 *System Status: Production Ready*  

@@ -645,7 +645,7 @@ const optimizedQuery = `
 
 ---
 
-**Performance Optimization Guide Version: 1.2.0**  
+**Performance Optimization Guide Version: 1.2.1**  
 **Last Updated: November 23, 2025**  
 **Maintained by: MA Malnu Kananga Performance Team**  
 **Review Frequency: Monthly**

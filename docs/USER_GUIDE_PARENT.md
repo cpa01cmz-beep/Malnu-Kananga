@@ -457,7 +457,7 @@ A: Hubungi administrasi sekolah untuk verifikasi data anak.
 ---
 
 *Dokumen ini dibuat pada: November 20, 2024*  
-*Versi: 1.2.0*  
+*Versi: 1.2.1*  
 *Update Terakhir: November 23, 2025*  
-*System Version: Production Ready v1.2.0*  
+*System Version: Production Ready v1.3.0*  
 *Mobile Features: PWA Support with Real-time Notifications*
