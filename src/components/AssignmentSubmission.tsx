@@ -2,8 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Assignment, currentParent } from '../data/parentData';
 
 
-
-
+  
 interface SubmissionData {
   file?: File;
   notes?: string;
@@ -13,7 +12,11 @@ interface SubmissionData {
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (_submissionData: SubmissionData) => Promise<void>;
+  onSubmit: (submissionData: {
+    file?: File;
+    notes?: string;
+    submittedBy: string;
+  }) => Promise<void>;
 }
 
 const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
