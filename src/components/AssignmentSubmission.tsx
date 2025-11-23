@@ -1,16 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { Assignment, currentParent } from '../data/parentData';
 
-declare global {
-  interface Window {
-    HTMLInputElement: any;
-  }
-}
+
 
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (assignmentId: string, submissionData: {
+  onSubmit: (_assignmentId: string, _submissionData: {
     file?: File;
     notes?: string;
     submittedBy: string;
