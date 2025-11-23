@@ -526,13 +526,13 @@ Kami menyambut kontribusi! Berikut cara berkontribusi:
 
 ### Resources
 
-- 📖 **[Student User Guide](USER_GUIDE_STUDENT.md)**: Panduan pengguna untuk siswa
-- 👩‍🏫 **[Teacher User Guide](USER_GUIDE_TEACHER.md)**: Panduan untuk guru dan admin
-- 👨‍👩‍👧‍👦 **[Parent User Guide](USER_GUIDE_PARENT.md)**: Panduan untuk orang tua siswa
-- 🔧 **[Contributing Guide](CONTRIBUTING.md)**: Panduan teknis kontribusi
-- 📋 **[Production Checklist](PRODUCTION_CHECKLIST.md)**: Checklist deployment
-- 🚀 **[Deployment Guide](DEPLOYMENT.md)**: Panduan deployment lengkap
+- 📖 **[Student User Guide](docs/USER_GUIDE_STUDENT.md)**: Panduan pengguna untuk siswa
+- 👩‍🏫 **[Teacher User Guide](docs/USER_GUIDE_TEACHER.md)**: Panduan untuk guru dan admin
+- 👨‍👩‍👧‍👦 **[Parent User Guide](docs/USER_GUIDE_PARENT.md)**: Panduan untuk orang tua siswa
+- 🔧 **[Contributing Guide](docs/DEVELOPER_GUIDE.md)**: Panduan teknis kontribusi
+- 📋 **[Production Checklist](docs/DEPLOYMENT_GUIDE.md#deployment-checklist)**: Checklist deployment
+- 🚀 **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)**: Panduan deployment lengkap
 
 ---
 
-**Status**: PRODUCTION READY | **Version**: 1.0.0 | **Last Updated**: October 2025 | **Development Server**: http://localhost:9000
+**Status**: PRODUCTION READY | **Version**: 1.2.0 | **Last Updated**: November 2024 | **Development Server**: http://localhost:9000

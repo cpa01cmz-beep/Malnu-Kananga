@@ -23,16 +23,31 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'supp
     return () => clearInterval(interval);
   }, [selectedTimeFrame]);
 
-  const loadDashboardData = () => {
-    const status = StudentSupportMonitoring.getCurrentStatus();
-    const allAlerts = StudentSupportMonitoring.getAlerts();
-    const currentMetrics = status.metrics;
-    const monitoringReport = StudentSupportMonitoring.generateMonitoringReport(selectedTimeFrame);
+  const loadDashboardData = async () => {
+    try {
+      const status = StudentSupportMonitoring.getCurrentStatus();
+      const allAlerts = StudentSupportMonitoring.getAlerts();
+      const currentMetrics = status.metrics;
+      const monitoringReport = StudentSupportMonitoring.generateMonitoringReport(selectedTimeFrame);
+      
+      // Get AI-powered analytics
+      const aiAnalytics = StudentSupportService.getSupportAnalytics();
+      const aiReport = StudentSupportService.generateSupportReport(
+        selectedTimeFrame === 'hourly' ? 'daily' : 
+        selectedTimeFrame === 'daily' ? 'weekly' : 'monthly'
+      );
 
-    setCurrentStatus(status);
-    setAlerts(allAlerts.filter(a => !a.resolved));
-    setMetrics(currentMetrics);
-    setReport(monitoringReport);
+      setCurrentStatus({
+        ...status,
+        aiAnalytics,
+        aiReport
+      });
+      setAlerts(allAlerts.filter(a => !a.resolved));
+      setMetrics(currentMetrics);
+      setReport(monitoringReport);
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+    }
   };
 
   const handleResolveAlert = (alertId: string) => {
