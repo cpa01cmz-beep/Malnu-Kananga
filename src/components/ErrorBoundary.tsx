@@ -1,11 +1,11 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { getErrorLoggingService, logErrorBoundary } from '../services/errorLoggingService';
+import { getErrorLoggingService } from '../services/errorLoggingService';
 import { captureErrorBoundary } from '../services/sentryService';
 
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  onError?: (err: Error, errInfo: ErrorInfo) => void;
 }
 
 interface State {
@@ -24,7 +24,7 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  public componentDidCatch(_error: Error, _errorInfo: ErrorInfo) {
     // Gunakan error logging service untuk comprehensive error tracking
     const errorLoggingService = getErrorLoggingService();
 
@@ -186,7 +186,7 @@ class ErrorBoundary extends Component<Props, State> {
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
   fallback?: ReactNode,
-  onError?: (error: Error, errorInfo: ErrorInfo) => void
+  onError?: (err: Error, errInfo: ErrorInfo) => void
 ) {
   const WrappedComponent = (props: P) => (
     <ErrorBoundary fallback={fallback} onError={onError}>
@@ -201,8 +201,8 @@ export function withErrorBoundary<P extends object>(
 
 // Hook untuk manual error throwing (untuk testing atau conditional errors)
 export function useErrorHandler() {
-  return (error: Error) => {
-    throw error;
+  return (_error: Error) => {
+    throw _error;
   };
 }
 

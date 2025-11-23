@@ -153,7 +153,7 @@ export async function clearConversationHistory() {
     return conversations.length;
   } catch (error) {
     console.error('Failed to clear conversation history:', error);
-    throw error;
+    return 0;
   }
 }
 
