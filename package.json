@@ -14,7 +14,9 @@
     "bundle:analyze": "npx vite-bundle-analyzer dist",
     "test:supabase": "tsx src/services/supabaseTest.ts",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "quality:report": "node scripts/qualityReporter.cjs",
+    "quality:check": "npm run lint && npm run test:coverage && npm run quality:report"
   },
   "dependencies": {
     "@google/genai": "^1.29.1",
