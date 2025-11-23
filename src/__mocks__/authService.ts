@@ -1,5 +1,5 @@
 // Mock for authService that handles import.meta in test environment
-import { WORKER_URL } from '../utils/envValidation';
+// import { WORKER_URL } from '../utils/envValidation';
 
 // Rate limiting untuk client-side protection
 const clientRateLimitStore = new Map();
