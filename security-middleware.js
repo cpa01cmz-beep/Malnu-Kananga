@@ -6,23 +6,22 @@ class SecurityMiddleware {
   }
 
   // Enhanced rate limiting with multiple tiers
-  isRateLimitExceeded(clientId, endpoint = 'default') {
+  isRateLimitExceeded(clientId, maxRequests = 100, windowMs = 60000, endpoint = 'default') {
     const now = Date.now();
-    const limits = {
-      'default': { limit: 100, windowMs: 60000 },
-      'auth': { limit: 10, windowMs: 60000 },
-      'ai': { limit: 50, windowMs: 60000 },
-      'upload': { limit: 5, windowMs: 60000 }
-    };
     
-    const config = limits[endpoint] || limits['default'];
+    // SECURITY: Validate inputs
+    if (!clientId || typeof clientId !== 'string') {
+      console.warn('SECURITY: Invalid clientId for rate limiting');
+      return true; // Block invalid requests
+    }
+    
     const key = `${clientId}:${endpoint}`;
     const clientData = this.rateLimitStore.get(key);
 
     if (!clientData) {
       this.rateLimitStore.set(key, {
         count: 1,
-        resetTime: now + config.windowMs,
+        resetTime: now + windowMs,
         firstRequest: now
       });
       return false;
@@ -31,7 +30,7 @@ class SecurityMiddleware {
     if (now > clientData.resetTime) {
       this.rateLimitStore.set(key, {
         count: 1,
-        resetTime: now + config.windowMs,
+        resetTime: now + windowMs,
         firstRequest: now
       });
       return false;
@@ -40,11 +39,17 @@ class SecurityMiddleware {
     clientData.count++;
     
     // Progressive rate limiting for abusive clients
-    if (clientData.count > config.limit * 2) {
+    if (clientData.count > maxRequests * 2) {
+      console.warn(`SECURITY: Hard block for abusive client: ${clientId}`);
       return true; // Hard block
     }
     
-    return clientData.count > config.limit;
+    const isExceeded = clientData.count > maxRequests;
+    if (isExceeded) {
+      console.warn(`SECURITY: Rate limit exceeded for client: ${clientId}, count: ${clientData.count}`);
+    }
+    
+    return isExceeded;
   }
 
   // Enhanced input validation and sanitization
@@ -97,6 +102,11 @@ class SecurityMiddleware {
   sanitizeInput(data, type = 'string') {
     if (typeof data !== 'string') return data;
     
+    // SECURITY: Validate input length
+    if (data.length > 10000) {
+      throw new Error('Input too long');
+    }
+    
     // Remove potentially dangerous characters
     let sanitized = data
       .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters
@@ -109,6 +119,19 @@ class SecurityMiddleware {
     }
     
     return sanitized;
+  }
+
+  // SQL injection prevention
+  sanitizeSqlInput(input) {
+    if (typeof input !== 'string') return input;
+    
+    // Remove SQL injection patterns
+    return input
+      .replace(/['"\\;]/g, '') // Remove quotes and semicolons
+      .replace(/\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b/gi, '') // Remove SQL keywords
+      .replace(/--/g, '') // Remove SQL comments
+      .replace(/\/\*[\s\S]*?\*\//g, '') // Remove SQL block comments
+      .trim();
   }
 
   // Enhanced security headers
@@ -186,9 +209,18 @@ class SecurityMiddleware {
 
   // Create device fingerprint for enhanced tracking
   createFingerprint(ip, userAgent) {
-    const crypto = require('crypto');
+    // SECURITY: Use Web Crypto API instead of Node.js crypto
     const data = `${ip}:${userAgent}`;
-    return crypto.createHash('sha256').update(data).digest('hex').substring(0, 16);
+    
+    // Simple hash implementation for Cloudflare Workers
+    let hash = 0;
+    for (let i = 0; i < data.length; i++) {
+      const char = data.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    
+    return Math.abs(hash).toString(16).padStart(16, '0').substring(0, 16);
   }
 
   // Comprehensive security check
