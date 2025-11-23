@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.5% </span>
+                <span class="strong">37.5% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>7/8</span>
+                <span class='fraction'>3/8</span>
             </div>
         
             
@@ -96,27 +96,20 @@
 <a name='L31'></a><a href='#L31'>31</a>
 <a name='L32'></a><a href='#L32'>32</a>
 <a name='L33'></a><a href='#L33'>33</a>
-<a name='L34'></a><a href='#L34'>34</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">302x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">302x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">23x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -129,7 +122,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
 import { ChatMessage, Sender } from '../types';
 &nbsp;
 interface MessageBubbleProps {
@@ -141,17 +145,19 @@ const MessageBubble: React.FC&lt;MessageBubbleProps&gt; = ({ message, isLoading 
   const isUser = message.sender === Sender.User;
 &nbsp;
   return (
-    &lt;div className={`flex items-end max-w-xs md:max-w-md gap-2 ${isUser ? 'self-end flex-row-reverse' : 'self-start'}`}&gt;
+    &lt;div className={`flex items-end max-w-xs md:max-w-md gap-2 ${isUser ? <span class="branch-0 cbranch-no" title="branch not covered" >'self-end flex-row-reverse' </span>: 'self-start'}`}&gt;
       &lt;div
         className={`rounded-2xl p-3 text-sm md:text-base ${
           isUser
-            ? 'bg-green-500 text-white rounded-br-lg'
+            ? <span class="branch-0 cbranch-no" title="branch not covered" >'bg-green-500 text-white rounded-br-lg'</span>
             : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-lg'
         }`}
       &gt;
-        {message.text}
-        {isLoading &amp;&amp; !message.text &amp;&amp; (
-          &lt;div className="flex items-center justify-center space-x-1"&gt;
+        &lt;div className="whitespace-pre-wrap break-words"&gt;
+          {message.text}
+        &lt;/div&gt;
+        {isLoading &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >!message.text </span>&amp;&amp; (
+<span class="branch-2 cbranch-no" title="branch not covered" >          &lt;div className="flex items-center justify-center space-x-1 py-1"&gt;</span>
             &lt;span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0s'}}&gt;&lt;/span&gt;
             &lt;span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}&gt;&lt;/span&gt;
             &lt;span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}&gt;&lt;/span&gt;
@@ -169,7 +175,7 @@ export default MessageBubble;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-20T04:21:49.428Z
+                at 2025-11-23T01:10:21.298Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -18,7 +18,8 @@ export default {
         module: 'commonjs',
         jsx: 'react-jsx',
         esModuleInterop: true,
-        allowSyntheticDefaultImports: true
+        allowSyntheticDefaultImports: true,
+        types: ['jest', '@testing-library/jest-dom']
       }
     }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
@@ -33,5 +34,13 @@ export default {
   testEnvironmentOptions: {
     customExportConditions: ['node', 'node-addons']
   },
-  extensionsToTreatAsEsm: []
+  extensionsToTreatAsEsm: [],
+  globals: {
+    'ts-jest': {
+      tsconfig: {
+        noUnusedLocals: false,
+        noUnusedParameters: false
+      }
+    }
+  }
 };
