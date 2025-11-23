@@ -4,8 +4,8 @@ import { AttendanceRecord, AttendanceStats } from '../data/studentData';
 interface AttendanceTabProps {
   attendanceData: AttendanceRecord[];
   attendanceStats: AttendanceStats;
-  formatDate: (dateString: string) => string;
-  getAttendanceColor: (status: string) => string;
+  formatDate: (_date: string) => string;
+  getAttendanceColor: (_status: string) => string;
 }
 
 const AttendanceTab: React.FC<AttendanceTabProps> = ({
