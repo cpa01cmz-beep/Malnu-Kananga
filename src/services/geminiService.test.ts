@@ -271,10 +271,15 @@ test('should handle successful response with context', async () => {
 
     test('should handle error and return empty array', async () => {
       mockSearchMemories.mockRejectedValue(new Error('Memory error'));
+      
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
       const result = await getConversationHistory();
 
       expect(result).toEqual([]);
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to get conversation history:', expect.any(Error));
+      
+      consoleSpy.mockRestore();
     });
 
     test('should use default limit', async () => {
@@ -312,8 +317,12 @@ test('should handle successful response with context', async () => {
 
     test('should handle error', async () => {
       mockSearchMemories.mockRejectedValue(new Error('Memory error'));
+      
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(clearConversationHistory()).rejects.toThrow('Memory error');
+      
+      consoleSpy.mockRestore();
     });
   });
 
@@ -331,10 +340,15 @@ test('should handle successful response with context', async () => {
 
     test('should handle error and return null', async () => {
       mockGetStats.mockRejectedValue(new Error('Stats error'));
+      
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
       const result = await getMemoryStats();
 
       expect(result).toBeNull();
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to get memory stats:', expect.any(Error));
+      
+      consoleSpy.mockRestore();
     });
   });
 });
