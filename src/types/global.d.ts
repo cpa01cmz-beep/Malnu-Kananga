@@ -78,6 +78,12 @@ declare global {
   var TouchEvent: typeof TouchEvent;
   var WheelEvent: typeof WheelEvent;
   var DragEvent: typeof DragEvent;
+  var AbortSignal: typeof AbortSignal;
+  var HeadersInit: typeof HeadersInit;
+  var EventListener: typeof EventListener;
+  var NodeJS: typeof NodeJS;
+  var React: any;
+  var global: any;
   var ClipboardEvent: typeof ClipboardEvent;
   var CompositionEvent: typeof CompositionEvent;
   var InputEvent: typeof InputEvent;
