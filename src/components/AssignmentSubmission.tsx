@@ -5,7 +5,6 @@ import { Assignment, currentParent } from '../data/parentData';
 
 
 interface SubmissionData {
-interface SubmissionData {
   file?: File;
   notes?: string;
   submittedBy: string;
@@ -14,8 +13,7 @@ interface SubmissionData {
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (submissionData: SubmissionData) => Promise<void>;
-}
+   onSubmit: (_submissionData: SubmissionData) => Promise<void>;
 }
 
 const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
