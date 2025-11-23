@@ -1,4 +1,5 @@
 /// <reference types="dom" />
+/// <reference types="node" />
 
 declare global {
   interface Window {
@@ -88,6 +89,14 @@ declare global {
   var BeforeUnloadEvent: typeof BeforeUnloadEvent;
   var PageShowEvent: typeof PageShowEvent;
   var PageHideEvent: typeof PageHideEvent;
+  var AbortSignal: typeof AbortSignal;
+  var HeadersInit: typeof HeadersInit;
+  var EventListener: typeof EventListener;
+  var NodeJS: {
+    Timeout: any;
+  };
+  var React: typeof React;
+  var global: any;
 }
 
 export {};
