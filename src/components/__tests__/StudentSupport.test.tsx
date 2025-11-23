@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import StudentSupport from '../StudentSupport';
 
 // Mock window.alert
-global.alert = jest.fn();
+(global as any).alert = jest.fn();
 
 // Mock the student support service
 jest.mock('../../services/studentSupportService', () => ({
