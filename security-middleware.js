@@ -5,13 +5,23 @@ class SecurityMiddleware {
     this.rateLimitStore = new Map();
   }
 
-  // Rate limiting implementation
-  isRateLimitExceeded(clientId, limit = 100, windowMs = 60000) {
+  // Enhanced rate limiting with different limits per endpoint
+  isRateLimitExceeded(clientId, limit = 100, windowMs = 60000, endpoint = 'default') {
     const now = Date.now();
-    const clientData = this.rateLimitStore.get(clientId);
+    const key = `${clientId}:${endpoint}`;
+    const clientData = this.rateLimitStore.get(key);
+
+    // Different limits for different endpoints
+    const limits = {
+      'login': 3,      // 3 attempts per minute
+      'api': 50,       // 50 requests per minute
+      'default': 100   // 100 requests per minute
+    };
+    
+    const effectiveLimit = limits[endpoint] || limit;
 
     if (!clientData) {
-      this.rateLimitStore.set(clientId, {
+      this.rateLimitStore.set(key, {
         count: 1,
         resetTime: now + windowMs
       });
@@ -19,7 +29,7 @@ class SecurityMiddleware {
     }
 
     if (now > clientData.resetTime) {
-      this.rateLimitStore.set(clientId, {
+      this.rateLimitStore.set(key, {
         count: 1,
         resetTime: now + windowMs
       });
@@ -27,7 +37,7 @@ class SecurityMiddleware {
     }
 
     clientData.count++;
-    return clientData.count > limit;
+    return clientData.count > effectiveLimit;
   }
 
   // Enhanced input validation and sanitization
@@ -66,41 +76,6 @@ class SecurityMiddleware {
                .replace(/\*\//g, '')
                .replace(/\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b/gi, '')
                .trim();
-  }
-
-  // Enhanced rate limiting with different limits per endpoint
-  isRateLimitExceeded(clientId, limit = 100, windowMs = 60000, endpoint = 'default') {
-    const now = Date.now();
-    const key = `${clientId}:${endpoint}`;
-    const clientData = this.rateLimitStore.get(key);
-
-    // Different limits for different endpoints
-    const limits = {
-      'login': 3,      // 3 attempts per minute
-      'api': 50,       // 50 requests per minute
-      'default': 100   // 100 requests per minute
-    };
-    
-    const effectiveLimit = limits[endpoint] || limit;
-
-    if (!clientData) {
-      this.rateLimitStore.set(key, {
-        count: 1,
-        resetTime: now + windowMs
-      });
-      return false;
-    }
-
-    if (now > clientData.resetTime) {
-      this.rateLimitStore.set(key, {
-        count: 1,
-        resetTime: now + windowMs
-      });
-      return false;
-    }
-
-    clientData.count++;
-    return clientData.count > effectiveLimit;
   }
 
   // Security headers

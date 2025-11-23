@@ -382,7 +382,7 @@ export default {
     }
     
     // Apply rate limiting to all requests
-    if (security.isRateLimitExceeded(clientId, 100, 60000)) {
+    if (security.isRateLimitExceeded(clientId, 100, 60000, 'default')) {
       return new Response('Rate limit exceeded', { 
         status: 429,
         headers: {
