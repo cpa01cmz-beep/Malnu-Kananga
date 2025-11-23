@@ -1,5 +1,7 @@
 // worker.js - Kode backend GABUNGAN untuk Login, RAG Retriever, dan Seeder
 
+/* global self, indexedDB, clients, Response, Request, Headers, FetchEvent, caches */
+
 // --- STUDENT SUPPORT UTILITIES ---
 
 function categorizeSupportResponse(message, response) {
@@ -582,7 +584,7 @@ Respons:`;
         const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
         const signature = await generateHMACSignature(data, secret);
         return new Response(JSON.stringify({ signature }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
-      } catch (e) {
+      } catch (error) {
         return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }
@@ -599,7 +601,7 @@ Respons:`;
         const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
         const isValid = await verifyHMACSignature(data, signature, secret);
         return new Response(JSON.stringify({ isValid }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
-      } catch (e) {
+      } catch (error) {
         return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }
