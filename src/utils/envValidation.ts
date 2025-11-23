@@ -12,15 +12,7 @@ class EnvironmentError extends Error {
   }
 }
 
-// Helper function to safely access environment variables
-const getEnvVar = (key: string, defaultValue?: string): string => {
-  // Use process.env for Jest compatibility
-  if (typeof process !== 'undefined' && process.env && process.env[key]) {
-    return process.env[key];
-  }
 
-  return defaultValue || '';
-};
 
 export function validateEnvironment(): EnvironmentConfig {
   // Check if running in Jest test environment
