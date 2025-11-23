@@ -70,7 +70,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({
         onClose();
       }, 2000);
 
-    } catch {
+     } catch (_error) {
       NotificationService.addNotification({
         title: 'Gagal Mengirim Feedback',
         message: 'Terjadi kesalahan saat mengirim feedback. Silakan coba lagi.',

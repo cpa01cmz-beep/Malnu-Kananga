@@ -13,7 +13,7 @@ interface SubmissionData {
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-   onSubmit: (_submissionData: SubmissionData) => Promise<void>;
+  onSubmit: (_submissionData: SubmissionData) => Promise<void>;
 }
 
 const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
