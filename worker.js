@@ -2,6 +2,66 @@
 /// <reference types="@cloudflare/workers-types" />
 import SecurityMiddleware from './security-middleware.js';
 
+// --- CSRF PROTECTION ---
+function generateCSRFToken() {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function validateCSRFToken(request) {
+    const cookieToken = getCSRFTokenFromCookie(request);
+    const headerToken = request.headers.get('X-CSRF-Token');
+    
+    if (!cookieToken || !headerToken) {
+        return false;
+    }
+    
+    return constantTimeCompare(cookieToken, headerToken);
+}
+
+function getCSRFTokenFromCookie(request) {
+    const cookieHeader = request.headers.get('Cookie');
+    if (!cookieHeader) return null;
+    
+    const cookies = cookieHeader.split(';').map(cookie => cookie.trim());
+    const csrfCookie = cookies.find(cookie => cookie.startsWith('csrf_token='));
+    
+    return csrfCookie ? csrfCookie.substring('csrf_token='.length) : null;
+}
+
+function constantTimeCompare(a, b) {
+    if (a.length !== b.length) {
+        return false;
+    }
+    
+    let result = 0;
+    for (let i = 0; i < a.length; i++) {
+        result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    }
+    
+    return result === 0;
+}
+
+function setCSRFTokenCookie(response, token) {
+    const cookieValue = `csrf_token=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`;
+    response.headers.set('Set-Cookie', cookieValue);
+    response.headers.set('X-CSRF-Token', token);
+    return response;
+}
+
+function needsCSRFProtection(request) {
+    const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
+    const protectedPaths = ['/api/', '/edit', '/delete', '/update', '/create'];
+    
+    if (safeMethods.includes(request.method)) {
+        return false;
+    }
+    
+    const url = new URL(request.url);
+    return protectedPaths.some(path => url.pathname.startsWith(path));
+}
+
 // --- SECURITY INITIALIZATION ---
 
 function categorizeSupportResponse(message, response) {
@@ -311,6 +371,16 @@ export default {
     const security = new SecurityMiddleware(env);
     const clientId = security.getClientId(request);
     
+    // Apply CSRF protection to state-changing requests
+    if (needsCSRFProtection(request)) {
+      if (!validateCSRFToken(request)) {
+        return new Response('CSRF token validation failed', { 
+          status: 403,
+          headers: security.getSecurityHeaders()
+        });
+      }
+    }
+    
     // Apply rate limiting to all requests
     if (security.isRateLimitExceeded(clientId, 100, 60000)) {
       return new Response('Rate limit exceeded', { 
@@ -538,16 +608,16 @@ Respons:`;
       try {
         const clientIP = getClientIP(request);
 
-        // Check rate limiting
-        if (isRateLimited(clientIP)) {
+        // Enhanced rate limiting for login endpoint
+        if (security.isRateLimitExceeded(clientIP, 3, 60000, 'login')) {
           return new Response(JSON.stringify({
-            message: 'Terlalu banyak percobaan login. Silakan coba lagi dalam 30 menit.'
+            message: 'Terlalu banyak percobaan login. Silakan coba lagi dalam 1 menit.'
           }), {
             status: 429,
             headers: {
               ...corsHeaders,
               'Content-Type': 'application/json',
-              'Retry-After': '1800'
+              'Retry-After': '60'
             }
           });
         }
@@ -557,22 +627,39 @@ Respons:`;
           return new Response(JSON.stringify({ message: 'Email diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
 
-        // Basic email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        // Enhanced email validation with security middleware
+        if (!security.validateInput(email, 'email')) {
           return new Response(JSON.stringify({ message: 'Format email tidak valid.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
 
-        // Simplified auth - accept any email for demo purposes
-        // TODO: Replace with proper KV storage or external database when available
-        const token = await generateSecureToken(email, 15 * 60 * 1000);
+        // Sanitize email input
+        const sanitizedEmail = security.sanitizeSqlInput(email);
+
+        // SECURITY: Only allow registered emails for authentication
+        const allowedEmails = [
+          'admin@ma-malnukananga.sch.id',
+          'guru@ma-malnukanaga.sch.id', 
+          'siswa@ma-malnukanaga.sch.id',
+          'parent@ma-malnukanaga.sch.id',
+          'ayah@ma-malnukanaga.sch.id',
+          'ibu@ma-malnukanaga.sch.id'
+        ];
+        
+        if (!allowedEmails.includes(sanitizedEmail)) {
+          return new Response(JSON.stringify({ message: 'Email tidak terdaftar dalam sistem.' }), { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        const token = await generateSecureToken(sanitizedEmail, 15 * 60 * 1000);
         const magicLink = `${new URL(request.url).origin}/verify-login?token=${token}`;
         const emailBody = `<h1>Login ke Akun MA Malnu Kananga</h1><p>Klik tautan di bawah ini untuk masuk. Tautan ini hanya berlaku selama 15 menit.</p><a href="${magicLink}" style="padding: 10px; background-color: #22c55e; color: white; text-decoration: none; border-radius: 5px;">Login Sekarang</a><p>Jika Anda tidak meminta link ini, abaikan email ini.</p>`;
         const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
-                personalizations: [{ to: [{ email: email, name: 'Pengguna' }] }],
+                personalizations: [{ to: [{ email: sanitizedEmail, name: 'Pengguna' }] }],
                 from: { email: 'noreply@ma-malnukananga.sch.id', name: 'MA Malnu Kananga' },
                 subject: 'Link Login Anda',
                 content: [{ type: 'text/html', value: emailBody }],
@@ -597,7 +684,13 @@ Respons:`;
             const headers = new Headers();
             // Add __Host- prefix for more secure cookie (only works on HTTPS)
             // Use the actual token instead of just the email to prevent session hijacking
-            headers.set('Set-Cookie', `__Host-auth_session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
+            headers.set('Set-Cookie', `__Host-auth_session=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=900; Partitioned`);
+            
+            // Generate and set CSRF token
+            const csrfToken = generateCSRFToken();
+            headers.set('Set-Cookie', `csrf_token=${csrfToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`);
+            headers.set('X-CSRF-Token', csrfToken);
+            
             headers.set('Location', new URL(request.url).origin);
             return new Response(null, { status: 302, headers });
         } catch(e) {

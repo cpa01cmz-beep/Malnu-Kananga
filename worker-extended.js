@@ -138,7 +138,7 @@ export default {
                 return new Response('Link login sudah kedaluwarsa. Silakan minta link baru.', { status: 400 });
             }
             const headers = new Headers();
-            headers.set('Set-Cookie', `auth_session=${btoa(email)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`);
+            headers.set('Set-Cookie', `__Host-auth_session=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=900; Partitioned`);
             headers.set('Location', new URL(request.url).origin);
             return new Response(null, { status: 302, headers });
         } catch(e) {
