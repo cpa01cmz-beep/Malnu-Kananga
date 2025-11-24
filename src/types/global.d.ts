@@ -6,22 +6,22 @@ declare global {
     announceNavigation?: (message: string) => void;
   }
   
-  var console: Console;
-  var setTimeout: (handler: TimerHandler, timeout?: number, ...arguments: any[]) => number;
+  var console: globalThis.Console;
+  var setTimeout: (handler: globalThis.TimerHandler, timeout?: number, ...arguments: any[]) => number;
   var clearTimeout: (id?: number) => void;
-  var setInterval: (handler: TimerHandler, timeout?: number, ...arguments: any[]) => number;
+  var setInterval: (handler: globalThis.TimerHandler, timeout?: number, ...arguments: any[]) => number;
   var clearInterval: (id?: number) => void;
-  var requestAnimationFrame: (callback: FrameRequestCallback) => number;
+  var requestAnimationFrame: (callback: globalThis.FrameRequestCallback) => number;
   var cancelAnimationFrame: (id: number) => void;
-  var localStorage: Storage;
-  var sessionStorage: Storage;
-  var navigator: Navigator;
-  var document: Document;
-  var window: Window;
+  var localStorage: globalThis.Storage;
+  var sessionStorage: globalThis.Storage;
+  var navigator: globalThis.Navigator;
+  var document: globalThis.Document;
+  var window: globalThis.Window;
   var alert: (message?: any) => void;
   var confirm: (message?: string) => boolean;
   var prompt: (message?: string, _default?: string) => string | null;
-  var fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+  var fetch: (input: globalThis.RequestInfo | URL, init?: globalThis.RequestInit) => Promise<Response>;
   var btoa: (data: string) => string;
   var atob: (data: string) => string;
   var Blob: typeof Blob;
