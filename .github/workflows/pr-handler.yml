@@ -145,7 +145,6 @@ jobs:
             ----------------------------------------
             - Set GH_TOKEN environment variable dengan benar untuk semua operasi gh
             - Jalankan: gh pr list --state open --limit 10 --json number,title,author,createdAt,labels
-            - Filter PR yang bukan dari bot dengan: | jq -r '.[] | select(.author.login != "github-actions[bot]")'
             - Urutkan berdasarkan waktu pembuatan: | sort -k3
             - Pilih PR pertama dari hasil sortir
             - Dapatkan detail lengkap: gh pr view <nomor> --json number,title,body,headRefName,baseRefName,mergeable,reviewDecision,commits,comments,statusCheckRollup
