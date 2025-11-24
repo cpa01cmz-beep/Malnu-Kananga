@@ -391,6 +391,96 @@ X-CSRF-Token: {csrf_token}
 ```
 
 **Error Response:**
+
+## 🔄 Webhooks
+
+### Webhook Events
+- `user.login`: User berhasil login
+- `user.logout`: User logout
+- `grade.submitted`: Nilai disubmit
+- `attendance.recorded`: Absensi dicatat
+
+### Webhook Configuration
+```http
+POST /api/webhooks/subscribe
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "url": "https://your-app.com/webhook",
+  "events": ["user.login", "grade.submitted"],
+  "secret": "webhook_secret"
+}
+```
+
+## 📊 Monitoring & Logging
+
+### Available Endpoints
+- `/request-login-link` - Request magic link authentication
+- `/verify-login` - Verify JWT token from magic link  
+- `/refresh-token` - Refresh authentication token
+- `/logout` - User logout
+- `/api/chat` - AI chat with RAG system
+- `/seed` - Seed vector database with school data
+- `/generate-signature` - Generate HMAC signature
+- `/verify-signature` - Verify HMAC signature
+
+### Health Check Endpoints
+- `/health` - Overall system health (planned, not yet implemented)
+- Direct endpoint testing recommended for current health verification
+
+### Current Implementation Status
+Based on worker.js analysis (November 23, 2025), the following endpoints are fully implemented:
+
+#### ✅ Fully Implemented Endpoints (10 endpoints)
+- **Authentication System**:
+  - ✅ `/request-login-link` - Magic link generation with rate limiting (5 attempts/15min, IP-based blocking)
+  - ✅ `/verify-login` - JWT token verification with HMAC-SHA256 signing, secure cookie handling
+  - ✅ `/generate-signature` - HMAC signature generation for data integrity
+  - ✅ `/verify-signature` - HMAC signature verification
+
+- **AI & RAG System**:
+  - ✅ `/api/chat` - RAG chat with vector similarity search (0.75 threshold, topK=3)
+  - ✅ `/seed` - Vector database seeding with batch processing (100 docs/batch, 50 documents total)
+  - ✅ `/api/student-support` - Enhanced student support AI with risk categorization (academic, technical, administrative, personal)
+  - ✅ `/api/support-monitoring` - Proactive support monitoring with risk assessment and automated recommendations
+
+- **System Monitoring**:
+  - ✅ `/health` - System health check with service status monitoring (IMPLEMENTED - November 24, 2025)
+
+#### 🔧 Implementation Details
+**Authentication System**:
+- Rate limiting: 5 requests per 15 minutes per IP address
+- Automatic 30-minute block after limit exceeded
+- JWT tokens with 15-minute expiry and jti tracking
+- Secure cookies with `__Host-` prefix (HTTPS only)
+- Email delivery via MailChannels API
+
+**AI & RAG System**:
+- Vector embeddings: @cf/baai/bge-base-en-v1.5 (768 dimensions)
+- AI model: @cf/google/gemma-7b-it-lora for student support
+- Similarity thresholds: 0.75 for general chat, 0.7 for support queries
+- Context retrieval with relevance scoring
+- Risk assessment algorithm with multiple factors (GPA, attendance, engagement)
+
+#### ❌ Documented But Not Implemented (15+ endpoints)
+- **Authentication Extensions**: `/refresh-token`, `/logout`
+- **Student Data APIs**: `/api/student/{student_id}`, `/api/student/{student_id}/grades`, `/api/student/{student_id}/schedule`, `/api/student/{student_id}/attendance`
+- **Teacher APIs**: `/api/teacher/{teacher_id}/classes`, `/api/teacher/{teacher_id}/grades`, `/api/teacher/{teacher_id}/attendance`
+- **Parent APIs**: `/api/parent/{parent_id}/children`, `/api/parent/{parent_id}/child/{child_id}/report`
+- **Content Management**: `/api/content/featured-programs`, `/api/content/news`, `/api/content/announcements`
+- **System APIs**: `/api/analytics/dashboard`, `/api/messaging/*`, `/api/webhooks/subscribe`
+
+#### ⚠️ Implementation Gap Analysis
+- **Documentation Coverage**: 25+ endpoints documented, 10 implemented (40% implementation rate)
+- **Core Functionality Missing**: Student data retrieval, content management, academic operations
+- **Frontend-Backend Mismatch**: Frontend services reference many non-existent endpoints
+- **Priority Recommendations**: Implement student data and content endpoints first
+- **Current Focus**: AI chat, authentication, and health monitoring systems are fully operational
+- **Recent Progress**: Health check endpoint successfully implemented (November 24, 2025)
+- **Documentation Status**: All documentation synchronized to v1.3.1 ✅
+
+### Logging Format
 ```json
 {
   "message": "Server configuration error."

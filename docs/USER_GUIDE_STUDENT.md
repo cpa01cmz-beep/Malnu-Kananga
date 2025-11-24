@@ -4,6 +4,12 @@
 
 Portal siswa MA Malnu Kananga adalah platform digital untuk mengakses informasi akademik, berkomunikasi dengan guru, dan mengelola aktivitas sekolah secara online.
 
+**📋 Versi Dokumen**: v1.3.1  
+**🔄 Terakhir Diperbarui**: November 24, 2025  
+**⚡ Status Portal**: Production Ready  
+**🌐 URL Production**: https://ma-malnukananga.sch.id  
+**🔧 Development**: http://localhost:9000
+
 ---
 
 **Student Guide Version: 1.3.1**  
