@@ -29,7 +29,7 @@ interface StudentDashboardProps {
 }
 
 const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'grades' | 'schedule' | 'attendance' | 'announcements' | 'support' | 'progress'>('overview');
+  const [activeTab, setActiveTab] = useState<string>('overview');
   const [currentToast, setCurrentToast] = useState<NotificationItem | null>(null);
 
   // Calculate statistics
@@ -72,24 +72,25 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
         gradeTrend: 'stable' as const,
         attendanceRate: attendanceStats.percentage,
         assignmentCompletion: 85, // Sample data
-        subjectPerformance: studentGrades.reduce((acc, grade) => {
-          acc[grade.subjectName] = parseFloat(grade.finalGrade || '0');
-          return acc;
-        }, {} as Record<string, number>)
-      },
-      engagementMetrics: {
-        loginFrequency: 5, // Sample data
-        resourceAccess: 12,
-        supportRequests: 0,
-        participationScore: 85,
-        featureUsage: {
-          overview: 10,
-          grades: 8,
-          schedule: 6,
-          attendance: 4,
-          announcements: 7
-        },
-        lastActiveDate: new Date().toISOString()
+         subjectPerformance: studentGrades.reduce((acc, grade) => {
+           acc[grade.subjectName] = parseFloat(grade.finalGrade || '0');
+           return acc;
+         }, {} as Record<string, number>)
+       },
+       engagementMetrics: {
+         loginFrequency: 5, // Sample data
+         resourceAccess: 12,
+         supportRequests: 0,
+         participationScore: 85,
+         featureUsage: {
+           overview: 10,
+           grades: 8,
+           schedule: 6,
+           attendance: 4,
+           announcements: 7
+         },
+         lastActiveDate: new Date().toISOString()
+       }
       }
     });
   }, [gpa, attendanceStats.percentage, studentGrades, currentStudent.id]);

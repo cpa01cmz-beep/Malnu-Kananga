@@ -7,7 +7,7 @@ interface SupportDashboardProps {
   studentId?: string;
 }
 
-const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'support_staff' }) => {
+const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'support_staff', studentId }) => {
   const [currentStatus, setCurrentStatus] = useState<any>(null);
   const [alerts, setAlerts] = useState<MonitoringAlert[]>([]);
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);

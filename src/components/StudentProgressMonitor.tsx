@@ -28,41 +28,40 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
           gpa: 0,
           gradeTrend: 'stable' as const,
           attendanceRate: 0,
-          assignmentCompletion: 0,
-          subjectPerformance: {}
+          assignmentCompletion: 0
         },
         engagementMetrics: {
           loginFrequency: 0,
           resourceAccess: 0,
           supportRequests: 0,
-          participationScore: 0,
-          featureUsage: {},
-          lastActiveDate: new Date().toISOString()
-        },
-        riskFactors: [
-          {
-            type: 'lowGrades',
-            severity: 'low' as const,
-            description: 'Grades below threshold'
-          },
-          {
-            type: 'poorAttendance',
-            severity: 'low' as const,
-            description: 'Attendance below 80%'
-          },
-          {
-            type: 'lowEngagement',
-            severity: 'low' as const,
-            description: 'Low portal engagement'
-          }
-        ],
-        recommendations: [
-          {
-            type: 'academic',
-            priority: 'medium' as const,
-            description: 'Consider tutoring support'
-          }
-        ],
+           participationScore: 0,
+           featureUsage: {},
+           lastActiveDate: new Date().toISOString()
+         },
+         riskFactors: [
+           {
+             type: 'lowGrades',
+             severity: 'low' as const,
+             description: 'Grades below threshold'
+           },
+           {
+             type: 'poorAttendance',
+             severity: 'low' as const,
+             description: 'Attendance below 80%'
+           },
+           {
+             type: 'lowEngagement',
+             severity: 'low' as const,
+             description: 'Low portal engagement'
+           }
+         ],
+         recommendations: [
+           {
+             type: 'academic',
+             priority: 'medium' as const,
+             description: 'Consider tutoring support'
+           }
+         ],
         lastUpdated: new Date().toISOString()
       };
       
@@ -187,28 +186,28 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Penyelesaian Tugas</p>
           </div>
           
-          <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600">
-              {Object.keys(progress.academicMetrics.subjectPerformance || {}).length}
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Mata Pelajaran</p>
-          </div>
-        </div>
+           <div className="text-center">
+             <div className="text-3xl font-bold text-blue-600">
+               {Object.keys(progress.academicMetrics.subjectPerformance || {}).length}
+             </div>
+             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Mata Pelajaran</p>
+           </div>
+         </div>
 
-        {/* Subject Performance */}
-        {progress.academicMetrics.subjectPerformance && Object.keys(progress.academicMetrics.subjectPerformance).length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Performa per Mata Pelajaran</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {Object.entries(progress.academicMetrics.subjectPerformance || {}).map(([subject, score]) => (
-                <div key={subject} className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{subject}</span>
-                  <span className={`text-sm font-bold ${getPerformanceColor(score as number)}`}>{score}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+         {/* Subject Performance */}
+         {progress.academicMetrics.subjectPerformance && Object.keys(progress.academicMetrics.subjectPerformance).length > 0 && (
+           <div className="mt-6">
+             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Performa per Mata Pelajaran</h3>
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+               {Object.entries(progress.academicMetrics.subjectPerformance || {}).map(([subject, score]) => (
+                 <div key={subject} className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{subject}</span>
+                   <span className={`text-sm font-bold ${getPerformanceColor(score as number)}`}>{score}</span>
+                 </div>
+               ))}
+             </div>
+           </div>
+         )}
       </div>
 
       {/* Engagement Metrics */}
@@ -245,90 +244,96 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
                 </span>
               </div>
               
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Terakhir Aktif</span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {progress.engagementMetrics.lastActiveDate ? new Date(progress.engagementMetrics.lastActiveDate).toLocaleDateString('id-ID') : 'N/A'}
-                </span>
               </div>
-            </div>
           </div>
           
           <div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Penggunaan Fitur</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Engagement Metrics</h3>
             
-            {progress.engagementMetrics.featureUsage && Object.keys(progress.engagementMetrics.featureUsage).length > 0 ? (
-              <div className="space-y-2">
-                {Object.entries(progress.engagementMetrics.featureUsage).map(([feature, count]) => (
-                  <div key={feature} className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">{feature}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div 
-                          className="bg-blue-600 h-2 rounded-full" 
-                          style={{ width: `${Math.min((count as number) * 10, 100)}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-sm font-medium text-gray-900 dark:text-white w-8">{count as number}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">Belum ada data penggunaan fitur</p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Risk Factors */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">⚠️ Faktor Risiko</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {progress.riskFactors?.map((risk, index) => (
-            <div key={index} className={`p-4 rounded-lg border-2 ${
-              risk.severity === 'high' 
-                ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20' 
-                : risk.severity === 'medium'
-                ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20'
-                : 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
-            }`}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-2xl">
-                  {risk.severity === 'high' ? '🔴' : risk.severity === 'medium' ? '🟡' : '✅'}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600 dark:text-gray-400">Resource Access</span>
+                <span className="font-medium text-gray-900 dark:text-white">
+                   {progress.engagementMetrics.lastActiveDate ? new Date(progress.engagementMetrics.lastActiveDate).toLocaleDateString('id-ID') : 'N/A'}
                 </span>
-                <span className="font-medium text-gray-900 dark:text-white capitalize">{risk.type}</span>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {risk.description}
-              </p>
             </div>
-          ))}
+          </div>
+           
+           <div>
+             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Penggunaan Fitur</h3>
+             
+             {progress.engagementMetrics.featureUsage && Object.keys(progress.engagementMetrics.featureUsage).length > 0 ? (
+               <div className="space-y-2">
+                 {Object.entries(progress.engagementMetrics.featureUsage).map(([feature, count]) => (
+                   <div key={feature} className="flex items-center justify-between">
+                     <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">{feature}</span>
+                     <div className="flex items-center gap-2">
+                       <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                         <div 
+                           className="bg-blue-600 h-2 rounded-full" 
+                           style={{ width: `${Math.min((count as number) * 10, 100)}%` }}
+                         ></div>
+                       </div>
+                       <span className="text-sm font-medium text-gray-900 dark:text-white w-8">{count as number}</span>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             ) : (
+               <p className="text-sm text-gray-500 dark:text-gray-400">Belum ada data penggunaan fitur</p>
+             )}
+           </div>
         </div>
       </div>
 
-      {/* Recommendations */}
-      {progress.recommendations && progress.recommendations.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">💡 Rekomendasi</h2>
-          
-          <div className="space-y-3">
-            {progress.recommendations.map((recommendation, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <span className="text-blue-600 mt-1">💡</span>
-                <div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">{recommendation.description}</p>
-                  {recommendation.action && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Aksi: {recommendation.action}</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+{/* Risk Level */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">⚠️ Tingkat Risiko</h2>
+        
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+           {progress.riskFactors?.map((risk, index) => (
+             <div key={index} className={`p-4 rounded-lg border-2 ${
+               risk.severity === 'high' 
+                 ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20' 
+                 : risk.severity === 'medium'
+                 ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20'
+                 : 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
+             }`}>
+               <div className="flex items-center gap-2 mb-2">
+                 <span className="text-2xl">
+                   {risk.severity === 'high' ? '🔴' : risk.severity === 'medium' ? '🟡' : '✅'}
+                 </span>
+                 <span className="font-medium text-gray-900 dark:text-white capitalize">{risk.type}</span>
+               </div>
+               <p className="text-sm text-gray-600 dark:text-gray-400">
+                 {risk.description}
+               </p>
+             </div>
+           ))}
+         </div>
+       </div>
 
+       {/* Recommendations */}
+       {progress.recommendations && progress.recommendations.length > 0 && (
+         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">💡 Rekomendasi</h2>
+           
+           <div className="space-y-3">
+             {progress.recommendations.map((recommendation, index) => (
+               <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                 <span className="text-blue-600 mt-1">💡</span>
+                 <div>
+                   <p className="text-sm text-gray-700 dark:text-gray-300">{recommendation.description}</p>
+                   {recommendation.action && (
+                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Aksi: {recommendation.action}</p>
+                   )}
+                 </div>
+               </div>
+             ))}
+           </div>
+         </div>
+       )}
       {/* Progress Chart Placeholder */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">📈 Trend Progress</h2>
