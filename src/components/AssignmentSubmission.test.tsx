@@ -27,11 +27,7 @@ describe('AssignmentSubmission Component', () => {
   };
 
   const mockOnClose = jest.fn();
-<<<<<<< HEAD
   const mockOnSubmit = jest.fn().mockResolvedValue(undefined) as jest.MockedFunction<(data: { file?: File; notes?: string; submittedBy: string }) => Promise<void>>;
-=======
-  const mockOnSubmit = jest.fn().mockResolvedValue(undefined) as jest.MockedFunction<(data: { file?: File; notes?: string; submittedBy: string }) => Promise<void>>;
->>>>>>> 09633d6 (Fix TypeScript compilation errors in test files)
 
   beforeEach(() => {
     jest.clearAllMocks();
