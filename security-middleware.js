@@ -103,6 +103,7 @@ class SecurityMiddleware {
     if (typeof data !== 'string') return data;
     
     // Remove potentially dangerous characters
+    // Remove potentially dangerous characters
     let sanitized = data;
     
     // Remove control characters using string methods instead of regex to avoid lint error
