@@ -102,9 +102,8 @@ class SecurityMiddleware {
   sanitizeInput(data, type = 'string') {
     if (typeof data !== 'string') return data;
     
-    // Remove potentially dangerous characters
-    // Remove potentially dangerous characters
-    let sanitized = data;
+     // Remove potentially dangerous characters
+     let sanitized = data;
     
     // Remove control characters using string methods instead of regex to avoid lint error
     const controlChars = ['\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07', 
