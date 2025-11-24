@@ -226,5 +226,5 @@ Buka browser dan kunjungi `http://localhost:9000`
 ---
 
 *Guide Version: 1.2.0*  
-*Last Updated: November 23, 2025*  
+*Last Updated: November 23, 2024*  
 *Maintained by: MA Malnu Kananga Documentation Team*
