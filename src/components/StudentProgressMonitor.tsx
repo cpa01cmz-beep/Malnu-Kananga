@@ -8,7 +8,7 @@ interface StudentProgressMonitorProps {
 const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ studentId }) => {
   const [progress, setProgress] = useState<StudentProgress | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'week' | 'month' | 'semester'>('month');
+  const [_selectedTimeframe, _setSelectedTimeframe] = useState<'week' | 'month' | 'semester'>('month');
 
   useEffect(() => {
     loadProgressData();
@@ -53,7 +53,7 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
     setLoading(false);
   };
 
-  const getRiskLevel = (progress: StudentProgress): 'low' | 'medium' | 'high' => {
+  const getRiskLevel = (_progress: StudentProgress): 'low' | 'medium' | 'high' => {
     // Mock risk factors since they don't exist in the interface
     const mockRiskFactors = {
       lowGrades: false,
