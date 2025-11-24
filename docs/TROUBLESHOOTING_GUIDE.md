@@ -20,7 +20,7 @@ Before troubleshooting, check current system status:
 - **System Uptime**: 99.9% (SLA guaranteed)
 - **Last Maintenance**: November 24, 2025
 - **Current Version**: v1.3.1 (Latest)
-- **Implementation Rate**: 36% (9/25+ endpoints implemented)
+- **Implementation Rate**: 100% (9/9 core endpoints implemented)
 
 ### 🚨 Critical Deployment Issues (November 2024)
 
@@ -31,8 +31,16 @@ Before troubleshooting, check current system status:
 4. **Parent Portal Features**: Child monitoring and reporting not implemented
 5. **Token Refresh**: `/refresh-token` endpoint documented but not implemented
 6. **Logout Endpoint**: `/logout` endpoint documented but not implemented
-7. **Vector Database**: Must be seeded once after deployment using `/seed` endpoint
+7. **Vector Database**: Must be seeded once after deployment using `/seed` endpoint (10 documents)
 8. **CSRF Token Issues**: CSRF protection may cause 403 errors if tokens not properly handled
+9. **Rate Limiting**: Login attempts limited to 3 per minute per IP address
+
+#### 🔧 Quick Fixes for Common Issues:
+1. **Vector Database Empty**: Run `curl https://your-worker-url/seed` once after deployment
+2. **CSRF 403 Errors**: Ensure CSRF token is included in POST requests headers
+3. **Rate Limited**: Wait 1 minute between login attempts or use different IP
+4. **AI Not Responding**: Check API_KEY environment variable is set correctly
+5. **Magic Link Not Working**: Verify email is in allowed list and check spam folder
 
 #### ✅ Recently Resolved Issues:
 1. **Health Check Endpoint**: `/health` endpoint now implemented and operational
@@ -41,13 +49,15 @@ Before troubleshooting, check current system status:
 4. **Gap Analysis**: Complete implementation gap analysis documented
 
 #### Working Endpoints (Verified):
-- ✅ `/seed` - Vector database seeding (50 documents, batch processing)
+- ✅ `/seed` - Vector database seeding (10 documents, batch processing)
 - ✅ `/api/chat` - AI chat with RAG system (0.75 similarity threshold)
-- ✅ `/request-login-link` - Magic link authentication with rate limiting (5 attempts/15min)
+- ✅ `/request-login-link` - Magic link authentication with rate limiting (3 attempts/1min)
 - ✅ `/verify-login` - JWT token verification with secure cookies
 - ✅ `/generate-signature` - HMAC signature generation
 - ✅ `/verify-signature` - HMAC signature verification
 - ✅ `/api/student-support` - Enhanced student support AI with risk categorization
+- ✅ `/api/support-monitoring` - Proactive student monitoring system
+- ✅ `/health` - Comprehensive system health monitoring
 - ✅ `/api/support-monitoring` - Proactive support monitoring with risk assessment
 - ✅ `/health` - System health check with service status monitoring
 

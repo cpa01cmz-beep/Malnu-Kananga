@@ -446,7 +446,8 @@ wrangler d1 create malnu-kananga-db
 # Create Vectorize index
 wrangler vectorize create malnu-kananga-index \
   --dimensions=768 \
-  --metric=cosine
+  --metric=cosine \
+  --description="MA Malnu Kananga AI Knowledge Base"
 
 # Note down database_id dan index_name dari output
 ```
@@ -471,10 +472,13 @@ database_id = "your_database_id_here"
 binding = "VECTORIZE_INDEX"
 index_name = "malnu-kananga-index"
 
+# AI binding
+ai = { binding = "AI" }
+
 # Environment Variables
 [vars]
-API_KEY = "your_gemini_api_key"
 NODE_ENV = "production"
+# API_KEY and SECRET_KEY should be set as secrets
 ```
 
 #### Step 4: Deploy Worker
@@ -516,7 +520,7 @@ wrangler pages deploy dist --compatibility-date=2024-01-01
 curl https://malnu-kananga.your-subdomain.workers.dev/seed
 
 # Expected response:
-# Successfully seeded 50 documents.
+# Successfully seeded 10 documents.
 
 # Verify seeding worked
 curl -X POST https://malnu-kananga.your-subdomain.workers.dev/api/chat \
@@ -527,7 +531,7 @@ curl -X POST https://malnu-kananga.your-subdomain.workers.dev/api/chat \
 **⚠️ Important Notes:**
 - Vector database seeding MUST be done once after worker deployment
 - Without seeding, AI chat will have no context and cannot answer questions
-- Current document count: 50 school information entries
+- Current document count: 10 school information entries
 - Documents include: PPDB info, school programs, location, contact details
 
 ---

@@ -198,13 +198,13 @@ compatibility_flags = ["nodejs_compat"]
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
-database_name = "malnu-kananga-auth"
+database_name = "malnu-kananga-db"
 database_id = "your-database-id-here"
 
 # Vectorize binding
 [[vectorize]]
-binding = "VECTORIZE"
-index_name = "malnu-kananga-docs"
+binding = "VECTORIZE_INDEX"
+index_name = "malnu-kananga-index"
 
 # AI binding
 ai = { binding = "AI" }
