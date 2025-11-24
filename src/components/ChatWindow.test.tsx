@@ -29,13 +29,13 @@ jest.mock('./icons/CloseIcon', () => ({
 
 // Mock ResizeObserver and IntersectionObserver
 beforeAll(() => {
-  (global as any).ResizeObserver = class ResizeObserver {
+  (global as unknown).ResizeObserver = class ResizeObserver {
     observe() {}
     unobserve() {}
     disconnect() {}
   };
 
-  (global as any).IntersectionObserver = class IntersectionObserver {
+  (global as unknown).IntersectionObserver = class IntersectionObserver {
     constructor() {}
     observe() {}
     unobserve() {}

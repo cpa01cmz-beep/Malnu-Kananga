@@ -8,7 +8,6 @@ import {
   getUnreadMessages,
   getPendingAssignments,
   getUpcomingAssignments,
-  type Assignment,
   type Message,
   type AcademicReport
 } from '../data/parentData';
