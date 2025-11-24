@@ -2,7 +2,7 @@
 // Dashboard monitoring real-time untuk admin support
 
 import React, { useState, useEffect } from 'react';
-import { studentSupportService } from '../services/studentSupportService';
+import { StudentSupportService } from '../services/studentSupportService';
 import RealTimeMonitoringService from '../services/realTimeMonitoringService';
 import AutomatedInterventionEngine from '../services/automatedInterventionEngine';
 
@@ -35,7 +35,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
       setInterventionStats(interventionEngine.getInterventionStats());
 
       // Get at-risk students
-      const allProgress = studentSupportService.getAllStudentProgress();
+      const allProgress = StudentSupportService.getAllStudentProgress();
       const atRisk = Object.values(allProgress).filter(student => 
         student.riskLevel === 'high' || student.riskLevel === 'medium'
       );
