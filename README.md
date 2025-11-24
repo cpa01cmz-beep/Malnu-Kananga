@@ -526,16 +526,14 @@ Kami menyambut kontribusi! Berikut cara berkontribusi:
 
 ### Resources
 
-- 📚 **[Documentation Index](docs/README.md)**: Indeks lengkap semua dokumentasi
-- 📖 **[Student User Guide](docs/USER_GUIDE_STUDENT.md)**: Panduan pengguna untuk siswa
-- 👩‍🏫 **[Teacher User Guide](docs/USER_GUIDE_TEACHER.md)**: Panduan untuk guru dan admin
-- 👨‍👩‍👧‍👦 **[Parent User Guide](docs/USER_GUIDE_PARENT.md)**: Panduan untuk orang tua siswa
-- 🔧 **[Contributing Guide](docs/DEVELOPER_GUIDE.md)**: Panduan teknis kontribusi
-- 📋 **[Production Checklist](docs/DEPLOYMENT_GUIDE.md#deployment-checklist)**: Checklist deployment
-- 🚀 **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)**: Panduan deployment lengkap
-- 📊 **[Implementation Gap Analysis](docs/IMPLEMENTATION_GAP_ANALYSIS.md)**: Analisis gap implementasi API
-- 🔧 **[API Documentation](docs/API_DOCUMENTATION.md)**: Dokumentasi API lengkap
-- 🔍 **[Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md)**: Panduan troubleshooting
+- 📚 **[Documentation Index](docs/DOCUMENTATION_INDEX.md)**: Complete navigation to all documentation
+- 🚀 **[Quick Start Guide](docs/QUICK_START_GUIDE.md)**: 5-minute setup guide
+- 📖 **[User Guides](docs/DOCUMENTATION_INDEX.md#user-guides)**: Student, Teacher, and Parent guides
+- 🔧 **[Developer Documentation](docs/DOCUMENTATION_INDEX.md#technical-documentation)**: Development and API docs
+- 🚀 **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)**: Production deployment instructions
+- 🔒 **[Security Documentation](docs/SECURITY_GUIDE.md)**: Security implementation guide
+- 🔍 **[Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md)**: Common issues and solutions
+- 📊 **[Documentation Audit](docs/DOCUMENTATION_AUDIT_REPORT.md)**: Latest documentation quality report
 
 ---
 
