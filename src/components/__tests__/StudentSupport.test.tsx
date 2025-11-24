@@ -11,6 +11,9 @@ Object.defineProperty(window, 'alert', {
   value: mockAlert
 });
 
+// Use fake timers for handling async operations
+jest.useFakeTimers();
+
 // Mock the student support service
 jest.mock('../../services/studentSupportService', () => ({
   StudentSupportService: {
@@ -142,35 +145,38 @@ describe('StudentSupport Component', () => {
   });
 
   it('creates new support request when form is submitted', async () => {
-    const { studentSupportService } = require('../../services/studentSupportService');
-    
-    render(<StudentSupport studentId="STU001" />);
-    
-    // Open new request form
-    fireEvent.click(screen.getByText('📝 Buat Permintaan Baru'));
-    
-    // Fill form
-    fireEvent.change(screen.getByPlaceholderText('Judul permintaan'), {
-      target: { value: 'Bantuan Fisika' }
-    });
-    fireEvent.change(screen.getByPlaceholderText('Jelaskan masalah atau bantuan yang Anda butuhkan'), {
-      target: { value: 'Saya kesulitan dengan mekanika' }
-    });
-    
-    // Submit form
-    fireEvent.click(screen.getByText('Kirim Permintaan'));
-    
-    await waitFor(() => {
-      expect(StudentSupportService.createSupportRequest).toHaveBeenCalledWith(
-        'STU001',
-        'academic',
-        'umum',
-        'Bantuan Fisika',
-        'Saya kesulitan dengan mekanika',
-        'medium'
-      );
-    });
-  });
+     const { StudentSupportService } = require('../../services/studentSupportService');
+     
+     render(<StudentSupport studentId="STU001" />);
+     
+     // Open new request form
+     fireEvent.click(screen.getByText('📝 Buat Permintaan Baru'));
+     
+     // Fill form
+     fireEvent.change(screen.getByPlaceholderText('Judul permintaan'), {
+       target: { value: 'Bantuan Fisika' }
+     });
+     fireEvent.change(screen.getByPlaceholderText('Jelaskan masalah atau bantuan yang Anda butuhkan'), {
+       target: { value: 'Saya kesulitan dengan mekanika' }
+     });
+     
+     // Submit form
+     fireEvent.click(screen.getByText('Kirim Permintaan'));
+     
+     // Advance timers to process async operations
+     jest.runAllTimers();
+     
+     await waitFor(() => {
+       expect(StudentSupportService.createSupportRequest).toHaveBeenCalledWith(
+         'STU001',
+         'academic',
+         'umum',
+         'Bantuan Fisika',
+         'Saya kesulitan dengan mekanika',
+         'medium'
+       );
+     });
+   });
 
   it('filters resources based on search term', () => {
     render(<StudentSupport studentId="STU001" />);
@@ -187,9 +193,9 @@ describe('StudentSupport Component', () => {
   });
 
   it('shows empty state when no requests exist', () => {
-    // Mock empty requests
-    const { studentSupportService } = require('../../services/studentSupportService');
-    StudentSupportService.getSupportRequests.mockReturnValue([]);
+     // Mock empty requests
+     const { StudentSupportService } = require('../../services/studentSupportService');
+     StudentSupportService.getSupportRequests.mockReturnValue([]);
     
     render(<StudentSupport studentId="STU001" />);
     
