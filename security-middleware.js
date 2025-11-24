@@ -102,11 +102,19 @@ class SecurityMiddleware {
   sanitizeInput(data, type = 'string') {
     if (typeof data !== 'string') return data;
     
-     // Remove potentially dangerous characters
-// Remove control characters using safer approach
-      let sanitized = data.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // eslint-disable-line no-control-regex
-        .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
-        .trim();
+<<<<<<< HEAD
+// Remove potentially dangerous characters
+    let sanitized = data
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters
+      .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
+      .trim();
+=======
+// Remove potentially dangerous characters
+    let sanitized = data
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // eslint-disable-line no-control-regex
+      .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
+      .trim();
+>>>>>>> 2d5a054 ([OPERATOR] MAINTENANCE - Fix Critical Build and Lint Issues)
     
     // Additional sanitization for specific types
     if (type === 'message') {

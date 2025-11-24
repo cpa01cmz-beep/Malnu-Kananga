@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Assignment, currentParent } from '../data/parentData';
 
-interface FileList {
+interface _FileList {
   length: number;
   item(_index: number): File | null;
   [_index: number]: File;
