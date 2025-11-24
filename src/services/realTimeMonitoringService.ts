@@ -44,6 +44,7 @@ class RealTimeMonitoringService {
   private monitoringInterval: NodeJS.Timeout | null = null;
   private studentSessions: Map<string, StudentMetrics> = new Map();
   private interventionTriggers: Map<string, InterventionTrigger> = new Map();
+  private studentSupportService: StudentSupportService = new StudentSupportService();
 
   static getInstance(): RealTimeMonitoringService {
     if (!this.instance) {
@@ -172,7 +173,7 @@ class RealTimeMonitoringService {
 
   // Check if student has critical risk
   private isCriticalRisk(session: StudentMetrics): boolean {
-    const progress = studentSupportService.getStudentProgress(session.studentId);
+    const progress = this.studentSupportService.getStudentProgress(session.studentId);
     if (!progress) return false;
 
     return (
@@ -193,7 +194,7 @@ class RealTimeMonitoringService {
 
   // Check for engagement drop
   private hasEngagementDrop(session: StudentMetrics): boolean {
-    const progress = studentSupportService.getStudentProgress(session.studentId);
+    const progress = this.studentSupportService.getStudentProgress(session.studentId);
     if (!progress) return false;
 
     return (
