@@ -16,7 +16,7 @@ interface SubmissionData {
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (_submissionData: {
+  onSubmit: (submissionData: {
     file?: File;
     notes?: string;
     submittedBy: string;
@@ -32,7 +32,7 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileSelect = (file: File) => {
     // Validate file type
@@ -88,12 +88,13 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
 
     setIsSubmitting(true);
 
+    const submissionData: SubmissionData = {
+      file: selectedFile || undefined,
+      notes: notes.trim() || undefined,
+      submittedBy: currentParent.id
+    };
+
     try {
-      const submissionData: SubmissionData = {
-        file: selectedFile || undefined,
-        notes: notes.trim() || undefined,
-        submittedBy: currentParent.id
-      };
       await onSubmit(submissionData);
 
       // Close modal after successful submission
