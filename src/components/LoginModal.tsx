@@ -66,13 +66,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
         setFormState('idle');
 
         // Enhanced error messages for development
-        const errorMessage = err instanceof Error ? err.message : 'Terjadi kesalahan. Silakan coba lagi.';
+         const errorMessage = err instanceof Error ? err.message : 'Terjadi kesalahan. Silakan coba lagi.';
         if (NODE_ENV === 'development' && errorMessage.includes('fetch')) {
           setError('Tidak dapat terhubung ke server. Pastikan Cloudflare Worker sudah di-deploy.');
         } else if (NODE_ENV === 'development' && errorMessage.includes('VITE_WORKER_URL')) {
           setError(errorMessage);
         } else {
-          setError(errorMessage);
+           setError(errorMessage);
         }
       }
   }
