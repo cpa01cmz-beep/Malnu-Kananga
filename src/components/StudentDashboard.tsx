@@ -63,15 +63,15 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     };
   }, []);
 
-  // Initialize student support system
-  useEffect(() => {
-    // Initialize student progress tracking
-    StudentSupportService.updateStudentProgress(currentStudent.id, {
-      academicMetrics: {
-        gpa: gpa,
-        gradeTrend: 'stable' as const,
-        attendanceRate: attendanceStats.percentage,
-        assignmentCompletion: 85, // Sample data
+// Initialize student support system
+   useEffect(() => {
+     // Initialize student progress tracking
+     StudentSupportService.updateStudentProgress(currentStudent.id, {
+       academicMetrics: {
+         gpa: gpa,
+         gradeTrend: 'stable' as const,
+         attendanceRate: attendanceStats.percentage,
+         assignmentCompletion: 85, // Sample data
          subjectPerformance: studentGrades.reduce((acc, grade) => {
            acc[grade.subjectName] = parseFloat(grade.finalGrade || '0');
            return acc;
@@ -91,9 +91,8 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
          },
          lastActiveDate: new Date().toISOString()
        }
-      }
-    });
-  }, [gpa, attendanceStats.percentage, studentGrades, currentStudent.id]);
+      });
+    }, [gpa, attendanceStats.percentage, studentGrades, currentStudent.id]);
 
   // Add some sample notifications for demonstration
   useEffect(() => {
@@ -163,7 +162,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
       <NavigationTabs
         activeTab={activeTab}
         tabs={tabs}
-        onTabChange={(tabId: string) => setActiveTab(tabId as any)}
+         onTabChange={(tabId: string) => setActiveTab(tabId as any)}
       />
 
       {/* Main Content */}

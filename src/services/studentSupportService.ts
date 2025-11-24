@@ -65,17 +65,17 @@ export interface StudentProgress {
   };
   riskLevel: 'low' | 'medium' | 'high';
   lastUpdated: string;
-  riskFactors?: Array<{
-    type: string;
-    severity: 'low' | 'medium' | 'high';
-    description: string;
-  }>;
-  recommendations?: Array<{
-    type: string;
-    priority: 'low' | 'medium' | 'high';
-    description: string;
-    action?: string;
-  }>;
+   riskFactors?: Array<{
+     type: string;
+     severity: 'low' | 'medium' | 'high';
+     description: string;
+   }>;
+   recommendations?: Array<{
+     type: string;
+     priority: 'low' | 'medium' | 'high';
+     description: string;
+     action?: string;
+   }>;
 }
 
 export interface SupportAutomation {

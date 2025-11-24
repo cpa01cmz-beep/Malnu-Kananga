@@ -393,7 +393,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Low Risk</span>
                       <span className="text-sm font-medium text-green-600">
-                        {Object.values(studentSupportService.getAllStudentProgress()).filter(s => s.riskLevel === 'low').length}
+                        {Object.values(StudentSupportService.getAllStudentProgress()).filter(s => s.riskLevel === 'low').length}
                       </span>
                     </div>
                   </div>
