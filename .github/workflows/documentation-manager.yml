@@ -3,7 +3,6 @@ name: Documentation Manager
 on:
   workflow_dispatch:
   push:
-    branches: [main, master, develop]
     paths: ['**/*.md', '**.rst', '**.txt', 'docs/**', 'README*']
 
 permissions:
