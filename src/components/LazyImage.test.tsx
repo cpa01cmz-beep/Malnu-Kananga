@@ -29,7 +29,7 @@ Object.defineProperty(mockCanvas, 'toDataURL', {
 const originalCreateElement = document.createElement;
 document.createElement = jest.fn((tagName) => {
   if (tagName === 'canvas') {
-    return mockCanvas as any;
+    return mockCanvas as unknown;
   }
   return originalCreateElement.call(document, tagName);
 });
