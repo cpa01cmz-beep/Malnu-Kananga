@@ -42,6 +42,12 @@ export default defineConfig(({ command, mode }) => ({
           if (id.includes('Section')) {
             return 'sections';
           }
+          if (id.includes('ChatWindow')) {
+            return 'chat';
+          }
+          if (id.includes('memory')) {
+            return 'memory';
+          }
           if (id.includes('components')) {
             return 'components';
           }
@@ -91,8 +97,8 @@ export default defineConfig(({ command, mode }) => ({
       }
     },
 
-    // Chunk size warnings
-    chunkSizeWarningLimit: 300
+    // Chunk size warnings - increased threshold for education system
+    chunkSizeWarningLimit: 250
   },
 
   // Development server optimizations
