@@ -153,6 +153,86 @@ CREATE TABLE attendance (
 );
 ```
 
+### Supabase Integration Architecture
+
+#### Hybrid Database Approach
+MA Malnu Kananga menggunakan **dual database architecture** untuk optimalisasi performa dan fitur:
+
+```mermaid
+graph TB
+    A[Frontend Application] --> B[Service Layer]
+    B --> C[Cloudflare D1]
+    B --> D[Supabase PostgreSQL]
+    
+    C --> E[Static Data & Cache]
+    D --> F[Real-time Data]
+    D --> G[User Management]
+    D --> H[File Storage]
+    
+    subgraph "Cloudflare Ecosystem"
+        C
+        I[Vectorize]
+        J[Workers]
+    end
+    
+    subgraph "Supabase Ecosystem"
+        D
+        K[Realtime Engine]
+        L[Auth Service]
+        M[Storage Service]
+    end
+```
+
+#### Supabase PostgreSQL
+- **Type**: Managed PostgreSQL database
+- **Version**: PostgreSQL 15+
+- **Features**: Real-time subscriptions, Row Level Security (RLS)
+- **Integration**: REST API, GraphQL API, Realtime WebSocket
+- **Use Cases**: User management, real-time collaboration, file storage
+
+#### Supabase Service Integration
+```typescript
+// Service files in src/services/
+├── supabase/
+│   ├── supabaseClient.ts     # Supabase client configuration
+│   ├── supabaseApiService.ts # API service layer
+│   ├── supabaseAuthService.ts # Authentication service
+│   └── supabaseStorage.ts    # File storage service
+```
+
+#### Data Distribution Strategy
+| Data Type | Storage | Reason |
+|-----------|---------|--------|
+| **User Authentication** | Supabase | Advanced auth features, social login |
+| **Real-time Chat** | Supabase | WebSocket support, real-time sync |
+| **File Uploads** | Supabase Storage | CDN integration, image optimization |
+| **Academic Records** | Cloudflare D1 | Fast read operations, edge caching |
+| **Static Content** | Cloudflare D1 | Global distribution, low latency |
+| **AI Vector Data** | Cloudflare Vectorize | Specialized vector operations |
+
+#### Service Communication
+```typescript
+// Example: Hybrid service usage
+class HybridDataService {
+  // Use D1 for fast academic data
+  async getStudentGrades(studentId: string) {
+    return await this.d1Service.query(
+      'SELECT * FROM grades WHERE student_id = ?', [studentId]
+    );
+  }
+  
+  // Use Supabase for real-time features
+  async subscribeToChatUpdates(chatId: string) {
+    return await this.supabaseClient
+      .channel(`chat:${chatId}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public' }, payload => {
+        this.handleNewMessage(payload.new);
+      })
+      .subscribe();
+  }
+}
+```
+
 ### Vector Database Architecture
 
 #### Cloudflare Vectorize
