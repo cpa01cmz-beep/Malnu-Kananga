@@ -29,13 +29,25 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'grades' | 'schedule' | 'attendance' | 'announcements'>('overview');
   const [currentToast, setCurrentToast] = useState<NotificationItem | null>(null);
 
-// API hooks untuk real data
-   const {
-     data: studentProfile,
-     isLoading: profileLoading,
-     error: _profileError,
-     isSuccess: _profileSuccess
-   } = useAcademicStats();
+  // API hooks untuk real data
+    const {
+      data: studentProfile,
+      isLoading: profileLoading,
+      error: _profileError,
+      isSuccess: _profileSuccess
+    } = useAcademicStats();
+
+    // Use mock student data sebagai fallback jika API gagal
+    const fallbackStudent = {
+      id: 'STU001',
+      name: 'Ahmad Fauzi Rahman',
+      email: 'siswa@ma-malnukananga.sch.id',
+      class: 'XII IPA 1',
+      academicYear: '2024/2025',
+      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
+    };
+
+    const currentStudent = studentProfile || fallbackStudent;
 
   const {
     data: grades,
@@ -61,17 +73,7 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     error: _statsError
   } = useAcademicStats();
 
-  // Use mock data sebagai fallback jika API belum tersedia
-  const fallbackStudent = {
-    id: 'STU001',
-    name: 'Ahmad Fauzi Rahman',
-    email: 'siswa@ma-malnukananga.sch.id',
-    class: 'XII IPA 1',
-    academicYear: '2024/2025',
-    profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
-  };
-
-  const currentStudent = studentProfile || fallbackStudent;
+  
 
   // Calculate statistics dari API data atau fallback ke mock data
   const studentGrades = grades || [];
@@ -143,8 +145,8 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     }
   };
 
-  // Loading state untuk critical data
-  if (profileLoading) {
+  // Loading state untuk critical data - using mock data so no loading needed
+  if (false) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="pt-24 pb-12">

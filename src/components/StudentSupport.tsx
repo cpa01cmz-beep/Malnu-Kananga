@@ -53,8 +53,10 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
      setSupportRequests(requests.filter(req => req.studentId === studentId));
 
     // Load available resources
-    const allResources = StudentSupportService.getRelevantResources('');
-    setResources(allResources);
+    const allResourcesPromise = StudentSupportService.getRelevantResources('');
+    allResourcesPromise.then(allResources => {
+      setResources(allResources);
+    });
 
     // Load student progress
     const progress = StudentSupportService.getStudentProgress(studentId);

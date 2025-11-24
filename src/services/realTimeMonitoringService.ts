@@ -3,6 +3,8 @@
 
 import { StudentSupportService } from './studentSupportService';
 
+const studentSupportService = StudentSupportService.getInstance();
+
 export interface StudentMetrics {
   studentId: string;
   timestamp: string;
