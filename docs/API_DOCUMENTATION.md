@@ -6,8 +6,8 @@ MA Malnu Kananga API provides core endpoints for authentication, AI chat functio
 
 ---
 
-**API Documentation Version: 1.4.0**  
-**Last Updated: November 24, 2025**  
+**API Documentation Version: 1.4.1**  
+**Last Updated: November 24, 2024**  
 **Implementation Status: Production Ready (Core Features)**
 
 ## ⚠️ Implementation Status

@@ -6,7 +6,7 @@ Portal orang tua MA Malnu Kananga adalah platform digital untuk memantau perkemb
 
 ---
 
-**Parent Guide Version: 1.3.1**  
+**Parent Guide Version: 1.3.2**  
 **Last Updated: November 24, 2024**  
 **Guide Status: Production Ready**
 

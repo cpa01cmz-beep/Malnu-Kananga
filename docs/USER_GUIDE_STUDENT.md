@@ -6,7 +6,7 @@ Portal siswa MA Malnu Kananga adalah platform digital untuk mengakses informasi 
 
 ---
 
-**Student Guide Version: 1.3.1**  
+**Student Guide Version: 1.3.2**  
 **Last Updated: November 24, 2024**  
 **Guide Status: Production Ready**
 
