@@ -30,7 +30,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
   const loadSupportData = () => {
     // Load student's support requests
     const requests = StudentSupportService.getSupportRequests();
-    setSupportRequests(requests.filter((req: any) => req.studentId === studentId));
+     setSupportRequests(requests.filter(req => req.studentId === studentId));
 
     // Load available resources
     const allResources = StudentSupportService.getRelevantResources('');
