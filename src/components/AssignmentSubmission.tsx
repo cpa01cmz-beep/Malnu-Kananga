@@ -1,11 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Assignment, currentParent } from '../data/parentData';
 
-interface HTMLInputElement {
-  files: FileList | null;
-}
-
-interface FileList {
+interface _FileList {
   length: number;
   item(_index: number): File | null;
   [_index: number]: File;
@@ -36,7 +32,7 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (file: File) => {
     // Validate file type
@@ -252,7 +248,11 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
                   <div className="mt-4">
                     <button
                       type="button"
-                      onClick={() => fileInputRef.current?.click()}
+                      onClick={() => {
+                        if (fileInputRef.current) {
+                          fileInputRef.current.click();
+                        }
+                      }}
                       className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium"
                     >
                       Pilih File

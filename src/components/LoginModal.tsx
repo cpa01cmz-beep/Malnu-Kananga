@@ -83,7 +83,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       id: 'mock-user-id',
       email: email,
       name: 'Mock User',
-      role: 'student'
+      role: 'student',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      is_active: true
     };
     onLoginSuccess(mockUser);
   };

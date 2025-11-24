@@ -2,7 +2,8 @@
 // Komponen untuk menampilkan dan mengelola sistem dukungan siswa
 
 import React, { useState, useEffect } from 'react';
-import { studentSupportService, SupportRequest, SupportResource, StudentProgress } from '../services/studentSupportService';
+import { StudentSupportService, SupportRequest, SupportResource, StudentProgress } from '../services/studentSupportService';
+import RealTimeMonitoringService from '../services/realTimeMonitoringService';
 
 interface StudentSupportProps {
   studentId: string;
@@ -25,19 +26,38 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
 
   useEffect(() => {
     loadSupportData();
+    
+    // Track student session for real-time monitoring
+    const monitoringService = RealTimeMonitoringService.getInstance();
+    monitoringService.trackStudentSession(studentId, {
+      studentId,
+      timestamp: new Date().toISOString(),
+      loginFrequency: 1,
+      pageViews: 1,
+      timeOnPortal: 0,
+      resourceAccess: 0,
+      assignmentProgress: 0,
+      lastLogin: new Date().toISOString(),
+      currentSession: {
+        startTime: new Date().toISOString(),
+        pagesVisited: ['student-support'],
+        timeSpent: 0,
+        interactions: 0
+      }
+    });
   }, [studentId]);
 
   const loadSupportData = () => {
     // Load student's support requests
-    const requests = studentSupportService.getSupportRequests();
+    const requests = StudentSupportService.getSupportRequests();
     setSupportRequests(requests.filter(req => req.studentId === studentId));
 
     // Load available resources
-    const allResources = studentSupportService.getRelevantResources('');
+    const allResources = StudentSupportService.getRelevantResources('');
     setResources(allResources);
 
     // Load student progress
-    const progress = studentSupportService.getStudentProgress(studentId);
+    const progress = StudentSupportService.getStudentProgress(studentId);
     setStudentProgress(progress || null);
   };
 
@@ -47,7 +67,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
       return;
     }
 
-    const request = studentSupportService.createSupportRequest(
+    const request = StudentSupportService.createSupportRequest(
       studentId,
       newRequest.type,
       newRequest.category || 'umum',
@@ -57,6 +77,11 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
     );
 
     setSupportRequests([...supportRequests, request]);
+    
+    // Track support request for monitoring
+    const monitoringService = RealTimeMonitoringService.getInstance();
+    monitoringService.trackResourceAccess(studentId, `support-request-${request.id}`);
+    
     setNewRequest({
       type: 'academic',
       category: '',
