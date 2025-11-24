@@ -284,6 +284,16 @@ function generateRandomString(length) {
 
 // Generate HMAC signature using crypto.subtle
 async function generateHMACSignature(data, secret) {
+  // SECURITY: Validate secret key before use
+  if (!secret || secret === 'default-secret-key-for-worker') {
+    throw new Error('Invalid secret key: Default key not allowed in production');
+  }
+  
+  // Validate input data
+  if (!data || typeof data !== 'string') {
+    throw new Error('Invalid data for HMAC signature generation');
+  }
+  
   // Convert data and secret to ArrayBuffers for Web Crypto API
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
@@ -317,19 +327,32 @@ async function verifyHMACSignature(data, signature, secret) {
 
 async function verifyAndDecodeToken(token, env) {
   try {
+    // SECURITY: Validate token format
+    if (!token || typeof token !== 'string') {
+      return null;
+    }
+    
     const parts = token.split('.');
     if (parts.length !== 3) return null;
 
     const [encodedHeader, encodedPayload, signature] = parts;
     
-    // Verify signature using HMAC-SHA256 with secure secret
+    // SECURITY: Verify secret key is secure
     if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
-      throw new Error('Secure SECRET_KEY environment variable required for production');
+      console.error('SECURITY: Attempted token verification with default secret key');
+      return null;
     }
+    
+    // SECURITY: Validate signature format
+    if (!signature || !/^[a-f0-9]+$/i.test(signature)) {
+      return null;
+    }
+    
     const secret = env.SECRET_KEY;
     const isValid = await verifyHMACSignature(`${encodedHeader}.${encodedPayload}`, signature, secret);
     
     if (!isValid) {
+      console.warn('SECURITY: Invalid token signature detected');
       return null; // Invalid signature
     }
 
@@ -338,12 +361,28 @@ async function verifyAndDecodeToken(token, env) {
 
     const tokenData = JSON.parse(decodedPayload);
 
-    if (Date.now() / 1000 > tokenData.exp) {
+    // SECURITY: Validate token payload structure
+    if (!tokenData.email || !tokenData.exp || !tokenData.iat) {
+      console.warn('SECURITY: Invalid token payload structure');
+      return null;
+    }
+
+    // SECURITY: Check token expiry with buffer
+    const now = Math.floor(Date.now() / 1000);
+    if (now > tokenData.exp) {
+      console.warn('SECURITY: Expired token used');
+      return null;
+    }
+    
+    // SECURITY: Check issued time is not in future
+    if (tokenData.iat > now) {
+      console.warn('SECURITY: Token issued in future detected');
       return null;
     }
 
     return tokenData;
   } catch (error) {
+    console.error('SECURITY: Token verification error:', error.message);
     return null;
   }
 }
@@ -699,14 +738,15 @@ Respons:`;
         // SECURITY: Only allow registered emails for authentication
         const allowedEmails = [
           'admin@ma-malnukananga.sch.id',
-          'guru@ma-malnukanaga.sch.id', 
-          'siswa@ma-malnukanaga.sch.id',
-          'parent@ma-malnukanaga.sch.id',
-          'ayah@ma-malnukanaga.sch.id',
-          'ibu@ma-malnukanaga.sch.id'
+          'guru@ma-malnukananga.sch.id', 
+          'siswa@ma-malnukananga.sch.id',
+          'parent@ma-malnukananga.sch.id',
+          'ayah@ma-malnukananga.sch.id',
+          'ibu@ma-malnukananga.sch.id'
         ];
         
         if (!allowedEmails.includes(sanitizedEmail)) {
+          console.warn(`SECURITY: Unauthorized login attempt for email: ${sanitizedEmail}`);
           return new Response(JSON.stringify({ message: 'Email tidak terdaftar dalam sistem.' }), { 
             status: 403, 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -767,11 +807,20 @@ Respons:`;
           return new Response(JSON.stringify({ message: 'Data diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
         
-        // Gunakan secret key yang disimpan di environment variable
-        const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+        // SECURITY: Require secure secret key for signature generation
+        if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
+          console.error('SECURITY: Attempted signature generation with default secret');
+          return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        const secret = env.SECRET_KEY;
         const signature = await generateHMACSignature(data, secret);
         return new Response(JSON.stringify({ signature }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       } catch (e) {
+        console.error('Signature generation error:', e.message);
         return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }
@@ -784,11 +833,20 @@ Respons:`;
           return new Response(JSON.stringify({ message: 'Data dan signature diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
         
-        // Gunakan secret key yang disimpan di environment variable
-        const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+        // SECURITY: Require secure secret key for signature verification
+        if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
+          console.error('SECURITY: Attempted signature verification with default secret');
+          return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        const secret = env.SECRET_KEY;
         const isValid = await verifyHMACSignature(data, signature, secret);
         return new Response(JSON.stringify({ isValid }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       } catch (e) {
+        console.error('Signature verification error:', e.message);
         return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }
