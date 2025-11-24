@@ -12,7 +12,6 @@ import {
 import { AuthService } from '../services/authService';
 import { _NotificationService, NotificationItem } from '../services/notificationService';
 import {
-  useStudentProfile,
   useStudentGrades,
   useAttendanceRecords,
   useClassSchedule,
@@ -30,13 +29,13 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'grades' | 'schedule' | 'attendance' | 'announcements'>('overview');
   const [currentToast, setCurrentToast] = useState<NotificationItem | null>(null);
 
-  // API hooks untuk real data
-  const {
-    data: studentProfile,
-    isLoading: profileLoading,
-    error: _profileError,
-    isSuccess: _profileSuccess
-  } = useStudentProfile();
+// API hooks untuk real data
+   const {
+     data: studentProfile,
+     isLoading: profileLoading,
+     error: _profileError,
+     isSuccess: _profileSuccess
+   } = useAcademicStats();
 
   const {
     data: grades,
@@ -78,11 +77,11 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
   const studentGrades = grades || [];
   const attendanceData = attendance || [];
   const weeklySchedule = schedule || [];
-  const announcements: Announcement[] = []; // TODO: Add announcements API
+  const announcements: _Announcement[] = []; // TODO: Add announcements API
 
   const gpa = grades ? calculateGPA(grades) : 0;
   const attendanceStats = attendance ? getAttendanceStats(attendance) : { total: 0, present: 0, absent: 0, sick: 0, permitted: 0, percentage: 0 };
-  const unreadAnnouncements = getUnreadAnnouncements(announcements);
+  const unreadAnnouncements = getUnreadAnnouncements(announcements || []);
 
   // Get today's schedule
   const today = new Date().toLocaleDateString('id-ID', { weekday: 'long' });
@@ -164,8 +163,8 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
                 <img
-                  src={currentStudent.profileImage}
-                  alt={currentStudent.name}
+                  src={(currentStudent as any).profileImage || '/default-avatar.png'}
+                  alt={(currentStudent as any).name || 'Student'}
                   className="h-12 w-12 rounded-full object-cover"
                 />
                 <div>
@@ -202,7 +201,7 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as 'profile' | 'grades' | 'attendance' | 'schedule' | 'announcements')}
+                onClick={() => setActiveTab(tab.id as any)}
                 className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                   activeTab === tab.id
                     ? 'border-green-500 text-green-600 dark:text-green-400'

@@ -53,15 +53,20 @@ export interface StudentProgress {
     gradeTrend: 'improving' | 'stable' | 'declining';
     attendanceRate: number;
     assignmentCompletion: number;
+    subjectPerformance?: Record<string, number>;
   };
   engagementMetrics: {
     loginFrequency: number;
     resourceAccess: number;
     supportRequests: number;
     participationScore: number;
+    featureUsage?: Record<string, number>;
+    lastActiveDate?: string;
   };
   riskLevel: 'low' | 'medium' | 'high';
   lastUpdated: string;
+  riskFactors?: string[];
+  recommendations?: string[];
 }
 
 export interface SupportAutomation {

@@ -1,7 +1,14 @@
 export default {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
+  setupFiles: ['<rootDir>/src/test-globals.d.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+  transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      tsconfig: './tsconfig.test.json'
+    }]
+  },
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',
     '<rootDir>/src/**/?(*.)(test|spec).(ts|tsx|js)'
@@ -16,15 +23,6 @@ export default {
     '^uuid$': '<rootDir>/src/__mocks__/uuid.js'
   },
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: {
-        target: 'es2017',
-        module: 'commonjs',
-        jsx: 'react-jsx',
-        esModuleInterop: true,
-        allowSyntheticDefaultImports: true
-      }
-    }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
       presets: [['@babel/preset-env', { 
         modules: 'commonjs',
