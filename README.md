@@ -526,13 +526,17 @@ Kami menyambut kontribusi! Berikut cara berkontribusi:
 
 ### Resources
 
+- 📚 **[Documentation Index](docs/README.md)**: Indeks lengkap semua dokumentasi
 - 📖 **[Student User Guide](docs/USER_GUIDE_STUDENT.md)**: Panduan pengguna untuk siswa
 - 👩‍🏫 **[Teacher User Guide](docs/USER_GUIDE_TEACHER.md)**: Panduan untuk guru dan admin
 - 👨‍👩‍👧‍👦 **[Parent User Guide](docs/USER_GUIDE_PARENT.md)**: Panduan untuk orang tua siswa
 - 🔧 **[Contributing Guide](docs/DEVELOPER_GUIDE.md)**: Panduan teknis kontribusi
 - 📋 **[Production Checklist](docs/DEPLOYMENT_GUIDE.md#deployment-checklist)**: Checklist deployment
 - 🚀 **[Deployment Guide](docs/DEPLOYMENT_GUIDE.md)**: Panduan deployment lengkap
+- 📊 **[Implementation Gap Analysis](docs/IMPLEMENTATION_GAP_ANALYSIS.md)**: Analisis gap implementasi API
+- 🔧 **[API Documentation](docs/API_DOCUMENTATION.md)**: Dokumentasi API lengkap
+- 🔍 **[Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md)**: Panduan troubleshooting
 
 ---
 
-**Status**: PRODUCTION READY | **Version**: 1.3.0 | **Last Updated**: November 24, 2024 | **Development Server**: http://localhost:9000
+**Status**: PRODUCTION READY | **Version**: 1.3.1 | **Last Updated**: November 24, 2025 | **Development Server**: http://localhost:9000
