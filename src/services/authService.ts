@@ -109,6 +109,8 @@ async function generateSecureToken(email: string, expiryTime: number = 15 * 60 *
 
   // SECURITY: Client-side signature generation disabled for ALL environments
   // All authentication now handled server-side in Cloudflare Worker
+  // CRITICAL SECURITY: Never enable client-side token generation
+  console.error('SECURITY VIOLATION: Client-side token generation blocked - use server-side authentication');
   throw new Error('Authentication must be handled server-side only - use /api/login endpoint');
 }
 
@@ -128,6 +130,8 @@ function generateSecureTokenSync(email: string, expiryTime: number = 15 * 60 * 1
 
   // SECURITY: All token generation moved to server-side
   // Client-side token generation completely disabled for security
+  // CRITICAL SECURITY: Never enable client-side token generation
+  console.error('SECURITY VIOLATION: Client-side token generation blocked - use server-side authentication');
   throw new Error('Authentication must be handled server-side only - use /api/login endpoint');
 }
 
@@ -145,9 +149,10 @@ function verifyAndDecodeToken(token: string): TokenData | null {
     // This client-side implementation is for development/testing purposes only
     const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
-     // SECURITY: Client-side token verification disabled for ALL environments
-     console.error('SECURITY: Client-side token verification not allowed - security vulnerability');
-     return null;
+// SECURITY: Client-side token verification disabled for ALL environments
+      // CRITICAL SECURITY: Never enable client-side token verification
+      console.error('SECURITY VIOLATION: Client-side token verification blocked - use server-side verification');
+      return null;
   } catch (error) {
     return null;
   }
