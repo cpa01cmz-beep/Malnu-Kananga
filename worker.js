@@ -199,12 +199,17 @@ global.globalConsole = console;
 // Rate limiting storage (in production, use KV storage or external Redis)
 const rateLimitStore = new Map();
 
-// Rate limiting configuration
-const RATE_LIMIT = {
-  windowMs: 15 * 60 * 1000, // 15 menit window
-  maxAttempts: 5, // Maksimal 5 attempts per window
-  blockDuration: 30 * 60 * 1000 // Block selama 30 menit jika limit exceeded
-};
+// Rate limiting configuration - read from environment
+function getRateLimitConfig(env) {
+  const windowMs = env.RATE_LIMIT_WINDOW_MS ? parseInt(env.RATE_LIMIT_WINDOW_MS) : 15 * 60 * 1000; // 15 menit default
+  const maxRequests = env.RATE_LIMIT_MAX_REQUESTS ? parseInt(env.RATE_LIMIT_MAX_REQUESTS) : 100; // 100 requests default
+  
+  return {
+    windowMs,
+    maxRequests,
+    blockDuration: 30 * 60 * 1000 // Block selama 30 menit jika limit exceeded
+  };
+}
 
 function getClientIP(request) {
   // Cloudflare Workers: get client IP from headers
@@ -213,7 +218,7 @@ function getClientIP(request) {
          'unknown';
 }
 
-function isRateLimited(clientIP) {
+function isRateLimited(clientIP, rateLimitConfig) {
   const now = Date.now();
   const clientData = rateLimitStore.get(clientIP);
 
@@ -233,7 +238,7 @@ function isRateLimited(clientIP) {
   }
 
   // Reset if window expired
-  if (now - clientData.firstAttempt > RATE_LIMIT.windowMs) {
+  if (now - clientData.firstAttempt > rateLimitConfig.windowMs) {
     rateLimitStore.set(clientIP, {
       attempts: 1,
       firstAttempt: now,
@@ -245,8 +250,8 @@ function isRateLimited(clientIP) {
   // Increment attempts
   clientData.attempts++;
 
-  if (clientData.attempts > RATE_LIMIT.maxAttempts) {
-    clientData.blockedUntil = now + RATE_LIMIT.blockDuration;
+  if (clientData.attempts > rateLimitConfig.maxRequests) {
+    clientData.blockedUntil = now + rateLimitConfig.blockDuration;
     return true;
   }
 
@@ -267,10 +272,10 @@ async function generateSecureToken(email, expiryTime = 15 * 60 * 1000) {
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
   // Generate signature using HMAC-SHA256 with secure secret key from environment
-  if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
-    throw new Error('Secure SECRET_KEY environment variable required for production');
+  const secret = env.JWT_SECRET || env.SECRET_KEY;
+  if (!secret || secret === 'default-secret-key-for-worker' || secret.length < 32) {
+    throw new Error('Secure JWT_SECRET environment variable required (min 32 characters, not default value)');
   }
-  const secret = env.SECRET_KEY;
   const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;
@@ -285,8 +290,8 @@ function generateRandomString(length) {
 // Generate HMAC signature using crypto.subtle
 async function generateHMACSignature(data, secret) {
   // SECURITY: Validate secret key before use
-  if (!secret || secret === 'default-secret-key-for-worker') {
-    throw new Error('Invalid secret key: Default key not allowed in production');
+  if (!secret || secret === 'default-secret-key-for-worker' || secret.length < 32) {
+    throw new Error('Invalid secret key: Must be at least 32 characters and not use default value');
   }
   
   // Validate input data
@@ -432,12 +437,15 @@ export default {
     }
 
     // Secure CORS configuration - restrict to specific domains
-    const allowedOrigins = [
-      'https://ma-malnukananga.sch.id',
-      'https://www.ma-malnukananga.sch.id',
-      'http://localhost:3000', // Development only
-      'http://localhost:5173'  // Vite default port
-    ];
+    // Read from environment or use secure defaults
+    const allowedOrigins = (env.CORS_ALLOWED_ORIGINS && env.CORS_ALLOWED_ORIGINS !== 'undefined') 
+      ? env.CORS_ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+      : [
+          'https://ma-malnukananga.sch.id',
+          'https://www.ma-malnukananga.sch.id',
+          'http://localhost:3000', // Development only
+          'http://localhost:5173'  // Vite default port
+        ];
     
     const origin = request.headers.get('Origin');
     const corsHeaders = {
@@ -454,6 +462,23 @@ export default {
     }
 
     const url = new URL(request.url);
+    
+    // Get rate limiting configuration
+    const rateLimitConfig = getRateLimitConfig(env);
+    
+    // Apply rate limiting to all endpoints except OPTIONS
+    if (request.method !== 'OPTIONS') {
+      const clientIP = getClientIP(request);
+      if (isRateLimited(clientIP, rateLimitConfig)) {
+        return new Response(JSON.stringify({ 
+          error: 'Too many requests. Please try again later.',
+          retryAfter: Math.ceil(rateLimitConfig.blockDuration / 1000)
+        }), { 
+          status: 429, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': Math.ceil(rateLimitConfig.blockDuration / 1000).toString() }
+        });
+      }
+    }
 
     // --- Endpoint untuk Seeding Data (PENGISI INFO) ---
     if (url.pathname === '/seed') {
