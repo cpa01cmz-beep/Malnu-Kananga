@@ -247,18 +247,6 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
               </div>
           </div>
           
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Engagement Metrics</h3>
-            
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Resource Access</span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                   {progress.engagementMetrics.lastActiveDate ? new Date(progress.engagementMetrics.lastActiveDate).toLocaleDateString('id-ID') : 'N/A'}
-                </span>
-              </div>
-            </div>
-            
            <div>
              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Penggunaan Fitur</h3>
              
