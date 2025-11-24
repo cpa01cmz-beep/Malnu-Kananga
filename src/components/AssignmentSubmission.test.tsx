@@ -27,7 +27,7 @@ describe('AssignmentSubmission Component', () => {
   };
 
   const mockOnClose = jest.fn();
-  const mockOnSubmit = jest.fn().mockResolvedValue(undefined);
+  const mockOnSubmit = jest.fn().mockResolvedValue(undefined) as jest.MockedFunction<(data: { file?: File; notes?: string; submittedBy: string }) => Promise<void>>;
 
   beforeEach(() => {
     jest.clearAllMocks();
