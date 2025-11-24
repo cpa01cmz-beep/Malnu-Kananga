@@ -1,23 +1,8 @@
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ChatWindow from './ChatWindow';
 import { ChatProvider } from '../contexts/ChatContext';
-declare global {
-  var ResizeObserver: {
-    new(): ResizeObserver;
-    observe(): void;
-    unobserve(): void;
-    disconnect(): void;
-  };
-  var IntersectionObserver: {
-    new(): IntersectionObserver;
-    observe(): void;
-    unobserve(): void;
-    disconnect(): void;
-  };
-}
 
 // Wrapper component to provide ChatContext to tests
 const ChatWindowWithProvider = (props: {isOpen: boolean, closeChat: () => void}) => (

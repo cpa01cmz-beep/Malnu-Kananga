@@ -29,9 +29,7 @@ class ErrorBoundary extends Component<Props, State> {
     const errorLoggingService = getErrorLoggingService();
 
     // Log error dengan metadata tambahan untuk debugging
-    errorLoggingService.logErrorBoundary(error, {
-      componentStack: errorInfo.componentStack || '',
-    }, {
+    errorLoggingService.logErrorBoundary(error, { componentStack: errorInfo.componentStack || '' }, {
       componentName: this.constructor.name,
       props: Object.keys(this.props),
       hasCustomFallback: !!this.props.fallback,

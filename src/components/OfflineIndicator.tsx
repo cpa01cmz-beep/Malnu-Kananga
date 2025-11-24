@@ -9,7 +9,7 @@ const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
   showRetryButton = true,
   onRetry
 }) => {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [_isOnline, setIsOnline] = useState(navigator.onLine);
   const [showIndicator, setShowIndicator] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
