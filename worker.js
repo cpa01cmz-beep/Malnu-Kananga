@@ -9,15 +9,24 @@ function generateCSRFToken() {
     return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
-function validateCSRFToken(request) {
+function validateCSRFToken(request, securityLogger = null, endpoint = 'unknown') {
     const cookieToken = getCSRFTokenFromCookie(request);
     const headerToken = request.headers.get('X-CSRF-Token');
+    const ip = getClientIP(request);
     
     if (!cookieToken || !headerToken) {
+        if (securityLogger) {
+            securityLogger.logCSRFViolation(ip, endpoint);
+        }
         return false;
     }
     
-    return constantTimeCompare(cookieToken, headerToken);
+    const isValid = constantTimeCompare(cookieToken, headerToken);
+    if (!isValid && securityLogger) {
+        securityLogger.logCSRFViolation(ip, endpoint);
+    }
+    
+    return isValid;
 }
 
 function getCSRFTokenFromCookie(request) {
@@ -28,6 +37,63 @@ function getCSRFTokenFromCookie(request) {
     const csrfCookie = cookies.find(cookie => cookie.startsWith('csrf_token='));
     
     return csrfCookie ? csrfCookie.substring('csrf_token='.length) : null;
+}
+
+function getAuthTokenFromCookie(request) {
+    const cookieHeader = request.headers.get('Cookie');
+    if (!cookieHeader) return null;
+    
+    const cookies = cookieHeader.split(';').map(cookie => cookie.trim());
+    const authCookie = cookies.find(cookie => cookie.startsWith('__Host-auth_session='));
+    
+    return authCookie ? authCookie.substring('__Host-auth_session='.length) : null;
+}
+
+function verifyAuthToken(token) {
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return false;
+
+        const [encodedHeader, encodedPayload, signature] = parts;
+        
+        // Decode payload (base64url)
+        const payload = JSON.parse(atob(encodedPayload.replace(/-/g, '+').replace(/_/g, '/')));
+        
+        // Check expiration
+        const now = Math.floor(Date.now() / 1000);
+        if (payload.exp < now) {
+            console.warn('SECURITY: Expired token used');
+            return false;
+        }
+        
+        // Verify signature (simplified - in production use proper JWT verification)
+        const data = `${encodedHeader}.${encodedPayload}`;
+        const expectedSignature = generateHMACSignature(data, JWT_SECRET);
+        
+        return constantTimeCompare(signature, expectedSignature);
+    } catch (error) {
+        console.error('SECURITY: Token verification failed:', error);
+        return false;
+    }
+}
+
+function isAuthenticated(request, securityLogger = null, endpoint = 'unknown') {
+    const token = getAuthTokenFromCookie(request);
+    const ip = getClientIP(request);
+    
+    if (!token) {
+        if (securityLogger) {
+            securityLogger.logUnauthorizedAccess(ip, endpoint, false);
+        }
+        return false;
+    }
+    
+    const isValid = verifyAuthToken(token);
+    if (!isValid && securityLogger) {
+        securityLogger.logUnauthorizedAccess(ip, endpoint, false);
+    }
+    
+    return isValid;
 }
 
 function constantTimeCompare(a, b) {
@@ -196,7 +262,134 @@ function generateSupportRecommendations(riskAssessment) {
 // Global declarations for Cloudflare Worker environment
 global.globalConsole = console;
 
-// Rate limiting storage (in production, use KV storage or external Redis)
+// Security event logging
+class SecurityLogger {
+  constructor(env) {
+    this.env = env;
+  }
+  
+  async logSecurityEvent(event, details = {}) {
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      event,
+      details,
+      severity: this.getSeverityLevel(event)
+    };
+    
+    console.warn(`SECURITY EVENT [${logEntry.severity}]: ${event}`, details);
+    
+    // Store in KV for audit trail (if available)
+    if (this.env.SECURITY_LOGS_KV) {
+      try {
+        const logKey = `security_log:${Date.now()}:${Math.random().toString(36).substr(2, 9)}`;
+        await this.env.SECURITY_LOGS_KV.put(logKey, JSON.stringify(logEntry), {
+          expirationTtl: 30 * 24 * 60 * 60 // 30 days retention
+        });
+      } catch (error) {
+        console.error('Failed to store security log:', error);
+      }
+    }
+  }
+  
+  getSeverityLevel(event) {
+    const criticalEvents = ['AUTH_BYPASS_ATTEMPT', 'CSRF_TOKEN_INVALID', 'RATE_LIMIT_HARD_BLOCK'];
+    const highEvents = ['RATE_LIMIT_EXCEEDED', 'INVALID_TOKEN', 'UNAUTHORIZED_ACCESS'];
+    const mediumEvents = ['SUSPICIOUS_INPUT', 'FAILED_AUTHENTICATION'];
+    
+    if (criticalEvents.includes(event)) return 'CRITICAL';
+    if (highEvents.includes(event)) return 'HIGH';
+    if (mediumEvents.includes(event)) return 'MEDIUM';
+    return 'LOW';
+  }
+  
+  async logAuthenticationAttempt(email, success, ip, details = {}) {
+    await this.logSecurityEvent('AUTHENTICATION_ATTEMPT', {
+      email,
+      success,
+      ip,
+      userAgent: details.userAgent,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  async logRateLimitViolation(ip, endpoint, count, limit) {
+    await this.logSecurityEvent('RATE_LIMIT_EXCEEDED', {
+      ip,
+      endpoint,
+      count,
+      limit,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  async logCSRFViolation(ip, endpoint) {
+    await this.logSecurityEvent('CSRF_TOKEN_INVALID', {
+      ip,
+      endpoint,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  async logUnauthorizedAccess(ip, endpoint, tokenValid = false) {
+    await this.logSecurityEvent('UNAUTHORIZED_ACCESS', {
+      ip,
+      endpoint,
+      tokenValid,
+      timestamp: new Date().toISOString()
+    });
+  }
+}
+
+// Rate limiting storage using Cloudflare KV for distributed rate limiting
+class DistributedRateLimitStore {
+  constructor(kvStore) {
+    this.kv = kvStore;
+  }
+  
+  async get(key) {
+    try {
+      const data = await this.kv.get(key, 'json');
+      return data || null;
+    } catch (error) {
+      console.error('Rate limit KV get error:', error);
+      return null;
+    }
+  }
+  
+  async set(key, value, ttl) {
+    try {
+      await this.kv.put(key, JSON.stringify(value), { expirationTtl: ttl });
+    } catch (error) {
+      console.error('Rate limit KV set error:', error);
+    }
+  }
+  
+  async increment(key, windowMs, maxRequests) {
+    const now = Date.now();
+    const ttl = Math.ceil(windowMs / 1000);
+    const rateLimitKey = `rate_limit:${key}`;
+    
+    const current = await this.get(rateLimitKey) || { count: 0, resetTime: now + windowMs };
+    
+    // Reset if window expired
+    if (now > current.resetTime) {
+      current.count = 1;
+      current.resetTime = now + windowMs;
+    } else {
+      current.count++;
+    }
+    
+    await this.set(rateLimitKey, current, ttl);
+    
+    return {
+      count: current.count,
+      exceeded: current.count > maxRequests,
+      resetTime: current.resetTime
+    };
+  }
+}
+
+// Fallback to memory store for development
 const rateLimitStore = new Map();
 
 // Rate limiting configuration - read from environment
@@ -216,6 +409,66 @@ function getClientIP(request) {
   return request.headers.get('CF-Connecting-IP') ||
          request.headers.get('X-Forwarded-For') ||
          'unknown';
+}
+
+async function isRateLimitExceeded(env, clientId, maxRequests, windowMs, endpoint = 'default') {
+  try {
+    // Use distributed rate limiting if KV store is available
+    if (env.RATE_LIMIT_KV) {
+      const distributedStore = new DistributedRateLimitStore(env.RATE_LIMIT_KV);
+      const result = await distributedStore.increment(clientId, windowMs, maxRequests);
+      
+      if (result.exceeded) {
+        console.warn(`SECURITY: Rate limit exceeded for ${clientId} on ${endpoint}: ${result.count}/${maxRequests}`);
+        return true;
+      }
+      
+      return false;
+    }
+    
+    // Fallback to memory-based rate limiting
+    const now = Date.now();
+    const key = `${endpoint}:${clientId}`;
+    const clientData = rateLimitStore.get(key);
+    
+    if (!clientData) {
+      rateLimitStore.set(key, {
+        count: 1,
+        resetTime: now + windowMs,
+        firstRequest: now
+      });
+      return false;
+    }
+    
+    // Reset if window expired
+    if (now > clientData.resetTime) {
+      rateLimitStore.set(key, {
+        count: 1,
+        resetTime: now + windowMs,
+        firstRequest: now
+      });
+      return false;
+    }
+    
+    clientData.count++;
+    
+    // Progressive rate limiting for abusive clients
+    if (clientData.count > maxRequests * 2) {
+      console.warn(`SECURITY: Hard block for abusive client: ${clientId}`);
+      return true; // Hard block
+    }
+    
+    const isExceeded = clientData.count > maxRequests;
+    if (isExceeded) {
+      console.warn(`SECURITY: Rate limit exceeded for client: ${clientId}, count: ${clientData.count}`);
+    }
+    
+    return isExceeded;
+  } catch (error) {
+    console.error('Rate limiting error:', error);
+    // Fail open - allow request if rate limiting fails
+    return false;
+  }
 }
 
 function isRateLimited(clientIP, rateLimitConfig) {
@@ -410,57 +663,9 @@ const documents = [
 // ----------------------------------------------------
 
 export default {
-  async fetch(request, env) {
-    // Initialize security middleware
-    const security = new SecurityMiddleware(env);
-    const clientId = security.getClientId(request);
-    
-    // Apply CSRF protection to state-changing requests
-    if (needsCSRFProtection(request)) {
-      if (!validateCSRFToken(request)) {
-        return new Response('CSRF token validation failed', { 
-          status: 403,
-          headers: security.getSecurityHeaders()
-        });
-      }
-    }
-    
-    // Apply rate limiting to all requests
-    if (security.isRateLimitExceeded(clientId, 100, 60000, 'default')) {
-      return new Response('Rate limit exceeded', { 
-        status: 429,
-        headers: {
-          'Retry-After': '60',
-          ...security.getSecurityHeaders()
-        }
-      });
-    }
-
-    // Secure CORS configuration - restrict to specific domains
-    // Read from environment or use secure defaults
-    const allowedOrigins = (env.CORS_ALLOWED_ORIGINS && env.CORS_ALLOWED_ORIGINS !== 'undefined') 
-      ? env.CORS_ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
-      : [
-          'https://ma-malnukananga.sch.id',
-          'https://www.ma-malnukananga.sch.id',
-          'http://localhost:3000', // Development only
-          'http://localhost:5173'  // Vite default port
-        ];
-    
-    const origin = request.headers.get('Origin');
-    const corsHeaders = {
-      'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
-      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Allow-Credentials': 'true',
-      'Access-Control-Max-Age': '86400',
-      ...security.getSecurityHeaders()
-    };
-
-    if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders });
-    }
-
+  async fetch(request, env, ctx) {
+    const security = new SecurityMiddleware();
+    const securityLogger = new SecurityLogger(env);
     const url = new URL(request.url);
     
     // Get rate limiting configuration
@@ -509,6 +714,22 @@ export default {
     // --- Endpoint untuk RAG Context Retrieval (PENCARI INFO) ---
     if (url.pathname === '/api/chat' && request.method === 'POST') {
       try {
+        // SECURITY: Check authentication
+        if (!isAuthenticated(request, securityLogger, '/api/chat')) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // SECURITY: Validate CSRF token for state-changing operations
+        if (!validateCSRFToken(request, securityLogger, '/api/chat')) {
+          return new Response(JSON.stringify({ message: 'CSRF token tidak valid.' }), { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
         const { message } = await request.json();
         const embeddings = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [message] });
         const vectors = embeddings.data[0];
@@ -540,6 +761,22 @@ export default {
     // --- Endpoint Student Support AI ---
     if (url.pathname === '/api/student-support' && request.method === 'POST') {
       try {
+        // SECURITY: Check authentication
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // SECURITY: Validate CSRF token for state-changing operations
+        if (!validateCSRFToken(request)) {
+          return new Response(JSON.stringify({ message: 'CSRF token tidak valid.' }), { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
         const { studentId, message, category, context } = await request.json();
         
         // Enhanced context for student support
@@ -628,6 +865,22 @@ Respons:`;
     // --- Endpoint untuk Proactive Support Monitoring ---
     if (url.pathname === '/api/support-monitoring' && request.method === 'POST') {
       try {
+        // SECURITY: Check authentication
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // SECURITY: Validate CSRF token for state-changing operations
+        if (!validateCSRFToken(request)) {
+          return new Response(JSON.stringify({ message: 'CSRF token tidak valid.' }), { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
         const { studentMetrics } = await request.json();
         
         // Analyze student metrics for risk assessment
@@ -731,10 +984,12 @@ Respons:`;
     // --- Endpoint Login ---
     if (url.pathname === '/request-login-link' && request.method === 'POST') {
       try {
+        // SECURITY: Login endpoint exempt from CSRF (public endpoint)
+        // CSRF protection applied after authentication
         const clientIP = getClientIP(request);
 
         // Enhanced rate limiting for login endpoint
-        if (security.isRateLimitExceeded(clientIP, 3, 60000, 'login')) {
+        if (await isRateLimitExceeded(env, clientIP, 3, 60000, 'login')) {
           return new Response(JSON.stringify({
             message: 'Terlalu banyak percobaan login. Silakan coba lagi dalam 1 menit.'
           }), {
@@ -827,6 +1082,22 @@ Respons:`;
     // --- Endpoint untuk Generate Signature ---
     if (url.pathname === '/generate-signature' && request.method === 'POST') {
       try {
+        // SECURITY: Check authentication
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // SECURITY: Validate CSRF token for state-changing operations
+        if (!validateCSRFToken(request)) {
+          return new Response(JSON.stringify({ message: 'CSRF token tidak valid.' }), { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
         const { data } = await request.json();
         if (!data) {
           return new Response(JSON.stringify({ message: 'Data diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
@@ -853,6 +1124,22 @@ Respons:`;
     // --- Endpoint untuk Verify Signature ---
     if (url.pathname === '/verify-signature' && request.method === 'POST') {
       try {
+        // SECURITY: Check authentication
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // SECURITY: Validate CSRF token for state-changing operations
+        if (!validateCSRFToken(request)) {
+          return new Response(JSON.stringify({ message: 'CSRF token tidak valid.' }), { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
         const { data, signature } = await request.json();
         if (!data || !signature) {
           return new Response(JSON.stringify({ message: 'Data dan signature diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
