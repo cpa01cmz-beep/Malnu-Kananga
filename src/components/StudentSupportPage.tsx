@@ -4,10 +4,11 @@ import { StudentSupportService } from '../services/studentSupportService';
 const StudentSupportPage: React.FC = () => {
   React.useEffect(() => {
     // Initialize student support system
-    StudentSupportService.initialize();
+    const supportService = StudentSupportService.getInstance();
+    supportService.initialize();
     
     // Add sample support resources
-    StudentSupportService.addSupportResource({
+    supportService.addSupportResource({
       title: 'Panduan Login Portal',
       description: 'Langkah demi langkah cara login ke portal siswa menggunakan Magic Link',
       category: 'guide',
@@ -15,11 +16,10 @@ const StudentSupportPage: React.FC = () => {
       content: '1. Buka portal siswa\n2. Masukkan email sekolah\n3. Klik "Kirim Magic Link"\n4. Periksa email\n5. Klik link login',
       tags: ['login', 'magic-link', 'tutorial'],
       difficulty: 'beginner',
-      estimatedTime: 5,
-      rating: 0
+      estimatedTime: 5
     });
 
-    StudentSupportService.addSupportResource({
+    supportService.addSupportResource({
       title: 'Cara Melihat Nilai',
       description: 'Tutorial lengkap cara mengakses dan memahami nilai akademik',
       category: 'tutorial',
@@ -27,11 +27,10 @@ const StudentSupportPage: React.FC = () => {
       content: 'Klik tab "Nilai" untuk melihat semua mata pelajaran dan nilai terbaru',
       tags: ['nilai', 'akademik', 'tutorial'],
       difficulty: 'beginner',
-      estimatedTime: 3,
-      rating: 0
+      estimatedTime: 3
     });
 
-    StudentSupportService.addSupportResource({
+    supportService.addSupportResource({
       title: 'FAQ Umum Portal',
       description: 'Pertanyaan yang sering diajukan tentang portal siswa',
       category: 'faq',
@@ -39,8 +38,7 @@ const StudentSupportPage: React.FC = () => {
       content: 'Q: Bagaimana cara reset password?\nA: Gunakan fitur Magic Link\n\nQ: Portal tidak bisa diakses?\nA: Periksa koneksi internet dan clear cache browser',
       tags: ['faq', 'pertanyaan', 'umum'],
       difficulty: 'beginner',
-      estimatedTime: 10,
-      rating: 0
+      estimatedTime: 10
     });
   }, []);
 

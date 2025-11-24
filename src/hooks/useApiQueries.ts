@@ -27,7 +27,7 @@ const handleApiResponse = <T>(response: ApiResponse<T>): T | null => {
   if (response.success && response.data) {
     return response.data;
   }
-  throw new Error(response.error || 'API request failed');
+  throw new Error(response.message || 'API request failed');
 };
 
 // ==================== STUDENT API HOOKS ====================
@@ -36,7 +36,7 @@ const handleApiResponse = <T>(response: ApiResponse<T>): T | null => {
 export const useCurrentStudent = (
   options?: Omit<UseQueryOptions<Student | null, Error, Student | null, readonly unknown[]>, 'queryKey' | 'queryFn'>
 ) => {
-  return useQuery({
+  return useQuery<Student | null>({
     queryKey: queryKeys.studentProfile(),
     queryFn: async () => {
       const response = await studentApiService.getCurrentStudent();

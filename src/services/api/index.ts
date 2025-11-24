@@ -32,6 +32,14 @@ export interface ApiError {
   details?: any;
 }
 
+// API Response types
+export interface ApiResponse<T = any> {
+  data: T;
+  success: boolean;
+  message?: string;
+  timestamp: string;
+}
+
 // API Configuration
 export const API_CONFIG = {
   BASE_URL: import.meta.env.VITE_WORKER_URL || 'https://malnu-api.sulhi-cmz.workers.dev',

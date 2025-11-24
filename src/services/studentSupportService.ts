@@ -44,6 +44,8 @@ export interface SupportResource {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   rating?: number;
   usageCount?: number;
+  description?: string;
+  estimatedTime?: number;
 }
 
 export interface StudentProgress {
@@ -84,14 +86,24 @@ export interface SupportAutomation {
 }
 
 class StudentSupportService {
-  private static REQUESTS_KEY = 'malnu_support_requests';
-  private static RESOURCES_KEY = 'malnu_support_resources';
-  private static PROGRESS_KEY = 'malnu_student_progress';
-  private static AUTOMATION_KEY = 'malnu_support_automation';
-  private static KNOWLEDGE_BASE_KEY = 'malnu_knowledge_base';
+  private static instance: StudentSupportService;
+  private REQUESTS_KEY = 'malnu_support_requests';
+  private RESOURCES_KEY = 'malnu_support_resources';
+  private PROGRESS_KEY = 'malnu_student_progress';
+  private AUTOMATION_KEY = 'malnu_support_automation';
+  private KNOWLEDGE_BASE_KEY = 'malnu_knowledge_base';
+
+  private constructor() {}
+
+  static getInstance(): StudentSupportService {
+    if (!StudentSupportService.instance) {
+      StudentSupportService.instance = new StudentSupportService();
+    }
+    return StudentSupportService.instance;
+  }
 
   // Initialize support system
-  static initialize(): void {
+  initialize(): void {
     this.setupKnowledgeBase();
     this.setupAutomationRules();
     this.initializeProgressTracking();
@@ -99,7 +111,7 @@ class StudentSupportService {
   }
 
   // Setup knowledge base with common issues and solutions
-  private static setupKnowledgeBase(): void {
+  private setupKnowledgeBase(): void {
     const existingKB = localStorage.getItem(this.KNOWLEDGE_BASE_KEY);
     if (existingKB) return;
 
@@ -164,7 +176,7 @@ class StudentSupportService {
   }
 
   // Setup automation rules for proactive support
-  private static setupAutomationRules(): void {
+  private setupAutomationRules(): void {
     const existingRules = localStorage.getItem(this.AUTOMATION_KEY);
     if (existingRules) return;
 
@@ -694,7 +706,7 @@ class StudentSupportService {
   }
 
   // Initialize progress tracking
-  private static initializeProgressTracking(): void {
+  private initializeProgressTracking(): void {
     // Initialize sample data for testing
     const sampleProgress: StudentProgress = {
       studentId: 'STU001',
@@ -718,7 +730,7 @@ class StudentSupportService {
   }
 
   // Start automated monitoring
-  private static startAutomatedMonitoring(): void {
+  private startAutomatedMonitoring(): void {
     // Check for at-risk students every hour
     setInterval(() => {
       this.monitorAtRiskStudents();
@@ -887,7 +899,7 @@ class StudentSupportService {
   }
 
   // Initialize sample resources
-  private static initializeSampleResources(): SupportResource[] {
+  private initializeSampleResources(): SupportResource[] {
     const sampleResources: SupportResource[] = [
       {
         id: 'res_001',
@@ -952,7 +964,7 @@ class StudentSupportService {
   }
 
   // Add support resource
-  static addSupportResource(resource: Omit<SupportResource, 'id' | 'usageCount' | 'rating'>): SupportResource {
+  addSupportResource(resource: Omit<SupportResource, 'id' | 'usageCount' | 'rating'>): SupportResource {
     const resources = this.getSupportResources();
     const newResource: SupportResource = {
       ...resource,
