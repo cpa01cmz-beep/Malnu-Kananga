@@ -92,12 +92,10 @@ export default [
         indexedDB: true,
         IDBOpenDBRequest: true,
         isDevelopment: true,
-        crypto: true,
+crypto: true,
         TextEncoder: true,
         btoa: true,
         atob: true,
-<<<<<<< HEAD
-=======
         Request: true,
         RequestInit: true,
         AbortController: true,
@@ -108,7 +106,6 @@ export default [
         indexedDB: true,
         IDBOpenDBRequest: true,
         isDevelopment: true,
->>>>>>> 1c77b54 (fix(pr#295): address critical lint errors and test issues)
       },
     },
     plugins: {

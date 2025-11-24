@@ -19,7 +19,7 @@ interface TouchPoint {
 }
 
 export const useTouchGestures = (options: TouchGestureOptions) => {
-  const elementRef = useRef<HTMLElement | null>(null);
+  const elementRef = useRef<HTMLElement>(null);
   const touchStartRef = useRef<TouchPoint | null>(null);
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
