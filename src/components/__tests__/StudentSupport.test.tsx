@@ -141,8 +141,27 @@ describe('StudentSupport Component', () => {
     expect(screen.getByText('Deskripsi')).toBeInTheDocument();
   });
 
-  it('creates new support request when form is submitted', async () => {
-    const { studentSupportService } = require('../../services/studentSupportService');
+it('creates new support request when form is submitted', async () => {
+    const mockCreateRequest = jest.fn().mockReturnValue({
+      id: 'REQ-001',
+      studentId: 'STU001',
+      type: 'academic',
+      category: 'physics',
+      title: 'Bantuan Fisika',
+      description: 'Saya kesulitan dengan mekanika',
+      priority: 'medium',
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+    
+    jest.doMock('../../services/studentSupportService', () => ({
+      studentSupportService: {
+        createSupportRequest: mockCreateRequest,
+        getSupportRequests: jest.fn().mockReturnValue([]),
+        getSupportResources: jest.fn().mockReturnValue([])
+      }
+    }));
     
     render(<StudentSupport studentId="STU001" />);
     
@@ -153,6 +172,24 @@ describe('StudentSupport Component', () => {
     fireEvent.change(screen.getByPlaceholderText('Judul permintaan'), {
       target: { value: 'Bantuan Fisika' }
     });
+    fireEvent.change(screen.getByPlaceholderText('Jelaskan masalah atau bantuan yang Anda butuhkan'), {
+      target: { value: 'Saya kesulitan dengan mekanika' }
+    });
+    
+    // Submit form
+    fireEvent.click(screen.getByText('Kirim Permintaan'));
+    
+    await waitFor(() => {
+      expect(mockCreateRequest).toHaveBeenCalledWith({
+        studentId: 'STU001',
+        type: 'academic',
+        category: 'physics',
+        title: 'Bantuan Fisika',
+        description: 'Saya kesulitan dengan mekanika',
+        priority: 'medium'
+      });
+    }, { timeout: 10000 });
+  });
     fireEvent.change(screen.getByPlaceholderText('Jelaskan masalah atau bantuan yang Anda butuhkan'), {
       target: { value: 'Saya kesulitan dengan mekanika' }
     });
