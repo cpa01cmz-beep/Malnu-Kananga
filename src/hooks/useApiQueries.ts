@@ -46,6 +46,9 @@ export const useCurrentStudent = (
   });
 };
 
+// Alias for useCurrentStudent for consistency
+export const useStudentProfile = useCurrentStudent;
+
 // Get student grades dengan filtering
 export const useStudentGrades = (
   studentId?: string,

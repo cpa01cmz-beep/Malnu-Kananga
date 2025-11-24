@@ -78,7 +78,7 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
   const studentGrades = grades || [];
   const attendanceData = attendance || [];
   const weeklySchedule = schedule || [];
-  const announcements = []; // TODO: Add announcements API
+  const announcements: Announcement[] = []; // TODO: Add announcements API
 
   const gpa = grades ? calculateGPA(grades) : 0;
   const attendanceStats = attendance ? getAttendanceStats(attendance) : { total: 0, present: 0, absent: 0, sick: 0, permitted: 0, percentage: 0 };

@@ -29,7 +29,7 @@ interface StudentDashboardProps {
 }
 
 const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'grades' | 'schedule' | 'attendance' | 'announcements' | 'support' | 'progress'>('overview');
+  const [activeTab, setActiveTab] = useState<string>('overview');
   const [currentToast, setCurrentToast] = useState<NotificationItem | null>(null);
 
   // Calculate statistics
@@ -71,22 +71,13 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
         gpa: gpa,
         attendanceRate: attendanceStats.percentage,
         assignmentCompletion: 85, // Sample data
-        subjectPerformance: studentGrades.reduce((acc, grade) => {
-          acc[grade.subjectName] = grade.finalGrade || '0';
-          return acc;
-        }, {} as Record<string, string>)
+        gradeTrend: 'stable' as const
       },
       engagementMetrics: {
         loginFrequency: 5, // Sample data
-        featureUsage: {
-          overview: 10,
-          grades: 8,
-          schedule: 6,
-          attendance: 4,
-          announcements: 7
-        },
-        supportRequestsCount: 0,
-        lastActiveDate: new Date().toISOString()
+        resourceAccess: 10,
+        supportRequests: 0,
+        participationScore: 85
       }
     });
   }, [gpa, attendanceStats.percentage, studentGrades, currentStudent.id]);

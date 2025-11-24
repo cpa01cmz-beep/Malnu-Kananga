@@ -4,9 +4,10 @@ import { StudentSupportService } from '../services/studentSupportService';
 
 interface SupportDashboardProps {
   role?: 'admin' | 'support_staff' | 'teacher';
+  studentId?: string;
 }
 
-const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'support_staff' }) => {
+const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'support_staff', studentId }) => {
   const [currentStatus, setCurrentStatus] = useState<any>(null);
   const [alerts, setAlerts] = useState<MonitoringAlert[]>([]);
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
