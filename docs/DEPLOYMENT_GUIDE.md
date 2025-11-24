@@ -39,8 +39,8 @@ This comprehensive guide covers the complete deployment process for the MA Malnu
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/ma-malnukananga/school-portal.git
-cd school-portal
+git clone https://github.com/sulhi/ma-malnu-kananga.git
+cd ma-malnu-kananga
 ```
 
 ### 2. Install Dependencies
@@ -61,9 +61,11 @@ nano .env
 ```bash
 # Required for AI functionality
 API_KEY=your_google_gemini_api_key_here
+GEMINI_API_KEY=your_google_gemini_api_key_here
 
 # Required for authentication (MUST be 32+ characters)
 SECRET_KEY=your_jwt_secret_key_here_minimum_32_characters
+CSRF_SECRET=your_csrf_secret_key_here
 
 # Application configuration
 NODE_ENV=development
@@ -652,7 +654,7 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 - **Troubleshooting Guide**: [TROUBLESHOOTING_GUIDE.md](./TROUBLESHOOTING_GUIDE.md)
 
 ### Community Support
-- **GitHub Issues**: [Report bugs and request features](https://github.com/ma-malnukananga/school-portal/issues)
+- **GitHub Issues**: [Report bugs and request features](https://github.com/sulhi/ma-malnu-kananga/issues)
 - **Discord Community**: [Join our Discord](https://discord.gg/ma-malnukananga)
 - **Email Support**: support@ma-malnukananga.sch.id
 
@@ -684,10 +686,12 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 - [ ] CDN caching configured
 
 ### Post-Deployment
-- [ ] Health checks passing
-- [ ] API endpoints responding
-- [ ] AI functionality working
-- [ ] Authentication system operational
+- [ ] Health checks passing (test /health endpoint)
+- [ ] API endpoints responding (verify /api/chat)
+- [ ] AI functionality working (test RAG system)
+- [ ] Authentication system operational (test magic link)
+- [ ] CSRF protection working (verify secure headers)
+- [ ] Vector database seeded (run /seed once)
 - [ ] Monitoring and logging active
 - [ ] Performance metrics within targets
 - [ ] User acceptance testing completed
@@ -696,7 +700,7 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 
 **Deployment Guide**  
 *Version: 1.3.0*  
-*Last Updated: November 20, 2024*  
+*Last Updated: November 24, 2024*  
 *Deployment Team: MA Malnu Kananga DevOps*  
 *Next Review: December 2024*
 
