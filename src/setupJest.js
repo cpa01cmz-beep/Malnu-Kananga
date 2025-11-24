@@ -23,4 +23,6 @@ if (typeof globalThis.import === 'undefined') {
 // Also ensure process.env is available
 if (typeof process === 'undefined') {
   global.process = { env: { NODE_ENV: 'test' } };
+} else if (typeof process.env === 'undefined') {
+  process.env = { NODE_ENV: 'test' };
 }
