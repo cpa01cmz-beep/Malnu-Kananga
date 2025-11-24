@@ -258,8 +258,7 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
                 </span>
               </div>
             </div>
-          </div>
-           
+            
            <div>
              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Penggunaan Fitur</h3>
              

@@ -739,33 +739,25 @@ class StudentSupportService {
     }, 5 * 60 * 1000);
   }
 
-  // Monitor at-risk students with AI-powered analysis
-  private static async monitorAtRiskStudents(): Promise<void> {
+  // Monitor at-risk students
+  private static monitorAtRiskStudents(): void {
     const allProgress = this.getAllStudentProgress();
     
     for (const progress of Object.values(allProgress)) {
       try {
-        // Get AI-powered risk assessment
-        const riskAssessment = await this.getAIRiskAssessment(progress);
+        // Get risk assessment
+        const riskAssessment = this.getRiskAssessment(progress);
         
         if (riskAssessment.riskLevel === 'high' || riskAssessment.riskLevel === 'medium') {
-          // Create intervention request with AI recommendations
-          const recommendations = riskAssessment.recommendations || [];
-          const recommendationText = recommendations.map((rec: any) => 
-            `- ${rec.description} (${rec.priority})`
-          ).join('\n');
-          
+          // Create intervention request
           this.createSupportRequest(
             progress.studentId,
             'academic',
             'intervention',
-            `AI-Detected ${riskAssessment.riskLevel.toUpperCase()} Risk Student`,
-            `Risk factors: ${riskAssessment.riskFactors.join(', ')}\n\nRecommendations:\n${recommendationText}`,
+            `Detected ${riskAssessment.riskLevel.toUpperCase()} Risk Student`,
+            `Student identified with ${riskAssessment.riskLevel} risk level`,
             riskAssessment.riskLevel === 'high' ? 'high' : 'medium'
           );
-          
-          // Send proactive notifications
-          await this.sendProactiveNotification(progress, riskAssessment);
         }
       } catch (error) {
         console.error(`Failed to monitor student ${progress.studentId}:`, error);
@@ -784,35 +776,23 @@ class StudentSupportService {
     }
   }
 
-  // Get AI-powered risk assessment
-  private static async getAIRiskAssessment(progress: StudentProgress): Promise<{
-    riskLevel: string;
-    riskScore: number;
-    riskFactors: string[];
-    urgency: string;
-    recommendations: any[];
-  }> {
-    const response = await fetch('/api/support-monitoring', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        studentMetrics: {
-          ...progress.academicMetrics,
-          ...progress.engagementMetrics,
-          lastLoginDays: this.calculateDaysSinceLastLogin(progress.studentId)
-        }
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Risk assessment error: ${response.statusText}`);
+// Get risk assessment
+    private static getRiskAssessment(progress: StudentProgress): {
+      riskLevel: string;
+      riskScore: number;
+      riskFactors: string[];
+      urgency: string;
+      recommendations: any[];
+    } {
+      // Return mock assessment for now until API is available
+      return {
+        riskLevel: progress.riskLevel,
+        riskScore: 0,
+        riskFactors: [],
+        urgency: 'normal',
+        recommendations: []
+      };
     }
-
-    const result = await response.json();
-    return result.riskAssessment;
-  }
 
   // Calculate days since last login
   private static calculateDaysSinceLastLogin(studentId: string): number {
@@ -821,15 +801,11 @@ class StudentSupportService {
     return Math.floor(Math.random() * 14);
   }
 
-  // Send proactive notification
-  private static async sendProactiveNotification(progress: StudentProgress, riskAssessment: any): Promise<void> {
-    // This would integrate with notification system
-    console.log(`Proactive notification for student ${progress.studentId}:`, {
-      riskLevel: riskAssessment.riskLevel,
-      urgency: riskAssessment.urgency,
-      recommendations: riskAssessment.recommendations
-    });
-  }
+// Send proactive notification
+    private static sendProactiveNotification(progress: StudentProgress, riskAssessment: any): void {
+      // This would integrate with notification system
+      console.log(`Proactive notification for student ${progress.studentId}`);
+    }
 
   // Update engagement metrics
   private static updateEngagementMetrics(): void {
@@ -837,49 +813,19 @@ class StudentSupportService {
     console.log('Updating engagement metrics...');
   }
 
-  // Get relevant resources with AI-enhanced knowledge base
-  static async getRelevantResources(searchTerm?: string): Promise<SupportResource[]> {
+  // Get relevant resources
+  static getRelevantResources(searchTerm?: string): SupportResource[] {
     const resources = this.getSupportResources();
     
     if (!searchTerm) return resources;
 
-    // Use AI-enhanced knowledge base for better results
-    const knowledgeBase = AIEnhancedKnowledgeBase.getInstance();
-    const searchResults = await knowledgeBase.searchKnowledgeBase({
-      query: searchTerm,
-      limit: 10
-    });
-
-    // Convert knowledge base articles to support resources
-    const kbResources: SupportResource[] = searchResults.map(result => ({
-      id: result.article.id,
-      title: result.article.title,
-      content: result.article.content,
-      category: result.article.category,
-      type: result.article.type as any,
-      tags: result.article.tags,
-      difficulty: result.article.difficulty,
-      rating: result.article.rating,
-      usageCount: result.article.usageCount
-    }));
-
-    // Combine with traditional resources
-    const traditionalResources = resources.filter(resource =>
+    // Filter resources based on search term
+    return resources.filter(resource =>
       resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       resource.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
       resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-
-    // Merge and deduplicate by ID
-    const allResources = [...kbResources, ...traditionalResources];
-    const uniqueResources = allResources.filter((resource, index, self) =>
-      index === self.findIndex(r => r.id === resource.id)
-    );
-
-    // Sort by rating and usage
-    return uniqueResources.sort((a, b) => 
-      (b.rating || 0) * 10 + (b.usageCount || 0) - 
-      ((a.rating || 0) * 10 + (a.usageCount || 0))
+    ).sort((a, b) => 
+      (b.rating || 0) - (a.rating || 0)
     );
   }
 
@@ -1114,26 +1060,13 @@ class StudentSupportService {
   }
 }
 
-// Initialize enhanced support system with real-time monitoring
-import RealTimeMonitoringService from './realTimeMonitoringService';
-import AutomatedInterventionEngine from './automatedInterventionEngine';
-import AIEnhancedKnowledgeBase from './aiEnhancedKnowledgeBase';
+
 
 // Auto-initialize when module loads
 if (typeof window !== 'undefined') {
   StudentSupportService.initialize();
   
-  // Start real-time monitoring
-  const monitoringService = RealTimeMonitoringService.getInstance();
-  monitoringService.startMonitoring();
-  
-  // Initialize intervention engine
-  const interventionEngine = AutomatedInterventionEngine.getInstance();
-  
-  // Initialize AI-enhanced knowledge base
-  const knowledgeBase = AIEnhancedKnowledgeBase.getInstance();
-  
-  console.log('🚀 Enhanced Student Support System initialized with AI-powered monitoring and knowledge base');
+  console.log('🚀 Student Support System initialized');
 }
 
 export { StudentSupportService };

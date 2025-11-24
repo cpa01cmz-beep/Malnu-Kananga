@@ -23,6 +23,9 @@ export default {
     '^uuid$': '<rootDir>/src/__mocks__/uuid.js'
   },
   transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      tsconfig: './tsconfig.test.json'
+    }],
     '^.+\\.(js|jsx)$': ['babel-jest', {
       presets: [['@babel/preset-env', { 
         modules: 'commonjs',
