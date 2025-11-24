@@ -27,6 +27,7 @@ export interface SystemMetrics {
   systemLoad: number;
   resourceUtilization: number;
   uptime: number;
+  timestamp: string;
 }
 
 class StudentSupportMonitoring {
@@ -247,6 +248,7 @@ class StudentSupportMonitoring {
       pendingRequests: analytics.pendingRequests,
       averageResponseTime: analytics.averageResolutionTime,
       systemLoad: Math.random() * 100, // Simulated - would use actual system metrics
+      timestamp: new Date().toISOString(),
       resourceUtilization: Math.random() * 100, // Simulated
       uptime: Date.now() // Simulated uptime
     };
