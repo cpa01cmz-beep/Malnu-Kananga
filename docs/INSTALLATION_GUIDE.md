@@ -4,13 +4,19 @@
 
 Panduan lengkap untuk instalasi dan setup sistem portal MA Malnu Kananga. Guide ini mencakup setup development environment, production deployment, dan konfigurasi semua komponen sistem.
 
+**📋 Current Status**: Production Ready - v1.3.1  
+**🔄 Last Updated**: November 24, 2025  
+**⚡ Deployment**: One-click deploy ke Cloudflare tersedia
+
 ## 📋 Prerequisites
 
 ### System Requirements
-- **Node.js**: Version 18.0.0 atau lebih tinggi
-- **npm**: Version 8.0.0 atau lebih tinggi (atau yarn 1.22.0+)
+- **Node.js**: Version 18.0.0 atau lebih tinggi (wajib untuk ES2022 features)
+- **npm**: Version 9.0.0 atau lebih tinggi (atau yarn 1.22.0+)
 - **Git**: Version 2.30.0 atau lebih tinggi
 - **OS**: Windows 10+, macOS 10.15+, atau Ubuntu 18.04+
+- **Cloudflare Account**: Untuk production deployment (gratis tier cukup)
+- **Google Gemini API Key**: Required untuk AI functionality
 
 ---
 

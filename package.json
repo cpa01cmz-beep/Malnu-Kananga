@@ -14,7 +14,10 @@
     "bundle:analyze": "npx vite-bundle-analyzer dist",
     "test:supabase": "tsx src/services/supabaseTest.ts",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "type-check": "tsc --noEmit --project tsconfig.typecheck.json",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "env:validate": "node -e \"console.log('Environment validation not implemented yet')\""
   },
   "dependencies": {
     "@google/genai": "^1.29.1",
