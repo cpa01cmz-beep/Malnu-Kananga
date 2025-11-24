@@ -3,14 +3,14 @@ import {
   calculateGPA,
   getAttendanceStats,
   getUnreadAnnouncements,
-  type Student,
+  type _Student,
   type Grade,
   type ScheduleItem,
   type AttendanceRecord,
-  type Announcement
+  type _Announcement
 } from '../data/studentData';
 import { AuthService } from '../services/authService';
-import { NotificationService, NotificationItem } from '../services/notificationService';
+import { _NotificationService, NotificationItem } from '../services/notificationService';
 import {
   useStudentGrades,
   useAttendanceRecords,
@@ -33,32 +33,32 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
   const {
     data: studentProfile,
     isLoading: profileLoading,
-    error: profileError,
-    isSuccess: profileSuccess
+    error: _profileError,
+    isSuccess: _profileSuccess
   } = useStudentProfile();
 
   const {
     data: grades,
     isLoading: gradesLoading,
-    error: gradesError
+    error: _gradesError
   } = useStudentGrades();
 
   const {
     data: attendance,
     isLoading: attendanceLoading,
-    error: attendanceError
+    error: _attendanceError
   } = useAttendanceRecords();
 
   const {
     data: schedule,
     isLoading: scheduleLoading,
-    error: scheduleError
+    error: _scheduleError
   } = useClassSchedule();
 
   const {
-    data: stats,
-    isLoading: statsLoading,
-    error: statsError
+    data: _stats,
+    isLoading: _statsLoading,
+    error: _statsError
   } = useAcademicStats();
 
   // Use mock data sebagai fallback jika API belum tersedia

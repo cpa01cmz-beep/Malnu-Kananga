@@ -8,8 +8,8 @@ import {
   getUnreadMessages,
   getPendingAssignments,
   getUpcomingAssignments,
-  type Message,
-  type AcademicReport
+  type _Message,
+  type _AcademicReport
 } from '../data/parentData';
 
 interface ParentDashboardProps {
