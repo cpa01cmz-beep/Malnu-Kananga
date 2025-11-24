@@ -8,7 +8,7 @@ import {
   calculateGPA,
   getAttendanceStats,
   getUnreadAnnouncements,
-  type _Announcement
+  type Announcement
 } from '../data/studentData';
 import { AuthService } from '../services/authService';
 import { NotificationService, NotificationItem } from '../services/notificationService';

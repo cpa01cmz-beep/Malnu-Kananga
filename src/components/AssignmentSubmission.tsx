@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Assignment, currentParent } from '../data/parentData';
+import { _Assignment as Assignment, currentParent } from '../data/parentData';
 
 interface _FileList {
   length: number;
