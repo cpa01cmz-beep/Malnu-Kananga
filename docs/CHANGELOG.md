@@ -206,6 +206,6 @@ For questions about this changelog or to report issues:
 
 **CHANGELOG - MA Malnu Kananga School Portal**
 
-*Last Updated: November 24, 2025*  
+*Last Updated: November 24, 2024*  
 *Maintained by: MA Malnu Kananga Development Team*  
 *Format: Keep a Changelog 1.0.0*
