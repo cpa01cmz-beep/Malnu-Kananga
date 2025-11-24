@@ -201,7 +201,7 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'profile' | 'grades' | 'attendance' | 'schedule' | 'announcements')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                   activeTab === tab.id
                     ? 'border-green-500 text-green-600 dark:text-green-400'
