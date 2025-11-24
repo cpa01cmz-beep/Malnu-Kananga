@@ -549,7 +549,7 @@ class StudentSupportService {
           'progress_report_weekly',
           {
             studentName: `Siswa ${progress.studentId}`,
-            weekPeriod: now.toLocaleDateString('id-ID', { week: 'long' }),
+            weekPeriod: `Minggu ke-${Math.ceil(now.getDate() / 7)}`,
             gpa: progress.academicMetrics.gpa.toFixed(2),
             attendanceRate: progress.academicMetrics.attendanceRate,
             assignmentCompletion: progress.academicMetrics.assignmentCompletion,
@@ -1090,7 +1090,7 @@ class StudentSupportService {
   private static calculateStudentSatisfaction(resources: SupportResource[]): number {
     if (resources.length === 0) return 0;
 
-    const totalRating = resources.reduce((sum, resource) => sum + resource.rating, 0);
+    const totalRating = resources.reduce((sum, resource) => sum + (resource.rating || 0), 0);
     return totalRating / resources.length;
   }
 
