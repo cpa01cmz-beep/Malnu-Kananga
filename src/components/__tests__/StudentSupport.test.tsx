@@ -4,16 +4,16 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import StudentSupport from '../StudentSupport';
 
-declare global {
-  var alert: jest.Mock;
-}
-
 // Mock window.alert
-(global as any).alert = jest.fn();
+const mockAlert = jest.fn();
+Object.defineProperty(window, 'alert', {
+  writable: true,
+  value: mockAlert
+});
 
 // Mock the student support service
 jest.mock('../../services/studentSupportService', () => ({
-  studentSupportService: {
+  StudentSupportService: {
     getSupportRequests: jest.fn(() => [
       {
         id: 'REQ001',
@@ -161,7 +161,7 @@ describe('StudentSupport Component', () => {
     fireEvent.click(screen.getByText('Kirim Permintaan'));
     
     await waitFor(() => {
-      expect(studentSupportService.createSupportRequest).toHaveBeenCalledWith(
+      expect(StudentSupportService.createSupportRequest).toHaveBeenCalledWith(
         'STU001',
         'academic',
         'umum',
@@ -189,7 +189,7 @@ describe('StudentSupport Component', () => {
   it('shows empty state when no requests exist', () => {
     // Mock empty requests
     const { studentSupportService } = require('../../services/studentSupportService');
-    studentSupportService.getSupportRequests.mockReturnValue([]);
+    StudentSupportService.getSupportRequests.mockReturnValue([]);
     
     render(<StudentSupport studentId="STU001" />);
     

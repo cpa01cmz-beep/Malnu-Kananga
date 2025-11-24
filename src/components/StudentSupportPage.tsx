@@ -1,5 +1,5 @@
 import React from 'react';
-import StudentSupportService from '../services/studentSupportService';
+import { StudentSupportService } from '../services/studentSupportService';
 
 const StudentSupportPage: React.FC = () => {
   React.useEffect(() => {
