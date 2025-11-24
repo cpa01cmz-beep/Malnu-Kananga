@@ -92,7 +92,7 @@ export default defineConfig(({ command, mode }) => ({
     },
 
     // Chunk size warnings
-    chunkSizeWarningLimit: 300,
+    chunkSizeWarningLimit: 300
   },
 
   // Development server optimizations
