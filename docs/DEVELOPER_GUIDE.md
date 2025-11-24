@@ -995,4 +995,4 @@ npm test -- --verbose
 ---
 
 *Developer Guide Version: 1.2.0*  
-*Last Updated: November 20, 2024*
+*Last Updated: November 24, 2024*

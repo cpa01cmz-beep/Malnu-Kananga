@@ -535,4 +535,4 @@ Kami menyambut kontribusi! Berikut cara berkontribusi:
 
 ---
 
-**Status**: PRODUCTION READY | **Version**: 1.2.0 | **Last Updated**: November 2024 | **Development Server**: http://localhost:9000
+**Status**: PRODUCTION READY | **Version**: 1.3.0 | **Last Updated**: November 24, 2024 | **Development Server**: http://localhost:9000
