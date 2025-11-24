@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
 
+// Extend Jest matchers with jest-dom matchers
 declare global {
   namespace jest {
     interface Matchers<R = void, T = any> {
@@ -31,3 +32,5 @@ declare global {
     }
   }
 }
+
+export {};
