@@ -1,8 +1,15 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ChatWindow from './ChatWindow';
-import { Sender } from '../types';
+import { ChatProvider } from '../contexts/ChatContext';
+
+// Wrapper component to provide ChatContext to tests
+const ChatWindowWithProvider = (props: {isOpen: boolean, closeChat: () => void}) => (
+  <ChatProvider>
+    <ChatWindow {...props} />
+  </ChatProvider>
+);
 
 // Mock the service
 jest.mock('../services/geminiService', () => ({
@@ -22,13 +29,13 @@ jest.mock('./icons/CloseIcon', () => ({
 
 // Mock ResizeObserver and IntersectionObserver
 beforeAll(() => {
-  global.ResizeObserver = class ResizeObserver {
+  (global as unknown).ResizeObserver = class ResizeObserver {
     observe() {}
     unobserve() {}
     disconnect() {}
   };
 
-  global.IntersectionObserver = class IntersectionObserver {
+  (global as unknown).IntersectionObserver = class IntersectionObserver {
     constructor() {}
     observe() {}
     unobserve() {}
@@ -49,27 +56,27 @@ describe('ChatWindow Component', () => {
 
   describe('Rendering', () => {
     test('should render chat window when open', () => {
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       expect(screen.getByText('Asisten AI')).toBeInTheDocument();
       expect(screen.getByText('Assalamualaikum! Saya Asisten AI MA Malnu Kananga.')).toBeInTheDocument();
     });
 
     test('should not render when closed', () => {
-      render(<ChatWindow isOpen={false} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={false} closeChat={mockCloseChat} />);
 
       expect(screen.queryByText('Asisten AI')).not.toBeInTheDocument();
     });
 
     test('should render input field and send button', () => {
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       expect(screen.getByPlaceholderText('Ketik pertanyaan Anda...')).toBeInTheDocument();
       expect(screen.getByLabelText('Kirim pesan')).toBeInTheDocument();
     });
 
     test('should render close button', () => {
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       expect(screen.getByLabelText('Tutup obrolan')).toBeInTheDocument();
     });
@@ -93,7 +100,7 @@ describe('ChatWindow Component', () => {
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       const sendButton = screen.getByLabelText('Kirim pesan');
@@ -126,7 +133,7 @@ describe('ChatWindow Component', () => {
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
 
@@ -142,7 +149,7 @@ describe('ChatWindow Component', () => {
     test('should not send empty message', async () => {
       const user = userEvent.setup();
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const sendButton = screen.getByLabelText('Kirim pesan');
 
@@ -162,7 +169,7 @@ describe('ChatWindow Component', () => {
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       const sendButton = screen.getByLabelText('Kirim pesan');
@@ -180,7 +187,7 @@ describe('ChatWindow Component', () => {
     test('should close chat when close button is clicked', async () => {
       const user = userEvent.setup();
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const closeButton = screen.getByLabelText('Tutup obrolan');
       await user.click(closeButton);
@@ -197,7 +204,7 @@ describe('ChatWindow Component', () => {
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
 
@@ -227,7 +234,7 @@ describe('ChatWindow Component', () => {
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       await user.type(input, 'Siapa kamu?');
@@ -243,12 +250,13 @@ describe('ChatWindow Component', () => {
       const user = userEvent.setup();
 
       const mockStream = (async function* () {
+        yield '';
         throw new Error('AI Service Error');
       })();
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       await user.type(input, 'Test message');
@@ -276,7 +284,7 @@ describe('ChatWindow Component', () => {
         .mockReturnValueOnce(mockStream1)
         .mockReturnValueOnce(mockStream2);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
 
@@ -316,7 +324,7 @@ describe('ChatWindow Component', () => {
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       await user.type(input, 'Test');
@@ -332,7 +340,7 @@ describe('ChatWindow Component', () => {
     });
 
     test('should disable send button when input is empty', () => {
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const sendButton = screen.getByLabelText('Kirim pesan');
       expect(sendButton).toBeDisabled();
@@ -341,7 +349,7 @@ describe('ChatWindow Component', () => {
     test('should enable send button when input has content', async () => {
       const user = userEvent.setup();
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       const sendButton = screen.getByLabelText('Kirim pesan');
@@ -362,7 +370,7 @@ describe('ChatWindow Component', () => {
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
 
@@ -376,14 +384,14 @@ describe('ChatWindow Component', () => {
     });
 
     test('should have proper ARIA labels', () => {
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       expect(screen.getByLabelText('Tutup obrolan')).toBeInTheDocument();
       expect(screen.getByLabelText('Kirim pesan')).toBeInTheDocument();
     });
 
     test('should be focusable and navigable', () => {
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       const closeButton = screen.getByLabelText('Tutup obrolan');
@@ -409,7 +417,7 @@ describe('ChatWindow Component', () => {
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       await user.type(input, 'Test');
@@ -434,7 +442,7 @@ describe('ChatWindow Component', () => {
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       await user.type(input, 'User message');
@@ -455,7 +463,7 @@ describe('ChatWindow Component', () => {
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       await user.type(input, 'User question');
@@ -476,7 +484,7 @@ describe('ChatWindow Component', () => {
         throw new Error('Service unavailable');
       });
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       await user.type(input, 'Test message');
@@ -496,7 +504,7 @@ describe('ChatWindow Component', () => {
 
       mockGetAIResponseStream.mockReturnValue(mockStream);
 
-      render(<ChatWindow isOpen={true} closeChat={mockCloseChat} />);
+      render(<ChatWindowWithProvider isOpen={true} closeChat={mockCloseChat} />);
 
       const input = screen.getByPlaceholderText('Ketik pertanyaan Anda...');
       await user.type(input, 'Test message');

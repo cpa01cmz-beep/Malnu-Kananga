@@ -7,6 +7,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.1] - 2025-11-23
+
+### 📚 Documentation Improvements
+- **Documentation Audit**: Comprehensive audit and restructuring of all documentation
+- **Version Alignment**: Synchronized all documentation versions to v1.3.1
+- **Content Consistency**: Fixed inconsistencies between docs/ and root documentation
+- **Navigation Enhancement**: Improved cross-references and navigation structure
+- **Language Standardization**: Ensured consistent Indonesian language usage
+- **Gap Analysis**: Identified and documented implementation gaps in API endpoints
+
+### 🔧 Infrastructure Updates
+- **Health Check Implementation**: Added health check endpoint status documentation
+- **API Status Matrix**: Comprehensive implementation status for all documented endpoints
+- **Security Documentation**: Updated security assessment and implementation guides
+- **Troubleshooting Enhancement**: Expanded troubleshooting guide with current issues
+
+### 🐛 Bug Fixes
+- **Documentation Inconsistencies**: Fixed version mismatches across documentation files
+- **Broken References**: Updated all internal links and cross-references
+- **Outdated Information**: Updated deployment URLs and configuration examples
+- **Implementation Status**: Corrected implementation status for various endpoints
+
+---
+
+## [1.3.0] - 2024-11-23
+
+### 🔒 Security
+- **CRITICAL Security Vulnerability Fixes**: Authentication & CSRF Protection implementation
+- **CSRF Protection Middleware**: Added comprehensive CSRF protection for all API endpoints
+- **Security Headers**: Implemented Content Security Policy (CSP) and additional security headers
+- **Authentication Hardening**: Enhanced magic link authentication with additional validation
+- **Environment Validation**: Added robust environment variable validation system
+- **Input Sanitization**: Improved input validation and sanitization across all endpoints
+
+### 🛡️ Security Features Added
+- **CSRF Token System**: Double-submit cookie pattern for CSRF protection
+- **Security Middleware**: Centralized security middleware for request validation
+- **WebP Detection**: Added WebP image format detection with security validation
+- **Enhanced Error Handling**: Secure error responses without information leakage
+- **Rate Limiting**: Improved rate limiting with security considerations
+- **Session Security**: Enhanced session management with secure cookie handling
+
+### 🔧 Infrastructure Updates
+- **Worker Security**: Enhanced Cloudflare Worker security configuration
+- **Environment Variables**: Added SECRET_KEY requirement for JWT signing
+- **Security Headers**: Implemented comprehensive security header policies
+- **Audit Logging**: Enhanced security event logging and monitoring
+- **Error Boundaries**: Improved error handling with security considerations
+
+### 📚 Documentation
+- **Security Assessment**: Comprehensive security assessment reports
+- **Implementation Guides**: Updated security implementation documentation
+- **Troubleshooting**: Added security-specific troubleshooting guides
+- **Best Practices**: Enhanced security best practices documentation
+
+### 🐛 Bug Fixes
+- **Authentication Flow**: Fixed authentication token validation issues
+- **CSRF Vulnerabilities**: Resolved CSRF vulnerabilities in form submissions
+- **Environment Validation**: Fixed environment variable validation edge cases
+- **Security Headers**: Fixed security header implementation bugs
+- **Error Handling**: Improved error response security
+
+---
+
 ## [1.2.0] - 2024-11-20
 
 ### 🆕 Added
@@ -136,12 +200,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 For questions about this changelog or to report issues:
 - **GitHub Issues**: [Create Issue](https://github.com/ma-malnukananga/school-portal/issues)
 - **Email**: support@ma-malnukananga.sch.id
-- **Documentation**: [Full Documentation](./docs/README.md)
+- **Documentation**: [Full Documentation](./README.md)
 
 ---
 
 **CHANGELOG - MA Malnu Kananga School Portal**
 
-*Last Updated: November 20, 2024*  
+*Last Updated: November 24, 2025*  
 *Maintained by: MA Malnu Kananga Development Team*  
 *Format: Keep a Changelog 1.0.0*

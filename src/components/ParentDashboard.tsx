@@ -8,8 +8,6 @@ import {
   getUnreadMessages,
   getPendingAssignments,
   getUpcomingAssignments,
-  getAssignmentStats,
-  type Assignment,
   type Message,
   type AcademicReport
 } from '../data/parentData';
@@ -110,7 +108,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onLogout }) => {
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id as 'overview' | 'children' | 'assignments' | 'messages' | 'reports')}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${
                 activeTab === tab.id
                   ? 'bg-green-600 text-white'

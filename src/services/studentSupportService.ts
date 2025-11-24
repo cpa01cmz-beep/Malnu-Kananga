@@ -1,5 +1,7 @@
 // Provides 24/7 automated support for students
 
+import { ParentCommunicationService } from './parentCommunicationService';
+
 export interface SupportRequest {
   id: string;
   studentId: string;
@@ -298,8 +300,76 @@ class StudentSupportService {
     localStorage.setItem(this.REQUESTS_KEY, JSON.stringify(requests));
   }
 
-  // Process request automatically
-  private static processRequestAutomatically(request: SupportRequest): void {
+  // Process request automatically with AI integration
+  static async processRequestAutomatically(request: SupportRequest): Promise<void> {
+    try {
+      // Get AI-powered response
+      const aiResponse = await this.getAIResponse(request);
+      
+      // Update request with AI response
+      const requests = this.getSupportRequests();
+      const requestIndex = requests.findIndex(r => r.id === request.id);
+      
+      if (requestIndex !== -1) {
+        requests[requestIndex].status = aiResponse.confidence > 0.7 ? 'in_progress' : 'pending';
+        requests[requestIndex].updatedAt = new Date().toISOString();
+        requests[requestIndex].resolution = aiResponse.response;
+        requests[requestIndex].tags = [...(requests[requestIndex].tags || []), aiResponse.category];
+        this.saveSupportRequests(requests);
+
+        // Send automated response notification
+        this.sendAutomatedResponse(request, aiResponse.response);
+        
+        // If confidence is low, escalate to human
+        if (aiResponse.confidence < 0.7) {
+          this.escalateRequest(request);
+        }
+      }
+    } catch (error) {
+      console.error('AI processing failed:', error);
+      // Fallback to knowledge base
+      this.processWithKnowledgeBase(request);
+    }
+  }
+
+  // Get AI response from worker
+  private static async getAIResponse(request: SupportRequest): Promise<{
+    response: string;
+    category: string;
+    confidence: number;
+    contextUsed: boolean;
+  }> {
+    const studentProgress = this.getStudentProgress(request.studentId);
+    
+    const response = await fetch('/api/student-support', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        studentId: request.studentId,
+        message: `${request.title}\n\n${request.description}`,
+        category: request.type,
+        context: {
+          requestType: request.type,
+          priority: request.priority,
+          studentProgress: studentProgress,
+          requestHistory: this.getSupportRequests()
+            .filter(r => r.studentId === request.studentId)
+            .slice(0, 3)
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`AI service error: ${response.statusText}`);
+    }
+
+    return await response.json();
+  }
+
+  // Fallback to knowledge base processing
+  private static processWithKnowledgeBase(request: SupportRequest): void {
     const knowledgeBase = JSON.parse(localStorage.getItem(this.KNOWLEDGE_BASE_KEY) || '{}');
     
     // Try to find automated solution
@@ -445,6 +515,121 @@ class StudentSupportService {
         this.executeAutomationRule(rule, progress);
       }
     });
+
+    // Check parent communication triggers
+    this.checkParentCommunicationTriggers(progress);
+  }
+
+  // Check parent communication triggers
+  private static checkParentCommunicationTriggers(progress: StudentProgress): void {
+    try {
+      // Send weekly progress reports
+      const lastWeeklyReport = localStorage.getItem(`last_weekly_report_${progress.studentId}`);
+      const now = new Date();
+      const shouldSendWeekly = !lastWeeklyReport || 
+        (now.getTime() - new Date(lastWeeklyReport).getTime()) > 7 * 24 * 60 * 60 * 1000;
+
+      if (shouldSendWeekly) {
+        ParentCommunicationService.sendTemplateCommunication(
+          progress.studentId,
+          'progress_report_weekly',
+          {
+            studentName: `Siswa ${progress.studentId}`,
+            weekPeriod: `Minggu ke-${Math.ceil(now.getDate() / 7)}`,
+            gpa: progress.academicMetrics.gpa.toFixed(2),
+            attendanceRate: progress.academicMetrics.attendanceRate,
+            assignmentCompletion: progress.academicMetrics.assignmentCompletion,
+            gradeTrend: progress.academicMetrics.gradeTrend,
+            loginFrequency: progress.engagementMetrics.loginFrequency,
+            resourceAccess: progress.engagementMetrics.resourceAccess,
+            supportRequests: progress.engagementMetrics.supportRequests,
+            riskLevel: progress.riskLevel.toUpperCase(),
+            hasConcerns: progress.riskLevel !== 'low',
+            concerns: this.generateConcerns(progress)
+          }
+        );
+        localStorage.setItem(`last_weekly_report_${progress.studentId}`, now.toISOString());
+      }
+
+      // Send high-risk alerts
+      if (progress.riskLevel === 'high') {
+        const lastAlert = localStorage.getItem(`last_risk_alert_${progress.studentId}`);
+        const shouldSendAlert = !lastAlert || 
+          (now.getTime() - new Date(lastAlert).getTime()) > 24 * 60 * 60 * 1000;
+
+        if (shouldSendAlert) {
+          ParentCommunicationService.sendTemplateCommunication(
+            progress.studentId,
+            'alert_high_risk',
+            {
+              studentName: `Siswa ${progress.studentId}`,
+              riskLevel: progress.riskLevel.toUpperCase(),
+              riskFactors: this.generateRiskFactors(progress),
+              recommendations: this.generateParentRecommendations(progress),
+              urgency: 'IMMEDIATE',
+              emergencyContact: 'support@ma-malnukananga.sch.id'
+            },
+            'urgent'
+          );
+          localStorage.setItem(`last_risk_alert_${progress.studentId}`, now.toISOString());
+        }
+      }
+    } catch (error) {
+      console.error('Failed to check parent communication triggers:', error);
+    }
+  }
+
+  // Generate concerns description for parents
+  private static generateConcerns(progress: StudentProgress): string {
+    const concerns = [];
+    
+    if (progress.academicMetrics.gpa < 70) {
+      concerns.push('- IPK dibawah standar');
+    }
+    if (progress.academicMetrics.attendanceRate < 80) {
+      concerns.push('- Kehadiran rendah');
+    }
+    if (progress.academicMetrics.assignmentCompletion < 75) {
+      concerns.push('- Penyelesaian tugas rendah');
+    }
+    if (progress.engagementMetrics.loginFrequency < 3) {
+      concerns.push('- Jarang mengakses portal');
+    }
+    
+    return concerns.length > 0 ? concerns.join('\n') : 'Tidak ada concerns khusus.';
+  }
+
+  // Generate risk factors for parents
+  private static generateRiskFactors(progress: StudentProgress): string {
+    const factors = [];
+    
+    if (progress.academicMetrics.gpa < 70) factors.push('IPK rendah');
+    if (progress.academicMetrics.attendanceRate < 80) factors.push('Kehadiran rendah');
+    if (progress.academicMetrics.assignmentCompletion < 75) factors.push('Tugas tidak selesai');
+    if (progress.engagementMetrics.loginFrequency < 3) factors.push('Engagement rendah');
+    if (progress.engagementMetrics.supportRequests > 5) factors.push('Banyak permintaan bantuan');
+    
+    return factors.join(', ') || 'Tidak ada faktor risiko spesifik';
+  }
+
+  // Generate recommendations for parents
+  private static generateParentRecommendations(progress: StudentProgress): string {
+    const recommendations = [];
+    
+    if (progress.academicMetrics.gpa < 70) {
+      recommendations.push('1. Sediakan waktu belajar terstruktur di rumah');
+      recommendations.push('2. Diskusikan kesulitan akademis dengan guru mata pelajaran');
+    }
+    if (progress.academicMetrics.attendanceRate < 80) {
+      recommendations.push('3. Pastikan siswa hadir tepat waktu setiap hari');
+      recommendations.push('4. Hubungi pihak sekolah jika ada kendala kehadiran');
+    }
+    if (progress.engagementMetrics.loginFrequency < 3) {
+      recommendations.push('5. Bantu siswa mengakses portal secara teratur');
+      recommendations.push('6. Monitor penggunaan portal untuk informasi penting');
+    }
+    
+    return recommendations.length > 0 ? recommendations.join('\n') : 'Lanjutkan dukungan positif yang sudah diberikan.';
   }
 
   // Check if rule should trigger
@@ -540,22 +725,95 @@ class StudentSupportService {
     }, 5 * 60 * 1000);
   }
 
-  // Monitor at-risk students
-  private static monitorAtRiskStudents(): void {
+  // Monitor at-risk students with AI-powered analysis
+  private static async monitorAtRiskStudents(): Promise<void> {
     const allProgress = this.getAllStudentProgress();
     
-    Object.values(allProgress).forEach(progress => {
-      if (progress.riskLevel === 'high') {
-        // Create intervention request
-        this.createSupportRequest(
-          progress.studentId,
-          'academic',
-          'intervention',
-          'At-Risk Student Intervention',
-          `Student identified as at-risk with ${progress.riskLevel} risk level`,
-          'medium'
-        );
+    for (const progress of Object.values(allProgress)) {
+      try {
+        // Get AI-powered risk assessment
+        const riskAssessment = await this.getAIRiskAssessment(progress);
+        
+        if (riskAssessment.riskLevel === 'high' || riskAssessment.riskLevel === 'medium') {
+          // Create intervention request with AI recommendations
+          const recommendations = riskAssessment.recommendations || [];
+          const recommendationText = recommendations.map((rec: any) => 
+            `- ${rec.description} (${rec.priority})`
+          ).join('\n');
+          
+          this.createSupportRequest(
+            progress.studentId,
+            'academic',
+            'intervention',
+            `AI-Detected ${riskAssessment.riskLevel.toUpperCase()} Risk Student`,
+            `Risk factors: ${riskAssessment.riskFactors.join(', ')}\n\nRecommendations:\n${recommendationText}`,
+            riskAssessment.riskLevel === 'high' ? 'high' : 'medium'
+          );
+          
+          // Send proactive notifications
+          await this.sendProactiveNotification(progress, riskAssessment);
+        }
+      } catch (error) {
+        console.error(`Failed to monitor student ${progress.studentId}:`, error);
+        // Fallback to basic monitoring
+        if (progress.riskLevel === 'high') {
+          this.createSupportRequest(
+            progress.studentId,
+            'academic',
+            'intervention',
+            'At-Risk Student Intervention',
+            `Student identified as at-risk with ${progress.riskLevel} risk level`,
+            'medium'
+          );
+        }
       }
+    }
+  }
+
+  // Get AI-powered risk assessment
+  private static async getAIRiskAssessment(progress: StudentProgress): Promise<{
+    riskLevel: string;
+    riskScore: number;
+    riskFactors: string[];
+    urgency: string;
+    recommendations: any[];
+  }> {
+    const response = await fetch('/api/support-monitoring', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        studentMetrics: {
+          ...progress.academicMetrics,
+          ...progress.engagementMetrics,
+          lastLoginDays: this.calculateDaysSinceLastLogin(progress.studentId)
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Risk assessment error: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result.riskAssessment;
+  }
+
+  // Calculate days since last login
+  private static calculateDaysSinceLastLogin(studentId: string): number {
+    // This would integrate with actual login tracking system
+    // For now, return mock data
+    return Math.floor(Math.random() * 14);
+  }
+
+  // Send proactive notification
+  private static async sendProactiveNotification(progress: StudentProgress, riskAssessment: any): Promise<void> {
+    // This would integrate with notification system
+    console.log(`Proactive notification for student ${progress.studentId}:`, {
+      riskLevel: riskAssessment.riskLevel,
+      urgency: riskAssessment.urgency,
+      recommendations: riskAssessment.recommendations
     });
   }
 
@@ -565,16 +823,49 @@ class StudentSupportService {
     console.log('Updating engagement metrics...');
   }
 
-  // Get relevant resources
-  static getRelevantResources(searchTerm?: string): SupportResource[] {
+  // Get relevant resources with AI-enhanced knowledge base
+  static async getRelevantResources(searchTerm?: string): Promise<SupportResource[]> {
     const resources = this.getSupportResources();
     
     if (!searchTerm) return resources;
 
-    return resources.filter(resource =>
+    // Use AI-enhanced knowledge base for better results
+    const knowledgeBase = AIEnhancedKnowledgeBase.getInstance();
+    const searchResults = await knowledgeBase.searchKnowledgeBase({
+      query: searchTerm,
+      limit: 10
+    });
+
+    // Convert knowledge base articles to support resources
+    const kbResources: SupportResource[] = searchResults.map(result => ({
+      id: result.article.id,
+      title: result.article.title,
+      content: result.article.content,
+      category: result.article.category,
+      type: result.article.type as any,
+      tags: result.article.tags,
+      difficulty: result.article.difficulty,
+      rating: result.article.rating,
+      usageCount: result.article.usageCount
+    }));
+
+    // Combine with traditional resources
+    const traditionalResources = resources.filter(resource =>
       resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       resource.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
       resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
+    // Merge and deduplicate by ID
+    const allResources = [...kbResources, ...traditionalResources];
+    const uniqueResources = allResources.filter((resource, index, self) =>
+      index === self.findIndex(r => r.id === resource.id)
+    );
+
+    // Sort by rating and usage
+    return uniqueResources.sort((a, b) => 
+      (b.rating || 0) * 10 + (b.usageCount || 0) - 
+      ((a.rating || 0) * 10 + (a.usageCount || 0))
     );
   }
 
@@ -785,7 +1076,7 @@ class StudentSupportService {
   private static calculateStudentSatisfaction(resources: SupportResource[]): number {
     if (resources.length === 0) return 0;
 
-    const totalRating = resources.reduce((sum, resource) => sum + resource.rating, 0);
+    const totalRating = resources.reduce((sum, resource) => sum + (resource.rating || 0), 0);
     return totalRating / resources.length;
   }
 
@@ -809,9 +1100,26 @@ class StudentSupportService {
   }
 }
 
+// Initialize enhanced support system with real-time monitoring
+import RealTimeMonitoringService from './realTimeMonitoringService';
+import AutomatedInterventionEngine from './automatedInterventionEngine';
+import AIEnhancedKnowledgeBase from './aiEnhancedKnowledgeBase';
+
 // Auto-initialize when module loads
 if (typeof window !== 'undefined') {
   StudentSupportService.initialize();
+  
+  // Start real-time monitoring
+  const monitoringService = RealTimeMonitoringService.getInstance();
+  monitoringService.startMonitoring();
+  
+  // Initialize intervention engine
+  const interventionEngine = AutomatedInterventionEngine.getInstance();
+  
+  // Initialize AI-enhanced knowledge base
+  const knowledgeBase = AIEnhancedKnowledgeBase.getInstance();
+  
+  console.log('🚀 Enhanced Student Support System initialized with AI-powered monitoring and knowledge base');
 }
 
 export { StudentSupportService };

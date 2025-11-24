@@ -11,20 +11,52 @@ export default defineConfig(({ command, mode }) => ({
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
   },
   build: {
-    // Enable source maps for production debugging
-    sourcemap: mode === 'production',
+    // Enable source maps for production debugging (security consideration)
+    sourcemap: mode === 'development',
 
     // Optimize chunk size
     rollupOptions: {
       output: {
-        manualChunks: {
+        manualChunks: (id) => {
           // Vendor chunks untuk better caching
-          'react-vendor': ['react', 'react-dom'],
-          'ui-vendor': ['@google/genai'],
-          'utils': ['uuid'],
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('@google/genai')) {
+              return 'ai-vendor';
+            }
+            if (id.includes('uuid')) {
+              return 'utils-vendor';
+            }
+            if (id.includes('tanstack') || id.includes('@tanstack')) {
+              return 'query-vendor';
+            }
+            return 'vendor';
+          }
+          
           // Split larger components into separate chunks
-          'dashboard': ['./src/components/StudentDashboard', './src/components/TeacherDashboard', './src/components/ParentDashboard'],
-          'sections': ['./src/components/HeroSection', './src/components/PPDBSection', './src/components/ContactSection', './src/components/RelatedLinksSection', './src/components/ProfileSection', './src/components/FeaturedProgramsSection', './src/components/LatestNewsSection']
+          if (id.includes('Dashboard')) {
+            return 'dashboard';
+          }
+          if (id.includes('Section')) {
+            return 'sections';
+          }
+          if (id.includes('ChatWindow')) {
+            return 'chat';
+          }
+          if (id.includes('memory')) {
+            return 'memory';
+          }
+          if (id.includes('components')) {
+            return 'components';
+          }
+          if (id.includes('services')) {
+            return 'services';
+          }
+          if (id.includes('hooks')) {
+            return 'hooks';
+          }
         },
 
         // Optimize chunk naming untuk better caching
@@ -55,13 +87,18 @@ export default defineConfig(({ command, mode }) => ({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true,
-        drop_debugger: true
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production',
+        pure_funcs: mode === 'production' ? ['console.log', 'console.info', 'console.debug'] : [],
+        passes: 2
+      },
+      mangle: {
+        safari10: true
       }
     },
 
-    // Chunk size warnings
-    chunkSizeWarningLimit: 500
+    // Chunk size warnings - increased threshold for education system
+    chunkSizeWarningLimit: 250
   },
 
   // Development server optimizations
@@ -72,6 +109,21 @@ export default defineConfig(({ command, mode }) => ({
 
   // Dependency pre-bundling untuk better performance
   optimizeDeps: {
-    include: ['react', 'react-dom', '@google/genai']
-  }
+    include: ['react', 'react-dom', '@google/genai'],
+    exclude: ['@tanstack/react-query']
+  },
+
+  // Experimental features for better performance
+  experimental: {
+    renderBuiltUrl: (filename, { hostType }) => {
+      if (hostType === 'js') {
+        return { js: `/${filename}` };
+      } else {
+        return { relative: true };
+      }
+    }
+  },
+
+  // Asset optimization
+  assetsInclude: ['**/*.webp']
 }))

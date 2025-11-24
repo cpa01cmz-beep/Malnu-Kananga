@@ -68,6 +68,18 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 - **Fitur**: Problem diagnosis, step-by-step solutions, support contacts
 - **Level**: All levels
 
+#### 🔒 [Security Guide](./SECURITY_GUIDE.md)
+- **Target**: Developer, system administrator, security team
+- **Topik**: Security architecture, authentication, data protection, monitoring
+- **Fitur**: Security best practices, incident response, compliance guidelines
+- **Level**: Advanced
+
+#### ⚡ [Performance Guide](./PERFORMANCE_GUIDE.md)
+- **Target**: Developer, DevOps engineer, performance team
+- **Topik**: Performance optimization, monitoring, caching strategies
+- **Fitur**: Frontend/backend optimization, load testing, performance metrics
+- **Level**: Intermediate to Advanced
+
 ---
 
 ## 🎯 Quick Navigation
@@ -106,6 +118,8 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 | Deployment Guide | DevOps, SysAdmin | Advanced | Quarterly |
 | System Architecture | Developer, Architect | Advanced | Quarterly |
 | Troubleshooting Guide | All | All | As needed |
+| Security Guide | Developer, Admin | Advanced | Quarterly |
+| Performance Guide | Developer, DevOps | Intermediate | Quarterly |
 
 ---
 
@@ -257,7 +271,9 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 - [Deployment Guide](./DEPLOYMENT_GUIDE.md#production-deployment)
 - [System Architecture](./SYSTEM_ARCHITECTURE.md)
 - [Troubleshooting](./TROUBLESHOOTING_GUIDE.md#emergency-procedures)
-- [Changelog](../CHANGELOG.md)
+- [Security Guide](./SECURITY_GUIDE.md)
+- [Performance Guide](./PERFORMANCE_GUIDE.md)
+- [Changelog](./CHANGELOG.md)
 
 ---
 
@@ -312,6 +328,6 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 
 ---
 
-*Documentation Index Version: 1.2.0*  
-*Last Updated: November 20, 2024*  
+*Documentation Index Version: 1.3.1*  
+*Last Updated: November 24, 2025*  
 *Maintained by: MA Malnu Kananga Documentation Team*

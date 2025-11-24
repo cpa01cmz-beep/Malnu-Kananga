@@ -12,6 +12,235 @@ Panduan lengkap untuk instalasi dan setup sistem portal MA Malnu Kananga. Guide 
 - **Git**: Version 2.30.0 atau lebih tinggi
 - **OS**: Windows 10+, macOS 10.15+, atau Ubuntu 18.04+
 
+---
+
+## 🔧 Node.js 18+ Installation Guide
+
+### Why Node.js 18+ is Required
+MA Malnu Kananga menggunakan fitur-fitur modern JavaScript yang hanya tersedia di Node.js 18+:
+- ES2022 features (Top-level await, `.at()` method)
+- Improved performance dan memory management
+- Enhanced security features
+- Better compatibility dengan modern dependencies
+
+### Installation Methods
+
+#### Method 1: Using NVM (Recommended)
+NVM (Node Version Manager) memungkinkan multiple Node.js versions:
+
+**Linux/macOS:**
+```bash
+# Install NVM
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Reload shell configuration
+source ~/.bashrc  # atau source ~/.zshrc
+
+# Install Node.js 18 LTS
+nvm install 18
+nvm use 18
+
+# Set 18 as default version
+nvm alias default 18
+
+# Verify installation
+node --version  # Should show v18.x.x
+npm --version   # Should show 9.x.x or higher
+```
+
+**Windows:**
+```powershell
+# Download and install NVM for Windows from:
+# https://github.com/coreybutler/nvm-windows/releases
+
+# Install Node.js 18
+nvm install 18.19.0
+nvm use 18.19.0
+
+# Verify installation
+node --version
+npm --version
+```
+
+#### Method 2: Official Installer
+
+**Windows:**
+1. Download dari [nodejs.org](https://nodejs.org/en/download/)
+2. Pilih "Windows Installer (.msi)" untuk Node.js 18.x LTS
+3. Run installer dengan default settings
+4. Restart command prompt/terminal
+
+**macOS:**
+```bash
+# Using Homebrew
+brew install node@18
+
+# Atau download .pkg installer dari nodejs.org
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+# Add NodeSource repository
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+
+# Install Node.js
+sudo apt-get install -y nodejs
+
+# Verify installation
+node --version
+npm --version
+```
+
+#### Method 3: Package Managers
+
+**macOS (Homebrew):**
+```bash
+brew install node@18
+brew link --overwrite node@18
+```
+
+**Linux (Snap):**
+```bash
+sudo snap install node --classic --channel=18
+```
+
+**Windows (Chocolatey):**
+```powershell
+choco install nodejs --version=18.19.0
+```
+
+### Verification & Setup
+
+#### Check Node.js Version
+```bash
+# Check current version
+node --version
+# Expected: v18.x.x (minimum v18.0.0)
+
+# Check npm version
+npm --version
+# Expected: 9.x.x or higher
+
+# Check if Node.js is properly installed
+node -e "console.log('Node.js is working!')"
+```
+
+#### Configure npm (Optional)
+```bash
+# Configure npm for better performance
+npm config set fund false
+npm config set audit false
+
+# Configure global packages location (optional)
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+
+# Add to shell profile (~/.bashrc or ~/.zshrc)
+export PATH=~/.npm-global/bin:$PATH
+source ~/.bashrc  # atau source ~/.zshrc
+```
+
+### Troubleshooting Node.js Installation
+
+#### Issue: "Command not found: node"
+```bash
+# Check if Node.js is in PATH
+which node
+echo $PATH
+
+# If using NVM, ensure NVM is loaded
+source ~/.bashrc
+nvm use 18
+```
+
+#### Issue: Permission denied
+```bash
+# Fix npm permissions (Linux/macOS)
+sudo chown -R $(whoami) ~/.npm
+sudo chown -R $(whoami) /usr/local/lib/node_modules
+
+# Atau use npx to avoid global installation
+npx npm install
+```
+
+#### Issue: Multiple Node.js versions
+```bash
+# List installed versions
+nvm list
+
+# Switch to Node.js 18
+nvm use 18
+
+# Uninstall old versions
+nvm uninstall 16
+nvm uninstall 14
+```
+
+#### Issue: npm version too old
+```bash
+# Update npm to latest version
+npm install -g npm@latest
+
+# Verify npm version
+npm --version
+```
+
+### Development Environment Setup
+
+#### Global Development Tools (Optional)
+```bash
+# Install useful global tools
+npm install -g nodemon typescript ts-node vite
+
+# Verify installations
+nodemon --version
+tsc --version
+vite --version
+```
+
+#### Configure Git for Node.js Projects
+```bash
+# Configure Git to handle Node.js files properly
+git config --global core.autocrlf input  # Linux/macOS
+git config --global core.autocrlf true   # Windows
+
+# Set default branch name
+git config --global init.defaultBranch main
+```
+
+### Performance Optimization
+
+#### Increase Node.js Memory Limit (Optional)
+```bash
+# Add to shell profile (~/.bashrc or ~/.zshrc)
+export NODE_OPTIONS="--max-old-space-size=4096"
+
+# Or set per project
+export NODE_OPTIONS="--max-old-space-size=2048"
+```
+
+#### Configure npm Registry (Optional)
+```bash
+# Use faster npm registry (optional)
+npm config set registry https://registry.npmmirror.com
+
+# Reset to default registry
+npm config set registry https://registry.npmjs.org
+```
+
+### Next Steps After Node.js Installation
+
+1. **Verify Node.js 18+ is working**
+2. **Clone the repository**
+3. **Install project dependencies**
+4. **Configure environment variables**
+5. **Start development server**
+
+```bash
+# Quick verification
+node --version && npm --version && echo "Node.js 18+ setup complete!"
+```
+
 ### Required Accounts & Services
 - **GitHub Account**: Untuk source code management
 - **Cloudflare Account**: Untuk deployment dan infrastructure
@@ -549,8 +778,8 @@ wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 
 ---
 
-**Installation & Setup Guide Version: 1.0.0**  
-*Last Updated: November 20, 2024*  
+**Installation & Setup Guide Version: 1.3.1**  
+*Last Updated: November 23, 2025*  
 *Maintained by: MA Malnu Kananga Technical Team*
 
 ---
