@@ -1,5 +1,5 @@
-// Parent Communication Automation Service
-// Layanan komunikasi otomatis dengan orang tua siswa
+// Enhanced Parent Communication Automation Service
+// Layanan komunikasi otomatis dengan orang tua siswa - Enhanced dengan AI-powered personalization
 
 export interface ParentCommunication {
   id: string;
