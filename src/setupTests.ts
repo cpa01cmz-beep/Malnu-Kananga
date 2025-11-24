@@ -55,8 +55,11 @@ Object.defineProperty(HTMLInputElement.prototype, 'files', {
 });
 
 // Mock setTimeout and clearTimeout for timer testing
-global.setTimeout = jest.fn();
-global.clearTimeout = jest.fn();
+const originalSetTimeout = global.setTimeout;
+const originalClearTimeout = global.clearTimeout;
+
+global.setTimeout = jest.fn((fn, delay) => originalSetTimeout(fn, delay)) as any;
+global.clearTimeout = jest.fn((id) => originalClearTimeout(id)) as any;
 
 // Global DOM type definitions for testing
 declare global {
