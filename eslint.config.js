@@ -92,7 +92,7 @@ export default [
         indexedDB: true,
         IDBOpenDBRequest: true,
         isDevelopment: true,
-        crypto: true,
+crypto: true,
         TextEncoder: true,
         btoa: true,
         atob: true,
