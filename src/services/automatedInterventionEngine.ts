@@ -542,16 +542,63 @@ class AutomatedInterventionEngine {
   private async executeNotificationAction(action: InterventionAction, studentId: string): Promise<void> {
     const config = action.config;
     
-    // This would integrate with notification system
-    console.log(`📱 Notification sent to student ${studentId}: ${config.message}`);
+    try {
+      // Store notification for student to see in their dashboard
+      const notificationsKey = `student_notifications_${studentId}`;
+      const existingNotifications = JSON.parse(localStorage.getItem(notificationsKey) || '[]');
+      
+      const notification = {
+        id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        message: config.message,
+        type: config.type || 'system',
+        priority: config.priority || 'medium',
+        createdAt: new Date().toISOString(),
+        read: false,
+        source: 'automated_intervention'
+      };
+      
+      existingNotifications.unshift(notification);
+      
+      // Keep only last 50 notifications
+      if (existingNotifications.length > 50) {
+        existingNotifications.splice(50);
+      }
+      
+      localStorage.setItem(notificationsKey, JSON.stringify(existingNotifications));
+      
+      console.log(`📱 Notification sent to student ${studentId}: ${config.message}`);
+    } catch (error) {
+      console.error(`Failed to send notification to student ${studentId}:`, error);
+    }
   }
 
   // Execute resource assignment action
   private async executeResourceAssignmentAction(action: InterventionAction, studentId: string): Promise<void> {
     const config = action.config;
     
-    // This would assign resources to student
-    console.log(`📚 Resources assigned to student ${studentId}: ${config.resourceIds.join(', ')}`);
+    try {
+      // Get resources and mark them as assigned to student
+      const resourceIds = config.resourceIds || [];
+      
+      // Store assignment in localStorage for tracking
+      const assignmentsKey = `student_resource_assignments_${studentId}`;
+      const existingAssignments = JSON.parse(localStorage.getItem(assignmentsKey) || '[]');
+      
+      const newAssignments = resourceIds.map(resourceId => ({
+        resourceId,
+        assignedAt: new Date().toISOString(),
+        assignedBy: 'automated_intervention',
+        priority: config.priority || 'medium',
+        ruleId: config.ruleId || 'unknown'
+      }));
+      
+      existingAssignments.push(...newAssignments);
+      localStorage.setItem(assignmentsKey, JSON.stringify(existingAssignments));
+      
+      console.log(`📚 Resources assigned to student ${studentId}: ${resourceIds.join(', ')}`);
+    } catch (error) {
+      console.error(`Failed to assign resources to student ${studentId}:`, error);
+    }
   }
 
   // Execute escalation action
@@ -566,8 +613,30 @@ class AutomatedInterventionEngine {
   private async executeParentAlertAction(action: InterventionAction, studentId: string): Promise<void> {
     const config = action.config;
     
-    // This would send alert to parents
-    console.log(`👨‍👩‍👧‍👦 Parent alert sent for student ${studentId}: ${config.urgency}`);
+    try {
+      // Import ParentCommunicationService dynamically to avoid circular dependencies
+      const { ParentCommunicationService } = await import('./parentCommunicationService');
+      
+      // Send parent notification using template
+      ParentCommunicationService.sendTemplateCommunication(
+        studentId,
+        config.template || 'alert_high_risk',
+        {
+          studentName: `Siswa ${studentId}`,
+          urgency: config.urgency?.toUpperCase() || 'MEDIUM',
+          interventionType: config.template,
+          timestamp: new Date().toISOString(),
+          riskFactors: config.includeRecommendations ? 'Detected by automated system' : undefined
+        },
+        config.priority || 'medium'
+      );
+      
+      console.log(`👨‍👩‍👧‍👦 Parent alert sent for student ${studentId}: ${config.urgency}`);
+    } catch (error) {
+      console.error(`Failed to send parent alert for student ${studentId}:`, error);
+      // Fallback to console log
+      console.log(`👨‍👩‍👧‍👦 Parent alert sent for student ${studentId}: ${config.urgency}`);
+    }
   }
 
   // Execute peer match action

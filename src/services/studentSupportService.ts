@@ -349,7 +349,7 @@ class StudentSupportService {
     }
   }
 
-  // Get AI response from worker
+  // Get AI response from worker with enhanced context and fallback
   private static async getAIResponse(request: SupportRequest): Promise<{
     response: string;
     category: string;
@@ -358,31 +358,133 @@ class StudentSupportService {
   }> {
     const studentProgress = this.getStudentProgress(request.studentId);
     
-    const response = await fetch('/api/student-support', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        studentId: request.studentId,
-        message: `${request.title}\n\n${request.description}`,
-        category: request.type,
-        context: {
-          requestType: request.type,
-          priority: request.priority,
-          studentProgress: studentProgress,
-          requestHistory: this.getSupportRequests()
-            .filter(r => r.studentId === request.studentId)
-            .slice(0, 3)
-        }
-      })
-    });
+    try {
+      const response = await fetch('/api/student-support', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          studentId: request.studentId,
+          message: `${request.title}\n\n${request.description}`,
+          category: request.type,
+          context: {
+            requestType: request.type,
+            priority: request.priority,
+            studentProgress: studentProgress,
+            requestHistory: this.getSupportRequests()
+              .filter(r => r.studentId === request.studentId)
+              .slice(0, 3),
+            systemContext: {
+              timestamp: new Date().toISOString(),
+              language: 'id-ID',
+              schoolName: 'MA Malnu Kananga',
+              supportLevel: 'automated'
+            }
+          }
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error(`AI service error: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`AI service error: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      
+      // Validate AI response
+      if (!result.response || !result.category || typeof result.confidence !== 'number') {
+        throw new Error('Invalid AI response format');
+      }
+
+      return result;
+    } catch (error) {
+      console.warn('AI service unavailable, using enhanced fallback:', error);
+      return this.getEnhancedFallbackResponse(request, studentProgress);
+    }
+  }
+
+  // Enhanced fallback response system
+  private static getEnhancedFallbackResponse(request: SupportRequest, studentProgress: StudentProgress | null): {
+    response: string;
+    category: string;
+    confidence: number;
+    contextUsed: boolean;
+  } {
+    const fallbackResponses = {
+      academic: {
+        login: {
+          response: "Untuk masuk ke portal, gunakan fitur Magic Link. Masukkan email sekolah Anda dan periksa email untuk link masuk. Jika tidak menerima email, periksa folder spam dan pastikan email yang dimasukkan benar.",
+          category: "login",
+          confidence: 0.8
+        },
+        nilai: {
+          response: "Nilai dapat dilihat di tab 'Nilai' pada dashboard. Pilih semester yang diinginkan dari dropdown. Jika nilai tidak muncul, refresh halaman atau hubungi guru mata pelajaran terkait.",
+          category: "nilai",
+          confidence: 0.75
+        },
+        default: {
+          response: "Terima kasih atas pertanyaan akademis Anda. Tim support akan membantu Anda. Sementara itu, coba periksa panduan pembelajaran atau hubungi guru mata pelajaran terkait.",
+          category: "academic",
+          confidence: 0.6
+        }
+      },
+      technical: {
+        portal: {
+          response: "Jika portal tidak berfungsi, coba: 1) Clear browser cache, 2) Gunakan browser Chrome/Firefox terbaru, 3) Periksa koneksi internet, 4) Restart browser. Jika masih bermasalah, hubungi IT support.",
+          category: "portal",
+          confidence: 0.85
+        },
+        default: {
+          response: "Kami menerima laporan masalah teknis Anda. Tim IT akan segera memeriksanya. Coba refresh halaman atau restart browser sementara menunggu respons.",
+          category: "technical",
+          confidence: 0.7
+        }
+      },
+      administrative: {
+        default: {
+          response: "Untuk pertanyaan administratif, silakan hubungi bagian tata usaha sekolah pada jam kerja (Senin-Jumat, 07:00-15:00) atau buat tiket support untuk ditindaklanjuti.",
+          category: "administrative",
+          confidence: 0.65
+        }
+      },
+      personal: {
+        default: {
+          response: "Untuk dukungan personal, Anda dapat menghubungi Guru Bimbingan Konseling (BK). Privasi Anda akan terjaga dan kami siap membantu dengan sepenuh hati.",
+          category: "personal",
+          confidence: 0.7
+        }
+      }
+    };
+
+    // Determine best response based on request content
+    const requestText = `${request.title} ${request.description}`.toLowerCase();
+    const typeResponses = fallbackResponses[request.type] || fallbackResponses.academic;
+    
+    let selectedResponse = typeResponses.default;
+    
+    // Check for specific keywords
+    if (requestText.includes('login') || requestText.includes('masuk')) {
+      selectedResponse = typeResponses.login || typeResponses.default;
+    } else if (requestText.includes('nilai') || requestText.includes('grade')) {
+      selectedResponse = typeResponses.nilai || typeResponses.default;
+    } else if (requestText.includes('portal')) {
+      selectedResponse = typeResponses.portal || typeResponses.default;
     }
 
-    return await response.json();
+    // Add student-specific context if available
+    let enhancedResponse = selectedResponse.response;
+    if (studentProgress) {
+      if (studentProgress.riskLevel === 'high') {
+        enhancedResponse += "\n\n💡 Perhatian: Kami melihat Anda mungkin perlu dukungan tambahan. Jangan ragu menghubungi Guru BK untuk bantuan lebih lanjut.";
+      }
+    }
+
+    return {
+      response: enhancedResponse,
+      category: selectedResponse.category,
+      confidence: selectedResponse.confidence,
+      contextUsed: !!studentProgress
+    };
   }
 
   // Fallback to knowledge base processing
@@ -787,7 +889,7 @@ class StudentSupportService {
     }
   }
 
-  // Get AI-powered risk assessment
+  // Get AI-powered risk assessment with enhanced fallback
   private static async getAIRiskAssessment(progress: StudentProgress): Promise<{
     riskLevel: string;
     riskScore: number;
@@ -795,26 +897,141 @@ class StudentSupportService {
     urgency: string;
     recommendations: any[];
   }> {
-    const response = await fetch('/api/support-monitoring', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        studentMetrics: {
-          ...progress.academicMetrics,
-          ...progress.engagementMetrics,
-          lastLoginDays: this.calculateDaysSinceLastLogin(progress.studentId)
-        }
-      })
-    });
+    try {
+      const response = await fetch('/api/support-monitoring', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          studentMetrics: {
+            ...progress.academicMetrics,
+            ...progress.engagementMetrics,
+            lastLoginDays: this.calculateDaysSinceLastLogin(progress.studentId)
+          },
+          context: {
+            studentId: progress.studentId,
+            timestamp: new Date().toISOString(),
+            assessmentType: 'comprehensive'
+          }
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error(`Risk assessment error: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`Risk assessment error: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      
+      // Validate AI risk assessment
+      if (!result.riskAssessment || !result.riskAssessment.riskLevel) {
+        throw new Error('Invalid risk assessment format');
+      }
+
+      return result.riskAssessment;
+    } catch (error) {
+      console.warn('AI risk assessment unavailable, using enhanced fallback:', error);
+      return this.getEnhancedRiskAssessment(progress);
+    }
+  }
+
+  // Enhanced risk assessment fallback
+  private static getEnhancedRiskAssessment(progress: StudentProgress): {
+    riskLevel: string;
+    riskScore: number;
+    riskFactors: string[];
+    urgency: string;
+    recommendations: any[];
+  } {
+    let riskScore = 0;
+    const riskFactors: string[] = [];
+    const recommendations: any[] = [];
+
+    // Academic risk factors
+    if (progress.academicMetrics.gpa < 70) {
+      riskScore += 3;
+      riskFactors.push('IPK rendah');
+      recommendations.push({
+        description: 'Program remedial akademik',
+        priority: 'high',
+        type: 'academic'
+      });
     }
 
-    const result = await response.json();
-    return result.riskAssessment;
+    if (progress.academicMetrics.attendanceRate < 80) {
+      riskScore += 2;
+      riskFactors.push('Kehadiran rendah');
+      recommendations.push({
+        description: 'Monitoring kehadiran intensif',
+        priority: 'medium',
+        type: 'attendance'
+      });
+    }
+
+    if (progress.academicMetrics.assignmentCompletion < 75) {
+      riskScore += 2;
+      riskFactors.push('Penyelesaian tugas rendah');
+      recommendations.push({
+        description: 'Bimbingan manajemen waktu',
+        priority: 'medium',
+        type: 'time_management'
+      });
+    }
+
+    // Engagement risk factors
+    if (progress.engagementMetrics.loginFrequency < 3) {
+      riskScore += 1;
+      riskFactors.push('Login jarang');
+      recommendations.push({
+        description: 'Kampanye engagement portal',
+        priority: 'low',
+        type: 'engagement'
+      });
+    }
+
+    if (progress.engagementMetrics.supportRequests > 5) {
+      riskScore += 1;
+      riskFactors.push('Banyak permintaan bantuan');
+      recommendations.push({
+        description: 'Evaluasi sistem support',
+        priority: 'medium',
+        type: 'system'
+      });
+    }
+
+    // Determine risk level
+    let riskLevel = 'low';
+    let urgency = 'low';
+    
+    if (riskScore >= 6) {
+      riskLevel = 'high';
+      urgency = 'immediate';
+      recommendations.push({
+        description: 'Intervensi Guru BK segera',
+        priority: 'urgent',
+        type: 'counseling'
+      });
+    } else if (riskScore >= 3) {
+      riskLevel = 'medium';
+      urgency = 'soon';
+    }
+
+    // Add general recommendations
+    if (riskScore > 0) {
+      recommendations.push({
+        description: 'Komunikasi dengan orang tua',
+        priority: 'medium',
+        type: 'parent_communication'
+      });
+    }
+
+    return {
+      riskLevel,
+      riskScore,
+      riskFactors,
+      urgency,
+      recommendations
+    };
   }
 
   // Calculate days since last login
@@ -840,50 +1057,122 @@ class StudentSupportService {
     console.log('Updating engagement metrics...');
   }
 
-  // Get relevant resources with AI-enhanced knowledge base
+  // Get relevant resources with enhanced search and fallback
   static async getRelevantResources(searchTerm?: string): Promise<SupportResource[]> {
     const resources = this.getSupportResources();
     
     if (!searchTerm) return resources;
 
-    // Use AI-enhanced knowledge base for better results
-    const knowledgeBase = AIEnhancedKnowledgeBase.getInstance();
-    const searchResults = await knowledgeBase.searchKnowledgeBase({
-      query: searchTerm,
-      limit: 10
+    try {
+      // Try AI-enhanced knowledge base first
+      const knowledgeBase = AIEnhancedKnowledgeBase.getInstance();
+      const searchResults = await knowledgeBase.searchKnowledgeBase({
+        query: searchTerm,
+        limit: 10
+      });
+
+      // Convert knowledge base articles to support resources
+      const kbResources: SupportResource[] = searchResults.map(result => ({
+        id: result.article.id,
+        title: result.article.title,
+        content: result.article.content,
+        category: result.article.category,
+        type: result.article.type as any,
+        tags: result.article.tags,
+        difficulty: result.article.difficulty,
+        rating: result.article.rating,
+        usageCount: result.article.usageCount
+      }));
+
+      // Combine with traditional resources
+      const traditionalResources = resources.filter(resource =>
+        resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        resource.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+
+      // Merge and deduplicate by ID
+      const allResources = [...kbResources, ...traditionalResources];
+      const uniqueResources = allResources.filter((resource, index, self) =>
+        index === self.findIndex(r => r.id === resource.id)
+      );
+
+      // Sort by rating and usage
+      return uniqueResources.sort((a, b) => 
+        (b.rating || 0) * 10 + (b.usageCount || 0) - 
+        ((a.rating || 0) * 10 + (a.usageCount || 0))
+      );
+    } catch (error) {
+      console.warn('AI knowledge base unavailable, using enhanced search:', error);
+      return this.getEnhancedResourceSearch(resources, searchTerm);
+    }
+  }
+
+  // Enhanced resource search with intelligent matching
+  private static getEnhancedResourceSearch(resources: SupportResource[], searchTerm: string): SupportResource[] {
+    const searchLower = searchTerm.toLowerCase();
+    const searchTerms = searchLower.split(' ').filter(term => term.length > 2);
+    
+    const scoredResources = resources.map(resource => {
+      let score = 0;
+      
+      // Exact title match gets highest score
+      if (resource.title.toLowerCase() === searchLower) {
+        score += 100;
+      }
+      
+      // Title contains search term
+      if (resource.title.toLowerCase().includes(searchLower)) {
+        score += 50;
+      }
+      
+      // Individual term matching in title
+      searchTerms.forEach(term => {
+        if (resource.title.toLowerCase().includes(term)) {
+          score += 20;
+        }
+      });
+      
+      // Content matching
+      if (resource.content.toLowerCase().includes(searchLower)) {
+        score += 30;
+      }
+      
+      searchTerms.forEach(term => {
+        if (resource.content.toLowerCase().includes(term)) {
+          score += 10;
+        }
+      });
+      
+      // Tag matching
+      resource.tags.forEach(tag => {
+        if (tag.toLowerCase().includes(searchLower)) {
+          score += 25;
+        }
+        searchTerms.forEach(term => {
+          if (tag.toLowerCase().includes(term)) {
+            score += 15;
+          }
+        });
+      });
+      
+      // Category matching
+      if (resource.category.toLowerCase().includes(searchLower)) {
+        score += 15;
+      }
+      
+      // Boost based on rating and usage
+      score += (resource.rating || 0) * 5;
+      score += (resource.usageCount || 0) * 0.5;
+      
+      return { resource, score };
     });
-
-    // Convert knowledge base articles to support resources
-    const kbResources: SupportResource[] = searchResults.map(result => ({
-      id: result.article.id,
-      title: result.article.title,
-      content: result.article.content,
-      category: result.article.category,
-      type: result.article.type as any,
-      tags: result.article.tags,
-      difficulty: result.article.difficulty,
-      rating: result.article.rating,
-      usageCount: result.article.usageCount
-    }));
-
-    // Combine with traditional resources
-    const traditionalResources = resources.filter(resource =>
-      resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      resource.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-
-    // Merge and deduplicate by ID
-    const allResources = [...kbResources, ...traditionalResources];
-    const uniqueResources = allResources.filter((resource, index, self) =>
-      index === self.findIndex(r => r.id === resource.id)
-    );
-
-    // Sort by rating and usage
-    return uniqueResources.sort((a, b) => 
-      (b.rating || 0) * 10 + (b.usageCount || 0) - 
-      ((a.rating || 0) * 10 + (a.usageCount || 0))
-    );
+    
+    // Filter out resources with no matches and sort by score
+    return scoredResources
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.resource);
   }
 
   // Get support resources
@@ -1120,23 +1409,31 @@ class StudentSupportService {
 // Initialize enhanced support system with real-time monitoring
 import RealTimeMonitoringService from './realTimeMonitoringService';
 import AutomatedInterventionEngine from './automatedInterventionEngine';
-import AIEnhancedKnowledgeBase from './aiEnhancedKnowledgeBase';
 
-// Auto-initialize when module loads
+// Auto-initialize when module loads with error handling
 if (typeof window !== 'undefined') {
-  StudentSupportService.initialize();
-  
-  // Start real-time monitoring
-  const monitoringService = RealTimeMonitoringService.getInstance();
-  monitoringService.startMonitoring();
-  
-  // Initialize intervention engine
-  const interventionEngine = AutomatedInterventionEngine.getInstance();
-  
-  // Initialize AI-enhanced knowledge base
-  const knowledgeBase = AIEnhancedKnowledgeBase.getInstance();
-  
-  console.log('🚀 Enhanced Student Support System initialized with AI-powered monitoring and knowledge base');
+  try {
+    StudentSupportService.initialize();
+    
+    // Start real-time monitoring
+    const monitoringService = RealTimeMonitoringService.getInstance();
+    monitoringService.startMonitoring();
+    
+    // Initialize intervention engine
+    const interventionEngine = AutomatedInterventionEngine.getInstance();
+    interventionEngine.initialize();
+    
+    console.log('🚀 Enhanced Student Support System initialized with real-time monitoring and automated interventions');
+  } catch (error) {
+    console.error('Failed to initialize Student Support System:', error);
+    // Fallback initialization
+    try {
+      StudentSupportService.initialize();
+      console.log('⚠️ Student Support System initialized in fallback mode');
+    } catch (fallbackError) {
+      console.error('Critical: Student Support System failed to initialize:', fallbackError);
+    }
+  }
 }
 
 export { StudentSupportService };
