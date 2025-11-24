@@ -163,19 +163,6 @@ function verifyAndDecodeToken(token: string): TokenData | null {
     // SECURITY: Client-side token verification disabled for ALL environments
     console.error('SECURITY: Client-side token verification not allowed - security vulnerability');
     return null;
-
-    // Add padding jika diperlukan
-    const paddedPayload = encodedPayload + '='.repeat((4 - encodedPayload.length % 4) % 4);
-    const decodedPayload = atob(paddedPayload.replace(/-/g, '+').replace(/_/g, '/'));
-
-    const tokenData: TokenData = JSON.parse(decodedPayload);
-
-    // Verify expiration
-    if (Date.now() / 1000 > tokenData.exp) {
-      return null;
-    }
-
-    return tokenData;
   } catch (error) {
     return null;
   }
