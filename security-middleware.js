@@ -102,16 +102,19 @@ class SecurityMiddleware {
   sanitizeInput(data, type = 'string') {
     if (typeof data !== 'string') return data;
     
-    // SECURITY: Validate input length
-    if (data.length > 10000) {
-      throw new Error('Input too long');
-    }
-    
+<<<<<<< HEAD
      // Remove potentially dangerous characters
      let sanitized = data
-       .replace(/[\0-\b\v\f\012-\037\177]/g, '') // Control characters
+       .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters - eslint-disable-line no-control-regex
        .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
        .trim();
+=======
+    // Remove potentially dangerous characters
+    let sanitized = data
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters - eslint-disable-line no-control-regex
+      .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
+      .trim();
+>>>>>>> fc8ff8c (Security fixes: disable client-side token verification and fix regex linting)
     
     // Additional sanitization for specific types
     if (type === 'message') {
