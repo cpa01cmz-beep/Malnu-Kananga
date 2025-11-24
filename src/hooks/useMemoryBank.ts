@@ -5,7 +5,7 @@ import { MemoryBank, schoolMemoryBankConfig, Memory, MemoryQuery } from '../memo
  * React hook for using Memory Bank functionality
  */
 export function useMemoryBank() {
-  const [memoryBank] = useState(() => new MemoryBank(schoolMemoryBankConfig));
+  const [memoryBank] = useState(() => new MemoryBank(schoolMemoryBankConfig()));
   const [memories, setMemories] = useState<Memory[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 

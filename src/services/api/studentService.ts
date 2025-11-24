@@ -1,7 +1,7 @@
 // Student Data API Service
 // Menggantikan mock data studentData.ts (PRIORITY: HIGHEST)
 
-import { BaseApiService, ApiResponse } from './baseApiService';
+import { baseApiService, ApiResponse } from './baseApiService';
 import type { Student, Grade, ScheduleItem, AttendanceRecord } from '../../types';
 
 // Development mode - menggunakan mock data untuk testing
@@ -223,7 +223,7 @@ export class StudentApiService {
 
   static async getById(id: string): Promise<Student | null> {
     if (isDevelopment) {
-      const students = this.getAll();
+      const students = await this.getAll();
       return students.find(s => s.id === id) || null;
     } else {
       const response = await this.getService().getById(id);
@@ -233,13 +233,13 @@ export class StudentApiService {
 
   static async create(student: Omit<Student, 'id'>): Promise<Student | null> {
     if (isDevelopment) {
-      const students = this.getAll();
+      const students = await this.getAll();
       const newStudent: Student = {
         ...student,
         id: `STU${Date.now()}`
       };
       students.push(newStudent);
-      this.getService().saveStudents(students);
+      await this.getService().saveStudents(students);
       return newStudent;
     } else {
       const response = await this.getService().create(student);
@@ -249,12 +249,12 @@ export class StudentApiService {
 
   static async update(id: string, student: Partial<Student>): Promise<Student | null> {
     if (isDevelopment) {
-      const students = this.getAll();
+      const students = await this.getAll();
       const index = students.findIndex(s => s.id === id);
       if (index === -1) return null;
 
       students[index] = { ...students[index], ...student };
-      this.getService().saveStudents(students);
+      await this.getService().saveStudents(students);
       return students[index];
     } else {
       const response = await this.getService().update(id, student);
@@ -264,11 +264,11 @@ export class StudentApiService {
 
   static async delete(id: string): Promise<boolean> {
     if (isDevelopment) {
-      const students = this.getAll();
+      const students = await this.getAll();
       const filteredStudents = students.filter(s => s.id !== id);
       if (filteredStudents.length === students.length) return false;
 
-      this.getService().saveStudents(filteredStudents);
+      await this.getService().saveStudents(filteredStudents);
       return true;
     } else {
       const response = await this.getService().delete(id);

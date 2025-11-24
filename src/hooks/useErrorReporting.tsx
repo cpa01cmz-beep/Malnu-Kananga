@@ -1,7 +1,7 @@
 // Hook untuk error reporting yang terintegrasi dengan error logging service
 // Memudahkan penggunaan error monitoring di seluruh aplikasi
 
-import { useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { getErrorLoggingService, ErrorReportingOptions } from '../services/errorLoggingService';
 
 export interface UseErrorReportingOptions extends ErrorReportingOptions {
@@ -107,7 +107,7 @@ export function useErrorReporting(options: UseErrorReportingOptions = {}): Error
 
     // Catch unhandled promise rejections
     const originalUnhandledRejectionHandler = window.onunhandledrejection;
-    window.onunhandledrejection = function(event) {
+    window.onunhandledrejection = function(this: Window, event) {
       const error = event.reason instanceof Error ? event.reason : new Error(String(event.reason));
 
       errorServiceRef.current.logError(error, undefined, {

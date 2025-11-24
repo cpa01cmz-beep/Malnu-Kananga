@@ -70,10 +70,13 @@ export class MemoryBank implements MemoryServiceInterface {
    * Update an existing memory
    */
   async updateMemory(id: string, updates: Partial<Memory>): Promise<void> {
-    const updatedMemory = await this.memoryService.updateMemory(id, updates);
+    await this.memoryService.updateMemory(id, updates);
 
-    // Emit event
-    this.emit('memoryUpdated', updatedMemory);
+    // Get updated memory for event
+    const updatedMemory = await this.getMemory(id);
+    if (updatedMemory) {
+      this.emit('memoryUpdated', updatedMemory);
+    }
   }
 
   /**

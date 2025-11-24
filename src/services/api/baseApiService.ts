@@ -9,6 +9,7 @@ export interface ApiResponse<T> {
   message?: string;
   error?: string;
   statusCode?: number;
+  timestamp?: string;
 }
 
 export interface RequestConfig {
@@ -43,9 +44,9 @@ class BaseApiService {
     const mergedConfig = { ...this.defaultConfig, ...config };
     const { retries, retryDelay } = mergedConfig;
 
-    let lastError: Error;
+    let lastError: Error = new Error('Unknown error');
 
-    for (let attempt = 0; attempt <= retries; attempt++) {
+    for (let attempt = 0; attempt <= (retries || 3); attempt++) {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), mergedConfig.timeout);
@@ -78,8 +79,8 @@ class BaseApiService {
           throw error;
         }
 
-        if (attempt < retries) {
-          await this.delay(retryDelay * (attempt + 1));
+        if (attempt < (retries || 3)) {
+          await this.delay((retryDelay || 1000) * (attempt + 1));
         }
       }
     }
@@ -111,11 +112,12 @@ class BaseApiService {
         };
       }
 
-      return {
-        success: true,
-        data,
-        statusCode: response.status
-      };
+return {
+          success: true,
+          data,
+          statusCode: response.status,
+          timestamp: new Date().toISOString()
+        };
 
     } catch (error) {
       console.error('API GET request failed:', error);
@@ -151,7 +153,8 @@ class BaseApiService {
       return {
         success: true,
         data: responseData,
-        statusCode: response.status
+        statusCode: response.status,
+        timestamp: new Date().toISOString()
       };
 
     } catch (error) {

@@ -1,7 +1,7 @@
 // News API Service
 // Menggantikan mock data latestNews.ts
 
-import { BaseApiService, ApiResponse } from './baseApiService';
+import { baseApiService, ApiResponse } from './baseApiService';
 import type { LatestNews } from '../../types';
 
 // Development mode - menggunakan mock data untuk testing
@@ -109,7 +109,7 @@ export class NewsApiService {
 
   static async getById(id: number): Promise<LatestNews | null> {
     if (isDevelopment) {
-      const news = this.getAll();
+      const news = await this.getAll();
       return news.find(n => n.id === id) || null;
     } else {
       const response = await this.getService().getById(id);
@@ -119,13 +119,13 @@ export class NewsApiService {
 
   static async create(news: Omit<LatestNews, 'id'>): Promise<LatestNews | null> {
     if (isDevelopment) {
-      const newsList = this.getAll();
+      const newsList = await this.getAll();
       const newNews: LatestNews = {
         ...news,
         id: Date.now() // Simple ID generation
       };
       newsList.push(newNews);
-      this.getService().saveAll(newsList);
+      await this.getService().saveAll(newsList);
       return newNews;
     } else {
       const response = await this.getService().create(news);
@@ -135,12 +135,12 @@ export class NewsApiService {
 
   static async update(id: number, news: Partial<LatestNews>): Promise<LatestNews | null> {
     if (isDevelopment) {
-      const newsList = this.getAll();
+      const newsList = await this.getAll();
       const index = newsList.findIndex(n => n.id === id);
       if (index === -1) return null;
 
       newsList[index] = { ...newsList[index], ...news };
-      this.getService().saveAll(newsList);
+      await this.getService().saveAll(newsList);
       return newsList[index];
     } else {
       const response = await this.getService().update(id, news);
@@ -150,11 +150,11 @@ export class NewsApiService {
 
   static async delete(id: number): Promise<boolean> {
     if (isDevelopment) {
-      const newsList = this.getAll();
+      const newsList = await this.getAll();
       const filteredNews = newsList.filter(n => n.id !== id);
       if (filteredNews.length === newsList.length) return false;
 
-      this.getService().saveAll(filteredNews);
+      await this.getService().saveAll(filteredNews);
       return true;
     } else {
       const response = await this.getService().delete(id);
@@ -164,7 +164,8 @@ export class NewsApiService {
 
   static async getByCategory(category: string): Promise<LatestNews[]> {
     if (isDevelopment) {
-      return this.getAll().filter(n => n.category === category);
+      const allNews = await this.getAll();
+      return allNews.filter(n => n.category === category);
     } else {
       const response = await this.getService().getByCategory(category);
       return response.success && response.data ? response.data : [];
@@ -173,7 +174,7 @@ export class NewsApiService {
 
   static async getActive(): Promise<LatestNews[]> {
     if (isDevelopment) {
-      return this.getAll(); // Dalam development, return semua news
+      return await this.getAll(); // Dalam development, return semua news
     } else {
       const response = await this.getService().getActive();
       return response.success && response.data ? response.data : [];

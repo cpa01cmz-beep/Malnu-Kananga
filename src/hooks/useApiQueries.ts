@@ -24,10 +24,10 @@ type ApiErrorType = ApiError | null;
 
 // Utility function untuk handle API responses
 const handleApiResponse = <T>(response: ApiResponse<T>): T | null => {
-  if (response.success && response.data) {
+  if (response.success && response.data !== undefined) {
     return response.data;
   }
-  throw new Error(response.message || 'API request failed');
+  return null;
 };
 
 // ==================== STUDENT API HOOKS ====================
@@ -38,7 +38,7 @@ export const useCurrentStudent = (
 ) => {
   return useQuery<Student | null>({
     queryKey: queryKeys.studentProfile(),
-    queryFn: async () => {
+    queryFn: async (): Promise<Student | null> => {
       const response = await studentApiService.getCurrentStudent();
       return handleApiResponse(response);
     },

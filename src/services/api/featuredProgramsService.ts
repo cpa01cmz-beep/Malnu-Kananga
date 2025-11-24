@@ -1,7 +1,7 @@
 // Featured Programs API Service
 // Menggantikan mock data featuredPrograms.ts
 
-import { BaseApiService, ApiResponse } from './baseApiService';
+import { baseApiService, ApiResponse } from './baseApiService';
 import type { FeaturedProgram } from '../../types';
 
 export class FeaturedProgramsService extends BaseApiService {
@@ -80,6 +80,7 @@ export class FeaturedProgramsApiService {
   private static service: FeaturedProgramsService | LocalFeaturedProgramsService;
 
   private static getService() {
+    const isDevelopment = import.meta.env.DEV;
     if (isDevelopment) {
       return LocalFeaturedProgramsService;
     } else {
@@ -97,8 +98,9 @@ export class FeaturedProgramsApiService {
   }
 
   static async getById(id: number): Promise<FeaturedProgram | null> {
+    const isDevelopment = import.meta.env.DEV;
     if (isDevelopment) {
-      const programs = this.getAll();
+      const programs = await this.getAll();
       return programs.find(p => p.id === id) || null;
     } else {
       const response = await this.getService().getById(id);
@@ -107,14 +109,15 @@ export class FeaturedProgramsApiService {
   }
 
   static async create(program: Omit<FeaturedProgram, 'id'>): Promise<FeaturedProgram | null> {
+    const isDevelopment = import.meta.env.DEV;
     if (isDevelopment) {
-      const programs = this.getAll();
+      const programs = await this.getAll();
       const newProgram: FeaturedProgram = {
         ...program,
         id: Date.now() // Simple ID generation
       };
       programs.push(newProgram);
-      this.getService().saveAll(programs);
+      await this.getService().saveAll(programs);
       return newProgram;
     } else {
       const response = await this.getService().create(program);
@@ -123,13 +126,14 @@ export class FeaturedProgramsApiService {
   }
 
   static async update(id: number, program: Partial<FeaturedProgram>): Promise<FeaturedProgram | null> {
+    const isDevelopment = import.meta.env.DEV;
     if (isDevelopment) {
-      const programs = this.getAll();
+      const programs = await this.getAll();
       const index = programs.findIndex(p => p.id === id);
       if (index === -1) return null;
 
       programs[index] = { ...programs[index], ...program };
-      this.getService().saveAll(programs);
+      await this.getService().saveAll(programs);
       return programs[index];
     } else {
       const response = await this.getService().update(id, program);
@@ -138,12 +142,13 @@ export class FeaturedProgramsApiService {
   }
 
   static async delete(id: number): Promise<boolean> {
+    const isDevelopment = import.meta.env.DEV;
     if (isDevelopment) {
-      const programs = this.getAll();
+      const programs = await this.getAll();
       const filteredPrograms = programs.filter(p => p.id !== id);
       if (filteredPrograms.length === programs.length) return false;
 
-      this.getService().saveAll(filteredPrograms);
+      await this.getService().saveAll(filteredPrograms);
       return true;
     } else {
       const response = await this.getService().delete(id);
@@ -152,8 +157,9 @@ export class FeaturedProgramsApiService {
   }
 
   static async getActive(): Promise<FeaturedProgram[]> {
+    const isDevelopment = import.meta.env.DEV;
     if (isDevelopment) {
-      return this.getAll(); // Dalam development, return semua programs
+      return await this.getAll(); // Dalam development, return semua programs
     } else {
       const response = await this.getService().getActive();
       return response.success && response.data ? response.data : [];

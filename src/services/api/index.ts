@@ -37,7 +37,7 @@ export interface ApiResponse<T = any> {
   data: T;
   success: boolean;
   message?: string;
-  timestamp: string;
+  timestamp?: string;
 }
 
 // API Configuration
