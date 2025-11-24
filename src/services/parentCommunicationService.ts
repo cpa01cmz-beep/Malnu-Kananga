@@ -695,9 +695,14 @@ Tim Bimbingan Konseling`,
   }
 }
 
-// Auto-initialize when module loads
+// Auto-initialize when module loads with error handling
 if (typeof window !== 'undefined') {
-  ParentCommunicationService.initialize();
+  try {
+    ParentCommunicationService.initialize();
+    console.log('📧 Parent Communication Service initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize Parent Communication Service:', error);
+  }
 }
 
 export { ParentCommunicationService };
