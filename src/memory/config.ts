@@ -1,15 +1,18 @@
 import { MemoryBankConfig } from './types';
-import { LocalStorageAdapter } from './storage/LocalStorageAdapter';
 
 /**
  * Default Memory Bank Configuration
  */
-export const defaultMemoryBankConfig: MemoryBankConfig = {
-  maxMemories: 1000,
-  defaultImportance: 0.5,
-  storageAdapter: new LocalStorageAdapter('memory_bank_memories'),
-  enableAutoCleanup: true,
-  cleanupThreshold: 0.8
+export const defaultMemoryBankConfig = async (): Promise<MemoryBankConfig> => {
+  const { LocalStorageAdapter } = await import('./storage/LocalStorageAdapter');
+  
+  return {
+    maxMemories: 1000,
+    defaultImportance: 0.5,
+    storageAdapter: new LocalStorageAdapter('memory_bank_memories'),
+    enableAutoCleanup: true,
+    cleanupThreshold: 0.8
+  };
 };
 
 /**
@@ -35,10 +38,14 @@ export const cloudMemoryBankConfig = async (baseUrl: string, apiKey?: string): P
  * Memory Bank Configuration for School Context
  * Optimized for educational content and student interactions
  */
-export const schoolMemoryBankConfig: MemoryBankConfig = {
-  maxMemories: 2000,
-  defaultImportance: 0.6,
-  storageAdapter: new LocalStorageAdapter('school_memory_bank'),
-  enableAutoCleanup: true,
-  cleanupThreshold: 0.85
+export const schoolMemoryBankConfig = async (): Promise<MemoryBankConfig> => {
+  const { LocalStorageAdapter } = await import('./storage/LocalStorageAdapter');
+  
+  return {
+    maxMemories: 2000,
+    defaultImportance: 0.6,
+    storageAdapter: new LocalStorageAdapter('school_memory_bank'),
+    enableAutoCleanup: true,
+    cleanupThreshold: 0.85
+  };
 };

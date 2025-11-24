@@ -2,9 +2,9 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface ChatContextType {
   isConnected: boolean;
-  setIsConnected: (connected: boolean) => void;
+  setIsConnected: (_connected: boolean) => void;
   connectionError: string | null;
-  setConnectionError: (error: string | null) => void;
+  setConnectionError: (_error: string | null) => void;
   retryCount: number;
   incrementRetryCount: () => void;
   resetRetryCount: () => void;

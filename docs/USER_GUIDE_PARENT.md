@@ -18,10 +18,16 @@ Portal orang tua MA Malnu Kananga adalah platform digital untuk memantau perkemb
 ### 2. Dashboard Orang Tua Overview
 Setelah login, Anda akan melihat:
 - **Informasi Anak**: Nama, kelas, foto anak-anak
-- **Statistik Akademik**: IPK, kehadiran, peringkat per anak
-- **Update Terbaru**: Nilai, kehadiran, pengumuman terbaru
-- **Pesan Belum Dibaca**: Pesan dari guru dan sekolah
-- **AI Assistant**: Bantuan informasi tentang sekolah
+- **Statistik Akademik**: IPK, kehadiran, peringkat per anak (📝 *Data demo*)
+- **Update Terbaru**: Nilai, kehadiran, pengumuman terbaru (📝 *Data demo*)
+- **Pesan Belum Dibaca**: Pesan dari guru dan sekolah (🚧 *Dalam pengembangan*)
+- **AI Assistant**: Bantuan informasi tentang sekolah ✅ *Aktif*
+
+#### ⚠️ Status Fitur Saat Ini
+- **✅ Aktif**: Login system, AI Assistant, dashboard interface
+- **📝 Development**: Data akademik anak menggunakan data demo
+- **🚧 Coming Soon**: Real-time data integration dengan sistem sekolah
+- **📧 Planned**: Messaging system untuk komunikasi dengan guru
 
 ---
 
@@ -48,6 +54,12 @@ Setelah login, Anda akan melihat:
 
 #### Lihat Nilai Akademik
 1. Pilih anak dari dashboard
+
+#### ⚠️ Status Fitur Monitoring
+- **Status**: 📝 *Demo mode untuk development*
+- **Saat ini**: Data akademik menggunakan contoh untuk development
+- **Rencana**: Integrasi real-time dengan sistem nilai sekolah
+- **Fitur yang akan datang**: Alert performa, trend analysis, comparative reports
 2. Klik menu **"Nilai"**
 3. Lihat detail nilai:
    - **Semester Aktif**: Nilai semester berjalan
@@ -445,7 +457,7 @@ A: Hubungi administrasi sekolah untuk verifikasi data anak.
 ---
 
 *Dokumen ini dibuat pada: November 20, 2024*  
-*Versi: 1.1.0*  
-*Update Terakhir: November 20, 2024*  
-*System Version: Production Ready v1.1.0*  
+*Versi: 1.2.0*  
+*Update Terakhir: November 23, 2025*  
+*System Version: Production Ready v1.2.0*  
 *Mobile Features: PWA Support with Real-time Notifications*

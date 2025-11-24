@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
 import AssignmentSubmission from './AssignmentSubmission';
@@ -28,7 +27,7 @@ describe('AssignmentSubmission Component', () => {
   };
 
   const mockOnClose = jest.fn();
-  const mockOnSubmit = jest.fn();
+  const mockOnSubmit = jest.fn().mockResolvedValue(undefined) as jest.MockedFunction<(data: { file?: File; notes?: string; submittedBy: string }) => Promise<void>>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -173,9 +172,9 @@ describe('AssignmentSubmission Component', () => {
        const largeFileBuffer = new ArrayBuffer(11 * 1024 * 1024); // 11MB
        const largeFile = new File([largeFileBuffer], 'large.pdf', { type: 'application/pdf' });
       
-      // Find the file upload area by looking for the input or drop zone
-      const fileInput = screen.getByRole('button', { name: /pilih file/i }) || 
-                       screen.getByText('Pilih File').closest('div');
+       // Find the file upload area by looking for the input or drop zone - using getAllByRole to handle multiple elements
+       const fileButtons = screen.getAllByRole('button', { name: /pilih file/i });
+       const fileInput = fileButtons[0] || screen.getByText('Pilih File').closest('div');
 
       if (fileInput) {
         fireEvent.drop(fileInput, {
@@ -289,12 +288,12 @@ describe('AssignmentSubmission Component', () => {
       const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
       fireEvent.click(submitButton);
 
-      await waitFor(() => {
-        expect(mockOnSubmit).toHaveBeenCalledWith(mockAssignment.id, {
-          notes: 'Catatan untuk pengumpulan',
-          submittedBy: 'PAR001'
-        });
-      });
+       await waitFor(() => {
+         expect(mockOnSubmit).toHaveBeenCalledWith({
+           notes: 'Catatan untuk pengumpulan',
+           submittedBy: 'PAR001'
+         });
+       });
       
       jest.useRealTimers();
     });
@@ -302,8 +301,8 @@ describe('AssignmentSubmission Component', () => {
     test('should show loading state during submission', async () => {
       jest.useFakeTimers();
       
-      // Mock a delayed submission
-      mockOnSubmit.mockImplementation(() => new Promise(resolve => global.setTimeout(resolve, 100)));
+       // Mock a delayed submission
+       mockOnSubmit.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
 
       render(
         <AssignmentSubmission
