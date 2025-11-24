@@ -4,6 +4,13 @@
 /// <reference types="@testing-library/jest-dom" />
 
 declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toBeInTheDocument(): R;
+      toHaveValue(value: any): R;
+      toBeDisabled(): R;
+    }
+  }
   interface Window {
     announceNavigation?: (message: string) => void;
   }

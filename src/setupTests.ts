@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import 'jest-extended/all';
 
 // Mock environment variables for testing
 process.env.API_KEY = process.env.TEST_API_KEY || 'test-api-key-placeholder';
