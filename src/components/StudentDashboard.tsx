@@ -69,15 +69,19 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     StudentSupportService.updateStudentProgress(currentStudent.id, {
       academicMetrics: {
         gpa: gpa,
+        gradeTrend: 'stable' as const,
         attendanceRate: attendanceStats.percentage,
         assignmentCompletion: 85, // Sample data
         subjectPerformance: studentGrades.reduce((acc, grade) => {
-          acc[grade.subjectName] = grade.finalGrade || '0';
+          acc[grade.subjectName] = parseFloat(grade.finalGrade || '0');
           return acc;
-        }, {} as Record<string, string>)
+        }, {} as Record<string, number>)
       },
       engagementMetrics: {
         loginFrequency: 5, // Sample data
+        resourceAccess: 12,
+        supportRequests: 0,
+        participationScore: 85,
         featureUsage: {
           overview: 10,
           grades: 8,
@@ -85,7 +89,6 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
           attendance: 4,
           announcements: 7
         },
-        supportRequestsCount: 0,
         lastActiveDate: new Date().toISOString()
       }
     });
@@ -159,7 +162,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
       <NavigationTabs
         activeTab={activeTab}
         tabs={tabs}
-        onTabChange={setActiveTab}
+        onTabChange={(tabId: string) => setActiveTab(tabId as any)}
       />
 
       {/* Main Content */}

@@ -26,23 +26,43 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
         studentId,
         academicMetrics: {
           gpa: 0,
+          gradeTrend: 'stable' as const,
           attendanceRate: 0,
           assignmentCompletion: 0,
           subjectPerformance: {}
         },
         engagementMetrics: {
-          portalLoginFrequency: 0,
+          loginFrequency: 0,
+          resourceAccess: 0,
+          supportRequests: 0,
+          participationScore: 0,
           featureUsage: {},
-          supportRequestsCount: 0,
           lastActiveDate: new Date().toISOString()
         },
-        riskFactors: {
-          lowGrades: false,
-          poorAttendance: false,
-          lowEngagement: false,
-          frequentSupportRequests: false
-        },
-        recommendations: [],
+        riskFactors: [
+          {
+            type: 'lowGrades',
+            severity: 'low' as const,
+            description: 'Grades below threshold'
+          },
+          {
+            type: 'poorAttendance',
+            severity: 'low' as const,
+            description: 'Attendance below 80%'
+          },
+          {
+            type: 'lowEngagement',
+            severity: 'low' as const,
+            description: 'Low portal engagement'
+          }
+        ],
+        recommendations: [
+          {
+            type: 'academic',
+            priority: 'medium' as const,
+            description: 'Consider tutoring support'
+          }
+        ],
         lastUpdated: new Date().toISOString()
       };
       
@@ -169,21 +189,21 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
           
           <div className="text-center">
             <div className="text-3xl font-bold text-blue-600">
-              {Object.keys(progress.academicMetrics.subjectPerformance).length}
+              {Object.keys(progress.academicMetrics.subjectPerformance || {}).length}
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Mata Pelajaran</p>
           </div>
         </div>
 
         {/* Subject Performance */}
-        {Object.keys(progress.academicMetrics.subjectPerformance).length > 0 && (
+        {progress.academicMetrics.subjectPerformance && Object.keys(progress.academicMetrics.subjectPerformance).length > 0 && (
           <div className="mt-6">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Performa per Mata Pelajaran</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {Object.entries(progress.academicMetrics.subjectPerformance).map(([subject, score]) => (
+              {Object.entries(progress.academicMetrics.subjectPerformance || {}).map(([subject, score]) => (
                 <div key={subject} className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{subject}</span>
-                  <span className={`text-sm font-bold ${getPerformanceColor(parseInt(score) || 0)}`}>{score}</span>
+                  <span className={`text-sm font-bold ${getPerformanceColor(score as number)}`}>{score}</span>
                 </div>
               ))}
             </div>
@@ -228,7 +248,7 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Terakhir Aktif</span>
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {new Date(progress.engagementMetrics.lastActiveDate).toLocaleDateString('id-ID')}
+                  {progress.engagementMetrics.lastActiveDate ? new Date(progress.engagementMetrics.lastActiveDate).toLocaleDateString('id-ID') : 'N/A'}
                 </span>
               </div>
             </div>
@@ -237,7 +257,7 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
           <div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Penggunaan Fitur</h3>
             
-            {Object.keys(progress.engagementMetrics.featureUsage).length > 0 ? (
+            {progress.engagementMetrics.featureUsage && Object.keys(progress.engagementMetrics.featureUsage).length > 0 ? (
               <div className="space-y-2">
                 {Object.entries(progress.engagementMetrics.featureUsage).map(([feature, count]) => (
                   <div key={feature} className="flex items-center justify-between">
@@ -246,10 +266,10 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
                       <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div 
                           className="bg-blue-600 h-2 rounded-full" 
-                          style={{ width: `${Math.min(count * 10, 100)}%` }}
+                          style={{ width: `${Math.min((count as number) * 10, 100)}%` }}
                         ></div>
                       </div>
-                      <span className="text-sm font-medium text-gray-900 dark:text-white w-8">{count}</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white w-8">{count as number}</span>
                     </div>
                   </div>
                 ))}
@@ -266,66 +286,30 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">⚠️ Faktor Risiko</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className={`p-4 rounded-lg border-2 ${
-            progress.riskFactors.lowGrades 
-              ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20' 
-              : 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
-          }`}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-2xl">{progress.riskFactors.lowGrades ? '🔴' : '✅'}</span>
-              <span className="font-medium text-gray-900 dark:text-white">Nilai Rendah</span>
+          {progress.riskFactors?.map((risk, index) => (
+            <div key={index} className={`p-4 rounded-lg border-2 ${
+              risk.severity === 'high' 
+                ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20' 
+                : risk.severity === 'medium'
+                ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20'
+                : 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
+            }`}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">
+                  {risk.severity === 'high' ? '🔴' : risk.severity === 'medium' ? '🟡' : '✅'}
+                </span>
+                <span className="font-medium text-gray-900 dark:text-white capitalize">{risk.type}</span>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {risk.description}
+              </p>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {progress.riskFactors.lowGrades ? 'IPK < 70' : 'IPK ≥ 70'}
-            </p>
-          </div>
-          
-          <div className={`p-4 rounded-lg border-2 ${
-            progress.riskFactors.poorAttendance 
-              ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20' 
-              : 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
-          }`}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-2xl">{progress.riskFactors.poorAttendance ? '🔴' : '✅'}</span>
-              <span className="font-medium text-gray-900 dark:text-white">Kehadiran Buruk</span>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {progress.riskFactors.poorAttendance ? 'Kehadiran < 80%' : 'Kehadiran ≥ 80%'}
-            </p>
-          </div>
-          
-          <div className={`p-4 rounded-lg border-2 ${
-            progress.riskFactors.lowEngagement 
-              ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20' 
-              : 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
-          }`}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-2xl">{progress.riskFactors.lowEngagement ? '🔴' : '✅'}</span>
-              <span className="font-medium text-gray-900 dark:text-white">Engagement Rendah</span>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {progress.riskFactors.lowEngagement ? 'Login < 3x/minggu' : 'Login ≥ 3x/minggu'}
-            </p>
-          </div>
-          
-          <div className={`p-4 rounded-lg border-2 ${
-            progress.riskFactors.frequentSupportRequests 
-              ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20' 
-              : 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20'
-          }`}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-2xl">{progress.riskFactors.frequentSupportRequests ? '🔴' : '✅'}</span>
-              <span className="font-medium text-gray-900 dark:text-white">Request Sering</span>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {progress.riskFactors.frequentSupportRequests ? '> 5 request/bulan' : '≤ 5 request/bulan'}
-            </p>
-          </div>
+          ))}
         </div>
       </div>
 
       {/* Recommendations */}
-      {progress.recommendations.length > 0 && (
+      {progress.recommendations && progress.recommendations.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">💡 Rekomendasi</h2>
           
@@ -333,7 +317,12 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
             {progress.recommendations.map((recommendation, index) => (
               <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <span className="text-blue-600 mt-1">💡</span>
-                <p className="text-sm text-gray-700 dark:text-gray-300">{recommendation}</p>
+                <div>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{recommendation.description}</p>
+                  {recommendation.action && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Aksi: {recommendation.action}</p>
+                  )}
+                </div>
               </div>
             ))}
           </div>

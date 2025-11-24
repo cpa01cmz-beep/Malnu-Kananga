@@ -18,4 +18,5 @@ export {
   useSubmitGrades,
   useRecordAttendance,
   useMarkAnnouncementAsRead,
+  useStudentProfile,
 } from './useApiQueries';

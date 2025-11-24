@@ -4,6 +4,7 @@ import { StudentSupportService } from '../services/studentSupportService';
 
 interface SupportDashboardProps {
   role?: 'admin' | 'support_staff' | 'teacher';
+  studentId?: string;
 }
 
 const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'support_staff' }) => {

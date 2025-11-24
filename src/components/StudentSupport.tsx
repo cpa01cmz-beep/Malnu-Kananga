@@ -2,7 +2,7 @@
 // Komponen untuk menampilkan dan mengelola sistem dukungan siswa
 
 import React, { useState, useEffect } from 'react';
-import { studentSupportService, SupportRequest, SupportResource, StudentProgress } from '../services/studentSupportService';
+import { StudentSupportService, SupportRequest, SupportResource, StudentProgress } from '../services/studentSupportService';
 
 interface StudentSupportProps {
   studentId: string;
@@ -29,15 +29,15 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
 
   const loadSupportData = () => {
     // Load student's support requests
-    const requests = studentSupportService.getSupportRequests();
-    setSupportRequests(requests.filter(req => req.studentId === studentId));
+    const requests = StudentSupportService.getSupportRequests();
+    setSupportRequests(requests.filter((req: any) => req.studentId === studentId));
 
     // Load available resources
-    const allResources = studentSupportService.getRelevantResources('');
+    const allResources = StudentSupportService.getRelevantResources('');
     setResources(allResources);
 
     // Load student progress
-    const progress = studentSupportService.getStudentProgress(studentId);
+    const progress = StudentSupportService.getStudentProgress(studentId);
     setStudentProgress(progress || null);
   };
 
@@ -47,7 +47,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
       return;
     }
 
-    const request = studentSupportService.createSupportRequest(
+    const request = StudentSupportService.createSupportRequest(
       studentId,
       newRequest.type,
       newRequest.category || 'umum',
