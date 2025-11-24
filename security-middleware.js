@@ -107,11 +107,11 @@ class SecurityMiddleware {
       throw new Error('Input too long');
     }
     
-    // Remove potentially dangerous characters
-    let sanitized = data
-      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters
-      .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
-      .trim();
+     // Remove potentially dangerous characters
+     let sanitized = data
+       .replace(/[\0-\b\v\f\012-\037\177]/g, '') // Control characters
+       .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
+       .trim();
     
     // Additional sanitization for specific types
     if (type === 'message') {
