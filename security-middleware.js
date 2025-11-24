@@ -102,19 +102,23 @@ class SecurityMiddleware {
   sanitizeInput(data, type = 'string') {
     if (typeof data !== 'string') return data;
     
-<<<<<<< HEAD
-// Remove potentially dangerous characters
-    let sanitized = data
-      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters
-      .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
-      .trim();
-=======
-// Remove potentially dangerous characters
-    let sanitized = data
-      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // eslint-disable-line no-control-regex
-      .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
-      .trim();
->>>>>>> 2d5a054 ([OPERATOR] MAINTENANCE - Fix Critical Build and Lint Issues)
+    // Remove potentially dangerous characters
+    let sanitized = data;
+    
+    // Remove control characters using string methods instead of regex to avoid lint error
+    const controlChars = ['\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07', 
+                          '\x08', '\x0B', '\x0C', '\x0E', '\x0F', '\x10', '\x11', '\x12', 
+                          '\x13', '\x14', '\x15', '\x16', '\x17', '\x18', '\x19', '\x1A', 
+                          '\x1B', '\x1C', '\x1D', '\x1E', '\x1F', '\x7F'];
+    
+    for (const char of controlChars) {
+      sanitized = sanitized.split(char).join('');
+    }
+    
+    // Remove invalid Unicode
+    sanitized = sanitized.split('\uFFFE').join('').split('\uFFFF').join('');
+    
+    sanitized = sanitized.trim();
     
     // Additional sanitization for specific types
     if (type === 'message') {
