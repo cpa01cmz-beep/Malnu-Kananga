@@ -44,9 +44,9 @@ export interface Grade {
   studentId: string;
   subject: string;
   score: number;
-  semester?: string;
-  academicYear?: string;
-  date?: string;
+  date: string;
+  semester: string;
+  academicYear: string;
 }
 
 // Schedule item data structure
@@ -75,7 +75,6 @@ export interface AcademicStats {
   totalCredits: number;
   subjects: string[];
 }
-
 
 
 
