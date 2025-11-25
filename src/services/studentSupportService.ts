@@ -561,54 +561,54 @@ class StudentSupportService {
     console.log(`Escalated request ${request.id} requires human intervention`);
   }
 
-  // Update student progress
-  updateStudentProgress(studentId: string, progress: Partial<StudentProgress>): void {
-    const allProgress = this.getAllStudentProgress();
-    const existingProgress = allProgress[studentId] || {
-      studentId,
-      academicMetrics: {
-        gpa: 0,
-        gradeTrend: 'stable' as const,
-        attendanceRate: 0,
-        assignmentCompletion: 0
-      },
-      engagementMetrics: {
-        loginFrequency: 0,
-        resourceAccess: 0,
-        supportRequests: 0,
-        participationScore: 0
-      },
-      riskLevel: 'low' as const,
-      lastUpdated: new Date().toISOString()
-    };
+// Update student progress
+   updateStudentProgress(studentId: string, progress: Partial<StudentProgress>): void {
+     const allProgress = this.getAllStudentProgress();
+     const existingProgress = allProgress[studentId] || {
+       studentId,
+       academicMetrics: {
+         gpa: 0,
+         gradeTrend: 'stable' as const,
+         attendanceRate: 0,
+         assignmentCompletion: 0
+       },
+       engagementMetrics: {
+         loginFrequency: 0,
+         resourceAccess: 0,
+         supportRequests: 0,
+         participationScore: 0
+       },
+       riskLevel: 'low' as const,
+       lastUpdated: new Date().toISOString()
+     };
 
-    const updatedProgress = {
-      ...existingProgress,
-      ...progress,
-      lastUpdated: new Date().toISOString()
-    };
+     const updatedProgress = {
+       ...existingProgress,
+       ...progress,
+       lastUpdated: new Date().toISOString()
+     };
 
-    // Update risk level
-    updatedProgress.riskLevel = this.assessRiskLevel(updatedProgress);
+     // Update risk level
+     updatedProgress.riskLevel = this.assessRiskLevel(updatedProgress);
 
-    allProgress[studentId] = updatedProgress;
-    localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(allProgress));
+     allProgress[studentId] = updatedProgress;
+     localStorage.setItem(StudentSupportService.PROGRESS_KEY, JSON.stringify(allProgress));
 
-    // Trigger automation rules
-    this.checkAutomationRules(updatedProgress);
-  }
+     // Trigger automation rules
+     this.checkAutomationRules(updatedProgress);
+   }
 
 // Get all student progress
-  static getAllStudentProgress(): Record<string, StudentProgress> {
-    const progress = localStorage.getItem(StudentSupportService.PROGRESS_KEY);
-    return progress ? JSON.parse(progress) : {};
-  }
+   getAllStudentProgress(): Record<string, StudentProgress> {
+     const progress = localStorage.getItem(StudentSupportService.PROGRESS_KEY);
+     return progress ? JSON.parse(progress) : {};
+   }
 
-  // Get student progress
-  getStudentProgress(studentId: string): StudentProgress | null {
-    const allProgress = StudentSupportService.getAllStudentProgress();
-    return allProgress[studentId] || null;
-  }
+// Get student progress
+   getStudentProgress(studentId: string): StudentProgress | null {
+     const allProgress = this.getAllStudentProgress();
+     return allProgress[studentId] || null;
+   }
 
   // Assess risk level
   private assessRiskLevel(progress: StudentProgress): StudentProgress['riskLevel'] {
@@ -625,20 +625,20 @@ class StudentSupportService {
   }
 
 // Check automation rules
-  private static checkAutomationRules(progress: StudentProgress): void {
-    const rules = JSON.parse(localStorage.getItem(StudentSupportService.AUTOMATION_KEY) || '[]');
-    
-    rules.forEach((rule: SupportAutomation) => {
-      if (!rule.isActive) return;
+   private checkAutomationRules(progress: StudentProgress): void {
+     const rules = JSON.parse(localStorage.getItem(StudentSupportService.AUTOMATION_KEY) || '[]');
+     
+     rules.forEach((rule: SupportAutomation) => {
+       if (!rule.isActive) return;
 
-      if (this.shouldTriggerRule(rule, progress)) {
-        this.executeAutomationRule(rule, progress);
-      }
-    });
+       if (this.shouldTriggerRule(rule, progress)) {
+         this.executeAutomationRule(rule, progress);
+       }
+     });
 
-    // Check parent communication triggers
-    this.checkParentCommunicationTriggers(progress);
-  }
+     // Check parent communication triggers
+     this.checkParentCommunicationTriggers(progress);
+   }
 
   // Check parent communication triggers
   private checkParentCommunicationTriggers(progress: StudentProgress): void {
@@ -829,7 +829,7 @@ class StudentSupportService {
       lastUpdated: new Date().toISOString()
     };
 
-    StudentSupportService.updateStudentProgress('STU001', sampleProgress);
+    this.updateStudentProgress('STU001', sampleProgress);
   }
 
   // Start automated monitoring
@@ -845,50 +845,52 @@ class StudentSupportService {
     }, 5 * 60 * 1000);
   }
 
-  // Monitor at-risk students with AI-powered analysis
-  private async monitorAtRiskStudents(): Promise<void> {
-    const allProgress = this.getAllStudentProgress();
-    
-    for (const progress of Object.values(allProgress)) {
-      try {
-        // Get AI-powered risk assessment
-        const riskAssessment = await this.getAIRiskAssessment(progress);
-        
-        if (riskAssessment.riskLevel === 'high' || riskAssessment.riskLevel === 'medium') {
-          // Create intervention request with AI recommendations
-          const recommendations = riskAssessment.recommendations || [];
-          const recommendationText = recommendations.map((rec: any) => 
-            `- ${rec.description} (${rec.priority})`
-          ).join('\n');
-          
-          this.createSupportRequest(
-            progress.studentId,
-            'academic',
-            'intervention',
-            `AI-Detected ${riskAssessment.riskLevel.toUpperCase()} Risk Student`,
-            `Risk factors: ${riskAssessment.riskFactors.join(', ')}\n\nRecommendations:\n${recommendationText}`,
-            riskAssessment.riskLevel === 'high' ? 'high' : 'medium'
-          );
-          
-          // Send proactive notifications
-          await this.sendProactiveNotification(progress, riskAssessment);
-        }
-      } catch (error) {
-        console.error(`Failed to monitor student ${progress.studentId}:`, error);
-        // Fallback to basic monitoring
-        if (progress.riskLevel === 'high') {
-          this.createSupportRequest(
-            progress.studentId,
-            'academic',
-            'intervention',
-            'At-Risk Student Intervention',
-            `Student identified as at-risk with ${progress.riskLevel} risk level`,
-            'medium'
-          );
-        }
-      }
-    }
-  }
+// Monitor at-risk students with AI-powered analysis
+   private static async monitorAtRiskStudents(): Promise<void> {
+     const instance = StudentSupportService.getInstance();
+     const allProgress = instance.getAllStudentProgress();
+     
+     for (const progress of Object.values(allProgress)) {
+       try {
+         // Get AI-powered risk assessment
+         const riskAssessment = await instance.getAIRiskAssessment(progress as StudentProgress);
+         
+         if (riskAssessment.riskLevel === 'high' || riskAssessment.riskLevel === 'medium') {
+           // Create intervention request with AI recommendations
+           const recommendations = riskAssessment.recommendations || [];
+           const recommendationText = recommendations.map((rec: any) => 
+             `- ${rec.description} (${rec.priority})`
+           ).join('\n');
+           
+           instance.createSupportRequest(
+             (progress as StudentProgress).studentId,
+             'academic',
+             'intervention',
+             `AI-Detected ${riskAssessment.riskLevel.toUpperCase()} Risk Student`,
+             `Risk factors: ${riskAssessment.riskFactors.join(', ')}\n\nRecommendations:\n${recommendationText}`,
+             riskAssessment.riskLevel === 'high' ? 'high' : 'medium'
+           );
+           
+           // Send proactive notifications
+           await instance.sendProactiveNotification(progress as StudentProgress, riskAssessment);
+         }
+       } catch (error) {
+         console.error(`Failed to monitor student ${(progress as StudentProgress).studentId}:`, error);
+         // Fallback to basic monitoring
+         if ((progress as StudentProgress).riskLevel === 'high') {
+           instance.createSupportRequest(
+             (progress as StudentProgress).studentId,
+             'academic',
+             'intervention',
+             'At-Risk Student Intervention',
+             `Student identified as at-risk with ${(progress as StudentProgress).riskLevel} risk level`,
+             'medium'
+           );
+         }
+       }
+     }
+   }
+
 
   // Get AI-powered risk assessment with enhanced fallback
   private async getAIRiskAssessment(progress: StudentProgress): Promise<{
@@ -1042,21 +1044,21 @@ class StudentSupportService {
     return Math.floor(Math.random() * 14);
   }
 
-  // Send proactive notification
-  private async sendProactiveNotification(progress: StudentProgress, riskAssessment: any): Promise<void> {
-    // This would integrate with notification system
-    console.log(`Proactive notification for student ${progress.studentId}:`, {
-      riskLevel: riskAssessment.riskLevel,
-      urgency: riskAssessment.urgency,
-      recommendations: riskAssessment.recommendations
-    });
-  }
+// Send proactive notification
+   private async sendProactiveNotification(progress: StudentProgress, riskAssessment: any): Promise<void> {
+     // This would integrate with notification system
+     console.log(`Proactive notification for student ${progress.studentId}:`, {
+       riskLevel: riskAssessment.riskLevel,
+       urgency: riskAssessment.urgency,
+       recommendations: riskAssessment.recommendations
+     });
+   }
 
-  // Update engagement metrics
-  private updateEngagementMetrics(): void {
-    // This would track real-time engagement
-    console.log('Updating engagement metrics...');
-  }
+// Update engagement metrics
+   private static updateEngagementMetrics(): void {
+     // This would track real-time engagement
+     console.log('Updating engagement metrics...');
+   }
 
   // Get relevant resources with enhanced search and fallback
   async getRelevantResources(searchTerm?: string): Promise<SupportResource[]> {
@@ -1148,8 +1150,8 @@ class StudentSupportService {
 // Get support resources
   getSupportAnalytics(): any {
     const requests = this.getSupportRequests();
-const allProgress = StudentSupportService.getAllStudentProgress();
-    const resources = StudentSupportService.getSupportResources();
+const allProgress = this.getAllStudentProgress();
+     const resources = this.getSupportResources();
 
     return {
       totalRequests: requests.length,
@@ -1163,17 +1165,22 @@ const allProgress = StudentSupportService.getAllStudentProgress();
     };
   }
 
-  // Get support resources
-  static getSupportResources(category?: string): SupportResource[] {
-    const resources = localStorage.getItem(StudentSupportService.RESOURCES_KEY);
-    let allResources: SupportResource[] = resources ? JSON.parse(resources) : StudentSupportService.initializeSampleResources();
+// Get support resources
+   static getSupportResources(category?: string): SupportResource[] {
+     const resources = localStorage.getItem(StudentSupportService.RESOURCES_KEY);
+     let allResources: SupportResource[] = resources ? JSON.parse(resources) : StudentSupportService.initializeSampleResources();
 
-    if (category) {
-      allResources = allResources.filter(r => r.category === category);
-    }
-    
-    return allResources.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-  }
+     if (category) {
+       allResources = allResources.filter(r => r.category === category);
+     }
+     
+     return allResources.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+   }
+   
+   // Instance method for getSupportResources
+   getSupportResources(category?: string): SupportResource[] {
+     return StudentSupportService.getSupportResources(category);
+   }
 
   // Initialize sample resources
   private static initializeSampleResources(): SupportResource[] {
@@ -1241,21 +1248,26 @@ const allProgress = StudentSupportService.getAllStudentProgress();
     return sampleResources;
   }
 
-  // Add support resource
-  static addSupportResource(resource: Omit<SupportResource, 'id' | 'usageCount' | 'rating'>): SupportResource {
-    const resources = StudentSupportService.getSupportResources();
-    const newResource: SupportResource = {
-      ...resource,
-      id: `resource_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      usageCount: 0,
-      rating: 0
-    };
+// Add support resource
+   static addSupportResource(resource: Omit<SupportResource, 'id' | 'usageCount' | 'rating'>): SupportResource {
+     const resources = StudentSupportService.getSupportResources();
+     const newResource: SupportResource = {
+       ...resource,
+       id: `resource_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+       usageCount: 0,
+       rating: 0
+     };
 
-    resources.push(newResource);
-    localStorage.setItem(StudentSupportService.RESOURCES_KEY, JSON.stringify(resources));
+     resources.push(newResource);
+     localStorage.setItem(StudentSupportService.RESOURCES_KEY, JSON.stringify(resources));
 
-    return newResource;
-  }
+     return newResource;
+   }
+   
+   // Instance method for addSupportResource
+   addSupportResource(resource: Omit<SupportResource, 'id' | 'usageCount' | 'rating'>): SupportResource {
+     return StudentSupportService.addSupportResource(resource);
+   }
 
   // Rate support resource
   rateResource(resourceId: string, rating: number): void {
@@ -1273,16 +1285,31 @@ const allProgress = StudentSupportService.getAllStudentProgress();
     }
   }
 
-  // Get category breakdown
-  private getCategoryBreakdown(requests: SupportRequest[]): Record<string, number> {
-    const breakdown: Record<string, number> = {};
-    
-    requests.forEach(request => {
-      breakdown[request.type] = (breakdown[request.type] || 0) + 1;
-    });
+// Calculate average resolution time
+   private calculateAverageResolutionTime(requests: SupportRequest[]): number {
+     const resolvedRequests = requests.filter(r => r.status === 'resolved');
+     if (resolvedRequests.length === 0) return 0;
 
-    return breakdown;
-  }
+     const totalHours = resolvedRequests.reduce((total, request) => {
+       const createdAt = new Date(request.createdAt).getTime();
+       const resolvedAt = new Date(request.updatedAt).getTime();
+       const hours = (resolvedAt - createdAt) / (1000 * 60 * 60);
+       return total + hours;
+     }, 0);
+
+     return Number((totalHours / resolvedRequests.length).toFixed(2));
+   }
+
+   // Get category breakdown
+   private getCategoryBreakdown(requests: SupportRequest[]): Record<string, number> {
+     const breakdown: Record<string, number> = {};
+     
+     requests.forEach(request => {
+       breakdown[request.type] = (breakdown[request.type] || 0) + 1;
+     });
+
+     return breakdown;
+   }
 
   // Generate support report
   generateSupportReport(timeFrame: 'daily' | 'weekly' | 'monthly'): any {

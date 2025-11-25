@@ -3,7 +3,7 @@
 
 import { StudentSupportService } from './studentSupportService';
 
-const studentSupportService = new StudentSupportService();
+const studentSupportService = StudentSupportService.getInstance();
 
 export interface StudentMetrics {
   studentId: string;
