@@ -147,7 +147,7 @@ function verifyAndDecodeToken(token: string): TokenData | null {
     const data = `${encodedHeader}.${encodedPayload}`;
     // In production, token verification should be done server-side only
     // This client-side implementation is for development/testing purposes only
-    const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
 // SECURITY: Client-side token verification disabled for ALL environments
       // CRITICAL SECURITY: Never enable client-side token verification
@@ -357,8 +357,8 @@ export interface RefreshTokenResponse {
 }
 
 // Development mode - menggunakan local storage untuk testing
-const isDevelopment = import.meta.env.DEV;
-const useSupabase = import.meta.env.VITE_USE_SUPABASE === 'true' || import.meta.env.USE_SUPABASE === 'true';
+const isDevelopment = (import.meta as any).env?.DEV || false;
+const useSupabase = ((import.meta as any).env?.VITE_USE_SUPABASE === 'true' || (import.meta as any).env?.USE_SUPABASE === 'true');
 
 class LocalAuthService {
   private static USERS_KEY = 'malnu_auth_users';

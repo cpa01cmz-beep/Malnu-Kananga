@@ -30,7 +30,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
   const loadSupportData = async () => {
     const supportService = StudentSupportService.getInstance();
     
-    // Load student's support requests
+        // Load student's support requests
     const requests = supportService.getSupportRequests();
     setSupportRequests(requests.filter((req: SupportRequest) => req.studentId === studentId));
 

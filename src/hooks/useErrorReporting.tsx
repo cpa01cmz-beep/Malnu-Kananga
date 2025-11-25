@@ -1,8 +1,7 @@
 // Hook untuk error reporting yang terintegrasi dengan error logging service
 // Memudahkan penggunaan error monitoring di seluruh aplikasi
 
-import { useCallback, useRef } from 'react';
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { getErrorLoggingService, ErrorReportingOptions } from '../services/errorLoggingService';
 
 export interface UseErrorReportingOptions extends ErrorReportingOptions {

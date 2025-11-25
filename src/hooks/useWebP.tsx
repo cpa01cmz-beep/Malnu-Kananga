@@ -1,5 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import React from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { initializeWebPDetection, getWebPSupport, getOptimalImageSrc } from '../utils/webpDetection';
 
 // WebP Context interface
