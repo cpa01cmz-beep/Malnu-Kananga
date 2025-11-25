@@ -765,8 +765,8 @@ For API support and questions:
 
 ---
 
-*API Documentation Version: 1.4.0*  
-*Last Updated: November 24, 2025*  
+*API Documentation Version: 1.4.2*  
+*Last Updated: November 25, 2025*  
 *Implementation Rate: 100% (9/9 documented endpoints)*  
 *Backend: Cloudflare Workers with D1, Vectorize & AI*  
 *Status: Production Ready (Core Features)*

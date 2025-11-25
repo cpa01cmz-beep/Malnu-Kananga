@@ -1,5 +1,6 @@
 /// <reference types="jest" />
 /// <reference types="@testing-library/jest-dom" />
+/// <reference types="vite/client" />
 
 declare global {
   namespace jest {
