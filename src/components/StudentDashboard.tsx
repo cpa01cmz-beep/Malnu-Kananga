@@ -23,6 +23,7 @@ import AnnouncementsTab from './AnnouncementsTab';
 import ToastNotification from './ToastNotification';
 import StudentSupportDashboard from './StudentSupportDashboard';
 import StudentProgressMonitor from './StudentProgressMonitor';
+import LearningTab from './LearningTab';
 
 interface StudentDashboardProps {
   onLogout: () => void;
@@ -145,6 +146,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
 
   const tabs = [
     { id: 'overview', name: 'Ringkasan', icon: '🏠' },
+    { id: 'learning', name: 'Pembelajaran', icon: '📚' },
     { id: 'grades', name: 'Nilai', icon: '📊' },
     { id: 'schedule', name: 'Jadwal', icon: '📅' },
     { id: 'attendance', name: 'Absensi', icon: '✅' },
@@ -179,6 +181,10 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             formatDate={formatDate}
             getGradeColor={getGradeColor}
           />
+        )}
+
+        {activeTab === 'learning' && (
+          <LearningTab student={currentStudent} />
         )}
 
         {activeTab === 'grades' && (
