@@ -105,14 +105,7 @@ class LocalStudentService {
       id: 'STU001',
       name: 'Ahmad Fauzi Rahman',
       email: 'siswa@ma-malnukananga.sch.id',
-      class: 'XII IPA 1',
-      academicYear: '2024/2025',
-      dateOfBirth: '2007-03-15',
-      address: 'Jl. Pendidikan No. 123, Kananga, Pandeglang',
-      phone: '081234567890',
-      parentPhone: '081987654321',
-      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-      enrollmentDate: '2023-07-01'
+      class: 'XII IPA 1'
     }];
   }
 
@@ -126,32 +119,16 @@ class LocalStudentService {
       {
         id: 'GRD001',
         studentId: 'STU001',
-        subjectId: 'SUBJ001',
-        subjectName: 'Matematika',
-        semester: 1,
-        academicYear: '2024/2025',
-        midtermScore: 85,
-        finalScore: 88,
-        assignmentScore: 82,
-        attendanceScore: 90,
-        finalGrade: 'A',
-        gradePoint: 4.0,
-        status: 'Lulus'
+        subject: 'Matematika',
+        score: 85,
+        date: '2024-10-01'
       },
       {
         id: 'GRD002',
         studentId: 'STU001',
-        subjectId: 'SUBJ002',
-        subjectName: 'Fisika',
-        semester: 1,
-        academicYear: '2024/2025',
-        midtermScore: 78,
-        finalScore: 82,
-        assignmentScore: 80,
-        attendanceScore: 85,
-        finalGrade: 'B+',
-        gradePoint: 3.5,
-        status: 'Lulus'
+        subject: 'Fisika',
+        score: 78,
+        date: '2024-10-02'
       }
     ];
   }
@@ -167,17 +144,13 @@ class LocalStudentService {
         id: 'ATT001',
         studentId: 'STU001',
         date: '2024-10-01',
-        subject: 'Matematika',
-        status: 'Hadir',
-        notes: ''
+        status: 'present'
       },
       {
         id: 'ATT002',
         studentId: 'STU001',
         date: '2024-10-02',
-        subject: 'Kimia',
-        status: 'Izin',
-        notes: 'Sakit demam'
+        status: 'absent'
       }
     ];
   }
@@ -191,23 +164,17 @@ class LocalStudentService {
     return [
       {
         id: 'SCH001',
-        day: 'Senin',
-        time: '07:00 - 08:30',
+        studentId: 'STU001',
         subject: 'Matematika',
-        subjectCode: 'MAT12',
-        teacher: 'Dr. Siti Nurhaliza, M.Pd.',
-        room: 'Lab. Komputer 1',
-        type: 'Teori'
+        time: '07:00 - 08:30',
+        day: 'Senin'
       },
       {
         id: 'SCH002',
-        day: 'Senin',
-        time: '08:45 - 10:15',
+        studentId: 'STU001',
         subject: 'Fisika',
-        subjectCode: 'FIS12',
-        teacher: 'Prof. Budi Santoso, M.T.',
-        room: 'Lab. Fisika',
-        type: 'Praktik'
+        time: '08:45 - 10:15',
+        day: 'Senin'
       }
     ];
   }
