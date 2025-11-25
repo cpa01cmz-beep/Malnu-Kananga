@@ -20,7 +20,7 @@
     "env:validate": "node -e \"console.log('Environment validation not implemented yet')\""
   },
   "dependencies": {
-    "@google/genai": "^1.29.1",
+    "@google/genai": "^1.30.0",
     "@sentry/react": "^10.25.0",
     "@sentry/tracing": "^7.120.4",
     "@supabase/supabase-js": "^2.81.1",
