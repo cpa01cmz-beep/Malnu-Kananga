@@ -6,10 +6,14 @@ Dokumentasi ini menjelaskan implementasi keamanan sistem MA Malnu Kananga, menca
 
 ---
 
-**Security Documentation Version: 1.3.2**  
+**Security Documentation Version: 1.4.0**  
 **Last Updated: November 25, 2025**  
-**Security Status: Production Hardened**  
-**Documentation Audit: Completed - Security implementation verified**
+<<<<<<< HEAD
+**Security Status: Production Hardened (Implemented Features Only)**  
+**Implementation Coverage**: 100% for implemented endpoints (9/9)
+=======
+**Security Status: Production Hardened**
+>>>>>>> a90ac69 (Documentation Updates - Comprehensive audit and enhancement v1.4.0)
 
 ## 🏗️ Security Architecture
 
@@ -22,13 +26,16 @@ Dokumentasi ini menjelaskan implementasi keamanan sistem MA Malnu Kananga, menca
 - **SSL/TLS Encryption**: End-to-end encryption for all communications
 
 #### Layer 2: Application Security
-- **Authentication System**: Magic link authentication with JWT tokens
-- **Session Management**: Secure session handling with expiration
-- **Input Validation**: Comprehensive input sanitization and validation
-- **Rate Limiting**: IP-based rate limiting to prevent abuse
-- **CSRF Protection**: Cross-Site Request Forgery protection with double-submit cookies
-- **Security Headers**: Content Security Policy (CSP) and security headers implementation
-- **Environment Validation**: Robust environment variable validation system
+- **Authentication System**: Magic link authentication with JWT tokens (HMAC-SHA256)
+- **Session Management**: Secure HTTP-only cookies with __Host prefix, 15-minute expiry
+- **Input Validation**: Comprehensive XSS/SQL injection prevention with pattern matching
+- **Rate Limiting**: Multi-tier rate limiting with progressive blocking (3/min login, 100/15min general)
+- **CSRF Protection**: Double-submit cookie pattern with 1-hour token expiry
+- **Security Headers**: Comprehensive CSP with strict policies and security headers
+- **Environment Validation**: Robust environment variable validation with fallbacks
+- **Bot Detection**: User-Agent analysis and suspicious activity monitoring
+- **Geographic Filtering**: Country-based access control (default: Indonesia only)
+- **Request Size Validation**: Maximum payload size enforcement (10MB default)
 
 #### Layer 3: Data Security
 - **Encryption at Rest**: Data encrypted in Cloudflare D1 database
@@ -38,9 +45,13 @@ Dokumentasi ini menjelaskan implementasi keamanan sistem MA Malnu Kananga, menca
 
 #### Layer 4: Infrastructure Security
 - **Serverless Architecture**: Reduced attack surface with Cloudflare Workers
-- **Secrets Management**: Secure environment variable handling
-- **Access Control**: Role-based access control (RBAC)
-- **Audit Logging**: Comprehensive logging of security events
+- **Secrets Management**: Secure Cloudflare Workers secrets with rotation support
+- **Access Control**: Role-based access control (RBAC) - planned for future endpoints
+- **Audit Logging**: Comprehensive security event logging with severity levels (CRITICAL, HIGH, MEDIUM, LOW)
+- **IP Blocking**: Automatic IP blocking for abusive behavior with 30-minute duration
+- **Client Fingerprinting**: Enhanced client identification using IP + User-Agent hashing
+- **Geographic Restrictions**: Country-based filtering with configurable allowlist
+- **Request Validation**: Content-Length validation and bot detection
 
 ## 🔐 Authentication & Authorization
 
@@ -48,7 +59,33 @@ Dokumentasi ini menjelaskan implementasi keamanan sistem MA Malnu Kananga, menca
 
 #### Flow Overview
 1. **User Request**: User enters email address
-2. **Token Generation**: System generates secure JWT token
+2. **Token Generation**: System generates secure JWT token using HMAC-SHA256
+3. **Email Delivery**: Magic link sent via MailChannels API
+4. **Token Verification**: JWT validation with Web Crypto API
+5. **Session Creation**: Secure HTTP-only cookies with __Host prefix
+6. **CSRF Protection**: Double-submit cookie pattern
+
+#### Implementation Details
+
+**JWT Token Security:**
+- **Algorithm**: HMAC-SHA256 with Web Crypto API
+- **Secret Key**: Minimum 32 characters, stored in Cloudflare Workers secrets
+- **Token Expiry**: 15 minutes with jti (JWT ID) for tracking
+- **Secure Cookies**: __Host prefix, HTTP-only, partitioned, 15-minute expiry
+- **CSRF Tokens**: Separate cookie with 1-hour expiry, rotation on each request
+
+**Rate Limiting:**
+- **Login Endpoint**: 3 requests per minute per IP/fingerprint
+- **General APIs**: 100 requests per 15 minutes per IP/fingerprint
+- **Progressive Blocking**: Automatic 30-minute block for abusive clients
+- **Distributed Storage**: KV store with memory fallback
+- **Client Fingerprinting**: IP + User-Agent hash for enhanced tracking
+
+**Email Security:**
+- **Allowed Emails**: Pre-registered email addresses only
+- **Input Validation**: Email format validation with regex
+- **Rate Limiting**: 3 attempts per minute to prevent email bombing
+- **Delivery**: MailChannels API with secure headers
 3. **Email Delivery**: Magic link sent via MailChannels API
 4. **Token Verification**: User clicks link to authenticate
 5. **Session Creation**: Secure session established
