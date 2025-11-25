@@ -376,7 +376,7 @@ Tim Bimbingan Konseling`,
     const settings = this.getParentSettings(communication.studentId);
     if (settings && this.isQuietHours(settings)) {
       // Reschedule for next allowed time
-      const nextAllowedTime = this.getNextAllowedTime(settings);
+      const nextAllowedTime = this.getNextAllowedTime(settings || undefined);
       communication.scheduledFor = nextAllowedTime.toISOString();
       this.saveCommunication(communication);
       return;
