@@ -2,38 +2,7 @@
 // Menggantikan mock data studentData.ts (PRIORITY: HIGHEST)
 
 import { baseApiService, type ApiResponse } from './baseApiService';
-
-// Type definitions
-interface Student {
-  id: string;
-  name: string;
-  email: string;
-  grade?: string;
-  class?: string;
-}
-
-interface Grade {
-  id: string;
-  studentId: string;
-  subject: string;
-  score: number;
-  date: string;
-}
-
-interface ScheduleItem {
-  id: string;
-  studentId: string;
-  subject: string;
-  time: string;
-  day: string;
-}
-
-interface AttendanceRecord {
-  id: string;
-  studentId: string;
-  date: string;
-  status: 'present' | 'absent' | 'late';
-}
+import type { Student, Grade, ScheduleItem, AttendanceRecord } from '../../types';
 
 // Development mode - menggunakan mock data untuk testing
 const isDevelopment = (import.meta as any).env?.DEV || false;
@@ -221,7 +190,7 @@ export class StudentApiService {
   static async getById(id: string): Promise<any | null> {
     if (isDevelopment) {
       const students = await this.getAll();
-      return students.find((s: any) => s.id === id) || null;
+       return students.find((s: any) => s.id === id) || null;
     } else {
       const response = await new StudentService().getById(id);
       return response.success && response.data ? response.data : null;
@@ -236,7 +205,7 @@ export class StudentApiService {
         id: `STU${Date.now()}`
       };
       students.push(newStudent);
-      LocalStudentService.saveStudents(students);
+       LocalStudentService.saveStudents(students);
       return newStudent;
     } else {
       const response = await new StudentService().create(student);
@@ -247,11 +216,11 @@ export class StudentApiService {
   static async update(id: string, student: any): Promise<any | null> {
     if (isDevelopment) {
       const students = await this.getAll();
-      const index = students.findIndex((s: any) => s.id === id);
-      if (index === -1) return null;
+       const index = students.findIndex((s: any) => s.id === id);
+       if (index === -1) return null;
 
-      students[index] = { ...students[index], ...student };
-      LocalStudentService.saveStudents(students);
+       students[index] = { ...students[index], ...student };
+       LocalStudentService.saveStudents(students);
       return students[index];
     } else {
       const response = await new StudentService().update(id, student);
@@ -261,11 +230,11 @@ export class StudentApiService {
 
   static async delete(id: string): Promise<boolean> {
     if (isDevelopment) {
-      const students = this.getAll();
+      const students = await this.getAll();
       const filteredStudents = students.filter(s => s.id !== id);
       if (filteredStudents.length === students.length) return false;
 
-      this.getService().saveStudents(filteredStudents);
+      await this.getService().saveStudents(filteredStudents);
       return true;
     } else {
       const response = await this.getService().delete(id);

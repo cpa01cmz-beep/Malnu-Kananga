@@ -108,7 +108,7 @@ export class NewsApiService {
   static async getById(id: number): Promise<LatestNews | null> {
     if (isDevelopment) {
       const news = await this.getAll();
-      return news.find((n: any) => n.id === id) || null;
+       return news.find((n: any) => n.id === id) || null;
     } else {
       const response = await new NewsService().getById(id);
       return response.success && response.data ? response.data : null;
@@ -123,7 +123,7 @@ export class NewsApiService {
         id: Date.now() // Simple ID generation
       } as LatestNews;
       newsList.push(newNews);
-      LocalNewsService.saveAll(newsList);
+       LocalNewsService.saveAll(newsList);
       return newNews;
     } else {
       const response = await new NewsService().create(news);
@@ -134,11 +134,11 @@ export class NewsApiService {
   static async update(id: number, news: Partial<LatestNews>): Promise<LatestNews | null> {
     if (isDevelopment) {
       const newsList = await this.getAll();
-      const index = newsList.findIndex((n: any) => n.id === id);
-      if (index === -1) return null;
+       const index = newsList.findIndex((n: any) => n.id === id);
+       if (index === -1) return null;
 
-      newsList[index] = { ...newsList[index], ...news };
-      LocalNewsService.saveAll(newsList);
+       newsList[index] = { ...newsList[index], ...news };
+       LocalNewsService.saveAll(newsList);
       return newsList[index];
     } else {
       const response = await new NewsService().update(id, news);
@@ -149,10 +149,10 @@ export class NewsApiService {
   static async delete(id: number): Promise<boolean> {
     if (isDevelopment) {
       const newsList = await this.getAll();
-      const filteredNews = newsList.filter((n: any) => n.id !== id);
-      if (filteredNews.length === newsList.length) return false;
+       const filteredNews = newsList.filter((n: any) => n.id !== id);
+       if (filteredNews.length === newsList.length) return false;
 
-      LocalNewsService.saveAll(filteredNews);
+       LocalNewsService.saveAll(filteredNews);
       return true;
     } else {
       const response = await new NewsService().delete(id);
