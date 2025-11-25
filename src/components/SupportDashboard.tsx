@@ -57,7 +57,6 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
         lastCheck: new Date().toISOString(),
         memory: (typeof process !== 'undefined' && process.memoryUsage ? (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2) : '0') + ' MB'
       });
-      });
 
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
@@ -248,11 +247,9 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="font-semibold text-gray-900 mb-3">Live Activity Feed</h3>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {activeInterventions.map(intervention => (
-                    <div key={intervention.id} className="border-l-4 border-blue-500 pl-3 py-2">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <span className="font-medium">Student {intervention.studentId}</span>
+                   {activeInterventions.map(intervention => (
+                     <div key={intervention.id} className="border-l-4 border-blue-500 pl-3 py-2">
+                       <div className="flex justify-between items-start">
                          <div>
                            <span className="font-medium">Student {intervention.studentId}</span>
                            <span className={`ml-2 text-xs px-2 py-1 rounded ${getSeverityColor(intervention.severity || 'medium')}`}>
@@ -262,19 +259,12 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
                          <div className="text-gray-500">
                            {intervention.timestamp ? new Date(intervention.timestamp).toLocaleTimeString('id-ID') : 'N/A'}
                          </div>
-                          </span>
-                        )}
-                        </div>
-                        <div className="text-gray-500">
-                          {intervention.timestamp ? new Date(intervention.timestamp).toLocaleTimeString('id-ID') : 'N/A'}
-                        </div>
-                      </div>
-                      <div className="text-sm text-gray-600 mt-1">
-                        {intervention.actions?.length || 0} actions queued
-                      </div>
-                      </div>
-                    </div>
-                  ))}
+                       </div>
+                       <div className="text-sm text-gray-600 mt-1">
+                         {intervention.actions?.length || 0} actions queued
+                       </div>
+                     </div>
+                   ))}
                   {activeInterventions.length === 0 && (
                     <div className="text-center text-gray-500 py-4">
                       No recent activity
@@ -370,18 +360,17 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
                     <div className="text-sm text-blue-800">
                       • Consider reviewing and optimizing intervention rules for better effectiveness
                     </div>
-                  )}
-                  {atRiskStudents.filter(s => s.riskLevel === 'high').length > 5 && (
-                    <div className="text-sm text-blue-800">
-                      • High number of at-risk students detected. Consider proactive outreach programs.
-                    </div>
-                  )}
-
-
-                    <div className="text-sm text-green-800">
-                      • System is performing optimally! Current interventions are highly effective.
-                    </div>
-                  )}
+                   )}
+                   {systemHealth?.status !== 'healthy' && (
+                     <div className="text-sm text-red-800">
+                       • System health requires attention. Check resource utilization.
+                     </div>
+                   )}
+                   {(interventionStats?.averageEffectiveness || 0) > 80 && atRiskStudents.length < 3 && (
+                     <div className="text-sm text-green-800">
+                       • System is performing optimally! Current interventions are highly effective.
+                     </div>
+                   )}
                 </div>
               </div>
             </div>
