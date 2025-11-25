@@ -231,13 +231,14 @@ export class StudentApiService {
   static async delete(id: string): Promise<boolean> {
     if (isDevelopment) {
       const students = await this.getAll();
-      const filteredStudents = students.filter(s => s.id !== id);
+      const filteredStudents = students.filter((s: any) => s.id !== id);
       if (filteredStudents.length === students.length) return false;
 
-      await this.getService().saveStudents(filteredStudents);
+      LocalStudentService.saveStudents(filteredStudents);
       return true;
     } else {
-      const response = await this.getService().delete(id);
+      const service = new StudentService();
+      const response = await service.delete(id);
       return response.success;
     }
   }
@@ -245,9 +246,10 @@ export class StudentApiService {
   // Grade operations
   static async getGrades(studentId: string): Promise<Grade[]> {
     if (isDevelopment) {
-      return this.getService().getGrades().filter(g => g.studentId === studentId);
+      return LocalStudentService.getGrades().filter((g: any) => g.studentId === studentId);
     } else {
-      const response = await this.getService().getGrades(studentId);
+      const service = new StudentService();
+      const response = await service.getGrades(studentId);
       return response.success && response.data ? response.data : [];
     }
   }
@@ -255,9 +257,10 @@ export class StudentApiService {
   // Attendance operations
   static async getAttendance(studentId: string, month?: string, year?: string): Promise<AttendanceRecord[]> {
     if (isDevelopment) {
-      return this.getService().getAttendance().filter(a => a.studentId === studentId);
+      return LocalStudentService.getAttendance().filter((a: any) => a.studentId === studentId);
     } else {
-      const response = await this.getService().getAttendance(studentId, month, year);
+      const service = new StudentService();
+      const response = await service.getAttendance(studentId, month, year);
       return response.success && response.data ? response.data : [];
     }
   }
@@ -265,9 +268,10 @@ export class StudentApiService {
   // Schedule operations
   static async getSchedule(studentId: string): Promise<ScheduleItem[]> {
     if (isDevelopment) {
-      return this.getService().getSchedule();
+      return LocalStudentService.getSchedule();
     } else {
-      const response = await this.getService().getSchedule(studentId);
+      const service = new StudentService();
+      const response = await service.getSchedule(studentId);
       return response.success && response.data ? response.data : [];
     }
   }
@@ -275,19 +279,20 @@ export class StudentApiService {
   // Get students by class
   static async getByClass(classId: string): Promise<Student[]> {
     if (isDevelopment) {
-      return this.getAll().filter(s => s.class === classId);
+      return (await this.getAll()).filter((s: any) => s.class === classId);
     } else {
-      const response = await this.getService().getByClass(classId);
+      const service = new StudentService();
+      const response = await service.getByClass(classId);
       return response.success && response.data ? response.data : [];
     }
   }
 
   // Utility functions (mirroring the original mock data functions)
   static calculateGPA(grades: Grade[]): number {
-    const completedGrades = grades.filter(grade => grade.status === 'Lulus' && grade.gradePoint);
+    const completedGrades = grades.filter(grade => grade.score >= 70);
     if (completedGrades.length === 0) return 0;
 
-    const totalPoints = completedGrades.reduce((sum, grade) => sum + (grade.gradePoint || 0), 0);
+    const totalPoints = completedGrades.reduce((sum, grade) => sum + grade.score, 0);
     return Math.round((totalPoints / completedGrades.length) * 100) / 100;
   }
 
@@ -300,10 +305,10 @@ export class StudentApiService {
     percentage: number;
   } {
     const total = attendance.length;
-    const present = attendance.filter(a => a.status === 'Hadir').length;
-    const absent = attendance.filter(a => a.status === 'Alfa').length;
-    const sick = attendance.filter(a => a.status === 'Sakit').length;
-    const permitted = attendance.filter(a => a.status === 'Izin').length;
+    const present = attendance.filter(a => a.status === 'present').length;
+    const absent = attendance.filter(a => a.status === 'absent').length;
+    const sick = 0; // No sick status in current interface
+    const permitted = 0; // No permitted status in current interface
     const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
 
     return { total, present, absent, sick, permitted, percentage };

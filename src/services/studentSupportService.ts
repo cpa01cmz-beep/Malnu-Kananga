@@ -464,11 +464,11 @@ class StudentSupportService {
     
     // Check for specific keywords
     if (requestText.includes('login') || requestText.includes('masuk')) {
-      selectedResponse = typeResponses.login || typeResponses.default;
+      selectedResponse = (typeResponses as any).login || typeResponses.default;
     } else if (requestText.includes('nilai') || requestText.includes('grade')) {
-      selectedResponse = typeResponses.nilai || typeResponses.default;
+      selectedResponse = (typeResponses as any).nilai || typeResponses.default;
     } else if (requestText.includes('portal')) {
-      selectedResponse = typeResponses.portal || typeResponses.default;
+      selectedResponse = (typeResponses as any).portal || typeResponses.default;
     }
 
     // Add student-specific context if available

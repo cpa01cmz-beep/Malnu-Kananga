@@ -70,12 +70,5 @@ declare global {
   
   var global: typeof globalThis;
   
-  // Extend Jest matchers for testing-library
-  namespace jest {
-    interface Matchers<R> {
-      toBeInTheDocument(): R;
-      toHaveValue(value: any): R;
-      toBeDisabled(): R;
-    }
-  }
+  
 }

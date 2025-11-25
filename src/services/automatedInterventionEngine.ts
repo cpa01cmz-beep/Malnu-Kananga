@@ -587,7 +587,7 @@ class AutomatedInterventionEngine {
       const assignmentsKey = `student_resource_assignments_${studentId}`;
       const existingAssignments = JSON.parse(localStorage.getItem(assignmentsKey) || '[]');
       
-      const newAssignments = resourceIds.map(resourceId => ({
+      const newAssignments = resourceIds.map((resourceId: any) => ({
         resourceId,
         assignedAt: new Date().toISOString(),
         assignedBy: 'automated_intervention',

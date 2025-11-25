@@ -105,7 +105,7 @@ async function generateSecureToken(email: string, expiryTime: number = 15 * 60 *
   // In production, signature generation should be done server-side only
   // This client-side implementation is for development/testing purposes only
   // DO NOT use this for production authentication as it exposes the secret
-  const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+  const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
   // SECURITY: Client-side signature generation disabled for ALL environments
   // All authentication now handled server-side in Cloudflare Worker
