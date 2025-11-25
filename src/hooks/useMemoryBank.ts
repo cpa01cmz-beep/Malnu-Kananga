@@ -1,23 +1,35 @@
 import { useState, useEffect, useCallback } from 'react';
-import { MemoryBank, schoolMemoryBankConfig, Memory, MemoryQuery } from '../memory';
+import { MemoryBank, Memory, MemoryQuery } from '../memory';
 
 /**
  * React hook for using Memory Bank functionality
  */
 export function useMemoryBank() {
-  const [memoryBank] = useState(() => new MemoryBank(schoolMemoryBankConfig()));
+  const [memoryBank, setMemoryBank] = useState<MemoryBank | null>(null);
   const [memories, setMemories] = useState<Memory[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load recent memories on mount
+  // Initialize memory bank and load recent memories on mount
   useEffect(() => {
-    loadRecentMemories();
+    const initializeMemoryBank = async () => {
+      try {
+        const { schoolMemoryBankConfig } = await import('../memory/config');
+        const config = await schoolMemoryBankConfig();
+        const bank = new MemoryBank(config);
+        setMemoryBank(bank);
+        loadRecentMemories(bank);
+      } catch (error) {
+        console.error('Failed to initialize memory bank:', error);
+      }
+    };
+    
+    initializeMemoryBank();
   }, []);
 
-  const loadRecentMemories = useCallback(async (limit = 20) => {
+  const loadRecentMemories = useCallback(async (bank: MemoryBank, limit = 20) => {
     setIsLoading(true);
     try {
-      const recentMemories = await memoryBank.searchMemories({
+      const recentMemories = await bank.searchMemories({
         limit,
       });
       setMemories(recentMemories);
@@ -26,13 +38,14 @@ export function useMemoryBank() {
     } finally {
       setIsLoading(false);
     }
-  }, [memoryBank]);
+  }, []);
 
   const addMemory = useCallback(async (
     content: string,
     type: Memory['type'],
     metadata?: Record<string, any>
   ) => {
+    if (!memoryBank) throw new Error('Memory bank not initialized');
     try {
       const newMemory = await memoryBank.addMemory(content, type, metadata);
       setMemories(prev => [newMemory, ...prev]);
@@ -44,6 +57,7 @@ export function useMemoryBank() {
   }, [memoryBank]);
 
   const searchMemories = useCallback(async (query: MemoryQuery) => {
+    if (!memoryBank) return [];
     setIsLoading(true);
     try {
       return await memoryBank.searchMemories(query);
@@ -56,6 +70,7 @@ export function useMemoryBank() {
   }, [memoryBank]);
 
   const getRelevantMemories = useCallback(async (context: string, limit = 5) => {
+    if (!memoryBank) return [];
     try {
       return await memoryBank.getRelevantMemories(context, limit);
     } catch (error) {
@@ -65,6 +80,7 @@ export function useMemoryBank() {
   }, [memoryBank]);
 
   const deleteMemory = useCallback(async (id: string) => {
+    if (!memoryBank) throw new Error('Memory bank not initialized');
     try {
       await memoryBank.deleteMemory(id);
       setMemories(prev => prev.filter(m => m.id !== id));
@@ -75,6 +91,7 @@ export function useMemoryBank() {
   }, [memoryBank]);
 
   const clearAllMemories = useCallback(async () => {
+    if (!memoryBank) throw new Error('Memory bank not initialized');
     setIsLoading(true);
     try {
       await memoryBank.cleanup();
@@ -88,6 +105,7 @@ export function useMemoryBank() {
   }, [memoryBank]);
 
   const getStats = useCallback(async () => {
+    if (!memoryBank) return null;
     try {
       return await memoryBank.getStats();
     } catch (error) {

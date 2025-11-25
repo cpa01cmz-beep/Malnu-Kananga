@@ -105,7 +105,8 @@ export class FeaturedProgramsApiService {
       const programs = await this.getAll();
        return programs.find((p: any) => p.id === id) || null;
     } else {
-      const response = await this.getService().getById(id);
+      const service = new FeaturedProgramsService();
+      const response = await service.getById(id);
       return response.success && response.data ? response.data : null;
     }
   }

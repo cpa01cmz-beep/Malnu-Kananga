@@ -73,7 +73,7 @@ export class MemoryBank implements MemoryServiceInterface {
     await this.memoryService.updateMemory(id, updates);
 
     // Get updated memory for event
-    const updatedMemory = await this.getMemory(id);
+    const updatedMemory = await this.memoryService.getMemory(id);
     if (updatedMemory) {
       this.emit('memoryUpdated', updatedMemory);
     }
@@ -100,10 +100,10 @@ export class MemoryBank implements MemoryServiceInterface {
    * Perform cleanup operations (remove old/low-importance memories)
    */
   async cleanup(): Promise<void> {
-    const deletedCount = await this.memoryService.cleanup();
+    await this.memoryService.cleanup();
 
     // Emit event
-    this.emit('cleanupPerformed', deletedCount);
+    this.emit('cleanupPerformed', 0);
   }
 
   /**

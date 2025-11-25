@@ -148,7 +148,7 @@ export class MemoryService implements MemoryServiceInterface {
     const maxMemories = this.config.maxMemories || 1000;
 
     if (allMemories.length <= maxMemories) {
-      return 0; // No cleanup needed
+      return; // No cleanup needed
     }
 
     // Sort memories by importance and recency for cleanup
@@ -169,9 +169,6 @@ export class MemoryService implements MemoryServiceInterface {
     for (const memory of memoriesToDelete) {
       await this.storageAdapter.delete(memory.id);
     }
-
-    // Return void to match interface
-    return;
   }
 
   /**

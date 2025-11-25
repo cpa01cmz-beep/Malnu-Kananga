@@ -374,7 +374,7 @@ Tim Bimbingan Konseling`,
   private static async sendCommunication(communication: ParentCommunication): Promise<void> {
     // Check quiet hours
     const settings = this.getParentSettings(communication.studentId);
-    if (this.isQuietHours(settings)) {
+    if (settings && this.isQuietHours(settings)) {
       // Reschedule for next allowed time
       const nextAllowedTime = this.getNextAllowedTime(settings);
       communication.scheduledFor = nextAllowedTime.toISOString();
