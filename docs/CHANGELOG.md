@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.1] - 2025-11-24
 
-## [1.3.1] - 2025-11-24
-
 ### 📚 Comprehensive Documentation Overhaul
 - **Documentation Audit**: Complete audit and restructuring of all documentation files
 - **Version Standardization**: Synchronized all documentation to version 1.3.1

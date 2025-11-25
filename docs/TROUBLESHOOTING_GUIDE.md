@@ -1,5 +1,49 @@
 # 🔧 Troubleshooting Guide & FAQ - MA Malnu Kananga
 
+## ⚡ Quick Fix Top 5 Issues
+
+### 1. 🔗 Magic Link Tidak Masuk
+**Problem**: Tidak menerima email atau link tidak berfungsi  
+**Solution**: 
+- Check folder spam/promosi di email
+- Request ulang magic link (tunggu 15 menit)
+- Pastikan email benar dan tidak typo
+- Clear browser cache dan cookies
+
+### 2. 🤖 AI Chat Tidak Merespon  
+**Problem**: Chat window menunjukkan loading tapi tidak ada jawaban  
+**Solution**:
+- Seed vector database: `curl https://worker-url/seed`
+- Check API_KEY valid di environment
+- Verify worker URL benar di VITE_WORKER_URL
+- Refresh browser dan coba kembali
+
+### 3. 🔐 Login Gagal Terus-Menerus
+**Problem**: Magic link berhasil tapi login tetap gagal  
+**Solution**:
+- Clear browser cache sepenuhnya
+- Check SECRET_KEY minimum 32 karakter
+- Pastikan tidak ada extension yang block cookies
+- Gunakan browser Chrome/Firefox terbaru
+
+### 4. 📱 Mobile/PWA Tidak Bisa Install
+**Problem**: Tombol install tidak muncul di mobile  
+**Solution**:
+- Gunakan Chrome Android atau Safari iOS
+- Pastikan HTTPS (bukan HTTP)
+- Clear cache browser mobile
+- Akses langsung via browser, bukan social media
+
+### 5. 🌐 CORS Error di Console
+**Problem**: Error "CORS policy" atau "blocked by CORS policy"  
+**Solution**:
+- Update VITE_WORKER_URL ke worker URL yang benar
+- Check worker sudah di-deploy dengan benar
+- Verify environment variables ter-set dengan benar
+- Restart development server
+
+---
+
 ## 🚨 Common Issues & Solutions
 
 This comprehensive troubleshooting guide covers common issues, their solutions, and frequently asked questions for all user types.

@@ -86,6 +86,26 @@ API MA Malnu Kananga saat ini memiliki **implementasi sangat terbatas** dengan f
 4. **No Administrative Functions**: Tidak ada user management atau configuration
 5. **Static Frontend**: Interface menggunakan hardcoded data arrays
 
+## 🚨 IMPLEMENTATION STATUS WARNING
+
+### ✅ **WORKING ENDPOINTS** (Production Ready)
+- **Authentication**: `/request-login-link`, `/verify-token` - Fully functional
+- **AI Chat**: `/api/chat` - RAG system with vector database
+- **System**: `/health`, `/seed` - Health checks and database seeding
+- **Content**: Basic content management (demo data)
+
+### ⚠️ **DEMO DATA ENDPOINTS** (Development Only)
+- **Student Data**: `/api/student/*` - Uses mock/demo data
+- **Teacher Data**: `/api/teacher/*` - Uses mock/demo data  
+- **Parent Data**: `/api/parent/*` - Uses mock/demo data
+- **Academic Records**: All academic APIs use demo data
+
+### ❌ **NOT IMPLEMENTED** (Future Features)
+- **Real Database Integration**: Student/Teacher/Parent data from actual database
+- **Advanced Analytics**: Performance tracking and reporting
+- **File Upload**: Assignment submission and document management
+- **Notification System**: Real-time notifications and messaging
+
 ## 🏗️ Architecture
 
 ### Base Configuration
