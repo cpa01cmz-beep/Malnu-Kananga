@@ -1148,7 +1148,7 @@ class StudentSupportService {
 // Get support resources
   getSupportAnalytics(): any {
     const requests = this.getSupportRequests();
-    const allProgress = StudentSupportService.getAllStudentProgress();
+const allProgress = StudentSupportService.getAllStudentProgress();
     const resources = StudentSupportService.getSupportResources();
 
     return {
@@ -1273,23 +1273,6 @@ class StudentSupportService {
     }
   }
 
-
-
-  // Calculate average resolution time
-  private calculateAverageResolutionTime(requests: SupportRequest[]): number {
-    const resolvedRequests = requests.filter(r => r.status === 'resolved');
-    
-    if (resolvedRequests.length === 0) return 0;
-
-    const totalTime = resolvedRequests.reduce((sum, request) => {
-      const created = new Date(request.createdAt).getTime();
-      const resolved = new Date(request.updatedAt).getTime();
-      return sum + (resolved - created);
-    }, 0);
-
-    return totalTime / resolvedRequests.length / (1000 * 60 * 60); // hours
-  }
-
   // Get category breakdown
   private getCategoryBreakdown(requests: SupportRequest[]): Record<string, number> {
     const breakdown: Record<string, number> = {};
@@ -1383,6 +1366,7 @@ class StudentSupportService {
 // Auto-initialize when module loads with error handling
 if (typeof window !== 'undefined') {
   try {
+    // Initialize with proper error handling
     const service = StudentSupportService.getInstance();
     service.initialize();
     
