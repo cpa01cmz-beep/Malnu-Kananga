@@ -97,16 +97,8 @@ crypto: true,
         TextEncoder: true,
         btoa: true,
         atob: true,
-        Request: true,
-        RequestInit: true,
-        AbortController: true,
-        performance: true,
-        NotificationOptions: true,
-        ServiceWorkerRegistration: true,
-        IDBDatabase: true,
-        indexedDB: true,
-        IDBOpenDBRequest: true,
-        isDevelopment: true,
+<<<<<<< HEAD
+        ResizeObserver: true,
       },
     },
     plugins: {
@@ -199,6 +191,12 @@ crypto: true,
   },
   {
     ignores: ['dist/', 'node_modules/', 'build/', '*.config.*'],
+  },
+  {
+    files: ['security-middleware.js'],
+    rules: {
+      'no-control-regex': 'off',
+    },
   },
   prettier,
 ];
