@@ -7,12 +7,12 @@ interface SupportDashboardProps {
   studentId?: string;
 }
 
-const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'support_staff', studentId }) => {
-  const [currentStatus, setCurrentStatus] = useState<any>(null);
+const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role: _role = 'support_staff', studentId: _studentId }) => {
+  const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated: string; activeUsers: number } | null>(null);
   const [alerts, setAlerts] = useState<MonitoringAlert[]>([]);
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
   const [selectedTimeFrame, setSelectedTimeFrame] = useState<'hourly' | 'daily' | 'weekly'>('daily');
-  const [report, setReport] = useState<any>(null);
+  const [_report, setReport] = useState<{ summary: string; details: string[] } | null>(null);
   const [showAlertDetails, setShowAlertDetails] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<MonitoringAlert | null>(null);
 
@@ -76,7 +76,7 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'supp
     }
   };
 
-  const getTrendIcon = (trend: string) => {
+  const _getTrendIcon = (trend: string) => {
     switch (trend) {
       case 'improving': return '📈';
       case 'declining': return '📉';
@@ -218,7 +218,7 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'supp
           <h2 className="text-lg font-semibold text-gray-900">Active Alerts ({alerts.length})</h2>
           <select
             value={selectedTimeFrame}
-            onChange={(e) => setSelectedTimeFrame(e.target.value as any)}
+            onChange={(e) => setSelectedTimeFrame(e.target.value as 'hourly' | 'daily' | 'weekly')}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="hourly">Last Hour</option>

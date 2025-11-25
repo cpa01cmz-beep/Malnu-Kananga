@@ -138,7 +138,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
             ].map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'overview' | 'assignments' | 'resources' | 'progress')}
                 className={`flex-1 min-w-[120px] py-3 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
                   activeTab === tab.id
                     ? `bg-${tab.color}-100 text-${tab.color}-700 border-2 border-${tab.color}-300 shadow-sm`
@@ -458,7 +458,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
                 <select
                   value={newRequest.type}
-                  onChange={(e) => setNewRequest({...newRequest, type: e.target.value as any})}
+                  onChange={(e) => setNewRequest({...newRequest, type: e.target.value as 'academic' | 'technical' | 'personal' | 'other'})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="academic">Akademis</option>
@@ -505,7 +505,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Prioritas</label>
                 <select
                   value={newRequest.priority}
-                  onChange={(e) => setNewRequest({...newRequest, priority: e.target.value as any})}
+                  onChange={(e) => setNewRequest({...newRequest, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent'})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="low">Rendah</option>
