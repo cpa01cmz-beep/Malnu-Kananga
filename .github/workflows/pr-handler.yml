@@ -37,7 +37,7 @@ jobs:
       
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ env.GH_TOKEN }}
@@ -57,8 +57,7 @@ jobs:
             PERAN
             ========================================
             Anda adalah PR Automation Specialist yang bertugas menangani Pull Request secara otomatis.
-            Anda berada di lingkungan github action dengan akses penuh ke repository.
-            Anda harus mengatur git user.name sebagai "github-actions" dan git user.email sebagai "github-actions@github.com" untuk setiap commit.
+            Anda berada di lingkungan github action dengan akses penuh ke repository.            
             Anda bertanggung jawab memastikan keamanan dengan tidak mengekspos secret apapun dalam log atau komentar.
 
             ========================================
@@ -78,7 +77,7 @@ jobs:
             ----------------------------------------
             - Dapatkan daftar semua PR terbuka menggunakan gh pr list dengan filter status "open"
             - Urutkan berdasarkan umur (tertua lebih dulu) atau berdasarkan label prioritas (priority/high > priority/medium > priority/low)
-            - Pilih satu PR yang akan ditangani pada eksekusi ini
+            - Pilih satu PR yang akan ditangani pada eksekusi ini, termasuk dari bot
             - Catat nomor PR yang dipilih untuk referensi
             - Batalkan eksekusi jika tidak ada PR terbuka yang memenuhi kriteria
 
@@ -87,7 +86,6 @@ jobs:
             - Dapatkan detail PR termasuk branch name, komentar, status CI/CD, dan mergeability
             - Periksa apakah ada konflik merge dengan branch target (main/master)
             - Identifikasi semua komentar yang belum terselesaikan dari reviewer
-            - Periksa apakah PR memiliki label "do-not-merge", "work-in-progress", atau "needs-human-review"
             - Batalkan eksekusi jika PR memiliki label yang menghalangi otomatisasi
 
             3. Persiapkan Environment Kerja
@@ -113,8 +111,8 @@ jobs:
               * Jalankan test terkait sebelum commit
               * Commit dengan format standar: "fix(pr#<nomor>): [deskripsi singkat perubahan]"
             - Set konfigurasi git sebelum commit:
-              * git config user.name "github-actions"
-              * git config user.email "github-actions@github.com"
+              * git config user.name "pr-handler"
+              * git config user.email "pr-handler@ma-malnukananga.pages.dev"
               * git config --global --add safe.directory $(pwd)
 
             5. Test dan Validasi Komprehensif
@@ -147,7 +145,6 @@ jobs:
             ----------------------------------------
             - Set GH_TOKEN environment variable dengan benar untuk semua operasi gh
             - Jalankan: gh pr list --state open --limit 10 --json number,title,author,createdAt,labels
-            - Filter PR yang bukan dari bot dengan: | jq -r '.[] | select(.author.login != "github-actions[bot]")'
             - Urutkan berdasarkan waktu pembuatan: | sort -k3
             - Pilih PR pertama dari hasil sortir
             - Dapatkan detail lengkap: gh pr view <nomor> --json number,title,body,headRefName,baseRefName,mergeable,reviewDecision,commits,comments,statusCheckRollup

@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { LazyStudentDashboard, LazyTeacherDashboard, LazyParentDashboard } from '../utils/lazyImports';
 
 // Loading component
@@ -9,7 +9,7 @@ const LoadingSpinner = () => (
 );
 
 // Error boundary for lazy components
-const LazyErrorBoundary = ({ children }: { children: React.ReactNode }) => (
+const LazyErrorBoundary = ({ children: _children }: { children: React.ReactNode }) => (
   <div className="flex items-center justify-center min-h-[200px]">
     <div className="text-center">
       <p className="text-red-600 mb-2">Gagal memuat komponen</p>
@@ -35,18 +35,18 @@ export const LazyWrapper = ({ children }: { children: React.ReactNode }) => (
 // Lazy dashboard components with proper loading states
 export const StudentDashboardLazy = () => (
   <LazyWrapper>
-    <LazyStudentDashboard />
+    <LazyStudentDashboard onLogout={() => {}} />
   </LazyWrapper>
 );
 
 export const TeacherDashboardLazy = () => (
   <LazyWrapper>
-    <LazyTeacherDashboard />
+    <LazyTeacherDashboard onLogout={() => {}} />
   </LazyWrapper>
 );
 
 export const ParentDashboardLazy = () => (
   <LazyWrapper>
-    <LazyParentDashboard />
+    <LazyParentDashboard onLogout={() => {}} />
   </LazyWrapper>
 );

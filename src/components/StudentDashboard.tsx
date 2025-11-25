@@ -7,8 +7,7 @@ import {
   announcements,
   calculateGPA,
   getAttendanceStats,
-  getUnreadAnnouncements,
-  type Announcement
+  getUnreadAnnouncements
 } from '../data/studentData';
 import { AuthService } from '../services/authService';
 import { NotificationService, NotificationItem } from '../services/notificationService';
@@ -29,7 +28,7 @@ interface StudentDashboardProps {
 }
 
 const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'grades' | 'schedule' | 'attendance' | 'announcements' | 'support' | 'progress'>('overview');
+  const [activeTab, setActiveTab] = useState<string>('overview');
   const [currentToast, setCurrentToast] = useState<NotificationItem | null>(null);
 
   // Calculate statistics
@@ -66,18 +65,23 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
   // Initialize student support system
   useEffect(() => {
     // Initialize student progress tracking
-    StudentSupportService.updateStudentProgress(currentStudent.id, {
+    const supportService = StudentSupportService.getInstance();
+    supportService.updateStudentProgress(currentStudent.id, {
       academicMetrics: {
         gpa: gpa,
+        gradeTrend: 'stable' as const,
         attendanceRate: attendanceStats.percentage,
         assignmentCompletion: 85, // Sample data
         subjectPerformance: studentGrades.reduce((acc, grade) => {
-          acc[grade.subjectName] = grade.finalGrade || '0';
+          acc[grade.subjectName] = parseFloat(grade.finalGrade || '0');
           return acc;
-        }, {} as Record<string, string>)
+        }, {} as Record<string, number>)
       },
       engagementMetrics: {
         loginFrequency: 5, // Sample data
+        resourceAccess: 12,
+        supportRequests: 0,
+        participationScore: 85,
         featureUsage: {
           overview: 10,
           grades: 8,
@@ -85,7 +89,6 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
           attendance: 4,
           announcements: 7
         },
-        supportRequestsCount: 0,
         lastActiveDate: new Date().toISOString()
       }
     });
@@ -159,7 +162,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
       <NavigationTabs
         activeTab={activeTab}
         tabs={tabs}
-        onTabChange={setActiveTab}
+         onTabChange={(tabId: string) => setActiveTab(tabId as 'overview' | 'grades' | 'assignments' | 'schedule' | 'announcements')}
       />
 
       {/* Main Content */}
@@ -205,7 +208,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
         )}
 
         {activeTab === 'support' && (
-          <StudentSupportDashboard studentId={currentStudent.id} />
+          <StudentSupportDashboard />
         )}
 
         {activeTab === 'progress' && (

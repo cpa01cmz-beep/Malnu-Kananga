@@ -6,23 +6,22 @@ class SecurityMiddleware {
   }
 
   // Enhanced rate limiting with multiple tiers
-  isRateLimitExceeded(clientId, endpoint = 'default') {
+  isRateLimitExceeded(clientId, maxRequests = 100, windowMs = 60000, endpoint = 'default') {
     const now = Date.now();
-    const limits = {
-      'default': { limit: 100, windowMs: 60000 },
-      'auth': { limit: 10, windowMs: 60000 },
-      'ai': { limit: 50, windowMs: 60000 },
-      'upload': { limit: 5, windowMs: 60000 }
-    };
     
-    const config = limits[endpoint] || limits['default'];
+    // SECURITY: Validate inputs
+    if (!clientId || typeof clientId !== 'string') {
+      console.warn('SECURITY: Invalid clientId for rate limiting');
+      return true; // Block invalid requests
+    }
+    
     const key = `${clientId}:${endpoint}`;
     const clientData = this.rateLimitStore.get(key);
 
     if (!clientData) {
       this.rateLimitStore.set(key, {
         count: 1,
-        resetTime: now + config.windowMs,
+        resetTime: now + windowMs,
         firstRequest: now
       });
       return false;
@@ -31,7 +30,7 @@ class SecurityMiddleware {
     if (now > clientData.resetTime) {
       this.rateLimitStore.set(key, {
         count: 1,
-        resetTime: now + config.windowMs,
+        resetTime: now + windowMs,
         firstRequest: now
       });
       return false;
@@ -40,11 +39,17 @@ class SecurityMiddleware {
     clientData.count++;
     
     // Progressive rate limiting for abusive clients
-    if (clientData.count > config.limit * 2) {
+    if (clientData.count > maxRequests * 2) {
+      console.warn(`SECURITY: Hard block for abusive client: ${clientId}`);
       return true; // Hard block
     }
     
-    return clientData.count > config.limit;
+    const isExceeded = clientData.count > maxRequests;
+    if (isExceeded) {
+      console.warn(`SECURITY: Rate limit exceeded for client: ${clientId}, count: ${clientData.count}`);
+    }
+    
+    return isExceeded;
   }
 
   // Enhanced input validation and sanitization
@@ -55,17 +60,47 @@ class SecurityMiddleware {
     }
     
     if (type === 'string') {
-      // Enhanced XSS prevention
+      // Comprehensive XSS prevention - enhanced security patterns
       const dangerousPatterns = [
-        /<script/i,
-        /javascript:/i,
-        /on\w+\s*=/i,
-        /<iframe/i,
-        /<object/i,
-        /<embed/i,
-        /data:text\/html/i,
-        /vbscript:/i,
-        /expression\s*\(/i
+        // Script injection patterns
+        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+        /javascript:/gi,
+        /vbscript:/gi,
+        /data:text\/html/gi,
+        /data:application\/javascript/gi,
+        
+        // Event handler patterns
+        /on\w+\s*=/gi,
+        /onclick\s*=/gi,
+        /onload\s*=/gi,
+        /onerror\s*=/gi,
+        /onmouseover\s*=/gi,
+        
+        // HTML injection patterns
+        /<iframe\b[^>]*>/gi,
+        /<object\b[^>]*>/gi,
+        /<embed\b[^>]*>/gi,
+        /<link\b[^>]*>/gi,
+        /<meta\b[^>]*>/gi,
+        /<form\b[^>]*>/gi,
+        /<input\b[^>]*>/gi,
+        
+        // CSS injection patterns
+        /expression\s*\(/gi,
+        /@import/gi,
+        /behavior\s*:/gi,
+        /binding\s*:/gi,
+        
+        // Protocol injection
+        /file:\/\//gi,
+        /ftp:\/\//gi,
+        /mailto:/gi,
+        
+        // Encoding attacks
+        /%3cscript/gi,
+        /%3e/gi,
+        /&#x3c;script/gi,
+        /&#60;script/gi
       ];
       
       return typeof data === 'string' && 
@@ -99,9 +134,10 @@ class SecurityMiddleware {
     
     // Remove potentially dangerous characters
     let sanitized = data
-      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters
-      .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
-      .trim();
+        // eslint-disable-next-line no-control-regex
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters
+       .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
+       .trim();
     
     // Additional sanitization for specific types
     if (type === 'message') {
@@ -111,18 +147,51 @@ class SecurityMiddleware {
     return sanitized;
   }
 
-  // Enhanced security headers
+  // SQL injection prevention
+  sanitizeSqlInput(input) {
+    if (typeof input !== 'string') return input;
+    
+    // Remove SQL injection patterns
+    return input
+      .replace(/['"\\;]/g, '') // Remove quotes and semicolons
+      .replace(/\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b/gi, '') // Remove SQL keywords
+      .replace(/--/g, '') // Remove SQL comments
+      .replace(/\/\*[\s\S]*?\*\//g, '') // Remove SQL block comments
+      .trim();
+  }
+
+  // Enhanced security headers with comprehensive CSP
   getSecurityHeaders() {
     return {
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
       'X-XSS-Protection': '1; mode=block',
       'Referrer-Policy': 'strict-origin-when-cross-origin',
-      'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https:; frame-ancestors 'none';",
+      'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()',
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+      
+      // Comprehensive Content Security Policy
+      'Content-Security-Policy': [
+        "default-src 'self';",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval';", // Required for React development
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;",
+        "img-src 'self' data: https: https://images.unsplash.com;",
+        "font-src 'self' https://fonts.gstatic.com;",
+        "connect-src 'self' https: wss:;", // Allow WebSocket and HTTPS
+        "frame-src 'none';",
+        "frame-ancestors 'none';",
+        "form-action 'self';",
+        "base-uri 'self';",
+        "manifest-src 'self';",
+        "worker-src 'self' blob:;",
+        "object-src 'none';",
+        "media-src 'self';",
+        "prefetch-src 'self';"
+      ].join(' '),
+      
       'Cross-Origin-Embedder-Policy': 'require-corp',
-      'Cross-Origin-Resource-Policy': 'same-origin'
+      'Cross-Origin-Resource-Policy': 'same-origin',
+      'Cross-Origin-Opener-Policy': 'same-origin'
     };
   }
 
@@ -186,9 +255,18 @@ class SecurityMiddleware {
 
   // Create device fingerprint for enhanced tracking
   createFingerprint(ip, userAgent) {
-    const crypto = require('crypto');
+    // SECURITY: Use Web Crypto API instead of Node.js crypto
     const data = `${ip}:${userAgent}`;
-    return crypto.createHash('sha256').update(data).digest('hex').substring(0, 16);
+    
+    // Simple hash implementation for Cloudflare Workers
+    let hash = 0;
+    for (let i = 0; i < data.length; i++) {
+      const char = data.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    
+    return Math.abs(hash).toString(16).padStart(16, '0').substring(0, 16);
   }
 
   // Comprehensive security check

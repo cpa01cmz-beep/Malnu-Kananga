@@ -1,6 +1,6 @@
 // Import Google AI SDK and content types
 import { GoogleGenAI } from "@google/genai";
-import { MemoryBank, schoolMemoryBankConfig } from '../memory';
+import { MemoryBank } from '../memory';
 import { API_KEY, WORKER_URL } from '../utils/envValidation';
 
 // Initialize the Google AI client
@@ -9,7 +9,17 @@ const ai = new GoogleGenAI({ apiKey: API_KEY });
 const workerUrl = `${WORKER_URL}/api/chat`;
 
 // Initialize memory bank for conversation history
-const memoryBank = new MemoryBank(schoolMemoryBankConfig);
+let memoryBank: MemoryBank | null = null;
+
+// Initialize memory bank asynchronously
+const initializeMemoryBank = async () => {
+  if (!memoryBank) {
+    const { schoolMemoryBankConfig } = await import('../memory/config');
+    const config = await schoolMemoryBankConfig();
+    memoryBank = new MemoryBank(config);
+  }
+  return memoryBank;
+};
 
 // This function implements the RAG pattern:
 // 1. Fetches relevant context from our Worker (which queries a vector DB).
@@ -17,28 +27,38 @@ const memoryBank = new MemoryBank(schoolMemoryBankConfig);
 // 3. Sends the augmented prompt to the Gemini model for a grounded response.
 // 4. Stores conversation in memory bank for future context.
 export async function* getAIResponseStream(message: string, history: {role: 'user' | 'model', parts: string}[]): AsyncGenerator<string> {
+  // Ensure memory bank is initialized
+  await initializeMemoryBank();
+  
   let context = "";
+
   try {
-    // 1. Fetch context from the Worker
-    const contextResponse = await fetch(workerUrl, {
+    // 1. Fetch relevant context from our Worker (which queries a vector DB).
+    const response = await fetch(workerUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message }),
     });
-    if (contextResponse.ok) {
-        const data = await contextResponse.json();
-        context = data.context;
+
+    if (!response.ok) {
+      throw new Error(`Worker response not ok: ${response.status}`);
     }
-  } catch(e) {
-      // We can still proceed without context, Gemini will do its best.
+
+    const data = await response.json();
+    context = data.context || "";
+  } catch (error) {
+    console.warn('Failed to fetch context from worker:', error);
+    // Continue without context if worker is unavailable
   }
 
   // 2. Get additional context from memory bank
   let memoryContext = "";
   try {
-    const relevantMemories = await memoryBank.getRelevantMemories(message, 3);
-    if (relevantMemories.length > 0) {
-      memoryContext = relevantMemories.map(m => m.content).join('\n---\n');
+    if (memoryBank) {
+      const relevantMemories = await memoryBank.getRelevantMemories(message, 3);
+      if (relevantMemories.length > 0) {
+        memoryContext = relevantMemories.map(m => m.content).join('\n---\n');
+      }
     }
   } catch (error) {
     console.warn('Failed to get memory context:', error);
@@ -72,29 +92,31 @@ export async function* getAIResponseStream(message: string, history: {role: 'use
         model: 'gemini-2.5-flash',
         contents,
         config: {
-            systemInstruction,
+            systemInstruction: systemInstruction!,
         }
     });
 
     for await (const chunk of responseStream) {
-      fullResponse += chunk.text;
-      yield chunk.text;
+      fullResponse += chunk.text || '';
+      yield chunk.text || '';
     }
 
     // 4. Store conversation in memory bank for future context
     try {
-      await memoryBank.addMemory(
-        `Pertanyaan: ${message}\nJawaban: ${fullResponse}`,
-        'conversation',
-        {
-          type: 'user_ai_interaction',
-          userMessage: message,
-          aiResponse: fullResponse,
-          timestamp: new Date().toISOString(),
-          contextUsed: !!context,
-          memoryContextUsed: !!memoryContext
-        }
-      );
+      if (memoryBank) {
+        await memoryBank.addMemory(
+          `Pertanyaan: ${message}\nJawaban: ${fullResponse}`,
+          'conversation',
+          {
+            type: 'user_ai_interaction',
+            userMessage: message,
+            aiResponse: fullResponse,
+            timestamp: new Date().toISOString(),
+            contextUsed: !!context,
+            memoryContextUsed: !!memoryContext
+          }
+        );
+      }
     } catch (memoryError) {
       console.warn('Failed to store conversation in memory bank:', memoryError);
     }
@@ -104,27 +126,28 @@ export async function* getAIResponseStream(message: string, history: {role: 'use
 
       // Store failed interaction in memory bank
       try {
-        await memoryBank.addMemory(
-          `Pertanyaan: ${message}\nError: ${error instanceof Error ? error.message : 'Unknown error'}`,
-          'conversation',
-          {
-            type: 'failed_interaction',
-            userMessage: message,
-            error: error instanceof Error ? error.message : 'Unknown error',
-            timestamp: new Date().toISOString()
-          }
-        );
+        if (memoryBank) {
+          await memoryBank.addMemory(
+            `Pertanyaan: ${message}\nError: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            'conversation',
+            {
+              type: 'failed_interaction',
+              userMessage: message,
+              error: error instanceof Error ? error.message : 'Unknown error',
+              timestamp: new Date().toISOString()
+            }
+          );
+        }
       } catch (memoryError) {
         console.warn('Failed to store error in memory bank:', memoryError);
       }
+    }
   }
-}
-
-
 
 // Memory bank utility functions
 export async function getConversationHistory(limit = 10) {
   try {
+    if (!memoryBank) return [];
     return await memoryBank.searchMemories({
       type: 'conversation',
       limit,
@@ -137,6 +160,7 @@ export async function getConversationHistory(limit = 10) {
 
 export async function clearConversationHistory() {
   try {
+    if (!memoryBank) return 0;
     const conversations = await memoryBank.searchMemories({
       type: 'conversation',
     });
@@ -159,6 +183,7 @@ export async function clearConversationHistory() {
 
 export async function getMemoryStats() {
   try {
+    if (!memoryBank) return null;
     return await memoryBank.getStats();
   } catch (error) {
     console.error('Failed to get memory stats:', error);

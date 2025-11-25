@@ -29,19 +29,21 @@ class ErrorBoundary extends Component<Props, State> {
     const errorLoggingService = getErrorLoggingService();
 
     // Log error dengan metadata tambahan untuk debugging
-    errorLoggingService.logErrorBoundary(error, errorInfo, {
+    errorLoggingService.logErrorBoundary(error, { componentStack: errorInfo.componentStack || '' }, {
       componentName: this.constructor.name,
       props: Object.keys(this.props),
       hasCustomFallback: !!this.props.fallback,
       hasCustomErrorHandler: !!this.props.onError
     }).catch((logErrorValue) => {
-      // Fallback jika logging service gagal
-      console.error('ErrorBoundary caught an error:', error, errorInfo);
-      console.error('Error logging service juga gagal:', logErrorValue);
+      // Security: Remove console logging in production
+      if (process.env.NODE_ENV === 'development') {
+        console.error('ErrorBoundary caught an error:', error, errorInfo);
+        console.error('Error logging service juga gagal:', logErrorValue);
+      }
     });
 
     // Kirim error ke Sentry
-    captureErrorBoundary(error, errorInfo.componentStack);
+    captureErrorBoundary(error, errorInfo.componentStack || '');
 
     this.setState({
       error,
@@ -121,7 +123,7 @@ class ErrorBoundary extends Component<Props, State> {
                       </pre>
                     </div>
 
-                    {this.state.errorInfo && (
+                    {this.state.errorInfo && this.state.errorInfo.componentStack && (
                       <div className="mb-3">
                         <div className="text-yellow-600 dark:text-yellow-400 font-semibold mb-1">Component Stack:</div>
                         <pre className="whitespace-pre-wrap text-xs">
@@ -151,7 +153,9 @@ class ErrorBoundary extends Component<Props, State> {
                       <button
                         onClick={() => {
                           const logs = getErrorLoggingService().exportErrorLogs();
-                          console.log('All Error Logs:', JSON.parse(logs));
+                          if (process.env.NODE_ENV === 'development') {
+                            console.log('All Error Logs:', JSON.parse(logs));
+                          }
                           window.alert('Error logs exported to console');
                         }}
                         className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded hover:bg-blue-200 dark:hover:bg-blue-800"

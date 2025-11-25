@@ -105,11 +105,13 @@ async function generateSecureToken(email: string, expiryTime: number = 15 * 60 *
   // In production, signature generation should be done server-side only
   // This client-side implementation is for development/testing purposes only
   // DO NOT use this for production authentication as it exposes the secret
-  const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+   const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
   // SECURITY: Client-side signature generation disabled for ALL environments
-  console.error('SECURITY: Client-side JWT generation not allowed - security vulnerability');
-  throw new Error('Authentication must be handled server-side only');
+  // All authentication now handled server-side in Cloudflare Worker
+  // CRITICAL SECURITY: Never enable client-side token generation
+  console.error('SECURITY VIOLATION: Client-side token generation blocked - use server-side authentication');
+  throw new Error('Authentication must be handled server-side only - use /api/login endpoint');
 }
 
 // Synchronous version for development mode
@@ -126,24 +128,11 @@ function generateSecureTokenSync(email: string, expiryTime: number = 15 * 60 * 1
   const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-  // For development mode, generate a simple token without server-side secret
-  // In production, this should be handled by the server
-  const signature = generateDevelopmentSignature(`${encodedHeader}.${encodedPayload}`);
-
-  return `${encodedHeader}.${encodedPayload}.${signature}`;
-}
-
-// Generate a simple signature for development mode (not secure, but sufficient for local testing)
-function generateDevelopmentSignature(data: string): string {
-  // Simple hash function for development - NOT secure for production
-  let hash = 0;
-  for (let i = 0; i < data.length; i++) {
-    const char = data.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  // Convert to hex string
-  return Math.abs(hash).toString(16);
+  // SECURITY: All token generation moved to server-side
+  // Client-side token generation completely disabled for security
+  // CRITICAL SECURITY: Never enable client-side token generation
+  console.error('SECURITY VIOLATION: Client-side token generation blocked - use server-side authentication');
+  throw new Error('Authentication must be handled server-side only - use /api/login endpoint');
 }
 
 // Verify dan decode secure token
@@ -158,24 +147,12 @@ function verifyAndDecodeToken(token: string): TokenData | null {
     const data = `${encodedHeader}.${encodedPayload}`;
     // In production, token verification should be done server-side only
     // This client-side implementation is for development/testing purposes only
-    const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+    const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
-    // SECURITY: Client-side token verification disabled for ALL environments
-    console.error('SECURITY: Client-side token verification not allowed - security vulnerability');
-    return null;
-
-    // Add padding jika diperlukan
-    const paddedPayload = encodedPayload + '='.repeat((4 - encodedPayload.length % 4) % 4);
-    const decodedPayload = atob(paddedPayload.replace(/-/g, '+').replace(/_/g, '/'));
-
-    const tokenData: TokenData = JSON.parse(decodedPayload);
-
-    // Verify expiration
-    if (Date.now() / 1000 > tokenData.exp) {
+// SECURITY: Client-side token verification disabled for ALL environments
+      // CRITICAL SECURITY: Never enable client-side token verification
+      console.error('SECURITY VIOLATION: Client-side token verification blocked - use server-side verification');
       return null;
-    }
-
-    return tokenData;
   } catch (error) {
     return null;
   }
@@ -380,8 +357,8 @@ export interface RefreshTokenResponse {
 }
 
 // Development mode - menggunakan local storage untuk testing
-const isDevelopment = import.meta.env.DEV;
-const useSupabase = import.meta.env.VITE_USE_SUPABASE === 'true' || import.meta.env.USE_SUPABASE === 'true';
+const isDevelopment = (import.meta as any).env?.DEV || false;
+const useSupabase = ((import.meta as any).env?.VITE_USE_SUPABASE === 'true' || (import.meta as any).env?.USE_SUPABASE === 'true');
 
 class LocalAuthService {
   private static USERS_KEY = 'malnu_auth_users';
