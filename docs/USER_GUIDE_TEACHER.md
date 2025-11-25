@@ -84,10 +84,21 @@ Setelah login, Anda akan melihat:
 - **Task List**: Tugas yang perlu diselesaikan
 - **Quick Actions**: Aksi cepat untuk input nilai dan absensi
 
-#### ⚠️ Status Fitur Saat Ini
-- **✅ Aktif**: Login system, AI Assistant, dashboard interface
-- **📝 Development**: Data kelas, jadwal, dan siswa menggunakan data demo
-- **🚧 Coming Soon**: Real-time integration dengan sistem akademik sekolah
+#### ⚠️ Status Fitur Saat Ini (Update November 2024)
+- **✅ Aktif**: Login system (Magic Link), AI Assistant (RAG), dashboard interface
+- **📝 Demo Mode**: Data kelas, jadwal, dan siswa menggunakan data contoh statis
+- **🚧 Dalam Pengembangan**: Real-time integration dengan sistem akademik sekolah
+- **📋 Rencana Q1 2025**: Teacher tools untuk input nilai dan absensi
+- **📋 Rencana Q2 2025**: Advanced analytics dan reporting tools
+
+#### 📌 Penting: Mode Demo Saat Ini
+**Data pengajaran yang ditampilkan adalah data contoh:**
+- Daftar kelas dan siswa bersifat simulasi
+- Jadwal mengajar adalah contoh format
+- Data nilai dan absensi bersifat dummy
+- Materi pembelajaran adalah contoh konten
+
+**Tools pengajaran real-time akan tersedia setelah implementasi teacher dashboard APIs**
 
 ---
 

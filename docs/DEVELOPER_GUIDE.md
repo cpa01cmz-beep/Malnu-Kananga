@@ -20,17 +20,20 @@ Welcome to the MA Malnu Kananga developer guide! This comprehensive guide will h
 ### Tech Stack Overview
 
 **Frontend (React + TypeScript)**
-- **React 19.2**: Modern React with hooks and concurrent features terbaru
-- **TypeScript**: Strict type checking for better code quality
-- **Vite 7.2**: Fast build tool with HMR and optimized bundles
-- **Tailwind CSS**: Utility-first CSS framework
-- **PWA**: Progressive Web App capabilities
+- **React 19.2**: Latest React with concurrent features and automatic batching
+- **TypeScript 5.9**: Strict type checking with modern syntax support
+- **Vite 7.2**: Ultra-fast build tool with HMR and optimized bundles
+- **Tailwind CSS 4.1**: Latest utility-first CSS framework with PostCSS 8
+- **Supabase 2.81**: Real-time database integration and authentication
+- **React Query 5.90**: Server state management and caching
+- **PWA**: Progressive Web App capabilities with service worker
 
 **Backend (Cloudflare Workers)**
-- **Cloudflare Workers**: Serverless JavaScript runtime
-- **D1 Database**: SQLite-compatible serverless database
-- **Vectorize**: Vector database for AI RAG system
-- **Google Gemini AI**: Large language model integration
+- **Cloudflare Workers**: Serverless JavaScript runtime with V8 isolates
+- **D1 Database**: SQLite-compatible serverless database with edge replication
+- **Vectorize**: Vector database for AI RAG system (768 dimensions)
+- **Google Gemini AI 1.29**: Large language model integration with flash model
+- **MailChannels API**: Email delivery for magic link authentication
 
 **Development Tools**
 - **Jest**: Testing framework with comprehensive coverage

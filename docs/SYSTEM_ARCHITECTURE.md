@@ -48,7 +48,15 @@ MA Malnu Kananga School Portal is built on a modern, serverless architecture des
 
 ## 🎨 Frontend Architecture
 
-### Enhanced Technology Stack with Security Integration
+### Technology Stack (Updated November 2024)
+- **React 19.2**: Latest React with concurrent features, automatic batching, and Suspense
+- **TypeScript 5.9**: Strict type safety with modern syntax and path mapping
+- **Vite 7.2**: Ultra-fast build tool with HMR, optimized bundles, and plugin ecosystem
+- **Tailwind CSS 4.1**: Latest utility-first CSS framework with PostCSS 8 and JIT compilation
+- **Supabase 2.81**: Real-time database integration, authentication, and storage
+- **React Query 5.90**: Advanced server state management, caching, and synchronization
+- **PWA**: Progressive Web App with service worker, offline support, and install prompts
+- **Sentry 10.25**: Error tracking and performance monitoring
 
 #### Frontend Stack
 - **React 19.2**: Modern React with concurrent features and security hooks
@@ -386,10 +394,18 @@ class HybridDataService {
 ### Vector Database Architecture
 
 #### Cloudflare Vectorize
-- **Dimensions**: 768 (compatible with embedding models)
-- **Metric**: Cosine similarity for semantic search
-- **Indexing**: HNSW (Hierarchical Navigable Small World)
-- **Performance**: Millisecond vector similarity search
+- **Dimensions**: 768 (compatible with Google Gemini embedding models)
+- **Metric**: Cosine similarity for semantic search with 0.75 cutoff
+- **Indexing**: HNSW (Hierarchical Navigable Small World) algorithm
+- **Performance**: Millisecond vector similarity search across global edge
+- **Storage**: Up to 1M vectors with automatic scaling
+
+#### Supabase Integration (New)
+- **Real-time Database**: PostgreSQL with real-time subscriptions
+- **Authentication**: JWT-based auth with social providers
+- **Storage**: File storage for documents and media
+- **Edge Functions**: Serverless functions for complex operations
+- **Row Level Security**: Fine-grained access control
 
 #### Vector Schema
 ```javascript
