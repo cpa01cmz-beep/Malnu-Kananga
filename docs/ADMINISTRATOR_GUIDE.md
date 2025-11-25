@@ -14,8 +14,8 @@ Portal administrator MA Malnu Kananga adalah pusat kontrol sistem untuk mengelol
 
 ---
 
-**Administrator Guide Version: 1.3.1**  
-**Last Updated: 2025-11-24**
+**Administrator Guide Version: 1.1.2**  
+**Last Updated: 2025-11-25-11-24**
 **Guide Status: Production Ready**
 
 ## ⚠️ **PENTING: Status Implementasi Saat Ini**

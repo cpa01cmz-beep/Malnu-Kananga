@@ -520,14 +520,9 @@ A: Hubungi administrasi sekolah untuk verifikasi data anak.
 ---
 
 
-*Dokumen ini dibuat pada: November 20, 2024*  
-*Versi: 1.2.0*  
-*Update Terakhir: November 23, 2025*  
-*System Version: 1.3.1*  
-
-*Dokumen ini dibuat pada: 2025-11-24
-*Versi: 2025-11-24
-*Update Terakhir: 2025-11-24
-*System Version: Production Ready v1.2.0*  
+*Dokumen ini dibuat pada: 2025-11-24*  
+*Versi: 1.2.2*  
+*Update Terakhir: 2025-11-25*  
+*System Version: Production Ready v1.3.2*  
 
 *Mobile Features: PWA Support with Real-time Notifications*

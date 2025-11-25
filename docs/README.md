@@ -515,18 +515,8 @@ Portal MA Malnu Kananga saat ini dalam **tahap pengembangan awal** dengan keterb
 
 ---
 
- 
-*Documentation Index Version: 1.4.0*  
-*Last Updated: 2025-11-24*  
+*Documentation Index Version: 1.4.1*  
+*Last Updated: 2025-11-25*  
 *Implementation Status: In Development (36% Complete)*  
-
-
-
-*Documentation Index Version: 1.4.0*  
-*Last Updated: 2025-11-24*  
-
-
-*Documentation Index Version: 1.3.1*  
-*Last Updated: 2025-11-24
 
 *Maintained by: MA Malnu Kananga Documentation Team*
