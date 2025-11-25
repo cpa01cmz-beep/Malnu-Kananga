@@ -6,7 +6,7 @@ This comprehensive guide covers the complete deployment process for the MA Malnu
 
 ---
 
-**Deployment Guide Version: 1.3.1**  
+**Deployment Guide Version: 1.4.0**  
 **Last Updated: November 25, 2025**  
 **Deployment Status: Production Ready**
 
