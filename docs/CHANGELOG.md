@@ -136,7 +136,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Documentation Updates**: Comprehensive documentation refresh and version alignment
 - **Configuration Clarifications**: Updated environment variable documentation with SECRET_KEY requirement
 - **Worker Configuration**: Updated wrangler.toml configuration examples with current structure
-- **Version Consistency**: Aligned all documentation versions to v1.2.0
+- **Version: 1.3.1
 
 ### 🔄 Changed
 - **API Documentation**: Updated base URL information and worker name references
@@ -265,6 +265,6 @@ For questions about this changelog or to report issues:
 
 **CHANGELOG - MA Malnu Kananga School Portal**
 
-*Last Updated: November 24, 2024*  
+*Last Updated: November 25, 2025*  
 *Maintained by: MA Malnu Kananga Development Team*  
 *Format: Keep a Changelog 1.0.0*

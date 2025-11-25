@@ -956,6 +956,6 @@ npm run type-check
 
 ---
 
-*Guide Version: 1.2.0*  
-*Last Updated: November 23, 2024*  
+*Guide Version: 1.3.1*  
+*Last Updated: November 25, 2025*  
 *Maintained by: MA Malnu Kananga Technical Team*
