@@ -57,14 +57,12 @@ export class StudentService {
   async update(id: string, student: Partial<Student>): Promise<ApiResponse<Student>> {
     return baseApiService.put<Student>(`/${this.baseUrl}/${id}`, student);
   }
-  }
 
   async delete(id: string): Promise<ApiResponse<void>> {
     return baseApiService.delete<void>(`/${this.baseUrl}/${id}`);
   }
 
   // Get student grades
-<<<<<<< HEAD
   async getGrades(studentId: string): Promise<ApiResponse<Grade[]>> {
     return baseApiService.get<Grade[]>(`/${this.baseUrl}/${studentId}/grades`);
   }
@@ -84,10 +82,8 @@ export class StudentService {
   }
 
   // Get students by class
-  // Get students by class
   async getByClass(classId: string): Promise<ApiResponse<Student[]>> {
     return baseApiService.get<Student[]>(`/${this.baseUrl}?class=${classId}`);
-  }
   }
 }
 
