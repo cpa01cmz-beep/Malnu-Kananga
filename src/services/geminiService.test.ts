@@ -21,14 +21,17 @@ const mockGetStats = jest.fn();
 const mockGetRelevantMemories = jest.fn().mockResolvedValue([]);
 const mockAddMemory = jest.fn();
 
+// Create a mock MemoryBank class
+class MockMemoryBank {
+  searchMemories = mockSearchMemories;
+  deleteMemory = mockDeleteMemory;
+  getStats = mockGetStats;
+  getRelevantMemories = mockGetRelevantMemories;
+  addMemory = mockAddMemory;
+}
+
 jest.mock('../memory', () => ({
-  MemoryBank: jest.fn().mockImplementation(() => ({
-    searchMemories: mockSearchMemories,
-    deleteMemory: mockDeleteMemory,
-    getStats: mockGetStats,
-    getRelevantMemories: mockGetRelevantMemories,
-    addMemory: mockAddMemory,
-  })),
+  MemoryBank: MockMemoryBank,
   schoolMemoryBankConfig: {}
 }));
 

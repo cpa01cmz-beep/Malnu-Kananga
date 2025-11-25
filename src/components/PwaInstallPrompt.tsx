@@ -10,7 +10,7 @@ const PwaInstallPrompt: React.FC = () => {
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [isAndroid, setIsAndroid] = useState(false);
+  const [_isAndroid, setIsAndroid] = useState(false);
 
   useEffect(() => {
     // Detect platform

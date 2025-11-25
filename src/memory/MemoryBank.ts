@@ -70,10 +70,13 @@ export class MemoryBank implements MemoryServiceInterface {
    * Update an existing memory
    */
   async updateMemory(id: string, updates: Partial<Memory>): Promise<void> {
-    const updatedMemory = await this.memoryService.updateMemory(id, updates);
+    await this.memoryService.updateMemory(id, updates);
 
-    // Emit event
-    this.emit('memoryUpdated', updatedMemory);
+    // Get updated memory for event
+    const updatedMemory = await this.memoryService.getMemory(id);
+    if (updatedMemory) {
+      this.emit('memoryUpdated', updatedMemory);
+    }
   }
 
   /**
@@ -97,10 +100,10 @@ export class MemoryBank implements MemoryServiceInterface {
    * Perform cleanup operations (remove old/low-importance memories)
    */
   async cleanup(): Promise<void> {
-    const deletedCount = await this.memoryService.cleanup();
+    await this.memoryService.cleanup();
 
     // Emit event
-    this.emit('cleanupPerformed', deletedCount);
+    this.emit('cleanupPerformed', 0);
   }
 
   /**

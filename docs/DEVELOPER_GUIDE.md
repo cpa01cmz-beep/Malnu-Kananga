@@ -6,14 +6,23 @@ Welcome to the MA Malnu Kananga developer guide! This comprehensive guide will h
 
 ---
 
+
+**Developer Guide Version: 1.4.0**  
+**Last Updated: 2025-11-24**  
+
+**Developer Guide Version: 1.3.1**  
+**Last Updated: 2025-11-24
+
+**Development Status: Production Ready**
+
 ## 🏗️ Project Architecture
 
 ### Tech Stack Overview
 
 **Frontend (React + TypeScript)**
-- **React 18**: Modern React with hooks and concurrent features
+- **React 19.2**: Modern React with hooks and concurrent features terbaru
 - **TypeScript**: Strict type checking for better code quality
-- **Vite**: Fast build tool with HMR and optimized bundles
+- **Vite 7.2**: Fast build tool with HMR and optimized bundles
 - **Tailwind CSS**: Utility-first CSS framework
 - **PWA**: Progressive Web App capabilities
 
@@ -208,6 +217,206 @@ wrangler deploy --env=production
 # 5. Seed vector database
 curl https://malnu-api.sulhi-cmz.workers.dev/seed
 ```
+
+---
+
+## 📦 Dependencies & Packages
+
+### Core Dependencies
+
+#### Frontend Framework
+```json
+{
+  "react": "^19.2.0",           // React library with concurrent features
+  "react-dom": "^19.2.0"        // React DOM renderer
+}
+```
+
+#### AI & External Services
+```json
+{
+  "@google/genai": "^1.29.1",   // Google Gemini AI SDK
+  "@supabase/supabase-js": "^2.81.1"  // Supabase client for real-time features
+}
+```
+
+#### State Management & Data Fetching
+```json
+{
+  "@tanstack/react-query": "^5.90.10",      // Server state management
+  "@tanstack/react-query-devtools": "^5.90.2"  // DevTools for React Query
+}
+```
+
+#### Error Monitoring & Analytics
+```json
+{
+  "@sentry/react": "^10.25.0",    // Error tracking and performance monitoring
+  "@sentry/tracing": "^7.120.4"   // Distributed tracing
+}
+```
+
+#### Utilities
+```json
+{
+  "uuid": "^13.0.0"               // UUID generation for unique identifiers
+}
+```
+
+### Development Dependencies
+
+#### Build Tools & Compiler
+```json
+{
+  "vite": "^7.2.2",                           // Build tool and dev server
+  "@vitejs/plugin-react": "^5.1.1",           // React plugin for Vite
+  "@vitejs/plugin-react-swc": "^4.2.2",       // SWC plugin for faster builds
+  "typescript": "^5.9.3",                     // TypeScript compiler
+  "tsx": "^4.20.6",                           // TypeScript execution
+  "ts-node": "^10.9.2"                        // TypeScript runtime for Node.js
+}
+```
+
+#### Testing Framework
+```json
+{
+  "jest": "^30.2.0",                          // Test runner
+  "ts-jest": "^29.4.5",                       // TypeScript preset for Jest
+  "@testing-library/react": "^16.3.0",        // React testing utilities
+  "@testing-library/jest-dom": "^6.9.1",      // DOM testing utilities
+  "@testing-library/user-event": "^14.6.1",   // User interaction simulation
+  "@testing-library/dom": "^10.4.1",          // DOM testing utilities
+  "jest-environment-jsdom": "^30.2.0",        // JSOM environment for Jest
+  "babel-jest": "^30.2.0",                    // Babel integration for Jest
+  "@babel/preset-env": "^7.28.5",             // Babel environment preset
+  "@babel/preset-react": "^7.28.5",           // Babel React preset
+  "@babel/preset-typescript": "^7.28.5"       // Babel TypeScript preset
+}
+```
+
+#### Code Quality & Linting
+```json
+{
+  "eslint": "^9.39.1",                        // JavaScript/TypeScript linter
+  "@eslint/js": "^9.39.1",                    // ESLint configuration
+  "@typescript-eslint/eslint-plugin": "^8.47.0", // TypeScript ESLint plugin
+  "@typescript-eslint/parser": "^8.47.0",     // TypeScript parser for ESLint
+  "eslint-config-prettier": "^10.1.8",        // Prettier configuration for ESLint
+  "eslint-plugin-react": "^7.37.5",           // React plugin for ESLint
+  "eslint-plugin-react-hooks": "^7.0.1",      // React hooks plugin for ESLint
+  "eslint-plugin-jsx-a11y": "^6.10.2"         // Accessibility plugin for ESLint
+}
+```
+
+#### Styling & CSS
+```json
+{
+  "tailwindcss": "^4.1.17",                   // Utility-first CSS framework
+  "@tailwindcss/postcss": "^4.1.17",          // Tailwind PostCSS plugin
+  "postcss": "^8.5.6",                        // CSS transformation tool
+  "autoprefixer": "^10.4.22"                  // CSS vendor prefixing
+}
+```
+
+#### Bundle Analysis & Optimization
+```json
+{
+  "vite-bundle-analyzer": "^1.2.3",           // Bundle analyzer for Vite
+  "webpack-bundle-analyzer": "^4.10.2",       // Bundle analyzer for Webpack
+  "source-map-explorer": "^2.5.3",            // Source map analysis tool
+  "terser": "^5.44.1"                         // JavaScript minifier
+}
+```
+
+#### TypeScript Definitions
+```json
+{
+  "@types/react": "^19.2.5",                  // React type definitions
+  "@types/react-dom": "^19.2.3",              // React DOM type definitions
+  "@types/jest": "^30.0.0"                    // Jest type definitions
+}
+```
+
+### Package Scripts
+
+#### Development Commands
+```json
+{
+  "dev": "vite",                              // Start development server
+  "build": "vite build",                      // Build for production
+  "build:analyze": "vite build --mode analyze", // Build with bundle analysis
+  "preview": "vite preview",                  // Preview production build
+  "bundle:analyze": "npx vite-bundle-analyzer dist" // Analyze bundle size
+}
+```
+
+#### Testing Commands
+```json
+{
+  "test": "jest",                             // Run all tests
+  "test:watch": "jest --watch",               // Run tests in watch mode
+  "test:coverage": "jest --coverage",         // Generate coverage report
+  "test:supabase": "tsx src/services/supabaseTest.ts" // Test Supabase integration
+}
+```
+
+#### Code Quality Commands
+```json
+{
+  "lint": "eslint . --ext .js,.jsx,.ts,.tsx", // Run ESLint
+  "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix" // Fix ESLint issues
+}
+```
+
+### Dependency Management
+
+#### Adding New Dependencies
+```bash
+# Production dependency
+npm install package-name
+
+# Development dependency
+npm install --save-dev package-name
+
+# TypeScript types
+npm install --save-dev @types/package-name
+```
+
+#### Updating Dependencies
+```bash
+# Check for outdated packages
+npm outdated
+
+# Update to latest versions
+npm update
+
+# Update specific package
+npm install package-name@latest
+```
+
+#### Security Auditing
+```bash
+# Check for security vulnerabilities
+npm audit
+
+# Fix security issues
+npm audit fix
+```
+
+### Version Compatibility
+
+#### React Ecosystem
+- **React**: 19.2.0 (Latest stable with concurrent features)
+- **TypeScript**: 5.9.3 (Compatible with React 19)
+- **Vite**: 7.2.2 (Latest with React 19 support)
+
+#### AI Services
+- **Google Gemini**: 1.29.1 (Latest stable SDK)
+- **Supabase**: 2.81.1 (Latest with real-time features)
+
+#### Testing
+- **Jest**: 30.2.0 (Latest with React 19 support)
+- **Testing Library**: Latest versions compatible with React 19
 
 ---
 
@@ -994,5 +1203,10 @@ npm test -- --verbose
 
 ---
 
+*Developer Guide Version: 1.4.0*  
+*Last Updated: 2025-11-24*
+
+
 *Developer Guide Version: 1.2.0*  
-*Last Updated: November 24, 2024*
+*Last Updated: 2025-11-24
+

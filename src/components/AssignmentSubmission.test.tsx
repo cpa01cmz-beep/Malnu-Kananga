@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import '@testing-library/jest-dom';
 import AssignmentSubmission from './AssignmentSubmission';
 
 // Mock parent data

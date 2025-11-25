@@ -21,10 +21,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   onLogout,
   onClose
 }) => {
-  const { elementRef } = useTouchGestures({
+  const gestureResult = useTouchGestures({
     onSwipeDown: onClose,
     onSwipeLeft: onClose,
   });
+  const elementRef = gestureResult.elementRef as React.RefObject<HTMLDivElement>;
 
   const { handleTouchFeedback } = useTouchFeedback({
     hapticFeedback: true,

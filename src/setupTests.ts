@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import 'jest-extended/all';
 
 // Mock environment variables for testing
 process.env.API_KEY = process.env.TEST_API_KEY || 'test-api-key-placeholder';
@@ -68,4 +69,13 @@ declare global {
   }
   
   var global: typeof globalThis;
+  
+  // Extend Jest matchers for testing-library
+  namespace jest {
+    interface Matchers<R = any> {
+      toBeInTheDocument(): R;
+      toHaveValue(value: any): R;
+      toBeDisabled(): R;
+    }
+  }
 }
