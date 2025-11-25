@@ -107,7 +107,7 @@ export function useErrorReporting(options: UseErrorReportingOptions = {}): Error
 
     // Catch unhandled promise rejections
     const originalUnhandledRejectionHandler = window.onunhandledrejection;
-    window.onunhandledrejection = function(this: typeof window, event) {
+    window.onunhandledrejection = function(event) {
       const error = event.reason instanceof Error ? event.reason : new Error(String(event.reason));
 
       errorServiceRef.current.logError(error, undefined, {

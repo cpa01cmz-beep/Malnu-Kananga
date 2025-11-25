@@ -11,7 +11,7 @@ export interface ChatMessage {
 
 // Featured program data structure
 export interface FeaturedProgram {
-  id: number;
+  id: string | number;
   title: string;
   description: string;
   imageUrl: string;
@@ -20,7 +20,7 @@ export interface FeaturedProgram {
 
 // Latest news data structure
 export interface LatestNews {
-  id: number;
+  id: string | number;
   title: string;
   date: string;
   category: string;
@@ -35,6 +35,7 @@ export interface Student {
   email: string;
   grade?: string;
   class?: string;
+  nis?: string;
 }
 
 // Grade data structure
@@ -43,7 +44,9 @@ export interface Grade {
   studentId: string;
   subject: string;
   score: number;
-  date: string;
+  semester?: string;
+  academicYear?: string;
+  date?: string;
 }
 
 // Schedule item data structure
@@ -51,6 +54,8 @@ export interface ScheduleItem {
   id: string;
   studentId: string;
   subject: string;
+  teacher?: string;
+  room?: string;
   time: string;
   day: string;
 }
@@ -70,33 +75,9 @@ export interface AcademicStats {
   subjects: string[];
 }
 
-// Student data types
-export interface Student {
-  id: string;
-  name: string;
-  email: string;
-  grade: string;
-  nis: string;
-}
 
-export interface Grade {
-  id: string;
-  studentId: string;
-  subject: string;
-  score: number;
-  semester: string;
-  academicYear: string;
-}
 
-export interface ScheduleItem {
-  id: string;
-  studentId: string;
-  subject: string;
-  teacher: string;
-  day: string;
-  time: string;
-  room: string;
-}
+
 
 export interface AttendanceRecord {
   id: string;
@@ -104,34 +85,6 @@ export interface AttendanceRecord {
   date: string;
   status: 'present' | 'absent' | 'late';
   subject?: string;
-}
-
-// Student data types
-export interface Student {
-  id: string;
-  name: string;
-  email: string;
-  grade: string;
-  nis: string;
-}
-
-export interface Grade {
-  id: string;
-  studentId: string;
-  subject: string;
-  score: number;
-  semester: string;
-  academicYear: string;
-}
-
-export interface ScheduleItem {
-  id: string;
-  studentId: string;
-  subject: string;
-  teacher: string;
-  day: string;
-  time: string;
-  room: string;
 }
 
 export interface AttendanceRecord {

@@ -216,9 +216,13 @@ describe('withErrorBoundary HOC', () => {
     };
     const WrappedComponent = withErrorBoundary(ErrorComponent);
 
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
     render(<WrappedComponent />);
 
     expect(screen.getByText('Terjadi Kesalahan')).toBeInTheDocument();
+    
+    consoleSpy.mockRestore();
   });
 
   it('seharusnya menggunakan custom fallback di HOC', () => {
@@ -228,9 +232,13 @@ describe('withErrorBoundary HOC', () => {
     const customFallback = <div>HOC Custom Fallback</div>;
     const WrappedComponent = withErrorBoundary(ErrorComponent, customFallback);
 
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
     render(<WrappedComponent />);
 
     expect(screen.getByText('HOC Custom Fallback')).toBeInTheDocument();
+    
+    consoleSpy.mockRestore();
   });
 
   it('seharusnya memiliki displayName yang benar', () => {
