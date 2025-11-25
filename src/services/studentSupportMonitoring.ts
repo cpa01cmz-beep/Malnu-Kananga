@@ -104,7 +104,8 @@ class StudentSupportMonitoring {
 
   // Monitor individual student progress
   private static monitorStudentProgress(): void {
-    const allProgress = StudentSupportService.getAllStudentProgress();
+    const supportService = StudentSupportService.getInstance();
+    const allProgress = supportService.getAllStudentProgress();
     
     Object.values(allProgress).forEach(progress => {
       // Check for sudden grade drops
@@ -152,7 +153,8 @@ class StudentSupportMonitoring {
 
   // Monitor support system load
   private static monitorSupportLoad(): void {
-    const analytics = StudentSupportService.getSupportAnalytics();
+    const supportService = StudentSupportService.getInstance();
+    const analytics = supportService.getSupportAnalytics();
     
     // Check response time
     if (analytics.averageResolutionTime > 48) {
@@ -230,8 +232,9 @@ class StudentSupportMonitoring {
 
   // Collect system metrics
   private static collectSystemMetrics(): SystemMetrics {
-    const allProgress = StudentSupportService.getAllStudentProgress();
-    const analytics = StudentSupportService.getSupportAnalytics();
+    const supportService = StudentSupportService.getInstance();
+    const allProgress = supportService.getAllStudentProgress();
+    const analytics = supportService.getSupportAnalytics();
     
     const totalStudents = Object.keys(allProgress).length;
     const activeStudents = Object.values(allProgress).filter(p => 

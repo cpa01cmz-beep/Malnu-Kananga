@@ -174,7 +174,8 @@ class RealTimeMonitoringService {
 
     // Check if student has critical risk
     private isCriticalRisk(session: StudentMetrics): boolean {
-     const progress = StudentSupportService.getStudentProgress(session.studentId);
+     const supportService = StudentSupportService.getInstance();
+     const progress = supportService.getStudentProgress(session.studentId);
      if (!progress) return false;
 
     return (
@@ -195,7 +196,8 @@ class RealTimeMonitoringService {
 
     // Check for engagement drop
     private hasEngagementDrop(session: StudentMetrics): boolean {
-     const progress = StudentSupportService.getStudentProgress(session.studentId);
+     const supportService = StudentSupportService.getInstance();
+     const progress = supportService.getStudentProgress(session.studentId);
      if (!progress) return false;
 
     return (
@@ -256,7 +258,8 @@ class RealTimeMonitoringService {
     const actions: InterventionAction[] = [];
 
     // Create support request
-    const supportRequest = StudentSupportService.createSupportRequest(
+    const supportService = StudentSupportService.getInstance();
+    const supportRequest = supportService.createSupportRequest(
       trigger.studentId,
       'academic',
       'intervention',
@@ -344,7 +347,8 @@ class RealTimeMonitoringService {
     const actions: InterventionAction[] = [];
 
     // Create technical support request
-    StudentSupportService.createSupportRequest(
+    const supportService = StudentSupportService.getInstance();
+    supportService.createSupportRequest(
       trigger.studentId,
       'technical',
       'automated_detection',
@@ -373,7 +377,8 @@ class RealTimeMonitoringService {
     const actions: InterventionAction[] = [];
 
     // Create wellness support request
-    StudentSupportService.createSupportRequest(
+    const supportService = StudentSupportService.getInstance();
+    supportService.createSupportRequest(
       trigger.studentId,
       'personal',
       'wellness_check',
@@ -416,10 +421,11 @@ class RealTimeMonitoringService {
 
   // Update engagement metrics
   private updateEngagementMetrics(): void {
+    const supportService = StudentSupportService.getInstance();
     this.studentSessions.forEach((session, studentId) => {
-      const progress = StudentSupportService.getStudentProgress(studentId);
+      const progress = supportService.getStudentProgress(studentId);
       if (progress) {
-        StudentSupportService.updateStudentProgress(studentId, {
+        supportService.updateStudentProgress(studentId, {
           engagementMetrics: {
             ...progress.engagementMetrics,
             loginFrequency: Math.max(progress.engagementMetrics.loginFrequency, session.loginFrequency),
@@ -433,9 +439,10 @@ class RealTimeMonitoringService {
   // Perform deep analysis
   private performDeepAnalysis(): void {
     console.log('🔬 Performing deep analysis...');
+    const supportService = StudentSupportService.getInstance();
     
     this.studentSessions.forEach((session, studentId) => {
-      const progress = StudentSupportService.getStudentProgress(studentId);
+      const progress = supportService.getStudentProgress(studentId);
       if (progress) {
         // Analyze patterns and predict risks
         this.analyzeStudentPatterns(session, progress);
