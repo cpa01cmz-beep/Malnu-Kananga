@@ -6,7 +6,7 @@ MA Malnu Kananga API provides core endpoints for authentication, AI chat functio
 
 ---
 
-**API Documentation Version: 1.5.0**  
+**API Documentation Version: 1.4.2**  
 **Last Updated: November 25, 2025**  
 **Implementation Status: Production Ready (Core Features)**  
 **Documentation Audit**: Completed - Aligned with AGENTS.md requirements
@@ -762,7 +762,7 @@ For API support and questions:
 
 ---
 
-*API Documentation Version: 1.4.0*  
+*API Documentation Version: 1.4.2*  
 *Last Updated: November 25, 2025*  
 *Implementation Rate: 100% (9/9 documented endpoints)*  
 *Backend: Cloudflare Workers with D1, Vectorize & AI*  
