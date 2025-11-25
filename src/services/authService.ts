@@ -191,7 +191,7 @@ function refreshTokenSync(currentToken: string): string | null {
 
 // Token storage management dengan auto-refresh
 class TokenManager {
-  private static TOKEN_KEY = 'malnu_secure_token';
+  private static TOKEN_KEY = 'malnu_secure_token_v2';
   private static REFRESH_TIMER_KEY = 'malnu_refresh_timer';
   private static refreshTimer: NodeJS.Timeout | null = null;
 
