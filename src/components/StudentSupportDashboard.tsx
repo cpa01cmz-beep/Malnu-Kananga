@@ -8,7 +8,7 @@ interface SupportDashboardProps {
 }
 
 const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role: _role = 'support_staff', studentId: _studentId }) => {
-  const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated: string; activeUsers: number; aiAnalytics?: any; aiReport?: any; recommendations?: string[] } | null>(null);
+  const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated: string; activeUsers: number; aiAnalytics?: any; aiReport?: any; recommendations?: string[]; metrics?: any; activeAlerts?: number } | null>(null);
   const [alerts, setAlerts] = useState<MonitoringAlert[]>([]);
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
   const [selectedTimeFrame, setSelectedTimeFrame] = useState<'hourly' | 'daily' | 'weekly'>('daily');
@@ -40,12 +40,14 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role: _role 
       );
 
       setCurrentStatus({
-        status: status.status || 'unknown',
+        status: status.status,
         lastUpdated: new Date().toISOString(),
         activeUsers: status.metrics?.activeStudents || 0,
-        aiAnalytics: aiAnalytics || {},
-        aiReport: aiReport || {},
-        recommendations: status.recommendations || aiReport?.recommendations || []
+        aiAnalytics,
+        aiReport,
+        recommendations: status.recommendations,
+        metrics: status.metrics,
+        activeAlerts: status.activeAlerts
       });
       setAlerts(allAlerts.filter(a => !a.resolved));
       setMetrics(currentMetrics);
@@ -284,7 +286,7 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role: _role 
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Recommendations</h2>
           <div className="space-y-2">
-            {currentStatus.recommendations.map((rec: string, index: number) => (
+            {currentStatus.recommendations!.map((rec: string, index: number) => (
               <div key={index} className="flex items-center space-x-2">
                 <div className="text-blue-600">💡</div>
                 <div className="text-gray-700">{rec}</div>

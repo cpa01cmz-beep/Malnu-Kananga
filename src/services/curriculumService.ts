@@ -504,12 +504,11 @@ class CurriculumService {
         }
       ],
       assessments: [
-{
+         {
            id: 'fis_ass_001',
            title: 'Quiz Gerak Lurus',
            type: 'quiz',
            description: 'Evaluasi pemahaman konsep gerak lurus',
-           instructions: 'Kerjakan semua soal dengan teliti. Waktu pengerjaan 45 menit.',
            subjectId: 'SUBJ002',
            semester: 1,
            objectives: ['fis_obj_001'],
@@ -517,7 +516,8 @@ class CurriculumService {
            timeLimit: 45,
            attempts: 2,
            passingScore: 70,
-           isGraded: true
+           isGraded: true,
+           instructions: 'Jawab semua pertanyaan dengan benar'
          }
       ],
       coreCompetencies: [
