@@ -7,7 +7,7 @@ Panduan ini secara khusus membahas masalah dan keterbatasan yang ada di portal M
 ---
 
 **Troubleshooting Guide Version: 1.0.0**  
-**Last Updated: November 24, 2024**  
+**Last Updated: November 25, 2025**  
 **Guide Status: Critical - Must Read**
 
 ## 🚨 **KRITIS: Masalah Umum yang Akan Ditemui**
@@ -355,6 +355,6 @@ Portal MA Malnu Kananga saat ini dalam **tahap pengembangan aktif** dengan keter
 ---
 
 **Troubleshooting Guide Version: 1.0.0**  
-**Last Updated: November 24, 2024**  
+**Last Updated: November 25, 2025**  
 **Next Review: December 1, 2024**  
 **Maintained by: MA Malnu Kananga Technical Team**

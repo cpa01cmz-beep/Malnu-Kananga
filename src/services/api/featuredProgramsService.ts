@@ -51,16 +51,25 @@ class LocalFeaturedProgramsService {
     // Fallback ke mock data jika tidak ada di localStorage
     return [
       {
+        id: 1,
         title: 'Tahfidz Al-Qur\'an',
         description: 'Program intensif menghafal Al-Qur\'an dengan bimbingan ustadz/ustadzah berkompeten.',
         imageUrl: 'https://images.unsplash.com/photo-1599339942293-86b72a38547b?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
       },
       {
+        id: 2,
+        title: 'Ekstrakurikuler Tahfidz',
+        description: 'Program menghafal Al-Qur\'an dengan bimbingan para ustaz yang berpengalaman.',
+        imageUrl: 'https://images.unsplash.com/photo-1599339942293-86b72a38547b?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
+      },
+      {
+        id: 3,
         title: 'Kajian Kitab Kuning',
         description: 'Pendalaman khazanah Islam klasik melalui kajian kitab-kitab kuning oleh para ahli.',
         imageUrl: 'https://images.unsplash.com/photo-1585056701393-85835978f84e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
       },
       {
+        id: 4,
         title: 'Sains & Teknologi',
         description: 'Mengintegrasikan ilmu pengetahuan modern dengan nilai-nilai Islam untuk mencetak generasi unggul.',
         imageUrl: 'https://images.unsplash.com/photo-1532187643623-8f691689017a?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
@@ -74,7 +83,7 @@ class LocalFeaturedProgramsService {
 }
 
 // Development mode check
-const isDevelopment = (import.meta as any).env?.DEV || false;
+const isDevelopment = import.meta.env?.DEV || false;
 
 // Main service yang memilih implementation berdasarkan environment
 
@@ -82,7 +91,7 @@ export class FeaturedProgramsApiService {
   private static service: FeaturedProgramsService | LocalFeaturedProgramsService;
 
   private static getService() {
-    const isDevelopment = import.meta.env.DEV;
+    const isDevelopment = process.env.NODE_ENV === 'development';
     if (isDevelopment) {
       return LocalFeaturedProgramsService;
     } else {
@@ -100,7 +109,7 @@ export class FeaturedProgramsApiService {
   }
 
   static async getById(id: number): Promise<FeaturedProgram | null> {
-    const isDevelopment = import.meta.env.DEV;
+    const isDevelopment = process.env.NODE_ENV === 'development';
     if (isDevelopment) {
       const programs = await this.getAll();
        return programs.find((p: any) => p.id === id) || null;
@@ -112,7 +121,7 @@ export class FeaturedProgramsApiService {
   }
 
   static async create(program: Omit<FeaturedProgram, 'id'>): Promise<FeaturedProgram | null> {
-    const isDevelopment = import.meta.env.DEV;
+    const isDevelopment = process.env.NODE_ENV === 'development';
     if (isDevelopment) {
       const programs = await this.getAll();
       const newProgram: FeaturedProgram = {
@@ -129,7 +138,7 @@ export class FeaturedProgramsApiService {
   }
 
   static async update(id: number, program: Partial<FeaturedProgram>): Promise<FeaturedProgram | null> {
-    const isDevelopment = import.meta.env.DEV;
+    const isDevelopment = process.env.NODE_ENV === 'development';
     if (isDevelopment) {
       const programs = await this.getAll();
        const index = programs.findIndex((p: any) => p.id === id);
@@ -145,7 +154,7 @@ export class FeaturedProgramsApiService {
   }
 
   static async delete(id: number): Promise<boolean> {
-    const isDevelopment = import.meta.env.DEV;
+    const isDevelopment = process.env.NODE_ENV === 'development';
     if (isDevelopment) {
       const programs = await this.getAll();
        const filteredPrograms = programs.filter((p: any) => p.id !== id);
@@ -160,7 +169,7 @@ export class FeaturedProgramsApiService {
   }
 
   static async getActive(): Promise<FeaturedProgram[]> {
-    const isDevelopment = import.meta.env.DEV;
+    const isDevelopment = process.env.NODE_ENV === 'development';
     if (isDevelopment) {
       return await this.getAll(); // Dalam development, return semua programs
     } else {

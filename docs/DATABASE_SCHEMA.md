@@ -549,7 +549,7 @@ FROM student_profiles;
 
 ## 📋 Schema Version History
 
-### Version 1.0.0 (Current)
+### Version: 1.3.1 (Current)
 - Initial schema implementation
 - Basic user management
 - Academic tracking tables
@@ -557,12 +557,12 @@ FROM student_profiles;
 
 ### Planned Versions
 
-#### Version 1.1.0
+#### Version: 1.3.1
 - Add messaging system tables
 - Implement notification system
 - Add file storage metadata
 
-#### Version 1.2.0
+#### Version: 1.3.1
 - Enhanced analytics tables
 - Audit logging system
 - Performance metrics storage
@@ -586,8 +586,8 @@ For database-related questions:
 - **Issues**: Report via GitHub Issues
 
 ---
-
-*Database Schema Documentation Version: 1.0.0*  
-*Last Updated: November 24, 2024*  
+ 
+*Database Schema Documentation Version: 1.3.1*  
+*Last Updated: November 25, 2025*  
 *Supported Databases: Cloudflare D1, Supabase PostgreSQL*  
-*Schema Version: 1.0.0*
+*Schema Version: 1.3.1*

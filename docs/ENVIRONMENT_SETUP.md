@@ -676,9 +676,9 @@ For environment setup issues:
 - **Security**: Report security issues to security@ma-malnukananga.sch.id
 
 ---
-
-*Environment Setup Guide Version: 1.0.0*  
-*Last Updated: November 24, 2024*  
+ 
+*Environment Setup Guide Version: 1.3.1*  
+*Last Updated: November 25, 2025*  
 *Supported Environments: Development, Testing, Staging, Production*  
 *Primary Database: Cloudflare D1*  
 *AI Service: Google Gemini*

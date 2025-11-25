@@ -6,7 +6,7 @@ MA Malnu Kananga project maintains a dual file structure where certain files exi
 
 ---
 
-**Dual File Structure Guide Version: 1.0.0**  
+**Dual File Structure Guide Version: 1.0.1**  
 **Last Updated: November 25, 2025**  
 **Implementation Status: Production Ready**  
 **Documentation Audit: Completed - Aligned with AGENTS.md requirements**
