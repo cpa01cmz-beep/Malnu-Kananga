@@ -34,15 +34,17 @@ export interface ApiError {
 
 // API Response types
 export interface ApiResponse<T = any> {
-  data: T;
+  data?: T;
   success: boolean;
   message?: string;
+  error?: string;
+  statusCode?: number;
   timestamp: string;
 }
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_WORKER_URL || 'https://malnu-api.sulhi-cmz.workers.dev',
+  BASE_URL: (import.meta as any).env?.VITE_WORKER_URL || 'https://malnu-api.sulhi-cmz.workers.dev',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000,

@@ -11,17 +11,63 @@ export interface ChatMessage {
 
 // Featured program data structure
 export interface FeaturedProgram {
+  id?: number;
   title: string;
   description: string;
   imageUrl: string;
+  active?: boolean;
 }
 
 // Latest news data structure
 export interface LatestNews {
+  id?: number;
   title: string;
   date: string;
   category: string;
   imageUrl: string;
+  active?: boolean;
+}
+
+// Student data structure
+export interface Student {
+  id: string;
+  name: string;
+  email: string;
+  grade?: string;
+  class?: string;
+}
+
+// Grade data structure
+export interface Grade {
+  id: string;
+  studentId: string;
+  subject: string;
+  score: number;
+  date: string;
+}
+
+// Schedule item data structure
+export interface ScheduleItem {
+  id: string;
+  studentId: string;
+  subject: string;
+  time: string;
+  day: string;
+}
+
+// Attendance record data structure
+export interface AttendanceRecord {
+  id: string;
+  studentId: string;
+  date: string;
+  status: 'present' | 'absent' | 'late';
+}
+
+// Academic stats data structure
+export interface AcademicStats {
+  gpa: number;
+  totalCredits: number;
+  subjects: string[];
 }
 
 // Student Progress types

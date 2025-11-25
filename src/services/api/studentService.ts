@@ -1,32 +1,61 @@
 // Student Data API Service
 // Menggantikan mock data studentData.ts (PRIORITY: HIGHEST)
 
-import { BaseApiService, ApiResponse } from './baseApiService';
-import type { Student, Grade, ScheduleItem, AttendanceRecord } from '../../types';
+import { baseApiService, type ApiResponse } from './baseApiService';
+
+// Type definitions
+interface Student {
+  id: string;
+  name: string;
+  email: string;
+  grade?: string;
+  class?: string;
+}
+
+interface Grade {
+  id: string;
+  studentId: string;
+  subject: string;
+  score: number;
+  date: string;
+}
+
+interface ScheduleItem {
+  id: string;
+  studentId: string;
+  subject: string;
+  time: string;
+  day: string;
+}
+
+interface AttendanceRecord {
+  id: string;
+  studentId: string;
+  date: string;
+  status: 'present' | 'absent' | 'late';
+}
 
 // Development mode - menggunakan mock data untuk testing
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = (import.meta as any).env?.DEV || false;
 
-export class StudentService extends BaseApiService {
-  constructor() {
-    super('students');
-  }
+export class StudentService {
+  private baseUrl = 'students';
 
   // Student CRUD operations
   async getAll(): Promise<ApiResponse<Student[]>> {
-    return this.withRetry(() => this.get<Student[]>(''));
+    return baseApiService.get<Student[]>(`/${this.baseUrl}`);
   }
 
   async getById(id: string): Promise<ApiResponse<Student>> {
-    return this.withRetry(() => this.get<Student>(`/${id}`));
+    return baseApiService.get<Student>(`/${this.baseUrl}/${id}`);
   }
 
   async create(student: Omit<Student, 'id'>): Promise<ApiResponse<Student>> {
-    return this.withRetry(() => this.post<Student>('', student));
+    return baseApiService.post<Student>(`/${this.baseUrl}`, student);
   }
 
   async update(id: string, student: Partial<Student>): Promise<ApiResponse<Student>> {
-    return this.withRetry(() => this.put<Student>(`/${id}`, student));
+    return baseApiService.put<Student>(`/${this.baseUrl}/${id}`, student);
   }
 
   async delete(id: string): Promise<ApiResponse<void>> {
@@ -35,25 +64,26 @@ export class StudentService extends BaseApiService {
 
   // Get student grades
   async getGrades(studentId: string): Promise<ApiResponse<Grade[]>> {
-    return this.withRetry(() => this.get<Grade[]>(`/${studentId}/grades`));
+    return baseApiService.get<Grade[]>(`/${this.baseUrl}/${studentId}/grades`);
   }
 
   // Get student attendance
   async getAttendance(studentId: string, month?: string, year?: string): Promise<ApiResponse<AttendanceRecord[]>> {
-    const params: any = {};
-    if (month) params.month = month;
-    if (year) params.year = year;
-    return this.withRetry(() => this.get<AttendanceRecord[]>(`/${studentId}/attendance`, params));
+    const params = new URLSearchParams();
+    if (month) params.append('month', month);
+    if (year) params.append('year', year);
+    const queryString = params.toString();
+    return baseApiService.get<AttendanceRecord[]>(`/${this.baseUrl}/${studentId}/attendance${queryString ? '?' + queryString : ''}`);
   }
 
   // Get student schedule
   async getSchedule(studentId: string): Promise<ApiResponse<ScheduleItem[]>> {
-    return this.withRetry(() => this.get<ScheduleItem[]>(`/${studentId}/schedule`));
+    return baseApiService.get<ScheduleItem[]>(`/${this.baseUrl}/${studentId}/schedule`);
   }
 
   // Get students by class
   async getByClass(classId: string): Promise<ApiResponse<Student[]>> {
-    return this.withRetry(() => this.get<Student[]>('', { class: classId }));
+    return baseApiService.get<Student[]>(`/${this.baseUrl}?class=${classId}`);
   }
 }
 
@@ -214,7 +244,7 @@ export class StudentApiService {
   // Student operations
   static async getAll(): Promise<Student[]> {
     if (isDevelopment) {
-      return this.getService().getStudents();
+      return LocalStudentService.getStudents();
     } else {
       const response = await this.getService().getAll();
       return response.success && response.data ? response.data : [];
@@ -223,8 +253,8 @@ export class StudentApiService {
 
   static async getById(id: string): Promise<Student | null> {
     if (isDevelopment) {
-      const students = this.getAll();
-      return students.find(s => s.id === id) || null;
+      const students = await this.getAll();
+      return students.find((s: any) => s.id === id) || null;
     } else {
       const response = await this.getService().getById(id);
       return response.success && response.data ? response.data : null;
@@ -233,13 +263,13 @@ export class StudentApiService {
 
   static async create(student: Omit<Student, 'id'>): Promise<Student | null> {
     if (isDevelopment) {
-      const students = this.getAll();
+      const students = await this.getAll();
       const newStudent: Student = {
         ...student,
         id: `STU${Date.now()}`
       };
       students.push(newStudent);
-      this.getService().saveStudents(students);
+      LocalStudentService.saveStudents(students);
       return newStudent;
     } else {
       const response = await this.getService().create(student);
