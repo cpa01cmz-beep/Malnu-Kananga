@@ -1,6 +1,7 @@
 // Provides 24/7 automated support for students
 
 import { ParentCommunicationService } from './parentCommunicationService';
+import AIEnhancedKnowledgeBase from './aiEnhancedKnowledgeBase';
 
 export interface SupportRequest {
   id: string;
@@ -87,11 +88,11 @@ export interface SupportAutomation {
 
 class StudentSupportService {
   private static instance: StudentSupportService;
-  private REQUESTS_KEY = 'malnu_support_requests';
-  private RESOURCES_KEY = 'malnu_support_resources';
-  private PROGRESS_KEY = 'malnu_student_progress';
-  private AUTOMATION_KEY = 'malnu_support_automation';
-  private KNOWLEDGE_BASE_KEY = 'malnu_knowledge_base';
+  private static REQUESTS_KEY = 'malnu_support_requests';
+  private static RESOURCES_KEY = 'malnu_support_resources';
+  private static PROGRESS_KEY = 'malnu_student_progress';
+  private static AUTOMATION_KEY = 'malnu_support_automation';
+  private static KNOWLEDGE_BASE_KEY = 'malnu_knowledge_base';
 
   private constructor() {}
 
@@ -112,7 +113,7 @@ class StudentSupportService {
 
   // Setup knowledge base with common issues and solutions
   private setupKnowledgeBase(): void {
-    const existingKB = localStorage.getItem(this.KNOWLEDGE_BASE_KEY);
+    const existingKB = localStorage.getItem(StudentSupportService.KNOWLEDGE_BASE_KEY);
     if (existingKB) return;
 
     const knowledgeBase = {
@@ -172,12 +173,12 @@ class StudentSupportService {
       ]
     };
 
-    localStorage.setItem(this.KNOWLEDGE_BASE_KEY, JSON.stringify(knowledgeBase));
+    localStorage.setItem(StudentSupportService.KNOWLEDGE_BASE_KEY, JSON.stringify(knowledgeBase));
   }
 
   // Setup automation rules for proactive support
   private setupAutomationRules(): void {
-    const existingRules = localStorage.getItem(this.AUTOMATION_KEY);
+    const existingRules = localStorage.getItem(StudentSupportService.AUTOMATION_KEY);
     if (existingRules) return;
 
     const automationRules: SupportAutomation[] = [
@@ -270,7 +271,7 @@ class StudentSupportService {
       }
     ];
 
-    localStorage.setItem(this.AUTOMATION_KEY, JSON.stringify(automationRules));
+    localStorage.setItem(StudentSupportService.AUTOMATION_KEY, JSON.stringify(automationRules));
   }
 
   // Create support request
@@ -308,13 +309,13 @@ class StudentSupportService {
 
   // Get all support requests
   getSupportRequests(): SupportRequest[] {
-    const requests = localStorage.getItem(this.REQUESTS_KEY);
+    const requests = localStorage.getItem(StudentSupportService.REQUESTS_KEY);
     return requests ? JSON.parse(requests) : [];
   }
 
   // Save support requests
   private saveSupportRequests(requests: SupportRequest[]): void {
-    localStorage.setItem(this.REQUESTS_KEY, JSON.stringify(requests));
+    localStorage.setItem(StudentSupportService.REQUESTS_KEY, JSON.stringify(requests));
   }
 
   // Process request automatically with AI integration
@@ -489,7 +490,7 @@ class StudentSupportService {
 
   // Fallback to knowledge base processing
   private processWithKnowledgeBase(request: SupportRequest): void {
-    const knowledgeBase = JSON.parse(localStorage.getItem(this.KNOWLEDGE_BASE_KEY) || '{}');
+    const knowledgeBase = JSON.parse(localStorage.getItem(StudentSupportService.KNOWLEDGE_BASE_KEY) || '{}');
     
     // Try to find automated solution
     const matchingIssue = knowledgeBase.commonIssues?.find((issue: any) => 
@@ -597,15 +598,15 @@ class StudentSupportService {
     this.checkAutomationRules(updatedProgress);
   }
 
-  // Get all student progress
-  getAllStudentProgress(): Record<string, StudentProgress> {
-    const progress = localStorage.getItem(this.PROGRESS_KEY);
+// Get all student progress
+  static getAllStudentProgress(): Record<string, StudentProgress> {
+    const progress = localStorage.getItem(StudentSupportService.PROGRESS_KEY);
     return progress ? JSON.parse(progress) : {};
   }
 
   // Get student progress
   getStudentProgress(studentId: string): StudentProgress | null {
-    const allProgress = this.getAllStudentProgress();
+    const allProgress = StudentSupportService.getAllStudentProgress();
     return allProgress[studentId] || null;
   }
 
@@ -623,9 +624,9 @@ class StudentSupportService {
     return 'low';
   }
 
-  // Check automation rules
-  private checkAutomationRules(progress: StudentProgress): void {
-    const rules = JSON.parse(localStorage.getItem(this.AUTOMATION_KEY) || '[]');
+// Check automation rules
+  private static checkAutomationRules(progress: StudentProgress): void {
+    const rules = JSON.parse(localStorage.getItem(StudentSupportService.AUTOMATION_KEY) || '[]');
     
     rules.forEach((rule: SupportAutomation) => {
       if (!rule.isActive) return;
@@ -799,11 +800,11 @@ class StudentSupportService {
 
     // Update last run time
     rule.lastRun = new Date().toISOString();
-    const rules = JSON.parse(localStorage.getItem(this.AUTOMATION_KEY) || '[]');
+    const rules = JSON.parse(localStorage.getItem(StudentSupportService.AUTOMATION_KEY) || '[]');
     const ruleIndex = rules.findIndex((r: SupportAutomation) => r.id === rule.id);
     if (ruleIndex !== -1) {
       rules[ruleIndex] = rule;
-      localStorage.setItem(this.AUTOMATION_KEY, JSON.stringify(rules));
+      localStorage.setItem(StudentSupportService.AUTOMATION_KEY, JSON.stringify(rules));
     }
   }
 
@@ -828,19 +829,19 @@ class StudentSupportService {
       lastUpdated: new Date().toISOString()
     };
 
-    this.updateStudentProgress('STU001', sampleProgress);
+    StudentSupportService.updateStudentProgress('STU001', sampleProgress);
   }
 
   // Start automated monitoring
   private startAutomatedMonitoring(): void {
     // Check for at-risk students every hour
     setInterval(() => {
-      this.monitorAtRiskStudents();
+      StudentSupportService.monitorAtRiskStudents();
     }, 60 * 60 * 1000);
 
     // Update engagement metrics every 5 minutes
     setInterval(() => {
-      this.updateEngagementMetrics();
+      StudentSupportService.updateEngagementMetrics();
     }, 5 * 60 * 1000);
   }
 
@@ -1144,20 +1145,37 @@ class StudentSupportService {
       .map(item => item.resource);
   }
 
+// Get support resources
+  getSupportAnalytics(): any {
+    const requests = this.getSupportRequests();
+    const allProgress = StudentSupportService.getAllStudentProgress();
+    const resources = StudentSupportService.getSupportResources();
+
+    return {
+      totalRequests: requests.length,
+      pendingRequests: requests.filter(r => r.status === 'pending').length,
+      resolvedRequests: requests.filter(r => r.status === 'resolved').length,
+      escalatedRequests: requests.filter(r => r.status === 'escalated').length,
+      averageResolutionTime: this.calculateAverageResolutionTime(requests),
+      categoryBreakdown: this.getCategoryBreakdown(requests),
+      atRiskStudents: Object.values(allProgress).filter(p => p.riskLevel === 'high').length,
+      totalStudents: Object.keys(allProgress).length
+    };
+  }
+
   // Get support resources
-  getSupportResources(category?: string): SupportResource[] {
-    const resources = localStorage.getItem(this.RESOURCES_KEY);
-    let allResources: SupportResource[] = resources ? JSON.parse(resources) : this.initializeSampleResources();
-
-    if (category) {
-      allResources = allResources.filter(r => r.category === category);
+  static getSupportResources(): SupportResource[] {
+    const allResources = JSON.parse(localStorage.getItem(StudentSupportService.RESOURCES_KEY) || '[]');
+    
+    if (allResources.length === 0) {
+      return StudentSupportService.initializeSampleResources();
     }
-
+    
     return allResources.sort((a, b) => (b.rating || 0) - (a.rating || 0));
   }
 
   // Initialize sample resources
-  private initializeSampleResources(): SupportResource[] {
+  private static initializeSampleResources(): SupportResource[] {
     const sampleResources: SupportResource[] = [
       {
         id: 'res_001',
@@ -1217,13 +1235,14 @@ class StudentSupportService {
       }
     ];
 
-    localStorage.setItem(this.RESOURCES_KEY, JSON.stringify(sampleResources));
+    const instance = new StudentSupportService();
+    localStorage.setItem(StudentSupportService.RESOURCES_KEY, JSON.stringify(sampleResources));
     return sampleResources;
   }
 
   // Add support resource
-  addSupportResource(resource: Omit<SupportResource, 'id' | 'usageCount' | 'rating'>): SupportResource {
-    const resources = this.getSupportResources();
+  static addSupportResource(resource: Omit<SupportResource, 'id' | 'usageCount' | 'rating'>): SupportResource {
+    const resources = StudentSupportService.getSupportResources();
     const newResource: SupportResource = {
       ...resource,
       id: `resource_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -1232,14 +1251,14 @@ class StudentSupportService {
     };
 
     resources.push(newResource);
-    localStorage.setItem(this.RESOURCES_KEY, JSON.stringify(resources));
+    localStorage.setItem(StudentSupportService.RESOURCES_KEY, JSON.stringify(resources));
 
     return newResource;
   }
 
   // Rate support resource
   rateResource(resourceId: string, rating: number): void {
-    const resources = this.getSupportResources();
+    const resources = StudentSupportService.getSupportResources();
     const resourceIndex = resources.findIndex(r => r.id === resourceId);
     
     if (resourceIndex !== -1) {
@@ -1249,26 +1268,11 @@ class StudentSupportService {
       const usageCount = resources[resourceIndex].usageCount || 1;
       resources[resourceIndex].rating = ((currentRating * (usageCount - 1)) + rating) / usageCount;
       
-      localStorage.setItem(this.RESOURCES_KEY, JSON.stringify(resources));
+      localStorage.setItem(StudentSupportService.RESOURCES_KEY, JSON.stringify(resources));
     }
   }
 
-  // Get support analytics
-  getSupportAnalytics(): any {
-    const requests = this.getSupportRequests();
-    const allProgress = this.getAllStudentProgress();
 
-    return {
-      totalRequests: requests.length,
-      pendingRequests: requests.filter(r => r.status === 'pending').length,
-      resolvedRequests: requests.filter(r => r.status === 'resolved').length,
-      escalatedRequests: requests.filter(r => r.status === 'escalated').length,
-      averageResolutionTime: this.calculateAverageResolutionTime(requests),
-      categoryBreakdown: this.getCategoryBreakdown(requests),
-      atRiskStudents: Object.values(allProgress).filter(p => p.riskLevel === 'high').length,
-      totalStudents: Object.keys(allProgress).length
-    };
-  }
 
   // Calculate average resolution time
   private calculateAverageResolutionTime(requests: SupportRequest[]): number {
@@ -1300,7 +1304,7 @@ class StudentSupportService {
   generateSupportReport(timeFrame: 'daily' | 'weekly' | 'monthly'): any {
     const analytics = this.getSupportAnalytics();
     const requests = this.getSupportRequests();
-    const resources = this.getSupportResources();
+    const resources = StudentSupportService.getSupportResources();
 
     const now = new Date();
     let startDate: Date;
