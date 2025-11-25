@@ -153,6 +153,10 @@ export async function getConversationHistory(limit = 10) {
       limit,
     });
   } catch (error) {
+    // Silently handle error in test environment
+    if (process.env.NODE_ENV === 'test') {
+      return [];
+    }
     console.error('Failed to get conversation history:', error);
     return [];
   }
@@ -170,12 +174,17 @@ export async function clearConversationHistory() {
       return 0;
     }
 
+    // Delete each conversation
     for (const conversation of conversations) {
       await memoryBank.deleteMemory(conversation.id);
     }
 
     return conversations.length;
   } catch (error) {
+    // Silently handle error in test environment
+    if (process.env.NODE_ENV === 'test') {
+      throw error;
+    }
     console.error('Failed to clear conversation history:', error);
     throw error;
   }
@@ -186,6 +195,10 @@ export async function getMemoryStats() {
     if (!memoryBank) return null;
     return await memoryBank.getStats();
   } catch (error) {
+    // Silently handle error in test environment
+    if (process.env.NODE_ENV === 'test') {
+      return null;
+    }
     console.error('Failed to get memory stats:', error);
     return null;
   }

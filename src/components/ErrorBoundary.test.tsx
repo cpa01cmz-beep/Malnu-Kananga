@@ -21,6 +21,11 @@ describe('ErrorBoundary', () => {
     jest.spyOn(console, 'group').mockImplementation(() => {});
     jest.spyOn(console, 'groupEnd').mockImplementation(() => {});
     
+    // Mock console.group, console.log, console.warn untuk menghindari noise
+    jest.spyOn(console, 'group').mockImplementation(() => {});
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+    
     // Mock error logging service
     jest.mock('../services/errorLoggingService', () => ({
       getErrorLoggingService: () => ({
@@ -42,6 +47,7 @@ describe('ErrorBoundary', () => {
   afterEach(() => {
     consoleError.mockRestore();
     jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   it('seharusnya render children normal tanpa error', () => {
