@@ -2,7 +2,7 @@
 
 ## 🌟 Overview
 
-MA Malnu Kananga implements comprehensive testing strategy with 90%+ coverage across unit tests, integration tests, and E2E tests. This guide covers testing procedures, tools, and best practices for maintaining code quality.
+This comprehensive testing guide covers all aspects of testing for the MA Malnu Kananga School Portal, including unit tests, integration tests, E2E tests, and performance testing.
 
 ---
 
@@ -11,6 +11,19 @@ MA Malnu Kananga implements comprehensive testing strategy with 90%+ coverage ac
 **Testing Status: Production Verified**
 
 ## 🏗️ Testing Architecture
+
+### Testing Stack
+- **Jest**: Primary testing framework for unit and integration tests
+- **Vitest**: Modern testing framework for Vite-based projects
+- **React Testing Library**: Component testing utilities
+- **ESLint + Prettier**: Code quality and formatting
+- **GitHub Actions**: CI/CD pipeline for automated testing
+
+### Test Coverage Goals
+- **Unit Tests**: 90%+ coverage for all components and services
+- **Integration Tests**: 80%+ coverage for API endpoints
+- **E2E Tests**: Critical user journeys covered
+- **Performance Tests**: Lighthouse scores 95+ maintained
 
 ### Testing Pyramid
 ```

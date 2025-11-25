@@ -16,9 +16,9 @@ Welcome to the MA Malnu Kananga developer guide! This comprehensive guide will h
 ### Tech Stack Overview
 
 **Frontend (React + TypeScript)**
-- **React 18**: Modern React with hooks and concurrent features
+- **React 19.2**: Modern React with hooks and concurrent features terbaru
 - **TypeScript**: Strict type checking for better code quality
-- **Vite**: Fast build tool with HMR and optimized bundles
+- **Vite 7.2**: Fast build tool with HMR and optimized bundles
 - **Tailwind CSS**: Utility-first CSS framework
 - **PWA**: Progressive Web App capabilities
 

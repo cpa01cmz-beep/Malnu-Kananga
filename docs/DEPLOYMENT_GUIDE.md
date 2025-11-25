@@ -100,6 +100,38 @@ npm run env:validate
 # - Production environment has proper security settings
 ```
 
+### 6. 🔍 Finding Your Cloudflare Worker URL (CRITICAL)
+
+After deploying your Cloudflare Worker, you MUST find and configure the correct URL:
+
+#### Step-by-Step URL Discovery:
+1. **Go to Cloudflare Dashboard** → Workers & Pages
+2. **Find Your Worker**: Look for name pattern `malnu-kananga-*`
+3. **Copy Worker URL**: Format will be `https://your-worker-name.subdomain.workers.dev`
+4. **Update Environment**: Add to your `.env` file:
+   ```bash
+   VITE_WORKER_URL=https://your-actual-worker-url.workers.dev
+   ```
+
+#### Common URL Patterns:
+- Development: `http://localhost:8787` (local worker)
+- Staging: `https://malnu-kananga-staging.your-subdomain.workers.dev`
+- Production: `https://malnu-kananga-prod.your-subdomain.workers.dev`
+
+#### Verification:
+```bash
+# Test your worker URL
+curl https://your-worker-url.workers.dev/health
+
+# Should return: {"status": "ok", "timestamp": "..."}
+```
+
+#### ⚠️ Common Issues:
+- **404 Error**: Worker not deployed or wrong URL
+- **CORS Error**: VITE_WORKER_URL not matching actual worker URL
+- **AI Not Working**: Vector database not seeded (run `/seed` endpoint)
+- **Auth Failing**: SECRET_KEY missing or too short
+
 ---
 
 ## 🏗️ Local Development Setup
