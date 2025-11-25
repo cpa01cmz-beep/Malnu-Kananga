@@ -72,6 +72,7 @@ class LocalStudentService {
     // Fallback ke mock data jika tidak ada di localStorage
     return [{
       id: 'STU001',
+      nis: '2024001',
       name: 'Ahmad Fauzi Rahman',
       email: 'siswa@ma-malnukananga.sch.id',
       grade: 'XII',
@@ -92,18 +93,18 @@ class LocalStudentService {
         studentId: 'STU001',
         subject: 'Matematika',
         score: 85,
-        date: '2024-10-01',
         semester: 'Ganjil',
-        academicYear: '2024/2025'
+        academicYear: '2024/2025',
+        date: '2024-10-01'
       },
       {
         id: 'GRD002',
         studentId: 'STU001',
         subject: 'Fisika',
         score: 78,
-        date: '2024-10-02',
         semester: 'Ganjil',
-        academicYear: '2024/2025'
+        academicYear: '2024/2025',
+        date: '2024-10-05'
       }
     ];
   }
@@ -137,23 +138,23 @@ class LocalStudentService {
     }
 
     return [
-      {
+{
         id: 'SCH001',
         studentId: 'STU001',
         subject: 'Matematika',
-        time: '07:00 - 08:30',
-        day: 'Senin',
         teacher: 'Budi Santoso, S.Pd',
-        room: 'Lab. Komputer'
+        room: 'Lab. Komputer',
+        time: '07:00 - 08:30',
+        day: 'Senin'
       },
       {
         id: 'SCH002',
         studentId: 'STU001',
         subject: 'Fisika',
-        time: '08:45 - 10:15',
-        day: 'Senin',
-        teacher: 'Dewi Lestari, M.Si',
-        room: 'Lab. Fisika'
+        teacher: 'Dra. Siti Nurhaliza',
+        room: 'Lab. Fisika',
+        time: '08:30 - 10:00',
+        day: 'Senin'
       }
     ];
   }
