@@ -2,7 +2,7 @@
 
 ## 🌟 Overview
 
-MA Malnu Kananga frontend is built with React 18 + TypeScript, featuring a comprehensive component library with 60+ reusable components. This documentation provides complete reference for all components, their props, usage examples, and design patterns.
+MA Malnu Kananga frontend is built with React 18 + TypeScript, featuring a comprehensive component library with 62 reusable components. This documentation provides complete reference for all components, their props, usage examples, and design patterns.
 
 ---
 
@@ -18,15 +18,107 @@ MA Malnu Kananga frontend is built with React 18 + TypeScript, featuring a compr
 ### Component Structure
 ```
 src/components/
-├── icons/           # 10+ SVG icon components
+├── icons/           # 10 SVG icon components
 ├── __tests__/       # Component test files
 ├── AuthButtons.tsx          # Authentication buttons
 ├── ChatWindow.tsx           # AI chat interface
 ├── StudentDashboard.tsx     # Student portal dashboard
 ├── TeacherDashboard.tsx     # Teacher portal dashboard
 ├── ParentDashboard.tsx      # Parent portal dashboard
-└── ... (50+ more components)
+└── ... (52 more components)
 ```
+
+### 📊 **Component Inventory (62 total components)**
+
+#### 🎯 **Core UI Components (15 components)**
+- `ErrorBoundary.tsx` - React error boundary with fallback UI
+- `LoadingSpinner.tsx` - Loading animation component
+- `ToastNotification.tsx` - Toast notification system
+- `LazyWrapper.tsx` - Lazy loading wrapper component
+- `OfflineIndicator.tsx` - Offline status indicator
+- `ConnectionStatus.tsx` - Network connection status
+- `MetaTags.tsx` - SEO meta tags management
+- `PwaInstallPrompt.tsx` - PWA installation prompt
+- `ModalsContainer.tsx` - Modal container management
+- `NavigationTabs.tsx` - Tab navigation component
+- `MobileMenuButton.tsx` - Mobile menu toggle
+- `MobileMenu.tsx` - Mobile navigation menu
+- `DesktopNavigation.tsx` - Desktop navigation
+- `Footer.tsx` - Website footer
+- `Header.tsx` - Website header
+
+#### 🎨 **Layout Components (12 components)**
+- `HeroSection.tsx` - Landing page hero section
+- `FeaturedProgramsSection.tsx` - Featured programs display
+- `LatestNewsSection.tsx` - Latest news display
+- `PPDBSection.tsx` - Student admission section
+- `ContactSection.tsx` - Contact information section
+- `RelatedLinksSection.tsx` - Related links section
+- `DocumentationPage.tsx` - Documentation page layout
+- `MainContentRouter.tsx` - Content routing component
+- `ProfileSection.tsx` - User profile section
+- `StudentDashboardHeader.tsx` - Student dashboard header
+- `FeedbackForm.tsx` - User feedback form
+- `Logo.tsx` - Application logo
+
+#### 👥 **Dashboard Components (8 components)**
+- `StudentDashboard.tsx` - Main student dashboard
+- `TeacherDashboard.tsx` - Main teacher dashboard
+- `ParentDashboard.tsx` - Main parent dashboard
+- `StudentSupportDashboard.tsx` - Student support dashboard
+- `SupportDashboard.tsx` - General support dashboard
+- `StudentSupportPage.tsx` - Student support page
+- `OverviewTab.tsx` - Dashboard overview tab
+- `StudentProgressMonitor.tsx` - Progress monitoring component
+
+#### 📚 **Academic Components (6 components)**
+- `GradesTab.tsx` - Grades display tab
+- `ScheduleTab.tsx` - Class schedule tab
+- `AttendanceTab.tsx` - Attendance tracking tab
+- `AnnouncementsTab.tsx` - Announcements display
+- `AssignmentSubmission.tsx` - Assignment submission
+- `StudentDashboardApi.tsx` - Student API integration
+
+#### 💬 **Chat Components (7 components)**
+- `ChatWindow.tsx` - Main chat interface
+- `ChatWindowContainer.tsx` - Chat container
+- `ChatMessages.tsx` - Chat messages display
+- `ChatInput.tsx` - Chat input field
+- `ChatHeader.tsx` - Chat interface header
+- `MessageBubble.tsx` - Individual message bubble
+- `StudentSupport.tsx` - Student support chat
+
+#### 🔔 **Notification Components (3 components)**
+- `NotificationBell.tsx` - Notification bell icon
+- `ToastNotification.tsx` - Toast notifications
+- `LoginModal.tsx` - Login modal dialog
+
+#### 🖼️ **Media Components (2 components)**
+- `LazyImage.tsx` - Lazy loaded images
+- `LazyImage.test.tsx` - Image component tests
+
+#### 🎯 **Icon Components (10 components)**
+- `ChevronDownIcon.tsx` - Chevron down icon
+- `ChatIcon.tsx` - Chat icon
+- `ClipboardDocumentCheckIcon.tsx` - Clipboard check icon
+- `InformationCircleIcon.tsx` - Information circle icon
+- `DocumentTextIcon.tsx` - Document text icon
+- `SendIcon.tsx` - Send message icon
+- `MenuIcon.tsx` - Menu icon
+- `UsersIcon.tsx` - Users icon
+- `CloseIcon.tsx` - Close icon
+- `BuildingLibraryIcon.tsx` - Building library icon
+
+#### 🧪 **Test Components (9 components)**
+- `StudentSupport.test.tsx` - Student support tests
+- `ParentDashboard.test.tsx` - Parent dashboard tests
+- `AssignmentSubmission.test.tsx` - Assignment submission tests
+- `ChatWindow.test.tsx` - Chat window tests
+- `ChatWindow.qa.test.tsx` - Chat QA tests
+- `ErrorBoundary.qa.test.tsx` - Error boundary QA tests
+- `ErrorBoundary.test.tsx` - Error boundary tests
+- `LazyImage.test.tsx` - Lazy image tests
+- `Header.test.tsx` - Header component tests
 
 ---
 

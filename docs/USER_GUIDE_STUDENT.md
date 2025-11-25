@@ -29,7 +29,9 @@ Portal siswa MA Malnu Kananga adalah platform digital untuk mengakses informasi 
 **Guide Status: Production Ready**
 
 
-## ⚠️ Status Implementasi Fitur
+## ⚠️ DEMO MODE - Limited Functionality
+
+Portal siswa saat ini dalam **MODE DEMO** dengan keterbatasan fungsionalitas:
 
 ### ✅ **Fitur yang Berfungsi Penuh (9 endpoints)**
 - ✅ **Login System**: Magic link authentication berfungsi sempurna
@@ -42,16 +44,13 @@ Portal siswa MA Malnu Kananga adalah platform digital untuk mengakses informasi 
 - ✅ **Security Features**: Rate limiting, CSRF protection, IP blocking
 - ✅ **Signature API**: Verifikasi data integritas
 
-### 📋 **Fitur dengan Data Demo (16 endpoints - belum diimplementasi)**
-Data akademik saat ini menggunakan **data demo statis**:
-- 📊 **Nilai & IPK**: Data contoh (endpoint: `/api/student/{id}/grades` - 📋 Planned)
-- 📅 **Jadwal Pelajaran**: Jadwal demo (endpoint: `/api/student/{id}/schedule` - 📋 Planned)
-- 📋 **Daftar Tugas**: Contoh tugas (endpoint: `/api/student/{id}/assignments` - 📋 Planned)
-- 📈 **Statistik Kehadiran**: Data simulasi (endpoint: `/api/student/{id}/attendance` - 📋 Planned)
-- 👤 **Profil Siswa**: Data demo (endpoint: `/api/student/{id}` - 📋 Planned)
-- 📱 **Notifikasi**: Belum ada real-time (endpoint: `/api/notifications` - 📋 Planned)
-- 💬 **Messaging Guru**: Belum tersedia (endpoint: `/api/messaging/*` - 📋 Planned)
-- 📎 **Pengumpulan Tugas**: Belum ada submission (endpoint: `/api/assignments/submit` - 📋 Planned)
+### 📝 **Fitur dengan Data Demo (0% Real Data)**
+**⚠️ PERINGATAN DEMO:** Data akademik berikut adalah **CONTOH/FIKTIF** dan tidak mencerminkan data aktual:
+- 📊 **Nilai & IPK**: Data simulasi untuk demonstrasi UI saja
+- 📅 **Jadwal Pelajaran**: Jadwal contoh, bukan jadwal sebenarnya
+- 📋 **Daftar Tugas**: Tugas fiktif untuk preview fitur
+- 📈 **Statistik Kehadiran**: Data acak untuk testing interface
+- 👥 **Daftar Guru**: Data contoh, bukan data guru sebenarnya
 
 ### 🚧 **Sedang Dikembangan**
 - 🔗 **Integrasi Database Siswa**: Target 1-2 bulan
@@ -59,11 +58,17 @@ Data akademik saat ini menggunakan **data demo statis**:
 - 💬 **Messaging Guru**: Target 3-4 bulan
 - 📎 **Pengumpulan Tugas Digital**: Target 4-5 bulan
 
-### 📊 **Status Implementasi API**
-- **Total Endpoints**: 25
-- **Sudah Diimplementasi**: 9 (36%)
-- **Rencana Pengembangan**: 16 (64%)
-- **Status Saat Ini**: Core features ready, academic features planned
+### 📋 **Status Implementasi API**
+- **Total API Endpoints**: 25 documented
+- **Implemented Endpoints**: 9 working endpoints
+- **Gap**: 64% of documented APIs are not implemented
+- **Status**: Demo mode with simulated data
+
+### 📅 **Timeline Realistis Pengembangan**
+- **Phase 1** (Q1 2025): Integrasi database siswa dan sistem nilai
+- **Phase 2** (Q2 2025): Sistem pengumpulan tugas digital
+- **Phase 3** (Q3 2025): Notifikasi real-time dan messaging guru
+- **Phase 4** (Q4 2025): Rapor digital dan e-library
 
 > **⚠️ PENTING**: Hanya fitur dengan tanda ✅ yang berfungsi dengan data real. Fitur dengan tanda 📋 menggunakan data demo statis dan belum terhubung ke database.
 
