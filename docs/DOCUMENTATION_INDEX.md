@@ -184,7 +184,6 @@ This index provides organized access to all MA Malnu Kananga project documentati
   - Compliance requirements
 
 - **[Security Audit Report](./SECURITY_AUDIT_REPORT.md)** - Security audit findings
-  - Security assessment results
   - Vulnerability scan results
   - Security recommendations
   - Compliance status
@@ -212,11 +211,14 @@ This index provides organized access to all MA Malnu Kananga project documentati
   - Error codes and meanings
   - Support contacts
 
-- **[Troubleshooting Current Limitations](./TROUBLESHOOTING_CURRENT_LIMITATIONS.md)** - Current system limitations
-  - Known limitations and constraints
-  - Workaround solutions
-  - Future improvement plans
-  - Temporary restrictions
+- **[Quick Troubleshooting Guide](./QUICK_TROUBLESHOOTING_GUIDE.md)** - Quick reference troubleshooting
+  - Fast issue resolution
+  - Common error fixes
+  - Emergency procedures
+  - Common issues and solutions
+  - Debug procedures
+  - Error codes and meanings
+  - Support contacts
 
 ### Project Information
 - **[README.md](../README.md)** - Project overview and introduction
@@ -237,12 +239,15 @@ This index provides organized access to all MA Malnu Kananga project documentati
   - Known issues
   - Upgrade instructions
 
-### Video Learning Resources
-- **[Video Tutorials](./VIDEO_TUTORIALS.md)** - Comprehensive video learning center
-  - Student, teacher, and parent video guides
-  - Technical tutorials for administrators
-  - Mobile and PWA feature videos
-  - Production timeline and quality standards
+- **[Video Tutorials](./VIDEO_TUTORIALS.md)** - Video tutorial collection
+  - Setup tutorials
+  - Feature demonstrations
+  - Training videos
+  - How-to guides
+  - Release announcements
+  - Feature highlights
+  - Known issues
+  - Upgrade instructions
 
 ---
 
