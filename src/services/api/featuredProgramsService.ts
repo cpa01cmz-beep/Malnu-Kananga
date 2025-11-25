@@ -101,7 +101,7 @@ export class FeaturedProgramsApiService {
     const isDevelopment = import.meta.env.DEV;
     if (isDevelopment) {
       const programs = await this.getAll();
-      return programs.find(p => p.id === id) || null;
+       return programs.find((p: any) => p.id === id) || null;
     } else {
       const response = await this.getService().getById(id);
       return response.success && response.data ? response.data : null;
@@ -117,7 +117,7 @@ export class FeaturedProgramsApiService {
         id: Date.now() // Simple ID generation
       };
       programs.push(newProgram);
-      await this.getService().saveAll(programs);
+       LocalFeaturedProgramsService.saveAll(programs);
       return newProgram;
     } else {
       const response = await this.getService().create(program);
@@ -129,11 +129,11 @@ export class FeaturedProgramsApiService {
     const isDevelopment = import.meta.env.DEV;
     if (isDevelopment) {
       const programs = await this.getAll();
-      const index = programs.findIndex(p => p.id === id);
-      if (index === -1) return null;
+       const index = programs.findIndex((p: any) => p.id === id);
+       if (index === -1) return null;
 
-      programs[index] = { ...programs[index], ...program };
-      await this.getService().saveAll(programs);
+       programs[index] = { ...programs[index], ...program };
+       LocalFeaturedProgramsService.saveAll(programs);
       return programs[index];
     } else {
       const response = await this.getService().update(id, program);
@@ -145,10 +145,10 @@ export class FeaturedProgramsApiService {
     const isDevelopment = import.meta.env.DEV;
     if (isDevelopment) {
       const programs = await this.getAll();
-      const filteredPrograms = programs.filter(p => p.id !== id);
-      if (filteredPrograms.length === programs.length) return false;
+       const filteredPrograms = programs.filter((p: any) => p.id !== id);
+       if (filteredPrograms.length === programs.length) return false;
 
-      await this.getService().saveAll(filteredPrograms);
+       LocalFeaturedProgramsService.saveAll(filteredPrograms);
       return true;
     } else {
       const response = await this.getService().delete(id);

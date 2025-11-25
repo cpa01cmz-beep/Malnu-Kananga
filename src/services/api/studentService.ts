@@ -1,7 +1,7 @@
 // Student Data API Service
 // Menggantikan mock data studentData.ts (PRIORITY: HIGHEST)
 
-import { baseApiService, ApiResponse } from './baseApiService';
+import { baseApiService, type ApiResponse } from './baseApiService';
 import type { Student, Grade, ScheduleItem, AttendanceRecord } from '../../types';
 
 // Development mode - menggunakan mock data untuk testing
@@ -224,7 +224,7 @@ export class StudentApiService {
   static async getById(id: string): Promise<Student | null> {
     if (isDevelopment) {
       const students = await this.getAll();
-      return students.find(s => s.id === id) || null;
+       return students.find((s: any) => s.id === id) || null;
     } else {
       const response = await this.getService().getById(id);
       return response.success && response.data ? response.data : null;
@@ -239,7 +239,7 @@ export class StudentApiService {
         id: `STU${Date.now()}`
       };
       students.push(newStudent);
-      await this.getService().saveStudents(students);
+       LocalStudentService.saveStudents(students);
       return newStudent;
     } else {
       const response = await this.getService().create(student);
@@ -250,11 +250,11 @@ export class StudentApiService {
   static async update(id: string, student: Partial<Student>): Promise<Student | null> {
     if (isDevelopment) {
       const students = await this.getAll();
-      const index = students.findIndex(s => s.id === id);
-      if (index === -1) return null;
+       const index = students.findIndex((s: any) => s.id === id);
+       if (index === -1) return null;
 
-      students[index] = { ...students[index], ...student };
-      await this.getService().saveStudents(students);
+       students[index] = { ...students[index], ...student };
+       LocalStudentService.saveStudents(students);
       return students[index];
     } else {
       const response = await this.getService().update(id, student);
