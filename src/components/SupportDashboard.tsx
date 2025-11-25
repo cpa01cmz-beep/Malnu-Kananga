@@ -27,7 +27,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
     try {
       // Get at-risk students
       const allProgress = studentSupportService.getAllStudentProgress();
-      const atRisk = Object.values(allProgress).filter((student: any) => 
+      const atRisk = Object.values(allProgress).filter((student: { riskLevel: string }) => 
         student.riskLevel === 'high' || student.riskLevel === 'medium'
       );
       setAtRiskStudents(atRisk);
@@ -96,7 +96,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
             ].map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as string)}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
@@ -330,7 +330,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Low Risk</span>
                       <span className="text-sm font-medium text-green-600">
-                        {Object.values(studentSupportService.getAllStudentProgress()).filter((s: any) => s.riskLevel === 'low').length}
+                        {Object.values(studentSupportService.getAllStudentProgress()).filter((s: { riskLevel: string }) => s.riskLevel === 'low').length}
                       </span>
                     </div>
                   </div>

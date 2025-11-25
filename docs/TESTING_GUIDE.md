@@ -76,12 +76,14 @@ src/components/Header.test.tsx                ✅ Header component tests
 Unit Tests (80%)
 ```
 
-### Technology Stack
-- **Jest**: Test runner with TypeScript support
-- **React Testing Library**: Component testing utilities
-- **Vitest**: Fast unit testing (alternative to Jest)
-- **ESLint**: Code quality during testing
-- **Coverage Reports**: LCOV format with HTML reports
+### Technology Stack (Updated November 2024)
+- **Jest 30.2**: Test runner with TypeScript support and modern ES modules
+- **React Testing Library 16.3**: Component testing utilities with React 19 support
+- **Vitest**: Fast unit testing with Vite integration (alternative to Jest)
+- **ESLint 9.39**: Code quality during testing with TypeScript rules
+- **Coverage Reports**: LCOV format with HTML reports and JSON output
+- **GitHub Actions**: CI/CD pipeline with automated testing
+- **Testing Library User Event 14.6**: Advanced user interaction simulation
 
 ### Test Structure
 ```
@@ -305,6 +307,358 @@ describe('useWebP', () => {
   });
 });
 ```
+
+---
+
+## 🔄 CI/CD Integration
+
+### GitHub Actions Workflow
+
+#### Test Pipeline Configuration
+```yaml
+# .github/workflows/test.yml
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run linting
+      run: npm run lint
+    
+    - name: Run type checking
+      run: npm run type-check
+    
+    - name: Run tests
+      run: npm run test:coverage
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+```
+
+#### Quality Gates
+```yaml
+# Quality gate checks
+- name: Check coverage threshold
+  run: |
+    COVERAGE=$(cat coverage/coverage-summary.json | jq '.total.lines.pct')
+    if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+      echo "Coverage $COVERAGE% is below threshold 80%"
+      exit 1
+    fi
+
+- name: Check bundle size
+  run: |
+    npm run build
+    BUNDLE_SIZE=$(du -k dist/assets/*.js | awk '{sum+=$1} END {print sum}')
+    if [ $BUNDLE_SIZE -gt 500 ]; then
+      echo "Bundle size ${BUNDLE_SIZE}KB exceeds limit 500KB"
+      exit 1
+    fi
+```
+
+### Pre-commit Hooks
+
+#### Husky Configuration
+```json
+// package.json
+{
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run test"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ],
+    "src/**/*.{ts,tsx}": [
+      "npm run test -- --findRelatedTests"
+    ]
+  }
+}
+```
+
+---
+
+## 📊 Coverage Requirements
+
+### Coverage Thresholds
+
+#### Current Requirements
+```javascript
+// jest.config.js
+coverageThreshold: {
+  global: {
+    branches: 80,
+    functions: 80,
+    lines: 80,
+    statements: 80
+  },
+  // Critical files have higher requirements
+  './src/services/': {
+    branches: 90,
+    functions: 90,
+    lines: 90,
+    statements: 90
+  },
+  './src/components/': {
+    branches: 85,
+    functions: 85,
+    lines: 85,
+    statements: 85
+  }
+}
+```
+
+#### Coverage Reports
+- **HTML Report**: `coverage/lcov-report/index.html`
+- **LCOV Format**: `coverage/lcov.info` for CI/CD
+- **JSON Summary**: `coverage/coverage-summary.json`
+- **Text Summary**: Console output with detailed metrics
+
+### Coverage Best Practices
+
+#### What to Test
+- **Business Logic**: All service functions and utilities
+- **User Interactions**: Button clicks, form submissions, navigation
+- **Data Flow**: API calls, state updates, side effects
+- **Error Handling**: Error states, validation, edge cases
+- **Accessibility**: ARIA attributes, keyboard navigation
+
+#### What Not to Test
+- **Third-party Libraries**: Assume they're well tested
+- **Static Assets**: Images, fonts, CSS files
+- **Configuration**: Build configuration, environment variables
+- **Type Definitions**: TypeScript type definitions
+
+---
+
+## 🧪 Advanced Testing Patterns
+
+### Mock Strategies
+
+#### API Mocking
+```typescript
+// __mocks__/apiService.ts
+export const mockApiService = {
+  login: jest.fn(),
+  getGrades: jest.fn(),
+  submitAssignment: jest.fn()
+};
+
+// Test file
+import { mockApiService } from '../__mocks__/apiService';
+jest.mock('../services/apiService', () => mockApiService);
+
+describe('Student Dashboard', () => {
+  beforeEach(() => {
+    mockApiService.getGrades.mockResolvedValue(mockGrades);
+  });
+
+  it('displays grades correctly', async () => {
+    render(<StudentDashboard />);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Mathematics')).toBeInTheDocument();
+    });
+  });
+});
+```
+
+#### Component Mocking
+```typescript
+// Mock complex components
+jest.mock('../components/ChatWindow', () => ({
+  ChatWindow: ({ onMessage }: any) => (
+    <div data-testid="chat-window">
+      <button onClick={() => onMessage('test message')}>
+        Send Message
+      </button>
+    </div>
+  )
+}));
+```
+
+### Integration Testing
+
+#### Multi-component Tests
+```typescript
+// LoginFlow.integration.test.tsx
+import { render, screen, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import { App } from '../App';
+
+const renderWithRouter = (component: React.ReactElement) => {
+  return render(
+    <BrowserRouter>
+      {component}
+    </BrowserRouter>
+  );
+};
+
+describe('Login Flow Integration', () => {
+  it('completes login flow successfully', async () => {
+    renderWithRouter(<App />);
+    
+    // Start login
+    const loginButton = screen.getByText(/login/i);
+    await userEvent.click(loginButton);
+    
+    // Fill login form
+    const emailInput = screen.getByLabelText(/email/i);
+    await userEvent.type(emailInput, 'student@example.com');
+    
+    const submitButton = screen.getByText(/send magic link/i);
+    await userEvent.click(submitButton);
+    
+    // Verify redirect to dashboard
+    await waitFor(() => {
+      expect(screen.getByText(/student dashboard/i)).toBeInTheDocument();
+    });
+  });
+});
+```
+
+---
+
+## 🔧 Testing Tools & Utilities
+
+### Custom Test Utilities
+
+#### Render Helpers
+```typescript
+// src/__tests__/utils/test-utils.tsx
+import { render, RenderOptions } from '@testing-library/react';
+import { ReactElement } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter } from 'react-router-dom';
+
+const createTestQueryClient = () => new QueryClient({
+  defaultOptions: {
+    queries: { retry: false },
+    mutations: { retry: false }
+  }
+});
+
+const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
+  const queryClient = createTestQueryClient();
+  
+  return (
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    </BrowserRouter>
+  );
+};
+
+const customRender = (
+  ui: ReactElement,
+  options?: Omit<RenderOptions, 'wrapper'>
+) => render(ui, { wrapper: AllTheProviders, ...options });
+
+export * from '@testing-library/react';
+export { customRender as render };
+```
+
+#### Mock Data Generators
+```typescript
+// src/__tests__/utils/mock-data.ts
+export const createMockStudent = (overrides = {}) => ({
+  id: 'student-1',
+  name: 'John Doe',
+  email: 'john@example.com',
+  grade: '12',
+  ...overrides
+});
+
+export const createMockGrades = (count = 5) => 
+  Array.from({ length: count }, (_, i) => ({
+    id: `grade-${i}`,
+    subject: `Subject ${i + 1}`,
+    score: Math.floor(Math.random() * 40) + 60,
+    semester: '2024-1'
+  }));
+```
+
+### Performance Testing
+
+#### Load Testing Setup
+```typescript
+// performance.test.ts
+import { performance } from 'perf_hooks';
+
+describe('Performance Tests', () => {
+  it('renders dashboard within performance budget', async () => {
+    const start = performance.now();
+    
+    render(<StudentDashboard />);
+    await screen.findByTestId('dashboard-content');
+    
+    const end = performance.now();
+    const renderTime = end - start;
+    
+    expect(renderTime).toBeLessThan(1000); // 1 second budget
+  });
+});
+```
+
+---
+
+## 📋 Testing Checklist
+
+### Pre-commit Checklist
+- [ ] All new features have corresponding tests
+- [ ] Test coverage meets minimum thresholds
+- [ ] All tests pass on local machine
+- [ ] Linting passes without errors
+- [ ] Type checking passes without errors
+- [ ] Integration tests cover critical user flows
+
+### Pre-release Checklist
+- [ ] Full test suite passes in CI/CD
+- [ ] Coverage reports generated and reviewed
+- [ ] Performance tests meet budgets
+- [ ] E2E tests pass on multiple browsers
+- [ ] Accessibility tests pass WCAG guidelines
+- [ ] Security tests pass vulnerability scans
+
+### Test Review Guidelines
+- **Test Quality**: Tests should be readable and maintainable
+- **Test Isolation**: Tests should not depend on each other
+- **Mock Usage**: Use mocks appropriately for external dependencies
+- **Assertion Quality**: Use specific assertions with clear expectations
+- **Error Scenarios**: Test both happy path and error conditions
 
 ### Utility Testing
 
