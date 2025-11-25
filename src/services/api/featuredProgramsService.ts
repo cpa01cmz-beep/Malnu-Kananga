@@ -74,10 +74,9 @@ class LocalFeaturedProgramsService {
 }
 
 // Development mode check
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = (import.meta as any).env?.DEV || false;
 
 // Main service yang memilih implementation berdasarkan environment
-const isDevelopment = (import.meta as any).env?.DEV || false;
 
 export class FeaturedProgramsApiService {
   private static service: FeaturedProgramsService | LocalFeaturedProgramsService;
