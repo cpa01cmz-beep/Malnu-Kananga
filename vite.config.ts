@@ -29,48 +29,31 @@ export default defineConfig(({ command, mode }) => ({
             if (id.includes('uuid')) {
               return 'utils-vendor';
             }
-            if (id.includes('tanstack') || id.includes('@tanstack')) {
-              return 'query-vendor';
-            }
+             if (id.includes('@supabase/supabase-js')) {
+               return 'db-vendor';
+             }
+             if (id.includes('@tanstack/react-query')) {
+               return 'query-vendor';
+             }
             return 'vendor';
           }
           
-          // Split larger components into separate chunks
-          if (id.includes('Dashboard')) {
-            return 'dashboard';
-          }
-          if (id.includes('Section')) {
-            return 'sections';
-          }
-          if (id.includes('ChatWindow')) {
-            return 'chat';
-          }
-          if (id.includes('memory')) {
-            return 'memory';
-          }
-          if (id.includes('StudentSupport')) {
-            return 'student-support';
-          }
-          if (id.includes('components')) {
-            return 'components';
-          }
-          if (id.includes('services')) {
-            return 'services';
-          }
-          if (id.includes('hooks')) {
-            return 'hooks';
-          }
-        },
+           // Application chunks
+           if (id.includes('/src/components/')) {
+             return 'components';
+           }
+           if (id.includes('/src/services/')) {
+             return 'services';
+           }
+           if (id.includes('/src/hooks/')) {
+             return 'hooks';
+           }
+           if (id.includes('/src/memory/')) {
+             return 'memory';
+           }
+         },
 
-        // Optimize chunk naming untuk better caching
-        chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId
-            ? chunkInfo.facadeModuleId.split('/').pop()?.replace('.tsx', '').replace('.ts', '')
-            : 'chunk';
-          return `js/${facadeModuleId}-[hash].js`;
-        },
-
-        // Optimize asset naming
+         // Optimize asset naming
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name?.split('.') || [];
           const ext = info[info.length - 1];
@@ -85,24 +68,9 @@ export default defineConfig(({ command, mode }) => ({
       }
     },
 
-    // Performance optimizations
-    target: 'esnext',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: mode === 'production',
-        drop_debugger: mode === 'production',
-        pure_funcs: mode === 'production' ? ['console.log', 'console.info', 'console.debug'] : [],
-        passes: 2
-      },
-      mangle: {
-        safari10: true
-      }
-    },
-
-    // Chunk size warnings - increased threshold for education system
-    chunkSizeWarningLimit: 300
-  },
+     // Chunk size warnings
+     chunkSizeWarningLimit: 300,
+   },
 
   // Development server optimizations
   server: {
@@ -116,16 +84,7 @@ export default defineConfig(({ command, mode }) => ({
     exclude: ['@tanstack/react-query']
   },
 
-  // Experimental features for better performance
-  experimental: {
-    renderBuiltUrl: (filename, { hostType }) => {
-      if (hostType === 'js') {
-        return { js: `/${filename}` };
-      } else {
-        return { relative: true };
-      }
-    }
-  },
+
 
   // Asset optimization
   assetsInclude: ['**/*.webp']

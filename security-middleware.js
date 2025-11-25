@@ -132,10 +132,9 @@ class SecurityMiddleware {
   sanitizeInput(data, type = 'string') {
     if (typeof data !== 'string') return data;
     
-    // Remove potentially dangerous characters
-    let sanitized = data
-         
-        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters
+     // Remove potentially dangerous characters
+     let sanitized = data
+       .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters eslint-disable-line no-control-regex
        .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
        .trim();
     
