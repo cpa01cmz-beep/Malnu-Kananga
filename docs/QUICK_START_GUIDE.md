@@ -4,6 +4,12 @@
 
 Panduan cepat untuk memulai dengan sistem portal MA Malnu Kananga. Guide ini dirancang untuk memberikan pengalaman setup tercepat dalam 5 menit.
 
+---
+
+**Quick Start Guide Version: 1.4.0**  
+**Last Updated: November 25, 2025**  
+**Status: Production Ready**
+
 ## ⚡ 5-Minute Quick Start
 
 ### Prerequisites Checklist
