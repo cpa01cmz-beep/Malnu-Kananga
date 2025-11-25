@@ -1,9 +1,11 @@
 import React from 'react';
 import { Grade } from '../data/studentData';
 
+// The 'grade' parameter in getGradeColor is used in the JSX
+
 interface GradesTabProps {
   grades: Grade[];
-  getGradeColor: (grade: string) => string;
+  getGradeColor: (_gradeValue: string) => string;
 }
 
 const GradesTab: React.FC<GradesTabProps> = ({ grades, getGradeColor }) => {

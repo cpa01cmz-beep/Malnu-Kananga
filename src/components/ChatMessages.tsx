@@ -30,6 +30,20 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading = false
             isLoading={isLoading && message.sender === 'ai' && !message.text}
           />
         ))}
+        
+        {/* Show typing indicator when loading */}
+        {isLoading && (
+          <div className="flex items-end max-w-xs md:max-w-md gap-2 self-start">
+            <div className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-2xl rounded-bl-lg p-3">
+              <div className="flex items-center space-x-1">
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0s'}}></span>
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
+                <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></span>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div ref={messagesEndRef} />
       </div>
     </div>

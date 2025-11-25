@@ -6,6 +6,67 @@ Portal guru MA Malnu Kananga adalah platform digital untuk mengelola pembelajara
 
 ---
 
+
+**Teacher Guide Version: 1.3.2**  
+**Last Updated: 2025-11-24**  
+**Guide Status: Production Ready (Very Limited Features)**  
+**Documentation Audit: Completed - Feature implementation status updated**
+
+**Teacher Guide Version: 1.3.1**  
+**Last Updated: 2025-11-24
+**Guide Status: Production Ready**
+
+
+## ⚠️ DEMO MODE - UI Only
+
+Portal guru saat ini dalam **MODE DEMO** dengan keterbatasan fungsionalitas sangat signifikan:
+
+### ✅ **Fitur yang Berfungsi Penuh (9 endpoints)**
+- ✅ **Login System**: Magic link authentication berfungsi sempurna
+- ✅ **AI Assistant**: Chatbot cerdas dengan RAG vector search
+- ✅ **Student Support AI**: Bantuan AI untuk monitoring siswa
+- ✅ **Support Monitoring**: Pemantauan proaktif siswa
+- ✅ **Dashboard Interface**: Tampilan guru yang modern dan responsif
+- ✅ **PWA Features**: Install sebagai aplikasi mobile
+- ✅ **Health Check**: Monitoring status sistem real-time
+- ✅ **Security Features**: Rate limiting, CSRF protection, IP blocking
+- ✅ **Signature API**: Verifikasi data integritas
+
+### 📝 **Fitur dengan Data Demo (0% Real Data)**
+**⚠️ PERINGATAN DEMO:** Data mengajar berikut adalah **CONTOH/FIKTIF** dan tidak mencerminkan data aktual:
+- 👥 **Daftar Kelas**: Kelas fiktif untuk demonstrasi UI
+- 📚 **Mata Pelajaran**: Pelajaran contoh, bukan jadwal sebenarnya
+- 👨‍🎓 **Data Siswa**: Siswa fiktif, bukan data siswa real
+- 📊 **Statistik Mengajar**: Data acak untuk testing interface
+- 📅 **Jadwal Mengajar**: Jadwal contoh, bukan jadwal resmi
+
+### 📋 **Status Implementasi API Guru**
+- **Total Teacher APIs**: 12 documented endpoints
+- **Implemented Endpoints**: 0 working endpoints
+- **Gap**: 100% of teacher APIs are not implemented
+- **Status**: UI only, no backend functionality
+
+### ❌ **Fitur Guru yang BELUM TERSEDIA SAMA SEKALI (0% Complete)**
+- 📝 **Input Nilai Online**: Tidak ada sistem penilaian digital
+- 📋 **Manajemen Absensi**: Tidak ada attendance tracking
+- 💬 **Komunikasi Orang Tua**: Tidak ada messaging system
+- 📎 **Distribusi Materi**: Tidak ada upload materi pembelajaran
+- 📈 **Analytics Akademik**: Tidak ada performance tracking
+- 📄 **Rapor Digital**: Tidak ada pembuatan rapor online
+- 📚 **Bank Soal**: Tidak ada sistem manajemen soal
+- 🗓️ **Kalender Akademik**: Tidak ada manajemen jadwal
+- 📧 **Pengumuman Kelas**: Tidak ada sistem pengumuman
+
+### 📊 **Status Implementasi API**
+- **Total Endpoints**: 25
+- **Sudah Diimplementasi**: 9 (36%)
+- **Rencana Pengembangan**: 16 (64%)
+- **Status Saat Ini**: Core features ready, teacher features planned
+
+> **⚠️ PENTING**: Hanya fitur dengan tanda ✅ yang berfungsi dengan data real. Fitur dengan tanda 📋 menggunakan data demo statis dan belum terhubung ke database.
+
+---
+
 ## 🚀 Memulai Portal Guru
 
 ### 1. Login ke Portal
@@ -18,10 +79,15 @@ Portal guru MA Malnu Kananga adalah platform digital untuk mengelola pembelajara
 ### 2. Dashboard Guru Overview
 Setelah login, Anda akan melihat:
 - **Informasi Guru**: Nama, NIP, mata pelajaran yang diampu
-- **Statistik Mengajar**: Total kelas, total siswa, jam mengajar
-- **Jadwal Hari Ini**: Kelas yang akan diajar hari ini
+- **Statistik Mengajar**: Total kelas, total siswa, jam mengajar (📝 *Data demo*)
+- **Jadwal Hari Ini**: Kelas yang akan diajar hari ini (📝 *Data demo*)
 - **Task List**: Tugas yang perlu diselesaikan
 - **Quick Actions**: Aksi cepat untuk input nilai dan absensi
+
+#### ⚠️ Status Fitur Saat Ini
+- **✅ Aktif**: Login system, AI Assistant, dashboard interface
+- **📝 Development**: Data kelas, jadwal, dan siswa menggunakan data demo
+- **🚧 Coming Soon**: Real-time integration dengan sistem akademik sekolah
 
 ---
 
@@ -48,6 +114,12 @@ Setelah login, Anda akan melihat:
 #### Proses Input Nilai
 1. Pilih kelas dari menu **"Kelas Saya"**
 2. Klik **"Input Nilai"** pada kelas yang dipilih
+
+#### ⚠️ Status Fitur Input Nilai
+- **Status**: 📝 *Demo mode untuk development*
+- **Saat ini**: Sistem input nilai menggunakan data contoh
+- **Rencana**: Integrasi dengan sistem nilai sekolah yang sebenarnya
+- **Fitur yang akan datang**: Auto-calculation, grade validation, reporting
 3. Pilih jenis penilaian:
    - **UTS**: Ujian Tengah Semester
    - **UAS**: Ujian Akhir Semester
@@ -405,8 +477,10 @@ A: Gunakan fitur Broadcast dengan approval administrator.
 
 ---
 
-*Dokumen ini dibuat pada: November 20, 2024*  
-*Versi: 1.1.0*  
-*Update Terakhir: November 20, 2024*  
-*System Version: Production Ready v1.1.0*  
+
+*Dokumen ini dibuat pada: 2025-11-24*  
+*Versi: 1.2.2*  
+*Update Terakhir: 2025-11-25*  
+*System Version: Production Ready v1.3.2*  
+
 *AI Features: Advanced Teaching Assistant with Content Generation*

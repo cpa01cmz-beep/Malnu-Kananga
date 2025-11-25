@@ -6,6 +6,10 @@ This comprehensive guide covers the complete deployment process for the MA Malnu
 
 ---
 
+**Deployment Guide Version: 1.3.1**  
+**Last Updated: 2025-11-24
+**Deployment Status: Production Ready**
+
 ## 📋 Prerequisites
 
 ### Required Accounts & Services
@@ -22,9 +26,16 @@ This comprehensive guide covers the complete deployment process for the MA Malnu
 
 ### Required API Keys
 - **Google Gemini API Key**: For AI chat functionality (required)
-- **Cloudflare API Token**: With appropriate permissions
-- **SECRET_KEY**: HMAC secret key for JWT signing (required)
+- **Cloudflare API Token**: With appropriate permissions (Edit, D1, Vectorize)
+- **SECRET_KEY**: HMAC secret key for JWT signing (required, 32+ characters)
 - **Custom Domain DNS** (Optional): If using custom domain
+
+### Security Requirements
+- **SECRET_KEY**: Must be at least 32 characters long, random string
+- **API Token**: Requires Edit permissions for D1 and Vectorize operations
+- **HTTPS**: All production deployments must use HTTPS
+- **CORS**: Properly configured for your domain
+- **CSRF**: CSRF protection enabled by default in production
 
 ---
 
@@ -32,8 +43,8 @@ This comprehensive guide covers the complete deployment process for the MA Malnu
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/ma-malnukananga/school-portal.git
-cd school-portal
+git clone https://github.com/sulhi/ma-malnu-kananga.git
+cd ma-malnu-kananga
 ```
 
 ### 2. Install Dependencies
@@ -54,9 +65,11 @@ nano .env
 ```bash
 # Required for AI functionality
 API_KEY=your_google_gemini_api_key_here
+GEMINI_API_KEY=your_google_gemini_api_key_here
 
-# Required for authentication
-SECRET_KEY=your_jwt_secret_key_here
+# Required for authentication (MUST be 32+ characters)
+SECRET_KEY=your_jwt_secret_key_here_minimum_32_characters
+CSRF_SECRET=your_csrf_secret_key_here
 
 # Application configuration
 NODE_ENV=development
@@ -69,7 +82,55 @@ VITE_WORKER_URL=http://localhost:8787
 VITE_ENABLE_PWA=true
 VITE_ENABLE_AI_CHAT=true
 VITE_ENABLE_ANALYTICS=false
+
+# Security configuration (production only)
+# CSRF_PROTECTION=true (automatically enabled in production)
+# SECURITY_HEADERS=true (automatically enabled in production)
 ```
+
+### 5. Environment Validation
+```bash
+# Validate environment configuration
+npm run env:validate
+
+# This will check:
+# - SECRET_KEY is present and meets minimum requirements
+# - API_KEY is properly formatted
+# - Required environment variables are set
+# - Production environment has proper security settings
+```
+
+### 6. 🔍 Finding Your Cloudflare Worker URL (CRITICAL)
+
+After deploying your Cloudflare Worker, you MUST find and configure the correct URL:
+
+#### Step-by-Step URL Discovery:
+1. **Go to Cloudflare Dashboard** → Workers & Pages
+2. **Find Your Worker**: Look for name pattern `malnu-kananga-*`
+3. **Copy Worker URL**: Format will be `https://your-worker-name.subdomain.workers.dev`
+4. **Update Environment**: Add to your `.env` file:
+   ```bash
+   VITE_WORKER_URL=https://your-actual-worker-url.workers.dev
+   ```
+
+#### Common URL Patterns:
+- Development: `http://localhost:8787` (local worker)
+- Staging: `https://malnu-kananga-staging.your-subdomain.workers.dev`
+- Production: `https://malnu-kananga-prod.your-subdomain.workers.dev`
+
+#### Verification:
+```bash
+# Test your worker URL
+curl https://your-worker-url.workers.dev/health
+
+# Should return: {"status": "ok", "timestamp": "..."}
+```
+
+#### ⚠️ Common Issues:
+- **404 Error**: Worker not deployed or wrong URL
+- **CORS Error**: VITE_WORKER_URL not matching actual worker URL
+- **AI Not Working**: Vector database not seeded (run `/seed` endpoint)
+- **Auth Failing**: SECRET_KEY missing or too short
 
 ---
 
@@ -184,6 +245,14 @@ ai = { binding = "AI" }
 [vars]
 NODE_ENV = "production"
 # API_KEY and SECRET_KEY should be set as secrets
+
+# Security configuration
+[compatibility_flags]
+nodejs_compat = true
+
+# Security headers (automatically applied)
+[compatibility_date]
+date = "2024-01-01"
 ```
 
 ---
@@ -219,7 +288,20 @@ npm run build
 ls -la dist/
 ```
 
-#### Step 2: Deploy Worker
+#### Step 2: Configure Security Secrets
+```bash
+# Set required secrets (NEVER commit these to git)
+wrangler secret put API_KEY
+# Enter your Gemini API key when prompted
+
+wrangler secret put SECRET_KEY
+# Enter your 32+ character secret key when prompted
+
+# Verify secrets are set
+wrangler secret list
+```
+
+#### Step 3: Deploy Worker
 ```bash
 # Deploy backend worker
 wrangler deploy
@@ -243,6 +325,23 @@ curl https://your-worker-url.workers.dev/seed
 
 # Verify seeding
 curl https://your-worker-url.workers.dev/health
+```
+
+#### Step 5: Security Verification
+```bash
+# Test CSRF protection
+curl -X POST https://your-worker-url.workers.dev/request-login-link \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com"}'
+# Should return 403 without CSRF token
+
+# Test security headers
+curl -I https://your-worker-url.workers.dev/
+# Should include CSP, X-Frame-Options, etc.
+
+# Test environment validation
+curl https://your-worker-url.workers.dev/api/health
+# Should confirm all security requirements met
 ```
 
 ---
@@ -591,7 +690,7 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 - **Troubleshooting Guide**: [TROUBLESHOOTING_GUIDE.md](./TROUBLESHOOTING_GUIDE.md)
 
 ### Community Support
-- **GitHub Issues**: [Report bugs and request features](https://github.com/ma-malnukananga/school-portal/issues)
+- **GitHub Issues**: [Report bugs and request features](https://github.com/sulhi/ma-malnu-kananga/issues)
 - **Discord Community**: [Join our Discord](https://discord.gg/ma-malnukananga)
 - **Email Support**: support@ma-malnukananga.sch.id
 
@@ -623,10 +722,12 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 - [ ] CDN caching configured
 
 ### Post-Deployment
-- [ ] Health checks passing
-- [ ] API endpoints responding
-- [ ] AI functionality working
-- [ ] Authentication system operational
+- [ ] Health checks passing (test /health endpoint)
+- [ ] API endpoints responding (verify /api/chat)
+- [ ] AI functionality working (test RAG system)
+- [ ] Authentication system operational (test magic link)
+- [ ] CSRF protection working (verify secure headers)
+- [ ] Vector database seeded (run /seed once)
 - [ ] Monitoring and logging active
 - [ ] Performance metrics within targets
 - [ ] User acceptance testing completed
@@ -634,10 +735,10 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 ---
 
 **Deployment Guide**  
-*Version: 1.2.0*  
-*Last Updated: November 20, 2024*  
+*Version: 1.3.0*  
+*Last Updated: 2025-11-24*
 *Deployment Team: MA Malnu Kananga DevOps*  
-*Next Review: December 2024*
+*Next Review: 2025-12-24
 
 ---
 

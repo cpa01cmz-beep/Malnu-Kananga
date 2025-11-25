@@ -4,19 +4,266 @@
 
 Panduan lengkap untuk instalasi dan setup sistem portal MA Malnu Kananga. Guide ini mencakup setup development environment, production deployment, dan konfigurasi semua komponen sistem.
 
+
+**📋 Current Status**: Production Ready - v1.4.0  
+**🔄 Last Updated: 2025-11-24  
+**⚡ Deployment**: One-click deploy ke Cloudflare tersedia  
+**📝 Documentation Audit**: Completed - Aligned with AGENTS.md requirements
+
+**📋 Current Status**: Production Ready - v1.3.1  
+**🔄 Last Updated**: 2025-11-24  
+**⚡ Deployment**: One-click deploy ke Cloudflare tersedia
+
+
 ## 📋 Prerequisites
 
 ### System Requirements
-- **Node.js**: Version 18.0.0 atau lebih tinggi
-- **npm**: Version 8.0.0 atau lebih tinggi (atau yarn 1.22.0+)
+- **Node.js**: Version 18.0.0 atau lebih tinggi (wajib untuk ES2022 features)
+- **npm**: Version 9.0.0 atau lebih tinggi (atau yarn 1.22.0+)
 - **Git**: Version 2.30.0 atau lebih tinggi
 - **OS**: Windows 10+, macOS 10.15+, atau Ubuntu 18.04+
+- **Cloudflare Account**: Untuk production deployment (gratis tier cukup)
+- **Google Gemini API Key**: Required untuk AI functionality
+
+---
+
+## 🔧 Node.js 18+ Installation Guide
+
+### Why Node.js 18+ is Required
+MA Malnu Kananga menggunakan fitur-fitur modern JavaScript yang hanya tersedia di Node.js 18+:
+- ES2022 features (Top-level await, `.at()` method)
+- Improved performance dan memory management
+- Enhanced security features
+- Better compatibility dengan modern dependencies
+
+### Installation Methods
+
+#### Method 1: Using NVM (Recommended)
+NVM (Node Version Manager) memungkinkan multiple Node.js versions:
+
+**Linux/macOS:**
+```bash
+# Install NVM
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+
+# Reload shell configuration
+source ~/.bashrc  # atau source ~/.zshrc
+
+# Install Node.js 18 LTS
+nvm install 18
+nvm use 18
+
+# Set 18 as default version
+nvm alias default 18
+
+# Verify installation
+node --version  # Should show v18.x.x
+npm --version   # Should show 9.x.x or higher
+```
+
+**Windows:**
+```powershell
+# Download and install NVM for Windows from:
+# https://github.com/coreybutler/nvm-windows/releases
+
+# Install Node.js 18
+nvm install 18.19.0
+nvm use 18.19.0
+
+# Verify installation
+node --version
+npm --version
+```
+
+#### Method 2: Official Installer
+
+**Windows:**
+1. Download dari [nodejs.org](https://nodejs.org/en/download/)
+2. Pilih "Windows Installer (.msi)" untuk Node.js 18.x LTS
+3. Run installer dengan default settings
+4. Restart command prompt/terminal
+
+**macOS:**
+```bash
+# Using Homebrew
+brew install node@18
+
+# Atau download .pkg installer dari nodejs.org
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+# Add NodeSource repository
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+
+# Install Node.js
+sudo apt-get install -y nodejs
+
+# Verify installation
+node --version
+npm --version
+```
+
+#### Method 3: Package Managers
+
+**macOS (Homebrew):**
+```bash
+brew install node@18
+brew link --overwrite node@18
+```
+
+**Linux (Snap):**
+```bash
+sudo snap install node --classic --channel=18
+```
+
+**Windows (Chocolatey):**
+```powershell
+choco install nodejs --version=18.19.0
+```
+
+### Verification & Setup
+
+#### Check Node.js Version
+```bash
+# Check current version
+node --version
+# Expected: v18.x.x (minimum v18.0.0)
+
+# Check npm version
+npm --version
+# Expected: 9.x.x or higher
+
+# Check if Node.js is properly installed
+node -e "console.log('Node.js is working!')"
+```
+
+#### Configure npm (Optional)
+```bash
+# Configure npm for better performance
+npm config set fund false
+npm config set audit false
+
+# Configure global packages location (optional)
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+
+# Add to shell profile (~/.bashrc or ~/.zshrc)
+export PATH=~/.npm-global/bin:$PATH
+source ~/.bashrc  # atau source ~/.zshrc
+```
+
+### Troubleshooting Node.js Installation
+
+#### Issue: "Command not found: node"
+```bash
+# Check if Node.js is in PATH
+which node
+echo $PATH
+
+# If using NVM, ensure NVM is loaded
+source ~/.bashrc
+nvm use 18
+```
+
+#### Issue: Permission denied
+```bash
+# Fix npm permissions (Linux/macOS)
+sudo chown -R $(whoami) ~/.npm
+sudo chown -R $(whoami) /usr/local/lib/node_modules
+
+# Atau use npx to avoid global installation
+npx npm install
+```
+
+#### Issue: Multiple Node.js versions
+```bash
+# List installed versions
+nvm list
+
+# Switch to Node.js 18
+nvm use 18
+
+# Uninstall old versions
+nvm uninstall 16
+nvm uninstall 14
+```
+
+#### Issue: npm version too old
+```bash
+# Update npm to latest version
+npm install -g npm@latest
+
+# Verify npm version
+npm --version
+```
+
+### Development Environment Setup
+
+#### Global Development Tools (Optional)
+```bash
+# Install useful global tools
+npm install -g nodemon typescript ts-node vite
+
+# Verify installations
+nodemon --version
+tsc --version
+vite --version
+```
+
+#### Configure Git for Node.js Projects
+```bash
+# Configure Git to handle Node.js files properly
+git config --global core.autocrlf input  # Linux/macOS
+git config --global core.autocrlf true   # Windows
+
+# Set default branch name
+git config --global init.defaultBranch main
+```
+
+### Performance Optimization
+
+#### Increase Node.js Memory Limit (Optional)
+```bash
+# Add to shell profile (~/.bashrc or ~/.zshrc)
+export NODE_OPTIONS="--max-old-space-size=4096"
+
+# Or set per project
+export NODE_OPTIONS="--max-old-space-size=2048"
+```
+
+#### Configure npm Registry (Optional)
+```bash
+# Use faster npm registry (optional)
+npm config set registry https://registry.npmmirror.com
+
+# Reset to default registry
+npm config set registry https://registry.npmjs.org
+```
+
+### Next Steps After Node.js Installation
+
+1. **Verify Node.js 18+ is working**
+2. **Clone the repository**
+3. **Install project dependencies**
+4. **Configure environment variables**
+5. **Start development server**
+
+```bash
+# Quick verification
+node --version && npm --version && echo "Node.js 18+ setup complete!"
+```
 
 ### Required Accounts & Services
 - **GitHub Account**: Untuk source code management
-- **Cloudflare Account**: Untuk deployment dan infrastructure
-- **Google Account**: Untuk Google Gemini AI API key
+- **Cloudflare Account**: Untuk deployment dan infrastructure (gratis tier cukup)
+- **Google Account**: Untuk Google Gemini AI API key (WAJIB untuk AI functionality)
 - **Email Provider**: Untuk magic link authentication (MailChannels terintegrasi)
+
+**🚨 Critical Requirements:**
+- **Google Gemini API Key**: TANPA ini, AI chat tidak akan berfungsi
+- **Cloudflare Worker Deployment**: TANPA ini, authentication dan AI tidak tersedia
+- **Vector Database Seeding**: TANPA ini, AI chat akan mengembalikan response kosong
 
 ### Browser Requirements
 - **Chrome**: Version 90+
@@ -106,9 +353,14 @@ Buka browser dan kunjungi `http://localhost:9000`:
 
 1. ✅ Homepage loads correctly
 2. ✅ PWA installation prompt appears
-3. ✅ AI chat interface accessible
+3. ⚠️ **AI chat interface accessible (mungkin tidak berfungsi tanpa worker deployed)**
 4. ✅ All navigation links work
 5. ✅ Responsive design on mobile
+
+**🚨 Development Limitations:**
+- AI chat requires deployed worker with vector database seeded
+- Local development uses mock data for AI responses
+- Full functionality only available after production deployment
 
 ---
 
@@ -182,16 +434,25 @@ npm run format      # jika tersedia
    - Tunggu proses deployment selesai
    - Copy deployment URL
 
-5. **Post-Deployment Setup:**
-   ```bash
-   # Seed vector database (jalankan sekali saja)
-   curl https://your-worker-url.workers.dev/seed
-   
-   # Verify deployment
-   curl https://your-worker-url.workers.dev/api/chat \
-     -H "Content-Type: application/json" \
-     -d '{"message": "Test"}'
-   ```
+5. **🚨 Post-Deployment Setup (CRITICAL):**
+    ```bash
+    # ⚠️ WAJIB: Seed vector database (jalankan sekali saja)
+    curl https://your-worker-url.workers.dev/seed
+    
+    # 🔍 VERIFIKASI WAJIB: Pastikan AI chat berfungsi
+    curl -X POST https://your-worker-url.workers.dev/api/chat \
+      -H "Content-Type: application/json" \
+      -d '{"message": "Apa program unggulan sekolah?"}'
+    
+    # Expected response harus ada "context" field:
+    # {"context": "Profil Sekolah: Madrasah Aliyah MALNU Kananga..."}
+    ```
+    
+    **⚠️ JIKA AI CHAT TIDAK BERFUNGSI:**
+    1. Pastikan `/seed` endpoint sudah dijalankan
+    2. Tunggu 1-2 menit untuk vector indexing
+    3. Test ulang dengan pertanyaan tentang sekolah
+    4. Jika masih kosong, ulangi seeding
 
 ### Option 2: Manual Deployment
 
@@ -280,26 +541,53 @@ wrangler pages deploy dist --compatibility-date=2024-01-01
 #    - Node.js version: 18
 ```
 
-#### Step 6: Seed Vector Database (Critical)
+#### Step 6: Seed Vector Database (🚨 CRITICAL - REQUIRED)
 
 ```bash
-# Seed vector database dengan data sekolah
+# ⚠️ CRITICAL: Seed vector database dengan data sekolah
+# HARUS dijalankan sekali setelah worker deployment
 curl https://malnu-kananga.your-subdomain.workers.dev/seed
 
 # Expected response:
-# Successfully seeded 50 documents.
+# Successfully seeded 10 documents.
 
-# Verify seeding worked
+# 🔍 VERIFICATION WAJIB - Pastikan seeding berhasil
 curl -X POST https://malnu-kananga.your-subdomain.workers.dev/api/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Apa saja program unggulan sekolah?"}'
+
+# Expected response harus mengandung konten sekolah:
+# {
+#   "context": "Profil Sekolah: Madrasah Aliyah MALNU Kananga..."
+# }
 ```
 
-**⚠️ Important Notes:**
-- Vector database seeding MUST be done once after worker deployment
-- Without seeding, AI chat will have no context and cannot answer questions
-- Current document count: 50 school information entries
-- Documents include: PPDB info, school programs, location, contact details
+**🚨 CRITICAL WARNINGS:**
+- **Vector database seeding WAJIB dilakukan sekali setelah worker deployment**
+- **Tanpa seeding, AI chat akan mengembalikan context kosong dan tidak bisa menjawab pertanyaan**
+- **Current document count: 10 school information entries (bukan 50)**
+- **Documents include: PPDB info, school programs, location, contact details**
+- **Jika AI chat tidak berfungsi, 90% kemungkinan karena vector database belum di-seed**
+
+**🔍 Verification Steps:**
+1. Jalankan `/seed` endpoint
+2. Test `/api/chat` dengan pertanyaan tentang sekolah
+3. Pastikan response mengandung "context" dengan informasi sekolah
+4. Jika context kosong, ulangi seeding
+
+**📋 Troubleshooting Seeding:**
+```bash
+# Check if vector database has data
+curl -X POST https://malnu-kananga.your-subdomain.workers.dev/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "test"}'
+
+# Jika response context kosong:
+# 1. Pastikan worker sudah di-deploy dengan benar
+# 2. Pastikan environment variables sudah di-set
+# 3. Jalankan ulang /seed endpoint
+# 4. Tunggu 1-2 menit untuk vector indexing
+```
 
 ---
 
@@ -549,9 +837,16 @@ wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 
 ---
 
-**Installation & Setup Guide Version: 1.0.0**  
-*Last Updated: November 20, 2024*  
+
+**Installation & Setup Guide Version: 1.4.0**  
+*Last Updated: 2025-11-24*  
+*Maintained by: MA Malnu Kananga Technical Team*  
+*Documentation Audit: Completed - All setup procedures verified & AGENTS.md aligned*
+
+**Installation & Setup Guide Version: 1.3.1**  
+*Last Updated: 2025-11-24
 *Maintained by: MA Malnu Kananga Technical Team*
+
 
 ---
 

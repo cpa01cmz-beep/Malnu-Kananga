@@ -105,34 +105,13 @@ async function generateSecureToken(email: string, expiryTime: number = 15 * 60 *
   // In production, signature generation should be done server-side only
   // This client-side implementation is for development/testing purposes only
   // DO NOT use this for production authentication as it exposes the secret
-  const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+   const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
-  // For production, we'll make a request to the server to generate the signature
-  if (!isDevelopment) {
-    try {
-      const response = await fetch(`${WORKER_URL}/generate-signature`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: `${encodedHeader}.${encodedPayload}` }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate signature');
-      }
-
-      const { signature } = await response.json();
-      return `${encodedHeader}.${encodedPayload}.${signature}`;
-    } catch (error) {
-      console.error('Error generating signature on server:', error);
-      throw new Error('Failed to generate secure token');
-    }
-  }
-
-  // For development, continue with client-side signature generation
-  const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
-  return `${encodedHeader}.${encodedPayload}.${signature}`;
+  // SECURITY: Client-side signature generation disabled for ALL environments
+  // All authentication now handled server-side in Cloudflare Worker
+  // CRITICAL SECURITY: Never enable client-side token generation
+  console.error('SECURITY VIOLATION: Client-side token generation blocked - use server-side authentication');
+  throw new Error('Authentication must be handled server-side only - use /api/login endpoint');
 }
 
 // Synchronous version for development mode
@@ -149,24 +128,11 @@ function generateSecureTokenSync(email: string, expiryTime: number = 15 * 60 * 1
   const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-  // For development mode, generate a simple token without server-side secret
-  // In production, this should be handled by the server
-  const signature = generateDevelopmentSignature(`${encodedHeader}.${encodedPayload}`);
-
-  return `${encodedHeader}.${encodedPayload}.${signature}`;
-}
-
-// Generate a simple signature for development mode (not secure, but sufficient for local testing)
-function generateDevelopmentSignature(data: string): string {
-  // Simple hash function for development - NOT secure for production
-  let hash = 0;
-  for (let i = 0; i < data.length; i++) {
-    const char = data.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  // Convert to hex string
-  return Math.abs(hash).toString(16);
+  // SECURITY: All token generation moved to server-side
+  // Client-side token generation completely disabled for security
+  // CRITICAL SECURITY: Never enable client-side token generation
+  console.error('SECURITY VIOLATION: Client-side token generation blocked - use server-side authentication');
+  throw new Error('Authentication must be handled server-side only - use /api/login endpoint');
 }
 
 // Verify dan decode secure token
@@ -181,36 +147,12 @@ function verifyAndDecodeToken(token: string): TokenData | null {
     const data = `${encodedHeader}.${encodedPayload}`;
     // In production, token verification should be done server-side only
     // This client-side implementation is for development/testing purposes only
-    const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+    const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
-    // For production, we'll make a request to the server to verify the signature
-    if (!isDevelopment) {
-      // In a real implementation, this would be an async function
-      // For now, we'll return null for production paths that require server calls
-      console.warn('Server-side token verification required in production.');
+// SECURITY: Client-side token verification disabled for ALL environments
+      // CRITICAL SECURITY: Never enable client-side token verification
+      console.error('SECURITY VIOLATION: Client-side token verification blocked - use server-side verification');
       return null;
-    } else {
-      // For development, continue with client-side signature verification
-      // In a real implementation, we'd use HMAC verification here
-      const expectedSignature = generateDevelopmentSignature(data);
-
-      if (signature !== expectedSignature) {
-        return null; // Invalid signature
-      }
-    }
-
-    // Add padding jika diperlukan
-    const paddedPayload = encodedPayload + '='.repeat((4 - encodedPayload.length % 4) % 4);
-    const decodedPayload = atob(paddedPayload.replace(/-/g, '+').replace(/_/g, '/'));
-
-    const tokenData: TokenData = JSON.parse(decodedPayload);
-
-    // Verify expiration
-    if (Date.now() / 1000 > tokenData.exp) {
-      return null;
-    }
-
-    return tokenData;
   } catch (error) {
     return null;
   }
@@ -415,8 +357,8 @@ export interface RefreshTokenResponse {
 }
 
 // Development mode - menggunakan local storage untuk testing
-const isDevelopment = import.meta.env.DEV;
-const useSupabase = import.meta.env.VITE_USE_SUPABASE === 'true' || import.meta.env.USE_SUPABASE === 'true';
+const isDevelopment = (import.meta as any).env?.DEV || false;
+const useSupabase = ((import.meta as any).env?.VITE_USE_SUPABASE === 'true' || (import.meta as any).env?.USE_SUPABASE === 'true');
 
 class LocalAuthService {
   private static USERS_KEY = 'malnu_auth_users';
@@ -497,36 +439,16 @@ class LocalAuthService {
       }
     ];
 
-    // Jika belum ada users, inisialisasi dengan default users
-    if (users.length === 0) {
-      this.saveUsers(defaultUsers);
-      return defaultUsers.find(u => u.email === email) || defaultUsers[0];
-    }
-
-    // Cari user yang sudah ada
-    const existingUser = users.find(user => user.email === email && user.is_active);
+    // SECURITY: Only allow predefined users - no dynamic user creation
+    const existingUser = defaultUsers.find(user => user.email === email && user.is_active);
     if (existingUser) {
       return existingUser;
     }
 
-    // Buat user baru dengan role berdasarkan email pattern
-    let role = 'student'; // default role
-    if (email.includes('admin')) role = 'admin';
-    else if (email.includes('guru') || email.includes('teacher')) role = 'teacher';
-    else if (email.includes('parent') || email.includes('ayah') || email.includes('ibu') || email.includes('wali')) role = 'parent';
-
-    const newUser: User = {
-      id: Date.now(), // Simple ID generation for demo
-      email,
-      name,
-      role,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      is_active: true
-    };
-    users.push(newUser);
-    this.saveUsers(users);
-    return newUser;
+    // SECURITY: Disabled automatic user creation for demo mode
+    // Only allow predefined users for security
+    console.error('SECURITY: Automatic user creation disabled - unknown email not allowed');
+    throw new Error('User not found. Please use a registered email address.');
   }
 
   static setCurrentUser(user: User | null): void {
@@ -609,14 +531,9 @@ export class AuthService {
       // Use Supabase authentication
       return await SupabaseAuthService.requestLoginLink(email);
     } else if (isDevelopment) {
-      // Development mode - simulate magic link dengan secure token
-      const user = LocalAuthService.findUserByEmail(email) || LocalAuthService.createUser(email);
-      const token = generateSecureTokenSync(email, 15 * 60 * 1000); // 15 menit expiry
-      LocalAuthService.setCurrentUser(user);
-
-      // Simulate email sending
-      console.log(`[DEV MODE] Magic link untuk ${email}: /verify-login?token=${token}`);
-      return { success: true, message: 'Link login (cek console untuk development mode)' };
+      // Development mode - use server-side authentication only
+      // SECURITY: Removed client-side token generation
+      return ProductionAuthService.requestLoginLink(email);
     } else {
       return ProductionAuthService.requestLoginLink(email);
     }
@@ -632,34 +549,9 @@ export class AuthService {
         message: result.message
       };
     } else if (isDevelopment) {
-      try {
-        const tokenData = verifyAndDecodeToken(token);
-        if (!tokenData) {
-          return { success: false, message: 'Token tidak valid atau sudah kedaluwarsa' };
-        }
-
-        const user = LocalAuthService.findUserByEmail(tokenData.email);
-        if (user) {
-          LocalAuthService.setCurrentUser(user);
-          // Store token dengan refresh mechanism
-          TokenManager.storeTokenSync(token);
-
-          // Check if token perlu refresh dalam waktu dekat
-          const needsRefresh = shouldRefreshToken(token);
-
-          return {
-            success: true,
-            user,
-            message: 'Login berhasil',
-            needsRefresh,
-            refreshedToken: needsRefresh ? refreshTokenSync(token) || undefined : undefined
-          };
-        } else {
-          return { success: false, message: 'User tidak ditemukan' };
-        }
-      } catch (error) {
-        return { success: false, message: 'Token tidak valid' };
-      }
+      // Development mode - use server-side verification only
+      // SECURITY: Removed client-side token verification
+      return ProductionAuthService.verifyLoginToken(token);
     } else {
       return ProductionAuthService.verifyLoginToken(token);
     }

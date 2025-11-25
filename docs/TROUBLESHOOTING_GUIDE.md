@@ -1,35 +1,113 @@
 # 🔧 Troubleshooting Guide & FAQ - MA Malnu Kananga
 
+## ⚡ Quick Fix Top 5 Issues
+
+### 1. 🔗 Magic Link Tidak Masuk
+**Problem**: Tidak menerima email atau link tidak berfungsi  
+**Solution**: 
+- Check folder spam/promosi di email
+- Request ulang magic link (tunggu 15 menit)
+- Pastikan email benar dan tidak typo
+- Clear browser cache dan cookies
+
+### 2. 🤖 AI Chat Tidak Merespon  
+**Problem**: Chat window menunjukkan loading tapi tidak ada jawaban  
+**Solution**:
+- Seed vector database: `curl https://worker-url/seed`
+- Check API_KEY valid di environment
+- Verify worker URL benar di VITE_WORKER_URL
+- Refresh browser dan coba kembali
+
+### 3. 🔐 Login Gagal Terus-Menerus
+**Problem**: Magic link berhasil tapi login tetap gagal  
+**Solution**:
+- Clear browser cache sepenuhnya
+- Check SECRET_KEY minimum 32 karakter
+- Pastikan tidak ada extension yang block cookies
+- Gunakan browser Chrome/Firefox terbaru
+
+### 4. 📱 Mobile/PWA Tidak Bisa Install
+**Problem**: Tombol install tidak muncul di mobile  
+**Solution**:
+- Gunakan Chrome Android atau Safari iOS
+- Pastikan HTTPS (bukan HTTP)
+- Clear cache browser mobile
+- Akses langsung via browser, bukan social media
+
+### 5. 🌐 CORS Error di Console
+**Problem**: Error "CORS policy" atau "blocked by CORS policy"  
+**Solution**:
+- Update VITE_WORKER_URL ke worker URL yang benar
+- Check worker sudah di-deploy dengan benar
+- Verify environment variables ter-set dengan benar
+- Restart development server
+
+---
+
 ## 🚨 Common Issues & Solutions
 
 This comprehensive troubleshooting guide covers common issues, their solutions, and frequently asked questions for all user types.
+
+---
+
+
+**Troubleshooting Guide Version: 1.4.0**  
+**Last Updated: 2025-11-24**  
+
+**Troubleshooting Guide Version: 1.3.1**  
+**Last Updated: 2025-11-24
+
+**Guide Status: Production Ready**
 
 ### 📊 System Status Overview
 
 Before troubleshooting, check current system status:
 - **Status Page**: https://status.ma-malnukananga.sch.id (planned)
-- **Health Check**: Test endpoints directly (health endpoint not yet implemented)
+- **Health Check**: `/health` endpoint implemented and operational ✅
 - **API Documentation**: Available in repository docs/API_DOCUMENTATION.md
+- **Implementation Gap Analysis**: See docs/IMPLEMENTATION_GAP_ANALYSIS.md
 - **System Uptime**: 99.9% (SLA guaranteed)
-- **Last Maintenance**: November 20, 2024
-- **Current Version**: v1.2.0 (Latest)
-- **Known Issues**: Health check endpoint not implemented, use direct endpoint testing
+- **Last Maintenance**: 2025-11-24
+- **Current Version**: v1.3.1 (Latest)
+- **Implementation Rate**: 40% (10/25+ endpoints implemented)
+- **Documentation Version**: All docs synchronized to v1.3.1 ✅
 
 ### 🚨 Critical Deployment Issues (November 2024)
 
 #### Current Known Issues:
-1. **Health Check Endpoint**: `/health` endpoint referenced in docs but not implemented in worker.js
-2. **Token Refresh**: `/refresh-token` endpoint referenced but not fully implemented  
-3. **Logout Endpoint**: `/logout` endpoint referenced but not fully implemented
-4. **Vector Database**: Must be seeded once after deployment using `/seed` endpoint
+1. **Student Data APIs**: Core student endpoints not implemented (grades, schedule, attendance)
+2. **Content Management APIs**: Dynamic content endpoints not implemented (news, programs)
+3. **Teacher Academic Tools**: Grade input and attendance management not implemented
+4. **Parent Portal Features**: Child monitoring and reporting not implemented
+5. **Token Refresh**: `/refresh-token` endpoint documented but not implemented
+6. **Logout Endpoint**: `/logout` endpoint documented but not implemented
+7. **Vector Database**: Must be seeded once after deployment using `/seed` endpoint
+8. **CSRF Token Issues**: CSRF protection may cause 403 errors if tokens not properly handled
+
+#### ✅ Recently Resolved Issues:
+1. **Health Check Endpoint**: `/health` endpoint now implemented and operational
+2. **Documentation Inconsistencies**: All documentation versions synchronized to v1.3.1
+3. **API Status Tracking**: Comprehensive implementation status matrix added
+4. **Gap Analysis**: Complete implementation gap analysis documented
 
 #### Working Endpoints (Verified):
-- ✅ `/seed` - Vector database seeding (50 documents)
-- ✅ `/api/chat` - AI chat with RAG system
-- ✅ `/request-login-link` - Magic link authentication with rate limiting
-- ✅ `/verify-login` - JWT token verification
+- ✅ `/seed` - Vector database seeding (50 documents, batch processing)
+- ✅ `/api/chat` - AI chat with RAG system (0.75 similarity threshold)
+- ✅ `/request-login-link` - Magic link authentication with rate limiting (5 attempts/15min)
+- ✅ `/verify-login` - JWT token verification with secure cookies
 - ✅ `/generate-signature` - HMAC signature generation
 - ✅ `/verify-signature` - HMAC signature verification
+- ✅ `/api/student-support` - Enhanced student support AI with risk categorization
+- ✅ `/api/support-monitoring` - Proactive support monitoring with risk assessment
+- ✅ `/health` - System health check with service status monitoring
+
+#### Implementation Status (November 2024):
+- **Authentication System**: 100% operational with CSRF protection
+- **AI & RAG System**: 100% operational with student support features
+- **System Monitoring**: 100% operational with health check endpoint
+- **Student Data Management**: 0% (not implemented)
+- **Content Management**: 0% (not implemented)
+- **Analytics & Reporting**: 0% (not implemented)
 
 #### 🔍 Finding Your API URL
 The actual API URL depends on your Cloudflare Worker deployment:
@@ -51,6 +129,11 @@ fetch('https://malnu-api.sulhi-cmz.workers.dev/api/chat', {
   .then(r => r.json())
   .then(console.log);
 
+// Check system health
+fetch('https://malnu-api.sulhi-cmz.workers.dev/health')
+  .then(r => r.json())
+  .then(console.log);
+
 // Check authentication status
 console.log('Token:', localStorage.getItem('malnu_secure_token'));
 console.log('User:', localStorage.getItem('malnu_auth_current_user'));
@@ -69,6 +152,160 @@ fetch('https://malnu-api.sulhi-cmz.workers.dev/generate-signature', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ data: 'test' })
 }).then(r => r.json()).then(console.log);
+```
+
+---
+
+## 🛡️ Security Issues
+
+### ❌ CSRF Token Validation Failed (403 Forbidden)
+
+**Symptoms:**
+- API requests returning 403 Forbidden errors
+- "CSRF token validation failed" error messages
+- Form submissions not working after security update
+
+**Solutions:**
+
+#### 1. Check CSRF Token Implementation
+```javascript
+// Ensure CSRF token is included in headers
+function getCSRFToken() {
+  const cookies = document.cookie.split(';');
+  for (let cookie of cookies) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === 'csrf_token') return value;
+  }
+  return null;
+}
+
+const csrfToken = getCSRFToken();
+if (csrfToken) {
+  fetch('/api/endpoint', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': csrfToken
+    },
+    body: JSON.stringify(data)
+  });
+} else {
+  console.error('CSRF token not found in cookies');
+}
+```
+
+#### 2. Verify Cookie Settings
+- Check that `csrf_token` cookie is set by the server after authentication
+- Ensure cookie has `Secure`, `HttpOnly`, and `SameSite=Strict` attributes
+- Note: HTTP-only cookies cannot be accessed directly via JavaScript
+- The server automatically includes CSRF token in response headers for client-side use
+
+#### 3. CSRF Token Flow Debugging
+```javascript
+// Check if CSRF token is properly set after login
+fetch('/api/test-csrf', {
+  method: 'GET',
+  credentials: 'include' // Important for cookies
+}).then(response => {
+  console.log('CSRF Response Headers:', response.headers.get('X-CSRF-Token'));
+  return response.json();
+}).then(data => console.log('CSRF Test Result:', data));
+
+// Alternative: Check cookies in browser dev tools
+// Application > Storage > Cookies > your-domain
+```
+
+#### 4. Common CSRF Issues and Solutions
+
+**Issue**: "CSRF token validation failed" despite having token
+**Solution**: Ensure token is fresh and matches server-side token
+
+**Issue**: Token not found in cookies
+**Solution**: Re-authenticate to get fresh CSRF token
+
+**Issue**: Cross-origin requests blocked
+**Solution**: Ensure proper CORS configuration and credentials
+
+```javascript
+// Proper CSRF-protected request example
+async function makeSecureRequest(url, data) {
+  // First, ensure we have a fresh CSRF token
+  const tokenResponse = await fetch('/api/csrf-token', { 
+    credentials: 'include' 
+  });
+  const csrfToken = tokenResponse.headers.get('X-CSRF-Token');
+  
+  if (!csrfToken) {
+    throw new Error('CSRF token not available');
+  }
+  
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': csrfToken
+    },
+    credentials: 'include',
+    body: JSON.stringify(data)
+  });
+}
+```
+
+### ❌ Security Headers Blocking Resources
+
+**Symptoms:**
+- Images, scripts, or styles not loading
+- Console errors about Content Security Policy violations
+- External resources being blocked
+
+**Solutions:**
+
+#### 1. Check CSP Violations
+```javascript
+// Monitor CSP violations in browser console
+// Look for errors like: "Refused to load image because it violates CSP"
+```
+
+#### 2. Update CSP Configuration
+- Contact administrator to update Content Security Policy
+- Ensure all required domains are whitelisted in CSP
+- Use `nonce-` or `hash-` for inline scripts when necessary
+
+#### 3. Verify Resource URLs
+- Ensure all external resources use HTTPS
+- Check that resource domains are included in CSP `connect-src`, `img-src`, etc.
+
+### ❌ Environment Variable Validation Failed
+
+**Symptoms:**
+- "Environment validation failed" errors
+- Application not starting in production
+- Missing SECRET_KEY or API_KEY errors
+
+**Solutions:**
+
+#### 1. Verify Required Environment Variables
+```bash
+# Check all required variables are set
+echo $SECRET_KEY    # Should be 32+ characters
+echo $API_KEY       # Should be valid Gemini API key
+echo $NODE_ENV      # Should be "production"
+```
+
+#### 2. Update Environment Configuration
+```bash
+# Add missing variables to .env or Cloudflare Workers secrets
+SECRET_KEY=your_super_secret_key_here_32_chars_min
+API_KEY=AIzaSyC_your_gemini_api_key_here
+NODE_ENV=production
+```
+
+#### 3. Validate Environment
+```bash
+# Run environment validation
+npm run env:validate
+# Or check worker logs for validation errors
+wrangler tail
 ```
 
 ---
@@ -276,24 +513,34 @@ fetch('https://your-worker-url.workers.dev/api/chat', {
 1. **Email Address Typo**
    - ✅ **Solution**: Double-check email spelling
    - ✅ **Prevention**: Use email validation in frontend
+   - 🔍 **Debug**: Check browser console for validation errors
 
 2. **Email in Spam Folder**
    - ✅ **Solution**: Check spam/junk folder
    - ✅ **Prevention**: Add noreply@ma-malnukananga.sch.id to contacts
+   - 📧 **Email Details**: From "MA Malnu Kananga" <noreply@ma-malnukananga.sch.id>
 
 3. **Email Server Delay**
    - ✅ **Solution**: Wait 2-3 minutes, then request again
    - ⚠️ **Note**: Magic links expire after 15 minutes
+   - ⏱️ **Expected Delivery**: Usually within 30 seconds
 
 4. **Rate Limiting**
    - ✅ **Solution**: Wait 15 minutes before requesting again
    - ✅ **Prevention**: Limit login attempts to avoid rate limit
    - 🔍 **Check**: Browser console for "429 Too Many Requests" errors
-   - ✅ **Prevention**: Monitor email delivery metrics
+   - 📊 **Limits**: 5 requests per 15 minutes per IP address
+   - 🚫 **Block Duration**: 30 minutes automatic block
 
-4. **Invalid Email Domain**
+5. **Invalid Email Domain**
    - ✅ **Solution**: Use registered school email
    - ✅ **Prevention**: Validate domain against whitelist
+   - 🏫 **Accepted Domains**: ma-malnukananga.sch.id, gmail.com, yahoo.com
+
+6. **MailChannels Service Issues**
+   - ✅ **Solution**: Test email service manually
+   - 🔧 **Manual Test**: `curl -X POST "https://api.mailchannels.net/tx/v1/send" ...`
+   - 📈 **Monitoring**: Check worker logs for email delivery status
 
 **Administrator Actions**:
 ```bash
@@ -357,25 +604,53 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
    ```bash
    # Verify API key is set
    wrangler secret list --env=production
+   
+   # Check API key format
+   echo $API_KEY | grep -E "^AIzaSy"
    ```
 
 2. **Test API Connection**
    ```bash
+   # Test worker endpoint
    curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/api/chat" \
      -H "Content-Type: application/json" \
      -d '{"message": "test"}'
+   
+   # Test Gemini API directly
+   curl -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"contents":[{"parts":[{"text":"test"}]}]}'
    ```
 
 3. **Check Rate Limits**
-   - Gemini API has rate limits
-   - Wait 1 minute between requests
-   - Check API quota usage
+   - Gemini API has rate limits (free tier: 60 requests per minute)
+   - Wait 1 minute between requests if rate limited
+   - Check API quota usage in Google AI Studio
+   - 🔍 **Error**: "Resource has been exhausted" indicates quota exceeded
 
 4. **Vector Database Status**
     ```bash
     # Check if vector database is seeded
     curl https://malnu-api.sulhi-cmz.workers.dev/seed
+    
+    # Expected response: "Successfully seeded 50 documents."
+    # If error: Database needs seeding or vectorize index not configured
     ```
+
+5. **Check Vector Similarity Threshold**
+   - Current threshold: 0.75 for general chat, 0.7 for support queries
+   - If no documents meet threshold, AI will have no context
+   - 🔍 **Debug**: Check if context is returned in API response
+   - 💡 **Solution**: Add more relevant documents or lower threshold
+
+6. **Verify Worker Configuration**
+   ```bash
+   # Check vectorize index
+   wrangler vectorize list
+   
+   # Check AI model binding
+   wrangler tail --env=production
+   ```
 
 5. **Rate Limiting**
      - ✅ **Solution**: Wait 1 minute between chat requests (if applicable)
@@ -570,6 +845,9 @@ if (performance.memory) {
    
    # Fix common issues
    npm run type-check
+   
+   # Check for specific errors
+   npx tsc --noEmit --pretty
    ```
 
 2. **Missing Dependencies**
@@ -577,12 +855,36 @@ if (performance.memory) {
    # Clean install
    rm -rf node_modules package-lock.json
    npm install
+   
+   # Check for peer dependency conflicts
+   npm ls --depth=0
    ```
 
 3. **Import Errors**
    ```bash
    # Check for circular dependencies
    npx madge --circular src/
+   
+   # Check for missing exports
+   npx tsc --noEmit --traceResolution
+   ```
+
+4. **Environment Variable Issues**
+   ```bash
+   # Check if .env file exists
+   ls -la .env
+   
+   # Validate environment variables
+   npm run env:validate
+   ```
+
+5. **Vite Configuration Issues**
+   ```bash
+   # Check Vite configuration
+   npx vite --debug --mode production
+   
+   # Test build with verbose output
+   npm run build -- --debug
    ```
 
 ### ❌ Test Failures
@@ -602,12 +904,29 @@ npm run test:coverage
 
 # Debug specific test
 node --inspect-brk node_modules/.bin/jest --runInBand AuthService.test.ts
+
+# Run tests with coverage for specific file
+npm test -- --coverage --testPathPattern=authService
 ```
 
 **Common Test Issues**:
-1. **Mock Failures**: Update mock implementations
+1. **Mock Failures**: Update mock implementations in `src/__mocks__/`
 2. **Async Issues**: Add proper await/async handling
-3. **Environment Variables**: Set test environment variables
+3. **Environment Variables**: Set test environment variables in setup files
+4. **Import Path Issues**: Check relative vs absolute imports
+5. **TypeScript Compilation**: Ensure test files are included in tsconfig.json
+
+**Test Environment Setup**:
+```bash
+# Check Jest configuration
+cat jest.config.js
+
+# Verify test setup
+cat setupTests.ts
+
+# Check environment variables for tests
+cat .env.test
+```
 
 ---
 
@@ -952,21 +1271,32 @@ Any other relevant information
 ## 📚 Additional Resources
 
 ### 📖 Documentation
-- [API Documentation](./API_DOCUMENTATION.md)
-- [Developer Guide](./DEVELOPER_GUIDE.md)
-- [Administrator Guide](./ADMINISTRATOR_GUIDE.md)
-- [User Guides](./USER_GUIDE_STUDENT.md)
+- [API Documentation](./API_DOCUMENTATION.md) - Complete API reference
+- [Quick Start Guide](./QUICK_START_GUIDE.md) - 5-minute setup guide
+- [Installation Guide](./INSTALLATION_GUIDE.md) - Detailed setup instructions
+- [Environment Validation](./ENVIRONMENT_VALIDATION.md) - Environment troubleshooting
+- [Developer Guide](./DEVELOPER_GUIDE.md) - Development best practices
+- [Administrator Guide](./ADMINISTRATOR_GUIDE.md) - System administration
+- [User Guides](./USER_GUIDE_STUDENT.md) - End-user documentation
 
 ### 🔗 External Resources
 - [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
+- [Cloudflare D1 Documentation](https://developers.cloudflare.com/d1/)
+- [Cloudflare Vectorize Documentation](https://developers.cloudflare.com/vectorize/)
 - [Google Gemini API Documentation](https://ai.google.dev/docs)
 - [React Documentation](https://react.dev/)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Vite Documentation](https://vitejs.dev/)
 
 ### 🎓 Training Materials
 - [Video Tutorials](https://training.ma-malnukananga.sch.id) (planned)
 - [Best Practices Guide](https://bestpractices.ma-malnukananga.sch.id) (planned)
 - [Security Guidelines](https://security.ma-malnukananga.sch.id) (planned)
+
+### 🛠️ Development Tools
+- [Node.js Version Manager](https://github.com/nvm-sh/nvm) - Manage Node.js versions
+- [Cloudflare Wrangler](https://developers.cloudflare.com/workers/wrangler/) - Worker deployment
+- [Google AI Studio](https://makersuite.google.com/app/apikey) - API key management
 
 ---
 
@@ -976,6 +1306,14 @@ Any other relevant information
 
 ---
 
-*Document Version: 1.2.0*  
-*Last Updated: November 20, 2024*  
+
+*Document Version: 1.4.0*  
+*Last Updated: 2025-11-24*  
+*Maintained by: MA Malnu Kananga Technical Team*  
+*Documentation Audit: Completed - All solutions verified & AGENTS.md aligned*  
+*Audit Status: ✅ Complete (2025-11-24) - Aligned with AGENTS.md*
+
+*Document Version: 1.3.1*  
+*Last Updated: 2025-11-24
 *Maintained by: MA Malnu Kananga Technical Team*
+

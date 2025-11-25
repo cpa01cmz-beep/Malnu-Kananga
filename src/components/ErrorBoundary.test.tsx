@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ErrorBoundary, { withErrorBoundary, useErrorHandler } from './ErrorBoundary';
@@ -15,8 +14,12 @@ describe('ErrorBoundary', () => {
   let consoleError: jest.SpyInstance;
 
   beforeEach(() => {
-    // Mock console.error untuk menghindari noise di test output
+    // Mock console methods untuk menghindari noise di test output
     consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'group').mockImplementation(() => {});
+    jest.spyOn(console, 'groupEnd').mockImplementation(() => {});
     
     // Mock error logging service
     jest.mock('../services/errorLoggingService', () => ({
@@ -38,7 +41,7 @@ describe('ErrorBoundary', () => {
 
   afterEach(() => {
     consoleError.mockRestore();
-    jest.clearAllMocks();
+    jest.restoreAllMocks();
   });
 
   it('seharusnya render children normal tanpa error', () => {
@@ -213,9 +216,13 @@ describe('withErrorBoundary HOC', () => {
     };
     const WrappedComponent = withErrorBoundary(ErrorComponent);
 
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
     render(<WrappedComponent />);
 
     expect(screen.getByText('Terjadi Kesalahan')).toBeInTheDocument();
+    
+    consoleSpy.mockRestore();
   });
 
   it('seharusnya menggunakan custom fallback di HOC', () => {
@@ -225,9 +232,13 @@ describe('withErrorBoundary HOC', () => {
     const customFallback = <div>HOC Custom Fallback</div>;
     const WrappedComponent = withErrorBoundary(ErrorComponent, customFallback);
 
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
     render(<WrappedComponent />);
 
     expect(screen.getByText('HOC Custom Fallback')).toBeInTheDocument();
+    
+    consoleSpy.mockRestore();
   });
 
   it('seharusnya memiliki displayName yang benar', () => {
