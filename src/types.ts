@@ -44,6 +44,7 @@ export interface LatestNews {
    studentId: string;
    subject: string;
    score: number;
+   date: string;
    semester: string;
    academicYear: string;
  }
