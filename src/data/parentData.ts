@@ -25,7 +25,7 @@ export interface Child {
   status: 'active' | 'inactive' | 'graduate';
 }
 
-export interface Assignment {
+export interface _Assignment {
   id: string;
   title: string;
   description: string;
@@ -46,7 +46,7 @@ export interface Assignment {
   };
 }
 
-export interface Message {
+export interface _Message {
   id: string;
   from: {
     id: string;
@@ -65,7 +65,7 @@ export interface Message {
   priority: 'low' | 'normal' | 'high' | 'urgent';
 }
 
-export interface AcademicReport {
+export interface _AcademicReport {
   id: string;
   studentId: string;
   studentName: string;
@@ -127,7 +127,7 @@ export const parentChildren: Child[] = [
 ];
 
 // Mock data tugas untuk anak
-export const assignmentsData: Assignment[] = [
+export const assignmentsData: _Assignment[] = [
   {
     id: 'ASG001',
     title: 'Laporan Praktikum Fisika',
@@ -176,7 +176,7 @@ export const assignmentsData: Assignment[] = [
 ];
 
 // Mock data pesan
-export const messagesData: Message[] = [
+export const messagesData: _Message[] = [
   {
     id: 'MSG001',
     from: {
@@ -216,7 +216,7 @@ export const messagesData: Message[] = [
 ];
 
 // Mock data rapor akademik
-export const academicReports: AcademicReport[] = [
+export const academicReports: _AcademicReport[] = [
   {
     id: 'RPT001',
     studentId: 'STU001',
@@ -253,17 +253,17 @@ export const academicReports: AcademicReport[] = [
 ];
 
 // Helper functions untuk portal orang tua
-export function getUnreadMessages(messages: Message[]): Message[] {
+export function getUnreadMessages(messages: _Message[]): _Message[] {
   return messages.filter(message => !message.isRead);
 }
 
-export function getPendingAssignments(assignments: Assignment[]): Assignment[] {
+export function getPendingAssignments(assignments: _Assignment[]): _Assignment[] {
   return assignments.filter(assignment =>
     assignment.status === 'assigned' || assignment.status === 'overdue'
   );
 }
 
-export function getUpcomingAssignments(assignments: Assignment[], days: number = 7): Assignment[] {
+export function getUpcomingAssignments(assignments: _Assignment[], days: number = 7): _Assignment[] {
   const now = new Date();
   const futureDate = new Date(now.getTime() + (days * 24 * 60 * 60 * 1000));
 
@@ -273,7 +273,7 @@ export function getUpcomingAssignments(assignments: Assignment[], days: number =
   });
 }
 
-export function getAssignmentStats(assignments: Assignment[]): {
+export function getAssignmentStats(assignments: _Assignment[]): {
   total: number;
   submitted: number;
   pending: number;

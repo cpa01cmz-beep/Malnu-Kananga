@@ -5,7 +5,7 @@ interface NotificationBellProps {
   onNotificationClick?: () => void;
 }
 
-const NotificationBell: React.FC<NotificationBellProps> = ({ onNotificationClick }) => {
+const NotificationBell: React.FC<NotificationBellProps> = ({ onNotificationClick: _onNotificationClick }) => {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);

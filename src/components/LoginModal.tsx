@@ -62,16 +62,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
 
         setFormState('success');
 
-      } catch (err: any) {
+      } catch (err: unknown) {
         setFormState('idle');
 
         // Enhanced error messages for development
-        if (NODE_ENV === 'development' && err.message.includes('fetch')) {
+         const errorMessage = err instanceof Error ? err.message : 'Terjadi kesalahan. Silakan coba lagi.';
+        if (NODE_ENV === 'development' && errorMessage.includes('fetch')) {
           setError('Tidak dapat terhubung ke server. Pastikan Cloudflare Worker sudah di-deploy.');
-        } else if (NODE_ENV === 'development' && err.message.includes('VITE_WORKER_URL')) {
-          setError(err.message);
+        } else if (NODE_ENV === 'development' && errorMessage.includes('VITE_WORKER_URL')) {
+          setError(errorMessage);
         } else {
-          setError(err.message || 'Terjadi kesalahan. Silakan coba lagi.');
+           setError(errorMessage);
         }
       }
   }

@@ -4,71 +4,74 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import StudentSupport from '../StudentSupport';
 
-declare global {
-  var alert: jest.Mock;
-}
-
 // Mock window.alert
-(global as any).alert = jest.fn();
+const mockAlert = jest.fn();
+Object.defineProperty(window, 'alert', {
+  writable: true,
+  value: mockAlert
+});
 
-// Mock the student support service
+
 jest.mock('../../services/studentSupportService', () => ({
-  studentSupportService: {
-    getSupportRequests: jest.fn(() => [
-      {
-        id: 'REQ001',
-        studentId: 'STU001',
-        type: 'academic',
-        category: 'math',
-        priority: 'medium',
-        title: 'Bantuan Matematika',
-        description: 'Saya kesulitan dengan kalkulus',
-        status: 'pending',
-        createdAt: '2024-01-01T10:00:00Z'
-      }
-    ]),
-    getRelevantResources: jest.fn(() => [
-      {
-        id: 'RES001',
-        title: 'Panduan Belajar Efektif',
-        type: 'guide',
-        category: 'academic',
-        content: 'Teknik belajar efektif',
-        difficulty: 'beginner',
-        tags: ['belajar', 'metode']
-      }
-    ]),
-    getStudentProgress: jest.fn(() => ({
-      studentId: 'STU001',
-      academicMetrics: {
-        gpa: 3.5,
-        gradeTrend: 'improving',
-        subjectsAtRisk: [],
-        attendanceRate: 85,
-        assignmentCompletion: 90
-      },
-      engagementMetrics: {
-        loginFrequency: 5,
-        resourceAccess: 10,
-        supportRequests: 2,
-        participationScore: 75
-      },
-      riskLevel: 'low',
-      lastUpdated: '2024-01-01T10:00:00Z'
-    })),
-    createSupportRequest: jest.fn(() => ({
-      id: 'REQ002',
-      studentId: 'STU001',
-      type: 'academic',
-      category: 'physics',
-      priority: 'medium',
-      title: 'Bantuan Fisika',
-      description: 'Saya kesulitan dengan mekanika',
-      status: 'pending',
-      createdAt: '2024-01-01T11:00:00Z'
-    }))
-  }
+  StudentSupportService: {
+    getInstance: jest.fn(() => ({
+      getSupportRequests: jest.fn(() => [
+          {
+            id: 'REQ001',
+            studentId: 'STU001',
+            type: 'academic',
+            category: 'math',
+            priority: 'medium',
+            title: 'Bantuan Matematika',
+            description: 'Saya kesulitan dengan kalkulus',
+            status: 'pending',
+            createdAt: '2024-01-01T10:00:00Z'
+          }
+        ]),
+        getRelevantResources: jest.fn(() => [
+          {
+            id: 'RES001',
+            title: 'Panduan Belajar Efektif',
+            type: 'guide',
+            category: 'academic',
+            content: 'Teknik belajar efektif',
+            difficulty: 'beginner',
+            tags: ['belajar', 'metode']
+          }
+        ]),
+        getStudentProgress: jest.fn(() => ({
+          studentId: 'STU001',
+          academicMetrics: {
+            gpa: 3.5,
+            gradeTrend: 'improving',
+            subjectsAtRisk: [],
+            attendanceRate: 85,
+            assignmentCompletion: 90
+          },
+          engagementMetrics: {
+            loginFrequency: 5,
+            resourceAccess: 10,
+            supportRequests: 2,
+            participationScore: 75
+          },
+          riskLevel: 'low',
+          lastUpdated: '2024-01-01T10:00:00Z'
+        })),
+        createSupportRequest: jest.fn(() => ({
+          id: 'REQ002',
+          studentId: 'STU001',
+          type: 'academic',
+          category: 'physics',
+          priority: 'medium',
+          title: 'Bantuan Fisika',
+          description: 'Saya kesulitan dengan mekanika',
+          status: 'pending',
+          createdAt: '2024-01-01T11:00:00Z'
+        }))
+     }))
+   }
 }));
+
 
 describe('StudentSupport Component', () => {
   beforeEach(() => {
@@ -141,27 +144,8 @@ describe('StudentSupport Component', () => {
     expect(screen.getByText('Deskripsi')).toBeInTheDocument();
   });
 
-it('creates new support request when form is submitted', async () => {
-    const mockCreateRequest = jest.fn().mockReturnValue({
-      id: 'REQ-001',
-      studentId: 'STU001',
-      type: 'academic',
-      category: 'physics',
-      title: 'Bantuan Fisika',
-      description: 'Saya kesulitan dengan mekanika',
-      priority: 'medium',
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    });
-    
-    jest.doMock('../../services/studentSupportService', () => ({
-      studentSupportService: {
-        createSupportRequest: mockCreateRequest,
-        getSupportRequests: jest.fn().mockReturnValue([]),
-        getSupportResources: jest.fn().mockReturnValue([])
-      }
-    }));
+  it('creates new support request when form is submitted', async () => {
+    const { StudentSupportService } = require('../../services/studentSupportService');
     
     render(<StudentSupport studentId="STU001" />);
     
@@ -180,25 +164,7 @@ it('creates new support request when form is submitted', async () => {
     fireEvent.click(screen.getByText('Kirim Permintaan'));
     
     await waitFor(() => {
-      expect(mockCreateRequest).toHaveBeenCalledWith({
-        studentId: 'STU001',
-        type: 'academic',
-        category: 'physics',
-        title: 'Bantuan Fisika',
-        description: 'Saya kesulitan dengan mekanika',
-        priority: 'medium'
-      });
-    }, { timeout: 10000 });
-  });
-    fireEvent.change(screen.getByPlaceholderText('Jelaskan masalah atau bantuan yang Anda butuhkan'), {
-      target: { value: 'Saya kesulitan dengan mekanika' }
-    });
-    
-    // Submit form
-    fireEvent.click(screen.getByText('Kirim Permintaan'));
-    
-    await waitFor(() => {
-      expect(studentSupportService.createSupportRequest).toHaveBeenCalledWith(
+      expect(StudentSupportService.createSupportRequest).toHaveBeenCalledWith(
         'STU001',
         'academic',
         'umum',
@@ -224,9 +190,9 @@ it('creates new support request when form is submitted', async () => {
   });
 
   it('shows empty state when no requests exist', () => {
-    // Mock empty requests
-    const { studentSupportService } = require('../../services/studentSupportService');
-    studentSupportService.getSupportRequests.mockReturnValue([]);
+     // Mock empty requests
+     const { StudentSupportService } = require('../../services/studentSupportService');
+     StudentSupportService.getSupportRequests.mockReturnValue([]);
     
     render(<StudentSupport studentId="STU001" />);
     
@@ -246,7 +212,7 @@ it('creates new support request when form is submitted', async () => {
     fireEvent.click(screen.getByText('Kirim Permintaan'));
     
     // Should show validation alert
-    expect(window.alert).toHaveBeenCalledWith('Mohon lengkapi judul dan deskripsi permintaan');
+    expect(mockAlert).toHaveBeenCalledWith('Mohon lengkapi judul dan deskripsi permintaan');
   });
 
   it('closes modal when cancel is clicked', () => {

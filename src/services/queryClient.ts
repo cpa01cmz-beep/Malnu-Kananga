@@ -75,14 +75,13 @@ const queryDefaults: DefaultOptions = {
 
 // Create QueryClient dengan konfigurasi optimal
 export const queryClient = new QueryClient({
-  defaultOptions: queryDefaults,
-
-  // Global cache configuration
-  defaultQueryOptions: {
-    ...queryDefaults.queries,
-
-    // Placeholder data untuk better UX
-    placeholderData: (previousData) => previousData,
+  defaultOptions: {
+    ...queryDefaults,
+    queries: {
+      ...queryDefaults.queries,
+      // Placeholder data untuk better UX
+      placeholderData: (previousData: any) => previousData,
+    },
   },
 });
 

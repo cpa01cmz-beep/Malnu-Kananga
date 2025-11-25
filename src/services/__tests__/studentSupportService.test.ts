@@ -4,12 +4,14 @@ import { StudentSupportService } from '../studentSupportService';
 describe('StudentSupportService', () => {
   beforeEach(() => {
     localStorage.clear();
-    StudentSupportService.initialize();
+    const service = StudentSupportService.getInstance();
+    service.initialize();
   });
 
   describe('createSupportRequest', () => {
     it('should create a new support request with correct properties', () => {
-      const request = StudentSupportService.createSupportRequest({
+      const service = StudentSupportService.getInstance();
+      const request = service.createSupportRequest({
         studentId: 'STU001',
         type: 'academic',
         category: 'mathematics',
@@ -31,7 +33,8 @@ describe('StudentSupportService', () => {
     });
 
     it('should process requests automatically for common issues', async () => {
-      const request = StudentSupportService.createSupportRequest({
+      const service = StudentSupportService.getInstance();
+      const request = service.createSupportRequest({
         studentId: 'STU001',
         type: 'technical',
         category: 'login',
@@ -41,16 +44,16 @@ describe('StudentSupportService', () => {
       });
 
       // Mock AI processing
-      jest.spyOn(StudentSupportService as any, 'getAIResponse').mockResolvedValue({
+      jest.spyOn(service as any, 'getAIResponse').mockResolvedValue({
         response: 'Coba gunakan fitur Magic Link untuk login',
         category: 'technical',
         confidence: 0.8,
         contextUsed: true
       });
 
-      await StudentSupportService.processRequestAutomatically(request);
+      await service.processRequestAutomatically(request);
 
-      const requests = StudentSupportService.getSupportRequests();
+      const requests = service.getSupportRequests();
       const processedRequest = requests.find(r => r.id === request.id);
       
       expect(processedRequest).toBeDefined();
@@ -61,6 +64,7 @@ describe('StudentSupportService', () => {
 
   describe('updateStudentProgress', () => {
     it('should update student progress with new data', () => {
+      const service = StudentSupportService.getInstance();
       const progressData = {
         academicMetrics: {
           gpa: 85,
@@ -76,9 +80,9 @@ describe('StudentSupportService', () => {
         }
       };
 
-      StudentSupportService.updateStudentProgress('STU001', progressData);
+      service.updateStudentProgress('STU001', progressData);
 
-      const progress = StudentSupportService.getStudentProgress('STU001');
+      const progress = service.getStudentProgress('STU001');
       expect(progress).toBeDefined();
       expect(progress?.academicMetrics.gpa).toBe(85);
       expect(progress?.studentId).toBe('STU001');
@@ -86,7 +90,8 @@ describe('StudentSupportService', () => {
     });
 
     it('should create new progress record if none exists', () => {
-      StudentSupportService.updateStudentProgress('STU002', {
+      const service = StudentSupportService.getInstance();
+      service.updateStudentProgress('STU002', {
         academicMetrics: {
           gpa: 2.5,
           attendanceRate: 75,
@@ -101,7 +106,7 @@ describe('StudentSupportService', () => {
         }
       });
 
-      const progress = StudentSupportService.getStudentProgress('STU002');
+      const progress = service.getStudentProgress('STU002');
       expect(progress).toBeDefined();
       expect(progress?.studentId).toBe('STU002');
       expect(progress?.riskLevel).toBe('high');
@@ -110,7 +115,8 @@ describe('StudentSupportService', () => {
 
   describe('addSupportResource', () => {
     it('should add new support resource', () => {
-      const resource = StudentSupportService.addSupportResource({
+      const service = StudentSupportService.getInstance();
+      const resource = service.addSupportResource({
         title: 'Tutorial Matematika',
         description: 'Panduan lengkap belajar matematika',
         category: 'tutorial',
@@ -128,7 +134,8 @@ describe('StudentSupportService', () => {
     });
 
     it('should retrieve resources by category', () => {
-      StudentSupportService.addSupportResource({
+      const service = StudentSupportService.getInstance();
+      service.addSupportResource({
         title: 'Tutorial Login',
         description: 'Cara login ke portal',
         category: 'guide',
@@ -139,7 +146,7 @@ describe('StudentSupportService', () => {
         rating: 0
       });
 
-      const guides = StudentSupportService.getSupportResources('guide');
+      const guides = service.getSupportResources('guide');
       expect(guides.length).toBeGreaterThan(0);
       expect(guides[0].category).toBe('guide');
     });
@@ -147,7 +154,8 @@ describe('StudentSupportService', () => {
 
   describe('getSupportAnalytics', () => {
     it('should return correct analytics', () => {
-      StudentSupportService.createSupportRequest({
+      const service = StudentSupportService.getInstance();
+      service.createSupportRequest({
         studentId: 'STU001',
         type: 'academic',
         category: 'mathematics',
@@ -156,7 +164,7 @@ describe('StudentSupportService', () => {
         priority: 'medium'
       });
       
-      StudentSupportService.createSupportRequest({
+      service.createSupportRequest({
         studentId: 'STU002',
         type: 'technical',
         category: 'login',
@@ -165,7 +173,7 @@ describe('StudentSupportService', () => {
         priority: 'high'
       });
       
-      const analytics = StudentSupportService.getSupportAnalytics();
+      const analytics = service.getSupportAnalytics();
       
       expect(analytics.totalRequests).toBe(2);
       expect(analytics.openRequests).toBeGreaterThanOrEqual(0);
@@ -177,8 +185,9 @@ describe('StudentSupportService', () => {
 
   describe('generateSupportReport', () => {
     it('should generate support report for different timeframes', () => {
-      const dailyReport = StudentSupportService.generateSupportReport('daily');
-      const weeklyReport = StudentSupportService.generateSupportReport('weekly');
+      const service = StudentSupportService.getInstance();
+      const dailyReport = service.generateSupportReport('daily');
+      const weeklyReport = service.generateSupportReport('weekly');
       
       expect(dailyReport.timeFrame).toBe('daily');
       expect(dailyReport.period).toBeDefined();
@@ -193,7 +202,8 @@ describe('StudentSupportService', () => {
 
   describe('rateResource', () => {
     it('should update resource rating and usage count', () => {
-      const resource = StudentSupportService.addSupportResource({
+      const service = StudentSupportService.getInstance();
+      const resource = service.addSupportResource({
         title: 'Test Resource',
         description: 'Test description',
         category: 'guide',
@@ -204,9 +214,9 @@ describe('StudentSupportService', () => {
         rating: 0
       });
 
-      StudentSupportService.rateResource(resource.id, 5);
+      service.rateResource(resource.id, 5);
       
-      const resources = StudentSupportService.getSupportResources();
+      const resources = service.getSupportResources();
       const updatedResource = resources.find(r => r.id === resource.id);
       
       expect(updatedResource?.usageCount).toBe(1);

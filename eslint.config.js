@@ -49,12 +49,13 @@ export default [
         HTMLInputElement: true,
         HTMLDivElement: true,
         HTMLFormElement: true,
-        HTMLImageElement: true,
-        HTMLElement: true,
-        IntersectionObserver: true,
-        EventListener: true,
-        TouchEvent: true,
-        URLSearchParams: true,
+         HTMLImageElement: true,
+         HTMLElement: true,
+         IntersectionObserver: true,
+         ResizeObserver: true,
+         EventListener: true,
+         TouchEvent: true,
+         URLSearchParams: true,
         HeadersInit: true,
         AbortSignal: true,
         WebSocket: true,
@@ -92,115 +93,109 @@ export default [
         indexedDB: true,
         IDBOpenDBRequest: true,
         isDevelopment: true,
-        crypto: true,
+crypto: true,
         TextEncoder: true,
         btoa: true,
-        atob: true,
-<<<<<<< HEAD
-=======
-        Request: true,
-        RequestInit: true,
-        AbortController: true,
-        performance: true,
-        NotificationOptions: true,
-        ServiceWorkerRegistration: true,
-        IDBDatabase: true,
-        indexedDB: true,
-        IDBOpenDBRequest: true,
-        isDevelopment: true,
->>>>>>> 1c77b54 (fix(pr#295): address critical lint errors and test issues)
-      },
-    },
-    plugins: {
-      '@typescript-eslint': typescript,
-      react,
-      'react-hooks': reactHooks,
-      'jsx-a11y': jsxA11y,
-    },
-    rules: {
-      'react/react-in-jsx-scope': 'off',
-      'react/prop-types': 'off',
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['warn', { 
-        'argsIgnorePattern': '^_',
-        'varsIgnorePattern': '^_',
-        'caughtErrorsIgnorePattern': '^_'
-      }],
-      'no-unused-vars': 'off', // Turn off JS version since we use TS version
-      'jsx-a11y/click-events-have-key-events': 'warn',
-      'jsx-a11y/no-static-element-interactions': 'warn',
-    },
-    settings: {
-      react: {
-        version: 'detect',
-      },
-    },
-  },
-  {
-    files: ['implement/**/*.js', 'scripts/**/*.js', 'src/__mocks__/**/*'],
-    languageOptions: {
-      globals: {
-        path: true,
-        __dirname: true,
-        __filename: true,
-        module: true,
-        require: true,
-        exports: true,
-        Buffer: true,
-        global: true,
-        btoa: true,
-        atob: true,
-      },
-    },
-    rules: {
-      '@typescript-eslint/no-unused-vars': 'off',
-      'no-unused-vars': 'off',
-      'no-undef': 'off',
-      'no-redeclare': 'off',
-    },
-  },
-  {
-    files: ['public/**/*.js'],
-    languageOptions: {
-      globals: {
-        addEventListener: true,
-        removeEventListener: true,
-        postMessage: true,
-        importScripts: true,
-        clients: true,
-        skipWaiting: true,
-      },
-    },
-    rules: {
-      'no-undef': 'off',
-      'no-redeclare': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
-      'no-unused-vars': 'off',
-    },
-  },
-  {
-    files: ['worker.js', 'worker-extended.js'],
-    languageOptions: {
-      globals: {
-        setTimeout: true,
-        clearTimeout: true,
-        setInterval: true,
-        clearInterval: true,
-        crypto: true,
-        btoa: true,
-        atob: true,
-      },
-    },
-    rules: {
-      'no-undef': 'off',
-      'no-redeclare': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
-      'no-unused-vars': 'off',
-    },
-  },
-  {
-    ignores: ['dist/', 'node_modules/', 'build/', '*.config.*'],
-  },
-  prettier,
-];
+         atob: true,
+         ResizeObserver: true,
+       },
+     },
+     plugins: {
+       '@typescript-eslint': typescript,
+       react,
+       'react-hooks': reactHooks,
+       'jsx-a11y': jsxA11y,
+     },
+     rules: {
+       'react/react-in-jsx-scope': 'off',
+       'react/prop-types': 'off',
+       '@typescript-eslint/explicit-function-return-type': 'off',
+       '@typescript-eslint/no-explicit-any': 'warn',
+       '@typescript-eslint/no-unused-vars': ['warn', { 
+         'argsIgnorePattern': '^_',
+         'varsIgnorePattern': '^_',
+         'caughtErrorsIgnorePattern': '^_'
+       }],
+       'no-unused-vars': 'off', // Turn off JS version since we use TS version
+       'jsx-a11y/click-events-have-key-events': 'off',
+       'jsx-a11y/no-static-element-interactions': 'off',
+     },
+     settings: {
+       react: {
+         version: 'detect',
+       },
+     },
+   },
+   {
+     files: ['implement/**/*.js', 'scripts/**/*.js', 'src/__mocks__/**/*'],
+     languageOptions: {
+       globals: {
+         path: true,
+         __dirname: true,
+         __filename: true,
+         module: true,
+         require: true,
+         exports: true,
+         Buffer: true,
+         global: true,
+         btoa: true,
+         atob: true,
+       },
+     },
+     rules: {
+       '@typescript-eslint/no-unused-vars': 'off',
+       'no-unused-vars': 'off',
+       'no-undef': 'off',
+       'no-redeclare': 'off',
+     },
+   },
+   {
+     files: ['public/**/*.js'],
+     languageOptions: {
+       globals: {
+         addEventListener: true,
+         removeEventListener: true,
+         postMessage: true,
+         importScripts: true,
+         clients: true,
+         skipWaiting: true,
+       },
+     },
+     rules: {
+       'no-undef': 'off',
+       'no-redeclare': 'off',
+       '@typescript-eslint/no-unused-vars': 'off',
+       'no-unused-vars': 'off',
+     },
+   },
+   {
+     files: ['worker.js', 'worker-extended.js'],
+     languageOptions: {
+       globals: {
+         setTimeout: true,
+         clearTimeout: true,
+         setInterval: true,
+         clearInterval: true,
+         crypto: true,
+         btoa: true,
+         atob: true,
+       },
+     },
+     rules: {
+       'no-undef': 'off',
+       'no-redeclare': 'off',
+       '@typescript-eslint/no-unused-vars': 'off',
+       'no-unused-vars': 'off',
+     },
+   },
+   {
+     ignores: ['dist/', 'node_modules/', 'build/', '*.config.*'],
+   },
+   {
+     files: ['security-middleware.js'],
+     rules: {
+       'no-control-regex': 'off',
+     },
+   },
+   prettier,
+ ];

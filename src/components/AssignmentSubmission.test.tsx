@@ -1,6 +1,6 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import '@testing-library/jest-dom';
 import AssignmentSubmission from './AssignmentSubmission';
 
 // Mock parent data
@@ -28,7 +28,7 @@ describe('AssignmentSubmission Component', () => {
   };
 
   const mockOnClose = jest.fn();
-  const mockOnSubmit = jest.fn();
+  const mockOnSubmit = jest.fn().mockResolvedValue(undefined) as jest.MockedFunction<(data: { file?: File; notes?: string; submittedBy: string }) => Promise<void>>;
 
   beforeEach(() => {
     jest.clearAllMocks();

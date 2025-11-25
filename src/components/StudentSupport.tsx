@@ -2,7 +2,7 @@
 // Komponen untuk menampilkan dan mengelola sistem dukungan siswa
 
 import React, { useState, useEffect } from 'react';
-import { studentSupportService, SupportRequest, SupportResource, StudentProgress } from '../services/studentSupportService';
+import { StudentSupportService, SupportRequest, SupportResource, StudentProgress } from '../services/studentSupportService';
 
 interface StudentSupportProps {
   studentId: string;
@@ -13,12 +13,18 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
   const [supportRequests, setSupportRequests] = useState<SupportRequest[]>([]);
   const [resources, setResources] = useState<SupportResource[]>([]);
   const [studentProgress, setStudentProgress] = useState<StudentProgress | null>(null);
-  const [newRequest, setNewRequest] = useState({
-    type: 'academic' as const,
+  const [newRequest, setNewRequest] = useState<{
+    type: 'academic' | 'technical' | 'administrative' | 'personal';
+    category: string;
+    title: string;
+    description: string;
+    priority: 'low' | 'medium' | 'high' | 'urgent';
+  }>({
+    type: 'academic',
     category: '',
     title: '',
     description: '',
-    priority: 'medium' as const
+    priority: 'medium'
   });
   const [showNewRequestForm, setShowNewRequestForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,19 +33,21 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
     loadSupportData();
   }, [studentId]);
 
-  const loadSupportData = () => {
-    // Load student's support requests
-    const requests = studentSupportService.getSupportRequests();
-    setSupportRequests(requests.filter(req => req.studentId === studentId));
+   const loadSupportData = async () => {
+     const supportService = StudentSupportService.getInstance();
+     
+     // Load student's support requests
+     const requests = supportService.getSupportRequests();
+     setSupportRequests(requests.filter((req: SupportRequest) => req.studentId === studentId));
 
-    // Load available resources
-    const allResources = studentSupportService.getRelevantResources('');
-    setResources(allResources);
+     // Load available resources
+     const allResources = await supportService.getRelevantResources('');
+     setResources(allResources);
 
-    // Load student progress
-    const progress = studentSupportService.getStudentProgress(studentId);
-    setStudentProgress(progress || null);
-  };
+     // Load student progress
+     const progress = supportService.getStudentProgress(studentId);
+     setStudentProgress(progress || null);
+   };
 
   const handleCreateRequest = () => {
     if (!newRequest.title || !newRequest.description) {
@@ -47,14 +55,15 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
       return;
     }
 
-    const request = studentSupportService.createSupportRequest(
-      studentId,
-      newRequest.type,
-      newRequest.category || 'umum',
-      newRequest.title,
-      newRequest.description,
-      newRequest.priority
-    );
+     const supportService = StudentSupportService.getInstance();
+     const request = supportService.createSupportRequest(
+       studentId,
+       newRequest.type,
+       newRequest.category || 'umum',
+       newRequest.title,
+       newRequest.description,
+       newRequest.priority
+     );
 
     setSupportRequests([...supportRequests, request]);
     setNewRequest({
@@ -121,8 +130,8 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
             ].map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                 onClick={() => setActiveTab(tab.id as 'dashboard' | 'requests' | 'resources' | 'progress')}
+                 className={`flex-1 min-w-[120px] py-3 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -402,9 +411,9 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
                 <select
-                  value={newRequest.type}
-                  onChange={(e) => setNewRequest({...newRequest, type: e.target.value as any})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   value={newRequest.type}
+                   onChange={(e) => setNewRequest({...newRequest, type: e.target.value as 'academic' | 'technical' | 'administrative' | 'personal'})}
+                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="academic">Akademis</option>
                   <option value="technical">Teknis</option>
@@ -450,7 +459,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Prioritas</label>
                 <select
                   value={newRequest.priority}
-                  onChange={(e) => setNewRequest({...newRequest, priority: e.target.value as any})}
+                  onChange={(e) => setNewRequest({...newRequest, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent'})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="low">Rendah</option>
