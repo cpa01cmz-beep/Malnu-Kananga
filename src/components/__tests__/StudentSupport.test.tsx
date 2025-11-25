@@ -68,9 +68,8 @@ jest.mock('../../services/studentSupportService', () => ({
           status: 'pending',
           createdAt: '2024-01-01T11:00:00Z'
         }))
-    }))
-    }))
-  }
+     }))
+   }
 }));
 
 
@@ -147,36 +146,35 @@ describe('StudentSupport Component', () => {
   });
 
   it('creates new support request when form is submitted', async () => {
-   it('creates new support request when form is submitted', async () => {
-     const { StudentSupportService } = require('../../services/studentSupportService');
-     
-     render(<StudentSupport studentId="STU001" />);
-     
-     // Open new request form
-     fireEvent.click(screen.getByText('📝 Buat Permintaan Baru'));
-     
-     // Fill form
-     fireEvent.change(screen.getByPlaceholderText('Judul permintaan'), {
-       target: { value: 'Bantuan Fisika' }
-     });
-     fireEvent.change(screen.getByPlaceholderText('Jelaskan masalah atau bantuan yang Anda butuhkan'), {
-       target: { value: 'Saya kesulitan dengan mekanika' }
-     });
-     
-     // Submit form
-     fireEvent.click(screen.getByText('Kirim Permintaan'));
-     
-     await waitFor(() => {
-       expect(StudentSupportService.createSupportRequest).toHaveBeenCalledWith(
-         'STU001',
-         'academic',
-         'umum',
-         'Bantuan Fisika',
-         'Saya kesulitan dengan mekanika',
-         'medium'
-       );
-     });
-   });
+    const { StudentSupportService } = require('../../services/studentSupportService');
+    
+    render(<StudentSupport studentId="STU001" />);
+    
+    // Open new request form
+    fireEvent.click(screen.getByText('📝 Buat Permintaan Baru'));
+    
+    // Fill form
+    fireEvent.change(screen.getByPlaceholderText('Judul permintaan'), {
+      target: { value: 'Bantuan Fisika' }
+    });
+    fireEvent.change(screen.getByPlaceholderText('Jelaskan masalah atau bantuan yang Anda butuhkan'), {
+      target: { value: 'Saya kesulitan dengan mekanika' }
+    });
+    
+    // Submit form
+    fireEvent.click(screen.getByText('Kirim Permintaan'));
+    
+    await waitFor(() => {
+      expect(StudentSupportService.createSupportRequest).toHaveBeenCalledWith(
+        'STU001',
+        'academic',
+        'umum',
+        'Bantuan Fisika',
+        'Saya kesulitan dengan mekanika',
+        'medium'
+      );
+    });
+  });
 
   it('filters resources based on search term', () => {
     render(<StudentSupport studentId="STU001" />);
