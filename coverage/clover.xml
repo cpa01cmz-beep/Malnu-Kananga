@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <coverage generated="1764037682203" clover="3.2.0">
   <project timestamp="1764037682203" name="All files">
+=======
+<coverage generated="1764032151987" clover="3.2.0">
+  <project timestamp="1764032151987" name="All files">
+>>>>>>> 7abc442 (Quality Assurance Implementation - 2025-11-25)
     <metrics statements="1727" coveredstatements="630" conditionals="1077" coveredconditionals="277" methods="433" coveredmethods="129" elements="3237" coveredelements="1036" complexity="0" loc="1727" ncloc="1727" packages="8" files="40" classes="40"/>
     <package name="src">
       <metrics statements="3" coveredstatements="3" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>

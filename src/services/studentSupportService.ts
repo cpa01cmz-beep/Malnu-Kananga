@@ -274,7 +274,7 @@ class StudentSupportService {
   }
 
   // Create support request
-  static createSupportRequest(
+  createSupportRequest(
     studentId: string,
     type: SupportRequest['type'],
     category: string,
@@ -307,18 +307,18 @@ class StudentSupportService {
   }
 
   // Get all support requests
-  static getSupportRequests(): SupportRequest[] {
+  getSupportRequests(): SupportRequest[] {
     const requests = localStorage.getItem(this.REQUESTS_KEY);
     return requests ? JSON.parse(requests) : [];
   }
 
   // Save support requests
-  private static saveSupportRequests(requests: SupportRequest[]): void {
+  private saveSupportRequests(requests: SupportRequest[]): void {
     localStorage.setItem(this.REQUESTS_KEY, JSON.stringify(requests));
   }
 
   // Process request automatically with AI integration
-  static async processRequestAutomatically(request: SupportRequest): Promise<void> {
+  async processRequestAutomatically(request: SupportRequest): Promise<void> {
     try {
       // Get AI-powered response
       const aiResponse = await this.getAIResponse(request);
@@ -350,7 +350,7 @@ class StudentSupportService {
   }
 
   // Get AI response from worker with enhanced context and fallback
-  private static async getAIResponse(request: SupportRequest): Promise<{
+  private async getAIResponse(request: SupportRequest): Promise<{
     response: string;
     category: string;
     confidence: number;
@@ -404,7 +404,7 @@ class StudentSupportService {
   }
 
   // Enhanced fallback response system
-  private static getEnhancedFallbackResponse(request: SupportRequest, studentProgress: StudentProgress | null): {
+  private getEnhancedFallbackResponse(request: SupportRequest, studentProgress: StudentProgress | null): {
     response: string;
     category: string;
     confidence: number;
@@ -488,7 +488,7 @@ class StudentSupportService {
   }
 
   // Fallback to knowledge base processing
-  private static processWithKnowledgeBase(request: SupportRequest): void {
+  private processWithKnowledgeBase(request: SupportRequest): void {
     const knowledgeBase = JSON.parse(localStorage.getItem(this.KNOWLEDGE_BASE_KEY) || '{}');
     
     // Try to find automated solution
@@ -522,7 +522,7 @@ class StudentSupportService {
   }
 
   // Check if request should be escalated
-  private static shouldEscalate(request: SupportRequest, issue: any): boolean {
+  private shouldEscalate(request: SupportRequest, issue: any): boolean {
     const similarRequests = this.getSupportRequests().filter(r => 
       r.type === request.type && 
       r.studentId === request.studentId &&
@@ -533,7 +533,7 @@ class StudentSupportService {
   }
 
   // Escalate request to human support
-  private static escalateRequest(request: SupportRequest): void {
+  private escalateRequest(request: SupportRequest): void {
     const requests = this.getSupportRequests();
     const requestIndex = requests.findIndex(r => r.id === request.id);
     
@@ -549,19 +549,19 @@ class StudentSupportService {
   }
 
   // Send automated response
-  private static sendAutomatedResponse(request: SupportRequest, solution: string): void {
+  private sendAutomatedResponse(request: SupportRequest, solution: string): void {
     // This would integrate with the notification system
     console.log(`Automated response for request ${request.id}: ${solution}`);
   }
 
   // Notify support team
-  private static notifySupportTeam(request: SupportRequest): void {
+  private notifySupportTeam(request: SupportRequest): void {
     // This would send notification to human support staff
     console.log(`Escalated request ${request.id} requires human intervention`);
   }
 
   // Update student progress
-  static updateStudentProgress(studentId: string, progress: Partial<StudentProgress>): void {
+  updateStudentProgress(studentId: string, progress: Partial<StudentProgress>): void {
     const allProgress = this.getAllStudentProgress();
     const existingProgress = allProgress[studentId] || {
       studentId,
@@ -598,19 +598,19 @@ class StudentSupportService {
   }
 
   // Get all student progress
-  static getAllStudentProgress(): Record<string, StudentProgress> {
+  getAllStudentProgress(): Record<string, StudentProgress> {
     const progress = localStorage.getItem(this.PROGRESS_KEY);
     return progress ? JSON.parse(progress) : {};
   }
 
   // Get student progress
-  static getStudentProgress(studentId: string): StudentProgress | null {
+  getStudentProgress(studentId: string): StudentProgress | null {
     const allProgress = this.getAllStudentProgress();
     return allProgress[studentId] || null;
   }
 
   // Assess risk level
-  private static assessRiskLevel(progress: StudentProgress): StudentProgress['riskLevel'] {
+  private assessRiskLevel(progress: StudentProgress): StudentProgress['riskLevel'] {
     let riskScore = 0;
 
     if (progress.academicMetrics.gpa < 70) riskScore += 2;
@@ -624,7 +624,7 @@ class StudentSupportService {
   }
 
   // Check automation rules
-  private static checkAutomationRules(progress: StudentProgress): void {
+  private checkAutomationRules(progress: StudentProgress): void {
     const rules = JSON.parse(localStorage.getItem(this.AUTOMATION_KEY) || '[]');
     
     rules.forEach((rule: SupportAutomation) => {
@@ -640,7 +640,7 @@ class StudentSupportService {
   }
 
   // Check parent communication triggers
-  private static checkParentCommunicationTriggers(progress: StudentProgress): void {
+  private checkParentCommunicationTriggers(progress: StudentProgress): void {
     try {
       // Send weekly progress reports
       const lastWeeklyReport = localStorage.getItem(`last_weekly_report_${progress.studentId}`);
@@ -699,7 +699,7 @@ class StudentSupportService {
   }
 
   // Generate concerns description for parents
-  private static generateConcerns(progress: StudentProgress): string {
+  private generateConcerns(progress: StudentProgress): string {
     const concerns = [];
     
     if (progress.academicMetrics.gpa < 70) {
@@ -719,7 +719,7 @@ class StudentSupportService {
   }
 
   // Generate risk factors for parents
-  private static generateRiskFactors(progress: StudentProgress): string {
+  private generateRiskFactors(progress: StudentProgress): string {
     const factors = [];
     
     if (progress.academicMetrics.gpa < 70) factors.push('IPK rendah');
@@ -732,7 +732,7 @@ class StudentSupportService {
   }
 
   // Generate recommendations for parents
-  private static generateParentRecommendations(progress: StudentProgress): string {
+  private generateParentRecommendations(progress: StudentProgress): string {
     const recommendations = [];
     
     if (progress.academicMetrics.gpa < 70) {
@@ -752,7 +752,7 @@ class StudentSupportService {
   }
 
   // Check if rule should trigger
-  private static shouldTriggerRule(rule: SupportAutomation, progress: StudentProgress): boolean {
+  private shouldTriggerRule(rule: SupportAutomation, progress: StudentProgress): boolean {
     const { triggerConfig } = rule;
 
     switch (rule.trigger) {
@@ -773,7 +773,7 @@ class StudentSupportService {
   }
 
   // Execute automation rule
-  private static executeAutomationRule(rule: SupportAutomation, progress: StudentProgress): void {
+  private executeAutomationRule(rule: SupportAutomation, progress: StudentProgress): void {
     rule.actions.forEach(action => {
       switch (action.type) {
         case 'notification':
@@ -845,7 +845,7 @@ class StudentSupportService {
   }
 
   // Monitor at-risk students with AI-powered analysis
-  private static async monitorAtRiskStudents(): Promise<void> {
+  private async monitorAtRiskStudents(): Promise<void> {
     const allProgress = this.getAllStudentProgress();
     
     for (const progress of Object.values(allProgress)) {
@@ -890,7 +890,7 @@ class StudentSupportService {
   }
 
   // Get AI-powered risk assessment with enhanced fallback
-  private static async getAIRiskAssessment(progress: StudentProgress): Promise<{
+  private async getAIRiskAssessment(progress: StudentProgress): Promise<{
     riskLevel: string;
     riskScore: number;
     riskFactors: string[];
@@ -936,7 +936,7 @@ class StudentSupportService {
   }
 
   // Enhanced risk assessment fallback
-  private static getEnhancedRiskAssessment(progress: StudentProgress): {
+  private getEnhancedRiskAssessment(progress: StudentProgress): {
     riskLevel: string;
     riskScore: number;
     riskFactors: string[];
@@ -1035,14 +1035,14 @@ class StudentSupportService {
   }
 
   // Calculate days since last login
-  private static calculateDaysSinceLastLogin(studentId: string): number {
+  private calculateDaysSinceLastLogin(studentId: string): number {
     // This would integrate with actual login tracking system
     // For now, return mock data
     return Math.floor(Math.random() * 14);
   }
 
   // Send proactive notification
-  private static async sendProactiveNotification(progress: StudentProgress, riskAssessment: any): Promise<void> {
+  private async sendProactiveNotification(progress: StudentProgress, riskAssessment: any): Promise<void> {
     // This would integrate with notification system
     console.log(`Proactive notification for student ${progress.studentId}:`, {
       riskLevel: riskAssessment.riskLevel,
@@ -1052,64 +1052,33 @@ class StudentSupportService {
   }
 
   // Update engagement metrics
-  private static updateEngagementMetrics(): void {
+  private updateEngagementMetrics(): void {
     // This would track real-time engagement
     console.log('Updating engagement metrics...');
   }
 
   // Get relevant resources with enhanced search and fallback
-  static async getRelevantResources(searchTerm?: string): Promise<SupportResource[]> {
+  async getRelevantResources(searchTerm?: string): Promise<SupportResource[]> {
     const resources = this.getSupportResources();
     
     if (!searchTerm) return resources;
 
     try {
-      // Try AI-enhanced knowledge base first
-      const knowledgeBase = AIEnhancedKnowledgeBase.getInstance();
-      const searchResults = await knowledgeBase.searchKnowledgeBase({
-        query: searchTerm,
-        limit: 10
-      });
-
-      // Convert knowledge base articles to support resources
-      const kbResources: SupportResource[] = searchResults.map(result => ({
-        id: result.article.id,
-        title: result.article.title,
-        content: result.article.content,
-        category: result.article.category,
-        type: result.article.type as any,
-        tags: result.article.tags,
-        difficulty: result.article.difficulty,
-        rating: result.article.rating,
-        usageCount: result.article.usageCount
-      }));
-
-      // Combine with traditional resources
-      const traditionalResources = resources.filter(resource =>
+      // Use enhanced search directly since AI knowledge base is not available
+      return this.getEnhancedResourceSearch(resources, searchTerm);
+    } catch (error) {
+      console.warn('Enhanced search failed, using basic search:', error);
+      // Fallback to basic search
+      return resources.filter(resource =>
         resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         resource.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
         resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
       );
-
-      // Merge and deduplicate by ID
-      const allResources = [...kbResources, ...traditionalResources];
-      const uniqueResources = allResources.filter((resource, index, self) =>
-        index === self.findIndex(r => r.id === resource.id)
-      );
-
-      // Sort by rating and usage
-      return uniqueResources.sort((a, b) => 
-        (b.rating || 0) * 10 + (b.usageCount || 0) - 
-        ((a.rating || 0) * 10 + (a.usageCount || 0))
-      );
-    } catch (error) {
-      console.warn('AI knowledge base unavailable, using enhanced search:', error);
-      return this.getEnhancedResourceSearch(resources, searchTerm);
     }
   }
 
   // Enhanced resource search with intelligent matching
-  private static getEnhancedResourceSearch(resources: SupportResource[], searchTerm: string): SupportResource[] {
+  private getEnhancedResourceSearch(resources: SupportResource[], searchTerm: string): SupportResource[] {
     const searchLower = searchTerm.toLowerCase();
     const searchTerms = searchLower.split(' ').filter(term => term.length > 2);
     
@@ -1176,7 +1145,7 @@ class StudentSupportService {
   }
 
   // Get support resources
-  static getSupportResources(category?: string): SupportResource[] {
+  getSupportResources(category?: string): SupportResource[] {
     const resources = localStorage.getItem(this.RESOURCES_KEY);
     let allResources: SupportResource[] = resources ? JSON.parse(resources) : this.initializeSampleResources();
 
@@ -1269,7 +1238,7 @@ class StudentSupportService {
   }
 
   // Rate support resource
-  static rateResource(resourceId: string, rating: number): void {
+  rateResource(resourceId: string, rating: number): void {
     const resources = this.getSupportResources();
     const resourceIndex = resources.findIndex(r => r.id === resourceId);
     
@@ -1285,7 +1254,7 @@ class StudentSupportService {
   }
 
   // Get support analytics
-  static getSupportAnalytics(): any {
+  getSupportAnalytics(): any {
     const requests = this.getSupportRequests();
     const allProgress = this.getAllStudentProgress();
 
@@ -1302,7 +1271,7 @@ class StudentSupportService {
   }
 
   // Calculate average resolution time
-  private static calculateAverageResolutionTime(requests: SupportRequest[]): number {
+  private calculateAverageResolutionTime(requests: SupportRequest[]): number {
     const resolvedRequests = requests.filter(r => r.status === 'resolved');
     
     if (resolvedRequests.length === 0) return 0;
@@ -1317,7 +1286,7 @@ class StudentSupportService {
   }
 
   // Get category breakdown
-  private static getCategoryBreakdown(requests: SupportRequest[]): Record<string, number> {
+  private getCategoryBreakdown(requests: SupportRequest[]): Record<string, number> {
     const breakdown: Record<string, number> = {};
     
     requests.forEach(request => {
@@ -1328,7 +1297,7 @@ class StudentSupportService {
   }
 
   // Generate support report
-  static generateSupportReport(timeFrame: 'daily' | 'weekly' | 'monthly'): any {
+  generateSupportReport(timeFrame: 'daily' | 'weekly' | 'monthly'): any {
     const analytics = this.getSupportAnalytics();
     const requests = this.getSupportRequests();
     const resources = this.getSupportResources();
@@ -1365,7 +1334,7 @@ class StudentSupportService {
   }
 
   // Get top issues
-  private static getTopIssues(requests: SupportRequest[]): Array<{title: string, count: number}> {
+  private getTopIssues(requests: SupportRequest[]): Array<{title: string, count: number}> {
     const issueCounts: Record<string, number> = {};
     
     requests.forEach(request => {
@@ -1379,7 +1348,7 @@ class StudentSupportService {
   }
 
   // Calculate student satisfaction
-  private static calculateStudentSatisfaction(resources: SupportResource[]): number {
+  private calculateStudentSatisfaction(resources: SupportResource[]): number {
     if (resources.length === 0) return 0;
 
     const totalRating = resources.reduce((sum, resource) => sum + (resource.rating || 0), 0);
@@ -1387,7 +1356,7 @@ class StudentSupportService {
   }
 
   // Generate system recommendations
-  private static generateSystemRecommendations(analytics: any): string[] {
+  private generateSystemRecommendations(analytics: any): string[] {
     const recommendations: string[] = [];
 
     if (analytics.escalatedRequests > analytics.totalRequests * 0.2) {
@@ -1406,29 +1375,19 @@ class StudentSupportService {
   }
 }
 
-// Initialize enhanced support system with real-time monitoring
-import RealTimeMonitoringService from './realTimeMonitoringService';
-import AutomatedInterventionEngine from './automatedInterventionEngine';
-
 // Auto-initialize when module loads with error handling
 if (typeof window !== 'undefined') {
   try {
-    StudentSupportService.initialize();
+    const service = StudentSupportService.getInstance();
+    service.initialize();
     
-    // Start real-time monitoring
-    const monitoringService = RealTimeMonitoringService.getInstance();
-    monitoringService.startMonitoring();
-    
-    // Initialize intervention engine
-    const interventionEngine = AutomatedInterventionEngine.getInstance();
-    interventionEngine.initialize();
-    
-    console.log('🚀 Enhanced Student Support System initialized with real-time monitoring and automated interventions');
+    console.log('🚀 Student Support System initialized successfully');
   } catch (error) {
     console.error('Failed to initialize Student Support System:', error);
     // Fallback initialization
     try {
-      StudentSupportService.initialize();
+      const service = StudentSupportService.getInstance();
+      service.initialize();
       console.log('⚠️ Student Support System initialized in fallback mode');
     } catch (fallbackError) {
       console.error('Critical: Student Support System failed to initialize:', fallbackError);

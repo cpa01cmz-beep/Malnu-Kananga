@@ -16,7 +16,8 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
 
   const loadProgressData = () => {
     setLoading(true);
-    const studentProgress = StudentSupportService.getStudentProgress(studentId);
+    const supportService = StudentSupportService.getInstance();
+    const studentProgress = supportService.getStudentProgress(studentId);
     
     if (studentProgress) {
       setProgress(studentProgress);
@@ -40,7 +41,7 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
         lastUpdated: new Date().toISOString()
       };
       
-      StudentSupportService.updateStudentProgress(studentId, initialProgress);
+      supportService.updateStudentProgress(studentId, initialProgress);
       setProgress(initialProgress);
     }
     
