@@ -6,7 +6,7 @@ This guide provides comprehensive security testing procedures for the MA Malnu K
 
 ---
 
-**Security Testing Guide Version: 1.0.0**  
+**Security Testing Guide Version: 1.3.1**  
 **Last Updated: November 25, 2025**  
 **Testing Framework: Jest + Custom Security Tests**
 
@@ -649,7 +649,7 @@ const weeklySecuritySummary = {
 
 ---
 
-**Guide Version: 1.0.0**  
+**Guide Version: 1.3.1**  
 **Last Updated: November 25, 2025**  
 **Next Review: February 25, 2026**  
 **Security Team: MA Malnu Kananga**
