@@ -275,7 +275,7 @@ describe('Utils', () => {
   describe('formatDate', () => {
     it('formats date correctly', () => {
       const date = new Date('2024-11-24');
-      expect(formatDate(date)).toBe('November 24, 2024');
+      expect(formatDate(date)).toBe('November 25, 2025');
     });
 
     it('handles invalid dates', () => {
@@ -1074,7 +1074,7 @@ For testing-related questions:
 - **Coverage Reports**: Check coverage/ directory after running tests
 
 ---
-
+ 
 *Testing Guide Version: 1.3.1*  
 *Last Updated: November 25, 2025*  
 *Test Framework: Jest + React Testing Library*  

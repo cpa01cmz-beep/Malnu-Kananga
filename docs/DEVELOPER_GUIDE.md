@@ -1198,6 +1198,6 @@ npm test -- --verbose
 *This developer guide is maintained by the MA Malnu Kananga development team. For questions or contributions, please reach out to the development team.*
 
 ---
-
-*Developer Guide Version: 1.3.1*  
+ 
+*Developer Guide Version: 1.4.0*  
 *Last Updated: November 25, 2025*
