@@ -68,24 +68,18 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     // Initialize student progress tracking
     const supportService = StudentSupportService.getInstance();
     supportService.updateStudentProgress(currentStudent.id, {
-      academicMetrics: {
-        gpa: gpa,
-        gradeTrend: 'stable' as const,
-        attendanceRate: attendanceStats.percentage,
-        assignmentCompletion: 85, // Sample data
-        gradeTrend: 'stable' as const
-      },
-      engagementMetrics: {
-        loginFrequency: 5, // Sample data
-        resourceAccess: 12,
-        supportRequests: 0,
-        participationScore: 85
-      },
-      engagementMetrics: {
-        loginFrequency: 5, // Sample data
-        resourceAccess: 12,
-        participationScore: 85
-      }
+        academicMetrics: {
+          gpa: gpa,
+          gradeTrend: 'stable' as const,
+          attendanceRate: attendanceStats.percentage,
+          assignmentCompletion: 85 // Sample data
+        },
+        engagementMetrics: {
+          loginFrequency: 5, // Sample data
+          resourceAccess: 12,
+          supportRequests: 0,
+          participationScore: 85
+        }
     });
   }, [gpa, attendanceStats.percentage, studentGrades, currentStudent.id]);
 

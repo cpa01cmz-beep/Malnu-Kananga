@@ -153,19 +153,19 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <img
-                  src={currentStudent?.profileImage || '/default-avatar.png'}
-                  alt={currentStudent?.name || 'Student'}
-                  className="h-12 w-12 rounded-full object-cover"
-                />
-                <div>
-                  <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {currentStudent?.name}
-                  </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {currentStudent?.class} • {currentStudent?.academicYear}
-                  </p>
-                </div>
+                 <img
+                   src={studentProfile?.profileImage || '/default-avatar.png'}
+                   alt={studentProfile?.name || 'Student'}
+                   className="h-12 w-12 rounded-full object-cover"
+                 />
+                 <div>
+                   <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                     {studentProfile?.name}
+                   </h1>
+                   <p className="text-sm text-gray-500 dark:text-gray-400">
+                     {studentProfile?.class} • {studentProfile?.academicYear}
+                   </p>
+                 </div>
               </div>
               <NotificationBell />
             </div>
@@ -214,7 +214,7 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             {/* Welcome Card */}
             <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
               <h2 className="text-2xl font-bold mb-2">
-                Selamat datang kembali, {currentStudent?.name?.split(' ')[0]}! 👋
+                 Selamat datang kembali, {studentProfile?.name?.split(' ')[0]}! 👋
               </h2>
               <p className="text-green-100">
                 Hari ini adalah {today}, {formatDate(new Date().toISOString())}
