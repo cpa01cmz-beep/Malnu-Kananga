@@ -8,7 +8,7 @@ interface SupportDashboardProps {
 }
 
 const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role: _role = 'support_staff', studentId: _studentId }) => {
-  const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated: string; activeUsers: number; aiAnalytics?: any; aiReport?: any; recommendations?: string[]; metrics?: any; activeAlerts?: number } | null>(null);
+const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated: string; activeUsers: number; aiAnalytics?: any; aiReport?: any; recommendations?: string[]; metrics?: any; activeAlerts?: number } | null>(null);
   const [alerts, setAlerts] = useState<MonitoringAlert[]>([]);
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
   const [selectedTimeFrame, setSelectedTimeFrame] = useState<'hourly' | 'daily' | 'weekly'>('daily');

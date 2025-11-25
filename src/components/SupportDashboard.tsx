@@ -11,8 +11,11 @@ interface SupportDashboardProps {
 
 const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'monitoring' | 'interventions' | 'analytics'>('overview');
-
-  const [systemHealth, setSystemHealth] = useState<{ status: string; uptime: number | string; lastCheck: string; memory?: string } | null>(null);
+const [realTimeStats, setRealTimeStats] = useState<any>(null);
+const [interventionStats, setInterventionStats] = useState<any>(null);
+const [atRiskStudents, setAtRiskStudents] = useState<any[]>([]);
+const [activeInterventions, setActiveInterventions] = useState<any[]>([]);
+const [systemHealth, setSystemHealth] = useState<{ status: string; uptime: number | string; lastCheck: string; memory?: string } | null>(null);
 
   useEffect(() => {
     loadDashboardData();

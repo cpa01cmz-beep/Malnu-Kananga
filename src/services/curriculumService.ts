@@ -504,21 +504,21 @@ class CurriculumService {
         }
       ],
       assessments: [
-         {
-           id: 'fis_ass_001',
-           title: 'Quiz Gerak Lurus',
-           type: 'quiz',
-           description: 'Evaluasi pemahaman konsep gerak lurus',
-           subjectId: 'SUBJ002',
-           semester: 1,
-           objectives: ['fis_obj_001'],
-           maxScore: 100,
-           timeLimit: 45,
-           attempts: 2,
-           passingScore: 70,
-           isGraded: true,
-           instructions: 'Jawab semua pertanyaan dengan benar'
-         }
+        {
+          id: 'fis_ass_001',
+          title: 'Quiz Gerak Lurus',
+          type: 'quiz',
+          description: 'Evaluasi pemahaman konsep gerak lurus',
+          subjectId: 'SUBJ002',
+          semester: 1,
+          objectives: ['fis_obj_001'],
+          maxScore: 100,
+          timeLimit: 45,
+          attempts: 2,
+          passingScore: 70,
+          isGraded: true,
+          instructions: 'Jawab semua pertanyaan dengan teliti'
+        }
       ],
       coreCompetencies: [
         {
