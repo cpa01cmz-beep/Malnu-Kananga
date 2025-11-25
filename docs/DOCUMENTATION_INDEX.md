@@ -6,10 +6,10 @@ This index provides organized access to all MA Malnu Kananga project documentati
 
 ---
 
-**Documentation Index Version: 1.0.0**  
-**Last Updated: November 24, 2025**  
-**Total Documents**: 25 files  
-**Audit Status**: ✅ Complete (November 24, 2025)
+**Documentation Index Version: 1.1.0**  
+**Last Updated: November 25, 2025**  
+**Total Documents**: 28 files  
+**Audit Status**: ✅ Complete (November 25, 2025) - Aligned with AGENTS.md
 
 ---
 
@@ -70,6 +70,24 @@ This index provides organized access to all MA Malnu Kananga project documentati
   - Table definitions and relationships
   - Data models and entities
   - Migration procedures
+
+- **[RAG AI System](./RAG_AI_SYSTEM.md)** - AI system architecture and implementation
+  - Vector database and embeddings
+  - Retrieval-augmented generation flow
+  - Indonesian language AI responses
+  - Knowledge base management
+
+- **[Cloudflare Worker Backend](./CLOUDFLARE_WORKER_BACKEND.md)** - Serverless backend documentation
+  - Worker architecture and deployment
+  - Authentication and security
+  - API endpoints and services
+  - Performance optimization
+
+- **[Dual File Structure](./DUAL_FILE_STRUCTURE.md)** - Project structure guide
+  - src/ vs root directory usage
+  - Development workflow
+  - Build process explanation
+  - Import patterns and best practices
 
 ### API & Integration
 - **[API Documentation](./API_DOCUMENTATION.md)** - Complete API reference
@@ -220,8 +238,8 @@ This index provides organized access to all MA Malnu Kananga project documentati
 
 ### By Purpose
 - **🚀 Getting Started**: [Quick Start](./QUICK_START_GUIDE.md), [Installation](./INSTALLATION_GUIDE.md)
-- **🏗️ Architecture**: [System Architecture](./SYSTEM_ARCHITECTURE.md), [Database Schema](./DATABASE_SCHEMA.md)
-- **🔧 Development**: [Developer Guide](./DEVELOPER_GUIDE.md), [Testing](./TESTING_GUIDE.md)
+- **🏗️ Architecture**: [System Architecture](./SYSTEM_ARCHITECTURE.md), [Database Schema](./DATABASE_SCHEMA.md), [RAG AI System](./RAG_AI_SYSTEM.md), [Cloudflare Worker Backend](./CLOUDFLARE_WORKER_BACKEND.md)
+- **🔧 Development**: [Developer Guide](./DEVELOPER_GUIDE.md), [Dual File Structure](./DUAL_FILE_STRUCTURE.md), [Testing](./TESTING_GUIDE.md)
 - **🚀 Deployment**: [Deployment Guide](./DEPLOYMENT_GUIDE.md), [Environment Setup](./ENVIRONMENT_SETUP.md)
 - **🔒 Security**: [Security Guide](./SECURITY_GUIDE.md), [Security Implementation](./SECURITY_IMPLEMENTATION_GUIDE.md)
 - **📊 Monitoring**: [Monitoring Guide](./MONITORING_GUIDE.md), [Performance](./PERFORMANCE_GUIDE.md)
@@ -229,8 +247,8 @@ This index provides organized access to all MA Malnu Kananga project documentati
 
 ### By Technical Level
 - **🌱 Beginner**: [Quick Start](./QUICK_START_GUIDE.md), User Guides
-- **🚀 Intermediate**: [Installation](./INSTALLATION_GUIDE.md), [API Documentation](./API_DOCUMENTATION.md)
-- **🔧 Advanced**: [System Architecture](./SYSTEM_ARCHITECTURE.md), [Security Implementation](./SECURITY_IMPLEMENTATION_GUIDE.md)
+- **🚀 Intermediate**: [Installation](./INSTALLATION_GUIDE.md), [API Documentation](./API_DOCUMENTATION.md), [Dual File Structure](./DUAL_FILE_STRUCTURE.md)
+- **🔧 Advanced**: [System Architecture](./SYSTEM_ARCHITECTURE.md), [RAG AI System](./RAG_AI_SYSTEM.md), [Cloudflare Worker Backend](./CLOUDFLARE_WORKER_BACKEND.md), [Security Implementation](./SECURITY_IMPLEMENTATION_GUIDE.md)
 - **👨‍💻 Expert**: [Developer Guide](./DEVELOPER_GUIDE.md), [Implementation Analysis](./IMPLEMENTATION_GAP_ANALYSIS.md)
 
 ---
