@@ -3,6 +3,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { StudentSupportService, SupportRequest, SupportResource, StudentProgress } from '../services/studentSupportService';
+
+// Get service instance
+const studentSupportService = StudentSupportService.getInstance();
 import RealTimeMonitoringService from '../services/realTimeMonitoringService';
 
 interface StudentSupportProps {
@@ -49,17 +52,15 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
 
   const loadSupportData = () => {
     // Load student's support requests
-    const requests = StudentSupportService.getSupportRequests();
+    const requests = studentSupportService.getSupportRequests();
     setSupportRequests(requests.filter(req => req.studentId === studentId));
 
     // Load available resources
-    const allResourcesPromise = StudentSupportService.getRelevantResources('');
-    allResourcesPromise.then(allResources => {
-      setResources(allResources);
-    });
+    const allResources = studentSupportService.getRelevantResources('');
+    setResources(allResources);
 
     // Load student progress
-    const progress = StudentSupportService.getStudentProgress(studentId);
+    const progress = studentSupportService.getStudentProgress(studentId);
     setStudentProgress(progress || null);
   };
 
@@ -69,7 +70,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
       return;
     }
 
-    const request = StudentSupportService.createSupportRequest(
+    const request = studentSupportService.createSupportRequest(
       studentId,
       newRequest.type,
       newRequest.category || 'umum',
