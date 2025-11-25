@@ -1,7 +1,7 @@
 // API Services Index untuk MA Malnu Kananga
 // Centralized export untuk semua API services
 
-export { default as BaseApiService, baseApiService } from './baseApiService';
+export { baseApiService } from './baseApiService';
 export { default as StudentApiService, studentApiService } from './studentApiService';
 export { default as ContentApiService, contentApiService } from './contentApiService';
 export { FeaturedProgramsApiService as FeaturedProgramsService, FeaturedProgramsApiService as featuredProgramsService } from './featuredProgramsService';

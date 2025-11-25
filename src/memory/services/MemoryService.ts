@@ -143,7 +143,7 @@ export class MemoryService implements MemoryServiceInterface {
   /**
    * Perform cleanup operations
    */
-  async cleanup(): Promise<number> {
+  async cleanup(): Promise<void> {
     const allMemories = await this.storageAdapter.getAll();
     const maxMemories = this.config.maxMemories || 1000;
 
@@ -170,7 +170,8 @@ export class MemoryService implements MemoryServiceInterface {
       await this.storageAdapter.delete(memory.id);
     }
 
-    return memoriesToDelete.length;
+    // Return void to match interface
+    return;
   }
 
   /**

@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import React from 'react';
 
 interface TouchFeedbackOptions {
   hapticFeedback?: boolean;

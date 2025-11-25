@@ -57,12 +57,14 @@ export class StudentService {
   async update(id: string, student: Partial<Student>): Promise<ApiResponse<Student>> {
     return baseApiService.put<Student>(`/${this.baseUrl}/${id}`, student);
   }
+  }
 
   async delete(id: string): Promise<ApiResponse<void>> {
-    return this.withRetry(() => this.delete<void>(`/${id}`));
+    return baseApiService.delete<void>(`/${this.baseUrl}/${id}`);
   }
 
   // Get student grades
+<<<<<<< HEAD
   async getGrades(studentId: string): Promise<ApiResponse<Grade[]>> {
     return baseApiService.get<Grade[]>(`/${this.baseUrl}/${studentId}/grades`);
   }
@@ -82,8 +84,10 @@ export class StudentService {
   }
 
   // Get students by class
+  // Get students by class
   async getByClass(classId: string): Promise<ApiResponse<Student[]>> {
     return baseApiService.get<Student[]>(`/${this.baseUrl}?class=${classId}`);
+  }
   }
 }
 
@@ -242,26 +246,26 @@ export class StudentApiService {
   }
 
   // Student operations
-  static async getAll(): Promise<Student[]> {
+  static async getAll(): Promise<any[]> {
     if (isDevelopment) {
       return LocalStudentService.getStudents();
     } else {
-      const response = await this.getService().getAll();
+      const response = await new StudentService().getAll();
       return response.success && response.data ? response.data : [];
     }
   }
 
-  static async getById(id: string): Promise<Student | null> {
+  static async getById(id: string): Promise<any | null> {
     if (isDevelopment) {
       const students = await this.getAll();
       return students.find((s: any) => s.id === id) || null;
     } else {
-      const response = await this.getService().getById(id);
+      const response = await new StudentService().getById(id);
       return response.success && response.data ? response.data : null;
     }
   }
 
-  static async create(student: Omit<Student, 'id'>): Promise<Student | null> {
+  static async create(student: any): Promise<any | null> {
     if (isDevelopment) {
       const students = await this.getAll();
       const newStudent: Student = {
@@ -272,22 +276,22 @@ export class StudentApiService {
       LocalStudentService.saveStudents(students);
       return newStudent;
     } else {
-      const response = await this.getService().create(student);
+      const response = await new StudentService().create(student);
       return response.success && response.data ? response.data : null;
     }
   }
 
-  static async update(id: string, student: Partial<Student>): Promise<Student | null> {
+  static async update(id: string, student: any): Promise<any | null> {
     if (isDevelopment) {
-      const students = this.getAll();
-      const index = students.findIndex(s => s.id === id);
+      const students = await this.getAll();
+      const index = students.findIndex((s: any) => s.id === id);
       if (index === -1) return null;
 
       students[index] = { ...students[index], ...student };
-      this.getService().saveStudents(students);
+      LocalStudentService.saveStudents(students);
       return students[index];
     } else {
-      const response = await this.getService().update(id, student);
+      const response = await new StudentService().update(id, student);
       return response.success && response.data ? response.data : null;
     }
   }

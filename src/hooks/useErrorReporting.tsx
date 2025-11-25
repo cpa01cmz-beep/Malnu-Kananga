@@ -2,6 +2,7 @@
 // Memudahkan penggunaan error monitoring di seluruh aplikasi
 
 import { useCallback, useRef } from 'react';
+import React from 'react';
 import { getErrorLoggingService, ErrorReportingOptions } from '../services/errorLoggingService';
 
 export interface UseErrorReportingOptions extends ErrorReportingOptions {
@@ -117,7 +118,7 @@ export function useErrorReporting(options: UseErrorReportingOptions = {}): Error
       });
 
       if (originalUnhandledRejectionHandler) {
-        originalUnhandledRejectionHandler(event);
+        originalUnhandledRejectionHandler.call(window, event);
       }
     };
   }
