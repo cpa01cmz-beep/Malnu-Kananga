@@ -6,7 +6,7 @@ MA Malnu Kananga implements a sophisticated Retrieval-Augmented Generation (RAG)
 
 ---
 
-**RAG System Documentation Version: 1.0.0**  
+**RAG System Documentation Version: 1.0.1**  
 **Last Updated: November 25, 2025**  
 **Implementation Status: Production Ready**  
 **Documentation Audit: Completed - Aligned with AGENTS.md requirements**

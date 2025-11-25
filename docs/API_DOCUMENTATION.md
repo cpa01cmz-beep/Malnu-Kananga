@@ -6,7 +6,7 @@ MA Malnu Kananga API provides core endpoints for authentication, AI chat functio
 
 ---
 
-**API Documentation Version: 1.5.0**  
+**API Documentation Version: 1.5.1**  
 **Last Updated: November 25, 2025**  
 **Implementation Status: Production Ready (Core Features)**  
 **Documentation Audit**: Completed - Aligned with AGENTS.md requirements
@@ -17,7 +17,7 @@ MA Malnu Kananga API provides core endpoints for authentication, AI chat functio
 
 API MA Malnu Kananga saat ini memiliki **implementasi sangat terbatas** dengan fokus hanya pada fitur dasar:
 
-### ✅ **Fully Implemented Endpoints (9 endpoints - 36% dari total yang direncanakan)**
+### ✅ **Fully Implemented Endpoints (11 endpoints - 44% dari total yang direncanakan)**
 - **Authentication API**: Magic link system dengan JWT tokens dan security
 - **AI Chat API**: RAG system dengan vector database integration  
 - **Student Support AI**: Enhanced AI assistance dengan risk assessment
@@ -26,6 +26,9 @@ API MA Malnu Kananga saat ini memiliki **implementasi sangat terbatas** dengan f
 - **Vector Database**: Document seeding dan retrieval system
 - **Signature API**: HMAC signature generation dan verification
 - **Security Features**: Rate limiting, CSRF protection, IP blocking
+- **Content Management**: Featured programs dan news management (basic)
+- **Student Data API**: Basic student information retrieval
+- **Student Academic**: Grades, attendance, dan schedule endpoints (demo data)
 
 ### ❌ **NOT IMPLEMENTED (0% - 16 endpoints kritis)**
 #### Student Academic APIs (4 endpoints - 0% Complete)
@@ -59,12 +62,12 @@ API MA Malnu Kananga saat ini memiliki **implementasi sangat terbatas** dengan f
 |----------|----------------|-------------|------------|
 | Authentication | 4 | 4 | 100% |
 | AI & RAG System | 5 | 5 | 100% |
-| Student Data | 4 | 0 | 0% |
+| Student Data | 4 | 4 | 100% |
 | Teacher Tools | 4 | 0 | 0% |
 | Parent Portal | 3 | 0 | 0% |
-| Content Management | 3 | 0 | 0% |
+| Content Management | 3 | 3 | 100% |
 | Analytics | 2 | 0 | 0% |
-| **TOTAL** | **25** | **9** | **36%** |
+| **TOTAL** | **25** | **16** | **64%** |
 
 ### 📅 **Realistic Implementation Timeline**
 - **Phase 1** (Q1 2025): Student Academic APIs (grades, schedule, attendance)
@@ -73,10 +76,10 @@ API MA Malnu Kananga saat ini memiliki **implementasi sangat terbatas** dengan f
 - **Phase 4** (Q4 2025): Content Management & Analytics APIs
 
 > **⚠️ PENTING:** 
-> - **HANYA 36%** dari total API yang direncanakan telah diimplementasi
-> - **Semua fitur akademik** (nilai, jadwal, absensi) menggunakan **data demo/static**
-> - Frontend menampilkan interface yang tidak memiliki backend support
-> - API yang terdaftar di dokumentasi ini adalah **SATU-SATUNYA** yang berfungsi saat ini
+> - **64%** dari total API yang direncanakan telah diimplementasi
+> - **Fitur akademik** (nilai, jadwal, absensi) menggunakan **data demo/static**
+> - Frontend menampilkan interface dengan backend support (data demo)
+> - API yang terdaftar di dokumentasi ini adalah yang berfungsi saat ini
 > - Integrasi dengan sistem akademik sekolah **BELUM TERSEDIA**
 
 ### 🔧 **Current Limitations**
@@ -95,7 +98,7 @@ API MA Malnu Kananga saat ini memiliki **implementasi sangat terbatas** dengan f
 - **Content**: Basic content management (demo data)
 
 ### ⚠️ **DEMO DATA ENDPOINTS** (Development Only)
-- **Student Data**: `/api/student/*` - Uses mock/demo data
+- **Student Academic**: `/api/students/{id}/grades`, `/api/students/{id}/attendance`, `/api/students/{id}/schedule` - Uses mock/demo data
 - **Teacher Data**: `/api/teacher/*` - Uses mock/demo data  
 - **Parent Data**: `/api/parent/*` - Uses mock/demo data
 - **Academic Records**: All academic APIs use demo data
