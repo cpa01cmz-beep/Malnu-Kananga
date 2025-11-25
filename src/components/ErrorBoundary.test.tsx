@@ -167,7 +167,7 @@ it('seharusnya mereset state ketika tombol "Coba Lagi" diklik', () => {
   });
 
   it('seharusnya me-reload halaman ketika tombol "Muat Ulang Halaman" diklik', () => {
-    const reloadMock = jest.fn();
+    const _reloadMock = jest.fn();
     
     // Skip this test in JSDOM environment since location.reload is read-only
     // In real browser, this would work correctly
