@@ -33,9 +33,9 @@ export interface Student {
   id: string;
   name: string;
   email: string;
-  grade?: string;
+  grade: string;
+  nis: string;
   class?: string;
-  nis?: string;
 }
 
 // Grade data structure
@@ -44,7 +44,9 @@ export interface Grade {
   studentId: string;
   subject: string;
   score: number;
-  date: string;
+  date?: string;
+  semester: string;
+  academicYear: string;
 }
 
 // Schedule item data structure
@@ -54,6 +56,8 @@ export interface ScheduleItem {
   subject: string;
   time: string;
   day: string;
+  teacher: string;
+  room: string;
 }
 
 // Attendance record data structure
@@ -62,6 +66,7 @@ export interface AttendanceRecord {
   studentId: string;
   date: string;
   status: 'present' | 'absent' | 'late';
+  subject?: string;
 }
 
 // Academic stats data structure
@@ -71,77 +76,6 @@ export interface AcademicStats {
   subjects: string[];
 }
 
-// Student data types
-export interface StudentWithNis {
-  id: string;
-  name: string;
-  email: string;
-  grade: string;
-  nis: string;
-}
-
-export interface Grade {
-  id: string;
-  studentId: string;
-  subject: string;
-  score: number;
-  semester: string;
-  academicYear: string;
-}
-
-export interface ScheduleItem {
-  id: string;
-  studentId: string;
-  subject: string;
-  teacher: string;
-  day: string;
-  time: string;
-  room: string;
-}
-
-export interface AttendanceRecord {
-  id: string;
-  studentId: string;
-  date: string;
-  status: 'present' | 'absent' | 'late';
-  subject?: string;
-}
-
-// Student data types
-export interface StudentWithNis {
-  id: string;
-  name: string;
-  email: string;
-  grade: string;
-  nis: string;
-}
-
-export interface Grade {
-  id: string;
-  studentId: string;
-  subject: string;
-  score: number;
-  semester: string;
-  academicYear: string;
-}
-
-export interface ScheduleItem {
-  id: string;
-  studentId: string;
-  subject: string;
-  teacher: string;
-  day: string;
-  time: string;
-  room: string;
-}
-
-export interface AttendanceRecord {
-  id: string;
-  studentId: string;
-  date: string;
-  status: 'present' | 'absent' | 'late';
-  subject?: string;
-}
 
 // Student Progress types
 export interface StudentProgress {
