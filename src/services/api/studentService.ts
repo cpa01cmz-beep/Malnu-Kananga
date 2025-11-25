@@ -76,6 +76,7 @@ class LocalStudentService {
       name: 'Ahmad Fauzi Rahman',
       email: 'siswa@ma-malnukananga.sch.id',
       grade: 'XII',
+      nis: '2024001',
       class: 'XII IPA 1'
     }];
   }
@@ -92,18 +93,18 @@ class LocalStudentService {
         studentId: 'STU001',
         subject: 'Matematika',
         score: 85,
+        date: '2024-10-01',
         semester: 'Ganjil',
-        academicYear: '2024/2025',
-        date: '2024-10-01'
+        academicYear: '2024/2025'
       },
       {
         id: 'GRD002',
         studentId: 'STU001',
         subject: 'Fisika',
         score: 78,
+        date: '2024-10-02',
         semester: 'Ganjil',
-        academicYear: '2024/2025',
-        date: '2024-10-05'
+        academicYear: '2024/2025'
       }
     ];
   }
@@ -144,16 +145,18 @@ class LocalStudentService {
         teacher: 'Budi Santoso, S.Pd',
         room: 'Lab. Komputer',
         time: '07:00 - 08:30',
-        day: 'Senin'
+        day: 'Senin',
+        teacher: 'Budi Santoso, S.Pd',
+        room: 'Lab. Komputer'
       },
       {
         id: 'SCH002',
         studentId: 'STU001',
         subject: 'Fisika',
+        time: '08:45 - 10:15',
+        day: 'Senin',
         teacher: 'Dra. Siti Nurhaliza',
-        room: 'Lab. Fisika',
-        time: '08:30 - 10:00',
-        day: 'Senin'
+        room: 'Lab. Fisika'
       }
     ];
   }
