@@ -1,42 +1,40 @@
 // Featured Programs API Service
 // Menggantikan mock data featuredPrograms.ts
 
-import { BaseApiService, ApiResponse } from './baseApiService';
+import { baseApiService, type ApiResponse } from './baseApiService';
 import type { FeaturedProgram } from '../../types';
 
-export class FeaturedProgramsService extends BaseApiService {
-  constructor() {
-    super('featured-programs');
-  }
+export class FeaturedProgramsService {
+  private baseUrl = 'featured-programs';
 
   // Get all featured programs
   async getAll(): Promise<ApiResponse<FeaturedProgram[]>> {
-    return this.withRetry(() => this.get<FeaturedProgram[]>(''));
+    return baseApiService.get<FeaturedProgram[]>(`/${this.baseUrl}`);
   }
 
   // Get featured program by ID
   async getById(id: number): Promise<ApiResponse<FeaturedProgram>> {
-    return this.withRetry(() => this.get<FeaturedProgram>(`/${id}`));
+    return baseApiService.get<FeaturedProgram>(`/${this.baseUrl}/${id}`);
   }
 
   // Create new featured program
   async create(program: Omit<FeaturedProgram, 'id'>): Promise<ApiResponse<FeaturedProgram>> {
-    return this.withRetry(() => this.post<FeaturedProgram>('', program));
+    return baseApiService.post<FeaturedProgram>(`/${this.baseUrl}`, program);
   }
 
   // Update featured program
   async update(id: number, program: Partial<FeaturedProgram>): Promise<ApiResponse<FeaturedProgram>> {
-    return this.withRetry(() => this.put<FeaturedProgram>(`/${id}`, program));
+    return baseApiService.put<FeaturedProgram>(`/${this.baseUrl}/${id}`, program);
   }
 
   // Delete featured program
   async delete(id: number): Promise<ApiResponse<void>> {
-    return this.withRetry(() => this.delete<void>(`/${id}`));
+    return baseApiService.delete<void>(`/${this.baseUrl}/${id}`);
   }
 
   // Get active featured programs only
   async getActive(): Promise<ApiResponse<FeaturedProgram[]>> {
-    return this.withRetry(() => this.get<FeaturedProgram[]>('', { active: true }));
+    return baseApiService.get<FeaturedProgram[]>(`/${this.baseUrl}?active=true`);
   }
 }
 
@@ -76,6 +74,8 @@ class LocalFeaturedProgramsService {
 }
 
 // Main service yang memilih implementation berdasarkan environment
+const isDevelopment = (import.meta as any).env?.DEV || false;
+
 export class FeaturedProgramsApiService {
   private static service: FeaturedProgramsService | LocalFeaturedProgramsService;
 
@@ -98,8 +98,8 @@ export class FeaturedProgramsApiService {
 
   static async getById(id: number): Promise<FeaturedProgram | null> {
     if (isDevelopment) {
-      const programs = this.getAll();
-      return programs.find(p => p.id === id) || null;
+      const programs = await this.getAll();
+      return programs.find((p: any) => p.id === id) || null;
     } else {
       const response = await this.getService().getById(id);
       return response.success && response.data ? response.data : null;
@@ -108,13 +108,13 @@ export class FeaturedProgramsApiService {
 
   static async create(program: Omit<FeaturedProgram, 'id'>): Promise<FeaturedProgram | null> {
     if (isDevelopment) {
-      const programs = this.getAll();
+      const programs = await this.getAll();
       const newProgram: FeaturedProgram = {
         ...program,
         id: Date.now() // Simple ID generation
       };
       programs.push(newProgram);
-      this.getService().saveAll(programs);
+      LocalFeaturedProgramsService.saveAll(programs);
       return newProgram;
     } else {
       const response = await this.getService().create(program);
@@ -124,12 +124,12 @@ export class FeaturedProgramsApiService {
 
   static async update(id: number, program: Partial<FeaturedProgram>): Promise<FeaturedProgram | null> {
     if (isDevelopment) {
-      const programs = this.getAll();
-      const index = programs.findIndex(p => p.id === id);
+      const programs = await this.getAll();
+      const index = programs.findIndex((p: any) => p.id === id);
       if (index === -1) return null;
 
       programs[index] = { ...programs[index], ...program };
-      this.getService().saveAll(programs);
+      LocalFeaturedProgramsService.saveAll(programs);
       return programs[index];
     } else {
       const response = await this.getService().update(id, program);
@@ -139,11 +139,11 @@ export class FeaturedProgramsApiService {
 
   static async delete(id: number): Promise<boolean> {
     if (isDevelopment) {
-      const programs = this.getAll();
-      const filteredPrograms = programs.filter(p => p.id !== id);
+      const programs = await this.getAll();
+      const filteredPrograms = programs.filter((p: any) => p.id !== id);
       if (filteredPrograms.length === programs.length) return false;
 
-      this.getService().saveAll(filteredPrograms);
+      LocalFeaturedProgramsService.saveAll(filteredPrograms);
       return true;
     } else {
       const response = await this.getService().delete(id);
@@ -153,7 +153,7 @@ export class FeaturedProgramsApiService {
 
   static async getActive(): Promise<FeaturedProgram[]> {
     if (isDevelopment) {
-      return this.getAll(); // Dalam development, return semua programs
+      return await this.getAll(); // Dalam development, return semua programs
     } else {
       const response = await this.getService().getActive();
       return response.success && response.data ? response.data : [];
