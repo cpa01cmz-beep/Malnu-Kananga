@@ -29,32 +29,31 @@ export default defineConfig(({ command, mode }) => ({
             if (id.includes('uuid')) {
               return 'utils-vendor';
             }
-            if (id.includes('@supabase/supabase-js')) {
-              return 'db-vendor';
-            }
-            if (id.includes('@tanstack/react-query')) {
-              return 'query-vendor';
-            }
+             if (id.includes('@supabase/supabase-js')) {
+               return 'db-vendor';
+             }
+             if (id.includes('@tanstack/react-query')) {
+               return 'query-vendor';
+             }
             return 'vendor';
           }
           
-<<<<<<< HEAD
            // Application chunks
            if (id.includes('/src/components/')) {
              return 'components';
-          }
-          if (id.includes('/src/services/')) {
-            return 'services';
-          }
-          if (id.includes('/src/hooks/')) {
-            return 'hooks';
-          }
-          if (id.includes('/src/memory/')) {
-            return 'memory';
-          }
-        },
+           }
+           if (id.includes('/src/services/')) {
+             return 'services';
+           }
+           if (id.includes('/src/hooks/')) {
+             return 'hooks';
+           }
+           if (id.includes('/src/memory/')) {
+             return 'memory';
+           }
+         },
 
-        // Optimize asset naming
+         // Optimize asset naming
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name?.split('.') || [];
           const ext = info[info.length - 1];
@@ -66,8 +65,8 @@ export default defineConfig(({ command, mode }) => ({
           }
           return `assets/[name]-[hash].${ext}`;
         }
-       }
-     },
+      }
+    },
 
      // Chunk size warnings
      chunkSizeWarningLimit: 300,
@@ -84,6 +83,8 @@ export default defineConfig(({ command, mode }) => ({
     include: ['react', 'react-dom', '@google/genai'],
     exclude: ['@tanstack/react-query']
   },
+
+
 
   // Asset optimization
   assetsInclude: ['**/*.webp']
