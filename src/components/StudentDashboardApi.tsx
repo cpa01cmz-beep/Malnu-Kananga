@@ -11,6 +11,7 @@ import {
 import { AuthService } from '../services/authService';
 import { NotificationItem } from '../services/notificationService';
 import {
+  useCurrentStudent,
   useStudentGrades,
   useAttendanceRecords,
   useClassSchedule,
@@ -29,24 +30,12 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
   const [currentToast, setCurrentToast] = useState<NotificationItem | null>(null);
 
   // API hooks untuk real data
-    const {
-      data: studentProfile,
-      isLoading: profileLoading,
-      error: _profileError,
-      isSuccess: _profileSuccess
-    } = useAcademicStats();
-
-    // Use mock student data sebagai fallback jika API gagal
-    const fallbackStudent = {
-      id: 'STU001',
-      name: 'Ahmad Fauzi Rahman',
-      email: 'siswa@ma-malnukananga.sch.id',
-      class: 'XII IPA 1',
-      academicYear: '2024/2025',
-      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
-    };
-
-    const currentStudent = studentProfile || fallbackStudent;
+  const {
+    data: studentProfile,
+    isLoading: profileLoading,
+    error: _profileError,
+    isSuccess: _profileSuccess
+  } = useCurrentStudent();
 
   const {
     data: grades,
@@ -203,7 +192,7 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as 'overview' | 'grades' | 'assignments' | 'attendance' | 'announcements')}
+                onClick={() => setActiveTab(tab.id as 'overview' | 'grades' | 'schedule' | 'attendance' | 'announcements')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                   activeTab === tab.id
                     ? 'border-green-500 text-green-600 dark:text-green-400'
