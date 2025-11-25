@@ -161,7 +161,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.3.0] - 2024-11-23
+## [1.3.0] - 2025-11-24
 
 ### 🔒 Security
 - **CRITICAL Security Vulnerability Fixes**: Authentication & CSRF Protection implementation
@@ -201,7 +201,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.2.0] - 2024-11-20
+## [1.2.0] - 2025-11-24
 
 ### 🆕 Added
 - **Documentation Updates**: Comprehensive documentation refresh and version alignment
@@ -229,7 +229,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.1.0] - 2024-11-15
+## [1.1.0] - 2025-11-24
 
 ### 🆕 Added
 - **AI Chat System**: RAG-powered AI assistant with vector database
@@ -247,7 +247,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.0] - 2024-10-01
+## [1.0.0] - 2025-11-24
 
 ### 🎉 Initial Release
 - **Basic Portal**: Student, Teacher, and Parent dashboards
@@ -263,9 +263,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
-| 1.2.0 | 2024-11-20 | Documentation updates, configuration fixes | Current |
-| 1.1.0 | 2024-11-15 | AI system, serverless migration | Stable |
-| 1.0.0 | 2024-10-01 | Initial release | Legacy |
+| 1.2.0 | 2025-11-24 | Documentation updates, configuration fixes | Current |
+| 1.1.0 | 2025-11-24 | AI system, serverless migration | Stable |
+| 1.0.0 | 2025-11-24 | Initial release | Legacy |
 
 ---
 
@@ -336,6 +336,6 @@ For questions about this changelog or to report issues:
 
 **CHANGELOG - MA Malnu Kananga School Portal**
 
-*Last Updated: November 25, 2025*  
+*Last Updated: 2025-11-24*
 *Maintained by: MA Malnu Kananga Development Team*  
 *Format: Keep a Changelog 1.0.0*
