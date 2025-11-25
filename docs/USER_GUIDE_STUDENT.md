@@ -17,37 +17,51 @@ Portal siswa MA Malnu Kananga adalah platform digital untuk mengakses informasi 
 **Guide Status: Production Ready**  
 **Documentation Audit: Completed - All procedures verified**
 
-## ⚠️ Status Implementasi Saat Ini
+## ⚠️ **PENTING: Status Implementasi Saat Ini**
+
+### 🚨 **KRITIS: Harap Dibaca Sebelum Menggunakan**
+
+Portal siswa saat ini dalam **tahap pengembangan aktif** dengan keterbatasan fungsionalitas:
 
 ### 🎯 **Fitur yang Berfungsi Penuh (100%)**
 - ✅ **Login System**: Magic link authentication berfungsi sempurna
-- ✅ **AI Assistant**: Chatbot cerdas untuk pertanyaan umum
-- ✅ **PWA Features**: Install sebagai aplikasi mobile
-- ✅ **Responsive Design**: Optimal di semua perangkat
-- ✅ **Public Information**: Berita dan pengumuman sekolah
+- ✅ **AI Assistant**: Chatbot cerdas untuk pertanyaan umum tentang sekolah
+- ✅ **PWA Features**: Install sebagai aplikasi mobile di smartphone
+- ✅ **Responsive Design**: Optimal di semua perangkat (desktop, tablet, mobile)
+- ✅ **Website Publik**: Informasi umum sekolah dapat diakses
 
-### 📝 **Fitur Mode Demo (Data Simulasi)**
-Data akademik saat ini menggunakan **data demo** untuk pengembangan:
-- 📊 **Nilai & IPK**: Data contoh untuk simulasi (Backend: 0% complete)
-- 📅 **Jadwal Pelajaran**: Jadwal demo untuk testing (Backend: 0% complete)
-- 📋 **Daftar Tugas**: Contoh tugas untuk preview fitur (Backend: 0% complete)
-- 📈 **Statistik Kehadiran**: Data simulasi untuk development (Backend: 0% complete)
+### 📝 **Fitur dengan Data Demo (0% Real Data)**
+**PERINGATAN:** Data akademik berikut adalah **CONTOH/FIKTIF** dan tidak mencerminkan data aktual:
+- 📊 **Nilai & IPK**: Data simulasi untuk demonstrasi UI saja
+- 📅 **Jadwal Pelajaran**: Jadwal contoh, bukan jadwal sebenarnya
+- 📋 **Daftar Tugas**: Tugas fiktif untuk preview fitur
+- 📈 **Statistik Kehadiran**: Data acak untuk testing interface
+- 👥 **Daftar Guru**: Data contoh, bukan data guru sebenarnya
 
-### 🚧 **Sedang Dikembangkan (Priority Queue)**
-- 🔗 **Student Data APIs**: `/api/student/{id}/grades` (Priority: HIGH)
-- 🔗 **Student Data APIs**: `/api/student/{id}/schedule` (Priority: HIGH)
-- 🔗 **Student Data APIs**: `/api/student/{id}/attendance` (Priority: HIGH)
-- 📱 **Notifikasi Real-time**: Update nilai dan jadwal otomatis (Priority: MEDIUM)
-- 💬 **Messaging Guru**: Komunikasi langsung dengan pengajar (Priority: MEDIUM)
-- 📎 **Pengumpulan Tugas Digital**: Submission system online (Priority: LOW)
+### ❌ **Fitur yang BELUM TERSEDIA (0% Complete)**
+- 🔗 **Integrasi Database Siswa**: Tidak ada koneksi ke database akademik real
+- 📱 **Notifikasi Real-time**: Tidak ada update otomatis nilai/jadwal
+- 💬 **Messaging Guru**: Tidak ada sistem komunikasi dengan guru
+- 📎 **Pengumpulan Tugas Digital**: Tidak ada submission system
+- 📄 **Rapor Digital**: Tidak ada akses ke rapor aktual
+- 📚 **E-Library**: Tidak ada perpustakaan digital
 
-### 📅 **Timeline Implementasi**
-- **Q1 2025** (Jan-Mar): Student Data APIs implementation
-- **Q2 2025** (Apr-Jun): Real-time notifications & messaging
-- **Q3 2025** (Jul-Sep): Advanced features & analytics
-- **Q4 2025** (Oct-Dec): Mobile app & optimization
+### 📅 **Timeline Realistis Pengembangan**
+- **Phase 1** (Q1 2025): Integrasi database siswa dan sistem nilai
+- **Phase 2** (Q2 2025): Communication system dan notifikasi
+- **Phase 3** (Q3 2025): Advanced features dan e-learning
 
-> **💡 Informasi Penting**: Portal ini dalam tahap pengembangan aktif. Fitur akademik akan berfungsi penuh setelah implementasi backend selesai.
+> **⚠️ PENTING:** 
+> - Portal ini **BUKAN** sistem akademik resmi saat ini
+> - Gunakan hanya untuk eksplorasi dan feedback
+> - Data akademik resmi tetap melalui sistem sekolah yang ada
+> - Informasi nilai dan jadwal resmi melalui buku penghubung atau admin sekolah
+
+### 🎯 **Cara Menggunakan Portal Saat Ini**
+1. **Eksplorasi Fitur**: Coba AI assistant untuk informasi umum
+2. **Install PWA**: Install sebagai aplikasi di smartphone
+3. **Feedback**: Berikan masukan untuk pengembangan
+4. **Monitoring**: Pantau perkembangan fitur di update berikutnya
 
 ---
 

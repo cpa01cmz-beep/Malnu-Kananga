@@ -11,35 +11,61 @@ Portal orang tua MA Malnu Kananga adalah platform digital untuk memantau perkemb
 **Guide Status: Production Ready**  
 **Documentation Audit: Completed - Feature status synchronized with implementation**
 
-## ⚠️ Status Implementasi Saat Ini
+## ⚠️ **PENTING: Status Implementasi Saat Ini**
 
-### 🎯 **Fitur yang Berfungsi Penuh**
+### 🚨 **KRITIS: Harap Dibaca Sebelum Menggunakan**
+
+Portal orang tua saat ini dalam **tahap pengembangan awal** dengan keterbatasan fungsionalitas sangat signifikan:
+
+### 🎯 **Fitur yang Berfungsi Penuh (100%)**
 - ✅ **Login System**: Magic link authentication berfungsi sempurna
-- ✅ **AI Assistant**: Chatbot cerdas untuk informasi sekolah
-- ✅ **Dashboard Interface**: Tampilan orang tua yang user-friendly
+- ✅ **AI Assistant**: Chatbot cerdas untuk informasi umum sekolah
+- ✅ **Dashboard Interface**: Tampilan portal orang tua yang modern
 - ✅ **PWA Features**: Install sebagai aplikasi mobile
-- ✅ **Multi-Child View**: Monitoring untuk lebih dari satu anak
+- ✅ **Website Publik**: Akses informasi umum sekolah
 
-### 📝 **Fitur Mode Development**
-Data anak saat ini menggunakan **data demo** untuk pengembangan:
-- 📊 **Nilai Akademik**: Data contoh untuk simulasi monitoring
-- 📅 **Jadwal & Kehadiran**: Data demo untuk preview fitur
-- 📈 **Progress Tracking**: Statistik perkembangan contoh
+### 📝 **Fitur dengan Data Demo (0% Real Data)**
+**PERINGATAN:** Data anak berikut adalah **CONTOH/FIKTIF** dan tidak mencerminkan data aktual:
+- 📊 **Nilai Akademik**: Nilai fiktif untuk demonstrasi UI saja
+- 📅 **Jadwal & Kehadiran**: Data contoh, bukan data sebenarnya
+- 📈 **Progress Tracking**: Statistik acak untuk testing interface
 - 🏆 **Pencapaian**: Badge dan reward system demo
+- 👥 **Info Guru**: Data guru contoh, bukan guru sebenarnya
+- 📚 **Aktivitas Sekolah**: Kegiatan fiktif untuk preview
 
-### 🚧 **Sedang Dikembangkan**
-- 💬 **Messaging Guru**: Komunikasi langsung dengan pengajar
-- 📱 **Notifikasi Real-time**: Update nilai dan kehadiran otomatis
-- 📋 **Laporan Bulanan**: Comprehensive progress reports
-- 🎯 **Learning Recommendations**: Personalized suggestions
-- 📅 **Calendar Integration**: Sync dengan family calendar
+### ❌ **Fitur Orang Tua yang BELUM TERSEDIA SAMA SEKALI (0% Complete)**
+- 💬 **Messaging Guru**: Tidak ada komunikasi langsung dengan guru
+- 📱 **Notifikasi Real-time**: Tidak ada update otomatis nilai/kehadiran
+- 📋 **Laporan Bulanan**: Tidak ada progress reports
+- 🎯 **Learning Recommendations**: Tidak ada saran pembelajaran
+- 📅 **Calendar Integration**: Tidak ada sinkronisasi kalender
+- 📊 **Real-time Monitoring**: Tidak ada monitoring live
+- 📧 **Pengumuman Kelas**: Tidak ada sistem pengumuman
+- 📄 **Rapor Digital**: Tidak ada akses rapor aktual
+- 🎥 **Galeri Kegiatan**: Tidak ada foto/video kegiatan
+- 💰 **Payment Info**: Tidak ada informasi pembayaran
 
-### 📅 **Timeline Pengembangan**
-- **Phase 1** (Saat Ini): Core dashboard dan AI assistant
-- **Phase 2** (1-2 bulan): Real-time academic monitoring
-- **Phase 3** (3-4 bulan): Advanced communication dan analytics
+### 📅 **Timeline Realistis Pengembangan Orang Tua**
+- **Phase 1** (Q1 2025): Database siswa dan monitoring nilai dasar
+- **Phase 2** (Q2 2025): Communication system dan notifikasi
+- **Phase 3** (Q3 2025): Advanced analytics dan laporan
+- **Phase 4** (Q4 2025): Full integration dengan sistem akademik
 
-> **Catatan**: Semua fitur yang ditampilkan dalam panduan ini adalah target akhir dari sistem. Beberapa fitur mungkin masih dalam tahap pengembangan.
+> **⚠️ PENTING:** 
+> - Portal orang tua **BUKAN** sistem monitoring resmi saat ini
+> - **TIDAK BISA** digunakan untuk monitoring akademik anak yang real
+> - Data yang ditampilkan adalah **CONTOH** dan tidak akurat
+> - Gunakan hanya untuk eksplorasi interface dan feedback development
+> - Informasi akademik resmi anak melalui buku penghubung atau admin sekolah
+> - Komunikasi dengan guru tetap melalui saluran resmi sekolah
+
+### 🎯 **Cara Menggunakan Portal Orang Tua Saat Ini**
+1. **Eksplorasi Interface**: Lihat tata letak dan navigasi portal
+2. **Test AI Assistant**: Tanyakan informasi umum tentang sekolah
+3. **Install PWA**: Install sebagai aplikasi di smartphone
+4. **Preview Features**: Lihat konsep monitoring yang akan datang
+5. **Feedback Development**: Berikan masukan untuk perbaikan portal
+6. **Stay Updated**: Pantau pengembangan fitur monitoring di update berikutnya
 
 ---
 

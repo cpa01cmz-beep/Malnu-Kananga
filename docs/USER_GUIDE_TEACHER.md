@@ -11,34 +11,57 @@ Portal guru MA Malnu Kananga adalah platform digital untuk mengelola pembelajara
 **Guide Status: Production Ready**  
 **Documentation Audit: Completed - Feature implementation status updated**
 
-## ⚠️ Status Implementasi Saat Ini
+## ⚠️ **PENTING: Status Implementasi Saat Ini**
 
-### 🎯 **Fitur yang Berfungsi Penuh**
+### 🚨 **KRITIS: Harap Dibaca Sebelum Menggunakan**
+
+Portal guru saat ini dalam **tahap pengembangan awal** dengan keterbatasan fungsionalitas sangat signifikan:
+
+### 🎯 **Fitur yang Berfungsi Penuh (100%)**
 - ✅ **Login System**: Magic link authentication berfungsi sempurna
-- ✅ **AI Assistant**: Chatbot cerdas untuk bantuan mengajar
-- ✅ **Dashboard Interface**: Tampilan guru yang modern dan responsif
+- ✅ **AI Assistant**: Chatbot cerdas untuk informasi umum sekolah
+- ✅ **Dashboard Interface**: Tampilan portal guru yang modern
 - ✅ **PWA Features**: Install sebagai aplikasi mobile
+- ✅ **Website Publik**: Akses informasi umum sekolah
 
-### 📝 **Fitur Mode Development**
-Data mengajar saat ini menggunakan **data demo** untuk pengembangan:
-- 👥 **Daftar Kelas**: Data contoh untuk simulasi
-- 📚 **Mata Pelajaran**: Daftar pelajaran demo untuk testing
-- 👨‍🎓 **Data Siswa**: Informasi siswa contoh untuk preview
-- 📊 **Statistik Mengajar**: Data simulasi untuk development
+### 📝 **Fitur dengan Data Demo (0% Real Data)**
+**PERINGATAN:** Data mengajar berikut adalah **CONTOH/FIKTIF** dan tidak mencerminkan data aktual:
+- 👥 **Daftar Kelas**: Kelas fiktif untuk demonstrasi UI
+- 📚 **Mata Pelajaran**: Pelajaran contoh, bukan jadwal sebenarnya
+- 👨‍🎓 **Data Siswa**: Siswa fiktif, bukan data siswa real
+- 📊 **Statistik Mengajar**: Data acak untuk testing interface
+- 📅 **Jadwal Mengajar**: Jadwal contoh, bukan jadwal resmi
 
-### 🚧 **Sedang Dikembangkan**
-- 📝 **Input Nilai Online**: Sistem penilaian digital terintegrasi
-- 📋 **Manajemen Absensi**: Digital attendance tracking
-- 💬 **Komunikasi Orang Tua**: Messaging system terintegrasi
-- 📎 **Distribusi Materi**: Upload dan share materi pembelajaran
-- 📈 **Analytics Akademik**: Performance tracking per siswa
+### ❌ **Fitur Guru yang BELUM TERSEDIA SAMA SEKALI (0% Complete)**
+- 📝 **Input Nilai Online**: Tidak ada sistem penilaian digital
+- 📋 **Manajemen Absensi**: Tidak ada attendance tracking
+- 💬 **Komunikasi Orang Tua**: Tidak ada messaging system
+- 📎 **Distribusi Materi**: Tidak ada upload materi pembelajaran
+- 📈 **Analytics Akademik**: Tidak ada performance tracking
+- 📄 **Rapor Digital**: Tidak ada pembuatan rapor online
+- 📚 **Bank Soal**: Tidak ada sistem manajemen soal
+- 🗓️ **Kalender Akademik**: Tidak ada manajemen jadwal
+- 📧 **Pengumuman Kelas**: Tidak ada sistem pengumuman
 
-### 📅 **Timeline Pengembangan**
-- **Phase 1** (Saat Ini): Core dashboard dan AI assistant
-- **Phase 2** (1-2 bulan): Grade input dan attendance system
-- **Phase 3** (3-4 bulan): Advanced analytics dan communication
+### 📅 **Timeline Realistis Pengembangan Guru**
+- **Phase 1** (Q1 2025): Database siswa dan sistem nilai dasar
+- **Phase 2** (Q2 2025): Attendance system dan komunikasi dasar
+- **Phase 3** (Q3 2025): Advanced analytics dan manajemen materi
+- **Phase 4** (Q4 2025): Full integration dengan sistem akademik
 
-> **Catatan**: Semua fitur yang ditampilkan dalam panduan ini adalah target akhir dari sistem. Beberapa fitur mungkin masih dalam tahap pengembangan.
+> **⚠️ PENTING:** 
+> - Portal guru **BUKAN** sistem mengajar resmi saat ini
+> - **TIDAK BISA** digunakan untuk input nilai atau absensi resmi
+> - Gunakan hanya untuk eksplorasi interface dan feedback
+> - Semua aktivitas mengajar resmi tetap melalui sistem sekolah yang ada
+> - Input nilai dan absensi resmi melalui buku nilai dan administrasi sekolah
+
+### 🎯 **Cara Menggunakan Portal Guru Saat Ini**
+1. **Eksplorasi Interface**: Lihat tata letak dan navigasi portal
+2. **Test AI Assistant**: Ajukan pertanyaan tentang sekolah
+3. **Install PWA**: Install sebagai aplikasi di smartphone
+4. **Feedback Development**: Berikan masukan untuk perbaikan
+5. **Monitor Progress**: Pantau pengembangan fitur guru di update berikutnya
 
 ---
 
