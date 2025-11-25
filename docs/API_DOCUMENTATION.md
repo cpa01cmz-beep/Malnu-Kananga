@@ -25,19 +25,32 @@ MA Malnu Kananga API provides core endpoints for authentication, AI chat functio
 - **Signature API**: HMAC signature generation and verification
 - **Security Features**: Rate limiting, CSRF protection, IP blocking
 
-#### 🚧 **Future Endpoints (Not Yet Implemented)**
-- **Student Academic APIs**: Grades, schedule, attendance records
-- **Teacher Management APIs**: Class management, grade input
+#### 🚧 **Critical Missing APIs (0% Complete - HIGH PRIORITY)**
+**Student Academic APIs** (Needed for Core Functionality):
+- `GET /api/student/{student_id}/grades` - Grade retrieval and GPA
+- `GET /api/student/{student_id}/schedule` - Class schedule and subjects
+- `GET /api/student/{student_id}/attendance` - Attendance records and statistics
+- `GET /api/student/{student_id}/assignments` - Assignment list and submissions
+
+**Teacher Management APIs** (Needed for Academic Operations):
+- `POST /api/teacher/grades` - Grade submission and updates
+- `POST /api/teacher/attendance` - Attendance tracking and reporting
+- `POST /api/teacher/assignments` - Assignment creation and management
+- `GET /api/teacher/classes` - Class lists and student information
+
+#### 📝 **Planned Future APIs (MEDIUM PRIORITY)**
 - **Parent Portal APIs**: Child monitoring, communication
 - **Content Management APIs**: Dynamic content and announcements
 - **Analytics APIs**: Performance metrics and reporting
+- **Notification APIs**: Real-time alerts and messaging
 
-#### 📝 **Current Architecture**
-1. **Phase 1** (Complete): Authentication, AI chat, and monitoring
-2. **Phase 2** (Planned): Student and teacher academic APIs
-3. **Phase 3** (Future): Advanced analytics and content management
+#### 📅 **Implementation Roadmap**
+1. **Phase 1** ✅ (Complete): Authentication, AI chat, and monitoring
+2. **Phase 2** 🚧 (Q1 2025): Student and teacher academic APIs
+3. **Phase 3** 📝 (Q2 2025): Parent portal and content management
+4. **Phase 4** 📝 (Q3 2025): Analytics and advanced features
 
-> **Note**: This documentation reflects ONLY currently implemented endpoints. Frontend uses static/demo data for features not yet implemented.
+> **🔴 CRITICAL NOTE**: Frontend currently displays **DEMO DATA** for all academic features because the core APIs above are not yet implemented. This creates a significant gap between documented functionality and actual system capabilities.
 
 ## 🏗️ Architecture
 
