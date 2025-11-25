@@ -86,11 +86,21 @@ Setelah login, Anda akan melihat:
 - **Pesan Belum Dibaca**: Pesan dari guru dan sekolah (🚧 *Dalam pengembangan*)
 - **AI Assistant**: Bantuan informasi tentang sekolah ✅ *Aktif*
 
-#### ⚠️ Status Fitur Saat Ini
-- **✅ Aktif**: Login system, AI Assistant, dashboard interface
-- **📝 Development**: Data akademik anak menggunakan data demo
-- **🚧 Coming Soon**: Real-time data integration dengan sistem sekolah
-- **📧 Planned**: Messaging system untuk komunikasi dengan guru
+#### ⚠️ Status Fitur Saat Ini (Update November 2024)
+- **✅ Aktif**: Login system (Magic Link), AI Assistant (RAG), dashboard interface
+- **📝 Demo Mode**: Data akademik anak menggunakan data contoh statis
+- **🚧 Dalam Pengembangan**: Real-time integration dengan sistem akademik sekolah
+- **📧 Rencana Q1 2025**: Messaging system untuk komunikasi dengan guru
+- **📋 Rencana Q2 2025**: Live notifications dan progress tracking
+
+#### 📌 Penting: Mode Demo Saat Ini
+**Data akademik anak yang ditampilkan adalah data contoh:**
+- Nilai dan IPK bersifat simulasi
+- Kehadiran dan jadwal adalah contoh format
+- Laporan perkembangan bersifat dummy
+- Data ekskul dan prestasi adalah contoh
+
+**Data real-time anak akan tersedia setelah implementasi sistem akademik integration**
 
 ---
 

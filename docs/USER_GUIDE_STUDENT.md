@@ -100,10 +100,20 @@ Setelah login, Anda akan melihat:
 - **Quick Actions**: Akses cepat ke fitur penting
 - **Recent Activities**: Aktivitas terakhir di portal
 
-#### ⚠️ Status Fitur Saat Ini
-- **✅ Aktif**: Login system, AI Assistant, PWA features
-- **📝 Development**: Data akademik (nilai, jadwal, kehadiran) menggunakan data demo
-- **🚧 Coming Soon**: Real-time data integration dengan sistem sekolah
+#### ⚠️ Status Fitur Saat Ini (Update November 2024)
+- **✅ Aktif**: Login system (Magic Link), AI Assistant (RAG), PWA features
+- **📝 Demo Mode**: Data akademik (nilai, jadwal, kehadiran) menggunakan data contoh statis
+- **🚧 Dalam Pengembangan**: Real-time integration dengan sistem akademik sekolah
+- **📋 Rencana Q1 2025**: Student data APIs implementation untuk live data
+
+#### 📌 Penting: Mode Demo Saat Ini
+**Data akademik yang ditampilkan adalah data contoh untuk tujuan demonstrasi:**
+- Nilai dan IPK bersifat simulasi
+- Jadwal pelajaran adalah contoh format
+- Data kehadiran bersifat dummy
+- Informasi ekskul dan prestasi adalah contoh
+
+**Data real-time akan tersedia setelah implementasi API integration di Q1 2025**
 
 #### 🆕 Fitur Baru Dashboard
 - **Real-time Updates**: Data diperbarui secara otomatis
