@@ -126,15 +126,14 @@ declare global {
   var StorageEvent: typeof StorageEvent;
   var MessageEvent: typeof MessageEvent;
   var BeforeUnloadEvent: typeof BeforeUnloadEvent;
-  var PageShowEvent: typeof PageShowEvent;
-  var PageHideEvent: typeof PageHideEvent;
-  var EventListener: typeof EventListener;
-  var HeadersInit: typeof HeadersInit;
-  var AbortSignal: typeof AbortSignal;
-  var URLSearchParams: typeof URLSearchParams;
-  var NodeJS: typeof NodeJS;
-  var React: typeof React;
-  var global: typeof global;
+    var PageShowEvent: typeof PageShowEvent;
+    var PageHideEvent: typeof PageHideEvent;
+    var global: typeof globalThis;
+    var NodeJS: typeof NodeJS;
+    var EventListener: typeof EventListener;
+    var AbortSignal: typeof AbortSignal;
+    var HeadersInit: typeof HeadersInit;
+    var React: typeof React;
 }
 
 export {};

@@ -23,7 +23,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, onLogout, onPortalClick: _onPortalClick }) => {
     const isScrolled = useScrollEffect();
     const { isMenuOpen, setIsMenuOpen } = useResponsiveMenu();
-    const { handleTouchFeedback: _handleTouchFeedback } = useTouchFeedback();
+    useTouchFeedback();
 
 
 
