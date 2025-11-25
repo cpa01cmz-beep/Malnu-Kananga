@@ -8,7 +8,7 @@ interface SupportDashboardProps {
 }
 
 const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role: _role = 'support_staff', studentId: _studentId }) => {
-  const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated: string; activeUsers: number } | null>(null);
+  const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated: string; activeUsers: number; aiAnalytics?: any; aiReport?: any; recommendations?: string[] } | null>(null);
   const [alerts, setAlerts] = useState<MonitoringAlert[]>([]);
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
   const [selectedTimeFrame, setSelectedTimeFrame] = useState<'hourly' | 'daily' | 'weekly'>('daily');
@@ -40,9 +40,12 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role: _role 
       );
 
       setCurrentStatus({
-        ...status,
-        aiAnalytics,
-        aiReport
+        status: status.status || 'unknown',
+        lastUpdated: new Date().toISOString(),
+        activeUsers: status.metrics?.activeStudents || 0,
+        aiAnalytics: aiAnalytics || {},
+        aiReport: aiReport || {},
+        recommendations: status.recommendations || aiReport?.recommendations || []
       });
       setAlerts(allAlerts.filter(a => !a.resolved));
       setMetrics(currentMetrics);
@@ -277,7 +280,7 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role: _role 
       </div>
 
       {/* Recommendations */}
-      {currentStatus.recommendations.length > 0 && (
+      {currentStatus?.recommendations && currentStatus.recommendations.length > 0 && (
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Recommendations</h2>
           <div className="space-y-2">

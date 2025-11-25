@@ -2,6 +2,8 @@
 
 import { ParentCommunicationService } from './parentCommunicationService';
 import AIEnhancedKnowledgeBase from './aiEnhancedKnowledgeBase';
+import RealTimeMonitoringService from './realTimeMonitoringService';
+import AutomatedInterventionEngine from './automatedInterventionEngine';
 
 export interface SupportRequest {
   id: string;
@@ -318,10 +320,12 @@ class StudentSupportService {
     localStorage.setItem(StudentSupportService.REQUESTS_KEY, JSON.stringify(requests));
   }
 
-  // Process request automatically with AI integration
+  // Process request automatically with enhanced AI integration
   async processRequestAutomatically(request: SupportRequest): Promise<void> {
     try {
-      // Get AI-powered response
+      console.log(`🤖 Processing support request ${request.id} with enhanced AI`);
+      
+      // Get AI-powered response with enhanced context
       const aiResponse = await this.getAIResponse(request);
       
       // Update request with AI response
@@ -329,25 +333,261 @@ class StudentSupportService {
       const requestIndex = requests.findIndex(r => r.id === request.id);
       
       if (requestIndex !== -1) {
-        requests[requestIndex].status = aiResponse.confidence > 0.7 ? 'in_progress' : 'pending';
+        // Enhanced status determination based on confidence and priority
+        let newStatus: SupportRequest['status'] = 'pending';
+        
+        if (aiResponse.confidence > 0.8) {
+          newStatus = 'in_progress';
+        } else if (request.priority === 'urgent' && aiResponse.confidence > 0.6) {
+          newStatus = 'in_progress';
+        } else if (aiResponse.confidence > 0.7) {
+          newStatus = 'in_progress';
+        }
+        
+        requests[requestIndex].status = newStatus;
         requests[requestIndex].updatedAt = new Date().toISOString();
         requests[requestIndex].resolution = aiResponse.response;
-        requests[requestIndex].tags = [...(requests[requestIndex].tags || []), aiResponse.category];
+        requests[requestIndex].tags = [...(requests[requestIndex].tags || []), aiResponse.category, 'ai_processed'];
+        
+        // Add AI metadata for tracking
+        (requests[requestIndex] as any).aiMetadata = {
+          confidence: aiResponse.confidence,
+          contextUsed: aiResponse.contextUsed,
+          processedAt: new Date().toISOString(),
+          processingVersion: '2.0'
+        };
+        
         this.saveSupportRequests(requests);
 
-        // Send automated response notification
-        this.sendAutomatedResponse(request, aiResponse.response);
+        // Send enhanced automated response notification
+        await this.sendEnhancedAutomatedResponse(request, aiResponse);
         
-        // If confidence is low, escalate to human
-        if (aiResponse.confidence < 0.7) {
-          this.escalateRequest(request);
+        // Enhanced escalation logic
+        const shouldEscalate = this.shouldEscalateRequest(request, aiResponse);
+        if (shouldEscalate) {
+          await this.enhancedEscalation(request, aiResponse);
+        }
+
+        // Trigger proactive monitoring for high-risk cases
+        if (request.priority === 'urgent' || aiResponse.confidence < 0.5) {
+          this.triggerProactiveMonitoring(request.studentId);
         }
       }
     } catch (error) {
-      console.error('AI processing failed:', error);
-      // Fallback to knowledge base
-      this.processWithKnowledgeBase(request);
+      console.error('Enhanced AI processing failed:', error);
+      // Enhanced fallback with multiple strategies
+      await this.enhancedFallbackProcessing(request);
     }
+  }
+
+  // Enhanced automated response with multiple channels
+  private async sendEnhancedAutomatedResponse(request: SupportRequest, aiResponse: any): Promise<void> {
+    try {
+      // Store notification for student dashboard
+      const notificationsKey = `student_notifications_${request.studentId}`;
+      const existingNotifications = JSON.parse(localStorage.getItem(notificationsKey) || '[]');
+      
+      const notification = {
+        id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        title: 'Response dari Support AI',
+        message: aiResponse.response.substring(0, 200) + (aiResponse.response.length > 200 ? '...' : ''),
+        fullMessage: aiResponse.response,
+        type: 'support_response',
+        priority: request.priority,
+        confidence: aiResponse.confidence,
+        requestId: request.id,
+        createdAt: new Date().toISOString(),
+        read: false,
+        source: 'ai_support',
+        category: aiResponse.category,
+        contextUsed: aiResponse.contextUsed
+      };
+      
+      existingNotifications.unshift(notification);
+      
+      // Keep only last 50 notifications
+      if (existingNotifications.length > 50) {
+        existingNotifications.splice(50);
+      }
+      
+      localStorage.setItem(notificationsKey, JSON.stringify(existingNotifications));
+      
+      console.log(`📱 Enhanced AI response sent for request ${request.id} (confidence: ${aiResponse.confidence})`);
+      
+      // Trigger real-time monitoring if confidence is low
+      if (aiResponse.confidence < 0.6) {
+        this.triggerProactiveMonitoring(request.studentId);
+      }
+      
+    } catch (error) {
+      console.error('Failed to send enhanced automated response:', error);
+      // Fallback to basic notification
+      this.sendAutomatedResponse(request, aiResponse.response);
+    }
+  }
+
+  // Enhanced escalation logic
+  private shouldEscalateRequest(request: SupportRequest, aiResponse: any): boolean {
+    // Multiple escalation criteria
+    const criteria = {
+      lowConfidence: aiResponse.confidence < 0.6,
+      highPriority: request.priority === 'urgent',
+      repeatedIssue: this.hasRepeatedIssues(request.studentId, request.type),
+      complexity: this.isComplexRequest(request),
+      riskStudent: this.isHighRiskStudent(request.studentId)
+    };
+    
+    const escalationScore = Object.values(criteria).filter(Boolean).length;
+    
+    // Escalate if 2 or more criteria are met
+    return escalationScore >= 2;
+  }
+
+  // Enhanced escalation with context
+  private async enhancedEscalation(request: SupportRequest, aiResponse: any): Promise<void> {
+    console.log(`🚨 Enhanced escalation for request ${request.id}`);
+    
+    const requests = this.getSupportRequests();
+    const requestIndex = requests.findIndex(r => r.id === request.id);
+    
+    if (requestIndex !== -1) {
+      requests[requestIndex].status = 'escalated';
+      requests[requestIndex].priority = 'high';
+      requests[requestIndex].updatedAt = new Date().toISOString();
+      
+      // Add escalation metadata
+      (requests[requestIndex] as any).escalationMetadata = {
+        escalatedAt: new Date().toISOString(),
+        aiConfidence: aiResponse.confidence,
+        escalationReason: this.getEscalationReason(request, aiResponse),
+        contextUsed: aiResponse.contextUsed
+      };
+      
+      this.saveSupportRequests(requests);
+      
+      // Enhanced notification to support team
+      await this.notifySupportTeamWithContext(requests[requestIndex], aiResponse);
+    }
+  }
+
+  // Get escalation reason
+  private getEscalationReason(request: SupportRequest, aiResponse: any): string {
+    const reasons = [];
+    
+    if (aiResponse.confidence < 0.6) reasons.push('Low AI confidence');
+    if (request.priority === 'urgent') reasons.push('High priority request');
+    if (this.hasRepeatedIssues(request.studentId, request.type)) reasons.push('Repeated issue');
+    if (this.isComplexRequest(request)) reasons.push('Complex request');
+    if (this.isHighRiskStudent(request.studentId)) reasons.push('High-risk student');
+    
+    return reasons.join(', ') || 'Standard escalation protocol';
+  }
+
+  // Check for repeated issues
+  private hasRepeatedIssues(studentId: string, type: string): boolean {
+    const requests = this.getSupportRequests();
+    const similarRequests = requests.filter(r => 
+      r.studentId === studentId && 
+      r.type === type &&
+      Date.now() - new Date(r.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000 // Last 7 days
+    );
+    
+    return similarRequests.length >= 3;
+  }
+
+  // Check if request is complex
+  private isComplexRequest(request: SupportRequest): boolean {
+    const complexityIndicators = [
+      request.description.length > 500,
+      request.title.split(' ').length > 10,
+      request.priority === 'urgent',
+      request.type === 'personal'
+    ];
+    
+    return complexityIndicators.filter(Boolean).length >= 2;
+  }
+
+  // Check if student is high risk
+  private isHighRiskStudent(studentId: string): boolean {
+    const progress = this.getStudentProgress(studentId);
+    return progress ? progress.riskLevel === 'high' : false;
+  }
+
+  // Enhanced fallback processing
+  private async enhancedFallbackProcessing(request: SupportRequest): Promise<void> {
+    console.log(`🔄 Using enhanced fallback processing for request ${request.id}`);
+    
+    try {
+      // Try knowledge base first
+      this.processWithKnowledgeBase(request);
+      
+      // If still unresolved, create escalation request
+      const requests = this.getSupportRequests();
+      const requestIndex = requests.findIndex(r => r.id === request.id);
+      
+      if (requestIndex !== -1 && requests[requestIndex].status === 'pending') {
+        // Create escalation with fallback context
+        await this.enhancedEscalation(requests[requestIndex], {
+          confidence: 0.3,
+          category: 'fallback_processing',
+          contextUsed: false
+        });
+      }
+    } catch (error) {
+      console.error('Enhanced fallback processing failed:', error);
+      // Last resort: basic escalation
+      this.escalateRequest(request);
+    }
+  }
+
+  // Trigger proactive monitoring
+  private triggerProactiveMonitoring(studentId: string): void {
+    try {
+      // Initialize monitoring if not already active
+      const monitoringService = RealTimeMonitoringService.getInstance();
+      if (monitoringService && monitoringService.trackStudentSession) {
+        monitoringService.trackStudentSession(studentId, {
+          lastLogin: new Date().toISOString(),
+          pageViews: 1
+        });
+      }
+    } catch (error) {
+      console.warn('Failed to trigger proactive monitoring:', error);
+    }
+  }
+
+  // Enhanced support team notification
+  private async notifySupportTeamWithContext(request: SupportRequest, aiResponse: any): Promise<void> {
+    const studentProgress = this.getStudentProgress(request.studentId);
+    const recentRequests = this.getSupportRequests()
+      .filter(r => r.studentId === request.studentId)
+      .slice(0, 5);
+    
+    const context = {
+      request,
+      aiResponse,
+      studentProgress,
+      recentRequests,
+      escalationReason: this.getEscalationReason(request, aiResponse),
+      systemLoad: this.getSystemLoad(),
+      timestamp: new Date().toISOString()
+    };
+    
+    // This would integrate with notification system
+    console.log(`🚨 Enhanced support team notification:`, {
+      requestId: request.id,
+      studentId: request.studentId,
+      priority: request.priority,
+      confidence: aiResponse.confidence,
+      escalationReason: context.escalationReason,
+      studentRisk: studentProgress?.riskLevel || 'unknown'
+    });
+  }
+
+  // Get system load for context
+  private getSystemLoad(): number {
+    // Mock implementation - would integrate with actual monitoring
+    return Math.random() * 100;
   }
 
   // Get AI response from worker with enhanced context and fallback
@@ -360,6 +600,7 @@ class StudentSupportService {
     const studentProgress = this.getStudentProgress(request.studentId);
     
     try {
+      // Enhanced AI integration with multiple fallback strategies
       const response = await fetch('/api/student-support', {
         method: 'POST',
         headers: {
@@ -380,7 +621,14 @@ class StudentSupportService {
               timestamp: new Date().toISOString(),
               language: 'id-ID',
               schoolName: 'MA Malnu Kananga',
-              supportLevel: 'automated'
+              supportLevel: 'automated',
+              interventionHistory: this.getInterventionHistory(request.studentId)
+            },
+            enhancedFeatures: {
+              sentimentAnalysis: true,
+              priorityEscalation: request.priority === 'urgent',
+              riskAssessment: studentProgress?.riskLevel === 'high',
+              contextualResources: true
             }
           }
         })
@@ -392,9 +640,15 @@ class StudentSupportService {
 
       const result = await response.json();
       
-      // Validate AI response
+      // Enhanced AI response validation
       if (!result.response || !result.category || typeof result.confidence !== 'number') {
         throw new Error('Invalid AI response format');
+      }
+
+      // Add enhanced processing for high-priority requests
+      if (request.priority === 'urgent' && result.confidence < 0.8) {
+        result.response += '\n\n⚠️ Permintaan Anda telah ditandai sebagai prioritas tinggi. Tim support akan segera menghubungi Anda.';
+        result.confidence = Math.min(result.confidence + 0.2, 0.95);
       }
 
       return result;
@@ -404,7 +658,19 @@ class StudentSupportService {
     }
   }
 
-  // Enhanced fallback response system
+  // Get intervention history for enhanced context
+  private getInterventionHistory(studentId: string): any[] {
+    try {
+      const interventionEngine = AutomatedInterventionEngine.getInstance();
+      return interventionEngine.getInterventionHistory ? 
+        interventionEngine.getInterventionHistory(studentId) : [];
+    } catch (error) {
+      console.warn('Failed to get intervention history:', error);
+      return [];
+    }
+  }
+
+  // Enhanced fallback response system with AI-powered contextual understanding
   private getEnhancedFallbackResponse(request: SupportRequest, studentProgress: StudentProgress | null): {
     response: string;
     category: string;
@@ -423,6 +689,16 @@ class StudentSupportService {
           category: "nilai",
           confidence: 0.75
         },
+        tugas: {
+          response: "Untuk mengakses tugas, buka tab 'Tugas' di dashboard. Anda dapat melihat deadline, mengumpulkan tugas, dan melihat feedback dari guru. Jika ada masalah teknis, hubungi IT support.",
+          category: "tugas",
+          confidence: 0.78
+        },
+        jadwal: {
+          response: "Jadwal pelajaran dapat dilihat di tab 'Jadwal' pada dashboard. Jadwal diperbarui secara otomatis. Jika ada perubahan mendadak, Anda akan menerima notifikasi.",
+          category: "jadwal",
+          confidence: 0.82
+        },
         default: {
           response: "Terima kasih atas pertanyaan akademis Anda. Tim support akan membantu Anda. Sementara itu, coba periksa panduan pembelajaran atau hubungi guru mata pelajaran terkait.",
           category: "academic",
@@ -434,6 +710,16 @@ class StudentSupportService {
           response: "Jika portal tidak berfungsi, coba: 1) Clear browser cache, 2) Gunakan browser Chrome/Firefox terbaru, 3) Periksa koneksi internet, 4) Restart browser. Jika masih bermasalah, hubungi IT support.",
           category: "portal",
           confidence: 0.85
+        },
+        notifikasi: {
+          response: "Jika notifikasi tidak muncul, periksa: 1) Pengaturan notifikasi browser, 2) Pastikan notifikasi diizinkan, 3) Refresh halaman, 4) Restart browser. Masalah persisten? Hubungi IT support.",
+          category: "notifikasi",
+          confidence: 0.83
+        },
+        download: {
+          response: "Untuk masalah download, pastikan: 1) Koneksi internet stabil, 2) Browser mendukung file type, 3) Storage device mencukupi, 4) Antivirus tidak memblokir. Coba download di browser lain jika perlu.",
+          category: "download",
+          confidence: 0.79
         },
         default: {
           response: "Kami menerima laporan masalah teknis Anda. Tim IT akan segera memeriksanya. Coba refresh halaman atau restart browser sementara menunggu respons.",
@@ -457,35 +743,134 @@ class StudentSupportService {
       }
     };
 
-    // Determine best response based on request content
+    // Enhanced keyword analysis with AI-like pattern matching
     const requestText = `${request.title} ${request.description}`.toLowerCase();
     const typeResponses = fallbackResponses[request.type] || fallbackResponses.academic;
     
     let selectedResponse = typeResponses.default;
+    let confidenceBoost = 0;
     
-    // Check for specific keywords
-    if (requestText.includes('login') || requestText.includes('masuk')) {
-      selectedResponse = (typeResponses as any).login || typeResponses.default;
-    } else if (requestText.includes('nilai') || requestText.includes('grade')) {
-      selectedResponse = (typeResponses as any).nilai || typeResponses.default;
-    } else if (requestText.includes('portal')) {
-      selectedResponse = (typeResponses as any).portal || typeResponses.default;
+    // Enhanced keyword matching with context awareness
+    const keywordPatterns = {
+      'login|masuk|akses|magic link': 'login',
+      'nilai|grade|score|raport': 'nilai',
+      'tugas|assignment|pr|kumpul': 'tugas',
+      'jadwal|schedule|pelajaran|mapel': 'jadwal',
+      'portal|sistem|platform|website': 'portal',
+      'notifikasi|notification|pemberitahuan': 'notifikasi',
+      'download|unduh|file|dokumen': 'download'
+    };
+
+    // Pattern matching for better categorization
+    for (const [pattern, category] of Object.entries(keywordPatterns)) {
+      if (new RegExp(pattern).test(requestText)) {
+        const categoryResponse = (typeResponses as any)[category];
+        if (categoryResponse) {
+          selectedResponse = categoryResponse;
+          confidenceBoost = 0.1;
+          break;
+        }
+      }
     }
 
-    // Add student-specific context if available
+    // Sentiment analysis for urgency detection
+    const urgentKeywords = ['darurat', 'urgent', 'segera', 'penting', 'emergency', 'cepat'];
+    const isUrgent = urgentKeywords.some(keyword => requestText.includes(keyword));
+    
+    if (isUrgent && request.priority !== 'urgent') {
+      selectedResponse.response += '\n\n⚠️ Kami mendeteksi urgensi dalam permintaan Anda. Tim support akan memprioritaskan kasus Anda.';
+      confidenceBoost += 0.15;
+    }
+
+    // Enhanced student-specific context integration
     let enhancedResponse = selectedResponse.response;
+    let contextUsed = !!studentProgress;
+    
     if (studentProgress) {
+      const contextualAdditions = [];
+      
+      // Risk-based contextual support
       if (studentProgress.riskLevel === 'high') {
-        enhancedResponse += "\n\n💡 Perhatian: Kami melihat Anda mungkin perlu dukungan tambahan. Jangan ragu menghubungi Guru BK untuk bantuan lebih lanjut.";
+        contextualAdditions.push("💡 Perhatian: Kami melihat Anda mungkin perlu dukungan tambahan. Jangan ragu menghubungi Guru BK untuk bantuan lebih lanjut.");
+        confidenceBoost += 0.1;
       }
+      
+      // Academic performance context
+      if (studentProgress.academicMetrics.gpa < 70 && request.type === 'academic') {
+        contextualAdditions.push("📚 Kami menyarankan untuk fokus pada peningkatan performa akademis. Resources pembelajaran tambahan telah disediakan di dashboard Anda.");
+        confidenceBoost += 0.08;
+      }
+      
+      // Engagement-based suggestions
+      if (studentProgress.engagementMetrics.loginFrequency < 3) {
+        contextualAdditions.push("🔄 Cobalah untuk login lebih teratur agar tidak ketinggalan informasi penting dan update terbaru.");
+        confidenceBoost += 0.05;
+      }
+      
+      // Recent support requests context
+      const recentRequests = this.getSupportRequests()
+        .filter(r => r.studentId === request.studentId)
+        .filter(r => Date.now() - new Date(r.createdAt).getTime() < 7 * 24 * 60 * 60 * 1000);
+      
+      if (recentRequests.length > 3) {
+        contextualAdditions.push("📞 Kami melihat Anda telah menghubungi support beberapa kali kali ini. Jika masalah persisten, kami akan segera menindaklanjuti dengan prioritas tinggi.");
+        confidenceBoost += 0.12;
+      }
+      
+      if (contextualAdditions.length > 0) {
+        enhancedResponse += '\n\n' + contextualAdditions.join('\n\n');
+      }
+    }
+
+    // Add proactive resource suggestions based on request type
+    const resourceSuggestions = this.getResourceSuggestions(request.type, requestText);
+    if (resourceSuggestions) {
+      enhancedResponse += `\n\n📖 Resources yang mungkin membantu: ${resourceSuggestions}`;
+      confidenceBoost += 0.05;
+    }
+
+    // Add escalation information for high-priority cases
+    if (request.priority === 'high' || request.priority === 'urgent') {
+      enhancedResponse += '\n\n🚀 Permintaan Anda telah diprioritaskan. Estimasi respons: ' + 
+        (request.priority === 'urgent' ? '15-30 menit' : '1-2 jam');
+      confidenceBoost += 0.1;
     }
 
     return {
       response: enhancedResponse,
       category: selectedResponse.category,
-      confidence: selectedResponse.confidence,
-      contextUsed: !!studentProgress
+      confidence: Math.min(selectedResponse.confidence + confidenceBoost, 0.95),
+      contextUsed
     };
+  }
+
+  // Get resource suggestions based on request context
+  private getResourceSuggestions(requestType: string, requestText: string): string {
+    const resourceMap = {
+      academic: {
+        'login|masuk': 'Panduan Magic Link, Tutorial Portal',
+        'nilai|grade': 'Cara Melihat Nilai, Panduan Akademis',
+        'tugas|assignment': 'Guide Pengumpulan Tugas, Tips Manajemen Waktu',
+        'default': 'Panduan Belajar, Tips Akademis'
+      },
+      technical: {
+        'portal|sistem': 'Troubleshooting Portal, FAQ Teknis',
+        'notifikasi': 'Panduan Notifikasi, Settings Browser',
+        'download': 'Guide Download, Browser Compatibility',
+        'default': 'FAQ Teknis, Contact IT Support'
+      }
+    };
+
+    const typeResources = resourceMap[requestType as keyof typeof resourceMap];
+    if (!typeResources) return '';
+
+    for (const [pattern, resources] of Object.entries(typeResources)) {
+      if (pattern === 'default' || new RegExp(pattern).test(requestText)) {
+        return resources;
+      }
+    }
+
+    return '';
   }
 
   // Fallback to knowledge base processing

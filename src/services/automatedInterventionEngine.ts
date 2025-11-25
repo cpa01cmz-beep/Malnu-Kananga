@@ -740,7 +740,7 @@ class AutomatedInterventionEngine {
   }
 
   // Get intervention history
-  private getInterventionHistory(studentId: string): InterventionResult[] {
+  public getInterventionHistory(studentId: string): InterventionResult[] {
     return this.interventionHistory.get(studentId) || [];
   }
 
