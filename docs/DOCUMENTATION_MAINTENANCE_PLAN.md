@@ -299,10 +299,10 @@ This document outlines the comprehensive maintenance plan for all MA Malnu Kanan
 - **UX Writers**: ux-writers@ma-malnukananga.sch.id
 
 ### Resources and References
-- **Style Guide**: [Documentation Style Guide](./DOCUMENTATION_STYLE_GUIDE.md) (planned)
-- **Templates**: [Documentation Templates](./templates/) (planned)
-- **Training Materials**: [Documentation Training](./training/) (planned)
-- **Best Practices**: [Documentation Best Practices](./BEST_PRACTICES.md) (planned)
+- **Style Guide**: [Documentation Maintenance Guide](./DOCUMENTATION_MAINTENANCE_GUIDE.md) (implemented)
+- **Templates**: Integrated into [Documentation Maintenance Guide](./DOCUMENTATION_MAINTENANCE_GUIDE.md)
+- **Training Materials**: Covered in [Documentation Maintenance Guide](./DOCUMENTATION_MAINTENANCE_GUIDE.md)
+- **Best Practices**: Integrated into [Documentation Maintenance Guide](./DOCUMENTATION_MAINTENANCE_GUIDE.md)
 
 ---
 
