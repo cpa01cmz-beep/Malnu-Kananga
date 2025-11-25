@@ -1,5 +1,7 @@
 # AI Integration Guide - MA Malnu Kananga RAG System
 
+> **📋 Note**: For comprehensive RAG AI system documentation, please refer to **[RAG_AI_SYSTEM.md](./docs/RAG_AI_SYSTEM.md)**. This guide provides implementation details, while the main documentation covers architecture, usage, and operational procedures.
+
 ## Table of Contents
 1. [RAG Architecture Overview](#rag-architecture-overview)
 2. [Vector Database Implementation](#vector-database-implementation)
@@ -13,6 +15,13 @@
 10. [Performance Optimization](#performance-optimization)
 11. [Security Considerations for AI](#security-considerations-for-ai)
 12. [Monitoring and Analytics](#monitoring-and-analytics)
+
+---
+
+**📚 Related Documentation**
+- **[RAG_AI_SYSTEM.md](./docs/RAG_AI_SYSTEM.md)** - Complete system architecture and user guide
+- **[CLOUDFLARE_WORKER_BACKEND.md](./docs/CLOUDFLARE_WORKER_BACKEND.md)** - Backend implementation details
+- **[API_DOCUMENTATION.md](./docs/API_DOCUMENTATION.md)** - AI API endpoints reference
 
 ---
 
