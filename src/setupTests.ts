@@ -1,8 +1,9 @@
 import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
 
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
+// Add type assertion to fix type compatibility issues
+global.TextEncoder = TextEncoder as any;
+global.TextDecoder = TextDecoder as any;
 import 'jest-extended/all';
 
 // Mock environment variables for testing

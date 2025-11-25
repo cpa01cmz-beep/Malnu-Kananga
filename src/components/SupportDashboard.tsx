@@ -11,16 +11,11 @@ interface SupportDashboardProps {
 
 const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'monitoring' | 'interventions' | 'analytics'>('overview');
-<<<<<<< HEAD
-
-  const [systemHealth, setSystemHealth] = useState<{ status: string; uptime: number | string; lastCheck: string; memory?: string } | null>(null);
-=======
-  const [realTimeStats, setRealTimeStats] = useState<any>(null);
-  const [interventionStats, setInterventionStats] = useState<any>(null);
-  const [atRiskStudents, setAtRiskStudents] = useState<any[]>([]);
-  const [activeInterventions, setActiveInterventions] = useState<any[]>([]);
-  const [systemHealth, setSystemHealth] = useState<{ status: string; uptime: number | string; lastCheck: string; memory?: string } | null>(null);
->>>>>>> acca154 (Quality Assurance Updates - 2025-11-25)
+const [realTimeStats, setRealTimeStats] = useState<any>(null);
+const [interventionStats, setInterventionStats] = useState<any>(null);
+const [atRiskStudents, setAtRiskStudents] = useState<any[]>([]);
+const [activeInterventions, setActiveInterventions] = useState<any[]>([]);
+const [systemHealth, setSystemHealth] = useState<{ status: string; uptime: number | string; lastCheck: string; memory?: string } | null>(null);
 
   useEffect(() => {
     loadDashboardData();
@@ -119,11 +114,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
             ].map(tab => (
               <button
                 key={tab.id}
-<<<<<<< HEAD
                 onClick={() => setActiveTab(tab.id as 'overview' | 'analytics' | 'monitoring' | 'interventions')}
-=======
-                onClick={() => setActiveTab(tab.id as 'overview' | 'analytics' | 'monitoring' | 'interventions')}
->>>>>>> acca154 (Quality Assurance Updates - 2025-11-25)
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
