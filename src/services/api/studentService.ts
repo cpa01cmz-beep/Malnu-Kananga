@@ -76,7 +76,6 @@ class LocalStudentService {
       name: 'Ahmad Fauzi Rahman',
       email: 'siswa@ma-malnukananga.sch.id',
       grade: 'XII',
-      nis: '2024001',
       class: 'XII IPA 1'
     }];
   }

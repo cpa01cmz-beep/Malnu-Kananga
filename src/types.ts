@@ -78,6 +78,7 @@ export interface AcademicStats {
 
 
 
+
 // Student Progress types
 export interface StudentProgress {
   gpa: number;
