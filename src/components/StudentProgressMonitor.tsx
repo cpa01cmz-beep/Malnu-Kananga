@@ -29,7 +29,9 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
           gpa: 0,
           gradeTrend: 'stable' as const,
           attendanceRate: 0,
-          assignmentCompletion: 0
+<<<<<<< HEAD
+           assignmentCompletion: 0
+         },
         },
         engagementMetrics: {
           loginFrequency: 0,
@@ -162,7 +164,10 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Penyelesaian Tugas</p>
           </div>
           
-          </div>
+           </div>
+         </div>
+
+         
       </div>
 
       {/* Engagement Metrics */}
@@ -225,38 +230,39 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
                 </span>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
 
-{/* Risk Level */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">⚠️ Tingkat Risiko</h2>
-        
-        <div className={`p-6 rounded-lg text-center ${
-          progress.riskLevel === 'high' 
-            ? 'bg-red-50 border-2 border-red-200 dark:bg-red-900/20 dark:border-red-800'
-            : progress.riskLevel === 'medium'
-            ? 'bg-yellow-50 border-2 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800'
-            : 'bg-green-50 border-2 border-green-200 dark:bg-green-900/20 dark:border-green-800'
-        }`}>
-          <div className="text-4xl mb-2">
-            {progress.riskLevel === 'high' ? '🔴' : progress.riskLevel === 'medium' ? '🟡' : '✅'}
-          </div>
-          <div className="text-xl font-bold mb-1">
-            {progress.riskLevel === 'high' ? 'Tinggi' : progress.riskLevel === 'medium' ? 'Sedang' : 'Rendah'}
-          </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {progress.riskLevel === 'high' 
-              ? 'Memerlukan intervensi segera'
-              : progress.riskLevel === 'medium'
-              ? 'Perlu pemantauan lebih dekat'
-              : 'Berperforma baik'
-            }
-          </p>
-        </div>
-      </div>
-
+       {/* Risk Level */}
+       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">⚠️ Tingkat Risiko</h2>
+         
+         <div className={`p-6 rounded-lg text-center ${
+           progress.riskLevel === 'high' 
+             ? 'bg-red-50 border-2 border-red-200 dark:bg-red-900/20 dark:border-red-800'
+             : progress.riskLevel === 'medium'
+             ? 'bg-yellow-50 border-2 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800'
+             : 'bg-green-50 border-2 border-green-200 dark:bg-green-900/20 dark:border-green-800'
+         }`}>
+           <div className="text-4xl mb-2">
+             {progress.riskLevel === 'high' ? '🔴' : progress.riskLevel === 'medium' ? '🟡' : '✅'}
+           </div>
+           <div className="text-xl font-bold mb-1">
+             {progress.riskLevel === 'high' ? 'Tinggi' : progress.riskLevel === 'medium' ? 'Sedang' : 'Rendah'}
+           </div>
+           <p className="text-sm text-gray-600 dark:text-gray-400">
+             {progress.riskLevel === 'high' 
+               ? 'Memerlukan intervensi segera'
+               : progress.riskLevel === 'medium'
+               ? 'Perlu pemantauan lebih dekat'
+               : 'Berperforma baik'
+             }
+           </p>
+         </div>
+       </div>
       {/* Progress Chart Placeholder */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">📈 Trend Progress</h2>

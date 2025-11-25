@@ -11,8 +11,6 @@ Object.defineProperty(window, 'alert', {
   value: mockAlert
 });
 
-// Use fake timers for handling async operations
-jest.useFakeTimers();
 
 jest.mock('../../services/studentSupportService', () => ({
   StudentSupportService: {
@@ -70,6 +68,7 @@ jest.mock('../../services/studentSupportService', () => ({
           status: 'pending',
           createdAt: '2024-01-01T11:00:00Z'
         }))
+    }))
     }))
   }
 }));
@@ -148,6 +147,7 @@ describe('StudentSupport Component', () => {
   });
 
   it('creates new support request when form is submitted', async () => {
+   it('creates new support request when form is submitted', async () => {
      const { StudentSupportService } = require('../../services/studentSupportService');
      
      render(<StudentSupport studentId="STU001" />);
@@ -165,9 +165,6 @@ describe('StudentSupport Component', () => {
      
      // Submit form
      fireEvent.click(screen.getByText('Kirim Permintaan'));
-     
-     // Advance timers to process async operations
-     jest.runAllTimers();
      
      await waitFor(() => {
        expect(StudentSupportService.createSupportRequest).toHaveBeenCalledWith(
@@ -218,7 +215,7 @@ describe('StudentSupport Component', () => {
     fireEvent.click(screen.getByText('Kirim Permintaan'));
     
     // Should show validation alert
-    expect(window.alert).toHaveBeenCalledWith('Mohon lengkapi judul dan deskripsi permintaan');
+    expect(mockAlert).toHaveBeenCalledWith('Mohon lengkapi judul dan deskripsi permintaan');
   });
 
   it('closes modal when cancel is clicked', () => {

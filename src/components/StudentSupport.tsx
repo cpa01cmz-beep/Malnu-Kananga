@@ -13,12 +13,18 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
   const [supportRequests, setSupportRequests] = useState<SupportRequest[]>([]);
   const [resources, setResources] = useState<SupportResource[]>([]);
   const [studentProgress, setStudentProgress] = useState<StudentProgress | null>(null);
-  const [newRequest, setNewRequest] = useState({
-    type: 'academic' as const,
+  const [newRequest, setNewRequest] = useState<{
+    type: 'academic' | 'technical' | 'administrative' | 'personal';
+    category: string;
+    title: string;
+    description: string;
+    priority: 'low' | 'medium' | 'high' | 'urgent';
+  }>({
+    type: 'academic',
     category: '',
     title: '',
     description: '',
-    priority: 'medium' as const
+    priority: 'medium'
   });
   const [showNewRequestForm, setShowNewRequestForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,19 +33,21 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
     loadSupportData();
   }, [studentId]);
 
-  const loadSupportData = async () => {
-    const supportService = StudentSupportService.getInstance();
-    
-        // Load student's support requests
-    const requests = supportService.getSupportRequests();
-    setSupportRequests(requests.filter((req: SupportRequest) => req.studentId === studentId));
+   const loadSupportData = async () => {
+     const supportService = StudentSupportService.getInstance();
+     
+     // Load student's support requests
+     const requests = supportService.getSupportRequests();
+     setSupportRequests(requests.filter((req: SupportRequest) => req.studentId === studentId));
 
-    // Load available resources
-    const allResources = await supportService.getRelevantResources('');
-    setResources(allResources);
+     // Load available resources
+     const allResources = await supportService.getRelevantResources('');
+     setResources(allResources);
 
-    // Load student progress
-    const progress = supportService.getStudentProgress(studentId);
+     // Load student progress
+     const progress = supportService.getStudentProgress(studentId);
+     setStudentProgress(progress || null);
+   };
     setStudentProgress(progress || null);
   };
 
@@ -49,8 +57,8 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
       return;
     }
 
-    const supportService = StudentSupportService.getInstance();
-    const request = supportService.createSupportRequest(
+     const supportService = StudentSupportService.getInstance();
+     const request = supportService.createSupportRequest(
       studentId,
       newRequest.type,
       newRequest.category || 'umum',
@@ -138,8 +146,8 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
             ].map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as 'overview' | 'assignments' | 'resources' | 'progress')}
-                className={`flex-1 min-w-[120px] py-3 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
+                 onClick={() => setActiveTab(tab.id as 'dashboard' | 'requests' | 'resources' | 'progress')}
+                 className={`flex-1 min-w-[120px] py-3 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
                   activeTab === tab.id
                     ? `bg-${tab.color}-100 text-${tab.color}-700 border-2 border-${tab.color}-300 shadow-sm`
                     : 'bg-white text-gray-600 border-2 border-transparent hover:bg-gray-100 hover:text-gray-800'
@@ -458,7 +466,8 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
                 <select
                   value={newRequest.type}
-                  onChange={(e) => setNewRequest({...newRequest, type: e.target.value as 'academic' | 'technical' | 'personal' | 'other'})}
+<<<<<<< HEAD
+                   onChange={(e) => setNewRequest({...newRequest, type: e.target.value as 'academic' | 'technical' | 'administrative' | 'personal'})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="academic">Akademis</option>
