@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React from 'react';
 import { initializeWebPDetection, getWebPSupport, getOptimalImageSrc } from '../utils/webpDetection';
 
 // WebP Context interface
@@ -16,7 +17,7 @@ interface WebPProviderProps {
   children: ReactNode;
 }
 
-export const WebPProvider: React.FC<WebPProviderProps> = ({ children }) => {
+export const WebPProvider: React.FC<WebPProviderProps> = ({ children }: { children: ReactNode }) => {
   const [supportsWebP, setSupportsWebP] = useState<boolean | null>(getWebPSupport());
   const [isLoading, setIsLoading] = useState<boolean>(supportsWebP === null);
 

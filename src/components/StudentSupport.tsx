@@ -3,9 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { StudentSupportService, SupportRequest, SupportResource, StudentProgress } from '../services/studentSupportService';
-
-// Get service instance
-const studentSupportService = StudentSupportService.getInstance();
 import RealTimeMonitoringService from '../services/realTimeMonitoringService';
 
 interface StudentSupportProps {
@@ -50,17 +47,17 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
     });
   }, [studentId]);
 
-  const loadSupportData = () => {
+  const loadSupportData = async () => {
     // Load student's support requests
-    const requests = studentSupportService.getSupportRequests();
-    setSupportRequests(requests.filter(req => req.studentId === studentId));
+    const requests = StudentSupportService.getSupportRequests();
+    setSupportRequests(requests.filter((req: SupportRequest) => req.studentId === studentId));
 
     // Load available resources
-    const allResources = studentSupportService.getRelevantResources('');
+    const allResources = await StudentSupportService.getRelevantResources('');
     setResources(allResources);
 
     // Load student progress
-    const progress = studentSupportService.getStudentProgress(studentId);
+    const progress = StudentSupportService.getStudentProgress(studentId);
     setStudentProgress(progress || null);
   };
 
@@ -70,7 +67,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
       return;
     }
 
-    const request = studentSupportService.createSupportRequest(
+    const request = StudentSupportService.createSupportRequest(
       studentId,
       newRequest.type,
       newRequest.category || 'umum',

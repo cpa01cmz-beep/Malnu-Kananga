@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import React from 'react';
 import type { ChatMessage } from '../types';
 import { Sender } from '../types';
 import { getAIResponseStream, initialGreeting } from '../services/geminiService';

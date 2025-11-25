@@ -47,10 +47,10 @@ class BaseApiService {
 
     let lastError: Error = new Error('Unknown error');
 
-    for (let attempt = 0; attempt <= retries; attempt++) {
+    for (let attempt = 0; attempt <= (retries || 3); attempt++) {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), mergedConfig.timeout);
+        const timeoutId = setTimeout(() => controller.abort(), mergedConfig.timeout || 10000);
 
         const response = await fetch(url, {
           ...options,
@@ -80,8 +80,8 @@ class BaseApiService {
           throw error;
         }
 
-        if (attempt < retries) {
-          await this.delay(retryDelay * (attempt + 1));
+        if (attempt < (retries || 3)) {
+          await this.delay((retryDelay || 1000) * (attempt + 1));
         }
       }
     }

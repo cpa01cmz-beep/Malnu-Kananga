@@ -312,7 +312,7 @@ Contact IT Support:
 
     // Generate AI solutions for new problems every 6 hours
     setInterval(() => {
-      this.generateAISolutions();
+      this.generateAISolution();
       this.validateExistingSolutions();
     }, 21600000);
 
