@@ -9,13 +9,13 @@ interface SupportDashboardProps {
   adminId?: string;
 }
 
-const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
+const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'monitoring' | 'interventions' | 'analytics'>('overview');
-  const [realTimeStats, setRealTimeStats] = useState<any>(null);
-  const [interventionStats, setInterventionStats] = useState<any>(null);
-  const [atRiskStudents, setAtRiskStudents] = useState<any[]>([]);
-  const [activeInterventions, setActiveInterventions] = useState<any[]>([]);
-  const [systemHealth, setSystemHealth] = useState<any>(null);
+  const [realTimeStats, setRealTimeStats] = useState<{ activeUsers: number; responseTime: number; satisfactionRate: number } | null>(null);
+  const [interventionStats, setInterventionStats] = useState<{ total: number; active: number; completed: number } | null>(null);
+  const [atRiskStudents, setAtRiskStudents] = useState<{ id: string; name: string; riskLevel: string }[]>([]);
+  const [activeInterventions, setActiveInterventions] = useState<{ id: string; studentId: string; type: string }[]>([]);
+  const [systemHealth, setSystemHealth] = useState<{ status: string; uptime: number; lastCheck: string } | null>(null);
 
   useEffect(() => {
     loadDashboardData();

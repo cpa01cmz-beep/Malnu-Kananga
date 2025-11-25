@@ -3,14 +3,13 @@ import {
   calculateGPA,
   getAttendanceStats,
   getUnreadAnnouncements,
-  type Student,
   type Grade,
   type ScheduleItem,
   type AttendanceRecord,
   type Announcement
 } from '../data/studentData';
 import { AuthService } from '../services/authService';
-import { NotificationService, NotificationItem } from '../services/notificationService';
+import { NotificationItem } from '../services/notificationService';
 import {
   useStudentGrades,
   useAttendanceRecords,
@@ -166,16 +165,16 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
                 <img
-                  src={(currentStudent as any).profileImage || '/default-avatar.png'}
-                  alt={(currentStudent as any).name || 'Student'}
+                  src={currentStudent?.profileImage || '/default-avatar.png'}
+                  alt={currentStudent?.name || 'Student'}
                   className="h-12 w-12 rounded-full object-cover"
                 />
                 <div>
                   <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {(currentStudent as any).name}
+                    {currentStudent?.name}
                   </h1>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {(currentStudent as any).class} • {(currentStudent as any).academicYear}
+                    {currentStudent?.class} • {currentStudent?.academicYear}
                   </p>
                 </div>
               </div>
@@ -204,7 +203,7 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'overview' | 'grades' | 'assignments' | 'attendance' | 'announcements')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                   activeTab === tab.id
                     ? 'border-green-500 text-green-600 dark:text-green-400'
@@ -226,7 +225,7 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             {/* Welcome Card */}
             <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
               <h2 className="text-2xl font-bold mb-2">
-                Selamat datang kembali, {(currentStudent as any).name?.split(' ')[0]}! 👋
+                Selamat datang kembali, {currentStudent?.name?.split(' ')[0]}! 👋
               </h2>
               <p className="text-green-100">
                 Hari ini adalah {today}, {formatDate(new Date().toISOString())}

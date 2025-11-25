@@ -48,6 +48,9 @@ export default defineConfig(({ command, mode }) => ({
           if (id.includes('memory')) {
             return 'memory';
           }
+          if (id.includes('StudentSupport')) {
+            return 'student-support';
+          }
           if (id.includes('components')) {
             return 'components';
           }
@@ -98,7 +101,7 @@ export default defineConfig(({ command, mode }) => ({
     },
 
     // Chunk size warnings - increased threshold for education system
-    chunkSizeWarningLimit: 250
+    chunkSizeWarningLimit: 300
   },
 
   // Development server optimizations

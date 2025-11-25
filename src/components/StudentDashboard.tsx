@@ -162,7 +162,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
       <NavigationTabs
         activeTab={activeTab}
         tabs={tabs}
-         onTabChange={(tabId: string) => setActiveTab(tabId as any)}
+         onTabChange={(tabId: string) => setActiveTab(tabId as 'overview' | 'grades' | 'assignments' | 'schedule' | 'announcements')}
       />
 
       {/* Main Content */}
