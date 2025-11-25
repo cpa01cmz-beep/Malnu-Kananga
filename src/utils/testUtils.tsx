@@ -65,12 +65,14 @@ export const createTouchEvent = (type: string, coordinates = { x: 0, y: 0 }) => 
   });
 };
 
-export const createMockApiResponse = <T>(data: T, success = true) => ({
-  success,
-  data,
-  error: success ? undefined : 'Test error',
-  message: success ? 'Success' : 'Error',
-});
+export function createMockApiResponse<T>(data: T, success = true) {
+  return {
+    success,
+    data,
+    error: success ? undefined : 'Test error',
+    message: success ? 'Success' : 'Error',
+  };
+}
 
 // Async test helpers
 export const waitForAsync = () => new Promise(resolve => setTimeout(resolve, 0));
