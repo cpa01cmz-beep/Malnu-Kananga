@@ -38,8 +38,9 @@ describe('useTouchGestures', () => {
   it('seharusnya mengembalikan ref yang bisa di-attach ke element', () => {
     const { result } = renderHook(() => useTouchGestures({}));
 
-    expect(result.current).toHaveProperty('current');
-    expect(typeof result.current.current).toBe('object');
+    expect(result.current).toHaveProperty('elementRef');
+    expect(result.current.elementRef).toHaveProperty('current');
+    expect(typeof result.current.elementRef.current).toBe('object');
   });
 
   it('seharusnya membersihkan event listeners saat unmount', () => {

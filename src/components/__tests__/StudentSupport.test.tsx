@@ -14,64 +14,67 @@ Object.defineProperty(window, 'alert', {
 // Use fake timers for handling async operations
 jest.useFakeTimers();
 
-// Mock the student support service
 jest.mock('../../services/studentSupportService', () => ({
   StudentSupportService: {
-    getSupportRequests: jest.fn(() => [
-      {
-        id: 'REQ001',
-        studentId: 'STU001',
-        type: 'academic',
-        category: 'math',
-        priority: 'medium',
-        title: 'Bantuan Matematika',
-        description: 'Saya kesulitan dengan kalkulus',
-        status: 'pending',
-        createdAt: '2024-01-01T10:00:00Z'
-      }
-    ]),
-    getRelevantResources: jest.fn(() => [
-      {
-        id: 'RES001',
-        title: 'Panduan Belajar Efektif',
-        type: 'guide',
-        category: 'academic',
-        content: 'Teknik belajar efektif',
-        difficulty: 'beginner',
-        tags: ['belajar', 'metode']
-      }
-    ]),
-    getStudentProgress: jest.fn(() => ({
-      studentId: 'STU001',
-      academicMetrics: {
-        gpa: 3.5,
-        gradeTrend: 'improving',
-        subjectsAtRisk: [],
-        attendanceRate: 85,
-        assignmentCompletion: 90
-      },
-      engagementMetrics: {
-        loginFrequency: 5,
-        resourceAccess: 10,
-        supportRequests: 2,
-        participationScore: 75
-      },
-      riskLevel: 'low',
-      lastUpdated: '2024-01-01T10:00:00Z'
-    })),
-    createSupportRequest: jest.fn(() => ({
-      id: 'REQ002',
-      studentId: 'STU001',
-      type: 'academic',
-      category: 'physics',
-      priority: 'medium',
-      title: 'Bantuan Fisika',
-      description: 'Saya kesulitan dengan mekanika',
-      status: 'pending',
-      createdAt: '2024-01-01T11:00:00Z'
+    getInstance: jest.fn(() => ({
+      getSupportRequests: jest.fn(() => [
+          {
+            id: 'REQ001',
+            studentId: 'STU001',
+            type: 'academic',
+            category: 'math',
+            priority: 'medium',
+            title: 'Bantuan Matematika',
+            description: 'Saya kesulitan dengan kalkulus',
+            status: 'pending',
+            createdAt: '2024-01-01T10:00:00Z'
+          }
+        ]),
+        getRelevantResources: jest.fn(() => [
+          {
+            id: 'RES001',
+            title: 'Panduan Belajar Efektif',
+            type: 'guide',
+            category: 'academic',
+            content: 'Teknik belajar efektif',
+            difficulty: 'beginner',
+            tags: ['belajar', 'metode']
+          }
+        ]),
+        getStudentProgress: jest.fn(() => ({
+          studentId: 'STU001',
+          academicMetrics: {
+            gpa: 3.5,
+            gradeTrend: 'improving',
+            subjectsAtRisk: [],
+            attendanceRate: 85,
+            assignmentCompletion: 90
+          },
+          engagementMetrics: {
+            loginFrequency: 5,
+            resourceAccess: 10,
+            supportRequests: 2,
+            participationScore: 75
+          },
+          riskLevel: 'low',
+          lastUpdated: '2024-01-01T10:00:00Z'
+        })),
+        createSupportRequest: jest.fn(() => ({
+          id: 'REQ002',
+          studentId: 'STU001',
+          type: 'academic',
+          category: 'physics',
+          priority: 'medium',
+          title: 'Bantuan Fisika',
+          description: 'Saya kesulitan dengan mekanika',
+          status: 'pending',
+          createdAt: '2024-01-01T11:00:00Z'
+        }))
     }))
   }
 }));
+
+
 
 describe('StudentSupport Component', () => {
   beforeEach(() => {
