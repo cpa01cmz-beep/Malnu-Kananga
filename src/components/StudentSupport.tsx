@@ -48,8 +48,6 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
      const progress = supportService.getStudentProgress(studentId);
      setStudentProgress(progress || null);
    };
-    setStudentProgress(progress || null);
-  };
 
   const handleCreateRequest = () => {
     if (!newRequest.title || !newRequest.description) {
@@ -59,16 +57,15 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
 
      const supportService = StudentSupportService.getInstance();
      const request = supportService.createSupportRequest(
-      studentId,
-      newRequest.type,
-      newRequest.category || 'umum',
-      newRequest.title,
-      newRequest.description,
-      newRequest.priority
-    );
+       studentId,
+       newRequest.type,
+       newRequest.category || 'umum',
+       newRequest.title,
+       newRequest.description,
+       newRequest.priority
+     );
 
     setSupportRequests([...supportRequests, request]);
-    
     setNewRequest({
       type: 'academic',
       category: '',
@@ -114,48 +111,34 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-      <div className="bg-white rounded-xl shadow-xl overflow-hidden">
+    <div className="max-w-6xl mx-auto p-6">
+      <div className="bg-white rounded-lg shadow-lg">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 sm:p-8">
-          <div className="max-w-3xl">
-            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Pusat Dukungan Siswa</h1>
-            <p className="text-blue-100 text-lg">Sistem dukungan akademis dan teknis otomatis 24/7</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full">
-                🤖 AI-Powered
-              </span>
-              <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full">
-                📊 Real-time Monitoring
-              </span>
-              <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full">
-                🚀 Quick Response
-              </span>
-            </div>
-          </div>
+        <div className="border-b border-gray-200 p-6">
+          <h1 className="text-2xl font-bold text-gray-900">Pusat Dukungan Siswa</h1>
+          <p className="text-gray-600 mt-2">Sistem dukungan akademis dan teknis otomatis</p>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="border-b border-gray-200 bg-gray-50">
-          <nav className="flex flex-wrap sm:flex-nowrap gap-2 px-4 sm:px-6 py-2">
+        <div className="border-b border-gray-200">
+          <nav className="flex space-x-8 px-6">
             {[
-              { id: 'dashboard', label: 'Dashboard', icon: '📊', color: 'blue' },
-              { id: 'requests', label: 'Permintaan Saya', icon: '📝', color: 'orange' },
-              { id: 'resources', label: 'Resources', icon: '📚', color: 'green' },
-              { id: 'progress', label: 'Progress', icon: '📈', color: 'purple' }
+              { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+              { id: 'requests', label: 'Permintaan Saya', icon: '📝' },
+              { id: 'resources', label: 'Resources', icon: '📚' },
+              { id: 'progress', label: 'Progress', icon: '📈' }
             ].map(tab => (
               <button
                 key={tab.id}
                  onClick={() => setActiveTab(tab.id as 'dashboard' | 'requests' | 'resources' | 'progress')}
                  className={`flex-1 min-w-[120px] py-3 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
                   activeTab === tab.id
-                    ? `bg-${tab.color}-100 text-${tab.color}-700 border-2 border-${tab.color}-300 shadow-sm`
-                    : 'bg-white text-gray-600 border-2 border-transparent hover:bg-gray-100 hover:text-gray-800'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
-                <span className="mr-2 text-lg">{tab.icon}</span>
-                <span className="hidden sm:inline">{tab.label}</span>
-                <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+                <span className="mr-2">{tab.icon}</span>
+                {tab.label}
               </button>
             ))}
           </nav>
@@ -166,63 +149,28 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
               {/* Quick Stats */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 lg:p-6 rounded-xl border border-blue-200 hover:shadow-lg transition-shadow duration-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-3xl">⏳</span>
-                    <span className="text-xs text-blue-600 font-medium bg-blue-200 px-2 py-1 rounded-full">
-                      {supportRequests.filter(r => r.status === 'pending').length} Aktif
-                    </span>
-                  </div>
-                  <div className="text-blue-700 text-2xl lg:text-3xl font-bold">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="text-blue-600 text-2xl font-bold">
                     {supportRequests.filter(r => r.status === 'pending').length}
                   </div>
-                  <div className="text-blue-800 text-sm font-medium">Menunggu Respon</div>
+                  <div className="text-blue-800 text-sm">Menunggu Respon</div>
                 </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 lg:p-6 rounded-xl border border-green-200 hover:shadow-lg transition-shadow duration-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-3xl">✅</span>
-                    <span className="text-xs text-green-600 font-medium bg-green-200 px-2 py-1 rounded-full">
-                      {Math.round((supportRequests.filter(r => r.status === 'resolved').length / Math.max(supportRequests.length, 1)) * 100)}%
-                    </span>
-                  </div>
-                  <div className="text-green-700 text-2xl lg:text-3xl font-bold">
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="text-green-600 text-2xl font-bold">
                     {supportRequests.filter(r => r.status === 'resolved').length}
                   </div>
-                  <div className="text-green-800 text-sm font-medium">Selesai</div>
+                  <div className="text-green-800 text-sm">Selesai</div>
                 </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 lg:p-6 rounded-xl border border-purple-200 hover:shadow-lg transition-shadow duration-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-3xl">📚</span>
-                    <span className="text-xs text-purple-600 font-medium bg-purple-200 px-2 py-1 rounded-full">
-                      {resources.filter(r => r.rating && r.rating > 4).length} Top
-                    </span>
-                  </div>
-                  <div className="text-purple-700 text-2xl lg:text-3xl font-bold">{resources.length}</div>
-                  <div className="text-purple-800 text-sm font-medium">Resources Tersedia</div>
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <div className="text-purple-600 text-2xl font-bold">{resources.length}</div>
+                  <div className="text-purple-800 text-sm">Resources Tersedia</div>
                 </div>
-                <div className={`bg-gradient-to-br p-4 lg:p-6 rounded-xl border hover:shadow-lg transition-shadow duration-200 ${
-                  studentProgress?.riskLevel === 'high' ? 'from-red-50 to-red-100 border-red-200' :
-                  studentProgress?.riskLevel === 'medium' ? 'from-yellow-50 to-yellow-100 border-yellow-200' :
-                  'from-green-50 to-green-100 border-green-200'
-                }`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-3xl">
-                      {studentProgress?.riskLevel === 'high' ? '🚨' :
-                       studentProgress?.riskLevel === 'medium' ? '⚠️' : '✨'}
-                    </span>
-                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                      studentProgress?.riskLevel === 'high' ? 'text-red-600 bg-red-200' :
-                      studentProgress?.riskLevel === 'medium' ? 'text-yellow-600 bg-yellow-200' :
-                      'text-green-600 bg-green-200'
-                    }`}>
-                      {studentProgress?.riskLevel.toUpperCase() || 'LOW'}
-                    </span>
-                  </div>
-                  <div className={`text-2xl lg:text-3xl font-bold ${getRiskLevelColor(studentProgress?.riskLevel || 'low')}`}>
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <div className={`text-2xl font-bold ${getRiskLevelColor(studentProgress?.riskLevel || 'low')}`}>
                     {studentProgress?.riskLevel.toUpperCase() || 'LOW'}
                   </div>
-                  <div className="text-sm font-medium opacity-80">Tingkat Risiko</div>
+                  <div className="text-orange-800 text-sm">Tingkat Risiko</div>
                 </div>
               </div>
 
@@ -247,20 +195,18 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
               </div>
 
               {/* Quick Actions */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex space-x-4">
                 <button
                   onClick={() => setShowNewRequestForm(true)}
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                 >
-                  <span className="mr-2">📝</span>
-                  Buat Permintaan Baru
+                  📝 Buat Permintaan Baru
                 </button>
                 <button
                   onClick={() => setActiveTab('resources')}
-                  className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
                 >
-                  <span className="mr-2">📚</span>
-                  Jelajahi Resources
+                  📚 Jelajahi Resources
                 </button>
               </div>
             </div>
@@ -457,18 +403,17 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
 
       {/* New Request Modal */}
       {showNewRequestForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all duration-300 scale-100">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
             <h3 className="text-lg font-semibold mb-4">Buat Permintaan Dukungan Baru</h3>
             
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
                 <select
-                  value={newRequest.type}
-<<<<<<< HEAD
+                   value={newRequest.type}
                    onChange={(e) => setNewRequest({...newRequest, type: e.target.value as 'academic' | 'technical' | 'administrative' | 'personal'})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="academic">Akademis</option>
                   <option value="technical">Teknis</option>
@@ -525,16 +470,16 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
               </div>
             </div>
 
-            <div className="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
+            <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={() => setShowNewRequestForm(false)}
-                className="px-6 py-3 text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors duration-200 font-medium"
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Batal
               </button>
               <button
                 onClick={handleCreateRequest}
-                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Kirim Permintaan
               </button>
