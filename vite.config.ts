@@ -29,45 +29,29 @@ export default defineConfig(({ command, mode }) => ({
             if (id.includes('uuid')) {
               return 'utils-vendor';
             }
-            if (id.includes('tanstack') || id.includes('@tanstack')) {
+            if (id.includes('@supabase/supabase-js')) {
+              return 'db-vendor';
+            }
+            if (id.includes('@tanstack/react-query')) {
               return 'query-vendor';
             }
             return 'vendor';
           }
           
-          // Split larger components into separate chunks
-          if (id.includes('Dashboard')) {
-            return 'dashboard';
+<<<<<<< HEAD
+           // Application chunks
+           if (id.includes('/src/components/')) {
+             return 'components';
           }
-          if (id.includes('Section')) {
-            return 'sections';
-          }
-          if (id.includes('ChatWindow')) {
-            return 'chat';
-          }
-          if (id.includes('memory')) {
-            return 'memory';
-          }
-          if (id.includes('StudentSupport')) {
-            return 'student-support';
-          }
-          if (id.includes('components')) {
-            return 'components';
-          }
-          if (id.includes('services')) {
+          if (id.includes('/src/services/')) {
             return 'services';
           }
-          if (id.includes('hooks')) {
+          if (id.includes('/src/hooks/')) {
             return 'hooks';
           }
-        },
-
-        // Optimize chunk naming untuk better caching
-        chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId
-            ? chunkInfo.facadeModuleId.split('/').pop()?.replace('.tsx', '').replace('.ts', '')
-            : 'chunk';
-          return `js/${facadeModuleId}-[hash].js`;
+          if (id.includes('/src/memory/')) {
+            return 'memory';
+          }
         },
 
         // Optimize asset naming
@@ -82,27 +66,12 @@ export default defineConfig(({ command, mode }) => ({
           }
           return `assets/[name]-[hash].${ext}`;
         }
-      }
-    },
+       }
+     },
 
-    // Performance optimizations
-    target: 'esnext',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: mode === 'production',
-        drop_debugger: mode === 'production',
-        pure_funcs: mode === 'production' ? ['console.log', 'console.info', 'console.debug'] : [],
-        passes: 2
-      },
-      mangle: {
-        safari10: true
-      }
-    },
-
-    // Chunk size warnings - increased threshold for education system
-    chunkSizeWarningLimit: 300
-  },
+     // Chunk size warnings
+     chunkSizeWarningLimit: 300,
+   },
 
   // Development server optimizations
   server: {
@@ -114,17 +83,6 @@ export default defineConfig(({ command, mode }) => ({
   optimizeDeps: {
     include: ['react', 'react-dom', '@google/genai'],
     exclude: ['@tanstack/react-query']
-  },
-
-  // Experimental features for better performance
-  experimental: {
-    renderBuiltUrl: (filename, { hostType }) => {
-      if (hostType === 'js') {
-        return { js: `/${filename}` };
-      } else {
-        return { relative: true };
-      }
-    }
   },
 
   // Asset optimization
