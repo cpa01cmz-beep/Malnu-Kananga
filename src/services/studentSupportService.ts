@@ -1148,23 +1148,8 @@ class StudentSupportService {
 // Get support resources
   getSupportAnalytics(): any {
     const requests = this.getSupportRequests();
-    const allProgress = StudentSupportService.getAllStudentProgress();
+const allProgress = StudentSupportService.getAllStudentProgress();
     const resources = StudentSupportService.getSupportResources();
-<<<<<<< HEAD
-
-    return {
-      totalRequests: requests.length,
-      pendingRequests: requests.filter(r => r.status === 'pending').length,
-      resolvedRequests: requests.filter(r => r.status === 'resolved').length,
-      escalatedRequests: requests.filter(r => r.status === 'escalated').length,
-      averageResolutionTime: this.calculateAverageResolutionTime(requests),
-      categoryBreakdown: this.getCategoryBreakdown(requests),
-      atRiskStudents: Object.values(allProgress).filter(p => p.riskLevel === 'high').length,
-      totalStudents: Object.keys(allProgress).length
-    };
-  }
-
-=======
 
     return {
       totalRequests: requests.length,
@@ -1187,7 +1172,6 @@ class StudentSupportService {
       allResources = allResources.filter(r => r.category === category);
     }
     
->>>>>>> origin/main
     return allResources.sort((a, b) => (b.rating || 0) - (a.rating || 0));
   }
 
@@ -1289,37 +1273,6 @@ class StudentSupportService {
     }
   }
 
-<<<<<<< HEAD
-// Get support analytics
-    getSupportAnalytics(): any {
-      const requests = this.getSupportRequests();
-      const allProgress = StudentSupportService.getAllStudentProgress();
-      const resources = StudentSupportService.getSupportResources();
-
-      return {
-        totalRequests: requests.length,
-        pendingRequests: requests.filter(r => r.status === 'pending').length,
-        resolvedRequests: requests.filter(r => r.status === 'resolved').length,
-        escalatedRequests: requests.filter(r => r.status === 'escalated').length,
-        averageResolutionTime: this.calculateAverageResolutionTime(requests),
-        categoryBreakdown: this.getCategoryBreakdown(requests),
-        atRiskStudents: Object.values(allProgress).filter(p => p.riskLevel === 'high').length,
-        totalStudents: Object.keys(allProgress).length
-      };
-    }
-
-    // Get support resources
-    static getSupportResources(category?: string): SupportResource[] {
-      const resources = localStorage.getItem(StudentSupportService.RESOURCES_KEY);
-      let allResources: SupportResource[] = resources ? JSON.parse(resources) : StudentSupportService.initializeSampleResources();
-
-      if (category) {
-        allResources = allResources.filter(r => r.category === category);
-      }
-      
-      return allResources.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-    }
-
   // Get category breakdown
   private getCategoryBreakdown(requests: SupportRequest[]): Record<string, number> {
     const breakdown: Record<string, number> = {};
@@ -1413,22 +1366,21 @@ class StudentSupportService {
 // Auto-initialize when module loads with error handling
 if (typeof window !== 'undefined') {
   try {
-// Initialize with proper error handling
-     const service = StudentSupportService.getInstance();
-     service.initialize();
-     
-     console.log('🚀 Student Support System initialized successfully');
-   } catch (error) {
-     console.error('Failed to initialize Student Support System:', error);
-     // Fallback initialization
-     try {
-       const service = StudentSupportService.getInstance();
-       service.initialize();
-       console.log('⚠️ Student Support System initialized in fallback mode');
-     } catch (fallbackError) {
-       console.error('Critical: Student Support System failed to initialize:', fallbackError);
-     }
-   }
+    // Initialize with proper error handling
+    const service = StudentSupportService.getInstance();
+    service.initialize();
+    
+    console.log('🚀 Student Support System initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize Student Support System:', error);
+    // Fallback initialization
+    try {
+      const service = StudentSupportService.getInstance();
+      service.initialize();
+      console.log('⚠️ Student Support System initialized in fallback mode');
+    } catch (fallbackError) {
+      console.error('Critical: Student Support System failed to initialize:', fallbackError);
+    }
   }
 }
 
