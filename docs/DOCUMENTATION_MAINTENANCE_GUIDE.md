@@ -569,7 +569,7 @@ jobs:
 
 ---
 
-*Guide Version: 1.0.0*  
+*Guide Version: 1.1.0*  
 *Last Updated: November 25, 2025*  
 *Next Review: February 25, 2026*  
 *Maintained by: MA Malnu Kananga Documentation Team*

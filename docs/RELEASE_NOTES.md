@@ -254,7 +254,7 @@ Release notes untuk MA Malnu Kananga School Portal menyediakan informasi lengkap
 
 **Release Notes - MA Malnu Kananga School Portal**
 
-*Last Updated: November 24, 2025*  
+*Last Updated: November 25, 2025*  
 *Current Version: v1.3.1*  
 *Next Release: v1.4.0 (Planned Q1 2025)*  
 *Maintained by: MA Malnu Kananga Development Team*
