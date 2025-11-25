@@ -68,6 +68,12 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 - **Fitur**: Problem diagnosis, step-by-step solutions, support contacts
 - **Level**: All levels
 
+#### 🔍 [Environment Validation Guide](./ENVIRONMENT_VALIDATION.md)
+- **Target**: Developer, system administrator, DevOps
+- **Topik**: Environment configuration, validation scripts, troubleshooting
+- **Fitur**: Automated validation, setup scripts, environment testing
+- **Level**: Intermediate to Advanced
+
 #### 🔒 [Security Guide](./SECURITY_GUIDE.md)
 - **Target**: Developer, system administrator, security team
 - **Topik**: Security architecture, authentication, data protection, monitoring
@@ -92,9 +98,10 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 
 ### 🔧 Technical Users
 1. **API Integration**: Lihat API Documentation
-2. **Development Setup**: Ikuti Installation Guide & Developer Guide
+2. **Development Setup**: Ikuti Installation Guide & Environment Validation Guide
 3. **System Architecture**: Review Developer Guide
-4. **Deployment**: Check Installation Guide & Troubleshooting
+4. **Deployment**: Check Installation Guide & Environment Validation Guide
+5. **Environment Issues**: Check Environment Validation Guide
 
 ### 📚 Power Users
 1. **Advanced Features**: Lihat Panduan Administrator
@@ -118,6 +125,7 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 | Deployment Guide | DevOps, SysAdmin | Advanced | Quarterly |
 | System Architecture | Developer, Architect | Advanced | Quarterly |
 | Troubleshooting Guide | All | All | As needed |
+| Environment Validation | Developer, DevOps | Intermediate | Quarterly |
 | Security Guide | Developer, Admin | Advanced | Quarterly |
 | Performance Guide | Developer, DevOps | Intermediate | Quarterly |
 
@@ -132,6 +140,7 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 - **Login Issues**: Troubleshooting Guide
 - **Security**: Administrator Guide
 - **API Authentication**: API Documentation
+- **Environment Setup**: Environment Validation Guide
 
 #### 📚 Academic Management
 - **Grades & Scores**: Student & Parent Guides
@@ -253,6 +262,7 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 - [Getting Started Guide](./USER_GUIDE_STUDENT.md#quick-start)
 - [System Requirements](./DEPLOYMENT_GUIDE.md#prerequisites)
 - [Installation Steps](./DEPLOYMENT_GUIDE.md#environment-setup)
+- [Environment Validation](./ENVIRONMENT_VALIDATION.md#environment-validation-checklist)
 - [Common Issues](./TROUBLESHOOTING_GUIDE.md#common-issues)
 - [API Quick Reference](./API_DOCUMENTATION.md#quick-reference)
 - [System Architecture](./SYSTEM_ARCHITECTURE.md#high-level-architecture)
@@ -267,6 +277,7 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 ### 🔧 Technical Resources
 - [API Endpoints](./API_DOCUMENTATION.md#authentication-api)
 - [Development Setup](./DEPLOYMENT_GUIDE.md#local-development-setup)
+- [Environment Validation](./ENVIRONMENT_VALIDATION.md#environment-validation-scripts)
 - [Installation Guide](./DEPLOYMENT_GUIDE.md#cloudflare-infrastructure-setup)
 - [Deployment Guide](./DEPLOYMENT_GUIDE.md#production-deployment)
 - [System Architecture](./SYSTEM_ARCHITECTURE.md)
