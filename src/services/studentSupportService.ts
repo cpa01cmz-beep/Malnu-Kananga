@@ -547,8 +547,8 @@ class StudentSupportService {
       const monitoringService = RealTimeMonitoringService.getInstance();
       if (monitoringService && monitoringService.trackStudentSession) {
         monitoringService.trackStudentSession(studentId, {
-          lastActivity: new Date().toISOString(),
-          supportRequestTriggered: true
+          lastLogin: new Date().toISOString(),
+          pageViews: 1
         });
       }
     } catch (error) {
