@@ -73,7 +73,6 @@ jest.mock('../../services/studentSupportService', () => ({
 }));
 
 
-
 describe('StudentSupport Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();

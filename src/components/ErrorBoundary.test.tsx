@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ErrorBoundary, { withErrorBoundary, useErrorHandler } from './ErrorBoundary';
 
@@ -141,7 +142,7 @@ describe('ErrorBoundary', () => {
     process.env.NODE_ENV = originalEnv;
   });
 
-it('seharusnya mereset state ketika tombol "Coba Lagi" diklik', () => {
+  it('seharusnya mereset state ketika tombol "Coba Lagi" diklik', () => {
     const TestComponent = ({ shouldThrow = false }: { shouldThrow?: boolean }) => {
       if (shouldThrow) {
         throw new Error('Test error');
@@ -285,7 +286,7 @@ describe('useErrorHandler hook', () => {
 
       return (
         <div>
-          <button onClick={handleClick}>Throw Error</button>
+          <button>Throw Error</button>
         </div>
       );
     };
