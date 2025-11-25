@@ -1164,11 +1164,12 @@ class StudentSupportService {
   }
 
   // Get support resources
-  static getSupportResources(): SupportResource[] {
-    const allResources = JSON.parse(localStorage.getItem(StudentSupportService.RESOURCES_KEY) || '[]');
-    
-    if (allResources.length === 0) {
-      return StudentSupportService.initializeSampleResources();
+  static getSupportResources(category?: string): SupportResource[] {
+    const resources = localStorage.getItem(StudentSupportService.RESOURCES_KEY);
+    let allResources: SupportResource[] = resources ? JSON.parse(resources) : StudentSupportService.initializeSampleResources();
+
+    if (category) {
+      allResources = allResources.filter(r => r.category === category);
     }
     
     return allResources.sort((a, b) => (b.rating || 0) - (a.rating || 0));
