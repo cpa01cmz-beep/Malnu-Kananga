@@ -46,31 +46,25 @@ describe('useTouchGestures', () => {
 
     // Attach ref to element
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     // Simulate touch start
     act(() => {
-      const touchStart = new TouchEvent('touchstart', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100,
-          clientY: 100,
-        } as TouchInit)],
+      const touchStart = new Event('touchstart', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchStart, 'touches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchStart);
     });
 
     // Simulate touch end with swipe right movement
     act(() => {
-      const touchEnd = new TouchEvent('touchend', {
-        changedTouches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 200, // Moved right
-          clientY: 100, // Same Y position
-        } as TouchInit)],
+      const touchEnd = new Event('touchend', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchEnd, 'changedTouches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 200, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchEnd);
     });
@@ -84,29 +78,23 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     act(() => {
-      const touchStart = new TouchEvent('touchstart', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 200,
-          clientY: 100,
-        } as TouchInit)],
+      const touchStart = new Event('touchstart', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchStart, 'touches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 200, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchStart);
     });
 
     act(() => {
-      const touchEnd = new TouchEvent('touchend', {
-        changedTouches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100, // Moved left
-          clientY: 100, // Same Y position
-        } as TouchInit)],
+      const touchEnd = new Event('touchend', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchEnd, 'changedTouches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchEnd);
     });
@@ -120,29 +108,23 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     act(() => {
-      const touchStart = new TouchEvent('touchstart', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100,
-          clientY: 200,
-        } as TouchInit)],
+      const touchStart = new Event('touchstart', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchStart, 'touches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 100, clientY: 200 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchStart);
     });
 
     act(() => {
-      const touchEnd = new TouchEvent('touchend', {
-        changedTouches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100, // Same X position
-          clientY: 100, // Moved up
-        } as TouchInit)],
+      const touchEnd = new Event('touchend', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchEnd, 'changedTouches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchEnd);
     });
@@ -156,29 +138,23 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     act(() => {
-      const touchStart = new TouchEvent('touchstart', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100,
-          clientY: 100,
-        } as TouchInit)],
+      const touchStart = new Event('touchstart', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchStart, 'touches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchStart);
     });
 
     act(() => {
-      const touchEnd = new TouchEvent('touchend', {
-        changedTouches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100, // Same X position
-          clientY: 200, // Moved down
-        } as TouchInit)],
+      const touchEnd = new Event('touchend', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchEnd, 'changedTouches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 100, clientY: 200 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchEnd);
     });
@@ -192,30 +168,20 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     act(() => {
-      const touchStart = new TouchEvent('touchstart', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100,
-          clientY: 100,
-        } as TouchInit)],
-      });
+      const touchStart = document.createEvent('Event');
+      touchStart.initEvent('touchstart', true, true);
+      touchStart.touches = [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }];
       mockElement.dispatchEvent(touchStart);
     });
 
     act(() => {
-      const touchEnd = new TouchEvent('touchend', {
-        changedTouches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100, // Same position
-          clientY: 100, // Same position
-        } as TouchInit)],
-      });
+      const touchEnd = document.createEvent('Event');
+      touchEnd.initEvent('touchend', true, true);
+      touchEnd.changedTouches = [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }];
       mockElement.dispatchEvent(touchEnd);
     });
 
@@ -228,18 +194,13 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     act(() => {
-      const touchStart = new TouchEvent('touchstart', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100,
-          clientY: 100,
-        } as TouchInit)],
-      });
+      const touchStart = document.createEvent('Event');
+      touchStart.initEvent('touchstart', true, true);
+      touchStart.touches = [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }];
       mockElement.dispatchEvent(touchStart);
     });
 
@@ -257,29 +218,23 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     act(() => {
-      const touchStart = new TouchEvent('touchstart', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100,
-          clientY: 100,
-        } as TouchInit)],
+      const touchStart = new Event('touchstart', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchStart, 'touches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchStart);
     });
 
     act(() => {
-      const touchMove = new TouchEvent('touchmove', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 120, // Moved
-          clientY: 120, // Moved
-        } as TouchInit)],
+      const touchMove = new Event('touchmove', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchMove, 'touches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 120, clientY: 120 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchMove);
     });
@@ -298,18 +253,13 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     act(() => {
-      const touchStart = new TouchEvent('touchstart', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100,
-          clientY: 100,
-        } as TouchInit)],
-      });
+      const touchStart = document.createEvent('Event');
+      touchStart.initEvent('touchstart', true, true);
+      touchStart.touches = [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }];
       mockElement.dispatchEvent(touchStart);
     });
 
@@ -330,12 +280,12 @@ describe('useTouchGestures', () => {
     const addEventListenerSpy = jest.spyOn(mockElement, 'addEventListener');
     const removeEventListenerSpy = jest.spyOn(mockElement, 'removeEventListener');
 
-    const { unmount } = renderHook(() => 
+    const { result, unmount } = renderHook(() => 
       useTouchGestures({ onTap })
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     unmount();
@@ -354,30 +304,24 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     // Simulate tap (short touch)
     act(() => {
-      const touchStart = new TouchEvent('touchstart', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100,
-          clientY: 100,
-        } as TouchInit)],
+      const touchStart = new Event('touchstart', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchStart, 'touches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchStart);
     });
 
     act(() => {
-      const touchEnd = new TouchEvent('touchend', {
-        changedTouches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100,
-          clientY: 100,
-        } as TouchInit)],
+      const touchEnd = new Event('touchend', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchEnd, 'changedTouches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchEnd);
     });
@@ -393,29 +337,23 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     act(() => {
-      const touchStart = new TouchEvent('touchstart', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100,
-          clientY: 100,
-        } as TouchInit)],
+      const touchStart = new Event('touchstart', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchStart, 'touches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchStart);
     });
 
     act(() => {
-      const touchEnd = new TouchEvent('touchend', {
-        changedTouches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 150, // Only moved 50px, less than minSwipeDistance
-          clientY: 100,
-        } as TouchInit)],
+      const touchEnd = new Event('touchend', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchEnd, 'changedTouches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 150, clientY: 100 }], // Only moved 50px, less than minSwipeDistance
+        writable: false
       });
       mockElement.dispatchEvent(touchEnd);
     });
@@ -429,17 +367,14 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     act(() => {
-      const touchStart = new TouchEvent('touchstart', {
-        touches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 100,
-          clientY: 100,
-        } as TouchInit)],
+      const touchStart = new Event('touchstart', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchStart, 'touches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 100, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchStart);
     });
@@ -450,13 +385,10 @@ describe('useTouchGestures', () => {
     });
 
     act(() => {
-      const touchEnd = new TouchEvent('touchend', {
-        changedTouches: [new Touch({
-          identifier: 0,
-          target: mockElement,
-          clientX: 200,
-          clientY: 100,
-        } as TouchInit)],
+      const touchEnd = new Event('touchend', { bubbles: true, cancelable: true });
+      Object.defineProperty(touchEnd, 'changedTouches', {
+        value: [{ identifier: 0, target: mockElement, clientX: 200, clientY: 100 }],
+        writable: false
       });
       mockElement.dispatchEvent(touchEnd);
     });
