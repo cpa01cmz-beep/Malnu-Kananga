@@ -91,7 +91,7 @@ export default [
         ServiceWorkerRegistration: true,
         IDBDatabase: true,
         indexedDB: true,
-        IDBOpenDBRequest: true,
+IDBOpenDBRequest: true,
         isDevelopment: true,
         crypto: true,
         ResizeObserver: true,
@@ -104,8 +104,6 @@ export default [
         Document: true,
         RequestInfo: true,
         btoa: true,
-         atob: true,
-         ResizeObserver: true,
-        },
+        atob: true,
       },
       plugins: {
