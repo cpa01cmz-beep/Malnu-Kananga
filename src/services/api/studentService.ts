@@ -72,7 +72,6 @@ class LocalStudentService {
     // Fallback ke mock data jika tidak ada di localStorage
     return [{
       id: 'STU001',
-      nis: '2024001',
       name: 'Ahmad Fauzi Rahman',
       email: 'siswa@ma-malnukananga.sch.id',
       grade: 'XII',
@@ -143,11 +142,9 @@ class LocalStudentService {
         studentId: 'STU001',
         subject: 'Matematika',
         teacher: 'Budi Santoso, S.Pd',
-        room: 'Lab. Komputer',
+        room: 'Lab IPA 1',
         time: '07:00 - 08:30',
-        day: 'Senin',
-        teacher: 'Budi Santoso, S.Pd',
-        room: 'Lab. Komputer'
+        day: 'Senin'
       },
       {
         id: 'SCH002',
@@ -155,8 +152,8 @@ class LocalStudentService {
         subject: 'Fisika',
         time: '08:45 - 10:15',
         day: 'Senin',
-        teacher: 'Dra. Siti Nurhaliza',
-        room: 'Lab. Fisika'
+         teacher: 'Dewi Lestari, M.Si',
+         room: 'Lab Fisika'
       }
     ];
   }

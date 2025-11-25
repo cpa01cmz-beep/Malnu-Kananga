@@ -93,7 +93,7 @@ export class FeaturedProgramsApiService {
     }
   }
 
-static async getAll(): Promise<FeaturedProgram[]> {
+  static async getAll(): Promise<FeaturedProgram[]> {
     const isDevelopment = (import.meta as any).env?.DEV || false;
     if (isDevelopment) {
       return LocalFeaturedProgramsService.getAll();
