@@ -1,5 +1,5 @@
-// Parent Communication Automation Service
-// Layanan komunikasi otomatis dengan orang tua siswa
+// Enhanced Parent Communication Automation Service
+// Layanan komunikasi otomatis dengan orang tua siswa - Enhanced dengan AI-powered personalization
 
 export interface ParentCommunication {
   id: string;
@@ -374,9 +374,9 @@ Tim Bimbingan Konseling`,
   private static async sendCommunication(communication: ParentCommunication): Promise<void> {
     // Check quiet hours
     const settings = this.getParentSettings(communication.studentId);
-    if (this.isQuietHours(settings)) {
+    if (settings && this.isQuietHours(settings)) {
       // Reschedule for next allowed time
-      const nextAllowedTime = this.getNextAllowedTime(settings);
+      const nextAllowedTime = this.getNextAllowedTime(settings || undefined);
       communication.scheduledFor = nextAllowedTime.toISOString();
       this.saveCommunication(communication);
       return;
@@ -695,9 +695,14 @@ Tim Bimbingan Konseling`,
   }
 }
 
-// Auto-initialize when module loads
+// Auto-initialize when module loads with error handling
 if (typeof window !== 'undefined') {
-  ParentCommunicationService.initialize();
+  try {
+    ParentCommunicationService.initialize();
+    console.log('📧 Parent Communication Service initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize Parent Communication Service:', error);
+  }
 }
 
 export { ParentCommunicationService };

@@ -6,6 +6,10 @@ This comprehensive guide covers the complete deployment process for the MA Malnu
 
 ---
 
+**Deployment Guide Version: 1.3.1**  
+**Last Updated: 2025-11-24
+**Deployment Status: Production Ready**
+
 ## 📋 Prerequisites
 
 ### Required Accounts & Services
@@ -39,8 +43,8 @@ This comprehensive guide covers the complete deployment process for the MA Malnu
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/ma-malnukananga/school-portal.git
-cd school-portal
+git clone https://github.com/sulhi/ma-malnu-kananga.git
+cd ma-malnu-kananga
 ```
 
 ### 2. Install Dependencies
@@ -61,9 +65,11 @@ nano .env
 ```bash
 # Required for AI functionality
 API_KEY=your_google_gemini_api_key_here
+GEMINI_API_KEY=your_google_gemini_api_key_here
 
 # Required for authentication (MUST be 32+ characters)
 SECRET_KEY=your_jwt_secret_key_here_minimum_32_characters
+CSRF_SECRET=your_csrf_secret_key_here
 
 # Application configuration
 NODE_ENV=development
@@ -93,6 +99,38 @@ npm run env:validate
 # - Required environment variables are set
 # - Production environment has proper security settings
 ```
+
+### 6. 🔍 Finding Your Cloudflare Worker URL (CRITICAL)
+
+After deploying your Cloudflare Worker, you MUST find and configure the correct URL:
+
+#### Step-by-Step URL Discovery:
+1. **Go to Cloudflare Dashboard** → Workers & Pages
+2. **Find Your Worker**: Look for name pattern `malnu-kananga-*`
+3. **Copy Worker URL**: Format will be `https://your-worker-name.subdomain.workers.dev`
+4. **Update Environment**: Add to your `.env` file:
+   ```bash
+   VITE_WORKER_URL=https://your-actual-worker-url.workers.dev
+   ```
+
+#### Common URL Patterns:
+- Development: `http://localhost:8787` (local worker)
+- Staging: `https://malnu-kananga-staging.your-subdomain.workers.dev`
+- Production: `https://malnu-kananga-prod.your-subdomain.workers.dev`
+
+#### Verification:
+```bash
+# Test your worker URL
+curl https://your-worker-url.workers.dev/health
+
+# Should return: {"status": "ok", "timestamp": "..."}
+```
+
+#### ⚠️ Common Issues:
+- **404 Error**: Worker not deployed or wrong URL
+- **CORS Error**: VITE_WORKER_URL not matching actual worker URL
+- **AI Not Working**: Vector database not seeded (run `/seed` endpoint)
+- **Auth Failing**: SECRET_KEY missing or too short
 
 ---
 
@@ -652,7 +690,7 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 - **Troubleshooting Guide**: [TROUBLESHOOTING_GUIDE.md](./TROUBLESHOOTING_GUIDE.md)
 
 ### Community Support
-- **GitHub Issues**: [Report bugs and request features](https://github.com/ma-malnukananga/school-portal/issues)
+- **GitHub Issues**: [Report bugs and request features](https://github.com/sulhi/ma-malnu-kananga/issues)
 - **Discord Community**: [Join our Discord](https://discord.gg/ma-malnukananga)
 - **Email Support**: support@ma-malnukananga.sch.id
 
@@ -684,10 +722,12 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 - [ ] CDN caching configured
 
 ### Post-Deployment
-- [ ] Health checks passing
-- [ ] API endpoints responding
-- [ ] AI functionality working
-- [ ] Authentication system operational
+- [ ] Health checks passing (test /health endpoint)
+- [ ] API endpoints responding (verify /api/chat)
+- [ ] AI functionality working (test RAG system)
+- [ ] Authentication system operational (test magic link)
+- [ ] CSRF protection working (verify secure headers)
+- [ ] Vector database seeded (run /seed once)
 - [ ] Monitoring and logging active
 - [ ] Performance metrics within targets
 - [ ] User acceptance testing completed
@@ -696,9 +736,9 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 
 **Deployment Guide**  
 *Version: 1.3.0*  
-*Last Updated: November 20, 2024*  
+*Last Updated: 2025-11-24*
 *Deployment Team: MA Malnu Kananga DevOps*  
-*Next Review: December 2024*
+*Next Review: 2025-12-24
 
 ---
 

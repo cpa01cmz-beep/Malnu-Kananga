@@ -1,10 +1,10 @@
 import React from 'react';
-import { AttendanceRecord, AttendanceStats } from '../data/studentData';
+import { AttendanceRecord, getAttendanceStats } from '../data/studentData';
 
 interface AttendanceTabProps {
   attendanceData: AttendanceRecord[];
-  attendanceStats: AttendanceStats;
-  formatDate: (date: string) => string;
+  attendanceStats: ReturnType<typeof getAttendanceStats>;
+  formatDate: (dateString: string) => string;
   getAttendanceColor: (status: string) => string;
 }
 

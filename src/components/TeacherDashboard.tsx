@@ -16,13 +16,14 @@ import {
 import { AuthService } from '../services/authService';
 import { NotificationService } from '../services/notificationService';
 import NotificationBell from './NotificationBell';
+import AssessmentTab from './AssessmentTab';
 
 interface TeacherDashboardProps {
   onLogout: () => void;
 }
 
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onLogout }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'grades' | 'attendance' | 'students' | 'analytics'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'assessments' | 'grades' | 'attendance' | 'students' | 'analytics'>('overview');
   const [selectedClass, setSelectedClass] = useState<string>(teacherClasses[0]?.id || '');
   const [gradeInputs, setGradeInputs] = useState<{[key: string]: GradeInput}>({});
 
@@ -125,10 +126,11 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onLogout }) => {
           <nav className="flex space-x-8">
             {[
               { id: 'overview', name: 'Ringkasan', icon: '🏠' },
-              { id: 'grades', name: 'Input Nilai', icon: '📝' },
+              { id: 'assessments', name: 'Tes & Evaluasi', icon: '📝' },
+              { id: 'grades', name: 'Input Nilai', icon: '📊' },
               { id: 'attendance', name: 'Absensi', icon: '📋' },
               { id: 'students', name: 'Data Siswa', icon: '👥' },
-              { id: 'analytics', name: 'Analytics', icon: '📊' }
+              { id: 'analytics', name: 'Analytics', icon: '📈' }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -253,6 +255,13 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onLogout }) => {
               </div>
             </div>
           </div>
+        )}
+
+        {activeTab === 'assessments' && (
+          <AssessmentTab 
+            selectedClass={selectedClass}
+            classStudents={classStudents}
+          />
         )}
 
         {activeTab === 'grades' && (
