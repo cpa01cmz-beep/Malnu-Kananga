@@ -5,55 +5,54 @@ import { baseApiService, type ApiResponse } from './baseApiService';
 import type { Student, Grade, ScheduleItem, AttendanceRecord } from '../../types';
 
 // Development mode - menggunakan mock data untuk testing
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment = (import.meta as any).env?.DEV || false;
 
-export class StudentService extends BaseApiService {
-  constructor() {
-    super('students');
-  }
+export class StudentService {
+  private baseUrl = 'students';
 
   // Student CRUD operations
   async getAll(): Promise<ApiResponse<Student[]>> {
-    return this.withRetry(() => this.get<Student[]>(''));
+    return baseApiService.get<Student[]>(`/${this.baseUrl}`);
   }
 
   async getById(id: string): Promise<ApiResponse<Student>> {
-    return this.withRetry(() => this.get<Student>(`/${id}`));
+    return baseApiService.get<Student>(`/${this.baseUrl}/${id}`);
   }
 
   async create(student: Omit<Student, 'id'>): Promise<ApiResponse<Student>> {
-    return this.withRetry(() => this.post<Student>('', student));
+    return baseApiService.post<Student>(`/${this.baseUrl}`, student);
   }
 
   async update(id: string, student: Partial<Student>): Promise<ApiResponse<Student>> {
-    return this.withRetry(() => this.put<Student>(`/${id}`, student));
+    return baseApiService.put<Student>(`/${this.baseUrl}/${id}`, student);
   }
 
   async delete(id: string): Promise<ApiResponse<void>> {
-    return this.withRetry(() => this.delete<void>(`/${id}`));
+    return baseApiService.delete<void>(`/${this.baseUrl}/${id}`);
   }
 
   // Get student grades
   async getGrades(studentId: string): Promise<ApiResponse<Grade[]>> {
-    return this.withRetry(() => this.get<Grade[]>(`/${studentId}/grades`));
+    return baseApiService.get<Grade[]>(`/${this.baseUrl}/${studentId}/grades`);
   }
 
   // Get student attendance
   async getAttendance(studentId: string, month?: string, year?: string): Promise<ApiResponse<AttendanceRecord[]>> {
-    const params: any = {};
-    if (month) params.month = month;
-    if (year) params.year = year;
-    return this.withRetry(() => this.get<AttendanceRecord[]>(`/${studentId}/attendance`, params));
+    const params = new URLSearchParams();
+    if (month) params.append('month', month);
+    if (year) params.append('year', year);
+    const queryString = params.toString();
+    return baseApiService.get<AttendanceRecord[]>(`/${this.baseUrl}/${studentId}/attendance${queryString ? '?' + queryString : ''}`);
   }
 
   // Get student schedule
   async getSchedule(studentId: string): Promise<ApiResponse<ScheduleItem[]>> {
-    return this.withRetry(() => this.get<ScheduleItem[]>(`/${studentId}/schedule`));
+    return baseApiService.get<ScheduleItem[]>(`/${this.baseUrl}/${studentId}/schedule`);
   }
 
   // Get students by class
   async getByClass(classId: string): Promise<ApiResponse<Student[]>> {
-    return this.withRetry(() => this.get<Student[]>('', { class: classId }));
+    return baseApiService.get<Student[]>(`/${this.baseUrl}?class=${classId}`);
   }
 }
 
@@ -75,14 +74,7 @@ class LocalStudentService {
       id: 'STU001',
       name: 'Ahmad Fauzi Rahman',
       email: 'siswa@ma-malnukananga.sch.id',
-      class: 'XII IPA 1',
-      academicYear: '2024/2025',
-      dateOfBirth: '2007-03-15',
-      address: 'Jl. Pendidikan No. 123, Kananga, Pandeglang',
-      phone: '081234567890',
-      parentPhone: '081987654321',
-      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-      enrollmentDate: '2023-07-01'
+      class: 'XII IPA 1'
     }];
   }
 
@@ -96,32 +88,16 @@ class LocalStudentService {
       {
         id: 'GRD001',
         studentId: 'STU001',
-        subjectId: 'SUBJ001',
-        subjectName: 'Matematika',
-        semester: 1,
-        academicYear: '2024/2025',
-        midtermScore: 85,
-        finalScore: 88,
-        assignmentScore: 82,
-        attendanceScore: 90,
-        finalGrade: 'A',
-        gradePoint: 4.0,
-        status: 'Lulus'
+        subject: 'Matematika',
+        score: 85,
+        date: '2024-10-01'
       },
       {
         id: 'GRD002',
         studentId: 'STU001',
-        subjectId: 'SUBJ002',
-        subjectName: 'Fisika',
-        semester: 1,
-        academicYear: '2024/2025',
-        midtermScore: 78,
-        finalScore: 82,
-        assignmentScore: 80,
-        attendanceScore: 85,
-        finalGrade: 'B+',
-        gradePoint: 3.5,
-        status: 'Lulus'
+        subject: 'Fisika',
+        score: 78,
+        date: '2024-10-02'
       }
     ];
   }
@@ -137,17 +113,13 @@ class LocalStudentService {
         id: 'ATT001',
         studentId: 'STU001',
         date: '2024-10-01',
-        subject: 'Matematika',
-        status: 'Hadir',
-        notes: ''
+        status: 'present'
       },
       {
         id: 'ATT002',
         studentId: 'STU001',
         date: '2024-10-02',
-        subject: 'Kimia',
-        status: 'Izin',
-        notes: 'Sakit demam'
+        status: 'absent'
       }
     ];
   }
@@ -161,23 +133,17 @@ class LocalStudentService {
     return [
       {
         id: 'SCH001',
-        day: 'Senin',
-        time: '07:00 - 08:30',
+        studentId: 'STU001',
         subject: 'Matematika',
-        subjectCode: 'MAT12',
-        teacher: 'Dr. Siti Nurhaliza, M.Pd.',
-        room: 'Lab. Komputer 1',
-        type: 'Teori'
+        time: '07:00 - 08:30',
+        day: 'Senin'
       },
       {
         id: 'SCH002',
-        day: 'Senin',
-        time: '08:45 - 10:15',
+        studentId: 'STU001',
         subject: 'Fisika',
-        subjectCode: 'FIS12',
-        teacher: 'Prof. Budi Santoso, M.T.',
-        room: 'Lab. Fisika',
-        type: 'Praktik'
+        time: '08:45 - 10:15',
+        day: 'Senin'
       }
     ];
   }
@@ -212,26 +178,26 @@ export class StudentApiService {
   }
 
   // Student operations
-  static async getAll(): Promise<Student[]> {
+  static async getAll(): Promise<any[]> {
     if (isDevelopment) {
-      return this.getService().getStudents();
+      return LocalStudentService.getStudents();
     } else {
-      const response = await this.getService().getAll();
+      const response = await new StudentService().getAll();
       return response.success && response.data ? response.data : [];
     }
   }
 
-  static async getById(id: string): Promise<Student | null> {
+  static async getById(id: string): Promise<any | null> {
     if (isDevelopment) {
       const students = await this.getAll();
        return students.find((s: any) => s.id === id) || null;
     } else {
-      const response = await this.getService().getById(id);
+      const response = await new StudentService().getById(id);
       return response.success && response.data ? response.data : null;
     }
   }
 
-  static async create(student: Omit<Student, 'id'>): Promise<Student | null> {
+  static async create(student: any): Promise<any | null> {
     if (isDevelopment) {
       const students = await this.getAll();
       const newStudent: Student = {
@@ -242,12 +208,12 @@ export class StudentApiService {
        LocalStudentService.saveStudents(students);
       return newStudent;
     } else {
-      const response = await this.getService().create(student);
+      const response = await new StudentService().create(student);
       return response.success && response.data ? response.data : null;
     }
   }
 
-  static async update(id: string, student: Partial<Student>): Promise<Student | null> {
+  static async update(id: string, student: any): Promise<any | null> {
     if (isDevelopment) {
       const students = await this.getAll();
        const index = students.findIndex((s: any) => s.id === id);
@@ -257,7 +223,7 @@ export class StudentApiService {
        LocalStudentService.saveStudents(students);
       return students[index];
     } else {
-      const response = await this.getService().update(id, student);
+      const response = await new StudentService().update(id, student);
       return response.success && response.data ? response.data : null;
     }
   }

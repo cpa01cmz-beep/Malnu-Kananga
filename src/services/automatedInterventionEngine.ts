@@ -285,7 +285,8 @@ class AutomatedInterventionEngine {
 
   // Evaluate and execute interventions
   private async evaluateAndExecuteInterventions(): Promise<void> {
-    const allProgress = StudentSupportService.getAllStudentProgress();
+    const supportService = StudentSupportService.getInstance();
+    const allProgress = supportService.getAllStudentProgress();
     
     for (const [studentId, progress] of Object.entries(allProgress)) {
       for (const rule of this.rules.values()) {
@@ -353,7 +354,8 @@ class AutomatedInterventionEngine {
   private evaluatePatternConditions(conditions: any[], progress: any, studentId: string): boolean {
     // Get historical data for pattern analysis
     const history = this.getInterventionHistory(studentId);
-    const requests = StudentSupportService.getSupportRequests()
+    const supportService = StudentSupportService.getInstance();
+    const requests = supportService.getSupportRequests()
       .filter(req => req.studentId === studentId);
 
     return conditions.every(condition => {
@@ -527,8 +529,9 @@ class AutomatedInterventionEngine {
   // Execute support request action
   private async executeSupportRequestAction(action: InterventionAction, studentId: string): Promise<void> {
     const config = action.config;
+    const supportService = StudentSupportService.getInstance();
     
-    StudentSupportService.createSupportRequest(
+    supportService.createSupportRequest(
       studentId,
       config.category as any,
       'automated_intervention',
@@ -683,7 +686,8 @@ class AutomatedInterventionEngine {
 
   // Calculate intervention effectiveness
   private calculateInterventionEffectiveness(intervention: InterventionResult, studentId: string): number {
-    const progress = StudentSupportService.getStudentProgress(studentId);
+    const supportService = StudentSupportService.getInstance();
+    const progress = supportService.getStudentProgress(studentId);
     if (!progress) return 0;
 
     // Check if metrics improved after intervention

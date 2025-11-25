@@ -9,7 +9,7 @@ export interface ApiResponse<T> {
   message?: string;
   error?: string;
   statusCode?: number;
-  timestamp?: string;
+  timestamp: string;
 }
 
 export interface RequestConfig {
@@ -42,14 +42,15 @@ class BaseApiService {
     config: RequestConfig = {}
   ): Promise<Response> {
     const mergedConfig = { ...this.defaultConfig, ...config };
-    const { retries, retryDelay } = mergedConfig;
+    const retries = mergedConfig.retries || 3;
+    const retryDelay = mergedConfig.retryDelay || 1000;
 
     let lastError: Error = new Error('Unknown error');
 
     for (let attempt = 0; attempt <= (retries || 3); attempt++) {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), mergedConfig.timeout);
+        const timeoutId = setTimeout(() => controller.abort(), mergedConfig.timeout || 10000);
 
         const response = await fetch(url, {
           ...options,
@@ -108,22 +109,24 @@ class BaseApiService {
         return {
           success: false,
           error: data.message || `HTTP ${response.status}: ${response.statusText}`,
-          statusCode: response.status
-        };
-      }
-
-return {
-          success: true,
-          data,
           statusCode: response.status,
           timestamp: new Date().toISOString()
         };
+      }
+
+      return {
+        success: true,
+        data,
+        statusCode: response.status,
+        timestamp: new Date().toISOString()
+      };
 
     } catch (error) {
       console.error('API GET request failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error occurred'
+        error: error instanceof Error ? error.message : 'Network error occurred',
+        timestamp: new Date().toISOString()
       };
     }
   }
@@ -146,7 +149,8 @@ return {
         return {
           success: false,
           error: responseData.message || `HTTP ${response.status}: ${response.statusText}`,
-          statusCode: response.status
+          statusCode: response.status,
+          timestamp: new Date().toISOString()
         };
       }
 
@@ -161,7 +165,8 @@ return {
       console.error('API POST request failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error occurred'
+        error: error instanceof Error ? error.message : 'Network error occurred',
+        timestamp: new Date().toISOString()
       };
     }
   }
@@ -184,21 +189,24 @@ return {
         return {
           success: false,
           error: responseData.message || `HTTP ${response.status}: ${response.statusText}`,
-          statusCode: response.status
+          statusCode: response.status,
+          timestamp: new Date().toISOString()
         };
       }
 
       return {
         success: true,
         data: responseData,
-        statusCode: response.status
+        statusCode: response.status,
+        timestamp: new Date().toISOString()
       };
 
     } catch (error) {
       console.error('API PUT request failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error occurred'
+        error: error instanceof Error ? error.message : 'Network error occurred',
+        timestamp: new Date().toISOString()
       };
     }
   }
@@ -217,20 +225,23 @@ return {
         return {
           success: false,
           error: data.message || `HTTP ${response.status}: ${response.statusText}`,
-          statusCode: response.status
+          statusCode: response.status,
+          timestamp: new Date().toISOString()
         };
       }
 
       return {
         success: true,
-        statusCode: response.status
+        statusCode: response.status,
+        timestamp: new Date().toISOString()
       };
 
     } catch (error) {
       console.error('API DELETE request failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Network error occurred'
+        error: error instanceof Error ? error.message : 'Network error occurred',
+        timestamp: new Date().toISOString()
       };
     }
   }

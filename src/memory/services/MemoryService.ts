@@ -170,7 +170,8 @@ export class MemoryService implements MemoryServiceInterface {
       await this.storageAdapter.delete(memory.id);
     }
 
-    return memoriesToDelete.length;
+    // Return void to match interface
+    return;
   }
 
   /**

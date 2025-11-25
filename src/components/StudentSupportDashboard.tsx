@@ -32,8 +32,9 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'supp
       const monitoringReport = StudentSupportMonitoring.generateMonitoringReport(selectedTimeFrame);
       
       // Get AI-powered analytics
-      const aiAnalytics = StudentSupportService.getSupportAnalytics();
-      const aiReport = StudentSupportService.generateSupportReport(
+      const supportService = StudentSupportService.getInstance();
+      const aiAnalytics = supportService.getSupportAnalytics();
+      const aiReport = supportService.generateSupportReport(
         selectedTimeFrame === 'hourly' ? 'daily' : 
         selectedTimeFrame === 'daily' ? 'weekly' : 'monthly'
       );

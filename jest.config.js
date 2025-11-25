@@ -3,6 +3,9 @@ export default {
   testEnvironment: 'jsdom',
   setupFiles: ['<rootDir>/src/test-globals.d.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts', 'jest-extended/all'],
+  fakeTimers: {
+    enableGlobally: true,
+  },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',

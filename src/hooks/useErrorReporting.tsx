@@ -117,7 +117,7 @@ export function useErrorReporting(options: UseErrorReportingOptions = {}): Error
       });
 
       if (originalUnhandledRejectionHandler) {
-        originalUnhandledRejectionHandler(event);
+        originalUnhandledRejectionHandler.call(window, event);
       }
     };
   }
