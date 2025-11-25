@@ -785,10 +785,10 @@ wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 
 ---
 
-**Installation & Setup Guide Version: 1.3.2**  
-*Last Updated: November 24, 2025*  
+**Installation & Setup Guide Version: 1.4.0**  
+*Last Updated: November 25, 2025*  
 *Maintained by: MA Malnu Kananga Technical Team*  
-*Documentation Audit: Completed - All setup procedures verified*
+*Documentation Audit: Completed - All setup procedures verified - Aligned with AGENTS.md*
 
 ---
 

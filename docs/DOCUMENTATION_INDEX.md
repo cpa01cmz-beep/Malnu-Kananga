@@ -8,7 +8,7 @@ This index provides organized access to all MA Malnu Kananga project documentati
 
 **Documentation Index Version: 1.3.1**  
 **Last Updated: November 25, 2025**  
-**Total Documents**: 35 files  
+**Total Documents**: 36 files  
 **Audit Status**: ✅ Complete (November 25, 2025) - Aligned with AGENTS.md
 
 ---
@@ -261,6 +261,12 @@ This index provides organized access to all MA Malnu Kananga project documentati
   - Quality metrics
   - Improvement plans
   - Maintenance schedules
+
+- **[Documentation Maintenance Plan](./DOCUMENTATION_MAINTENANCE_PLAN.md)** - Documentation maintenance strategy
+  - Maintenance schedules and procedures
+  - Quality metrics and KPIs
+  - Team roles and responsibilities
+  - Continuous improvement processes
 
 - **[Video Tutorials](./VIDEO_TUTORIALS.md)** - Video tutorial guides
   - Video tutorial library
