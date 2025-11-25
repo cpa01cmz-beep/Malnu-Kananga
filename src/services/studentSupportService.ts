@@ -1163,6 +1163,14 @@ class StudentSupportService {
     };
   }
 
+  // Get support resources
+  static getSupportResources(): SupportResource[] {
+    const allResources = JSON.parse(localStorage.getItem(StudentSupportService.RESOURCES_KEY) || '[]');
+    
+    if (allResources.length === 0) {
+      return StudentSupportService.initializeSampleResources();
+    }
+    
     return allResources.sort((a, b) => (b.rating || 0) - (a.rating || 0));
   }
 
@@ -1264,23 +1272,7 @@ class StudentSupportService {
     }
   }
 
-// Get support analytics
-  getSupportAnalytics(): any {
-    const requests = this.getSupportRequests();
-    const allProgress = StudentSupportService.getAllStudentProgress();
-    const resources = StudentSupportService.getSupportResources();
 
-    return {
-      totalRequests: requests.length,
-      pendingRequests: requests.filter(r => r.status === 'pending').length,
-      resolvedRequests: requests.filter(r => r.status === 'resolved').length,
-      escalatedRequests: requests.filter(r => r.status === 'escalated').length,
-      averageResolutionTime: this.calculateAverageResolutionTime(requests),
-      categoryBreakdown: this.getCategoryBreakdown(requests),
-      atRiskStudents: Object.values(allProgress).filter(p => p.riskLevel === 'high').length,
-      totalStudents: Object.keys(allProgress).length
-    };
-  }
 
   // Calculate average resolution time
   private calculateAverageResolutionTime(requests: SupportRequest[]): number {
@@ -1312,7 +1304,7 @@ class StudentSupportService {
   generateSupportReport(timeFrame: 'daily' | 'weekly' | 'monthly'): any {
     const analytics = this.getSupportAnalytics();
     const requests = this.getSupportRequests();
-    const resources = this.getSupportResources();
+    const resources = StudentSupportService.getSupportResources();
 
     const now = new Date();
     let startDate: Date;
@@ -1390,7 +1382,6 @@ class StudentSupportService {
 // Auto-initialize when module loads with error handling
 if (typeof window !== 'undefined') {
   try {
-<<<<<<< HEAD
     const service = StudentSupportService.getInstance();
     service.initialize();
     
@@ -1405,14 +1396,6 @@ if (typeof window !== 'undefined') {
     } catch (fallbackError) {
       console.error('Critical: Student Support System failed to initialize:', fallbackError);
     }
-=======
-    // Initialize basic student support service
-    StudentSupportService.getInstance();
-    
-    console.log('🚀 Student Support System initialized');
-  } catch (error) {
-    console.error('Failed to initialize Student Support System:', error);
->>>>>>> 6c2cf14 (Fix TypeScript compilation errors in studentSupportService)
   }
 }
 
