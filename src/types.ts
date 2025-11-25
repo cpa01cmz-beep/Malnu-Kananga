@@ -35,6 +35,7 @@ export interface Student {
   email: string;
   grade?: string;
   class?: string;
+  nis?: string;
 }
 
 // Grade data structure
@@ -71,7 +72,7 @@ export interface AcademicStats {
 }
 
 // Student data types
-export interface Student {
+export interface StudentWithNis {
   id: string;
   name: string;
   email: string;
@@ -107,7 +108,7 @@ export interface AttendanceRecord {
 }
 
 // Student data types
-export interface Student {
+export interface StudentWithNis {
   id: string;
   name: string;
   email: string;
