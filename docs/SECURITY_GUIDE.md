@@ -444,8 +444,8 @@ curl https://api.example.com/health
 
 ---
 
-**Security Documentation Version: 1.2.0**  
-**Last Updated: November 23, 2024**  
+**Security Documentation Version: 1.3.1**  
+**Last Updated: November 25, 2025**  
 **Maintained by: MA Malnu Kananga Security Team**  
 **Classification: Internal Use Only**
 

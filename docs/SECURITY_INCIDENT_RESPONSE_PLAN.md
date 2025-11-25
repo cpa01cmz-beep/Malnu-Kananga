@@ -6,7 +6,7 @@ This Security Incident Response Plan (SIRP) outlines the procedures, roles, and 
 
 ---
 
-**Security Incident Response Plan Version: 1.0.0**  
+**Security Incident Response Plan Version: 1.3.1**  
 **Last Updated: November 25, 2025**  
 **Plan Status: Active**  
 **Response Team: Trained and Ready**
@@ -721,7 +721,7 @@ const responseMetrics = {
 
 ---
 
-**Plan Version: 1.0.0**  
+**Plan Version: 1.3.1**  
 **Last Updated: November 25, 2025**  
 **Next Review: February 25, 2026**  
 **Response Team: MA Malnu Kananga Security Team**

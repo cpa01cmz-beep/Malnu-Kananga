@@ -9,7 +9,7 @@ This report provides a comprehensive analysis of the MA Malnu Kananga project do
 **Audit Date**: November 25, 2025  
 **Audit Scope**: All documentation in `/docs` directory + AGENTS.md alignment  
 **Auditor**: OpenCode Documentation Agent  
-**Audit Version**: 2.0.0
+**Audit Version**: 1.3.1
 
 ---
 

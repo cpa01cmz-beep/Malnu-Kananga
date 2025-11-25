@@ -387,5 +387,5 @@ A: Ya, untuk keperluan improvement layanan dan personalisasi.
 *Dokumen ini dibuat pada: November 20, 2024*  
 *Versi: 1.2.0*  
 *Update Terakhir: November 23, 2025*  
-*System Version: Production Ready v1.2.0*  
+*System Version: 1.3.1*  
 *AI Features: RAG System with Google Gemini Integration*
