@@ -147,7 +147,7 @@ class LocalStudentService {
         time: '07:00 - 08:30',
         day: 'Senin',
         teacher: 'Budi Santoso, S.Pd',
-        room: 'Lab. Komputer'
+         room: 'Lab IPA 1'
       },
       {
         id: 'SCH002',
@@ -155,8 +155,8 @@ class LocalStudentService {
         subject: 'Fisika',
         time: '08:45 - 10:15',
         day: 'Senin',
-        teacher: 'Dra. Siti Nurhaliza',
-        room: 'Lab. Fisika'
+         teacher: 'Dewi Lestari, M.Si',
+         room: 'Lab Fisika'
       }
     ];
   }
