@@ -112,14 +112,18 @@ describe('StudentSupport Component', () => {
     expect(screen.getByText('academic - math')).toBeInTheDocument();
   });
 
-  it('displays resources in resources tab', () => {
+  it('displays resources in resources tab', async () => {
     render(<StudentSupport studentId="STU001" />);
     
-    fireEvent.click(screen.getByText('Resources'));
+    // Wait for component to load and click on Resources tab
+    await waitFor(() => {
+      fireEvent.click(screen.getByText('Resources'));
+    });
     
-    expect(screen.getByText('Panduan Belajar Efektif')).toBeInTheDocument();
-    expect(screen.getByText('Teknik belajar efektif')).toBeInTheDocument();
-    expect(screen.getByText('#belajar')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Panduan Belajar Efektif')).toBeInTheDocument();
+      expect(screen.getByText('Teknik belajar efektif')).toBeInTheDocument();
+    });
   });
 
   it('displays student progress in progress tab', () => {

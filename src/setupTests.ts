@@ -1,4 +1,8 @@
 import '@testing-library/jest-dom';
+import { TextEncoder, TextDecoder } from 'util';
+
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 import 'jest-extended/all';
 
 // Mock environment variables for testing
@@ -70,5 +74,6 @@ declare global {
   
   var global: typeof globalThis;
   
-
+  // Extend Jest matchers for testing-library
+  
 }
