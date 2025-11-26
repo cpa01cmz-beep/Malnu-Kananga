@@ -222,14 +222,6 @@ describe('Gemini Service', () => {
    });
 
    describe('getConversationHistory', () => {
-     let mockMemoryBank: any;
-     
-     beforeEach(() => {
-       const { MemoryBank } = require('../memory');
-       mockMemoryBank = new MemoryBank();
-       mockMemoryBank.searchMemories.mockResolvedValue([]);
-     });
-
      test('should return conversation history', async () => {
        const mockConversations = [
          { id: '1', content: 'Conversation 1', type: 'conversation' },
@@ -237,25 +229,13 @@ describe('Gemini Service', () => {
        ];
        
        mockSearchMemories.mockResolvedValue(mockConversations);
-
-    beforeEach(() => {
-      const { MemoryBank } = require('../memory');
-      mockMemoryBank = new MemoryBank();
-      mockMemoryBank.searchMemories.mockResolvedValue([]);
-    });
-
-    test('should return conversation history', async () => {
-      const result = await getConversationHistory(5);
+       const result = await getConversationHistory(5);
 
       expect(mockSearchMemories).toHaveBeenCalledWith({
         type: 'conversation',
         limit: 5,
       });
-       expect(mockSearchMemories).toHaveBeenCalledWith({
-         type: 'conversation',
-         limit: 5,
-       });
-       expect(result).toEqual(mockConversations);
+      expect(result).toEqual(mockConversations);
      });
 
      test('should use default limit', async () => {
@@ -277,14 +257,6 @@ describe('Gemini Service', () => {
   });
 
   describe('clearConversationHistory', () => {
-    let mockMemoryBank: any;
-
-    beforeEach(() => {
-      const { MemoryBank } = require('../memory');
-      mockMemoryBank = new MemoryBank();
-      mockMemoryBank.searchMemories.mockResolvedValue([]);
-      mockMemoryBank.deleteMemory.mockResolvedValue(undefined);
-    });
 
     test('should delete all conversations and return count', async () => {
       const mockConversations = [
@@ -336,12 +308,6 @@ describe('Gemini Service', () => {
   });
 
   describe('getMemoryStats', () => {
-    let mockMemoryBank: any;
-
-    beforeEach(() => {
-      const { MemoryBank } = require('../memory');
-      mockMemoryBank = new MemoryBank();
-    });
 
     test('should return memory stats', async () => {
       const mockStats = { totalMemories: 10, totalSize: 1024 };
