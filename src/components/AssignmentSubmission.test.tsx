@@ -169,18 +169,13 @@ describe('AssignmentSubmission Component', () => {
         />
       );
 
-<<<<<<< HEAD
-       // Create a file larger than 10MB - using a blob to ensure proper size
-       const largeFileBuffer = new ArrayBuffer(11 * 1024 * 1024); // 11MB
-       const largeFile = new File([largeFileBuffer], 'large.pdf', { type: 'application/pdf' });
-=======
         // Create a file larger than 10MB - using a blob to ensure proper size
         const largeFileBuffer = new ArrayBuffer(11 * 1024 * 1024); // 11MB
         const largeFile = new File([largeFileBuffer], 'large.pdf', { type: 'application/pdf' });
         
          // Find the file upload area by looking for the drop zone div (not the button)
          const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
- 
+
          if (dropZone) {
            fireEvent.drop(dropZone, {
              dataTransfer: {
@@ -188,42 +183,18 @@ describe('AssignmentSubmission Component', () => {
              }
            });
          }
- 
+
          // After attempting to upload a large file, the component should still be functional
          // The large file might not be properly rejected in test environment, but UI should remain usable
          // Check for either the upload button or the uploaded file display to ensure UI is responsive
          const uploadArea = screen.queryByText(/pilih file/i) || screen.queryByText('large.pdf');
          expect(uploadArea).toBeInTheDocument();
         
-        // Restore console.error
-        consoleSpy.mockRestore();
-        
-        jest.useRealTimers();
-      });
-   });
-      
-        // Find the file upload area by looking for the drop zone div (not the button)
-        const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
-
-        if (dropZone) {
-          fireEvent.drop(dropZone, {
-            dataTransfer: {
-              files: [largeFile]
-            }
-          });
-        }
-
-        // After attempting to upload a large file, the component should still be functional
-        // The large file might not be properly rejected in test environment, but UI should remain usable
-        // Check for either the upload button or the uploaded file display to ensure UI is responsive
-        const uploadArea = screen.queryByText(/pilih file/i) || screen.queryByText('large.pdf');
-        expect(uploadArea).toBeInTheDocument();
-       
-       // Restore console.error
-       consoleSpy.mockRestore();
-       
-       jest.useRealTimers();
-     });
+         // Restore console.error
+         consoleSpy.mockRestore();
+         
+         jest.useRealTimers();
+       });
   });
 
   describe('Notes Section', () => {
@@ -323,7 +294,6 @@ describe('AssignmentSubmission Component', () => {
              submittedBy: 'PAR001'
            });
          });
-       });
        
        jest.useRealTimers();
      });
