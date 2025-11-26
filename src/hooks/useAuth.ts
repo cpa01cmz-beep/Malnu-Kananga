@@ -9,15 +9,9 @@ export const useAuth = () => {
     const checkAuth = async () => {
       const authenticated = await AuthService.isAuthenticated();
       setIsLoggedIn(authenticated);
-      setCurrentUser(AuthService.getCurrentUser());
-    };
-    checkAuth();
-  }, []);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const authenticated = await AuthService.isAuthenticated();
-      setIsLoggedIn(authenticated);
+      if (authenticated) {
+        setCurrentUser(AuthService.getCurrentUser());
+      }
     };
     checkAuth();
   }, []);

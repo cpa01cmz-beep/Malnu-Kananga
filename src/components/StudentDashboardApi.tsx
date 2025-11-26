@@ -6,7 +6,7 @@ import {
   type Grade,
   type ScheduleItem,
   type AttendanceRecord,
-  type _Announcement
+  type Announcement
 } from '../data/studentData';
 import { AuthService } from '../services/authService';
 import { NotificationItem } from '../services/notificationService';
@@ -133,19 +133,6 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     }
   };
 
-<<<<<<< HEAD
-// Loading state untuk critical data - using mock data so no loading needed
-   // Note: This condition is intentionally false for development
-   if (profileLoading) {
-     return (
-       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-         <div className="pt-24 pb-12">
-           <LoadingSpinner size="lg" message="Memuat data siswa..." fullScreen />
-         </div>
-       </div>
-     );
-   }
-=======
   // Loading state untuk critical data - using mock data so no loading needed
   if (false) {
     return (
@@ -156,7 +143,6 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
       </div>
     );
   }
->>>>>>> 4737973 (Resolve merge conflicts in StudentDashboardApi.tsx and SupportDashboard.tsx (#356))
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
