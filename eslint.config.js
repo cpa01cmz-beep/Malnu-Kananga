@@ -107,3 +107,32 @@ IDBOpenDBRequest: true,
         atob: true,
       },
       plugins: {
+        typescript,
+        react,
+        reactHooks,
+        jsxA11y,
+      },
+      rules: {
+        // Security rules
+        'no-eval': 'error',
+        'no-implied-eval': 'error',
+        'no-new-func': 'error',
+        'no-script-url': 'error',
+        'no-void': 'error',
+        
+        // React security
+        'react/no-danger': 'error',
+        'react/no-unsafe': 'error',
+        
+        // Accessibility
+        'jsx-a11y/anchor-is-valid': 'warn',
+        'jsx-a11y/alt-text': 'warn',
+        
+        // TypeScript rules
+        '@typescript-eslint/no-explicit-any': 'warn',
+        '@typescript-eslint/no-unused-vars': 'error',
+      },
+    },
+  },
+  prettier,
+];
