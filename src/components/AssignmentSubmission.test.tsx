@@ -135,20 +135,19 @@ describe('AssignmentSubmission Component', () => {
         />
       );
 
-      const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-stream' });
-      const dropZone = screen.getByText('Pilih File').closest('div');
+        const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-stream' });
+        const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
 
-      if (dropZone) {
-        fireEvent.drop(dropZone, {
-          dataTransfer: {
-            files: [invalidFile]
-          }
-        });
-      }
+        if (dropZone) {
+          fireEvent.drop(dropZone, {
+            dataTransfer: {
+              files: [invalidFile]
+            }
+          });
+        }
 
-       // Should still show the file upload area (the large file should not prevent upload UI from working)
-       // After a large file is rejected, the upload area should still be functional
-       expect(screen.getByText(/pilih file/i)).toBeInTheDocument();
+        // Check that console.error was called with file type validation message
+        expect(consoleSpy).toHaveBeenCalledWith('Tipe file tidak didukung. Silakan upload file PDF, Word, gambar, atau text.');
        
        // Restore console.error
        consoleSpy.mockRestore();
@@ -161,37 +160,36 @@ describe('AssignmentSubmission Component', () => {
       // Mock console.error to avoid test output pollution
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-      render(
-        <AssignmentSubmission
-          assignment={mockAssignment}
-          onClose={mockOnClose}
-          onSubmit={mockOnSubmit}
-        />
-      );
+       render(
+         <AssignmentSubmission
+           assignment={mockAssignment}
+           onClose={mockOnClose}
+           onSubmit={mockOnSubmit}
+         />
+       );
 
-       // Create a file larger than 10MB - using a blob to ensure proper size
-       const largeFileBuffer = new ArrayBuffer(11 * 1024 * 1024); // 11MB
-       const largeFile = new File([largeFileBuffer], 'large.pdf', { type: 'application/pdf' });
-      
-// Find the outer drop zone div that handles drag and drop - look for the element with role="button" and tabIndex
-       // that contains the "Pilih File" text (the outer div with drag/drop handlers, not the inner button)
-       const dropZone = screen.getByText('Pilih File').closest('div[role="button"]');
+        // Create a file larger than 10MB - using a blob to ensure proper size
+        const largeFileBuffer = new ArrayBuffer(11 * 1024 * 1024); // 11MB
+        const largeFile = new File([largeFileBuffer], 'large.pdf', { type: 'application/pdf' });
+       
+ // Find the outer drop zone div that handles drag and drop - look for the element with role="button" and tabIndex
+        // that contains the "Pilih File" text (the outer div with drag/drop handlers, not the inner button)
+        const dropZone = screen.getByText('Pilih File').closest('div[role="button"]');
  
-       fireEvent.drop(dropZone, {
-         dataTransfer: {
-           files: [largeFile]
-         }
-       });
+        fireEvent.drop(dropZone, {
+          dataTransfer: {
+            files: [largeFile]
+          }
+        });
 
-        // After attempting to upload a large file, the component should still be functional
-        // The large file might not be properly rejected in test environment, but UI should remain usable
-        // Check for either the upload button or the uploaded file display to ensure UI is responsive
-        const uploadArea = screen.queryByText(/pilih file/i) || screen.queryByText('large.pdf');
-        expect(uploadArea).toBeInTheDocument();
-       
-       // Restore console.error
-       consoleSpy.mockRestore();
-       
+         // After attempting to upload a large file, the component should still be functional
+         // The large file might not be properly rejected in test environment, but UI should remain usable
+         // Check for either the upload button or the uploaded file display to ensure UI is responsive
+         const uploadArea = screen.queryByText(/pilih file/i) || screen.queryByText('large.pdf');
+         expect(uploadArea).toBeInTheDocument();
+        
+        // Restore console.error
+        consoleSpy.mockRestore();
        jest.useRealTimers();
      });
   });
