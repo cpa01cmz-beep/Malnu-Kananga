@@ -24,12 +24,12 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  public componentDidCatch(_error: Error, _errorInfo: ErrorInfo) {
     // Gunakan error logging service untuk comprehensive error tracking
     const errorLoggingService = getErrorLoggingService();
 
     // Log error dengan metadata tambahan untuk debugging
-    errorLoggingService.logErrorBoundary(error, { componentStack: errorInfo.componentStack || '' }, {
+    errorLoggingService.logErrorBoundary(_error, { componentStack: _errorInfo.componentStack || '' }, {
       componentName: this.constructor.name,
       props: Object.keys(this.props),
       hasCustomFallback: !!this.props.fallback,
@@ -37,22 +37,22 @@ class ErrorBoundary extends Component<Props, State> {
     }).catch((logErrorValue) => {
       // Security: Remove console logging in production
       if (process.env.NODE_ENV === 'development') {
-        console.error('ErrorBoundary caught an error:', error, errorInfo);
+        console.error('ErrorBoundary caught an error:', _error, _errorInfo);
         console.error('Error logging service juga gagal:', logErrorValue);
       }
     });
 
     // Kirim error ke Sentry
-    captureErrorBoundary(error, errorInfo.componentStack || '');
+    captureErrorBoundary(_error, _errorInfo.componentStack || '');
 
     this.setState({
-      error,
-      errorInfo
+      error: _error,
+      errorInfo: _errorInfo
     });
 
     // Call optional error handler
     if (this.props.onError) {
-      this.props.onError(error, errorInfo);
+      this.props.onError(_error, _errorInfo);
     }
   }
 
@@ -205,8 +205,8 @@ export function withErrorBoundary<P extends object>(
 
 // Hook untuk manual error throwing (untuk testing atau conditional errors)
 export function useErrorHandler() {
-  return (error: Error) => {
-    throw error;
+  return (_error: Error) => {
+    throw _error;
   };
 }
 
