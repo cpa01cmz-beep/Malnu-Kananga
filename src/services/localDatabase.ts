@@ -155,7 +155,7 @@ class LocalDatabase {
 }
 
 // Auto-initialize saat module di-load (development only)
-if ((import.meta as any).env?.DEV) {
+if (import.meta.env?.DEV) {
   LocalDatabase.initialize();
 }
 

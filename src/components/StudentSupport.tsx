@@ -42,9 +42,9 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
      const requests = supportService.getSupportRequests();
      setSupportRequests(requests.filter((req: SupportRequest) => req.studentId === studentId));
 
-     // Load available resources
-     const allResources = await supportService.getRelevantResources('');
-     setResources(allResources);
+      // Load available resources
+      const allResources = await supportService.getRelevantResources('');
+      setResources(allResources);
 
      // Load student progress
      const progress = supportService.getStudentProgress(studentId);
