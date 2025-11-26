@@ -1,10 +1,20 @@
 import React, { useState, useRef } from 'react';
-import { _Assignment as Assignment, currentParent } from '../data/parentData';
+import { Assignment, currentParent } from '../data/parentData';
+
+interface HTMLInputElement {
+  files: FileList | null;
+}
+
+interface FileList {
+  length: number;
+  item(index: number): File | null;
+  [index: number]: File;
+}
 
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (assignmentId: string, data: {
+  onSubmit: (submissionData: {
     file?: File;
     notes?: string;
     submittedBy: string;
@@ -182,20 +192,21 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
               File Tugas
             </label>
 
-            <div
+<div
               role="button"
               tabIndex={0}
-              className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+              className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
                 dragActive
                   ? 'border-green-400 bg-green-50 dark:bg-green-900/20'
                   : selectedFile
                   ? 'border-green-400 bg-green-50 dark:bg-green-900/20'
-                  : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+                  : 'border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500'
               }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   fileInputRef.current?.click();
