@@ -11,7 +11,7 @@ jest.mock('@google/genai', () => ({
 }));
 
 jest.mock('../utils/envValidation', () => ({
-  API_KEY: 'test-api-key',
+  API_KEY: 'mock-api-key-for-testing',
   WORKER_URL: 'https://test-worker.com'
 }));
 
@@ -21,14 +21,16 @@ const mockGetStats = jest.fn();
 const mockGetRelevantMemories = jest.fn().mockResolvedValue([]);
 const mockAddMemory = jest.fn();
 
+const mockMemoryBank = {
+  searchMemories: mockSearchMemories,
+  deleteMemory: mockDeleteMemory,
+  getStats: mockGetStats,
+  getRelevantMemories: mockGetRelevantMemories,
+  addMemory: mockAddMemory,
+};
+
 jest.mock('../memory', () => ({
-  MemoryBank: jest.fn(() => ({
-    searchMemories: mockSearchMemories,
-    deleteMemory: mockDeleteMemory,
-    getStats: mockGetStats,
-    getRelevantMemories: mockGetRelevantMemories,
-    addMemory: mockAddMemory,
-  })),
+  MemoryBank: jest.fn(() => mockMemoryBank),
   schoolMemoryBankConfig: {}
 }));
 
@@ -271,7 +273,7 @@ test('should handle successful response with context', async () => {
 
       const result = await getConversationHistory(5);
 
-      expect(mockSearchMemories).toHaveBeenCalledWith({
+      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
         type: 'conversation',
         limit: 5,
       });
@@ -291,7 +293,7 @@ test('should handle successful response with context', async () => {
 
       await getConversationHistory();
 
-      expect(mockSearchMemories).toHaveBeenCalledWith({
+      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
         type: 'conversation',
         limit: 10,
       });
@@ -310,7 +312,7 @@ test('should handle successful response with context', async () => {
 
       const result = await clearConversationHistory();
 
-      expect(mockSearchMemories).toHaveBeenCalledWith({
+      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
         type: 'conversation',
       });
       expect(mockDeleteMemory).toHaveBeenCalledTimes(2);

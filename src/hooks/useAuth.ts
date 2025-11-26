@@ -17,10 +17,16 @@ export const useAuth = () => {
     checkAuth();
   }, []);
 
-  const handleLoginSuccess = async (user?: User) => {
+  const handleLoginSuccess = (user?: User) => {
     setIsLoggedIn(true);
-    const currentUser = user || await AuthService.getCurrentUser();
-    setCurrentUser(currentUser);
+    if (user) {
+      setCurrentUser(user);
+    } else {
+      // If no user provided, fetch current user
+      AuthService.getCurrentUser().then(fetchedUser => {
+        setCurrentUser(fetchedUser);
+      });
+    }
   };
 
   const handleLogout = () => {

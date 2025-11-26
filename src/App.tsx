@@ -94,9 +94,9 @@ const App: React.FC = () => {
                    }}
                 />
 
-                <MainContentRouter
-                  isLoggedIn={Boolean(isLoggedIn)}
-                  currentUser={currentUser}
+                 <MainContentRouter
+                   isLoggedIn={Boolean(isLoggedIn)}
+                   currentUser={currentUser}
                   onLogout={handleLogout}
                 />
 
@@ -118,8 +118,8 @@ const App: React.FC = () => {
                   isDocsOpen={isDocsOpen}
                   onLoginClose={() => setIsLoginOpen(false)}
                   onDocsClose={() => setIsDocsOpen(false)}
-                  onLoginSuccess={() => {
-                    handleLoginSuccess();
+                  onLoginSuccess={(user) => {
+                    handleLoginSuccess(user);
                     trackEvent('login', 'auth', 'login_success');
                   }}
                 />
