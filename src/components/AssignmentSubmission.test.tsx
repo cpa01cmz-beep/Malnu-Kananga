@@ -173,17 +173,15 @@ describe('AssignmentSubmission Component', () => {
        const largeFileBuffer = new ArrayBuffer(11 * 1024 * 1024); // 11MB
        const largeFile = new File([largeFileBuffer], 'large.pdf', { type: 'application/pdf' });
       
-      // Find the file upload area by looking for the input or drop zone
-      const fileInput = screen.getByRole('button', { name: /pilih file/i }) || 
-                       screen.getByText('Pilih File').closest('div');
-
-      if (fileInput) {
-        fireEvent.drop(fileInput, {
-          dataTransfer: {
-            files: [largeFile]
-          }
-        });
-      }
+// Find the outer drop zone div that handles drag and drop - look for the element with role="button" and tabIndex
+       // that contains the "Pilih File" text (the outer div with drag/drop handlers, not the inner button)
+       const dropZone = screen.getByText('Pilih File').closest('div[role="button"]');
+ 
+       fireEvent.drop(dropZone, {
+         dataTransfer: {
+           files: [largeFile]
+         }
+       });
 
         // After attempting to upload a large file, the component should still be functional
         // The large file might not be properly rejected in test environment, but UI should remain usable
