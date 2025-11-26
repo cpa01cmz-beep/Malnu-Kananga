@@ -49,13 +49,13 @@ export default [
         HTMLInputElement: true,
         HTMLDivElement: true,
         HTMLFormElement: true,
-         HTMLImageElement: true,
-         HTMLElement: true,
-         IntersectionObserver: true,
-         ResizeObserver: true,
-         EventListener: true,
-         TouchEvent: true,
-         URLSearchParams: true,
+        HTMLImageElement: true,
+        HTMLElement: true,
+        IntersectionObserver: true,
+        ResizeObserver: true,
+        EventListener: true,
+        TouchEvent: true,
+        URLSearchParams: true,
         HeadersInit: true,
         AbortSignal: true,
         WebSocket: true,
@@ -91,7 +91,7 @@ export default [
         ServiceWorkerRegistration: true,
         IDBDatabase: true,
         indexedDB: true,
-IDBOpenDBRequest: true,
+        IDBOpenDBRequest: true,
         isDevelopment: true,
         crypto: true,
         ResizeObserver: true,
@@ -106,4 +106,33 @@ IDBOpenDBRequest: true,
         btoa: true,
         atob: true,
       },
-      plugins: {
+    },
+    plugins: {
+      '@typescript-eslint': typescript,
+      react,
+      'react-hooks': reactHooks,
+      'jsx-a11y': jsxA11y,
+    },
+    rules: {
+      // Security rules
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      'no-script-url': 'error',
+      'no-void': 'error',
+      
+      // React security
+      'react/no-danger': 'error',
+      'react/no-unsafe': 'error',
+      
+      // Accessibility
+      'jsx-a11y/anchor-is-valid': 'warn',
+      'jsx-a11y/alt-text': 'warn',
+      
+      // TypeScript rules
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'error',
+    },
+  },
+  prettier,
+];
