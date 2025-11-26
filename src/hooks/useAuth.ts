@@ -10,23 +10,15 @@ export const useAuth = () => {
       const authenticated = await AuthService.isAuthenticated();
       setIsLoggedIn(authenticated);
       if (authenticated) {
-        const user = await AuthService.getCurrentUser();
-        setCurrentUser(user);
+        setCurrentUser(AuthService.getCurrentUser());
       }
     };
     checkAuth();
   }, []);
 
-  const handleLoginSuccess = (user?: User) => {
+  const handleLoginSuccess = () => {
     setIsLoggedIn(true);
-    if (user) {
-      setCurrentUser(user);
-    } else {
-      // If no user provided, fetch current user
-      AuthService.getCurrentUser().then(fetchedUser => {
-        setCurrentUser(fetchedUser);
-      });
-    }
+    setCurrentUser(AuthService.getCurrentUser());
   };
 
   const handleLogout = () => {
