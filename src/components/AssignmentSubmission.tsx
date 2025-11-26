@@ -16,7 +16,7 @@ interface SubmissionData {
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (data: {
+  onSubmit: (_assignmentId: string, _submissionData: {
     file?: File;
     notes?: string;
     submittedBy: string;
@@ -95,7 +95,7 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
     };
 
     try {
-      await onSubmit({
+      await onSubmit(assignment.id, {
         file: selectedFile || undefined,
         notes: notes.trim() || undefined,
         submittedBy: currentParent.id
@@ -203,7 +203,7 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
             <div
               role="button"
               tabIndex={0}
-              className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+              className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
                 dragActive
                   ? 'border-green-400 bg-green-50 dark:bg-green-900/20'
                   : selectedFile
@@ -214,6 +214,13 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  fileInputRef.current?.click();
+                }
+              }}
             >
               <input
                 ref={fileInputRef}
