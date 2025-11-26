@@ -120,7 +120,7 @@ The actual API URL depends on your Cloudflare Worker deployment:
 Use these browser developer tools for quick diagnosis:
 ```javascript
 // Check API connectivity (test available endpoints)
-fetch('https://malnu-api.sulhi-cmz.workers.dev/api/chat', {
+fetch('https://your-worker-url.workers.dev/api/chat', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ message: 'test' })
@@ -141,12 +141,12 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
 navigator.serviceWorker.getRegistrations().then(console.log);
 
 // Test vector database seeding
-fetch('https://malnu-api.sulhi-cmz.workers.dev/seed')
+fetch('https://your-worker-url.workers.dev/seed')
   .then(r => r.text())
   .then(console.log);
 
 // Test signature generation
-fetch('https://malnu-api.sulhi-cmz.workers.dev/generate-signature', {
+fetch('https://your-worker-url.workers.dev/generate-signature', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ data: 'test' })
@@ -429,7 +429,7 @@ wrangler secret put SECRET_KEY
 ```javascript
 // Check email service status (endpoint not implemented)
 // Use direct email testing instead
-fetch('https://malnu-api.sulhi-cmz.workers.dev/request-login-link', {
+fetch('https://your-worker-url.workers.dev/request-login-link', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ email: 'test@example.com' })
@@ -544,7 +544,7 @@ fetch('https://your-worker-url.workers.dev/api/chat', {
 **Administrator Actions**:
 ```bash
 # Test email service manually
-curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/request-login-link" \
+curl -X POST "https://your-worker-url.workers.dev/request-login-link" \
   -H "Content-Type: application/json" \
   -d '{"email": "admin@example.com"}'
 
@@ -611,7 +611,7 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
 2. **Test API Connection**
    ```bash
    # Test worker endpoint
-   curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/api/chat" \
+   curl -X POST "https://your-worker-url.workers.dev/api/chat" \
      -H "Content-Type: application/json" \
      -d '{"message": "test"}'
    
@@ -630,7 +630,7 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
 4. **Vector Database Status**
     ```bash
     # Check if vector database is seeded
-    curl https://malnu-api.sulhi-cmz.workers.dev/seed
+    curl https://your-worker-url.workers.dev/seed
     
     # Expected response: "Successfully seeded 50 documents."
     # If error: Database needs seeding or vectorize index not configured
@@ -657,7 +657,7 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
      - 🔍 **Monitor**: API response headers for rate limit info
     ```bash
     # Test chat endpoint directly
-    curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/api/chat" \
+    curl -X POST "https://your-worker-url.workers.dev/api/chat" \
       -H "Content-Type: application/json" \
       -d '{"message": "Apa program unggulan sekolah?"}'
     ```
@@ -665,7 +665,7 @@ console.log('User:', localStorage.getItem('malnu_auth_current_user'));
 **Administrator Solutions**:
 ```bash
 # Re-seed vector database
-curl "https://malnu-api.sulhi-cmz.workers.dev/seed"
+curl "https://your-worker-url.workers.dev/seed"
 
 # Check worker logs
 wrangler tail
@@ -740,7 +740,7 @@ await vectorize.upsert([newDoc]);
 1. **API Connection Issues**
    ```bash
 # Test specific endpoints
-    curl "https://malnu-api.sulhi-cmz.workers.dev/api/student/123"
+    curl "https://your-worker-url.workers.dev/api/student/123"
    ```
 
 2. **Authentication Issues**
@@ -1066,7 +1066,7 @@ wrangler d1 execute malnu-kananga-db --command="SHOW TABLES"
 wrangler vectorize list
 
 # Test vector search
-curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/api/chat" \
+curl -X POST "https://your-worker-url.workers.dev/api/chat" \
   -H "Content-Type: application/json" \
   -d '{"message": "test query"}'
 ```
@@ -1099,7 +1099,7 @@ wrangler d1 restore malnu-kananga-db backup-2024-11-01.sql
 wrangler tail --env=production
 
 # Check system status
-curl "https://malnu-api.sulhi-cmz.workers.dev/health"
+curl "https://your-worker-url.workers.dev/health"
 ```
 
 ### 🔒 Security Incident
@@ -1120,7 +1120,7 @@ wrangler firewall rules create --ip="192.168.1.100" --action="block"
 wrangler tail --env=production --since="1h"
 
 # Force logout all users
-curl -X POST "https://malnu-api.sulhi-cmz.workers.dev/admin/force-logout" \
+curl -X POST "https://your-worker-url.workers.dev/admin/force-logout" \
   -H "Authorization: Bearer {admin_token}"
 ```
 

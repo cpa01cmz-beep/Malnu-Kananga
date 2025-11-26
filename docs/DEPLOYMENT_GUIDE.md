@@ -2,7 +2,24 @@
 
 ## 🌟 Overview
 
-This comprehensive guide covers the complete deployment process for the MA Malnu Kananga School Portal, from development setup to production deployment on Cloudflare's serverless platform.
+This guide covers the deployment process for the MA Malnu Kananga School Portal. **Note**: Current implementation provides authentication and AI features only. Academic features are planned for future development.
+
+## ⚠️ Current Implementation Status
+
+**Working Features**:
+- ✅ Authentication system (magic link login)
+- ✅ AI chat assistant with RAG
+- ✅ Modern responsive UI
+- ✅ PWA functionality
+
+**Not Yet Implemented**:
+- ❌ Student academic data APIs
+- ❌ Teacher grade input system
+- ❌ Parent monitoring features
+- ❌ Content management system
+- ❌ Database persistence
+
+This deployment guide focuses on getting the working features operational.
 
 ---
 

@@ -4,6 +4,32 @@
 
 Portal guru MA Malnu Kananga adalah platform digital untuk mengelola pembelajaran, input nilai, monitoring siswa, dan komunikasi dengan orang tua secara efisien.
 
+## ⚠️ Implementation Status Notice
+
+**Current Implementation Status**: 🟡 **Limited Functionality**
+
+### ✅ **Currently Working Features**
+- **Authentication System**: Magic link login fully functional
+- **AI Chat Assistant**: RAG-powered assistant for school information
+- **Dashboard Interface**: Modern teacher dashboard with navigation
+- **PWA Features**: Installable web app with offline support
+
+### ❌ **Not Yet Implemented**
+- **Grade Input System**: Real grade submission and storage
+- **Attendance Recording**: Digital attendance tracking
+- **Class Management**: Actual class data and student lists
+- **Parent Communication**: Messaging system not connected
+- **Assignment Management**: Digital assignment creation and grading
+- **Analytics Reports**: Performance analytics and insights
+
+### 🔄 **What to Expect**
+- **Demo Data**: Current class and student information is sample data only
+- **UI Mockup**: Interface demonstrates intended functionality
+- **Development Focus**: Core authentication and AI features are operational
+- **Future Updates**: Teacher tools will be implemented in phases
+
+**Note**: This guide describes the intended full functionality. Some features shown may be using demonstration data until backend APIs are fully implemented.
+
 ---
 
 <<<<<<< HEAD

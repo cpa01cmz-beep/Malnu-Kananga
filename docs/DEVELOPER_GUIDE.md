@@ -2,7 +2,24 @@
 
 ## 🚀 Getting Started
 
-Welcome to the MA Malnu Kananga developer guide! This comprehensive guide will help you understand the codebase, setup development environment, and contribute effectively to the project.
+Welcome to the MA Malnu Kananga developer guide! This guide will help you understand the current codebase and contribute to the project.
+
+## ⚠️ Implementation Reality Check
+
+**Current Working Systems**:
+- ✅ Authentication & session management
+- ✅ AI chat with RAG technology  
+- ✅ Modern React UI with TypeScript
+- ✅ PWA capabilities
+
+**Major Gaps**:
+- ❌ Academic data APIs (student grades, schedules, attendance)
+- ❌ Teacher tools (grade input, class management)
+- ❌ Parent monitoring features
+- ❌ Database integration (currently using static data)
+- ❌ Content management system
+
+**Development Focus**: The codebase demonstrates intended functionality with mock data. Backend APIs for academic features need implementation.
 
 ---
 
@@ -154,7 +171,7 @@ wrangler login
 wrangler deploy --env=development
 
 # Seed vector database (one-time setup)
-curl https://malnu-api.sulhi-cmz.workers.dev/seed
+curl https://your-worker-url.workers.dev/seed
 ```
 
 5. **Verify Installation**
@@ -170,7 +187,7 @@ curl https://malnu-api.sulhi-cmz.workers.dev/seed
 API_KEY=your_gemini_api_key_here
 
 # Worker URL (Optional - defaults to production)
-VITE_WORKER_URL=https://malnu-api.sulhi-cmz.workers.dev
+VITE_WORKER_URL=https://your-worker-url.workers.dev
 
 # Development Settings
 VITE_DEV_MODE=true
@@ -190,7 +207,7 @@ wrangler secret put SECRET_KEY
 
 # Environment variables
 NODE_ENV=production
-VITE_WORKER_URL=https://malnu-api.sulhi-cmz.workers.dev
+VITE_WORKER_URL=https://your-worker-url.workers.dev
 ```
 
 ### Environment Setup Guide
@@ -231,7 +248,7 @@ wrangler secret put SECRET_KEY
 wrangler deploy --env=production
 
 # 5. Seed vector database
-curl https://malnu-api.sulhi-cmz.workers.dev/seed
+curl https://your-worker-url.workers.dev/seed
 ```
 
 ---
@@ -934,7 +951,7 @@ wrangler deploy
 wrangler deploy --env=production
 
 # Seed vector database
-curl https://malnu-api.sulhi-cmz.workers.dev/seed
+curl https://your-worker-url.workers.dev/seed
 ```
 
 ---
