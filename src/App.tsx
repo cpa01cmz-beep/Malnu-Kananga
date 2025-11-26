@@ -85,7 +85,7 @@ const App: React.FC = () => {
                     handleLogout();
                     trackEvent('click', 'navigation', 'logout_button');
                   }}
-                  onPortalClick={() => {
+                  onPortalClick={async () => {
                     if (isLoggedIn && currentUser) {
                       document.getElementById('main-content')?.scrollIntoView({ behavior: 'smooth' });
                       announceNavigation('Portal Dashboard');

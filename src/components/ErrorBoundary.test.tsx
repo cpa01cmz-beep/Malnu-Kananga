@@ -17,6 +17,10 @@ describe('ErrorBoundary', () => {
   beforeEach(() => {
     // Mock console.error untuk menghindari noise di test output
     consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    // Mock console.group, console.warn, console.log
+    jest.spyOn(console, 'group').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+    jest.spyOn(console, 'log').mockImplementation(() => {});
     
     // Mock error logging service
     jest.mock('../services/errorLoggingService', () => ({

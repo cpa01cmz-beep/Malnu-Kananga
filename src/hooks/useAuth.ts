@@ -14,9 +14,17 @@ export const useAuth = () => {
     checkAuth();
   }, []);
 
-  const handleLoginSuccess = () => {
+  useEffect(() => {
+    const checkAuth = async () => {
+      const authenticated = await AuthService.isAuthenticated();
+      setIsLoggedIn(authenticated);
+    };
+    checkAuth();
+  }, []);
+
+  const handleLoginSuccess = (user?: User) => {
     setIsLoggedIn(true);
-    setCurrentUser(AuthService.getCurrentUser());
+    setCurrentUser(user || AuthService.getCurrentUser());
   };
 
   const handleLogout = () => {

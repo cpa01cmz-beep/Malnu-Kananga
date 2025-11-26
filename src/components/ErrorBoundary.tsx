@@ -1,11 +1,11 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { getErrorLoggingService, logErrorBoundary } from '../services/errorLoggingService';
+import { getErrorLoggingService } from '../services/errorLoggingService';
 import { captureErrorBoundary } from '../services/sentryService';
 
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  onError?: (_error: Error, _errorInfo: ErrorInfo) => void;
 }
 
 interface State {
@@ -29,19 +29,21 @@ class ErrorBoundary extends Component<Props, State> {
     const errorLoggingService = getErrorLoggingService();
 
     // Log error dengan metadata tambahan untuk debugging
-    errorLoggingService.logErrorBoundary(error, errorInfo, {
+    errorLoggingService.logErrorBoundary(error, { componentStack: errorInfo.componentStack || '' }, {
       componentName: this.constructor.name,
       props: Object.keys(this.props),
       hasCustomFallback: !!this.props.fallback,
       hasCustomErrorHandler: !!this.props.onError
-    }).catch(logError => {
-      // Fallback jika logging service gagal
-      console.error('ErrorBoundary caught an error:', error, errorInfo);
-      console.error('Error logging service juga gagal:', logError);
+    }).catch((logErrorValue) => {
+      // Security: Remove console logging in production
+      if (process.env.NODE_ENV === 'development') {
+        console.error('ErrorBoundary caught an error:', error, errorInfo);
+        console.error('Error logging service juga gagal:', logErrorValue);
+      }
     });
 
     // Kirim error ke Sentry
-    captureErrorBoundary(error, errorInfo.componentStack);
+    captureErrorBoundary(error, errorInfo.componentStack || '');
 
     this.setState({
       error,
@@ -121,7 +123,7 @@ class ErrorBoundary extends Component<Props, State> {
                       </pre>
                     </div>
 
-                    {this.state.errorInfo && (
+                    {this.state.errorInfo && this.state.errorInfo.componentStack && (
                       <div className="mb-3">
                         <div className="text-yellow-600 dark:text-yellow-400 font-semibold mb-1">Component Stack:</div>
                         <pre className="whitespace-pre-wrap text-xs">
@@ -151,8 +153,10 @@ class ErrorBoundary extends Component<Props, State> {
                       <button
                         onClick={() => {
                           const logs = getErrorLoggingService().exportErrorLogs();
-                          console.log('All Error Logs:', JSON.parse(logs));
-                          alert('Error logs exported to console');
+                          if (process.env.NODE_ENV === 'development') {
+                            console.log('All Error Logs:', JSON.parse(logs));
+                          }
+                          window.alert('Error logs exported to console');
                         }}
                         className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded hover:bg-blue-200 dark:hover:bg-blue-800"
                       >
@@ -162,7 +166,7 @@ class ErrorBoundary extends Component<Props, State> {
                       <button
                         onClick={() => {
                           getErrorLoggingService().clearStoredErrorLogs();
-                          alert('Error logs cleared');
+                          window.alert('Error logs cleared');
                         }}
                         className="text-xs bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 px-2 py-1 rounded hover:bg-red-200 dark:hover:bg-red-800"
                       >
@@ -186,7 +190,7 @@ class ErrorBoundary extends Component<Props, State> {
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
   fallback?: ReactNode,
-  onError?: (error: Error, errorInfo: ErrorInfo) => void
+  onError?: (_error: Error, _errorInfo: ErrorInfo) => void
 ) {
   const WrappedComponent = (props: P) => (
     <ErrorBoundary fallback={fallback} onError={onError}>

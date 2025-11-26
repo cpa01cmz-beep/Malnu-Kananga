@@ -37,7 +37,9 @@ export interface Grade {
   attendanceScore?: number;
   finalGrade?: string;
   gradePoint?: number;
-  status: 'Lulus' | 'Tidak Lulus' | 'Belum Selesai';
+  status: 'Lulus' | 'Tidak Lulus' | 'Belum Selesai' | 'draft' | 'submitted' | 'approved';
+  submittedAt?: string;
+  submittedBy?: string;
 }
 
 export interface ScheduleItem {
@@ -363,6 +365,15 @@ export function getAttendanceStats(attendance: AttendanceRecord[]): {
   const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
 
   return { total, present, absent, sick, permitted, percentage };
+}
+
+export interface AttendanceStats {
+  total: number;
+  present: number;
+  absent: number;
+  sick: number;
+  permitted: number;
+  percentage: number;
 }
 
 export function getUnreadAnnouncements(announcements: Announcement[]): Announcement[] {

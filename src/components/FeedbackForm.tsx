@@ -29,7 +29,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -70,7 +70,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({
         onClose();
       }, 2000);
 
-    } catch (error) {
+     } catch (_error) {
       NotificationService.addNotification({
         title: 'Gagal Mengirim Feedback',
         message: 'Terjadi kesalahan saat mengirim feedback. Silakan coba lagi.',

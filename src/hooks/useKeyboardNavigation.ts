@@ -5,7 +5,7 @@ export const useKeyboardNavigation = () => {
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     // Handle common keyboard shortcuts
     switch (event.key) {
-      case 'Escape':
+      case 'Escape': {
         // Close modals and dropdowns
         const openModals = document.querySelectorAll('[role="dialog"][aria-hidden="false"]');
         openModals.forEach(modal => {
@@ -20,8 +20,9 @@ export const useKeyboardNavigation = () => {
           trigger?.click();
         });
         break;
+      }
 
-      case 'Tab':
+      case 'Tab': {
         // Ensure proper tab order and focus management
         const focusableElements = document.querySelectorAll(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), [role="button"]'
@@ -45,9 +46,10 @@ export const useKeyboardNavigation = () => {
           }
         }
         break;
+      }
 
       case 'Enter':
-      case ' ':
+      case ' ': {
         // Handle Enter and Space for button-like elements
         const activeElement = document.activeElement;
         if (activeElement?.getAttribute('role') === 'button' && !activeElement?.closest('button,input,textarea,select')) {
@@ -55,8 +57,9 @@ export const useKeyboardNavigation = () => {
           (activeElement as HTMLElement)?.click();
         }
         break;
+      }
 
-      case 'ArrowDown':
+      case 'ArrowDown': {
         // Handle arrow key navigation in menus
         if (document.activeElement?.closest('[role="menu"]')) {
           event.preventDefault();
@@ -67,8 +70,9 @@ export const useKeyboardNavigation = () => {
           (menuItems[nextIndex] as HTMLElement)?.focus();
         }
         break;
+      }
 
-      case 'ArrowUp':
+      case 'ArrowUp': {
         // Handle arrow key navigation in menus (reverse)
         if (document.activeElement?.closest('[role="menu"]')) {
           event.preventDefault();
@@ -79,8 +83,9 @@ export const useKeyboardNavigation = () => {
           (menuItems[prevIndex] as HTMLElement)?.focus();
         }
         break;
+      }
 
-      case 'Home':
+      case 'Home': {
         // Go to first menu item
         if (document.activeElement?.closest('[role="menu"]')) {
           event.preventDefault();
@@ -89,8 +94,9 @@ export const useKeyboardNavigation = () => {
           firstItem?.focus();
         }
         break;
+      }
 
-      case 'End':
+      case 'End': {
         // Go to last menu item
         if (document.activeElement?.closest('[role="menu"]')) {
           event.preventDefault();
@@ -100,6 +106,7 @@ export const useKeyboardNavigation = () => {
           lastItem?.focus();
         }
         break;
+      }
     }
   }, []);
 

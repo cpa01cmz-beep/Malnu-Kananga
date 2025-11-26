@@ -1,9 +1,8 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ChatWindow from './ChatWindow';
 import { ChatProvider } from '../contexts/ChatContext';
-import { Sender } from '../types';
 
 // Wrapper component to provide ChatContext to tests
 const ChatWindowWithProvider = (props: {isOpen: boolean, closeChat: () => void}) => (
@@ -30,13 +29,13 @@ jest.mock('./icons/CloseIcon', () => ({
 
 // Mock ResizeObserver and IntersectionObserver
 beforeAll(() => {
-  global.ResizeObserver = class ResizeObserver {
+  (global as unknown).ResizeObserver = class ResizeObserver {
     observe() {}
     unobserve() {}
     disconnect() {}
   };
 
-  global.IntersectionObserver = class IntersectionObserver {
+  (global as unknown).IntersectionObserver = class IntersectionObserver {
     constructor() {}
     observe() {}
     unobserve() {}
@@ -251,6 +250,7 @@ describe('ChatWindow Component', () => {
       const user = userEvent.setup();
 
       const mockStream = (async function* () {
+        yield '';
         throw new Error('AI Service Error');
       })();
 

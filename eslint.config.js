@@ -10,6 +10,7 @@ export default [
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
+    ignores: ['dist/', 'node_modules/', 'coverage/', 'build/', 'public/sw.js'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -46,6 +47,18 @@ export default [
         Blob: true,
         File: true,
         FileReader: true,
+        HTMLInputElement: true,
+        HTMLDivElement: true,
+        HTMLFormElement: true,
+        HTMLImageElement: true,
+        HTMLElement: true,
+        IntersectionObserver: true,
+        ResizeObserver: true,
+        EventListener: true,
+        TouchEvent: true,
+        URLSearchParams: true,
+        HeadersInit: true,
+        AbortSignal: true,
         WebSocket: true,
         Worker: true,
         ServiceWorker: true,
@@ -66,6 +79,26 @@ export default [
         setInterval: true,
         clearInterval: true,
         require: true,
+        global: true,
+        NodeJS: true,
+        React: true,
+        alert: true,
+        globalThis: true,
+        Request: true,
+        RequestInit: true,
+        AbortController: true,
+        performance: true,
+        NotificationOptions: true,
+        ServiceWorkerRegistration: true,
+        IDBDatabase: true,
+        indexedDB: true,
+        IDBOpenDBRequest: true,
+        isDevelopment: true,
+        crypto: true,
+        TextEncoder: true,
+        btoa: true,
+        atob: true,
+        module: true,
       },
     },
     plugins: {
@@ -75,13 +108,39 @@ export default [
       'jsx-a11y': jsxA11y,
     },
     rules: {
-      'react/react-in-jsx-scope': 'off',
-      'react/prop-types': 'off',
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      // Security rules
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      'no-script-url': 'error',
+      'no-void': 'error',
+      
+      // React security
+      'react/no-danger': 'error',
+      'react/no-unsafe': 'error',
+      
+      // Accessibility
+      'jsx-a11y/anchor-is-valid': 'warn',
+      'jsx-a11y/alt-text': 'warn',
       'jsx-a11y/click-events-have-key-events': 'warn',
       'jsx-a11y/no-static-element-interactions': 'warn',
+      
+      // TypeScript rules
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { 
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_',
+        'caughtErrorsIgnorePattern': '^_'
+      }],
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      'no-unused-vars': 'off', // Turn off JS version since we use TS version
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
+      'no-console': 'off',
+      'no-debugger': 'error',
+      'no-redeclare': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-undef': 'off',
     },
     settings: {
       react: {

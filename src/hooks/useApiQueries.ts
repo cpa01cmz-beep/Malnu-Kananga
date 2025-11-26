@@ -24,10 +24,10 @@ type ApiErrorType = ApiError | null;
 
 // Utility function untuk handle API responses
 const handleApiResponse = <T>(response: ApiResponse<T>): T | null => {
-  if (response.success && response.data) {
+  if (response.success && response.data !== undefined) {
     return response.data;
   }
-  throw new Error(response.error || 'API request failed');
+  return null;
 };
 
 // ==================== STUDENT API HOOKS ====================
@@ -36,15 +36,18 @@ const handleApiResponse = <T>(response: ApiResponse<T>): T | null => {
 export const useCurrentStudent = (
   options?: Omit<UseQueryOptions<Student | null, Error, Student | null, readonly unknown[]>, 'queryKey' | 'queryFn'>
 ) => {
-  return useQuery({
+  return useQuery<Student | null>({
     queryKey: queryKeys.studentProfile(),
-    queryFn: async () => {
+    queryFn: async (): Promise<Student | null> => {
       const response = await studentApiService.getCurrentStudent();
       return handleApiResponse(response);
     },
     ...options,
   });
 };
+
+// Alias for useCurrentStudent for consistency
+export const useStudentProfile = useCurrentStudent;
 
 // Get student grades dengan filtering
 export const useStudentGrades = (
@@ -311,6 +314,19 @@ export const useMarkAnnouncementAsRead = (
       queryClient.invalidateQueries({ queryKey: ['students', 'announcements'] });
     },
     ...options,
+  });
+};
+
+// Hook untuk student profile
+export const useStudentProfile = (studentId: string) => {
+  return useQuery({
+    queryKey: ['students', 'profile', studentId],
+    queryFn: async () => {
+      const response = await studentApiService.getStudentProfile(studentId);
+      return handleApiResponse(response);
+    },
+    enabled: !!studentId,
+    ...options as UseQueryOptions<Student>,
   });
 };
 

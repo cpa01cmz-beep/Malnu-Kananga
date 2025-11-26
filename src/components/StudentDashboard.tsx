@@ -7,8 +7,7 @@ import {
   announcements,
   calculateGPA,
   getAttendanceStats,
-  getUnreadAnnouncements,
-  type Announcement
+  getUnreadAnnouncements
 } from '../data/studentData';
 import { AuthService } from '../services/authService';
 import { NotificationService, NotificationItem } from '../services/notificationService';
@@ -23,13 +22,14 @@ import AnnouncementsTab from './AnnouncementsTab';
 import ToastNotification from './ToastNotification';
 import StudentSupportDashboard from './StudentSupportDashboard';
 import StudentProgressMonitor from './StudentProgressMonitor';
+import LearningTab from './LearningTab';
 
 interface StudentDashboardProps {
   onLogout: () => void;
 }
 
 const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'grades' | 'schedule' | 'attendance' | 'announcements' | 'support' | 'progress'>('overview');
+  const [activeTab, setActiveTab] = useState<string>('overview');
   const [currentToast, setCurrentToast] = useState<NotificationItem | null>(null);
 
   // Calculate statistics
@@ -63,33 +63,36 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     };
   }, []);
 
-  // Initialize student support system
-  useEffect(() => {
-    // Initialize student progress tracking
-    StudentSupportService.updateStudentProgress(currentStudent.id, {
-      academicMetrics: {
-        gpa: gpa,
-        attendanceRate: attendanceStats.percentage,
-        assignmentCompletion: 85, // Sample data
-        subjectPerformance: studentGrades.reduce((acc, grade) => {
-          acc[grade.subject] = parseInt(grade.score);
-          return acc;
-        }, {} as Record<string, number>)
+// Initialize student support system
+useEffect(() => {
+  // Initialize student progress tracking
+  StudentSupportService.updateStudentProgress(currentStudent.id, {
+    academicMetrics: {
+      gpa: gpa,
+      gradeTrend: 'stable' as const,
+      attendanceRate: attendanceStats.percentage,
+      assignmentCompletion: 85, // Sample data
+      subjectPerformance: studentGrades.reduce((acc, grade) => {
+        acc[grade.subjectName] = parseFloat(grade.finalGrade || '0');
+        return acc;
+      }, {} as Record<string, number>)
+    },
+    engagementMetrics: {
+      loginFrequency: 5, // Sample data
+      resourceAccess: 12,
+      supportRequests: 0,
+      participationScore: 85,
+      featureUsage: {
+        overview: 10,
+        grades: 8,
+        schedule: 6,
+        attendance: 4,
+        announcements: 7
       },
-      engagementMetrics: {
-        portalLoginFrequency: 5, // Sample data
-        featureUsage: {
-          overview: 10,
-          grades: 8,
-          schedule: 6,
-          attendance: 4,
-          announcements: 7
-        },
-        supportRequestsCount: 0,
-        lastActiveDate: new Date().toISOString()
-      }
-    });
-  }, [gpa, attendanceStats.percentage, studentGrades, currentStudent.id]);
+      lastActiveDate: new Date().toISOString()
+    }
+   });
+ }, [gpa, attendanceStats.percentage, studentGrades, currentStudent.id]);
 
   // Add some sample notifications for demonstration
   useEffect(() => {
@@ -141,6 +144,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
 
   const tabs = [
     { id: 'overview', name: 'Ringkasan', icon: '🏠' },
+    { id: 'learning', name: 'Pembelajaran', icon: '📚' },
     { id: 'grades', name: 'Nilai', icon: '📊' },
     { id: 'schedule', name: 'Jadwal', icon: '📅' },
     { id: 'attendance', name: 'Absensi', icon: '✅' },
@@ -156,11 +160,11 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
         onLogout={handleLogout}
       />
 
-      <NavigationTabs
-        activeTab={activeTab}
-        tabs={tabs}
-        onTabChange={setActiveTab}
-      />
+       <NavigationTabs
+         activeTab={activeTab}
+         tabs={tabs}
+          onTabChange={(tabId: string) => setActiveTab(tabId as typeof activeTab)}
+       />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -175,6 +179,10 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             formatDate={formatDate}
             getGradeColor={getGradeColor}
           />
+        )}
+
+        {activeTab === 'learning' && (
+          <LearningTab student={currentStudent} />
         )}
 
         {activeTab === 'grades' && (
@@ -205,7 +213,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
         )}
 
         {activeTab === 'support' && (
-          <StudentSupportDashboard studentId={currentStudent.id} />
+          <StudentSupportDashboard />
         )}
 
         {activeTab === 'progress' && (
