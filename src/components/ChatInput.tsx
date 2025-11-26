@@ -4,8 +4,8 @@ import { useTouchFeedback } from '../hooks/useTouchFeedback';
 
 interface ChatInputProps {
   input: string;
-  onInputChange: (value: string) => void;
-  onSend: (e?: React.FormEvent) => void;
+  onInputChange: { (value: string): void };
+  onSend: { (e?: React.FormEvent): void };
   isLoading: boolean;
 }
 
@@ -29,7 +29,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ input, onInputChange, onSend, isL
         <button
           type="submit"
           disabled={isLoading || !input.trim()}
-          onTouchStart={_handleTouchFeedback}
+          onTouchStart={handleTouchFeedback}
           className="p-3 bg-blue-600 text-white rounded-full disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-blue-700 active:bg-blue-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 touch-optimized min-w-[44px] min-h-[44px] flex items-center justify-center"
           aria-label={isLoading ? "Mengirim pesan..." : "Kirim pesan"}
         >
