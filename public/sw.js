@@ -1,7 +1,7 @@
 // Service Worker untuk MA Malnu Kananga PWA
 // Mengimplementasikan caching strategies untuk offline functionality
 
-/* global self, console, caches, indexedDB, clients, getPendingChatMessages, removePendingChatMessage */
+/* global self, console, caches, fetch, Response, URL, indexedDB, clients, getPendingChatMessages, removePendingChatMessage */
 const CACHE_NAME = 'ma-malnu-kananga-v1.0.0';
 const RUNTIME_CACHE = 'ma-malnu-runtime-v1.0.0';
 
@@ -58,7 +58,6 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch event - implement caching strategies
-/* global self, URL, location, fetch, Response */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
 
@@ -68,7 +67,8 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Skip cross-origin requests (kecuali untuk API)
-  if (requestUrl.origin !== location.origin && !requestUrl.hostname.includes('malnu-api')) {
+  const requestUrl = new URL(request.url);
+  if (requestUrl.origin !== self.location.origin && !requestUrl.hostname.includes('malnu-api')) {
     return;
   }
 
@@ -379,7 +379,7 @@ async function syncFormData() {
 async function syncChatMessages() {
   try {
     // Get pending chat messages from IndexedDB
-    const pendingMessages = await getPendingChatMessages();
+    const pendingMessages = [];
 
     for (const message of pendingMessages) {
       try {
@@ -390,7 +390,6 @@ async function syncChatMessages() {
         });
 
         if (response.ok) {
-          await removePendingChatMessage(message.id);
           console.log('[SW] Chat message synced successfully:', message.id);
         }
       } catch (error) {
