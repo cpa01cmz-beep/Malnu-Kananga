@@ -49,7 +49,6 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
       notes: notes.trim() || undefined,
       submittedBy: currentParent.id
     };
-
      try {
        await onSubmit(submissionData);
 
