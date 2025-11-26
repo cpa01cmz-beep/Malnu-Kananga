@@ -404,11 +404,11 @@ async function generateSecureToken(email, expiryTime = 15 * 60 * 1000) {
   const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-   // Generate signature using HMAC-SHA256 with secure secret key from environment
-   const secret = env.JWT_SECRET || env.SECRET_KEY;
-   if (!secret || secret === 'default-secret-key-for-worker' || secret.length < 32) {
-     throw new Error('Secure JWT_SECRET environment variable required (min 32 characters, not default value)');
-   }
+// Generate signature using HMAC-SHA256 with secure secret key from environment
+    const secret = env.JWT_SECRET || env.SECRET_KEY;
+    if (!secret || secret === 'default-secret-key-for-worker' || secret.length < 32) {
+      throw new Error('Secure JWT_SECRET environment variable required (min 32 characters, not default value)');
+    }
   const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;
@@ -475,17 +475,16 @@ async function verifyAndDecodeToken(token, env) {
 
     const [encodedHeader, encodedPayload, signature] = parts;
     
-    // SECURITY: Verify secret key is secure
-    if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
-      console.error('SECURITY: Attempted token verification with default secret key');
-      return null;
-    }
-    
-    // SECURITY: Validate signature format
-    if (!signature || !/^[a-f0-9]+$/i.test(signature)) {
-      return null;
-    }
-    
+// SECURITY: Verify secret key is secure
+     if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
+       console.error('SECURITY: Attempted token verification with default secret key');
+       return null;
+     }
+     
+     // SECURITY: Validate signature format
+     if (!signature || !/^[a-f0-9]+$/i.test(signature)) {
+       return null;
+     }
     const secret = env.SECRET_KEY;
     const isValid = await verifyHMACSignature(`${encodedHeader}.${encodedPayload}`, signature, secret);
     
@@ -999,15 +998,14 @@ Respons:`;
           return new Response(JSON.stringify({ message: 'Data diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
         
-        // SECURITY: Require secure secret key for signature generation
-        if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
-          console.error('SECURITY: Attempted signature generation with default secret');
-          return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
-            status: 500, 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          });
-        }
-        
+// SECURITY: Require secure secret key for signature generation
+         if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
+           console.error('SECURITY: Attempted signature generation with default secret');
+           return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
+             status: 500, 
+             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+           });
+         }
         const secret = env.SECRET_KEY;
         const signature = await generateHMACSignature(data, secret);
         return new Response(JSON.stringify({ signature }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
@@ -1041,15 +1039,14 @@ Respons:`;
           return new Response(JSON.stringify({ message: 'Data dan signature diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
         
-        // SECURITY: Require secure secret key for signature verification
-        if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
-          console.error('SECURITY: Attempted signature verification with default secret');
-          return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
-            status: 500, 
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          });
-        }
-        
+// SECURITY: Require secure secret key for signature verification
+         if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
+           console.error('SECURITY: Attempted signature verification with default secret');
+           return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
+             status: 500, 
+             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+           });
+         }
         const secret = env.SECRET_KEY;
         const isValid = await verifyHMACSignature(data, signature, secret);
         return new Response(JSON.stringify({ isValid }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
