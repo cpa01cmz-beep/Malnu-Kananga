@@ -1,5 +1,5 @@
-// Automated Intervention Engine
-// Mesin otomasi untuk intervensi siswa berbasis AI
+// Enhanced Automated Intervention Engine
+// Mesin otomasi untuk intervensi siswa berbasis AI dengan advanced analytics
 
 import { StudentSupportService, SupportRequest } from './studentSupportService';
 import RealTimeMonitoringService, { InterventionTrigger } from './realTimeMonitoringService';
@@ -612,7 +612,7 @@ class AutomatedInterventionEngine {
     console.log(`🚨 Escalated for student ${studentId}: ${config.escalateTo} (${config.urgency})`);
   }
 
-  // Execute parent alert action
+  // Execute parent alert action with enhanced context
   private async executeParentAlertAction(action: InterventionAction, studentId: string): Promise<void> {
     const config = action.config;
     
@@ -620,7 +620,14 @@ class AutomatedInterventionEngine {
       // Import ParentCommunicationService dynamically to avoid circular dependencies
       const { ParentCommunicationService } = await import('./parentCommunicationService');
       
-      // Send parent notification using template
+      // Get enhanced student context
+      const supportService = StudentSupportService.getInstance();
+      const studentProgress = supportService.getStudentProgress(studentId);
+      const recentRequests = supportService.getSupportRequests()
+        .filter(req => req.studentId === studentId)
+        .slice(0, 5);
+      
+      // Send enhanced parent notification with detailed context
       ParentCommunicationService.sendTemplateCommunication(
         studentId,
         config.template || 'alert_high_risk',
@@ -629,17 +636,84 @@ class AutomatedInterventionEngine {
           urgency: config.urgency?.toUpperCase() || 'MEDIUM',
           interventionType: config.template,
           timestamp: new Date().toISOString(),
-          riskFactors: config.includeRecommendations ? 'Detected by automated system' : undefined
+          riskFactors: config.includeRecommendations ? this.generateRiskFactors(studentProgress) : undefined,
+          recommendations: this.generateParentRecommendations(studentProgress),
+          recentActivity: recentRequests.map(req => ({
+            type: req.type,
+            status: req.status,
+            date: new Date(req.createdAt).toLocaleDateString('id-ID')
+          })),
+          nextSteps: this.generateNextSteps(action.config.template),
+          emergencyContact: 'support@ma-malnukananga.sch.id'
         },
         config.priority || 'medium'
       );
       
-      console.log(`👨‍👩‍👧‍👦 Parent alert sent for student ${studentId}: ${config.urgency}`);
+      console.log(`👨‍👩‍👧‍👦 Enhanced parent alert sent for student ${studentId}: ${config.urgency}`);
     } catch (error) {
       console.error(`Failed to send parent alert for student ${studentId}:`, error);
       // Fallback to console log
       console.log(`👨‍👩‍👧‍👦 Parent alert sent for student ${studentId}: ${config.urgency}`);
     }
+  }
+
+  // Generate risk factors for parent communication
+  private generateRiskFactors(studentProgress: any): string {
+    if (!studentProgress) return 'Tidak ada data risiko spesifik';
+    
+    const factors = [];
+    
+    if (studentProgress.academicMetrics.gpa < 70) {
+      factors.push('IPK dibawah standar');
+    }
+    if (studentProgress.academicMetrics.attendanceRate < 80) {
+      factors.push('Kehadiran rendah');
+    }
+    if (studentProgress.academicMetrics.assignmentCompletion < 75) {
+      factors.push('Penyelesaian tugas rendah');
+    }
+    if (studentProgress.engagementMetrics.loginFrequency < 3) {
+      factors.push('Jarang mengakses portal');
+    }
+    if (studentProgress.riskLevel === 'high') {
+      factors.push('Tingkat risiko tinggi');
+    }
+    
+    return factors.length > 0 ? factors.join(', ') : 'Tidak ada faktor risiko spesifik';
+  }
+
+  // Generate parent recommendations
+  private generateParentRecommendations(studentProgress: any): string {
+    if (!studentProgress) return 'Lanjutkan dukungan positif yang sudah diberikan.';
+    
+    const recommendations = [];
+    
+    if (studentProgress.academicMetrics.gpa < 70) {
+      recommendations.push('1. Sediakan waktu belajar terstruktur di rumah');
+      recommendations.push('2. Diskusikan kesulitan akademis dengan guru mata pelajaran');
+    }
+    if (studentProgress.academicMetrics.attendanceRate < 80) {
+      recommendations.push('3. Pastikan siswa hadir tepat waktu setiap hari');
+      recommendations.push('4. Hubungi pihak sekolah jika ada kendala kehadiran');
+    }
+    if (studentProgress.engagementMetrics.loginFrequency < 3) {
+      recommendations.push('5. Bantu siswa mengakses portal secara teratur');
+      recommendations.push('6. Monitor penggunaan portal untuk informasi penting');
+    }
+    
+    return recommendations.length > 0 ? recommendations.join('\n') : 'Lanjutkan dukungan positif yang sudah diberikan.';
+  }
+
+  // Generate next steps based on intervention type
+  private generateNextSteps(template?: string): string {
+    const nextSteps = {
+      'critical_academic_alert': '1. Segera hubungi Guru BK\n2. Jadwalkan pertemuan dengan wali kelas\n3. Monitor aktivitas belajar di rumah',
+      'alert_high_risk': '1. Perhatikan perubahan perilaku siswa\n2. Komunikasi dengan pihak sekolah\n3. Berikan dukungan emosional',
+      'performance_decline': '1. Diskusikan dengan guru mata pelajaran\n2. Buat jadwal belajar bersama\n3. Monitor penyelesaian tugas',
+      'wellness_check': '1. Ajak siswa berbicara terbuka\n2. Perhatikan kesehatan mental dan fisik\n3. Hubungi Guru BK jika perlu'
+    };
+    
+    return nextSteps[template as keyof typeof nextSteps] || '1. Komunikasi dengan pihak sekolah\n2. Monitor perkembangan siswa\n3. Berikan dukungan yang diperlukan';
   }
 
   // Execute peer match action
@@ -666,7 +740,7 @@ class AutomatedInterventionEngine {
   }
 
   // Get intervention history
-  private getInterventionHistory(studentId: string): InterventionResult[] {
+  public getInterventionHistory(studentId: string): InterventionResult[] {
     return this.interventionHistory.get(studentId) || [];
   }
 

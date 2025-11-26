@@ -516,7 +516,8 @@ class CurriculumService {
           timeLimit: 45,
           attempts: 2,
           passingScore: 70,
-          isGraded: true
+          isGraded: true,
+          instructions: 'Jawab semua pertanyaan dengan teliti'
         }
       ],
       coreCompetencies: [

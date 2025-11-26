@@ -68,30 +68,18 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     // Initialize student progress tracking
     const supportService = StudentSupportService.getInstance();
     supportService.updateStudentProgress(currentStudent.id, {
-      academicMetrics: {
-        gpa: gpa,
-        gradeTrend: 'stable' as const,
-        attendanceRate: attendanceStats.percentage,
-        assignmentCompletion: 85, // Sample data
-        subjectPerformance: studentGrades.reduce((acc, grade) => {
-          acc[grade.subjectName] = parseFloat(grade.finalGrade || '0');
-          return acc;
-        }, {} as Record<string, number>)
-      },
-      engagementMetrics: {
-        loginFrequency: 5, // Sample data
-        resourceAccess: 12,
-        supportRequests: 0,
-        participationScore: 85,
-        featureUsage: {
-          overview: 10,
-          grades: 8,
-          schedule: 6,
-          attendance: 4,
-          announcements: 7
+        academicMetrics: {
+          gpa: gpa,
+          gradeTrend: 'stable' as const,
+          attendanceRate: attendanceStats.percentage,
+          assignmentCompletion: 85 // Sample data
         },
-        lastActiveDate: new Date().toISOString()
-      }
+        engagementMetrics: {
+          loginFrequency: 5, // Sample data
+          resourceAccess: 12,
+          supportRequests: 0,
+          participationScore: 85
+        }
     });
   }, [gpa, attendanceStats.percentage, studentGrades, currentStudent.id]);
 
@@ -164,7 +152,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
       <NavigationTabs
         activeTab={activeTab}
         tabs={tabs}
-         onTabChange={(tabId: string) => setActiveTab(tabId as 'overview' | 'grades' | 'assignments' | 'schedule' | 'announcements')}
+         onTabChange={(tabId: string) => setActiveTab(tabId as typeof activeTab)}
       />
 
       {/* Main Content */}

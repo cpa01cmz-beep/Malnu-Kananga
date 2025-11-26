@@ -145,15 +145,14 @@ function verifyAndDecodeToken(token: string): TokenData | null {
 
     // Verify signature using development signature method
     const data = `${encodedHeader}.${encodedPayload}`;
-    // In production, token verification should be done server-side only
-    // This client-side implementation is for development/testing purposes only
-    const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+     // In production, token verification should be done server-side only
+     // This client-side implementation is for development/testing purposes only
+     const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
-// SECURITY: Client-side token verification disabled for ALL environments
-      // CRITICAL SECURITY: Never enable client-side token verification
-      console.error('SECURITY VIOLATION: Client-side token verification blocked - use server-side verification');
-      return null;
-  } catch (error) {
+     // SECURITY: Client-side token verification disabled for ALL environments
+     console.error('SECURITY: Client-side token verification not allowed - security vulnerability');
+     return null;
+   } catch (error) {
     return null;
   }
 }
@@ -191,7 +190,7 @@ function refreshTokenSync(currentToken: string): string | null {
 
 // Token storage management dengan auto-refresh
 class TokenManager {
-  private static TOKEN_KEY = 'malnu_secure_token';
+  private static TOKEN_KEY = 'malnu_secure_token_v2';
   private static REFRESH_TIMER_KEY = 'malnu_refresh_timer';
   private static refreshTimer: NodeJS.Timeout | null = null;
 

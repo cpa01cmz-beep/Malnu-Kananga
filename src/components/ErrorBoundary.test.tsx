@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ErrorBoundary, { withErrorBoundary, useErrorHandler } from './ErrorBoundary';
 
@@ -21,6 +22,11 @@ describe('ErrorBoundary', () => {
     jest.spyOn(console, 'group').mockImplementation(() => {});
     jest.spyOn(console, 'groupEnd').mockImplementation(() => {});
     
+    // Mock console.group, console.log, console.warn untuk menghindari noise
+    jest.spyOn(console, 'group').mockImplementation(() => {});
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+    
     // Mock error logging service
     jest.mock('../services/errorLoggingService', () => ({
       getErrorLoggingService: () => ({
@@ -42,6 +48,7 @@ describe('ErrorBoundary', () => {
   afterEach(() => {
     consoleError.mockRestore();
     jest.restoreAllMocks();
+    jest.clearAllMocks();
   });
 
   it('seharusnya render children normal tanpa error', () => {
@@ -135,7 +142,7 @@ describe('ErrorBoundary', () => {
     process.env.NODE_ENV = originalEnv;
   });
 
-it('seharusnya mereset state ketika tombol "Coba Lagi" diklik', () => {
+  it('seharusnya mereset state ketika tombol "Coba Lagi" diklik', () => {
     const TestComponent = ({ shouldThrow = false }: { shouldThrow?: boolean }) => {
       if (shouldThrow) {
         throw new Error('Test error');
@@ -279,7 +286,7 @@ describe('useErrorHandler hook', () => {
 
       return (
         <div>
-          <button onClick={handleClick}>Throw Error</button>
+          <button>Throw Error</button>
         </div>
       );
     };

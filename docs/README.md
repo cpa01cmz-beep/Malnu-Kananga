@@ -99,15 +99,46 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 - **Fitur**: Frontend/backend optimization, load testing, performance metrics
 - **Level**: Intermediate to Advanced
 
+### 🤝 Community & Contribution
+Dokumentasi untuk kontributor dan anggota komunitas:
+
+#### 🤝 [Contributing Guide](./CONTRIBUTING.md)
+- **Target**: Developers, contributors, community members
+- **Topik**: How to contribute, code standards, development workflow
+- **Fitur**: Contribution guidelines, code review process, PR templates
+- **Level**: Intermediate to Advanced
+
+#### 📋 [Code of Conduct](./CODE_OF_CONDUCT.md)
+- **Target**: All community members, contributors
+- **Topik**: Community guidelines, behavior expectations, reporting
+- **Fitur**: Inclusive environment, conflict resolution, support
+- **Level**: All levels
+
+### 📚 Support & Reference
+Dokumentasi bantuan dan referensi cepat:
+
+#### ❓ [FAQ](./FAQ.md)
+- **Target**: All users, new users, support staff
+- **Topik**: Common questions, troubleshooting, quick answers
+- **Fitur**: Problem solutions, how-to guides, support contacts
+- **Level**: All levels
+
+#### 📅 [Release Notes](./RELEASE_NOTES.md)
+- **Target**: All users, administrators, developers
+- **Topik**: Version history, new features, bug fixes
+- **Fitur**: Change log, upgrade guides, roadmap
+- **Level**: All levels
+
 ---
 
 ## 🎯 Quick Navigation
 
 ### 🚀 New Users
 1. **First Time Users**: Mulai dengan Panduan Pengguna yang sesuai
-2. **System Requirements**: Check di Developer Guide
-3. **Login Issues**: Lihat Troubleshooting Guide
-4. **Need Help**: Contact support di bagian bawah setiap dokumen
+2. **Quick Start**: Lihat Quick Start Guide untuk setup 5 menit
+3. **System Requirements**: Check di Installation Guide
+4. **Login Issues**: Lihat Troubleshooting Guide atau FAQ
+5. **Need Help**: Contact support di bagian bawah setiap dokumen
 
 ### 🔧 Technical Users
 1. **API Integration**: Lihat API Documentation
@@ -119,8 +150,16 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 ### 📚 Power Users
 1. **Advanced Features**: Lihat Panduan Administrator
 2. **Analytics & Reporting**: Panduan Guru/Orang Tua
-3. **System Optimization**: Developer Guide
+3. **System Optimization**: Performance Guide & Developer Guide
 4. **Best Practices**: Semua panduan pengguna
+5. **Community**: Baca Code of Conduct untuk interaksi positif
+
+### 🤝 Contributors
+1. **First Contribution**: Ikuti Contributing Guide
+2. **Code Standards**: Review development guidelines
+3. **Pull Requests**: Gunakan PR template
+4. **Community**: Ikuti Code of Conduct
+5. **Release Notes**: Track perubahan di Release Notes
 
 ---
 
@@ -141,6 +180,10 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 | Environment Validation | Developer, DevOps | Intermediate | Quarterly |
 | Security Guide | Developer, Admin | Advanced | Quarterly |
 | Performance Guide | Developer, DevOps | Intermediate | Quarterly |
+| Contributing Guide | Developer, Contributor | Intermediate | Quarterly |
+| Code of Conduct | All Community Members | All | As needed |
+| FAQ | All Users | All | As needed |
+| Release Notes | All Users | All | With Releases |
 
 ---
 
@@ -150,8 +193,8 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 
 #### 🔐 Authentication & Login
 - **Magic Link System**: All User Guides
-- **Login Issues**: Troubleshooting Guide
-- **Security**: Administrator Guide
+- **Login Issues**: Troubleshooting Guide, FAQ
+- **Security**: Security Guide, Administrator Guide
 - **API Authentication**: API Documentation
 - **Environment Setup**: Environment Validation Guide
 
@@ -163,7 +206,7 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 
 #### 💬 Communication
 - **Messaging System**: All User Guides
-- **AI Assistant**: All User Guides
+- **AI Assistant**: All User Guides, FAQ
 - **Notifications**: Parent & Student Guides
 - **Announcements**: Administrator Guide
 
@@ -171,7 +214,19 @@ Dokumentasi teknis untuk pengembang dan administrator sistem:
 - **User Management**: Administrator Guide
 - **System Monitoring**: Administrator Guide
 - **Backup & Recovery**: Administrator Guide
-- **Performance**: Developer Guide
+- **Performance**: Performance Guide, Developer Guide
+
+#### 🤝 Community & Contribution
+- **How to Contribute**: Contributing Guide
+- **Code Standards**: Contributing Guide
+- **Community Guidelines**: Code of Conduct
+- **Reporting Issues**: Contributing Guide, FAQ
+
+#### 📚 Documentation & Support
+- **Finding Information**: Documentation Index
+- **Common Questions**: FAQ
+- **Version History**: Release Notes
+- **Getting Help**: All guides, FAQ
 
 ### 🏷️ Tags & Labels
 
@@ -182,6 +237,8 @@ Setiap dokumen memiliki tags untuk kemudahan pencarian:
 - `#technical` - Konten teknis
 - `#academic` - Konten akademik
 - `#administrative` - Konten administratif
+- `#community` - Konten komunitas dan kontribusi
+- `#support` - Konten bantuan dan troubleshooting
 - `#emergency` - Prosedur darurat
 
 ---

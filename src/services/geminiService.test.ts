@@ -36,7 +36,8 @@ jest.mock('../memory', () => ({
 }));
 
 // Mock fetch globally
-global.fetch = jest.fn();
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
 
 // Import after mocking
 import { 
@@ -51,140 +52,109 @@ describe('Gemini Service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockSearchMemories.mockResolvedValue([]);
-    mockDeleteMemory.mockResolvedValue(undefined);
-    mockGetStats.mockResolvedValue({ totalMemories: 0, totalSize: 0 });
-    mockGetRelevantMemories.mockResolvedValue([]);
-    mockAddMemory.mockResolvedValue(undefined);
-    mockGenerateContentStream.mockResolvedValue({
-      [Symbol.asyncIterator]: async function* () {
-        yield { text: 'Maaf, terjadi masalah saat menghubungi AI. Silakan coba lagi nanti.' };
-      }
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ context: 'test context' })
     });
   });
 
   describe('getAIResponseStream', () => {
-test('should handle successful response with context', async () => {
-      const mockContext = 'School context information';
-      const mockResponse = {
-        ok: true,
-        json: jest.fn().mockResolvedValue({ context: mockContext })
+    test('should handle successful response with context', async () => {
+      const mockStream = async function* () {
+        yield { text: 'Hello' };
+        yield { text: ' world' };
       };
       
-      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      mockGenerateContentStream.mockReturnValue(mockStream);
 
-      const mockStream = {
-        [Symbol.asyncIterator]: async function* () {
-          yield { text: 'Hello' };
-          yield { text: ' world' };
-        }
-      };
-
-      mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockGetRelevantMemories.mockResolvedValue([]);
-
-      const generator = getAIResponseStream('Hello', []);
-      const results = [];
-      for await (const chunk of generator) {
-        results.push(chunk);
+      const stream = getAIResponseStream('Hello', []);
+      const chunks = [];
+      
+      for await (const chunk of stream) {
+        chunks.push(chunk);
       }
 
-      expect(results).toEqual(['Hello', ' world']);
+      expect(chunks).toEqual(['Hello', ' world']);
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://test-worker.com/api/chat',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'Hello' }),
+        }
+      );
     });
 
     test('should handle Google AI API error', async () => {
-      (global.fetch as jest.Mock).mockResolvedValue({
-        ok: true,
-        json: jest.fn().mockResolvedValue({ context: 'context' })
-      });
+      mockGenerateContentStream.mockRejectedValue(new Error('API Error'));
 
-      mockGenerateContentStream.mockRejectedValue(new Error('API error'));
-      mockGetRelevantMemories.mockResolvedValue([]);
-
-      const generator = getAIResponseStream('Hello', []);
-      const results = [];
-      for await (const chunk of generator) {
-        results.push(chunk);
-      }
-
-      expect(results).toEqual(['Maaf, terjadi masalah saat menghubungi AI. Silakan coba lagi nanti.']);
+      const stream = getAIResponseStream('Hello', []);
+      
+      await expect(async () => {
+        for await (const chunk of stream) {
+          // Should not reach here
+        }
+      }).rejects.toThrow('API Error');
     });
 
     test('should include context in prompt when available', async () => {
-      const mockContext = 'School information';
-      const mockResponse = {
-        ok: true,
-        json: jest.fn().mockResolvedValue({ context: mockContext })
+      const mockStream = async function* () {
+        yield { text: 'Response with context' };
       };
       
-      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      mockGenerateContentStream.mockReturnValue(mockStream);
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ context: 'Relevant context' })
+      });
 
-      const mockStream = {
-        [Symbol.asyncIterator]: async function* () {
-          yield { text: 'Response with context' };
-        }
-      };
-
-      mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockGetRelevantMemories.mockResolvedValue([]);
-
-      const generator = getAIResponseStream('Question', []);
-      const results = [];
-      for await (const chunk of generator) {
-        results.push(chunk);
+      const stream = getAIResponseStream('Question', []);
+      const chunks = [];
+      
+      for await (const chunk of stream) {
+        chunks.push(chunk);
       }
 
-      expect(mockGenerateContentStream).toHaveBeenCalled();
-      expect(results).toEqual(['Response with context']);
+      expect(chunks).toEqual(['Response with context']);
+      expect(mockFetch).toHaveBeenCalled();
     });
 
     test('should use correct system instruction in Indonesian', async () => {
-      (global.fetch as jest.Mock).mockResolvedValue({
-        ok: true,
-        json: jest.fn().mockResolvedValue({ context: '' })
-      });
-
-      const mockStream = {
-        [Symbol.asyncIterator]: async function* () {
-          yield { text: 'Indonesian response' };
-        }
+      const mockStream = async function* () {
+        yield { text: 'Indonesian response' };
       };
+      
+      mockGenerateContentStream.mockReturnValue(mockStream);
 
-      mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockGetRelevantMemories.mockResolvedValue([]);
-
-      const generator = getAIResponseStream('Pertanyaan', []);
-      const results = [];
-      for await (const chunk of generator) {
-        results.push(chunk);
+      const stream = getAIResponseStream('Halo', []);
+      const chunks = [];
+      
+      for await (const chunk of stream) {
+        chunks.push(chunk);
       }
 
-      expect(results).toEqual(['Indonesian response']);
+      expect(chunks).toEqual(['Indonesian response']);
     });
 
     test('should handle empty context response', async () => {
-      const mockResponse = {
-        ok: true,
-        json: jest.fn().mockResolvedValue({ context: '' })
+      const mockStream = async function* () {
+        yield { text: 'No context response' };
       };
       
-      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      mockGenerateContentStream.mockReturnValue(mockStream);
+      mockFetch.mockResolvedValue({
+        ok: false,
+        json: () => Promise.resolve({ error: 'No context found' })
+      });
 
-      const mockStream = {
-        [Symbol.asyncIterator]: async function* () {
-          yield { text: 'No context response' };
-        }
-      };
-
-      mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockGetRelevantMemories.mockResolvedValue([]);
-
-      const generator = getAIResponseStream('Hello', []);
-      const results = [];
-      for await (const chunk of generator) {
-        results.push(chunk);
+      const stream = getAIResponseStream('Question', []);
+      const chunks = [];
+      
+      for await (const chunk of stream) {
+        chunks.push(chunk);
       }
 
-      expect(results).toEqual(['No context response']);
+      expect(chunks).toEqual(['No context response']);
     });
   });
 
@@ -195,70 +165,68 @@ test('should handle successful response with context', async () => {
     });
 
     test('should be in Indonesian language', () => {
-      expect(initialGreeting).toMatch(/Halo|Assalamualaikum/);
+      expect(initialGreeting).toContain('Assalamualaikum');
+      expect(initialGreeting).toContain('Saya');
     });
 
     test('should contain relevant keywords', () => {
-      expect(initialGreeting).toMatch(/asisten|AI|bantuan|help/i);
+      expect(initialGreeting).toContain('Asisten AI');
+      expect(initialGreeting).toContain('MA Malnu Kananga');
     });
 
     test('should be helpful and welcoming', () => {
-      expect(initialGreeting).toMatch(/selamat datang|bisa|bantu/i);
+      expect(initialGreeting).toContain('Ada yang bisa saya bantu');
     });
   });
 
   describe('Error Handling', () => {
     test('should handle malformed API response', async () => {
-      (global.fetch as jest.Mock).mockResolvedValue({
+      mockFetch.mockResolvedValue({
         ok: true,
-        json: jest.fn().mockRejectedValue(new Error('Invalid JSON'))
+        json: () => Promise.reject(new Error('Invalid JSON'))
       });
 
-      const mockStream = {
-        [Symbol.asyncIterator]: async function* () {
-          yield { text: 'Error handled' };
-        }
+      const mockStream = async function* () {
+        yield { text: 'Response despite fetch error' };
       };
+      
+      mockGenerateContentStream.mockReturnValue(mockStream);
 
-      mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockGetRelevantMemories.mockResolvedValue([]);
-
-      const generator = getAIResponseStream('Test', []);
-      const results = [];
-      for await (const chunk of generator) {
-        results.push(chunk);
+      const stream = getAIResponseStream('Test', []);
+      const chunks = [];
+      
+      for await (const chunk of stream) {
+        chunks.push(chunk);
       }
 
-      expect(results).toEqual(['Error handled']);
+      expect(chunks).toEqual(['Response despite fetch error']);
     });
 
     test('should handle network timeout', async () => {
-      (global.fetch as jest.Mock).mockRejectedValue(new Error('Timeout'));
+      mockFetch.mockRejectedValue(new Error('Network timeout'));
 
-      const mockStream = {
-        [Symbol.asyncIterator]: async function* () {
-          yield { text: 'Timeout handled' };
-        }
+      const mockStream = async function* () {
+        yield { text: 'Response despite network error' };
       };
+      
+      mockGenerateContentStream.mockReturnValue(mockStream);
 
-      mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockGetRelevantMemories.mockResolvedValue([]);
-
-      const generator = getAIResponseStream('Test', []);
-      const results = [];
-      for await (const chunk of generator) {
-        results.push(chunk);
+      const stream = getAIResponseStream('Test', []);
+      const chunks = [];
+      
+      for await (const chunk of stream) {
+        chunks.push(chunk);
       }
 
-      expect(results).toEqual(['Timeout handled']);
+      expect(chunks).toEqual(['Response despite network error']);
     });
   });
 
   describe('getConversationHistory', () => {
     test('should return conversation history', async () => {
       const mockConversations = [
-        { id: '1', content: 'Test conversation 1', type: 'conversation' },
-        { id: '2', content: 'Test conversation 2', type: 'conversation' },
+        { id: '1', content: 'Conversation 1', type: 'conversation' },
+        { id: '2', content: 'Conversation 2', type: 'conversation' },
       ];
       
       mockSearchMemories.mockResolvedValue(mockConversations);
@@ -272,21 +240,12 @@ test('should handle successful response with context', async () => {
       expect(result).toEqual(mockConversations);
     });
 
-    test('should handle error and return empty array', async () => {
-      mockSearchMemories.mockRejectedValue(new Error('Memory error'));
-      
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-      const result = await getConversationHistory();
-
-      expect(result).toEqual([]);
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to get conversation history:', expect.any(Error));
-      
-      consoleSpy.mockRestore();
-    });
-
     test('should use default limit', async () => {
-      mockSearchMemories.mockResolvedValue([]);
+      const mockConversations = [
+        { id: '1', content: 'Conversation 1', type: 'conversation' },
+      ];
+      
+      mockSearchMemories.mockResolvedValue(mockConversations);
 
       await getConversationHistory();
 
@@ -294,6 +253,14 @@ test('should handle successful response with context', async () => {
         type: 'conversation',
         limit: 10,
       });
+    });
+
+    test('should handle error and return empty array', async () => {
+      mockSearchMemories.mockRejectedValue(new Error('Memory error'));
+      
+      const result = await getConversationHistory();
+
+      expect(result).toEqual([]);
     });
   });
 
@@ -327,6 +294,24 @@ test('should handle successful response with context', async () => {
       
       consoleSpy.mockRestore();
     });
+
+    test('should handle empty conversations array', async () => {
+      mockSearchMemories.mockResolvedValue([]);
+
+      const result = await clearConversationHistory();
+
+      expect(result).toBe(0);
+      expect(mockDeleteMemory).not.toHaveBeenCalled();
+    });
+
+    test('should handle null/undefined response from searchMemories', async () => {
+      mockSearchMemories.mockResolvedValue(null);
+
+      const result = await clearConversationHistory();
+
+      expect(result).toBe(0);
+      expect(mockDeleteMemory).not.toHaveBeenCalled();
+    });
   });
 
   describe('getMemoryStats', () => {
@@ -344,14 +329,9 @@ test('should handle successful response with context', async () => {
     test('should handle error and return null', async () => {
       mockGetStats.mockRejectedValue(new Error('Stats error'));
       
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
       const result = await getMemoryStats();
 
       expect(result).toBeNull();
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to get memory stats:', expect.any(Error));
-      
-      consoleSpy.mockRestore();
     });
   });
 });

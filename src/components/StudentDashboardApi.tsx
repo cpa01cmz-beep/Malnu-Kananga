@@ -11,6 +11,7 @@ import {
 import { AuthService } from '../services/authService';
 import { NotificationItem } from '../services/notificationService';
 import {
+  useCurrentStudent,
   useStudentGrades,
   useAttendanceRecords,
   useClassSchedule,
@@ -29,24 +30,12 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
   const [currentToast, setCurrentToast] = useState<NotificationItem | null>(null);
 
   // API hooks untuk real data
-    const {
-      data: studentProfile,
-      isLoading: profileLoading,
-      error: _profileError,
-      isSuccess: _profileSuccess
-    } = useAcademicStats();
-
-    // Use mock student data sebagai fallback jika API gagal
-    const fallbackStudent = {
-      id: 'STU001',
-      name: 'Ahmad Fauzi Rahman',
-      email: 'siswa@ma-malnukananga.sch.id',
-      class: 'XII IPA 1',
-      academicYear: '2024/2025',
-      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
-    };
-
-    const currentStudent = studentProfile || fallbackStudent;
+  const {
+    data: studentProfile,
+    isLoading: profileLoading,
+    error: _profileError,
+    isSuccess: _profileSuccess
+  } = useCurrentStudent();
 
   const {
     data: grades,
@@ -164,19 +153,19 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <img
-                  src={currentStudent?.profileImage || '/default-avatar.png'}
-                  alt={currentStudent?.name || 'Student'}
-                  className="h-12 w-12 rounded-full object-cover"
-                />
-                <div>
-                  <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {currentStudent?.name}
-                  </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {currentStudent?.class} • {currentStudent?.academicYear}
-                  </p>
-                </div>
+                 <img
+                   src={studentProfile?.profileImage || '/default-avatar.png'}
+                   alt={studentProfile?.name || 'Student'}
+                   className="h-12 w-12 rounded-full object-cover"
+                 />
+                 <div>
+                   <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                     {studentProfile?.name}
+                   </h1>
+                   <p className="text-sm text-gray-500 dark:text-gray-400">
+                     {studentProfile?.class} • {studentProfile?.academicYear}
+                   </p>
+                 </div>
               </div>
               <NotificationBell />
             </div>
@@ -203,7 +192,7 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as 'overview' | 'grades' | 'assignments' | 'attendance' | 'announcements')}
+                onClick={() => setActiveTab(tab.id as 'overview' | 'grades' | 'schedule' | 'attendance' | 'announcements')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                   activeTab === tab.id
                     ? 'border-green-500 text-green-600 dark:text-green-400'
@@ -225,7 +214,7 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
             {/* Welcome Card */}
             <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
               <h2 className="text-2xl font-bold mb-2">
-                Selamat datang kembali, {currentStudent?.name?.split(' ')[0]}! 👋
+                 Selamat datang kembali, {studentProfile?.name?.split(' ')[0]}! 👋
               </h2>
               <p className="text-green-100">
                 Hari ini adalah {today}, {formatDate(new Date().toISOString())}

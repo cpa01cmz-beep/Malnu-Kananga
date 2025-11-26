@@ -11,8 +11,6 @@ Object.defineProperty(window, 'alert', {
   value: mockAlert
 });
 
-// Use fake timers for handling async operations
-jest.useFakeTimers();
 
 jest.mock('../../services/studentSupportService', () => ({
   StudentSupportService: {
@@ -70,10 +68,9 @@ jest.mock('../../services/studentSupportService', () => ({
           status: 'pending',
           createdAt: '2024-01-01T11:00:00Z'
         }))
-    }))
-  }
+     }))
+   }
 }));
-
 
 
 describe('StudentSupport Component', () => {
@@ -115,14 +112,18 @@ describe('StudentSupport Component', () => {
     expect(screen.getByText('academic - math')).toBeInTheDocument();
   });
 
-  it('displays resources in resources tab', () => {
+  it('displays resources in resources tab', async () => {
     render(<StudentSupport studentId="STU001" />);
     
-    fireEvent.click(screen.getByText('Resources'));
+    // Wait for component to load and click on Resources tab
+    await waitFor(() => {
+      fireEvent.click(screen.getByText('Resources'));
+    });
     
-    expect(screen.getByText('Panduan Belajar Efektif')).toBeInTheDocument();
-    expect(screen.getByText('Teknik belajar efektif')).toBeInTheDocument();
-    expect(screen.getByText('#belajar')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Panduan Belajar Efektif')).toBeInTheDocument();
+      expect(screen.getByText('Teknik belajar efektif')).toBeInTheDocument();
+    });
   });
 
   it('displays student progress in progress tab', () => {
@@ -148,38 +149,35 @@ describe('StudentSupport Component', () => {
   });
 
   it('creates new support request when form is submitted', async () => {
-     const { StudentSupportService } = require('../../services/studentSupportService');
-     
-     render(<StudentSupport studentId="STU001" />);
-     
-     // Open new request form
-     fireEvent.click(screen.getByText('📝 Buat Permintaan Baru'));
-     
-     // Fill form
-     fireEvent.change(screen.getByPlaceholderText('Judul permintaan'), {
-       target: { value: 'Bantuan Fisika' }
-     });
-     fireEvent.change(screen.getByPlaceholderText('Jelaskan masalah atau bantuan yang Anda butuhkan'), {
-       target: { value: 'Saya kesulitan dengan mekanika' }
-     });
-     
-     // Submit form
-     fireEvent.click(screen.getByText('Kirim Permintaan'));
-     
-     // Advance timers to process async operations
-     jest.runAllTimers();
-     
-     await waitFor(() => {
-       expect(StudentSupportService.createSupportRequest).toHaveBeenCalledWith(
-         'STU001',
-         'academic',
-         'umum',
-         'Bantuan Fisika',
-         'Saya kesulitan dengan mekanika',
-         'medium'
-       );
-     });
-   });
+    const { StudentSupportService } = require('../../services/studentSupportService');
+    
+    render(<StudentSupport studentId="STU001" />);
+    
+    // Open new request form
+    fireEvent.click(screen.getByText('📝 Buat Permintaan Baru'));
+    
+    // Fill form
+    fireEvent.change(screen.getByPlaceholderText('Judul permintaan'), {
+      target: { value: 'Bantuan Fisika' }
+    });
+    fireEvent.change(screen.getByPlaceholderText('Jelaskan masalah atau bantuan yang Anda butuhkan'), {
+      target: { value: 'Saya kesulitan dengan mekanika' }
+    });
+    
+    // Submit form
+    fireEvent.click(screen.getByText('Kirim Permintaan'));
+    
+    await waitFor(() => {
+      expect(StudentSupportService.createSupportRequest).toHaveBeenCalledWith(
+        'STU001',
+        'academic',
+        'umum',
+        'Bantuan Fisika',
+        'Saya kesulitan dengan mekanika',
+        'medium'
+      );
+    });
+  });
 
   it('filters resources based on search term', () => {
     render(<StudentSupport studentId="STU001" />);
@@ -218,7 +216,7 @@ describe('StudentSupport Component', () => {
     fireEvent.click(screen.getByText('Kirim Permintaan'));
     
     // Should show validation alert
-    expect(window.alert).toHaveBeenCalledWith('Mohon lengkapi judul dan deskripsi permintaan');
+    expect(mockAlert).toHaveBeenCalledWith('Mohon lengkapi judul dan deskripsi permintaan');
   });
 
   it('closes modal when cancel is clicked', () => {

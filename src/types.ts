@@ -29,55 +29,52 @@ export interface LatestNews {
 }
 
 // Student data structure
-export interface Student {
-  id: string;
-  name: string;
-  email: string;
-  grade: string;
-  nis: string;
-  class?: string;
-}
+ export interface Student {
+   id: string;
+   name: string;
+   email: string;
+   grade: string;
+   nis: string;
+   class?: string;
+ }
 
-// Grade data structure
-export interface Grade {
-  id: string;
-  studentId: string;
-  subject: string;
-  score: number;
-  semester?: string;
-  academicYear?: string;
-  date?: string;
-}
+ // Grade data structure
+ export interface Grade {
+   id: string;
+   studentId: string;
+   subject: string;
+   score: number;
+   date: string;
+   semester: string;
+   academicYear: string;
+ }
 
-// Schedule item data structure
-export interface ScheduleItem {
-  id: string;
-  studentId: string;
-  subject: string;
-  teacher: string;
-  room: string;
-  time: string;
-  day: string;
-}
+ // Schedule item data structure
+ export interface ScheduleItem {
+   id: string;
+   studentId: string;
+   subject: string;
+   teacher: string;
+   day: string;
+   time: string;
+   room: string;
+ }
 
-// Attendance record data structure
-export interface AttendanceRecord {
-  id: string;
-  studentId: string;
-  date: string;
-  status: 'present' | 'absent' | 'late';
-  subject?: string;
-}
+ // Attendance record data structure
+ export interface AttendanceRecord {
+   id: string;
+   studentId: string;
+   date: string;
+   status: 'present' | 'absent' | 'late';
+   subject?: string;
+ }
 
-// Academic stats data structure
-export interface AcademicStats {
-  gpa: number;
-  totalCredits: number;
-  subjects: string[];
-}
-
-
-
+ // Academic stats data structure
+ export interface AcademicStats {
+   gpa: number;
+   totalCredits: number;
+   subjects: string[];
+ }
 
 // Student Progress types
 export interface StudentProgress {

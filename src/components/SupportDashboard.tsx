@@ -11,11 +11,11 @@ interface SupportDashboardProps {
 
 const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'monitoring' | 'interventions' | 'analytics'>('overview');
-  const [realTimeStats, setRealTimeStats] = useState<{ activeUsers: number; responseTime: number; satisfactionRate: number } | null>(null);
-  const [interventionStats, setInterventionStats] = useState<{ total: number; active: number; completed: number } | null>(null);
-  const [atRiskStudents, setAtRiskStudents] = useState<{ id: string; name: string; riskLevel: string }[]>([]);
-  const [activeInterventions, setActiveInterventions] = useState<{ id: string; studentId: string; type: string }[]>([]);
-  const [systemHealth, setSystemHealth] = useState<{ status: string; uptime: number; lastCheck: string } | null>(null);
+const [realTimeStats, setRealTimeStats] = useState<any>(null);
+const [interventionStats, setInterventionStats] = useState<any>(null);
+const [atRiskStudents, setAtRiskStudents] = useState<any[]>([]);
+const [activeInterventions, setActiveInterventions] = useState<any[]>([]);
+const [systemHealth, setSystemHealth] = useState<{ status: string; uptime: number | string; lastCheck: string; memory?: string } | null>(null);
 
   useEffect(() => {
     loadDashboardData();
@@ -27,20 +27,38 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
     try {
       // Get at-risk students
       const allProgress = studentSupportService.getAllStudentProgress();
-      const atRisk = Object.values(allProgress).filter((student: { riskLevel: string }) => 
+      const atRisk = Object.values(allProgress).filter((student: any) => 
         student.riskLevel === 'high' || student.riskLevel === 'medium'
-      );
+      ).map((student: any) => ({
+        id: student.id || student.studentId || 'unknown',
+        name: student.name || 'Unknown Student',
+        riskLevel: student.riskLevel,
+        studentId: student.studentId,
+        academicMetrics: student.academicMetrics
+      }));
       setAtRiskStudents(atRisk);
 
       setActiveInterventions([]);
-      setRealTimeStats({ pendingInterventions: 0 });
-      setInterventionStats({ averageEffectiveness: 75, totalInterventions: 0 });
+      setRealTimeStats({ 
+        activeUsers: 0, 
+        responseTime: 0, 
+        satisfactionRate: 0, 
+        pendingInterventions: 0 
+      });
+      setInterventionStats({ 
+        total: 0, 
+        active: 0, 
+        completed: 0, 
+        averageEffectiveness: 75, 
+        totalInterventions: 0 
+      });
 
       // Get system health
       setSystemHealth({
         status: 'healthy',
         uptime: 'N/A',
-        memory: (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)
+        lastCheck: new Date().toISOString(),
+        memory: (typeof process !== 'undefined' && process.memoryUsage ? (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2) : '0') + ' MB'
       });
 
     } catch (error) {
@@ -96,7 +114,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
             ].map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as string)}
+                onClick={() => setActiveTab(tab.id as 'overview' | 'analytics' | 'monitoring' | 'interventions')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
@@ -148,14 +166,14 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
                 <div className="space-y-2">
                   {activeInterventions.slice(0, 5).map(intervention => (
                     <div key={intervention.id} className="flex items-center justify-between text-sm">
-                      <div>
-                        <span className="font-medium">Student {intervention.studentId}</span>
-                        <span className={`ml-2 px-2 py-1 rounded text-xs ${getSeverityColor(intervention.severity)}`}>
-                          {intervention.triggerType.replace('_', ' ')}
-                        </span>
+                       <div>
+                         <span className="font-medium">Student {intervention.studentId}</span>
+                         <span className={`ml-2 px-2 py-1 rounded text-xs ${getSeverityColor(intervention.severity || 'medium')}`}>
+                           {intervention.triggerType?.replace('_', ' ') || 'Unknown'}
+                         </span>
                       </div>
                       <div className="text-gray-500">
-                        {new Date(intervention.timestamp).toLocaleTimeString('id-ID')}
+                        {intervention.timestamp ? new Date(intervention.timestamp).toLocaleTimeString('id-ID') : 'N/A'}
                       </div>
                     </div>
                   ))}
@@ -174,14 +192,14 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
                   {atRiskStudents.slice(0, 5).map(student => (
                     <div key={student.studentId} className="flex items-center justify-between text-sm">
                       <div>
-                        <span className="font-medium">Student {student.studentId}</span>
-                        <span className={`ml-2 px-2 py-1 rounded text-xs ${getRiskColor(student.riskLevel)}`}>
-                          {student.riskLevel.toUpperCase()}
-                        </span>
+<span className="font-medium">Student {student.studentId || student.id}</span>
+                         <span className={`ml-2 px-2 py-1 rounded text-xs ${getRiskColor(student.riskLevel)}`}>
+                           {student.riskLevel.toUpperCase()}
+                         </span>
                       </div>
-                      <div className="text-gray-500">
-                        GPA: {student.academicMetrics.gpa.toFixed(1)}
-                      </div>
+<div className="text-gray-500">
+                         GPA: {student.academicMetrics?.gpa ? student.academicMetrics.gpa.toFixed(1) : 'N/A'}
+                       </div>
                     </div>
                   ))}
                   {atRiskStudents.length === 0 && (
@@ -212,9 +230,9 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">System Performance</h3>
                   <div className="space-y-1 text-sm">
-                    <div>Memory Usage: {systemHealth?.memory || 0} MB</div>
-                    <div>Uptime: {Math.floor((systemHealth?.uptime || 0) / 3600)}h</div>
-                    <div>Total Interventions: {interventionStats?.totalInterventions || 0}</div>
+                     <div>Memory Usage: {systemHealth?.memory || 0} MB</div>
+                     <div>Uptime: {typeof systemHealth?.uptime === 'number' ? Math.floor(systemHealth.uptime / 3600) : 'N/A'}h</div>
+                     <div>Total Interventions: {interventionStats?.totalInterventions || 0}</div>
                   </div>
                 </div>
                 
@@ -223,7 +241,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
                   <div className="space-y-1 text-sm">
                     <div>Avg Effectiveness: {interventionStats?.averageEffectiveness?.toFixed(1) || 0}%</div>
                     <div>Active Rules: {interventionStats?.activeRules || 0}</div>
-                    <div>Last 24h: {interventionStats?.recentActivity?.last24Hours || 0}</div>
+                    <div>Last 24h: {interventionStats?.recentActivity || 0}</div>
                   </div>
                 </div>
               </div>
@@ -232,24 +250,24 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="font-semibold text-gray-900 mb-3">Live Activity Feed</h3>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {activeInterventions.map(intervention => (
-                    <div key={intervention.id} className="border-l-4 border-blue-500 pl-3 py-2">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <span className="font-medium">Student {intervention.studentId}</span>
-                          <span className={`ml-2 text-xs px-2 py-1 rounded ${getSeverityColor(intervention.severity)}`}>
-                            {intervention.triggerType.replace('_', ' ')}
-                          </span>
-                        </div>
-                        <span className="text-xs text-gray-500">
-                          {new Date(intervention.timestamp).toLocaleTimeString('id-ID')}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-600 mt-1">
-                        {intervention.actions.length} actions queued
-                      </div>
-                    </div>
-                  ))}
+                   {activeInterventions.map(intervention => (
+                     <div key={intervention.id} className="border-l-4 border-blue-500 pl-3 py-2">
+                       <div className="flex justify-between items-start">
+                         <div>
+                           <span className="font-medium">Student {intervention.studentId}</span>
+                           <span className={`ml-2 text-xs px-2 py-1 rounded ${getSeverityColor(intervention.severity || 'medium')}`}>
+                             {intervention.triggerType?.replace('_', ' ') || 'Unknown'}
+                           </span>
+                         </div>
+                         <div className="text-gray-500">
+                           {intervention.timestamp ? new Date(intervention.timestamp).toLocaleTimeString('id-ID') : 'N/A'}
+                         </div>
+                       </div>
+                       <div className="text-sm text-gray-600 mt-1">
+                         {intervention.actions?.length || 0} actions queued
+                       </div>
+                     </div>
+                   ))}
                   {activeInterventions.length === 0 && (
                     <div className="text-center text-gray-500 py-4">
                       No recent activity
@@ -341,31 +359,21 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }
               <div className="bg-blue-50 p-4 rounded-lg">
                 <h3 className="font-semibold text-blue-900 mb-3">System Recommendations</h3>
                 <div className="space-y-2">
-                  {interventionStats?.averageEffectiveness < 50 && (
+                   {(interventionStats?.averageEffectiveness || 0) < 50 && (
                     <div className="text-sm text-blue-800">
                       • Consider reviewing and optimizing intervention rules for better effectiveness
                     </div>
-                  )}
-                  {atRiskStudents.filter(s => s.riskLevel === 'high').length > 5 && (
-                    <div className="text-sm text-blue-800">
-                      • High number of at-risk students detected. Consider proactive outreach programs.
-                    </div>
-                  )}
-                  {realTimeStats?.pendingInterventions > 10 && (
-                    <div className="text-sm text-blue-800">
-                      • High number of pending interventions. Additional support staff may be needed.
-                    </div>
-                  )}
-                  {systemHealth?.status !== 'healthy' && (
-                    <div className="text-sm text-red-800">
-                      • System health requires attention. Check resource utilization.
-                    </div>
-                  )}
-                  {interventionStats?.averageEffectiveness > 80 && atRiskStudents.length < 3 && (
-                    <div className="text-sm text-green-800">
-                      • System is performing optimally! Current interventions are highly effective.
-                    </div>
-                  )}
+                   )}
+                   {systemHealth?.status !== 'healthy' && (
+                     <div className="text-sm text-red-800">
+                       • System health requires attention. Check resource utilization.
+                     </div>
+                   )}
+                   {(interventionStats?.averageEffectiveness || 0) > 80 && atRiskStudents.length < 3 && (
+                     <div className="text-sm text-green-800">
+                       • System is performing optimally! Current interventions are highly effective.
+                     </div>
+                   )}
                 </div>
               </div>
             </div>

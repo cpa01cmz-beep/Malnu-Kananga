@@ -8,7 +8,7 @@ interface StudentProgressMonitorProps {
 const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ studentId }) => {
   const [progress, setProgress] = useState<StudentProgress | null>(null);
   const [loading, setLoading] = useState(true);
-  const [_selectedTimeframe, _setSelectedTimeframe] = useState<'week' | 'month' | 'semester'>('month');
+  const [selectedTimeframe, setSelectedTimeframe] = useState<'week' | 'month' | 'semester'>('month');
 
   useEffect(() => {
     loadProgressData();
@@ -25,28 +25,37 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
       // Initialize progress for new student
       const initialProgress: StudentProgress = {
         studentId,
-        academicMetrics: {
-          gpa: 0,
-          gradeTrend: 'stable' as const,
-          attendanceRate: 0,
-          assignmentCompletion: 0
-        },
-        engagementMetrics: {
-          loginFrequency: 0,
-          resourceAccess: 0,
-          supportRequests: 0,
-          participationScore: 0
-        },
-        riskLevel: 'low' as const,
-        lastUpdated: new Date().toISOString()
-      };
-      
-      supportService.updateStudentProgress(studentId, initialProgress);
-      setProgress(initialProgress);
-    }
-    
-    setLoading(false);
-  };
+          academicMetrics: {
+            gpa: 0,
+            gradeTrend: 'stable' as const,
+             attendanceRate: 0,
+             assignmentCompletion: 0,
+             subjectPerformance: {}
+           },
+         engagementMetrics: {
+           loginFrequency: 0,
+           resourceAccess: 0,
+           supportRequests: 0,
+           participationScore: 0,
+           featureUsage: {
+             overview: 0,
+             grades: 0,
+             schedule: 0,
+             attendance: 0,
+             announcements: 0
+           },
+           lastActiveDate: new Date().toISOString()
+         },
+         riskLevel: 'low' as const,
+         lastUpdated: new Date().toISOString()
+       };
+       
+       supportService.updateStudentProgress(studentId, initialProgress);
+       setProgress(initialProgress);
+     }
+     
+     setLoading(false);
+   };
 
   const getRiskLevel = (_progress: StudentProgress): 'low' | 'medium' | 'high' => {
     // Mock risk factors since they don't exist in the interface
@@ -162,7 +171,9 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Penyelesaian Tugas</p>
           </div>
           
-          </div>
+         </div>
+
+         
       </div>
 
       {/* Engagement Metrics */}
@@ -199,65 +210,40 @@ const StudentProgressMonitor: React.FC<StudentProgressMonitorProps> = ({ student
                 </span>
               </div>
               
-              </div>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">Engagement Metrics</h3>
-            
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Resource Access</span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {progress.engagementMetrics.resourceAccess}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Support Requests</span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {progress.engagementMetrics.supportRequests}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Participation Score</span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {progress.engagementMetrics.participationScore}%
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+             </div>
+           </div>
+         </div>
+       </div>
 
-{/* Risk Level */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">⚠️ Tingkat Risiko</h2>
-        
-        <div className={`p-6 rounded-lg text-center ${
-          progress.riskLevel === 'high' 
-            ? 'bg-red-50 border-2 border-red-200 dark:bg-red-900/20 dark:border-red-800'
-            : progress.riskLevel === 'medium'
-            ? 'bg-yellow-50 border-2 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800'
-            : 'bg-green-50 border-2 border-green-200 dark:bg-green-900/20 dark:border-green-800'
-        }`}>
-          <div className="text-4xl mb-2">
-            {progress.riskLevel === 'high' ? '🔴' : progress.riskLevel === 'medium' ? '🟡' : '✅'}
-          </div>
-          <div className="text-xl font-bold mb-1">
-            {progress.riskLevel === 'high' ? 'Tinggi' : progress.riskLevel === 'medium' ? 'Sedang' : 'Rendah'}
-          </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {progress.riskLevel === 'high' 
-              ? 'Memerlukan intervensi segera'
-              : progress.riskLevel === 'medium'
-              ? 'Perlu pemantauan lebih dekat'
-              : 'Berperforma baik'
-            }
-          </p>
-        </div>
-      </div>
+       {/* Risk Level */}
+       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">⚠️ Tingkat Risiko</h2>
+         
+         <div className={`p-6 rounded-lg text-center ${
+           progress.riskLevel === 'high' 
+             ? 'bg-red-50 border-2 border-red-200 dark:bg-red-900/20 dark:border-red-800'
+             : progress.riskLevel === 'medium'
+             ? 'bg-yellow-50 border-2 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800'
+             : 'bg-green-50 border-2 border-green-200 dark:bg-green-900/20 dark:border-green-800'
+         }`}>
+           <div className="text-4xl mb-2">
+             {progress.riskLevel === 'high' ? '🔴' : progress.riskLevel === 'medium' ? '🟡' : '✅'}
+           </div>
+           <div className="text-xl font-bold mb-1">
+             {progress.riskLevel === 'high' ? 'Tinggi' : progress.riskLevel === 'medium' ? 'Sedang' : 'Rendah'}
+           </div>
+           <p className="text-sm text-gray-600 dark:text-gray-400">
+             {progress.riskLevel === 'high' 
+               ? 'Memerlukan intervensi segera'
+               : progress.riskLevel === 'medium'
+               ? 'Perlu pemantauan lebih dekat'
+               : 'Berperforma baik'
+             }
+           </p>
+         </div>
+       </div>
 
-      {/* Progress Chart Placeholder */}
+       {/* Progress Chart Placeholder */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">📈 Trend Progress</h2>
         

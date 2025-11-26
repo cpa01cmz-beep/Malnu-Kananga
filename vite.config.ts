@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command, mode }) => ({
+export default defineConfig(({ mode }) => ({
   plugins: [react()],
   css: {
     postcss: './postcss.config.js',
@@ -10,80 +10,9 @@ export default defineConfig(({ command, mode }) => ({
   define: {
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
   },
-  build: {
-    // Enable source maps for production debugging (security consideration)
-    sourcemap: mode === 'development',
-
-    // Optimize chunk size
-    rollupOptions: {
-      output: {
-        manualChunks: (id) => {
-          // Vendor chunks untuk better caching
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'react-vendor';
-            }
-            if (id.includes('@google/genai')) {
-              return 'ai-vendor';
-            }
-            if (id.includes('uuid')) {
-              return 'utils-vendor';
-            }
-            if (id.includes('tanstack') || id.includes('@tanstack')) {
-              return 'query-vendor';
-            }
-            return 'vendor';
-          }
-          
-          // Split larger components into separate chunks
-          if (id.includes('Dashboard')) {
-            return 'dashboard';
-          }
-          if (id.includes('Section')) {
-            return 'sections';
-          }
-          if (id.includes('ChatWindow')) {
-            return 'chat';
-          }
-          if (id.includes('memory')) {
-            return 'memory';
-          }
-          if (id.includes('StudentSupport')) {
-            return 'student-support';
-          }
-          if (id.includes('components')) {
-            return 'components';
-          }
-          if (id.includes('services')) {
-            return 'services';
-          }
-          if (id.includes('hooks')) {
-            return 'hooks';
-          }
-        },
-
-        // Optimize chunk naming untuk better caching
-        chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId
-            ? chunkInfo.facadeModuleId.split('/').pop()?.replace('.tsx', '').replace('.ts', '')
-            : 'chunk';
-          return `js/${facadeModuleId}-[hash].js`;
-        },
-
-        // Optimize asset naming
-        assetFileNames: (assetInfo) => {
-          const info = assetInfo.name?.split('.') || [];
-          const ext = info[info.length - 1];
-          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(ext)) {
-            return `images/[name]-[hash].${ext}`;
-          }
-          if (/css/i.test(ext)) {
-            return `css/[name]-[hash].${ext}`;
-          }
-          return `assets/[name]-[hash].${ext}`;
-        }
-      }
-    },
+    build: {
+      // Enable source maps for production debugging (security consideration)
+      sourcemap: mode === 'development',
 
     // Performance optimizations
     target: 'esnext',
@@ -100,15 +29,86 @@ export default defineConfig(({ command, mode }) => ({
       }
     },
 
-    // Chunk size warnings - increased threshold for education system
-    chunkSizeWarningLimit: 300
-  },
+    // Chunk size warnings
+    chunkSizeWarningLimit: 300,
 
-  // Development server optimizations
-  server: {
-    port: 3000,
-    open: true
-  },
+     // Optimize chunk size
+     rollupOptions: {
+       output: {
+         manualChunks: (id) => {
+           // Vendor chunks untuk better caching
+           if (id.includes('node_modules')) {
+             if (id.includes('react') || id.includes('react-dom')) {
+               return 'react-vendor';
+             }
+             if (id.includes('@google/genai')) {
+               return 'ai-vendor';
+             }
+             if (id.includes('uuid')) {
+               return 'utils-vendor';
+             }
+             if (id.includes('@supabase/supabase-js')) {
+               return 'db-vendor';
+             }
+             if (id.includes('@tanstack/react-query')) {
+               return 'query-vendor';
+             }
+             if (id.includes('tanstack') || id.includes('@tanstack')) {
+               return 'query-vendor';
+             }
+             return 'vendor';
+           }
+           
+           // Split larger components into separate chunks
+           if (id.includes('Dashboard')) {
+             return 'dashboard';
+           }
+           if (id.includes('Section')) {
+             return 'sections';
+           }
+           if (id.includes('/src/components/')) {
+             return 'components';
+           }
+           if (id.includes('/src/services/')) {
+             return 'services';
+           }
+           if (id.includes('/src/hooks/')) {
+             return 'hooks';
+           }
+           if (id.includes('/src/memory/')) {
+             return 'memory';
+           }
+         },
+
+         // Optimize chunk naming untuk better caching
+         chunkFileNames: (chunkInfo) => {
+           const facadeModuleId = chunkInfo.facadeModuleId
+             ? chunkInfo.facadeModuleId.split('/').pop()?.replace('.tsx', '').replace('.ts', '')
+             : 'chunk';
+           return `js/${facadeModuleId}-[hash].js`;
+         },
+
+         // Optimize asset naming
+assetFileNames: (assetInfo) => {
+            const info = assetInfo.name?.split('.') || [];
+            const extType = info[info.length - 1];
+if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+              return `images/[name]-[hash].${extType}`;
+            }
+            if (/css/i.test(extType)) {
+              return `css/[name]-[hash].${extType}`;
+            }
+            return `assets/[name]-[hash].${extType}`;
+         }
+       }
+     }
+   },
+
+   // Development server optimizations
+   server: {
+     port: 3000,
+     open: true
+   },
 
   // Dependency pre-bundling untuk better performance
   optimizeDeps: {
@@ -116,16 +116,7 @@ export default defineConfig(({ command, mode }) => ({
     exclude: ['@tanstack/react-query']
   },
 
-  // Experimental features for better performance
-  experimental: {
-    renderBuiltUrl: (filename, { hostType }) => {
-      if (hostType === 'js') {
-        return { js: `/${filename}` };
-      } else {
-        return { relative: true };
-      }
-    }
-  },
+
 
   // Asset optimization
   assetsInclude: ['**/*.webp']

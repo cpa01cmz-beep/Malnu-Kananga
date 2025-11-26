@@ -1,4 +1,9 @@
 import '@testing-library/jest-dom';
+import { TextEncoder, TextDecoder } from 'util';
+
+// Add type assertion to fix type compatibility issues
+global.TextEncoder = TextEncoder as any;
+global.TextDecoder = TextDecoder as any;
 import 'jest-extended/all';
 
 // Mock environment variables for testing
@@ -71,11 +76,5 @@ declare global {
   var global: typeof globalThis;
   
   // Extend Jest matchers for testing-library
-  namespace jest {
-    interface Matchers<R = any> {
-      toBeInTheDocument(): R;
-      toHaveValue(value: any): R;
-      toBeDisabled(): R;
-    }
-  }
+  
 }
