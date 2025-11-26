@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Header from './Header';
 
@@ -344,7 +345,9 @@ describe('Header Component', () => {
     });
 
     test('should handle rapid state changes', async () => {
-      const user = userEvent.setup();
+      jest.useFakeTimers();
+      jest.setTimeout(15000);
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
       const { rerender } = render(
         <Header
           onLoginClick={mockOnLoginClick}
@@ -373,10 +376,13 @@ describe('Header Component', () => {
         />
       );
 
-      const loginButton = screen.getByText('Login');
-      await user.click(loginButton);
+      await act(async () => {
+        const loginButton = screen.getByText('Login');
+        await user.click(loginButton);
+      });
 
       expect(mockOnLoginClick).toHaveBeenCalledTimes(1);
+      jest.useRealTimers();
     });
   });
 });

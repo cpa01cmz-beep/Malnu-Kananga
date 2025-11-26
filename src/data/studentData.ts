@@ -367,6 +367,15 @@ export function getAttendanceStats(attendance: AttendanceRecord[]): {
   return { total, present, absent, sick, permitted, percentage };
 }
 
+export interface AttendanceStats {
+  total: number;
+  present: number;
+  absent: number;
+  sick: number;
+  permitted: number;
+  percentage: number;
+}
+
 export function getUnreadAnnouncements(announcements: Announcement[]): Announcement[] {
   return announcements.filter(announcement => !announcement.isRead);
 }

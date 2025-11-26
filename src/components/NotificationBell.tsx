@@ -22,10 +22,10 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNotificationClick
       setUnreadCount(prev => prev + 1);
     };
 
-    window.addEventListener('showNotification', handleNewNotification as EventListener);
+    window.addEventListener('showNotification', handleNewNotification as any);
 
     return () => {
-      window.removeEventListener('showNotification', handleNewNotification as EventListener);
+      window.removeEventListener('showNotification', handleNewNotification as any);
     };
   }, []);
 
@@ -99,6 +99,8 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNotificationClick
       <button
         onClick={() => setShowDropdown(!showDropdown)}
         className="relative p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+        aria-label={`Notifikasi ${unreadCount > 0 ? `(${unreadCount} belum dibaca)` : ''}`}
+        aria-expanded={showDropdown}
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5-5-5h5V12h-5l5-5 5 5h-5v5zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
@@ -144,9 +146,14 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNotificationClick
                 <div
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleNotificationClick(notification)}
+                  role="button"
+                  tabIndex={0}
                   className={`p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-l-4 ${getPriorityColor(notification.priority)} ${
                     !notification.isRead ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                   }`}
+                  aria-label={`Notifikasi: ${notification.title}`}
+                  aria-pressed={notification.isRead}
                 >
                   <div className="flex items-start space-x-3">
                     <span className="text-lg">{getNotificationIcon(notification.type)}</span>

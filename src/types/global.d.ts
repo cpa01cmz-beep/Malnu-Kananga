@@ -1,27 +1,27 @@
 /// <reference types="dom" />
-/// <reference types="node" />
 
 declare global {
   interface Window {
     announceNavigation?: (message: string) => void;
   }
   
-  var console: globalThis.Console;
-  var setTimeout: (handler: globalThis.TimerHandler, timeout?: number, ...arguments: any[]) => number;
+  var console: Console;
+  var setTimeout: (handler: TimerHandler, timeout?: number, ...arguments: any[]) => number;
   var clearTimeout: (id?: number) => void;
-  var setInterval: (handler: globalThis.TimerHandler, timeout?: number, ...arguments: any[]) => number;
+  var setInterval: (handler: TimerHandler, timeout?: number, ...arguments: any[]) => number;
   var clearInterval: (id?: number) => void;
-  var requestAnimationFrame: (callback: globalThis.FrameRequestCallback) => number;
+  var requestAnimationFrame: (callback: FrameRequestCallback) => number;
   var cancelAnimationFrame: (id: number) => void;
-  var localStorage: globalThis.Storage;
-  var sessionStorage: globalThis.Storage;
-  var navigator: globalThis.Navigator;
-  var document: globalThis.Document;
-  var window: globalThis.Window;
+  var localStorage: Storage;
+  var sessionStorage: Storage;
+  var navigator: Navigator;
+  var document: Document;
+  var window: Window;
+  var global: typeof globalThis;
   var alert: (message?: any) => void;
   var confirm: (message?: string) => boolean;
   var prompt: (message?: string, _default?: string) => string | null;
-  var fetch: (input: globalThis.RequestInfo | URL, init?: globalThis.RequestInit) => Promise<Response>;
+  var fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
   var btoa: (data: string) => string;
   var atob: (data: string) => string;
   var Blob: typeof Blob;
@@ -90,12 +90,9 @@ declare global {
   var PageShowEvent: typeof PageShowEvent;
   var PageHideEvent: typeof PageHideEvent;
   var EventListener: typeof EventListener;
+  var NodeJS: typeof NodeJS;
   var HeadersInit: typeof HeadersInit;
   var AbortSignal: typeof AbortSignal;
-  var URLSearchParams: typeof URLSearchParams;
-  var NodeJS: typeof NodeJS;
-  var React: typeof React;
-  var global: typeof global;
 }
 
 export {};

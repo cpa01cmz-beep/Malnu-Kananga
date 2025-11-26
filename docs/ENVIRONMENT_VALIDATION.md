@@ -1,8 +1,344 @@
-# 🔐 Environment Validation Guide - MA Malnu Kananga
+# 🔍 Environment Validation Guide - MA Malnu Kananga
 
 ## 🌟 Overview
 
-Panduan lengkap untuk validasi environment variables dan konfigurasi sistem MA Malnu Kananga. Guide ini memastikan semua komponen sistem terkonfigurasi dengan benar untuk development dan production.
+Comprehensive guide for validating and troubleshooting environment configuration for MA Malnu Kananga portal system. This guide ensures all required environment variables, dependencies, and system requirements are properly configured.
+
+**Environment Validation Version: 1.3.1**  
+**Last Updated: 2025-11-24**  
+**Status: Production Ready**
+
+---
+
+## 📋 Environment Validation Checklist
+
+### ✅ Required Environment Variables
+
+#### Development Environment (.env)
+```bash
+# Required: Google Gemini AI API
+API_KEY=AIzaSyC_xxxxxxxxxxxxxxxxxxxxxxxxxx  # Your Google Gemini API key
+
+# Application Configuration
+NODE_ENV=development
+VITE_APP_ENV=development
+
+# Optional Development Overrides
+VITE_DEV_MODE=true
+VITE_ENABLE_PWA=true
+VITE_ENABLE_AI_CHAT=true
+VITE_WORKER_URL=http://localhost:8787  # Local worker URL
+```
+
+#### Production Environment (Cloudflare Workers Secrets)
+```bash
+# Required Secrets (set via wrangler secret put)
+API_KEY=your_gemini_api_key_here          # Google Gemini API key
+SECRET_KEY=your_jwt_secret_key_here       # HMAC secret for JWT (32+ chars)
+
+# Application Configuration
+NODE_ENV=production
+VITE_APP_ENV=production
+
+# Optional Production Variables
+VITE_WORKER_URL=https://your-worker.workers.dev
+```
+
+### 🔧 Environment Validation Script
+
+Create `scripts/validate-env.js`:
+
+```javascript
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+
+class EnvironmentValidator {
+  constructor() {
+    this.errors = [];
+    this.warnings = [];
+    this.requiredVars = {
+      development: ['API_KEY'],
+      production: ['API_KEY', 'SECRET_KEY']
+    };
+  }
+
+  validateEnvironment(env = process.env.NODE_ENV || 'development') {
+    console.log(`🔍 Validating ${env} environment...\n`);
+
+    // Check .env file exists
+    this.validateEnvFile();
+    
+    // Check required variables
+    this.validateRequiredVariables(env);
+    
+    // Check API key format
+    this.validateAPIKey();
+    
+    // Check Node.js version
+    this.validateNodeVersion();
+    
+    // Check dependencies
+    this.validateDependencies();
+    
+    // Display results
+    this.displayResults();
+    
+    return this.errors.length === 0;
+  }
+
+  validateEnvFile() {
+    const envPath = path.join(process.cwd(), '.env');
+    
+    if (!fs.existsSync(envPath)) {
+      this.errors.push('❌ .env file not found');
+      return;
+    }
+    
+    console.log('✅ .env file found');
+    
+    // Check .env.example exists
+    const examplePath = path.join(process.cwd(), '.env.example');
+    if (fs.existsSync(examplePath)) {
+      console.log('✅ .env.example file found');
+    } else {
+      this.warnings.push('⚠️ .env.example file not found');
+    }
+  }
+
+  validateRequiredVariables(env) {
+    const required = this.requiredVars[env] || this.requiredVars.development;
+    
+    required.forEach(varName => {
+      const value = process.env[varName];
+      
+      if (!value) {
+        this.errors.push(`❌ Required variable ${varName} is not set`);
+      } else {
+        console.log(`✅ ${varName} is set`);
+        
+        // Additional validation for specific variables
+        if (varName === 'SECRET_KEY' && value.length < 32) {
+          this.errors.push(`❌ SECRET_KEY must be at least 32 characters (current: ${value.length})`);
+        }
+      }
+    });
+  }
+
+  validateAPIKey() {
+    const apiKey = process.env.API_KEY;
+    
+    if (!apiKey) return;
+    
+    // Check Gemini API key format
+    if (!apiKey.startsWith('AIzaSy')) {
+      this.errors.push('❌ API_KEY does not appear to be a valid Google Gemini API key');
+    } else {
+      console.log('✅ API_KEY format appears valid');
+    }
+  }
+
+  validateNodeVersion() {
+    const nodeVersion = process.version;
+    const majorVersion = parseInt(nodeVersion.slice(1).split('.')[0]);
+    
+    if (majorVersion < 18) {
+      this.errors.push(`❌ Node.js version ${nodeVersion} is too old. Required: v18+`);
+    } else {
+      console.log(`✅ Node.js version ${nodeVersion} is supported`);
+    }
+  }
+
+  validateDependencies() {
+    const packagePath = path.join(process.cwd(), 'package.json');
+    
+    if (!fs.existsSync(packagePath)) {
+      this.errors.push('❌ package.json not found');
+      return;
+    }
+    
+    try {
+      const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+      const dependencies = packageJson.dependencies || {};
+      
+      // Check critical dependencies
+      const criticalDeps = ['react', 'react-dom', 'vite'];
+      criticalDeps.forEach(dep => {
+        if (dependencies[dep]) {
+          console.log(`✅ ${dep} dependency found`);
+        } else {
+          this.errors.push(`❌ Critical dependency ${dep} not found`);
+        }
+      });
+      
+    } catch (error) {
+      this.errors.push('❌ Error reading package.json: ' + error.message);
+    }
+  }
+
+  displayResults() {
+    console.log('\n📊 Validation Results:');
+    console.log('===');
+    
+    if (this.errors.length === 0 && this.warnings.length === 0) {
+      console.log('🎉 All validations passed!');
+    } else {
+      if (this.errors.length > 0) {
+        console.log('\n❌ Errors:');
+        this.errors.forEach(error => console.log(`  ${error}`));
+      }
+      
+      if (this.warnings.length > 0) {
+        console.log('\n⚠️ Warnings:');
+        this.warnings.forEach(warning => console.log(`  ${warning}`));
+      }
+    }
+    
+    console.log('\n📋 Summary:');
+    console.log(`  Errors: ${this.errors.length}`);
+    console.log(`  Warnings: ${this.warnings.length}`);
+    console.log(`  Status: ${this.errors.length === 0 ? '✅ PASS' : '❌ FAIL'}`);
+  }
+}
+
+// Run validation if called directly
+if (require.main === module) {
+  const validator = new EnvironmentValidator();
+  const success = validator.validateEnvironment();
+  process.exit(success ? 0 : 1);
+}
+
+module.exports = EnvironmentValidator;
+```
+
+### 🚀 Enhanced npm Scripts
+
+Update `package.json` scripts:
+
+```json
+{
+  "scripts": {
+    "env:validate": "node scripts/validate-env.js",
+    "env:check": "node -e \"console.log('Environment Variables:'); console.log('NODE_ENV:', process.env.NODE_ENV || 'not set'); console.log('API_KEY:', process.env.API_KEY ? 'set' : 'not set'); console.log('SECRET_KEY:', process.env.SECRET_KEY ? 'set' : 'not set');\"",
+    "env:setup": "node scripts/setup-env.js",
+    "env:test": "NODE_ENV=test npm run env:validate",
+    "env:prod": "NODE_ENV=production npm run env:validate"
+  }
+}
+```
+
+---
+
+## 🔧 Environment Setup Script
+
+Create `scripts/setup-env.js`:
+
+```javascript
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const readline = require('readline');
+
+class EnvironmentSetup {
+  constructor() {
+    this.rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+  }
+
+  async setupEnvironment() {
+    console.log('🚀 MA Malnu Kananga Environment Setup');
+    console.log('==\n');
+
+    // Check if .env exists
+    const envPath = path.join(process.cwd(), '.env');
+    const envExists = fs.existsSync(envPath);
+
+    if (envExists) {
+      console.log('⚠️ .env file already exists');
+      const overwrite = await this.question('Do you want to overwrite it? (y/N): ');
+      if (overwrite.toLowerCase() !== 'y') {
+        console.log('Setup cancelled.');
+        this.rl.close();
+        return;
+      }
+    }
+
+    // Get required values
+    const apiKey = await this.question('Enter your Google Gemini API Key: ');
+    const nodeEnv = await this.question('Enter NODE_ENV (development/production): ', 'development');
+
+    // Validate inputs
+    if (!apiKey.startsWith('AIzaSy')) {
+      console.log('⚠️ API Key does not appear to be valid Gemini API key');
+      const continueAnyway = await this.question('Continue anyway? (y/N): ');
+      if (continueAnyway.toLowerCase() !== 'y') {
+        console.log('Setup cancelled.');
+        this.rl.close();
+        return;
+      }
+    }
+
+    // Create .env file
+    const envContent = `# Google Gemini AI Configuration
+API_KEY=${apiKey}
+
+# Application Configuration
+NODE_ENV=${nodeEnv}
+VITE_APP_ENV=${nodeEnv}
+
+# Development Configuration
+VITE_DEV_MODE=true
+VITE_ENABLE_PWA=true
+VITE_ENABLE_AI_CHAT=true
+
+# Worker Configuration (uncomment if using local worker)
+# VITE_WORKER_URL=http://localhost:8787
+`;
+
+    fs.writeFileSync(envPath, envContent);
+    console.log('✅ .env file created successfully');
+
+    // Validate setup
+    console.log('\n🔍 Validating setup...');
+    const { spawn } = require('child_process');
+    const validate = spawn('npm', ['run', 'env:validate'], { 
+      stdio: 'inherit',
+      shell: true 
+    });
+
+    validate.on('close', (code) => {
+      if (code === 0) {
+        console.log('\n🎉 Environment setup completed successfully!');
+        console.log('You can now run: npm run dev');
+      } else {
+        console.log('\n❌ Environment setup validation failed');
+        console.log('Please check the errors above and fix them manually');
+      }
+      this.rl.close();
+    });
+  }
+
+  question(query, defaultValue = '') {
+    return new Promise((resolve) => {
+      this.rl.question(query, (answer) => {
+        resolve(answer || defaultValue);
+      });
+    });
+  }
+}
+
+// Run setup if called directly
+if (require.main === module) {
+  const setup = new EnvironmentSetup();
+  setup.setupEnvironment();
+}
+
+module.exports = EnvironmentSetup;
+```
 
 ---
 
@@ -620,6 +956,15 @@ npm run type-check
 
 ---
 
+
+*Guide Version: 1.3.1*  
+*Last Updated: 2025-11-24*  
+
 *Guide Version: 1.2.0*  
-*Last Updated: November 23, 2025*  
+<<<<<<< HEAD
+*Last Updated: November 23, 2024*  
+=======
+*Last Updated: 2025-11-24
+
+>>>>>>> origin/main
 *Maintained by: MA Malnu Kananga Technical Team*

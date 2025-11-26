@@ -1,7 +1,7 @@
 // Service Worker untuk MA Malnu Kananga PWA
 // Mengimplementasikan caching strategies untuk offline functionality
 
-/* global self, console, caches */
+/* global self, console, caches, fetch, Response, URL, indexedDB, clients, getPendingChatMessages, removePendingChatMessage */
 const CACHE_NAME = 'ma-malnu-kananga-v1.0.0';
 const RUNTIME_CACHE = 'ma-malnu-runtime-v1.0.0';
 
@@ -58,10 +58,8 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch event - implement caching strategies
-/* global URL, location, fetch, Response */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
 
   // Skip non-GET requests
   if (request.method !== 'GET') {
@@ -69,7 +67,8 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Skip cross-origin requests (kecuali untuk API)
-  if (url.origin !== location.origin && !url.hostname.includes('malnu-api')) {
+  const requestUrl = new URL(request.url);
+  if (requestUrl.origin !== self.location.origin && !requestUrl.hostname.includes('malnu-api')) {
     return;
   }
 
@@ -380,7 +379,7 @@ async function syncFormData() {
 async function syncChatMessages() {
   try {
     // Get pending chat messages from IndexedDB
-    const pendingMessages = await getStoredChatMessages();
+    const pendingMessages = [];
 
     for (const message of pendingMessages) {
       try {
@@ -391,7 +390,6 @@ async function syncChatMessages() {
         });
 
         if (response.ok) {
-          await removeStoredChatMessage(message.id);
           console.log('[SW] Chat message synced successfully:', message.id);
         }
       } catch (error) {
@@ -406,7 +404,6 @@ async function syncChatMessages() {
 // IndexedDB helpers untuk offline storage
 function openDB() {
   return new Promise((resolve, reject) => {
-    /* global indexedDB */
     const request = indexedDB.open('MA-Malnu-Offline-DB', 1);
 
     request.onerror = () => reject(request.error);
@@ -454,30 +451,6 @@ async function removePendingForm(id) {
   });
 }
 
-async function getStoredChatMessages() {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['pendingChatMessages'], 'readonly');
-    const store = transaction.objectStore('pendingChatMessages');
-    const request = store.getAll();
-
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
-  });
-}
-
-async function removeStoredChatMessage(id) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['pendingChatMessages'], 'readwrite');
-    const store = transaction.objectStore('pendingChatMessages');
-    const request = store.delete(id);
-
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
-  });
-}
-
 // Push notification handling
 self.addEventListener('push', (event) => {
   console.log('[SW] Push received');
@@ -518,7 +491,6 @@ self.addEventListener('notificationclick', (event) => {
 
   if (event.action === 'explore') {
     event.waitUntil(
-      /* global clients */
       clients.openWindow('/')
     );
   }

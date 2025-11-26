@@ -121,5 +121,48 @@
     "test-docs.js",
     "setup-cloudflare-resources.js",
     "cli.js"
+  ],
+  "overrides": [
+    {
+      "files": ["src/__mocks__/**/*", "src/__tests__/**/*"],
+      "env": {
+        "jest": true
+      },
+      "globals": {
+        "describe": "readonly",
+        "test": "readonly", 
+        "it": "readonly",
+        "expect": "readonly",
+        "beforeEach": "readonly",
+        "afterEach": "readonly",
+        "beforeAll": "readonly",
+        "afterAll": "readonly",
+        "jest": "readonly",
+        "global": "readonly"
+      }
+    },
+    {
+      "files": ["public/sw.js"],
+      "env": {
+        "serviceworker": true
+      },
+      "globals": {
+        "self": "readonly",
+        "caches": "readonly",
+        "clients": "readonly",
+        "indexedDB": "readonly"
+      }
+    },
+    {
+      "files": ["implement/**/*", "scripts/**/*"],
+      "env": {
+        "node": true
+      },
+      "globals": {
+        "console": "readonly",
+        "process": "readonly",
+        "module": "readonly"
+      }
+    }
   ]
 }

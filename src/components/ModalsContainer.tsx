@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import LoginModal from './LoginModal';
 import DocumentationPage from './DocumentationPage';
 import { User } from '../services/authService';
@@ -8,7 +8,7 @@ interface ModalsContainerProps {
   isDocsOpen: boolean;
   onLoginClose: () => void;
   onDocsClose: () => void;
-  onLoginSuccess: (user: User) => void;
+  onLoginSuccess: (user?: User) => void;
 }
 
 const ModalsContainer: React.FC<ModalsContainerProps> = ({
