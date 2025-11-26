@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { Assignment, currentParent } from '../data/parentData';
+import { _Assignment as Assignment, currentParent } from '../data/parentData';
 
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (_data: {
+  onSubmit: (assignmentId: string, data: {
     file?: File;
     notes?: string;
     submittedBy: string;
