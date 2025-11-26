@@ -146,15 +146,15 @@ function verifyAndDecodeToken(token: string): TokenData | null {
     // Verify signature using development signature method
     const data = `${encodedHeader}.${encodedPayload}`;
      // In production, token verification should be done server-side only
-     // This client-side implementation is for development/testing purposes only
-     const secret = isDevelopment ? (import.meta.env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+      // This client-side implementation is for development/testing purposes only
+      const secret = isDevelopment ? (import.meta.env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
      // SECURITY: Client-side token verification disabled for ALL environments
      console.error('SECURITY: Client-side token verification not allowed - security vulnerability');
      return null;
    } catch (error) {
-    return null;
-  }
+     return null;
+   }
 }
 
 // Check if token needs refresh (dalam 5 menit terakhir)

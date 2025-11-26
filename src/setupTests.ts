@@ -6,6 +6,24 @@ global.TextEncoder = TextEncoder as any;
 global.TextDecoder = TextDecoder as any;
 import 'jest-extended/all';
 
+// Suppress console logs during tests to reduce noise
+const originalConsole = { ...console };
+beforeAll(() => {
+  console.error = jest.fn();
+  console.warn = jest.fn();
+  console.log = jest.fn();
+  console.group = jest.fn();
+  console.groupEnd = jest.fn();
+});
+
+afterAll(() => {
+  console.error = originalConsole.error;
+  console.warn = originalConsole.warn;
+  console.log = originalConsole.log;
+  console.group = originalConsole.group;
+  console.groupEnd = originalConsole.groupEnd;
+});
+
 // Mock environment variables for testing
 process.env.API_KEY = process.env.TEST_API_KEY || 'test-api-key-placeholder';
 

@@ -1,8 +1,25 @@
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ChatWindow from './ChatWindow';
 import { ChatProvider } from '../contexts/ChatContext';
+
+// Mock ResizeObserver
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
+
+declare global {
+  var IntersectionObserver: {
+    new(): IntersectionObserver;
+    observe(): void;
+    unobserve(): void;
+    disconnect(): void;
+  };
+}
 
 // Wrapper component to provide ChatContext to tests
 const ChatWindowWithProvider = (props: {isOpen: boolean, closeChat: () => void}) => (
@@ -29,13 +46,13 @@ jest.mock('./icons/CloseIcon', () => ({
 
 // Mock ResizeObserver and IntersectionObserver
 beforeAll(() => {
-  (global as unknown).ResizeObserver = class ResizeObserver {
+  (global as any).ResizeObserver = class ResizeObserver {
     observe() {}
     unobserve() {}
     disconnect() {}
   };
 
-  (global as unknown).IntersectionObserver = class IntersectionObserver {
+  (global as any).IntersectionObserver = class IntersectionObserver {
     constructor() {}
     observe() {}
     unobserve() {}
