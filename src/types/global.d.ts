@@ -2,7 +2,7 @@
 
 declare global {
   interface Window {
-    announceNavigation?: (message: string) => void;
+    // Add any custom window properties here
   }
   
   var console: Console;
@@ -17,6 +17,7 @@ declare global {
   var navigator: Navigator;
   var document: Document;
   var window: Window;
+  var global: typeof globalThis;
   var alert: (message?: any) => void;
   var confirm: (message?: string) => boolean;
   var prompt: (message?: string, _default?: string) => string | null;
@@ -78,12 +79,6 @@ declare global {
   var TouchEvent: typeof TouchEvent;
   var WheelEvent: typeof WheelEvent;
   var DragEvent: typeof DragEvent;
-  var AbortSignal: typeof AbortSignal;
-  var HeadersInit: typeof HeadersInit;
-  var EventListener: typeof EventListener;
-  var NodeJS: typeof NodeJS;
-  var React: any;
-  var global: any;
   var ClipboardEvent: typeof ClipboardEvent;
   var CompositionEvent: typeof CompositionEvent;
   var InputEvent: typeof InputEvent;
@@ -94,13 +89,11 @@ declare global {
   var BeforeUnloadEvent: typeof BeforeUnloadEvent;
   var PageShowEvent: typeof PageShowEvent;
   var PageHideEvent: typeof PageHideEvent;
-  var global: typeof globalThis;
-  var NodeJS: any;
-  var HeadersInit: any;
-  var AbortSignal: any;
-  var EventListener: any;
-  var React: any;
-  var TouchEvent: any;
+  var EventListener: typeof EventListener;
+  var NodeJS: typeof NodeJS;
+  var HeadersInit: typeof HeadersInit;
+  var AbortSignal: typeof AbortSignal;
+  var React: typeof React;
 }
 
 export {};

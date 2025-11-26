@@ -12,6 +12,25 @@ process.env.API_KEY = process.env.TEST_API_KEY || 'test-api-key-placeholder';
 // Mock fetch for testing API calls
 global.fetch = jest.fn();
 
+// Mock global objects for TypeScript
+declare global {
+  var global: typeof globalThis;
+  var alert: (message: string) => void;
+  var HTMLInputElement: typeof HTMLInputElement;
+  var HTMLDivElement: typeof HTMLDivElement;
+  var HTMLImageElement: typeof HTMLImageElement;
+  var HTMLFormElement: typeof HTMLFormElement;
+  var HTMLElement: typeof HTMLElement;
+  var EventListener: typeof EventListener;
+  var IntersectionObserver: typeof IntersectionObserver;
+  var TouchEvent: typeof TouchEvent;
+  var NodeJS: typeof NodeJS;
+  var HeadersInit: typeof HeadersInit;
+  var AbortSignal: typeof AbortSignal;
+  var URLSearchParams: typeof URLSearchParams;
+  var React: typeof React;
+}
+
 // Mock ResizeObserver
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
