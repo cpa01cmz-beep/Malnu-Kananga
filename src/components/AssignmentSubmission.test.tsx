@@ -28,7 +28,7 @@ describe('AssignmentSubmission Component', () => {
   };
 
   const mockOnClose = jest.fn();
-  const mockOnSubmit = jest.fn().mockResolvedValue(undefined) as jest.MockedFunction<(data: { file?: File; notes?: string; submittedBy: string }) => Promise<void>>;
+  const mockOnSubmit = jest.fn().mockResolvedValue(undefined);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -135,8 +135,8 @@ describe('AssignmentSubmission Component', () => {
         />
       );
 
-      const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-stream' });
-      const dropZone = screen.getByText('Pilih File').closest('div');
+       const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-stream' });
+       const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
 
       if (dropZone) {
         fireEvent.drop(dropZone, {
@@ -173,17 +173,16 @@ describe('AssignmentSubmission Component', () => {
        const largeFileBuffer = new ArrayBuffer(11 * 1024 * 1024); // 11MB
        const largeFile = new File([largeFileBuffer], 'large.pdf', { type: 'application/pdf' });
       
-       // Find the file upload area by looking for the input or drop zone - using getAllByRole to handle multiple elements
-       const fileButtons = screen.getAllByRole('button', { name: /pilih file/i });
-       const fileInput = fileButtons[0] || screen.getByText('Pilih File').closest('div');
+        // Find the file upload area by looking for the drop zone div (not the button)
+        const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
 
-      if (fileInput) {
-        fireEvent.drop(fileInput, {
-          dataTransfer: {
-            files: [largeFile]
-          }
-        });
-      }
+        if (dropZone) {
+          fireEvent.drop(dropZone, {
+            dataTransfer: {
+              files: [largeFile]
+            }
+          });
+        }
 
         // After attempting to upload a large file, the component should still be functional
         // The large file might not be properly rejected in test environment, but UI should remain usable
@@ -238,8 +237,8 @@ describe('AssignmentSubmission Component', () => {
         />
       );
 
-      const file = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
-      const dropZone = screen.getByText('Pilih File').closest('div');
+       const file = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
+       const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
 
       if (dropZone) {
         fireEvent.drop(dropZone, {
@@ -289,12 +288,12 @@ describe('AssignmentSubmission Component', () => {
       const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
       fireEvent.click(submitButton);
 
-       await waitFor(() => {
-         expect(mockOnSubmit).toHaveBeenCalledWith({
-           notes: 'Catatan untuk pengumpulan',
-           submittedBy: 'PAR001'
-         });
-       });
+        await waitFor(() => {
+          expect(mockOnSubmit).toHaveBeenCalledWith('ASG001', {
+            notes: 'Catatan untuk pengumpulan',
+            submittedBy: 'PAR001'
+          });
+        });
       
       jest.useRealTimers();
     });

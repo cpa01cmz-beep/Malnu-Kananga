@@ -105,7 +105,7 @@ async function generateSecureToken(email: string, expiryTime: number = 15 * 60 *
   // In production, signature generation should be done server-side only
   // This client-side implementation is for development/testing purposes only
   // DO NOT use this for production authentication as it exposes the secret
-  const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+   const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
   // SECURITY: Client-side signature generation disabled for ALL environments
   // All authentication now handled server-side in Cloudflare Worker
@@ -145,15 +145,22 @@ function verifyAndDecodeToken(token: string): TokenData | null {
 
     // Verify signature using development signature method
     const data = `${encodedHeader}.${encodedPayload}`;
-    // In production, token verification should be done server-side only
-    // This client-side implementation is for development/testing purposes only
-    const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
+     // In production, token verification should be done server-side only
+     // This client-side implementation is for development/testing purposes only
+     const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
+<<<<<<< HEAD
 // SECURITY: Client-side token verification disabled for ALL environments
       // CRITICAL SECURITY: Never enable client-side token verification
       console.error('SECURITY VIOLATION: Client-side token verification blocked - use server-side verification');
       return null;
   } catch (error) {
+=======
+     // SECURITY: Client-side token verification disabled for ALL environments
+     console.error('SECURITY: Client-side token verification not allowed - security vulnerability');
+     return null;
+   } catch (error) {
+>>>>>>> origin/main
     return null;
   }
 }
@@ -191,7 +198,7 @@ function refreshTokenSync(currentToken: string): string | null {
 
 // Token storage management dengan auto-refresh
 class TokenManager {
-  private static TOKEN_KEY = 'malnu_secure_token';
+  private static TOKEN_KEY = 'malnu_secure_token_v2';
   private static REFRESH_TIMER_KEY = 'malnu_refresh_timer';
   private static refreshTimer: NodeJS.Timeout | null = null;
 
@@ -357,8 +364,8 @@ export interface RefreshTokenResponse {
 }
 
 // Development mode - menggunakan local storage untuk testing
-const isDevelopment = import.meta.env.DEV;
-const useSupabase = import.meta.env.VITE_USE_SUPABASE === 'true' || import.meta.env.USE_SUPABASE === 'true';
+const isDevelopment = (import.meta as any).env?.DEV || false;
+const useSupabase = ((import.meta as any).env?.VITE_USE_SUPABASE === 'true' || (import.meta as any).env?.USE_SUPABASE === 'true');
 
 class LocalAuthService {
   private static USERS_KEY = 'malnu_auth_users';

@@ -4,13 +4,17 @@
 import React, { useState, useEffect } from 'react';
 import { StudentSupportService } from '../services/studentSupportService';
 const studentSupportService = StudentSupportService.getInstance();
+<<<<<<< HEAD
 import RealTimeMonitoringService from '../services/realTimeMonitoringService';
 import AutomatedInterventionEngine from '../services/automatedInterventionEngine';
+=======
+>>>>>>> origin/main
 
 interface SupportDashboardProps {
   adminId?: string;
 }
 
+<<<<<<< HEAD
 const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'monitoring' | 'interventions' | 'analytics'>('overview');
   const [realTimeStats, setRealTimeStats] = useState<any>(null);
@@ -18,6 +22,15 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
   const [atRiskStudents, setAtRiskStudents] = useState<any[]>([]);
   const [activeInterventions, setActiveInterventions] = useState<any[]>([]);
   const [systemHealth, setSystemHealth] = useState<any>(null);
+=======
+const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId: _adminId }) => {
+  const [activeTab, setActiveTab] = useState<'overview' | 'monitoring' | 'interventions' | 'analytics'>('overview');
+const [realTimeStats, setRealTimeStats] = useState<any>(null);
+const [interventionStats, setInterventionStats] = useState<any>(null);
+const [atRiskStudents, setAtRiskStudents] = useState<any[]>([]);
+const [activeInterventions, setActiveInterventions] = useState<any[]>([]);
+const [systemHealth, setSystemHealth] = useState<{ status: string; uptime: number | string; lastCheck: string; memory?: string } | null>(null);
+>>>>>>> origin/main
 
   useEffect(() => {
     loadDashboardData();
@@ -27,6 +40,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
 
   const loadDashboardData = () => {
     try {
+<<<<<<< HEAD
       // Get real-time monitoring stats
       const monitoringService = RealTimeMonitoringService.getInstance();
       setRealTimeStats(monitoringService.getMonitoringStats());
@@ -54,6 +68,42 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
         status: monitoringService.getMonitoringStats().systemHealth,
         uptime: monitoringService.getMonitoringStats().uptime,
         memory: (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)
+=======
+      // Get at-risk students
+      const allProgress = studentSupportService.getAllStudentProgress();
+      const atRisk = Object.values(allProgress).filter((student: any) => 
+        student.riskLevel === 'high' || student.riskLevel === 'medium'
+      ).map((student: any) => ({
+        id: student.id || student.studentId || 'unknown',
+        name: student.name || 'Unknown Student',
+        riskLevel: student.riskLevel,
+        studentId: student.studentId,
+        academicMetrics: student.academicMetrics
+      }));
+      setAtRiskStudents(atRisk);
+
+      setActiveInterventions([]);
+      setRealTimeStats({ 
+        activeUsers: 0, 
+        responseTime: 0, 
+        satisfactionRate: 0, 
+        pendingInterventions: 0 
+      });
+      setInterventionStats({ 
+        total: 0, 
+        active: 0, 
+        completed: 0, 
+        averageEffectiveness: 75, 
+        totalInterventions: 0 
+      });
+
+      // Get system health
+      setSystemHealth({
+        status: 'healthy',
+        uptime: 'N/A',
+        lastCheck: new Date().toISOString(),
+        memory: (typeof process !== 'undefined' && process.memoryUsage ? (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2) : '0') + ' MB'
+>>>>>>> origin/main
       });
 
     } catch (error) {
@@ -109,7 +159,11 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
             ].map(tab => (
               <button
                 key={tab.id}
+<<<<<<< HEAD
                 onClick={() => setActiveTab(tab.id as any)}
+=======
+                onClick={() => setActiveTab(tab.id as 'overview' | 'analytics' | 'monitoring' | 'interventions')}
+>>>>>>> origin/main
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
@@ -161,6 +215,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                 <div className="space-y-2">
                   {activeInterventions.slice(0, 5).map(intervention => (
                     <div key={intervention.id} className="flex items-center justify-between text-sm">
+<<<<<<< HEAD
                       <div>
                         <span className="font-medium">Student {intervention.studentId}</span>
                         <span className={`ml-2 px-2 py-1 rounded text-xs ${getSeverityColor(intervention.severity)}`}>
@@ -169,6 +224,16 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                       </div>
                       <div className="text-gray-500">
                         {new Date(intervention.timestamp).toLocaleTimeString('id-ID')}
+=======
+                       <div>
+                         <span className="font-medium">Student {intervention.studentId}</span>
+                         <span className={`ml-2 px-2 py-1 rounded text-xs ${getSeverityColor(intervention.severity || 'medium')}`}>
+                           {intervention.triggerType?.replace('_', ' ') || 'Unknown'}
+                         </span>
+                      </div>
+                      <div className="text-gray-500">
+                        {intervention.timestamp ? new Date(intervention.timestamp).toLocaleTimeString('id-ID') : 'N/A'}
+>>>>>>> origin/main
                       </div>
                     </div>
                   ))}
@@ -187,6 +252,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                   {atRiskStudents.slice(0, 5).map(student => (
                     <div key={student.studentId} className="flex items-center justify-between text-sm">
                       <div>
+<<<<<<< HEAD
                         <span className="font-medium">Student {student.studentId}</span>
                         <span className={`ml-2 px-2 py-1 rounded text-xs ${getRiskColor(student.riskLevel)}`}>
                           {student.riskLevel.toUpperCase()}
@@ -195,6 +261,16 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                       <div className="text-gray-500">
                         GPA: {student.academicMetrics.gpa.toFixed(1)}
                       </div>
+=======
+<span className="font-medium">Student {student.studentId || student.id}</span>
+                         <span className={`ml-2 px-2 py-1 rounded text-xs ${getRiskColor(student.riskLevel)}`}>
+                           {student.riskLevel.toUpperCase()}
+                         </span>
+                      </div>
+<div className="text-gray-500">
+                         GPA: {student.academicMetrics?.gpa ? student.academicMetrics.gpa.toFixed(1) : 'N/A'}
+                       </div>
+>>>>>>> origin/main
                     </div>
                   ))}
                   {atRiskStudents.length === 0 && (
@@ -225,9 +301,15 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-gray-900 mb-2">System Performance</h3>
                   <div className="space-y-1 text-sm">
+<<<<<<< HEAD
                     <div>Memory Usage: {systemHealth?.memory || 0} MB</div>
                     <div>Uptime: {Math.floor((systemHealth?.uptime || 0) / 3600)}h</div>
                     <div>Total Interventions: {interventionStats?.totalInterventions || 0}</div>
+=======
+                     <div>Memory Usage: {systemHealth?.memory || 0} MB</div>
+                     <div>Uptime: {typeof systemHealth?.uptime === 'number' ? Math.floor(systemHealth.uptime / 3600) : 'N/A'}h</div>
+                     <div>Total Interventions: {interventionStats?.totalInterventions || 0}</div>
+>>>>>>> origin/main
                   </div>
                 </div>
                 
@@ -236,7 +318,11 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                   <div className="space-y-1 text-sm">
                     <div>Avg Effectiveness: {interventionStats?.averageEffectiveness?.toFixed(1) || 0}%</div>
                     <div>Active Rules: {interventionStats?.activeRules || 0}</div>
+<<<<<<< HEAD
                     <div>Last 24h: {interventionStats?.recentActivity?.last24Hours || 0}</div>
+=======
+                    <div>Last 24h: {interventionStats?.recentActivity || 0}</div>
+>>>>>>> origin/main
                   </div>
                 </div>
               </div>
@@ -245,6 +331,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="font-semibold text-gray-900 mb-3">Live Activity Feed</h3>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
+<<<<<<< HEAD
                   {activeInterventions.map(intervention => (
                     <div key={intervention.id} className="border-l-4 border-blue-500 pl-3 py-2">
                       <div className="flex justify-between items-start">
@@ -263,6 +350,26 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                       </div>
                     </div>
                   ))}
+=======
+                   {activeInterventions.map(intervention => (
+                     <div key={intervention.id} className="border-l-4 border-blue-500 pl-3 py-2">
+                       <div className="flex justify-between items-start">
+                         <div>
+                           <span className="font-medium">Student {intervention.studentId}</span>
+                           <span className={`ml-2 text-xs px-2 py-1 rounded ${getSeverityColor(intervention.severity || 'medium')}`}>
+                             {intervention.triggerType?.replace('_', ' ') || 'Unknown'}
+                           </span>
+                         </div>
+                         <div className="text-gray-500">
+                           {intervention.timestamp ? new Date(intervention.timestamp).toLocaleTimeString('id-ID') : 'N/A'}
+                         </div>
+                       </div>
+                       <div className="text-sm text-gray-600 mt-1">
+                         {intervention.actions?.length || 0} actions queued
+                       </div>
+                     </div>
+                   ))}
+>>>>>>> origin/main
                   {activeInterventions.length === 0 && (
                     <div className="text-center text-gray-500 py-4">
                       No recent activity
@@ -281,6 +388,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="font-semibold text-gray-900 mb-3">Active Intervention Rules</h3>
                 <div className="space-y-3">
+<<<<<<< HEAD
                   {AutomatedInterventionEngine.getInstance().getRules().map(rule => (
                     <div key={rule.id} className="border border-gray-200 rounded-lg p-3">
                       <div className="flex justify-between items-start">
@@ -312,6 +420,9 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                       </div>
                     </div>
                   ))}
+=======
+                  <p className="text-gray-500 text-sm">No intervention rules available</p>
+>>>>>>> origin/main
                 </div>
               </div>
 
@@ -319,6 +430,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
               <div className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="font-semibold text-gray-900 mb-3">Recent Intervention Results</h3>
                 <div className="space-y-2">
+<<<<<<< HEAD
                   {atRiskStudents.slice(0, 3).map(student => {
                     const history = RealTimeMonitoringService.getInstance().getInterventionTriggers(student.studentId);
                     const recentHistory = history.slice(-3);
@@ -341,6 +453,9 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                       </div>
                     );
                   })}
+=======
+                  <p className="text-gray-500 text-sm">No recent intervention data available</p>
+>>>>>>> origin/main
                 </div>
               </div>
             </div>
@@ -394,7 +509,11 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Low Risk</span>
                       <span className="text-sm font-medium text-green-600">
+<<<<<<< HEAD
                         {Object.values(StudentSupportService.getAllStudentProgress()).filter(s => s.riskLevel === 'low').length}
+=======
+                        {Object.values(studentSupportService.getAllStudentProgress()).filter((s: { riskLevel: string }) => s.riskLevel === 'low').length}
+>>>>>>> origin/main
                       </span>
                     </div>
                   </div>
@@ -405,6 +524,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
               <div className="bg-blue-50 p-4 rounded-lg">
                 <h3 className="font-semibold text-blue-900 mb-3">System Recommendations</h3>
                 <div className="space-y-2">
+<<<<<<< HEAD
                   {interventionStats?.averageEffectiveness < 50 && (
                     <div className="text-sm text-blue-800">
                       • Consider reviewing and optimizing intervention rules for better effectiveness
@@ -430,6 +550,23 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ adminId }) => {
                       • System is performing optimally! Current interventions are highly effective.
                     </div>
                   )}
+=======
+                   {(interventionStats?.averageEffectiveness || 0) < 50 && (
+                    <div className="text-sm text-blue-800">
+                      • Consider reviewing and optimizing intervention rules for better effectiveness
+                    </div>
+                   )}
+                   {systemHealth?.status !== 'healthy' && (
+                     <div className="text-sm text-red-800">
+                       • System health requires attention. Check resource utilization.
+                     </div>
+                   )}
+                   {(interventionStats?.averageEffectiveness || 0) > 80 && atRiskStudents.length < 3 && (
+                     <div className="text-sm text-green-800">
+                       • System is performing optimally! Current interventions are highly effective.
+                     </div>
+                   )}
+>>>>>>> origin/main
                 </div>
               </div>
             </div>

@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 // Real-time Student Monitoring Service
 // Monitor siswa secara real-time dan trigger intervensi otomatis
+=======
+// Enhanced Real-time Student Monitoring Service
+// Monitor siswa secara real-time dan trigger intervensi otomatis dengan AI-powered analysis
+>>>>>>> origin/main
 
 import { StudentSupportService } from './studentSupportService';
 
@@ -172,6 +177,7 @@ class RealTimeMonitoringService {
     });
   }
 
+<<<<<<< HEAD
     // Check if student has critical risk
     private isCriticalRisk(session: StudentMetrics): boolean {
      const progress = StudentSupportService.getStudentProgress(session.studentId);
@@ -182,6 +188,21 @@ class RealTimeMonitoringService {
       progress.academicMetrics.attendanceRate < 70 ||
       progress.riskLevel === 'high'
     );
+=======
+    // Check if student has critical risk with enhanced analysis
+  private isCriticalRisk(session: StudentMetrics): boolean {
+    const supportService = StudentSupportService.getInstance();
+    const progress = supportService.getStudentProgress(session.studentId);
+    if (!progress) return false;
+
+    // Enhanced risk assessment with multiple factors
+    const academicRisk = progress.academicMetrics.gpa < 60 || progress.academicMetrics.attendanceRate < 70;
+    const engagementRisk = progress.engagementMetrics.loginFrequency < 2 || session.currentSession.interactions < 3;
+    const timeRisk = session.currentSession.timeSpent < 60000; // Less than 1 minute
+    const systemRisk = progress.riskLevel === 'high';
+
+    return academicRisk || (engagementRisk && timeRisk) || systemRisk;
+>>>>>>> origin/main
   }
 
   // Check for technical issues
@@ -193,6 +214,7 @@ class RealTimeMonitoringService {
     return hasLowInteraction || hasHighPageViews;
   }
 
+<<<<<<< HEAD
     // Check for engagement drop
     private hasEngagementDrop(session: StudentMetrics): boolean {
      const progress = StudentSupportService.getStudentProgress(session.studentId);
@@ -202,6 +224,20 @@ class RealTimeMonitoringService {
       progress.engagementMetrics.loginFrequency < 2 ||
       session.currentSession.timeSpent < 120000 // Less than 2 minutes
     );
+=======
+    // Check for engagement drop with enhanced pattern detection
+  private hasEngagementDrop(session: StudentMetrics): boolean {
+    const supportService = StudentSupportService.getInstance();
+    const progress = supportService.getStudentProgress(session.studentId);
+    if (!progress) return false;
+
+    const lowLoginFrequency = progress.engagementMetrics.loginFrequency < 2;
+    const shortSession = session.currentSession.timeSpent < 120000; // Less than 2 minutes
+    const lowInteraction = session.currentSession.interactions < 3;
+    const lowPageEngagement = session.pageViews > 0 && session.currentSession.timeSpent / session.pageViews < 10000; // Less than 10 seconds per page
+
+    return lowLoginFrequency || (shortSession && lowInteraction) || lowPageEngagement;
+>>>>>>> origin/main
   }
 
   // Create intervention trigger
@@ -251,52 +287,116 @@ class RealTimeMonitoringService {
     this.interventionTriggers.set(trigger.id, trigger);
   }
 
+<<<<<<< HEAD
   // Execute academic intervention
   private async executeAcademicIntervention(trigger: InterventionTrigger): Promise<void> {
     const actions: InterventionAction[] = [];
 
     // Create support request
     const supportRequest = StudentSupportService.createSupportRequest(
+=======
+  // Execute academic intervention with enhanced actions
+  private async executeAcademicIntervention(trigger: InterventionTrigger): Promise<void> {
+    const actions: InterventionAction[] = [];
+
+    // Create support request with enhanced context
+    const supportService = StudentSupportService.getInstance();
+    const supportRequest = supportService.createSupportRequest(
+>>>>>>> origin/main
       trigger.studentId,
       'academic',
       'intervention',
       `Intervensi Otomatis - Risiko ${trigger.severity.toUpperCase()}`,
+<<<<<<< HEAD
       `Sistem mendeteksi risiko akademis. Metrik: ${JSON.stringify(trigger.metrics, null, 2)}`,
       trigger.severity as any
     );
 
+=======
+      `Sistem mendeteksi risiko akademis dengan AI analysis. Metrik: ${JSON.stringify(trigger.metrics, null, 2)}`,
+      trigger.severity as any
+    );
+
+    // Enhanced notification with personalized message
+>>>>>>> origin/main
     actions.push({
       id: `action_${Date.now()}_1`,
       type: 'notification',
       config: {
+<<<<<<< HEAD
         message: 'Tim support akademis telah diberitahu mengenai situasi Anda',
         type: 'academic_support'
+=======
+        message: `Tim support akademis telah diberitahu. Prioritas: ${trigger.severity.toUpperCase()}. Kami siap membantu Anda segera.`,
+        type: 'academic_support',
+        priority: trigger.severity,
+        estimatedResponse: trigger.severity === 'critical' ? '15 menit' : '1 jam'
+>>>>>>> origin/main
       },
       status: 'pending',
       timestamp: new Date().toISOString()
     });
 
+<<<<<<< HEAD
     // Assign resources
     if (trigger.severity === 'critical' || trigger.severity === 'high') {
+=======
+    // Enhanced resource assignment based on severity
+    if (trigger.severity === 'critical' || trigger.severity === 'high') {
+      const criticalResources = ['academic_recovery_plan', 'study_tips', 'time_management', 'stress_management'];
+      const mediumResources = ['study_tips', 'time_management'];
+      
+>>>>>>> origin/main
       actions.push({
         id: `action_${Date.now()}_2`,
         type: 'resource_assignment',
         config: {
+<<<<<<< HEAD
           resourceIds: ['academic_recovery_plan', 'study_tips', 'time_management'],
           priority: 'high'
+=======
+          resourceIds: trigger.severity === 'critical' ? criticalResources : mediumResources,
+          priority: 'high',
+          automatedFollowup: true
+>>>>>>> origin/main
         },
         status: 'pending',
         timestamp: new Date().toISOString()
       });
 
+<<<<<<< HEAD
       // Counselor referral for critical cases
+=======
+      // Enhanced counselor referral with detailed context
+>>>>>>> origin/main
       if (trigger.severity === 'critical') {
         actions.push({
           id: `action_${Date.now()}_3`,
           type: 'counselor_referral',
           config: {
             urgency: 'immediate',
+<<<<<<< HEAD
             reason: 'Critical academic risk detected',
+=======
+            reason: 'Critical academic risk detected by AI monitoring',
+            studentId: trigger.studentId,
+            context: {
+              riskFactors: this.extractRiskFactors(trigger.metrics),
+              recommendedActions: ['Immediate academic assessment', 'Parent notification', 'Personalized recovery plan']
+            }
+          },
+          status: 'pending',
+          timestamp: new Date().toISOString()
+        });
+
+        // Parent alert for critical cases
+        actions.push({
+          id: `action_${Date.now()}_4`,
+          type: 'parent_alert',
+          config: {
+            urgency: 'immediate',
+            message: 'Critical academic risk detected - immediate attention required',
+>>>>>>> origin/main
             studentId: trigger.studentId
           },
           status: 'pending',
@@ -344,7 +444,12 @@ class RealTimeMonitoringService {
     const actions: InterventionAction[] = [];
 
     // Create technical support request
+<<<<<<< HEAD
     StudentSupportService.createSupportRequest(
+=======
+    const supportService = StudentSupportService.getInstance();
+    supportService.createSupportRequest(
+>>>>>>> origin/main
       trigger.studentId,
       'technical',
       'automated_detection',
@@ -373,7 +478,12 @@ class RealTimeMonitoringService {
     const actions: InterventionAction[] = [];
 
     // Create wellness support request
+<<<<<<< HEAD
     StudentSupportService.createSupportRequest(
+=======
+    const supportService = StudentSupportService.getInstance();
+    supportService.createSupportRequest(
+>>>>>>> origin/main
       trigger.studentId,
       'personal',
       'wellness_check',
@@ -416,10 +526,18 @@ class RealTimeMonitoringService {
 
   // Update engagement metrics
   private updateEngagementMetrics(): void {
+<<<<<<< HEAD
     this.studentSessions.forEach((session, studentId) => {
       const progress = StudentSupportService.getStudentProgress(studentId);
       if (progress) {
         StudentSupportService.updateStudentProgress(studentId, {
+=======
+    const supportService = StudentSupportService.getInstance();
+    this.studentSessions.forEach((session, studentId) => {
+      const progress = supportService.getStudentProgress(studentId);
+      if (progress) {
+        supportService.updateStudentProgress(studentId, {
+>>>>>>> origin/main
           engagementMetrics: {
             ...progress.engagementMetrics,
             loginFrequency: Math.max(progress.engagementMetrics.loginFrequency, session.loginFrequency),
@@ -433,9 +551,16 @@ class RealTimeMonitoringService {
   // Perform deep analysis
   private performDeepAnalysis(): void {
     console.log('🔬 Performing deep analysis...');
+<<<<<<< HEAD
     
     this.studentSessions.forEach((session, studentId) => {
       const progress = StudentSupportService.getStudentProgress(studentId);
+=======
+    const supportService = StudentSupportService.getInstance();
+    
+    this.studentSessions.forEach((session, studentId) => {
+      const progress = supportService.getStudentProgress(studentId);
+>>>>>>> origin/main
       if (progress) {
         // Analyze patterns and predict risks
         this.analyzeStudentPatterns(session, progress);
@@ -539,6 +664,7 @@ class RealTimeMonitoringService {
     console.log('🧹 System maintenance completed');
   }
 
+<<<<<<< HEAD
   // Get monitoring statistics
   getMonitoringStats(): any {
     return {
@@ -553,6 +679,94 @@ class RealTimeMonitoringService {
     };
   }
 
+=======
+  // Extract risk factors from metrics
+  private extractRiskFactors(metrics: any): string[] {
+    const factors: string[] = [];
+    
+    if (metrics.academicMetrics?.gpa < 60) factors.push('Critical GPA decline');
+    if (metrics.academicMetrics?.attendanceRate < 70) factors.push('Poor attendance');
+    if (metrics.engagementMetrics?.loginFrequency < 2) factors.push('Low portal engagement');
+    if (metrics.currentSession?.timeSpent < 60000) factors.push('Very short session duration');
+    if (metrics.currentSession?.interactions < 3) factors.push('Minimal interaction');
+    
+    return factors;
+  }
+
+  // Enhanced monitoring statistics with AI insights
+  getMonitoringStats(): any {
+    const triggers = Array.from(this.interventionTriggers.values());
+    const sessions = Array.from(this.studentSessions.values());
+    
+    return {
+      activeStudents: this.studentSessions.size,
+      pendingInterventions: triggers.filter(trigger => trigger.status === 'pending').length,
+      inProgressInterventions: triggers.filter(trigger => trigger.status === 'in_progress').length,
+      totalInterventions: this.interventionTriggers.size,
+      systemHealth: this.getSystemHealthStatus(),
+      uptime: process.uptime(),
+      aiInsights: {
+        averageSessionDuration: sessions.reduce((sum, s) => sum + s.currentSession.timeSpent, 0) / Math.max(sessions.length, 1),
+        interventionEffectiveness: this.calculateInterventionEffectiveness(triggers),
+        riskTrends: this.analyzeRiskTrends(triggers),
+        engagementScore: this.calculateEngagementScore(sessions)
+      }
+    };
+  }
+
+  // Calculate intervention effectiveness
+  private calculateInterventionEffectiveness(triggers: InterventionTrigger[]): number {
+    const resolvedTriggers = triggers.filter(t => t.status === 'resolved');
+    if (triggers.length === 0) return 0;
+    return (resolvedTriggers.length / triggers.length) * 100;
+  }
+
+  // Analyze risk trends
+  private analyzeRiskTrends(triggers: InterventionTrigger[]): any {
+    const now = new Date().getTime();
+    const last24h = triggers.filter(t => now - new Date(t.timestamp).getTime() < 24 * 60 * 60 * 1000);
+    const last7d = triggers.filter(t => now - new Date(t.timestamp).getTime() < 7 * 24 * 60 * 60 * 1000);
+    
+    return {
+      last24h: {
+        total: last24h.length,
+        critical: last24h.filter(t => t.severity === 'critical').length,
+        high: last24h.filter(t => t.severity === 'high').length
+      },
+      last7d: {
+        total: last7d.length,
+        critical: last7d.filter(t => t.severity === 'critical').length,
+        high: last7d.filter(t => t.severity === 'high').length
+      }
+    };
+  }
+
+  // Calculate engagement score
+  private calculateEngagementScore(sessions: StudentMetrics[]): number {
+    if (sessions.length === 0) return 0;
+    
+    const totalScore = sessions.reduce((sum, session) => {
+      let score = 0;
+      
+      // Login frequency score (0-30 points)
+      score += Math.min(session.loginFrequency * 10, 30);
+      
+      // Session duration score (0-25 points)
+      score += Math.min(session.currentSession.timeSpent / 120000 * 25, 25); // 25 points for 2+ minutes
+      
+      // Interaction score (0-25 points)
+      score += Math.min(session.currentSession.interactions * 5, 25);
+      
+      // Resource access score (0-20 points)
+      score += Math.min(session.resourceAccess * 4, 20);
+      
+      return sum + score;
+    }, 0);
+    
+    return Math.round(totalScore / sessions.length);
+  }
+
+>>>>>>> origin/main
   // Get student session
   getStudentSession(studentId: string): StudentMetrics | undefined {
     return this.studentSessions.get(studentId);

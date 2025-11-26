@@ -7,7 +7,15 @@ Dokumentasi ini menjelaskan strategi monitoring dan observability komprehensif u
 ---
 
 **Monitoring Guide Version: 1.3.1**  
+<<<<<<< HEAD
 **Last Updated: November 24, 2024**  
+=======
+
+**Last Updated: 2025-11-24**  
+
+**Last Updated: 2025-11-24
+
+>>>>>>> origin/main
 **Monitoring Status: Production Ready**
 
 ---
@@ -1273,5 +1281,13 @@ export default SystemStatus;
 ---
 
 *Monitoring Guide Version: 1.3.1*  
+<<<<<<< HEAD
 *Last Updated: November 24, 2024*  
+=======
+
+*Last Updated: 2025-11-24*  
+
+*Last Updated: 2025-11-24
+
+>>>>>>> origin/main
 *DevOps Team: MA Malnu Kananga*

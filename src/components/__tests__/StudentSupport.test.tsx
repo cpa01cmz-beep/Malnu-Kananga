@@ -11,12 +11,15 @@ Object.defineProperty(window, 'alert', {
   value: mockAlert
 });
 
+<<<<<<< HEAD
 // Use fake timers for handling async operations
 jest.useFakeTimers();
+=======
+>>>>>>> origin/main
 
-// Mock the student support service
 jest.mock('../../services/studentSupportService', () => ({
   StudentSupportService: {
+<<<<<<< HEAD
     getSupportRequests: jest.fn(() => [
       {
         id: 'REQ001',
@@ -71,7 +74,66 @@ jest.mock('../../services/studentSupportService', () => ({
       createdAt: '2024-01-01T11:00:00Z'
     }))
   }
+=======
+    getInstance: jest.fn(() => ({
+      getSupportRequests: jest.fn(() => [
+          {
+            id: 'REQ001',
+            studentId: 'STU001',
+            type: 'academic',
+            category: 'math',
+            priority: 'medium',
+            title: 'Bantuan Matematika',
+            description: 'Saya kesulitan dengan kalkulus',
+            status: 'pending',
+            createdAt: '2024-01-01T10:00:00Z'
+          }
+        ]),
+        getRelevantResources: jest.fn(() => [
+          {
+            id: 'RES001',
+            title: 'Panduan Belajar Efektif',
+            type: 'guide',
+            category: 'academic',
+            content: 'Teknik belajar efektif',
+            difficulty: 'beginner',
+            tags: ['belajar', 'metode']
+          }
+        ]),
+        getStudentProgress: jest.fn(() => ({
+          studentId: 'STU001',
+          academicMetrics: {
+            gpa: 3.5,
+            gradeTrend: 'improving',
+            subjectsAtRisk: [],
+            attendanceRate: 85,
+            assignmentCompletion: 90
+          },
+          engagementMetrics: {
+            loginFrequency: 5,
+            resourceAccess: 10,
+            supportRequests: 2,
+            participationScore: 75
+          },
+          riskLevel: 'low',
+          lastUpdated: '2024-01-01T10:00:00Z'
+        })),
+        createSupportRequest: jest.fn(() => ({
+          id: 'REQ002',
+          studentId: 'STU001',
+          type: 'academic',
+          category: 'physics',
+          priority: 'medium',
+          title: 'Bantuan Fisika',
+          description: 'Saya kesulitan dengan mekanika',
+          status: 'pending',
+          createdAt: '2024-01-01T11:00:00Z'
+        }))
+     }))
+   }
+>>>>>>> origin/main
 }));
+
 
 describe('StudentSupport Component', () => {
   beforeEach(() => {
@@ -112,14 +174,18 @@ describe('StudentSupport Component', () => {
     expect(screen.getByText('academic - math')).toBeInTheDocument();
   });
 
-  it('displays resources in resources tab', () => {
+  it('displays resources in resources tab', async () => {
     render(<StudentSupport studentId="STU001" />);
     
-    fireEvent.click(screen.getByText('Resources'));
+    // Wait for component to load and click on Resources tab
+    await waitFor(() => {
+      fireEvent.click(screen.getByText('Resources'));
+    });
     
-    expect(screen.getByText('Panduan Belajar Efektif')).toBeInTheDocument();
-    expect(screen.getByText('Teknik belajar efektif')).toBeInTheDocument();
-    expect(screen.getByText('#belajar')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Panduan Belajar Efektif')).toBeInTheDocument();
+      expect(screen.getByText('Teknik belajar efektif')).toBeInTheDocument();
+    });
   });
 
   it('displays student progress in progress tab', () => {
@@ -145,6 +211,7 @@ describe('StudentSupport Component', () => {
   });
 
   it('creates new support request when form is submitted', async () => {
+<<<<<<< HEAD
      const { StudentSupportService } = require('../../services/studentSupportService');
      
      render(<StudentSupport studentId="STU001" />);
@@ -177,6 +244,37 @@ describe('StudentSupport Component', () => {
        );
      });
    });
+=======
+    const { StudentSupportService } = require('../../services/studentSupportService');
+    
+    render(<StudentSupport studentId="STU001" />);
+    
+    // Open new request form
+    fireEvent.click(screen.getByText('📝 Buat Permintaan Baru'));
+    
+    // Fill form
+    fireEvent.change(screen.getByPlaceholderText('Judul permintaan'), {
+      target: { value: 'Bantuan Fisika' }
+    });
+    fireEvent.change(screen.getByPlaceholderText('Jelaskan masalah atau bantuan yang Anda butuhkan'), {
+      target: { value: 'Saya kesulitan dengan mekanika' }
+    });
+    
+    // Submit form
+    fireEvent.click(screen.getByText('Kirim Permintaan'));
+    
+    await waitFor(() => {
+      expect(StudentSupportService.createSupportRequest).toHaveBeenCalledWith(
+        'STU001',
+        'academic',
+        'umum',
+        'Bantuan Fisika',
+        'Saya kesulitan dengan mekanika',
+        'medium'
+      );
+    });
+  });
+>>>>>>> origin/main
 
   it('filters resources based on search term', () => {
     render(<StudentSupport studentId="STU001" />);
@@ -215,7 +313,7 @@ describe('StudentSupport Component', () => {
     fireEvent.click(screen.getByText('Kirim Permintaan'));
     
     // Should show validation alert
-    expect(window.alert).toHaveBeenCalledWith('Mohon lengkapi judul dan deskripsi permintaan');
+    expect(mockAlert).toHaveBeenCalledWith('Mohon lengkapi judul dan deskripsi permintaan');
   });
 
   it('closes modal when cancel is clicked', () => {

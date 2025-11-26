@@ -312,7 +312,11 @@ Contact IT Support:
 
     // Generate AI solutions for new problems every 6 hours
     setInterval(() => {
+<<<<<<< HEAD
       this.generateAISolutions();
+=======
+      this.generateAISolution('Automated problem detection', 'general');
+>>>>>>> origin/main
       this.validateExistingSolutions();
     }, 21600000);
 
@@ -504,10 +508,18 @@ Contact IT Support:
 
   // Identify knowledge gaps
   private identifyKnowledgeGaps(): void {
+<<<<<<< HEAD
     const supportRequests = StudentSupportService.getSupportRequests();
     const categoryCounts: Record<string, number> = {};
     
     supportRequests.forEach(request => {
+=======
+    const supportService = StudentSupportService.getInstance();
+    const supportRequests = supportService.getSupportRequests();
+    const categoryCounts: Record<string, number> = {};
+    
+    supportRequests.forEach((request: any) => {
+>>>>>>> origin/main
       categoryCounts[request.type] = (categoryCounts[request.type] || 0) + 1;
     });
 

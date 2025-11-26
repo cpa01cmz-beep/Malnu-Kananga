@@ -6,22 +6,23 @@ class SecurityMiddleware {
   }
 
   // Enhanced rate limiting with multiple tiers
-  isRateLimitExceeded(clientId, maxRequests = 100, windowMs = 60000, endpoint = 'default') {
+  isRateLimitExceeded(clientId, endpoint = 'default') {
     const now = Date.now();
+    const limits = {
+      'default': { limit: 100, windowMs: 60000 },
+      'auth': { limit: 10, windowMs: 60000 },
+      'ai': { limit: 50, windowMs: 60000 },
+      'upload': { limit: 5, windowMs: 60000 }
+    };
     
-    // SECURITY: Validate inputs
-    if (!clientId || typeof clientId !== 'string') {
-      console.warn('SECURITY: Invalid clientId for rate limiting');
-      return true; // Block invalid requests
-    }
-    
+    const config = limits[endpoint] || limits['default'];
     const key = `${clientId}:${endpoint}`;
     const clientData = this.rateLimitStore.get(key);
 
     if (!clientData) {
       this.rateLimitStore.set(key, {
         count: 1,
-        resetTime: now + windowMs,
+        resetTime: now + config.windowMs,
         firstRequest: now
       });
       return false;
@@ -30,7 +31,7 @@ class SecurityMiddleware {
     if (now > clientData.resetTime) {
       this.rateLimitStore.set(key, {
         count: 1,
-        resetTime: now + windowMs,
+        resetTime: now + config.windowMs,
         firstRequest: now
       });
       return false;
@@ -39,17 +40,11 @@ class SecurityMiddleware {
     clientData.count++;
     
     // Progressive rate limiting for abusive clients
-    if (clientData.count > maxRequests * 2) {
-      console.warn(`SECURITY: Hard block for abusive client: ${clientId}`);
+    if (clientData.count > config.limit * 2) {
       return true; // Hard block
     }
     
-    const isExceeded = clientData.count > maxRequests;
-    if (isExceeded) {
-      console.warn(`SECURITY: Rate limit exceeded for client: ${clientId}, count: ${clientData.count}`);
-    }
-    
-    return isExceeded;
+    return clientData.count > config.limit;
   }
 
   // Enhanced input validation and sanitization
@@ -132,23 +127,12 @@ class SecurityMiddleware {
   sanitizeInput(data, type = 'string') {
     if (typeof data !== 'string') return data;
     
-     // Remove potentially dangerous characters
-     let sanitized = data;
-    
-    // Remove control characters using string methods instead of regex to avoid lint error
-    const controlChars = ['\0', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07', 
-                          '\x08', '\x0B', '\x0C', '\x0E', '\x0F', '\x10', '\x11', '\x12', 
-                          '\x13', '\x14', '\x15', '\x16', '\x17', '\x18', '\x19', '\x1A', 
-                          '\x1B', '\x1C', '\x1D', '\x1E', '\x1F', '\x7F'];
-    
-    for (const char of controlChars) {
-      sanitized = sanitized.split(char).join('');
-    }
-    
-    // Remove invalid Unicode
-    sanitized = sanitized.split('\uFFFE').join('').split('\uFFFF').join('');
-    
-    sanitized = sanitized.trim();
+    // Remove potentially dangerous characters
+    let sanitized = data
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters
+      .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
+      .trim();
     
     // Additional sanitization for specific types
     if (type === 'message') {
@@ -158,6 +142,7 @@ class SecurityMiddleware {
     return sanitized;
   }
 
+<<<<<<< HEAD
   // SQL injection prevention
   sanitizeSqlInput(input) {
     if (typeof input !== 'string') return input;
@@ -172,6 +157,9 @@ class SecurityMiddleware {
   }
 
   // Enhanced security headers with comprehensive CSP
+=======
+  // Enhanced security headers
+>>>>>>> origin/main
   getSecurityHeaders() {
     return {
       'X-Content-Type-Options': 'nosniff',
@@ -266,18 +254,9 @@ class SecurityMiddleware {
 
   // Create device fingerprint for enhanced tracking
   createFingerprint(ip, userAgent) {
-    // SECURITY: Use Web Crypto API instead of Node.js crypto
+    const crypto = require('crypto');
     const data = `${ip}:${userAgent}`;
-    
-    // Simple hash implementation for Cloudflare Workers
-    let hash = 0;
-    for (let i = 0; i < data.length; i++) {
-      const char = data.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32-bit integer
-    }
-    
-    return Math.abs(hash).toString(16).padStart(16, '0').substring(0, 16);
+    return crypto.createHash('sha256').update(data).digest('hex').substring(0, 16);
   }
 
   // Comprehensive security check

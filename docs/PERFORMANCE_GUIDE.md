@@ -7,7 +7,15 @@ Panduan ini menjelaskan strategi optimasi performa untuk sistem MA Malnu Kananga
 ---
 
 **Performance Guide Version: 1.3.1**  
+<<<<<<< HEAD
 **Last Updated: November 24, 2024**  
+=======
+
+**Last Updated: 2025-11-24**  
+
+**Last Updated: 2025-11-24
+
+>>>>>>> origin/main
 **Performance Status: Production Optimized**
 
 ## 🏗️ Performance Architecture
@@ -651,8 +659,17 @@ const optimizedQuery = `
 
 ---
 
+
+**Performance Optimization Guide Version: 1.3.1**  
+**Last Updated: 2025-11-24**  
+
 **Performance Optimization Guide Version: 1.2.0**  
+<<<<<<< HEAD
 **Last Updated: November 23, 2024**  
+=======
+**Last Updated: 2025-11-24
+
+>>>>>>> origin/main
 **Maintained by: MA Malnu Kananga Performance Team**  
 **Review Frequency: Monthly**
 

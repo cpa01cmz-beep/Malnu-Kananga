@@ -2,6 +2,7 @@ export default {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   setupFiles: ['<rootDir>/src/test-globals.d.ts'],
+<<<<<<< HEAD
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
    transform: {
@@ -9,6 +10,13 @@ export default {
        tsconfig: './tsconfig.test.json'
      }]
    },
+=======
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts', 'jest-extended/all'],
+  fakeTimers: {
+    enableGlobally: true,
+  },
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+>>>>>>> origin/main
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(ts|tsx|js)',
     '<rootDir>/src/**/?(*.)(test|spec).(ts|tsx|js)'

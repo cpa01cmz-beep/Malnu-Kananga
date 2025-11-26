@@ -1,4 +1,10 @@
 import '@testing-library/jest-dom';
+import { TextEncoder, TextDecoder } from 'util';
+
+// Add type assertion to fix type compatibility issues
+global.TextEncoder = TextEncoder as any;
+global.TextDecoder = TextDecoder as any;
+import 'jest-extended/all';
 
 // Mock environment variables for testing
 process.env.API_KEY = process.env.TEST_API_KEY || 'test-api-key-placeholder';
@@ -36,6 +42,35 @@ global.Touch = jest.fn().mockImplementation((touchInitDict) => ({
   force: 1,
 }));
 
+// Mock TouchEvent for touch gesture testing
+global.TouchEvent = jest.fn().mockImplementation((type, eventInitDict) => {
+  const event = new Event(type, eventInitDict);
+  
+  // Define properties on the event object
+  Object.defineProperty(event, 'touches', {
+    value: eventInitDict?.touches || [],
+    writable: true,
+    enumerable: true,
+    configurable: true
+  });
+  
+  Object.defineProperty(event, 'targetTouches', {
+    value: eventInitDict?.targetTouches || [],
+    writable: true,
+    enumerable: true,
+    configurable: true
+  });
+  
+  Object.defineProperty(event, 'changedTouches', {
+    value: eventInitDict?.changedTouches || [],
+    writable: true,
+    enumerable: true,
+    configurable: true
+  });
+  
+  return event;
+});
+
 // Mock File for file upload testing
 global.File = jest.fn().mockImplementation((bits, name, options) => ({
   name,
@@ -68,4 +103,7 @@ declare global {
   }
   
   var global: typeof globalThis;
+  
+  // Extend Jest matchers for testing-library
+  
 }

@@ -4,13 +4,26 @@
 
 Panduan lengkap untuk instalasi dan setup sistem portal MA Malnu Kananga. Guide ini mencakup setup development environment, production deployment, dan konfigurasi semua komponen sistem.
 
+
+**📋 Current Status**: Production Ready - v1.4.0  
+**🔄 Last Updated: 2025-11-24  
+**⚡ Deployment**: One-click deploy ke Cloudflare tersedia  
+**📝 Documentation Audit**: Completed - Aligned with AGENTS.md requirements
+
+**📋 Current Status**: Production Ready - v1.3.1  
+**🔄 Last Updated**: 2025-11-24  
+**⚡ Deployment**: One-click deploy ke Cloudflare tersedia
+
+
 ## 📋 Prerequisites
 
 ### System Requirements
-- **Node.js**: Version 18.0.0 atau lebih tinggi
-- **npm**: Version 8.0.0 atau lebih tinggi (atau yarn 1.22.0+)
+- **Node.js**: Version 18.0.0 atau lebih tinggi (wajib untuk ES2022 features)
+- **npm**: Version 9.0.0 atau lebih tinggi (atau yarn 1.22.0+)
 - **Git**: Version 2.30.0 atau lebih tinggi
 - **OS**: Windows 10+, macOS 10.15+, atau Ubuntu 18.04+
+- **Cloudflare Account**: Untuk production deployment (gratis tier cukup)
+- **Google Gemini API Key**: Required untuk AI functionality
 
 ---
 
@@ -243,9 +256,14 @@ node --version && npm --version && echo "Node.js 18+ setup complete!"
 
 ### Required Accounts & Services
 - **GitHub Account**: Untuk source code management
-- **Cloudflare Account**: Untuk deployment dan infrastructure
-- **Google Account**: Untuk Google Gemini AI API key
+- **Cloudflare Account**: Untuk deployment dan infrastructure (gratis tier cukup)
+- **Google Account**: Untuk Google Gemini AI API key (WAJIB untuk AI functionality)
 - **Email Provider**: Untuk magic link authentication (MailChannels terintegrasi)
+
+**🚨 Critical Requirements:**
+- **Google Gemini API Key**: TANPA ini, AI chat tidak akan berfungsi
+- **Cloudflare Worker Deployment**: TANPA ini, authentication dan AI tidak tersedia
+- **Vector Database Seeding**: TANPA ini, AI chat akan mengembalikan response kosong
 
 ### Browser Requirements
 - **Chrome**: Version 90+
@@ -335,9 +353,14 @@ Buka browser dan kunjungi `http://localhost:9000`:
 
 1. ✅ Homepage loads correctly
 2. ✅ PWA installation prompt appears
-3. ✅ AI chat interface accessible
+3. ⚠️ **AI chat interface accessible (mungkin tidak berfungsi tanpa worker deployed)**
 4. ✅ All navigation links work
 5. ✅ Responsive design on mobile
+
+**🚨 Development Limitations:**
+- AI chat requires deployed worker with vector database seeded
+- Local development uses mock data for AI responses
+- Full functionality only available after production deployment
 
 ---
 
@@ -411,16 +434,25 @@ npm run format      # jika tersedia
    - Tunggu proses deployment selesai
    - Copy deployment URL
 
-5. **Post-Deployment Setup:**
-   ```bash
-   # Seed vector database (jalankan sekali saja)
-   curl https://your-worker-url.workers.dev/seed
-   
-   # Verify deployment
-   curl https://your-worker-url.workers.dev/api/chat \
-     -H "Content-Type: application/json" \
-     -d '{"message": "Test"}'
-   ```
+5. **🚨 Post-Deployment Setup (CRITICAL):**
+    ```bash
+    # ⚠️ WAJIB: Seed vector database (jalankan sekali saja)
+    curl https://your-worker-url.workers.dev/seed
+    
+    # 🔍 VERIFIKASI WAJIB: Pastikan AI chat berfungsi
+    curl -X POST https://your-worker-url.workers.dev/api/chat \
+      -H "Content-Type: application/json" \
+      -d '{"message": "Apa program unggulan sekolah?"}'
+    
+    # Expected response harus ada "context" field:
+    # {"context": "Profil Sekolah: Madrasah Aliyah MALNU Kananga..."}
+    ```
+    
+    **⚠️ JIKA AI CHAT TIDAK BERFUNGSI:**
+    1. Pastikan `/seed` endpoint sudah dijalankan
+    2. Tunggu 1-2 menit untuk vector indexing
+    3. Test ulang dengan pertanyaan tentang sekolah
+    4. Jika masih kosong, ulangi seeding
 
 ### Option 2: Manual Deployment
 
@@ -513,26 +545,61 @@ wrangler pages deploy dist --compatibility-date=2024-01-01
 #    - Node.js version: 18
 ```
 
-#### Step 6: Seed Vector Database (Critical)
+#### Step 6: Seed Vector Database (🚨 CRITICAL - REQUIRED)
 
 ```bash
-# Seed vector database dengan data sekolah
+# ⚠️ CRITICAL: Seed vector database dengan data sekolah
+# HARUS dijalankan sekali setelah worker deployment
 curl https://malnu-kananga.your-subdomain.workers.dev/seed
 
 # Expected response:
 # Successfully seeded 10 documents.
 
-# Verify seeding worked
+# 🔍 VERIFICATION WAJIB - Pastikan seeding berhasil
 curl -X POST https://malnu-kananga.your-subdomain.workers.dev/api/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Apa saja program unggulan sekolah?"}'
+
+# Expected response harus mengandung konten sekolah:
+# {
+#   "context": "Profil Sekolah: Madrasah Aliyah MALNU Kananga..."
+# }
 ```
 
+<<<<<<< HEAD
 **⚠️ Important Notes:**
 - Vector database seeding MUST be done once after worker deployment
 - Without seeding, AI chat will have no context and cannot answer questions
 - Current document count: 10 school information entries
 - Documents include: PPDB info, school programs, location, contact details
+=======
+**🚨 CRITICAL WARNINGS:**
+- **Vector database seeding WAJIB dilakukan sekali setelah worker deployment**
+- **Tanpa seeding, AI chat akan mengembalikan context kosong dan tidak bisa menjawab pertanyaan**
+- **Current document count: 10 school information entries (bukan 50)**
+- **Documents include: PPDB info, school programs, location, contact details**
+- **Jika AI chat tidak berfungsi, 90% kemungkinan karena vector database belum di-seed**
+
+**🔍 Verification Steps:**
+1. Jalankan `/seed` endpoint
+2. Test `/api/chat` dengan pertanyaan tentang sekolah
+3. Pastikan response mengandung "context" dengan informasi sekolah
+4. Jika context kosong, ulangi seeding
+
+**📋 Troubleshooting Seeding:**
+```bash
+# Check if vector database has data
+curl -X POST https://malnu-kananga.your-subdomain.workers.dev/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "test"}'
+
+# Jika response context kosong:
+# 1. Pastikan worker sudah di-deploy dengan benar
+# 2. Pastikan environment variables sudah di-set
+# 3. Jalankan ulang /seed endpoint
+# 4. Tunggu 1-2 menit untuk vector indexing
+```
+>>>>>>> origin/main
 
 ---
 
@@ -782,9 +849,21 @@ wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 
 ---
 
+<<<<<<< HEAD
 **Installation & Setup Guide Version: 1.3.1**  
 *Last Updated: November 23, 2024*  
+=======
+
+**Installation & Setup Guide Version: 1.4.0**  
+*Last Updated: 2025-11-24*  
+*Maintained by: MA Malnu Kananga Technical Team*  
+*Documentation Audit: Completed - All setup procedures verified & AGENTS.md aligned*
+
+**Installation & Setup Guide Version: 1.3.1**  
+*Last Updated: 2025-11-24
+>>>>>>> origin/main
 *Maintained by: MA Malnu Kananga Technical Team*
+
 
 ---
 

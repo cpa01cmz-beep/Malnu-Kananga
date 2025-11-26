@@ -3,7 +3,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { StudentSupportService, SupportRequest, SupportResource, StudentProgress } from '../services/studentSupportService';
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
 
 interface StudentSupportProps {
   studentId: string;
@@ -14,12 +17,18 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
   const [supportRequests, setSupportRequests] = useState<SupportRequest[]>([]);
   const [resources, setResources] = useState<SupportResource[]>([]);
   const [studentProgress, setStudentProgress] = useState<StudentProgress | null>(null);
-  const [newRequest, setNewRequest] = useState({
-    type: 'academic' as const,
+  const [newRequest, setNewRequest] = useState<{
+    type: 'academic' | 'technical' | 'administrative' | 'personal';
+    category: string;
+    title: string;
+    description: string;
+    priority: 'low' | 'medium' | 'high' | 'urgent';
+  }>({
+    type: 'academic',
     category: '',
     title: '',
     description: '',
-    priority: 'medium' as const
+    priority: 'medium'
   });
   const [showNewRequestForm, setShowNewRequestForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,6 +39,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
     
   }, [studentId]);
 
+<<<<<<< HEAD
   const loadSupportData = () => {
     // Load student's support requests
     const requests = StudentSupportService.getSupportRequests();
@@ -45,6 +55,23 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
     const progress = StudentSupportService.getStudentProgress(studentId);
     setStudentProgress(progress || null);
   };
+=======
+   const loadSupportData = async () => {
+     const supportService = StudentSupportService.getInstance();
+     
+     // Load student's support requests
+     const requests = supportService.getSupportRequests();
+     setSupportRequests(requests.filter((req: SupportRequest) => req.studentId === studentId));
+
+     // Load available resources
+     const allResources = await supportService.getRelevantResources('');
+     setResources(allResources);
+
+     // Load student progress
+     const progress = supportService.getStudentProgress(studentId);
+     setStudentProgress(progress || null);
+   };
+>>>>>>> origin/main
 
   const handleCreateRequest = () => {
     if (!newRequest.title || !newRequest.description) {
@@ -52,6 +79,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
       return;
     }
 
+<<<<<<< HEAD
     const request = StudentSupportService.createSupportRequest(
       studentId,
       newRequest.type,
@@ -60,6 +88,17 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
       newRequest.description,
       newRequest.priority
     );
+=======
+     const supportService = StudentSupportService.getInstance();
+     const request = supportService.createSupportRequest(
+       studentId,
+       newRequest.type,
+       newRequest.category || 'umum',
+       newRequest.title,
+       newRequest.description,
+       newRequest.priority
+     );
+>>>>>>> origin/main
 
     setSupportRequests([...supportRequests, request]);
     
@@ -112,32 +151,49 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="bg-white rounded-lg shadow-lg">
-        {/* Header */}
-        <div className="border-b border-gray-200 p-6">
-          <h1 className="text-2xl font-bold text-gray-900">Pusat Dukungan Siswa</h1>
-          <p className="text-gray-600 mt-2">Sistem dukungan akademis dan teknis otomatis</p>
+        {/* Enhanced Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 sm:p-8">
+          <div className="max-w-3xl">
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Pusat Dukungan Siswa</h1>
+            <p className="text-blue-100 text-lg">Sistem dukungan akademis dan teknis otomatis 24/7</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full">
+                🤖 AI-Powered
+              </span>
+              <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full">
+                📊 Real-time Monitoring
+              </span>
+              <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full">
+                🚨 Automated Interventions
+              </span>
+              <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full">
+                📱 24/7 Support
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="border-b border-gray-200">
-          <nav className="flex space-x-8 px-6">
+        {/* Enhanced Navigation Tabs */}
+        <div className="border-b border-gray-200 bg-white">
+          <nav className="flex space-x-1 sm:space-x-2 px-4 sm:px-6 overflow-x-auto">
             {[
-              { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-              { id: 'requests', label: 'Permintaan Saya', icon: '📝' },
-              { id: 'resources', label: 'Resources', icon: '📚' },
-              { id: 'progress', label: 'Progress', icon: '📈' }
+              { id: 'dashboard', label: 'Dashboard', icon: '📊', color: 'blue' },
+              { id: 'requests', label: 'Permintaan Saya', icon: '📝', color: 'green' },
+              { id: 'resources', label: 'Resources', icon: '📚', color: 'purple' },
+              { id: 'progress', label: 'Progress', icon: '📈', color: 'orange' }
             ].map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                 onClick={() => setActiveTab(tab.id as 'dashboard' | 'requests' | 'resources' | 'progress')}
+                 className={`flex items-center py-3 px-3 sm:px-4 border-b-2 font-medium text-sm transition-all duration-200 whitespace-nowrap ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? `border-${tab.color}-500 text-${tab.color}-600 bg-${tab.color}-50`
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                <span className="mr-2">{tab.icon}</span>
-                {tab.label}
+                <span className="mr-2 text-lg">{tab.icon}</span>
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
               </button>
             ))}
           </nav>
@@ -147,65 +203,131 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
         <div className="p-6">
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
-              {/* Quick Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <div className="text-blue-600 text-2xl font-bold">
-                    {supportRequests.filter(r => r.status === 'pending').length}
+              {/* Enhanced Quick Stats */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 lg:p-6 rounded-xl border border-blue-200 hover:shadow-lg transition-shadow duration-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-blue-600 text-3xl font-bold">
+                      {supportRequests.filter(r => r.status === 'pending').length}
+                    </div>
+                    <div className="text-blue-500 text-2xl">⏳</div>
                   </div>
-                  <div className="text-blue-800 text-sm">Menunggu Respon</div>
+                  <div className="text-blue-800 font-medium">Menunggu Respon</div>
+                  <div className="text-blue-600 text-xs mt-1">AI sedang memproses</div>
                 </div>
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <div className="text-green-600 text-2xl font-bold">
-                    {supportRequests.filter(r => r.status === 'resolved').length}
+                
+                <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 lg:p-6 rounded-xl border border-green-200 hover:shadow-lg transition-shadow duration-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-green-600 text-3xl font-bold">
+                      {supportRequests.filter(r => r.status === 'resolved').length}
+                    </div>
+                    <div className="text-green-500 text-2xl">✅</div>
                   </div>
-                  <div className="text-green-800 text-sm">Selesai</div>
+                  <div className="text-green-800 font-medium">Selesai</div>
+                  <div className="text-green-600 text-xs mt-1">Ditangani otomatis</div>
                 </div>
-                <div className="bg-purple-50 p-4 rounded-lg">
-                  <div className="text-purple-600 text-2xl font-bold">{resources.length}</div>
-                  <div className="text-purple-800 text-sm">Resources Tersedia</div>
-                </div>
-                <div className="bg-orange-50 p-4 rounded-lg">
-                  <div className={`text-2xl font-bold ${getRiskLevelColor(studentProgress?.riskLevel || 'low')}`}>
-                    {studentProgress?.riskLevel.toUpperCase() || 'LOW'}
+                
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 lg:p-6 rounded-xl border border-purple-200 hover:shadow-lg transition-shadow duration-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-purple-600 text-3xl font-bold">{resources.length}</div>
+                    <div className="text-purple-500 text-2xl">📚</div>
                   </div>
-                  <div className="text-orange-800 text-sm">Tingkat Risiko</div>
+                  <div className="text-purple-800 font-medium">Resources Tersedia</div>
+                  <div className="text-purple-600 text-xs mt-1">Panduan & tutorial</div>
+                </div>
+                
+                <div className={`bg-gradient-to-br p-4 lg:p-6 rounded-xl border hover:shadow-lg transition-shadow duration-200 ${
+                  studentProgress?.riskLevel === 'high' 
+                    ? 'from-red-50 to-red-100 border-red-200' 
+                    : studentProgress?.riskLevel === 'medium'
+                    ? 'from-yellow-50 to-yellow-100 border-yellow-200'
+                    : 'from-green-50 to-green-100 border-green-200'
+                }`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className={`text-3xl font-bold ${getRiskLevelColor(studentProgress?.riskLevel || 'low')}`}>
+                      {studentProgress?.riskLevel.toUpperCase() || 'LOW'}
+                    </div>
+                    <div className={`text-2xl ${
+                      studentProgress?.riskLevel === 'high' 
+                        ? 'text-red-500' 
+                        : studentProgress?.riskLevel === 'medium'
+                        ? 'text-yellow-500'
+                        : 'text-green-500'
+                    }`}>
+                      {studentProgress?.riskLevel === 'high' ? '🚨' : studentProgress?.riskLevel === 'medium' ? '⚠️' : '😊'}
+                    </div>
+                  </div>
+                  <div className="font-medium">Tingkat Risiko</div>
+                  <div className="text-xs mt-1 opacity-75">
+                    {studentProgress?.riskLevel === 'high' 
+                      ? 'Perlu perhatian khusus'
+                      : studentProgress?.riskLevel === 'medium'
+                      ? 'Monitor teratur'
+                      : 'Kondisi baik'
+                    }
+                  </div>
                 </div>
               </div>
 
-              {/* Recent Activity */}
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-gray-900 mb-3">Aktivitas Terkini</h3>
-                <div className="space-y-2">
+              {/* Enhanced Recent Activity */}
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl border border-gray-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-gray-900 flex items-center">
+                    <span className="mr-2">🕐</span>
+                    Aktivitas Terkini
+                  </h3>
+                  <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full">
+                    Real-time
+                  </span>
+                </div>
+                <div className="space-y-3">
                   {supportRequests.slice(0, 3).map(request => (
-                    <div key={request.id} className="flex items-center justify-between text-sm">
-                      <div>
-                        <span className="font-medium">{request.title}</span>
-                        <span className={`ml-2 ${getStatusColor(request.status)}`}>
-                          ({request.status})
-                        </span>
+                    <div key={request.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center">
+                          <span className="font-medium text-gray-900 truncate">{request.title}</span>
+                          <span className={`ml-2 px-2 py-1 text-xs rounded-full ${getStatusColor(request.status)} bg-opacity-10`}>
+                            {request.status}
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {request.type} • {request.priority}
+                        </div>
                       </div>
-                      <div className="text-gray-500">
-                        {new Date(request.createdAt).toLocaleDateString('id-ID')}
+                      <div className="text-right ml-3">
+                        <div className="text-xs text-gray-500">
+                          {new Date(request.createdAt).toLocaleDateString('id-ID')}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {new Date(request.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                        </div>
                       </div>
                     </div>
                   ))}
+                  {supportRequests.length === 0 && (
+                    <div className="text-center py-6 text-gray-500">
+                      <div className="text-3xl mb-2">📝</div>
+                      <p className="text-sm">Belum ada aktivitas</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Quick Actions */}
-              <div className="flex space-x-4">
+              {/* Enhanced Quick Actions */}
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <button
                   onClick={() => setShowNewRequestForm(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center"
                 >
-                  📝 Buat Permintaan Baru
+                  <span className="mr-2">📝</span>
+                  <span>Buat Permintaan Baru</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('resources')}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                  className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center"
                 >
-                  📚 Jelajahi Resources
+                  <span className="mr-2">📚</span>
+                  <span>Jelajahi Resources</span>
                 </button>
               </div>
             </div>
@@ -400,19 +522,19 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
         </div>
       </div>
 
-      {/* New Request Modal */}
+      {/* Enhanced New Request Modal */}
       {showNewRequestForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl transform transition-all">
             <h3 className="text-lg font-semibold mb-4">Buat Permintaan Dukungan Baru</h3>
             
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tipe</label>
                 <select
-                  value={newRequest.type}
-                  onChange={(e) => setNewRequest({...newRequest, type: e.target.value as any})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   value={newRequest.type}
+                   onChange={(e) => setNewRequest({...newRequest, type: e.target.value as 'academic' | 'technical' | 'administrative' | 'personal'})}
+                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="academic">Akademis</option>
                   <option value="technical">Teknis</option>
@@ -458,7 +580,7 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Prioritas</label>
                 <select
                   value={newRequest.priority}
-                  onChange={(e) => setNewRequest({...newRequest, priority: e.target.value as any})}
+                  onChange={(e) => setNewRequest({...newRequest, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent'})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="low">Rendah</option>

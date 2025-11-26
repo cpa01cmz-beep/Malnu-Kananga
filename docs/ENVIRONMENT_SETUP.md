@@ -677,8 +677,14 @@ For environment setup issues:
 
 ---
 
+ 
+*Environment Setup Guide Version: 1.3.1*  
+*Last Updated: 2025-11-24*  
+
+
 *Environment Setup Guide Version: 1.0.0*  
-*Last Updated: November 24, 2024*  
+*Last Updated: 2025-11-24
+
 *Supported Environments: Development, Testing, Staging, Production*  
 *Primary Database: Cloudflare D1*  
 *AI Service: Google Gemini*

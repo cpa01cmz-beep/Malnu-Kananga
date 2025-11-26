@@ -1,7 +1,7 @@
 // API Services Index untuk MA Malnu Kananga
 // Centralized export untuk semua API services
 
-export { default as BaseApiService, baseApiService } from './baseApiService';
+export { baseApiService } from './baseApiService';
 export { default as StudentApiService, studentApiService } from './studentApiService';
 export { default as ContentApiService, contentApiService } from './contentApiService';
 export { FeaturedProgramsApiService as FeaturedProgramsService, FeaturedProgramsApiService as featuredProgramsService } from './featuredProgramsService';
@@ -32,9 +32,19 @@ export interface ApiError {
   details?: any;
 }
 
+// API Response types
+export interface ApiResponse<T = any> {
+  data?: T;
+  success: boolean;
+  message?: string;
+  error?: string;
+  statusCode?: number;
+  timestamp: string;
+}
+
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_WORKER_URL || 'https://malnu-api.sulhi-cmz.workers.dev',
+  BASE_URL: (import.meta as any).env?.VITE_WORKER_URL || 'https://malnu-api.sulhi-cmz.workers.dev',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000,

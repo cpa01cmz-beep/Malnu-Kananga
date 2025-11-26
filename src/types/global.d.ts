@@ -2,10 +2,20 @@
 /// <reference types="node" />
 /// <reference types="jest" />
 /// <reference types="@testing-library/jest-dom" />
+<<<<<<< HEAD
 
 import '@testing-library/jest-dom';
+=======
+>>>>>>> origin/main
 
 declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toBeInTheDocument(): R;
+      toHaveValue(value: any): R;
+      toBeDisabled(): R;
+    }
+  }
   interface Window {
     announceNavigation?: (message: string) => void;
   }
@@ -121,6 +131,7 @@ declare global {
   var StorageEvent: typeof StorageEvent;
   var MessageEvent: typeof MessageEvent;
   var BeforeUnloadEvent: typeof BeforeUnloadEvent;
+<<<<<<< HEAD
   var PageShowEvent: typeof PageShowEvent;
   var PageHideEvent: typeof PageHideEvent;
   var EventListener: typeof EventListener;
@@ -160,6 +171,16 @@ declare global {
       toBeValid(): R;
     }
   }
+=======
+    var PageShowEvent: typeof PageShowEvent;
+    var PageHideEvent: typeof PageHideEvent;
+    var global: typeof globalThis;
+    var NodeJS: typeof NodeJS;
+    var EventListener: typeof EventListener;
+    var AbortSignal: typeof AbortSignal;
+    var HeadersInit: typeof HeadersInit;
+    var React: typeof React;
+>>>>>>> origin/main
 }
 
 export {};

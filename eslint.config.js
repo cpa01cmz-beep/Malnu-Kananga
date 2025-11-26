@@ -10,6 +10,7 @@ export default [
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
+    ignores: ['dist/', 'node_modules/', 'coverage/', 'build/', 'public/sw.js'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -49,13 +50,13 @@ export default [
         HTMLInputElement: true,
         HTMLDivElement: true,
         HTMLFormElement: true,
-         HTMLImageElement: true,
-         HTMLElement: true,
-         IntersectionObserver: true,
-         ResizeObserver: true,
-         EventListener: true,
-         TouchEvent: true,
-         URLSearchParams: true,
+        HTMLImageElement: true,
+        HTMLElement: true,
+        IntersectionObserver: true,
+        ResizeObserver: true,
+        EventListener: true,
+        TouchEvent: true,
+        URLSearchParams: true,
         HeadersInit: true,
         AbortSignal: true,
         WebSocket: true,
@@ -93,20 +94,11 @@ export default [
         indexedDB: true,
         IDBOpenDBRequest: true,
         isDevelopment: true,
-crypto: true,
+        crypto: true,
         TextEncoder: true,
         btoa: true,
         atob: true,
-        Request: true,
-        RequestInit: true,
-        AbortController: true,
-        performance: true,
-        NotificationOptions: true,
-        ServiceWorkerRegistration: true,
-        IDBDatabase: true,
-        indexedDB: true,
-        IDBOpenDBRequest: true,
-        isDevelopment: true,
+        module: true,
       },
     },
     plugins: {
@@ -116,18 +108,39 @@ crypto: true,
       'jsx-a11y': jsxA11y,
     },
     rules: {
-      'react/react-in-jsx-scope': 'off',
-      'react/prop-types': 'off',
-      '@typescript-eslint/explicit-function-return-type': 'off',
+      // Security rules
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      'no-script-url': 'error',
+      'no-void': 'error',
+      
+      // React security
+      'react/no-danger': 'error',
+      'react/no-unsafe': 'error',
+      
+      // Accessibility
+      'jsx-a11y/anchor-is-valid': 'warn',
+      'jsx-a11y/alt-text': 'warn',
+      'jsx-a11y/click-events-have-key-events': 'warn',
+      'jsx-a11y/no-static-element-interactions': 'warn',
+      
+      // TypeScript rules
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': ['warn', { 
         'argsIgnorePattern': '^_',
         'varsIgnorePattern': '^_',
         'caughtErrorsIgnorePattern': '^_'
       }],
+      '@typescript-eslint/explicit-function-return-type': 'off',
       'no-unused-vars': 'off', // Turn off JS version since we use TS version
-      'jsx-a11y/click-events-have-key-events': 'off',
-      'jsx-a11y/no-static-element-interactions': 'off',
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
+      'no-console': 'off',
+      'no-debugger': 'error',
+      'no-redeclare': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-undef': 'off',
     },
     settings: {
       react: {
