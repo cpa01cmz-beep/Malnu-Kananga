@@ -18,13 +18,7 @@ interface HeaderProps {
     onPortalClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({
-    onLoginClick,
-    onChatClick,
-    isLoggedIn,
-    onLogout,
-    onPortalClick
-}) => {
+const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, onLogout, onPortalClick }) => {
     const isScrolled = useScrollEffect();
     const { isMenuOpen, setIsMenuOpen } = useResponsiveMenu();
     

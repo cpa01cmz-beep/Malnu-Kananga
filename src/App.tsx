@@ -51,7 +51,7 @@ const App: React.FC = () => {
         <ChatProvider>
           <WebPProvider>
           <Suspense fallback={<div>Loading...</div>}>
-            {(isLoggedIn && currentUser) ? (
+            {isLoggedIn && currentUser !== null ? (
               <main id="main-content" role="main" aria-label="Portal utama">
                 {currentUser.role === 'admin' || currentUser.role === 'teacher' ? (
                   <TeacherDashboard onLogout={handleLogout} />
@@ -85,13 +85,13 @@ const App: React.FC = () => {
                     handleLogout();
                     trackEvent('click', 'navigation', 'logout_button');
                   }}
-                  onPortalClick={async () => {
-                    if (isLoggedIn && currentUser) {
-                      document.getElementById('main-content')?.scrollIntoView({ behavior: 'smooth' });
-                      announceNavigation('Portal Dashboard');
-                      trackEvent('click', 'navigation', 'portal_button');
-                    }
-                  }}
+                   onPortalClick={() => {
+                     if (isLoggedIn && currentUser !== null) {
+                       document.getElementById('main-content')?.scrollIntoView({ behavior: 'smooth' });
+                       announceNavigation('Portal Dashboard');
+                       trackEvent('click', 'navigation', 'portal_button');
+                     }
+                   }}
                 />
 
                 <MainContentRouter

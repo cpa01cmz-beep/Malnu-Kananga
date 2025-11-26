@@ -1,5 +1,6 @@
 // Mock for authService that handles import.meta in test environment
 
+
 // Rate limiting untuk client-side protection
 const clientRateLimitStore = new Map();
 const CLIENT_RATE_LIMIT = {
