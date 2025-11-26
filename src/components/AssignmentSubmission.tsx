@@ -14,7 +14,7 @@ interface FileList {
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (submissionData: {
+  onSubmit: (data: {
     file?: File;
     notes?: string;
     submittedBy: string;
