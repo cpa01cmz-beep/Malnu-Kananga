@@ -1,31 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { Assignment, currentParent } from '../data/parentData';
-
-interface HTMLInputElement {
-  files: FileList | null;
-}
-
-interface FileList {
-  length: number;
-  item(index: number): File | null;
-  [index: number]: File;
-}
-
-// Interface for submission data
-interface SubmissionData {
-  file?: File;
-  notes?: string;
-  submittedBy: string;
-}
+import { _Assignment as Assignment, currentParent } from '../data/parentData';
 
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (_assignmentId: string, _submissionData: {
+  onSubmit: (data: {
     file?: File;
     notes?: string;
     submittedBy: string;
-   }) => Promise<void>;
+  }) => Promise<void>;
 }
 
 const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
@@ -36,65 +19,21 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (file: File) => {
-    // Validate file type
-    const allowedTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'image/jpeg',
-      'image/png',
-      'image/gif',
-      'text/plain'
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-      console.error('Tipe file tidak didukung. Silakan upload file PDF, Word, gambar, atau text.');
-      return;
-    }
-
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      console.error('Ukuran file terlalu besar. Maksimal 10MB.');
-      return;
-    }
-
-    setSelectedFile(file);
-  };
-
-  const handleDrag = (e: React.DragEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFileSelect(e.dataTransfer.files[0]);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!selectedFile && !notes.trim()) {
-      console.error('Silakan pilih file atau tulis catatan sebelum mengumpulkan.');
+    
+    if (!selectedFile) {
+      alert('Silakan pilih file untuk diunggah');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      await onSubmit(assignment.id, {
+      await onSubmit({
         file: selectedFile || undefined,
         notes: notes.trim() || undefined,
         submittedBy: currentParent.id
@@ -119,98 +58,123 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
   };
 
   const getFileIcon = (fileName: string) => {
-    const ext = fileName.split('.').pop()?.toLowerCase();
-    switch (ext) {
-      case 'pdf': return '📄';
-      case 'doc': case 'docx': return '📝';
-      case 'jpg': case 'jpeg': case 'png': case 'gif': return '🖼️';
-      case 'txt': return '📃';
-      default: return '📎';
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'pdf':
+        return '📄';
+      case 'doc':
+      case 'docx':
+        return '📝';
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+        return '🖼️';
+      case 'txt':
+        return '📃';
+      default:
+        return '📎';
+    }
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/gif', 'text/plain'];
+      if (allowedTypes.includes(file.type) || file.name.match(/\.(pdf|doc|docx|jpg|jpeg|png|gif|txt)$/i)) {
+        setSelectedFile(file);
+      } else {
+        alert('Tipe file tidak didukung. Silakan pilih file PDF, DOC, DOCX, JPG, JPEG, PNG, GIF, atau TXT.');
+      }
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setSelectedFile(files[0]);
+    }
+  };
+
+  const removeFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Kumpulkan Tugas</h2>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">{assignment.title}</p>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Kumpulkan Tugas
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 hover:text-gray-700 dark:text-gray-400"
-            aria-label="Tutup modal pengumpulan tugas"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <div className="mt-4">
+            <h3 className="font-medium text-gray-900 dark:text-white">{assignment.title}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Mata Pelajaran: {assignment.subject}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Deadline: {new Date(assignment.dueDate).toLocaleDateString('id-ID', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </p>
+          </div>
         </div>
 
-        <div className="p-6">
-          {/* Assignment Details */}
-          <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Mata Pelajaran</p>
-                <p className="font-medium text-gray-900 dark:text-white">{assignment.subject}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Guru Pengampu</p>
-                <p className="font-medium text-gray-900 dark:text-white">{assignment.teacherName}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Batas Pengumpulan</p>
-                <p className="font-medium text-gray-900 dark:text-white">
-                  {new Date(assignment.dueDate).toLocaleDateString('id-ID', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Nilai Maksimal</p>
-                <p className="font-medium text-gray-900 dark:text-white">{assignment.maxScore}</p>
-              </div>
-            </div>
-            <div className="mt-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Deskripsi Tugas</p>
-              <p className="text-gray-900 dark:text-white">{assignment.description}</p>
-            </div>
-            {assignment.instructions && (
-              <div className="mt-4">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Instruksi</p>
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                  <p className="text-blue-900 dark:text-blue-100 text-sm whitespace-pre-line">
-                    {assignment.instructions}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* File Upload Area */}
-          <div className="mb-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* File Upload */}
+          <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               File Tugas
             </label>
-
-<div
-              role="button"
-              tabIndex={0}
-              className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
-                dragActive
-                  ? 'border-green-400 bg-green-50 dark:bg-green-900/20'
-                  : selectedFile
-                  ? 'border-green-400 bg-green-50 dark:bg-green-900/20'
-                  : 'border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500'
+            <div
+              className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                isDragging
+                  ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                  : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
               }`}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
               onDragOver={handleDrag}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
@@ -224,11 +188,7 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
                 ref={fileInputRef}
                 type="file"
                 className="hidden"
-                onChange={(e) => {
-                  if (e.target.files && e.target.files[0]) {
-                    handleFileSelect(e.target.files[0]);
-                  }
-                }}
+                onChange={handleFileSelect}
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt"
               />
 
@@ -242,8 +202,12 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
                     </p>
                   </div>
                   <button
-                    onClick={() => setSelectedFile(null)}
-                    className="text-red-500 hover:text-red-700 dark:text-red-400"
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFile();
+                    }}
+                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -252,9 +216,27 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
                 </div>
               ) : (
                 <div>
-                  <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                  <svg
+                    className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600"
+                    stroke="currentColor"
+                    fill="none"
+                    viewBox="0 0 48 48"
+                  >
+                    <path
+                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
+                  <div className="mt-4">
+                    <p className="text-lg font-medium text-gray-900 dark:text-white">
+                      {isDragging ? 'Lepaskan file di sini' : 'Seret dan drop file ke sini'}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      atau klik untuk memilih file
+                    </p>
+                  </div>
                   <div className="mt-4">
                     <button
                       type="button"
@@ -266,8 +248,8 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
                     <p className="text-gray-600 dark:text-gray-400 mt-1">
                       atau drag dan drop file ke sini
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-                      PDF, Word, Gambar, atau Text (maks. 10MB)
+                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                      Format yang didukung: PDF, DOC, DOCX, JPG, JPEG, PNG, GIF, TXT
                     </p>
                   </div>
                 </div>
@@ -275,70 +257,39 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
             </div>
           </div>
 
-          {/* Notes Section */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Catatan Tambahan (Opsional)
+          {/* Notes */}
+          <div>
+            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Catatan (opsional)
             </label>
             <textarea
+              id="notes"
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+              placeholder="Tambahkan catatan atau komentar tentang tugas ini..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Tambahkan catatan atau keterangan jika diperlukan..."
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              rows={4}
             />
-          </div>
-
-          {/* Submission Info */}
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6">
-            <div className="flex items-start space-x-2">
-              <span className="text-yellow-600 dark:text-yellow-400 mt-0.5">ℹ️</span>
-              <div className="text-sm">
-                <p className="font-medium text-yellow-800 dark:text-yellow-200 mb-1">
-                  Informasi Pengumpulan
-                </p>
-                <ul className="text-yellow-700 dark:text-yellow-300 space-y-1">
-                  <li>• Pastikan file yang diupload sesuai dengan instruksi</li>
-                  <li>• File akan diperiksa oleh guru pengampu mata pelajaran</li>
-                  <li>• Anda akan menerima notifikasi ketika tugas sudah dinilai</li>
-                </ul>
-              </div>
-            </div>
           </div>
 
           {/* Action Buttons */}
           <div className="flex justify-end space-x-3">
             <button
+              type="button"
               onClick={onClose}
-              disabled={isSubmitting}
-              className="px-6 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Batal
             </button>
             <button
-              onClick={handleSubmit}
-              disabled={isSubmitting || (!selectedFile && !notes.trim())}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+              type="submit"
+              disabled={!selectedFile || isSubmitting}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? (
-                <>
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span>Mengumpulkan...</span>
-                </>
-              ) : (
-                <>
-                  <span>Kumpulkan Tugas</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                  </svg>
-                </>
-              )}
+              {isSubmitting ? 'Mengunggah...' : 'Kumpulkan'}
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

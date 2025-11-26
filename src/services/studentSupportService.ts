@@ -1034,8 +1034,7 @@ class StudentSupportService {
     console.log(`Escalated request ${request.id} requires human intervention`);
   }
 
-// Update student progress
-   updateStudentProgress(studentId: string, progress: Partial<StudentProgress>): void {
+public updateStudentProgress(studentId: string, progress: Partial<StudentProgress>): void {
      const allProgress = this.getAllStudentProgress();
      const existingProgress = allProgress[studentId] || {
        studentId,

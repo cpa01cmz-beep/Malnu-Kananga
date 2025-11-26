@@ -315,10 +315,7 @@ export const pwaService = new PwaService({
         icon: '/icons/icon-192x192.png',
         tag: 'app-update',
         requireInteraction: true,
-        actions: [
-          { action: 'update', title: 'Perbarui Sekarang' },
-          { action: 'later', title: 'Nanti' }
-        ] as any
+        
       });
     }
   },

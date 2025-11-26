@@ -131,6 +131,11 @@ class StudentApiService extends BaseApiService {
     return this.get<AcademicStats>(`/api/student/stats${queryString ? `?${queryString}` : ''}`);
   }
 
+  // Get student by ID
+  async getStudentById(studentId: string): Promise<ApiResponse<Student>> {
+    return this.get<Student>(`/api/student/${studentId}`);
+  }
+
   // Update student profile
   async updateProfile(updates: Partial<Student>): Promise<ApiResponse<Student>> {
     return this.put<Student>('/api/student/profile', updates);

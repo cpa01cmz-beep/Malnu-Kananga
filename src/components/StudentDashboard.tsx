@@ -66,7 +66,8 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
 // Initialize student support system
 useEffect(() => {
   // Initialize student progress tracking
-  StudentSupportService.updateStudentProgress(currentStudent.id, {
+  const supportService = StudentSupportService.getInstance();
+  supportService.updateStudentProgress(currentStudent.id, {
     academicMetrics: {
       gpa: gpa,
       gradeTrend: 'stable' as const,

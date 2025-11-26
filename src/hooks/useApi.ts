@@ -4,6 +4,7 @@
 export {
   useCurrentStudent,
   useStudentProfile,
+  useStudentProfileById,
   useStudentGrades,
   useAttendanceRecords,
   useClassSchedule,
@@ -19,5 +20,4 @@ export {
   useSubmitGrades,
   useRecordAttendance,
   useMarkAnnouncementAsRead,
-  useStudentProfile,
 } from './useApiQueries';
