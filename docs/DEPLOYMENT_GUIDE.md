@@ -545,11 +545,16 @@ artillery run load-test.yml
 
 ## 🚨 Troubleshooting
 
-### Common Issues
+### Common Deployment Issues
 
 #### 1. Worker Deployment Fails
 **Problem**: Permission denied during deployment
-**Solution**: 
+**Symptoms**: 
+- `Error: Permission denied` when running `wrangler deploy`
+- `403 Forbidden` responses from Cloudflare API
+- Authentication errors in CI/CD pipeline
+
+**Solutions**: 
 ```bash
 # Check API token permissions
 wrangler auth whoami
@@ -558,50 +563,295 @@ wrangler auth whoami
 wrangler auth login
 
 # Verify token has required permissions
+# Token needs: Account:Cloudflare Pages:Edit, Account:Account Settings:Read
 ```
+
+**Prevention**:
+- Use API tokens with minimum required permissions
+- Regularly rotate API tokens
+- Store tokens in secure environment variables
 
 #### 2. Database Connection Issues
 **Problem**: Cannot connect to D1 database
-**Solution**:
+**Symptoms**:
+- `Database binding not found` errors
+- `502 Bad Gateway` on database queries
+- Migration failures
+
+**Solutions**:
 ```bash
 # Check database binding in wrangler.toml
 wrangler d1 list
 
 # Test database connection
 wrangler d1 execute malnu-kananga-db --command="SELECT 1"
+
+# Recreate database if corrupted
+wrangler d1 create malnu-kananga-db-new
+# Update wrangler.toml with new database ID
+# Run migrations again
 ```
+
+**Common Causes**:
+- Incorrect database ID in wrangler.toml
+- Missing database binding configuration
+- Database region mismatch
 
 #### 3. AI API Errors
 **Problem**: Gemini API not responding
-**Solution**:
+**Symptoms**:
+- `API key invalid` errors
+- `Quota exceeded` messages
+- Empty AI responses
+
+**Solutions**:
 ```bash
-# Verify API key
+# Verify API key is set
 wrangler secret list
 
 # Test API key validity
 curl -H "x-goog-api-key: YOUR_API_KEY" \
   https://generativelanguage.googleapis.com/v1beta/models
+
+# Check API quota and billing
+# Visit Google AI Studio to verify usage
 ```
+
+**Prevention**:
+- Monitor API usage quotas
+- Set up billing alerts
+- Implement fallback responses
 
 #### 4. Vector Database Issues
 **Problem**: Vector search not working
-**Solution**:
+**Symptoms**:
+- Empty context from AI chat
+- `Vectorize index not found` errors
+- Low similarity scores
+
+**Solutions**:
 ```bash
-# Check vectorize index
+# Check vectorize index exists
 wrangler vectorize list
 
 # Re-seed vector database
 curl https://your-worker-url.workers.dev/seed
+
+# Verify index dimensions match model (768 for bge-base-en-v1.5)
+wrangler vectorize describe malnu-kananga-index
 ```
 
-### Debug Mode
+**Common Issues**:
+- Wrong embedding model dimensions
+- Index not properly seeded
+- Similarity threshold too high (default 0.75)
+
+#### 5. Environment Variable Issues
+**Problem**: Missing or incorrect environment variables
+**Symptoms**:
+- `SECRET_KEY not configured` errors
+- Authentication failures
+- CORS issues
+
+**Solutions**:
 ```bash
-# Enable debug logging
+# List all secrets
+wrangler secret list
+
+# Set missing secrets
+wrangler secret put SECRET_KEY
+wrangler secret put API_KEY
+
+# Validate environment
+curl https://your-worker-url.workers.dev/health
+```
+
+**Critical Variables**:
+- `SECRET_KEY`: Must be 32+ characters, cannot be default
+- `API_KEY`: Valid Google Gemini API key
+- `NODE_ENV`: Set to "production" for production
+
+#### 6. CORS and Security Issues
+**Problem**: Frontend cannot connect to backend
+**Symptoms**:
+- CORS errors in browser console
+- `CSRF token invalid` errors
+- Mixed content warnings
+
+**Solutions**:
+```bash
+# Check CORS configuration
+# Should allow your frontend domain
+# Verify Origin header in requests
+
+# Test CSRF protection
+curl -X POST https://your-worker-url.workers.dev/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"test"}'
+# Should return 403 without CSRF token
+```
+
+**Configuration Checklist**:
+- Frontend domain added to CORS allowlist
+- CSRF tokens enabled in production
+- Secure cookies with __Host prefix
+
+#### 7. Build and Bundle Issues
+**Problem**: Frontend build fails
+**Symptoms**:
+- TypeScript compilation errors
+- Missing dependencies
+- Bundle size too large
+
+**Solutions**:
+```bash
+# Clear build cache
+rm -rf node_modules dist
+npm install
+
+# Check for TypeScript errors
+npm run type-check
+
+# Analyze bundle size
+npm run build:analyze
+```
+
+**Common Fixes**:
+- Update Node.js to version 18+
+- Clear npm cache: `npm cache clean --force`
+- Check for conflicting dependencies
+
+#### 8. Domain and SSL Issues
+**Problem**: Custom domain not working
+**Symptoms**:
+- DNS resolution failures
+- SSL certificate errors
+- Redirect loops
+
+**Solutions**:
+```bash
+# Check DNS propagation
+dig your-domain.com
+
+# Verify SSL certificate
+curl -I https://your-domain.com
+
+# Check Cloudflare SSL settings
+# Should be "Full (strict)" mode
+```
+
+**Troubleshooting Steps**:
+1. Verify nameservers point to Cloudflare
+2. Check CNAME/A records in DNS
+3. Ensure SSL certificate is issued
+4. Test with curl to isolate browser issues
+
+### Debug Mode and Monitoring
+
+#### Enable Debug Logging
+```bash
+# Local development with debug
 wrangler dev worker.js --log-level debug
 
-# View detailed logs
+# Production log monitoring
 wrangler tail --format json
+
+# Filter specific error types
+wrangler tail --filter "error"
 ```
+
+#### Health Check Monitoring
+```bash
+# Comprehensive health check
+curl https://your-worker-url.workers.dev/health
+
+# Expected response structure:
+{
+  "status": "healthy",
+  "services": {
+    "ai": "operational",
+    "database": "operational", 
+    "vectorize": "operational"
+  }
+}
+```
+
+#### Performance Monitoring
+```bash
+# Check worker response times
+curl -w "@curl-format.txt" https://your-worker-url.workers.dev/health
+
+# Monitor with real user metrics
+# Set up Core Web Vitals monitoring
+# Configure Lighthouse CI for automated testing
+```
+
+### Emergency Procedures
+
+#### Complete System Recovery
+```bash
+# 1. Restore database from backup
+wrangler d1 execute malnu-kananga-db --file=backup.sql
+
+# 2. Redeploy worker from known good version
+wrangler deploy --compatibility-date=2024-01-01
+
+# 3. Reseed vector database
+curl https://your-worker-url.workers.dev/seed
+
+# 4. Verify all systems
+curl https://your-worker-url.workers.dev/health
+```
+
+#### Rollback Procedures
+```bash
+# Rollback worker to previous version
+wrangler rollback --compatibility-date=2024-01-01
+
+# Rollback Pages deployment
+# Use Cloudflare dashboard:
+# 1. Go to Pages project
+# 2. Click "Deployments" 
+# 3. Find previous successful deployment
+# 4. Click "Rollback"
+
+# Restore database if needed
+wrangler d1 execute malnu-kananga-db --file=backup.sql
+```
+
+### Getting Help
+
+#### Collect Debug Information
+```bash
+# System information
+node --version
+npm --version
+wrangler --version
+
+# Configuration dump
+wrangler whoami
+wrangler d1 list
+wrangler vectorize list
+
+# Recent logs
+wrangler tail --since 1h
+
+# Health status
+curl https://your-worker-url.workers.dev/health
+```
+
+#### Contact Support
+When reporting issues, include:
+- Error messages and stack traces
+- Steps to reproduce the problem
+- System information (versions, configuration)
+- Recent changes or deployments
+- Browser and environment details
+
+**Support Channels**:
+- GitHub Issues: For bugs and feature requests
+- Email: devops@ma-malnukananga.sch.id
+- Documentation: Check this guide first
 
 ---
 
