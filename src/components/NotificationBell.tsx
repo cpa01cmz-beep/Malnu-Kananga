@@ -22,10 +22,10 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNotificationClick
       setUnreadCount(prev => prev + 1);
     };
 
-    window.addEventListener('showNotification', handleNewNotification as EventListener);
+    window.addEventListener('showNotification', handleNewNotification as any);
 
     return () => {
-      window.removeEventListener('showNotification', handleNewNotification as EventListener);
+      window.removeEventListener('showNotification', handleNewNotification as any);
     };
   }, []);
 
