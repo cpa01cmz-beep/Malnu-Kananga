@@ -5,20 +5,21 @@ import { useTouchFeedback } from '../hooks/useTouchFeedback';
 interface ChatInputProps {
   input: string;
   onInputChange: (value: string) => void;
-  onSend: (_e?: React.FormEvent) => void;
+  onSend: (e?: React.FormEvent) => void;
   isLoading: boolean;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ input, onInputChange, onSend, isLoading }) => {
+const ChatInput: React.FC<ChatInputProps> = (props) => {
+  const { input, isLoading } = props;
   const { handleTouchFeedback } = useTouchFeedback();
 
   return (
     <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-      <form onSubmit={onSend} className="flex items-center space-x-2">
+      <form onSubmit={props.onSend} className="flex items-center space-x-2">
         <input
           type="text"
           value={input}
-          onChange={(e) => onInputChange(e.target.value)}
+          onChange={(e) => props.onInputChange(e.target.value)}
           placeholder="Ketik pertanyaan Anda..."
           className="flex-1 p-3 bg-gray-100 dark:bg-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-gray-200 text-base touch-optimized"
           disabled={isLoading}
