@@ -1,6 +1,18 @@
 import React, { useState, useRef } from 'react';
 import { _Assignment as Assignment, currentParent } from '../data/parentData';
 
+interface _FileList {
+  length: number;
+  item(_index: number): File | null;
+  [_index: number]: File;
+}
+
+interface SubmissionData {
+  file?: File;
+  notes?: string;
+  submittedBy: string;
+}
+
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
