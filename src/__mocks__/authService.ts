@@ -1,5 +1,4 @@
 // Mock for authService that handles import.meta in test environment
-// import { WORKER_URL } from '../utils/envValidation';
 
 // Rate limiting untuk client-side protection
 const clientRateLimitStore = new Map();
@@ -161,7 +160,7 @@ class TokenManager {
     localStorage.removeItem(this.REFRESH_TIMER_KEY);
   }
 
-  private static scheduleTokenRefresh(_token: string): void {
+  private static scheduleTokenRefresh(token: string): void {
     // In test environment, we don't schedule actual refreshes
     // Just store the refresh timer info
     localStorage.setItem(this.REFRESH_TIMER_KEY, Date.now().toString());
