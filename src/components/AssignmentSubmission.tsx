@@ -7,6 +7,7 @@ interface _FileList {
   [_index: number]: File;
 }
 
+// Interface for submission data
 interface SubmissionData {
   file?: File;
   notes?: string;
