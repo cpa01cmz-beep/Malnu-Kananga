@@ -2,7 +2,139 @@
 /// <reference types="@cloudflare/workers-types" />
 
 
-// --- CSRF PROTECTION ---
+// Cloudflare Worker environment globals
+global.Headers = Headers;
+global.URL = URL;
+global.Response = Response;
+
+// --- STUDENT SUPPORT UTILITIES ---
+
+function categorizeSupportResponse(message, response) {
+  const lowerMessage = message.toLowerCase();
+  const lowerResponse = response.toLowerCase();
+  
+  // Academic support
+  if (lowerMessage.includes('nilai') || lowerMessage.includes('tugas') || lowerMessage.includes('belajar') || 
+      lowerMessage.includes('ujian') || lowerMessage.includes('mata pelajaran')) {
+    return 'academic';
+  }
+  
+  // Technical support
+  if (lowerMessage.includes('login') || lowerMessage.includes('password') || lowerMessage.includes('akses') ||
+      lowerMessage.includes('error') || lowerMessage.includes('tidak bisa') || lowerMessage.includes('gagal')) {
+    return 'technical';
+  }
+  
+  // Administrative support
+  if (lowerMessage.includes('jadwal') || lowerMessage.includes('absen') || lowerMessage.includes('administrasi') ||
+      lowerMessage.includes('surat') || lowerMessage.includes('dokumen')) {
+    return 'administrative';
+  }
+  
+  // Personal/Wellness support
+  if (lowerMessage.includes('stress') || lowerMessage.includes('cemas') || lowerMessage.includes('bantuan') ||
+      lowerMessage.includes('masalah') || lowerMessage.includes('kesulitan')) {
+    return 'personal';
+  }
+  
+  return 'general';
+}
+
+function analyzeStudentRisk(metrics) {
+  let riskScore = 0;
+  const riskFactors = [];
+  
+  // Academic risk factors
+  if (metrics.gpa && metrics.gpa < 70) {
+    riskScore += 3;
+    riskFactors.push('IPK rendah');
+  }
+  
+  if (metrics.attendanceRate && metrics.attendanceRate < 80) {
+    riskScore += 2;
+    riskFactors.push('Kehadiran rendah');
+  }
+  
+  if (metrics.assignmentCompletion && metrics.assignmentCompletion < 75) {
+    riskScore += 2;
+    riskFactors.push('Penyelesaian tugas rendah');
+  }
+  
+  // Engagement risk factors
+  if (metrics.loginFrequency && metrics.loginFrequency < 3) {
+    riskScore += 1;
+    riskFactors.push('Login jarang');
+  }
+  
+  if (metrics.lastLoginDays && metrics.lastLoginDays > 7) {
+    riskScore += 2;
+    riskFactors.push('Tidak login seminggu');
+  }
+  
+  if (metrics.supportRequests && metrics.supportRequests > 5) {
+    riskScore += 1;
+    riskFactors.push('Banyak permintaan support');
+  }
+  
+  // Determine risk level
+  let riskLevel = 'low';
+  if (riskScore >= 6) riskLevel = 'high';
+  else if (riskScore >= 3) riskLevel = 'medium';
+  
+  return {
+    riskLevel,
+    riskScore,
+    riskFactors,
+    urgency: riskLevel === 'high' ? 'immediate' : riskLevel === 'medium' ? 'soon' : 'routine'
+  };
+}
+
+function generateSupportRecommendations(riskAssessment) {
+  const recommendations = [];
+  
+  switch (riskAssessment.riskLevel) {
+    case 'high':
+      recommendations.push({
+        action: 'immediate_intervention',
+        description: 'Segera hubungi siswa dan orang tua',
+        priority: 'urgent',
+        assignTo: 'guidance_counselor'
+      });
+      recommendations.push({
+        action: 'create_support_plan',
+        description: 'Buat rencana dukungan personal',
+        priority: 'high',
+        assignTo: 'academic_coordinator'
+      });
+      break;
+      
+    case 'medium':
+      recommendations.push({
+        action: 'schedule_checkin',
+        description: 'Jadwalkan pertemuan dengan guru BK',
+        priority: 'medium',
+        assignTo: 'guidance_counselor'
+      });
+      recommendations.push({
+        action: 'provide_resources',
+        description: 'Berikan resources pembelajaran tambahan',
+        priority: 'medium',
+        assignTo: 'subject_teachers'
+      });
+      break;
+      
+    case 'low':
+      recommendations.push({
+        action: 'monitor_progress',
+        description: 'Monitor progress secara berkala',
+        priority: 'low',
+        assignTo: 'system_automated'
+      });
+      break;
+  }
+  
+  return recommendations;
+}
 
 // --- SECURITY UTILITIES ---
 

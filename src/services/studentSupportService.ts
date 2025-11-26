@@ -1565,11 +1565,11 @@ public updateStudentProgress(studentId: string, progress: Partial<StudentProgres
   }
 
   // Calculate days since last login
-  private calculateDaysSinceLastLogin(studentId: string): number {
-    // This would integrate with actual login tracking system
-    // For now, return mock data
-    return Math.floor(Math.random() * 14);
-  }
+   private static calculateDaysSinceLastLogin(_studentId: string): number {
+     // This would integrate with actual login tracking system
+     // For now, return mock data
+     return Math.floor(Math.random() * 14);
+   }
 
 // Send proactive notification
    private async sendProactiveNotification(progress: StudentProgress, riskAssessment: any): Promise<void> {
