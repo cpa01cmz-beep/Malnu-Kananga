@@ -16,7 +16,7 @@ interface SubmissionData {
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (data: {
+  onSubmit: (submissionData: {
     file?: File;
     notes?: string;
     submittedBy: string;
@@ -44,14 +44,16 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
 
     setIsSubmitting(true);
 
-    try {
-      await onSubmit({
-        file: selectedFile || undefined,
-        notes: notes.trim() || undefined,
-        submittedBy: currentParent.id
-      });
+    const submissionData = {
+      file: selectedFile || undefined,
+      notes: notes.trim() || undefined,
+      submittedBy: currentParent.id
+    };
 
-      // Close modal after successful submission
+     try {
+       await onSubmit(submissionData);
+
+       // Close modal after successful submission
       onClose();
     } catch (error) {
       console.error('Error submitting assignment:', error);

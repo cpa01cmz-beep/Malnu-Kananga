@@ -4,16 +4,12 @@ import { AttendanceRecord, AttendanceStats } from '../data/studentData';
 interface AttendanceTabProps {
   attendanceData: AttendanceRecord[];
   attendanceStats: AttendanceStats;
-  formatDate: (dateString: string) => string;
+  formatDate: (date: string) => string;
   getAttendanceColor: (status: string) => string;
 }
 
-const AttendanceTab: React.FC<AttendanceTabProps> = ({
-  attendanceData,
-  attendanceStats,
-  formatDate,
-  getAttendanceColor
-}) => {
+const AttendanceTab: React.FC<AttendanceTabProps> = (props) => {
+  const { attendanceData, attendanceStats } = props;
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow">
       <div className="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -43,10 +39,10 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({
             <div key={record.id} className="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
               <div>
                 <p className="font-medium text-gray-900 dark:text-white">{record.subject}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(record.date)}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{props.formatDate(record.date)}</p>
               </div>
               <div className="text-right">
-                <span className={`px-2 py-1 text-sm font-medium rounded-full ${getAttendanceColor(record.status)}`}>
+                <span className={`px-2 py-1 text-sm font-medium rounded-full ${props.getAttendanceColor(record.status)}`}>
                   {record.status}
                 </span>
                 {record.notes && (
