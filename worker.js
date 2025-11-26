@@ -411,7 +411,6 @@ const documents = [
 // ----------------------------------------------------
 
 export default {
-<<<<<<< HEAD
   async fetch(request, env) {
     const corsHeaders = {
       'Access-Control-Allow-Origin': 'https://ma-malnukananga.sch.id',
