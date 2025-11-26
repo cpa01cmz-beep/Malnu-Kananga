@@ -17,9 +17,16 @@ export const useAuth = () => {
     checkAuth();
   }, []);
 
-  const handleLoginSuccess = (user: User) => {
+  const handleLoginSuccess = (user?: User) => {
     setIsLoggedIn(true);
-    setCurrentUser(user);
+    if (user) {
+      setCurrentUser(user);
+    } else {
+      // If no user provided, fetch current user
+      AuthService.getCurrentUser().then(fetchedUser => {
+        setCurrentUser(fetchedUser);
+      });
+    }
   };
 
   const handleLogout = () => {

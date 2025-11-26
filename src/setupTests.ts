@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom';
-import type {} from '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
 
 // Add type assertion to fix type compatibility issues
