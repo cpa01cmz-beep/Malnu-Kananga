@@ -94,6 +94,13 @@ declare global {
   var BeforeUnloadEvent: typeof BeforeUnloadEvent;
   var PageShowEvent: typeof PageShowEvent;
   var PageHideEvent: typeof PageHideEvent;
+  var global: typeof globalThis;
+  var NodeJS: any;
+  var HeadersInit: any;
+  var AbortSignal: any;
+  var EventListener: any;
+  var React: any;
+  var TouchEvent: any;
 }
 
 export {};

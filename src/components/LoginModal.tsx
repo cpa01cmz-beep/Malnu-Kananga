@@ -96,8 +96,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     <div
       className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-300"
       onClick={handleBackdropClick}
+      onKeyDown={(e) => e.key === 'Escape' && onClose()}
       aria-modal="true"
       role="dialog"
+      tabIndex={-1}
     >
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md m-4 transform transition-all duration-300 scale-95 opacity-0 animate-scale-in">
         <div className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700">
