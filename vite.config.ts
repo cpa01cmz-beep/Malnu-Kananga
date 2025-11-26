@@ -10,9 +10,27 @@ export default defineConfig(({ command, mode }) => ({
   define: {
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
   },
-  build: {
-    // Enable source maps for production debugging (security consideration)
-    sourcemap: mode === 'development',
+    build: {
+      // Enable source maps for production debugging (security consideration)
+      sourcemap: mode === 'development',
+
+    // Performance optimizations
+    target: 'esnext',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production',
+        pure_funcs: mode === 'production' ? ['console.log', 'console.info', 'console.debug'] : [],
+        passes: 2
+      },
+      mangle: {
+        safari10: true
+      }
+    },
+
+    // Chunk size warnings
+    chunkSizeWarningLimit: 300,
 
     // Optimize chunk size
     rollupOptions: {
@@ -29,31 +47,48 @@ export default defineConfig(({ command, mode }) => ({
             if (id.includes('uuid')) {
               return 'utils-vendor';
             }
-             if (id.includes('@supabase/supabase-js')) {
-               return 'db-vendor';
-             }
-             if (id.includes('@tanstack/react-query')) {
-               return 'query-vendor';
-             }
+            if (id.includes('@supabase/supabase-js')) {
+              return 'db-vendor';
+            }
+            if (id.includes('@tanstack/react-query')) {
+              return 'query-vendor';
+            }
+            if (id.includes('tanstack') || id.includes('@tanstack')) {
+              return 'query-vendor';
+            }
             return 'vendor';
           }
           
-           // Application chunks
-           if (id.includes('/src/components/')) {
-             return 'components';
-           }
-           if (id.includes('/src/services/')) {
-             return 'services';
-           }
-           if (id.includes('/src/hooks/')) {
-             return 'hooks';
-           }
-           if (id.includes('/src/memory/')) {
-             return 'memory';
-           }
-         },
+          // Split larger components into separate chunks
+          if (id.includes('Dashboard')) {
+            return 'dashboard';
+          }
+          if (id.includes('Section')) {
+            return 'sections';
+          }
+          if (id.includes('/src/components/')) {
+            return 'components';
+          }
+          if (id.includes('/src/services/')) {
+            return 'services';
+          }
+          if (id.includes('/src/hooks/')) {
+            return 'hooks';
+          }
+          if (id.includes('/src/memory/')) {
+            return 'memory';
+          }
+        },
 
-         // Optimize asset naming
+        // Optimize chunk naming untuk better caching
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId
+            ? chunkInfo.facadeModuleId.split('/').pop()?.replace('.tsx', '').replace('.ts', '')
+            : 'chunk';
+          return `js/${facadeModuleId}-[hash].js`;
+        },
+
+        // Optimize asset naming
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name?.split('.') || [];
           const ext = info[info.length - 1];
@@ -67,10 +102,6 @@ export default defineConfig(({ command, mode }) => ({
         }
       }
     },
-
-     // Chunk size warnings
-     chunkSizeWarningLimit: 300,
-   },
 
   // Development server optimizations
   server: {
