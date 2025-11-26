@@ -51,14 +51,14 @@ const App: React.FC = () => {
         <ChatProvider>
           <WebPProvider>
           <Suspense fallback={<div>Loading...</div>}>
-            {isLoggedIn && currentUser !== null ? (
+            {(isLoggedIn && currentUser) ? (
               <main id="main-content" role="main" aria-label="Portal utama">
                 {currentUser.role === 'admin' || currentUser.role === 'teacher' ? (
-                  <TeacherDashboard onLogout={handleLogout} />
+                  <TeacherDashboard onLogout={() => handleLogout()} />
                 ) : currentUser.role === 'parent' ? (
-                  <ParentDashboard onLogout={handleLogout} />
+                  <ParentDashboard onLogout={() => handleLogout()} />
                 ) : (
-                  <StudentDashboard onLogout={handleLogout} />
+                  <StudentDashboard onLogout={() => handleLogout()} />
                 )}
               </main>
             ) : (
@@ -85,19 +85,19 @@ const App: React.FC = () => {
                     handleLogout();
                     trackEvent('click', 'navigation', 'logout_button');
                   }}
-                   onPortalClick={() => {
-                     if (isLoggedIn && currentUser !== null) {
-                       document.getElementById('main-content')?.scrollIntoView({ behavior: 'smooth' });
-                       announceNavigation('Portal Dashboard');
-                       trackEvent('click', 'navigation', 'portal_button');
-                     }
-                   }}
+                  onPortalClick={() => {
+                    if (isLoggedIn && currentUser) {
+                      document.getElementById('main-content')?.scrollIntoView({ behavior: 'smooth' });
+                      announceNavigation('Portal Dashboard');
+                      trackEvent('click', 'navigation', 'portal_button');
+                    }
+                  }}
                 />
 
-                 <MainContentRouter
-                   isLoggedIn={Boolean(isLoggedIn)}
-                   currentUser={currentUser}
-                  onLogout={handleLogout}
+                <MainContentRouter
+                  isLoggedIn={Boolean(isLoggedIn)}
+                  currentUser={currentUser}
+onLogout={() => handleLogout()}
                 />
 
                 <Footer onDocsClick={() => {
@@ -118,10 +118,10 @@ const App: React.FC = () => {
                   isDocsOpen={isDocsOpen}
                   onLoginClose={() => setIsLoginOpen(false)}
                   onDocsClose={() => setIsDocsOpen(false)}
-                  onLoginSuccess={(user) => {
-                    handleLoginSuccess(user);
-                    trackEvent('login', 'auth', 'login_success');
-                  }}
+onLoginSuccess={() => {
+                     handleLoginSuccess();
+                     trackEvent('login', 'auth', 'login_success');
+                   }}
                 />
               </main>
             )}
