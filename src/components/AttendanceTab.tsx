@@ -1,16 +1,9 @@
 import React from 'react';
-import { AttendanceRecord } from '../data/studentData';
+import { AttendanceRecord, AttendanceStats } from '../data/studentData';
 
 interface AttendanceTabProps {
   attendanceData: AttendanceRecord[];
-  attendanceStats: {
-    total: number;
-    present: number;
-    absent: number;
-    sick: number;
-    permitted: number;
-    percentage: number;
-  };
+  attendanceStats: AttendanceStats;
   formatDate: (dateString: string) => string;
   getAttendanceColor: (status: string) => string;
 }
