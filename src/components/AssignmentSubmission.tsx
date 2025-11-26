@@ -17,9 +17,6 @@ interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
   onSubmit: (_assignmentId: string, _submissionData: SubmissionData) => Promise<void>;
-=======
-  onSubmit: (_assignmentId: string, _submissionData: SubmissionData) => Promise<void>;
->>>>>>> a799b7f (fix(pr#304): address review comments)
 }
 
 const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({

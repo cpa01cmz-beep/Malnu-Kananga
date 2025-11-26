@@ -288,12 +288,12 @@ describe('AssignmentSubmission Component', () => {
       const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
       fireEvent.click(submitButton);
 
-       await waitFor(() => {
-         expect(mockOnSubmit).toHaveBeenCalledWith({
-           notes: 'Catatan untuk pengumpulan',
-           submittedBy: 'PAR001'
-         });
-       });
+        await waitFor(() => {
+          expect(mockOnSubmit).toHaveBeenCalledWith('ASG001', {
+            notes: 'Catatan untuk pengumpulan',
+            submittedBy: 'PAR001'
+          });
+        });
       
       jest.useRealTimers();
     });
