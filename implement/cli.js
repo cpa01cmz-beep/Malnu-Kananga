@@ -10,10 +10,11 @@ import path from 'path';
 import SessionManager from './sessionManager.js';
 
 // Global console for CLI operations
+/* global global */
+global.globalConsole = console;
 
 // Global console for CLI usage
-/* global console */
-const globalConsole = console;
+/* global console process */
 
 const IMPLEMENT_DIR = './';
 const STATE_FILE = path.join(IMPLEMENT_DIR, 'state.json');
@@ -43,7 +44,6 @@ async function showStatus() {
     console.log('Completed Steps:', state.progress.completedSteps.length, '/', state.progress.totalSteps);
     console.log('Project:', state.projectContext.name);
   } catch (error) {
-     
     /* global process */
     console.error('Error reading session state:', error.message);
   }

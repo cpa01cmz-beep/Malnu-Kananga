@@ -2,17 +2,8 @@ export default {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
-  globals: {
-    'ts-jest': {
-      tsconfig: {
-        target: 'es2017',
-        module: 'commonjs',
-        jsx: 'react-jsx',
-        esModuleInterop: true,
-        allowSyntheticDefaultImports: true,
-        types: ['jest', 'node']
-      }
-    }
+  fakeTimers: {
+    enableGlobally: true
   },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
@@ -46,5 +37,13 @@ export default {
     customExportConditions: ['node', 'node-addons']
   },
   extensionsToTreatAsEsm: [],
-  
+  globals: {
+    'ts-jest': {
+      useESM: false
+    }
+  },
+  testTimeout: 10000,
+  fakeTimers: {
+    enableGlobally: true
+  }
 };
