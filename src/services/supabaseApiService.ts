@@ -112,7 +112,7 @@ export class SupabaseApiService {
       } else if (event === 'PASSWORD_RECOVERY') {
         console.log('Password recovery initiated');
         // Perform any required actions during password recovery
-      } else if (event === 'MFA_CHALLENGE') {
+      } else if (event === 'MFA_CHALLENGE_VERIFIED') {
         console.log('MFA challenge');
         // Perform any required actions during MFA challenge
       }

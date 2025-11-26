@@ -349,22 +349,33 @@ export function calculateGPA(grades: Grade[]): number {
   return Math.round((totalPoints / completedGrades.length) * 100) / 100;
 }
 
-export function getAttendanceStats(attendance: AttendanceRecord[]): {
+export interface AttendanceStats {
+  totalSessions: number;
+  present: number;
+  absent: number;
+  excused: number;
+  sick: number;
+  attendanceRate: number;
+}
+
+export function getAttendanceStats(attendance: AttendanceRecord[]): AttendanceStats {
+  const total = attendance.length;
+  const present = attendance.filter(a => a.status === 'Hadir').length;
+  const absent = attendance.filter(a => a.status === 'Alfa').length;
+  const sick = attendance.filter(a => a.status === 'Sakit').length;
+  const excused = attendance.filter(a => a.status === 'Izin').length;
+  const attendanceRate = total > 0 ? Math.round((present / total) * 100) : 0;
+
+  return { totalSessions: total, present, absent, sick, excused, attendanceRate };
+}
+
+export interface AttendanceStats {
   total: number;
   present: number;
   absent: number;
   sick: number;
   permitted: number;
   percentage: number;
-} {
-  const total = attendance.length;
-  const present = attendance.filter(a => a.status === 'Hadir').length;
-  const absent = attendance.filter(a => a.status === 'Alfa').length;
-  const sick = attendance.filter(a => a.status === 'Sakit').length;
-  const permitted = attendance.filter(a => a.status === 'Izin').length;
-  const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
-
-  return { total, present, absent, sick, permitted, percentage };
 }
 
 export function getUnreadAnnouncements(announcements: Announcement[]): Announcement[] {

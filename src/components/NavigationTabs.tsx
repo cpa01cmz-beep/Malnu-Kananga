@@ -10,7 +10,7 @@ interface Tab {
 interface NavigationTabsProps {
   activeTab: string;
   tabs: Tab[];
-  onTabChange: (tabId: string) => void;
+  onTabChange: { (tabId: string): void };
 }
 
 const NavigationTabs: React.FC<NavigationTabsProps> = ({ activeTab, tabs, onTabChange }) => {

@@ -6,25 +6,27 @@ export const useAuth = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const authenticated = await AuthService.isAuthenticated();
-        const user = AuthService.getCurrentUser();
-        setIsLoggedIn(authenticated);
+    const checkAuth = async () => {
+      const authenticated = await AuthService.isAuthenticated();
+      setIsLoggedIn(authenticated);
+      if (authenticated) {
+        const user = await AuthService.getCurrentUser();
         setCurrentUser(user);
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        setIsLoggedIn(false);
-        setCurrentUser(null);
       }
     };
-
-    initializeAuth();
+    checkAuth();
   }, []);
 
-  const handleLoginSuccess = (user: User) => {
+  const handleLoginSuccess = (user?: User) => {
     setIsLoggedIn(true);
-    setCurrentUser(user);
+    if (user) {
+      setCurrentUser(user);
+    } else {
+      // If no user provided, fetch current user
+      AuthService.getCurrentUser().then(fetchedUser => {
+        setCurrentUser(fetchedUser);
+      });
+    }
   };
 
   const handleLogout = () => {

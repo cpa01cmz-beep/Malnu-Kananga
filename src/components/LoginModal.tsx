@@ -62,16 +62,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
 
         setFormState('success');
 
-      } catch (err: any) {
+      } catch (err: unknown) {
         setFormState('idle');
 
         // Enhanced error messages for development
-        if (NODE_ENV === 'development' && err.message.includes('fetch')) {
+         const errorMessage = err instanceof Error ? err.message : 'Terjadi kesalahan. Silakan coba lagi.';
+        if (NODE_ENV === 'development' && errorMessage.includes('fetch')) {
           setError('Tidak dapat terhubung ke server. Pastikan Cloudflare Worker sudah di-deploy.');
-        } else if (NODE_ENV === 'development' && err.message.includes('VITE_WORKER_URL')) {
-          setError(err.message);
+        } else if (NODE_ENV === 'development' && errorMessage.includes('VITE_WORKER_URL')) {
+          setError(errorMessage);
         } else {
-          setError(err.message || 'Terjadi kesalahan. Silakan coba lagi.');
+           setError(errorMessage);
         }
       }
   }
@@ -95,8 +96,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     <div
       className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-300"
       onClick={handleBackdropClick}
+      onKeyDown={(e) => e.key === 'Escape' && onClose()}
       aria-modal="true"
       role="dialog"
+      tabIndex={-1}
     >
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md m-4 transform transition-all duration-300 scale-95 opacity-0 animate-scale-in">
         <div className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700">

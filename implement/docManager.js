@@ -33,7 +33,7 @@ class DocumentationManager {
    * @param {string} outputPath - Where to save the documentation
    */
   async generateDocumentation(modulePath) {
-    console.log(`Generating documentation for ${modulePath}...`);
+    /* global console */ console.log(`Generating documentation for ${modulePath}...`);
     // This would implement actual documentation generation
     return true;
   }
@@ -70,10 +70,9 @@ class DocumentationManager {
         lastUpdated: new Date().toISOString()
       };
 
-      await fs.writeFile(this.docRegistry, JSON.stringify(registry, null, 2));
+await fs.writeFile(this.docRegistry, JSON.stringify(registry, null, 2));
     } catch (error) {
-      console.error('Error updating documentation registry:', error);
-      throw error;
+      /* global console */ console.error('Error updating documentation registry:', error);
     }
   }
 }

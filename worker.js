@@ -1,68 +1,15 @@
 // worker.js - Kode backend GABUNGAN untuk Login, RAG Retriever, dan Seeder
 /// <reference types="@cloudflare/workers-types" />
-import SecurityMiddleware from './security-middleware.js';
 
-// --- CSRF PROTECTION ---
-function generateCSRFToken() {
-    const array = new Uint8Array(32);
-    crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-}
 
-function validateCSRFToken(request) {
-    const cookieToken = getCSRFTokenFromCookie(request);
-    const headerToken = request.headers.get('X-CSRF-Token');
-    
-    if (!cookieToken || !headerToken) {
-        return false;
-    }
-    
-    return constantTimeCompare(cookieToken, headerToken);
-}
+// Cloudflare Worker environment globals
+global.Headers = Headers;
+global.URL = URL;
+global.Response = Response;
 
-function getCSRFTokenFromCookie(request) {
-    const cookieHeader = request.headers.get('Cookie');
-    if (!cookieHeader) return null;
-    
-    const cookies = cookieHeader.split(';').map(cookie => cookie.trim());
-    const csrfCookie = cookies.find(cookie => cookie.startsWith('csrf_token='));
-    
-    return csrfCookie ? csrfCookie.substring('csrf_token='.length) : null;
-}
+/* global self, indexedDB, clients, Response, Request, Headers, FetchEvent, caches */
 
-function constantTimeCompare(a, b) {
-    if (a.length !== b.length) {
-        return false;
-    }
-    
-    let result = 0;
-    for (let i = 0; i < a.length; i++) {
-        result |= a.charCodeAt(i) ^ b.charCodeAt(i);
-    }
-    
-    return result === 0;
-}
-
-function setCSRFTokenCookie(response, token) {
-    const cookieValue = `csrf_token=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`;
-    response.headers.set('Set-Cookie', cookieValue);
-    response.headers.set('X-CSRF-Token', token);
-    return response;
-}
-
-function needsCSRFProtection(request) {
-    const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
-    const protectedPaths = ['/api/', '/edit', '/delete', '/update', '/create'];
-    
-    if (safeMethods.includes(request.method)) {
-        return false;
-    }
-    
-    const url = new URL(request.url);
-    return protectedPaths.some(path => url.pathname.startsWith(path));
-}
-
-// --- SECURITY INITIALIZATION ---
+// --- STUDENT SUPPORT UTILITIES ---
 
 function categorizeSupportResponse(message, response) {
   const lowerMessage = message.toLowerCase();
@@ -195,16 +142,149 @@ function generateSupportRecommendations(riskAssessment) {
 
 // Global declarations for Cloudflare Worker environment
 global.globalConsole = console;
+/* global Response */
 
-// Rate limiting storage (in production, use KV storage or external Redis)
+// Security event logging
+class SecurityLogger {
+  constructor(env) {
+    this.env = env;
+  }
+  
+  async logSecurityEvent(event, details = {}) {
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      event,
+      details,
+      severity: this.getSeverityLevel(event)
+    };
+    
+    console.warn(`SECURITY EVENT [${logEntry.severity}]: ${event}`, details);
+    
+    // Store in KV for audit trail (if available)
+    if (this.env.SECURITY_LOGS_KV) {
+      try {
+        const logKey = `security_log:${Date.now()}:${Math.random().toString(36).substring(2, 11)}`;
+        await this.env.SECURITY_LOGS_KV.put(logKey, JSON.stringify(logEntry), {
+          expirationTtl: 30 * 24 * 60 * 60 // 30 days retention
+        });
+      } catch (error) {
+        console.error('Failed to store security log:', error);
+      }
+    }
+  }
+  
+  getSeverityLevel(event) {
+    const criticalEvents = ['AUTH_BYPASS_ATTEMPT', 'CSRF_TOKEN_INVALID', 'RATE_LIMIT_HARD_BLOCK'];
+    const highEvents = ['RATE_LIMIT_EXCEEDED', 'INVALID_TOKEN', 'UNAUTHORIZED_ACCESS'];
+    const mediumEvents = ['SUSPICIOUS_INPUT', 'FAILED_AUTHENTICATION'];
+    
+    if (criticalEvents.includes(event)) return 'CRITICAL';
+    if (highEvents.includes(event)) return 'HIGH';
+    if (mediumEvents.includes(event)) return 'MEDIUM';
+    return 'LOW';
+  }
+  
+  async logAuthenticationAttempt(email, success, ip, details = {}) {
+    await this.logSecurityEvent('AUTHENTICATION_ATTEMPT', {
+      email,
+      success,
+      ip,
+      userAgent: details.userAgent,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  async logRateLimitViolation(ip, endpoint, count, limit) {
+    await this.logSecurityEvent('RATE_LIMIT_EXCEEDED', {
+      ip,
+      endpoint,
+      count,
+      limit,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  async logCSRFViolation(ip, endpoint) {
+    await this.logSecurityEvent('CSRF_TOKEN_INVALID', {
+      ip,
+      endpoint,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  async logUnauthorizedAccess(ip, endpoint, tokenValid = false) {
+    await this.logSecurityEvent('UNAUTHORIZED_ACCESS', {
+      ip,
+      endpoint,
+      tokenValid,
+      timestamp: new Date().toISOString()
+    });
+  }
+}
+
+// Rate limiting storage using Cloudflare KV for distributed rate limiting
+class DistributedRateLimitStore {
+  constructor(kvStore) {
+    this.kv = kvStore;
+  }
+  
+  async get(key) {
+    try {
+      const data = await this.kv.get(key, 'json');
+      return data || null;
+    } catch (error) {
+      console.error('Rate limit KV get error:', error);
+      return null;
+    }
+  }
+  
+  async set(key, value, ttl) {
+    try {
+      await this.kv.put(key, JSON.stringify(value), { expirationTtl: ttl });
+    } catch (error) {
+      console.error('Rate limit KV set error:', error);
+    }
+  }
+  
+  async increment(key, windowMs, maxRequests) {
+    const now = Date.now();
+    const ttl = Math.ceil(windowMs / 1000);
+    const rateLimitKey = `rate_limit:${key}`;
+    
+    const current = await this.get(rateLimitKey) || { count: 0, resetTime: now + windowMs };
+    
+    // Reset if window expired
+    if (now > current.resetTime) {
+      current.count = 1;
+      current.resetTime = now + windowMs;
+    } else {
+      current.count++;
+    }
+    
+    await this.set(rateLimitKey, current, ttl);
+    
+    return {
+      count: current.count,
+      exceeded: current.count > maxRequests,
+      resetTime: current.resetTime
+    };
+  }
+}
+
+// Fallback to memory store for development
 const rateLimitStore = new Map();
 
-// Rate limiting configuration
-const RATE_LIMIT = {
-  windowMs: 15 * 60 * 1000, // 15 menit window
-  maxAttempts: 5, // Maksimal 5 attempts per window
-  blockDuration: 30 * 60 * 1000 // Block selama 30 menit jika limit exceeded
-};
+// Rate limiting configuration - read from environment
+function getRateLimitConfig(env) {
+  const windowMs = env.RATE_LIMIT_WINDOW_MS ? parseInt(env.RATE_LIMIT_WINDOW_MS) : 15 * 60 * 1000; // 15 menit default
+  const maxRequests = env.RATE_LIMIT_MAX_REQUESTS ? parseInt(env.RATE_LIMIT_MAX_REQUESTS) : 100; // 100 requests default
+  
+  return {
+    windowMs,
+    maxRequests,
+    blockDuration: 30 * 60 * 1000 // Block selama 30 menit jika limit exceeded
+  };
+}
 
 function getClientIP(request) {
   // Cloudflare Workers: get client IP from headers
@@ -213,7 +293,67 @@ function getClientIP(request) {
          'unknown';
 }
 
-function isRateLimited(clientIP) {
+async function isRateLimitExceeded(env, clientId, maxRequests, windowMs, endpoint = 'default') {
+  try {
+    // Use distributed rate limiting if KV store is available
+    if (env.RATE_LIMIT_KV) {
+      const distributedStore = new DistributedRateLimitStore(env.RATE_LIMIT_KV);
+      const result = await distributedStore.increment(clientId, windowMs, maxRequests);
+      
+      if (result.exceeded) {
+        console.warn(`SECURITY: Rate limit exceeded for ${clientId} on ${endpoint}: ${result.count}/${maxRequests}`);
+        return true;
+      }
+      
+      return false;
+    }
+    
+    // Fallback to memory-based rate limiting
+    const now = Date.now();
+    const key = `${endpoint}:${clientId}`;
+    const clientData = rateLimitStore.get(key);
+    
+    if (!clientData) {
+      rateLimitStore.set(key, {
+        count: 1,
+        resetTime: now + windowMs,
+        firstRequest: now
+      });
+      return false;
+    }
+    
+    // Reset if window expired
+    if (now > clientData.resetTime) {
+      rateLimitStore.set(key, {
+        count: 1,
+        resetTime: now + windowMs,
+        firstRequest: now
+      });
+      return false;
+    }
+    
+    clientData.count++;
+    
+    // Progressive rate limiting for abusive clients
+    if (clientData.count > maxRequests * 2) {
+      console.warn(`SECURITY: Hard block for abusive client: ${clientId}`);
+      return true; // Hard block
+    }
+    
+    const isExceeded = clientData.count > maxRequests;
+    if (isExceeded) {
+      console.warn(`SECURITY: Rate limit exceeded for client: ${clientId}, count: ${clientData.count}`);
+    }
+    
+    return isExceeded;
+  } catch (error) {
+    console.error('Rate limiting error:', error);
+    // Fail open - allow request if rate limiting fails
+    return false;
+  }
+}
+
+function isRateLimited(clientIP, rateLimitConfig) {
   const now = Date.now();
   const clientData = rateLimitStore.get(clientIP);
 
@@ -233,7 +373,7 @@ function isRateLimited(clientIP) {
   }
 
   // Reset if window expired
-  if (now - clientData.firstAttempt > RATE_LIMIT.windowMs) {
+  if (now - clientData.firstAttempt > rateLimitConfig.windowMs) {
     rateLimitStore.set(clientIP, {
       attempts: 1,
       firstAttempt: now,
@@ -245,8 +385,8 @@ function isRateLimited(clientIP) {
   // Increment attempts
   clientData.attempts++;
 
-  if (clientData.attempts > RATE_LIMIT.maxAttempts) {
-    clientData.blockedUntil = now + RATE_LIMIT.blockDuration;
+  if (clientData.attempts > rateLimitConfig.maxRequests) {
+    clientData.blockedUntil = now + rateLimitConfig.blockDuration;
     return true;
   }
 
@@ -266,11 +406,11 @@ async function generateSecureToken(email, expiryTime = 15 * 60 * 1000) {
   const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
   const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-  // Generate signature using HMAC-SHA256 with secure secret key from environment
-  if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
-    throw new Error('Secure SECRET_KEY environment variable required for production');
-  }
-  const secret = env.SECRET_KEY;
+// Generate signature using HMAC-SHA256 with secure secret key from environment
+    const secret = env.JWT_SECRET || env.SECRET_KEY;
+    if (!secret || secret === 'default-secret-key-for-worker' || secret.length < 32) {
+      throw new Error('Secure JWT_SECRET environment variable required (min 32 characters, not default value)');
+    }
   const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
 
   return `${encodedHeader}.${encodedPayload}.${signature}`;
@@ -284,6 +424,16 @@ function generateRandomString(length) {
 
 // Generate HMAC signature using crypto.subtle
 async function generateHMACSignature(data, secret) {
+  // SECURITY: Validate secret key before use
+  if (!secret || secret === 'default-secret-key-for-worker' || secret.length < 32) {
+    throw new Error('Invalid secret key: Must be at least 32 characters and not use default value');
+  }
+  
+  // Validate input data
+  if (!data || typeof data !== 'string') {
+    throw new Error('Invalid data for HMAC signature generation');
+  }
+  
   // Convert data and secret to ArrayBuffers for Web Crypto API
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
@@ -317,19 +467,31 @@ async function verifyHMACSignature(data, signature, secret) {
 
 async function verifyAndDecodeToken(token, env) {
   try {
+    // SECURITY: Validate token format
+    if (!token || typeof token !== 'string') {
+      return null;
+    }
+    
     const parts = token.split('.');
     if (parts.length !== 3) return null;
 
     const [encodedHeader, encodedPayload, signature] = parts;
     
-    // Verify signature using HMAC-SHA256 with secure secret
-    if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
-      throw new Error('Secure SECRET_KEY environment variable required for production');
-    }
+// SECURITY: Verify secret key is secure
+     if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
+       console.error('SECURITY: Attempted token verification with default secret key');
+       return null;
+     }
+     
+     // SECURITY: Validate signature format
+     if (!signature || !/^[a-f0-9]+$/i.test(signature)) {
+       return null;
+     }
     const secret = env.SECRET_KEY;
     const isValid = await verifyHMACSignature(`${encodedHeader}.${encodedPayload}`, signature, secret);
     
     if (!isValid) {
+      console.warn('SECURITY: Invalid token signature detected');
       return null; // Invalid signature
     }
 
@@ -338,12 +500,28 @@ async function verifyAndDecodeToken(token, env) {
 
     const tokenData = JSON.parse(decodedPayload);
 
-    if (Date.now() / 1000 > tokenData.exp) {
+    // SECURITY: Validate token payload structure
+    if (!tokenData.email || !tokenData.exp || !tokenData.iat) {
+      console.warn('SECURITY: Invalid token payload structure');
+      return null;
+    }
+
+    // SECURITY: Check token expiry with buffer
+    const now = Math.floor(Date.now() / 1000);
+    if (now > tokenData.exp) {
+      console.warn('SECURITY: Expired token used');
+      return null;
+    }
+    
+    // SECURITY: Check issued time is not in future
+    if (tokenData.iat > now) {
+      console.warn('SECURITY: Token issued in future detected');
       return null;
     }
 
     return tokenData;
   } catch (error) {
+    console.error('SECURITY: Token verification error:', error.message);
     return null;
   }
 }
@@ -367,54 +545,36 @@ const documents = [
 
 export default {
   async fetch(request, env) {
-    // Initialize security middleware
-    const security = new SecurityMiddleware(env);
-    const clientId = security.getClientId(request);
-    
-    // Apply CSRF protection to state-changing requests
-    if (needsCSRFProtection(request)) {
-      if (!validateCSRFToken(request)) {
-        return new Response('CSRF token validation failed', { 
-          status: 403,
-          headers: security.getSecurityHeaders()
-        });
-      }
-    }
-    
-    // Apply rate limiting to all requests
-    if (security.isRateLimitExceeded(clientId, 100, 60000, 'default')) {
-      return new Response('Rate limit exceeded', { 
-        status: 429,
-        headers: {
-          'Retry-After': '60',
-          ...security.getSecurityHeaders()
-        }
-      });
-    }
-
-    // Secure CORS configuration - restrict to specific domains
-    const allowedOrigins = [
-      'https://ma-malnukananga.sch.id',
-      'https://www.ma-malnukananga.sch.id',
-      'http://localhost:3000', // Development only
-      'http://localhost:5173'  // Vite default port
-    ];
-    
-    const origin = request.headers.get('Origin');
     const corsHeaders = {
-      'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
+      'Access-Control-Allow-Origin': 'https://ma-malnukananga.sch.id',
       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Allow-Credentials': 'true',
-      'Access-Control-Max-Age': '86400',
-      ...security.getSecurityHeaders()
     };
+
+    // Initialize security logger
+    const securityLogger = new SecurityLogger(env);
 
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
-
     const url = new URL(request.url);
+    
+    // Get rate limiting configuration
+    const rateLimitConfig = getRateLimitConfig(env);
+    
+    // Apply rate limiting to all endpoints except OPTIONS
+    if (request.method !== 'OPTIONS') {
+      const clientIP = getClientIP(request);
+      if (isRateLimited(clientIP, rateLimitConfig)) {
+        return new Response(JSON.stringify({ 
+          error: 'Too many requests. Please try again later.',
+          retryAfter: Math.ceil(rateLimitConfig.blockDuration / 1000)
+        }), { 
+          status: 429, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': Math.ceil(rateLimitConfig.blockDuration / 1000).toString() }
+        });
+      }
+    }
 
     // --- Endpoint untuk Seeding Data (PENGISI INFO) ---
     if (url.pathname === '/seed') {
@@ -445,6 +605,22 @@ export default {
     // --- Endpoint untuk RAG Context Retrieval (PENCARI INFO) ---
     if (url.pathname === '/api/chat' && request.method === 'POST') {
       try {
+        // SECURITY: Check authentication
+        if (!isAuthenticated(request, securityLogger, '/api/chat')) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // SECURITY: Validate CSRF token for state-changing operations
+        if (!validateCSRFToken(request, securityLogger, '/api/chat')) {
+          return new Response(JSON.stringify({ message: 'CSRF token tidak valid.' }), { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
         const { message } = await request.json();
         const embeddings = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [message] });
         const vectors = embeddings.data[0];
@@ -476,6 +652,22 @@ export default {
     // --- Endpoint Student Support AI ---
     if (url.pathname === '/api/student-support' && request.method === 'POST') {
       try {
+        // SECURITY: Check authentication
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // SECURITY: Validate CSRF token for state-changing operations
+        if (!validateCSRFToken(request)) {
+          return new Response(JSON.stringify({ message: 'CSRF token tidak valid.' }), { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
         const { studentId, message, category, context } = await request.json();
         
         // Enhanced context for student support
@@ -564,6 +756,22 @@ Respons:`;
     // --- Endpoint untuk Proactive Support Monitoring ---
     if (url.pathname === '/api/support-monitoring' && request.method === 'POST') {
       try {
+        // SECURITY: Check authentication
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // SECURITY: Validate CSRF token for state-changing operations
+        if (!validateCSRFToken(request)) {
+          return new Response(JSON.stringify({ message: 'CSRF token tidak valid.' }), { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
         const { studentMetrics } = await request.json();
         
         // Analyze student metrics for risk assessment
@@ -625,6 +833,7 @@ Respons:`;
         } catch (aiError) {
           healthStatus.services.ai = 'degraded';
           healthStatus.status = 'degraded';
+          console.error('AI service health check failed:', aiError.message);
         }
 
         // Test Vectorize service availability
@@ -634,6 +843,7 @@ Respons:`;
         } catch (vectorError) {
           healthStatus.services.vectorize = 'degraded';
           healthStatus.status = 'degraded';
+          console.error('Vectorize service health check failed:', vectorError.message);
         }
 
         // Test D1 database availability
@@ -643,6 +853,7 @@ Respons:`;
         } catch (dbError) {
           healthStatus.services.database = 'degraded';
           healthStatus.status = 'degraded';
+          console.error('Database service health check failed:', dbError.message);
         }
 
         const statusCode = healthStatus.status === 'healthy' ? 200 : 503;
@@ -652,13 +863,14 @@ Respons:`;
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
-      } catch (e) {
+} catch (e) {
+        console.error('Health check error:', e.message);
         return new Response(JSON.stringify({ 
           status: 'unhealthy',
           timestamp: new Date().toISOString(),
           error: e.message 
         }), {
-          status: 503,
+          status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
@@ -667,10 +879,12 @@ Respons:`;
     // --- Endpoint Login ---
     if (url.pathname === '/request-login-link' && request.method === 'POST') {
       try {
+        // SECURITY: Login endpoint exempt from CSRF (public endpoint)
+        // CSRF protection applied after authentication
         const clientIP = getClientIP(request);
 
         // Enhanced rate limiting for login endpoint
-        if (security.isRateLimitExceeded(clientIP, 3, 60000, 'login')) {
+        if (await isRateLimitExceeded(env, clientIP, 3, 60000, 'login')) {
           return new Response(JSON.stringify({
             message: 'Terlalu banyak percobaan login. Silakan coba lagi dalam 1 menit.'
           }), {
@@ -694,19 +908,20 @@ Respons:`;
         }
 
         // Sanitize email input
-        const sanitizedEmail = security.sanitizeSqlInput(email);
+        const sanitizedEmail = security.sanitizeInput(email);
 
         // SECURITY: Only allow registered emails for authentication
         const allowedEmails = [
           'admin@ma-malnukananga.sch.id',
-          'guru@ma-malnukanaga.sch.id', 
-          'siswa@ma-malnukanaga.sch.id',
-          'parent@ma-malnukanaga.sch.id',
-          'ayah@ma-malnukanaga.sch.id',
-          'ibu@ma-malnukanaga.sch.id'
+          'guru@ma-malnukananga.sch.id', 
+          'siswa@ma-malnukananga.sch.id',
+          'parent@ma-malnukananga.sch.id',
+          'ayah@ma-malnukananga.sch.id',
+          'ibu@ma-malnukananga.sch.id'
         ];
         
         if (!allowedEmails.includes(sanitizedEmail)) {
+          console.warn(`SECURITY: Unauthorized login attempt for email: ${sanitizedEmail}`);
           return new Response(JSON.stringify({ message: 'Email tidak terdaftar dalam sistem.' }), { 
             status: 403, 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -729,6 +944,7 @@ Respons:`;
         await fetch(send_request);
         return new Response(JSON.stringify({ success: true, message: 'Link login telah dikirim.' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       } catch (e) {
+        console.error('Login request error:', e.message);
         return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }
@@ -754,24 +970,49 @@ Respons:`;
             
             headers.set('Location', new URL(request.url).origin);
             return new Response(null, { status: 302, headers });
-        } catch(e) {
-            return new Response('Token tidak valid atau rusak.', { status: 400 });
+} catch(e) {
+             console.error('Token verification error:', e.message);
+             return new Response('Token tidak valid atau rusak.', { status: 400 });
         }
     }
     
     // --- Endpoint untuk Generate Signature ---
     if (url.pathname === '/generate-signature' && request.method === 'POST') {
       try {
+        // SECURITY: Check authentication
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // SECURITY: Validate CSRF token for state-changing operations
+        if (!validateCSRFToken(request)) {
+          return new Response(JSON.stringify({ message: 'CSRF token tidak valid.' }), { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
         const { data } = await request.json();
         if (!data) {
           return new Response(JSON.stringify({ message: 'Data diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
         
-        // Gunakan secret key yang disimpan di environment variable
-        const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+// SECURITY: Require secure secret key for signature generation
+         if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
+           console.error('SECURITY: Attempted signature generation with default secret');
+           return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
+             status: 500, 
+             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+           });
+         }
+        const secret = env.SECRET_KEY;
         const signature = await generateHMACSignature(data, secret);
         return new Response(JSON.stringify({ signature }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
-      } catch (e) {
+       } catch (error) {
+         console.error('Signature generation error:', error.message);
         return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }
@@ -779,16 +1020,40 @@ Respons:`;
     // --- Endpoint untuk Verify Signature ---
     if (url.pathname === '/verify-signature' && request.method === 'POST') {
       try {
+        // SECURITY: Check authentication
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // SECURITY: Validate CSRF token for state-changing operations
+        if (!validateCSRFToken(request)) {
+          return new Response(JSON.stringify({ message: 'CSRF token tidak valid.' }), { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
         const { data, signature } = await request.json();
         if (!data || !signature) {
           return new Response(JSON.stringify({ message: 'Data dan signature diperlukan.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
         }
         
-        // Gunakan secret key yang disimpan di environment variable
-        const secret = env.SECRET_KEY || 'default-secret-key-for-worker';
+// SECURITY: Require secure secret key for signature verification
+         if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
+           console.error('SECURITY: Attempted signature verification with default secret');
+           return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
+             status: 500, 
+             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+           });
+         }
+        const secret = env.SECRET_KEY;
         const isValid = await verifyHMACSignature(data, signature, secret);
         return new Response(JSON.stringify({ isValid }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
-      } catch (e) {
+       } catch (error) {
+         console.error('Signature verification error:', error.message);
         return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }

@@ -7,7 +7,7 @@ export const LazyParentDashboard = lazy(() => import('../components/ParentDashbo
 export const LazyStudentSupport = lazy(() => import('../components/StudentSupport'));
 export const LazyAssignmentSubmission = lazy(() => import('../components/AssignmentSubmission'));
 export const LazyChatWindow = lazy(() => import('../components/ChatWindow'));
-export const LazySiteEditor = lazy(() => import('../components/SiteEditor'));
+// export const LazySiteEditor = lazy(() => import('../components/SiteEditor')); // Component not found
 export const LazyDocumentationPage = lazy(() => import('../components/DocumentationPage'));
 export const LazyStudentProgressMonitor = lazy(() => import('../components/StudentProgressMonitor'));
 export const LazyStudentSupportDashboard = lazy(() => import('../components/StudentSupportDashboard'));
@@ -21,5 +21,5 @@ export const LazyFeaturedProgramsSection = lazy(() => import('../components/Feat
 export const LazyLatestNewsSection = lazy(() => import('../components/LatestNewsSection'));
 export const LazyRelatedLinksSection = lazy(() => import('../components/RelatedLinksSection'));
 
-// Lazy load services
-export const LazyMemoryService = lazy(() => import('../memory/services/MemoryService'));
+// Lazy load services - MemoryService is not a React component
+// export const LazyMemoryService = lazy(() => import('../memory/services/MemoryService'));
