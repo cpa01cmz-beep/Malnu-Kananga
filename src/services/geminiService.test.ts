@@ -21,21 +21,20 @@ const mockGetStats = jest.fn();
 const mockGetRelevantMemories = jest.fn().mockResolvedValue([]);
 const mockAddMemory = jest.fn();
 
-const mockMemoryBank = {
-  searchMemories: mockSearchMemories,
-  deleteMemory: mockDeleteMemory,
-  getStats: mockGetStats,
-  getRelevantMemories: mockGetRelevantMemories,
-  addMemory: mockAddMemory,
-};
-
 jest.mock('../memory', () => ({
-  MemoryBank: jest.fn(() => mockMemoryBank),
+  MemoryBank: jest.fn(() => ({
+    searchMemories: mockSearchMemories,
+    deleteMemory: mockDeleteMemory,
+    getStats: mockGetStats,
+    getRelevantMemories: mockGetRelevantMemories,
+    addMemory: mockAddMemory,
+  })),
   schoolMemoryBankConfig: {}
 }));
 
 // Mock fetch globally
-global.fetch = jest.fn();
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
 
 // Import after mocking
 const { 
@@ -69,9 +68,9 @@ test('should handle successful response with context', async () => {
         json: jest.fn().mockResolvedValue({ context: mockContext })
       };
       
-      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      mockFetch.mockResolvedValue(mockResponse);
 
-      const mockStream = {
+const mockStream = {
         [Symbol.asyncIterator]: async function* () {
           yield { text: 'Hello' };
           yield { text: ' world' };
@@ -80,18 +79,18 @@ test('should handle successful response with context', async () => {
 
        mockGenerateContentStream.mockResolvedValue(mockStream);
        mockGetRelevantMemories.mockResolvedValue([]);
-
+ 
        const generator = getAIResponseStream('Hello', []);
-      const results = [];
-      for await (const chunk of generator) {
-        results.push(chunk);
-      }
+       const results = [];
+       for await (const chunk of generator) {
+         results.push(chunk);
+       }
 
       expect(results).toEqual(['Hello', ' world']);
     });
 
     test('should handle Google AI API error', async () => {
-      (global.fetch as jest.Mock).mockResolvedValue({
+      mockFetch.mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue({ context: 'context' })
       });
@@ -115,7 +114,7 @@ test('should handle successful response with context', async () => {
         json: jest.fn().mockResolvedValue({ context: mockContext })
       };
       
-      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      mockFetch.mockResolvedValue(mockResponse);
 
       const mockStream = {
         [Symbol.asyncIterator]: async function* () {
@@ -137,7 +136,7 @@ test('should handle successful response with context', async () => {
     });
 
     test('should use correct system instruction in Indonesian', async () => {
-      (global.fetch as jest.Mock).mockResolvedValue({
+      mockFetch.mockResolvedValue({
         ok: true,
         json: jest.fn().mockResolvedValue({ context: '' })
       });
@@ -166,7 +165,7 @@ test('should handle successful response with context', async () => {
         json: jest.fn().mockResolvedValue({ context: '' })
       };
       
-      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+      mockFetch.mockResolvedValue(mockResponse);
 
       const mockStream = {
         [Symbol.asyncIterator]: async function* () {
@@ -208,7 +207,7 @@ test('should handle successful response with context', async () => {
 
   describe('Error Handling', () => {
     test('should handle malformed API response', async () => {
-      (global.fetch as jest.Mock).mockResolvedValue({
+      mockFetch.mockResolvedValue({
         ok: true,
         json: jest.fn().mockRejectedValue(new Error('Invalid JSON'))
       });
@@ -232,7 +231,7 @@ test('should handle successful response with context', async () => {
     });
 
     test('should handle network timeout', async () => {
-      (global.fetch as jest.Mock).mockRejectedValue(new Error('Timeout'));
+      mockFetch.mockRejectedValue(new Error('Timeout'));
 
       const mockStream = {
         [Symbol.asyncIterator]: async function* () {
@@ -264,7 +263,7 @@ test('should handle successful response with context', async () => {
 
       const result = await getConversationHistory(5);
 
-      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
+      expect(mockSearchMemories).toHaveBeenCalledWith({
         type: 'conversation',
         limit: 5,
       });
@@ -284,7 +283,7 @@ test('should handle successful response with context', async () => {
 
       await getConversationHistory();
 
-      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
+      expect(mockSearchMemories).toHaveBeenCalledWith({
         type: 'conversation',
         limit: 10,
       });
@@ -303,7 +302,7 @@ test('should handle successful response with context', async () => {
 
       const result = await clearConversationHistory();
 
-      expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
+      expect(mockSearchMemories).toHaveBeenCalledWith({
         type: 'conversation',
       });
       expect(mockDeleteMemory).toHaveBeenCalledTimes(2);
