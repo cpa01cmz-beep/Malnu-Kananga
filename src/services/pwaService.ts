@@ -124,7 +124,7 @@ class PwaService {
     }
 
     try {
-      await this.registration.sync.register(tag);
+      await (this.registration as any).sync?.register(tag);
       return true;
     } catch (error) {
       console.error('[PWA] Background sync registration failed:', error);
@@ -315,10 +315,7 @@ export const pwaService = new PwaService({
         icon: '/icons/icon-192x192.png',
         tag: 'app-update',
         requireInteraction: true,
-        actions: [
-          { action: 'update', title: 'Perbarui Sekarang' },
-          { action: 'later', title: 'Nanti' }
-        ]
+        
       });
     }
   },

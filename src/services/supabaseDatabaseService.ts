@@ -1,6 +1,6 @@
 // Supabase Database Service
 import { supabase } from './supabaseConfig';
-import { User } from './authService';
+// import { User } from './authService';
 
 // Define database table types
 export interface StudentProfile {

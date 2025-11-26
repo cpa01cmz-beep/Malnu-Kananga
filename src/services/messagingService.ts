@@ -1,7 +1,7 @@
 // Messaging service untuk komunikasi antara orang tua, guru, dan admin
 // Sistem pesan terintegrasi dengan real-time notifications
 
-import { Message, currentParent } from '../data/parentData';
+import { _Message as Message, currentParent } from '../data/parentData';
 
 export interface Conversation {
   id: string;

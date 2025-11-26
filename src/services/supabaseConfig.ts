@@ -13,7 +13,7 @@ interface SupabaseEnvironmentConfig {
 
 // Update environment validation to include Supabase variables
 export function validateSupabaseEnvironment(): SupabaseEnvironmentConfig {
-  const baseEnv = validateEnvironment(); // Get base environment config
+  validateEnvironment(); // Get base environment config
 
   // Check if running in Jest test environment
   const isTestEnv = process.env.JEST_WORKER_ID !== undefined || process.env.NODE_ENV === 'test';

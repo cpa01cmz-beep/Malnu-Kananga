@@ -25,7 +25,17 @@
     "HTMLDivElement": "readonly",
     "HTMLImageElement": "readonly",
     "HTMLTextAreaElement": "readonly",
+    "HTMLFormElement": "readonly",
+    "HTMLElement": "readonly",
     "Event": "readonly",
+    "EventListener": "readonly",
+    "HeadersInit": "readonly",
+    "AbortSignal": "readonly",
+    "URLSearchParams": "readonly",
+    "NodeJS": "readonly",
+    "React": "readonly",
+    "IntersectionObserver": "readonly",
+    "TouchEvent": "readonly",
     "navigator": "readonly",
     "global": "readonly",
     "module": "readonly",
@@ -83,6 +93,7 @@
     "no-console": "off",
     "no-unused-vars": "warn",
     "no-undef": "off",
+    "require-yield": "warn",
     "no-redeclare": "error"
   },
   "settings": {
@@ -102,13 +113,57 @@
     "src/types/global.d.ts",
     "worker.js",
     "worker-extended.js",
-    "implement/",
-    "public/",
-    "scripts/",
+    "implement/**/*",
+    "public/**/*",
+    "scripts/**/*",
     "docManager.js",
     "sessionManager.js",
     "test-docs.js",
     "setup-cloudflare-resources.js",
-    "cli.js"
+    "cli.js",
+    "sw.js"
+  ],
+  "overrides": [
+    {
+      "files": ["src/__mocks__/**/*", "src/__tests__/**/*"],
+      "env": {
+        "jest": true
+      },
+      "globals": {
+        "describe": "readonly",
+        "test": "readonly", 
+        "it": "readonly",
+        "expect": "readonly",
+        "beforeEach": "readonly",
+        "afterEach": "readonly",
+        "beforeAll": "readonly",
+        "afterAll": "readonly",
+        "jest": "readonly",
+        "global": "readonly"
+      }
+    },
+    {
+      "files": ["public/sw.js"],
+      "env": {
+        "serviceworker": true
+      },
+      "globals": {
+        "self": "readonly",
+        "caches": "readonly",
+        "clients": "readonly",
+        "indexedDB": "readonly"
+      }
+    },
+    {
+      "files": ["implement/**/*", "scripts/**/*"],
+      "env": {
+        "node": true
+      },
+      "globals": {
+        "console": "readonly",
+        "process": "readonly",
+        "module": "readonly"
+      }
+    }
   ]
 }

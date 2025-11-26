@@ -2,27 +2,26 @@
 import React from 'react';
 import Logo from './Logo';
 import DesktopNavigation from './DesktopNavigation';
-import AuthButtons from './AuthButtons';
-import MobileMenuButton from './MobileMenuButton';
 import MobileMenu from './MobileMenu';
 import { ChatIcon } from './icons/ChatIcon';
 import { CloseIcon } from './icons/CloseIcon';
 import { MenuIcon } from './icons/MenuIcon';
 import { useScrollEffect } from '../hooks/useScrollEffect';
 import { useResponsiveMenu } from '../hooks/useResponsiveMenu';
-import { useTouchFeedback } from '../hooks/useTouchFeedback';
+
 
 interface HeaderProps {
     onLoginClick: () => void;
     onChatClick: () => void;
     isLoggedIn: boolean;
     onLogout: () => void;
+    onPortalClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({ onLoginClick, onChatClick, isLoggedIn, onLogout, onPortalClick }) => {
     const isScrolled = useScrollEffect();
     const { isMenuOpen, setIsMenuOpen } = useResponsiveMenu();
-    const { handleTouchFeedback } = useTouchFeedback();
+    
 
 
 

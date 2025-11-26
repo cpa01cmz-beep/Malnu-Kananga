@@ -30,16 +30,16 @@ const LazyImage: React.FC<LazyImageProps> = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(priority);
   const [hasError, setHasError] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const imgRef = useRef<any>(null);
   const [imgSrc, setImgSrc] = useState(priority ? src : placeholder || blurDataURL);
 
   // Intersection Observer untuk lazy loading
   useEffect(() => {
     if (priority || !imgRef.current) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+    const observer = new (window as any).IntersectionObserver(
+      (entries: any[]) => {
+        entries.forEach((entry: any) => {
           if (entry.isIntersecting) {
             setIsInView(true);
             setImgSrc(src);

@@ -5,8 +5,7 @@
  * Script untuk membuat semua resources Cloudflare yang diperlukan
  */
 
-/* global console, process */
-
+/* global console process */
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
@@ -87,7 +86,7 @@ class CloudflareResourceManager {
       const dbList = execSync(`npx wrangler d1 list`, { encoding: 'utf8' });
       const dbMatch = dbList.match(new RegExp(`${DB_NAME}\\s+([a-f0-9-]+)`));
       databaseId = dbMatch ? dbMatch[1] : null;
-    } catch {
+    } catch (error) {
       console.log('ℹ️  Database belum dibuat, akan dibuat baru');
     }
 
@@ -96,7 +95,7 @@ class CloudflareResourceManager {
       const vecList = execSync(`npx wrangler vectorize list`, { encoding: 'utf8' });
       const vecMatch = vecList.match(new RegExp(`${VECTORIZE_NAME}\\s+([a-f0-9-]+)`));
       vectorizeId = vecMatch ? vecMatch[1] : null;
-    } catch {
+    } catch (error) {
       console.log('ℹ️  Vectorize index belum dibuat, akan dibuat baru');
     }
 
@@ -162,7 +161,7 @@ index_name = "${VECTORIZE_NAME}"`;
       } else {
         console.log('⚠️  Tidak dapat menemukan Worker URL, skipping seed');
       }
-    } catch {
+    } catch (error) {
       console.log('⚠️  Seed gagal, tapi deployment tetap berhasil');
     }
   }

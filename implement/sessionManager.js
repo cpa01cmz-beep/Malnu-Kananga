@@ -22,7 +22,7 @@ class SessionManager {
       this.state = JSON.parse(data);
       return this.state;
     } catch (error) {
-      console.error('Error loading session state:', error);
+      /* global console */ console.error('Error loading session state:', error);
       throw error;
     }
   }
@@ -34,7 +34,7 @@ class SessionManager {
     try {
       await fs.writeFile(this.stateFile, JSON.stringify(this.state, null, 2));
     } catch (error) {
-      console.error('Error saving session state:', error);
+      /* global console */ console.error('Error saving session state:', error);
       throw error;
     }
   }
