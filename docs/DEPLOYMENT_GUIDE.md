@@ -2,9 +2,34 @@
 
 ## 🌟 Overview
 
-This comprehensive guide covers the complete deployment process for the MA Malnu Kananga School Portal, from development setup to production deployment on Cloudflare's serverless platform.
+This guide covers the deployment process for the MA Malnu Kananga School Portal. **Note**: Current implementation provides authentication and AI features only. Academic features are planned for future development.
+
+## ⚠️ Current Implementation Status
+
+**Working Features**:
+- ✅ Authentication system (magic link login)
+- ✅ AI chat assistant with RAG
+- ✅ Modern responsive UI
+- ✅ PWA functionality
+
+**Not Yet Implemented**:
+- ❌ Student academic data APIs
+- ❌ Teacher grade input system
+- ❌ Parent monitoring features
+- ❌ Content management system
+- ❌ Database persistence
+
+This deployment guide focuses on getting the working features operational.
 
 ---
+
+**Deployment Guide Version: 1.3.1**  
+<<<<<<< HEAD
+**Last Updated: November 24, 2024**  
+=======
+**Last Updated: 2025-11-24
+>>>>>>> origin/main
+**Deployment Status: Production Ready**
 
 ## 📋 Prerequisites
 
@@ -22,9 +47,16 @@ This comprehensive guide covers the complete deployment process for the MA Malnu
 
 ### Required API Keys
 - **Google Gemini API Key**: For AI chat functionality (required)
-- **Cloudflare API Token**: With appropriate permissions
-- **SECRET_KEY**: HMAC secret key for JWT signing (required)
+- **Cloudflare API Token**: With appropriate permissions (Edit, D1, Vectorize)
+- **SECRET_KEY**: HMAC secret key for JWT signing (required, 32+ characters)
 - **Custom Domain DNS** (Optional): If using custom domain
+
+### Security Requirements
+- **SECRET_KEY**: Must be at least 32 characters long, random string
+- **API Token**: Requires Edit permissions for D1 and Vectorize operations
+- **HTTPS**: All production deployments must use HTTPS
+- **CORS**: Properly configured for your domain
+- **CSRF**: CSRF protection enabled by default in production
 
 ---
 
@@ -32,8 +64,8 @@ This comprehensive guide covers the complete deployment process for the MA Malnu
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/ma-malnukananga/school-portal.git
-cd school-portal
+git clone https://github.com/sulhi/ma-malnu-kananga.git
+cd ma-malnu-kananga
 ```
 
 ### 2. Install Dependencies
@@ -54,9 +86,11 @@ nano .env
 ```bash
 # Required for AI functionality
 API_KEY=your_google_gemini_api_key_here
+GEMINI_API_KEY=your_google_gemini_api_key_here
 
-# Required for authentication
-SECRET_KEY=your_jwt_secret_key_here
+# Required for authentication (MUST be 32+ characters)
+SECRET_KEY=your_jwt_secret_key_here_minimum_32_characters
+CSRF_SECRET=your_csrf_secret_key_here
 
 # Application configuration
 NODE_ENV=development
@@ -69,7 +103,55 @@ VITE_WORKER_URL=http://localhost:8787
 VITE_ENABLE_PWA=true
 VITE_ENABLE_AI_CHAT=true
 VITE_ENABLE_ANALYTICS=false
+
+# Security configuration (production only)
+# CSRF_PROTECTION=true (automatically enabled in production)
+# SECURITY_HEADERS=true (automatically enabled in production)
 ```
+
+### 5. Environment Validation
+```bash
+# Validate environment configuration
+npm run env:validate
+
+# This will check:
+# - SECRET_KEY is present and meets minimum requirements
+# - API_KEY is properly formatted
+# - Required environment variables are set
+# - Production environment has proper security settings
+```
+
+### 6. 🔍 Finding Your Cloudflare Worker URL (CRITICAL)
+
+After deploying your Cloudflare Worker, you MUST find and configure the correct URL:
+
+#### Step-by-Step URL Discovery:
+1. **Go to Cloudflare Dashboard** → Workers & Pages
+2. **Find Your Worker**: Look for name pattern `malnu-kananga-*`
+3. **Copy Worker URL**: Format will be `https://your-worker-name.subdomain.workers.dev`
+4. **Update Environment**: Add to your `.env` file:
+   ```bash
+   VITE_WORKER_URL=https://your-actual-worker-url.workers.dev
+   ```
+
+#### Common URL Patterns:
+- Development: `http://localhost:8787` (local worker)
+- Staging: `https://malnu-kananga-staging.your-subdomain.workers.dev`
+- Production: `https://malnu-kananga-prod.your-subdomain.workers.dev`
+
+#### Verification:
+```bash
+# Test your worker URL
+curl https://your-worker-url.workers.dev/health
+
+# Should return: {"status": "ok", "timestamp": "..."}
+```
+
+#### ⚠️ Common Issues:
+- **404 Error**: Worker not deployed or wrong URL
+- **CORS Error**: VITE_WORKER_URL not matching actual worker URL
+- **AI Not Working**: Vector database not seeded (run `/seed` endpoint)
+- **Auth Failing**: SECRET_KEY missing or too short
 
 ---
 
@@ -169,13 +251,13 @@ compatibility_flags = ["nodejs_compat"]
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
-database_name = "malnu-kananga-auth"
+database_name = "malnu-kananga-db"
 database_id = "your-database-id-here"
 
 # Vectorize binding
 [[vectorize]]
-binding = "VECTORIZE"
-index_name = "malnu-kananga-docs"
+binding = "VECTORIZE_INDEX"
+index_name = "malnu-kananga-index"
 
 # AI binding
 ai = { binding = "AI" }
@@ -184,6 +266,14 @@ ai = { binding = "AI" }
 [vars]
 NODE_ENV = "production"
 # API_KEY and SECRET_KEY should be set as secrets
+
+# Security configuration
+[compatibility_flags]
+nodejs_compat = true
+
+# Security headers (automatically applied)
+[compatibility_date]
+date = "2024-01-01"
 ```
 
 ---
@@ -219,7 +309,20 @@ npm run build
 ls -la dist/
 ```
 
-#### Step 2: Deploy Worker
+#### Step 2: Configure Security Secrets
+```bash
+# Set required secrets (NEVER commit these to git)
+wrangler secret put API_KEY
+# Enter your Gemini API key when prompted
+
+wrangler secret put SECRET_KEY
+# Enter your 32+ character secret key when prompted
+
+# Verify secrets are set
+wrangler secret list
+```
+
+#### Step 3: Deploy Worker
 ```bash
 # Deploy backend worker
 wrangler deploy
@@ -243,6 +346,23 @@ curl https://your-worker-url.workers.dev/seed
 
 # Verify seeding
 curl https://your-worker-url.workers.dev/health
+```
+
+#### Step 5: Security Verification
+```bash
+# Test CSRF protection
+curl -X POST https://your-worker-url.workers.dev/request-login-link \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com"}'
+# Should return 403 without CSRF token
+
+# Test security headers
+curl -I https://your-worker-url.workers.dev/
+# Should include CSP, X-Frame-Options, etc.
+
+# Test environment validation
+curl https://your-worker-url.workers.dev/api/health
+# Should confirm all security requirements met
 ```
 
 ---
@@ -442,11 +562,16 @@ artillery run load-test.yml
 
 ## 🚨 Troubleshooting
 
-### Common Issues
+### Common Deployment Issues
 
 #### 1. Worker Deployment Fails
 **Problem**: Permission denied during deployment
-**Solution**: 
+**Symptoms**: 
+- `Error: Permission denied` when running `wrangler deploy`
+- `403 Forbidden` responses from Cloudflare API
+- Authentication errors in CI/CD pipeline
+
+**Solutions**: 
 ```bash
 # Check API token permissions
 wrangler auth whoami
@@ -455,50 +580,295 @@ wrangler auth whoami
 wrangler auth login
 
 # Verify token has required permissions
+# Token needs: Account:Cloudflare Pages:Edit, Account:Account Settings:Read
 ```
+
+**Prevention**:
+- Use API tokens with minimum required permissions
+- Regularly rotate API tokens
+- Store tokens in secure environment variables
 
 #### 2. Database Connection Issues
 **Problem**: Cannot connect to D1 database
-**Solution**:
+**Symptoms**:
+- `Database binding not found` errors
+- `502 Bad Gateway` on database queries
+- Migration failures
+
+**Solutions**:
 ```bash
 # Check database binding in wrangler.toml
 wrangler d1 list
 
 # Test database connection
 wrangler d1 execute malnu-kananga-db --command="SELECT 1"
+
+# Recreate database if corrupted
+wrangler d1 create malnu-kananga-db-new
+# Update wrangler.toml with new database ID
+# Run migrations again
 ```
+
+**Common Causes**:
+- Incorrect database ID in wrangler.toml
+- Missing database binding configuration
+- Database region mismatch
 
 #### 3. AI API Errors
 **Problem**: Gemini API not responding
-**Solution**:
+**Symptoms**:
+- `API key invalid` errors
+- `Quota exceeded` messages
+- Empty AI responses
+
+**Solutions**:
 ```bash
-# Verify API key
+# Verify API key is set
 wrangler secret list
 
 # Test API key validity
 curl -H "x-goog-api-key: YOUR_API_KEY" \
   https://generativelanguage.googleapis.com/v1beta/models
+
+# Check API quota and billing
+# Visit Google AI Studio to verify usage
 ```
+
+**Prevention**:
+- Monitor API usage quotas
+- Set up billing alerts
+- Implement fallback responses
 
 #### 4. Vector Database Issues
 **Problem**: Vector search not working
-**Solution**:
+**Symptoms**:
+- Empty context from AI chat
+- `Vectorize index not found` errors
+- Low similarity scores
+
+**Solutions**:
 ```bash
-# Check vectorize index
+# Check vectorize index exists
 wrangler vectorize list
 
 # Re-seed vector database
 curl https://your-worker-url.workers.dev/seed
+
+# Verify index dimensions match model (768 for bge-base-en-v1.5)
+wrangler vectorize describe malnu-kananga-index
 ```
 
-### Debug Mode
+**Common Issues**:
+- Wrong embedding model dimensions
+- Index not properly seeded
+- Similarity threshold too high (default 0.75)
+
+#### 5. Environment Variable Issues
+**Problem**: Missing or incorrect environment variables
+**Symptoms**:
+- `SECRET_KEY not configured` errors
+- Authentication failures
+- CORS issues
+
+**Solutions**:
 ```bash
-# Enable debug logging
+# List all secrets
+wrangler secret list
+
+# Set missing secrets
+wrangler secret put SECRET_KEY
+wrangler secret put API_KEY
+
+# Validate environment
+curl https://your-worker-url.workers.dev/health
+```
+
+**Critical Variables**:
+- `SECRET_KEY`: Must be 32+ characters, cannot be default
+- `API_KEY`: Valid Google Gemini API key
+- `NODE_ENV`: Set to "production" for production
+
+#### 6. CORS and Security Issues
+**Problem**: Frontend cannot connect to backend
+**Symptoms**:
+- CORS errors in browser console
+- `CSRF token invalid` errors
+- Mixed content warnings
+
+**Solutions**:
+```bash
+# Check CORS configuration
+# Should allow your frontend domain
+# Verify Origin header in requests
+
+# Test CSRF protection
+curl -X POST https://your-worker-url.workers.dev/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message":"test"}'
+# Should return 403 without CSRF token
+```
+
+**Configuration Checklist**:
+- Frontend domain added to CORS allowlist
+- CSRF tokens enabled in production
+- Secure cookies with __Host prefix
+
+#### 7. Build and Bundle Issues
+**Problem**: Frontend build fails
+**Symptoms**:
+- TypeScript compilation errors
+- Missing dependencies
+- Bundle size too large
+
+**Solutions**:
+```bash
+# Clear build cache
+rm -rf node_modules dist
+npm install
+
+# Check for TypeScript errors
+npm run type-check
+
+# Analyze bundle size
+npm run build:analyze
+```
+
+**Common Fixes**:
+- Update Node.js to version 18+
+- Clear npm cache: `npm cache clean --force`
+- Check for conflicting dependencies
+
+#### 8. Domain and SSL Issues
+**Problem**: Custom domain not working
+**Symptoms**:
+- DNS resolution failures
+- SSL certificate errors
+- Redirect loops
+
+**Solutions**:
+```bash
+# Check DNS propagation
+dig your-domain.com
+
+# Verify SSL certificate
+curl -I https://your-domain.com
+
+# Check Cloudflare SSL settings
+# Should be "Full (strict)" mode
+```
+
+**Troubleshooting Steps**:
+1. Verify nameservers point to Cloudflare
+2. Check CNAME/A records in DNS
+3. Ensure SSL certificate is issued
+4. Test with curl to isolate browser issues
+
+### Debug Mode and Monitoring
+
+#### Enable Debug Logging
+```bash
+# Local development with debug
 wrangler dev worker.js --log-level debug
 
-# View detailed logs
+# Production log monitoring
 wrangler tail --format json
+
+# Filter specific error types
+wrangler tail --filter "error"
 ```
+
+#### Health Check Monitoring
+```bash
+# Comprehensive health check
+curl https://your-worker-url.workers.dev/health
+
+# Expected response structure:
+{
+  "status": "healthy",
+  "services": {
+    "ai": "operational",
+    "database": "operational", 
+    "vectorize": "operational"
+  }
+}
+```
+
+#### Performance Monitoring
+```bash
+# Check worker response times
+curl -w "@curl-format.txt" https://your-worker-url.workers.dev/health
+
+# Monitor with real user metrics
+# Set up Core Web Vitals monitoring
+# Configure Lighthouse CI for automated testing
+```
+
+### Emergency Procedures
+
+#### Complete System Recovery
+```bash
+# 1. Restore database from backup
+wrangler d1 execute malnu-kananga-db --file=backup.sql
+
+# 2. Redeploy worker from known good version
+wrangler deploy --compatibility-date=2024-01-01
+
+# 3. Reseed vector database
+curl https://your-worker-url.workers.dev/seed
+
+# 4. Verify all systems
+curl https://your-worker-url.workers.dev/health
+```
+
+#### Rollback Procedures
+```bash
+# Rollback worker to previous version
+wrangler rollback --compatibility-date=2024-01-01
+
+# Rollback Pages deployment
+# Use Cloudflare dashboard:
+# 1. Go to Pages project
+# 2. Click "Deployments" 
+# 3. Find previous successful deployment
+# 4. Click "Rollback"
+
+# Restore database if needed
+wrangler d1 execute malnu-kananga-db --file=backup.sql
+```
+
+### Getting Help
+
+#### Collect Debug Information
+```bash
+# System information
+node --version
+npm --version
+wrangler --version
+
+# Configuration dump
+wrangler whoami
+wrangler d1 list
+wrangler vectorize list
+
+# Recent logs
+wrangler tail --since 1h
+
+# Health status
+curl https://your-worker-url.workers.dev/health
+```
+
+#### Contact Support
+When reporting issues, include:
+- Error messages and stack traces
+- Steps to reproduce the problem
+- System information (versions, configuration)
+- Recent changes or deployments
+- Browser and environment details
+
+**Support Channels**:
+- GitHub Issues: For bugs and feature requests
+- Email: devops@ma-malnukananga.sch.id
+- Documentation: Check this guide first
 
 ---
 
@@ -591,7 +961,7 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 - **Troubleshooting Guide**: [TROUBLESHOOTING_GUIDE.md](./TROUBLESHOOTING_GUIDE.md)
 
 ### Community Support
-- **GitHub Issues**: [Report bugs and request features](https://github.com/ma-malnukananga/school-portal/issues)
+- **GitHub Issues**: [Report bugs and request features](https://github.com/sulhi/ma-malnu-kananga/issues)
 - **Discord Community**: [Join our Discord](https://discord.gg/ma-malnukananga)
 - **Email Support**: support@ma-malnukananga.sch.id
 
@@ -623,10 +993,12 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 - [ ] CDN caching configured
 
 ### Post-Deployment
-- [ ] Health checks passing
-- [ ] API endpoints responding
-- [ ] AI functionality working
-- [ ] Authentication system operational
+- [ ] Health checks passing (test /health endpoint)
+- [ ] API endpoints responding (verify /api/chat)
+- [ ] AI functionality working (test RAG system)
+- [ ] Authentication system operational (test magic link)
+- [ ] CSRF protection working (verify secure headers)
+- [ ] Vector database seeded (run /seed once)
 - [ ] Monitoring and logging active
 - [ ] Performance metrics within targets
 - [ ] User acceptance testing completed
@@ -634,10 +1006,10 @@ wrangler d1 execute malnu-kananga-db --file=backup.sql
 ---
 
 **Deployment Guide**  
-*Version: 1.2.0*  
-*Last Updated: November 20, 2024*  
+*Version: 1.3.0*  
+*Last Updated: 2025-11-24*
 *Deployment Team: MA Malnu Kananga DevOps*  
-*Next Review: December 2024*
+*Next Review: 2025-12-24
 
 ---
 

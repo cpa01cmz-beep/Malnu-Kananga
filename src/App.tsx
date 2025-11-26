@@ -3,11 +3,12 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import MetaTags from './components/MetaTags';
+
 import MainContentRouter from './components/MainContentRouter';
 import ChatWindowContainer from './components/ChatWindowContainer';
 import ModalsContainer from './components/ModalsContainer';
 import ErrorBoundary from './components/ErrorBoundary';
+import { ChatProvider } from './contexts/ChatContext';
 import { useKeyboardNavigation, useScreenReader } from './hooks/useKeyboardNavigation';
 import { useAuth } from './hooks/useAuth';
 import { WebPProvider } from './hooks/useWebP';
@@ -47,16 +48,17 @@ const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
-        <WebPProvider>
+        <ChatProvider>
+          <WebPProvider>
           <Suspense fallback={<div>Loading...</div>}>
-            {isLoggedIn && currentUser ? (
+            {(isLoggedIn && currentUser) ? (
               <main id="main-content" role="main" aria-label="Portal utama">
                 {currentUser.role === 'admin' || currentUser.role === 'teacher' ? (
-                  <TeacherDashboard onLogout={handleLogout} />
+                  <TeacherDashboard onLogout={() => handleLogout()} />
                 ) : currentUser.role === 'parent' ? (
-                  <ParentDashboard onLogout={handleLogout} />
+                  <ParentDashboard onLogout={() => handleLogout()} />
                 ) : (
-                  <StudentDashboard onLogout={handleLogout} />
+                  <StudentDashboard onLogout={() => handleLogout()} />
                 )}
               </main>
             ) : (
@@ -78,7 +80,7 @@ const App: React.FC = () => {
                     setIsChatOpen(true);
                     trackEvent('click', 'navigation', 'chat_button');
                   }}
-                  isLoggedIn={isLoggedIn}
+                  isLoggedIn={Boolean(isLoggedIn)}
                   onLogout={() => {
                     handleLogout();
                     trackEvent('click', 'navigation', 'logout_button');
@@ -93,9 +95,9 @@ const App: React.FC = () => {
                 />
 
                 <MainContentRouter
-                  isLoggedIn={isLoggedIn}
+                  isLoggedIn={Boolean(isLoggedIn)}
                   currentUser={currentUser}
-                  onLogout={handleLogout}
+onLogout={() => handleLogout()}
                 />
 
                 <Footer onDocsClick={() => {
@@ -116,15 +118,16 @@ const App: React.FC = () => {
                   isDocsOpen={isDocsOpen}
                   onLoginClose={() => setIsLoginOpen(false)}
                   onDocsClose={() => setIsDocsOpen(false)}
-                  onLoginSuccess={(user) => {
-                    handleLoginSuccess(user);
-                    trackEvent('login', 'auth', 'login_success');
-                  }}
+onLoginSuccess={() => {
+                     handleLoginSuccess();
+                     trackEvent('login', 'auth', 'login_success');
+                   }}
                 />
               </main>
             )}
           </Suspense>
-        </WebPProvider>
+          </WebPProvider>
+        </ChatProvider>
       </ErrorBoundary>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

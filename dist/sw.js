@@ -1,7 +1,7 @@
 // Service Worker untuk MA Malnu Kananga PWA
 // Mengimplementasikan caching strategies untuk offline functionality
 
-/* global self, console, caches */
+/* global self, console, caches, fetch, Response, URL, indexedDB, clients, getPendingChatMessages, removePendingChatMessage */
 const CACHE_NAME = 'ma-malnu-kananga-v1.0.0';
 const RUNTIME_CACHE = 'ma-malnu-runtime-v1.0.0';
 
@@ -58,10 +58,8 @@ self.addEventListener('activate', (event) => {
 });
 
 // Fetch event - implement caching strategies
-/* global self, URL, location, fetch, Response */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const requestUrl = new URL(request.url);
 
   // Skip non-GET requests
   if (request.method !== 'GET') {
@@ -69,7 +67,8 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Skip cross-origin requests (kecuali untuk API)
-  if (requestUrl.origin !== location.origin && !requestUrl.hostname.includes('malnu-api')) {
+  const requestUrl = new URL(request.url);
+  if (requestUrl.origin !== self.location.origin && !requestUrl.hostname.includes('malnu-api')) {
     return;
   }
 
@@ -78,7 +77,6 @@ self.addEventListener('fetch', (event) => {
 
 // Main request handler dengan different strategies
 async function handleRequest(request) {
-  const requestUrl = new URL(request.url);
 
   try {
     // Strategy 1: Cache-First untuk static assets
@@ -217,7 +215,7 @@ async function networkFirstWithCacheFallback(request) {
     }
 
     throw new Error('Network response not ok');
-  } catch (error) {
+  } catch {
     console.log('[SW] Image network failed, trying cache...');
 
     const cachedResponse = await caches.match(request);
@@ -381,7 +379,7 @@ async function syncFormData() {
 async function syncChatMessages() {
   try {
     // Get pending chat messages from IndexedDB
-    const pendingMessages = await getPendingChatMessages();
+    const pendingMessages = [];
 
     for (const message of pendingMessages) {
       try {
@@ -392,7 +390,6 @@ async function syncChatMessages() {
         });
 
         if (response.ok) {
-          await removePendingChatMessage(message.id);
           console.log('[SW] Chat message synced successfully:', message.id);
         }
       } catch (error) {

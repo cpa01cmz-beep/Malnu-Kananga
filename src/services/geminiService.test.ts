@@ -1,23 +1,36 @@
 import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 
 // Mock the dependencies
+const mockGenerateContentStream = jest.fn();
+const mockModels = { generateContentStream: mockGenerateContentStream };
+
 jest.mock('@google/genai', () => ({
-  GoogleGenAI: jest.fn()
+  GoogleGenAI: jest.fn().mockImplementation(() => ({
+    models: mockModels
+  }))
 }));
 
 jest.mock('../utils/envValidation', () => ({
-  API_KEY: 'test-api-key',
+  API_KEY: 'mock-api-key-for-testing',
   WORKER_URL: 'https://test-worker.com'
 }));
 
+const mockSearchMemories = jest.fn();
+const mockDeleteMemory = jest.fn();
+const mockGetStats = jest.fn();
+const mockGetRelevantMemories = jest.fn().mockResolvedValue([]);
+const mockAddMemory = jest.fn();
+
+const mockMemoryBank = {
+  searchMemories: mockSearchMemories,
+  deleteMemory: mockDeleteMemory,
+  getStats: mockGetStats,
+  getRelevantMemories: mockGetRelevantMemories,
+  addMemory: mockAddMemory,
+};
+
 jest.mock('../memory', () => ({
-  MemoryBank: jest.fn(() => ({
-    searchMemories: jest.fn(),
-    deleteMemory: jest.fn(),
-    getStats: jest.fn(),
-    getRelevantMemories: jest.fn().mockResolvedValue([]),
-    addMemory: jest.fn(),
-  })),
+  MemoryBank: jest.fn(() => mockMemoryBank),
   schoolMemoryBankConfig: {}
 }));
 
@@ -34,25 +47,22 @@ const {
 } = require('./geminiService');
 
 describe('Gemini Service', () => {
-  let mockMemoryBank: any;
-  let mockGenerateContentStream: any;
-
   beforeEach(() => {
     jest.clearAllMocks();
-    
-    // Set up fresh mocks for each test
-    const { GoogleGenAI } = require('@google/genai');
-    mockGenerateContentStream = jest.fn();
-    GoogleGenAI.mockImplementation(() => ({
-      models: { generateContentStream: mockGenerateContentStream }
-    }));
-
-    const { MemoryBank } = require('../memory');
-    mockMemoryBank = new MemoryBank();
+    mockSearchMemories.mockResolvedValue([]);
+    mockDeleteMemory.mockResolvedValue(undefined);
+    mockGetStats.mockResolvedValue({ totalMemories: 0, totalSize: 0 });
+    mockGetRelevantMemories.mockResolvedValue([]);
+    mockAddMemory.mockResolvedValue(undefined);
+    mockGenerateContentStream.mockResolvedValue({
+      [Symbol.asyncIterator]: async function* () {
+        yield { text: 'Maaf, terjadi masalah saat menghubungi AI. Silakan coba lagi nanti.' };
+      }
+    });
   });
 
   describe('getAIResponseStream', () => {
-    test('should handle successful response with context', async () => {
+test('should handle successful response with context', async () => {
       const mockContext = 'School context information';
       const mockResponse = {
         ok: true,
@@ -66,12 +76,12 @@ describe('Gemini Service', () => {
           yield { text: 'Hello' };
           yield { text: ' world' };
         }
-      };
+       };
 
-      mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+       mockGenerateContentStream.mockResolvedValue(mockStream);
+       mockGetRelevantMemories.mockResolvedValue([]);
 
-      const generator = getAIResponseStream('Hello', []);
+       const generator = getAIResponseStream('Hello', []);
       const results = [];
       for await (const chunk of generator) {
         results.push(chunk);
@@ -87,7 +97,7 @@ describe('Gemini Service', () => {
       });
 
       mockGenerateContentStream.mockRejectedValue(new Error('API error'));
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Hello', []);
       const results = [];
@@ -114,7 +124,7 @@ describe('Gemini Service', () => {
       };
 
       mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Question', []);
       const results = [];
@@ -139,7 +149,7 @@ describe('Gemini Service', () => {
       };
 
       mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Pertanyaan', []);
       const results = [];
@@ -165,7 +175,7 @@ describe('Gemini Service', () => {
       };
 
       mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Hello', []);
       const results = [];
@@ -210,7 +220,7 @@ describe('Gemini Service', () => {
       };
 
       mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Test', []);
       const results = [];
@@ -231,7 +241,7 @@ describe('Gemini Service', () => {
       };
 
       mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockMemoryBank.getRelevantMemories.mockResolvedValue([]);
+      mockGetRelevantMemories.mockResolvedValue([]);
 
       const generator = getAIResponseStream('Test', []);
       const results = [];
@@ -250,7 +260,7 @@ describe('Gemini Service', () => {
         { id: '2', content: 'Test conversation 2', type: 'conversation' },
       ];
       
-      mockMemoryBank.searchMemories.mockResolvedValue(mockConversations);
+      mockSearchMemories.mockResolvedValue(mockConversations);
 
       const result = await getConversationHistory(5);
 
@@ -262,7 +272,7 @@ describe('Gemini Service', () => {
     });
 
     test('should handle error and return empty array', async () => {
-      mockMemoryBank.searchMemories.mockRejectedValue(new Error('Memory error'));
+      mockSearchMemories.mockRejectedValue(new Error('Memory error'));
 
       const result = await getConversationHistory();
 
@@ -270,7 +280,7 @@ describe('Gemini Service', () => {
     });
 
     test('should use default limit', async () => {
-      mockMemoryBank.searchMemories.mockResolvedValue([]);
+      mockSearchMemories.mockResolvedValue([]);
 
       await getConversationHistory();
 
@@ -288,22 +298,22 @@ describe('Gemini Service', () => {
         { id: '2', content: 'Conversation 2', type: 'conversation' },
       ];
       
-      mockMemoryBank.searchMemories.mockResolvedValue(mockConversations);
-      mockMemoryBank.deleteMemory.mockResolvedValue(undefined);
+      mockSearchMemories.mockResolvedValue(mockConversations);
+      mockDeleteMemory.mockResolvedValue(undefined);
 
       const result = await clearConversationHistory();
 
       expect(mockMemoryBank.searchMemories).toHaveBeenCalledWith({
         type: 'conversation',
       });
-      expect(mockMemoryBank.deleteMemory).toHaveBeenCalledTimes(2);
-      expect(mockMemoryBank.deleteMemory).toHaveBeenCalledWith('1');
-      expect(mockMemoryBank.deleteMemory).toHaveBeenCalledWith('2');
+      expect(mockDeleteMemory).toHaveBeenCalledTimes(2);
+      expect(mockDeleteMemory).toHaveBeenCalledWith('1');
+      expect(mockDeleteMemory).toHaveBeenCalledWith('2');
       expect(result).toBe(2);
     });
 
     test('should handle error', async () => {
-      mockMemoryBank.searchMemories.mockRejectedValue(new Error('Memory error'));
+      mockSearchMemories.mockRejectedValue(new Error('Memory error'));
 
       await expect(clearConversationHistory()).rejects.toThrow('Memory error');
     });
@@ -313,16 +323,16 @@ describe('Gemini Service', () => {
     test('should return memory stats', async () => {
       const mockStats = { totalMemories: 10, totalSize: 1024 };
       
-      mockMemoryBank.getStats.mockResolvedValue(mockStats);
+      mockGetStats.mockResolvedValue(mockStats);
 
       const result = await getMemoryStats();
 
-      expect(mockMemoryBank.getStats).toHaveBeenCalled();
+      expect(mockGetStats).toHaveBeenCalled();
       expect(result).toEqual(mockStats);
     });
 
     test('should handle error and return null', async () => {
-      mockMemoryBank.getStats.mockRejectedValue(new Error('Stats error'));
+      mockGetStats.mockRejectedValue(new Error('Stats error'));
 
       const result = await getMemoryStats();
 

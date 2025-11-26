@@ -34,7 +34,7 @@ const detectWebPSupport = (): Promise<boolean> => {
         const supportsWebP = dataURL.startsWith('data:image/webp');
         webpSupport = supportsWebP;
         resolveDetection(supportsWebP);
-      } catch (error) {
+      } catch {
         // If there's an error in toDataURL, assume no WebP support
         webpSupport = false;
         resolveDetection(false);

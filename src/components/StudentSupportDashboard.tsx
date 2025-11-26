@@ -4,14 +4,15 @@ import { StudentSupportService } from '../services/studentSupportService';
 
 interface SupportDashboardProps {
   role?: 'admin' | 'support_staff' | 'teacher';
+  studentId?: string;
 }
 
-const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'support_staff' }) => {
-  const [currentStatus, setCurrentStatus] = useState<any>(null);
+const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role: _role = 'support_staff', studentId: _studentId }) => {
+const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated: string; activeUsers: number; aiAnalytics?: any; aiReport?: any; recommendations?: string[]; metrics?: any; activeAlerts?: number } | null>(null);
   const [alerts, setAlerts] = useState<MonitoringAlert[]>([]);
   const [metrics, setMetrics] = useState<SystemMetrics | null>(null);
   const [selectedTimeFrame, setSelectedTimeFrame] = useState<'hourly' | 'daily' | 'weekly'>('daily');
-  const [report, setReport] = useState<any>(null);
+  const [_report, setReport] = useState<{ summary: string; details: string[] } | null>(null);
   const [showAlertDetails, setShowAlertDetails] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<MonitoringAlert | null>(null);
 
@@ -23,16 +24,37 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'supp
     return () => clearInterval(interval);
   }, [selectedTimeFrame]);
 
-  const loadDashboardData = () => {
-    const status = StudentSupportMonitoring.getCurrentStatus();
-    const allAlerts = StudentSupportMonitoring.getAlerts();
-    const currentMetrics = status.metrics;
-    const monitoringReport = StudentSupportMonitoring.generateMonitoringReport(selectedTimeFrame);
+  const loadDashboardData = async () => {
+    try {
+      const status = StudentSupportMonitoring.getCurrentStatus();
+      const allAlerts = StudentSupportMonitoring.getAlerts();
+      const currentMetrics = status.metrics;
+      const monitoringReport = StudentSupportMonitoring.generateMonitoringReport(selectedTimeFrame);
+      
+      // Get AI-powered analytics
+      const supportService = StudentSupportService.getInstance();
+      const aiAnalytics = supportService.getSupportAnalytics();
+      const aiReport = supportService.generateSupportReport(
+        selectedTimeFrame === 'hourly' ? 'daily' : 
+        selectedTimeFrame === 'daily' ? 'weekly' : 'monthly'
+      );
 
-    setCurrentStatus(status);
-    setAlerts(allAlerts.filter(a => !a.resolved));
-    setMetrics(currentMetrics);
-    setReport(monitoringReport);
+      setCurrentStatus({
+        status: status.status,
+        lastUpdated: new Date().toISOString(),
+        activeUsers: status.metrics?.activeStudents || 0,
+        aiAnalytics,
+        aiReport,
+        recommendations: status.recommendations,
+        metrics: status.metrics,
+        activeAlerts: status.activeAlerts
+      });
+      setAlerts(allAlerts.filter(a => !a.resolved));
+      setMetrics(currentMetrics);
+      setReport(monitoringReport);
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+    }
   };
 
   const handleResolveAlert = (alertId: string) => {
@@ -59,7 +81,7 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'supp
     }
   };
 
-  const getTrendIcon = (trend: string) => {
+  const _getTrendIcon = (trend: string) => {
     switch (trend) {
       case 'improving': return '📈';
       case 'declining': return '📉';
@@ -201,7 +223,7 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'supp
           <h2 className="text-lg font-semibold text-gray-900">Active Alerts ({alerts.length})</h2>
           <select
             value={selectedTimeFrame}
-            onChange={(e) => setSelectedTimeFrame(e.target.value as any)}
+            onChange={(e) => setSelectedTimeFrame(e.target.value as 'hourly' | 'daily' | 'weekly')}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="hourly">Last Hour</option>
@@ -260,11 +282,11 @@ const StudentSupportDashboard: React.FC<SupportDashboardProps> = ({ role = 'supp
       </div>
 
       {/* Recommendations */}
-      {currentStatus.recommendations.length > 0 && (
+      {currentStatus?.recommendations && currentStatus.recommendations.length > 0 && (
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Recommendations</h2>
           <div className="space-y-2">
-            {currentStatus.recommendations.map((rec: string, index: number) => (
+            {currentStatus.recommendations!.map((rec: string, index: number) => (
               <div key={index} className="flex items-center space-x-2">
                 <div className="text-blue-600">💡</div>
                 <div className="text-gray-700">{rec}</div>

@@ -1,0 +1,23 @@
+# Security Headers Middleware
+# Add these headers to enhance security
+
+# Content Security Policy
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.supabase.co https://generativelanguage.googleapis.com; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';
+
+# X-Frame-Options
+X-Frame-Options: DENY
+
+# X-Content-Type-Options
+X-Content-Type-Options: nosniff
+
+# X-XSS-Protection
+X-XSS-Protection: 1; mode=block
+
+# Referrer Policy
+Referrer-Policy: strict-origin-when-cross-origin
+
+# Permissions Policy
+Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Strict-Transport-Security (HTTPS only)
+# Strict-Transport-Security: max-age=31536000; includeSubDomains; preload

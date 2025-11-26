@@ -32,7 +32,7 @@ export interface Grade {
   attendanceScore?: number;
   finalGrade?: string;
   gradePoint?: number;
-  status: 'draft' | 'submitted' | 'approved';
+  status: 'Lulus' | 'Tidak Lulus' | 'Belum Selesai';
   submittedAt?: string;
   submittedBy?: string;
 }
@@ -129,6 +129,11 @@ class StudentApiService extends BaseApiService {
 
     const queryString = params.toString();
     return this.get<AcademicStats>(`/api/student/stats${queryString ? `?${queryString}` : ''}`);
+  }
+
+  // Get student by ID
+  async getStudentById(studentId: string): Promise<ApiResponse<Student>> {
+    return this.get<Student>(`/api/student/${studentId}`);
   }
 
   // Update student profile
