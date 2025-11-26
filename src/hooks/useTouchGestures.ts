@@ -136,10 +136,10 @@ export const useTouchGestures = (options: TouchGestureOptions) => {
     const element = elementRef.current;
     if (!element) return;
 
-    // Add event listeners
-    element.addEventListener('touchstart', handleTouchStart);
-    element.addEventListener('touchend', handleTouchEnd);
-    element.addEventListener('touchmove', handleTouchMove);
+    // Add passive event listeners for better performance
+    element.addEventListener('touchstart', handleTouchStart, { passive: true });
+    element.addEventListener('touchend', handleTouchEnd, { passive: true });
+    element.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     return () => {
       element.removeEventListener('touchstart', handleTouchStart);
