@@ -36,7 +36,7 @@ jest.mock('../memory', () => ({
 }));
 
 // Mock fetch globally
-const mockFetch = jest.fn();
+const mockFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
 global.fetch = mockFetch;
 
 // Import after mocking
@@ -60,6 +60,11 @@ describe('Gemini Service', () => {
 
   describe('getAIResponseStream', () => {
     test('should handle successful response with context', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ context: 'School context info' })
+      });
+
       const mockStream = async function* () {
         yield { text: 'Hello' };
         yield { text: ' world' };

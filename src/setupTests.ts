@@ -42,6 +42,35 @@ global.Touch = jest.fn().mockImplementation((touchInitDict) => ({
   force: 1,
 }));
 
+// Mock TouchEvent for touch gesture testing
+global.TouchEvent = jest.fn().mockImplementation((type, eventInitDict) => {
+  const event = new Event(type, eventInitDict);
+  
+  // Define properties on the event object
+  Object.defineProperty(event, 'touches', {
+    value: eventInitDict?.touches || [],
+    writable: true,
+    enumerable: true,
+    configurable: true
+  });
+  
+  Object.defineProperty(event, 'targetTouches', {
+    value: eventInitDict?.targetTouches || [],
+    writable: true,
+    enumerable: true,
+    configurable: true
+  });
+  
+  Object.defineProperty(event, 'changedTouches', {
+    value: eventInitDict?.changedTouches || [],
+    writable: true,
+    enumerable: true,
+    configurable: true
+  });
+  
+  return event;
+});
+
 // Mock File for file upload testing
 global.File = jest.fn().mockImplementation((bits, name, options) => ({
   name,
