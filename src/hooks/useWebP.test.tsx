@@ -76,17 +76,12 @@ describe('WebPProvider dan useWebP Hook', () => {
     expect(screen.getByTestId('optimal-src')).toBeInTheDocument();
   });
 
-  it('seharusnya memberikan WebP support status', async () => {
+  it('seharusnya memberikan WebP support status', () => {
     render(
       <WebPProvider>
         <TestComponent />
       </WebPProvider>
     );
-
-    // Tunggu hingga loading selesai dengan act
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    });
 
     const statusElement = screen.getByTestId('webp-status');
     expect(statusElement.textContent).toBe('supported');
@@ -115,18 +110,13 @@ describe('WebPProvider dan useWebP Hook', () => {
       throw new Error('Canvas error');
     });
 
-    // Render dengan act untuk menangani state updates
+    // Render dengan act untuk menangani async state updates
     await act(async () => {
       render(
         <WebPProvider>
           <TestComponent />
         </WebPProvider>
       );
-    });
-
-    // Tunggu hingga error handling selesai
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 200));
     });
 
     const statusElement = screen.getByTestId('webp-status');
