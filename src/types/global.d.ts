@@ -1,12 +1,10 @@
 /// <reference types="dom" />
-/// <reference types="node" />
 
 declare global {
   interface Window {
-    // Add any custom window properties here
+    announceNavigation?: (message: string) => void;
   }
   
-  // Global DOM APIs
   var console: Console;
   var setTimeout: (handler: TimerHandler, timeout?: number, ...arguments: any[]) => number;
   var clearTimeout: (id?: number) => void;
@@ -47,7 +45,6 @@ declare global {
   var Worker: typeof Worker;
   var SharedWorker: typeof SharedWorker;
   var ServiceWorker: typeof ServiceWorker;
-  var ServiceWorkerRegistration: typeof ServiceWorkerRegistration;
   var Notification: typeof Notification;
   var Geolocation: typeof Geolocation;
   var GeolocationPosition: typeof GeolocationPosition;
@@ -96,32 +93,6 @@ declare global {
   var NodeJS: typeof NodeJS;
   var HeadersInit: typeof HeadersInit;
   var AbortSignal: typeof AbortSignal;
-  var React: typeof React;
-  var AbortController: typeof AbortController;
-  var RequestInit: RequestInit;
-  var RequestInfo: RequestInfo;
-  var Response: typeof Response;
-  var Headers: typeof Headers;
-  var NotificationOptions: NotificationOptions;
-  var TextEncoder: typeof TextEncoder;
-  var TextDecoder: typeof TextDecoder;
-  var Crypto: typeof Crypto;
-  var SubtleCrypto: typeof SubtleCrypto;
-  var crypto: Crypto;
-  var IDBDatabase: typeof IDBDatabase;
-  var IDBOpenDBRequest: typeof IDBOpenDBRequest;
-  var indexedDB: IDBFactory;
-  var performance: Performance;
-  var Request: typeof Request;
-  var IDBFactory: typeof IDBFactory;
-  
-  // Node.js types for browser compatibility
-  var NodeJS: {
-    Timeout: number;
-  };
-  
-  // Global for test environment
-  var global: typeof globalThis;
 }
 
 export {};

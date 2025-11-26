@@ -1,6 +1,6 @@
 // worker.js - Kode backend GABUNGAN untuk Login, RAG Retriever, dan Seeder
 /// <reference types="@cloudflare/workers-types" />
-import SecurityMiddleware from './security-middleware.js';
+
 
 // Cloudflare Worker environment globals
 global.Headers = Headers;
@@ -543,9 +543,19 @@ const documents = [
 // ----------------------------------------------------
 
 export default {
-  async fetch(request, env, ctx) {
-    const security = new SecurityMiddleware();
+  async fetch(request, env) {
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': 'https://ma-malnukananga.sch.id',
+      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    };
+
+    // Initialize security logger
     const securityLogger = new SecurityLogger(env);
+
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
+    }
     const url = new URL(request.url);
     
     // Get rate limiting configuration
@@ -822,6 +832,7 @@ Respons:`;
         } catch (aiError) {
           healthStatus.services.ai = 'degraded';
           healthStatus.status = 'degraded';
+          console.error('AI service health check failed:', aiError.message);
         }
 
         // Test Vectorize service availability
@@ -831,6 +842,7 @@ Respons:`;
         } catch (vectorError) {
           healthStatus.services.vectorize = 'degraded';
           healthStatus.status = 'degraded';
+          console.error('Vectorize service health check failed:', vectorError.message);
         }
 
         // Test D1 database availability
@@ -840,6 +852,7 @@ Respons:`;
         } catch (dbError) {
           healthStatus.services.database = 'degraded';
           healthStatus.status = 'degraded';
+          console.error('Database service health check failed:', dbError.message);
         }
 
         const statusCode = healthStatus.status === 'healthy' ? 200 : 503;
@@ -849,13 +862,14 @@ Respons:`;
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
-      } catch (e) {
+} catch (e) {
+        console.error('Health check error:', e.message);
         return new Response(JSON.stringify({ 
           status: 'unhealthy',
           timestamp: new Date().toISOString(),
           error: e.message 
         }), {
-          status: 503,
+          status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
@@ -929,6 +943,7 @@ Respons:`;
         await fetch(send_request);
         return new Response(JSON.stringify({ success: true, message: 'Link login telah dikirim.' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       } catch (e) {
+        console.error('Login request error:', e.message);
         return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }
@@ -954,8 +969,9 @@ Respons:`;
             
             headers.set('Location', new URL(request.url).origin);
             return new Response(null, { status: 302, headers });
-        } catch(e) {
-            return new Response('Token tidak valid atau rusak.', { status: 400 });
+} catch(e) {
+             console.error('Token verification error:', e.message);
+             return new Response('Token tidak valid atau rusak.', { status: 400 });
         }
     }
     

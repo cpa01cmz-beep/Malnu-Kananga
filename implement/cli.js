@@ -10,14 +10,7 @@ import path from 'path';
 import SessionManager from './sessionManager.js';
 
 // Global console for CLI operations
-/* global global */
-global.globalConsole = console;
-
-// Global console for CLI usage
 /* global console process */
-
-const IMPLEMENT_DIR = './';
-const STATE_FILE = path.join(IMPLEMENT_DIR, 'state.json');
 
 async function showHelp() {
   console.log(`
@@ -44,7 +37,7 @@ async function showStatus() {
     console.log('Completed Steps:', state.progress.completedSteps.length, '/', state.progress.totalSteps);
     console.log('Project:', state.projectContext.name);
   } catch (error) {
-    /* global process */
+    /* global process, console */
     console.error('Error reading session state:', error.message);
   }
 }
@@ -103,21 +96,21 @@ async function startNewSession() {
     projectContext: {
       name: "Malnu-Kananga School Portal",
       type: "React 19, TypeScript, Tailwind CSS, Cloudflare Workers",
-      directory: process.cwd(),
+      directory: /* global process */ process.cwd(),
       lastUpdate: new Date().toISOString()
     }
   };
   
   try {
     await fs.writeFile(STATE_FILE, JSON.stringify(newState, null, 2));
-    console.log(`New session started with ID: ${sessionId}`);
+    /* global console */ console.log(`New session started with ID: ${sessionId}`);
   } catch (error) {
-    console.error('Error creating new session:', error.message);
+    /* global console */ console.error('Error creating new session:', error.message);
   }
 }
 
 async function main() {
-  const args = process.argv.slice(2);
+  /* global process */ const args = process.argv.slice(2);
   const command = args[0];
 
   switch (command) {

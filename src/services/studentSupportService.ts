@@ -270,6 +270,94 @@ class StudentSupportService {
         ],
         isActive: true,
         lastRun: ''
+      },
+      {
+        id: 'critical_academic_decline',
+        name: 'Critical Academic Decline Detection',
+        description: 'Detect rapid academic decline and trigger immediate intervention',
+        trigger: 'threshold',
+        triggerConfig: {
+          metric: 'grade_drop',
+          threshold: 15, // points drop
+          timeFrame: 'weekly'
+        },
+        actions: [
+          {
+            type: 'notification',
+            config: {
+              message: '⚠️ Penurunan akademik signifikan terdeteksi. Segera hubungi Guru BK.',
+              type: 'urgent',
+              priority: 'high'
+            }
+          },
+          {
+            type: 'ticket_creation',
+            config: {
+              category: 'academic',
+              priority: 'high',
+              template: 'critical_decline'
+            }
+          },
+          {
+            type: 'escalation',
+            config: {
+              escalateTo: 'guidance_counselor',
+              delay: 2 // hours
+            }
+          }
+        ],
+        isActive: true,
+        lastRun: ''
+      },
+      {
+        id: 'multiple_support_requests',
+        name: 'Multiple Support Requests Monitor',
+        description: 'Monitor students with excessive support requests',
+        trigger: 'threshold',
+        triggerConfig: {
+          metric: 'support_requests',
+          threshold: 5,
+          timeFrame: 'weekly'
+        },
+        actions: [
+          {
+            type: 'notification',
+            config: {
+              message: 'Kami melihat Anda menghubungi support beberapa kali. Tim kami akan membantu menyelesaikan masalah Anda.',
+              type: 'support'
+            }
+          },
+          {
+            type: 'resource_assignment',
+            config: {
+              resourceIds: ['comprehensive_guide', 'faq_advanced']
+            }
+          }
+        ],
+        isActive: true,
+        lastRun: ''
+      },
+      {
+        id: 'wellness_check',
+        name: 'Student Wellness Check',
+        description: 'Periodic wellness check for students showing signs of distress',
+        trigger: 'schedule',
+        triggerConfig: {
+          schedule: 'weekly',
+          day: 'monday',
+          time: '09:00'
+        },
+        actions: [
+          {
+            type: 'notification',
+            config: {
+              message: '💪 Semoga minggu ini produktif! Jangan ragu menghubungi kami jika butuh bantuan.',
+              type: 'wellness'
+            }
+          }
+        ],
+        isActive: true,
+        lastRun: ''
       }
     ];
 
@@ -946,8 +1034,7 @@ class StudentSupportService {
     console.log(`Escalated request ${request.id} requires human intervention`);
   }
 
-// Update student progress
-   updateStudentProgress(studentId: string, progress: Partial<StudentProgress>): void {
+public updateStudentProgress(studentId: string, progress: Partial<StudentProgress>): void {
      const allProgress = this.getAllStudentProgress();
      const existingProgress = allProgress[studentId] || {
        studentId,
@@ -979,8 +1066,27 @@ class StudentSupportService {
      allProgress[studentId] = updatedProgress;
      localStorage.setItem(StudentSupportService.PROGRESS_KEY, JSON.stringify(allProgress));
 
+     // Save progress history for trend analysis
+     this.saveProgressHistory(studentId, updatedProgress);
+
      // Trigger automation rules
      this.checkAutomationRules(updatedProgress);
+   }
+
+   // Save progress history for trend analysis
+   private saveProgressHistory(studentId: string, progress: StudentProgress): void {
+     const historyKey = `progress_history_${studentId}`;
+     const history = this.getProgressHistory(studentId);
+     
+     // Add current progress to history
+     history.unshift(progress);
+     
+     // Keep only last 10 entries
+     if (history.length > 10) {
+       history.splice(10);
+     }
+     
+     localStorage.setItem(historyKey, JSON.stringify(history));
    }
 
 // Get all student progress
@@ -1152,10 +1258,46 @@ class StudentSupportService {
         if (triggerConfig.metric === 'engagement') {
           return progress.engagementMetrics.loginFrequency < triggerConfig.threshold;
         }
+        if (triggerConfig.metric === 'grade_drop') {
+          return this.detectGradeDrop(progress.studentId, triggerConfig.threshold);
+        }
+        if (triggerConfig.metric === 'support_requests') {
+          return progress.engagementMetrics.supportRequests > triggerConfig.threshold;
+        }
         break;
+      case 'schedule':
+        return this.shouldTriggerScheduledRule(rule);
     }
 
     return false;
+  }
+
+  // Detect significant grade drop
+  private detectGradeDrop(studentId: string, threshold: number): boolean {
+    const progressHistory = this.getProgressHistory(studentId);
+    if (progressHistory.length < 2) return false;
+
+    const current = progressHistory[0];
+    const previous = progressHistory[1];
+    const drop = previous.academicMetrics.gpa - current.academicMetrics.gpa;
+    
+    return drop >= threshold;
+  }
+
+  // Get student progress history
+  private getProgressHistory(studentId: string): StudentProgress[] {
+    const historyKey = `progress_history_${studentId}`;
+    const history = localStorage.getItem(historyKey);
+    return history ? JSON.parse(history) : [];
+  }
+
+  // Check if scheduled rule should trigger
+  private shouldTriggerScheduledRule(rule: SupportAutomation): boolean {
+    const now = new Date();
+    const lastRun = rule.lastRun ? new Date(rule.lastRun) : new Date(0);
+    const daysSinceLastRun = Math.floor((now.getTime() - lastRun.getTime()) / (1000 * 60 * 60 * 24));
+    
+    return daysSinceLastRun >= 7; // Weekly schedule
   }
 
   // Execute automation rule

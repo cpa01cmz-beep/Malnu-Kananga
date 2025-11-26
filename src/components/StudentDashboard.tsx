@@ -56,17 +56,18 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
       }, 5000);
     };
 
-    window.addEventListener('showNotification', handleNewNotification as EventListener);
+    window.addEventListener('showNotification', handleNewNotification as any);
 
     return () => {
-      window.removeEventListener('showNotification', handleNewNotification as EventListener);
+      window.removeEventListener('showNotification', handleNewNotification as any);
     };
   }, []);
 
 // Initialize student support system
 useEffect(() => {
   // Initialize student progress tracking
-  StudentSupportService.updateStudentProgress(currentStudent.id, {
+  const supportService = StudentSupportService.getInstance();
+  supportService.updateStudentProgress(currentStudent.id, {
     academicMetrics: {
       gpa: gpa,
       gradeTrend: 'stable' as const,
