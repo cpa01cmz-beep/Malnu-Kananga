@@ -1,3 +1,4 @@
+
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, test, expect, beforeEach, jest } from '@jest/globals';
 import '@testing-library/jest-dom';
@@ -301,8 +302,8 @@ describe('AssignmentSubmission Component', () => {
     test('should show loading state during submission', async () => {
       jest.useFakeTimers();
       
-       // Mock a delayed submission
-       mockOnSubmit.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+        // Mock a delayed submission
+        mockOnSubmit.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
 
       render(
         <AssignmentSubmission
