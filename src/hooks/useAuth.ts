@@ -2,49 +2,24 @@ import { useState, useEffect } from 'react';
 import { AuthService, User } from '../services/authService';
 
 export const useAuth = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const authenticated = await AuthService.isAuthenticated();
-        const user = await AuthService.getCurrentUser(); // Fixed: Added await for consistency
-        setIsLoggedIn(authenticated);
-        setCurrentUser(user);
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        setIsLoggedIn(false);
-        setCurrentUser(null);
-      }
-    };
-
-    initializeAuth();
-  }, []);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(AuthService.getCurrentUser());
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const authenticated = await AuthService.isAuthenticated();
-        const user = await AuthService.getCurrentUser();
-        setIsLoggedIn(authenticated);
-        setCurrentUser(user);
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        setIsLoggedIn(false);
-        setCurrentUser(null);
-      }
+    const checkAuth = async () => {
+      const authenticated = await AuthService.isAuthenticated();
+      setIsLoggedIn(authenticated);
     };
-
-    initializeAuth();
+    checkAuth();
   }, []);
 
-  const handleLoginSuccess = async (user: User) => {
+  const handleLoginSuccess = (user?: User) => {
     setIsLoggedIn(true);
-    setCurrentUser(user);
+    setCurrentUser(user || AuthService.getCurrentUser());
   };
 
-  const handleLogout = async () => {
-    await AuthService.logout();
+  const handleLogout = () => {
+    AuthService.logout();
     setIsLoggedIn(false);
     setCurrentUser(null);
   };

@@ -1,66 +1,26 @@
 /// <reference types="dom" />
-/// <reference types="node" />
-/// <reference types="jest" />
-/// <reference types="@testing-library/jest-dom" />
 
 declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toBeInTheDocument(): R;
-      toHaveValue(value: any): R;
-      toBeDisabled(): R;
-    }
-  }
   interface Window {
     announceNavigation?: (message: string) => void;
   }
-
-  namespace jest {
-    interface Matchers<R = void, T = any> {
-      toBeInTheDocument(): R;
-      toHaveValue(value: any): R;
-      toBeDisabled(): R;
-      toBeEnabled(): R;
-      toHaveClass(className: string): R;
-      toHaveStyle(style: Record<string, any>): R;
-      toHaveTextContent(text: string | RegExp): R;
-      toBeVisible(): R;
-      toBeChecked(): R;
-      toHaveAttribute(attr: string, value?: string): R;
-      toHaveFocus(): R;
-      toBeEmptyDOMElement(): R;
-      toContainElement(element: HTMLElement | null): R;
-      toContainHTML(html: string): R;
-      toHaveDescription(text: string | RegExp): R;
-      toHaveDisplayValue(value: any): R;
-      toHaveErrorMessage(text: string | RegExp): R;
-      toHaveFormValues(values: Record<string, any>): R;
-      toHaveRole(role: string): R;
-      toHaveAccessibleDescription(text: string | RegExp): R;
-      toHaveAccessibleName(text: string | RegExp): R;
-      toBePartiallyChecked(): R;
-      toBeRequired(): R;
-      toBeInvalid(): R;
-      toBeValid(): R;
-    }
-  }
   
-  var console: globalThis.Console;
-  var setTimeout: (handler: globalThis.TimerHandler, timeout?: number, ...arguments: any[]) => number;
+  var console: Console;
+  var setTimeout: (handler: TimerHandler, timeout?: number, ...arguments: any[]) => number;
   var clearTimeout: (id?: number) => void;
-  var setInterval: (handler: globalThis.TimerHandler, timeout?: number, ...arguments: any[]) => number;
+  var setInterval: (handler: TimerHandler, timeout?: number, ...arguments: any[]) => number;
   var clearInterval: (id?: number) => void;
-  var requestAnimationFrame: (callback: globalThis.FrameRequestCallback) => number;
+  var requestAnimationFrame: (callback: FrameRequestCallback) => number;
   var cancelAnimationFrame: (id: number) => void;
-  var localStorage: globalThis.Storage;
-  var sessionStorage: globalThis.Storage;
-  var navigator: globalThis.Navigator;
-  var document: globalThis.Document;
-  var window: globalThis.Window;
+  var localStorage: Storage;
+  var sessionStorage: Storage;
+  var navigator: Navigator;
+  var document: Document;
+  var window: Window;
   var alert: (message?: any) => void;
   var confirm: (message?: string) => boolean;
   var prompt: (message?: string, _default?: string) => string | null;
-  var fetch: (input: globalThis.RequestInfo | URL, init?: globalThis.RequestInit) => Promise<Response>;
+  var fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
   var btoa: (data: string) => string;
   var atob: (data: string) => string;
   var Blob: typeof Blob;
@@ -126,14 +86,8 @@ declare global {
   var StorageEvent: typeof StorageEvent;
   var MessageEvent: typeof MessageEvent;
   var BeforeUnloadEvent: typeof BeforeUnloadEvent;
-   var PageShowEvent: typeof PageShowEvent;
-   var PageHideEvent: typeof PageHideEvent;
-   var global: typeof globalThis;
-   var NodeJS: typeof NodeJS;
-   var EventListener: typeof EventListener;
-   var AbortSignal: typeof AbortSignal;
-   var HeadersInit: typeof HeadersInit;
-   var React: typeof React;
+  var PageShowEvent: typeof PageShowEvent;
+  var PageHideEvent: typeof PageHideEvent;
 }
 
 export {};
