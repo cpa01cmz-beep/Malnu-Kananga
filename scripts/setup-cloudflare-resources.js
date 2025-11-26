@@ -56,7 +56,7 @@ class CloudflareResourceManager {
           'Menjalankan migration database'
         );
       }
-    } catch (error) {
+    } catch {
       console.log('ℹ️  Database mungkin sudah ada, melanjutkan...');
     }
   }
@@ -70,7 +70,7 @@ class CloudflareResourceManager {
         `npx wrangler vectorize create ${VECTORIZE_NAME} --dimensions=768 --metric=cosine`,
         'Membuat Vectorize index'
       );
-    } catch (error) {
+    } catch {
       console.log('ℹ️  Vectorize index mungkin sudah ada, melanjutkan...');
     }
   }

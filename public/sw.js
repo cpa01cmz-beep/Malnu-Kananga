@@ -77,7 +77,6 @@ self.addEventListener('fetch', (event) => {
 
 // Main request handler dengan different strategies
 async function handleRequest(request) {
-  const requestUrl = new URL(request.url);
 
   try {
     // Strategy 1: Cache-First untuk static assets
