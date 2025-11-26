@@ -149,18 +149,10 @@ function verifyAndDecodeToken(token: string): TokenData | null {
      // This client-side implementation is for development/testing purposes only
      const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
 
-<<<<<<< HEAD
-// SECURITY: Client-side token verification disabled for ALL environments
-      // CRITICAL SECURITY: Never enable client-side token verification
-      console.error('SECURITY VIOLATION: Client-side token verification blocked - use server-side verification');
-      return null;
-  } catch (error) {
-=======
      // SECURITY: Client-side token verification disabled for ALL environments
      console.error('SECURITY: Client-side token verification not allowed - security vulnerability');
      return null;
    } catch (error) {
->>>>>>> origin/main
     return null;
   }
 }

@@ -142,7 +142,6 @@ class SecurityMiddleware {
     return sanitized;
   }
 
-<<<<<<< HEAD
   // SQL injection prevention
   sanitizeSqlInput(input) {
     if (typeof input !== 'string') return input;
@@ -157,9 +156,6 @@ class SecurityMiddleware {
   }
 
   // Enhanced security headers with comprehensive CSP
-=======
-  // Enhanced security headers
->>>>>>> origin/main
   getSecurityHeaders() {
     return {
       'X-Content-Type-Options': 'nosniff',

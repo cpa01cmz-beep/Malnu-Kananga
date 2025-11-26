@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-// Automated Intervention Engine
-// Mesin otomasi untuk intervensi siswa berbasis AI
-=======
 // Enhanced Automated Intervention Engine
 // Mesin otomasi untuk intervensi siswa berbasis AI dengan advanced analytics
->>>>>>> origin/main
 
 import { StudentSupportService, SupportRequest } from './studentSupportService';
 import RealTimeMonitoringService, { InterventionTrigger } from './realTimeMonitoringService';
@@ -290,12 +285,8 @@ class AutomatedInterventionEngine {
 
   // Evaluate and execute interventions
   private async evaluateAndExecuteInterventions(): Promise<void> {
-<<<<<<< HEAD
-    const allProgress = StudentSupportService.getAllStudentProgress();
-=======
     const supportService = StudentSupportService.getInstance();
     const allProgress = supportService.getAllStudentProgress();
->>>>>>> origin/main
     
     for (const [studentId, progress] of Object.entries(allProgress)) {
       for (const rule of this.rules.values()) {
@@ -363,12 +354,8 @@ class AutomatedInterventionEngine {
   private evaluatePatternConditions(conditions: any[], progress: any, studentId: string): boolean {
     // Get historical data for pattern analysis
     const history = this.getInterventionHistory(studentId);
-<<<<<<< HEAD
-    const requests = StudentSupportService.getSupportRequests()
-=======
     const supportService = StudentSupportService.getInstance();
     const requests = supportService.getSupportRequests()
->>>>>>> origin/main
       .filter(req => req.studentId === studentId);
 
     return conditions.every(condition => {
@@ -542,14 +529,9 @@ class AutomatedInterventionEngine {
   // Execute support request action
   private async executeSupportRequestAction(action: InterventionAction, studentId: string): Promise<void> {
     const config = action.config;
-<<<<<<< HEAD
-    
-    StudentSupportService.createSupportRequest(
-=======
     const supportService = StudentSupportService.getInstance();
     
     supportService.createSupportRequest(
->>>>>>> origin/main
       studentId,
       config.category as any,
       'automated_intervention',
@@ -563,10 +545,6 @@ class AutomatedInterventionEngine {
   private async executeNotificationAction(action: InterventionAction, studentId: string): Promise<void> {
     const config = action.config;
     
-<<<<<<< HEAD
-    // This would integrate with notification system
-    console.log(`📱 Notification sent to student ${studentId}: ${config.message}`);
-=======
     try {
       // Store notification for student to see in their dashboard
       const notificationsKey = `student_notifications_${studentId}`;
@@ -595,17 +573,12 @@ class AutomatedInterventionEngine {
     } catch (error) {
       console.error(`Failed to send notification to student ${studentId}:`, error);
     }
->>>>>>> origin/main
   }
 
   // Execute resource assignment action
   private async executeResourceAssignmentAction(action: InterventionAction, studentId: string): Promise<void> {
     const config = action.config;
     
-<<<<<<< HEAD
-    // This would assign resources to student
-    console.log(`📚 Resources assigned to student ${studentId}: ${config.resourceIds.join(', ')}`);
-=======
     try {
       // Get resources and mark them as assigned to student
       const resourceIds = config.resourceIds || [];
@@ -629,7 +602,6 @@ class AutomatedInterventionEngine {
     } catch (error) {
       console.error(`Failed to assign resources to student ${studentId}:`, error);
     }
->>>>>>> origin/main
   }
 
   // Execute escalation action
@@ -640,14 +612,6 @@ class AutomatedInterventionEngine {
     console.log(`🚨 Escalated for student ${studentId}: ${config.escalateTo} (${config.urgency})`);
   }
 
-<<<<<<< HEAD
-  // Execute parent alert action
-  private async executeParentAlertAction(action: InterventionAction, studentId: string): Promise<void> {
-    const config = action.config;
-    
-    // This would send alert to parents
-    console.log(`👨‍👩‍👧‍👦 Parent alert sent for student ${studentId}: ${config.urgency}`);
-=======
   // Execute parent alert action with enhanced context
   private async executeParentAlertAction(action: InterventionAction, studentId: string): Promise<void> {
     const config = action.config;
@@ -750,7 +714,6 @@ class AutomatedInterventionEngine {
     };
     
     return nextSteps[template as keyof typeof nextSteps] || '1. Komunikasi dengan pihak sekolah\n2. Monitor perkembangan siswa\n3. Berikan dukungan yang diperlukan';
->>>>>>> origin/main
   }
 
   // Execute peer match action
@@ -777,11 +740,7 @@ class AutomatedInterventionEngine {
   }
 
   // Get intervention history
-<<<<<<< HEAD
-  private getInterventionHistory(studentId: string): InterventionResult[] {
-=======
   public getInterventionHistory(studentId: string): InterventionResult[] {
->>>>>>> origin/main
     return this.interventionHistory.get(studentId) || [];
   }
 
@@ -801,12 +760,8 @@ class AutomatedInterventionEngine {
 
   // Calculate intervention effectiveness
   private calculateInterventionEffectiveness(intervention: InterventionResult, studentId: string): number {
-<<<<<<< HEAD
-    const progress = StudentSupportService.getStudentProgress(studentId);
-=======
     const supportService = StudentSupportService.getInstance();
     const progress = supportService.getStudentProgress(studentId);
->>>>>>> origin/main
     if (!progress) return 0;
 
     // Check if metrics improved after intervention
