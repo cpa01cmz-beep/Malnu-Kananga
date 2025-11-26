@@ -5,7 +5,7 @@ import { baseApiService, type ApiResponse } from './baseApiService';
 import type { Student, Grade, ScheduleItem, AttendanceRecord } from '../../types';
 
 // Development mode - menggunakan mock data untuk testing
-const isDevelopment = (import.meta as any).env?.DEV || false;
+const isDevelopment = import.meta.env?.DEV;
 
 export class StudentService {
   private baseUrl = 'students';

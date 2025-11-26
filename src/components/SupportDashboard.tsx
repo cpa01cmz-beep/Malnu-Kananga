@@ -4,6 +4,8 @@
 import React, { useState, useEffect } from 'react';
 import { StudentSupportService } from '../services/studentSupportService';
 const studentSupportService = StudentSupportService.getInstance();
+import RealTimeMonitoringService from '../services/realTimeMonitoringService';
+import AutomatedInterventionEngine from '../services/automatedInterventionEngine';
 
 interface SupportDashboardProps {
   adminId?: string;
