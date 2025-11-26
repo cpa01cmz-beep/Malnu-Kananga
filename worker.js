@@ -411,9 +411,17 @@ const documents = [
 // ----------------------------------------------------
 
 export default {
-  async fetch(request, env, ctx) {
-    const security = new SecurityMiddleware();
-    const securityLogger = new SecurityLogger(env);
+<<<<<<< HEAD
+  async fetch(request, env) {
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': 'https://ma-malnukananga.sch.id',
+      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    };
+
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
+    }
     const url = new URL(request.url);
     
     // Get rate limiting configuration
