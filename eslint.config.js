@@ -125,77 +125,32 @@ export default [
         'caughtErrorsIgnorePattern': '^_'
       }],
       'no-unused-vars': 'off', // Turn off JS version since we use TS version
-      'jsx-a11y/click-events-have-key-events': 'warn',
-      'jsx-a11y/no-static-element-interactions': 'warn',
-      'no-control-regex': 'off',
-    },
-    settings: {
-      react: {
-        version: 'detect',
-      },
-    },
-  },
-  {
-    files: ['implement/**/*.js', 'scripts/**/*.js', 'src/__mocks__/**/*'],
-    languageOptions: {
-      globals: {
-        path: true,
-        __dirname: true,
-        __filename: true,
-        module: true,
-        require: true,
-        exports: true,
-        Buffer: true,
-        global: true,
-        btoa: true,
-        atob: true,
-      },
-    },
-    rules: {
-      '@typescript-eslint/no-unused-vars': 'off',
-      'no-unused-vars': 'off',
-      'no-undef': 'off',
       'no-redeclare': 'off',
     },
   },
   {
-    files: ['public/**/*.js'],
+    files: ['scripts/**/*.js', 'implement/**/*.js', 'public/sw.js', 'worker*.js'],
     languageOptions: {
       globals: {
-        addEventListener: true,
-        removeEventListener: true,
-        postMessage: true,
-        importScripts: true,
-        clients: true,
-        skipWaiting: true,
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'readonly',
+        global: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
       },
     },
     rules: {
-      'no-undef': 'off',
-      'no-redeclare': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
-      'no-unused-vars': 'off',
-    },
-  },
-  {
-    files: ['worker.js', 'worker-extended.js'],
-    languageOptions: {
-      globals: {
-        setTimeout: true,
-        clearTimeout: true,
-        setInterval: true,
-        clearInterval: true,
-        crypto: true,
-        btoa: true,
-        atob: true,
-      },
-    },
-    rules: {
-      'no-undef': 'off',
-      'no-redeclare': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
-      'no-unused-vars': 'off',
-    },
+      'no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+    }
   },
   {
     ignores: ['dist/', 'node_modules/', 'build/', '*.config.*'],
