@@ -316,12 +316,12 @@ describe('AssignmentSubmission Component', () => {
       });
     });
 
-    test('should show loading state during submission', async () => {
-      // Mock a delayed submission
-      mockOnSubmit.mockImplementation(() => new Promise(resolve => {
-        jest.advanceTimersByTime(100);
-        resolve();
-      }));
+     test('should show loading state during submission', async () => {
+       // Mock a delayed submission
+       mockOnSubmit.mockImplementation(() => new Promise<void>(resolve => {
+         jest.advanceTimersByTime(100);
+         resolve();
+       }));
 
       render(
         <AssignmentSubmission
