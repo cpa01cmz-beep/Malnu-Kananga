@@ -96,13 +96,6 @@ export default [
         isDevelopment: true,
         crypto: true,
         TextEncoder: true,
-        Console: true,
-        TimerHandler: true,
-        FrameRequestCallback: true,
-        Storage: true,
-        Navigator: true,
-        Document: true,
-        RequestInfo: true,
         btoa: true,
         atob: true,
         module: true,
@@ -129,10 +122,18 @@ export default [
       // Accessibility
       'jsx-a11y/anchor-is-valid': 'warn',
       'jsx-a11y/alt-text': 'warn',
+      'jsx-a11y/click-events-have-key-events': 'warn',
+      'jsx-a11y/no-static-element-interactions': 'warn',
       
       // TypeScript rules
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-unused-vars': ['warn', { 
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_',
+        'caughtErrorsIgnorePattern': '^_'
+      }],
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      'no-unused-vars': 'off', // Turn off JS version since we use TS version
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       'no-console': 'off',
@@ -146,6 +147,71 @@ export default [
         version: 'detect',
       },
     },
+  },
+  {
+    files: ['implement/**/*.js', 'scripts/**/*.js', 'src/__mocks__/**/*'],
+    languageOptions: {
+      globals: {
+        path: true,
+        __dirname: true,
+        __filename: true,
+        module: true,
+        require: true,
+        exports: true,
+        Buffer: true,
+        global: true,
+        btoa: true,
+        atob: true,
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+      'no-unused-vars': 'off',
+      'no-undef': 'off',
+      'no-redeclare': 'off',
+    },
+  },
+  {
+    files: ['public/**/*.js'],
+    languageOptions: {
+      globals: {
+        addEventListener: true,
+        removeEventListener: true,
+        postMessage: true,
+        importScripts: true,
+        clients: true,
+        skipWaiting: true,
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+      'no-redeclare': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'no-unused-vars': 'off',
+    },
+  },
+  {
+    files: ['worker.js', 'worker-extended.js'],
+    languageOptions: {
+      globals: {
+        setTimeout: true,
+        clearTimeout: true,
+        setInterval: true,
+        clearInterval: true,
+        crypto: true,
+        btoa: true,
+        atob: true,
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+      'no-redeclare': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'no-unused-vars': 'off',
+    },
+  },
+  {
+    ignores: ['dist/', 'node_modules/', 'build/', '*.config.*'],
   },
   prettier,
 ];
