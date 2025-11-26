@@ -2,57 +2,19 @@
 
 ## 🌟 Overview
 
-MA Malnu Kananga API provides core endpoints for authentication, AI chat functionality, and system monitoring. The API is built on Cloudflare Workers with serverless architecture and focuses on essential functionality currently implemented.
-<<<<<<< HEAD
-
----
-
-**API Documentation Version: 1.4.0**  
-**Last Updated: November 24, 2024**  
-**Implementation Status: Production Ready (Core Features)**
-
-## ⚠️ Implementation Status
-
-### Current Implementation Rate: **100%** (9/9 endpoints documented and working)
-
-#### ✅ **Fully Implemented Endpoints (9 endpoints)**
-- **Authentication API**: Magic link system with JWT tokens and security
-- **AI Chat API**: RAG system with vector database integration
-- **Student Support AI**: Enhanced AI assistance with risk assessment
-- **Support Monitoring**: Proactive student monitoring system
-- **Health Check**: Comprehensive system status monitoring
-- **Vector Database**: Document seeding and retrieval system
-- **Signature API**: HMAC signature generation and verification
-- **Security Features**: Rate limiting, CSRF protection, IP blocking
-
-#### 🚧 **Future Endpoints (Not Yet Implemented)**
-- **Student Academic APIs**: Grades, schedule, attendance records
-- **Teacher Management APIs**: Class management, grade input
-- **Parent Portal APIs**: Child monitoring, communication
-- **Content Management APIs**: Dynamic content and announcements
-- **Analytics APIs**: Performance metrics and reporting
-
-#### 📝 **Current Architecture**
-1. **Phase 1** (Complete): Authentication, AI chat, and monitoring
-2. **Phase 2** (Planned): Student and teacher academic APIs
-3. **Phase 3** (Future): Advanced analytics and content management
-
-> **Note**: This documentation reflects ONLY currently implemented endpoints. Frontend uses static/demo data for features not yet implemented.
+MA Malnu Kananga API provides core endpoints for authentication and AI chat functionality. The API is built on Cloudflare Workers with serverless architecture.
 
 ## 🏗️ Architecture
 
-### Base Configuration
-- **Base URL**: Worker deployment URL (configured in environment)
-- **API Version**: Current implementation
+- **Base URL**: `https://your-worker-url.workers.dev` (Deployed worker URL)
+- **API Version**: v1
 - **Content-Type**: `application/json`
 - **Authentication**: JWT Token (Magic Link System) with HMAC-SHA256 signing
-- **Rate Limiting**: 3 requests per minute for login, 100 requests per 15 minutes for general APIs
-- **CORS**: Enabled for all origins (`Access-Control-Allow-Origin: *`)
+- **Rate Limiting**: 5 requests per 15 minutes per IP (authentication), unlimited for chat APIs
+- **CORS**: Enabled for specific origins (localhost:3000, localhost:5173, ma-malnukananga.sch.id)
 - **Timeout**: 10 seconds per request
 - **Security**: IP-based rate limiting, secure token generation with Web Crypto API
-- **CSRF Protection**: Double-submit cookie pattern for state-changing requests
-- **Security Logging**: Comprehensive security event logging with KV storage
-- **Status**: Production Ready (Core Features Implemented)
+- **Implementation Status**: 8 endpoints implemented (32% of documented features)
 
 ### Environment Variables
 ```typescript
@@ -62,8 +24,10 @@ JWT_SECRET=your_jwt_secret_key            # Alternative JWT secret key
 NODE_ENV=production                       # Environment mode
 
 // Optional Environment Variables
-RATE_LIMIT_WINDOW_MS=900000               # 15 minutes in milliseconds (default)
-RATE_LIMIT_MAX_REQUESTS=100               # Max requests per window (default)
+VITE_ENABLE_PWA=true                     # Enable PWA features
+VITE_ENABLE_AI_CHAT=true                  # Enable AI chat functionality
+VITE_ENABLE_ANALYTICS=false               # Enable analytics tracking
+VITE_WORKER_URL=https://your-worker-url.workers.dev  # Worker URL override
 
 // Cloudflare Workers Bindings (required)
 AI=@cf/baai/bge-base-en-v1.5              # AI model for embeddings
@@ -304,307 +268,25 @@ GET /health
     "ai": "operational",
     "database": "operational",
     "vectorize": "operational"
-  },
-  "version": "1.2.0",
-  "environment": "production"
+  }
 }
 ```
 
-**Response (Degraded):**
-```json
-{
-  "status": "degraded",
-  "timestamp": "2025-11-24T10:30:00.000Z",
-  "services": {
-    "ai": "degraded",
-    "database": "operational",
-    "vectorize": "operational"
-  },
-  "version": "1.2.0",
-  "environment": "production"
-}
-```
+## 🚨 Known Limitations
 
+### Current System Limitations
+1. **Static Data Only**: Student, teacher, and parent data use static TypeScript files
+2. **No Database Integration**: D1 database exists but not connected to APIs
 **Technical Details:**
-- **Authentication Required**: No (public endpoint)
-- **Service Tests**: Active connectivity checks for all services
-- **Status Codes**: 200 for healthy, 503 for degraded/unhealthy
-- **Version Tracking**: Current worker version
-- **Environment Detection**: Development/production mode
-
-## 🔐 Signature API
-
-### Generate HMAC Signature
-```http
-POST /generate-signature
-Content-Type: application/json
-Authorization: Bearer {jwt_token}
-X-CSRF-Token: {csrf_token}
-
-{
-  "data": "string_to_sign"
-}
-```
-
-**Implementation Status:** ✅ **Fully Implemented**
-
-**Response:**
-```json
-{
-  "signature": "a1b2c3d4e5f6..."
-}
-```
-
-**Error Response:**
-```json
-{
-  "message": "Server configuration error."
-}
-```
-
-**Technical Details:**
-- **Authentication Required**: Yes (JWT + CSRF token)
-- **Algorithm**: HMAC-SHA256
-- **Secret Key**: Must be 32+ characters, cannot use default value
-- **Input Validation**: Data must be non-empty string
-- **Security**: Uses Web Crypto API for secure signature generation
-
-### Verify HMAC Signature
-```http
-POST /verify-signature
-Content-Type: application/json
-Authorization: Bearer {jwt_token}
-X-CSRF-Token: {csrf_token}
-
-{
-  "data": "string_to_verify",
-  "signature": "a1b2c3d4e5f6..."
-}
-```
-
-**Implementation Status:** ✅ **Fully Implemented**
-
-**Response:**
-```json
-{
-  "isValid": true
-}
-```
-
-**Error Response:**
-```json
-{
-  "message": "Server configuration error."
-}
-```
-
-
-**Technical Details:**
-- **Authentication Required**: Yes (JWT + CSRF token)
-- **Algorithm**: HMAC-SHA256 verification
-- **Secret Key**: Same key used for generation
-- **Signature Format**: Hexadecimal string
-- **Security**: Constant-time comparison to prevent timing attacks
-
-## 🚫 Not Implemented Endpoints
-
-The following endpoints are **NOT YET IMPLEMENTED** in the current worker.js:
-
-### Student Data APIs
-- `GET /api/student/{student_id}` - Student profile and academic data
-- `GET /api/student/{student_id}/grades` - Student grades and GPA
-- `GET /api/student/{student_id}/schedule` - Class schedule
-- `GET /api/student/{student_id}/attendance` - Attendance records
-
-### Teacher Management APIs
-- `GET /api/teacher/{teacher_id}/classes` - Teacher class assignments
-- `POST /api/teacher/{teacher_id}/grades` - Grade submission
-- `POST /api/teacher/{teacher_id}/attendance` - Attendance submission
-
-### Parent Portal APIs
-- `GET /api/parent/{parent_id}/children` - Parent's children list
-- `GET /api/parent/{parent_id}/child/{child_id}/report` - Child academic report
-
-### Content Management APIs
-- `GET /api/content/featured-programs` - Dynamic featured programs
-- `GET /api/content/news` - Dynamic news content
-- `GET /api/content/announcements` - School announcements
-
-### System APIs
-- `POST /refresh-token` - Token refresh
-- `POST /logout` - User logout
-- `GET /api/analytics/dashboard` - Analytics dashboard
-- `POST /api/messaging/send` - Messaging system
-- `GET /api/messaging/inbox` - Message inbox
-- `POST /api/webhooks/subscribe` - Webhook subscriptions
-
-**Current Alternative**: Frontend uses static/demo data for all unimplemented endpoints.
-
-## 🔧 Error Handling
-
-### Standard Error Response
-```json
-{
-  "message": "Terjadi kesalahan pada server."
-}
-```
-
-### Common Error Responses by Endpoint
-
-#### Authentication Errors
-- **Rate Limit Exceeded** (429): `"Terlalu banyak percobaan login. Silakan coba lagi dalam 1 menit."`
-- **Invalid Email** (400): `"Format email tidak valid."`
-- **Unauthorized Email** (403): `"Email tidak terdaftar dalam sistem."`
-- **Token Invalid** (400): `"Token tidak valid atau hilang."`
-- **Token Expired** (400): `"Link login sudah kedaluwarsa atau tidak valid."`
-
-#### API Errors
-- **Authentication Required** (401): `"Autentikasi diperlukan."`
-- **CSRF Invalid** (403): `"CSRF token tidak valid."`
-- **Server Configuration** (500): `"Server configuration error."`
-- **General Error** (500): `"Terjadi kesalahan pada server."`
-
-## 🚀 Rate Limiting
-
-### Rate Limiting Implementation
-- **Login Endpoint**: 3 requests per minute per IP
-- **General APIs**: 100 requests per 15 minutes per IP
-- **Distributed Storage**: Uses KV store when available, fallback to memory
-- **Block Duration**: 30 minutes for abusive clients
-- **IP Detection**: CF-Connecting-IP header, X-Forwarded-IP fallback
-
-### Security Event Logging
-All security events are logged with severity levels:
-- **CRITICAL**: AUTH_BYPASS_ATTEMPT, CSRF_TOKEN_INVALID, RATE_LIMIT_HARD_BLOCK
-- **HIGH**: RATE_LIMIT_EXCEEDED, INVALID_TOKEN, UNAUTHORIZED_ACCESS
-- **MEDIUM**: SUSPICIOUS_INPUT, FAILED_AUTHENTICATION
-- **LOW**: Informational events
-
-## 🧪 Testing
-
-### Test Authentication Flow
-```bash
-# 1. Request magic link (using allowed email)
-curl -X POST https://your-worker.workers.dev/request-login-link \
-  -H "Content-Type: application/json" \
-  -d '{"email": "admin@ma-malnukananga.sch.id"}'
-
-# 2. Seed vector database (one-time setup)
-curl -X GET https://your-worker.workers.dev/seed
-
-# 3. Test AI chat (requires authentication cookie)
-curl -X POST https://your-worker.workers.dev/api/chat \
-  -H "Content-Type: application/json" \
-  -H "Cookie: __Host-auth_session=YOUR_JWT_TOKEN" \
-  -d '{"message": "Apa saja program unggulan sekolah?"}'
-```
-
-### Test Health Check
-```bash
-curl -X GET https://your-worker.workers.dev/health
-```
-
-### Test Signature API
-```bash
-# Generate signature
-curl -X POST https://your-worker.workers.dev/generate-signature \
-  -H "Content-Type: application/json" \
-  -H "Cookie: __Host-auth_session=YOUR_JWT_TOKEN" \
-  -d '{"data": "test string"}'
-
-# Verify signature
-curl -X POST https://your-worker.workers.dev/verify-signature \
-  -H "Content-Type: application/json" \
-  -H "Cookie: __Host-auth_session=YOUR_JWT_TOKEN" \
-  -d '{"data": "test string", "signature": "SIGNATURE_FROM_PREVIOUS_CALL"}'
-```
-
-## 📊 Implementation Summary
-
-### ✅ Fully Implemented Endpoints (9 endpoints)
-
-| Endpoint | Method | Authentication | Description |
-|----------|--------|----------------|-------------|
-| `/request-login-link` | POST | No | Magic link generation with rate limiting |
-| `/verify-login` | GET | No | JWT token verification and cookie setting |
-| `/api/chat` | POST | Yes | RAG chat with vector database |
-| `/api/student-support` | POST | Yes | Enhanced AI student support |
-| `/api/support-monitoring` | POST | Yes | Proactive student monitoring |
-| `/seed` | GET | No | Vector database seeding |
-| `/health` | GET | No | System health check |
-| `/generate-signature` | POST | Yes | HMAC signature generation |
-| `/verify-signature` | POST | Yes | HMAC signature verification |
-
-### 🔧 Security Features Implemented
-
-| Feature | Implementation |
-|---------|----------------|
-| **Rate Limiting** | Distributed KV store with memory fallback |
-| **CSRF Protection** | Double-submit cookie pattern |
-| **JWT Security** | HMAC-SHA256 with Web Crypto API |
-| **Input Validation** | Email sanitization and format validation |
-| **Security Logging** | Comprehensive event logging with severity levels |
-| **Secure Cookies** | __Host prefix, HTTP-only, partitioned |
-| **IP Blocking** | Automatic blocking for abusive clients |
-
-### 📈 System Architecture
-
-| Component | Technology | Status |
-|-----------|------------|--------|
-| **Authentication** | JWT + Magic Links | ✅ Operational |
-| **AI Chat** | Cloudflare AI + Vectorize | ✅ Operational |
-| **Vector Database** | Cloudflare Vectorize | ✅ Operational |
-| **Database** | Cloudflare D1 | ✅ Operational |
-| **Email Service** | MailChannels API | ✅ Operational |
-| **Security Logging** | Cloudflare KV | ✅ Operational (if configured) |
-
-### 🚫 Future Development Priorities
-
-| Priority | Feature | Description |
-|----------|---------|-------------|
-| **HIGH** | Student Data APIs | Academic records, grades, attendance |
-| **HIGH** | Content Management | Dynamic news and announcements |
-| **MEDIUM** | Teacher APIs | Class management and grade input |
-| **MEDIUM** | Parent Portal | Child monitoring and reports |
-| **LOW** | Analytics Dashboard | System metrics and reporting |
+For API support and questions:
+- **Documentation Issues**: Create GitHub Issue in repository
+- **Implementation Questions**: Review worker.js source code
+- **Feature Requests**: Submit via GitHub Issues with "enhancement" label
 
 ---
 
-**API Documentation Version: 1.4.0**  
-**Last Updated: 2025-11-24**
-**Implementation Status: Production Ready (Core Features)**
-
-## ⚠️ **PENTING: Status Implementasi API Saat Ini**
-
-### Current Implementation Rate: **36%** (9/25 endpoints documented)
-
-API MA Malnu Kananga saat ini memiliki **implementasi sangat terbatas** dengan fokus hanya pada fitur dasar:
-
-### ✅ **Fully Implemented Endpoints (9 endpoints - 36% dari total yang direncanakan)**
-- **Authentication API**: Magic link system dengan JWT tokens dan security
-- **AI Chat API**: RAG system dengan vector database integration  
-- **Health Check**: Comprehensive system status monitoring
-- **Vector Database**: Document seeding dan retrieval system
-- **Content Management**: Featured programs dan news management (demo data)
-- **Student Data API**: Basic student information retrieval (demo data)
-- **User Profile**: Basic user profile management (demo data)
-- **Content Editing**: AI-powered content editing system
-- **Vector Search**: RAG system document retrieval
-
-#### 🚧 **PLANNED ENDPOINTS (16 endpoints - NOT YET IMPLEMENTED)**
-- **Student Academic APIs**: Grades, schedule, attendance records (4 endpoints)
-- **Teacher Management APIs**: Class management, grade input (3 endpoints)
-- **Parent Portal APIs**: Child monitoring, communication (2 endpoints)
-- **Content Management APIs**: Dynamic content and announcements (3 endpoints)
-- **System APIs**: Token refresh, logout, analytics, messaging (4 endpoints)
-
-#### 📝 **Current Architecture**
-1. **Phase 1** (✅ Complete): Authentication, AI chat, and monitoring
-2. **Phase 2** (🚧 Planned): Student and teacher academic APIs
-3. **Phase 3** (📋 Future): Advanced analytics and content management
-
-*API Documentation Version: 1.4.0*  
-*Last Updated: 2025-11-24*
-*Implementation Rate: 36% (9/25 documented endpoints)*  
-*Backend: Cloudflare Workers with D1, Vectorize & AI*  
-*Status: Production Ready (Core Features Only)*
+*API Documentation Version: 1.3.0*  
+*Last Updated: November 23, 2025*  
+*Implementation Status: 8/25 endpoints implemented (32%)*  
+*Backend: Cloudflare Workers with Vectorize*  
+*Next Priority: Student Data APIs*

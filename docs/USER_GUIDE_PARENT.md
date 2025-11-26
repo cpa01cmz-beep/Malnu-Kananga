@@ -4,6 +4,32 @@
 
 Portal orang tua MA Malnu Kananga adalah platform digital untuk memantau perkembangan akademik anak, berkomunikasi dengan guru, dan terlibat aktif dalam pendidikan anak secara efektif.
 
+## ⚠️ Implementation Status Notice
+
+**Current Implementation Status**: 🟡 **Limited Functionality**
+
+### ✅ **Currently Working Features**
+- **Authentication System**: Magic link login fully functional
+- **AI Chat Assistant**: RAG-powered assistant for school information
+- **Dashboard Interface**: Modern parent dashboard with navigation
+- **PWA Features**: Installable web app with offline support
+
+### ❌ **Not Yet Implemented**
+- **Child Data Monitoring**: Real academic data and progress tracking
+- **Grade Viewing**: Actual grades and academic performance
+- **Attendance Tracking**: Real attendance records and reports
+- **Teacher Messaging**: Communication system with teachers
+- **Announcement System**: School announcements and notifications
+- **Progress Reports**: Detailed academic and behavioral reports
+
+### 🔄 **What to Expect**
+- **Sample Data**: Current child information is demonstration data only
+- **UI Prototype**: Interface shows intended functionality
+- **Development Focus**: Core authentication and AI features are operational
+- **Future Updates**: Parent monitoring features will be implemented in phases
+
+**Note**: This guide describes the intended full functionality. Some features shown may be using demonstration data until backend APIs are fully implemented.
+
 ---
 
 <<<<<<< HEAD

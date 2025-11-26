@@ -2,7 +2,24 @@
 
 ## 🌟 Overview
 
-MA Malnu Kananga School Portal is built on a modern, serverless architecture designed for scalability, performance, and reliability. This document provides comprehensive technical details about the system architecture, components, and design decisions.
+MA Malnu Kananga School Portal is built on a modern, serverless architecture. **Current implementation focuses on authentication and AI features only**. Academic features are planned for future development phases.
+
+## ⚠️ Implementation Status
+
+**Implemented Components**:
+- ✅ Frontend: React + TypeScript with modern UI
+- ✅ Authentication: Magic link system with JWT
+- ✅ AI System: RAG-powered chat with Vectorize
+- ✅ PWA: Progressive Web App capabilities
+
+**Planned but Not Implemented**:
+- ❌ D1 Database Integration (currently using static data)
+- ❌ Academic APIs (student, teacher, parent data)
+- ❌ Content Management System
+- ❌ Analytics and Reporting
+- ❌ Advanced Security Features
+
+This architecture document shows the intended full system design. Current implementation is a subset focused on core authentication and AI functionality.
 
 ---
 
@@ -840,7 +857,7 @@ MA Malnu Kananga implements comprehensive monitoring across all system layers:
 ## 🌐 API Architecture
 
 ### RESTful Design
-- **Base URL**: `https://malnu-api.sulhi-cmz.workers.dev`
+- **Base URL**: `https://your-worker-url.workers.dev` (Deployed worker URL)
 - **Version**: v1 with backward compatibility
 - **Format**: JSON with consistent error handling
 - **Documentation**: OpenAPI 3.0 specification
