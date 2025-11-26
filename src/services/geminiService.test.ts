@@ -76,12 +76,12 @@ test('should handle successful response with context', async () => {
           yield { text: 'Hello' };
           yield { text: ' world' };
         }
-      };
+       };
 
-      mockGenerateContentStream.mockResolvedValue(mockStream);
-      mockGetRelevantMemories.mockResolvedValue([]);
+       mockGenerateContentStream.mockResolvedValue(mockStream);
+       mockGetRelevantMemories.mockResolvedValue([]);
 
-      const generator = getAIResponseStream('Hello', []);
+       const generator = getAIResponseStream('Hello', []);
       const results = [];
       for await (const chunk of generator) {
         results.push(chunk);
