@@ -10,7 +10,17 @@ import path from 'path';
 import SessionManager from './sessionManager.js';
 
 // Global console for CLI operations
-/* global console process */
+if (typeof global === 'undefined') {
+  globalThis.globalConsole = console;
+} else {
+  global.globalConsole = console;
+}
+
+// Global console for CLI usage
+/* global console */
+
+const IMPLEMENT_DIR = './';
+const STATE_FILE = path.join(IMPLEMENT_DIR, 'state.json');
 
 async function showHelp() {
   console.log(`
