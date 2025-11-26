@@ -94,7 +94,9 @@ describe('AssignmentSubmission Component', () => {
       );
 
       expect(screen.getByText('File Tugas')).toBeInTheDocument();
-      expect(screen.getByText('Pilih File')).toBeInTheDocument();
+      expect(screen.getByText((content, element) => {
+        return content.includes('Pilih File');
+      })).toBeInTheDocument();
       expect(screen.getByText(/PDF, Word, Gambar, atau Text/)).toBeInTheDocument();
     });
 
@@ -137,24 +139,21 @@ describe('AssignmentSubmission Component', () => {
       );
 
        const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-stream' });
-       const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
-
-      if (dropZone) {
-        fireEvent.drop(dropZone, {
-          dataTransfer: {
-            files: [invalidFile]
-          }
-        });
-      }
-
-       // Should still show the file upload area (the large file should not prevent upload UI from working)
-       // After a large file is rejected, the upload area should still be functional
-       expect(screen.getByText(/pilih file/i)).toBeInTheDocument();
+        const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
+ 
+       if (dropZone) {
+         fireEvent.drop(dropZone, {
+           dataTransfer: {
+             files: [invalidFile]
+           }
+         });
+       }
+ 
+       // Check that console.error was called with file type validation message
+       expect(consoleSpy).toHaveBeenCalledWith('Tipe file tidak didukung. Silakan upload file PDF, Word, gambar, atau text.');
        
        // Restore console.error
        consoleSpy.mockRestore();
-       
-       jest.useRealTimers();
      });
 
     test('should validate file size', () => {
@@ -170,32 +169,32 @@ describe('AssignmentSubmission Component', () => {
         />
       );
 
-       // Create a file larger than 10MB - using a blob to ensure proper size
-       const largeFileBuffer = new ArrayBuffer(11 * 1024 * 1024); // 11MB
-       const largeFile = new File([largeFileBuffer], 'large.pdf', { type: 'application/pdf' });
-      
-        // Find the file upload area by looking for the drop zone div (not the button)
-        const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
+        // Create a file larger than 10MB - using a blob to ensure proper size
+        const largeFileBuffer = new ArrayBuffer(11 * 1024 * 1024); // 11MB
+        const largeFile = new File([largeFileBuffer], 'large.pdf', { type: 'application/pdf' });
+        
+         // Find the file upload area by looking for the drop zone div (not the button)
+         const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
 
-        if (dropZone) {
-          fireEvent.drop(dropZone, {
-            dataTransfer: {
-              files: [largeFile]
-            }
-          });
-        }
+         if (dropZone) {
+           fireEvent.drop(dropZone, {
+             dataTransfer: {
+               files: [largeFile]
+             }
+           });
+         }
 
-        // After attempting to upload a large file, the component should still be functional
-        // The large file might not be properly rejected in test environment, but UI should remain usable
-        // Check for either the upload button or the uploaded file display to ensure UI is responsive
-        const uploadArea = screen.queryByText(/pilih file/i) || screen.queryByText('large.pdf');
-        expect(uploadArea).toBeInTheDocument();
-       
-       // Restore console.error
-       consoleSpy.mockRestore();
-       
-       jest.useRealTimers();
-     });
+         // After attempting to upload a large file, the component should still be functional
+         // The large file might not be properly rejected in test environment, but UI should remain usable
+         // Check for either the upload button or the uploaded file display to ensure UI is responsive
+         const uploadArea = screen.queryByText(/pilih file/i) || screen.queryByText('large.pdf');
+         expect(uploadArea).toBeInTheDocument();
+        
+         // Restore console.error
+         consoleSpy.mockRestore();
+         
+         jest.useRealTimers();
+       });
   });
 
   describe('Notes Section', () => {
@@ -270,48 +269,48 @@ describe('AssignmentSubmission Component', () => {
       expect(submitButton).not.toBeDisabled();
     });
 
-    test('should call onSubmit with correct data', async () => {
-      jest.useFakeTimers();
-      
-      render(
-        <AssignmentSubmission
-          assignment={mockAssignment}
-          onClose={mockOnClose}
-          onSubmit={mockOnSubmit}
-        />
-      );
+     test('should call onSubmit with correct data', async () => {
+       jest.useFakeTimers();
+       
+       render(
+         <AssignmentSubmission
+           assignment={mockAssignment}
+           onClose={mockOnClose}
+           onSubmit={mockOnSubmit}
+         />
+       );
+ 
+       // Add notes
+       const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau keterangan/);
+       fireEvent.change(notesTextarea, { target: { value: 'Catatan untuk pengumpulan' } });
+ 
+       // Submit form
+       const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
+       fireEvent.click(submitButton);
+ 
+         await waitFor(() => {
+           expect(mockOnSubmit).toHaveBeenCalledWith('ASG001', {
+             notes: 'Catatan untuk pengumpulan',
+             submittedBy: 'PAR001'
+           });
+         });
+       
+       jest.useRealTimers();
+     });
 
-      // Add notes
-      const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau keterangan/);
-      fireEvent.change(notesTextarea, { target: { value: 'Catatan untuk pengumpulan' } });
+     test('should show loading state during submission', async () => {
+       jest.useFakeTimers();
+       
+         // Mock a delayed submission
+         mockOnSubmit.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
 
-      // Submit form
-      const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
-      fireEvent.click(submitButton);
-
-        await waitFor(() => {
-          expect(mockOnSubmit).toHaveBeenCalledWith('ASG001', {
-            notes: 'Catatan untuk pengumpulan',
-            submittedBy: 'PAR001'
-          });
-        });
-      
-      jest.useRealTimers();
-    });
-
-    test('should show loading state during submission', async () => {
-      jest.useFakeTimers();
-      
-        // Mock a delayed submission
-        mockOnSubmit.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
-
-      render(
-        <AssignmentSubmission
-          assignment={mockAssignment}
-          onClose={mockOnClose}
-          onSubmit={mockOnSubmit}
-        />
-      );
+       render(
+         <AssignmentSubmission
+           assignment={mockAssignment}
+           onClose={mockOnClose}
+           onSubmit={mockOnSubmit}
+         />
+       );
 
       // Add notes to enable submit
       const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau keterangan/);
@@ -359,11 +358,11 @@ describe('AssignmentSubmission Component', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    test('should handle submission error gracefully', async () => {
-      jest.useFakeTimers();
-      
-      mockOnSubmit.mockRejectedValue(new Error('Upload failed'));
+   describe('Error Handling', () => {
+     test('should handle submission error gracefully', async () => {
+       jest.useFakeTimers();
+       
+       mockOnSubmit.mockRejectedValue(new Error('Upload failed'));
 
       // Mock console.error to avoid test output pollution
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
