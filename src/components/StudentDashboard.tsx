@@ -56,10 +56,10 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
       }, 5000);
     };
 
-    window.addEventListener('showNotification', handleNewNotification as EventListener);
+    window.addEventListener('showNotification', handleNewNotification as any);
 
     return () => {
-      window.removeEventListener('showNotification', handleNewNotification as EventListener);
+      window.removeEventListener('showNotification', handleNewNotification as any);
     };
   }, []);
 
