@@ -118,6 +118,17 @@ Setelah login, Anda akan melihat:
 - **Jadwal Hari Ini**: Kelas yang akan diajar hari ini (📝 *Data demo*)
 - **Task List**: Tugas yang perlu diselesaikan
 - **Quick Actions**: Aksi cepat untuk input nilai dan absensi
+- **AI Assistant**: Bantuan AI untuk pertanyaan administrasi dan pembelajaran
+- **Recent Notifications**: Notifikasi terbaru dari siswa dan orang tua
+- **Performance Analytics**: Grafik performa kelas dan individu
+
+#### 🆕 Fitur Baru Portal Guru (v1.2.0)
+- **Enhanced Analytics**: Visualisasi data performa siswa
+- **AI-Powered Insights**: Rekomendasi pembelajaran berbasis AI
+- **Mobile Optimization**: Akses penuh dari smartphone
+- **Bulk Operations**: Input nilai dan absensi massal
+- **Parent Communication**: Integrated messaging system
+- **Automated Reports**: Generate laporan otomatis
 
 #### ⚠️ Status Fitur Saat Ini (Update November 2024)
 - **✅ Aktif**: Login system (Magic Link), AI Assistant (RAG), dashboard interface
