@@ -1,4 +1,3 @@
-
 # Security Assessment Report
 
 ## Executive Summary
