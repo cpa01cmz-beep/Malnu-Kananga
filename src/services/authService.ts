@@ -56,110 +56,41 @@ function generateRandomString(length: number): string {
   return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
-// Generate HMAC signature using crypto.subtle
-async function generateHMACSignature(data: string, secret: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw',
-    encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
-  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
-  return Array.from(new Uint8Array(signature), byte => byte.toString(16).padStart(2, '0')).join('');
-}
+// REMOVED: Client-side token generation functions for security
+// All token operations must be handled server-side in production
 
-// Verify HMAC signature using crypto.subtle
-async function verifyHMACSignature(data: string, signature: string, secret: string): Promise<boolean> {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw',
-    encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['verify']
-  );
+// REMOVED: Client-side cryptographic functions for security
+// All HMAC operations and token generation must be handled server-side
+// This prevents secret key exposure and token forgery attacks
 
-  // Convert signature from hex string to Uint8Array
-  const signatureBytes = new Uint8Array(signature.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
-
-  return await crypto.subtle.verify('HMAC', key, signatureBytes, encoder.encode(data));
-}
-
-// Secure token generation menggunakan Web Crypto API
-async function generateSecureToken(email: string, expiryTime: number = 15 * 60 * 1000): Promise<string> {
-  const header = { alg: 'HS256', typ: 'JWT' };
-  const payload = {
-    email: email,
-    exp: Math.floor((Date.now() + expiryTime) / 1000),
-    iat: Math.floor(Date.now() / 1000),
-    jti: generateRandomString(16) // Unique token ID
-  };
-
-  // Encode header dan payload ke base64url
-  const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-  const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-
-  // Generate signature using HMAC-SHA256 with crypto.subtle (secure signature)
-  // In production, signature generation should be done server-side only
-  // This client-side implementation is for development/testing purposes only
-  // DO NOT use this for production authentication as it exposes the secret
-   const secret = isDevelopment ? ((import.meta as any).env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
-
-  // SECURITY: Client-side signature generation disabled for ALL environments
-  // All authentication now handled server-side in Cloudflare Worker
-  // CRITICAL SECURITY: Never enable client-side token generation
-  console.error('SECURITY VIOLATION: Client-side token generation blocked - use server-side authentication');
-  throw new Error('Authentication must be handled server-side only - use /api/login endpoint');
-}
-
-// Synchronous version for development mode
-function generateSecureTokenSync(email: string, expiryTime: number = 15 * 60 * 1000): string {
-  const header = { alg: 'HS256', typ: 'JWT' };
-  const payload = {
-    email: email,
-    exp: Math.floor((Date.now() + expiryTime) / 1000),
-    iat: Math.floor(Date.now() / 1000),
-    jti: generateRandomString(16) // Unique token ID
-  };
-
-  // Encode header dan payload ke base64url
-  const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-  const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-
-  // SECURITY: All token generation moved to server-side
-  // Client-side token generation completely disabled for security
-  // CRITICAL SECURITY: Never enable client-side token generation
-  console.error('SECURITY VIOLATION: Client-side token generation blocked - use server-side authentication');
-  throw new Error('Authentication must be handled server-side only - use /api/login endpoint');
-}
-
-// Verify dan decode secure token
-function verifyAndDecodeToken(token: string): TokenData | null {
+// Verify dan decode secure token - SERVER SIDE ONLY
+// Client-side token verification is disabled for security
+async function verifyAndDecodeToken(token: string): Promise<TokenData | null> {
   try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
+    // Always verify tokens server-side for security
+    const response = await fetch(`${WORKER_URL}/verify-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token }),
+    });
 
-    const [encodedHeader, encodedPayload, signature] = parts;
+    if (!response.ok) {
+      return null;
+    }
 
-    // Verify signature using development signature method
-    const data = `${encodedHeader}.${encodedPayload}`;
-     // In production, token verification should be done server-side only
-      // This client-side implementation is for development/testing purposes only
-      const secret = isDevelopment ? (import.meta.env?.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
-
-     // SECURITY: Client-side token verification disabled for ALL environments
-     console.error('SECURITY: Client-side token verification not allowed - security vulnerability');
-     return null;
-   } catch (error) {
-     return null;
-   }
+    const result = await response.json();
+    return result.valid ? result.tokenData : null;
+  } catch (error) {
+    console.error('Token verification error:', error);
+    return null;
+  }
 }
 
 // Check if token needs refresh (dalam 5 menit terakhir)
-function shouldRefreshToken(token: string): boolean {
-  const tokenData = verifyAndDecodeToken(token);
+async function shouldRefreshToken(token: string): Promise<boolean> {
+  const tokenData = await verifyAndDecodeToken(token);
   if (!tokenData) return false;
 
   const now = Math.floor(Date.now() / 1000);
@@ -168,24 +99,27 @@ function shouldRefreshToken(token: string): boolean {
   return (tokenData.exp - now) <= fiveMinutes;
 }
 
-// Refresh token with async implementation for production
+// Refresh token - SERVER SIDE ONLY
 async function refreshToken(currentToken: string): Promise<string | null> {
-  const tokenData = verifyAndDecodeToken(currentToken);
-  if (!tokenData) return null;
+  try {
+    const response = await fetch(`${WORKER_URL}/refresh-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token: currentToken }),
+    });
 
-  // Generate token baru dengan expiry time yang sama atau diperpanjang
-  // Note: In a real implementation, this should be handled server-side for security
-  return await generateSecureToken(tokenData.email, 15 * 60 * 1000);
-}
+    if (!response.ok) {
+      return null;
+    }
 
-// Synchronous refresh token for development
-function refreshTokenSync(currentToken: string): string | null {
-  const tokenData = verifyAndDecodeToken(currentToken);
-  if (!tokenData) return null;
-
-  // Generate token baru dengan expiry time yang sama atau diperpanjang
-  // Note: In a real implementation, this should be handled server-side for security
-  return generateSecureTokenSync(tokenData.email, 15 * 60 * 1000);
+    const result = await response.json();
+    return result.token || null;
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    return null;
+  }
 }
 
 // Token storage management dengan auto-refresh
@@ -286,14 +220,16 @@ class TokenManager {
     const currentToken = this.getToken();
     if (!currentToken) return;
 
-    const newToken = refreshTokenSync(currentToken);
-    if (newToken) {
-      this.storeTokenSync(newToken);
-      console.log('🔄 Token berhasil di-refresh secara otomatis');
-    } else {
-      console.warn('⚠️ Gagal refresh token, user perlu login ulang');
-      this.removeToken();
-    }
+    // refreshTokenSync is not defined, using refreshToken
+    refreshToken(currentToken).then(newToken => {
+      if (newToken) {
+        this.storeTokenSync(newToken);
+        console.log('🔄 Token berhasil di-refresh secara otomatis');
+      } else {
+        console.warn('⚠️ Gagal refresh token, user perlu login ulang');
+        this.removeToken();
+      }
+    });
   }
 
   static initializeTokenManager(): void {
@@ -380,63 +316,10 @@ class LocalAuthService {
   static createUser(email: string, name?: string): User {
     const users = this.getUsers();
 
-    // Default users untuk testing berbagai role
-    const defaultUsers = [
-      {
-        id: 1,
-        email: 'admin@ma-malnukananga.sch.id',
-        name: 'Administrator',
-        role: 'admin',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        is_active: true
-      },
-      {
-        id: 2,
-        email: 'guru@ma-malnukanaga.sch.id',
-        name: 'Dr. Siti Nurhaliza, M.Pd.',
-        role: 'teacher',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        is_active: true
-      },
-      {
-        id: 3,
-        email: 'siswa@ma-malnukanaga.sch.id',
-        name: 'Ahmad Fauzi Rahman',
-        role: 'student',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        is_active: true
-      },
-      {
-        id: 4,
-        email: 'parent@ma-malnukanaga.sch.id',
-        name: 'Bapak Ahmad Rahman',
-        role: 'parent',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        is_active: true
-      },
-      {
-        id: 5,
-        email: 'ayah@ma-malnukanaga.sch.id',
-        name: 'Bapak Ahmad Fauzi',
-        role: 'parent',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        is_active: true
-      },
-      {
-        id: 6,
-        email: 'ibu@ma-malnukanaga.sch.id',
-        name: 'Ibu Siti Aminah',
-        role: 'parent',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        is_active: true
-      }
-    ];
+    // SECURITY: Removed hardcoded default users for security
+    // In production, users must be created through proper admin interface
+    // Development users should be created manually through setup process
+    const defaultUsers = [];
 
     // SECURITY: Only allow predefined users - no dynamic user creation
     const existingUser = defaultUsers.find(user => user.email === email && user.is_active);
@@ -570,14 +453,16 @@ export class AuthService {
         return { success: false, message: 'Tidak ada token aktif' };
       }
 
-      const newToken = refreshTokenSync(currentToken);
-      if (newToken) {
-        TokenManager.storeTokenSync(newToken);
-        return { success: true, token: newToken, message: 'Token berhasil di-refresh' };
-      } else {
-        TokenManager.removeToken();
-        return { success: false, message: 'Token tidak valid, silakan login ulang' };
-      }
+      // Use refreshToken instead of refreshTokenSync
+      return refreshToken(currentToken).then(newToken => {
+        if (newToken) {
+          TokenManager.storeTokenSync(newToken);
+          return { success: true, token: newToken, message: 'Token berhasil di-refresh' };
+        } else {
+          TokenManager.removeToken();
+          return { success: false, message: 'Token tidak valid, silakan login ulang' };
+        }
+      });
     } else {
       return { success: false, message: 'Token refresh hanya tersedia di development mode' };
     }
@@ -655,5 +540,3 @@ export class AuthService {
   }
 }
 
-// Export untuk kemudahan testing
-export { LocalAuthService, ProductionAuthService };

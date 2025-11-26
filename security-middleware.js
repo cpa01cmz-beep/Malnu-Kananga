@@ -1,54 +1,68 @@
 // Security middleware for Cloudflare Worker
-class SecurityMiddleware {
-  constructor(env) {
-    this.env = env;
-    this.rateLimitStore = new Map();
-  }
+export class SecurityMiddleware {
+  // Rate limiting store (in production, use KV or D1)
+  static rateLimitStore = new Map();
+  
+  // Rate limiting configuration
+  static RATE_LIMITS = {
+    '/api/chat': { windowMs: 60000, maxRequests: 10 }, // 10 requests per minute
+    '/api/student-support': { windowMs: 60000, maxRequests: 5 }, // 5 requests per minute
+    '/request-login-link': { windowMs: 900000, maxRequests: 3 }, // 3 requests per 15 minutes
+    'default': { windowMs: 60000, maxRequests: 20 } // 20 requests per minute for other endpoints
+  };
 
-  // Enhanced rate limiting with multiple tiers
-  isRateLimitExceeded(clientId, endpoint = 'default') {
+  // Input validation patterns
+  static VALIDATION_PATTERNS = {
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    studentId: /^[a-zA-Z0-9]{1,50}$/,
+    message: /^[\s\S]{1,1000}$/,
+    token: /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/
+  };
+
+  // Check rate limiting
+  static checkRateLimit(clientId, endpoint) {
     const now = Date.now();
-    const limits = {
-      'default': { limit: 100, windowMs: 60000 },
-      'auth': { limit: 10, windowMs: 60000 },
-      'ai': { limit: 50, windowMs: 60000 },
-      'upload': { limit: 5, windowMs: 60000 }
-    };
-    
-    const config = limits[endpoint] || limits['default'];
+    const limit = this.RATE_LIMITS[endpoint] || this.RATE_LIMITS.default;
     const key = `${clientId}:${endpoint}`;
-    const clientData = this.rateLimitStore.get(key);
-
-    if (!clientData) {
-      this.rateLimitStore.set(key, {
-        count: 1,
-        resetTime: now + config.windowMs,
-        firstRequest: now
-      });
-      return false;
-    }
-
-    if (now > clientData.resetTime) {
-      this.rateLimitStore.set(key, {
-        count: 1,
-        resetTime: now + config.windowMs,
-        firstRequest: now
-      });
-      return false;
-    }
-
-    clientData.count++;
     
-    // Progressive rate limiting for abusive clients
-    if (clientData.count > config.limit * 2) {
-      return true; // Hard block
+    if (!this.rateLimitStore.has(key)) {
+      this.rateLimitStore.set(key, {
+        requests: [{ timestamp: now }],
+        windowStart: now
+      });
+      return { allowed: true, remaining: limit.maxRequests - 1 };
     }
+
+    const data = this.rateLimitStore.get(key);
     
-    return clientData.count > config.limit;
+    // Clean old requests outside the window
+    data.requests = data.requests.filter(req => now - req.timestamp < limit.windowMs);
+    
+    // Reset window if it's expired
+    if (now - data.windowStart > limit.windowMs) {
+      data.requests = [];
+      data.windowStart = now;
+    }
+
+    // Check if limit exceeded
+    if (data.requests.length >= limit.maxRequests) {
+      return { 
+        allowed: false, 
+        remaining: 0,
+        resetTime: data.windowStart + limit.windowMs
+      };
+    }
+
+    // Add new request
+    data.requests.push({ timestamp: now });
+    return { 
+      allowed: true, 
+      remaining: limit.maxRequests - data.requests.length - 1
+    };
   }
 
-  // Enhanced input validation and sanitization
-  validateInput(data, type = 'string') {
+  // Enhanced input validation with comprehensive XSS prevention
+  static validateInput(data, type = 'string') {
     if (type === 'email') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(data) && data.length <= 254;
@@ -123,15 +137,61 @@ class SecurityMiddleware {
     return false;
   }
 
+  // Validate input data using rules (for compatibility)
+  static validateInputWithRules(data, rules) {
+    const errors = [];
+    
+    for (const [field, rule] of Object.entries(rules)) {
+      const value = data[field];
+      
+      // Required field check
+      if (rule.required && (!value || value === '')) {
+        errors.push(`${field} is required`);
+        continue;
+      }
+      
+      // Skip validation if field is not provided and not required
+      if (!value && !rule.required) {
+        continue;
+      }
+      
+      // Type check
+      if (rule.type && typeof value !== rule.type) {
+        errors.push(`${field} must be of type ${rule.type}`);
+        continue;
+      }
+      
+      // Pattern check
+      if (rule.pattern && !this.VALIDATION_PATTERNS[rule.pattern].test(value)) {
+        errors.push(`${field} format is invalid`);
+        continue;
+      }
+      
+      // Length check
+      if (rule.minLength && value.length < rule.minLength) {
+        errors.push(`${field} must be at least ${rule.minLength} characters`);
+      }
+      
+      if (rule.maxLength && value.length > rule.maxLength) {
+        errors.push(`${field} must not exceed ${rule.maxLength} characters`);
+      }
+    }
+    
+    return errors;
+  }
+
   // Sanitize input data
-  sanitizeInput(data, type = 'string') {
-    if (typeof data !== 'string') return data;
+  static sanitizeInput(input, type = 'string') {
+    if (typeof input !== 'string') return input;
     
     // Remove potentially dangerous characters
-    let sanitized = data
+    let sanitized = input
       // eslint-disable-next-line no-control-regex
       .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Control characters
       .replace(/[\uFFFE\uFFFF]/g, '') // Invalid Unicode
+      .replace(/[<>]/g, '') // Remove potential HTML tags
+      .replace(/javascript:/gi, '') // Remove javascript protocol
+      .replace(/on\w+=/gi, '') // Remove event handlers
       .trim();
     
     // Additional sanitization for specific types
@@ -143,7 +203,7 @@ class SecurityMiddleware {
   }
 
   // SQL injection prevention
-  sanitizeSqlInput(input) {
+  static sanitizeSqlInput(input) {
     if (typeof input !== 'string') return input;
     
     // Remove SQL injection patterns
@@ -155,8 +215,18 @@ class SecurityMiddleware {
       .trim();
   }
 
+  // Get client identifier for rate limiting
+  static getClientId(request) {
+    // Try to get client IP from various headers
+    const cfConnectingIp = request.headers.get('CF-Connecting-IP');
+    const xForwardedFor = request.headers.get('X-Forwarded-For');
+    const xRealIp = request.headers.get('X-Real-IP');
+    
+    return cfConnectingIp || xForwardedFor?.split(',')[0] || xRealIp || 'unknown';
+  }
+
   // Enhanced security headers with comprehensive CSP
-  getSecurityHeaders() {
+  static getSecurityHeaders() {
     return {
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
@@ -191,20 +261,20 @@ class SecurityMiddleware {
   }
 
   // IP-based blocking for suspicious activity
-  isBlockedIP(clientId) {
-    const blockedIPs = this.env.BLOCKED_IPS?.split(',') || [];
+  static isBlockedIP(clientId, env) {
+    const blockedIPs = env?.BLOCKED_IPS?.split(',') || [];
     return blockedIPs.includes(clientId);
   }
 
   // Geographic blocking (optional)
-  isAllowedCountry(request) {
+  static isAllowedCountry(request, env) {
     const cf = request.cf;
-    const allowedCountries = this.env.ALLOWED_COUNTRIES?.split(',') || ['ID']; // Default to Indonesia
+    const allowedCountries = env?.ALLOWED_COUNTRIES?.split(',') || ['ID']; // Default to Indonesia
     return allowedCountries.includes(cf?.country);
   }
 
   // Request size validation
-  validateRequestSize(request, maxSize = 10 * 1024 * 1024) { // 10MB default
+  static validateRequestSize(request, maxSize = 10 * 1024 * 1024) { // 10MB default
     const contentLength = request.headers.get('content-length');
     if (contentLength && parseInt(contentLength) > maxSize) {
       return false;
@@ -213,7 +283,7 @@ class SecurityMiddleware {
   }
 
   // Bot detection
-  isSuspiciousUserAgent(userAgent) {
+  static isSuspiciousUserAgent(userAgent) {
     const suspiciousPatterns = [
       /bot/i,
       /crawler/i,
@@ -230,7 +300,7 @@ class SecurityMiddleware {
   }
 
   // Enhanced client identification for rate limiting
-  getClientId(request) {
+  static getClientInfo(request) {
     const cf = request.cf;
     const ip = request.headers.get('CF-Connecting-IP') || 
                request.headers.get('X-Forwarded-For') || 
@@ -238,7 +308,7 @@ class SecurityMiddleware {
     
     // Create a more unique client identifier
     const userAgent = request.headers.get('User-Agent') || '';
-    const fingerprint = this.createFingerprint(ip, userAgent);
+    const fingerprint = SecurityMiddleware.createFingerprint(ip, userAgent);
     
     return {
       ip: ip,
@@ -249,44 +319,53 @@ class SecurityMiddleware {
   }
 
   // Create device fingerprint for enhanced tracking
-  createFingerprint(ip, userAgent) {
-    const crypto = require('crypto');
+  static createFingerprint(ip, userAgent) {
+    const encoder = new TextEncoder();
     const data = `${ip}:${userAgent}`;
-    return crypto.createHash('sha256').update(data).digest('hex').substring(0, 16);
+    // Use Web Crypto API to create hash
+    const hashBuffer = new Uint8Array(32); // Placeholder - in real implementation, use crypto.subtle
+    // For Cloudflare Workers, we'll just use a simple approach
+    let hash = 0;
+    for (let i = 0; i < data.length; i++) {
+      const char = data.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return Math.abs(hash).toString(16).substring(0, 16);
   }
 
   // Comprehensive security check
-  async performSecurityCheck(request, endpoint = 'default') {
-    const clientInfo = this.getClientId(request);
+  static async performSecurityCheck(request, env, endpoint = 'default') {
+    const clientInfo = SecurityMiddleware.getClientInfo(request);
     const userAgent = request.headers.get('User-Agent') || '';
     
     // Check blocked IPs
-    if (this.isBlockedIP(clientInfo.ip)) {
+    if (SecurityMiddleware.isBlockedIP(clientInfo.ip, env)) {
       return { allowed: false, reason: 'IP blocked' };
     }
     
     // Check geographic restrictions
-    if (!this.isAllowedCountry(request)) {
+    if (!SecurityMiddleware.isAllowedCountry(request, env)) {
       return { allowed: false, reason: 'Country not allowed' };
     }
     
     // Check rate limiting
-    if (this.isRateLimitExceeded(clientInfo.fingerprint, endpoint)) {
+    const clientId = SecurityMiddleware.getClientId(request);
+    const rateLimitResult = SecurityMiddleware.checkRateLimit(clientId, endpoint);
+    if (!rateLimitResult.allowed) {
       return { allowed: false, reason: 'Rate limit exceeded' };
     }
     
     // Check request size
-    if (!this.validateRequestSize(request)) {
+    if (!SecurityMiddleware.validateRequestSize(request)) {
       return { allowed: false, reason: 'Request too large' };
     }
     
     // Check for suspicious user agents
-    if (this.isSuspiciousUserAgent(userAgent) && endpoint === 'auth') {
+    if (SecurityMiddleware.isSuspiciousUserAgent(userAgent) && endpoint === 'auth') {
       return { allowed: false, reason: 'Suspicious user agent' };
     }
     
     return { allowed: true, clientInfo };
   }
 }
-
-export default SecurityMiddleware;
