@@ -3,24 +3,15 @@ import {
   calculateGPA,
   getAttendanceStats,
   getUnreadAnnouncements,
-<<<<<<< HEAD
-  type _Student,
-=======
->>>>>>> origin/main
   type Grade,
   type ScheduleItem,
   type AttendanceRecord,
   type _Announcement
 } from '../data/studentData';
 import { AuthService } from '../services/authService';
-<<<<<<< HEAD
-import { _NotificationService, NotificationItem } from '../services/notificationService';
-import {
-=======
 import { NotificationItem } from '../services/notificationService';
 import {
   useCurrentStudent,
->>>>>>> origin/main
   useStudentGrades,
   useAttendanceRecords,
   useClassSchedule,
@@ -39,33 +30,12 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
   const [currentToast, setCurrentToast] = useState<NotificationItem | null>(null);
 
   // API hooks untuk real data
-<<<<<<< HEAD
-    const {
-      data: studentProfile,
-      isLoading: profileLoading,
-      error: _profileError,
-      isSuccess: _profileSuccess
-    } = useAcademicStats();
-
-    // Use mock student data sebagai fallback jika API gagal
-    const fallbackStudent = {
-      id: 'STU001',
-      name: 'Ahmad Fauzi Rahman',
-      email: 'siswa@ma-malnukananga.sch.id',
-      class: 'XII IPA 1',
-      academicYear: '2024/2025',
-      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
-    };
-
-    const currentStudent = studentProfile || fallbackStudent;
-=======
   const {
     data: studentProfile,
     isLoading: profileLoading,
     error: _profileError,
     isSuccess: _profileSuccess
   } = useCurrentStudent();
->>>>>>> origin/main
 
   const {
     data: grades,
@@ -97,11 +67,7 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
   const studentGrades = grades || [];
   const attendanceData = attendance || [];
   const weeklySchedule = schedule || [];
-<<<<<<< HEAD
-   const announcements: _Announcement[] = []; // TODO: Add announcements API
-=======
   const announcements: Announcement[] = []; // TODO: Add announcements API
->>>>>>> origin/main
 
   const gpa = grades ? calculateGPA(grades) : 0;
   const attendanceStats = attendance ? getAttendanceStats(attendance) : { total: 0, present: 0, absent: 0, sick: 0, permitted: 0, percentage: 0 };
@@ -167,18 +133,6 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     }
   };
 
-<<<<<<< HEAD
-  // Loading state untuk critical data - using mock data so no loading needed
-  if (false) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="pt-24 pb-12">
-          <LoadingSpinner size="lg" message="Memuat data siswa..." fullScreen />
-        </div>
-      </div>
-    );
-  }
-=======
 // Loading state untuk critical data - using mock data so no loading needed
    // Note: This condition is intentionally false for development
    if (profileLoading) {
@@ -190,7 +144,6 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
        </div>
      );
    }
->>>>>>> origin/main
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -200,21 +153,6 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-<<<<<<< HEAD
-                <img
-                  src={(currentStudent as any).profileImage || '/default-avatar.png'}
-                  alt={(currentStudent as any).name || 'Student'}
-                  className="h-12 w-12 rounded-full object-cover"
-                />
-                <div>
-                  <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {currentStudent.name}
-                  </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {currentStudent.class} • {currentStudent.academicYear}
-                  </p>
-                </div>
-=======
                  <img
                    src={studentProfile?.profileImage || '/default-avatar.png'}
                    alt={studentProfile?.name || 'Student'}
@@ -228,7 +166,6 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
                      {studentProfile?.class} • {studentProfile?.academicYear}
                    </p>
                  </div>
->>>>>>> origin/main
               </div>
               <NotificationBell />
             </div>

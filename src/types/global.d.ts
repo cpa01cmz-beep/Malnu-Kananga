@@ -2,11 +2,6 @@
 /// <reference types="node" />
 /// <reference types="jest" />
 /// <reference types="@testing-library/jest-dom" />
-<<<<<<< HEAD
-
-import '@testing-library/jest-dom';
-=======
->>>>>>> origin/main
 
 declare global {
   namespace jest {
@@ -131,56 +126,14 @@ declare global {
   var StorageEvent: typeof StorageEvent;
   var MessageEvent: typeof MessageEvent;
   var BeforeUnloadEvent: typeof BeforeUnloadEvent;
-<<<<<<< HEAD
-  var PageShowEvent: typeof PageShowEvent;
-  var PageHideEvent: typeof PageHideEvent;
-  var EventListener: typeof EventListener;
-  var HeadersInit: typeof HeadersInit;
-  var AbortSignal: typeof AbortSignal;
-  var URLSearchParams: typeof URLSearchParams;
-  var NodeJS: typeof NodeJS;
-  var React: typeof React;
-  var global: typeof global;
-  
-  namespace jest {
-    interface Matchers<R = void, T = any> {
-      toBeInTheDocument(): R;
-      toHaveValue(value: any): R;
-      toBeDisabled(): R;
-      toBeEnabled(): R;
-      toHaveClass(className: string): R;
-      toHaveStyle(style: Record<string, any>): R;
-      toHaveTextContent(text: string | RegExp): R;
-      toBeVisible(): R;
-      toBeChecked(): R;
-      toHaveAttribute(attr: string, value?: string): R;
-      toHaveFocus(): R;
-      toBeEmptyDOMElement(): R;
-      toContainElement(element: HTMLElement | null): R;
-      toContainHTML(html: string): R;
-      toHaveDescription(text: string | RegExp): R;
-      toHaveDisplayValue(value: any): R;
-      toHaveErrorMessage(text: string | RegExp): R;
-      toHaveFormValues(values: Record<string, any>): R;
-      toHaveRole(role: string): R;
-      toHaveAccessibleDescription(text: string | RegExp): R;
-      toHaveAccessibleName(text: string | RegExp): R;
-      toBePartiallyChecked(): R;
-      toBeRequired(): R;
-      toBeInvalid(): R;
-      toBeValid(): R;
-    }
-  }
-=======
-    var PageShowEvent: typeof PageShowEvent;
-    var PageHideEvent: typeof PageHideEvent;
-    var global: typeof globalThis;
-    var NodeJS: typeof NodeJS;
-    var EventListener: typeof EventListener;
-    var AbortSignal: typeof AbortSignal;
-    var HeadersInit: typeof HeadersInit;
-    var React: typeof React;
->>>>>>> origin/main
+   var PageShowEvent: typeof PageShowEvent;
+   var PageHideEvent: typeof PageHideEvent;
+   var global: typeof globalThis;
+   var NodeJS: typeof NodeJS;
+   var EventListener: typeof EventListener;
+   var AbortSignal: typeof AbortSignal;
+   var HeadersInit: typeof HeadersInit;
+   var React: typeof React;
 }
 
 export {};
