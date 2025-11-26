@@ -318,15 +318,13 @@ export const useMarkAnnouncementAsRead = (
 };
 
 // Hook untuk student profile
-export const useStudentProfile = (studentId: string) => {
+export const useStudentProfileById = (studentId: string) => {
   return useQuery({
     queryKey: ['students', 'profile', studentId],
     queryFn: async () => {
-      const response = await studentApiService.getStudentProfile(studentId);
-      return handleApiResponse(response);
+      const response = await studentApiService.getStudentById(studentId);
+      return response.data;
     },
-    enabled: !!studentId,
-    ...options as UseQueryOptions<Student>,
   });
 };
 
