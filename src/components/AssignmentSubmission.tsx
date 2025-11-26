@@ -1,14 +1,21 @@
 import React, { useState, useRef } from 'react';
 import { Assignment, currentParent } from '../data/parentData';
 
+// Interface for submission data
+interface SubmissionData {
+  file?: File;
+  notes?: string;
+  submittedBy: string;
+}
+
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (data: {
+  onSubmit: (_assignmentId: string, _submissionData: {
     file?: File;
     notes?: string;
     submittedBy: string;
-  }) => void;
+   }) => Promise<void>;
 }
 
 const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({

@@ -139,8 +139,8 @@ describe('AssignmentSubmission Component', () => {
       );
 
        const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-stream' });
-        const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
- 
+       const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
+
        if (dropZone) {
          fireEvent.drop(dropZone, {
            dataTransfer: {
@@ -148,7 +148,7 @@ describe('AssignmentSubmission Component', () => {
            }
          });
        }
- 
+
        // Check that console.error was called with file type validation message
        expect(consoleSpy).toHaveBeenCalledWith('Tipe file tidak didukung. Silakan upload file PDF, Word, gambar, atau text.');
        
@@ -161,40 +161,40 @@ describe('AssignmentSubmission Component', () => {
       // Mock console.error to avoid test output pollution
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-      render(
-        <AssignmentSubmission
-          assignment={mockAssignment}
-          onClose={mockOnClose}
-          onSubmit={mockOnSubmit}
-        />
-      );
+       render(
+         <AssignmentSubmission
+           assignment={mockAssignment}
+           onClose={mockOnClose}
+           onSubmit={mockOnSubmit}
+         />
+       );
 
         // Create a file larger than 10MB - using a blob to ensure proper size
         const largeFileBuffer = new ArrayBuffer(11 * 1024 * 1024); // 11MB
         const largeFile = new File([largeFileBuffer], 'large.pdf', { type: 'application/pdf' });
-        
-         // Find the file upload area by looking for the drop zone div (not the button)
-         const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
+       
+       // Find the file upload area by looking for the drop zone container
+       const dropZone = screen.getByText('atau drag dan drop file ke sini').closest('div');
 
-         if (dropZone) {
-           fireEvent.drop(dropZone, {
-             dataTransfer: {
-               files: [largeFile]
-             }
-           });
-         }
+       if (dropZone) {
+         fireEvent.drop(dropZone, {
+           dataTransfer: {
+             files: [largeFile]
+           }
+         });
+       }
 
-         // After attempting to upload a large file, the component should still be functional
-         // The large file might not be properly rejected in test environment, but UI should remain usable
-         // Check for either the upload button or the uploaded file display to ensure UI is responsive
-         const uploadArea = screen.queryByText(/pilih file/i) || screen.queryByText('large.pdf');
-         expect(uploadArea).toBeInTheDocument();
+       // After attempting to upload a large file, the component should still be functional
+       // The large file might not be properly rejected in test environment, but UI should remain usable
+       // Check for either the upload button or the uploaded file display to ensure UI is responsive
+       const uploadArea = screen.queryByText('Pilih File') || screen.queryByText('large.pdf');
+       expect(uploadArea).toBeInTheDocument();
         
-         // Restore console.error
-         consoleSpy.mockRestore();
-         
-         jest.useRealTimers();
-       });
+       // Restore console.error
+       consoleSpy.mockRestore();
+        
+       jest.useRealTimers();
+     });
   });
 
   describe('Notes Section', () => {
