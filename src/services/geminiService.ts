@@ -186,7 +186,7 @@ export async function clearConversationHistory() {
       throw error;
     }
     console.error('Failed to clear conversation history:', error);
-    throw error;
+    return 0;
   }
 }
 

@@ -5,7 +5,7 @@ import { useTouchFeedback } from '../hooks/useTouchFeedback';
 interface ChatInputProps {
   input: string;
   onInputChange: (value: string) => void;
-  onSend: (e?: React.FormEvent) => void;
+  onSend: (_e?: React.FormEvent) => void;
   isLoading: boolean;
 }
 
