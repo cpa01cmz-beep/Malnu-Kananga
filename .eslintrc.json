@@ -113,14 +113,15 @@
     "src/types/global.d.ts",
     "worker.js",
     "worker-extended.js",
-    "implement/",
-    "public/",
-    "scripts/",
+    "implement/**/*",
+    "public/**/*",
+    "scripts/**/*",
     "docManager.js",
     "sessionManager.js",
     "test-docs.js",
     "setup-cloudflare-resources.js",
-    "cli.js"
+    "cli.js",
+    "sw.js"
   ],
   "overrides": [
     {
