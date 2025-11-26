@@ -10,10 +10,11 @@ import path from 'path';
 import SessionManager from './sessionManager.js';
 
 // Global console for CLI operations
+/* global global */
+global.globalConsole = console;
 
 // Global console for CLI usage
-/* global console */
-const globalConsole = console;
+/* global console process */
 
 const IMPLEMENT_DIR = './';
 const STATE_FILE = path.join(IMPLEMENT_DIR, 'state.json');
@@ -63,22 +64,22 @@ async function showProgress() {
       console.log(`  ${index + 1}. ${step} - ${checkpoint ? checkpoint.description : 'No description'}`);
     });
   } catch (error) {
-    console.error('Error reading session state:', error.message);
+    globalConsole.error('Error reading session state:', error.message);
   }
 }
 
 async function createCheckpoint(step, description) {
   if (!step) {
-    console.error('Error: Please provide a step name');
+    globalConsole.error('Error: Please provide a step name');
     return;
   }
   
   const session = new SessionManager();
   try {
     await session.completeStep(step, description || `Completed step: ${step}`);
-    console.log(`Checkpoint created for step: ${step}`);
+    globalConsole.log(`Checkpoint created for step: ${step}`);
   } catch (error) {
-    console.error('Error creating checkpoint:', error.message);
+    globalConsole.error('Error creating checkpoint:', error.message);
   }
 }
 
@@ -144,4 +145,4 @@ async function main() {
 }
 
 // Run the main function
-main().catch(console.error);
+main().catch(globalConsole.error);
