@@ -7,6 +7,8 @@ global.Headers = Headers;
 global.URL = URL;
 global.Response = Response;
 
+/* global self, indexedDB, clients, Response, Request, Headers, FetchEvent, caches */
+
 // --- STUDENT SUPPORT UTILITIES ---
 
 function categorizeSupportResponse(message, response) {
@@ -1009,8 +1011,8 @@ Respons:`;
         const secret = env.SECRET_KEY;
         const signature = await generateHMACSignature(data, secret);
         return new Response(JSON.stringify({ signature }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
-      } catch (e) {
-        console.error('Signature generation error:', e.message);
+       } catch (error) {
+         console.error('Signature generation error:', error.message);
         return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }
@@ -1050,8 +1052,8 @@ Respons:`;
         const secret = env.SECRET_KEY;
         const isValid = await verifyHMACSignature(data, signature, secret);
         return new Response(JSON.stringify({ isValid }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
-      } catch (e) {
-        console.error('Signature verification error:', e.message);
+       } catch (error) {
+         console.error('Signature verification error:', error.message);
         return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }
