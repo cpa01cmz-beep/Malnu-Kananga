@@ -133,8 +133,8 @@ const StudentDashboardApi: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     }
   };
 
-  // Loading state untuk critical data - using mock data so no loading needed
-  if (false) {
+  // Loading state untuk critical data
+  if (profileLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="pt-24 pb-12">
