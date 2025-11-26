@@ -478,7 +478,8 @@ wrangler d1 create malnu-kananga-db
 # Create Vectorize index
 wrangler vectorize create malnu-kananga-index \
   --dimensions=768 \
-  --metric=cosine
+  --metric=cosine \
+  --description="MA Malnu Kananga AI Knowledge Base"
 
 # Note down database_id dan index_name dari output
 ```
@@ -503,10 +504,13 @@ database_id = "your_database_id_here"
 binding = "VECTORIZE_INDEX"
 index_name = "malnu-kananga-index"
 
+# AI binding
+ai = { binding = "AI" }
+
 # Environment Variables
 [vars]
-API_KEY = "your_gemini_api_key"
 NODE_ENV = "production"
+# API_KEY and SECRET_KEY should be set as secrets
 ```
 
 #### Step 4: Deploy Worker
@@ -562,6 +566,13 @@ curl -X POST https://malnu-kananga.your-subdomain.workers.dev/api/chat \
 # }
 ```
 
+<<<<<<< HEAD
+**⚠️ Important Notes:**
+- Vector database seeding MUST be done once after worker deployment
+- Without seeding, AI chat will have no context and cannot answer questions
+- Current document count: 10 school information entries
+- Documents include: PPDB info, school programs, location, contact details
+=======
 **🚨 CRITICAL WARNINGS:**
 - **Vector database seeding WAJIB dilakukan sekali setelah worker deployment**
 - **Tanpa seeding, AI chat akan mengembalikan context kosong dan tidak bisa menjawab pertanyaan**
@@ -588,6 +599,7 @@ curl -X POST https://malnu-kananga.your-subdomain.workers.dev/api/chat \
 # 3. Jalankan ulang /seed endpoint
 # 4. Tunggu 1-2 menit untuk vector indexing
 ```
+>>>>>>> origin/main
 
 ---
 
@@ -837,6 +849,10 @@ wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 
 ---
 
+<<<<<<< HEAD
+**Installation & Setup Guide Version: 1.3.1**  
+*Last Updated: November 23, 2024*  
+=======
 
 **Installation & Setup Guide Version: 1.4.0**  
 *Last Updated: 2025-11-24*  
@@ -845,6 +861,7 @@ wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 
 **Installation & Setup Guide Version: 1.3.1**  
 *Last Updated: 2025-11-24
+>>>>>>> origin/main
 *Maintained by: MA Malnu Kananga Technical Team*
 
 

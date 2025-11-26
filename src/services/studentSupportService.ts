@@ -70,8 +70,22 @@ export interface StudentProgress {
   };
   riskLevel: 'low' | 'medium' | 'high';
   lastUpdated: string;
+<<<<<<< HEAD
+   riskFactors?: Array<{
+     type: string;
+     severity: 'low' | 'medium' | 'high';
+     description: string;
+   }>;
+   recommendations?: Array<{
+     type: string;
+     priority: 'low' | 'medium' | 'high';
+     description: string;
+     action?: string;
+   }>;
+=======
   riskFactors?: string[];
   recommendations?: string[];
+>>>>>>> origin/main
 }
 
 export interface SupportAutomation {
@@ -1230,6 +1244,63 @@ class StudentSupportService {
     }, 5 * 60 * 1000);
   }
 
+<<<<<<< HEAD
+  // Monitor at-risk students
+  private static monitorAtRiskStudents(): void {
+    const allProgress = this.getAllStudentProgress();
+    
+    for (const progress of Object.values(allProgress)) {
+      try {
+        // Get risk assessment
+        const riskAssessment = this.getRiskAssessment(progress);
+        
+        if (riskAssessment.riskLevel === 'high' || riskAssessment.riskLevel === 'medium') {
+          // Create intervention request
+          this.createSupportRequest(
+            progress.studentId,
+            'academic',
+            'intervention',
+            `Detected ${riskAssessment.riskLevel.toUpperCase()} Risk Student`,
+            `Student identified with ${riskAssessment.riskLevel} risk level`,
+            riskAssessment.riskLevel === 'high' ? 'high' : 'medium'
+          );
+        }
+      } catch (error) {
+        console.error(`Failed to monitor student ${progress.studentId}:`, error);
+        // Fallback to basic monitoring
+        if (progress.riskLevel === 'high') {
+          this.createSupportRequest(
+            progress.studentId,
+            'academic',
+            'intervention',
+            'At-Risk Student Intervention',
+            `Student identified as at-risk with ${progress.riskLevel} risk level`,
+            'medium'
+          );
+        }
+      }
+    }
+  }
+
+// Get risk assessment
+    private static getRiskAssessment(progress: StudentProgress): {
+      riskLevel: string;
+      riskScore: number;
+      riskFactors: string[];
+      urgency: string;
+      recommendations: any[];
+    } {
+      // Return mock assessment for now until API is available
+      return {
+        riskLevel: progress.riskLevel,
+        riskScore: 0,
+        riskFactors: [],
+        urgency: 'normal',
+        recommendations: []
+      };
+    }
+
+=======
 // Monitor at-risk students with AI-powered analysis
    private static async monitorAtRiskStudents(): Promise<void> {
      const instance = StudentSupportService.getInstance();
@@ -1422,6 +1493,7 @@ class StudentSupportService {
     };
   }
 
+>>>>>>> origin/main
   // Calculate days since last login
   private calculateDaysSinceLastLogin(studentId: string): number {
     // This would integrate with actual login tracking system
@@ -1430,6 +1502,12 @@ class StudentSupportService {
   }
 
 // Send proactive notification
+<<<<<<< HEAD
+    private static sendProactiveNotification(progress: StudentProgress, riskAssessment: any): void {
+      // This would integrate with notification system
+      console.log(`Proactive notification for student ${progress.studentId}`);
+    }
+=======
    private async sendProactiveNotification(progress: StudentProgress, riskAssessment: any): Promise<void> {
      // This would integrate with notification system
      console.log(`Proactive notification for student ${progress.studentId}:`, {
@@ -1438,6 +1516,7 @@ class StudentSupportService {
        recommendations: riskAssessment.recommendations
      });
    }
+>>>>>>> origin/main
 
 // Update engagement metrics
    private static updateEngagementMetrics(): void {
@@ -1451,6 +1530,25 @@ class StudentSupportService {
     
     if (!searchTerm) return resources;
 
+<<<<<<< HEAD
+    // Filter resources based on search term
+    return resources.filter(resource =>
+      resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      resource.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+    ).sort((a, b) => 
+      (b.rating || 0) - (a.rating || 0)
+    );
+  }
+
+  // Get support resources
+  static getSupportResources(category?: string): SupportResource[] {
+    const resources = localStorage.getItem(this.RESOURCES_KEY);
+    let allResources: SupportResource[] = resources ? JSON.parse(resources) : this.initializeSampleResources();
+
+    if (category) {
+      allResources = allResources.filter(r => r.category === category);
+=======
     try {
       // Use enhanced search directly since AI knowledge base is not available
       return this.getEnhancedResourceSearch(resources, searchTerm);
@@ -1462,6 +1560,7 @@ class StudentSupportService {
         resource.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
         resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
       );
+>>>>>>> origin/main
     }
   }
 
@@ -1775,6 +1874,15 @@ const allProgress = this.getAllStudentProgress();
   }
 }
 
+<<<<<<< HEAD
+
+
+// Auto-initialize when module loads
+if (typeof window !== 'undefined') {
+  StudentSupportService.initialize();
+  
+  console.log('🚀 Student Support System initialized');
+=======
 // Auto-initialize when module loads with error handling
 if (typeof window !== 'undefined') {
   try {
@@ -1794,6 +1902,7 @@ if (typeof window !== 'undefined') {
       console.error('Critical: Student Support System failed to initialize:', fallbackError);
     }
   }
+>>>>>>> origin/main
 }
 
 export { StudentSupportService };

@@ -50,13 +50,11 @@ This comprehensive troubleshooting guide covers common issues, their solutions, 
 
 ---
 
-
 **Troubleshooting Guide Version: 1.4.0**  
 **Last Updated: 2025-11-24**  
 
 **Troubleshooting Guide Version: 1.3.1**  
-**Last Updated: 2025-11-24
-
+**Last Updated: 2025-11-24**
 **Guide Status: Production Ready**
 
 ### 📊 System Status Overview
@@ -83,7 +81,6 @@ Before troubleshooting, check current system status:
 6. **Logout Endpoint**: `/logout` endpoint documented but not implemented
 7. **Vector Database**: Must be seeded once after deployment using `/seed` endpoint
 8. **CSRF Token Issues**: CSRF protection may cause 403 errors if tokens not properly handled
-
 #### ✅ Recently Resolved Issues:
 1. **Health Check Endpoint**: `/health` endpoint now implemented and operational
 2. **Documentation Inconsistencies**: All documentation versions synchronized to v1.3.1
@@ -91,13 +88,15 @@ Before troubleshooting, check current system status:
 4. **Gap Analysis**: Complete implementation gap analysis documented
 
 #### Working Endpoints (Verified):
-- ✅ `/seed` - Vector database seeding (50 documents, batch processing)
+- ✅ `/seed` - Vector database seeding (10 documents, batch processing)
 - ✅ `/api/chat` - AI chat with RAG system (0.75 similarity threshold)
-- ✅ `/request-login-link` - Magic link authentication with rate limiting (5 attempts/15min)
+- ✅ `/request-login-link` - Magic link authentication with rate limiting (3 attempts/1min)
 - ✅ `/verify-login` - JWT token verification with secure cookies
 - ✅ `/generate-signature` - HMAC signature generation
 - ✅ `/verify-signature` - HMAC signature verification
 - ✅ `/api/student-support` - Enhanced student support AI with risk categorization
+- ✅ `/api/support-monitoring` - Proactive student monitoring system
+- ✅ `/health` - Comprehensive system health monitoring
 - ✅ `/api/support-monitoring` - Proactive support monitoring with risk assessment
 - ✅ `/health` - System health check with service status monitoring
 
@@ -1306,14 +1305,8 @@ Any other relevant information
 
 ---
 
-
 *Document Version: 1.4.0*  
 *Last Updated: 2025-11-24*  
 *Maintained by: MA Malnu Kananga Technical Team*  
 *Documentation Audit: Completed - All solutions verified & AGENTS.md aligned*  
 *Audit Status: ✅ Complete (2025-11-24) - Aligned with AGENTS.md*
-
-*Document Version: 1.3.1*  
-*Last Updated: 2025-11-24
-*Maintained by: MA Malnu Kananga Technical Team*
-

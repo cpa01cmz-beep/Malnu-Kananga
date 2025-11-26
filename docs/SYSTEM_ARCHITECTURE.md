@@ -7,11 +7,15 @@ MA Malnu Kananga School Portal is built on a modern, serverless architecture des
 ---
 
 **System Architecture Version: 1.4.0**  
+<<<<<<< HEAD
+**Last Updated: November 24, 2024**  
+=======
 
 **Last Updated: 2025-11-24**  
 
 **Last Updated: 2025-11-24
 
+>>>>>>> origin/main
 **Architecture Status: Production Ready with Enhanced Security**
 
 ## 🏗️ High-Level Architecture
@@ -48,6 +52,9 @@ MA Malnu Kananga School Portal is built on a modern, serverless architecture des
 
 ## 🎨 Frontend Architecture
 
+<<<<<<< HEAD
+### Enhanced Technology Stack with Security Integration
+=======
 ### Technology Stack (Updated November 2024)
 - **React 19.2**: Latest React with concurrent features, automatic batching, and Suspense
 - **TypeScript 5.9**: Strict type safety with modern syntax and path mapping
@@ -57,6 +64,7 @@ MA Malnu Kananga School Portal is built on a modern, serverless architecture des
 - **React Query 5.90**: Advanced server state management, caching, and synchronization
 - **PWA**: Progressive Web App with service worker, offline support, and install prompts
 - **Sentry 10.25**: Error tracking and performance monitoring
+>>>>>>> origin/main
 
 #### Frontend Stack
 - **React 19.2**: Modern React with concurrent features and security hooks
@@ -590,7 +598,11 @@ User Query → Security Validation → Embedding Generation → Vector Similarit
     category: "academic",
     language: "id", 
     priority: "high",
+<<<<<<< HEAD
+    last_updated: "2024-11-20"
+=======
     last_updated: "2025-11-24"
+>>>>>>> origin/main
   },
   values: [0.1, 0.2, 0.3, ...] // 768-dimensional vector
 }
@@ -712,7 +724,11 @@ MA Malnu Kananga implements comprehensive monitoring across all system layers:
 ```javascript
 // Security-focused analytics
 {
+<<<<<<< HEAD
+  timestamp: "2024-11-24T10:30:00Z",
+=======
   timestamp: "2025-11-24T10:30:00Z",
+>>>>>>> origin/main
   level: "security",
   service: "auth",
   event: "AUTHENTICATION_ATTEMPT",
@@ -734,7 +750,11 @@ MA Malnu Kananga implements comprehensive monitoring across all system layers:
 
 // AI System analytics
 {
+<<<<<<< HEAD
+  timestamp: "2024-11-24T10:30:00Z",
+=======
   timestamp: "2025-11-24T10:30:00Z",
+>>>>>>> origin/main
   level: "info",
   service: "ai",
   event: "RAG_QUERY",
@@ -763,7 +783,11 @@ MA Malnu Kananga implements comprehensive monitoring across all system layers:
 // Enhanced health check endpoint (/health)
 {
   status: "healthy",
+<<<<<<< HEAD
+  timestamp: "2024-11-24T10:30:00Z",
+=======
   timestamp: "2025-11-24T10:30:00Z",
+>>>>>>> origin/main
   version: "1.3.1",
   environment: "production",
   services: {
@@ -948,6 +972,12 @@ MA Malnu Kananga implements comprehensive monitoring across all system layers:
 
 **System Architecture Documentation**  
 *Version: 1.4.0*  
+<<<<<<< HEAD
+*Last Updated: November 24, 2024*  
+*Architecture Team: MA Malnu Kananga Development Team*  
+*Security Review: December 2024*  
+*Next Review: January 2025*
+=======
 
 *Last Updated: 2025-11-24*  
 
@@ -956,6 +986,7 @@ MA Malnu Kananga implements comprehensive monitoring across all system layers:
 *Architecture Team: MA Malnu Kananga Development Team*  
 *Security Review: December 2024*  
 *Next Review: 2025-12-24
+>>>>>>> origin/main
 
 ---
 

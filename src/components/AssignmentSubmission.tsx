@@ -16,7 +16,15 @@ interface SubmissionData {
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
+<<<<<<< HEAD
+  onSubmit: (submissionData: {
+    file?: File;
+    notes?: string;
+    submittedBy: string;
+  }) => Promise<void>;
+=======
   onSubmit: (_assignmentId: string, _submissionData: SubmissionData) => Promise<void>;
+>>>>>>> origin/main
 }
 
 const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
@@ -91,12 +99,16 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
     };
 
     try {
+<<<<<<< HEAD
+      await onSubmit(submissionData);
+=======
       const submissionData: SubmissionData = {
         file: selectedFile || undefined,
         notes: notes.trim() || undefined,
         submittedBy: currentParent.id
       };
       await onSubmit(assignment.id, submissionData);
+>>>>>>> origin/main
 
       // Close modal after successful submission
       onClose();

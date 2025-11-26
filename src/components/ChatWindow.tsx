@@ -15,7 +15,11 @@ interface ChatWindowProps {
 const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat }) => {
   const { messages, input, setInput, isLoading, handleSend } = useChatLogic(isOpen);
 
+<<<<<<< HEAD
+  const { ref: elementRef } = useTouchGestures({
+=======
   const gestureResult = useTouchGestures({
+>>>>>>> origin/main
     onSwipeDown: closeChat,
     onSwipeRight: closeChat,
   });

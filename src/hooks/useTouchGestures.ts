@@ -152,5 +152,9 @@ export const useTouchGestures = (options: TouchGestureOptions) => {
     };
   }, [handleTouchStart, handleTouchEnd, handleTouchMove]);
 
+<<<<<<< HEAD
+  return { ref: elementRef };
+=======
   return { elementRef };
+>>>>>>> origin/main
 };

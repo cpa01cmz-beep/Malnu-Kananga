@@ -6,6 +6,10 @@ Welcome to the MA Malnu Kananga developer guide! This comprehensive guide will h
 
 ---
 
+<<<<<<< HEAD
+**Developer Guide Version: 1.3.1**  
+**Last Updated: November 24, 2024**  
+=======
 
 **Developer Guide Version: 1.4.0**  
 **Last Updated: 2025-11-24**  
@@ -13,6 +17,7 @@ Welcome to the MA Malnu Kananga developer guide! This comprehensive guide will h
 **Developer Guide Version: 1.3.1**  
 **Last Updated: 2025-11-24
 
+>>>>>>> origin/main
 **Development Status: Production Ready**
 
 ## 🏗️ Project Architecture
@@ -20,6 +25,13 @@ Welcome to the MA Malnu Kananga developer guide! This comprehensive guide will h
 ### Tech Stack Overview
 
 **Frontend (React + TypeScript)**
+<<<<<<< HEAD
+- **React 19.2**: Modern React with hooks and concurrent features
+- **TypeScript**: Strict type checking for better code quality
+- **Vite**: Fast build tool with HMR and optimized bundles
+- **Tailwind CSS**: Utility-first CSS framework
+- **PWA**: Progressive Web App capabilities
+=======
 - **React 19.2**: Latest React with concurrent features and automatic batching
 - **TypeScript 5.9**: Strict type checking with modern syntax support
 - **Vite 7.2**: Ultra-fast build tool with HMR and optimized bundles
@@ -27,6 +39,7 @@ Welcome to the MA Malnu Kananga developer guide! This comprehensive guide will h
 - **Supabase 2.81**: Real-time database integration and authentication
 - **React Query 5.90**: Server state management and caching
 - **PWA**: Progressive Web App capabilities with service worker
+>>>>>>> origin/main
 
 **Backend (Cloudflare Workers)**
 - **Cloudflare Workers**: Serverless JavaScript runtime with V8 isolates

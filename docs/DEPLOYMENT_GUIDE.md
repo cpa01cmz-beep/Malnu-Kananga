@@ -7,7 +7,11 @@ This comprehensive guide covers the complete deployment process for the MA Malnu
 ---
 
 **Deployment Guide Version: 1.3.1**  
+<<<<<<< HEAD
+**Last Updated: November 24, 2024**  
+=======
 **Last Updated: 2025-11-24
+>>>>>>> origin/main
 **Deployment Status: Production Ready**
 
 ## 📋 Prerequisites
@@ -230,13 +234,13 @@ compatibility_flags = ["nodejs_compat"]
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
-database_name = "malnu-kananga-auth"
+database_name = "malnu-kananga-db"
 database_id = "your-database-id-here"
 
 # Vectorize binding
 [[vectorize]]
-binding = "VECTORIZE"
-index_name = "malnu-kananga-docs"
+binding = "VECTORIZE_INDEX"
+index_name = "malnu-kananga-index"
 
 # AI binding
 ai = { binding = "AI" }

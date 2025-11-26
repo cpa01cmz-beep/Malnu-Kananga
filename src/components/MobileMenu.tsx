@@ -21,7 +21,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   onLogout,
   onClose
 }) => {
+<<<<<<< HEAD
+  const { ref: elementRef } = useTouchGestures({
+=======
   const gestureResult = useTouchGestures({
+>>>>>>> origin/main
     onSwipeDown: onClose,
     onSwipeLeft: onClose,
   });

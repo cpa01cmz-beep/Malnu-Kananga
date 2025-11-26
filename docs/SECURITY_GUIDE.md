@@ -6,10 +6,16 @@ Dokumentasi ini menjelaskan implementasi keamanan sistem MA Malnu Kananga, menca
 
 ---
 
+<<<<<<< HEAD
+**Security Documentation Version: 1.3.1**  
+**Last Updated: November 24, 2024**  
+**Security Status: Production Hardened**
+=======
 **Security Documentation Version: 1.3.2**  
 **Last Updated: November 25, 2025**  
 **Security Status: Basic Implementation**  
 **Documentation Audit: Completed - Security claims verified against implementation**
+>>>>>>> origin/main
 
 ## 🏗️ Security Architecture
 
@@ -565,8 +571,12 @@ curl https://api.example.com/health
 **Last Updated: 2025-11-24**  
 
 **Security Documentation Version: 1.2.0**  
+<<<<<<< HEAD
+**Last Updated: November 23, 2024**  
+=======
 **Last Updated: 2025-11-24
 
+>>>>>>> origin/main
 **Maintained by: MA Malnu Kananga Security Team**  
 **Classification: Internal Use Only**
 

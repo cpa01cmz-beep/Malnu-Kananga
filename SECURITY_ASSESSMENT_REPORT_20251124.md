@@ -68,4 +68,8 @@ Security vulnerability assessment completed for MA Malnu Kananga educational pla
 - **Overall Risk Level**: LOW
 - **Immediate Action Required**: No
 - **Monitoring Required**: Yes
+<<<<<<< HEAD
 - **Next Assessment**: 2025-12-24
+=======
+- **Next Assessment**: 2025-12-24
+>>>>>>> origin/main

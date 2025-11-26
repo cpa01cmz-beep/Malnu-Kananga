@@ -7,7 +7,12 @@ import {
   announcements,
   calculateGPA,
   getAttendanceStats,
+<<<<<<< HEAD
+  getUnreadAnnouncements,
+  type _Announcement
+=======
   getUnreadAnnouncements
+>>>>>>> origin/main
 } from '../data/studentData';
 import { AuthService } from '../services/authService';
 import { NotificationService, NotificationItem } from '../services/notificationService';
@@ -63,6 +68,38 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
     };
   }, []);
 
+<<<<<<< HEAD
+// Initialize student support system
+   useEffect(() => {
+     // Initialize student progress tracking
+     StudentSupportService.updateStudentProgress(currentStudent.id, {
+       academicMetrics: {
+         gpa: gpa,
+         gradeTrend: 'stable' as const,
+         attendanceRate: attendanceStats.percentage,
+         assignmentCompletion: 85, // Sample data
+         subjectPerformance: studentGrades.reduce((acc, grade) => {
+           acc[grade.subjectName] = parseFloat(grade.finalGrade || '0');
+           return acc;
+         }, {} as Record<string, number>)
+       },
+       engagementMetrics: {
+         loginFrequency: 5, // Sample data
+         resourceAccess: 12,
+         supportRequests: 0,
+         participationScore: 85,
+         featureUsage: {
+           overview: 10,
+           grades: 8,
+           schedule: 6,
+           attendance: 4,
+           announcements: 7
+         },
+         lastActiveDate: new Date().toISOString()
+       }
+      });
+    }, [gpa, attendanceStats.percentage, studentGrades, currentStudent.id]);
+=======
   // Initialize student support system
   useEffect(() => {
     // Initialize student progress tracking
@@ -82,6 +119,7 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
         }
     });
   }, [gpa, attendanceStats.percentage, studentGrades, currentStudent.id]);
+>>>>>>> origin/main
 
   // Add some sample notifications for demonstration
   useEffect(() => {
@@ -149,11 +187,19 @@ const StudentDashboard: React.FC<StudentDashboardProps> = ({ onLogout }) => {
         onLogout={handleLogout}
       />
 
+<<<<<<< HEAD
+       <NavigationTabs
+         activeTab={activeTab}
+         tabs={tabs}
+         onTabChange={(tabId: string) => setActiveTab(tabId as any)}
+       />
+=======
       <NavigationTabs
         activeTab={activeTab}
         tabs={tabs}
          onTabChange={(tabId: string) => setActiveTab(tabId as typeof activeTab)}
       />
+>>>>>>> origin/main
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -6,9 +6,15 @@ This comprehensive testing guide covers all aspects of testing for the MA Malnu 
 
 ---
 
+<<<<<<< HEAD
+**Testing Guide Version: 1.3.1**  
+**Last Updated: November 24, 2024**  
+**Testing Status: Production Verified**
+=======
 **Testing Guide Version: 1.3.2**  
 **Last Updated: November 25, 2025**  
 **Testing Status: Basic Implementation**
+>>>>>>> origin/main
 
 ## 🏗️ Testing Architecture
 
