@@ -10,6 +10,7 @@ export default [
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
+    ignores: ['dist/', 'node_modules/', 'coverage/', 'build/', 'public/sw.js'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -94,7 +95,6 @@ export default [
         IDBOpenDBRequest: true,
         isDevelopment: true,
         crypto: true,
-        ResizeObserver: true,
         TextEncoder: true,
         Console: true,
         TimerHandler: true,
@@ -105,6 +105,7 @@ export default [
         RequestInfo: true,
         btoa: true,
         atob: true,
+        module: true,
       },
     },
     plugins: {
@@ -132,6 +133,18 @@ export default [
       // TypeScript rules
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': 'error',
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
+      'no-console': 'off',
+      'no-debugger': 'error',
+      'no-redeclare': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-undef': 'off',
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
     },
   },
   prettier,
