@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 
 interface TouchFeedbackOptions {
   hapticFeedback?: boolean;
@@ -51,7 +51,11 @@ export const useTouchFeedback = (options: TouchFeedbackOptions = {}) => {
       clearTimeout(feedbackTimeoutRef.current);
       feedbackTimeoutRef.current = null;
     }
-  }, []);
+    // Also remove the class immediately if cleanup is called
+    if (elementRef.current) {
+      elementRef.current.classList.remove(feedbackClass);
+    }
+  }, [feedbackClass]);
 
   return {
     elementRef,

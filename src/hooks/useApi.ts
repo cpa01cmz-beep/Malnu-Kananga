@@ -3,6 +3,8 @@
 
 export {
   useCurrentStudent,
+  useStudentProfile,
+  useStudentProfileById,
   useStudentGrades,
   useAttendanceRecords,
   useClassSchedule,

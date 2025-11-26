@@ -5,7 +5,7 @@ import { captureErrorBoundary } from '../services/sentryService';
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  onError?: (_error: Error, _errorInfo: ErrorInfo) => void;
 }
 
 interface State {
@@ -24,33 +24,35 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  public componentDidCatch(_error: Error, _errorInfo: ErrorInfo) {
     // Gunakan error logging service untuk comprehensive error tracking
     const errorLoggingService = getErrorLoggingService();
 
     // Log error dengan metadata tambahan untuk debugging
-    errorLoggingService.logErrorBoundary(error, errorInfo, {
+    errorLoggingService.logErrorBoundary(_error, { componentStack: _errorInfo.componentStack || '' }, {
       componentName: this.constructor.name,
       props: Object.keys(this.props),
       hasCustomFallback: !!this.props.fallback,
       hasCustomErrorHandler: !!this.props.onError
     }).catch((logErrorValue) => {
-      // Fallback jika logging service gagal
-      console.error('ErrorBoundary caught an error:', error, errorInfo);
-      console.error('Error logging service juga gagal:', logErrorValue);
+      // Security: Remove console logging in production
+      if (process.env.NODE_ENV === 'development') {
+        console.error('ErrorBoundary caught an error:', _error, _errorInfo);
+        console.error('Error logging service juga gagal:', logErrorValue);
+      }
     });
 
     // Kirim error ke Sentry
-    captureErrorBoundary(error, errorInfo.componentStack);
+    captureErrorBoundary(_error, _errorInfo.componentStack || '');
 
     this.setState({
-      error,
-      errorInfo
+      error: _error,
+      errorInfo: _errorInfo
     });
 
     // Call optional error handler
     if (this.props.onError) {
-      this.props.onError(error, errorInfo);
+      this.props.onError(_error, _errorInfo);
     }
   }
 
@@ -121,7 +123,7 @@ class ErrorBoundary extends Component<Props, State> {
                       </pre>
                     </div>
 
-                    {this.state.errorInfo && (
+                    {this.state.errorInfo && this.state.errorInfo.componentStack && (
                       <div className="mb-3">
                         <div className="text-yellow-600 dark:text-yellow-400 font-semibold mb-1">Component Stack:</div>
                         <pre className="whitespace-pre-wrap text-xs">
@@ -151,7 +153,9 @@ class ErrorBoundary extends Component<Props, State> {
                       <button
                         onClick={() => {
                           const logs = getErrorLoggingService().exportErrorLogs();
-                          console.log('All Error Logs:', JSON.parse(logs));
+                          if (process.env.NODE_ENV === 'development') {
+                            console.log('All Error Logs:', JSON.parse(logs));
+                          }
                           window.alert('Error logs exported to console');
                         }}
                         className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded hover:bg-blue-200 dark:hover:bg-blue-800"
@@ -186,7 +190,7 @@ class ErrorBoundary extends Component<Props, State> {
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
   fallback?: ReactNode,
-  onError?: (error: Error, errorInfo: ErrorInfo) => void
+  onError?: (_error: Error, _errorInfo: ErrorInfo) => void
 ) {
   const WrappedComponent = (props: P) => (
     <ErrorBoundary fallback={fallback} onError={onError}>
@@ -201,8 +205,8 @@ export function withErrorBoundary<P extends object>(
 
 // Hook untuk manual error throwing (untuk testing atau conditional errors)
 export function useErrorHandler() {
-  return (error: Error) => {
-    throw error;
+  return (_error: Error) => {
+    throw _error;
   };
 }
 

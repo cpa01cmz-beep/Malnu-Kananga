@@ -4,13 +4,26 @@
 
 Panduan lengkap untuk instalasi dan setup sistem portal MA Malnu Kananga. Guide ini mencakup setup development environment, production deployment, dan konfigurasi semua komponen sistem.
 
+
+**📋 Current Status**: Production Ready - v1.4.0  
+**🔄 Last Updated: 2025-11-24  
+**⚡ Deployment**: One-click deploy ke Cloudflare tersedia  
+**📝 Documentation Audit**: Completed - Aligned with AGENTS.md requirements
+
+**📋 Current Status**: Production Ready - v1.3.1  
+**🔄 Last Updated**: 2025-11-24  
+**⚡ Deployment**: One-click deploy ke Cloudflare tersedia
+
+
 ## 📋 Prerequisites
 
 ### System Requirements
-- **Node.js**: Version 18.0.0 atau lebih tinggi
-- **npm**: Version 8.0.0 atau lebih tinggi (atau yarn 1.22.0+)
+- **Node.js**: Version 18.0.0 atau lebih tinggi (wajib untuk ES2022 features)
+- **npm**: Version 9.0.0 atau lebih tinggi (atau yarn 1.22.0+)
 - **Git**: Version 2.30.0 atau lebih tinggi
 - **OS**: Windows 10+, macOS 10.15+, atau Ubuntu 18.04+
+- **Cloudflare Account**: Untuk production deployment (gratis tier cukup)
+- **Google Gemini API Key**: Required untuk AI functionality
 
 ---
 
@@ -243,9 +256,14 @@ node --version && npm --version && echo "Node.js 18+ setup complete!"
 
 ### Required Accounts & Services
 - **GitHub Account**: Untuk source code management
-- **Cloudflare Account**: Untuk deployment dan infrastructure
-- **Google Account**: Untuk Google Gemini AI API key
+- **Cloudflare Account**: Untuk deployment dan infrastructure (gratis tier cukup)
+- **Google Account**: Untuk Google Gemini AI API key (WAJIB untuk AI functionality)
 - **Email Provider**: Untuk magic link authentication (MailChannels terintegrasi)
+
+**🚨 Critical Requirements:**
+- **Google Gemini API Key**: TANPA ini, AI chat tidak akan berfungsi
+- **Cloudflare Worker Deployment**: TANPA ini, authentication dan AI tidak tersedia
+- **Vector Database Seeding**: TANPA ini, AI chat akan mengembalikan response kosong
 
 ### Browser Requirements
 - **Chrome**: Version 90+
@@ -335,9 +353,14 @@ Buka browser dan kunjungi `http://localhost:9000`:
 
 1. ✅ Homepage loads correctly
 2. ✅ PWA installation prompt appears
-3. ✅ AI chat interface accessible
+3. ⚠️ **AI chat interface accessible (mungkin tidak berfungsi tanpa worker deployed)**
 4. ✅ All navigation links work
 5. ✅ Responsive design on mobile
+
+**🚨 Development Limitations:**
+- AI chat requires deployed worker with vector database seeded
+- Local development uses mock data for AI responses
+- Full functionality only available after production deployment
 
 ---
 
@@ -411,16 +434,25 @@ npm run format      # jika tersedia
    - Tunggu proses deployment selesai
    - Copy deployment URL
 
-5. **Post-Deployment Setup:**
-   ```bash
-   # Seed vector database (jalankan sekali saja)
-   curl https://your-worker-url.workers.dev/seed
-   
-   # Verify deployment
-   curl https://your-worker-url.workers.dev/api/chat \
-     -H "Content-Type: application/json" \
-     -d '{"message": "Test"}'
-   ```
+5. **🚨 Post-Deployment Setup (CRITICAL):**
+    ```bash
+    # ⚠️ WAJIB: Seed vector database (jalankan sekali saja)
+    curl https://your-worker-url.workers.dev/seed
+    
+    # 🔍 VERIFIKASI WAJIB: Pastikan AI chat berfungsi
+    curl -X POST https://your-worker-url.workers.dev/api/chat \
+      -H "Content-Type: application/json" \
+      -d '{"message": "Apa program unggulan sekolah?"}'
+    
+    # Expected response harus ada "context" field:
+    # {"context": "Profil Sekolah: Madrasah Aliyah MALNU Kananga..."}
+    ```
+    
+    **⚠️ JIKA AI CHAT TIDAK BERFUNGSI:**
+    1. Pastikan `/seed` endpoint sudah dijalankan
+    2. Tunggu 1-2 menit untuk vector indexing
+    3. Test ulang dengan pertanyaan tentang sekolah
+    4. Jika masih kosong, ulangi seeding
 
 ### Option 2: Manual Deployment
 
@@ -446,7 +478,8 @@ wrangler d1 create malnu-kananga-db
 # Create Vectorize index
 wrangler vectorize create malnu-kananga-index \
   --dimensions=768 \
-  --metric=cosine
+  --metric=cosine \
+  --description="MA Malnu Kananga AI Knowledge Base"
 
 # Note down database_id dan index_name dari output
 ```
@@ -471,10 +504,13 @@ database_id = "your_database_id_here"
 binding = "VECTORIZE_INDEX"
 index_name = "malnu-kananga-index"
 
+# AI binding
+ai = { binding = "AI" }
+
 # Environment Variables
 [vars]
-API_KEY = "your_gemini_api_key"
 NODE_ENV = "production"
+# API_KEY and SECRET_KEY should be set as secrets
 ```
 
 #### Step 4: Deploy Worker
@@ -509,26 +545,61 @@ wrangler pages deploy dist --compatibility-date=2024-01-01
 #    - Node.js version: 18
 ```
 
-#### Step 6: Seed Vector Database (Critical)
+#### Step 6: Seed Vector Database (🚨 CRITICAL - REQUIRED)
 
 ```bash
-# Seed vector database dengan data sekolah
+# ⚠️ CRITICAL: Seed vector database dengan data sekolah
+# HARUS dijalankan sekali setelah worker deployment
 curl https://malnu-kananga.your-subdomain.workers.dev/seed
 
 # Expected response:
-# Successfully seeded 50 documents.
+# Successfully seeded 10 documents.
 
-# Verify seeding worked
+# 🔍 VERIFICATION WAJIB - Pastikan seeding berhasil
 curl -X POST https://malnu-kananga.your-subdomain.workers.dev/api/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Apa saja program unggulan sekolah?"}'
+
+# Expected response harus mengandung konten sekolah:
+# {
+#   "context": "Profil Sekolah: Madrasah Aliyah MALNU Kananga..."
+# }
 ```
 
+<<<<<<< HEAD
 **⚠️ Important Notes:**
 - Vector database seeding MUST be done once after worker deployment
 - Without seeding, AI chat will have no context and cannot answer questions
-- Current document count: 50 school information entries
+- Current document count: 10 school information entries
 - Documents include: PPDB info, school programs, location, contact details
+=======
+**🚨 CRITICAL WARNINGS:**
+- **Vector database seeding WAJIB dilakukan sekali setelah worker deployment**
+- **Tanpa seeding, AI chat akan mengembalikan context kosong dan tidak bisa menjawab pertanyaan**
+- **Current document count: 10 school information entries (bukan 50)**
+- **Documents include: PPDB info, school programs, location, contact details**
+- **Jika AI chat tidak berfungsi, 90% kemungkinan karena vector database belum di-seed**
+
+**🔍 Verification Steps:**
+1. Jalankan `/seed` endpoint
+2. Test `/api/chat` dengan pertanyaan tentang sekolah
+3. Pastikan response mengandung "context" dengan informasi sekolah
+4. Jika context kosong, ulangi seeding
+
+**📋 Troubleshooting Seeding:**
+```bash
+# Check if vector database has data
+curl -X POST https://malnu-kananga.your-subdomain.workers.dev/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "test"}'
+
+# Jika response context kosong:
+# 1. Pastikan worker sudah di-deploy dengan benar
+# 2. Pastikan environment variables sudah di-set
+# 3. Jalankan ulang /seed endpoint
+# 4. Tunggu 1-2 menit untuk vector indexing
+```
+>>>>>>> origin/main
 
 ---
 
@@ -665,56 +736,468 @@ cp wrangler.toml wrangler.toml.backup
 
 ## 🚨 Troubleshooting
 
-### Common Installation Issues
+### Environment Setup Issues
 
-**Issue: Node.js version too old**
+#### Issue: Node.js Version Conflicts
+**Symptoms:**
+- `Error: Node.js version 16.x.x is not supported. Please use Node.js 18.x.x or higher`
+- `MODULE_NOT_FOUND` errors for modern packages
+- Build failures with syntax errors
+
+**Solutions:**
 ```bash
-# Solution: Install Node.js 18+ menggunakan nvm
+# Check current Node.js version
+node --version
+
+# Install correct version using NVM
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc
 nvm install 18
 nvm use 18
+nvm alias default 18
+
+# Verify installation
+node --version  # Should show v18.x.x
+npm --version   # Should show 9.x.x or higher
 ```
 
-**Issue: Permission denied on npm install**
+**Prevention:**
+- Use `.nvmrc` file in project root
+- Set default Node.js version to 18
+- Regularly update to latest 18.x LTS
+
+#### Issue: npm Permission Errors
+**Symptoms:**
+- `EACCES: permission denied` during `npm install`
+- `Error: EPERM: operation not permitted`
+- Cannot install global packages
+
+**Solutions:**
 ```bash
-# Solution: Fix npm permissions
+# Fix npm permissions (Linux/macOS)
 sudo chown -R $(whoami) ~/.npm
 sudo chown -R $(whoami) /usr/local/lib/node_modules
 
-# Atau gunakan npx
+# Alternative: Use npx to avoid global installation
 npx npm install
+
+# Or configure npm to use different directory
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
 ```
 
-**Issue: API_KEY not working**
+**Windows Solutions:**
+```powershell
+# Run PowerShell as Administrator
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Or use Chocolatey for package management
+choco install nodejs
+```
+
+#### Issue: Git Configuration Problems
+**Symptoms:**
+- Line ending issues (`LF vs CRLF`)
+- Permission denied on git operations
+- SSH key authentication failures
+
+**Solutions:**
 ```bash
-# Solution: Verify API key configuration
-echo $API_KEY  # Check if environment variable is set
+# Configure Git for cross-platform compatibility
+git config --global core.autocrlf input  # Linux/macOS
+git config --global core.autocrlf true   # Windows
+
+# Set up SSH keys for GitHub
+ssh-keygen -t ed25519 -C "your_email@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+cat ~/.ssh/id_ed25519.pub  # Add to GitHub SSH settings
+
+# Verify Git configuration
+git config --list
+```
+
+### Dependency Installation Issues
+
+#### Issue: Node Modules Corruption
+**Symptoms:**
+- Build fails with missing modules
+- `MODULE_NOT_FOUND` errors
+- Inconsistent behavior between runs
+
+**Solutions:**
+```bash
+# Clean installation
+rm -rf node_modules package-lock.json
+npm cache clean --force
+npm install
+
+# Verify installation
+npm list --depth=0
+
+# Check for security vulnerabilities
+npm audit
+npm audit fix
+```
+
+#### Issue: Conflicting Dependencies
+**Symptoms:**
+- `npm ERR! peer dep missing` warnings
+- Version conflicts between packages
+- Build failures due to incompatible versions
+
+**Solutions:**
+```bash
+# Check dependency tree
+npm ls
+
+# Install specific versions if needed
+npm install package@version
+
+# Use npm-check-updates for bulk updates
+npx npm-check-updates -u
+npm install
+
+# For persistent conflicts, use overrides in package.json
+```
+
+#### Issue: Network/Proxy Problems
+**Symptoms:**
+- `npm ERR! network timeout`
+- Connection refused errors
+- Slow or failed downloads
+
+**Solutions:**
+```bash
+# Configure npm proxy (if behind corporate proxy)
+npm config set proxy http://proxy.company.com:8080
+npm config set https-proxy http://proxy.company.com:8080
+
+# Use alternative registry
+npm config set registry https://registry.npmmirror.com
+
+# Increase timeout
+npm config set fetch-timeout 60000
+
+# Verify network connectivity
+ping registry.npmjs.org
+```
+
+### Environment Variable Issues
+
+#### Issue: API Key Configuration Problems
+**Symptoms:**
+- AI chat returns empty responses
+- `API_KEY not configured` errors
+- Authentication failures
+
+**Solutions:**
+```bash
+# Check if environment variable is set
+echo $API_KEY
+
+# Test API key validity
 curl -H "Content-Type: application/json" \
      -d '{"contents":[{"parts":[{"text":"Hello"}]}]}' \
      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_API_KEY"
+
+# For development, ensure .env file exists and is loaded
+cat .env
+# Should contain: API_KEY=your_actual_api_key_here
+
+# Restart development server after changing .env
+npm run dev
+```
+
+**Common API Key Issues:**
+- Invalid or expired API key
+- API key copied with extra spaces
+- Quota exceeded on Google AI Platform
+- Wrong API key format (should start with "AIza")
+
+#### Issue: Environment File Not Loading
+**Symptoms:**
+- Environment variables undefined in application
+- Default values being used instead
+- Configuration not applied
+
+**Solutions:**
+```bash
+# Verify .env file exists
+ls -la .env*
+
+# Check .env file format
+cat .env
+# Should be: KEY=value (no quotes, no spaces around =)
+
+# Ensure .env is in project root
+pwd  # Should be in ma-malnu-kananga directory
+
+# For production, use Cloudflare secrets
+wrangler secret put API_KEY
+```
+
+### Development Server Issues
+
+#### Issue: Port Already in Use
+**Symptoms:**
+- `Error: listen EADDRINUSE: address already in use :::9000`
+- Server fails to start
+- Port conflicts with other applications
+
+**Solutions:**
+```bash
+# Find process using port 9000
+lsof -i :9000  # Linux/macOS
+netstat -ano | findstr :9000  # Windows
+
+# Kill the process
+kill -9 PID  # Linux/macOS
+taskkill /PID PID /F  # Windows
+
+# Or use different port
+npm run dev -- --port 3000
+```
+
+#### Issue: Hot Reload Not Working
+**Symptoms:**
+- Changes not reflected in browser
+- Manual refresh required
+- File watching not working
+
+**Solutions:**
+```bash
+# Check file permissions
+ls -la src/
+
+# Clear Vite cache
+rm -rf node_modules/.vite
+
+# Restart with cache disabled
+npm run dev -- --force
+
+# Check for file watching limits (Linux)
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+```
+
+#### Issue: CORS Errors in Development
+**Symptoms:**
+- CORS errors in browser console
+- API calls blocked
+- Mixed content warnings
+
+**Solutions:**
+```bash
+# Check Vite proxy configuration in vite.config.ts
+# Should include proxy for API endpoints
+
+# Temporarily disable CORS for development
+# Add to vite.config.ts:
+server: {
+  cors: true
+}
+
+# Ensure worker URL is correct in .env
+VITE_WORKER_URL=http://localhost:8787
+```
+
+### Build and Compilation Issues
+
+#### Issue: TypeScript Compilation Errors
+**Symptoms:**
+- Type errors during build
+- `Cannot find module` errors
+- Declaration file problems
+
+**Solutions:**
+```bash
+# Check TypeScript configuration
+cat tsconfig.json
+
+# Install missing type definitions
+npm install --save-dev @types/node @types/react @types/react-dom
+
+# Run type checking
+npm run type-check
+
+# Clear TypeScript cache
+rm -rf node_modules/.typescript
+```
+
+#### Issue: Build Memory Issues
+**Symptoms:**
+- `JavaScript heap out of memory` errors
+- Build process crashes
+- Slow compilation times
+
+**Solutions:**
+```bash
+# Increase Node.js memory limit
+export NODE_OPTIONS="--max-old-space-size=4096"
+npm run build
+
+# Or set per command
+NODE_OPTIONS="--max-old-space-size=4096" npm run build
+
+# Optimize build process
+npm run build:analyze  # Check bundle size
 ```
 
 ### Deployment Issues
 
-**Issue: Worker deployment fails**
+#### Issue: Wrangler Authentication Problems
+**Symptoms:**
+- `Error: Not authenticated` when running wrangler commands
+- Permission denied errors
+- API token issues
+
+**Solutions:**
 ```bash
-# Solution: Check wrangler authentication
+# Re-authenticate with Cloudflare
 wrangler auth login
+
+# Check authentication status
 wrangler whoami
 
-# Check configuration
-wrangler validate
+# Verify API token permissions
+# Token needs: Account:Cloudflare Pages:Edit, Account:Account Settings:Read
+
+# Use API token instead of login
+wrangler auth whoami --api-token
 ```
 
-**Issue: Vector database seeding fails**
+#### Issue: Database Connection Failures
+**Symptoms:**
+- `Database binding not found` errors
+- Migration failures
+- D1 database not accessible
+
+**Solutions:**
 ```bash
-# Solution: Check Vectorize index configuration
+# Check database configuration
+wrangler d1 list
+
+# Verify wrangler.toml configuration
+cat wrangler.toml
+# Should include correct database_id
+
+# Test database connection
+wrangler d1 execute malnu-kananga-db --command="SELECT 1"
+
+# Recreate database if corrupted
+wrangler d1 create malnu-kananga-db-new
+# Update wrangler.toml with new ID
+```
+
+#### Issue: Vector Database Problems
+**Symptoms:**
+- AI chat returns empty context
+- Vector search not working
+- Seeding failures
+
+**Solutions:**
+```bash
+# Check Vectorize index
 wrangler vectorize list
 
-# Recreate index if necessary
+# Verify index configuration
+wrangler vectorize describe malnu-kananga-index
+
+# Recreate index with correct dimensions
 wrangler vectorize delete malnu-kananga-index
-wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
+wrangler vectorize create malnu-kananga-index \
+  --dimensions=768 \
+  --metric=cosine
+
+# Re-seed database
+curl https://your-worker-url.workers.dev/seed
 ```
+
+### Performance Issues
+
+#### Issue: Slow Development Server
+**Symptoms:**
+- Long startup times
+- Slow hot reload
+- High CPU usage
+
+**Solutions:**
+```bash
+# Check Node.js version (use LTS)
+node --version
+
+# Clear all caches
+rm -rf node_modules/.vite node_modules/.cache
+npm install
+
+# Disable unnecessary extensions in IDE
+# Use SSD for better I/O performance
+
+# Check system resources
+top  # Linux/macOS
+tasklist  # Windows
+```
+
+#### Issue: Large Bundle Size
+**Symptoms:**
+- Slow initial load
+- Large JavaScript files
+- Poor performance scores
+
+**Solutions:**
+```bash
+# Analyze bundle size
+npm run build:analyze
+
+# Optimize imports
+# Use dynamic imports for large libraries
+# Remove unused dependencies
+
+# Enable compression
+# Configure in vite.config.ts or Cloudflare settings
+```
+
+### Getting Help
+
+#### Collect Debug Information
+```bash
+# System information
+node --version
+npm --version
+git --version
+wrangler --version
+
+# Project information
+pwd
+ls -la
+cat package.json | grep version
+
+# Environment check
+echo "Node: $(node --version)"
+echo "NPM: $(npm --version)"
+echo "Working Directory: $(pwd)"
+echo "Git Branch: $(git branch --show-current)"
+echo "Git Remote: $(git remote get-url origin)"
+
+# Recent errors
+npm run test 2>&1 | tail -20
+npm run build 2>&1 | tail -20
+```
+
+#### When to Ask for Help
+Contact support if you experience:
+- Persistent installation failures after trying all solutions
+- Security-related errors or concerns
+- Performance issues that affect production
+- Unclear error messages not covered in this guide
+
+**Support Channels:**
+- GitHub Issues: For bugs and feature requests
+- Email: support@ma-malnukananga.sch.id
+- Documentation: Check other guides in docs/ folder
 
 ---
 
@@ -778,9 +1261,21 @@ wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 
 ---
 
-**Installation & Setup Guide Version: 1.0.0**  
-*Last Updated: November 20, 2024*  
+<<<<<<< HEAD
+**Installation & Setup Guide Version: 1.3.1**  
+*Last Updated: November 23, 2024*  
+=======
+
+**Installation & Setup Guide Version: 1.4.0**  
+*Last Updated: 2025-11-24*  
+*Maintained by: MA Malnu Kananga Technical Team*  
+*Documentation Audit: Completed - All setup procedures verified & AGENTS.md aligned*
+
+**Installation & Setup Guide Version: 1.3.1**  
+*Last Updated: 2025-11-24
+>>>>>>> origin/main
 *Maintained by: MA Malnu Kananga Technical Team*
+
 
 ---
 
