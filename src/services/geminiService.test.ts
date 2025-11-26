@@ -34,15 +34,6 @@ jest.mock('../memory', () => ({
   schoolMemoryBankConfig: {}
 }));
 
-// Create a mock memory bank instance to track calls
-const mockMemoryBank = {
-  searchMemories: mockSearchMemories,
-  deleteMemory: mockDeleteMemory,
-  getStats: mockGetStats,
-  getRelevantMemories: mockGetRelevantMemories,
-  addMemory: mockAddMemory,
-};
-
 // Mock fetch globally
 global.fetch = jest.fn();
 
