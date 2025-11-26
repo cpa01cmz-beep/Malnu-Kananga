@@ -29,11 +29,7 @@ class SecurityLogger {
     // Store in KV for audit trail (if available)
     if (this.env.SECURITY_LOGS_KV) {
       try {
-<<<<<<< HEAD
-        const logKey = `security_log:${Date.now()}:${Math.random().toString(36).substr(2, 9)}`;
-=======
         const logKey = `security_log:${Date.now()}:${Math.random().toString(36).substring(2, 11)}`;
->>>>>>> origin/main
         await this.env.SECURITY_LOGS_KV.put(logKey, JSON.stringify(logEntry), {
           expirationTtl: 30 * 24 * 60 * 60 // 30 days retention
         });

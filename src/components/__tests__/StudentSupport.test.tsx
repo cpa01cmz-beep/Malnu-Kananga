@@ -11,70 +11,9 @@ Object.defineProperty(window, 'alert', {
   value: mockAlert
 });
 
-<<<<<<< HEAD
-// Use fake timers for handling async operations
-jest.useFakeTimers();
-=======
->>>>>>> origin/main
 
 jest.mock('../../services/studentSupportService', () => ({
   StudentSupportService: {
-<<<<<<< HEAD
-    getSupportRequests: jest.fn(() => [
-      {
-        id: 'REQ001',
-        studentId: 'STU001',
-        type: 'academic',
-        category: 'math',
-        priority: 'medium',
-        title: 'Bantuan Matematika',
-        description: 'Saya kesulitan dengan kalkulus',
-        status: 'pending',
-        createdAt: '2024-01-01T10:00:00Z'
-      }
-    ]),
-    getRelevantResources: jest.fn(() => [
-      {
-        id: 'RES001',
-        title: 'Panduan Belajar Efektif',
-        type: 'guide',
-        category: 'academic',
-        content: 'Teknik belajar efektif',
-        difficulty: 'beginner',
-        tags: ['belajar', 'metode']
-      }
-    ]),
-    getStudentProgress: jest.fn(() => ({
-      studentId: 'STU001',
-      academicMetrics: {
-        gpa: 3.5,
-        gradeTrend: 'improving',
-        subjectsAtRisk: [],
-        attendanceRate: 85,
-        assignmentCompletion: 90
-      },
-      engagementMetrics: {
-        loginFrequency: 5,
-        resourceAccess: 10,
-        supportRequests: 2,
-        participationScore: 75
-      },
-      riskLevel: 'low',
-      lastUpdated: '2024-01-01T10:00:00Z'
-    })),
-    createSupportRequest: jest.fn(() => ({
-      id: 'REQ002',
-      studentId: 'STU001',
-      type: 'academic',
-      category: 'physics',
-      priority: 'medium',
-      title: 'Bantuan Fisika',
-      description: 'Saya kesulitan dengan mekanika',
-      status: 'pending',
-      createdAt: '2024-01-01T11:00:00Z'
-    }))
-  }
-=======
     getInstance: jest.fn(() => ({
       getSupportRequests: jest.fn(() => [
           {
@@ -131,7 +70,6 @@ jest.mock('../../services/studentSupportService', () => ({
         }))
      }))
    }
->>>>>>> origin/main
 }));
 
 
@@ -211,40 +149,6 @@ describe('StudentSupport Component', () => {
   });
 
   it('creates new support request when form is submitted', async () => {
-<<<<<<< HEAD
-     const { StudentSupportService } = require('../../services/studentSupportService');
-     
-     render(<StudentSupport studentId="STU001" />);
-     
-     // Open new request form
-     fireEvent.click(screen.getByText('📝 Buat Permintaan Baru'));
-     
-     // Fill form
-     fireEvent.change(screen.getByPlaceholderText('Judul permintaan'), {
-       target: { value: 'Bantuan Fisika' }
-     });
-     fireEvent.change(screen.getByPlaceholderText('Jelaskan masalah atau bantuan yang Anda butuhkan'), {
-       target: { value: 'Saya kesulitan dengan mekanika' }
-     });
-     
-     // Submit form
-     fireEvent.click(screen.getByText('Kirim Permintaan'));
-     
-     // Advance timers to process async operations
-     jest.runAllTimers();
-     
-     await waitFor(() => {
-       expect(StudentSupportService.createSupportRequest).toHaveBeenCalledWith(
-         'STU001',
-         'academic',
-         'umum',
-         'Bantuan Fisika',
-         'Saya kesulitan dengan mekanika',
-         'medium'
-       );
-     });
-   });
-=======
     const { StudentSupportService } = require('../../services/studentSupportService');
     
     render(<StudentSupport studentId="STU001" />);
@@ -274,7 +178,6 @@ describe('StudentSupport Component', () => {
       );
     });
   });
->>>>>>> origin/main
 
   it('filters resources based on search term', () => {
     render(<StudentSupport studentId="STU001" />);

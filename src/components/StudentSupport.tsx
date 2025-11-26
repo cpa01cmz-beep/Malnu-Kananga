@@ -3,10 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { StudentSupportService, SupportRequest, SupportResource, StudentProgress } from '../services/studentSupportService';
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
 
 interface StudentSupportProps {
   studentId: string;
@@ -39,23 +35,6 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
     
   }, [studentId]);
 
-<<<<<<< HEAD
-  const loadSupportData = () => {
-    // Load student's support requests
-    const requests = StudentSupportService.getSupportRequests();
-     setSupportRequests(requests.filter(req => req.studentId === studentId));
-
-    // Load available resources
-    const allResourcesPromise = StudentSupportService.getRelevantResources('');
-    allResourcesPromise.then(allResources => {
-      setResources(allResources);
-    });
-
-    // Load student progress
-    const progress = StudentSupportService.getStudentProgress(studentId);
-    setStudentProgress(progress || null);
-  };
-=======
    const loadSupportData = async () => {
      const supportService = StudentSupportService.getInstance();
      
@@ -71,7 +50,6 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
      const progress = supportService.getStudentProgress(studentId);
      setStudentProgress(progress || null);
    };
->>>>>>> origin/main
 
   const handleCreateRequest = () => {
     if (!newRequest.title || !newRequest.description) {
@@ -79,16 +57,6 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
       return;
     }
 
-<<<<<<< HEAD
-    const request = StudentSupportService.createSupportRequest(
-      studentId,
-      newRequest.type,
-      newRequest.category || 'umum',
-      newRequest.title,
-      newRequest.description,
-      newRequest.priority
-    );
-=======
      const supportService = StudentSupportService.getInstance();
      const request = supportService.createSupportRequest(
        studentId,
@@ -98,7 +66,6 @@ const StudentSupport: React.FC<StudentSupportProps> = ({ studentId }) => {
        newRequest.description,
        newRequest.priority
      );
->>>>>>> origin/main
 
     setSupportRequests([...supportRequests, request]);
     
