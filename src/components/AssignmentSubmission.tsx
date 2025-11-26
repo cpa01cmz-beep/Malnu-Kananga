@@ -1,26 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { _Assignment as Assignment, currentParent } from '../data/parentData';
-
-interface _FileList {
-  length: number;
-  item(_index: number): File | null;
-  [_index: number]: File;
-}
-
-interface SubmissionData {
-  file?: File;
-  notes?: string;
-  submittedBy: string;
-}
+import { Assignment, currentParent } from '../data/parentData';
 
 interface AssignmentSubmissionProps {
   assignment: Assignment;
   onClose: () => void;
-  onSubmit: (_assignmentId: string, _submissionData: {
+  onSubmit: (data: {
     file?: File;
     notes?: string;
     submittedBy: string;
-  }) => Promise<void>;
+  }) => void;
 }
 
 const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
@@ -32,7 +20,7 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (file: File) => {
     // Validate file type
@@ -87,12 +75,6 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
     }
 
     setIsSubmitting(true);
-
-    const submissionData: SubmissionData = {
-      file: selectedFile || undefined,
-      notes: notes.trim() || undefined,
-      submittedBy: currentParent.id
-    };
 
     try {
       await onSubmit(assignment.id, {
@@ -201,9 +183,7 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
             </label>
 
             <div
-              role="button"
-              tabIndex={0}
-              className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
+              className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
                 dragActive
                   ? 'border-green-400 bg-green-50 dark:bg-green-900/20'
                   : selectedFile
@@ -214,13 +194,6 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  fileInputRef.current?.click();
-                }
-              }}
             >
               <input
                 ref={fileInputRef}
@@ -260,11 +233,7 @@ const AssignmentSubmission: React.FC<AssignmentSubmissionProps> = ({
                   <div className="mt-4">
                     <button
                       type="button"
-                      onClick={() => {
-                        if (fileInputRef.current) {
-                          fileInputRef.current.click();
-                        }
-                      }}
+                      onClick={() => fileInputRef.current?.click()}
                       className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium"
                     >
                       Pilih File
