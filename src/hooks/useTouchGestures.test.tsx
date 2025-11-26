@@ -56,10 +56,13 @@ describe('useTouchGestures', () => {
       useTouchGestures({ onSwipeRight })
     );
 
+    // First, set the ref to the element
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
+    // Wait for useEffect to run and attach event listeners
+    // The useEffect will run automatically after setting the ref
     const touchStartEvent = new TouchEvent('touchstart', {
       touches: [{
         clientX: 100,
@@ -90,6 +93,7 @@ describe('useTouchGestures', () => {
       }]
     });
 
+    // Dispatch events - should trigger the swipe right callback
     act(() => {
       mockElement.dispatchEvent(touchStartEvent);
       jest.advanceTimersByTime(10);
@@ -105,7 +109,7 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     const touchStartEvent = new TouchEvent('touchstart', {
@@ -153,7 +157,7 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     const touchStartEvent = new TouchEvent('touchstart', {
@@ -201,7 +205,7 @@ describe('useTouchGestures', () => {
     );
 
     act(() => {
-      result.current.current = mockElement;
+      result.current.elementRef.current = mockElement;
     });
 
     const touchStartEvent = new TouchEvent('touchstart', {
@@ -300,14 +304,14 @@ it('seharusnya membersihkan timers saat unmount', () => {
      expect(() => unmount()).not.toThrow();
    });
 
-   it('seharusnya mendeteksi long press dengan benar', () => {
-     const { result } = renderHook(() => 
-       useTouchGestures({ onLongPress })
-     );
+it('seharusnya mendeteksi long press dengan benar', () => {
+      const { result } = renderHook(() => 
+        useTouchGestures({ onLongPress })
+      );
 
-     act(() => {
-       result.current.current = mockElement;
-     });
+      act(() => {
+        result.current.elementRef.current = mockElement;
+      });
 
      const touchStartEvent = new TouchEvent('touchstart', {
        touches: [{
@@ -332,14 +336,14 @@ it('seharusnya membersihkan timers saat unmount', () => {
      expect(onLongPress).toHaveBeenCalledTimes(1);
    });
 
-   it('seharusnya membatalkan long press jika ada pergerakan', () => {
-     const { result } = renderHook(() => 
-       useTouchGestures({ onLongPress })
-     );
+it('seharusnya membatalkan long press jika ada pergerakan', () => {
+      const { result } = renderHook(() => 
+        useTouchGestures({ onLongPress })
+      );
 
-     act(() => {
-       result.current.current = mockElement;
-     });
+      act(() => {
+        result.current.elementRef.current = mockElement;
+      });
 
      const touchStartEvent = new TouchEvent('touchstart', {
        touches: [{
@@ -380,17 +384,17 @@ it('seharusnya membersihkan timers saat unmount', () => {
      expect(onLongPress).not.toHaveBeenCalled();
    });
 
-   it('seharusnya menghormati minSwipeDistance', () => {
-     const { result } = renderHook(() => 
-       useTouchGestures({ 
-         onSwipeRight,
-         minSwipeDistance: 100
-       })
-     );
+it('seharusnya menghormati minSwipeDistance', () => {
+      const { result } = renderHook(() => 
+        useTouchGestures({ 
+          onSwipeRight,
+          minSwipeDistance: 100
+        })
+      );
 
-     act(() => {
-       result.current.current = mockElement;
-     });
+      act(() => {
+        result.current.elementRef.current = mockElement;
+      });
 
      const touchStartEvent = new TouchEvent('touchstart', {
        touches: [{
@@ -431,17 +435,17 @@ it('seharusnya membersihkan timers saat unmount', () => {
      expect(onSwipeRight).not.toHaveBeenCalled();
    });
 
-   it('seharusnya menghormati maxSwipeTime', () => {
-     const { result } = renderHook(() => 
-       useTouchGestures({ 
-         onSwipeRight,
-         maxSwipeTime: 200
-       })
-     );
+it('seharusnya menghormati maxSwipeTime', () => {
+      const { result } = renderHook(() => 
+        useTouchGestures({ 
+          onSwipeRight,
+          maxSwipeTime: 200
+        })
+      );
 
-     act(() => {
-       result.current.current = mockElement;
-     });
+      act(() => {
+        result.current.elementRef.current = mockElement;
+      });
 
      const touchStartEvent = new TouchEvent('touchstart', {
        touches: [{
@@ -482,17 +486,17 @@ it('seharusnya membersihkan timers saat unmount', () => {
      expect(onSwipeRight).not.toHaveBeenCalled();
    });
 
-   it('seharusnya menggunakan custom longPressDelay', () => {
-     const { result } = renderHook(() => 
-       useTouchGestures({ 
-         onLongPress,
-         longPressDelay: 1000
-       })
-     );
+it('seharusnya menggunakan custom longPressDelay', () => {
+      const { result } = renderHook(() => 
+        useTouchGestures({ 
+          onLongPress,
+          longPressDelay: 1000
+        })
+      );
 
-     act(() => {
-       result.current.current = mockElement;
-     });
+      act(() => {
+        result.current.elementRef.current = mockElement;
+      });
 
      const touchStartEvent = new TouchEvent('touchstart', {
        touches: [{
@@ -523,19 +527,19 @@ it('seharusnya membersihkan timers saat unmount', () => {
      expect(onLongPress).toHaveBeenCalledTimes(1);
    });
 
-   it('seharusnya membersihkan event listeners saat unmount', () => {
-     const removeEventListenerSpy = jest.spyOn(mockElement, 'removeEventListener');
+it('seharusnya membersihkan event listeners saat unmount', () => {
+      const removeEventListenerSpy = jest.spyOn(mockElement, 'removeEventListener');
 
-     const { result, unmount } = renderHook(() => 
-       useTouchGestures({ onTap })
-     );
+      const { result, unmount } = renderHook(() => 
+        useTouchGestures({ onTap })
+      );
 
-     act(() => {
-       result.current.current = mockElement;
-     });
+      act(() => {
+        result.current.elementRef.current = mockElement;
+      });
 
-     unmount();
-   });
+      unmount();
+    });
 
 it('seharusnya menggunakan custom minSwipeDistance', () => {
      const { unmount } = renderHook(() => 
@@ -579,18 +583,18 @@ it('seharusnya handle null element ref', () => {
      expect(result.current.elementRef.current).toBe(null);
    });
 
-   it('seharusnya menangani multiple gestures dengan benar', () => {
-     const { result } = renderHook(() => 
-       useTouchGestures({
-         onTap,
-         onSwipeRight,
-         onLongPress
-       })
-     );
+it('seharusnya menangani multiple gestures dengan benar', () => {
+      const { result } = renderHook(() => 
+        useTouchGestures({
+          onTap,
+          onSwipeRight,
+          onLongPress
+        })
+      );
 
-     act(() => {
-       result.current.current = mockElement;
-     });
+      act(() => {
+        result.current.elementRef.current = mockElement;
+      });
 
      const tapStartEvent = new TouchEvent('touchstart', {
        touches: [{
