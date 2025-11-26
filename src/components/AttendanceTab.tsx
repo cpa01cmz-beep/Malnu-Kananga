@@ -5,7 +5,7 @@ interface AttendanceTabProps {
   attendanceData: AttendanceRecord[];
   attendanceStats: AttendanceStats;
   formatDate: (dateString: string) => string;
-  getAttendanceColor: (status: string) => string;
+  getAttendanceColor: (_status: string) => string;
 }
 
 const AttendanceTab: React.FC<AttendanceTabProps> = ({
