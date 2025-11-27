@@ -1085,6 +1085,618 @@ Respons:`;
       }
     }
 
+    // --- Teacher Grade Management Endpoints ---
+    if (url.pathname === '/api/teacher/grades/sync' && request.method === 'POST') {
+      try {
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        // Simulate SIS sync - in production, integrate with actual Student Information System
+        const syncedGrades = [
+          {
+            id: 'GRD001',
+            studentId: 'STU001',
+            subjectId: 'MAT12',
+            midtermScore: 85,
+            finalScore: 88,
+            assignmentScore: 90,
+            attendanceScore: 95,
+            finalGrade: 'A-',
+            gradePoint: 3.7,
+            status: 'Lulus',
+            lastUpdated: new Date().toISOString()
+          }
+        ];
+
+        return new Response(JSON.stringify({
+          success: true,
+          data: {
+            syncedCount: syncedGrades.length,
+            updatedGrades: syncedGrades
+          }
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (error) {
+        console.error('Grade sync error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal sinkronisasi nilai' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
+    if (url.pathname === '/api/teacher/grades/realtime' && request.method === 'GET') {
+      try {
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        // Server-Sent Events for real-time grade updates
+        const stream = new ReadableStream({
+          start(controller) {
+            const sendUpdate = () => {
+              const data = {
+                grades: [{
+                  id: 'GRD001',
+                  studentId: 'STU001',
+                  subjectId: 'MAT12',
+                  finalGrade: 'A-',
+                  gradePoint: 3.7,
+                  timestamp: new Date().toISOString()
+                }]
+              };
+              controller.enqueue(`data: ${JSON.stringify(data)}\n\n`);
+            };
+
+            // Send initial update
+            sendUpdate();
+
+            // Send updates every 30 seconds
+            const interval = setInterval(sendUpdate, 30000);
+
+            // Cleanup on connection close
+            request.signal.addEventListener('abort', () => {
+              clearInterval(interval);
+              controller.close();
+            });
+          }
+        });
+
+        return new Response(stream, {
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+            ...corsHeaders
+          }
+        });
+      } catch (error) {
+        console.error('Real-time grades error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal menghubungkan ke real-time updates' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
+    if (url.pathname === '/api/teacher/grades/validate' && request.method === 'POST') {
+      try {
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const { grades } = await request.json();
+        
+        const validGrades = [];
+        const invalidGrades = [];
+        const warnings = [];
+
+        for (const grade of grades) {
+          const errors = [];
+          
+          // Validate score ranges
+          if (grade.midtermScore && (grade.midtermScore < 0 || grade.midtermScore > 100)) {
+            errors.push('Nilai UTS harus antara 0-100');
+          }
+          if (grade.finalScore && (grade.finalScore < 0 || grade.finalScore > 100)) {
+            errors.push('Nilai UAS harus antara 0-100');
+          }
+          if (grade.assignmentScore && (grade.assignmentScore < 0 || grade.assignmentScore > 100)) {
+            errors.push('Nilai tugas harus antara 0-100');
+          }
+          if (grade.attendanceScore && (grade.attendanceScore < 0 || grade.attendanceScore > 100)) {
+            errors.push('Nilai kehadiran harus antara 0-100');
+          }
+
+          // Validate grade point
+          if (grade.gradePoint && (grade.gradePoint < 0 || grade.gradePoint > 4.0)) {
+            errors.push('Grade point harus antara 0-4.0');
+          }
+
+          if (errors.length > 0) {
+            invalidGrades.push({ grade, errors });
+          } else {
+            validGrades.push(grade);
+          }
+
+          // Add warnings for borderline cases
+          if (grade.finalScore && grade.finalScore >= 95 && grade.finalGrade !== 'A') {
+            warnings.push(`Siswa ${grade.studentId} memiliki nilai UAS tinggi (${grade.finalScore}) tapi grade akhir bukan A`);
+          }
+        }
+
+        return new Response(JSON.stringify({
+          success: true,
+          data: {
+            validGrades,
+            invalidGrades,
+            warnings
+          }
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (error) {
+        console.error('Grade validation error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal validasi nilai' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
+    if (url.pathname === '/api/teacher/grades/batch-update' && request.method === 'POST') {
+      try {
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const { updates } = await request.json();
+        const successful = [];
+        const failed = [];
+
+        for (const update of updates) {
+          try {
+            // Simulate batch update processing
+            const updatedGrade = {
+              ...update.data,
+              id: update.gradeId,
+              lastUpdated: new Date().toISOString()
+            };
+            successful.push(updatedGrade);
+          } catch (error) {
+            failed.push({
+              gradeId: update.gradeId,
+              error: error.message
+            });
+          }
+        }
+
+        return new Response(JSON.stringify({
+          success: true,
+          data: {
+            successful,
+            failed
+          }
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (error) {
+        console.error('Batch grade update error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal update batch nilai' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
+    if (url.pathname === '/api/notifications/grade-update' && request.method === 'POST') {
+      try {
+        const { studentId, subjectId, grade, gradePoint } = await request.json();
+        
+        // Simulate notification sending
+        console.log(`Grade update notification: Student ${studentId}, Subject ${subjectId}, Grade ${grade} (${gradePoint})`);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Notifikasi berhasil dikirim'
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (error) {
+        console.error('Notification error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal mengirim notifikasi' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
+    // --- Essay Grading Service Endpoints ---
+    if (url.pathname === '/api/essay/grade' && request.method === 'POST') {
+      try {
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const submission = await request.json();
+        
+        // Validate submission
+        if (!submission.essay || !submission.question || !submission.studentId) {
+          return new Response(JSON.stringify({ 
+            success: false, 
+            error: 'Data esai tidak lengkap' 
+          }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+        }
+
+        // Simulate AI essay grading
+        const mockEvaluation = {
+          id: `eval_${Date.now()}`,
+          submissionId: submission.id,
+          overallScore: Math.floor(Math.random() * 30) + 70, // 70-100
+          overallPercentage: 0,
+          grade: 'B+',
+          feedback: {
+            strengths: [
+              'Struktur esai yang baik dan jelas',
+              'Argumen yang mendukung dengan baik',
+              'Penggunaan bahasa yang efektif'
+            ],
+            weaknesses: [
+              'Perlu lebih banyak contoh konkret',
+              'Kesimpulan bisa lebih kuat',
+              'Beberapa kalimat terlalu panjang'
+            ],
+            suggestions: [
+              'Tambahkan data atau statistik untuk mendukung argumen',
+              'Perbaiki transisi antar paragraf',
+              'Gunakan kalimat yang lebih variatif'
+            ],
+            general: 'Esai ini menunjukkan pemahaman yang baik tentang topik. Struktur sudah baik namun perlu diperkuat dengan bukti yang lebih konkret.'
+          },
+          criteriaScores: [
+            { criteriaName: 'Struktur', score: 85, maxPoints: 100, percentage: 85, feedback: 'Struktur baik dengan intro, body, dan konklusi yang jelas' },
+            { criteriaName: 'Isi', score: 78, maxPoints: 100, percentage: 78, feedback: 'Isi relevan tapi perlu lebih dalam' },
+            { criteriaName: 'Bahasa', score: 82, maxPoints: 100, percentage: 82, feedback: 'Bahasa baik dengan beberapa kesalahan minor' },
+            { criteriaName: 'Kosakata', score: 80, maxPoints: 100, percentage: 80, feedback: 'Kosakata bervariasi dan tepat' },
+            { criteriaName: 'Koherensi', score: 75, maxPoints: 100, percentage: 75, feedback: 'Alur ide cukup koheren' },
+            { criteriaName: 'Orisinalitas', score: 85, maxPoints: 100, percentage: 85, feedback: 'Ide original dengan perspektif menarik' }
+          ],
+          languageAnalysis: {
+            grammar: 82,
+            vocabulary: 80,
+            coherence: 75,
+            structure: 85,
+            originality: 85
+          },
+          detailedFeedback: 'Evaluasi lengkap esai dengan analisis komprehensif...',
+          confidence: 0.85,
+          needsHumanReview: false,
+          reviewReasons: [],
+          evaluationTime: new Date().toISOString()
+        };
+
+        mockEvaluation.overallPercentage = Math.round((mockEvaluation.overallScore / submission.maxScore) * 100);
+
+        return new Response(JSON.stringify({
+          success: true,
+          data: mockEvaluation
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (error) {
+        console.error('Essay grading error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal menilai esai' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
+    if (url.pathname === '/api/essay/batch-grade' && request.method === 'POST') {
+      try {
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const { submissions } = await request.json();
+        
+        if (!Array.isArray(submissions)) {
+          return new Response(JSON.stringify({ 
+            success: false, 
+            error: 'Submissions harus berupa array' 
+          }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+        }
+
+        // Simulate batch grading
+        const evaluations = submissions.map((submission, index) => ({
+          id: `eval_batch_${Date.now()}_${index}`,
+          submissionId: submission.id,
+          overallScore: Math.floor(Math.random() * 30) + 70,
+          overallPercentage: 0,
+          grade: 'B+',
+          feedback: {
+            strengths: ['Struktur baik', 'Argumen relevan'],
+            weaknesses: ['Perlu contoh lebih banyak'],
+            suggestions: ['Tambahkan data pendukung'],
+            general: 'Esai baik dengan ruang untuk perbaikan'
+          },
+          criteriaScores: [],
+          languageAnalysis: {
+            grammar: 80,
+            vocabulary: 75,
+            coherence: 78,
+            structure: 82,
+            originality: 80
+          },
+          detailedFeedback: 'Evaluasi batch...',
+          confidence: 0.8,
+          needsHumanReview: false,
+          reviewReasons: [],
+          evaluationTime: new Date().toISOString()
+        }));
+
+        evaluations.forEach(eval => {
+          eval.overallPercentage = Math.round((eval.overallScore / 100) * 100);
+        });
+
+        return new Response(JSON.stringify({
+          success: true,
+          data: evaluations
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (error) {
+        console.error('Batch essay grading error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal menilai esai secara batch' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
+    if (url.pathname === '/api/essay/metrics' && request.method === 'GET') {
+      try {
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const mockMetrics = {
+          totalEssays: 150,
+          averageScore: 82,
+          averageTime: 45,
+          accuracy: 0.85,
+          studentSatisfaction: 0.82,
+          commonWeaknesses: [
+            'Kurangnya contoh konkret',
+            'Struktur paragraf yang lemah',
+            'Kosakata terbatas'
+          ],
+          commonStrengths: [
+            'Struktur esai yang jelas',
+            'Pemahaman topik yang baik',
+            'Argumen yang logis'
+          ],
+          gradeDistribution: {
+            A: 25,
+            B: 80,
+            C: 35,
+            D: 8,
+            E: 2
+          }
+        };
+
+        return new Response(JSON.stringify({
+          success: true,
+          data: mockMetrics
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (error) {
+        console.error('Essay metrics error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal mengambil metrik penilaian' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
+    // --- Parent Communication Service Endpoints ---
+    if (url.pathname === '/api/parents/reports/generate' && request.method === 'POST') {
+      try {
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const { studentId, reportType, customPeriod } = await request.json();
+        
+        // Generate mock progress report
+        const mockReport = {
+          id: `report_${studentId}_${Date.now()}`,
+          studentId,
+          parentIds: ['parent_001'],
+          reportType,
+          period: customPeriod || {
+            start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+            end: new Date().toISOString()
+          },
+          academicPerformance: {
+            overallGPA: 3.2,
+            subjectGrades: [
+              {
+                subject: 'Matematika',
+                grade: 'B+',
+                score: 85,
+                trend: 'improving',
+                teacherComments: 'Menunjukkan peningkatan yang baik'
+              },
+              {
+                subject: 'Bahasa Indonesia',
+                grade: 'A-',
+                score: 88,
+                trend: 'stable',
+                teacherComments: 'Konsisten baik'
+              }
+            ],
+            attendance: {
+              present: 18,
+              absent: 1,
+              late: 2,
+              percentage: 90
+            },
+            assignments: {
+              completed: 12,
+              pending: 2,
+              overdue: 1,
+              completionRate: 80
+            }
+          },
+          behavioralNotes: [
+            {
+              date: new Date().toISOString(),
+              type: 'positive',
+              category: 'participation',
+              description: 'Aktif dalam diskusi kelas',
+              teacher: 'Bu Siti'
+            }
+          ],
+          achievements: [
+            {
+              date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+              type: 'academic',
+              title: 'Juara 2 Olimpiade Matematika',
+              description: 'Meraih juara 2 tingkat sekolah',
+              level: 'school'
+            }
+          ],
+          concerns: [],
+          recommendations: [
+            {
+              category: 'academic',
+              priority: 'medium',
+              action: 'Tingkatkan latihan soal matematika',
+              timeline: '2 minggu'
+            }
+          ],
+          nextSteps: [
+            'Tinjau laporan ini bersama anak',
+            'Hubungi guru wali jika ada pertanyaan'
+          ],
+          teacherComments: 'Anak Anda menunjukkan kemajuan yang baik. Pertahankan konsistensi ini.',
+          generatedAt: new Date().toISOString()
+        };
+
+        return new Response(JSON.stringify({
+          success: true,
+          data: mockReport
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (error) {
+        console.error('Progress report generation error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal membuat laporan kemajuan' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
+    if (url.pathname === '/api/parents/reports/send' && request.method === 'POST') {
+      try {
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const { reportId } = await request.json();
+        
+        // Simulate sending report
+        console.log(`Sending progress report ${reportId} to parents`);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Laporan berhasil dikirim ke orang tua'
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (error) {
+        console.error('Progress report send error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal mengirim laporan kemajuan' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
+    if (url.pathname === '/api/parents/meetings/schedule' && request.method === 'POST') {
+      try {
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const meeting = await request.json();
+        
+        const newMeeting = {
+          ...meeting,
+          id: `meeting_${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          status: 'scheduled'
+        };
+
+        return new Response(JSON.stringify({
+          success: true,
+          data: newMeeting
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (error) {
+        console.error('Meeting scheduling error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal menjadwalkan pertemuan' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
+    if (url.pathname === '/api/parents/emergency' && request.method === 'POST') {
+      try {
+        if (!isAuthenticated(request)) {
+          return new Response(JSON.stringify({ message: 'Autentikasi diperlukan.' }), { 
+            status: 401, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const { studentIds, message, priority } = await request.json();
+        
+        // Simulate emergency notification
+        console.log(`Emergency notification sent to parents of students: ${studentIds.join(', ')}`);
+        console.log(`Message: ${message}`);
+        console.log(`Priority: ${priority}`);
+        
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Notifikasi darurat berhasil dikirim'
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      } catch (error) {
+        console.error('Emergency notification error:', error.message);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Gagal mengirim notifikasi darurat' 
+        }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
+      }
+    }
+
     return new Response('Endpoint tidak ditemukan.', { status: 404, headers: corsHeaders });
   },
 };

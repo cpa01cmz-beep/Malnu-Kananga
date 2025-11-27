@@ -161,6 +161,117 @@ export const teacherApi = {
   },
 };
 
+// Real-time Grade Synchronization Service
+export const gradeSyncService = {
+  // Sync grades from Student Information System
+  syncFromSIS: async (): Promise<ApiResponse<{ syncedCount: number; updatedGrades: Grade[] }>> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/teacher/grades/sync`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      // Trigger real-time notifications
+      if (result.data?.updatedGrades?.length > 0) {
+        await notificationService.notifyGradeUpdates(result.data.updatedGrades);
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Error syncing grades from SIS:', error);
+      return {
+        success: false,
+        error: 'Gagal sinkronisasi nilai dari SIS. Silakan coba lagi.',
+      };
+    }
+  },
+
+  // Real-time grade update listener
+  subscribeToGradeUpdates: (callback: (grades: Grade[]) => void) => {
+    const eventSource = new EventSource(`${API_BASE_URL}/api/teacher/grades/realtime`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+      },
+    });
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        callback(data.grades);
+      } catch (error) {
+        console.error('Error parsing grade update:', error);
+      }
+    };
+
+    return eventSource;
+  },
+
+  // Batch grade validation
+  validateGrades: async (grades: Grade[]): Promise<ApiResponse<{
+    validGrades: Grade[];
+    invalidGrades: Array<{ grade: Grade; errors: string[] }>;
+    warnings: string[];
+  }>> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/teacher/grades/validate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ grades }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error validating grades:', error);
+      return {
+        success: false,
+        error: 'Gagal validasi nilai. Silakan periksa kembali data.',
+      };
+    }
+  },
+};
+
+// Notification Service for Grade Updates
+const notificationService = {
+  notifyGradeUpdates: async (grades: Grade[]): Promise<void> => {
+    for (const grade of grades) {
+      try {
+        await fetch(`${API_BASE_URL}/api/notifications/grade-update`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            studentId: grade.studentId,
+            subjectId: grade.subjectId,
+            grade: grade.finalGrade,
+            gradePoint: grade.gradePoint,
+          }),
+        });
+      } catch (error) {
+        console.error('Error sending grade notification:', error);
+      }
+    }
+  },
+};
+
 // Grades Management API
 export const gradesManagementApi = {
   // Get grades for a class and subject
@@ -207,7 +318,7 @@ export const gradesManagementApi = {
     }
   },
 
-  // Update student grade
+  // Update student grade with real-time sync
   updateGrade: async (
     gradeId: string,
     data: {
@@ -235,12 +346,67 @@ export const gradesManagementApi = {
       }
 
       const result = await response.json();
+      
+      // Trigger real-time sync if update successful
+      if (result.success && result.data) {
+        await gradeSyncService.syncFromSIS();
+      }
+      
       return result;
     } catch (error) {
       console.error('Error updating grade:', error);
       return {
         success: false,
         error: 'Gagal memperbarui nilai. Silakan coba lagi.',
+      };
+    }
+  },
+
+  // Batch grade update with validation
+  batchUpdateGrades: async (
+    updates: Array<{
+      gradeId: string;
+      data: {
+        midtermScore?: number;
+        finalScore?: number;
+        assignmentScore?: number;
+        attendanceScore?: number;
+        finalGrade?: string;
+        gradePoint?: number;
+        status?: 'Lulus' | 'Tidak Lulus' | 'Belum Selesai' | 'draft' | 'submitted' | 'approved';
+      };
+    }>
+  ): Promise<ApiResponse<{
+    successful: Grade[];
+    failed: Array<{ gradeId: string; error: string }>;
+  }>> => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/teacher/grades/batch-update`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ updates }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      // Trigger real-time sync for successful updates
+      if (result.data?.successful?.length > 0) {
+        await gradeSyncService.syncFromSIS();
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Error batch updating grades:', error);
+      return {
+        success: false,
+        error: 'Gagal memperbarui nilai secara batch. Silakan coba lagi.',
       };
     }
   },
