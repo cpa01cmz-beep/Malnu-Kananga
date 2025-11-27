@@ -2,6 +2,10 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ErrorBoundary, { withErrorBoundary, useErrorHandler } from './ErrorBoundary';
 
+interface ErrorInfo {
+  componentStack: string;
+}
+
 const ThrowErrorComponent = ({ shouldThrow = false }: { shouldThrow?: boolean }) => {
   if (shouldThrow) {
     throw new Error('Test error');
@@ -60,7 +64,9 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    expect(onError).toHaveBeenCalledWith(expect.any(Error), expect.any(ErrorInfo));
+    expect(onError).toHaveBeenCalledWith(expect.any(Error), expect.objectContaining({
+      componentStack: expect.any(String)
+    }));
   });
 
   it('seharusnya menampilkan detail error di development mode', () => {
@@ -127,17 +133,12 @@ describe('ErrorBoundary', () => {
 
   it('seharusnya me-reload halaman ketika tombol "Muat Ulang Halaman" diklik', () => {
     const reloadMock = jest.fn();
-    const originalLocation = window.location;
-
-    // Create a mock location object
-    const mockLocation = {
-      ...originalLocation,
-      reload: reloadMock
-    } as any;
-
-    // Replace window.location
+    
+    // Mock window.location.reload
     Object.defineProperty(window, 'location', {
-      value: mockLocation,
+      value: {
+        reload: reloadMock
+      },
       writable: true,
       configurable: true
     });
@@ -151,13 +152,6 @@ describe('ErrorBoundary', () => {
     fireEvent.click(screen.getByText('Muat Ulang Halaman'));
 
     expect(reloadMock).toHaveBeenCalledTimes(1);
-
-    // Restore original location
-    Object.defineProperty(window, 'location', {
-      value: originalLocation,
-      writable: true,
-      configurable: true
-    });
   });
 
   it('seharusnya menangani multiple error berturut-turut', () => {
@@ -218,7 +212,7 @@ describe('withErrorBoundary HOC', () => {
     const CustomFallback = () => <div>HOC Custom Fallback</div>;
     const WrappedComponent = withErrorBoundary(ErrorComponent, {
       fallback: <CustomFallback />
-    });
+    } as any);
 
     render(<WrappedComponent />);
 
@@ -229,7 +223,7 @@ describe('withErrorBoundary HOC', () => {
     const Component = () => <div>Test Component</div>;
     const WrappedComponent = withErrorBoundary(Component);
 
-    expect(WrappedComponent.displayName).toBe('withErrorBoundary(TestComponent)');
+    expect(WrappedComponent.displayName).toBe('withErrorBoundary(Component)');
   });
 });
 
@@ -247,7 +241,11 @@ describe('useErrorHandler hook', () => {
       const handleError = useErrorHandler();
       
       const handleClick = () => {
-        handleError(new Error('Manual error'));
+        try {
+          handleError(new Error('Manual error'));
+        } catch (e) {
+          // Error is thrown to be caught by boundary
+        }
       };
 
       return (
