@@ -266,7 +266,36 @@ const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
         />
       );
 
+      const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau keterangan/);
+      fireEvent.change(notesTextarea, { target: { value: 'Test notes' } });
 
+      const file = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
+      const dropZone = screen.getByText('Pilih File').closest('div');
+      
+      if (dropZone) {
+        fireEvent.drop(dropZone, {
+          dataTransfer: {
+            files: [file]
+          }
+        });
+      }
+
+      const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockOnSubmit).toHaveBeenCalledWith({
+          file: undefined,
+          notes: 'Test notes',
+          submittedBy: 'PAR001'
+        });
+      });
+    });
+
+    test('should show loading state during submission', async () => {
+      mockOnSubmit.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+
+      render(
         <AssignmentSubmission
           assignment={mockAssignment}
           onClose={mockOnClose}
@@ -274,10 +303,13 @@ const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
         />
       );
 
-const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau keterangan/);
-       fireEvent.change(notesTextarea, { target: { value: 'Test notes' } });
+      const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau keterangan/);
+      fireEvent.change(notesTextarea, { target: { value: 'Test notes' } });
 
-       const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
+      const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
+      fireEvent.click(submitButton);
+
+      expect(screen.getByText('Mengumpulkan...')).toBeInTheDocument();
       expect(submitButton).toBeDisabled();
     });
   });
@@ -348,7 +380,7 @@ const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau ketera
         />
       );
 
-expect(screen.getByRole('button', { name: /kumpulkan tugas/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /kumpulkan tugas/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /batal/i })).toBeInTheDocument();
     });
   });
