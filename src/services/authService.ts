@@ -1,6 +1,7 @@
 // Authentication service untuk development, production, dan Supabase
 import { WORKER_URL } from '../utils/envValidation';
 import SupabaseAuthService from './supabaseAuthService';
+import { SecureTokenManager } from '../utils/secureTokenManager';
 
 // Rate limiting untuk client-side protection
 const clientRateLimitStore = new Map();
@@ -194,53 +195,8 @@ function validateUserInput(input: string, type: 'email' | 'name' | 'general' = '
 // Token verification must be handled server-side only
 // This prevents token tampering and authentication bypass vulnerabilities
 
-// SECURE Token storage management using HTTP-only cookies
-class TokenManager {
-  private static TOKEN_KEY = 'malnu_secure_token';
-  
-  // SECURITY: Replaced localStorage with secure cookie-based storage
-  static storeToken(token: string): Promise<void> {
-    // In production, tokens should be stored in HTTP-only cookies set by server
-    // For development, we'll use sessionStorage (more secure than localStorage)
-    if (isDevelopment) {
-      sessionStorage.setItem(this.TOKEN_KEY, token);
-    }
-    // Production: Server should set HTTP-only cookie
-    return Promise.resolve();
-  }
-
-  static storeTokenSync(token: string): void {
-    // SECURITY: Using sessionStorage instead of localStorage for XSS protection
-    if (isDevelopment) {
-      sessionStorage.setItem(this.TOKEN_KEY, token);
-    }
-    // Production: Server should set HTTP-only cookie
-  }
-
-  static getToken(): string | null {
-    // In development, check sessionStorage
-    if (isDevelopment) {
-      return sessionStorage.getItem(this.TOKEN_KEY);
-    }
-    // Production: Read from HTTP-only cookie (handled by server)
-    return null;
-  }
-
-  static removeToken(): void {
-    // Remove from sessionStorage in development
-    if (isDevelopment) {
-      sessionStorage.removeItem(this.TOKEN_KEY);
-    }
-    // Production: Server should clear HTTP-only cookie
-    document.cookie = 'auth_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Secure; HttpOnly; SameSite=Strict';
-  }
-
-  // SECURITY: Removed auto-refresh functionality - tokens should be refreshed server-side
-  static initializeTokenManager(): void {
-    // Token management now handled server-side
-    console.log('Token management initialized - server-side only');
-  }
-}
+// SECURE Token storage management using SecureTokenManager
+// Replaced insecure TokenManager with SecureTokenManager
 
 export interface User {
   id: string | number; // Support both string (UUID) and number IDs
@@ -499,27 +455,14 @@ export class AuthService {
         success: result.success,
         message: result.message
       };
-    } else if (isDevelopment) {
-      const currentToken = TokenManager.getToken();
-      if (!currentToken) {
-        return { success: false, message: 'Tidak ada token aktif' };
-      }
-
-      const newToken = refreshTokenSync(currentToken);
-      if (newToken) {
-        TokenManager.storeTokenSync(newToken);
-        return { success: true, token: newToken, message: 'Token berhasil di-refresh' };
-      } else {
-        TokenManager.removeToken();
-        return { success: false, message: 'Token tidak valid, silakan login ulang' };
-      }
     } else {
-      return { success: false, message: 'Token refresh hanya tersedia di development mode' };
+      // Use SecureTokenManager for all environments
+      return await SecureTokenManager.refreshToken();
     }
   }
 
   static getStoredToken(): string | null {
-    return TokenManager.getToken();
+    return SecureTokenManager.getToken();
   }
 
   static isTokenExpiringSoon(): boolean {
@@ -527,8 +470,7 @@ export class AuthService {
       // For Supabase, we'll rely on their session management
       return false;
     }
-    const token = TokenManager.getToken();
-    return token ? shouldRefreshToken(token) : false;
+    return SecureTokenManager.isTokenExpiringSoon();
   }
 
   static async clearSession(): Promise<void> {
@@ -539,12 +481,9 @@ export class AuthService {
         LocalAuthService.setCurrentUser(null);
       }
     } else {
-      TokenManager.removeToken();
+      SecureTokenManager.removeToken();
       if (isDevelopment) {
         LocalAuthService.setCurrentUser(null);
-      } else {
-        // Production logout perlu server-side handling
-        document.cookie = 'auth_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
       }
     }
   }
@@ -565,28 +504,22 @@ export class AuthService {
       return await SupabaseAuthService.isAuthenticated();
     }
 
-    const user = await this.getCurrentUser();
-    const token = TokenManager.getToken();
+const user = await this.getCurrentUser();
+    const token = SecureTokenManager.getToken();
 
     if (!user || !token) {
       return false;
     }
 
-    // Check if token masih valid
-    const tokenData = verifyAndDecodeToken(token);
-    if (!tokenData) {
-      // Token expired, clear session
-      await this.clearSession();
-      return false;
-    }
+    // SECURITY: Token validation handled server-side only
+    // Client-side validation disabled for security
+    return SecureTokenManager.isTokenValid();
 
     return true;
   }
 
   static initializeAuth(): void {
-    if (isDevelopment && !useSupabase) {
-      TokenManager.initializeTokenManager();
-    }
+    SecureTokenManager.initialize();
   }
 }
 

@@ -366,4 +366,5 @@ class ErrorSanitizer {
 }
 
 export default ErrorSanitizer;
-export { ErrorSanitizer, SanitizedError, ErrorContext };
+export { ErrorSanitizer };
+export type { SanitizedError, ErrorContext };
