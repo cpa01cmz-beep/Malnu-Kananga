@@ -128,7 +128,12 @@ export class SecurityMonitor {
     description: string;
     affectedIPs: string[];
   }[] {
-    const patterns = [];
+    const patterns: {
+      pattern: string;
+      severity: 'medium' | 'high' | 'critical';
+      description: string;
+      affectedIPs: string[];
+    }[] = [];
     const recentEvents = this.events.filter(event => 
       Date.now() - event.timestamp.getTime() < 3600000 // Last hour
     );

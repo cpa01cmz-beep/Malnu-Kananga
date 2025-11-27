@@ -263,7 +263,14 @@ export const academicMonitoringApi = {
       
       return {
         success: true,
-        data: stats,
+        data: {
+          total: stats.total || 0,
+          present: stats.present || 0,
+          absent: stats.absent || 0,
+          sick: stats.sick || 0,
+          permitted: stats.excused || 0,
+          percentage: stats.attendanceRate || 0
+        },
       };
     }
   },

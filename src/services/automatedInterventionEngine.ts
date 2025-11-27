@@ -59,7 +59,7 @@ class AutomatedInterventionEngine {
     this.startInterventionEngine();
   }
 
-  // Initialize default intervention rules
+  // Initialize default intervention rules with enhanced AI-powered rules
   private initializeDefaultRules(): void {
     const defaultRules: InterventionRule[] = [
       {
@@ -82,7 +82,8 @@ class AutomatedInterventionEngine {
               priority: 'urgent',
               category: 'academic',
               template: 'critical_intervention',
-              autoAssign: 'guidance_counselor'
+              autoAssign: 'guidance_counselor',
+              aiContext: true
             }
           },
           {
@@ -90,15 +91,26 @@ class AutomatedInterventionEngine {
             config: {
               urgency: 'immediate',
               template: 'critical_academic_alert',
-              includeRecommendations: true
+              includeRecommendations: true,
+              aiAnalysis: true
             },
             delay: 5
           },
           {
             type: 'resource_assignment',
             config: {
-              resourceIds: ['academic_recovery_plan', 'emergency_study_guide'],
-              priority: 'high'
+              resourceIds: ['academic_recovery_plan', 'emergency_study_guide', 'stress_management'],
+              priority: 'high',
+              personalized: true
+            }
+          },
+          {
+            type: 'escalation',
+            config: {
+              escalateTo: 'principal',
+              urgency: 'immediate',
+              reason: 'critical_academic_failure',
+              autoSchedule: true
             }
           }
         ],
@@ -107,9 +119,54 @@ class AutomatedInterventionEngine {
         cooldownPeriod: 1440 // 24 hours
       },
       {
+        id: 'ai_predicted_failure',
+        name: 'AI-Predicted Academic Failure',
+        description: 'AI prediction untuk siswa yang berisiko gagal berdasarkan pattern analysis',
+        category: 'academic',
+        trigger: {
+          type: 'pattern',
+          conditions: [
+            { metric: 'aiRiskScore', operator: '>', value: 0.8 },
+            { metric: 'decliningTrendWeeks', operator: '>=', value: 3 },
+            { metric: 'multipleSubjectRisk', operator: '===', value: true }
+          ]
+        },
+        actions: [
+          {
+            type: 'support_request',
+            config: {
+              priority: 'high',
+              category: 'academic',
+              template: 'ai_predicted_intervention',
+              aiInsights: true,
+              predictiveAnalysis: true
+            }
+          },
+          {
+            type: 'notification',
+            config: {
+              message: 'AI system mendeteksi potensi kesulitan akademis. Tim support siap membantu!',
+              type: 'ai_prediction',
+              priority: 'high'
+            }
+          },
+          {
+            type: 'resource_assignment',
+            config: {
+              resourceIds: ['personalized_study_plan', 'subject_specific_help'],
+              priority: 'high',
+              aiRecommended: true
+            }
+          }
+        ],
+        priority: 'high',
+        isActive: true,
+        cooldownPeriod: 720 // 12 hours
+      },
+      {
         id: 'declining_performance',
         name: 'Declining Performance Alert',
-        description: 'Deteksi dan intervensi untuk penurunan performa',
+        description: 'Deteksi dan intervensi untuk penurunan performa dengan AI analysis',
         category: 'academic',
         trigger: {
           type: 'pattern',
@@ -125,22 +182,35 @@ class AutomatedInterventionEngine {
             config: {
               priority: 'high',
               category: 'academic',
-              template: 'performance_decline'
+              template: 'performance_decline',
+              aiAnalysis: true,
+              trendAnalysis: true
             }
           },
           {
             type: 'resource_assignment',
             config: {
-              resourceIds: ['study_improvement_guide', 'time_management_tips'],
-              priority: 'medium'
+              resourceIds: ['study_improvement_guide', 'time_management_tips', 'motivation_boosters'],
+              priority: 'medium',
+              adaptive: true
             }
           },
           {
             type: 'notification',
             config: {
-              message: 'Kami mendeteksi penurunan performa. Tim support siap membantu!',
-              type: 'support'
+              message: 'Kami mendeteksi penurunan performa. AI telah menganalisis pola Anda dan menyiapkan bantuan personal!',
+              type: 'support',
+              aiPersonalized: true
             }
+          },
+          {
+            type: 'peer_match',
+            config: {
+              type: 'academic_mentor',
+              criteria: 'high_performer_same_subjects',
+              aiMatched: true
+            },
+            delay: 30
           }
         ],
         priority: 'high',
@@ -148,9 +218,64 @@ class AutomatedInterventionEngine {
         cooldownPeriod: 720 // 12 hours
       },
       {
+        id: 'engagement_crisis',
+        name: 'Engagement Crisis Detection',
+        description: 'Deteksi krisis engagement dengan deep behavioral analysis',
+        category: 'engagement',
+        trigger: {
+          type: 'anomaly',
+          conditions: [
+            { metric: 'loginFrequency', operator: '<', value: 1 },
+            { metric: 'lastLoginDays', operator: '>', value: 14 },
+            { metric: 'interactionScore', operator: '<', value: 0.2 },
+            { metric: 'behavioralAnomaly', operator: '>', value: 0.8 }
+          ]
+        },
+        actions: [
+          {
+            type: 'support_request',
+            config: {
+              priority: 'urgent',
+              category: 'personal',
+              template: 'engagement_crisis',
+              behavioralAnalysis: true
+            }
+          },
+          {
+            type: 'parent_alert',
+            config: {
+              urgency: 'high',
+              template: 'engagement_crisis_alert',
+              behavioralInsights: true
+            },
+            delay: 10
+          },
+          {
+            type: 'escalation',
+            config: {
+              escalateTo: 'counselor',
+              urgency: 'urgent',
+              reason: 'engagement_crisis',
+              requireFollowUp: true
+            }
+          },
+          {
+            type: 'notification',
+            config: {
+              message: 'Kami sangat peduli dan merindukan kehadiran Anda. Tim support siap membantu tantangan yang Anda hadapi.',
+              type: 'personal_care',
+              empathy: true
+            }
+          }
+        ],
+        priority: 'critical',
+        isActive: true,
+        cooldownPeriod: 480 // 8 hours
+      },
+      {
         id: 'low_engagement',
         name: 'Low Engagement Intervention',
-        description: 'Intervensi untuk siswa dengan engagement rendah',
+        description: 'Intervensi untuk siswa dengan engagement rendah dengan gamification',
         category: 'engagement',
         trigger: {
           type: 'threshold',
@@ -164,24 +289,37 @@ class AutomatedInterventionEngine {
           {
             type: 'notification',
             config: {
-              message: 'Kami merindukan kehadiran Anda! Ada banyak informasi penting di portal.',
-              type: 'engagement'
+              message: 'Kami merindukan kehadiran Anda! Ada banyak informasi penting dan fitur menarik di portal.',
+              type: 'engagement',
+              gamification: true,
+              incentive: 'badge_points'
             }
           },
           {
             type: 'resource_assignment',
             config: {
-              resourceIds: ['portal_tutorial', 'engagement_guide'],
-              priority: 'low'
+              resourceIds: ['portal_tutorial', 'engagement_guide', 'feature_highlights'],
+              priority: 'low',
+              interactive: true
             }
           },
           {
             type: 'peer_match',
             config: {
               type: 'study_buddy',
-              criteria: 'similar_courses'
+              criteria: 'similar_courses',
+              aiMatched: true
             },
             delay: 60
+          },
+          {
+            type: 'notification',
+            config: {
+              message: '🎯 Challenge baru tersedia! Login dan dapatkan achievement khusus!',
+              type: 'gamification',
+              challenge: 'welcome_back'
+            },
+            delay: 120
           }
         ],
         priority: 'medium',
@@ -189,16 +327,74 @@ class AutomatedInterventionEngine {
         cooldownPeriod: 480 // 8 hours
       },
       {
+        id: 'mental_health_wellness',
+        name: 'Mental Health & Wellness Check',
+        description: 'Comprehensive wellness detection dengan AI sentiment analysis',
+        category: 'wellness',
+        trigger: {
+          type: 'pattern',
+          conditions: [
+            { metric: 'stressIndicators', operator: '>', value: 5 },
+            { metric: 'negativeSentimentScore', operator: '>', value: 0.7 },
+            { metric: 'isolationBehavior', operator: '>', value: 0.8 },
+            { metric: 'supportRequestFrequency', operator: '>', value: 8 }
+          ]
+        },
+        actions: [
+          {
+            type: 'support_request',
+            config: {
+              priority: 'urgent',
+              category: 'personal',
+              template: 'mental_health_support',
+              confidential: true,
+              counselorAssigned: true
+            }
+          },
+          {
+            type: 'resource_assignment',
+            config: {
+              resourceIds: ['mental_health_resources', 'stress_management_techniques', 'coping_strategies'],
+              priority: 'high',
+              privateAccess: true
+            }
+          },
+          {
+            type: 'escalation',
+            config: {
+              escalateTo: 'school_psychologist',
+              urgency: 'urgent',
+              reason: 'mental_health_concern',
+              confidential: true,
+              immediateFollowUp: true
+            }
+          },
+          {
+            type: 'notification',
+            config: {
+              message: 'Kami peduli dengan kesejahteraan Anda. Bantuan profesional tersedia jika Anda membutuhkannya.',
+              type: 'wellness',
+              supportive: true,
+              resources: 'mental_health_hotline'
+            }
+          }
+        ],
+        priority: 'critical',
+        isActive: true,
+        cooldownPeriod: 1440 // 24 hours
+      },
+      {
         id: 'technical_difficulties',
         name: 'Technical Difficulties Detection',
-        description: 'Deteksi masalah teknis dan bantuan otomatis',
+        description: 'Deteksi masalah teknis dan bantuan otomatis dengan diagnostic AI',
         category: 'technical',
         trigger: {
           type: 'anomaly',
           conditions: [
             { metric: 'failedLogins', operator: '>', value: 3 },
             { metric: 'pageErrors', operator: '>', value: 5 },
-            { metric: 'sessionDuration', operator: '<', value: 60 }
+            { metric: 'sessionDuration', operator: '<', value: 60 },
+            { metric: 'deviceCompatibility', operator: '===', value: 'poor' }
           ]
         },
         actions: [
@@ -207,14 +403,25 @@ class AutomatedInterventionEngine {
             config: {
               priority: 'medium',
               category: 'technical',
-              template: 'technical_difficulties'
+              template: 'technical_difficulties',
+              diagnosticData: true,
+              autoTroubleshoot: true
             }
           },
           {
             type: 'resource_assignment',
             config: {
-              resourceIds: ['troubleshooting_guide', 'contact_support'],
-              priority: 'medium'
+              resourceIds: ['troubleshooting_guide', 'device_compatibility_check', 'browser_optimization'],
+              priority: 'medium',
+              interactive: true
+            }
+          },
+          {
+            type: 'notification',
+            config: {
+              message: 'Kami mendeteksi masalah teknis. AI kami telah menganalisis issue dan menyiapkan solusi!',
+              type: 'technical_support',
+              diagnostic: true
             }
           }
         ],
@@ -223,40 +430,49 @@ class AutomatedInterventionEngine {
         cooldownPeriod: 240 // 4 hours
       },
       {
-        id: 'wellness_check',
-        name: 'Wellness Check Protocol',
-        description: 'Protocol kesehatan mental dan kesejahteraan',
-        category: 'wellness',
+        id: 'proactive_success_coaching',
+        name: 'Proactive Success Coaching',
+        description: 'AI-driven proactive coaching untuk siswa dengan potensi tinggi',
+        category: 'academic',
         trigger: {
           type: 'pattern',
           conditions: [
-            { metric: 'supportRequests', operator: '>', value: 5 },
-            { metric: 'stressIndicators', operator: '>', value: 3 },
-            { metric: 'isolationScore', operator: '>', value: 7 }
+            { metric: 'highPotentialScore', operator: '>', value: 0.8 },
+            { metric: 'consistentPerformance', operator: '===', value: true },
+            { metric: 'growthOpportunity', operator: '>', value: 0.7 }
           ]
         },
         actions: [
           {
-            type: 'support_request',
+            type: 'resource_assignment',
             config: {
-              priority: 'high',
-              category: 'personal',
-              template: 'wellness_check',
-              confidential: true
+              resourceIds: ['advanced_learning_materials', 'enrichment_programs', 'leadership_development'],
+              priority: 'medium',
+              personalized: true,
+              advanced: true
             }
           },
           {
-            type: 'escalation',
+            type: 'notification',
             config: {
-              escalateTo: 'counselor',
-              urgency: 'soon',
-              reason: 'wellness_concern'
+              message: '🌟 Potensi luar biasa terdeteksi! Program khusus telah disiapkan untuk membantu Anda mencapai kesuksesan.',
+              type: 'opportunity',
+              motivational: true
             }
+          },
+          {
+            type: 'peer_match',
+            config: {
+              type: 'mentorship',
+              criteria: 'high_achiever_mentor',
+              exclusive: true
+            },
+            delay: 120
           }
         ],
-        priority: 'high',
+        priority: 'low',
         isActive: true,
-        cooldownPeriod: 1440 // 24 hours
+        cooldownPeriod: 1680 // 28 hours
       }
     ];
 
