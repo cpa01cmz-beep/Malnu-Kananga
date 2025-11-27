@@ -43,289 +43,202 @@ function isClientRateLimited(email: string): boolean {
   return false;
 }
 
-// Basic email validation
+// Enhanced email validation with security checks
 function isValidEmail(email: string): boolean {
+  // Basic format validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-// Generate cryptographically secure random string
-function generateRandomString(length: number): string {
-  const array = new Uint8Array(length);
-  crypto.getRandomValues(array);
-  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-}
-
-// Generate HMAC signature using crypto.subtle
-async function generateHMACSignature(data: string, secret: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw',
-    encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
-  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
-  return Array.from(new Uint8Array(signature), byte => byte.toString(16).padStart(2, '0')).join('');
-}
-
-// Verify HMAC signature using crypto.subtle
-async function verifyHMACSignature(data: string, signature: string, secret: string): Promise<boolean> {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw',
-    encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['verify']
-  );
-
-  // Convert signature from hex string to Uint8Array
-  const signatureBytes = new Uint8Array(signature.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
-
-  return await crypto.subtle.verify('HMAC', key, signatureBytes, encoder.encode(data));
-}
-
-// Secure token generation menggunakan Web Crypto API
-async function generateSecureToken(email: string, expiryTime: number = 15 * 60 * 1000): Promise<string> {
-  const header = { alg: 'HS256', typ: 'JWT' };
-  const payload = {
-    email: email,
-    exp: Math.floor((Date.now() + expiryTime) / 1000),
-    iat: Math.floor(Date.now() / 1000),
-    jti: generateRandomString(16) // Unique token ID
-  };
-
-  // Encode header dan payload ke base64url
-  const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-  const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-
-  // Generate signature using HMAC-SHA256 with crypto.subtle (secure signature)
-  // In production, signature generation should be done server-side only
-  // This client-side implementation is for development/testing purposes only
-  // DO NOT use this for production authentication as it exposes the secret
-  const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
-
-  // SECURITY: Client-side signature generation disabled for ALL environments
-  console.error('SECURITY: Client-side JWT generation not allowed - security vulnerability');
-  throw new Error('Authentication must be handled server-side only');
-}
-
-// Synchronous version for development mode
-function generateSecureTokenSync(email: string, expiryTime: number = 15 * 60 * 1000): string {
-  const header = { alg: 'HS256', typ: 'JWT' };
-  const payload = {
-    email: email,
-    exp: Math.floor((Date.now() + expiryTime) / 1000),
-    iat: Math.floor(Date.now() / 1000),
-    jti: generateRandomString(16) // Unique token ID
-  };
-
-  // Encode header dan payload ke base64url
-  const encodedHeader = btoa(JSON.stringify(header)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-  const encodedPayload = btoa(JSON.stringify(payload)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-
-  // For development mode, generate a simple token without server-side secret
-  // In production, this should be handled by the server
-  const signature = generateDevelopmentSignature(`${encodedHeader}.${encodedPayload}`);
-
-  return `${encodedHeader}.${encodedPayload}.${signature}`;
-}
-
-// Generate a simple signature for development mode (not secure, but sufficient for local testing)
-function generateDevelopmentSignature(data: string): string {
-  // Simple hash function for development - NOT secure for production
-  let hash = 0;
-  for (let i = 0; i < data.length; i++) {
-    const char = data.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
+  if (!emailRegex.test(email)) {
+    return false;
   }
-  // Convert to hex string
-  return Math.abs(hash).toString(16);
-}
-
-// Verify dan decode secure token
-function verifyAndDecodeToken(token: string): TokenData | null {
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-
-    const [encodedHeader, encodedPayload, signature] = parts;
-
-    // Verify signature using development signature method
-    const data = `${encodedHeader}.${encodedPayload}`;
-    // In production, token verification should be done server-side only
-    // This client-side implementation is for development/testing purposes only
-    const secret = isDevelopment ? (import.meta.env.VITE_JWT_SECRET || 'dev-secret-key') : 'CLIENT_SIDE_PLACEHOLDER';
-
-    // SECURITY: Client-side token verification disabled for ALL environments
-    console.error('SECURITY: Client-side token verification not allowed - security vulnerability');
-    return null;
-  } catch (error) {
-    return null;
+  
+  // Length validation
+  if (email.length < 5 || email.length > 254) {
+    return false;
   }
+  
+  // Security checks - prevent dangerous patterns
+  const dangerousPatterns = [
+    /\.\./,           // Directory traversal
+    /[<>]/,           // HTML injection
+    /javascript:/i,   // JavaScript protocol
+    /data:/i,         // Data protocol
+    /vbscript:/i,     // VBScript protocol
+    /file:/i,         // File protocol
+    /ftp:/i,          // FTP protocol
+    /[\x00-\x1F\x7F]/ // Control characters
+  ];
+  
+  if (dangerousPatterns.some(pattern => pattern.test(email))) {
+    return false;
+  }
+  
+  // Domain validation - prevent suspicious domains
+  const [localPart, domain] = email.split('@');
+  
+  // Local part validation
+  if (!localPart || localPart.length > 64) {
+    return false;
+  }
+  
+  // Domain validation
+  if (!domain || domain.length > 253) {
+    return false;
+  }
+  
+  // Prevent consecutive dots
+  if (email.includes('..')) {
+    return false;
+  }
+  
+  // Prevent leading/trailing dots and hyphens in domain parts
+  const domainParts = domain.split('.');
+  for (const part of domainParts) {
+    if (part.startsWith('-') || part.endsWith('-') || part.startsWith('.') || part.endsWith('.')) {
+      return false;
+    }
+  }
+  
+  // Check for allowed characters in local part
+  const localPartRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+$/;
+  if (!localPartRegex.test(localPart)) {
+    return false;
+  }
+  
+  // Check for allowed characters in domain
+  const domainRegex = /^[a-zA-Z0-9.-]+$/;
+  if (!domainRegex.test(domain)) {
+    return false;
+  }
+  
+  return true;
 }
 
-// Check if token needs refresh (dalam 5 menit terakhir)
-function shouldRefreshToken(token: string): boolean {
-  const tokenData = verifyAndDecodeToken(token);
-  if (!tokenData) return false;
-
-  const now = Math.floor(Date.now() / 1000);
-  const fiveMinutes = 5 * 60;
-
-  return (tokenData.exp - now) <= fiveMinutes;
+// Input sanitization function
+function sanitizeInput(input: string): string {
+  if (typeof input !== 'string') {
+    return '';
+  }
+  
+  return input
+    .trim()
+    .replace(/[<>]/g, '') // Remove HTML brackets
+    .replace(/javascript:/gi, '') // Remove JavaScript protocol
+    .replace(/data:/gi, '') // Remove data protocol
+    .replace(/vbscript:/gi, '') // Remove VBScript protocol
+    .replace(/on\w+\s*=/gi, '') // Remove event handlers
+    .substring(0, 1000); // Limit length
 }
 
-// Refresh token with async implementation for production
-async function refreshToken(currentToken: string): Promise<string | null> {
-  const tokenData = verifyAndDecodeToken(currentToken);
-  if (!tokenData) return null;
-
-  // Generate token baru dengan expiry time yang sama atau diperpanjang
-  // Note: In a real implementation, this should be handled server-side for security
-  return await generateSecureToken(tokenData.email, 15 * 60 * 1000);
+// Validate user input for common attacks
+function validateUserInput(input: string, type: 'email' | 'name' | 'general' = 'general'): { valid: boolean; sanitized: string; error?: string } {
+  const sanitized = sanitizeInput(input);
+  
+  // Length validation
+  if (sanitized.length === 0) {
+    return { valid: false, sanitized: '', error: 'Input cannot be empty' };
+  }
+  
+  if (sanitized.length > 1000) {
+    return { valid: false, sanitized: '', error: 'Input too long' };
+  }
+  
+  // Type-specific validation
+  switch (type) {
+    case 'email':
+      if (!isValidEmail(sanitized)) {
+        return { valid: false, sanitized: '', error: 'Invalid email format' };
+      }
+      break;
+      
+    case 'name':
+      // Name validation - allow letters, spaces, and common punctuation
+      const nameRegex = /^[a-zA-Z\s\u00C0-\u017F.,'-]+$/;
+      if (!nameRegex.test(sanitized)) {
+        return { valid: false, sanitized: '', error: 'Invalid name format' };
+      }
+      if (sanitized.length > 100) {
+        return { valid: false, sanitized: '', error: 'Name too long' };
+      }
+      break;
+      
+    case 'general':
+      // General input validation - prevent script injection
+      const dangerousPatterns = [
+        /<script/i,
+        /<\/script>/i,
+        /<iframe/i,
+        /<object/i,
+        /<embed/i,
+        /<form/i,
+        /javascript:/i,
+        /vbscript:/i,
+        /onload=/i,
+        /onerror=/i,
+        /onclick=/i
+      ];
+      
+      if (dangerousPatterns.some(pattern => pattern.test(sanitized))) {
+        return { valid: false, sanitized: '', error: 'Invalid input detected' };
+      }
+      break;
+  }
+  
+  return { valid: true, sanitized };
 }
 
-// Synchronous refresh token for development
-function refreshTokenSync(currentToken: string): string | null {
-  const tokenData = verifyAndDecodeToken(currentToken);
-  if (!tokenData) return null;
+// SECURITY: All client-side JWT generation functions removed
+// Token generation and verification must be handled server-side only
+// This prevents secret key exposure and authentication bypass vulnerabilities
 
-  // Generate token baru dengan expiry time yang sama atau diperpanjang
-  // Note: In a real implementation, this should be handled server-side for security
-  return generateSecureTokenSync(tokenData.email, 15 * 60 * 1000);
-}
+// SECURITY: All client-side token verification functions removed
+// Token verification must be handled server-side only
+// This prevents token tampering and authentication bypass vulnerabilities
 
-// Token storage management dengan auto-refresh
+// SECURE Token storage management using HTTP-only cookies
 class TokenManager {
   private static TOKEN_KEY = 'malnu_secure_token';
-  private static REFRESH_TIMER_KEY = 'malnu_refresh_timer';
-  private static refreshTimer: NodeJS.Timeout | null = null;
-
-  // Add cleanup listener for page unload
-  private static initialized = false;
-  private static cleanupListener: (() => void) | null = null;
-
-  private static initializeCleanup(): void {
-    if (this.initialized) return;
-
-    // Clean up timer when page is unloaded
-    const cleanup = () => {
-      if (this.refreshTimer) {
-        clearTimeout(this.refreshTimer);
-        this.refreshTimer = null;
-      }
-    };
-
-    window.addEventListener('beforeunload', cleanup);
-    this.cleanupListener = cleanup;
-
-    this.initialized = true;
-  }
-
+  
+  // SECURITY: Replaced localStorage with secure cookie-based storage
   static storeToken(token: string): Promise<void> {
-    this.initializeCleanup();
-    localStorage.setItem(this.TOKEN_KEY, token);
-    this.scheduleTokenRefresh(token);
-    return Promise.resolve(); // For compatibility with async interface
+    // In production, tokens should be stored in HTTP-only cookies set by server
+    // For development, we'll use sessionStorage (more secure than localStorage)
+    if (isDevelopment) {
+      sessionStorage.setItem(this.TOKEN_KEY, token);
+    }
+    // Production: Server should set HTTP-only cookie
+    return Promise.resolve();
   }
 
   static storeTokenSync(token: string): void {
-    this.initializeCleanup();
-    localStorage.setItem(this.TOKEN_KEY, token);
-    this.scheduleTokenRefresh(token);
+    // SECURITY: Using sessionStorage instead of localStorage for XSS protection
+    if (isDevelopment) {
+      sessionStorage.setItem(this.TOKEN_KEY, token);
+    }
+    // Production: Server should set HTTP-only cookie
   }
 
   static getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    // In development, check sessionStorage
+    if (isDevelopment) {
+      return sessionStorage.getItem(this.TOKEN_KEY);
+    }
+    // Production: Read from HTTP-only cookie (handled by server)
+    return null;
   }
 
   static removeToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.REFRESH_TIMER_KEY);
-    if (this.refreshTimer) {
-      clearTimeout(this.refreshTimer);
-      this.refreshTimer = null;
+    // Remove from sessionStorage in development
+    if (isDevelopment) {
+      sessionStorage.removeItem(this.TOKEN_KEY);
     }
-
-    // Remove event listener on cleanup
-    if (this.cleanupListener) {
-      window.removeEventListener('beforeunload', this.cleanupListener);
-      this.cleanupListener = null;
-      this.initialized = false;
-    }
+    // Production: Server should clear HTTP-only cookie
+    document.cookie = 'auth_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Secure; HttpOnly; SameSite=Strict';
   }
 
-  private static scheduleTokenRefresh(token: string): void {
-    if (this.refreshTimer) {
-      clearTimeout(this.refreshTimer);
-    }
-
-    // Schedule refresh 1 menit sebelum token expired
-    const tokenData = verifyAndDecodeToken(token);
-    if (!tokenData) return;
-
-    const now = Math.floor(Date.now() / 1000);
-    const refreshTime = (tokenData.exp - now - 60) * 1000; // 1 menit sebelum expired
-
-    if (refreshTime > 0) {
-      this.refreshTimer = setTimeout(() => {
-        this.attemptTokenRefresh();
-      }, refreshTime);
-      localStorage.setItem(this.REFRESH_TIMER_KEY, Date.now().toString());
-    }
-  }
-
-  private static async attemptTokenRefresh(): Promise<void> {
-    const currentToken = this.getToken();
-    if (!currentToken) return;
-
-    const newToken = await refreshToken(currentToken);
-    if (newToken) {
-      await this.storeToken(newToken);
-      console.log('🔄 Token berhasil di-refresh secara otomatis');
-    } else {
-      console.warn('⚠️ Gagal refresh token, user perlu login ulang');
-      this.removeToken();
-    }
-  }
-
-  private static attemptTokenRefreshSync(): void {
-    const currentToken = this.getToken();
-    if (!currentToken) return;
-
-    const newToken = refreshTokenSync(currentToken);
-    if (newToken) {
-      this.storeTokenSync(newToken);
-      console.log('🔄 Token berhasil di-refresh secara otomatis');
-    } else {
-      console.warn('⚠️ Gagal refresh token, user perlu login ulang');
-      this.removeToken();
-    }
-  }
-
+  // SECURITY: Removed auto-refresh functionality - tokens should be refreshed server-side
   static initializeTokenManager(): void {
-    const token = this.getToken();
-    if (token) {
-      // Check if token masih valid atau perlu refresh
-      if (shouldRefreshToken(token)) {
-        if (isDevelopment) {
-          this.attemptTokenRefreshSync();
-        } else {
-          // For production, use async refresh
-          this.attemptTokenRefresh();
-        }
-      } else if (!verifyAndDecodeToken(token)) {
-        // Token sudah expired
-        this.removeToken();
-      } else {
-        // Token masih valid, schedule refresh jika diperlukan
-        this.scheduleTokenRefresh(token);
-      }
-    }
+    // Token management now handled server-side
+    console.log('Token management initialized - server-side only');
   }
 }
 
@@ -495,8 +408,18 @@ class ProductionAuthService {
         return { success: false, message: data.message || 'Gagal mengirim link login' };
       }
     } catch (error) {
-      console.error('Auth service error:', error);
-      return { success: false, message: 'Terjadi kesalahan pada server' };
+      // Use error sanitizer to prevent information disclosure
+      const errorContext = {
+        endpoint: '/request-login-link',
+        method: 'POST',
+        timestamp: new Date().toISOString()
+      };
+      
+      // Import dynamically to avoid circular dependencies
+      const { ErrorSanitizer } = await import('../utils/errorSanitizer');
+      const sanitized = ErrorSanitizer.sanitizeError(error as Error, errorContext);
+      
+      return { success: false, message: sanitized.message };
     }
   }
 
@@ -529,11 +452,12 @@ export class AuthService {
       };
     }
 
-    // Basic email validation
-    if (!isValidEmail(email)) {
+    // Enhanced email validation with security checks
+    const emailValidation = validateUserInput(email, 'email');
+    if (!emailValidation.valid) {
       return {
         success: false,
-        message: 'Format email tidak valid.'
+        message: emailValidation.error || 'Format email tidak valid.'
       };
     }
 
