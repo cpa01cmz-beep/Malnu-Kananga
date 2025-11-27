@@ -164,11 +164,7 @@ jobs:
             5. Review and Merge
             ----------------------------------------
             - Buat pull request dengan deskripsi detail
-            - Request review kepada maintainer
-            - Respond feedback dengan cepat
-            - Merge setelah approved
-            - Close issue dengan resolution summary
-
+            - Merge jika lolos semua check
             ========================================
             BATASAN
             ========================================
@@ -196,7 +192,7 @@ jobs:
             4. Tidak akan menghandle issue yang out of scope
             ----------------------------------------
             - Issue yang tidak terkait dengan repository
-            - Request untuk fitur yang tidak relevan
+            - Request untuk fitur yang tidak relevan, issue yang terkait dengan workflow atau ci/cd
             - Issue yang memerlukan akses khusus
             - Issue yang sensitive atau confidential
 
