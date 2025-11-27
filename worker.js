@@ -408,8 +408,14 @@ async function generateSecureToken(email, expiryTime = 15 * 60 * 1000) {
 
 // Generate signature using HMAC-SHA256 with secure secret key from environment
     const secret = env.JWT_SECRET || env.SECRET_KEY;
-    if (!secret || secret === 'default-secret-key-for-worker' || secret.length < 32) {
-      throw new Error('Secure JWT_SECRET environment variable required (min 32 characters, not default value)');
+    if (!secret || secret.length < 32) {
+      throw new Error('Secure JWT_SECRET environment variable required (min 32 characters)');
+    }
+    
+    // SECURITY: Additional validation to prevent common weak secrets
+    const weakSecrets = ['secret', 'password', '123456', 'admin', 'default', 'test', 'demo'];
+    if (weakSecrets.some(weak => secret.toLowerCase().includes(weak))) {
+      throw new Error('JWT_SECRET cannot contain common weak words');
     }
   const signature = await generateHMACSignature(`${encodedHeader}.${encodedPayload}`, secret);
 
@@ -425,8 +431,14 @@ function generateRandomString(length) {
 // Generate HMAC signature using crypto.subtle
 async function generateHMACSignature(data, secret) {
   // SECURITY: Validate secret key before use
-  if (!secret || secret === 'default-secret-key-for-worker' || secret.length < 32) {
-    throw new Error('Invalid secret key: Must be at least 32 characters and not use default value');
+  if (!secret || secret.length < 32) {
+    throw new Error('Invalid secret key: Must be at least 32 characters');
+  }
+  
+  // SECURITY: Additional validation to prevent common weak secrets
+  const weakSecrets = ['secret', 'password', '123456', 'admin', 'default', 'test', 'demo'];
+  if (weakSecrets.some(weak => secret.toLowerCase().includes(weak))) {
+    throw new Error('JWT_SECRET cannot contain common weak words');
   }
   
   // Validate input data
@@ -478,8 +490,8 @@ async function verifyAndDecodeToken(token, env) {
     const [encodedHeader, encodedPayload, signature] = parts;
     
 // SECURITY: Verify secret key is secure
-     if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
-       console.error('SECURITY: Attempted token verification with default secret key');
+     if (!env.SECRET_KEY || env.SECRET_KEY.length < 32) {
+       console.error('SECURITY: Attempted token verification with invalid secret key');
        return null;
      }
      
@@ -545,17 +557,32 @@ const documents = [
 
 export default {
   async fetch(request, env) {
+    // Enhanced security headers
     const corsHeaders = {
       'Access-Control-Allow-Origin': 'https://ma-malnukananga.sch.id',
       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-CSRF-Token',
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Max-Age': '86400',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'Permissions-Policy': 'geolocation=(), microphone=(), camera=(), payment=()'
     };
 
     // Initialize security logger
     const securityLogger = new SecurityLogger(env);
 
     if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: corsHeaders });
+      return new Response(null, { 
+        status: 200,
+        headers: {
+          ...corsHeaders,
+          'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none';",
+          'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
+        }
+      });
     }
     const url = new URL(request.url);
     
@@ -1001,11 +1028,11 @@ Respons:`;
         }
         
 // SECURITY: Require secure secret key for signature generation
-         if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
-           console.error('SECURITY: Attempted signature generation with default secret');
-           return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
-             status: 500, 
-             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          if (!env.SECRET_KEY || env.SECRET_KEY.length < 32) {
+            console.error('SECURITY: Attempted signature generation with invalid secret');
+            return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
+              status: 500, 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
            });
          }
         const secret = env.SECRET_KEY;
@@ -1042,10 +1069,10 @@ Respons:`;
         }
         
 // SECURITY: Require secure secret key for signature verification
-         if (!env.SECRET_KEY || env.SECRET_KEY === 'default-secret-key-for-worker') {
-           console.error('SECURITY: Attempted signature verification with default secret');
-           return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
-             status: 500, 
+          if (!env.SECRET_KEY || env.SECRET_KEY.length < 32) {
+            console.error('SECURITY: Attempted signature verification with invalid secret');
+            return new Response(JSON.stringify({ message: 'Server configuration error.' }), { 
+              status: 500,
              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
            });
          }
