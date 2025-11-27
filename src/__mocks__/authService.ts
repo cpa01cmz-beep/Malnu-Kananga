@@ -279,7 +279,7 @@ class SupabaseAuthService {
 
   static async verifySession(): Promise<VerifyResponse> {
     const user = LocalAuthService.getCurrentUser();
-    return { success: !!user, user, message: user ? 'Session valid' : 'No valid session' };
+    return { success: !!user, user: user || undefined, message: user ? 'Session valid' : 'No valid session' };
   }
 
   static async refreshSession(): Promise<RefreshTokenResponse> {

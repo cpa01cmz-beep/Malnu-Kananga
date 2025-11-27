@@ -39,7 +39,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ onNotificationClick
     }
 
     if (notification.actionUrl) {
-      window.location.href = notification.actionUrl;
+      window.open(notification.actionUrl, '_blank');
     }
 
     setShowDropdown(false);

@@ -19,7 +19,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat }) => {
     onSwipeDown: closeChat,
     onSwipeRight: closeChat,
   });
-  const elementRef = gestureResult.elementRef as React.RefObject<HTMLDivElement>;
 
   if (!isOpen) {
     return null;
@@ -27,7 +26,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat }) => {
 
   return (
     <div
-      ref={elementRef}
+      ref={gestureResult.elementRef}
       className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden touch-optimized"
     >
       <ChatHeader onClose={closeChat} />

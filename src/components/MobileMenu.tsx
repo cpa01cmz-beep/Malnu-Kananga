@@ -25,7 +25,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
     onSwipeDown: onClose,
     onSwipeLeft: onClose,
   });
-  const elementRef = gestureResult.elementRef as React.RefObject<HTMLDivElement>;
 
   const { handleTouchFeedback } = useTouchFeedback({
     hapticFeedback: true,
@@ -36,7 +35,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 
   return (
     <div
-      ref={elementRef}
+      ref={gestureResult.elementRef}
       className="md:hidden bg-white dark:bg-gray-800 shadow-lg mx-2 sm:mx-4 rounded-2xl mt-2 p-4 touch-optimized"
       onTouchStart={handleTouchFeedback}
     >

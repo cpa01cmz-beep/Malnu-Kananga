@@ -1437,7 +1437,7 @@ public updateStudentProgress(studentId: string, progress: Partial<StudentProgres
           studentMetrics: {
             ...progress.academicMetrics,
             ...progress.engagementMetrics,
-            lastLoginDays: this.calculateDaysSinceLastLogin(progress.studentId)
+            lastLoginDays: StudentSupportService.calculateDaysSinceLastLogin(progress.studentId)
           },
           context: {
             studentId: progress.studentId,

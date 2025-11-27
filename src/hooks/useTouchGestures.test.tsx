@@ -54,111 +54,151 @@ describe('useTouchGestures', () => {
   it('seharusnya membersihkan timers saat unmount', () => {
     const { unmount } = renderHook(() => 
       useTouchGestures({ onLongPress })
-    );
+);
 
-    // Mock touch start
-    const mockTouchEvent = {
-      touches: [{ clientX: 100, clientY: 100 }]
-    } as TouchEvent;
+    expect(() => unmount()).not.toThrow();
+  });
+
+  it('seharusnya membatalkan long press jika ada pergerakan', () => {
+    const { result } = renderHook(() => 
+      useTouchGestures({ onLongPress })
+    );
 
     act(() => {
       // This test is simplified since proper cleanup testing requires
       // more complex setup with actual DOM event listeners
       expect(true).toBe(true);
     });
-  });
+ 
+    act(() => {
+      jest.runAllTimers();
+    });
 
-  it('seharusnya mereturn handler functions', () => {
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    const touchMoveEvent = new TouchEvent('touchmove', {
+      touches: [{
+        clientX: 220,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 220,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    act(() => {
+      mockElement.dispatchEvent(touchStartEvent);
+      mockElement.dispatchEvent(touchMoveEvent);
+      jest.advanceTimersByTime(500);
+      jest.runAllTimers();
+    });
+
+    expect(onLongPress).not.toHaveBeenCalled();
+  });
     const { result } = renderHook(() => 
       useTouchGestures({ onTap })
     );
 
-    expect(result.current.handleTouchStart).toBeDefined();
-    expect(result.current.handleTouchEnd).toBeDefined();
-    expect(result.current.handleTouchMove).toBeDefined();
+act(() => {
+      result.current.elementRef.current = mockElement;
+    });
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    const touchEndEvent = new TouchEvent('touchend', {
+      changedTouches: [{
+        clientX: 205,
+        clientY: 205,
+        identifier: 0,
+        force: 1,
+        pageX: 205,
+        pageY: 205,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
+    });
+
+    act(() => {
+      mockElement.dispatchEvent(touchStartEvent);
+      jest.advanceTimersByTime(10);
+      mockElement.dispatchEvent(touchEndEvent);
+      jest.runAllTimers();
+    });
+
+    expect(onTap).toHaveBeenCalledTimes(1);
   });
 
-  it('seharusnya handle touch start tanpa error', () => {
+  it('seharusnya mendeteksi long press dengan benar - integration test', () => {
     const { result } = renderHook(() => 
-      useTouchGestures({ onTap })
+      useTouchGestures({ onLongPress })
     );
 
-    const mockTouchEvent = {
-      touches: [{ clientX: 100, clientY: 100 }]
-    } as TouchEvent;
-
-    expect(() => {
-      act(() => {
-        result.current.handleTouchStart(mockTouchEvent);
-      });
-    }).not.toThrow();
-  });
-
-  it('seharusnya handle touch end tanpa error', () => {
-    const { result } = renderHook(() => 
-      useTouchGestures({ onTap })
-    );
-
-    const mockTouchEvent = {
-      changedTouches: [{ clientX: 100, clientY: 100 }]
-    } as TouchEvent;
-
-    expect(() => {
-      act(() => {
-        result.current.handleTouchEnd(mockTouchEvent);
-      });
-    }).not.toThrow();
-  });
-
-  it('seharusnya handle touch move tanpa error', () => {
-    const { result } = renderHook(() => 
-      useTouchGestures({ onTap })
-    );
-
-    const mockTouchEvent = {
-      touches: [{ clientX: 100, clientY: 100 }]
-    } as TouchEvent;
-
-    expect(() => {
-      act(() => {
-        result.current.handleTouchMove(mockTouchEvent);
-      });
-    }).not.toThrow();
-  });
-
-  // Skip complex gesture tests for now - they require more sophisticated mocking
-  // These tests can be added back when we have proper touch event mocking setup
-  describe.skip('Complex gesture detection', () => {
-    it('seharusnya mendeteksi swipe right dengan benar', () => {
-      // Test implementation skipped
+    act(() => {
+      result.current.elementRef.current = mockElement;
     });
 
-    it('seharusnya mendeteksi swipe left dengan benar', () => {
-      // Test implementation skipped
+    act(() => {
+      jest.runAllTimers();
     });
 
-    it('seharusnya mendeteksi swipe up dengan benar', () => {
-      // Test implementation skipped
+    const touchStartEvent = new TouchEvent('touchstart', {
+      touches: [{
+        clientX: 200,
+        clientY: 200,
+        identifier: 0,
+        force: 1,
+        pageX: 200,
+        pageY: 200,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        target: mockElement
+      }]
     });
 
-    it('seharusnya mendeteksi swipe down dengan benar', () => {
-      // Test implementation skipped
+    act(() => {
+      mockElement.dispatchEvent(touchStartEvent);
+      jest.advanceTimersByTime(500);
+      jest.runAllTimers();
     });
 
-    it('seharusnya mendeteksi tap dengan benar', () => {
-      // Test implementation skipped
-    });
-
-    it('seharusnya mendeteksi long press dengan benar', () => {
-      // Test implementation skipped
-    });
-
-    it('seharusnya menggunakan custom longPressDelay', () => {
-      // Test implementation skipped
-    });
-
-    it('seharusnya menangani multiple gestures dengan benar', () => {
-      // Test implementation skipped
-    });
+    expect(onLongPress).toHaveBeenCalledTimes(1);
   });
 });
