@@ -108,58 +108,51 @@ describe('ErrorBoundary', () => {
   });
 
 it('seharusnya mereset state ketika tombol "Coba Lagi" diklik', () => {
-     const onErrorMock = jest.fn();
+      const onErrorMock = jest.fn();
 
-     const { rerender } = render(
-       <ErrorBoundary onError={onErrorMock}>
+      // Create a wrapper component that can toggle the error state
+      const TestComponent = ({ shouldThrow }: { shouldThrow: boolean }) => (
+        <ErrorBoundary onError={onErrorMock}>
+          <ThrowErrorComponent shouldThrow={shouldThrow} />
+        </ErrorBoundary>
+      );
+
+      const { rerender } = render(<TestComponent shouldThrow={true} />);
+
+      // Verify error state is shown
+      expect(screen.getByText('Terjadi Kesalahan')).toBeInTheDocument();
+      expect(onErrorMock).toHaveBeenCalledTimes(1);
+
+      // Click "Coba Lagi" button to reset the error boundary state
+      fireEvent.click(screen.getByText('Coba Lagi'));
+
+      // Rerender with the non-error component to see the normal content
+      rerender(<TestComponent shouldThrow={false} />);
+
+      // Check that normal component is now rendered (not the error UI)
+      expect(screen.getByText('Normal Component')).toBeInTheDocument();
+    });
+
+it('seharusnya me-reload halaman ketika tombol "Muat Ulang Halaman" diklik', () => {
+      const reloadSpy = jest.fn();
+      Object.defineProperty(window, 'location', {
+        value: {
+          ...window.location,
+          reload: reloadSpy
+        },
+        writable: true
+      });
+
+     render(
+       <ErrorBoundary>
          <ThrowErrorComponent shouldThrow={true} />
        </ErrorBoundary>
      );
 
-     // Verify error state is shown
-     expect(screen.getByText('Terjadi Kesalahan')).toBeInTheDocument();
-     expect(onErrorMock).toHaveBeenCalledTimes(1);
+     fireEvent.click(screen.getByText('Muat Ulang Halaman'));
 
-     // Click "Coba Lagi" button to reset the error boundary state
-     fireEvent.click(screen.getByText('Coba Lagi'));
-
-     // After reset, the error boundary should be in initial state
-     // Rerender with a non-error component to see the normal content
-     rerender(
-       <ErrorBoundary onError={onErrorMock}>
-         <ThrowErrorComponent shouldThrow={false} />
-       </ErrorBoundary>
-     );
-
-     // Check that normal component is now rendered (not the error UI)
-     expect(screen.getByText('Normal Component')).toBeInTheDocument();
-   });
-
-it('seharusnya me-reload halaman ketika tombol "Muat Ulang Halaman" diklik', () => {
-     // Mock window.location.reload - handle location differently to avoid redefinition
-     const reloadSpy = jest.fn();
-     delete (window as any).location;
-     Object.defineProperty(window, 'location', {
-       value: {
-         reload: reloadSpy,
-         href: 'http://localhost',
-         origin: 'http://localhost',
-         assign: jest.fn()
-       },
-       writable: true,
-       configurable: true
-     });
-
-    render(
-      <ErrorBoundary>
-        <ThrowErrorComponent shouldThrow={true} />
-      </ErrorBoundary>
-    );
-
-fireEvent.click(screen.getByText('Muat Ulang Halaman'));
-
-     expect(reloadSpy).toHaveBeenCalledTimes(1);
-   });
+      expect(reloadSpy).toHaveBeenCalledTimes(1);
+    });
 
   it('seharusnya menangani multiple error berturut-turut', () => {
     const { rerender } = render(
