@@ -26,24 +26,6 @@ jest.mock('./icons/ChatIcon', () => ({
   ChatIcon: () => <div data-testid="chat-icon">ChatIcon</div>
 }));
 
-jest.mock('../hooks/useResponsiveMenu', () => ({
-  useResponsiveMenu: jest.fn(() => ({ isMenuOpen: false, setIsMenuOpen: jest.fn() }))
-}));
-
-// Mock the icon components
-jest.mock('./icons/MenuIcon', () => ({
-  __esModule: true,
-  MenuIcon: () => <div data-testid="menu-icon">MenuIcon</div>
-}));
-jest.mock('./icons/CloseIcon', () => ({
-  __esModule: true,
-  CloseIcon: () => <div data-testid="close-icon">CloseIcon</div>
-}));
-jest.mock('./icons/ChatIcon', () => ({
-  __esModule: true,
-  ChatIcon: () => <div data-testid="chat-icon">ChatIcon</div>
-}));
-
 describe('Header Component', () => {
   const mockOnLoginClick = jest.fn();
   const mockOnChatClick = jest.fn();
