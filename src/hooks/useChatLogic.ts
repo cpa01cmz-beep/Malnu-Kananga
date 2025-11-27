@@ -44,7 +44,7 @@ export const useChatLogic = (isOpen: boolean) => {
     setMessages(prev => [...prev, { id: aiMessageId, text: '', sender: Sender.AI }]);
 
     let fullResponse = "";
-    let retryCount = 0;
+    const retryCount = 0;
     const maxRetries = 2;
 
     const attemptSend = async (): Promise<void> => {

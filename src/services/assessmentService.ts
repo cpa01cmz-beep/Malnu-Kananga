@@ -797,7 +797,7 @@ class AssessmentService {
   // Get assessment analytics
   getAssessmentAnalytics(assessmentId: string): AssessmentAnalytics {
     const analyticsData = localStorage.getItem(this.ANALYTICS_KEY);
-    let allAnalytics: AssessmentAnalytics[] = analyticsData ? JSON.parse(analyticsData) : [];
+    const allAnalytics: AssessmentAnalytics[] = analyticsData ? JSON.parse(analyticsData) : [];
 
     let analytics = allAnalytics.find(a => a.assessmentId === assessmentId);
     if (!analytics) {
@@ -820,7 +820,7 @@ class AssessmentService {
   // Save analytics
   private saveAnalytics(analytics: AssessmentAnalytics): void {
     const analyticsData = localStorage.getItem(this.ANALYTICS_KEY);
-    let allAnalytics: AssessmentAnalytics[] = analyticsData ? JSON.parse(analyticsData) : [];
+    const allAnalytics: AssessmentAnalytics[] = analyticsData ? JSON.parse(analyticsData) : [];
 
     const index = allAnalytics.findIndex(a => a.assessmentId === analytics.assessmentId);
     if (index === -1) {

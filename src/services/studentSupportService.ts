@@ -872,7 +872,7 @@ class StudentSupportService {
 
     // Enhanced student-specific context integration
     let enhancedResponse = selectedResponse.response;
-    let contextUsed = !!studentProgress;
+    const contextUsed = !!studentProgress;
     
     if (studentProgress) {
       const contextualAdditions = [];
