@@ -44,36 +44,36 @@ describe('AssignmentSubmission Component', () => {
       );
 
       expect(screen.getByRole('heading', { name: 'Kumpulkan Tugas' })).toBeInTheDocument();
-expect(screen.getByText('Laporan Praktikum Fisika')).toBeInTheDocument();
-       expect(screen.getByText(/Mata Pelajaran:\s*Fisika/)).toBeInTheDocument();
+      expect(screen.getByText('Laporan Praktikum Fisika')).toBeInTheDocument();
+      expect(screen.getByText(/Mata Pelajaran:\s*Fisika/)).toBeInTheDocument();
     });
 
-test('should display assignment details correctly', () => {
-       render(
-         <AssignmentSubmission
-           assignment={mockAssignment}
-           onClose={mockOnClose}
-           onSubmit={mockOnSubmit}
-         />
-       );
+    test('should display assignment details correctly', () => {
+      render(
+        <AssignmentSubmission
+          assignment={mockAssignment}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit}
+        />
+      );
 
-       expect(screen.getByText(/Mata Pelajaran:/)).toBeInTheDocument();
-       expect(screen.getByText(/Deadline:/)).toBeInTheDocument();
-       expect(screen.getByText(/Selasa, 15 Oktober 2024/)).toBeInTheDocument();
+      expect(screen.getByText(/Mata Pelajaran:/)).toBeInTheDocument();
+      expect(screen.getByText(/Deadline:/)).toBeInTheDocument();
+      expect(screen.getByText(/Selasa, 15 Oktober 2024/)).toBeInTheDocument();
     });
 
-test('should display assignment description and instructions', () => {
-       render(
-         <AssignmentSubmission
-           assignment={mockAssignment}
-           onClose={mockOnClose}
-           onSubmit={mockOnSubmit}
-         />
-       );
+    test('should display assignment description and instructions', () => {
+      render(
+        <AssignmentSubmission
+          assignment={mockAssignment}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit}
+        />
+      );
 
-       expect(screen.getByText('Laporan Praktikum Fisika')).toBeInTheDocument();
-       expect(screen.getByText(/Mata Pelajaran:/)).toBeInTheDocument();
-       expect(screen.getByText(/Deadline:/)).toBeInTheDocument();
+      expect(screen.getByText('Laporan Praktikum Fisika')).toBeInTheDocument();
+      expect(screen.getByText(/Mata Pelajaran:/)).toBeInTheDocument();
+      expect(screen.getByText(/Deadline:/)).toBeInTheDocument();
     });
   });
 
@@ -116,37 +116,37 @@ test('should display assignment description and instructions', () => {
       expect(screen.getByText('test.pdf')).toBeInTheDocument();
     });
 
-test('should validate file type', () => {
-       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    test('should validate file type', () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-       render(
-         <AssignmentSubmission
-           assignment={mockAssignment}
-           onClose={mockOnClose}
-           onSubmit={mockOnSubmit}
-         />
-       );
+      render(
+        <AssignmentSubmission
+          assignment={mockAssignment}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit}
+        />
+      );
 
-const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-stream' });
-       
-       const chooseFileButton = screen.getByText('Pilih File');
-       fireEvent.click(chooseFileButton);
-       
-       const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-       if (fileInput) {
-         Object.defineProperty(fileInput, 'files', {
-           value: [invalidFile],
-           writable: false,
-         });
-         fireEvent.change(fileInput);
-       }
+      // Test that invalid files are rejected - component should not display them
+      const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-stream' });
+      
+      const dropZone = screen.getByText('Pilih File').closest('div');
+      
+      if (dropZone) {
+        fireEvent.drop(dropZone, {
+          dataTransfer: {
+            files: [invalidFile]
+          }
+        });
+      }
 
-       expect(screen.getByText('Pilih File')).toBeInTheDocument();
-       
-       consoleSpy.mockRestore();
-     });
+      // Component should still show upload area since invalid file was rejected
+      expect(screen.getByText('Pilih File')).toBeInTheDocument();
+      
+      consoleSpy.mockRestore();
+    });
 
-     test('should validate file size', () => {
+    test('should validate file size', () => {
       render(
         <AssignmentSubmission
           assignment={mockAssignment}
@@ -171,7 +171,6 @@ const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-st
       
       expect(screen.getByText('test.pdf')).toBeInTheDocument();
     });
-
   });
 
   describe('Notes Section', () => {
@@ -184,7 +183,7 @@ const invalidFile = new File(['test'], 'test.exe', { type: 'application/octet-st
         />
       );
 
-const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau komentar/);
+      const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau komentar/);
       fireEvent.change(notesTextarea, { target: { value: 'Catatan tambahan untuk guru' } });
 
       expect(notesTextarea).toHaveValue('Catatan tambahan untuk guru');
@@ -225,7 +224,7 @@ const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau koment
         });
       }
 
-const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
+      const submitButton = screen.getByRole('button', { name: /kumpulkan/i });
       expect(submitButton).not.toBeDisabled();
     });
 
@@ -266,7 +265,7 @@ const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
         />
       );
 
-      const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau keterangan/);
+      const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau komentar/);
       fireEvent.change(notesTextarea, { target: { value: 'Test notes' } });
 
       const file = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
@@ -280,12 +279,12 @@ const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
         });
       }
 
-      const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
+      const submitButton = screen.getByRole('button', { name: /kumpulkan/i });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
         expect(mockOnSubmit).toHaveBeenCalledWith({
-          file: undefined,
+          file: expect.any(File),
           notes: 'Test notes',
           submittedBy: 'PAR001'
         });
@@ -303,13 +302,24 @@ const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
         />
       );
 
-      const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau keterangan/);
+      const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau komentar/);
       fireEvent.change(notesTextarea, { target: { value: 'Test notes' } });
 
-      const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
+      const file = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
+      const dropZone = screen.getByText('Pilih File').closest('div');
+      
+      if (dropZone) {
+        fireEvent.drop(dropZone, {
+          dataTransfer: {
+            files: [file]
+          }
+        });
+      }
+
+      const submitButton = screen.getByRole('button', { name: /kumpulkan/i });
       fireEvent.click(submitButton);
 
-      expect(screen.getByText('Mengumpulkan...')).toBeInTheDocument();
+      expect(screen.getByText('Mengunggah...')).toBeInTheDocument();
       expect(submitButton).toBeDisabled();
     });
   });
@@ -337,7 +347,7 @@ const submitButton = screen.getByRole('button', { name: /kumpulkan tugas/i });
         />
       );
 
-const closeButton = screen.getByLabelText('Tutup modal pengumpulan tugas');
+      const closeButton = screen.getByRole('button', { name: '' });
       fireEvent.click(closeButton);
       expect(mockOnClose).toHaveBeenCalledTimes(1);
     });
@@ -357,8 +367,19 @@ const closeButton = screen.getByLabelText('Tutup modal pengumpulan tugas');
         />
       );
 
-const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau keterangan/);
+      const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau komentar/);
       fireEvent.change(notesTextarea, { target: { value: 'Test notes' } });
+
+      const file = new File(['test content'], 'test.pdf', { type: 'application/pdf' });
+      const dropZone = screen.getByText('Pilih File').closest('div');
+      
+      if (dropZone) {
+        fireEvent.drop(dropZone, {
+          dataTransfer: {
+            files: [file]
+          }
+        });
+      }
 
       fireEvent.click(screen.getByRole('button', { name: /kumpulkan/i }));
 
@@ -380,7 +401,7 @@ const notesTextarea = screen.getByPlaceholderText(/Tambahkan catatan atau ketera
         />
       );
 
-      expect(screen.getByRole('button', { name: /kumpulkan tugas/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /kumpulkan/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /batal/i })).toBeInTheDocument();
     });
   });

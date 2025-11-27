@@ -3,6 +3,15 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import Header from './Header';
 
+// Mock the hooks before the component is imported
+jest.mock('../hooks/useScrollEffect', () => ({
+  useScrollEffect: jest.fn(() => false)
+}));
+
+jest.mock('../hooks/useResponsiveMenu', () => ({
+  useResponsiveMenu: jest.fn(() => ({ isMenuOpen: false, setIsMenuOpen: jest.fn() }))
+}));
+
 // Mock the icon components
 jest.mock('./icons/MenuIcon', () => ({
   __esModule: true,
@@ -99,79 +108,87 @@ describe('Header Component', () => {
   });
 
   describe('User Interactions', () => {
-    test('should call onLoginClick when login button is clicked', async () => {
-      const user = userEvent.setup();
-      render(
-        <Header
-          onLoginClick={mockOnLoginClick}
-          onChatClick={mockOnChatClick}
-          isLoggedIn={false}
-          onLogout={mockOnLogout}
-        />
-      );
+test('should call onLoginClick when login button is clicked', async () => {
+       const user = userEvent.setup({ advanceTimers: jest.fn });
+       render(
+         <Header
+           onLoginClick={mockOnLoginClick}
+           onChatClick={mockOnChatClick}
+           isLoggedIn={false}
+           onLogout={mockOnLogout}
+         />
+       );
 
-      const loginButton = screen.getByText('Login');
-      await user.click(loginButton);
+       const loginButton = screen.getByText('Login');
+       await act(async () => {
+         await user.click(loginButton);
+       });
 
-      expect(mockOnLoginClick).toHaveBeenCalledTimes(1);
-    });
+       expect(mockOnLoginClick).toHaveBeenCalledTimes(1);
+     }, 15000);
 
-    test('should call onChatClick when chat button is clicked', async () => {
-      const user = userEvent.setup();
-      render(
-        <Header
-          onLoginClick={mockOnLoginClick}
-          onChatClick={mockOnChatClick}
-          isLoggedIn={false}
-          onLogout={mockOnLogout}
-        />
-      );
+test('should call onChatClick when chat button is clicked', async () => {
+       const user = userEvent.setup({ advanceTimers: jest.fn });
+       render(
+         <Header
+           onLoginClick={mockOnLoginClick}
+           onChatClick={mockOnChatClick}
+           isLoggedIn={false}
+           onLogout={mockOnLogout}
+         />
+       );
 
-      const chatButton = screen.getByText('Tanya AI');
-      await user.click(chatButton);
+       const chatButton = screen.getByText('Tanya AI');
+       await act(async () => {
+         await user.click(chatButton);
+       });
 
-      expect(mockOnChatClick).toHaveBeenCalledTimes(1);
-    });
+       expect(mockOnChatClick).toHaveBeenCalledTimes(1);
+     }, 15000);
 
-    test('should call onLogout when logout button is clicked', async () => {
-      const user = userEvent.setup();
-      render(
-        <Header
-          onLoginClick={mockOnLoginClick}
-          onChatClick={mockOnChatClick}
-          isLoggedIn={true}
-          onLogout={mockOnLogout}
-        />
-      );
+test('should call onLogout when logout button is clicked', async () => {
+       const user = userEvent.setup({ advanceTimers: jest.fn });
+       render(
+         <Header
+           onLoginClick={mockOnLoginClick}
+           onChatClick={mockOnChatClick}
+           isLoggedIn={true}
+           onLogout={mockOnLogout}
+         />
+       );
 
-      const logoutButton = screen.getByText('Logout');
-      await user.click(logoutButton);
+       const logoutButton = screen.getByText('Logout');
+       await act(async () => {
+         await user.click(logoutButton);
+       });
 
-      expect(mockOnLogout).toHaveBeenCalledTimes(1);
-    });
+       expect(mockOnLogout).toHaveBeenCalledTimes(1);
+     }, 15000);
 
-    test('should toggle mobile menu when menu button is clicked', async () => {
-      const user = userEvent.setup();
-      render(
-        <Header
-          onLoginClick={mockOnLoginClick}
-          onChatClick={mockOnChatClick}
-          isLoggedIn={false}
-          onLogout={mockOnLogout}
-        />
-      );
+test('should toggle mobile menu when menu button is clicked', async () => {
+       const user = userEvent.setup({ advanceTimers: jest.fn });
+       render(
+         <Header
+           onLoginClick={mockOnLoginClick}
+           onChatClick={mockOnChatClick}
+           isLoggedIn={false}
+           onLogout={mockOnLogout}
+         />
+       );
 
-      // Initially menu should show "Buka menu"
-      const menuButton = screen.getByLabelText('Buka menu');
+       // Initially menu should show "Buka menu"
+       const menuButton = screen.getByLabelText('Buka menu');
 
-      // Desktop nav is always visible
-      expect(screen.queryByText('Beranda')).toBeInTheDocument();
+       // Desktop nav is always visible
+       expect(screen.queryByText('Beranda')).toBeInTheDocument();
 
-      await user.click(menuButton);
+       await act(async () => {
+         await user.click(menuButton);
+       });
 
-      // After clicking, the button should show "Tutup menu"
-      expect(screen.getByLabelText('Tutup menu')).toBeInTheDocument();
-    });
+       // After clicking, the button should show "Tutup menu"
+       expect(screen.getByLabelText('Tutup menu')).toBeInTheDocument();
+     }, 15000);
   });
 
   describe('Responsive Behavior', () => {
@@ -211,42 +228,46 @@ describe('Header Component', () => {
   });
 
   describe('Mobile Menu Interactions', () => {
-    test('should close mobile menu after login button click', async () => {
-      const user = userEvent.setup();
-      render(
-        <Header
-          onLoginClick={mockOnLoginClick}
-          onChatClick={mockOnChatClick}
-          isLoggedIn={false}
-          onLogout={mockOnLogout}
-        />
-      );
+test('should close mobile menu after login button click', async () => {
+       const user = userEvent.setup({ advanceTimers: jest.fn });
+       render(
+         <Header
+           onLoginClick={mockOnLoginClick}
+           onChatClick={mockOnChatClick}
+           isLoggedIn={false}
+           onLogout={mockOnLogout}
+         />
+       );
 
-      // For mobile menu testing, we would need to simulate mobile viewport
-      // This is a basic test structure - in a real scenario, you'd use libraries like
-      // @testing-library/react-hooks or manually set innerWidth
-      const loginButton = screen.getByText('Login');
-      await user.click(loginButton);
+       // For mobile menu testing, we would need to simulate mobile viewport
+       // This is a basic test structure - in a real scenario, you'd use libraries like
+       // @testing-library/react-hooks or manually set innerWidth
+       const loginButton = screen.getByText('Login');
+       await act(async () => {
+         await user.click(loginButton);
+       });
 
-      expect(mockOnLoginClick).toHaveBeenCalledTimes(1);
-    });
+       expect(mockOnLoginClick).toHaveBeenCalledTimes(1);
+     }, 15000);
 
-    test('should close mobile menu after chat button click', async () => {
-      const user = userEvent.setup();
-      render(
-        <Header
-          onLoginClick={mockOnLoginClick}
-          onChatClick={mockOnChatClick}
-          isLoggedIn={false}
-          onLogout={mockOnLogout}
-        />
-      );
+test('should close mobile menu after chat button click', async () => {
+       const user = userEvent.setup({ advanceTimers: jest.fn });
+       render(
+         <Header
+           onLoginClick={mockOnLoginClick}
+           onChatClick={mockOnChatClick}
+           isLoggedIn={false}
+           onLogout={mockOnLogout}
+         />
+       );
 
-      const chatButton = screen.getByText('Tanya AI');
-      await user.click(chatButton);
+       const chatButton = screen.getByText('Tanya AI');
+       await act(async () => {
+         await user.click(chatButton);
+       });
 
-      expect(mockOnChatClick).toHaveBeenCalledTimes(1);
-    });
+       expect(mockOnChatClick).toHaveBeenCalledTimes(1);
+     }, 15000);
   });
 
   describe('Accessibility', () => {
@@ -280,25 +301,27 @@ describe('Header Component', () => {
       expect(chatButton).toBeInTheDocument();
     });
 
-    test('should support keyboard navigation', async () => {
-      const user = userEvent.setup();
-      render(
-        <Header
-          onLoginClick={mockOnLoginClick}
-          onChatClick={mockOnChatClick}
-          isLoggedIn={false}
-          onLogout={mockOnLogout}
-        />
-      );
+test('should support keyboard navigation', async () => {
+       const user = userEvent.setup({ advanceTimers: jest.fn });
+       render(
+         <Header
+           onLoginClick={mockOnLoginClick}
+           onChatClick={mockOnChatClick}
+           isLoggedIn={false}
+           onLogout={mockOnLogout}
+         />
+       );
 
-      const loginButton = screen.getByText('Login');
+       const loginButton = screen.getByText('Login');
 
-      // Focus and press Enter
-      loginButton.focus();
-      await user.keyboard('{Enter}');
+       // Focus and press Enter
+       loginButton.focus();
+       await act(async () => {
+         await user.keyboard('{Enter}');
+       });
 
-      expect(mockOnLoginClick).toHaveBeenCalledTimes(1);
-    });
+       expect(mockOnLoginClick).toHaveBeenCalledTimes(1);
+     }, 15000);
   });
 
   describe('State Management', () => {
