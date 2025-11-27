@@ -99,6 +99,38 @@ export interface CurriculumMap {
   }>;
 }
 
+export interface AdaptiveLearningPath {
+  id: string;
+  studentId: string;
+  subjectId: string;
+  pathType: 'remedial' | 'regular' | 'enrichment';
+  currentLevel: 'beginner' | 'intermediate' | 'advanced';
+  progress: number; // 0-100
+  recommendedMaterials: string[]; // Material IDs
+  recommendedAssessments: string[]; // Assessment IDs
+  adaptiveRules: Array<{
+    condition: string;
+    action: string;
+    priority: number;
+  }>;
+  lastUpdated: string;
+  estimatedCompletion: string;
+}
+
+export interface StudentPerformanceMetrics {
+  studentId: string;
+  subjectId: string;
+  averageScore: number;
+  masteryLevel: 'not_started' | 'in_progress' | 'mastered' | 'needs_review';
+  strengths: string[];
+  weaknesses: string[];
+  learningStyle: 'visual' | 'auditory' | 'kinesthetic' | 'reading';
+  paceOfLearning: 'slow' | 'normal' | 'fast';
+  engagementScore: number;
+  timeSpent: number; // in minutes
+  lastActivity: string;
+}
+
 export interface StudentProgress {
   studentId: string;
   curriculumMaps: Record<string, {
@@ -942,6 +974,326 @@ class CurriculumService {
     });
 
     this.updateStudentProgress(studentId, curriculum.id, curriculumProgress);
+    
+    // Trigger adaptive learning path update
+    this.updateAdaptiveLearningPath(studentId, curriculum.subjectId, score);
+  }
+
+  // AI-Powered Adaptive Learning Path Management
+  updateAdaptiveLearningPath(studentId: string, subjectId: string, recentScore: number): void {
+    const performance = this.analyzeStudentPerformance(studentId, subjectId);
+    const currentPath = this.getAdaptiveLearningPath(studentId, subjectId);
+    
+    let newPathType: 'remedial' | 'regular' | 'enrichment' = 'regular';
+    let newLevel: 'beginner' | 'intermediate' | 'advanced' = 'intermediate';
+    
+    // AI-driven path determination
+    if (performance.averageScore < 70 || performance.masteryLevel === 'needs_review') {
+      newPathType = 'remedial';
+      newLevel = 'beginner';
+    } else if (performance.averageScore >= 85 && performance.masteryLevel === 'mastered') {
+      newPathType = 'enrichment';
+      newLevel = 'advanced';
+    }
+    
+    // Generate personalized recommendations
+    const recommendations = this.generatePersonalizedRecommendations(performance, newPathType);
+    
+    const updatedPath: AdaptiveLearningPath = {
+      id: currentPath?.id || `path_${studentId}_${subjectId}_${Date.now()}`,
+      studentId,
+      subjectId,
+      pathType: newPathType,
+      currentLevel: newLevel,
+      progress: this.calculatePathProgress(performance),
+      recommendedMaterials: recommendations.materials,
+      recommendedAssessments: recommendations.assessments,
+      adaptiveRules: this.generateAdaptiveRules(performance),
+      lastUpdated: new Date().toISOString(),
+      estimatedCompletion: this.estimateCompletionTime(performance, newPathType)
+    };
+    
+    this.saveAdaptiveLearningPath(updatedPath);
+  }
+
+  // Analyze student performance using AI
+  analyzeStudentPerformance(studentId: string, subjectId: string): StudentPerformanceMetrics {
+    const studentProgress = this.getStudentProgress(studentId);
+    const allMaps = this.getAllCurriculumMaps();
+    const subjectMap = allMaps.find(map => map.subjectId === subjectId);
+    
+    if (!studentProgress || !subjectMap) {
+      return this.getDefaultMetrics(studentId, subjectId);
+    }
+    
+    const curriculumProgress = studentProgress.curriculumMaps[subjectMap.id];
+    const assessmentResults = this.getAssessmentResults(studentId, subjectId);
+    
+    // Calculate performance metrics
+    const averageScore = assessmentResults.length > 0 
+      ? assessmentResults.reduce((sum, result) => sum + result.score, 0) / assessmentResults.length 
+      : 0;
+    
+    const masteryLevel = this.determineMasteryLevel(averageScore, curriculumProgress);
+    const strengths = this.identifyStrengths(assessmentResults, subjectMap);
+    const weaknesses = this.identifyWeaknesses(assessmentResults, subjectMap);
+    const learningStyle = this.detectLearningStyle(studentProgress);
+    const paceOfLearning = this.determineLearningPace(assessmentResults);
+    const engagementScore = this.calculateEngagementScore(studentProgress);
+    const timeSpent = this.calculateTimeSpent(studentProgress, subjectId);
+    
+    return {
+      studentId,
+      subjectId,
+      averageScore,
+      masteryLevel,
+      strengths,
+      weaknesses,
+      learningStyle,
+      paceOfLearning,
+      engagementScore,
+      timeSpent,
+      lastActivity: studentProgress.lastActivity || new Date().toISOString()
+    };
+  }
+
+  // Generate personalized learning recommendations
+  private generatePersonalizedRecommendations(
+    performance: StudentPerformanceMetrics, 
+    pathType: 'remedial' | 'regular' | 'enrichment'
+  ): { materials: string[]; assessments: string[] } {
+    const allMaps = this.getAllCurriculumMaps();
+    const subjectMap = allMaps.find(map => map.subjectId === performance.subjectId);
+    
+    if (!subjectMap) return { materials: [], assessments: [] };
+    
+    let recommendedMaterials: string[] = [];
+    let recommendedAssessments: string[] = [];
+    
+    // Filter materials based on learning style and path type
+    recommendedMaterials = subjectMap.materials
+      .filter(material => {
+        // Match learning style
+        if (performance.learningStyle === 'visual' && !material.type.includes('video') && !material.type.includes('interactive')) {
+          return false;
+        }
+        if (performance.learningStyle === 'reading' && material.type !== 'document') {
+          return false;
+        }
+        
+        // Match difficulty level
+        if (pathType === 'remedial' && material.difficulty === 'advanced') return false;
+        if (pathType === 'enrichment' && material.difficulty === 'beginner') return false;
+        
+        // Address weaknesses
+        return material.tags.some(tag => performance.weaknesses.includes(tag));
+      })
+      .slice(0, 5) // Limit to top 5 recommendations
+      .map(material => material.id);
+    
+    // Recommend assessments based on mastery level
+    recommendedAssessments = subjectMap.assessments
+      .filter(assessment => {
+        if (pathType === 'remedial' && assessment.type === 'exam') return false;
+        if (pathType === 'enrichment' && assessment.type === 'quiz') return false;
+        return true;
+      })
+      .slice(0, 3)
+      .map(assessment => assessment.id);
+    
+    return { materials: recommendedMaterials, assessments: recommendedAssessments };
+  }
+
+  // Generate adaptive learning rules
+  private generateAdaptiveRules(performance: StudentPerformanceMetrics): Array<{
+    condition: string;
+    action: string;
+    priority: number;
+  }> {
+    const rules = [];
+    
+    // Performance-based rules
+    if (performance.averageScore < 60) {
+      rules.push({
+        condition: 'score_below_60',
+        action: 'provide_remedial_content',
+        priority: 1
+      });
+    }
+    
+    if (performance.engagementScore < 50) {
+      rules.push({
+        condition: 'low_engagement',
+        action: 'send_motivational_content',
+        priority: 2
+      });
+    }
+    
+    if (performance.paceOfLearning === 'slow') {
+      rules.push({
+        condition: 'slow_pace',
+        action: 'provide_additional_practice',
+        priority: 3
+      });
+    }
+    
+    return rules;
+  }
+
+  // Helper methods for adaptive learning
+  private determineMasteryLevel(averageScore: number, progress: any): 'not_started' | 'in_progress' | 'mastered' | 'needs_review' {
+    if (averageScore === 0) return 'not_started';
+    if (averageScore >= 85) return 'mastered';
+    if (averageScore >= 60) return 'in_progress';
+    return 'needs_review';
+  }
+
+  private identifyStrengths(results: any[], subjectMap: CurriculumMap): string[] {
+    // Analyze assessment results to identify strong areas
+    const strengths = [];
+    const topicPerformance = {};
+    
+    results.forEach(result => {
+      const assessment = subjectMap.assessments.find(a => a.id === result.assessmentId);
+      if (assessment && result.score >= 80) {
+        assessment.objectives.forEach(objectiveId => {
+          const objective = subjectMap.objectives.find(o => o.id === objectiveId);
+          if (objective) {
+            strengths.push(objective.description);
+          }
+        });
+      }
+    });
+    
+    return [...new Set(strengths)]; // Remove duplicates
+  }
+
+  private identifyWeaknesses(results: any[], subjectMap: CurriculumMap): string[] {
+    const weaknesses = [];
+    
+    results.forEach(result => {
+      const assessment = subjectMap.assessments.find(a => a.id === result.assessmentId);
+      if (assessment && result.score < 60) {
+        assessment.objectives.forEach(objectiveId => {
+          const objective = subjectMap.objectives.find(o => o.id === objectiveId);
+          if (objective) {
+            weaknesses.push(objective.description);
+          }
+        });
+      }
+    });
+    
+    return [...new Set(weaknesses)];
+  }
+
+  private detectLearningStyle(progress: any): 'visual' | 'auditory' | 'kinesthetic' | 'reading' {
+    // Simple heuristic based on material interaction
+    // In production, this would use more sophisticated ML algorithms
+    const materialPreferences = progress.materialPreferences || {};
+    
+    const maxPreference = Math.max(...Object.values(materialPreferences));
+    const preferredType = Object.keys(materialPreferences).find(key => materialPreferences[key] === maxPreference);
+    
+    return preferredType as any || 'visual';
+  }
+
+  private determineLearningPace(results: any[]): 'slow' | 'normal' | 'fast' {
+    if (results.length < 2) return 'normal';
+    
+    const timeBetweenAssessments = results.slice(1).map((result, index) => {
+      const prevResult = results[index];
+      return new Date(result.submittedAt).getTime() - new Date(prevResult.submittedAt).getTime();
+    });
+    
+    const avgTime = timeBetweenAssessments.reduce((sum, time) => sum + time, 0) / timeBetweenAssessments.length;
+    const days = avgTime / (1000 * 60 * 60 * 24);
+    
+    if (days > 7) return 'slow';
+    if (days < 3) return 'fast';
+    return 'normal';
+  }
+
+  private calculateEngagementScore(progress: any): number {
+    // Calculate based on login frequency, material completion, etc.
+    const loginFrequency = progress.loginFrequency || 0;
+    const materialCompletion = progress.materialCompletion || 0;
+    const assessmentParticipation = progress.assessmentParticipation || 0;
+    
+    return Math.round((loginFrequency + materialCompletion + assessmentParticipation) / 3);
+  }
+
+  private calculateTimeSpent(progress: any, subjectId: string): number {
+    return progress.timeSpentBySubject?.[subjectId] || 0;
+  }
+
+  private calculatePathProgress(performance: StudentPerformanceMetrics): number {
+    // Calculate overall progress in the learning path
+    return Math.round(
+      (performance.averageScore / 100) * 0.6 + 
+      (performance.engagementScore / 100) * 0.4
+    ) * 100;
+  }
+
+  private estimateCompletionTime(performance: StudentPerformanceMetrics, pathType: string): string {
+    const baseWeeks = pathType === 'remedial' ? 8 : pathType === 'enrichment' ? 4 : 6;
+    const paceMultiplier = performance.paceOfLearning === 'slow' ? 1.5 : performance.paceOfLearning === 'fast' ? 0.75 : 1;
+    
+    const estimatedWeeks = Math.round(baseWeeks * paceMultiplier);
+    const completionDate = new Date();
+    completionDate.setDate(completionDate.getDate() + (estimatedWeeks * 7));
+    
+    return completionDate.toISOString();
+  }
+
+  private getDefaultMetrics(studentId: string, subjectId: string): StudentPerformanceMetrics {
+    return {
+      studentId,
+      subjectId,
+      averageScore: 0,
+      masteryLevel: 'not_started',
+      strengths: [],
+      weaknesses: [],
+      learningStyle: 'visual',
+      paceOfLearning: 'normal',
+      engagementScore: 0,
+      timeSpent: 0,
+      lastActivity: new Date().toISOString()
+    };
+  }
+
+  // Adaptive Learning Path Storage Methods
+  getAdaptiveLearningPath(studentId: string, subjectId: string): AdaptiveLearningPath | null {
+    const paths = JSON.parse(localStorage.getItem('adaptive_learning_paths') || '[]');
+    return paths.find(path => path.studentId === studentId && path.subjectId === subjectId) || null;
+  }
+
+  saveAdaptiveLearningPath(path: AdaptiveLearningPath): void {
+    const paths = JSON.parse(localStorage.getItem('adaptive_learning_paths') || '[]');
+    const existingIndex = paths.findIndex(p => p.studentId === path.studentId && p.subjectId === path.subjectId);
+    
+    if (existingIndex >= 0) {
+      paths[existingIndex] = path;
+    } else {
+      paths.push(path);
+    }
+    
+    localStorage.setItem('adaptive_learning_paths', JSON.stringify(paths));
+  }
+
+  getAssessmentResults(studentId: string, subjectId?: string): any[] {
+    const results = JSON.parse(localStorage.getItem('assessment_results') || '[]');
+    let studentResults = results.filter(result => result.studentId === studentId);
+    
+    if (subjectId) {
+      const allMaps = this.getAllCurriculumMaps();
+      const subjectAssessments = allMaps
+        .filter(map => map.subjectId === subjectId)
+        .flatMap(map => map.assessments.map(a => a.id));
+      
+      studentResults = studentResults.filter(result => subjectAssessments.includes(result.assessmentId));
+    }
+    
+    return studentResults;
   }
 
   // Generate curriculum report

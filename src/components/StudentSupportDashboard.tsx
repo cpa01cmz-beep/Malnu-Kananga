@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StudentSupportMonitoring, MonitoringAlert, SystemMetrics } from '../services/studentSupportMonitoring';
 import { StudentSupportService } from '../services/studentSupportService';
+import RealTimeMonitoringService, { StudentMetrics, InterventionTrigger } from '../services/realTimeMonitoringService';
 
 interface SupportDashboardProps {
   role?: 'admin' | 'support_staff' | 'teacher';
@@ -15,6 +16,13 @@ const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated
   const [_report, setReport] = useState<{ summary: string; details: string[] } | null>(null);
   const [showAlertDetails, setShowAlertDetails] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<MonitoringAlert | null>(null);
+  
+  // Enhanced real-time monitoring state
+  const [monitoringService] = useState(() => RealTimeMonitoringService.getInstance());
+  const [realTimeStats, setRealTimeStats] = useState<any>(null);
+  const [interventionTriggers, setInterventionTriggers] = useState<InterventionTrigger[]>([]);
+  const [studentSessions, setStudentSessions] = useState<StudentMetrics[]>([]);
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   useEffect(() => {
     loadDashboardData();
@@ -22,7 +30,17 @@ const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated
     // Refresh every 30 seconds
     const interval = setInterval(loadDashboardData, 30 * 1000);
     return () => clearInterval(interval);
-  }, [selectedTimeFrame]);
+  }, [selectedTimeFrame, autoRefresh]);
+
+  // Enhanced real-time monitoring
+  useEffect(() => {
+    if (autoRefresh) {
+      const refreshInterval = setInterval(() => {
+        loadRealTimeData();
+      }, 15000); // Refresh every 15 seconds for real-time data
+      return () => clearInterval(refreshInterval);
+    }
+  }, [autoRefresh]);
 
   const loadDashboardData = async () => {
     try {
@@ -52,8 +70,25 @@ const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated
       setAlerts(allAlerts.filter(a => !a.resolved));
       setMetrics(currentMetrics);
       setReport(monitoringReport);
+      
+      // Load enhanced real-time data
+      loadRealTimeData();
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
+    }
+  };
+
+  const loadRealTimeData = () => {
+    try {
+      const stats = monitoringService.getMonitoringStats();
+      const sessions = Array.from((monitoringService as any).studentSessions.values());
+      const triggers = monitoringService.getInterventionTriggers();
+
+      setRealTimeStats(stats);
+      setStudentSessions(sessions);
+      setInterventionTriggers(triggers);
+    } catch (error) {
+      console.error('Failed to load real-time data:', error);
     }
   };
 
@@ -99,20 +134,39 @@ const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      {/* Enhanced Header */}
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg shadow-lg p-6 text-white">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Student Support Dashboard</h1>
-            <p className="text-gray-600">Real-time monitoring and intervention system</p>
+            <h1 className="text-3xl font-bold text-white">Student Support Dashboard</h1>
+            <p className="text-indigo-100">AI-powered real-time monitoring and intervention system</p>
+            <div className="mt-2 flex items-center space-x-4">
+              <span className="text-sm text-indigo-200">
+                Last Updated: {new Date(currentStatus.lastUpdated).toLocaleTimeString('id-ID')}
+              </span>
+              {realTimeStats && (
+                <span className="px-2 py-1 bg-white/20 rounded-full text-xs">
+                  🤖 AI Active
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex items-center space-x-4">
-            <div className={`px-4 py-2 rounded-lg font-medium ${getStatusColor(currentStatus.status)}`}>
+            <label className="flex items-center text-white">
+              <input
+                type="checkbox"
+                checked={autoRefresh}
+                onChange={(e) => setAutoRefresh(e.target.checked)}
+                className="mr-2"
+              />
+              <span className="text-sm">Auto Refresh</span>
+            </label>
+            <div className={`px-4 py-2 rounded-lg font-medium ${getStatusColor(currentStatus.status).replace('text-', 'text-white ').replace('bg-', 'bg-white/20 ')}`}>
               Status: {currentStatus.status.toUpperCase()}
             </div>
             <button
               onClick={loadDashboardData}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-indigo-50 font-medium"
             >
               🔄 Refresh
             </button>
@@ -120,55 +174,97 @@ const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated
         </div>
       </div>
 
-      {/* Key Metrics */}
+      {/* Enhanced Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg shadow border border-blue-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">Total Students</p>
-              <p className="text-2xl font-bold text-gray-900">{metrics.totalStudents}</p>
+              <p className="text-sm text-blue-600 font-medium">Active Students</p>
+              <p className="text-3xl font-bold text-blue-900">{realTimeStats?.activeStudents || metrics.totalStudents}</p>
+              <p className="text-xs text-blue-500">Currently online</p>
             </div>
-            <div className="text-3xl">👥</div>
+            <div className="text-4xl text-blue-500">👥</div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-lg shadow border border-red-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">At-Risk Students</p>
-              <p className="text-2xl font-bold text-red-600">{metrics.atRiskStudents}</p>
-              <p className="text-xs text-gray-500">
-                {((metrics.atRiskStudents / metrics.totalStudents) * 100).toFixed(1)}% of total
+              <p className="text-sm text-red-600 font-medium">Pending Interventions</p>
+              <p className="text-3xl font-bold text-red-900">{realTimeStats?.pendingInterventions || metrics.atRiskStudents}</p>
+              <p className="text-xs text-red-500">Require attention</p>
+            </div>
+            <div className="text-4xl text-red-500">🚨</div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-lg shadow border border-yellow-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-yellow-600 font-medium">In Progress</p>
+              <p className="text-3xl font-bold text-yellow-900">{realTimeStats?.inProgressInterventions || metrics.pendingRequests}</p>
+              <p className="text-xs text-yellow-500">Being handled</p>
+            </div>
+            <div className="text-4xl text-yellow-500">⏰</div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg shadow border border-green-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-green-600 font-medium">Success Rate</p>
+              <p className="text-3xl font-bold text-green-900">
+                {Math.round(realTimeStats?.aiInsights?.interventionEffectiveness || 0)}%
               </p>
+              <p className="text-xs text-green-500">AI effectiveness</p>
             </div>
-            <div className="text-3xl">⚠️</div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Pending Requests</p>
-              <p className="text-2xl font-bold text-yellow-600">{metrics.pendingRequests}</p>
-            </div>
-            <div className="text-3xl">📝</div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Avg Response Time</p>
-              <p className="text-2xl font-bold text-blue-600">{metrics.averageResponseTime.toFixed(1)}h</p>
-            </div>
-            <div className="text-3xl">⏱️</div>
+            <div className="text-4xl text-green-500">✅</div>
           </div>
         </div>
       </div>
 
-      {/* System Health */}
+      {/* AI Insights Section */}
+      {realTimeStats?.aiInsights && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+            <span className="mr-2">🤖</span>
+            AI Insights & Analytics
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="text-sm text-gray-600 mb-1">Avg Session Duration</div>
+              <div className="text-2xl font-bold text-gray-900">
+                {Math.floor((realTimeStats.aiInsights.averageSessionDuration || 0) / 60000)}m
+              </div>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="text-sm text-gray-600 mb-1">Engagement Score</div>
+              <div className="text-2xl font-bold text-gray-900">
+                {realTimeStats.aiInsights.engagementScore || 0}/100
+              </div>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="text-sm text-gray-600 mb-1">Critical Cases (24h)</div>
+              <div className="text-2xl font-bold text-red-600">
+                {realTimeStats.aiInsights.riskTrends?.last24h?.critical || 0}
+              </div>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="text-sm text-gray-600 mb-1">System Uptime</div>
+              <div className="text-2xl font-bold text-gray-900">
+                {Math.floor((realTimeStats.uptime || 0) / 3600)}h
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Enhanced System Health with Real-time Performance */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">System Health</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <span className="mr-2">⚡</span>
+          System Performance & Health
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <div className="flex justify-between items-center mb-2">
@@ -188,16 +284,18 @@ const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated
 
           <div>
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-600">Resource Utilization</span>
-              <span className="text-sm font-medium">{metrics.resourceUtilization.toFixed(1)}%</span>
+              <span className="text-sm text-gray-600">Memory Usage</span>
+              <span className="text-sm font-medium">
+                {(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(1)}MB
+              </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
                 className={`h-2 rounded-full ${
-                  metrics.resourceUtilization > 90 ? 'bg-red-600' : 
-                  metrics.resourceUtilization > 70 ? 'bg-yellow-600' : 'bg-green-600'
+                  (process.memoryUsage().heapUsed / 1024 / 1024) > 400 ? 'bg-red-600' : 
+                  (process.memoryUsage().heapUsed / 1024 / 1024) > 300 ? 'bg-yellow-600' : 'bg-green-600'
                 }`}
-                style={{ width: `${metrics.resourceUtilization}%` }}
+                style={{ width: `${Math.min((process.memoryUsage().heapUsed / 1024 / 1024 / 500) * 100, 100)}%` }}
               />
             </div>
           </div>
@@ -205,22 +303,47 @@ const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated
           <div>
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm text-gray-600">Active Students</span>
-              <span className="text-sm font-medium">{metrics.activeStudents}</span>
+              <span className="text-sm font-medium">{realTimeStats?.activeStudents || metrics.activeStudents}</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
                 className="bg-blue-600 h-2 rounded-full"
-                style={{ width: `${(metrics.activeStudents / metrics.totalStudents) * 100}%` }}
+                style={{ width: `${((realTimeStats?.activeStudents || metrics.activeStudents) / metrics.totalStudents) * 100}%` }}
               />
             </div>
           </div>
         </div>
+        
+        {/* Additional Performance Metrics */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-gray-50 p-3 rounded-lg">
+            <div className="text-xs text-gray-600">Total Interventions</div>
+            <div className="text-lg font-bold text-gray-900">{realTimeStats?.totalInterventions || 0}</div>
+          </div>
+          <div className="bg-gray-50 p-3 rounded-lg">
+            <div className="text-xs text-gray-600">System Health</div>
+            <div className={`text-lg font-bold ${getStatusColor(realTimeStats?.systemHealth || 'healthy')}`}>
+              {(realTimeStats?.systemHealth || 'healthy').toUpperCase()}
+            </div>
+          </div>
+          <div className="bg-gray-50 p-3 rounded-lg">
+            <div className="text-xs text-gray-600">Resource Utilization</div>
+            <div className="text-lg font-bold text-gray-900">{metrics.resourceUtilization.toFixed(1)}%</div>
+          </div>
+          <div className="bg-gray-50 p-3 rounded-lg">
+            <div className="text-xs text-gray-600">Avg Response Time</div>
+            <div className="text-lg font-bold text-gray-900">{metrics.averageResponseTime.toFixed(1)}h</div>
+          </div>
+        </div>
       </div>
 
-      {/* Active Alerts */}
+      {/* Enhanced Active Alerts with Real-time Interventions */}
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Active Alerts ({alerts.length})</h2>
+          <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+            <span className="mr-2">🚨</span>
+            Active Interventions ({interventionTriggers.length + alerts.length})
+          </h2>
           <select
             value={selectedTimeFrame}
             onChange={(e) => setSelectedTimeFrame(e.target.value as 'hourly' | 'daily' | 'weekly')}
@@ -232,14 +355,74 @@ const [currentStatus, setCurrentStatus] = useState<{ status: string; lastUpdated
           </select>
         </div>
 
-        {alerts.length === 0 ? (
+        {interventionTriggers.length === 0 && alerts.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <div className="text-4xl mb-4">✅</div>
-            <p>No active alerts</p>
+            <p>No active interventions or alerts</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {alerts.slice(0, 5).map(alert => (
+            {/* Show real-time intervention triggers first */}
+            {interventionTriggers.slice(0, 3).map(trigger => (
+              <div key={trigger.id} className="border-l-4 border-red-500 bg-red-50 rounded-lg p-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getSeverityColor(trigger.severity)}`}>
+                        {trigger.severity.toUpperCase()}
+                      </span>
+                      <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                        AI DETECTED
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {new Date(trigger.timestamp).toLocaleString('id-ID')}
+                      </span>
+                    </div>
+                    <h3 className="font-semibold text-gray-900">
+                      {trigger.triggerType.replace('_', ' ').toUpperCase()} - Student {trigger.studentId}
+                    </h3>
+                    <p className="text-gray-600 text-sm mt-1">
+                      Automatic intervention triggered by AI monitoring system
+                    </p>
+                    {trigger.actions.length > 0 && (
+                      <div className="mt-2">
+                        <div className="text-sm font-medium text-gray-700">Actions:</div>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {trigger.actions.map(action => (
+                            <span key={action.id} className="px-2 py-1 bg-white text-gray-700 rounded text-xs">
+                              {action.type.replace('_', ' ')}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => {
+                        setSelectedAlert({
+                          id: trigger.id,
+                          title: `${trigger.triggerType} - Student ${trigger.studentId}`,
+                          description: `Automatic intervention: ${trigger.severity} severity`,
+                          severity: trigger.severity,
+                      timestamp: trigger.timestamp,
+                      studentId: trigger.studentId,
+                      actions: trigger.actions,
+                      resolved: false
+                        } as any);
+                        setShowAlertDetails(true);
+                      }}
+                      className="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded text-sm"
+                    >
+                      Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            {/* Show traditional alerts */}
+            {alerts.slice(0, Math.max(0, 5 - interventionTriggers.length)).map(alert => (
               <div key={alert.id} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
