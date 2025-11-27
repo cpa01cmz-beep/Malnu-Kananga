@@ -353,9 +353,13 @@ export interface AttendanceStats {
   totalSessions: number;
   present: number;
   absent: number;
-  excused: number;
   sick: number;
+  excused: number;
   attendanceRate: number;
+  // Legacy properties for backward compatibility
+  total?: number;
+  permitted?: number;
+  percentage?: number;
 }
 
 export function getAttendanceStats(attendance: AttendanceRecord[]): AttendanceStats {
@@ -378,19 +382,6 @@ export function getAttendanceStats(attendance: AttendanceRecord[]): AttendanceSt
     permitted: excused,
     percentage: attendanceRate
   };
-}
-
-export interface AttendanceStats {
-  totalSessions: number;
-  present: number;
-  absent: number;
-  sick: number;
-  excused: number;
-  attendanceRate: number;
-  // Legacy properties for backward compatibility
-  total?: number;
-  permitted?: number;
-  percentage?: number;
 }
 
 export function getUnreadAnnouncements(announcements: Announcement[]): Announcement[] {
