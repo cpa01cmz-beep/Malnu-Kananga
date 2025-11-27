@@ -77,6 +77,7 @@ export class SecurityMiddleware {
         /vbscript:/gi,
         /data:text\/html/gi,
         /data:application\/javascript/gi,
+        /data:image\/svg\+xml/gi,
         
         // Event handler patterns
         /on\w+\s*=/gi,
@@ -84,6 +85,10 @@ export class SecurityMiddleware {
         /onload\s*=/gi,
         /onerror\s*=/gi,
         /onmouseover\s*=/gi,
+        /onfocus\s*=/gi,
+        /onblur\s*=/gi,
+        /onchange\s*=/gi,
+        /onsubmit\s*=/gi,
         
         // HTML injection patterns
         /<iframe\b[^>]*>/gi,
@@ -93,23 +98,49 @@ export class SecurityMiddleware {
         /<meta\b[^>]*>/gi,
         /<form\b[^>]*>/gi,
         /<input\b[^>]*>/gi,
+        /<button\b[^>]*>/gi,
+        /<select\b[^>]*>/gi,
+        /<textarea\b[^>]*>/gi,
         
         // CSS injection patterns
         /expression\s*\(/gi,
         /@import/gi,
         /behavior\s*:/gi,
         /binding\s*:/gi,
+        /url\s*\(/gi,
         
         // Protocol injection
         /file:\/\//gi,
         /ftp:\/\//gi,
         /mailto:/gi,
+        /tel:/gi,
+        /sms:/gi,
         
         // Encoding attacks
         /%3cscript/gi,
         /%3e/gi,
         /&#x3c;script/gi,
-        /&#60;script/gi
+        /&#60;script/gi,
+        /&lt;script/gi,
+        /&gt;script/gi,
+        
+        // Unicode attacks
+        /\\u003c/gi,
+        /\\u003e/gi,
+        /\\x3c/gi,
+        /\\x3e/gi,
+        
+        // Base64 attacks
+        /PHNjcmlwd/gi,
+        /JyBzdHlsZT0i/gi,
+        
+        // DOM-based XSS patterns
+        /document\./gi,
+        /window\./gi,
+        /eval\s*\(/gi,
+        /setTimeout\s*\(/gi,
+        /setInterval\s*\(/gi,
+        /Function\s*\(/gi
       ];
       
       return typeof data === 'string' && 
@@ -209,9 +240,18 @@ export class SecurityMiddleware {
     // Remove SQL injection patterns
     return input
       .replace(/['"\\;]/g, '') // Remove quotes and semicolons
-      .replace(/\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b/gi, '') // Remove SQL keywords
+      .replace(/\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT|TRUNCATE|GRANT|REVOKE|COMMIT|ROLLBACK)\b/gi, '') // Remove SQL keywords
       .replace(/--/g, '') // Remove SQL comments
       .replace(/\/\*[\s\S]*?\*\//g, '') // Remove SQL block comments
+      .replace(/#\s*.*$/gm, '') // Remove MySQL comments
+      .replace(/;\s*$/gm, '') // Remove trailing semicolons
+      .replace(/\bOR\b.*\bTRUE\b/gi, '') // Remove OR TRUE patterns
+      .replace(/\bAND\b.*\bTRUE\b/gi, '') // Remove AND TRUE patterns
+      .replace(/\bWHERE\b.*\bOR\b/gi, '') // Remove WHERE OR patterns
+      .replace(/\bUNION\b.*\bSELECT\b/gi, '') // Remove UNION SELECT patterns
+      .replace(/\bINSERT\b.*\bINTO\b/gi, '') // Remove INSERT INTO patterns
+      .replace(/\bUPDATE\b.*\bSET\b/gi, '') // Remove UPDATE SET patterns
+      .replace(/\bDELETE\b.*\bFROM\b/gi, '') // Remove DELETE FROM patterns
       .trim();
   }
 
@@ -235,14 +275,14 @@ export class SecurityMiddleware {
       'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()',
       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
       
-      // Comprehensive Content Security Policy
+      // Enhanced Content Security Policy with stricter controls
       'Content-Security-Policy': [
         "default-src 'self';",
         "script-src 'self' 'unsafe-inline' 'unsafe-eval';", // Required for React development
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;",
-        "img-src 'self' data: https: https://images.unsplash.com;",
+        "img-src 'self' data: https: https://images.unsplash.com https://*.unsplash.com;",
         "font-src 'self' https://fonts.gstatic.com;",
-        "connect-src 'self' https: wss:;", // Allow WebSocket and HTTPS
+        "connect-src 'self' https: wss: https://*.googleapis.com;", // Allow WebSocket and HTTPS
         "frame-src 'none';",
         "frame-ancestors 'none';",
         "form-action 'self';",
@@ -251,12 +291,17 @@ export class SecurityMiddleware {
         "worker-src 'self' blob:;",
         "object-src 'none';",
         "media-src 'self';",
-        "prefetch-src 'self';"
+        "prefetch-src 'self';",
+        "child-src 'none';",
+        "upgrade-insecure-requests;"
       ].join(' '),
       
       'Cross-Origin-Embedder-Policy': 'require-corp',
       'Cross-Origin-Resource-Policy': 'same-origin',
-      'Cross-Origin-Opener-Policy': 'same-origin'
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
     };
   }
 
@@ -341,11 +386,19 @@ export class SecurityMiddleware {
     
     // Check blocked IPs
     if (SecurityMiddleware.isBlockedIP(clientInfo.ip, env)) {
+      SecurityMiddleware.logSecurityEvent('blocked_request', 'high', clientInfo, {
+        endpoint,
+        reason: 'IP blocked'
+      });
       return { allowed: false, reason: 'IP blocked' };
     }
     
     // Check geographic restrictions
     if (!SecurityMiddleware.isAllowedCountry(request, env)) {
+      SecurityMiddleware.logSecurityEvent('blocked_request', 'medium', clientInfo, {
+        endpoint,
+        reason: 'Country not allowed'
+      });
       return { allowed: false, reason: 'Country not allowed' };
     }
     
@@ -353,19 +406,111 @@ export class SecurityMiddleware {
     const clientId = SecurityMiddleware.getClientId(request);
     const rateLimitResult = SecurityMiddleware.checkRateLimit(clientId, endpoint);
     if (!rateLimitResult.allowed) {
+      SecurityMiddleware.logSecurityEvent('rate_limit_exceeded', 'medium', clientInfo, {
+        endpoint,
+        reason: 'Rate limit exceeded',
+        resetTime: rateLimitResult.resetTime
+      });
       return { allowed: false, reason: 'Rate limit exceeded' };
     }
     
     // Check request size
     if (!SecurityMiddleware.validateRequestSize(request)) {
+      SecurityMiddleware.logSecurityEvent('blocked_request', 'medium', clientInfo, {
+        endpoint,
+        reason: 'Request too large'
+      });
       return { allowed: false, reason: 'Request too large' };
     }
     
     // Check for suspicious user agents
     if (SecurityMiddleware.isSuspiciousUserAgent(userAgent) && endpoint === 'auth') {
+      SecurityMiddleware.logSecurityEvent('suspicious_activity', 'high', clientInfo, {
+        endpoint,
+        reason: 'Suspicious user agent',
+        userAgent
+      });
       return { allowed: false, reason: 'Suspicious user agent' };
     }
     
     return { allowed: true, clientInfo };
+  }
+
+  // Log security events
+  static logSecurityEvent(type, severity, clientInfo, details) {
+    const event = {
+      timestamp: new Date(),
+      type,
+      severity,
+      clientInfo,
+      details
+    };
+    
+    console.warn('🚨 Security Event:', event);
+    
+    // Store in localStorage for debugging (in production, use external logging)
+    try {
+      const existingLogs = localStorage.getItem('security_logs');
+      const logs = existingLogs ? JSON.parse(existingLogs) : [];
+      logs.push(event);
+      
+      // Keep only last 1000 logs
+      if (logs.length > 1000) {
+        logs.splice(0, logs.length - 1000);
+      }
+      
+      localStorage.setItem('security_logs', JSON.stringify(logs));
+    } catch (error) {
+      console.error('Failed to store security logs:', error);
+    }
+  }
+
+  // Validate and sanitize request data
+  static async validateAndSanitizeRequest(request) {
+    try {
+      const data = await request.json();
+      const sanitized = {};
+      const detectedThreats = [];
+      
+      for (const [key, value] of Object.entries(data)) {
+        // Check for XSS attempts
+        if (typeof value === 'string' && !SecurityMiddleware.validateInput(value, 'string')) {
+          detectedThreats.push({
+            type: 'xss_attempt',
+            field: key,
+            value: value.substring(0, 100) // Log first 100 chars
+          });
+          sanitized[key] = SecurityMiddleware.sanitizeInput(value, 'string');
+        } else {
+          sanitized[key] = value;
+        }
+        
+        // Check for SQL injection attempts
+        if (typeof value === 'string') {
+          const sqlPatterns = /\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT|TRUNCATE)\b/gi;
+          if (sqlPatterns.test(value)) {
+            detectedThreats.push({
+              type: 'sql_injection_attempt',
+              field: key,
+              value: value.substring(0, 100)
+            });
+            sanitized[key] = SecurityMiddleware.sanitizeSqlInput(value);
+          }
+        }
+      }
+      
+      if (detectedThreats.length > 0) {
+        const clientInfo = SecurityMiddleware.getClientInfo(request);
+        SecurityMiddleware.logSecurityEvent('suspicious_activity', 'high', clientInfo, {
+          threats: detectedThreats,
+          endpoint: new URL(request.url).pathname
+        });
+      }
+      
+      return { sanitized, detectedThreats };
+    } catch (error) {
+      console.error('Request validation error:', error);
+      return { sanitized: {}, detectedThreats: [] };
+    }
   }
 }
