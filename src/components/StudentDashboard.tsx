@@ -71,7 +71,7 @@ useEffect(() => {
     academicMetrics: {
       gpa: gpa,
       gradeTrend: 'stable' as const,
-      attendanceRate: attendanceStats.percentage,
+      attendanceRate: attendanceStats.percentage || 0,
       assignmentCompletion: 85, // Sample data
       subjectPerformance: studentGrades.reduce((acc, grade) => {
         acc[grade.subjectName] = parseFloat(grade.finalGrade || '0');
