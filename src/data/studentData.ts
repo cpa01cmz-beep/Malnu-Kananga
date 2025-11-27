@@ -366,16 +366,31 @@ export function getAttendanceStats(attendance: AttendanceRecord[]): AttendanceSt
   const excused = attendance.filter(a => a.status === 'Izin').length;
   const attendanceRate = total > 0 ? Math.round((present / total) * 100) : 0;
 
-  return { totalSessions: total, present, absent, sick, excused, attendanceRate };
+  return { 
+    totalSessions: total, 
+    present, 
+    absent, 
+    sick, 
+    excused, 
+    attendanceRate,
+    // Legacy properties
+    total: total,
+    permitted: excused,
+    percentage: attendanceRate
+  };
 }
 
 export interface AttendanceStats {
-  total: number;
+  totalSessions: number;
   present: number;
   absent: number;
   sick: number;
-  permitted: number;
-  percentage: number;
+  excused: number;
+  attendanceRate: number;
+  // Legacy properties for backward compatibility
+  total?: number;
+  permitted?: number;
+  percentage?: number;
 }
 
 export function getUnreadAnnouncements(announcements: Announcement[]): Announcement[] {

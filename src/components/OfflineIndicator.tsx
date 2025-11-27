@@ -13,6 +13,11 @@ const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
   const [showIndicator, setShowIndicator] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
+  const showSuccessMessage = (message: string) => {
+    // You can integrate with your toast notification system here
+    console.log('Success:', message);
+  };
+
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
@@ -36,11 +41,6 @@ const OfflineIndicator: React.FC<OfflineIndicatorProps> = ({
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
-
-  const showSuccessMessage = (message: string) => {
-    // You can integrate with your toast notification system here
-    console.log('Success:', message);
-  };
 
   const handleRetry = () => {
     setRetryCount(prev => prev + 1);
