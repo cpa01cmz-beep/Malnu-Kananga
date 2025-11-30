@@ -73,6 +73,7 @@ export const RELATED_LINKS = [
 ];
 
 // DATA AKUN DUMMY UNTUK PENGUJIAN
+// Digunakan sebagai default jika LocalStorage kosong atau di-reset
 export const INITIAL_USERS: User[] = [
     { 
         id: '1', 
@@ -86,7 +87,7 @@ export const INITIAL_USERS: User[] = [
         name: 'Siti Aminah, S.Pd.', 
         email: 'guru.staff@malnu.sch.id', 
         role: 'teacher', 
-        extraRole: 'staff', 
+        extraRole: 'staff', // Guru merangkap Staff Tata Usaha/Sarpras
         status: 'active' 
     },
     { 
@@ -94,7 +95,7 @@ export const INITIAL_USERS: User[] = [
         name: 'Budi Santoso', 
         email: 'siswa.osis@malnu.sch.id', 
         role: 'student', 
-        extraRole: 'osis', 
+        extraRole: 'osis', // Siswa merangkap Ketua OSIS
         status: 'active' 
     },
     { 
@@ -112,5 +113,21 @@ export const INITIAL_USERS: User[] = [
         role: 'student', 
         extraRole: null, 
         status: 'active' 
+    },
+    {
+        id: '6',
+        name: 'Andi Pratama',
+        email: 'andi.osis@malnu.sch.id',
+        role: 'student',
+        extraRole: 'osis', // Siswa merangkap Wakil Ketua OSIS
+        status: 'active'
+    },
+    {
+        id: '7',
+        name: 'Nurul Hidayah, S.Kom',
+        email: 'nurul.staff@malnu.sch.id',
+        role: 'teacher',
+        extraRole: 'staff', // Guru merangkap Staff IT/Laboran
+        status: 'active'
     }
 ];

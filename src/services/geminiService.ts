@@ -8,26 +8,26 @@ import { WORKER_CHAT_ENDPOINT } from '../config';
 // Initialize the Google AI client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
+// Models
+const FLASH_MODEL = 'gemini-2.5-flash';
+const PRO_THINKING_MODEL = 'gemini-3-pro-preview';
+
 // Local Context Interface
 interface LocalContext {
     featuredPrograms: FeaturedProgram[];
     latestNews: LatestNews[];
 }
 
-// This function implements the RAG pattern:
-// 1. Fetches relevant context from our Worker (which queries a vector DB).
-// 2. Augments the user's prompt with this context.
-// 3. Sends the augmented prompt to the Gemini model for a grounded response.
+// This function implements the RAG pattern with optional Thinking Mode
 export async function* getAIResponseStream(
     message: string, 
     history: {role: 'user' | 'model', parts: string}[],
-    localContext?: LocalContext // NEW: Accept current app state
+    localContext?: LocalContext,
+    useThinkingMode: boolean = false // Toggle for Gemini 3 Pro with Thinking
 ): AsyncGenerator<string> {
   let ragContext = "";
   
   // 1. Fetch RAG context from the Worker
-  // We do this in parallel or before prompt construction.
-  // Using try-catch to ensure chat continues even if backend is offline.
   try {
     const contextResponse = await fetch(WORKER_CHAT_ENDPOINT, {
       method: 'POST',
@@ -42,8 +42,7 @@ export async function* getAIResponseStream(
       console.warn("RAG fetch failed, proceeding with local context only:", e);
   }
 
-  // 2. Prepare Dynamic Context from Local State (Editor Changes)
-  // This is crucial for the "Generative UI" aspect - AI must know what's on the screen.
+  // 2. Prepare Dynamic Context from Local State
   let localContextString = "";
   if (localContext) {
       localContextString = `
@@ -55,7 +54,6 @@ Data berikut adalah konten yang sedang ditampilkan di website saat ini:
   }
 
   // 3. Construct the Augmented Prompt
-  // Priority: Local Context > RAG Context > General Knowledge
   const augmentedMessage = `
 ${localContextString}
 
@@ -66,30 +64,35 @@ ${ragContext ? ragContext : "Tidak ada data tambahan dari database."}
 ${message}
 `;
 
-  // System instruction for the model
-  const systemInstruction = `Anda adalah 'Asisten MA Malnu Kananga', AI yang ramah dan membantu.
-  
+  // System instruction
+  const baseInstruction = `Anda adalah 'Asisten MA Malnu Kananga'. 
   PANDUAN MENJAWAB:
-  1. Jawablah berdasarkan data [INFORMASI AKTUAL WEBSITE] dan [DATABASE PENGETAHUAN SEKOLAH] yang diberikan.
-  2. Jika user bertanya tentang program atau berita, prioritaskan data dari [INFORMASI AKTUAL WEBSITE].
-  3. Gunakan format Markdown (Bold, Bullet points) agar mudah dibaca.
-  4. Jika informasi tidak tersedia di konteks manapun, katakan "Maaf, saya belum memiliki informasi tersebut" dan sarankan menghubungi tata usaha.
-  5. Jawablah dengan Bahasa Indonesia yang sopan dan natural.`;
+  1. Jawablah berdasarkan data [INFORMASI AKTUAL WEBSITE] dan [DATABASE PENGETAHUAN SEKOLAH].
+  2. Gunakan Bahasa Indonesia yang sopan.
+  3. Jika mode berpikir aktif, jelaskan penalaran Anda jika diminta.`;
   
-  // Format history for the Gemini API
   const contents = [
       ...history.map(h => ({ role: h.role, parts: [{ text: h.parts }] })),
       { role: 'user', parts: [{ text: augmentedMessage }] }
   ];
 
+  const model = useThinkingMode ? PRO_THINKING_MODEL : FLASH_MODEL;
+  
+  // Config: Enable Thinking Budget only if using Pro model for complex queries
+  const config: any = {
+      systemInstruction: baseInstruction,
+  };
+
+  if (useThinkingMode) {
+      config.thinkingConfig = { thinkingBudget: 32768 }; // Max budget for Gemini 3 Pro
+      // Note: Do not set maxOutputTokens when thinkingBudget is set, per guidelines
+  }
+
   try {
-    // 4. Call the Gemini API
     const responseStream = await ai.models.generateContentStream({
-        model: 'gemini-2.5-flash',
+        model: model,
         contents,
-        config: {
-            systemInstruction,
-        }
+        config
     });
 
     for await (const chunk of responseStream) {
@@ -101,22 +104,50 @@ ${message}
   }
 }
 
-// FIX: Added getAIEditorResponse function to handle content editing requests from SiteEditor.tsx.
+// Function to analyze Teacher Grading Data (Uses Gemini 3 Pro)
+export async function analyzeClassPerformance(grades: any[]): Promise<string> {
+    const prompt = `
+    Analyze the following student grade data for a specific class subject. 
+    Provide a pedagogical analysis including:
+    1. Overall class performance summary.
+    2. Identification of students who need remedial help (Grade C or D).
+    3. Specific suggestions for the teacher to improve learning outcomes for this group.
+    
+    Data: ${JSON.stringify(grades)}
+    `;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: PRO_THINKING_MODEL,
+            contents: prompt,
+            config: {
+                thinkingConfig: { thinkingBudget: 32768 }
+            }
+        });
+        return response.text || "Gagal melakukan analisis.";
+    } catch (e) {
+        console.error("Analysis failed", e);
+        return "Maaf, gagal menganalisis data saat ini.";
+    }
+}
+
+// Function to handle content editing requests
 export async function getAIEditorResponse(
     prompt: string,
     currentContent: { featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }
 ): Promise<{ featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }> {
-    const model = 'gemini-2.5-flash';
+    
+    // Upgraded to Gemini 3 Pro for better JSON adherence and logic
+    const model = PRO_THINKING_MODEL; 
 
-    // Improved system instruction to prevent broken images
     const systemInstruction = `You are an intelligent website content editor. Your task is to modify the provided JSON data based on the user's instruction.
 - You must only add, remove, or modify entries in the JSON.
 - Do not change the overall JSON structure.
 - **CRITICAL IMAGE RULE**: 
-  - If the user asks for a new item and does NOT provide an image URL, use this placeholder format: "https://placehold.co/600x400?text=Category+Name" (replace 'Category+Name' with the relevant topic, e.g., 'Robotics', 'Sports'). 
-  - Do NOT invent or hallucinate 'unsplash.com' URLs, as they often break.
+  - If the user asks for a new item and does NOT provide an image URL, use this placeholder format: "https://placehold.co/600x400?text=Category+Name" (replace 'Category+Name' with the relevant topic). 
+  - Do NOT invent or hallucinate 'unsplash.com' URLs.
   - If modifying text but not the image, KEEP the existing 'imageUrl' exactly as is.
-- Ensure your response is only the modified JSON data, adhering to the provided schema.`;
+- Ensure your response is only the modified JSON data.`;
 
     const fullPrompt = `Here is the current website content in JSON format:
 \`\`\`json
@@ -132,26 +163,24 @@ Please provide the updated JSON content.`;
         properties: {
             featuredPrograms: {
                 type: Type.ARRAY,
-                description: 'List of featured school programs.',
                 items: {
                     type: Type.OBJECT,
                     properties: {
-                        title: { type: Type.STRING, description: 'The title of the program.' },
-                        description: { type: Type.STRING, description: 'A short description of the program.' },
-                        imageUrl: { type: Type.STRING, description: 'URL for the program image.' },
+                        title: { type: Type.STRING },
+                        description: { type: Type.STRING },
+                        imageUrl: { type: Type.STRING },
                     },
                 },
             },
             latestNews: {
                 type: Type.ARRAY,
-                description: 'List of latest news articles.',
                 items: {
                     type: Type.OBJECT,
                     properties: {
-                        title: { type: Type.STRING, description: 'The headline of the news article.' },
-                        date: { type: Type.STRING, description: 'The publication date of the news.' },
-                        category: { type: Type.STRING, description: 'The category of the news (e.g., Prestasi, Sekolah).' },
-                        imageUrl: { type: Type.STRING, description: 'URL for the news image.' },
+                        title: { type: Type.STRING },
+                        date: { type: Type.STRING },
+                        category: { type: Type.STRING },
+                        imageUrl: { type: Type.STRING },
                     },
                 },
             },
@@ -166,30 +195,24 @@ Please provide the updated JSON content.`;
                 systemInstruction,
                 responseMimeType: "application/json",
                 responseSchema: schema,
+                thinkingConfig: { thinkingBudget: 32768 } // Use thinking for precise JSON editing
             },
         });
         
         const jsonText = response.text.trim();
-        
-        // ROBUST JSON EXTRACTION:
-        // Finds the first '{' and the last '}' to extract the JSON object,
-        // ignoring any conversational text or markdown formatting before/after.
+        // Basic cleanup just in case
         const firstBrace = jsonText.indexOf('{');
         const lastBrace = jsonText.lastIndexOf('}');
-        
         let cleanedJsonText = jsonText;
         if (firstBrace !== -1 && lastBrace !== -1) {
             cleanedJsonText = jsonText.substring(firstBrace, lastBrace + 1);
         }
 
-        const newContent = JSON.parse(cleanedJsonText);
-        
-        return newContent;
+        return JSON.parse(cleanedJsonText);
     } catch (error) {
         console.error("Error calling Gemini API for content editing:", error);
         throw new Error("Gagal memproses respon dari AI. Mohon coba instruksi yang lebih spesifik.");
     }
 }
-
 
 export const initialGreeting = "Assalamualaikum! Saya Asisten AI MA Malnu Kananga. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?";

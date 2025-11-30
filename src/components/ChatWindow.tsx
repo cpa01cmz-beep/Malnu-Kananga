@@ -4,6 +4,7 @@ import type { ChatMessage, FeaturedProgram, LatestNews } from '../types';
 import { Sender } from '../types';
 import { getAIResponseStream, initialGreeting } from '../services/geminiService';
 import { CloseIcon } from './icons/CloseIcon';
+import { BrainIcon } from './icons/BrainIcon'; // Import Brain Icon
 import MarkdownRenderer from './MarkdownRenderer';
 import AutoResizeTextarea from './AutoResizeTextarea';
 import TypingIndicator from './TypingIndicator';
@@ -11,7 +12,6 @@ import TypingIndicator from './TypingIndicator';
 interface ChatWindowProps {
   isOpen: boolean;
   closeChat: () => void;
-  // NEW: Receive current site data to make the AI aware of changes
   siteContext: {
     featuredPrograms: FeaturedProgram[];
     latestNews: LatestNews[];
@@ -20,10 +20,10 @@ interface ChatWindowProps {
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  // State to store the conversation history for the LLM
   const [history, setHistory] = useState<{role: 'user' | 'model', parts: string}[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isThinkingMode, setIsThinkingMode] = useState(false); // State for Thinking Mode
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -40,7 +40,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, input]); // Scroll when input grows too
+  }, [messages, input]);
 
   const handleSend = useCallback(async () => {
     if (!input.trim() || isLoading) return;
@@ -48,19 +48,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
     const userMessageText = input;
     const userMessage: ChatMessage = { id: Date.now().toString(), text: userMessageText, sender: Sender.User };
     
-    // Add user message to the UI
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
     
-    // Add a placeholder for the AI response to the UI
     const aiMessageId = (Date.now() + 1).toString();
     setMessages(prev => [...prev, { id: aiMessageId, text: '', sender: Sender.AI }]);
     
     let fullResponse = "";
     try {
-      // Send the current message, history, AND local site context to the AI
-      const stream = getAIResponseStream(userMessageText, history, siteContext);
+      // Pass isThinkingMode to the service
+      const stream = getAIResponseStream(userMessageText, history, siteContext, isThinkingMode);
       for await (const chunk of stream) {
         fullResponse += chunk;
         setMessages(prev =>
@@ -77,28 +75,39 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
           msg.id === aiMessageId ? { ...msg, text: errorMessage } : msg
         )
       );
-      fullResponse = errorMessage; // Ensure the history records the error
+      fullResponse = errorMessage; 
     } finally {
       setIsLoading(false);
-      // Once the response is complete, update the history with both the user's message and the AI's full response.
       setHistory(prev => [...prev, 
         { role: 'user', parts: userMessageText },
         { role: 'model', parts: fullResponse }
       ]);
     }
-  }, [input, isLoading, history, siteContext]); // Added siteContext to dependencies
+  }, [input, isLoading, history, siteContext, isThinkingMode]);
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Header */}
       <header className="flex items-center justify-between p-4 bg-green-600 text-white flex-shrink-0">
-        <div className="flex items-center">
-            <div className="w-3 h-3 bg-white rounded-full mr-2 animate-pulse"></div>
+        <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-white rounded-full mr-1 animate-pulse"></div>
             <h2 className="font-bold text-lg">Asisten AI</h2>
         </div>
-        <button onClick={closeChat} className="p-1 rounded-full hover:bg-white/20" aria-label="Tutup obrolan">
-            <CloseIcon />
-        </button>
+        <div className="flex items-center gap-2">
+            {/* Thinking Mode Toggle */}
+            <button 
+                onClick={() => setIsThinkingMode(!isThinkingMode)}
+                className={`p-2 rounded-full transition-all flex items-center gap-1 ${isThinkingMode ? 'bg-white text-green-700 shadow-md' : 'bg-green-700 text-green-200 hover:bg-green-800'}`}
+                title={isThinkingMode ? "Mode Berpikir Dalam: Aktif" : "Aktifkan Mode Berpikir Dalam"}
+            >
+                <BrainIcon className="w-5 h-5" />
+                {isThinkingMode && <span className="text-xs font-bold px-1">Thinking</span>}
+            </button>
+            
+            <button onClick={closeChat} className="p-1 rounded-full hover:bg-white/20" aria-label="Tutup obrolan">
+                <CloseIcon />
+            </button>
+        </div>
       </header>
 
       {/* Messages */}
@@ -127,6 +136,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
                  {isLoading && message.sender === Sender.AI && !message.text && (
                     <div className="mt-1">
                         <TypingIndicator />
+                        {isThinkingMode && <span className="text-[10px] text-gray-500 dark:text-gray-400 block mt-1">Sedang berpikir mendalam...</span>}
                     </div>
                  )}
               </div>
@@ -143,7 +153,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
             onChange={setInput}
             onSend={handleSend}
             disabled={isLoading}
-            placeholder="Ketik pertanyaan Anda..."
+            placeholder={isThinkingMode ? "Ketik pertanyaan kompleks..." : "Ketik pertanyaan Anda..."}
         />
       </div>
     </div>

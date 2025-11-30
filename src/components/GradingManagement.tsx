@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
+import { analyzeClassPerformance } from '../services/geminiService';
+import { LightBulbIcon } from './icons/LightBulbIcon';
+import MarkdownRenderer from './MarkdownRenderer'; // Reuse renderer
 
 interface StudentGrade {
   id: string;
@@ -26,13 +29,14 @@ const INITIAL_DATA: StudentGrade[] = [
 ];
 
 const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToast }) => {
-  // Use custom hook
   const [grades, setGrades] = useLocalStorage<StudentGrade[]>(STORAGE_KEYS.GRADES, INITIAL_DATA);
-
   const [searchTerm, setSearchTerm] = useState('');
-  const [isEditing, setIsEditing] = useState<string | null>(null); // Store ID of row being edited
+  const [isEditing, setIsEditing] = useState<string | null>(null);
+  
+  // AI Analysis State
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
 
-  // Calculate Final Score: 30% Assignment + 30% Mid + 40% Final
   const calculateFinal = (g: StudentGrade) => {
       return (g.assignment * 0.3) + (g.midExam * 0.3) + (g.finalExam * 0.4);
   };
@@ -50,13 +54,28 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   );
 
   const handleInputChange = (id: string, field: keyof StudentGrade, value: string) => {
-      const numValue = Math.min(100, Math.max(0, Number(value) || 0)); // Clamp 0-100
+      const numValue = Math.min(100, Math.max(0, Number(value) || 0));
       setGrades(prev => prev.map(g => g.id === id ? { ...g, [field]: numValue } : g));
   };
 
   const handleSave = () => {
       setIsEditing(null);
       onShowToast('Nilai berhasil disimpan ke database.', 'success');
+  };
+
+  const handleAIAnalysis = async () => {
+      setIsAnalyzing(true);
+      setAnalysisResult(null);
+      // Prepare data for AI (add final score context)
+      const dataForAI = grades.map(g => ({
+          ...g,
+          finalScore: calculateFinal(g),
+          gradeLetter: getGradeLetter(calculateFinal(g))
+      }));
+
+      const result = await analyzeClassPerformance(dataForAI);
+      setAnalysisResult(result);
+      setIsAnalyzing(false);
   };
 
   return (
@@ -70,7 +89,15 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Input Nilai Siswa</h2>
                 <p className="text-gray-500 dark:text-gray-400">Mata Pelajaran: <strong>Matematika Wajib (XII IPA 1)</strong></p>
             </div>
-            <div>
+            <div className="flex gap-3">
+                <button 
+                    onClick={handleAIAnalysis}
+                    disabled={isAnalyzing}
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-md disabled:bg-gray-400"
+                >
+                    <LightBulbIcon className="w-5 h-5" />
+                    {isAnalyzing ? "Menganalisis..." : "Analisis AI"}
+                </button>
                 <input 
                     type="text" 
                     placeholder="Cari Nama / NIS..." 
@@ -80,6 +107,25 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 />
             </div>
         </div>
+
+        {/* AI Analysis Result Area */}
+        {analysisResult && (
+            <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-2xl p-6 mb-6 animate-scale-in">
+                <h3 className="text-lg font-bold text-purple-800 dark:text-purple-300 mb-3 flex items-center gap-2">
+                    <LightBulbIcon className="w-5 h-5" />
+                    Hasil Analisis Pedagogis (Gemini 3 Pro)
+                </h3>
+                <div className="text-gray-700 dark:text-gray-300 text-sm">
+                    <MarkdownRenderer content={analysisResult} />
+                </div>
+                <button 
+                    onClick={() => setAnalysisResult(null)}
+                    className="mt-4 text-xs text-purple-600 dark:text-purple-400 hover:underline"
+                >
+                    Tutup Analisis
+                </button>
+            </div>
+        )}
 
         {/* Info Banner */}
         <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg">
