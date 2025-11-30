@@ -1,82 +1,79 @@
-// Import Google AI SDK and content types
-import { GoogleGenAI } from "@google/genai";
-import { MemoryBank } from '../memory';
-import { API_KEY, WORKER_URL } from '../utils/envValidation';
+
+// FIX: Import `Type` for JSON schema definition.
+import { GoogleGenAI, Type } from "@google/genai";
+// FIX: Import content types for the AI editor function.
+import type { FeaturedProgram, LatestNews } from '../types';
+import { WORKER_CHAT_ENDPOINT } from '../config';
 
 // Initialize the Google AI client
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-const workerUrl = `${WORKER_URL}/api/chat`;
-
-// Initialize memory bank for conversation history
-let memoryBank: MemoryBank | null = null;
-
-// Initialize memory bank asynchronously
-const initializeMemoryBank = async () => {
-  if (!memoryBank) {
-    const { schoolMemoryBankConfig } = await import('../memory/config');
-    const config = await schoolMemoryBankConfig();
-    memoryBank = new MemoryBank(config);
-  }
-  return memoryBank;
-};
+// Local Context Interface
+interface LocalContext {
+    featuredPrograms: FeaturedProgram[];
+    latestNews: LatestNews[];
+}
 
 // This function implements the RAG pattern:
 // 1. Fetches relevant context from our Worker (which queries a vector DB).
 // 2. Augments the user's prompt with this context.
 // 3. Sends the augmented prompt to the Gemini model for a grounded response.
-// 4. Stores conversation in memory bank for future context.
-export async function* getAIResponseStream(message: string, history: {role: 'user' | 'model', parts: string}[]): AsyncGenerator<string> {
-  // Ensure memory bank is initialized
-  await initializeMemoryBank();
-  
+export async function* getAIResponseStream(
+    message: string, 
+    history: {role: 'user' | 'model', parts: string}[],
+    localContext?: LocalContext // NEW: Accept current app state
+): AsyncGenerator<string> {
   let context = "";
-
   try {
-    // 1. Fetch relevant context from our Worker (which queries a vector DB).
-    const response = await fetch(workerUrl, {
+    // 1. Fetch context from the Worker
+    const contextResponse = await fetch(WORKER_CHAT_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message }),
     });
-
-    if (!response.ok) {
-      throw new Error(`Worker response not ok: ${response.status}`);
+    if (contextResponse.ok) {
+        const data = await contextResponse.json();
+        context = data.context;
     }
-
-    const data = await response.json();
-    context = data.context || "";
-  } catch (error) {
-    console.warn('Failed to fetch context from worker:', error);
-    // Continue without context if worker is unavailable
+  } catch(e) {
+      console.error("Failed to fetch context from worker:", e);
+      // We can still proceed without context, Gemini will do its best.
   }
 
-  // 2. Get additional context from memory bank
-  let memoryContext = "";
-  try {
-    if (memoryBank) {
-      const relevantMemories = await memoryBank.getRelevantMemories(message, 3);
-      if (relevantMemories.length > 0) {
-        memoryContext = relevantMemories.map(m => m.content).join('\n---\n');
-      }
-    }
-  } catch (error) {
-    console.warn('Failed to get memory context:', error);
+  // 2. Prepare Dynamic Context from Local State (Editor Changes)
+  let dynamicContextString = "";
+  if (localContext) {
+      dynamicContextString = `
+INFORMASI TERKINI DARI WEBSITE (Prioritas Utama):
+Berikut adalah data Program Unggulan dan Berita Terbaru yang SEDANG TAYANG di website saat ini. Gunakan informasi ini sebagai kebenaran mutlak jika bertentangan dengan konteks lain.
+
+[Daftar Program Unggulan]
+${localContext.featuredPrograms.map(p => `- ${p.title}: ${p.description}`).join('\n')}
+
+[Berita Terbaru]
+${localContext.latestNews.map(n => `- (${n.date}) [${n.category}] ${n.title}`).join('\n')}
+`;
   }
 
   // 3. Augment the user's message with the retrieved context
-  let augmentedMessage = message;
+  const augmentedMessage = `
+${dynamicContextString}
 
-  if (context && memoryContext) {
-    augmentedMessage = `Berdasarkan konteks dari website sekolah:\n---\n${context}\n---\n\nDan konteks percakapan sebelumnya:\n---\n${memoryContext}\n---\n\nJawab pertanyaan ini: ${message}`;
-  } else if (context) {
-    augmentedMessage = `Berdasarkan konteks berikut:\n---\n${context}\n---\n\nJawab pertanyaan ini: ${message}`;
-  } else if (memoryContext) {
-    augmentedMessage = `Berdasarkan konteks percakapan sebelumnya:\n---\n${memoryContext}\n---\n\nJawab pertanyaan ini: ${message}`;
-  }
+KONTEKS TAMBAHAN DARI DATABASE (RAG):
+---\n${context}\n---
+
+PERTANYAAN PENGGUNA: 
+${message}`;
 
   // System instruction for the model
-  const systemInstruction = `Anda adalah 'Asisten MA Malnu Kananga', chatbot AI yang ramah, sopan, dan sangat membantu, berbicara dalam Bahasa Indonesia. Tugas Anda adalah menjawab pertanyaan tentang sekolah MA Malnu Kananga berdasarkan konteks yang diberikan dari website sekolah. Jika konteks tidak cukup untuk menjawab, katakan Anda tidak memiliki informasi tersebut dan sarankan untuk menghubungi pihak sekolah. JANGAN menjawab pertanyaan di luar topik sekolah.`;
+  const systemInstruction = `Anda adalah 'Asisten MA Malnu Kananga', chatbot AI yang ramah, sopan, dan sangat membantu, berbicara dalam Bahasa Indonesia. 
+  
+  ATURAN UTAMA:
+  1. Jawab pertanyaan tentang sekolah MA Malnu Kananga.
+  2. Prioritaskan "INFORMASI TERKINI DARI WEBSITE" yang diberikan di atas. Itu adalah data real-time.
+  3. Gunakan "KONTEKS TAMBAHAN" untuk informasi sejarah atau umum.
+  4. Jika informasi tidak ada di keduanya, katakan tidak tahu dan sarankan hubungi sekolah.
+  5. Gunakan format Markdown (Bold, List) untuk jawaban yang rapi.`;
   
   // Format history for the Gemini API
   const contents = [
@@ -84,124 +81,114 @@ export async function* getAIResponseStream(message: string, history: {role: 'use
       { role: 'user', parts: [{ text: augmentedMessage }] }
   ];
 
-  let fullResponse = "";
-
   try {
-    // 3. Call the Gemini API with the augmented prompt and history
+    // 4. Call the Gemini API with the augmented prompt and history
     const responseStream = await ai.models.generateContentStream({
         model: 'gemini-2.5-flash',
         contents,
         config: {
-            systemInstruction: systemInstruction!,
+            systemInstruction,
         }
     });
 
     for await (const chunk of responseStream) {
-      fullResponse += chunk.text || '';
-      yield chunk.text || '';
+      yield chunk.text;
     }
-
-    // 4. Store conversation in memory bank for future context
-    try {
-      if (memoryBank) {
-        await memoryBank.addMemory(
-          `Pertanyaan: ${message}\nJawaban: ${fullResponse}`,
-          'conversation',
-          {
-            type: 'user_ai_interaction',
-            userMessage: message,
-            aiResponse: fullResponse,
-            timestamp: new Date().toISOString(),
-            contextUsed: !!context,
-            memoryContextUsed: !!memoryContext
-          }
-        );
-      }
-    } catch (memoryError) {
-      console.warn('Failed to store conversation in memory bank:', memoryError);
-    }
-
   } catch (error) {
+      console.error("Error calling Gemini API:", error);
       yield "Maaf, terjadi masalah saat menghubungi AI. Silakan coba lagi nanti.";
+  }
+}
 
-      // Store failed interaction in memory bank
-      try {
-        if (memoryBank) {
-          await memoryBank.addMemory(
-            `Pertanyaan: ${message}\nError: ${error instanceof Error ? error.message : 'Unknown error'}`,
-            'conversation',
-            {
-              type: 'failed_interaction',
-              userMessage: message,
-              error: error instanceof Error ? error.message : 'Unknown error',
-              timestamp: new Date().toISOString()
-            }
-          );
+// FIX: Added getAIEditorResponse function to handle content editing requests from SiteEditor.tsx.
+export async function getAIEditorResponse(
+    prompt: string,
+    currentContent: { featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }
+): Promise<{ featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }> {
+    const model = 'gemini-2.5-flash';
+
+    // Improved system instruction to prevent broken images
+    const systemInstruction = `You are an intelligent website content editor. Your task is to modify the provided JSON data based on the user's instruction.
+- You must only add, remove, or modify entries in the JSON.
+- Do not change the overall JSON structure.
+- **CRITICAL IMAGE RULE**: 
+  - If the user asks for a new item and does NOT provide an image URL, use this placeholder format: "https://placehold.co/600x400?text=Category+Name" (replace 'Category+Name' with the relevant topic, e.g., 'Robotics', 'Sports'). 
+  - Do NOT invent or hallucinate 'unsplash.com' URLs, as they often break.
+  - If modifying text but not the image, KEEP the existing 'imageUrl' exactly as is.
+- Ensure your response is only the modified JSON data, adhering to the provided schema.`;
+
+    const fullPrompt = `Here is the current website content in JSON format:
+\`\`\`json
+${JSON.stringify(currentContent, null, 2)}
+\`\`\`
+
+Here is the user's request: "${prompt}"
+
+Please provide the updated JSON content.`;
+
+    const schema = {
+        type: Type.OBJECT,
+        properties: {
+            featuredPrograms: {
+                type: Type.ARRAY,
+                description: 'List of featured school programs.',
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        title: { type: Type.STRING, description: 'The title of the program.' },
+                        description: { type: Type.STRING, description: 'A short description of the program.' },
+                        imageUrl: { type: Type.STRING, description: 'URL for the program image.' },
+                    },
+                },
+            },
+            latestNews: {
+                type: Type.ARRAY,
+                description: 'List of latest news articles.',
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        title: { type: Type.STRING, description: 'The headline of the news article.' },
+                        date: { type: Type.STRING, description: 'The publication date of the news.' },
+                        category: { type: Type.STRING, description: 'The category of the news (e.g., Prestasi, Sekolah).' },
+                        imageUrl: { type: Type.STRING, description: 'URL for the news image.' },
+                    },
+                },
+            },
+        },
+    };
+
+    try {
+        const response = await ai.models.generateContent({
+            model,
+            contents: fullPrompt,
+            config: {
+                systemInstruction,
+                responseMimeType: "application/json",
+                responseSchema: schema,
+            },
+        });
+        
+        const jsonText = response.text.trim();
+        
+        // ROBUST JSON EXTRACTION:
+        // Finds the first '{' and the last '}' to extract the JSON object,
+        // ignoring any conversational text or markdown formatting before/after.
+        const firstBrace = jsonText.indexOf('{');
+        const lastBrace = jsonText.lastIndexOf('}');
+        
+        let cleanedJsonText = jsonText;
+        if (firstBrace !== -1 && lastBrace !== -1) {
+            cleanedJsonText = jsonText.substring(firstBrace, lastBrace + 1);
         }
-      } catch (memoryError) {
-        console.warn('Failed to store error in memory bank:', memoryError);
-      }
-    }
-  }
 
-// Memory bank utility functions
-export async function getConversationHistory(limit = 10) {
-  try {
-    if (!memoryBank) return [];
-    return await memoryBank.searchMemories({
-      type: 'conversation',
-      limit,
-    });
-  } catch (error) {
-    // Silently handle error in test environment
-    if (process.env.NODE_ENV === 'test') {
-      return [];
+        const newContent = JSON.parse(cleanedJsonText);
+        
+        return newContent;
+    } catch (error) {
+        console.error("Error calling Gemini API for content editing:", error);
+        throw new Error("Gagal memproses respon dari AI. Mohon coba instruksi yang lebih spesifik.");
     }
-    console.error('Failed to get conversation history:', error);
-    return [];
-  }
 }
 
-export async function clearConversationHistory() {
-  try {
-    if (!memoryBank) return 0;
-    const conversations = await memoryBank.searchMemories({
-      type: 'conversation',
-    });
-
-    // Handle case where searchMemories returns undefined or null
-    if (!conversations || !Array.isArray(conversations)) {
-      return 0;
-    }
-
-    // Delete each conversation
-    for (const conversation of conversations) {
-      await memoryBank.deleteMemory(conversation.id);
-    }
-
-    return conversations.length;
-  } catch (error) {
-    // Silently handle error in test environment
-    if (process.env.NODE_ENV === 'test') {
-      throw error;
-    }
-    console.error('Failed to clear conversation history:', error);
-    return 0;
-  }
-}
-
-export async function getMemoryStats() {
-  try {
-    if (!memoryBank) return null;
-    return await memoryBank.getStats();
-  } catch (error) {
-    // Silently handle error in test environment
-    if (process.env.NODE_ENV === 'test') {
-      return null;
-    }
-    console.error('Failed to get memory stats:', error);
-    return null;
-  }
-}
 
 export const initialGreeting = "Assalamualaikum! Saya Asisten AI MA Malnu Kananga. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?";

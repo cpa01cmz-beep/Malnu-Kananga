@@ -1,136 +1,269 @@
-import React, { useState, Suspense, lazy } from 'react';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import LoginModal from './components/LoginModal';
+import DocumentationPage from './components/DocumentationPage';
+import SiteEditor from './components/SiteEditor';
+import ChatWindow from './components/ChatWindow';
+import Toast, { ToastType } from './components/Toast';
+import StudentPortal from './components/StudentPortal';
+import AdminDashboard from './components/AdminDashboard';
+import TeacherDashboard from './components/TeacherDashboard';
+import PPDBRegistration from './components/PPDBRegistration'; 
 
-import MainContentRouter from './components/MainContentRouter';
-import ChatWindowContainer from './components/ChatWindowContainer';
-import ModalsContainer from './components/ModalsContainer';
-import ErrorBoundary from './components/ErrorBoundary';
-import { ChatProvider } from './contexts/ChatContext';
-import { useKeyboardNavigation, useScreenReader } from './hooks/useKeyboardNavigation';
-import { useAuth } from './hooks/useAuth';
-import { WebPProvider } from './hooks/useWebP';
-import { setupErrorMonitoring } from './services/errorMonitoringConfig';
-import { queryClient } from './services/queryClient';
-import { SupabaseApiService } from './services/supabaseApiService';
-import { initGA4, trackEvent } from './utils/analytics';
+// Sections
+import HeroSection from './components/sections/HeroSection';
+import RelatedLinksSection from './components/sections/RelatedLinksSection';
+import ProfileSection from './components/sections/ProfileSection';
+import ProgramsSection from './components/sections/ProgramsSection';
+import NewsSection from './components/sections/NewsSection';
+import PPDBSection from './components/sections/PPDBSection';
 
-// Lazy load heavy components untuk code splitting
-const StudentDashboard = lazy(() => import('./components/StudentDashboard'));
-const TeacherDashboard = lazy(() => import('./components/TeacherDashboard'));
-const ParentDashboard = lazy(() => import('./components/ParentDashboard'));
+import { INITIAL_PROGRAMS, INITIAL_NEWS } from './data/defaults';
+import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './types'; 
+import { STORAGE_KEYS } from './constants'; // Import constants
 
 const App: React.FC = () => {
-  // Setup error monitoring untuk production dan development
-  React.useEffect(() => {
-    setupErrorMonitoring();
-    
-    // Initialize Supabase integration
-    SupabaseApiService.initialize();
-    
-    // Initialize Google Analytics 4
-    initGA4();
-  }, []);
-
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isDocsOpen, setIsDocsOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isPPDBOpen, setIsPPDBOpen] = useState(false);
+  
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isPublicView, setIsPublicView] = useState(false);
 
-  // Authentication hook
-  const { isLoggedIn, currentUser, handleLoginSuccess, handleLogout } = useAuth();
+  // Auth State with Persistence
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [userExtraRole, setUserExtraRole] = useState<UserExtraRole>(null); 
 
-  // Accessibility hooks
-  useKeyboardNavigation();
-  const { announceNavigation } = useScreenReader();
+  // Initialize Auth from LocalStorage
+  useEffect(() => {
+    const savedAuth = localStorage.getItem(STORAGE_KEYS.AUTH_SESSION);
+    if (savedAuth) {
+      try {
+        const { role, extraRole, loggedIn } = JSON.parse(savedAuth);
+        if (loggedIn && role) {
+          setIsLoggedIn(true);
+          setUserRole(role);
+          setUserExtraRole(extraRole || null);
+        }
+      } catch (e) {
+        console.error("Failed to parse auth session", e);
+        localStorage.removeItem(STORAGE_KEYS.AUTH_SESSION);
+      }
+    }
+  }, []);
+
+  // Theme State & Logic
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
+      if (savedTheme === 'dark' || savedTheme === 'light') {
+        return savedTheme;
+      }
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem(STORAGE_KEYS.THEME, theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+  
+  // Toast State
+  const [toast, setToast] = useState<{ message: string; type: ToastType; isVisible: boolean }>({
+    message: '',
+    type: 'success',
+    isVisible: false,
+  });
+
+  const showToast = (message: string, type: ToastType = 'success') => {
+    setToast({ message, type, isVisible: true });
+  };
+
+  const hideToast = () => {
+    setToast(prev => ({ ...prev, isVisible: false }));
+  };
+  
+  // Content State
+  const [featuredPrograms, setFeaturedPrograms] = useState<FeaturedProgram[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.SITE_CONTENT);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return parsed.featuredPrograms || INITIAL_PROGRAMS;
+      } catch (e) {
+        return INITIAL_PROGRAMS;
+      }
+    }
+    return INITIAL_PROGRAMS;
+  });
+
+  const [latestNews, setLatestNews] = useState<LatestNews[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.SITE_CONTENT);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return parsed.latestNews || INITIAL_NEWS;
+      } catch (e) {
+        return INITIAL_NEWS;
+      }
+    }
+    return INITIAL_NEWS;
+  });
+
+  const handleLoginSuccess = (role: UserRole, extraRole: UserExtraRole = null) => {
+    setIsLoggedIn(true);
+    setUserRole(role);
+    setUserExtraRole(extraRole);
+    setIsLoginOpen(false);
+    setIsPublicView(false); 
+    
+    // Save session including extraRole
+    localStorage.setItem(STORAGE_KEYS.AUTH_SESSION, JSON.stringify({ loggedIn: true, role, extraRole }));
+
+    let roleName = role === 'admin' ? 'Administrator' : role === 'teacher' ? 'Guru' : 'Siswa';
+    if (extraRole === 'staff') roleName += ' (Staff)';
+    if (extraRole === 'osis') roleName += ' (Pengurus OSIS)';
+
+    showToast(`Login berhasil! Selamat datang, ${roleName}.`, 'success');
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserRole(null);
+    setUserExtraRole(null);
+    setIsPublicView(false);
+    localStorage.removeItem(STORAGE_KEYS.AUTH_SESSION);
+    showToast('Anda telah logout.', 'info');
+  };
+
+  const handleUpdateContent = (newContent: { featuredPrograms: FeaturedProgram[], latestNews: LatestNews[] }) => {
+    setFeaturedPrograms(newContent.featuredPrograms);
+    setLatestNews(newContent.latestNews);
+    localStorage.setItem(STORAGE_KEYS.SITE_CONTENT, JSON.stringify(newContent));
+    setIsEditorOpen(false);
+    showToast('Konten website berhasil diperbarui! Beralih ke "Lihat Website" untuk melihat hasilnya.', 'success');
+  };
+
+  const handleResetContent = () => {
+    if (window.confirm('Apakah Anda yakin ingin mengembalikan konten website ke pengaturan awal? Semua perubahan akan dihapus.')) {
+      setFeaturedPrograms(INITIAL_PROGRAMS);
+      setLatestNews(INITIAL_NEWS);
+      localStorage.removeItem(STORAGE_KEYS.SITE_CONTENT);
+      showToast('Konten dikembalikan ke pengaturan awal.', 'info');
+    }
+  };
+
+  // Helper to render the correct dashboard based on role
+  const renderDashboard = () => {
+      switch (userRole) {
+          case 'admin':
+              return <AdminDashboard 
+                        onOpenEditor={() => setIsEditorOpen(true)} 
+                        onShowToast={showToast} 
+                     />;
+          case 'teacher':
+              return <TeacherDashboard 
+                        extraRole={userExtraRole} // Pass extra role
+                        onShowToast={showToast} 
+                     />;
+          case 'student':
+          default:
+              return <StudentPortal 
+                        extraRole={userExtraRole} // Pass extra role
+                        onShowToast={showToast} 
+                     />;
+      }
+  };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ErrorBoundary>
-        <ChatProvider>
-          <WebPProvider>
-          <Suspense fallback={<div>Loading...</div>}>
-            {(isLoggedIn && currentUser) ? (
-              <main id="main-content" role="main" aria-label="Portal utama">
-                {currentUser.role === 'admin' || currentUser.role === 'teacher' ? (
-                  <TeacherDashboard onLogout={() => handleLogout()} />
-                ) : currentUser.role === 'parent' ? (
-                  <ParentDashboard onLogout={() => handleLogout()} />
-                ) : (
-                  <StudentDashboard onLogout={() => handleLogout()} />
-                )}
-              </main>
-            ) : (
-              <main id="main-content" role="main" aria-label="Halaman utama MA Malnu Kananga">
-                {/* Skip to main content link untuk screen readers */}
-                <a
-                  href="#main-content"
-                  className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-green-600 text-white px-4 py-2 rounded z-50"
-                >
-                  Lewati ke konten utama
-                </a>
+    <div className="bg-gray-50 dark:bg-gray-900 w-full min-h-screen font-sans text-gray-800 dark:text-gray-200 transition-colors duration-300">
+      <Header 
+        onLoginClick={() => setIsLoginOpen(true)}
+        onChatClick={() => setIsChatOpen(true)}
+        onEditClick={() => setIsEditorOpen(true)}
+        isLoggedIn={isLoggedIn}
+        userRole={userRole}
+        userExtraRole={userExtraRole} // Pass extra role to header
+        onLogout={handleLogout}
+        isPublicView={isPublicView}
+        onTogglePublicView={() => setIsPublicView(!isPublicView)}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
+      
+      {isLoggedIn && !isPublicView ? (
+        renderDashboard()
+      ) : (
+        <main>
+          <HeroSection />
+          <RelatedLinksSection />
+          <ProfileSection />
+          <PPDBSection onRegisterClick={() => setIsPPDBOpen(true)} />
+          <ProgramsSection programs={featuredPrograms} />
+          <NewsSection news={latestNews} />
+        </main>
+      )}
 
-                <Header
-                  onLoginClick={() => {
-                    setIsLoginOpen(true);
-                    trackEvent('click', 'navigation', 'login_button');
-                  }}
-                  onChatClick={() => {
-                    setIsChatOpen(true);
-                    trackEvent('click', 'navigation', 'chat_button');
-                  }}
-                  isLoggedIn={Boolean(isLoggedIn)}
-                  onLogout={() => {
-                    handleLogout();
-                    trackEvent('click', 'navigation', 'logout_button');
-                  }}
-                  onPortalClick={() => {
-                    if (isLoggedIn && currentUser) {
-                      document.getElementById('main-content')?.scrollIntoView({ behavior: 'smooth' });
-                      announceNavigation('Portal Dashboard');
-                      trackEvent('click', 'navigation', 'portal_button');
-                    }
-                  }}
-                />
+      <Footer onDocsClick={() => setIsDocsOpen(true)} />
 
-                <MainContentRouter
-                  isLoggedIn={Boolean(isLoggedIn)}
-                  currentUser={currentUser}
-onLogout={() => handleLogout()}
-                />
+      <div
+        className={`fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2.5rem)] max-w-sm h-[70vh] max-h-[600px] transition-all duration-300 ease-in-out ${
+          isChatOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
+        }`}
+      >
+        <ChatWindow 
+          isOpen={isChatOpen} 
+          closeChat={() => setIsChatOpen(false)} 
+          siteContext={{ featuredPrograms, latestNews }}
+        />
+      </div>
 
-                <Footer onDocsClick={() => {
-                  setIsDocsOpen(true);
-                  trackEvent('click', 'navigation', 'docs_button');
-                }} />
+      <LoginModal 
+        isOpen={isLoginOpen} 
+        onClose={() => setIsLoginOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+      />
+      
+      <PPDBRegistration 
+        isOpen={isPPDBOpen}
+        onClose={() => setIsPPDBOpen(false)}
+        onShowToast={showToast}
+      />
 
-                <ChatWindowContainer
-                  isOpen={isChatOpen}
-                  onClose={() => {
-                    setIsChatOpen(false);
-                    trackEvent('click', 'navigation', 'close_chat');
-                  }}
-                />
+      <DocumentationPage 
+        isOpen={isDocsOpen} 
+        onClose={() => setIsDocsOpen(false)} 
+      />
 
-                <ModalsContainer
-                  isLoginOpen={isLoginOpen}
-                  isDocsOpen={isDocsOpen}
-                  onLoginClose={() => setIsLoginOpen(false)}
-                  onDocsClose={() => setIsDocsOpen(false)}
-onLoginSuccess={() => {
-                     handleLoginSuccess();
-                     trackEvent('login', 'auth', 'login_success');
-                   }}
-                />
-              </main>
-            )}
-          </Suspense>
-          </WebPProvider>
-        </ChatProvider>
-      </ErrorBoundary>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+      <SiteEditor 
+        isOpen={isEditorOpen}
+        onClose={() => setIsEditorOpen(false)}
+        currentContent={{ featuredPrograms, latestNews }}
+        onUpdateContent={handleUpdateContent}
+        onResetContent={handleResetContent}
+      />
+
+      <Toast 
+        message={toast.message} 
+        type={toast.type} 
+        isVisible={toast.isVisible} 
+        onClose={hideToast} 
+      />
+    </div>
   );
 };
 

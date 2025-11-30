@@ -1,3 +1,0 @@
-GITHUB_REPOSITORY=cpa01cmz-beep/Malnu-Kananga
-GITHUB_REF=refs/heads/main
-GITHUB_SHA=0319cdbe80a0e0b145b8e4f51589b8197f63d558

@@ -1,26 +1,26 @@
+
 import React, { useState, useEffect } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
-import { WORKER_URL, NODE_ENV } from '../utils/envValidation';
-import { User } from '../services/authService';
+import { WORKER_LOGIN_ENDPOINT } from '../config';
+import { UserRole, UserExtraRole } from '../types';
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLoginSuccess: (user: User) => void;
+  onLoginSuccess: (role: UserRole, extraRole?: UserExtraRole) => void;
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [formState, setFormState] = useState<'idle' | 'loading' | 'success'>('idle');
-  const [error, setError] = useState(''); // State untuk pesan error
+  const [error, setError] = useState('');
 
-  // Reset form when modal is closed
   useEffect(() => {
     if (!isOpen) {
         setTimeout(() => {
             setFormState('idle');
             setEmail('');
-            setError(''); // Reset error juga
+            setError('');
         }, 300);
     }
   }, [isOpen]);
@@ -38,72 +38,44 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       if (!email) return;
 
       setFormState('loading');
-      setError(''); // Hapus error lama saat submit baru
+      setError('');
 
       try {
-        const workerUrl = WORKER_URL;
-
-        // Development mode validation
-        if (NODE_ENV === 'development' && workerUrl.includes('your-domain')) {
-          throw new Error('VITE_WORKER_URL belum dikonfigurasi. Silakan periksa file .env');
-        }
-
-        const response = await fetch(`${workerUrl}/request-login-link`, {
+        const response = await fetch(WORKER_LOGIN_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email })
         });
-
+        
         if (!response.ok) {
-            // Jika backend mengembalikan error (misal: 403 Forbidden untuk email tidak terdaftar)
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || `Gagal mengirim link. Status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Gagal mengirim link.');
         }
 
+        console.log('Magic Link request submitted for:', email);
         setFormState('success');
 
-      } catch (err: unknown) {
+      } catch (err: any) {
         setFormState('idle');
-
-        // Enhanced error messages for development
-         const errorMessage = err instanceof Error ? err.message : 'Terjadi kesalahan. Silakan coba lagi.';
-        if (NODE_ENV === 'development' && errorMessage.includes('fetch')) {
-          setError('Tidak dapat terhubung ke server. Pastikan Cloudflare Worker sudah di-deploy.');
-        } else if (NODE_ENV === 'development' && errorMessage.includes('VITE_WORKER_URL')) {
-          setError(errorMessage);
-        } else {
-           setError(errorMessage);
-        }
+        setError(err.message);
       }
   }
 
-  const handleCompleteLogin = () => {
-    // Di aplikasi nyata, halaman akan refresh setelah redirect dari magic link,
-    // dan status login akan terdeteksi dari cookie. Simulasi ini untuk UI.
-    const mockUser: User = {
-      id: 'mock-user-id',
-      email: email,
-      name: 'Mock User',
-      role: 'student',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      is_active: true
-    };
-    onLoginSuccess(mockUser);
+  // Simulation Login Handler with Extra Roles
+  const handleSimulatedLogin = (role: UserRole, extraRole: UserExtraRole = null) => {
+      onLoginSuccess(role, extraRole);
   };
 
   return (
     <div
       className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-300"
       onClick={handleBackdropClick}
-      onKeyDown={(e) => e.key === 'Escape' && onClose()}
       aria-modal="true"
       role="dialog"
-      tabIndex={-1}
     >
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md m-4 transform transition-all duration-300 scale-95 opacity-0 animate-scale-in">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md m-4 transform transition-all duration-300 scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh]">
         <div className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Login / Daftar</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Login</h2>
           <button
             onClick={onClose}
             className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -112,7 +84,54 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
             <CloseIcon />
           </button>
         </div>
-        <div className="p-6">
+        
+        <div className="p-6 overflow-y-auto">
+            {/* DEMO SECTION */}
+            <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-700/50">
+                <h3 className="text-sm font-bold text-yellow-800 dark:text-yellow-200 mb-2 uppercase tracking-wide">Mode Simulasi (Demo)</h3>
+                <p className="text-xs text-yellow-700 dark:text-yellow-300 mb-3">
+                    Pilih peran untuk login instan:
+                </p>
+                
+                {/* Standard Roles */}
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                    <button onClick={() => handleSimulatedLogin('student')} className="px-2 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        Siswa
+                    </button>
+                    <button onClick={() => handleSimulatedLogin('teacher')} className="px-2 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        Guru
+                    </button>
+                    <button onClick={() => handleSimulatedLogin('admin')} className="px-2 py-2 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
+                        Admin
+                    </button>
+                </div>
+
+                {/* Extra Roles */}
+                <div className="grid grid-cols-2 gap-2">
+                    <button 
+                        onClick={() => handleSimulatedLogin('teacher', 'staff')}
+                        className="px-2 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
+                    >
+                        Guru (Staff)
+                    </button>
+                    <button 
+                        onClick={() => handleSimulatedLogin('student', 'osis')}
+                        className="px-2 py-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 rounded-lg text-xs font-medium hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors"
+                    >
+                        Siswa (OSIS)
+                    </button>
+                </div>
+            </div>
+            
+            <div className="relative mb-6">
+                <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                </div>
+                <div className="relative flex justify-center">
+                    <span className="px-2 bg-white dark:bg-gray-800 text-xs text-gray-500 uppercase">Atau Login Email (Produksi)</span>
+                </div>
+            </div>
+
           {formState === 'success' ? (
             <div className="text-center">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/50">
@@ -122,10 +141,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
               </div>
               <h3 className="mt-3 text-lg font-medium text-gray-900 dark:text-white">Link Terkirim!</h3>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Silakan periksa inbox email Anda di <strong>{email}</strong> untuk melanjutkan proses login.
+                Silakan periksa inbox email Anda di <strong>{email}</strong>.
               </p>
               <button
-                onClick={handleCompleteLogin}
+                onClick={() => onLoginSuccess('student')}
                 className="mt-6 w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 Selesai
@@ -134,57 +153,21 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Alamat Email Terdaftar
-                </label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Alamat Email Terdaftar</label>
                 <div className="mt-1">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="anda@email.com"
-                  />
+                  <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-green-500" placeholder="anda@email.com" />
                 </div>
               </div>
-              
-              {error && (
-                <p className="text-sm text-red-600 dark:text-red-400 text-center">{error}</p>
-              )}
-
+              {error && <p className="text-sm text-red-600 dark:text-red-400 text-center">{error}</p>}
               <div>
-                <button
-                  type="submit"
-                  disabled={formState === 'loading'}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:cursor-not-allowed"
-                >
+                <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 dark:disabled:bg-gray-600">
                   {formState === 'loading' ? 'Memeriksa...' : 'Kirim Link Login'}
                 </button>
               </div>
-
-              <p className="mt-4 text-center text-xs text-gray-500 dark:text-gray-400">
-                Hanya email yang terdaftar yang dapat menerima link login. Hubungi admin jika Anda mengalami masalah.
-              </p>
             </form>
           )}
         </div>
       </div>
-      <style>{`
-        @keyframes scaleIn {
-          from { transform: scale(0.95); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        .animate-scale-in {
-            animation: scaleIn 0.2s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 };
