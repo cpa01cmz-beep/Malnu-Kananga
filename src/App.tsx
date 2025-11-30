@@ -22,52 +22,49 @@ import PPDBSection from './components/sections/PPDBSection';
 
 import { INITIAL_PROGRAMS, INITIAL_NEWS } from './data/defaults';
 import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './types'; 
-import { STORAGE_KEYS } from './constants'; // Import constants
+import { STORAGE_KEYS } from './constants';
+import useLocalStorage from './hooks/useLocalStorage';
+
+// Auth Session Interface
+interface AuthSession {
+  loggedIn: boolean;
+  role: UserRole | null;
+  extraRole: UserExtraRole | null;
+}
+
+// Content Interface
+interface SiteContent {
+  featuredPrograms: FeaturedProgram[];
+  latestNews: LatestNews[];
+}
 
 const App: React.FC = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isDocsOpen, setIsDocsOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isPPDBOpen, setIsPPDBOpen] = useState(false);
-  
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isPublicView, setIsPublicView] = useState(false);
 
-  // Auth State with Persistence
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState<UserRole | null>(null);
-  const [userExtraRole, setUserExtraRole] = useState<UserExtraRole>(null); 
-
-  // Initialize Auth from LocalStorage
-  useEffect(() => {
-    const savedAuth = localStorage.getItem(STORAGE_KEYS.AUTH_SESSION);
-    if (savedAuth) {
-      try {
-        const { role, extraRole, loggedIn } = JSON.parse(savedAuth);
-        if (loggedIn && role) {
-          setIsLoggedIn(true);
-          setUserRole(role);
-          setUserExtraRole(extraRole || null);
-        }
-      } catch (e) {
-        console.error("Failed to parse auth session", e);
-        localStorage.removeItem(STORAGE_KEYS.AUTH_SESSION);
-      }
-    }
-  }, []);
-
-  // Theme State & Logic
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
-      if (savedTheme === 'dark' || savedTheme === 'light') {
-        return savedTheme;
-      }
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'light';
+  // Auth State with Persistence via Hook
+  const [authSession, setAuthSession] = useLocalStorage<AuthSession>(STORAGE_KEYS.AUTH_SESSION, {
+    loggedIn: false,
+    role: null,
+    extraRole: null
   });
 
+  const { loggedIn: isLoggedIn, role: userRole, extraRole: userExtraRole } = authSession;
+
+  // Theme State via Hook
+  const [theme, setTheme] = useLocalStorage<'light' | 'dark'>(STORAGE_KEYS.THEME, 'light');
+
+  // Content State via Hook
+  const [siteContent, setSiteContent] = useLocalStorage<SiteContent>(STORAGE_KEYS.SITE_CONTENT, {
+    featuredPrograms: INITIAL_PROGRAMS,
+    latestNews: INITIAL_NEWS
+  });
+
+  // Apply Theme Effect
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
@@ -75,7 +72,6 @@ const App: React.FC = () => {
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem(STORAGE_KEYS.THEME, theme);
   }, [theme]);
 
   const toggleTheme = () => {
@@ -96,44 +92,12 @@ const App: React.FC = () => {
   const hideToast = () => {
     setToast(prev => ({ ...prev, isVisible: false }));
   };
-  
-  // Content State
-  const [featuredPrograms, setFeaturedPrograms] = useState<FeaturedProgram[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.SITE_CONTENT);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return parsed.featuredPrograms || INITIAL_PROGRAMS;
-      } catch (e) {
-        return INITIAL_PROGRAMS;
-      }
-    }
-    return INITIAL_PROGRAMS;
-  });
-
-  const [latestNews, setLatestNews] = useState<LatestNews[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.SITE_CONTENT);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return parsed.latestNews || INITIAL_NEWS;
-      } catch (e) {
-        return INITIAL_NEWS;
-      }
-    }
-    return INITIAL_NEWS;
-  });
 
   const handleLoginSuccess = (role: UserRole, extraRole: UserExtraRole = null) => {
-    setIsLoggedIn(true);
-    setUserRole(role);
-    setUserExtraRole(extraRole);
+    setAuthSession({ loggedIn: true, role, extraRole });
     setIsLoginOpen(false);
     setIsPublicView(false); 
     
-    // Save session including extraRole
-    localStorage.setItem(STORAGE_KEYS.AUTH_SESSION, JSON.stringify({ loggedIn: true, role, extraRole }));
-
     let roleName = role === 'admin' ? 'Administrator' : role === 'teacher' ? 'Guru' : 'Siswa';
     if (extraRole === 'staff') roleName += ' (Staff)';
     if (extraRole === 'osis') roleName += ' (Pengurus OSIS)';
@@ -142,27 +106,23 @@ const App: React.FC = () => {
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUserRole(null);
-    setUserExtraRole(null);
+    setAuthSession({ loggedIn: false, role: null, extraRole: null });
     setIsPublicView(false);
-    localStorage.removeItem(STORAGE_KEYS.AUTH_SESSION);
     showToast('Anda telah logout.', 'info');
   };
 
-  const handleUpdateContent = (newContent: { featuredPrograms: FeaturedProgram[], latestNews: LatestNews[] }) => {
-    setFeaturedPrograms(newContent.featuredPrograms);
-    setLatestNews(newContent.latestNews);
-    localStorage.setItem(STORAGE_KEYS.SITE_CONTENT, JSON.stringify(newContent));
+  const handleUpdateContent = (newContent: SiteContent) => {
+    setSiteContent(newContent);
     setIsEditorOpen(false);
     showToast('Konten website berhasil diperbarui! Beralih ke "Lihat Website" untuk melihat hasilnya.', 'success');
   };
 
   const handleResetContent = () => {
     if (window.confirm('Apakah Anda yakin ingin mengembalikan konten website ke pengaturan awal? Semua perubahan akan dihapus.')) {
-      setFeaturedPrograms(INITIAL_PROGRAMS);
-      setLatestNews(INITIAL_NEWS);
-      localStorage.removeItem(STORAGE_KEYS.SITE_CONTENT);
+      setSiteContent({
+        featuredPrograms: INITIAL_PROGRAMS,
+        latestNews: INITIAL_NEWS
+      });
       showToast('Konten dikembalikan ke pengaturan awal.', 'info');
     }
   };
@@ -197,7 +157,7 @@ const App: React.FC = () => {
         onEditClick={() => setIsEditorOpen(true)}
         isLoggedIn={isLoggedIn}
         userRole={userRole}
-        userExtraRole={userExtraRole} // Pass extra role to header
+        userExtraRole={userExtraRole}
         onLogout={handleLogout}
         isPublicView={isPublicView}
         onTogglePublicView={() => setIsPublicView(!isPublicView)}
@@ -213,8 +173,9 @@ const App: React.FC = () => {
           <RelatedLinksSection />
           <ProfileSection />
           <PPDBSection onRegisterClick={() => setIsPPDBOpen(true)} />
-          <ProgramsSection programs={featuredPrograms} />
-          <NewsSection news={latestNews} />
+          {/* Robustness Fix: Added fallback to empty array to prevent crashes if localStorage data is corrupted/incomplete */}
+          <ProgramsSection programs={siteContent?.featuredPrograms || []} />
+          <NewsSection news={siteContent?.latestNews || []} />
         </main>
       )}
 
@@ -228,7 +189,7 @@ const App: React.FC = () => {
         <ChatWindow 
           isOpen={isChatOpen} 
           closeChat={() => setIsChatOpen(false)} 
-          siteContext={{ featuredPrograms, latestNews }}
+          siteContext={siteContent || { featuredPrograms: [], latestNews: [] }}
         />
       </div>
 
@@ -252,7 +213,7 @@ const App: React.FC = () => {
       <SiteEditor 
         isOpen={isEditorOpen}
         onClose={() => setIsEditorOpen(false)}
-        currentContent={{ featuredPrograms, latestNews }}
+        currentContent={siteContent || { featuredPrograms: [], latestNews: [] }}
         onUpdateContent={handleUpdateContent}
         onResetContent={handleResetContent}
       />

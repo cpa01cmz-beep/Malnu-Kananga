@@ -9,6 +9,7 @@ import UserManagement from './UserManagement';
 import SystemStats from './SystemStats'; 
 import PPDBManagement from './PPDBManagement'; // Import PPDB Component
 import { ToastType } from './Toast';
+import { STORAGE_KEYS } from '../constants'; // Import constants
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -25,7 +26,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
   // Refresh stats when view changes to home
   useEffect(() => {
     if (currentView === 'home') {
-        const saved = localStorage.getItem('malnu_ppdb_registrants');
+        const saved = localStorage.getItem(STORAGE_KEYS.PPDB_REGISTRANTS); // Use Constant
         if (saved) {
             try {
                 const data = JSON.parse(saved);

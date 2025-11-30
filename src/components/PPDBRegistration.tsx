@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import type { PPDBRegistrant } from '../types';
+import { STORAGE_KEYS } from '../constants';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -10,9 +12,9 @@ interface PPDBRegistrationProps {
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
-const STORAGE_KEY = 'malnu_ppdb_registrants';
-
 const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, onShowToast }) => {
+  const [registrants, setRegistrants] = useLocalStorage<PPDBRegistrant[]>(STORAGE_KEYS.PPDB_REGISTRANTS, []);
+
   const [formData, setFormData] = useState<Partial<PPDBRegistrant>>({
     fullName: '',
     nisn: '',
@@ -51,10 +53,8 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
             status: 'pending'
         };
 
-        // Save to LocalStorage
-        const existingData = localStorage.getItem(STORAGE_KEY);
-        const registrants = existingData ? JSON.parse(existingData) : [];
-        localStorage.setItem(STORAGE_KEY, JSON.stringify([...registrants, newRegistrant]));
+        // Save to LocalStorage via hook
+        setRegistrants(prev => [...prev, newRegistrant]);
 
         setIsSubmitting(false);
         onShowToast('Pendaftaran berhasil! Data Anda sedang diverifikasi.', 'success');

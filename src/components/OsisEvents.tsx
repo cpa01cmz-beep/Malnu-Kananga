@@ -1,10 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { PlusIcon } from './icons/PlusIcon';
 import { TrashIcon } from './icons/TrashIcon';
 import type { SchoolEvent } from '../types';
 import { STORAGE_KEYS } from '../constants';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 interface OsisEventsProps {
   onBack: () => void;
@@ -17,14 +18,7 @@ const INITIAL_EVENTS: SchoolEvent[] = [
 ];
 
 const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
-  const [events, setEvents] = useState<SchoolEvent[]>(() => {
-      const saved = localStorage.getItem(STORAGE_KEYS.EVENTS);
-      return saved ? JSON.parse(saved) : INITIAL_EVENTS;
-  });
-
-  useEffect(() => {
-      localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(events));
-  }, [events]);
+  const [events, setEvents] = useLocalStorage<SchoolEvent[]>(STORAGE_KEYS.EVENTS, INITIAL_EVENTS);
 
   const [newEvent, setNewEvent] = useState<Partial<SchoolEvent>>({
       eventName: '', date: '', location: '', description: '', status: 'Upcoming'
@@ -57,6 +51,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
 
   return (
     <div className="animate-fade-in-up">
+        {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
             <div>
                 <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">

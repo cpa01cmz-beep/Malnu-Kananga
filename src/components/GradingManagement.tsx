@@ -1,6 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
-import { CloseIcon } from './icons/CloseIcon';
+import React, { useState } from 'react';
+import { STORAGE_KEYS } from '../constants';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 interface StudentGrade {
   id: string;
@@ -24,27 +25,9 @@ const INITIAL_DATA: StudentGrade[] = [
     { id: '5', name: 'Ahmad Dahlan', nis: '2024005', assignment: 95, midExam: 90, finalExam: 0 },
 ];
 
-const STORAGE_KEY = 'malnu_grades';
-
 const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToast }) => {
-  // Initialize from LocalStorage
-  const [grades, setGrades] = useState<StudentGrade[]>(() => {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-          try {
-              return JSON.parse(saved);
-          } catch (e) {
-              console.error("Failed to parse grades", e);
-              return INITIAL_DATA;
-          }
-      }
-      return INITIAL_DATA;
-  });
-
-  // Save to LocalStorage whenever grades change
-  useEffect(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(grades));
-  }, [grades]);
+  // Use custom hook
+  const [grades, setGrades] = useLocalStorage<StudentGrade[]>(STORAGE_KEYS.GRADES, INITIAL_DATA);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isEditing, setIsEditing] = useState<string | null>(null); // Store ID of row being edited

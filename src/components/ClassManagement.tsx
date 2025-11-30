@@ -1,6 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import UsersIcon from './icons/UsersIcon';
+import { STORAGE_KEYS } from '../constants';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 interface ClassStudent {
   id: string;
@@ -26,26 +28,9 @@ const INITIAL_STUDENTS: ClassStudent[] = [
     { id: '7', nis: '2024007', name: 'Doni Tata', gender: 'L', address: 'Jl. Ciputri', attendanceToday: 'Alpa' },
 ];
 
-const STORAGE_KEY = 'malnu_class_data';
-
 const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }) => {
-  // Initialize from LocalStorage
-  const [students, setStudents] = useState<ClassStudent[]>(() => {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-          try {
-              return JSON.parse(saved);
-          } catch (e) {
-              return INITIAL_STUDENTS;
-          }
-      }
-      return INITIAL_STUDENTS;
-  });
-
-  // Save to LocalStorage whenever students change
-  useEffect(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
-  }, [students]);
+  // Use custom hook for persistence
+  const [students, setStudents] = useLocalStorage<ClassStudent[]>(STORAGE_KEYS.CLASS_DATA, INITIAL_STUDENTS);
 
   const [searchTerm, setSearchTerm] = useState('');
 

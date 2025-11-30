@@ -1,70 +1,121 @@
 
 # Website & Portal Pintar MA Malnu Kananga
 
-Selamat datang di repositori resmi **MA Malnu Kananga Smart Portal**. Aplikasi ini adalah transformasi modern dari website sekolah tradisional menjadi platform pintar berbasis AI yang melayani publik, siswa, guru, dan administrator dalam satu ekosistem.
+![Status](https://img.shields.io/badge/Status-Production%20Ready-green)
+![Cloudflare](https://img.shields.io/badge/Deployed%20on-Cloudflare-orange)
 
-## 🔑 Akun Pengujian (Demo Data)
+Aplikasi web modern untuk MA Malnu Kananga yang mengintegrasikan Landing Page, Portal Siswa/Guru, dan **Kecerdasan Buatan (AI)** dalam satu platform. Dibangun dengan React dan di-backend-kan oleh Cloudflare Workers (Serverless).
 
-Untuk mempermudah pengujian fitur, berikut adalah daftar akun simulasi yang telah disiapkan dalam sistem. Anda dapat menggunakan tombol **Mode Simulasi** di Login Modal atau melihat data ini di menu **Manajemen User** (Admin).
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/PENGGUNA/REPO_INI)
 
-| Nama Pengguna | Role Utama | Role Extra | Fitur Khusus |
-| :--- | :--- | :--- | :--- |
-| **Ahmad Dahlan** | `Admin` | - | AI Editor, Manajemen User, PPDB |
-| **Siti Aminah** | `Guru` | `Staff` | Input Nilai, Wali Kelas, **Inventaris** |
-| **Budi Santoso** | `Siswa` | `OSIS` | Jadwal, Nilai, **Kegiatan OSIS** |
-| **Rudi Hartono** | `Guru` | - | Input Nilai, Wali Kelas |
-| **Dewi Sartika** | `Siswa` | - | Jadwal, Nilai, E-Library |
-
-> **Catatan:** Jika Anda tidak melihat akun-akun ini di tabel Manajemen User, silakan lakukan **"Factory Reset"** melalui menu **Laporan & Log** di Dashboard Admin untuk me-reset data lokal browser Anda.
+> **Catatan:** Tombol di atas akan men-deploy kode Worker. Namun, Anda **wajib** membuat database D1 dan Vectorize secara manual melalui CLI agar aplikasi berfungsi penuh (lihat panduan di bawah).
 
 ## 🚀 Fitur Utama
 
-### 1. Multi-Role Dashboard
-Sistem dashboard cerdas yang beradaptasi dengan peran pengguna:
-- **Publik**: Landing page modern dengan informasi PPDB, Profil, dan Berita.
-- **Siswa**: Portal untuk melihat jadwal, nilai, dan materi (Simulasi).
-- **Guru**: Dashboard manajemen kelas dan input nilai (Simulasi).
-- **Administrator**: Akses eksklusif ke Editor AI dan manajemen sistem.
+1.  **Generative AI Site Editor**: Admin dapat mengubah konten website (Berita/Program) hanya dengan mengetik perintah bahasa alami.
+2.  **RAG Chatbot (Asisten AI)**: Bot cerdas yang menjawab pertanyaan pengunjung berdasarkan data nyata sekolah (Visi, Misi, PPDB) menggunakan *Vector Search*.
+3.  **Multi-Role Dashboard**: Akses terpisah untuk Admin, Guru, Siswa, Staff, dan OSIS.
+4.  **Full Free Tier**: Dioptimalkan untuk berjalan 100% pada layanan gratis Cloudflare.
 
-### 2. Sistem PPDB Online (End-to-End)
-Alur pendaftaran siswa baru yang lengkap:
-- **Formulir Publik**: Calon siswa dapat mendaftar dan mengunggah dokumen via modal interaktif.
-- **Manajemen Admin**: Dashboard khusus untuk memverifikasi data pendaftar.
-- **Notifikasi Pintar**: Badge notifikasi real-time bagi Admin saat ada pendaftar baru.
+---
 
-### 3. Generative AI Site Editor (Admin Only)
-Administrator dapat mengubah konten website (Program Unggulan & Berita) hanya dengan percakapan bahasa alami.
-- **Dynamic State Injection**: AI "sadar" akan konten website saat ini sebelum melakukan perubahan.
-- **Visual Preview**: Melihat hasil editan secara langsung sebelum diterapkan.
-- **Auto-Fallbacks**: Penanganan cerdas untuk gambar yang hilang atau rusak.
+## 🛠️ Panduan Deployment (Langkah demi Langkah)
 
-### 4. Asisten AI Cerdas (RAG Chatbot)
-Chatbot yang melayang di pojok kanan bawah, siap menjawab pertanyaan pengunjung.
-- **RAG (Retrieval-Augmented Generation)**: Menjawab berdasarkan database pengetahuan sekolah (via Cloudflare Vectorize).
-- **Context-Aware**: Jika Admin baru saja mengupdate berita via Editor, Chatbot akan langsung tahu tanpa perlu update database.
+Karena proyek ini menggunakan database (D1 & Vectorize), deployment dilakukan dalam dua tahap: Backend (Worker) dan Frontend (Pages).
 
-### 5. Sistem Autentikasi Hybrid
-- **Magic Link**: Login aman tanpa password menggunakan email (Backend Cloudflare D1 + MailChannels).
-- **Simulasi Demo**: Mode login cepat untuk keperluan testing/presentasi (Admin, Guru, Siswa).
+### Prasyarat
+*   Akun Cloudflare.
+*   Node.js terinstall.
+*   Wrangler CLI (`npm install -g wrangler`).
 
-### 6. Tampilan Modern
-- **Responsive Design**: Optimal di HP, Tablet, dan Desktop.
-- **Dark Mode**: Dukungan tema gelap/terang otomatis maupun manual.
+### Tahap 1: Setup Backend (Worker)
 
-## 🛠️ Teknologi
+1.  **Login ke Cloudflare**:
+    ```bash
+    npx wrangler login
+    ```
 
-- **Frontend**: React 18, Vite, Tailwind CSS.
-- **AI**: Google Gemini API (`@google/genai`).
-- **Backend (Serverless)**: Cloudflare Workers.
-- **Database**: Cloudflare D1 (SQL) & Vectorize (Vector DB).
+2.  **Buat Database D1 (SQL)**:
+    ```bash
+    npx wrangler d1 create malnu-db
+    ```
+    ⚠️ **PENTING**: Salin `database_id` yang muncul di terminal, lalu buka `wrangler.toml` dan tempelkan pada bagian `database_id`.
+
+3.  **Buat Vectorize Index (Vector DB)**:
+    ```bash
+    npx wrangler vectorize create malnu-index --dimensions=768 --metric=cosine
+    ```
+
+4.  **Deploy Worker**:
+    ```bash
+    npx wrangler deploy
+    ```
+    *Catat URL Worker Anda (misal: `https://malnu-api.user.workers.dev`).*
+
+5.  **Isi Data Awal (Seeding)**:
+    Jalankan perintah ini untuk mengisi database AI dengan informasi sekolah:
+    ```bash
+    curl https://<URL-WORKER-ANDA>/seed
+    ```
+
+### Tahap 2: Setup Frontend (Pages)
+
+1.  **Build Aplikasi**:
+    Pastikan Anda memiliki file `.env` (atau set environment variable di dashboard Cloudflare Pages).
+    ```bash
+    npm install
+    npm run build
+    ```
+
+2.  **Deploy ke Cloudflare Pages**:
+    Anda bisa menghubungkan repositori GitHub ke Cloudflare Pages untuk deployment otomatis, atau upload folder `dist` secara manual.
+    *   **Environment Variables (Wajib Diset di Dashboard Pages)**:
+        *   `API_KEY`: API Key Google Gemini Anda (Dapatkan di [aistudio.google.com](https://aistudio.google.com/)).
+        *   `VITE_API_BASE_URL`: URL Worker yang Anda dapatkan dari Tahap 1.
+
+---
+
+## 💻 Setup Localhost (Pengembangan)
+
+1.  **Clone Repositori**:
+    ```bash
+    git clone <repo-url>
+    cd repo
+    ```
+
+2.  **Setup Environment**:
+    Buat file `.env` di root folder:
+    ```env
+    API_KEY=AIzaSy...
+    VITE_API_BASE_URL=http://127.0.0.1:8787
+    ```
+
+3.  **Jalankan Backend (Lokal)**:
+    ```bash
+    npx wrangler dev
+    ```
+
+4.  **Jalankan Frontend (Lokal)**:
+    Buka terminal baru:
+    ```bash
+    npm install
+    npm run dev
+    ```
+
+---
 
 ## 📂 Struktur Proyek
 
-Lihat `ARCHITECTURE.md` untuk detail lengkap mengenai struktur kode dan aliran data.
+*   `/src`: Kode Frontend (React UI).
+*   `worker.js`: Kode Backend Serverless (API Gateway).
+*   `wrangler.toml`: Konfigurasi resource Cloudflare.
 
-## 🏃‍♂️ Cara Menjalankan
+## 📚 Dokumentasi Lanjutan
 
-1.  Clone repositori ini.
-2.  Buat file `.env` dan isi `API_KEY` Gemini Anda.
-3.  Jalankan `npm install`.
-4.  Jalankan `npm run dev`.
+*   **[Panduan Pengguna (User Guide)](HOW_TO.md)**: Cara menggunakan fitur.
+*   **[Arsitektur Sistem](ARCHITECTURE.md)**: Penjelasan teknis.
+*   **[Roadmap](ROADMAP.md)**: Rencana masa depan.
+
+---
+
+**Dibuat dengan ❤️ untuk Pendidikan Indonesia.**

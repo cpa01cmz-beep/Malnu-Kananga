@@ -1,8 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import { TrashIcon } from './icons/TrashIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
+import { STORAGE_KEYS } from '../constants';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 interface Material {
   id: string;
@@ -18,8 +20,6 @@ interface MaterialUploadProps {
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
-const STORAGE_KEY = 'malnu_materials';
-
 const INITIAL_MATERIALS: Material[] = [
     { id: '1', title: 'Modul Bab 1: Limit Fungsi', subject: 'Matematika Wajib', type: 'PDF', size: '2.4 MB', uploadDate: '2024-07-20' },
     { id: '2', title: 'Slide Presentasi Sejarah Bani Umayyah', subject: 'Sejarah Kebudayaan Islam', type: 'PPT', size: '5.1 MB', uploadDate: '2024-07-22' },
@@ -27,14 +27,7 @@ const INITIAL_MATERIALS: Material[] = [
 ];
 
 const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) => {
-  const [materials, setMaterials] = useState<Material[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : INITIAL_MATERIALS;
-  });
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(materials));
-  }, [materials]);
+  const [materials, setMaterials] = useLocalStorage<Material[]>(STORAGE_KEYS.MATERIALS, INITIAL_MATERIALS);
 
   const [newTitle, setNewTitle] = useState('');
   const [newSubject, setNewSubject] = useState('Matematika Wajib');

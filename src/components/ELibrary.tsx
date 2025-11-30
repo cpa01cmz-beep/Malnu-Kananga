@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
+import { STORAGE_KEYS } from '../constants';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 interface Material {
   id: string;
@@ -17,8 +19,6 @@ interface ELibraryProps {
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
-const STORAGE_KEY = 'malnu_materials';
-
 const INITIAL_MATERIALS: Material[] = [
     { id: '1', title: 'Modul Bab 1: Limit Fungsi', subject: 'Matematika Wajib', type: 'PDF', size: '2.4 MB', uploadDate: '2024-07-20' },
     { id: '2', title: 'Slide Presentasi Sejarah Bani Umayyah', subject: 'Sejarah Kebudayaan Islam', type: 'PPT', size: '5.1 MB', uploadDate: '2024-07-22' },
@@ -26,11 +26,9 @@ const INITIAL_MATERIALS: Material[] = [
 ];
 
 const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
-  // Read Only - Get from Shared LocalStorage
-  const [materials] = useState<Material[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : INITIAL_MATERIALS;
-  });
+  // Read Only - Get from Shared LocalStorage using Hook
+  // We don't need the setter, so we just destructure the first element
+  const [materials] = useLocalStorage<Material[]>(STORAGE_KEYS.MATERIALS, INITIAL_MATERIALS);
 
   const [filterSubject, setFilterSubject] = useState('Semua');
   const [search, setSearch] = useState('');

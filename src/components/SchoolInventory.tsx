@@ -1,10 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ArchiveBoxIcon } from './icons/ArchiveBoxIcon';
 import { PlusIcon } from './icons/PlusIcon';
 import { TrashIcon } from './icons/TrashIcon';
 import type { InventoryItem } from '../types';
 import { STORAGE_KEYS } from '../constants';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 interface SchoolInventoryProps {
   onBack: () => void;
@@ -18,14 +19,7 @@ const INITIAL_INVENTORY: InventoryItem[] = [
 ];
 
 const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }) => {
-  const [items, setItems] = useState<InventoryItem[]>(() => {
-      const saved = localStorage.getItem(STORAGE_KEYS.INVENTORY);
-      return saved ? JSON.parse(saved) : INITIAL_INVENTORY;
-  });
-
-  useEffect(() => {
-      localStorage.setItem(STORAGE_KEYS.INVENTORY, JSON.stringify(items));
-  }, [items]);
+  const [items, setItems] = useLocalStorage<InventoryItem[]>(STORAGE_KEYS.INVENTORY, INITIAL_INVENTORY);
 
   const [newItem, setNewItem] = useState<Partial<InventoryItem>>({
       itemName: '', category: 'Umum', quantity: 1, condition: 'Baik', location: ''

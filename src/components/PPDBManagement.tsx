@@ -1,34 +1,23 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { PPDBRegistrant } from '../types';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
+import { STORAGE_KEYS } from '../constants';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 interface PPDBManagementProps {
   onBack: () => void;
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
-const STORAGE_KEY = 'malnu_ppdb_registrants';
-
 const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) => {
-  const [registrants, setRegistrants] = useState<PPDBRegistrant[]>([]);
+  const [registrants, setRegistrants] = useLocalStorage<PPDBRegistrant[]>(STORAGE_KEYS.PPDB_REGISTRANTS, []);
+  
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
-
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-        try {
-            setRegistrants(JSON.parse(saved));
-        } catch (e) {
-            console.error("Failed to load registrants");
-        }
-    }
-  }, []);
 
   const updateStatus = (id: string, newStatus: PPDBRegistrant['status']) => {
     const updated = registrants.map(r => r.id === id ? { ...r, status: newStatus } : r);
     setRegistrants(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     onShowToast(`Status pendaftar berhasil diubah menjadi ${newStatus === 'approved' ? 'Diterima' : 'Ditolak'}.`, newStatus === 'approved' ? 'success' : 'info');
   };
 

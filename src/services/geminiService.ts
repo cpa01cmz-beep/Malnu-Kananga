@@ -23,9 +23,12 @@ export async function* getAIResponseStream(
     history: {role: 'user' | 'model', parts: string}[],
     localContext?: LocalContext // NEW: Accept current app state
 ): AsyncGenerator<string> {
-  let context = "";
+  let ragContext = "";
+  
+  // 1. Fetch RAG context from the Worker
+  // We do this in parallel or before prompt construction.
+  // Using try-catch to ensure chat continues even if backend is offline.
   try {
-    // 1. Fetch context from the Worker
     const contextResponse = await fetch(WORKER_CHAT_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -33,47 +36,45 @@ export async function* getAIResponseStream(
     });
     if (contextResponse.ok) {
         const data = await contextResponse.json();
-        context = data.context;
+        ragContext = data.context || "";
     }
   } catch(e) {
-      console.error("Failed to fetch context from worker:", e);
-      // We can still proceed without context, Gemini will do its best.
+      console.warn("RAG fetch failed, proceeding with local context only:", e);
   }
 
   // 2. Prepare Dynamic Context from Local State (Editor Changes)
-  let dynamicContextString = "";
+  // This is crucial for the "Generative UI" aspect - AI must know what's on the screen.
+  let localContextString = "";
   if (localContext) {
-      dynamicContextString = `
-INFORMASI TERKINI DARI WEBSITE (Prioritas Utama):
-Berikut adalah data Program Unggulan dan Berita Terbaru yang SEDANG TAYANG di website saat ini. Gunakan informasi ini sebagai kebenaran mutlak jika bertentangan dengan konteks lain.
-
-[Daftar Program Unggulan]
-${localContext.featuredPrograms.map(p => `- ${p.title}: ${p.description}`).join('\n')}
-
-[Berita Terbaru]
-${localContext.latestNews.map(n => `- (${n.date}) [${n.category}] ${n.title}`).join('\n')}
+      localContextString = `
+[INFORMASI AKTUAL WEBSITE]
+Data berikut adalah konten yang sedang ditampilkan di website saat ini:
+- **Program Unggulan**: ${localContext.featuredPrograms.map(p => p.title).join(', ')}.
+- **Berita Terbaru**: ${localContext.latestNews.map(n => n.title).join(', ')}.
 `;
   }
 
-  // 3. Augment the user's message with the retrieved context
+  // 3. Construct the Augmented Prompt
+  // Priority: Local Context > RAG Context > General Knowledge
   const augmentedMessage = `
-${dynamicContextString}
+${localContextString}
 
-KONTEKS TAMBAHAN DARI DATABASE (RAG):
----\n${context}\n---
+[DATABASE PENGETAHUAN SEKOLAH]
+${ragContext ? ragContext : "Tidak ada data tambahan dari database."}
 
-PERTANYAAN PENGGUNA: 
-${message}`;
+[PERTANYAAN USER]
+${message}
+`;
 
   // System instruction for the model
-  const systemInstruction = `Anda adalah 'Asisten MA Malnu Kananga', chatbot AI yang ramah, sopan, dan sangat membantu, berbicara dalam Bahasa Indonesia. 
+  const systemInstruction = `Anda adalah 'Asisten MA Malnu Kananga', AI yang ramah dan membantu.
   
-  ATURAN UTAMA:
-  1. Jawab pertanyaan tentang sekolah MA Malnu Kananga.
-  2. Prioritaskan "INFORMASI TERKINI DARI WEBSITE" yang diberikan di atas. Itu adalah data real-time.
-  3. Gunakan "KONTEKS TAMBAHAN" untuk informasi sejarah atau umum.
-  4. Jika informasi tidak ada di keduanya, katakan tidak tahu dan sarankan hubungi sekolah.
-  5. Gunakan format Markdown (Bold, List) untuk jawaban yang rapi.`;
+  PANDUAN MENJAWAB:
+  1. Jawablah berdasarkan data [INFORMASI AKTUAL WEBSITE] dan [DATABASE PENGETAHUAN SEKOLAH] yang diberikan.
+  2. Jika user bertanya tentang program atau berita, prioritaskan data dari [INFORMASI AKTUAL WEBSITE].
+  3. Gunakan format Markdown (Bold, Bullet points) agar mudah dibaca.
+  4. Jika informasi tidak tersedia di konteks manapun, katakan "Maaf, saya belum memiliki informasi tersebut" dan sarankan menghubungi tata usaha.
+  5. Jawablah dengan Bahasa Indonesia yang sopan dan natural.`;
   
   // Format history for the Gemini API
   const contents = [
@@ -82,7 +83,7 @@ ${message}`;
   ];
 
   try {
-    // 4. Call the Gemini API with the augmented prompt and history
+    // 4. Call the Gemini API
     const responseStream = await ai.models.generateContentStream({
         model: 'gemini-2.5-flash',
         contents,
@@ -96,7 +97,7 @@ ${message}`;
     }
   } catch (error) {
       console.error("Error calling Gemini API:", error);
-      yield "Maaf, terjadi masalah saat menghubungi AI. Silakan coba lagi nanti.";
+      yield "Maaf, sistem AI sedang sibuk atau mengalami gangguan. Silakan coba sesaat lagi.";
   }
 }
 

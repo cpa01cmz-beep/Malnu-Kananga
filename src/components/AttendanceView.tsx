@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import UsersIcon from './icons/UsersIcon';
+import { STORAGE_KEYS } from '../constants';
 
 interface AttendanceViewProps {
   onBack: () => void;
@@ -23,12 +24,16 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
   ];
 
   useEffect(() => {
-    const classData = localStorage.getItem('malnu_class_data');
+    const classData = localStorage.getItem(STORAGE_KEYS.CLASS_DATA);
     if (classData) {
-        const parsed = JSON.parse(classData);
-        const myData = parsed.find((s: any) => s.nis === STUDENT_NIS);
-        if (myData) {
-            setTodayStatus(myData.attendanceToday);
+        try {
+            const parsed = JSON.parse(classData);
+            const myData = parsed.find((s: any) => s.nis === STUDENT_NIS);
+            if (myData) {
+                setTodayStatus(myData.attendanceToday);
+            }
+        } catch (e) {
+            console.error("Failed to parse attendance data");
         }
     }
   }, []);

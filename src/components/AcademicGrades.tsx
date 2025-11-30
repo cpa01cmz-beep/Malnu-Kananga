@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { STORAGE_KEYS } from '../constants';
 
 interface GradeItem {
   subject: string;
@@ -23,7 +24,9 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
 
   useEffect(() => {
     // 1. Ambil Data Matematika Wajib dari Input Guru (LocalStorage)
-    const storedGrades = localStorage.getItem('malnu_grades');
+    // Note: We use raw localStorage here for read-only to avoid hook complexity in read-only components 
+    // or we could use the hook without the setter.
+    const storedGrades = localStorage.getItem(STORAGE_KEYS.GRADES);
     let mathGrade: GradeItem = {
         subject: 'Matematika Wajib',
         assignment: 0,
@@ -34,24 +37,28 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
     };
 
     if (storedGrades) {
-        const parsed = JSON.parse(storedGrades);
-        // Cari nilai milik Budi
-        const budiData = parsed.find((p: any) => p.nis === STUDENT_NIS);
-        if (budiData) {
-            const final = (budiData.assignment * 0.3) + (budiData.midExam * 0.3) + (budiData.finalExam * 0.4);
-            let letter = 'D';
-            if (final >= 85) letter = 'A';
-            else if (final >= 75) letter = 'B';
-            else if (final >= 60) letter = 'C';
+        try {
+            const parsed = JSON.parse(storedGrades);
+            // Cari nilai milik Budi
+            const budiData = parsed.find((p: any) => p.nis === STUDENT_NIS);
+            if (budiData) {
+                const final = (budiData.assignment * 0.3) + (budiData.midExam * 0.3) + (budiData.finalExam * 0.4);
+                let letter = 'D';
+                if (final >= 85) letter = 'A';
+                else if (final >= 75) letter = 'B';
+                else if (final >= 60) letter = 'C';
 
-            mathGrade = {
-                subject: 'Matematika Wajib',
-                assignment: budiData.assignment,
-                midExam: budiData.midExam,
-                finalExam: budiData.finalExam,
-                finalScore: final,
-                grade: letter
-            };
+                mathGrade = {
+                    subject: 'Matematika Wajib',
+                    assignment: budiData.assignment,
+                    midExam: budiData.midExam,
+                    finalExam: budiData.finalExam,
+                    finalScore: final,
+                    grade: letter
+                };
+            }
+        } catch (e) {
+            console.error("Failed to parse grades in student view", e);
         }
     }
 

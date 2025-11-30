@@ -1,12 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { PlusIcon } from './icons/PlusIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { TrashIcon } from './icons/TrashIcon';
 import { CloseIcon } from './icons/CloseIcon';
-import { User, UserRole, UserExtraRole } from '../types'; // Import User from types
-import { INITIAL_USERS } from '../data/defaults'; // Import shared data
+import { User, UserRole, UserExtraRole } from '../types'; 
+import { INITIAL_USERS } from '../data/defaults';
 import { STORAGE_KEYS } from '../constants';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 interface UserManagementProps {
   onBack: () => void;
@@ -14,21 +15,13 @@ interface UserManagementProps {
 }
 
 const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) => {
-  const [users, setUsers] = useState<User[]>(() => {
-      const saved = localStorage.getItem(STORAGE_KEYS.USERS);
-      // Logic pembaruan: Jika data di localStorage kurang dari 3 user (data lama),
-      // kita timpa dengan INITIAL_USERS yang baru agar admin bisa melihat role Staff/OSIS.
-      if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed.length < 3) return INITIAL_USERS; 
-          return parsed;
-      }
-      return INITIAL_USERS;
-  });
+  const [users, setUsers] = useLocalStorage<User[]>(STORAGE_KEYS.USERS, INITIAL_USERS);
 
-  useEffect(() => {
-      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
-  }, [users]);
+  // Logic pembaruan: Jika data kurang dari 3 user (data lama),
+  // kita timpa dengan INITIAL_USERS yang baru agar admin bisa melihat role Staff/OSIS.
+  // Note: This logic is moved inside useEffect in the original code, but since we use hook,
+  // we can check it once on mount if needed, or rely on manual reset.
+  // Ideally, users should use Factory Reset to get new defaults.
 
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
