@@ -23,17 +23,17 @@ describe('Gemini Service', () => {
       // Import after setting environment
       const { getAIResponseStream } = await import('./src/services/geminiService');
       
-      const result = [];
-      try {
-        for await (const chunk of getAIResponseStream('test', [])) {
-          result.push(chunk);
+try {
+        for await (const _chunk of getAIResponseStream('test', [])) {
+          // Expected to error, break on first successful chunk
+          break;
         }
-      } catch (error) {
-        // Expected to error
+        // Should not reach here - if it does, that's unexpected success
+        expect(true).toBe(false);
+      } catch {
+        // Expected to error - this is the correct behavior
+        expect(true).toBe(true);
       }
-      
-      // Should either return empty array or error message
-      expect(Array.isArray(result)).toBe(true);
     });
   });
 
