@@ -78,10 +78,30 @@ done
 echo "🔍 Checking environment files..."
 if [ -f ".env" ]; then
     echo "⚠️  .env file found (should not be in production)"
+    # Check if .env contains real API keys
+    if grep -E "(AIza[0-9A-Za-z_-]{35}|sk-[a-zA-Z0-9]{48}|ghp_[a-zA-Z0-9]{36})" .env >/dev/null 2>&1; then
+        echo "❌ CRITICAL: Real API keys detected in .env file!"
+    fi
 fi
 
 if [ -f ".env.production" ]; then
     echo "✅ .env.production file found"
+fi
+
+# Check .env.example for security issues
+if [ -f ".env.example" ]; then
+    echo "🔍 Checking .env.example for security issues..."
+    # Check for potential real keys in template
+    if grep -E "(AIza[0-9A-Za-z_-]{35}|sk-[a-zA-Z0-9]{48}|ghp_[a-zA-Z0-9]{36})" .env.example >/dev/null 2>&1; then
+        echo "❌ Potential real API keys found in .env.example!"
+    else
+        echo "✅ .env.example appears safe"
+    fi
+    
+    # Check for too-realistic placeholders
+    if grep -q "your_google_gemini_api_key_here" .env.example; then
+        echo "⚠️  Replace realistic placeholder with generic description"
+    fi
 fi
 
 # Check for debug mode
