@@ -8,8 +8,8 @@ class EnvironmentValidator {
     this.errors = [];
     this.warnings = [];
     this.requiredVars = {
-      development: ['API_KEY'],
-      production: ['API_KEY', 'SECRET_KEY']
+      development: ['VITE_GEMINI_API_KEY'],
+      production: ['VITE_GEMINI_API_KEY', 'SECRET_KEY']
     };
   }
 
@@ -37,6 +37,27 @@ class EnvironmentValidator {
     return this.errors.length === 0;
   }
 
+  loadEnvFromFile() {
+    const envPath = path.join(process.cwd(), '.env');
+    
+    if (!fs.existsSync(envPath)) return;
+    
+    try {
+      const envContent = fs.readFileSync(envPath, 'utf8');
+      const lines = envContent.split('\n');
+      
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+          const [key, ...valueParts] = trimmed.split('=');
+          process.env[key.trim()] = valueParts.join('=').trim();
+        }
+      }
+    } catch (error) {
+      this.errors.push('❌ Error reading .env file: ' + error.message);
+    }
+  }
+
   validateEnvFile() {
     const envPath = path.join(process.cwd(), '.env');
     
@@ -47,12 +68,40 @@ class EnvironmentValidator {
     
     console.log('✅ .env file found');
     
-    // Check .env.example exists
+    // Check .env.example exists and is secure
     const examplePath = path.join(process.cwd(), '.env.example');
     if (fs.existsSync(examplePath)) {
       console.log('✅ .env.example file found');
+      
+      // Check for real keys in template
+      const templateContent = fs.readFileSync(examplePath, 'utf8');
+      const realKeyPatterns = [
+        /AIza[0-9A-Za-z_-]{35}/,
+        /sk-[a-zA-Z0-9]{48}/,
+        /ghp_[a-zA-Z0-9]{36}/
+      ];
+      
+      const hasRealKeys = realKeyPatterns.some(pattern => pattern.test(templateContent));
+      if (hasRealKeys) {
+        this.errors.push('❌ .env.example may contain real API keys');
+      } else {
+        console.log('✅ .env.example appears safe');
+      }
     } else {
       this.warnings.push('⚠️ .env.example file not found');
+    }
+    
+    // Check .gitignore
+    const gitignorePath = path.join(process.cwd(), '.gitignore');
+    if (fs.existsSync(gitignorePath)) {
+      const gitignoreContent = fs.readFileSync(gitignorePath, 'utf8');
+      if (gitignoreContent.includes('.env')) {
+        console.log('✅ .env is in .gitignore');
+      } else {
+        this.errors.push('❌ .env not found in .gitignore');
+      }
+    } else {
+      this.warnings.push('⚠️ .gitignore not found');
     }
   }
 
@@ -60,10 +109,17 @@ class EnvironmentValidator {
     const required = this.requiredVars[env] || this.requiredVars.development;
     
     required.forEach(varName => {
+      // Load from .env file if not in process.env
+      if (!process.env[varName]) {
+        this.loadEnvFromFile();
+      }
+      
       const value = process.env[varName];
       
       if (!value) {
         this.errors.push(`❌ Required variable ${varName} is not set`);
+      } else if (value.includes('placeholder') || value.includes('your_')) {
+        this.errors.push(`❌ ${varName} contains placeholder value`);
       } else {
         console.log(`✅ ${varName} is set`);
         
@@ -76,15 +132,15 @@ class EnvironmentValidator {
   }
 
   validateAPIKey() {
-    const apiKey = process.env.API_KEY;
+    const apiKey = process.env.VITE_GEMINI_API_KEY;
     
     if (!apiKey) return;
     
     // Check Gemini API key format
-    if (!apiKey.startsWith('AIzaSy')) {
-      this.errors.push('❌ API_KEY does not appear to be a valid Google Gemini API key');
+    if (!apiKey.startsWith('AIza')) {
+      this.errors.push('❌ VITE_GEMINI_API_KEY does not appear to be a valid Google Gemini API key');
     } else {
-      console.log('✅ API_KEY format appears valid');
+      console.log('✅ VITE_GEMINI_API_KEY format appears valid');
     }
   }
 
