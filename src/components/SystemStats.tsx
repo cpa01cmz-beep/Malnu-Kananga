@@ -5,7 +5,7 @@ import UsersIcon from './icons/UsersIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
-import { ArchiveBoxIcon } from './icons/ArchiveBoxIcon'; // Import ikon baru
+
 import { STORAGE_KEYS } from '../constants'; // Import constants
 
 interface SystemStatsProps {

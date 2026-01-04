@@ -13,7 +13,7 @@ interface PPDBRegistrationProps {
 }
 
 const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, onShowToast }) => {
-  const [registrants, setRegistrants] = useLocalStorage<PPDBRegistrant[]>(STORAGE_KEYS.PPDB_REGISTRANTS, []);
+  const [, setRegistrants] = useLocalStorage<PPDBRegistrant[]>(STORAGE_KEYS.PPDB_REGISTRANTS, []);
 
   const [formData, setFormData] = useState<Partial<PPDBRegistrant>>({
     fullName: '',

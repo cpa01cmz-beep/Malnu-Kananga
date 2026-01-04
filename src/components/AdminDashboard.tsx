@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { SparklesIcon } from './icons/SparklesIcon';
 import UsersIcon from './icons/UsersIcon';
-import DocumentTextIcon from './icons/DocumentTextIcon';
+
 import { ChartBarIcon } from './icons/ChartBarIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import UserManagement from './UserManagement';
