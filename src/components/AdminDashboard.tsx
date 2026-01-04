@@ -32,7 +32,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                 const data = JSON.parse(saved);
                 const count = data.filter((r: any) => r.status === 'pending').length;
                 setPendingPPDB(count);
-            } catch (e) {
+            } catch {
                 console.error("Error reading PPDB data");
             }
         }

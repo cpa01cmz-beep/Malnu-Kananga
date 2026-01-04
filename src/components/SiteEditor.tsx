@@ -56,7 +56,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   // Auto-scroll whenever messages change
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isLoading, proposedContent]);
+  }, [messages, isLoading, proposedContent, messages.length]);
 
   if (!isOpen) return null;
 
@@ -78,10 +78,10 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
         sender: Sender.AI
       };
       setMessages(prev => [...prev, aiMessage]);
-    } catch (error: any) {
+    } catch (error) {
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        text: `Maaf, terjadi kesalahan: ${error.message}`,
+        text: `Maaf, terjadi kesalahan: ${error instanceof Error ? error.message : 'Unknown error'}`,
         sender: Sender.AI
       };
       setMessages(prev => [...prev, errorMessage]);
