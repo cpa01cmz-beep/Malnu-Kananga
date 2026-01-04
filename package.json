@@ -9,7 +9,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "deploy:backend": "wrangler deploy",
-    "dev:backend": "wrangler dev"
+    "dev:backend": "wrangler dev",
+    "env:setup": "node scripts/setup-env.cjs",
+    "env:validate": "node scripts/validate-env.cjs"
   },
   "dependencies": {
     "@google/genai": "^0.14.0",
