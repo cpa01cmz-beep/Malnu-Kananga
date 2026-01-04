@@ -51,6 +51,8 @@ class EnvironmentSetup {
 
 # Google Gemini AI Configuration
 VITE_GEMINI_API_KEY=${apiKey}
+# Legacy compatibility (for services/geminiService.ts)
+API_KEY=${apiKey}
 
 # Application Configuration
 NODE_ENV=${nodeEnv}

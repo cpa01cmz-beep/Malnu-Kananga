@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
 // Initialize the Google AI client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.VITE_GEMINI_API_KEY || process.env.API_KEY || '' });
 
 const workerUrl = 'https://malnu-api.sulhi-cmz.workers.dev/api/chat';
 
