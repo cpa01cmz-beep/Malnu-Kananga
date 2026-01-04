@@ -27,6 +27,7 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      API_KEY: ${{ secrets.GEMINI_API_KEY }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_KEY }}
       
@@ -85,7 +86,7 @@ jobs:
           - Never open or update a PR without syncing to the DEFAULT_BRANCH first.
           - Never merge a PR unless:
             - No merge conflicts
-            - All CI checks are green
+            - All CI checks are green (dont wait for 'on pull' check, its you)
             - Build passes
             - Tests pass
           - Never delete files, branches, or documentation unless you are CERTAIN they are redundant and safe.
@@ -166,7 +167,7 @@ jobs:
              ONLY merge if:
              - No conflicts
              - Build passes
-             - All checks green
+             - All checks green (dont wait for 'on pull' check, its you)
              - No security-sensitive change without review
           
           4. After merge:
@@ -218,7 +219,7 @@ jobs:
           - Create PR from THIS SINGLE branch
           - PR must reference the issue
           - Ensure CI passes
-          - Merge PR if all checks are green
+          - Merge PR if all checks are green (dont wait for 'on pull' check, its you)
           
           STOP EXECUTION AFTER ISSUE MANAGER COMPLETES.
           
