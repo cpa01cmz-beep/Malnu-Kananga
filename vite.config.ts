@@ -76,6 +76,19 @@ export default defineConfig(({ mode }) => {
     ],
     define: {
       'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
+    },
+    build: {
+      rollupOptions: {
+        external: ['fsevents'],
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom'],
+            genai: ['@google/genai'],
+            tests: ['vitest', '@vitest/ui']
+          }
+        }
+      },
+      chunkSizeWarningLimit: 1000
     }
   }
 
