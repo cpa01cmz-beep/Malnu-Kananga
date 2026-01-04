@@ -6,7 +6,7 @@ import type { FeaturedProgram, LatestNews } from '../types';
 import { WORKER_CHAT_ENDPOINT } from '../config';
 
 // Initialize the Google AI client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' });
 
 // Models
 const FLASH_MODEL = 'gemini-2.5-flash';
@@ -96,7 +96,7 @@ ${message}
     });
 
     for await (const chunk of responseStream) {
-      yield chunk.text;
+      yield chunk.text || '';
     }
   } catch (error) {
       console.error("Error calling Gemini API:", error);
@@ -199,7 +199,7 @@ Please provide the updated JSON content.`;
             },
         });
         
-        const jsonText = response.text.trim();
+        const jsonText = (response.text || '').trim();
         // Basic cleanup just in case
         const firstBrace = jsonText.indexOf('{');
         const lastBrace = jsonText.lastIndexOf('}');
