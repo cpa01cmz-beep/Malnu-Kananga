@@ -12,7 +12,10 @@
     "env:setup": "node scripts/setup-env.cjs",
     "env:validate": "node scripts/validate-env.cjs",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 20",
-    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix"
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@google/genai": "^0.14.0",
@@ -20,17 +23,21 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@types/node": "^25.0.3",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.51.0",
     "@typescript-eslint/parser": "^8.51.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/ui": "^4.0.16",
     "eslint": "^9.39.2",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.26",
+    "jsdom": "^27.4.0",
     "typescript": "^5.5.3",
     "vite": "^7.3.0",
     "vite-plugin-pwa": "^1.2.0",
+    "vitest": "^4.0.16",
     "wrangler": "^4.54.0"
   }
 }
