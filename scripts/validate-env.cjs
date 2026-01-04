@@ -110,11 +110,13 @@ class EnvironmentValidator {
     try {
       const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
       const dependencies = packageJson.dependencies || {};
+      const devDependencies = packageJson.devDependencies || {};
       
-      // Check critical dependencies
+      // Check critical dependencies in both deps and devDeps
+      const allDependencies = { ...dependencies, ...devDependencies };
       const criticalDeps = ['react', 'react-dom', 'vite'];
       criticalDeps.forEach(dep => {
-        if (dependencies[dep]) {
+        if (allDependencies[dep]) {
           console.log(`✅ ${dep} dependency found`);
         } else {
           this.errors.push(`❌ Critical dependency ${dep} not found`);

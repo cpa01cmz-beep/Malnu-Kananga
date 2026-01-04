@@ -84,10 +84,24 @@ Karena proyek ini menggunakan database (D1 & Vectorize), deployment dilakukan da
     ```
 
 2.  **Setup Environment**:
-    Buat file `.env` di root folder:
+    
+    **Otomatis (Direkomendasikan)**:
+    ```bash
+    npm run env:setup
+    ```
+    
+    **Manual**:
+    Salin template environment ke file .env:
+    ```bash
+    cp .env.example .env
+    ```
+    Edit file `.env` dan ganti nilai-nilai berikut:
     ```env
-    API_KEY=AIzaSy...
-    VITE_API_BASE_URL=http://127.0.0.1:8787
+    # Wajib: API Key Google Gemini
+    API_KEY=AIzaSy... # Dapatkan dari https://aistudio.google.com/
+    
+    # Opsional: Jika menjalankan worker lokal
+    # VITE_WORKER_URL=http://localhost:8787
     ```
 
 3.  **Jalankan Backend (Lokal)**:
@@ -95,7 +109,13 @@ Karena proyek ini menggunakan database (D1 & Vectorize), deployment dilakukan da
     npx wrangler dev
     ```
 
-4.  **Jalankan Frontend (Lokal)**:
+4.  **Validasi Environment**:
+    Pastikan konfigurasi benar:
+    ```bash
+    npm run env:validate
+    ```
+
+5.  **Jalankan Frontend (Lokal)**:
     Buka terminal baru:
     ```bash
     npm install
