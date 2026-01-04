@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 function useLocalStorage<T>(key: string, initialValue: T) {
   // Get from local storage then parse stored json or return initialValue
-  const readValue = (): T => {
+  const readValue = useCallback((): T => {
     if (typeof window === 'undefined') {
       return initialValue;
     }
@@ -13,7 +13,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
       console.warn(`Error reading localStorage key "${key}":`, error);
       return initialValue;
     }
-  };
+  }, [key, initialValue]);
 
   const [storedValue, setStoredValue] = useState<T>(readValue);
 
@@ -46,7 +46,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
     // For single-page app state sync, the internal state mainly handles it.
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, [key]);
+  }, [key, readValue]);
 
   return [storedValue, setValue] as const;
 }

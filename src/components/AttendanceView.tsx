@@ -32,7 +32,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
             if (myData) {
                 setTodayStatus(myData.attendanceToday);
             }
-        } catch (e) {
+        } catch {
             console.error("Failed to parse attendance data");
         }
     }

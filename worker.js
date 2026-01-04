@@ -134,7 +134,7 @@ export default {
         
         // Simulasi sukses untuk frontend, real logic butuh binding DB & MailChannels
         return new Response(JSON.stringify({ success: true, message: 'Link login (Simulasi) telah dikirim.' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
-      } catch (e) {
+      } catch {
         return new Response(JSON.stringify({ message: 'Terjadi kesalahan pada server.' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }});
       }
     }

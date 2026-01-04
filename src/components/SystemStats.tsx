@@ -51,7 +51,7 @@ const SystemStats: React.FC<SystemStatsProps> = ({ onBack, onShowToast }) => {
     // 6. Calculate Storage Usage (Approx)
     let totalBytes = 0;
     for (let key in localStorage) {
-        if (localStorage.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(localStorage, key)) {
             totalBytes += (localStorage[key].length + key.length) * 2;
         }
     }

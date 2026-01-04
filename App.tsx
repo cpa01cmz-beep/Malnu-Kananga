@@ -8,7 +8,7 @@ import DocumentTextIcon from './components/icons/DocumentTextIcon';
 import BuildingLibraryIcon from './components/icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './components/icons/ClipboardDocumentCheckIcon';
 import UsersIcon from './components/icons/UsersIcon';
-import InformationCircleIcon from './components/icons/InformationCircleIcon';
+// import InformationCircleIcon from './components/icons/InformationCircleIcon';
 import ChatWindow from './components/ChatWindow';
 
 
