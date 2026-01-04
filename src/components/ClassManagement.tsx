@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import UsersIcon from './icons/UsersIcon';
+
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 

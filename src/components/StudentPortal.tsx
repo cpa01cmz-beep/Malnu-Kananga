@@ -86,7 +86,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
 
                 {/* Dashboard Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {menuItems.map((item, index) => (
+                  {menuItems.map((item) => (
                     <div key={item.title} onClick={item.action} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-700 flex flex-col items-start cursor-pointer group transform hover:-translate-y-1">
                       <div className={`p-3 rounded-2xl ${item.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
                          <div className="w-8 h-8">{item.icon}</div>

@@ -23,7 +23,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
   // we can check it once on mount if needed, or rely on manual reset.
   // Ideally, users should use Factory Reset to get new defaults.
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<Partial<User>>({});
   const [isEditing, setIsEditing] = useState(false);

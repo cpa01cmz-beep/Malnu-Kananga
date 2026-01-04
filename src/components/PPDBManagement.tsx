@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import type { PPDBRegistrant } from '../types';
-import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
+
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 
