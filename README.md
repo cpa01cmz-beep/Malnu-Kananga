@@ -70,7 +70,8 @@ Karena proyek ini menggunakan database (D1 & Vectorize), deployment dilakukan da
 2.  **Deploy ke Cloudflare Pages**:
     Anda bisa menghubungkan repositori GitHub ke Cloudflare Pages untuk deployment otomatis, atau upload folder `dist` secara manual.
     *   **Environment Variables (Wajib Diset di Dashboard Pages)**:
-        *   `API_KEY`: API Key Google Gemini Anda (Dapatkan di [aistudio.google.com](https://aistudio.google.com/)).
+        *   `VITE_GEMINI_API_KEY`: API Key Google Gemini Anda (Dapatkan di [aistudio.google.com](https://aistudio.google.com/)).
+        *   `API_KEY`: Alias untuk API Key (backward compatibility).
         *   `VITE_API_BASE_URL`: URL Worker yang Anda dapatkan dari Tahap 1.
 
 ---
@@ -98,7 +99,9 @@ Karena proyek ini menggunakan database (D1 & Vectorize), deployment dilakukan da
     Edit file `.env` dan ganti nilai-nilai berikut:
     ```env
     # Wajib: API Key Google Gemini
-    API_KEY=AIzaSy... # Dapatkan dari https://aistudio.google.com/
+    VITE_GEMINI_API_KEY=AIzaSy... # Dapatkan dari https://aistudio.google.com/
+    # Legacy compatibility (untuk services/geminiService.ts)
+    API_KEY=AIzaSy... # Sama dengan VITE_GEMINI_API_KEY
     
     # Opsional: Jika menjalankan worker lokal
     # VITE_WORKER_URL=http://localhost:8787
