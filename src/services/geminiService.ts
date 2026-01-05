@@ -1,9 +1,13 @@
 
-// FIX: Import `Type` for JSON schema definition.
 import { GoogleGenAI, Type } from "@google/genai";
-// FIX: Import content types for the AI editor function.
 import type { FeaturedProgram, LatestNews } from '../types';
 import { WORKER_CHAT_ENDPOINT } from '../config';
+import {
+  classifyError,
+  logError,
+  getUserFriendlyMessage,
+  withCircuitBreaker
+} from '../utils/errorHandler';
 
 // Initialize the Google AI client
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' });
@@ -89,18 +93,27 @@ ${message}
   }
 
   try {
-    const responseStream = await ai.models.generateContentStream({
+    const responseStream = await withCircuitBreaker(async () => {
+      return await ai.models.generateContentStream({
         model: model,
         contents,
         config
+      });
     });
 
     for await (const chunk of responseStream) {
       yield chunk.text || '';
     }
   } catch (error) {
-      console.error("Error calling Gemini API:", error);
-      yield "Maaf, sistem AI sedang sibuk atau mengalami gangguan. Silakan coba sesaat lagi.";
+    const classifiedError = classifyError(error, {
+      operation: 'getAIResponseStream',
+      timestamp: Date.now()
+    });
+    logError(classifiedError);
+    const message = getUserFriendlyMessage(classifiedError);
+    yield message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.' 
+      ? 'Maaf, sistem AI sedang sibuk atau mengalami gangguan. Silakan coba sesaat lagi.' 
+      : message;
   }
 }
 
@@ -117,17 +130,26 @@ export async function analyzeClassPerformance(grades: { studentName: string; sub
     `;
 
     try {
-        const response = await ai.models.generateContent({
-            model: PRO_THINKING_MODEL,
-            contents: prompt,
-            config: {
-                thinkingConfig: { thinkingBudget: 32768 }
-            }
+        const response = await withCircuitBreaker(async () => {
+            return await ai.models.generateContent({
+                model: PRO_THINKING_MODEL,
+                contents: prompt,
+                config: {
+                    thinkingConfig: { thinkingBudget: 32768 }
+                }
+            });
         });
         return response.text || "Gagal melakukan analisis.";
-    } catch (e) {
-        console.error("Analysis failed", e);
-        return "Maaf, gagal menganalisis data saat ini.";
+    } catch (error) {
+        const classifiedError = classifyError(error, {
+            operation: 'analyzeClassPerformance',
+            timestamp: Date.now()
+        });
+        logError(classifiedError);
+        const message = getUserFriendlyMessage(classifiedError);
+        return message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.' 
+          ? "Maaf, gagal menganalisis data saat ini." 
+          : message;
     }
 }
 
@@ -188,19 +210,20 @@ Please provide the updated JSON content.`;
     };
 
     try {
-        const response = await ai.models.generateContent({
-            model,
-            contents: fullPrompt,
-            config: {
-                systemInstruction,
-                responseMimeType: "application/json",
-                responseSchema: schema,
-                thinkingConfig: { thinkingBudget: 32768 } // Use thinking for precise JSON editing
-            },
+        const response = await withCircuitBreaker(async () => {
+            return await ai.models.generateContent({
+                model,
+                contents: fullPrompt,
+                config: {
+                    systemInstruction,
+                    responseMimeType: "application/json",
+                    responseSchema: schema,
+                    thinkingConfig: { thinkingBudget: 32768 }
+                },
+            });
         });
-        
+
         const jsonText = (response.text || '').trim();
-        // Basic cleanup just in case
         const firstBrace = jsonText.indexOf('{');
         const lastBrace = jsonText.lastIndexOf('}');
         let cleanedJsonText = jsonText;
@@ -210,8 +233,15 @@ Please provide the updated JSON content.`;
 
         return JSON.parse(cleanedJsonText);
     } catch (error) {
-        console.error("Error calling Gemini API for content editing:", error);
-        throw new Error("Gagal memproses respon dari AI. Mohon coba instruksi yang lebih spesifik.");
+        const classifiedError = classifyError(error, {
+            operation: 'getAIEditorResponse',
+            timestamp: Date.now()
+        });
+        logError(classifiedError);
+        const message = getUserFriendlyMessage(classifiedError);
+        throw new Error(message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.' 
+          ? "Gagal memproses respon dari AI. Mohon coba instruksi yang lebih spesifik." 
+          : message);
     }
 }
 
