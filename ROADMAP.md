@@ -23,11 +23,12 @@ Fokus: Membangun antarmuka pengguna (UI) lengkap dan logika bisnis menggunakan p
 Fokus: Memindahkan penyimpanan data dari `localStorage` ke Database Serverless sesungguhnya (Cloudflare D1).
 
 - [x] **Migrasi Database**:
-    - [x] Buat skema tabel D1 (`users`, `students`, `teachers`, `grades`, `attendance`, `inventory`, dll).
+    - [x] Buat skema tabel D1 (`users`, `students`, `teachers`, `grades`, `attendance`, `inventory`, `ppdb_registrants`, `school_events`, `sessions`, `audit_log`, `subjects`, `classes`, `schedules`, `e_library`, `announcements`).
     - [x] Buat API Endpoints di Cloudflare Workers untuk operasi CRUD (Users, PPDB, Inventory, Events).
-    - [ ] Implementasi API endpoints untuk Grade management
-    - [ ] Implementasi API endpoints untuk Attendance tracking
-    - [ ] Implementasi API endpoints untuk E-Library materials
+    - [x] Implementasi API endpoints untuk Grade management (Students, Teachers, Subjects, Classes, Schedules, Grades)
+    - [x] Implementasi API endpoints untuk Attendance tracking
+    - [x] Implementasi API endpoints untuk E-Library materials
+    - [x] Implementasi API endpoints untuk Announcements
 - [x] **Autentikasi Aman**:
     - [x] Ganti simulasi login dengan JWT (JSON Web Token) yang valid.
     - [x] Implementasi Session Management dengan JWT sessions

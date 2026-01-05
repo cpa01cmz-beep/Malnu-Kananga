@@ -1,7 +1,30 @@
 // apiService.ts - Frontend API Service
 // Handles all backend API interactions
 
-import type { User, PPDBRegistrant, InventoryItem, SchoolEvent } from '../types';
+import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement } from '../types';
+
+interface Student {
+  id: string;
+  userId: string;
+  nisn: string;
+  nis: string;
+  class: string;
+  className: string;
+  address: string;
+  phoneNumber: string;
+  parentName: string;
+  parentPhone: string;
+  dateOfBirth: string;
+  enrollmentDate: string;
+}
+
+interface Teacher {
+  id: string;
+  userId: string;
+  nip: string;
+  subjects: string;
+  joinDate: string;
+}
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
 
@@ -227,6 +250,78 @@ export const usersAPI = {
 };
 
 // ============================================
+// STUDENTS API
+// ============================================
+
+export const studentsAPI = {
+  async getAll(): Promise<ApiResponse<Student[]>> {
+    return request<Student[]>('/api/students');
+  },
+
+  async getById(id: string): Promise<ApiResponse<Student>> {
+    return request<Student>(`/api/students/${id}`);
+  },
+
+  async getByClass(className: string): Promise<ApiResponse<Student[]>> {
+    return request<Student[]>(`/api/students?class_name=${className}`);
+  },
+
+  async create(student: Partial<Student>): Promise<ApiResponse<Student>> {
+    return request<Student>('/api/students', {
+      method: 'POST',
+      body: JSON.stringify(student),
+    });
+  },
+
+  async update(id: string, student: Partial<Student>): Promise<ApiResponse<Student>> {
+    return request<Student>(`/api/students/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(student),
+    });
+  },
+
+  async delete(id: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/students/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// ============================================
+// TEACHERS API
+// ============================================
+
+export const teachersAPI = {
+  async getAll(): Promise<ApiResponse<Teacher[]>> {
+    return request<Teacher[]>('/api/teachers');
+  },
+
+  async getById(id: string): Promise<ApiResponse<Teacher>> {
+    return request<Teacher>(`/api/teachers/${id}`);
+  },
+
+  async create(teacher: Partial<Teacher>): Promise<ApiResponse<Teacher>> {
+    return request<Teacher>('/api/teachers', {
+      method: 'POST',
+      body: JSON.stringify(teacher),
+    });
+  },
+
+  async update(id: string, teacher: Partial<Teacher>): Promise<ApiResponse<Teacher>> {
+    return request<Teacher>(`/api/teachers/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(teacher),
+    });
+  },
+
+  async delete(id: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/teachers/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// ============================================
 // PPDB REGISTRANTS API
 // ============================================
 
@@ -376,14 +471,313 @@ export const chatAPI = {
 };
 
 // ============================================
+// SUBJECTS API
+// ============================================
+
+export const subjectsAPI = {
+  async getAll(): Promise<ApiResponse<Subject[]>> {
+    return request<Subject[]>('/api/subjects');
+  },
+
+  async getById(id: string): Promise<ApiResponse<Subject>> {
+    return request<Subject>(`/api/subjects/${id}`);
+  },
+
+  async create(subject: Partial<Subject>): Promise<ApiResponse<Subject>> {
+    return request<Subject>('/api/subjects', {
+      method: 'POST',
+      body: JSON.stringify(subject),
+    });
+  },
+
+  async update(id: string, subject: Partial<Subject>): Promise<ApiResponse<Subject>> {
+    return request<Subject>(`/api/subjects/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(subject),
+    });
+  },
+
+  async delete(id: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/subjects/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// ============================================
+// CLASSES API
+// ============================================
+
+export const classesAPI = {
+  async getAll(): Promise<ApiResponse<Class[]>> {
+    return request<Class[]>('/api/classes');
+  },
+
+  async getById(id: string): Promise<ApiResponse<Class>> {
+    return request<Class>(`/api/classes/${id}`);
+  },
+
+  async create(classData: Partial<Class>): Promise<ApiResponse<Class>> {
+    return request<Class>('/api/classes', {
+      method: 'POST',
+      body: JSON.stringify(classData),
+    });
+  },
+
+  async update(id: string, classData: Partial<Class>): Promise<ApiResponse<Class>> {
+    return request<Class>(`/api/classes/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(classData),
+    });
+  },
+
+  async delete(id: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/classes/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// ============================================
+// SCHEDULES API
+// ============================================
+
+export const schedulesAPI = {
+  async getAll(): Promise<ApiResponse<Schedule[]>> {
+    return request<Schedule[]>('/api/schedules');
+  },
+
+  async getById(id: string): Promise<ApiResponse<Schedule>> {
+    return request<Schedule>(`/api/schedules/${id}`);
+  },
+
+  async create(schedule: Partial<Schedule>): Promise<ApiResponse<Schedule>> {
+    return request<Schedule>('/api/schedules', {
+      method: 'POST',
+      body: JSON.stringify(schedule),
+    });
+  },
+
+  async update(id: string, schedule: Partial<Schedule>): Promise<ApiResponse<Schedule>> {
+    return request<Schedule>(`/api/schedules/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(schedule),
+    });
+  },
+
+  async delete(id: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/schedules/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// ============================================
+// GRADES API
+// ============================================
+
+export const gradesAPI = {
+  async getAll(): Promise<ApiResponse<Grade[]>> {
+    return request<Grade[]>('/api/grades');
+  },
+
+  async getById(id: string): Promise<ApiResponse<Grade>> {
+    return request<Grade>(`/api/grades/${id}`);
+  },
+
+  async getByStudent(studentId: string): Promise<ApiResponse<Grade[]>> {
+    return request<Grade[]>(`/api/grades?student_id=${studentId}`);
+  },
+
+  async getBySubject(subjectId: string): Promise<ApiResponse<Grade[]>> {
+    return request<Grade[]>(`/api/grades?subject_id=${subjectId}`);
+  },
+
+  async getByClass(classId: string): Promise<ApiResponse<Grade[]>> {
+    return request<Grade[]>(`/api/grades?class_id=${classId}`);
+  },
+
+  async create(grade: Partial<Grade>): Promise<ApiResponse<Grade>> {
+    return request<Grade>('/api/grades', {
+      method: 'POST',
+      body: JSON.stringify(grade),
+    });
+  },
+
+  async update(id: string, grade: Partial<Grade>): Promise<ApiResponse<Grade>> {
+    return request<Grade>(`/api/grades/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(grade),
+    });
+  },
+
+  async delete(id: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/grades/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// ============================================
+// ATTENDANCE API
+// ============================================
+
+export const attendanceAPI = {
+  async getAll(): Promise<ApiResponse<Attendance[]>> {
+    return request<Attendance[]>('/api/attendance');
+  },
+
+  async getById(id: string): Promise<ApiResponse<Attendance>> {
+    return request<Attendance>(`/api/attendance/${id}`);
+  },
+
+  async getByStudent(studentId: string): Promise<ApiResponse<Attendance[]>> {
+    return request<Attendance[]>(`/api/attendance?student_id=${studentId}`);
+  },
+
+  async getByClass(classId: string): Promise<ApiResponse<Attendance[]>> {
+    return request<Attendance[]>(`/api/attendance?class_id=${classId}`);
+  },
+
+  async getByDate(date: string): Promise<ApiResponse<Attendance[]>> {
+    return request<Attendance[]>(`/api/attendance?date=${date}`);
+  },
+
+  async create(attendance: Partial<Attendance>): Promise<ApiResponse<Attendance>> {
+    return request<Attendance>('/api/attendance', {
+      method: 'POST',
+      body: JSON.stringify(attendance),
+    });
+  },
+
+  async update(id: string, attendance: Partial<Attendance>): Promise<ApiResponse<Attendance>> {
+    return request<Attendance>(`/api/attendance/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(attendance),
+    });
+  },
+
+  async delete(id: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/attendance/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// ============================================
+// E-LIBRARY API
+// ============================================
+
+export const eLibraryAPI = {
+  async getAll(): Promise<ApiResponse<ELibrary[]>> {
+    return request<ELibrary[]>('/api/e_library');
+  },
+
+  async getById(id: string): Promise<ApiResponse<ELibrary>> {
+    return request<ELibrary>(`/api/e_library/${id}`);
+  },
+
+  async getByCategory(category: string): Promise<ApiResponse<ELibrary[]>> {
+    return request<ELibrary[]>(`/api/e_library?category=${category}`);
+  },
+
+  async getBySubject(subjectId: string): Promise<ApiResponse<ELibrary[]>> {
+    return request<ELibrary[]>(`/api/e_library?subject_id=${subjectId}`);
+  },
+
+  async create(material: Partial<ELibrary>): Promise<ApiResponse<ELibrary>> {
+    return request<ELibrary>('/api/e_library', {
+      method: 'POST',
+      body: JSON.stringify(material),
+    });
+  },
+
+  async update(id: string, material: Partial<ELibrary>): Promise<ApiResponse<ELibrary>> {
+    return request<ELibrary>(`/api/e_library/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(material),
+    });
+  },
+
+  async incrementDownloadCount(id: string): Promise<ApiResponse<ELibrary>> {
+    return request<ELibrary>(`/api/e_library/${id}/download`, {
+      method: 'PUT',
+    });
+  },
+
+  async delete(id: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/e_library/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// ============================================
+// ANNOUNCEMENTS API
+// ============================================
+
+export const announcementsAPI = {
+  async getAll(): Promise<ApiResponse<Announcement[]>> {
+    return request<Announcement[]>('/api/announcements');
+  },
+
+  async getById(id: string): Promise<ApiResponse<Announcement>> {
+    return request<Announcement>(`/api/announcements/${id}`);
+  },
+
+  async getActive(): Promise<ApiResponse<Announcement[]>> {
+    return request<Announcement[]>('/api/announcements?active=true');
+  },
+
+  async getByCategory(category: string): Promise<ApiResponse<Announcement[]>> {
+    return request<Announcement[]>(`/api/announcements?category=${category}`);
+  },
+
+  async create(announcement: Partial<Announcement>): Promise<ApiResponse<Announcement>> {
+    return request<Announcement>('/api/announcements', {
+      method: 'POST',
+      body: JSON.stringify(announcement),
+    });
+  },
+
+  async update(id: string, announcement: Partial<Announcement>): Promise<ApiResponse<Announcement>> {
+    return request<Announcement>(`/api/announcements/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(announcement),
+    });
+  },
+
+  async toggleStatus(id: string): Promise<ApiResponse<Announcement>> {
+    return request<Announcement>(`/api/announcements/${id}/toggle`, {
+      method: 'PUT',
+    });
+  },
+
+  async delete(id: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/announcements/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// ============================================
 // EXPORT ALL APIs
 // ============================================
 
 export const api = {
   auth: authAPI,
   users: usersAPI,
+  students: studentsAPI,
+  teachers: teachersAPI,
   ppdb: ppdbAPI,
   inventory: inventoryAPI,
   events: eventsAPI,
   chat: chatAPI,
+  subjects: subjectsAPI,
+  classes: classesAPI,
+  schedules: schedulesAPI,
+  grades: gradesAPI,
+  attendance: attendanceAPI,
+  eLibrary: eLibraryAPI,
+  announcements: announcementsAPI,
 };

@@ -67,3 +67,82 @@ export interface SchoolEvent {
   description: string;
   status: 'Upcoming' | 'Ongoing' | 'Completed';
 }
+
+export interface Subject {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  creditHours: number;
+}
+
+export interface Class {
+  id: string;
+  name: string;
+  homeroomTeacherId: string;
+  academicYear: string;
+  semester: '1' | '2';
+}
+
+export interface Schedule {
+  id: string;
+  classId: string;
+  subjectId: string;
+  teacherId: string;
+  dayOfWeek: 'Senin' | 'Selasa' | 'Rabu' | 'Kamis' | 'Jumat' | 'Sabtu' | 'Minggu';
+  startTime: string;
+  endTime: string;
+  room: string;
+}
+
+export interface Grade {
+  id: string;
+  studentId: string;
+  subjectId: string;
+  classId: string;
+  academicYear: string;
+  semester: string;
+  assignmentType: string;
+  assignmentName: string;
+  score: number;
+  maxScore: number;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface Attendance {
+  id: string;
+  studentId: string;
+  classId: string;
+  date: string;
+  status: 'hadir' | 'sakit' | 'izin' | 'alpa';
+  notes: string;
+  recordedBy: string;
+  createdAt: string;
+}
+
+export interface ELibrary {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  subjectId: string;
+  uploadedBy: string;
+  uploadedAt: string;
+  downloadCount: number;
+}
+
+export interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  category: 'umum' | 'akademik' | 'kegiatan' | 'keuangan';
+  targetAudience: string;
+  isActive: boolean;
+  createdBy: string;
+  createdAt: string;
+  expiresAt: string;
+}

@@ -267,6 +267,99 @@ async function initDatabase(env) {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     
+    CREATE TABLE IF NOT EXISTS subjects (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      code TEXT UNIQUE NOT NULL,
+      description TEXT,
+      credit_hours INTEGER DEFAULT 2
+    );
+    
+    CREATE TABLE IF NOT EXISTS classes (
+      id TEXT PRIMARY KEY,
+      name TEXT UNIQUE NOT NULL,
+      homeroom_teacher_id TEXT,
+      academic_year TEXT NOT NULL,
+      semester TEXT NOT NULL CHECK(semester IN ('1', '2')),
+      FOREIGN KEY (homeroom_teacher_id) REFERENCES teachers(id) ON DELETE SET NULL
+    );
+    
+    CREATE TABLE IF NOT EXISTS schedules (
+      id TEXT PRIMARY KEY,
+      class_id TEXT NOT NULL,
+      subject_id TEXT NOT NULL,
+      teacher_id TEXT NOT NULL,
+      day_of_week TEXT NOT NULL CHECK(day_of_week IN ('Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')),
+      start_time TEXT NOT NULL,
+      end_time TEXT NOT NULL,
+      room TEXT,
+      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+      FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+      FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE CASCADE
+    );
+    
+    CREATE TABLE IF NOT EXISTS attendance (
+      id TEXT PRIMARY KEY,
+      student_id TEXT NOT NULL,
+      class_id TEXT NOT NULL,
+      date DATE NOT NULL,
+      status TEXT NOT NULL CHECK(status IN ('hadir', 'sakit', 'izin', 'alpa')),
+      notes TEXT,
+      recorded_by TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+      FOREIGN KEY (recorded_by) REFERENCES users(id)
+    );
+    
+    CREATE TABLE IF NOT EXISTS grades (
+      id TEXT PRIMARY KEY,
+      student_id TEXT NOT NULL,
+      subject_id TEXT NOT NULL,
+      class_id TEXT NOT NULL,
+      academic_year TEXT NOT NULL,
+      semester TEXT NOT NULL,
+      assignment_type TEXT NOT NULL,
+      assignment_name TEXT NOT NULL,
+      score REAL NOT NULL CHECK(score >= 0 AND score <= 100),
+      max_score REAL DEFAULT 100,
+      created_by TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+      FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+      FOREIGN KEY (created_by) REFERENCES users(id)
+    );
+    
+    CREATE TABLE IF NOT EXISTS e_library (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      description TEXT,
+      category TEXT NOT NULL,
+      file_url TEXT NOT NULL,
+      file_type TEXT NOT NULL,
+      file_size INTEGER,
+      subject_id TEXT,
+      uploaded_by TEXT NOT NULL,
+      uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      download_count INTEGER DEFAULT 0,
+      FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE SET NULL,
+      FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE CASCADE
+    );
+    
+    CREATE TABLE IF NOT EXISTS announcements (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      category TEXT NOT NULL CHECK(category IN ('umum', 'akademik', 'kegiatan', 'keuangan')),
+      target_audience TEXT,
+      is_active BOOLEAN DEFAULT 1,
+      created_by TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      expires_at TIMESTAMP,
+      FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+    );
+    
     CREATE TABLE IF NOT EXISTS sessions (
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL,
@@ -619,6 +712,15 @@ export default {
       '/api/ppdb_registrants': (r, e, c) => handleCRUD(r, e, c, 'ppdb_registrants'),
       '/api/inventory': (r, e, c) => handleCRUD(r, e, c, 'inventory'),
       '/api/school_events': (r, e, c) => handleCRUD(r, e, c, 'school_events'),
+      '/api/students': (r, e, c) => handleCRUD(r, e, c, 'students'),
+      '/api/teachers': (r, e, c) => handleCRUD(r, e, c, 'teachers'),
+      '/api/subjects': (r, e, c) => handleCRUD(r, e, c, 'subjects'),
+      '/api/classes': (r, e, c) => handleCRUD(r, e, c, 'classes'),
+      '/api/schedules': (r, e, c) => handleCRUD(r, e, c, 'schedules'),
+      '/api/grades': (r, e, c) => handleCRUD(r, e, c, 'grades'),
+      '/api/attendance': (r, e, c) => handleCRUD(r, e, c, 'attendance'),
+      '/api/e_library': (r, e, c) => handleCRUD(r, e, c, 'e_library'),
+      '/api/announcements': (r, e, c) => handleCRUD(r, e, c, 'announcements'),
     };
     
     for (const [path, handler] of Object.entries(routes)) {
