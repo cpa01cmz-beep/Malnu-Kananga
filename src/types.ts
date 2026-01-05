@@ -95,6 +95,50 @@ export interface PPDBRegistrant {
   registrationDate: string;
   status: 'pending' | 'approved' | 'rejected';
   documentUrl?: string;
+  score?: number;
+  rubricScores?: Record<string, number>;
+  documentPreviews?: DocumentPreview[];
+}
+
+export interface DocumentPreview {
+  id: string;
+  name: string;
+  url: string;
+  type: 'image' | 'pdf' | 'document';
+  size: number;
+}
+
+export interface PPDBFilterOptions {
+  status: 'all' | 'pending' | 'approved' | 'rejected';
+  dateRange: 'all' | 'today' | 'week' | 'month';
+  scoreRange: 'all' | 'high' | 'medium' | 'low';
+  schoolFilter: string;
+}
+
+export interface PPDBSortOptions {
+  field: 'registrationDate' | 'fullName' | 'score' | 'status';
+  direction: 'asc' | 'desc';
+}
+
+export interface PPDBTemplate {
+  id: string;
+  name: string;
+  type: 'approval' | 'rejection';
+  subject: string;
+  body: string;
+  variables: string[];
+}
+
+export interface PPDBRubric {
+  id: string;
+  name: string;
+  criteria: {
+    id: string;
+    name: string;
+    weight: number;
+    maxScore: number;
+    description: string;
+  }[];
 }
 
 export interface InventoryItem {
