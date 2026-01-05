@@ -6,6 +6,13 @@ import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';
 import { STORAGE_KEYS, VOICE_CONFIG } from '../constants';
 import type { VoiceLanguage, SpeechSynthesisVoice } from '../types';
 import { logger } from '../utils/logger';
+import {
+  backupVoiceSettings,
+  restoreVoiceSettings,
+  hasBackup,
+  getBackupDate,
+  deleteBackup,
+} from '../services/voiceSettingsBackup';
 
 interface VoiceSettingsProps {
   isOpen: boolean;
@@ -41,6 +48,9 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [autoReadAI, setAutoReadAI] = useState(false);
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
+  const [hasSettingsBackup, setHasSettingsBackup] = useState(false);
+  const [backupDate, setBackupDate] = useState<string | null>(null);
+  const [showRestoreConfirmation, setShowRestoreConfirmation] = useState(false);
 
   const loadSettings = useCallback(() => {
     try {
@@ -81,6 +91,8 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
   useEffect(() => {
     if (isOpen && synthesis.voices.length > 0) {
       loadSettings();
+      setHasSettingsBackup(hasBackup());
+      setBackupDate(getBackupDate());
     }
   }, [isOpen, synthesis.voices.length, loadSettings]);
 
@@ -186,6 +198,44 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
     }
 
     setShowResetConfirmation(false);
+  };
+
+  const handleBackup = () => {
+    if (backupVoiceSettings()) {
+      setHasSettingsBackup(true);
+      setBackupDate(getBackupDate());
+      if (onShowToast) {
+        onShowToast('Pengaturan suara berhasil dibackup', 'success');
+      }
+    } else {
+      if (onShowToast) {
+        onShowToast('Gagal membackup pengaturan suara', 'error');
+      }
+    }
+  };
+
+  const handleRestore = () => {
+    if (restoreVoiceSettings()) {
+      loadSettings();
+      if (onShowToast) {
+        onShowToast('Pengaturan suara berhasil dipulihkan', 'success');
+      }
+    } else {
+      if (onShowToast) {
+        onShowToast('Gagal memulihkan pengaturan suara', 'error');
+      }
+    }
+    setShowRestoreConfirmation(false);
+  };
+
+  const handleDeleteBackup = () => {
+    if (deleteBackup()) {
+      setHasSettingsBackup(false);
+      setBackupDate(null);
+      if (onShowToast) {
+        onShowToast('Backup pengaturan suara berhasil dihapus', 'success');
+      }
+    }
   };
 
   if (!isOpen) return null;
@@ -353,6 +403,44 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
           </div>
 
           <div className="space-y-4">
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Backup & Restore</h3>
+
+              {hasSettingsBackup && backupDate ? (
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <p className="text-xs text-blue-700 dark:text-blue-300 mb-2">
+                    Backup tersimpan: {backupDate}
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setShowRestoreConfirmation(true)}
+                      className="flex-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+                    >
+                      Pulihkan
+                    </button>
+                    <button
+                      onClick={handleDeleteBackup}
+                      className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                    >
+                      Hapus
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={handleBackup}
+                  className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  Backup Pengaturan
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-4">
             <button
               onClick={() => setShowResetConfirmation(true)}
               className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
@@ -389,6 +477,36 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                   className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
                 >
                   Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Restore Confirmation Modal */}
+      {showRestoreConfirmation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm mx-4 border border-gray-200 dark:border-gray-700">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                Pulihkan Pengaturan Suara?
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                Pengaturan suara akan dikembalikan ke nilai dari backup: {backupDate}. Pengaturan saat ini akan ditimpa.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowRestoreConfirmation(false)}
+                  className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleRestore}
+                  className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  Pulihkan
                 </button>
               </div>
             </div>

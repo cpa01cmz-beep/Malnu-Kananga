@@ -5,6 +5,8 @@ import UsersIcon from './icons/UsersIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
+import { backupVoiceSettings } from '../services/voiceSettingsBackup';
+import { logger } from '../utils/logger';
 
 import { STORAGE_KEYS } from '../constants'; // Import constants
 
@@ -73,14 +75,20 @@ const SystemStats: React.FC<SystemStatsProps> = ({ onBack, onShowToast }) => {
   const handleFactoryReset = () => {
     const confirmText = "PERINGATAN: Tindakan ini akan menghapus SEMUA data:\n- Akun user baru\n- Nilai & Absensi\n- Konten website\n- Data PPDB\n- Inventaris & Event\n\nAplikasi akan kembali ke pengaturan awal pabrik. Lanjutkan?";
     if (window.confirm(confirmText)) {
-      
-      // Iterate over all keys in STORAGE_KEYS and remove them
-      Object.values(STORAGE_KEYS).forEach(key => {
+
+      backupVoiceSettings();
+      logger.info('Voice settings backed up before factory reset');
+
+      const keysToRemove = Object.values(STORAGE_KEYS).filter(
+        key => key !== STORAGE_KEYS.VOICE_SETTINGS_BACKUP_KEY
+      );
+
+      keysToRemove.forEach(key => {
           localStorage.removeItem(key);
       });
-      
+
       onShowToast('Sistem berhasil di-reset. Halaman akan dimuat ulang.', 'success');
-      
+
       setTimeout(() => {
         window.location.reload();
       }, 1500);

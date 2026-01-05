@@ -12,6 +12,7 @@ export const STORAGE_KEYS = {
     AUTH_SESSION: 'malnu_auth_session',
     THEME: 'malnu_theme',
     VOICE_STORAGE_KEY: 'malnu_voice_settings',
+    VOICE_SETTINGS_BACKUP_KEY: 'malnu_voice_settings_backup',
 } as const;
 
 export const APP_CONFIG = {
