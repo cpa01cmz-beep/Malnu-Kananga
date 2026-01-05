@@ -31,7 +31,7 @@ echo "🔧 Building application..."
 npm run build
 
 echo "🧪 Running tests..."
-npm test -- --watchAll=false --passWithNoTests
+npm run test:run
 
 echo "☁️  Deploying to Cloudflare Workers..."
 
