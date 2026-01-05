@@ -20,6 +20,11 @@ database_id = "placeholder-database-id"  # Replace with actual ID after creation
 binding = "VECTORIZE_INDEX"
 index_name = "malnu-kananga-index"
 
+# R2 Bucket bindings - create with: wrangler r2 bucket create malnu-kananga-files
+[[env.production.r2_buckets]]
+binding = "BUCKET"
+bucket_name = "malnu-kananga-files"
+
 # Environment variables
 [env.production.vars]
 ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
@@ -40,6 +45,10 @@ database_id = "your-dev-d1-database-id-here"  # Replace with actual ID after cre
 [[env.dev.vectorize]]
 binding = "VECTORIZE_INDEX"
 index_name = "malnu-kananga-index-dev"
+
+[[env.dev.r2_buckets]]
+binding = "BUCKET"
+bucket_name = "malnu-kananga-files-dev"
 
 [env.dev.vars]
 ALLOWED_ORIGIN = "*"
