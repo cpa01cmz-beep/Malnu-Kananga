@@ -3,6 +3,9 @@ import { usePushNotifications } from '../hooks/usePushNotifications';
 import { CloseIcon } from './icons/CloseIcon';
 import { BellIcon } from './icons/BellIcon';
 import { BellSlashIcon } from './icons/BellSlashIcon';
+import BatchManagement from './BatchManagement';
+import TemplateManagement from './TemplateManagement';
+import NotificationAnalyticsComponent from './NotificationAnalytics';
 import { NotificationSettings as NotificationSettingsType } from '../types';
 import { logger } from '../utils/logger';
 
@@ -22,6 +25,9 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
     permissionDenied,
     settings,
     history,
+    batches,
+    templates,
+    analytics,
     requestPermission,
     updateSettings,
     resetSettings,
@@ -30,11 +36,17 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
     deleteNotification,
     showNotification,
     createNotification,
+    createBatch,
+    sendBatch,
+    createTemplate,
+    createNotificationFromTemplate,
   } = usePushNotifications();
 
   const [localSettings, setLocalSettings] = useState<NotificationSettingsType>(settings);
   const [showHistory, setShowHistory] = useState(false);
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
+  
+  const [activeTab, setActiveTab] = useState<'settings' | 'batches' | 'templates' | 'analytics'>('settings');
 
   const handleSaveSettings = useCallback(() => {
     updateSettings(localSettings);
@@ -140,7 +152,61 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        {/* Tabs */}
+        <div className="border-b border-gray-200">
+          <nav className="flex space-x-8 px-6" aria-label="Tabs">
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'settings'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Pengaturan
+            </button>
+            <button
+              onClick={() => setActiveTab('batches')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm relative ${
+                activeTab === 'batches'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Batch
+              {batches.filter(b => b.status === 'pending').length > 0 && (
+                <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {batches.filter(b => b.status === 'pending').length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('templates')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'templates'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Template
+            </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'analytics'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Analytics
+            </button>
+          </nav>
+        </div>
+
+        {/* Tab Content */}
+        <div className="p-6">
+          {activeTab === 'settings' && (
+            <div className="space-y-6">
           {/* Permission Status */}
           <div className="bg-gray-50 rounded-lg p-4">
             <h3 className="text-sm font-medium text-gray-900 mb-3">
@@ -278,6 +344,34 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                 />
                 <span className="text-sm text-gray-700">Sistem</span>
               </label>
+
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={localSettings.roleBasedFiltering}
+                  onChange={(e) =>
+                    setLocalSettings({ ...localSettings, roleBasedFiltering: e.target.checked })
+                  }
+                  disabled={!localSettings.enabled}
+                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  aria-label="Filter berdasarkan peran"
+                />
+                <span className="text-sm text-gray-700">Filter Berdasarkan Peran</span>
+              </label>
+
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={localSettings.batchNotifications}
+                  onChange={(e) =>
+                    setLocalSettings({ ...localSettings, batchNotifications: e.target.checked })
+                  }
+                  disabled={!localSettings.enabled}
+                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  aria-label="Grup notifikasi"
+                />
+                <span className="text-sm text-gray-700">Grup Notifikasi</span>
+              </label>
             </div>
           </div>
 
@@ -345,12 +439,40 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                     className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-              </div>
+</div>
             )}
           </div>
+        </div>
+          )}
 
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3">
+          {activeTab === 'batches' && (
+            <BatchManagement 
+              batches={batches} 
+              createBatch={createBatch} 
+              sendBatch={sendBatch} 
+              onShowToast={onShowToast} 
+            />
+          )}
+
+          {activeTab === 'templates' && (
+            <TemplateManagement 
+              templates={templates}
+              createTemplate={createTemplate}
+              createNotificationFromTemplate={createNotificationFromTemplate}
+              showNotification={showNotification}
+              onShowToast={onShowToast}
+            />
+          )}
+
+          {activeTab === 'analytics' && (
+            <NotificationAnalyticsComponent analytics={analytics} />
+          )}
+        </div>
+
+        {activeTab === 'settings' && (
+          <div className="px-6 pb-6">
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={handleSaveSettings}
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
@@ -376,8 +498,9 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
             >
               Reset
             </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Reset Confirmation Modal */}
         {showResetConfirmation && (
