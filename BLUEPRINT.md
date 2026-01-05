@@ -32,22 +32,33 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 │         Web-Based School Management System          │
 ├──────────────────────────────────────────────────────────────────┤
 │                   Frontend Layer                     │
-│  (Web Interface - Responsif untuk Desktop/Mobile)  │
+│  (React + Vite - Responsif untuk Desktop/Mobile)   │
+│  State Management: React Hooks + apiService.ts      │
 ├──────────────────────────────────────────────────────────────────┤
 │                   Application Layer                  │
-│  (Business Logic & Integration Services)           │
+│  (Cloudflare Workers - Serverless Backend)         │
+│  Business Logic, API Endpoints, JWT Auth           │
 ├──────────────────────────────────────────────────────────────────┤
 │                   Database Layer                     │
-│  (Data Storage - Terenkripsi & Backup Otomatis)   │
+│  (Cloudflare D1 - SQLite Serverless Database)       │
+│  15+ Tables: Users, Students, Teachers, etc.       │
+├──────────────────────────────────────────────────────────────────┤
+│                   AI & Search Layer                  │
+│  (Cloudflare Vectorize + Workers AI)               │
+│  RAG Chatbot, Document Embeddings                  │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
 ### 3.2 Infrastruktur
-- **Deployment**: Cloud-based / On-premise server
-- **Database**: Relational Database (MySQL, PostgreSQL)
+- **Frontend Deployment**: Cloudflare Pages / Vercel / Netlify
+- **Backend Deployment**: Cloudflare Workers (Edge computing)
+- **Database**: Cloudflare D1 (SQLite-based serverless database)
+- **Search/AI**: Cloudflare Vectorize + Workers AI
+- **File Storage**: Cloudflare R2 (S3-compatible storage)
 - **Protocol**: HTTPS dengan SSL/TLS encryption
-- **Backup**: Automated daily backup dengan redundancy
-- **Scalability**: Dapat menangani ribuan pengguna konkuren
+- **Authentication**: JWT (JSON Web Tokens) dengan session management
+- **Backup**: Automated backup oleh Cloudflare D1
+- **Scalability**: Auto-scaling serverless architecture
 
 ---
 
