@@ -6,12 +6,16 @@ import type {
   SpeechRecognitionEventCallbacks,
   SpeechRecognitionState,
   VoiceLanguage,
+  SpeechRecognition,
+  SpeechRecognitionErrorEvent,
+  SpeechRecognitionEvent,
+  SpeechWindow,
 } from '../types';
 import { VOICE_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 
 class SpeechRecognitionService {
-  private recognition: any;
+  private recognition: SpeechRecognition | null;
   private state: SpeechRecognitionState = 'idle';
   private config: SpeechRecognitionConfig;
   private callbacks: SpeechRecognitionEventCallbacks = {};
@@ -39,13 +43,15 @@ class SpeechRecognitionService {
       return false;
     }
 
-    const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const speechWindow = window as SpeechWindow;
+    const SpeechRecognitionAPI = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
     return !!SpeechRecognitionAPI;
   }
 
   private initializeRecognition(): void {
     try {
-      const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const speechWindow = window as SpeechWindow;
+      const SpeechRecognitionAPI = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
       this.recognition = new SpeechRecognitionAPI();
       this.configureRecognition();
       this.setupEventListeners();
@@ -67,11 +73,11 @@ class SpeechRecognitionService {
   private setupEventListeners(): void {
     if (!this.recognition) return;
 
-    this.recognition.onresult = (event: any) => {
+    this.recognition.onresult = (event: SpeechRecognitionEvent) => {
       this.handleResult(event);
     };
 
-    this.recognition.onerror = (event: any) => {
+    this.recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       this.handleError(event);
     };
 
@@ -99,7 +105,7 @@ class SpeechRecognitionService {
     };
   }
 
-  private handleResult(event: any): void {
+  private handleResult(event: SpeechRecognitionEvent): void {
     const result = event.results[event.results.length - 1];
     const transcript = result[0].transcript;
     const isFinal = result.isFinal;
@@ -112,7 +118,7 @@ class SpeechRecognitionService {
     }
   }
 
-  private handleError(event: any): void {
+  private handleError(event: SpeechRecognitionErrorEvent): void {
     const error: SpeechRecognitionError = {
       error: this.mapErrorType(event.error),
       message: event.message || 'Speech recognition error occurred',
