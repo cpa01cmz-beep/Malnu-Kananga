@@ -16,6 +16,16 @@ interface PPDBRegistrationProps {
 }
 
 const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, onShowToast }) => {
+  const initialFormData = {
+    fullName: '',
+    nisn: '',
+    originSchool: '',
+    parentName: '',
+    phoneNumber: '',
+    email: '',
+    address: '',
+  };
+
   const [formData, setFormData] = useState<Partial<PPDBRegistrant>>({
     fullName: '',
     nisn: '',
@@ -35,21 +45,18 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
   const [diplomaImage, setDiplomaImage] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!isOpen) {
-      cleanup();
-    }
-    return cleanup;
-  }, [isOpen]);
-
-  const cleanup = async () => {
-    setExtractedGrades(null);
-    setShowGradesPreview(false);
+const cleanup = () => {
+    setFormData(initialFormData);
+    setUploadedDocument(null);
     setDiplomaImage(null);
     setOcrProgress({ status: 'Idle', progress: 0 });
   };
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (!isOpen) {
+      cleanup();
+    }
+  }, [isOpen]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const RelatedLinksSection: React.FC = () => {
-  const [links, setLinks] = useState([]);
+  const [links, setLinks] = useState<{name: string; href: string; icon: React.FC<object>; color: string}[]>([]);
 
   useEffect(() => {
     const loadLinks = async () => {

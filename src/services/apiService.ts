@@ -130,6 +130,7 @@ export const authAPI = {
   async login(email: string, password: string): Promise<LoginResponse> {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
+
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
@@ -152,6 +153,7 @@ export const authAPI = {
     try {
       await fetch(`${API_BASE_URL}/auth/logout`, {
         method: 'POST',
+
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -172,6 +174,7 @@ export const authAPI = {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
         method: 'POST',
+
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken }),
       });
@@ -310,7 +313,7 @@ export const usersAPI = {
     return request<User>('/api/users', {
       method: 'POST',
       body: JSON.stringify(user),
-    });
+    } as RequestInit);
   },
 
   // Update user
@@ -353,6 +356,7 @@ export const studentsAPI = {
   async create(student: Partial<Student>): Promise<ApiResponse<Student>> {
     return request<Student>('/api/students', {
       method: 'POST',
+
       body: JSON.stringify(student),
     });
   },
@@ -387,6 +391,7 @@ export const teachersAPI = {
   async create(teacher: Partial<Teacher>): Promise<ApiResponse<Teacher>> {
     return request<Teacher>('/api/teachers', {
       method: 'POST',
+
       body: JSON.stringify(teacher),
     });
   },
@@ -424,6 +429,7 @@ export const ppdbAPI = {
   async create(registrant: Partial<PPDBRegistrant>): Promise<ApiResponse<PPDBRegistrant>> {
     return request<PPDBRegistrant>('/api/ppdb_registrants', {
       method: 'POST',
+
       body: JSON.stringify(registrant),
     });
   },
@@ -467,6 +473,7 @@ export const inventoryAPI = {
   async create(item: Partial<InventoryItem>): Promise<ApiResponse<InventoryItem>> {
     return request<InventoryItem>('/api/inventory', {
       method: 'POST',
+
       body: JSON.stringify(item),
     });
   },
@@ -506,6 +513,7 @@ export const eventsAPI = {
   async create(event: Partial<SchoolEvent>): Promise<ApiResponse<SchoolEvent>> {
     return request<SchoolEvent>('/api/school_events', {
       method: 'POST',
+
       body: JSON.stringify(event),
     });
   },
@@ -546,6 +554,7 @@ export const chatAPI = {
   async getContext(message: string): Promise<{ context: string }> {
     const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: 'POST',
+
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message }),
     });
@@ -570,6 +579,7 @@ export const subjectsAPI = {
   async create(subject: Partial<Subject>): Promise<ApiResponse<Subject>> {
     return request<Subject>('/api/subjects', {
       method: 'POST',
+
       body: JSON.stringify(subject),
     });
   },
@@ -604,6 +614,7 @@ export const classesAPI = {
   async create(classData: Partial<Class>): Promise<ApiResponse<Class>> {
     return request<Class>('/api/classes', {
       method: 'POST',
+
       body: JSON.stringify(classData),
     });
   },
@@ -638,6 +649,7 @@ export const schedulesAPI = {
   async create(schedule: Partial<Schedule>): Promise<ApiResponse<Schedule>> {
     return request<Schedule>('/api/schedules', {
       method: 'POST',
+
       body: JSON.stringify(schedule),
     });
   },
@@ -684,6 +696,7 @@ export const gradesAPI = {
   async create(grade: Partial<Grade>): Promise<ApiResponse<Grade>> {
     return request<Grade>('/api/grades', {
       method: 'POST',
+
       body: JSON.stringify(grade),
     });
   },
@@ -730,6 +743,7 @@ export const attendanceAPI = {
   async create(attendance: Partial<Attendance>): Promise<ApiResponse<Attendance>> {
     return request<Attendance>('/api/attendance', {
       method: 'POST',
+
       body: JSON.stringify(attendance),
     });
   },
@@ -772,6 +786,7 @@ export const eLibraryAPI = {
   async create(material: Partial<ELibrary>): Promise<ApiResponse<ELibrary>> {
     return request<ELibrary>('/api/e_library', {
       method: 'POST',
+
       body: JSON.stringify(material),
     });
   },
@@ -928,6 +943,7 @@ export const announcementsAPI = {
   async create(announcement: Partial<Announcement>): Promise<ApiResponse<Announcement>> {
     return request<Announcement>('/api/announcements', {
       method: 'POST',
+
       body: JSON.stringify(announcement),
     });
   },

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import VoiceCommandParser from '../services/voiceCommandParser';
-import type { VoiceCommand, VoiceLanguage } from '../types';
+import type { VoiceCommand } from '../types';
+import { VoiceLanguage } from '../types';
 import { logger } from '../utils/logger';
 
 interface UseVoiceCommandsOptions {
@@ -19,7 +20,7 @@ interface UseVoiceCommandsReturn {
 export const useVoiceCommands = (
   options: UseVoiceCommandsOptions = {}
 ): UseVoiceCommandsReturn => {
-  const { onCommand, language: propLanguage = 'id-ID' } = options;
+  const { onCommand, language: propLanguage = VoiceLanguage.Indonesian } = options;
 
   const [isSupported, setIsSupported] = useState(true);
   const [commands, setCommands] = useState<string[]>([]);
