@@ -12,6 +12,7 @@ interface LoginModalProps {
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [formState, setFormState] = useState<'idle' | 'loading' | 'success'>('idle');
   const [error, setError] = useState('');
 
@@ -20,6 +21,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
         setTimeout(() => {
             setFormState('idle');
             setEmail('');
+            setPassword('');
             setError('');
         }, 300);
     }
@@ -35,13 +37,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (!email) return;
+      if (!email || !password) return;
 
       setFormState('loading');
       setError('');
 
       try {
-        const response = await api.auth.login(email, 'default_password');
+        const response = await api.auth.login(email, password);
 
         if (response.success && response.data) {
           const user = response.data.user;
@@ -154,10 +156,16 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                   <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-green-500" placeholder="anda@email.com" />
                 </div>
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                <div className="mt-1">
+                  <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-green-500" placeholder="Masukkan password" />
+                </div>
+              </div>
               {error && <p className="text-sm text-red-600 dark:text-red-400 text-center">{error}</p>}
               <div>
                 <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 dark:disabled:bg-gray-600">
-                  {formState === 'loading' ? 'Memeriksa...' : 'Kirim Link Login'}
+                  {formState === 'loading' ? 'Memproses...' : 'Login'}
                 </button>
               </div>
             </form>
