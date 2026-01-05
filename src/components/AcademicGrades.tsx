@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { gradesAPI, subjectsAPI } from '../services/apiService';
 import { Grade, Subject } from '../types';
 import { authAPI } from '../services/apiService';
+import { logger } from '../utils/logger';
 
 interface GradeItem {
   subject: string;
@@ -48,7 +49,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
       }
     } catch (err) {
       setError('Terjadi kesalahan saat mengambil data nilai');
-      console.error('Error fetching grades:', err);
+      logger.error('Error fetching grades:', err);
     } finally {
       setLoading(false);
     }

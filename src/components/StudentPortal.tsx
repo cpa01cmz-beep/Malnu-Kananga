@@ -13,6 +13,7 @@ import OsisEvents from './OsisEvents'; // New Component
 import { ToastType } from './Toast';
 import { UserExtraRole, Student } from '../types';
 import { authAPI, studentsAPI } from '../services/apiService';
+import { logger } from '../utils/logger';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -37,7 +38,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
           }
         }
       } catch (error) {
-        console.error('Failed to fetch student data:', error);
+        logger.error('Failed to fetch student data:', error);
       } finally {
         setLoading(false);
       }

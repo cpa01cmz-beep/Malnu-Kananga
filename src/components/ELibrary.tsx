@@ -3,6 +3,7 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { eLibraryAPI, fileStorageAPI } from '../services/apiService';
 import { ELibrary as ELibraryType } from '../types';
+import { logger } from '../utils/logger';
 
 interface ELibraryProps {
   onBack: () => void;
@@ -32,7 +33,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       }
     } catch (err) {
       setError('Terjadi kesalahan saat mengambil data materi');
-      console.error('Error fetching materials:', err);
+      logger.error('Error fetching materials:', err);
     } finally {
       setLoading(false);
     }
@@ -78,7 +79,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       const downloadUrl = fileStorageAPI.getDownloadUrl(material.fileUrl);
       window.open(downloadUrl, '_blank');
     } catch (err) {
-      console.error('Error downloading file:', err);
+      logger.error('Error downloading file:', err);
       onShowToast('Gagal mengunduh file', 'error');
     }
   };

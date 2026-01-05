@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import { TrashIcon } from './icons/TrashIcon';
 import { fileStorageAPI, FileUploadResponse } from '../services/apiService';
+import { logger } from '../utils/logger';
 
 interface UploadedFile {
   id: string;
@@ -110,7 +111,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       }
     } catch (err) {
       setError('Failed to upload file. Please try again.');
-      console.error('Upload error:', err);
+      logger.error('Upload error:', err);
     } finally {
       setUploading(false);
       setUploadProgress(0);
@@ -128,7 +129,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       }
     } catch (err) {
       setError('Failed to delete file. Please try again.');
-      console.error('Delete error:', err);
+      logger.error('Delete error:', err);
     }
   };
 

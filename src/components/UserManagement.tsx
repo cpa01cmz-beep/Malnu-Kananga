@@ -6,6 +6,7 @@ import { TrashIcon } from './icons/TrashIcon';
 import { CloseIcon } from './icons/CloseIcon';
 import { User, UserRole, UserExtraRole } from '../types';
 import { api } from '../services/apiService';
+import { logger } from '../utils/logger';
 
 interface UserManagementProps {
   onBack: () => void;
@@ -39,7 +40,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
       }
     } catch (err) {
       setError('Terjadi kesalahan saat memuat data');
-      console.error('Error fetching users:', err);
+      logger.error('Error fetching users:', err);
     } finally {
       setIsLoading(false);
     }
@@ -74,7 +75,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
               }
           } catch (err) {
               onShowToast('Terjadi kesalahan saat menghapus pengguna', 'error');
-              console.error('Error deleting user:', err);
+              logger.error('Error deleting user:', err);
           }
       }
   };
@@ -108,7 +109,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
           }
       } catch (err) {
           setError('Terjadi kesalahan saat menyimpan pengguna');
-          console.error('Error saving user:', err);
+          logger.error('Error saving user:', err);
       } finally {
           setIsSaving(false);
       }

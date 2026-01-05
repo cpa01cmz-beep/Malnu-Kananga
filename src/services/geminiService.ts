@@ -8,6 +8,7 @@ import {
   getUserFriendlyMessage,
   withCircuitBreaker
 } from '../utils/errorHandler';
+import { logger } from '../utils/logger';
 
 // Initialize the Google AI client
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' });
@@ -43,7 +44,7 @@ export async function* getAIResponseStream(
         ragContext = data.context || "";
     }
   } catch(e) {
-      console.warn("RAG fetch failed, proceeding with local context only:", e);
+      logger.warn("RAG fetch failed, proceeding with local context only:", e);
   }
 
   // 2. Prepare Dynamic Context from Local State

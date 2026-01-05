@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { schedulesAPI, subjectsAPI } from '../services/apiService';
 import { Schedule, Subject } from '../types';
+import { logger } from '../utils/logger';
 
 interface ScheduleItem {
   id: string;
@@ -49,7 +50,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
       }
     } catch (err) {
       setError('Terjadi kesalahan saat mengambil data jadwal');
-      console.error('Error fetching schedules:', err);
+      logger.error('Error fetching schedules:', err);
     } finally {
       setLoading(false);
     }

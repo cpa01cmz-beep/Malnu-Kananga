@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 export enum ErrorType {
   NETWORK_ERROR = 'NETWORK_ERROR',
   TIMEOUT_ERROR = 'TIMEOUT_ERROR',
@@ -151,10 +153,10 @@ export function logError(error: GeminiAPIError): void {
     errorName: error.name
   };
 
-  console.error('[GeminiAPIError]', JSON.stringify(logData, null, 2));
+  logger.error('[GeminiAPIError]', JSON.stringify(logData, null, 2));
 
   if (error.context.attempt !== undefined && error.context.maxAttempts) {
-    console.error(`[GeminiAPIError] Attempt ${error.context.attempt} of ${error.context.maxAttempts}`);
+    logger.error(`[GeminiAPIError] Attempt ${error.context.attempt} of ${error.context.maxAttempts}`);
   }
 }
 
@@ -208,7 +210,7 @@ export async function retryWithBackoff<T>(
         logError(lastError);
 
         const delay = calculateDelay(attempt, config);
-        console.log(`[Retry] Retrying ${operationName} in ${delay}ms (attempt ${attempt}/${config.maxAttempts})`);
+        logger.info(`[Retry] Retrying ${operationName} in ${delay}ms (attempt ${attempt}/${config.maxAttempts})`);
         await new Promise(resolve => setTimeout(resolve, delay));
       } else {
         logError(lastError);
@@ -265,7 +267,7 @@ export class CircuitBreaker {
     this.lastFailureTime = this.timeProvider();
     if (this.failureCount >= this.threshold) {
       this.state = 'open';
-      console.warn(`[CircuitBreaker] Circuit opened after ${this.failureCount} failures`);
+      logger.warn(`[CircuitBreaker] Circuit opened after ${this.failureCount} failures`);
     }
   }
 
@@ -273,7 +275,7 @@ export class CircuitBreaker {
     this.checkStateTransition();
 
     if (!this.shouldAttempt()) {
-      console.warn('[CircuitBreaker] Circuit is open, using fallback or throwing');
+      logger.warn('[CircuitBreaker] Circuit is open, using fallback or throwing');
       if (fallback) {
         return fallback();
       }
@@ -299,7 +301,7 @@ export class CircuitBreaker {
     const now = this.timeProvider();
     if (this.state === 'open' && now - this.lastFailureTime > this.timeoutMs) {
       this.state = 'half-open';
-      console.log('[CircuitBreaker] Transitioned to half-open state');
+      logger.info('[CircuitBreaker] Transitioned to half-open state');
     }
   }
 
