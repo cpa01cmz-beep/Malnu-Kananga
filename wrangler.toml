@@ -10,7 +10,7 @@ compatibility_date = "2024-01-01"
 # 2. Copy the database_id from output and replace placeholder below
 # 3. Create R2 bucket: wrangler r2 bucket create malnu-kananga-files
 # 4. Set strong JWT_SECRET environment variable (32+ characters recommended)
-# 5. Set actual GEMINI_API_KEY from Google Cloud Console
+# 5. Set actual VITE_GEMINI_API_KEY from Google Cloud Console
 # 6. Run: npm run validate-config to check configuration before deploying
 
 # Environment bindings for production
@@ -43,7 +43,8 @@ ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
 # Generate with: openssl rand -base64 32
 JWT_SECRET = "your-super-secret-jwt-key-change-this-in-production"
 # ⚠️ CRITICAL: Replace with actual Gemini API key from https://ai.google.dev
-GEMINI_API_KEY = "your_production_gemini_api_key_here"
+# Note: Must match frontend VITE_GEMINI_API_KEY for consistency
+VITE_GEMINI_API_KEY = "your_production_gemini_api_key_here"
 NODE_ENV = "production"
 LOG_LEVEL = "error"
 
@@ -73,5 +74,5 @@ ALLOWED_ORIGIN = "*"
 # Development secret (change for production)
 JWT_SECRET = "dev-jwt-secret-change-for-production"
 # Set your Gemini API key for AI features (same as frontend)
-# Can be set in .env file instead: GEMINI_API_KEY=your_key
-# GEMINI_API_KEY = "your_dev_gemini_api_key_here"
+# Can be set in .env file instead: VITE_GEMINI_API_KEY=your_key
+# VITE_GEMINI_API_KEY = "your_dev_gemini_api_key_here"

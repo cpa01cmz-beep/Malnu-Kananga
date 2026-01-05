@@ -44,7 +44,6 @@ echo ""
 # Critical variables
 echo "🔑 Critical Configuration:"
 validate_env_var "VITE_GEMINI_API_KEY"
-validate_env_var "API_KEY"
 
 echo ""
 
