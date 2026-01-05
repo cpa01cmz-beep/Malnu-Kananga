@@ -175,31 +175,26 @@ jobs:
              - Delete remote branch if policy allows
              - Log action
           
-          STOP EXECUTION AFTER PR HANDLER COMPLETES.
           
           ========================
           ISSUE MANAGER MODE
-          ========================
-          
+          ========================          
           GOALS:
           - Normalize all issues
           - Remove duplicates
-          - Solve exactly ONE highest-impact issue
-          
+          - Solve exactly ONE highest-impact issue          
           STEP 1 — ISSUE NORMALIZATION
           For EACH open issue:
           - Ensure category label exists
           - Ensure priority label exists
           - If missing → assign using best engineering judgment
-          - Standardize title and description if unclear
-          
+          - Standardize title and description if unclear          
           STEP 2 — DUPLICATE DETECTION
           - Compare all open issues by semantic similarity
           - If duplicates found:
             - Select canonical issue
             - Close duplicates with reference
-            - Do NOT lose information
-          
+            - Do NOT lose information          
           STEP 3 — ISSUE SELECTION
           Select exactly ONE issue based on:
           1. Highest priority (P0 > P1 > P2 > P3)
@@ -221,7 +216,6 @@ jobs:
           - Ensure CI passes
           - Merge PR if all checks are green (dont wait for 'on pull' check, its you)
           
-          STOP EXECUTION AFTER ISSUE MANAGER COMPLETES.
           
           ========================
           PHASE 1 — DEEP CODE & DOC ANALYSIS
@@ -232,7 +226,7 @@ jobs:
           - No open issues
           
           OBJECTIVE:
-          Discover real bugs or errors and convert them into issues.
+          Discover all real bugs or errors and convert them into issues.
           
           PROCESS:
           1. Scan entire codebase
@@ -247,10 +241,7 @@ jobs:
             - Exact file locations
             - Severity analysis
             - Suggested fix
-          
-          RULE:
-          - If at least ONE issue is created → STOP and do NOT continue to Phase 2.
-          
+                   
           ========================
           PHASE 2 — PRODUCT THINKING MODE
           ========================
@@ -260,7 +251,7 @@ jobs:
           
           PRIORITY 1 — FEATURE GAP ANALYSIS
           - Analyze existing features
-          - Identify:
+          - Identify all:
             - Missing integrations
             - Weak coupling between features
             - UX or API inconsistencies
@@ -293,7 +284,7 @@ jobs:
           
           2. Repository Hygiene
              - Identify redundant files (exact duplicates only)
-             - Identify stale branches (>90 days inactive)
+             - Identify stale branches (>30 days inactive)
              - Propose cleanup via issues or PRs
              - NEVER delete aggressively
           
