@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { gradesAPI, subjectsAPI } from '../services/apiService';
 import { Grade, Subject } from '../types';
 import { authAPI } from '../services/apiService';
@@ -25,11 +25,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchGrades();
-  }, []);
-
-  const fetchGrades = async () => {
+  const fetchGrades = useCallback(async () => {
     if (!STUDENT_NIS) {
       setError('User tidak ditemukan');
       setLoading(false);
@@ -56,7 +52,11 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [STUDENT_NIS]);
+
+  useEffect(() => {
+    fetchGrades();
+  }, [fetchGrades]);
 
   const aggregateGradesBySubject = (gradeData: Grade[], subjectData: Subject[]): GradeItem[] => {
     const gradeMap = new Map<string, { assignment: number; midExam: number; finalExam: number; count: number }>();

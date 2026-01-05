@@ -51,7 +51,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       setProposedContent(null);
       setInput('');
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]);
 
   // Auto-scroll whenever messages change
   useEffect(() => {

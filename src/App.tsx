@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
@@ -78,6 +78,8 @@ const App: React.FC = () => {
   }, [theme]);
 
   // Check for existing JWT token on mount and load default content if empty
+  const hasLoadedContent = useRef(false);
+
   useEffect(() => {
     const checkAuth = () => {
       if (api.auth.isAuthenticated()) {
@@ -92,9 +94,9 @@ const App: React.FC = () => {
       }
     };
     
-    // Load default content if site content is empty
     const loadDefaultContent = async () => {
-      if (siteContent.featuredPrograms.length === 0 || siteContent.latestNews.length === 0) {
+      if (!hasLoadedContent.current && (siteContent.featuredPrograms.length === 0 || siteContent.latestNews.length === 0)) {
+        hasLoadedContent.current = true;
         const { INITIAL_PROGRAMS, INITIAL_NEWS } = await import('./data/defaults');
         setSiteContent({
           featuredPrograms: INITIAL_PROGRAMS,
@@ -105,7 +107,7 @@ const App: React.FC = () => {
     
     checkAuth();
     loadDefaultContent();
-  }, []);
+  }, [siteContent.featuredPrograms.length, siteContent.latestNews.length]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
