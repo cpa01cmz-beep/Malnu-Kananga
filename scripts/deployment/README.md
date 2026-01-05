@@ -16,24 +16,34 @@ wrangler auth
 ```bash
 wrangler d1 create malnu-kananga-db
 ```
-Update `wrangler.toml` with the returned `database_id`.
 
-### 4. Create Vectorize Index
+### 4. Update Configuration
+```bash
+# Automatic configuration update
+./scripts/configure.sh update-db production
+./scripts/configure.sh create-env development
+```
+
+Or manually update `wrangler.toml` with the returned `database_id`.
+
+### 5. Create Vectorize Index
 ```bash
 wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 ```
 
-### 5. Deploy Worker
+### 6. Deploy Worker
 ```bash
 wrangler deploy
 ```
 
-### 6. Seed Database
+### 7. Seed Database
 ```bash
+./scripts/configure.sh seed
+# Or manually:
 curl -X POST https://malnu-kananga-worker.cpa01cmz.workers.dev/seed
 ```
 
-### 7. Update Frontend Configuration
+### 8. Update Frontend Configuration
 Create `.env` file:
 ```
 VITE_API_BASE_URL=https://malnu-kananga-worker.cpa01cmz.workers.dev
