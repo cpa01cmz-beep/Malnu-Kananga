@@ -1,82 +1,102 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { AuthService } from './authService'
+import { authAPI } from './apiService'
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-  length: 0,
-  key: vi.fn(),
-}
-
-global.localStorage = localStorageMock
+// Mock the authAPI
+vi.mock('./apiService', () => ({
+  authAPI: {
+    login: vi.fn(),
+    logout: vi.fn(),
+    isAuthenticated: vi.fn(),
+    getCurrentUser: vi.fn(),
+    getAuthToken: vi.fn(),
+    getRefreshToken: vi.fn(),
+  },
+}))
 
 describe('AuthService', () => {
+  let authService: AuthService;
+
   beforeEach(() => {
     vi.clearAllMocks()
+    authService = new AuthService()
   })
 
   describe('login', () => {
     it('should successfully login with valid credentials', async () => {
-      const auth = new AuthService()
-      const result = await auth.login('user@test.com', 'password123')
+      const mockResponse = { success: true, data: { user: { email: 'user@test.com' } } }
+      vi.mocked(authAPI.login).mockResolvedValue(mockResponse)
+
+      const result = await authService.login('user@test.com', 'password123')
       
       expect(result).toBe(true)
-      expect(localStorage.setItem).toHaveBeenCalledWith('isAuthenticated', 'true')
-      expect(localStorage.setItem).toHaveBeenCalledWith('user', JSON.stringify({ email: 'user@test.com', name: 'user' }))
+      expect(authAPI.login).toHaveBeenCalledWith('user@test.com', 'password123')
     })
 
     it('should fail login with invalid credentials', async () => {
-      const auth = new AuthService()
-      const result = await auth.login('invalid@test.com', 'short')
+      const mockResponse = { success: false, message: 'Invalid credentials' }
+      vi.mocked(authAPI.login).mockResolvedValue(mockResponse)
+
+      const result = await authService.login('invalid@test.com', 'short')
       
       expect(result).toBe(false)
-      expect(localStorage.setItem).not.toHaveBeenCalledWith('isAuthenticated', 'true')
+      expect(authAPI.login).toHaveBeenCalledWith('invalid@test.com', 'short')
     })
   })
 
   describe('logout', () => {
-    it('should clear authentication data', () => {
-      const auth = new AuthService()
-      auth.logout()
+    it('should call authAPI logout', async () => {
+      vi.mocked(authAPI.logout).mockResolvedValue(undefined)
       
-      expect(localStorage.removeItem).toHaveBeenCalledWith('isAuthenticated')
-      expect(localStorage.removeItem).toHaveBeenCalledWith('user')
+      await authService.logout()
+      
+      expect(authAPI.logout).toHaveBeenCalled()
+    })
+
+    it('should handle logout errors', async () => {
+      vi.mocked(authAPI.logout).mockRejectedValue(new Error('Logout failed'))
+      
+      // Should not throw an error
+      await expect(authService.logout()).resolves.toBeUndefined()
     })
   })
 
   describe('isAuthenticated', () => {
-    it('should return false when not authenticated', () => {
-      localStorageMock.getItem.mockReturnValue(null)
-      const auth = new AuthService()
+    it('should delegate to authAPI', () => {
+      vi.mocked(authAPI.isAuthenticated).mockReturnValue(true)
       
-      expect(auth.isAuthenticated()).toBe(false)
-    })
-
-    it('should return true when authenticated', () => {
-      localStorageMock.getItem.mockReturnValue('true')
-      const auth = new AuthService()
-      
-      expect(auth.isAuthenticated()).toBe(true)
+      expect(authService.isAuthenticated()).toBe(true)
+      expect(authAPI.isAuthenticated).toHaveBeenCalled()
     })
   })
 
   describe('getCurrentUser', () => {
-    it('should return null when no user is stored', () => {
-      localStorageMock.getItem.mockReturnValue(null)
-      const auth = new AuthService()
+    it('should delegate to authAPI', () => {
+      const mockUser = { email: 'user@test.com', name: 'Test User' }
+      vi.mocked(authAPI.getCurrentUser).mockReturnValue(mockUser)
       
-      expect(auth.getCurrentUser()).toBe(null)
+      expect(authService.getCurrentUser()).toEqual(mockUser)
+      expect(authAPI.getCurrentUser).toHaveBeenCalled()
     })
+  })
 
-    it('should return user data when user is stored', () => {
-      const userData = { email: 'user@test.com', name: 'Test User' }
-      localStorageMock.getItem.mockReturnValue(JSON.stringify(userData))
-      const auth = new AuthService()
+  describe('getAuthToken', () => {
+    it('should delegate to authAPI', () => {
+      const mockToken = 'test-token'
+      vi.mocked(authAPI.getAuthToken).mockReturnValue(mockToken)
       
-      expect(auth.getCurrentUser()).toEqual(userData)
+      expect(authService.getAuthToken()).toBe(mockToken)
+      expect(authAPI.getAuthToken).toHaveBeenCalled()
+    })
+  })
+
+  describe('getRefreshToken', () => {
+    it('should delegate to authAPI', () => {
+      const mockToken = 'refresh-token'
+      vi.mocked(authAPI.getRefreshToken).mockReturnValue(mockToken)
+      
+      expect(authService.getRefreshToken()).toBe(mockToken)
+      expect(authAPI.getRefreshToken).toHaveBeenCalled()
     })
   })
 })
