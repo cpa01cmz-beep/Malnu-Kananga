@@ -13,7 +13,7 @@ name = "malnu-kananga-worker-prod"
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "malnu-kananga-db-prod"
-database_id = "placeholder-database-id"  # Replace with actual ID after creation
+database_id = "local-database-id-for-testing"  # Replace with actual ID after creation
 
 # Vectorize index bindings - create with: wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 [[env.production.vectorize]]
@@ -28,8 +28,8 @@ bucket_name = "malnu-kananga-files"
 # Environment variables
 [env.production.vars]
 ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
-JWT_SECRET = "your-super-secret-jwt-key-change-this-in-production"
-GEMINI_API_KEY = "your_production_gemini_api_key_here"
+JWT_SECRET = "temp-jwt-secret-change-in-production-deployment"
+GEMINI_API_KEY = "temp-gemini-key-change-in-production-deployment"
 NODE_ENV = "production"
 LOG_LEVEL = "error"
 
@@ -40,7 +40,7 @@ name = "malnu-kananga-worker-dev"
 [[env.dev.d1_databases]]
 binding = "DB"
 database_name = "malnu-kananga-db-dev"
-database_id = "your-dev-d1-database-id-here"  # Replace with actual ID after creation
+database_id = "local-dev-database-id-for-testing"  # Replace with actual ID after creation
 
 [[env.dev.vectorize]]
 binding = "VECTORIZE_INDEX"
