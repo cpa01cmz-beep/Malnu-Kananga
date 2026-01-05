@@ -132,8 +132,6 @@ jobs:
 
               **START NOW.**
               Analyze the request/codebase, Select your Mode, and Execute Phase 0.
-
-            END OF PROMPT
             PROMPT
             )" \
               --model opencode/glm-4.7-free \
