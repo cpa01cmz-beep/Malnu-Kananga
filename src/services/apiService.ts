@@ -61,7 +61,7 @@ function parseJwtPayload(token: string): AuthPayload | null {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(
-      (typeof window !== 'undefined' ? window.atob(base64) : Buffer.from(base64, 'base64').toString())
+      (typeof window !== 'undefined' ? window.atob(base64) : globalThis.Buffer.from(base64, 'base64').toString())
         .split('')
         .map((c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
         .join('')

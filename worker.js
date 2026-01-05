@@ -76,7 +76,7 @@ class JWT {
       if (payload.exp < now) return null;
       
       return payload;
-    } catch (e) {
+} catch {
       return null;
     }
   }
@@ -108,7 +108,7 @@ const response = {
     message,
     data
   }),
-  error: (message, status = 400) => ({
+  error: (message) => ({
     success: false,
     message,
     error: message
@@ -374,7 +374,7 @@ async function handleLogin(request, env, corsHeaders) {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
-  } catch (e) {
+  } catch {
     return new Response(JSON.stringify(response.error('Terjadi kesalahan pada server', 500)), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
