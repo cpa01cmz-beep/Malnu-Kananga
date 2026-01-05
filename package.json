@@ -15,7 +15,10 @@
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "prepare": "husky install",
+    "security:scan": "npm audit && npx audit-ci --moderate",
+    "secrets:scan": "detect-secrets scan --baseline .secrets.baseline"
   },
   "dependencies": {
     "@google/genai": "^0.14.0",
@@ -38,6 +41,19 @@
     "vite": "^7.3.0",
     "vite-plugin-pwa": "^1.2.0",
     "vitest": "^4.0.16",
-    "wrangler": "^4.54.0"
+    "wrangler": "^4.54.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "audit-ci": "^6.6.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
