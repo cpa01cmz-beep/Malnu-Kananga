@@ -42,4 +42,35 @@ Kami mendorong penggunaan [Conventional Commits](https://www.conventionalcommits
 -   **Styling**: Gunakan kelas utilitas dari **Tailwind CSS** untuk semua styling. Hindari penulisan CSS kustom kecuali benar-benar diperlukan.
 -   **Keterbacaan**: Tulis kode yang bersih dan mudah dibaca. Tambahkan komentar jika Anda menulis logika yang kompleks.
 
+## Keamanan Pemindaian Rahasia (Secrets Scanning)
+
+Proyek ini menggunakan **detect-secrets** untuk memindahi potensi kredensial dan rahasia dalam kode berkas.
+
+### Prasyarat
+
+Sebelum menjalankan pemindaian rahasia, pastikan Anda memiliki Python dan pip diinstal:
+
+```bash
+# Instal detect-secrets (Python)
+pip3 install detect-secrets==1.5.0
+
+# Jalankan pemindaian rahasia
+npm run secrets:scan
+```
+
+### Memperbarui Baseline
+
+Jika Anda menambahkan file baru yang mengandung string yang terlihat seperti rahasia tapi sebenarnya bukan (seperti contoh API key token), Anda perlu memperbarui baseline:
+
+```bash
+# Scan ulang dan perbarui baseline
+detect-secrets scan --baseline .secrets.baseline
+```
+
+### Praktik Terbaik
+
+- Jangan pernah commit kredensial nyata ke repositori
+- Gunakan environment variables untuk konfigurasi sensitif
+- Jalankan `npm run secrets:scan` sebelum membuat pull request
+
 Terima kasih sekali lagi atas kontribusi Anda!
