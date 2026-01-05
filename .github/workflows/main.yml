@@ -51,8 +51,10 @@ jobs:
         with:
           path: |
             ~/.opencode
-          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+            ~/.npm
+          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
           restore-keys: |
+            opencode-${{ runner.os }}-v1
             opencode-${{ runner.os }}-
 
       - name: Configure Git

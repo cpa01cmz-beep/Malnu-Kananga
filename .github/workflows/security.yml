@@ -27,9 +27,18 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Install dependencies
         run: npm ci
+      
+      - name: Cache npm audit results
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: audit-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            audit-${{ runner.os }}-
 
       - name: Run npm audit
         run: npm audit --audit-level moderate
@@ -42,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install detect-secrets
         run: pip install detect-secrets
@@ -65,7 +74,7 @@ jobs:
         language: ['javascript']
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
