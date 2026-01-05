@@ -387,7 +387,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               // Show a brief toast message for voice errors
               if (error && !error.includes('tidak mendukung')) {
                 // You could integrate with a toast notification system here
-                console.log('Voice Error:', error);
+                logger.info('Voice Error:', error);
               }
             }}
           />

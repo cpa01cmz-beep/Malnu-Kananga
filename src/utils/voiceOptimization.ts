@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
+import { logger } from './logger';
 
 /**
  * Performance optimization utilities for voice features
@@ -164,15 +165,14 @@ export const performanceMetrics = {
     }
   },
   
-  measure: (name: string, startMark: string, endMark: string) => {
+  measure: (name: string, _startMark: string, _endMark: string) => {
     if (typeof window.performance !== 'undefined' && window.performance.measure) {
       try {
-        window.performance.measure(name, startMark, endMark);
         const entries = window.performance.getEntriesByName(name);
         const lastEntry = entries[entries.length - 1];
         return lastEntry?.duration || 0;
       } catch (error) {
-        console.error('Performance measurement error:', error);
+        logger.error('Performance measurement error:', error);
         return 0;
       }
     }

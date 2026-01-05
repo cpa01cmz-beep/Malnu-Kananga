@@ -1,5 +1,6 @@
 import { Subject, Class } from '../types';
 import { subjectsAPI, classesAPI } from './apiService';
+import { logger } from '../utils/logger';
 // import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export interface SubjectWithUsage {
@@ -69,7 +70,7 @@ export class CategoryService {
         return this.getFromCache(STORAGE_KEYS.SUBJECTS_CACHE) || [];
       }
     } catch (error) {
-      console.warn('Failed to fetch subjects, using cache:', error);
+      logger.warn('Failed to fetch subjects, using cache:', error);
       return this.getFromCache(STORAGE_KEYS.SUBJECTS_CACHE) || [];
     }
   }
@@ -93,7 +94,7 @@ export class CategoryService {
         return this.getFromCache(STORAGE_KEYS.CLASSES_CACHE) || [];
       }
     } catch (error) {
-      console.warn('Failed to fetch classes, using cache:', error);
+      logger.warn('Failed to fetch classes, using cache:', error);
       return this.getFromCache(STORAGE_KEYS.CLASSES_CACHE) || [];
     }
   }
@@ -173,13 +174,13 @@ export class CategoryService {
       const updatedSuggestions = [...existingSuggestions, newSuggestion];
       
       this.saveToCache(STORAGE_KEYS.CATEGORY_SUGGESTIONS, updatedSuggestions);
-      
+
       // In a real implementation, this would call an API to notify admins
-      console.log('New category suggestion:', newSuggestion);
-      
+      logger.info('New category suggestion:', newSuggestion);
+
       return true;
     } catch (error) {
-      console.error('Failed to save category suggestion:', error);
+      logger.error('Failed to save category suggestion:', error);
       return false;
     }
   }
@@ -211,7 +212,7 @@ export class CategoryService {
       };
       localStorage.setItem(key, JSON.stringify(cacheData));
     } catch (error) {
-      console.warn(`Failed to save cache for ${key}:`, error);
+      logger.warn(`Failed to save cache for ${key}:`, error);
     }
   }
 
@@ -225,10 +226,10 @@ export class CategoryService {
         localStorage.removeItem(key);
         return null;
       }
-      
+
       return cacheData.data;
     } catch (error) {
-      console.warn(`Failed to read cache for ${key}:`, error);
+      logger.warn(`Failed to read cache for ${key}:`, error);
       localStorage.removeItem(key);
       return null;
     }
@@ -239,10 +240,10 @@ export class CategoryService {
       try {
         localStorage.removeItem(key);
       } catch (error) {
-        console.warn(`Failed to clear cache key ${key}:`, error);
+        logger.warn(`Failed to clear cache key ${key}:`, error);
       }
     });
-    
+
     this.subjectCache = [];
     this.classCache = [];
     this.lastFetched = {};
