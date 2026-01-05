@@ -2,9 +2,8 @@
 import React, { useState } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
+import { ppdbAPI } from '../services/apiService';
 import type { PPDBRegistrant } from '../types';
-import { STORAGE_KEYS } from '../constants';
-import useLocalStorage from '../hooks/useLocalStorage';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -13,8 +12,6 @@ interface PPDBRegistrationProps {
 }
 
 const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, onShowToast }) => {
-  const [, setRegistrants] = useLocalStorage<PPDBRegistrant[]>(STORAGE_KEYS.PPDB_REGISTRANTS, []);
-
   const [formData, setFormData] = useState<Partial<PPDBRegistrant>>({
     fullName: '',
     nisn: '',
@@ -34,44 +31,45 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulasi Network Request
-    setTimeout(() => {
-        const newRegistrant: PPDBRegistrant = {
-            id: Date.now().toString(),
-            fullName: formData.fullName!,
-            nisn: formData.nisn!,
-            originSchool: formData.originSchool!,
-            parentName: formData.parentName!,
-            phoneNumber: formData.phoneNumber!,
-            email: formData.email!,
-            address: formData.address!,
-            registrationDate: new Date().toISOString().split('T')[0],
-            status: 'pending'
-        };
+    try {
+      const response = await ppdbAPI.create({
+        fullName: formData.fullName!,
+        nisn: formData.nisn!,
+        originSchool: formData.originSchool!,
+        parentName: formData.parentName!,
+        phoneNumber: formData.phoneNumber!,
+        email: formData.email!,
+        address: formData.address!,
+        registrationDate: new Date().toISOString().split('T')[0],
+        status: 'pending'
+      });
 
-        // Save to LocalStorage via hook
-        setRegistrants(prev => [...prev, newRegistrant]);
-
+      if (response.success) {
         setIsSubmitting(false);
         onShowToast('Pendaftaran berhasil! Data Anda sedang diverifikasi.', 'success');
-        
-        // Reset form
+
         setFormData({
-            fullName: '',
-            nisn: '',
-            originSchool: '',
-            parentName: '',
-            phoneNumber: '',
-            email: '',
-            address: '',
+          fullName: '',
+          nisn: '',
+          originSchool: '',
+          parentName: '',
+          phoneNumber: '',
+          email: '',
+          address: '',
         });
-        
+
         onClose();
-    }, 1500);
+      } else {
+        throw new Error(response.error || 'Gagal mendaftar');
+      }
+    } catch {
+      setIsSubmitting(false);
+      onShowToast('Gagal mendaftar. Silakan coba lagi.', 'error');
+    }
   };
 
   return (

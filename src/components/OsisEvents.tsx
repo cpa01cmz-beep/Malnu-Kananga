@@ -1,51 +1,80 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { PlusIcon } from './icons/PlusIcon';
 import { TrashIcon } from './icons/TrashIcon';
+import { eventsAPI } from '../services/apiService';
 import type { SchoolEvent } from '../types';
-import { STORAGE_KEYS } from '../constants';
-import useLocalStorage from '../hooks/useLocalStorage';
 
 interface OsisEventsProps {
   onBack: () => void;
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
-const INITIAL_EVENTS: SchoolEvent[] = [
-    { id: '1', eventName: 'Porseni 2025', date: '2025-06-15', location: 'Lapangan Sekolah', description: 'Pekan Olahraga dan Seni antar kelas.', status: 'Upcoming' },
-    { id: '2', eventName: 'Maulid Nabi', date: '2024-09-12', location: 'Masjid Jami', description: 'Peringatan Maulid Nabi Muhammad SAW.', status: 'Completed' },
-];
-
 const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
-  const [events, setEvents] = useLocalStorage<SchoolEvent[]>(STORAGE_KEYS.EVENTS, INITIAL_EVENTS);
+  const [events, setEvents] = useState<SchoolEvent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [newEvent, setNewEvent] = useState<Partial<SchoolEvent>>({
       eventName: '', date: '', location: '', description: '', status: 'Upcoming'
   });
 
-  const handleAddEvent = (e: React.FormEvent) => {
+  const loadEvents = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await eventsAPI.getAll();
+      if (response.success && response.data) {
+        setEvents(response.data);
+      }
+    } catch {
+      onShowToast('Gagal memuat kegiatan', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [onShowToast]);
+
+  useEffect(() => {
+    loadEvents();
+  }, [loadEvents]);
+
+  const handleAddEvent = async (e: React.FormEvent) => {
       e.preventDefault();
       if (!newEvent.eventName) return;
 
-      const event: SchoolEvent = {
-          id: Date.now().toString(),
+      try {
+        const response = await eventsAPI.create({
           eventName: newEvent.eventName!,
           date: newEvent.date!,
           location: newEvent.location!,
           description: newEvent.description!,
-          status: newEvent.status as 'Upcoming' | 'Ongoing' | 'Completed'
-      };
+          status: (newEvent.status as 'Upcoming' | 'Ongoing' | 'Completed')
+        });
 
-      setEvents([...events, event]);
-      setNewEvent({ eventName: '', date: '', location: '', description: '', status: 'Upcoming' });
-      onShowToast('Kegiatan berhasil dijadwalkan.', 'success');
+        if (response.success && response.data) {
+          setEvents([...events, response.data]);
+          setNewEvent({ eventName: '', date: '', location: '', description: '', status: 'Upcoming' });
+          onShowToast('Kegiatan berhasil dijadwalkan.', 'success');
+        } else {
+          throw new Error(response.error || 'Gagal menambahkan kegiatan');
+        }
+      } catch {
+        onShowToast('Gagal menambahkan kegiatan. Silakan coba lagi.', 'error');
+      }
   };
 
-  const handleDelete = (id: string) => {
-      if(window.confirm('Batalkan kegiatan ini?')) {
+  const handleDelete = async (id: string) => {
+      if(!window.confirm('Batalkan kegiatan ini?')) return;
+
+      try {
+        const response = await eventsAPI.delete(id);
+        if (response.success) {
           setEvents(events.filter(e => e.id !== id));
           onShowToast('Kegiatan dihapus.', 'info');
+        } else {
+          throw new Error(response.error || 'Gagal menghapus kegiatan');
+        }
+      } catch {
+        onShowToast('Gagal menghapus kegiatan. Silakan coba lagi.', 'error');
       }
   };
 
@@ -93,36 +122,41 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
 
             {/* List */}
             <div className="lg:col-span-2 space-y-4">
-                {events.length === 0 && <p className="text-center text-gray-500 mt-8">Belum ada kegiatan.</p>}
-                {events.map(event => (
-                    <div key={event.id} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-start gap-4">
-                            <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-2xl text-orange-600 dark:text-orange-400">
-                                <CalendarDaysIcon className="w-8 h-8" />
-                            </div>
-                            <div>
-                                <h4 className="text-lg font-bold text-gray-900 dark:text-white">{event.eventName}</h4>
-                                <div className="flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                    <span>📅 {event.date}</span>
-                                    <span>📍 {event.location}</span>
+                {isLoading ? (
+                    <p className="text-center text-gray-500 mt-8">Memuat kegiatan...</p>
+                ) : events.length === 0 ? (
+                    <p className="text-center text-gray-500 mt-8">Belum ada kegiatan.</p>
+                ) : (
+                    events.map(event => (
+                        <div key={event.id} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:shadow-md transition-shadow">
+                            <div className="flex items-start gap-4">
+                                <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-2xl text-orange-600 dark:text-orange-400">
+                                    <CalendarDaysIcon className="w-8 h-8" />
                                 </div>
-                                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{event.description}</p>
+                                <div>
+                                    <h4 className="text-lg font-bold text-gray-900 dark:text-white">{event.eventName}</h4>
+                                    <div className="flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                        <span>📅 {event.date}</span>
+                                        <span>📍 {event.location}</span>
+                                    </div>
+                                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{event.description}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3 self-end md:self-center">
+                                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                    event.status === 'Upcoming' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
+                                    event.status === 'Ongoing' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+                                    'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                                }`}>
+                                    {event.status}
+                                </span>
+                                <button onClick={() => handleDelete(event.id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors">
+                                    <TrashIcon />
+                                </button>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3 self-end md:self-center">
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                event.status === 'Upcoming' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
-                                event.status === 'Ongoing' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                                'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
-                            }`}>
-                                {event.status}
-                            </span>
-                            <button onClick={() => handleDelete(event.id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors">
-                                <TrashIcon />
-                            </button>
-                        </div>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
         </div>
     </div>
