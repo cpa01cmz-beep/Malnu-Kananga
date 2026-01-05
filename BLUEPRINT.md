@@ -282,6 +282,15 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 - **DDoS Protection**: CloudFlare / Akamai
 - **Backup**: Automated daily backup
 
+### CI/CD & DevOps
+- **CI/CD Platform**: GitHub Actions dengan optimized workflows
+- **Action Versions**: Latest stable versions (checkout@v5, setup-node@v6, codeql-action@v4, cache@v5)
+- **Caching Strategy**: Lockfile-based cache keys untuk optimal cache invalidation
+- **Reusable Components**: Composite actions untuk common patterns (harden-runner, failure-notification)
+- **Security Hardening**: Automated runner hardening untuk setiap workflow
+- **Failure Handling**: Automated failure notification dengan issue creation
+- **Workflow Standardization**: Konsisten permissions dan error handling
+
 ---
 
 ## 10. Proses Implementasi

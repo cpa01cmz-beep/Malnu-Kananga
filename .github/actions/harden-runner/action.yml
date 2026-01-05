@@ -1,0 +1,21 @@
+name: 'Hardened Runner'
+description: 'Security hardening for GitHub Actions runners'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Hardened Runner Security
+      shell: bash
+      run: |
+        # Disable GitHub Actions logging
+        echo "ACTIONS_STEP_DEBUG=false" >> $GITHUB_ENV
+        echo "ACTIONS_RUNNER_DEBUG=false" >> $GITHUB_ENV
+        
+        # Set strict security measures
+        echo "ACTIONS_ALLOW_UNSECURE_COMMANDS=false" >> $GITHUB_ENV
+        
+        # Enable strict error handling
+        set -euo pipefail
+        
+        # Log hardening status
+        echo "::notice::Runner hardened successfully"

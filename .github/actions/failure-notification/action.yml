@@ -1,0 +1,42 @@
+name: 'Failure Notification'
+description: 'Send failure notification on workflow failure'
+
+inputs:
+  workflow_name:
+    description: 'Name of the failed workflow'
+    required: true
+    default: 'unknown'
+  run_id:
+    description: 'GitHub Actions run ID'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Send Failure Notification
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        WORKFLOW_NAME: ${{ inputs.workflow_name }}
+        RUN_ID: ${{ inputs.run_id }}
+      run: |
+        echo "⚠️ Workflow $WORKFLOW_NAME failed (Run ID: $RUN_ID)"
+        echo "Creating issue for manual review..."
+        
+        # Create issue with failure details
+        gh issue create \
+          --title "🤖 Workflow Failed: $WORKFLOW_NAME - $(date +%Y-%m-%d)" \
+          --body "## Workflow Failure Report
+
+          **Workflow**: $WORKFLOW_NAME
+          **Run ID**: $RUN_ID
+          **Time**: $(date)
+
+          ### Action Required
+          Please review the workflow logs and manually address any issues.
+
+          [View Workflow Run](https://github.com/$GITHUB_REPOSITORY/actions/runs/$RUN_ID)
+
+          ---
+          *This issue was auto-generated.*" \
+          --label "bug,ci" || echo "Could not create issue"
