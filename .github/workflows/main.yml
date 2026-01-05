@@ -41,19 +41,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Setup Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.opencode
-          key: ${{ runner.os }}-opencode-v1
+          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-opencode-
+            opencode-${{ runner.os }}-
 
       - name: Configure Git
         run: |
@@ -321,22 +321,8 @@ jobs:
             --share false \
 
       - name: Fallback on Failure
+        uses: ./.github/actions/failure-notification
         if: failure()
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          echo "⚠️ Analyzer workflow failed. Creating issue for manual review."
-          gh issue create \
-            --title "🤖 Analyzer Failed - $(date +%Y-%m-%d)" \
-            --body "## Analyzer Failure Report
-
-          **Workflow**: oc analyzer
-          **Run ID**: ${{ github.run_id }}
-          **Time**: $(date)
-
-          ### Action Required
-          Please review the workflow logs and manually address any issues.
-
-          ---
-          *This issue was auto-generated.*" \
-            --label "bug" || echo "Could not create issue"
+        with:
+          workflow_name: 'oc analyzer'
+          run_id: ${{ github.run_id }}

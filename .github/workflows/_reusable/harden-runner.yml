@@ -1,0 +1,12 @@
+name: Reusable Hardened Runner
+
+on:
+  workflow_call:
+    
+jobs:
+  harden:
+    name: Security Hardening
+    runs-on: ubuntu-latest
+    steps:
+      - name: Security Hardening
+        uses: ./.github/actions/harden-runner
