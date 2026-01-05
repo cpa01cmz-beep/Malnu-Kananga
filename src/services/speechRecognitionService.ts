@@ -1,5 +1,7 @@
  
+  
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
   SpeechRecognitionConfig,
   SpeechRecognitionError,
@@ -304,3 +306,4 @@ class SpeechRecognitionService {
 }
 
 export default SpeechRecognitionService;
+/* eslint-enable @typescript-eslint/no-explicit-any */

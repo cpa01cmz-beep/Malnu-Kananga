@@ -5,9 +5,14 @@ import { Sender } from '../types';
 import { getAIResponseStream, initialGreeting } from '../services/geminiService';
 import { CloseIcon } from './icons/CloseIcon';
 import { BrainIcon } from './icons/BrainIcon';
+import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import AutoResizeTextarea from './AutoResizeTextarea';
 import TypingIndicator from './TypingIndicator';
+import VoiceInputButton from './VoiceInputButton';
+import VoiceSettings from './VoiceSettings';
+import { useVoiceSynthesis } from '../hooks/useVoiceSynthesis';
+import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 
 interface ChatWindowProps {
@@ -28,8 +33,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isThinkingMode, setIsThinkingMode] = useState(false);
+  const [showVoiceSettings, setShowVoiceSettings] = useState(false);
+  const [autoReadAI, setAutoReadAI] = useState(false);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef<{role: 'user' | 'model', parts: string}[]>([]);
+  const lastAIResponseRef = useRef<string>('');
+
+  const synthesis = useVoiceSynthesis();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -55,6 +66,20 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
     scrollToBottom();
   }, [messages.length]);
 
+  useEffect(() => {
+    if (isOpen) {
+      try {
+        const savedSettings = localStorage.getItem(STORAGE_KEYS.VOICE_STORAGE_KEY);
+        if (savedSettings) {
+          const parsedSettings = JSON.parse(savedSettings);
+          setAutoReadAI(parsedSettings.autoReadAI || false);
+        }
+      } catch (error) {
+        logger.error('Failed to load voice settings:', error);
+      }
+    }
+  }, [isOpen]);
+
   const handleSend = useCallback(async () => {
     if (!input.trim() || isLoading) return;
 
@@ -79,6 +104,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
             msg.id === aiMessageId ? { ...msg, text: fullResponse } : msg
           )
         );
+      }
+      
+      lastAIResponseRef.current = fullResponse;
+      
+      if (autoReadAI && synthesis.isSupported && fullResponse) {
+        synthesis.speak(fullResponse);
       }
     } catch (error) {
       logger.error("Error streaming response:", error);
@@ -112,7 +143,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
         return prev;
       });
     }
-  }, [input, isLoading, siteContext, isThinkingMode]);
+  }, [input, isLoading, siteContext, isThinkingMode, autoReadAI, synthesis]);
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -123,6 +154,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
             <h2 className="font-bold text-lg">Asisten AI</h2>
         </div>
         <div className="flex items-center gap-2">
+            {/* Voice Settings */}
+            {synthesis.isSupported && (
+              <button
+                onClick={() => setShowVoiceSettings(!showVoiceSettings)}
+                className={`p-2 rounded-full transition-all flex items-center gap-1 ${showVoiceSettings ? 'bg-white text-green-700 shadow-md' : 'bg-green-700 text-green-200 hover:bg-green-800'}`}
+                title="Pengaturan Suara"
+                aria-label="Buka pengaturan suara"
+              >
+                <SpeakerWaveIcon className="w-5 h-5" />
+              </button>
+            )}
+
             {/* Thinking Mode Toggle */}
             <button 
                 onClick={() => setIsThinkingMode(!isThinkingMode)}
@@ -177,14 +220,28 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
 
       {/* Input */}
       <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
-        <AutoResizeTextarea 
-            value={input}
-            onChange={setInput}
-            onSend={handleSend}
+        <div className="flex items-end gap-2">
+          <AutoResizeTextarea 
+              value={input}
+              onChange={setInput}
+              onSend={handleSend}
+              disabled={isLoading}
+              placeholder={isThinkingMode ? "Ketik pertanyaan kompleks..." : "Ketik pertanyaan Anda..."}
+          />
+          <VoiceInputButton
+            onTranscript={(transcript) => {
+              setInput(transcript);
+            }}
             disabled={isLoading}
-            placeholder={isThinkingMode ? "Ketik pertanyaan kompleks..." : "Ketik pertanyaan Anda..."}
-        />
+            onError={(error) => {
+              logger.error('Voice input error:', error);
+            }}
+          />
+        </div>
       </div>
+
+      {/* Voice Settings Modal */}
+      <VoiceSettings isOpen={showVoiceSettings} onClose={() => setShowVoiceSettings(false)} />
     </div>
   );
 };
