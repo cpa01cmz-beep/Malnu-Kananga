@@ -20,6 +20,7 @@ interface ChatWindowProps {
 }
 
 const MAX_HISTORY_SIZE = 20;
+const MAX_MESSAGES_SIZE = 100;
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -43,7 +44,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
     return () => {
         setHistory([]);
     };
-  }, [isOpen, messages.length]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   useEffect(() => {
     historyRef.current = history;
@@ -51,7 +53,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, input]);
+  }, [messages.length]);
 
   const handleSend = useCallback(async () => {
     if (!input.trim() || isLoading) return;
@@ -90,13 +92,24 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
     } finally {
       setIsLoading(false);
       setHistory(prev => {
-        const newHistory = [...prev,
+        const newHistory = [...prev, 
           { role: 'user', parts: userMessageText },
           { role: 'model', parts: fullResponse }
         ];
-        const limitedHistory = newHistory.slice(-MAX_HISTORY_SIZE);
+        // Limit history size to prevent memory leaks
+        const limitedHistory = newHistory.length > MAX_HISTORY_SIZE 
+          ? newHistory.slice(-MAX_HISTORY_SIZE)
+          : newHistory;
         historyRef.current = limitedHistory;
         return limitedHistory;
+      });
+      
+      // Limit messages size to prevent memory leaks
+      setMessages(prev => {
+        if (prev.length > MAX_MESSAGES_SIZE) {
+          return prev.slice(-MAX_MESSAGES_SIZE);
+        }
+        return prev;
       });
     }
   }, [input, isLoading, siteContext, isThinkingMode]);
