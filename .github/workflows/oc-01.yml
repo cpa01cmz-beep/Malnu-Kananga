@@ -72,9 +72,6 @@ jobs:
             if opencode run "$(cat .github/workflows/opencode-prompt.md)" \
               --model opencode/glm-4.7-free \
               --share false; then
-            )" \
-              --model opencode/glm-4.7-free \
-              --share false; then
               echo "OpenCode execution succeeded"
               break
             else
