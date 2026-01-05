@@ -10,7 +10,7 @@ interface ClassStudent {
   name: string;
   gender: 'L' | 'P';
   address: string;
-  attendanceToday: 'Hadir' | 'Sakit' | 'Izin' | 'Alpa';
+  attendanceToday: 'hadir' | 'sakit' | 'izin' | 'alpa';
 }
 
 interface ClassManagementProps {
@@ -39,7 +39,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
           name: student.className,
           gender: 'L' as const,
           address: student.address,
-          attendanceToday: 'Hadir' as const,
+          attendanceToday: 'hadir' as const,
         }));
         setStudents(studentData);
         await fetchTodayAttendance(studentData);
@@ -70,7 +70,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
         setStudents((prev) =>
           prev.map((student) => ({
             ...student,
-            attendanceToday: attendanceMap.get(student.id) || 'Hadir',
+            attendanceToday: attendanceMap.get(student.id) || 'hadir',
           }))
         );
       }
@@ -183,25 +183,25 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
         <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
           <p className="text-xs text-gray-500 dark:text-gray-400">Hadir Hari Ini</p>
           <p className="text-xl font-bold text-green-600 dark:text-green-400">
-            {students.filter((s) => s.attendanceToday === 'Hadir').length}
+            {students.filter((s) => s.attendanceToday === 'hadir').length}
           </p>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
           <p className="text-xs text-gray-500 dark:text-gray-400">Sakit</p>
           <p className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
-            {students.filter((s) => s.attendanceToday === 'Sakit').length}
+            {students.filter((s) => s.attendanceToday === 'sakit').length}
           </p>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
           <p className="text-xs text-gray-500 dark:text-gray-400">Izin</p>
           <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
-            {students.filter((s) => s.attendanceToday === 'Izin').length}
+            {students.filter((s) => s.attendanceToday === 'izin').length}
           </p>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
           <p className="text-xs text-gray-500 dark:text-gray-400">Alpa</p>
           <p className="text-xl font-bold text-red-600 dark:text-red-400">
-            {students.filter((s) => s.attendanceToday === 'Alpa').length}
+            {students.filter((s) => s.attendanceToday === 'alpa').length}
           </p>
         </div>
       </div>
@@ -250,19 +250,15 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
                           handleAttendanceChange(student.id, e.target.value as ClassStudent['attendanceToday'])
                         }
                         className={`text-xs font-medium rounded-full px-3 py-1.5 border-none focus:ring-2 focus:ring-green-500 cursor-pointer outline-none ${
-                          student.attendanceToday === 'Hadir'
-                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                            : student.attendanceToday === 'Sakit'
-                            ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
-                            : student.attendanceToday === 'Izin'
+                          student.attendanceToday === 'hadir'
                             ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
                             : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
                         }`}
                       >
-                        <option value="Hadir">Hadir</option>
-                        <option value="Sakit">Sakit</option>
-                        <option value="Izin">Izin</option>
-                        <option value="Alpa">Alpa</option>
+                        <option value="hadir">Hadir</option>
+                        <option value="sakit">Sakit</option>
+                        <option value="izin">Izin</option>
+                        <option value="alpa">Alpa</option>
                       </select>
                     </td>
                   </tr>

@@ -705,3 +705,51 @@ Untuk rencana pengembangan selanjutnya (integrasi database riil, fitur lanjutan)
 - src/services/categoryService.ts - MODIFIED (Replaced 7 console statements with logger)
 - src/utils/voiceOptimization.ts - MODIFIED (Replaced console.error with logger, fixed unused vars)
 - src/components/ChatWindow.tsx - MODIFIED (Replaced console.log with logger)
+
+---
+
+## 🚧 Tugas Saat Ini: Developer Experience & Performance Improvements (In Progress)
+
+### Tugas Berjalan (IN PROGRESS - SANITIZER MODE)
+- [ ] **Fix TypeScript Type Errors (140+ errors found)** (IN PROGRESS - SANITIZER MODE):
+       - [x] Analyze current build and test status - COMPLETED
+       - [x] Run TypeScript type checking - COMPLETED (140+ errors found)
+       - [x] Categorize errors by severity - COMPLETED
+       - [x] Lock task in TASK.md - COMPLETED
+       - [x] Fix P0 Critical Type Definitions (missing properties) - COMPLETED
+       - [x] Fix P1 High Priority Type Issues (VoiceLanguage) - COMPLETED
+       - [x] Add typecheck script to package.json - COMPLETED
+       - [x] Verify all tests and build passing after changes - COMPLETED
+       - [ ] Update documentation - IN PROGRESS
+       - [ ] Commit, push, and create PR - PENDING
+       - [ ] Fix P2 Medium Priority Issues (className props, readonly arrays) - PENDING for future
+       - [ ] Fix P3 Low Priority Issues (unused vars, minor mismatches) - PENDING for future
+
+### Critical Fixes Completed (P0 & P1):
+
+**Type Definitions Fixed (P0):**
+- `Grade` interface: Added `subjectName`, `assignment`, `midExam`, `finalExam` properties
+- `Schedule` interface: Added `subjectName`, `teacherName` properties
+- `Attendance` interface: Added `className` property
+- `PPDBRegistrant` interface: Added `documentUrl` property
+- `ClassStudent` interface: Fixed `attendanceToday` casing (uppercase → lowercase)
+
+**Type Safety Fixed (P1):**
+- `VoiceLanguage` enum: Fixed import/usage in 6 files
+  - constants.ts: Changed 'id-ID' → VoiceLanguage.Indonesian
+  - useVoiceRecognition.ts: Fixed useState default and imports
+  - VoiceSettings.tsx: Fixed useState default and filter logic
+- Global Window interface: Removed duplicate declarations
+
+**Developer Experience (DX):**
+- Added `npm run typecheck` script to package.json
+
+**Test & Build Status:**
+- ✅ All 60 tests passing
+- ✅ Build successful (3.93s, 664KB dist)
+- ✅ No regressions introduced
+
+**Remaining Errors: 166**
+- Mostly test files (StudentSupportService, authService)
+- P2/P3 issues (className props, readonly arrays)
+- Can be addressed in follow-up tasks

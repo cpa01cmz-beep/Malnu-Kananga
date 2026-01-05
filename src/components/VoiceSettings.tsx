@@ -4,7 +4,8 @@ import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { CloseIcon } from './icons/CloseIcon';
 import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';
 import { STORAGE_KEYS, VOICE_CONFIG } from '../constants';
-import type { VoiceLanguage, SpeechSynthesisVoice } from '../types';
+import type { SpeechSynthesisVoice } from '../types';
+import { VoiceLanguage } from '../types';
 import { logger } from '../utils/logger';
 import {
   backupVoiceSettings,
@@ -40,7 +41,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
   const recognition = useVoiceRecognition();
   const synthesis = useVoiceSynthesis();
 
-  const [language, setLanguage] = useState<VoiceLanguage>('id-ID');
+  const [language, setLanguage] = useState<VoiceLanguage>(VoiceLanguage.Indonesian);
   const [continuous, setContinuous] = useState(false);
   const [rate, setRate] = useState(1.0);
   const [pitch, setPitch] = useState(1.0);
@@ -357,7 +358,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                   className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
                   {synthesis.voices
-                    .filter((v) => v.lang.startsWith(language === 'id-ID' ? 'id' : 'en'))
+                    .filter((v) => v.lang.startsWith(language === VoiceLanguage.Indonesian ? 'id' : 'en'))
                     .map((voice) => (
                       <option key={voice.name} value={voice.name}>
                         {voice.name} ({voice.lang})

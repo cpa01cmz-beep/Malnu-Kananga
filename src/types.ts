@@ -94,6 +94,7 @@ export interface PPDBRegistrant {
   address: string;
   registrationDate: string;
   status: 'pending' | 'approved' | 'rejected';
+  documentUrl?: string;
 }
 
 export interface InventoryItem {
@@ -139,6 +140,8 @@ export interface Schedule {
   startTime: string;
   endTime: string;
   room: string;
+  subjectName?: string;
+  teacherName?: string;
 }
 
 export interface Grade {
@@ -152,8 +155,12 @@ export interface Grade {
   assignmentName: string;
   score: number;
   maxScore: number;
+  assignment?: number;
+  midExam?: number;
+  finalExam?: number;
   createdBy: string;
   createdAt: string;
+  subjectName?: string;
 }
 
 export interface Attendance {
@@ -165,6 +172,7 @@ export interface Attendance {
   notes: string;
   recordedBy: string;
   createdAt: string;
+  className?: string;
 }
 
 export interface ELibrary {
@@ -390,18 +398,6 @@ export interface SpeechSynthesisErrorEvent extends Event {
 }
 
 // Window interface extensions
-declare global {
-  interface Window {
-    SpeechRecognition?: SpeechRecognitionConstructor;
-    webkitSpeechRecognition?: SpeechRecognitionConstructor;
-    speechSynthesis: SpeechSynthesis;
-    SpeechSynthesisUtterance: {
-      new (text: string): SpeechSynthesisUtterance;
-      prototype: SpeechSynthesisUtterance;
-    };
-  }
-}
-
 export interface SpeechWindow {
   SpeechRecognition?: SpeechRecognitionConstructor;
   webkitSpeechRecognition?: SpeechRecognitionConstructor;

@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import SpeechRecognitionService from '../services/speechRecognitionService';
 import type { 
   SpeechRecognitionState, 
-  SpeechRecognitionError,
-  VoiceLanguage 
+  SpeechRecognitionError
 } from '../types';
+import { VoiceLanguage } from '../types';
 import { logger } from '../utils/logger';
 
 interface UseVoiceRecognitionOptions {
@@ -38,7 +38,7 @@ export const useVoiceRecognition = (
   const [state, setState] = useState<SpeechRecognitionState>('idle');
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
-  const [language, setLanguage] = useState<VoiceLanguage>('id-ID');
+  const [language, setLanguage] = useState<VoiceLanguage>(VoiceLanguage.Indonesian);
   const [continuous, setContinuous] = useState(false);
   const [permissionState, setPermissionState] = useState<'granted' | 'denied' | 'prompt' | 'unknown'>('unknown');
   

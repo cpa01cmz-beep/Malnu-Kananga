@@ -1,4 +1,6 @@
 
+import { VoiceLanguage } from './types';
+
 // Centralized Storage Keys to prevent typo and ensure consistency
 export const STORAGE_KEYS = {
     SITE_CONTENT: 'malnu_site_content',
@@ -25,7 +27,7 @@ export const APP_CONFIG = {
 
 export const VOICE_CONFIG = {
     DEFAULT_RECOGNITION_CONFIG: {
-        language: 'id-ID',
+        language: VoiceLanguage.Indonesian,
         continuous: false,
         interimResults: true,
         maxAlternatives: 1,
