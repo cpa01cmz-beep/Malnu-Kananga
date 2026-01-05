@@ -81,14 +81,47 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         external: ['fsevents'],
         output: {
-          manualChunks: {
-            vendor: ['react', 'react-dom'],
-            genai: ['@google/genai'],
-            tests: ['vitest', '@vitest/ui']
+          manualChunks: (id) => {
+            // Core React libraries
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor';
+            }
+            // AI library
+            if (id.includes('@google/genai')) {
+              return 'genai';
+            }
+            // Test libraries (only in test mode)
+            if (id.includes('vitest') || id.includes('@vitest')) {
+              return 'tests';
+            }
+            // Dashboard components
+            if (id.includes('AdminDashboard') || id.includes('StudentPortal') || id.includes('TeacherDashboard')) {
+              return 'dashboards';
+            }
+            // Modal components (lazy loaded)
+            if (id.includes('DocumentationPage') || id.includes('SiteEditor') || id.includes('PPDBRegistration')) {
+              return 'modals';
+            }
+            // Section components
+            if (id.includes('sections/')) {
+              return 'sections';
+            }
+            // Individual components
+            if (id.includes('components/') && !id.includes('icons/')) {
+              return 'ui-components';
+            }
           }
         }
       },
-      chunkSizeWarningLimit: 1000
+      chunkSizeWarningLimit: 300,
+      target: 'esnext',
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+        },
+      },
     }
   }
 

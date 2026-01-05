@@ -1,16 +1,20 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
-import DocumentationPage from './components/DocumentationPage';
-import SiteEditor from './components/SiteEditor';
 import ChatWindow from './components/ChatWindow';
 import Toast, { ToastType } from './components/Toast';
-import StudentPortal from './components/StudentPortal';
-import AdminDashboard from './components/AdminDashboard';
-import TeacherDashboard from './components/TeacherDashboard';
-import PPDBRegistration from './components/PPDBRegistration';
+
+// Lazy load modal/dialog components
+const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
+const SiteEditor = lazy(() => import('./components/SiteEditor'));
+const PPDBRegistration = lazy(() => import('./components/PPDBRegistration'));
+
+// Lazy load heavy dashboard components
+const StudentPortal = lazy(() => import('./components/StudentPortal'));
+const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
+const TeacherDashboard = lazy(() => import('./components/TeacherDashboard'));
 
 import HeroSection from './components/sections/HeroSection';
 import RelatedLinksSection from './components/sections/RelatedLinksSection';
@@ -19,7 +23,6 @@ import ProgramsSection from './components/sections/ProgramsSection';
 import NewsSection from './components/sections/NewsSection';
 import PPDBSection from './components/sections/PPDBSection';
 
-import { INITIAL_PROGRAMS, INITIAL_NEWS } from './data/defaults';
 import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './types';
 import { STORAGE_KEYS } from './constants';
 import useLocalStorage from './hooks/useLocalStorage';
@@ -58,10 +61,10 @@ const App: React.FC = () => {
   // Theme State via Hook
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>(STORAGE_KEYS.THEME, 'light');
 
-  // Content State via Hook
+  // Content State via Hook - lazy load defaults to reduce initial bundle
   const [siteContent, setSiteContent] = useLocalStorage<SiteContent>(STORAGE_KEYS.SITE_CONTENT, {
-    featuredPrograms: INITIAL_PROGRAMS,
-    latestNews: INITIAL_NEWS
+    featuredPrograms: [],
+    latestNews: []
   });
 
   // Apply Theme Effect
@@ -74,7 +77,7 @@ const App: React.FC = () => {
     }
   }, [theme]);
 
-  // Check for existing JWT token on mount
+  // Check for existing JWT token on mount and load default content if empty
   useEffect(() => {
     const checkAuth = () => {
       if (api.auth.isAuthenticated()) {
@@ -88,7 +91,20 @@ const App: React.FC = () => {
         }
       }
     };
+    
+    // Load default content if site content is empty
+    const loadDefaultContent = async () => {
+      if (siteContent.featuredPrograms.length === 0 || siteContent.latestNews.length === 0) {
+        const { INITIAL_PROGRAMS, INITIAL_NEWS } = await import('./data/defaults');
+        setSiteContent({
+          featuredPrograms: INITIAL_PROGRAMS,
+          latestNews: INITIAL_NEWS
+        });
+      }
+    };
+    
     checkAuth();
+    loadDefaultContent();
   }, []);
 
   const toggleTheme = () => {
@@ -140,8 +156,9 @@ const App: React.FC = () => {
     showToast('Konten website berhasil diperbarui! Beralih ke "Lihat Website" untuk melihat hasilnya.', 'success');
   };
 
-  const handleResetContent = () => {
+  const handleResetContent = async () => {
     if (window.confirm('Apakah Anda yakin ingin mengembalikan konten website ke pengaturan awal? Semua perubahan akan dihapus.')) {
+      const { INITIAL_PROGRAMS, INITIAL_NEWS } = await import('./data/defaults');
       setSiteContent({
         featuredPrograms: INITIAL_PROGRAMS,
         latestNews: INITIAL_NEWS
@@ -154,21 +171,33 @@ const App: React.FC = () => {
   const renderDashboard = () => {
       switch (userRole) {
           case 'admin':
-              return <AdminDashboard 
-                        onOpenEditor={() => setIsEditorOpen(true)} 
-                        onShowToast={showToast} 
-                     />;
+              return (
+                <Suspense fallback={<div className="flex justify-center items-center h-64">Loading admin dashboard...</div>}>
+                  <AdminDashboard 
+                    onOpenEditor={() => setIsEditorOpen(true)} 
+                    onShowToast={showToast} 
+                  />
+                </Suspense>
+              );
           case 'teacher':
-              return <TeacherDashboard 
-                        extraRole={userExtraRole} // Pass extra role
-                        onShowToast={showToast} 
-                     />;
+              return (
+                <Suspense fallback={<div className="flex justify-center items-center h-64">Loading teacher dashboard...</div>}>
+                  <TeacherDashboard 
+                    extraRole={userExtraRole} // Pass extra role
+                    onShowToast={showToast} 
+                  />
+                </Suspense>
+              );
           case 'student':
           default:
-              return <StudentPortal 
-                        extraRole={userExtraRole} // Pass extra role
-                        onShowToast={showToast} 
-                     />;
+              return (
+                <Suspense fallback={<div className="flex justify-center items-center h-64">Loading student portal...</div>}>
+                  <StudentPortal 
+                    extraRole={userExtraRole} // Pass extra role
+                    onShowToast={showToast} 
+                  />
+                </Suspense>
+              );
       }
   };
 
@@ -222,24 +251,30 @@ const App: React.FC = () => {
         onLoginSuccess={handleLoginSuccess}
       />
       
-      <PPDBRegistration 
-        isOpen={isPPDBOpen}
-        onClose={() => setIsPPDBOpen(false)}
-        onShowToast={showToast}
-      />
+      <Suspense fallback={<div className="flex justify-center items-center h-64">Loading registration form...</div>}>
+        <PPDBRegistration 
+          isOpen={isPPDBOpen}
+          onClose={() => setIsPPDBOpen(false)}
+          onShowToast={showToast}
+        />
+      </Suspense>
 
-      <DocumentationPage 
-        isOpen={isDocsOpen} 
-        onClose={() => setIsDocsOpen(false)} 
-      />
+      <Suspense fallback={<div className="flex justify-center items-center h-64">Loading documentation...</div>}>
+        <DocumentationPage 
+          isOpen={isDocsOpen} 
+          onClose={() => setIsDocsOpen(false)} 
+        />
+      </Suspense>
 
-      <SiteEditor 
-        isOpen={isEditorOpen}
-        onClose={() => setIsEditorOpen(false)}
-        currentContent={siteContent || { featuredPrograms: [], latestNews: [] }}
-        onUpdateContent={handleUpdateContent}
-        onResetContent={handleResetContent}
-      />
+      <Suspense fallback={<div className="flex justify-center items-center h-64">Loading editor...</div>}>
+        <SiteEditor 
+          isOpen={isEditorOpen}
+          onClose={() => setIsEditorOpen(false)}
+          currentContent={siteContent || { featuredPrograms: [], latestNews: [] }}
+          onUpdateContent={handleUpdateContent}
+          onResetContent={handleResetContent}
+        />
+      </Suspense>
 
       <Toast 
         message={toast.message} 
