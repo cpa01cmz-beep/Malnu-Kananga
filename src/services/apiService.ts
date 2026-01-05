@@ -1,30 +1,7 @@
 // apiService.ts - Frontend API Service
 // Handles all backend API interactions
 
-import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement } from '../types';
-
-interface Student {
-  id: string;
-  userId: string;
-  nisn: string;
-  nis: string;
-  class: string;
-  className: string;
-  address: string;
-  phoneNumber: string;
-  parentName: string;
-  parentPhone: string;
-  dateOfBirth: string;
-  enrollmentDate: string;
-}
-
-interface Teacher {
-  id: string;
-  userId: string;
-  nip: string;
-  subjects: string;
-  joinDate: string;
-}
+import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
 
@@ -264,6 +241,10 @@ export const studentsAPI = {
 
   async getByClass(className: string): Promise<ApiResponse<Student[]>> {
     return request<Student[]>(`/api/students?class_name=${className}`);
+  },
+
+  async getByUserId(userId: string): Promise<ApiResponse<Student>> {
+    return request<Student>(`/api/students?user_id=${userId}`);
   },
 
   async create(student: Partial<Student>): Promise<ApiResponse<Student>> {

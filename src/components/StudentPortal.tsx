@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import BuildingLibraryIcon from './icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
@@ -11,7 +11,8 @@ import AcademicGrades from './AcademicGrades';
 import AttendanceView from './AttendanceView';
 import OsisEvents from './OsisEvents'; // New Component
 import { ToastType } from './Toast';
-import { UserExtraRole } from '../types';
+import { UserExtraRole, Student } from '../types';
+import { authAPI, studentsAPI } from '../services/apiService';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -22,6 +23,28 @@ type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'attendance' | 'o
 
 const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<PortalView>('home');
+  const [studentData, setStudentData] = useState<Student | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStudentData = async () => {
+      try {
+        const currentUser = authAPI.getCurrentUser();
+        if (currentUser) {
+          const studentResponse = await studentsAPI.getByUserId(currentUser.id);
+          if (studentResponse.success && studentResponse.data) {
+            setStudentData(studentResponse.data);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch student data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudentData();
+  }, []);
 
   const menuItems = [
     {
@@ -70,10 +93,13 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                     <div>
                       <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Portal Siswa</h1>
                       <p className="mt-2 text-gray-600 dark:text-gray-300 text-lg">
-                        Selamat datang kembali, <strong>Budi Santoso</strong>!
+                        Selamat datang kembali, <strong>{loading ? 'Loading...' : studentData?.className || 'Siswa'}</strong>!
                         {extraRole === 'osis' && <span className="block mt-1 font-semibold text-orange-500">⭐ Pengurus OSIS</span>}
                       </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">NIS: 2024001 • Kelas XII IPA 1</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        {!loading && studentData && `NIS: ${studentData.nis} • Kelas ${studentData.className}`}
+                        {loading && 'Memuat data...'}
+                      </p>
                     </div>
                     <div className="hidden md:block text-right">
                        <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 mb-2">
