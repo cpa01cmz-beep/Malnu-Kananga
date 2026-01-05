@@ -200,12 +200,28 @@ Untuk rencana pengembangan selanjutnya (integrasi database riil, fitur lanjutan)
 ---
 
 ### Tugas Selesai Terbaru (COMPLETED - SANITIZER MODE)
+- [✅] **Environment Variable & Memory Leak Fixes** (Issue #532 - P1, Issue #531 - P1):
+      - [x] Clarify environment variable documentation (VITE_GEMINI_API_KEY vs GEMINI_API_KEY) - COMPLETED
+      - [x] Update .env.example with clear frontend vs backend variable explanations - COMPLETED
+      - [x] Update wrangler.toml with explicit environment variable documentation - COMPLETED
+      - [x] Fix memory leak in ChatWindow component - COMPLETED
+      - [x] Implement history size limiting (MAX_HISTORY_SIZE = 20) - COMPLETED
+      - [x] Add proper useEffect cleanup for history management - COMPLETED
+      - [x] Use ref-based history to prevent closure capture - COMPLETED
+      - [x] Verify build success (3.27s) - COMPLETED
+      - [x] Verify all tests passing (60/60 tests) - COMPLETED
+      - [x] Zero linting errors/warnings - COMPLETED
+      - [x] Update documentation (BLUEPRINT.md, ROADMAP.md, TASK.md) - COMPLETED
+
+---
+
+### Tugas Selesai Terbaru (COMPLETED - SANITIZER MODE)
 - [✅] **Remove Production Deployment Blockers** (COMPLETED - SANITIZER MODE) (Issue #528 - P0):
-     - [x] Analyze placeholder values in wrangler.toml and seeder-worker.js - COMPLETED
-     - [x] Create pre-deployment validation script to detect placeholder values - COMPLETED
-     - [x] Implement seeder-worker.js with proper database seeding functionality - COMPLETED
-     - [x] Add CI/CD validation to prevent deployment with placeholders - COMPLETED
-     - [x] Update documentation with clear setup instructions - COMPLETED
-     - [x] Test deployment validation - COMPLETED
-     - [x] Update documentation (TASK.md, BLUEPRINT.md, ROADMAP.md) - COMPLETED
-     - [x] Commit, push, and create PR - COMPLETED (changes merged to main - commit dc94146)
+      - [x] Analyze placeholder values in wrangler.toml and seeder-worker.js - COMPLETED
+      - [x] Create pre-deployment validation script to detect placeholder values - COMPLETED
+      - [x] Implement seeder-worker.js with proper database seeding functionality - COMPLETED
+      - [x] Add CI/CD validation to prevent deployment with placeholders - COMPLETED
+      - [x] Update documentation with clear setup instructions - COMPLETED
+      - [x] Test deployment validation - COMPLETED
+      - [x] Update documentation (TASK.md, BLUEPRINT.md, ROADMAP.md) - COMPLETED
+      - [x] Commit, push, and create PR - COMPLETED (changes merged to main - commit dc94146)

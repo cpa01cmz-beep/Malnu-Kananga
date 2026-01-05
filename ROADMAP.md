@@ -83,19 +83,31 @@ Fokus: Memindahkan penyimpanan data dari `localStorage` ke Database Serverless s
         - [x] Verify all tests passing (59/59 tests) - COMPLETED
         - [x] Zero linting errors/warnings - COMPLETED
         - [x] Update documentation - COMPLETED
-   - [✅] **Remove Production Deployment Blockers** (Issue #528 - P0):
-        - [x] Create pre-deployment validation script (scripts/validate-config.js) - COMPLETED
-        - [x] Implement seeder-worker.js with full database seeding functionality - COMPLETED
-        - [x] Add CI/CD workflow for configuration validation (.github/workflows/validate-config.yml) - COMPLETED
-        - [x] Add validate-config script to package.json - COMPLETED
-        - [x] Update wrangler.toml with clear placeholder documentation - COMPLETED
-        - [x] Create comprehensive DEPLOYMENT_GUIDE.md - COMPLETED
-        - [x] Update BACKEND_GUIDE.md with references to deployment guide - COMPLETED
-        - [x] Fix lint errors in seeder-worker.js - COMPLETED
-        - [x] Verify build success (2.72s) - COMPLETED
-        - [x] Verify all tests passing (59/59 tests) - COMPLETED
-        - [x] Zero linting errors/warnings - COMPLETED
-        - [x] Update documentation (BLUEPRINT.md, ROADMAP.md, TASK.md) - COMPLETED
+    - [✅] **Remove Production Deployment Blockers** (Issue #528 - P0):
+         - [x] Create pre-deployment validation script (scripts/validate-config.js) - COMPLETED
+         - [x] Implement seeder-worker.js with full database seeding functionality - COMPLETED
+         - [x] Add CI/CD workflow for configuration validation (.github/workflows/validate-config.yml) - COMPLETED
+         - [x] Add validate-config script to package.json - COMPLETED
+         - [x] Update wrangler.toml with clear placeholder documentation - COMPLETED
+         - [x] Create comprehensive DEPLOYMENT_GUIDE.md - COMPLETED
+         - [x] Update BACKEND_GUIDE.md with references to deployment guide - COMPLETED
+         - [x] Fix lint errors in seeder-worker.js - COMPLETED
+         - [x] Verify build success (2.72s) - COMPLETED
+         - [x] Verify all tests passing (59/59 tests) - COMPLETED
+         - [x] Zero linting errors/warnings - COMPLETED
+         - [x] Update documentation (BLUEPRINT.md, ROADMAP.md, TASK.md) - COMPLETED
+    - [✅] **Environment Variable & Memory Leak Fixes** (Issue #532 - P1, Issue #531 - P1):
+         - [x] Clarify environment variable documentation (VITE_GEMINI_API_KEY vs GEMINI_API_KEY) - COMPLETED
+         - [x] Update .env.example with clear frontend vs backend variable explanations - COMPLETED
+         - [x] Update wrangler.toml with explicit environment variable documentation - COMPLETED
+         - [x] Fix memory leak in ChatWindow component - COMPLETED
+         - [x] Implement history size limiting (MAX_HISTORY_SIZE = 20) - COMPLETED
+         - [x] Add proper useEffect cleanup for history management - COMPLETED
+         - [x] Use ref-based history to prevent closure capture - COMPLETED
+         - [x] Verify build success (3.27s) - COMPLETED
+         - [x] Verify all tests passing (60/60 tests) - COMPLETED
+         - [x] Zero linting errors/warnings - COMPLETED
+         - [x] Update documentation (BLUEPRINT.md, ROADMAP.md, TASK.md) - COMPLETED
 
 ---
 

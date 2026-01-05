@@ -43,8 +43,9 @@ ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
 # Generate with: openssl rand -base64 32
 JWT_SECRET = "your-super-secret-jwt-key-change-this-in-production"
 # ⚠️ CRITICAL: Replace with actual Gemini API key from https://ai.google.dev
-# Note: Must match frontend VITE_GEMINI_API_KEY for consistency
-VITE_GEMINI_API_KEY = "your_production_gemini_api_key_here"
+# NOTE: Cloudflare Workers use GEMINI_API_KEY (WITHOUT VITE_ prefix)
+# Frontend uses VITE_GEMINI_API_KEY (WITH VITE_ prefix) - these are DIFFERENT services
+GEMINI_API_KEY = "your_production_gemini_api_key_here"
 NODE_ENV = "production"
 LOG_LEVEL = "error"
 
@@ -73,6 +74,8 @@ bucket_name = "malnu-kananga-files-dev"
 ALLOWED_ORIGIN = "*"
 # Development secret (change for production)
 JWT_SECRET = "dev-jwt-secret-change-for-production"
-# Set your Gemini API key for AI features (same as frontend)
-# Can be set in .env file instead: VITE_GEMINI_API_KEY=your_key
-# VITE_GEMINI_API_KEY = "your_dev_gemini_api_key_here"
+# Set your Gemini API key for AI features
+# NOTE: Worker uses GEMINI_API_KEY (WITHOUT VITE_ prefix)
+# Frontend uses VITE_GEMINI_API_KEY (WITH VITE_ prefix) - these are DIFFERENT services
+# Can be set in .env file instead: GEMINI_API_KEY=your_key
+# GEMINI_API_KEY = "your_dev_gemini_api_key_here"

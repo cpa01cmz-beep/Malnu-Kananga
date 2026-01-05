@@ -19,13 +19,16 @@ interface ChatWindowProps {
   };
 }
 
+const MAX_HISTORY_SIZE = 20;
+
 const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [history, setHistory] = useState<{role: 'user' | 'model', parts: string}[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isThinkingMode, setIsThinkingMode] = useState(false); // State for Thinking Mode
+  const [isThinkingMode, setIsThinkingMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const historyRef = useRef<{role: 'user' | 'model', parts: string}[]>([]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -37,7 +40,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
             { id: 'initial', text: initialGreeting, sender: Sender.AI }
         ]);
     }
+    return () => {
+        setHistory([]);
+    };
   }, [isOpen, messages.length]);
+
+  useEffect(() => {
+    historyRef.current = history;
+  }, [history]);
 
   useEffect(() => {
     scrollToBottom();
@@ -48,18 +58,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
 
     const userMessageText = input;
     const userMessage: ChatMessage = { id: Date.now().toString(), text: userMessageText, sender: Sender.User };
-    
+
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
-    
+
     const aiMessageId = (Date.now() + 1).toString();
     setMessages(prev => [...prev, { id: aiMessageId, text: '', sender: Sender.AI }]);
-    
+
     let fullResponse = "";
     try {
-      // Pass isThinkingMode to the service
-      const stream = getAIResponseStream(userMessageText, history, siteContext, isThinkingMode);
+      const currentHistory = historyRef.current;
+      const stream = getAIResponseStream(userMessageText, currentHistory, siteContext, isThinkingMode);
       for await (const chunk of stream) {
         fullResponse += chunk;
         setMessages(prev =>
@@ -76,15 +86,20 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
           msg.id === aiMessageId ? { ...msg, text: errorMessage } : msg
         )
       );
-      fullResponse = errorMessage; 
+      fullResponse = errorMessage;
     } finally {
       setIsLoading(false);
-      setHistory(prev => [...prev, 
-        { role: 'user', parts: userMessageText },
-        { role: 'model', parts: fullResponse }
-      ]);
+      setHistory(prev => {
+        const newHistory = [...prev,
+          { role: 'user', parts: userMessageText },
+          { role: 'model', parts: fullResponse }
+        ];
+        const limitedHistory = newHistory.slice(-MAX_HISTORY_SIZE);
+        historyRef.current = limitedHistory;
+        return limitedHistory;
+      });
     }
-  }, [input, isLoading, history, siteContext, isThinkingMode]);
+  }, [input, isLoading, siteContext, isThinkingMode]);
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
