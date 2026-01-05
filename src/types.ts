@@ -28,6 +28,29 @@ export type UserRole = 'admin' | 'teacher' | 'student';
 // Role tambahan untuk tugas khusus
 export type UserExtraRole = 'staff' | 'osis' | null;
 
+export interface Student {
+  id: string;
+  userId: string;
+  nisn: string;
+  nis: string;
+  class: string;
+  className: string;
+  address: string;
+  phoneNumber: string;
+  parentName: string;
+  parentPhone: string;
+  dateOfBirth: string;
+  enrollmentDate: string;
+}
+
+export interface Teacher {
+  id: string;
+  userId: string;
+  nip: string;
+  subjects: string;
+  joinDate: string;
+}
+
 export interface User {
   id: string;
   name: string;
