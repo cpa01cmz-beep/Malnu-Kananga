@@ -1,6 +1,11 @@
 
 # Standar Pengkodean (Coding Standards)
 
+**Created**: 2025-01-01  
+**Last Updated**: 2026-01-05  
+**Version**: 2.1.0  
+**Status**: Active
+
 ## 1. TypeScript & React
 - **Interface Explicit**: Selalu gunakan `interface` untuk mendefinisikan props komponen dan struktur data. Hindari penggunaan `any`.
   ```ts

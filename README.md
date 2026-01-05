@@ -1,6 +1,11 @@
 
 # Website & Portal Pintar MA Malnu Kananga
 
+**Created**: 2025-01-01  
+**Last Updated**: 2026-01-05  
+**Version**: 2.1.0  
+**Status**: Production Ready
+
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-green)
 ![Cloudflare](https://img.shields.io/badge/Deployed%20on-Cloudflare-orange)
 
