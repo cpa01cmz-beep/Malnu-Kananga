@@ -11,6 +11,7 @@ export const STORAGE_KEYS = {
     EVENTS: 'malnu_events',
     AUTH_SESSION: 'malnu_auth_session',
     THEME: 'malnu_theme',
+    VOICE_STORAGE_KEY: 'malnu_voice_settings',
 } as const;
 
 export const APP_CONFIG = {
@@ -33,7 +34,6 @@ export const VOICE_CONFIG = {
     SPEECH_RECOGNITION_TIMEOUT: 5000,
     DEBOUNCE_DELAY: 500,
     MAX_VOICE_CACHE_SIZE: 50,
-    VOICE_STORAGE_KEY: 'malnu_voice_settings',
 } as const;
 
 export const ERROR_MESSAGES = {

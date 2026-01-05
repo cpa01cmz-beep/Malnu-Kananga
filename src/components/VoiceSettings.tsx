@@ -3,14 +3,17 @@ import { useVoiceSynthesis } from '../hooks/useVoiceSynthesis';
 import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { CloseIcon } from './icons/CloseIcon';
 import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, VOICE_CONFIG } from '../constants';
 import type { VoiceLanguage, SpeechSynthesisVoice } from '../types';
 import { logger } from '../utils/logger';
 
 interface VoiceSettingsProps {
   isOpen: boolean;
   onClose: () => void;
+  onShowToast?: (msg: string, type: 'success' | 'error' | 'info') => void;
 }
+
+
 
 interface StoredVoiceSettings {
   recognition: {
@@ -26,7 +29,7 @@ interface StoredVoiceSettings {
   autoReadAI: boolean;
 }
 
-const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose }) => {
+const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowToast }) => {
   const recognition = useVoiceRecognition();
   const synthesis = useVoiceSynthesis();
 
@@ -37,6 +40,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose }) => {
   const [volume, setVolume] = useState(1.0);
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [autoReadAI, setAutoReadAI] = useState(false);
+  const [showResetConfirmation, setShowResetConfirmation] = useState(false);
 
   const loadSettings = useCallback(() => {
     try {
@@ -136,6 +140,52 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose }) => {
 
   const testVoice = () => {
     synthesis.speak('Halo, ini adalah tes suara Anda.');
+  };
+
+  const resetToDefaults = () => {
+    // Reset all values to defaults from VOICE_CONFIG
+    setLanguage(VOICE_CONFIG.DEFAULT_RECOGNITION_CONFIG.language);
+    setContinuous(VOICE_CONFIG.DEFAULT_RECOGNITION_CONFIG.continuous);
+    setRate(VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG.rate);
+    setPitch(VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG.pitch);
+    setVolume(VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG.volume);
+    setSelectedVoice(null);
+    setAutoReadAI(false);
+
+    // Apply the defaults to the voice systems
+    recognition.setLanguage(VOICE_CONFIG.DEFAULT_RECOGNITION_CONFIG.language);
+    recognition.setContinuous(VOICE_CONFIG.DEFAULT_RECOGNITION_CONFIG.continuous);
+    synthesis.setRate(VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG.rate);
+    synthesis.setPitch(VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG.pitch);
+    synthesis.setVolume(VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG.volume);
+
+    // Save the defaults to localStorage
+    try {
+      const settings: StoredVoiceSettings = {
+        recognition: {
+          language: VOICE_CONFIG.DEFAULT_RECOGNITION_CONFIG.language,
+          continuous: VOICE_CONFIG.DEFAULT_RECOGNITION_CONFIG.continuous,
+        },
+        synthesis: {
+          rate: VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG.rate,
+          pitch: VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG.pitch,
+          volume: VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG.volume,
+        },
+        autoReadAI: false,
+      };
+
+      localStorage.setItem(STORAGE_KEYS.VOICE_STORAGE_KEY, JSON.stringify(settings));
+      logger.debug('Voice settings reset to defaults:', settings);
+    } catch (error) {
+      logger.error('Failed to save reset voice settings:', error);
+    }
+
+    // Show success notification
+    if (onShowToast) {
+      onShowToast('Pengaturan suara telah diatur ke pengaturan awal', 'success');
+    }
+
+    setShowResetConfirmation(false);
   };
 
   if (!isOpen) return null;
@@ -301,8 +351,50 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose }) => {
               </button>
             </div>
           </div>
+
+          <div className="space-y-4">
+            <button
+              onClick={() => setShowResetConfirmation(true)}
+              className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Reset ke Pengaturan Awal
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Reset Confirmation Modal */}
+      {showResetConfirmation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm mx-4 border border-gray-200 dark:border-gray-700">
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                Reset Pengaturan Suara?
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                Semua pengaturan suara akan dikembalikan ke nilai default. Tindakan ini tidak dapat dibatalkan.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowResetConfirmation(false)}
+                  className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={resetToDefaults}
+                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

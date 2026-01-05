@@ -15,6 +15,8 @@ import { useVoiceSynthesis } from '../hooks/useVoiceSynthesis';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 
+import { ToastType } from './Toast';
+
 interface ChatWindowProps {
   isOpen: boolean;
   closeChat: () => void;
@@ -22,12 +24,13 @@ interface ChatWindowProps {
     featuredPrograms: FeaturedProgram[];
     latestNews: LatestNews[];
   };
+  onShowToast?: (msg: string, type: ToastType) => void;
 }
 
 const MAX_HISTORY_SIZE = 20;
 const MAX_MESSAGES_SIZE = 100;
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext, onShowToast }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [history, setHistory] = useState<{role: 'user' | 'model', parts: string}[]>([]);
   const [input, setInput] = useState('');
@@ -246,7 +249,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
       </div>
 
       {/* Voice Settings Modal */}
-      <VoiceSettings isOpen={showVoiceSettings} onClose={() => setShowVoiceSettings(false)} />
+      <VoiceSettings isOpen={showVoiceSettings} onClose={() => setShowVoiceSettings(false)} onShowToast={onShowToast} />
     </div>
   );
 };
