@@ -40,20 +40,52 @@ wrangler deploy --env production
 
 echo "🌱 Seeding vector database..."
 # Seed the vector database with documents
-curl -X POST "https://malnu-api.your-domain.workers.dev/seed" \
+WORKER_URL="https://malnu-kananga-worker-prod.cpa01cmz.workers.dev"
+curl -X POST "${WORKER_URL}/seed" \
     -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-    -H "Content-Type: application/json"
+    -H "Content-Type: application/json" || {
+    echo "⚠️  Database seeding failed, continuing deployment..."
+}
 
 echo "🔍 Verifying deployment..."
 # Check if worker is responding
-curl -f "https://malnu-api.your-domain.workers.dev/health" || {
-    echo "❌ Health check failed"
+MAX_RETRIES=5
+RETRY_COUNT=0
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+    if curl -f "${WORKER_URL}/health"; then
+        echo "✅ Health check passed"
+        break
+    else
+        echo "⚠️  Health check failed, retrying... ($((RETRY_COUNT + 1))/$MAX_RETRIES)"
+        sleep 10
+        RETRY_COUNT=$((RETRY_COUNT + 1))
+    fi
+done
+
+if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+    echo "❌ Health check failed after $MAX_RETRIES attempts"
     exit 1
-}
+fi
 
 echo "📊 Setting up monitoring..."
-# Configure monitoring (if needed)
+# Test AI functionality
+echo "🧠 Testing AI chat functionality..."
+curl -X POST "${WORKER_URL}/api/chat" \
+    -H "Content-Type: application/json" \
+    -d '{"message": "Hello, this is a test message"}' \
+    --max-time 30 && {
+    echo "✅ AI chat endpoint functional"
+} || {
+    echo "⚠️  AI chat endpoint test failed"
+}
+
+echo "🔧 Running post-deployment validation..."
+# Validate critical endpoints
+ENDPOINTS=("/api/chat" "/health")
+for endpoint in "${ENDPOINTS[@]}"; do
+    curl -f "${WORKER_URL}${endpoint}" >/dev/null && echo "✅ ${endpoint}: OK" || echo "❌ ${endpoint}: FAILED"
+done
 
 echo "✅ Production deployment completed successfully!"
-echo "🌐 Your application is now live at: https://your-domain.com"
-echo "📝 Worker API is available at: https://malnu-api.your-domain.workers.dev"
+echo "🌐 Frontend should be deployed to: https://ma-malnukananga.sch.id"
+echo "📝 Worker API is available at: ${WORKER_URL}"
