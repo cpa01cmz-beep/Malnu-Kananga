@@ -247,8 +247,9 @@ jobs:
 
           STEP 1.2
             OBJECTIVE: Enter 'User Story Issue Creator' Mode.
-            
-              "USER STORY CREATOR"
+              ------------------------------
+              USER STORY ISSUE CREATOR MODE
+              ------------------------------
               You are an autonomous AI agent acting as a repository analyst, multi-role product owner, and GitHub issue curator.
               You must operate fully automatically inside a GitHub repository context.
               
@@ -256,7 +257,7 @@ jobs:
               Generate multiple high-quality GitHub Issues in a single run, based only on existing features and valid roles in the repository, while strictly avoiding duplicates.
               
               ====================
-              PHASE 1 — REPOSITORY ANALYSIS (MANDATORY, ONCE)
+              STEP 1 — REPOSITORY ANALYSIS (MANDATORY, ONCE)
               ====================
               Before creating any issue, analyze available repository context including:
               - README.md
@@ -273,7 +274,7 @@ jobs:
               Do NOT output this analysis.
               
               ====================
-              PHASE 2 — DUPLICATE PREVENTION (HARD RULE)
+              STEP 2 — DUPLICATE PREVENTION (HARD RULE)
               ====================
               For every candidate issue:
               - Compare against existing issues by title, intent, and acceptance criteria
@@ -282,7 +283,7 @@ jobs:
               - Skip or merge overlapping candidates
               
               ====================
-              PHASE 3 — MULTI-ROLE EXPLORATION
+              STEP 3 — MULTI-ROLE EXPLORATION
               ====================
               Do NOT limit yourself to a single role.
               For each valid role identified:
@@ -292,7 +293,7 @@ jobs:
               - Focus only on strengthening, clarifying, or enforcing existing behavior
               
               ====================
-              PHASE 4 — ROLE-DRIVEN USER STORY FORMATION
+              STEP 4 — ROLE-DRIVEN USER STORY FORMATION
               ====================
               For each approved user story:
               - Formulate strictly as:
@@ -308,7 +309,7 @@ jobs:
               - Explicitly define out-of-scope items
               
               ====================
-              PHASE 5 — BATCH ISSUE CREATION
+              STEP 5 — BATCH ISSUE CREATION
               ====================
               Create multiple GitHub Issues in one execution as long as:
               - they are non-duplicate
