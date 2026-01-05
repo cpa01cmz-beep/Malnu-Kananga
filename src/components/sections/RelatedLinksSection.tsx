@@ -1,13 +1,22 @@
-
-import React from 'react';
-import { RELATED_LINKS } from '../../data/defaults';
+import React, { useState, useEffect } from 'react';
 
 const RelatedLinksSection: React.FC = () => {
+  const [links, setLinks] = useState([]);
+
+  useEffect(() => {
+    const loadLinks = async () => {
+      const { getRelatedLinks } = await import('../../data/defaults');
+      const relatedLinks = await getRelatedLinks();
+      setLinks(relatedLinks);
+    };
+    loadLinks();
+  }, []);
+
   return (
     <section id="tautan" className="py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
-                {RELATED_LINKS.map((link) => (
+                {links.map((link) => (
                     <a 
                         key={link.name} 
                         href={link.href} 
