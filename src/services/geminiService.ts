@@ -4,6 +4,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 // FIX: Import content types for the AI editor function.
 import type { FeaturedProgram, LatestNews } from '../types';
 import { WORKER_CHAT_ENDPOINT } from '../config';
+import { geminiErrorHandler, GeminiError } from '../utils/geminiErrorHandler';
 
 // Initialize the Google AI client
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' });
@@ -18,7 +19,7 @@ interface LocalContext {
     latestNews: LatestNews[];
 }
 
-// This function implements the RAG pattern with optional Thinking Mode
+// This function implements the RAG pattern with optional Thinking Mode with enhanced error recovery
 export async function* getAIResponseStream(
     message: string, 
     history: {role: 'user' | 'model', parts: string}[],
@@ -27,19 +28,24 @@ export async function* getAIResponseStream(
 ): AsyncGenerator<string> {
   let ragContext = "";
   
-  // 1. Fetch RAG context from the Worker
+  // 1. Fetch RAG context from the Worker with retry
   try {
-    const contextResponse = await fetch(WORKER_CHAT_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
-    });
+    const contextResponse = await geminiErrorHandler.executeWithRetry(
+      () => fetch(WORKER_CHAT_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      }),
+      { operation: 'rag_context_fetch' }
+    );
+    
     if (contextResponse.ok) {
-        const data = await contextResponse.json();
-        ragContext = data.context || "";
+      const data = await contextResponse.json();
+      ragContext = data.context || "";
     }
-  } catch(e) {
-      console.warn("RAG fetch failed, proceeding with local context only:", e);
+  } catch (error) {
+    console.warn("RAG fetch failed, proceeding with local context only:", error);
+    // Continue without RAG context - this is not a fatal error
   }
 
   // 2. Prepare Dynamic Context from Local State
@@ -89,22 +95,30 @@ ${message}
   }
 
   try {
-    const responseStream = await ai.models.generateContentStream({
+    const responseStream = await geminiErrorHandler.executeWithRetry(
+      () => ai.models.generateContentStream({
         model: model,
         contents,
         config
-    });
+      }),
+      { model, useThinkingMode, operation: 'chat_stream' }
+    );
 
     for await (const chunk of responseStream) {
       yield chunk.text || '';
     }
   } catch (error) {
-      console.error("Error calling Gemini API:", error);
+    console.error("Error calling Gemini API:", error);
+    
+    if (error instanceof GeminiError) {
+      yield error.errorInfo.userMessage;
+    } else {
       yield "Maaf, sistem AI sedang sibuk atau mengalami gangguan. Silakan coba sesaat lagi.";
+    }
   }
 }
 
-// Function to analyze Teacher Grading Data (Uses Gemini 3 Pro)
+// Function to analyze Teacher Grading Data (Uses Gemini 3 Pro) with enhanced error recovery
 export async function analyzeClassPerformance(grades: { studentName: string; subject: string; grade: string; semester: string }[]): Promise<string> {
     const prompt = `
     Analyze the following student grade data for a specific class subject. 
@@ -116,17 +130,49 @@ export async function analyzeClassPerformance(grades: { studentName: string; sub
     Data: ${JSON.stringify(grades)}
     `;
 
+    const executeAnalysis = async (model: string) => {
+        return await geminiErrorHandler.executeWithRetry(
+            () => ai.models.generateContent({
+                model,
+                contents: prompt,
+                config: {
+                    thinkingConfig: { thinkingBudget: 32768 }
+                }
+            }),
+            { model, useThinkingMode: true, operation: 'grade_analysis' }
+        );
+    };
+
     try {
-        const response = await ai.models.generateContent({
-            model: PRO_THINKING_MODEL,
-            contents: prompt,
-            config: {
-                thinkingConfig: { thinkingBudget: 32768 }
+        let currentModel = PRO_THINKING_MODEL;
+        let lastError: Error | null = null;
+
+        // Try with fallback models if needed
+        for (let attempt = 0; attempt < 2; attempt++) {
+            try {
+                const response = await executeAnalysis(currentModel);
+                return response.text || "Gagal melakukan analisis.";
+            } catch (error) {
+                lastError = error as Error;
+                
+                if (error instanceof GeminiError && error.errorInfo.retryable) {
+                    currentModel = geminiErrorHandler.getFallbackModel(currentModel);
+                    console.warn(`Retrying grade analysis with fallback model: ${currentModel}`);
+                    continue;
+                }
+                
+                throw error;
             }
-        });
-        return response.text || "Gagal melakukan analisis.";
-    } catch (e) {
-        console.error("Analysis failed", e);
+        }
+
+        throw lastError || new Error("Analysis failed after all retries");
+    } catch (error) {
+        console.error("Analysis failed", error);
+        
+        if (error instanceof GeminiError) {
+            return error.errorInfo.userMessage;
+        }
+        
         return "Maaf, gagal menganalisis data saat ini.";
     }
 }
@@ -188,31 +234,71 @@ Please provide the updated JSON content.`;
     };
 
     try {
-        const response = await ai.models.generateContent({
-            model,
-            contents: fullPrompt,
-            config: {
-                systemInstruction,
-                responseMimeType: "application/json",
-                responseSchema: schema,
-                thinkingConfig: { thinkingBudget: 32768 } // Use thinking for precise JSON editing
-            },
-        });
-        
-        const jsonText = (response.text || '').trim();
-        // Basic cleanup just in case
-        const firstBrace = jsonText.indexOf('{');
-        const lastBrace = jsonText.lastIndexOf('}');
-        let cleanedJsonText = jsonText;
-        if (firstBrace !== -1 && lastBrace !== -1) {
-            cleanedJsonText = jsonText.substring(firstBrace, lastBrace + 1);
+        const executeEdit = async (model: string) => {
+            return await geminiErrorHandler.executeWithRetry(
+                () => ai.models.generateContent({
+                    model,
+                    contents: fullPrompt,
+                    config: {
+                        systemInstruction,
+                        responseMimeType: "application/json",
+                        responseSchema: schema,
+                        thinkingConfig: { thinkingBudget: 32768 } // Use thinking for precise JSON editing
+                    },
+                }),
+                { model, useThinkingMode: true, operation: 'content_editing' }
+            );
+        };
+
+        let currentModel = model;
+        let lastError: Error | null = null;
+
+        // Try with fallback models if needed
+        for (let attempt = 0; attempt < 2; attempt++) {
+            try {
+                const response = await executeEdit(currentModel);
+                
+                const jsonText = (response.text || '').trim();
+                // Basic cleanup just in case
+                const firstBrace = jsonText.indexOf('{');
+                const lastBrace = jsonText.lastIndexOf('}');
+                let cleanedJsonText = jsonText;
+                if (firstBrace !== -1 && lastBrace !== -1) {
+                    cleanedJsonText = jsonText.substring(firstBrace, lastBrace + 1);
+                }
+
+                return JSON.parse(cleanedJsonText);
+            } catch (error) {
+                lastError = error as Error;
+                
+                if (error instanceof GeminiError && error.errorInfo.retryable) {
+                    currentModel = geminiErrorHandler.getFallbackModel(currentModel);
+                    console.warn(`Retrying content editing with fallback model: ${currentModel}`);
+                    continue;
+                }
+                
+                throw error;
+            }
         }
 
-        return JSON.parse(cleanedJsonText);
+        throw lastError || new Error("Content editing failed after all retries");
     } catch (error) {
         console.error("Error calling Gemini API for content editing:", error);
+        
+        if (error instanceof GeminiError) {
+            throw new Error(error.errorInfo.userMessage);
+        }
+        
         throw new Error("Gagal memproses respon dari AI. Mohon coba instruksi yang lebih spesifik.");
     }
 }
 
 export const initialGreeting = "Assalamualaikum! Saya Asisten AI MA Malnu Kananga. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?";
+
+// Health check function for Gemini API
+export async function checkGeminiHealth() {
+    return await geminiErrorHandler.healthCheck();
+}
+
+// Export error handler for use in components
+export { geminiErrorHandler, GeminiError, getUserFriendlyMessage } from '../utils/geminiErrorHandler';
