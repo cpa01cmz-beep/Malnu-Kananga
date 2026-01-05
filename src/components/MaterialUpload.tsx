@@ -6,6 +6,7 @@ import { eLibraryAPI } from '../services/apiService';
 import { ELibrary as ELibraryType } from '../types';
 import FileUpload from './FileUpload';
 import { FileUploadResponse } from '../services/apiService';
+import { logger } from '../utils/logger';
 
 interface MaterialUploadProps {
   onBack: () => void;
@@ -39,7 +40,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
       }
     } catch (err) {
       setError('Terjadi kesalahan saat mengambil data materi');
-      console.error('Error fetching materials:', err);
+      logger.error('Error fetching materials:', err);
     } finally {
       setLoading(false);
     }
@@ -85,7 +86,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
       }
     } catch (err) {
       onShowToast('Terjadi kesalahan saat menambahkan materi', 'error');
-      console.error('Error creating material:', err);
+      logger.error('Error creating material:', err);
     } finally {
       setSubmitting(false);
     }
@@ -106,7 +107,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
       }
     } catch (err) {
       onShowToast('Terjadi kesalahan saat menghapus materi', 'error');
-      console.error('Error deleting material:', err);
+      logger.error('Error deleting material:', err);
     }
   };
 

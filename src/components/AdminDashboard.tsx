@@ -6,10 +6,11 @@ import UsersIcon from './icons/UsersIcon';
 import { ChartBarIcon } from './icons/ChartBarIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import UserManagement from './UserManagement';
-import SystemStats from './SystemStats'; 
+import SystemStats from './SystemStats';
 import PPDBManagement from './PPDBManagement'; // Import PPDB Component
 import { ToastType } from './Toast';
 import { STORAGE_KEYS } from '../constants'; // Import constants
+import { logger } from '../utils/logger';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -37,7 +38,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                 const count = data.filter((r: PPDBRegistrant) => r.status === 'pending').length;
                 setPendingPPDB(count);
             } catch {
-                console.error("Error reading PPDB data");
+                logger.error("Error reading PPDB data");
             }
         }
     }

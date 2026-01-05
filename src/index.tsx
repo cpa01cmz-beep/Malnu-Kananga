@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { logger } from './utils/logger';
 // Import registration function
 import { registerSW } from 'virtual:pwa-register';
 
@@ -13,7 +14,7 @@ const updateSW = registerSW({
     }
   },
   onOfflineReady() {
-    console.log('Aplikasi siap untuk penggunaan offline.');
+    logger.info('Aplikasi siap untuk penggunaan offline.');
   },
 });
 

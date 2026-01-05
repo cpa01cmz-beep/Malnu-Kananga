@@ -2,6 +2,7 @@
 // Handles all backend API interactions
 
 import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher } from '../types';
+import { logger } from '../utils/logger';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
 
@@ -157,7 +158,7 @@ export const authAPI = {
         },
       });
     } catch (e) {
-      console.error('Logout error:', e);
+      logger.error('Logout error:', e);
     } finally {
       clearAuthToken();
     }
@@ -185,7 +186,7 @@ export const authAPI = {
 
       return false;
     } catch (e) {
-      console.error('Refresh token error:', e);
+      logger.error('Refresh token error:', e);
       return false;
     }
   },

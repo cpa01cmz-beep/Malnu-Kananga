@@ -183,22 +183,29 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 
 ### 6.1 Keamanan Data
 - **Enkripsi Database**: AES-256 untuk data sensitif
-- **HTTPS/SSL**: Komunikasi terenkripsi
-- **Firewall & WAF**: Perlindungan dari serangan cyber
-- **Regular Security Audit**: Penetration testing berkala
-- **Backup Otomatis**: Daily backup dengan recovery plan
-- **JWT Authentication**: Token-based authentication dengan refresh token mechanism ✅
-- **Token Security**:
-  - Access token: 15 menit (short-lived)
-  - Refresh token: 7 hari
-  - Automatic token refresh saat akan kadaluarsa
-  - Session invalidation pada logout
-- **AI Error Recovery**: Comprehensive error handling untuk Gemini API ✅
-  - Exponential backoff retry untuk transient failures
-  - Circuit breaker pattern untuk mencegah cascading failures
-  - Spesifik error handling untuk rate limits (429)
-  - User-friendly error messages tanpa expose sensitive data
-  - Configurable timeout thresholds
+ - **HTTPS/SSL**: Komunikasi terenkripsi
+ - **Firewall & WAF**: Perlindungan dari serangan cyber
+ - **Regular Security Audit**: Penetration testing berkala
+ - **Backup Otomatis**: Daily backup dengan recovery plan
+ - **JWT Authentication**: Token-based authentication dengan refresh token mechanism ✅
+ - **Token Security**:
+   - Access token: 15 menit (short-lived)
+   - Refresh token: 7 hari
+   - Automatic token refresh saat akan kadaluarsa
+   - Session invalidation pada logout
+ - **AI Error Recovery**: Comprehensive error handling untuk Gemini API ✅
+   - Exponential backoff retry untuk transient failures
+   - Circuit breaker pattern untuk mencegah cascading failures
+   - Spesifik error handling untuk rate limits (429)
+   - User-friendly error messages tanpa expose sensitive data
+   - Configurable timeout thresholds
+ - **Secure Logging**: Environment-based logging system ✅
+   - Centralized logger utility (src/utils/logger.ts)
+   - Development-only logging to prevent production data exposure
+   - Configurable log levels (DEBUG, INFO, WARN, ERROR)
+   - No sensitive data logged in production
+   - Timestamp and structured log formatting
+
 
 ### 6.2 Privacy & Compliance
 - **Compliance GDPR/PDPA**: Perlindungan data pribadi

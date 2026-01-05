@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { studentsAPI, attendanceAPI } from '../services/apiService';
 import { Student, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
+import { logger } from '../utils/logger';
 
 interface ClassStudent {
   id: string;
@@ -47,7 +48,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
       }
     } catch (err) {
       setError('Terjadi kesalahan saat mengambil data siswa');
-      console.error('Error fetching students:', err);
+      logger.error('Error fetching students:', err);
     } finally {
       setLoading(false);
     }
@@ -74,7 +75,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
         );
       }
     } catch (err) {
-      console.error('Error fetching attendance:', err);
+      logger.error('Error fetching attendance:', err);
     }
   };
 
@@ -103,7 +104,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
         onShowToast(response.message || 'Gagal memperbarui kehadiran', 'error');
       }
     } catch (err) {
-      console.error('Error updating attendance:', err);
+      logger.error('Error updating attendance:', err);
       onShowToast('Terjadi kesalahan saat memperbarui kehadiran', 'error');
     }
   };

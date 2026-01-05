@@ -4,10 +4,11 @@ import type { ChatMessage, FeaturedProgram, LatestNews } from '../types';
 import { Sender } from '../types';
 import { getAIResponseStream, initialGreeting } from '../services/geminiService';
 import { CloseIcon } from './icons/CloseIcon';
-import { BrainIcon } from './icons/BrainIcon'; // Import Brain Icon
+import { BrainIcon } from './icons/BrainIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import AutoResizeTextarea from './AutoResizeTextarea';
 import TypingIndicator from './TypingIndicator';
+import { logger } from '../utils/logger';
 
 interface ChatWindowProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
         );
       }
     } catch (error) {
-      console.error("Error streaming response:", error);
+      logger.error("Error streaming response:", error);
       const errorMessage = "Maaf, terjadi kesalahan. Silakan coba lagi.";
       setMessages(prev =>
         prev.map(msg =>

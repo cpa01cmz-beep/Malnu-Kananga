@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
 import ChatWindow from './components/ChatWindow';
 import Toast, { ToastType } from './components/Toast';
+import { logger } from './utils/logger';
 
 // Lazy load modal/dialog components
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
@@ -144,7 +145,7 @@ const App: React.FC = () => {
     try {
       await api.auth.logout();
     } catch (err) {
-      console.error('Logout error:', err);
+      logger.error('Logout error:', err);
     } finally {
       setAuthSession({ loggedIn: false, role: null, extraRole: null });
       setIsPublicView(false);

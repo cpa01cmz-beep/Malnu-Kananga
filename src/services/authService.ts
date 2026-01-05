@@ -1,3 +1,5 @@
+import { logger } from '../utils/logger';
+
 export interface User {
   email: string
   name?: string
@@ -33,7 +35,7 @@ export class AuthService {
 
       return false
     } catch (error) {
-      console.error('Login error:', error)
+      logger.error('Login error:', error)
       return false
     }
   }
@@ -43,7 +45,7 @@ export class AuthService {
       localStorage.removeItem(this.AUTH_KEY)
       localStorage.removeItem(this.USER_KEY)
     } catch (error) {
-      console.error('Logout error:', error)
+      logger.error('Logout error:', error)
     }
   }
 
@@ -52,7 +54,7 @@ export class AuthService {
       const result = localStorage.getItem(this.AUTH_KEY)
       return result === 'true'
     } catch (error) {
-      console.error('Auth check error:', error)
+      logger.error('Auth check error:', error)
       return false
     }
   }
@@ -62,7 +64,7 @@ export class AuthService {
       const userData = localStorage.getItem(this.USER_KEY)
       return userData ? JSON.parse(userData) : null
     } catch (error) {
-      console.error('Get user error:', error)
+      logger.error('Get user error:', error)
       return null
     }
   }

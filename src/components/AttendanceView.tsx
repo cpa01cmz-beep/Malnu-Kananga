@@ -3,6 +3,7 @@ import UsersIcon from './icons/UsersIcon';
 import { attendanceAPI } from '../services/apiService';
 import { Attendance } from '../types';
 import { authAPI } from '../services/apiService';
+import { logger } from '../utils/logger';
 
 interface AttendanceViewProps {
   onBack: () => void;
@@ -43,7 +44,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
       }
     } catch (err) {
       setError('Terjadi kesalahan saat mengambil data kehadiran');
-      console.error('Error fetching attendance:', err);
+      logger.error('Error fetching attendance:', err);
     } finally {
       setLoading(false);
     }
