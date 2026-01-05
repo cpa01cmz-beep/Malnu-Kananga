@@ -5,11 +5,13 @@ import BuildingLibraryIcon from './icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import UsersIcon from './icons/UsersIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon'; // New Icon
+import { BrainIcon } from './icons/BrainIcon';
 import ScheduleView from './ScheduleView';
 import ELibrary from './ELibrary';
 import AcademicGrades from './AcademicGrades';
 import AttendanceView from './AttendanceView';
 import OsisEvents from './OsisEvents'; // New Component
+import StudentLearningModule from './StudentLearningModule';
 import { ToastType } from './Toast';
 import { UserExtraRole } from '../types';
 
@@ -18,12 +20,20 @@ interface StudentPortalProps {
     extraRole: UserExtraRole;
 }
 
-type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'attendance' | 'osis';
+type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'attendance' | 'learning' | 'osis';
 
 const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<PortalView>('home');
 
   const menuItems = [
+    {
+      title: 'Modul Pembelajaran',
+      description: 'Belajar interaktif dengan bantuan AI.',
+      icon: <BrainIcon />,
+      color: 'bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400',
+      action: () => setCurrentView('learning'),
+      active: true
+    },
     {
       title: 'Jadwal Pelajaran',
       description: 'Lihat jadwal kelas mingguan Anda.',
@@ -116,6 +126,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
             </>
         )}
 
+        {currentView === 'learning' && <StudentLearningModule />}
         {currentView === 'schedule' && <ScheduleView onBack={() => setCurrentView('home')} />}
         {currentView === 'library' && <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
         {currentView === 'grades' && <AcademicGrades onBack={() => setCurrentView('home')} />}
