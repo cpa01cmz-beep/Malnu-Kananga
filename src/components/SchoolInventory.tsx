@@ -34,7 +34,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
           itemName: newItem.itemName!,
           category: newItem.category!,
           quantity: Number(newItem.quantity),
-          condition: newItem.condition as any,
+          condition: newItem.condition as 'Baik' | 'Rusak Ringan' | 'Rusak Berat',
           location: newItem.location || '-'
       };
 
@@ -90,7 +90,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kondisi</label>
-                            <select value={newItem.condition} onChange={e => setNewItem({...newItem, condition: e.target.value as any})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500">
+                            <select value={newItem.condition} onChange={e => setNewItem({...newItem, condition: e.target.value as 'Baik' | 'Rusak Ringan' | 'Rusak Berat'})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500">
                                 <option>Baik</option>
                                 <option>Rusak Ringan</option>
                                 <option>Rusak Berat</option>

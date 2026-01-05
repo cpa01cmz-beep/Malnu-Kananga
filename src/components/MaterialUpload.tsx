@@ -111,7 +111,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                                     <button
                                         key={type}
                                         type="button"
-                                        onClick={() => setNewType(type as any)}
+                                        onClick={() => setNewType(type as string)}
                                         className={`px-3 py-2 text-sm font-medium rounded-lg border ${
                                             newType === type 
                                             ? 'bg-green-50 border-green-500 text-green-700 dark:bg-green-900/30 dark:text-green-300' 

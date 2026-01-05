@@ -79,7 +79,7 @@ ${message}
   const model = useThinkingMode ? PRO_THINKING_MODEL : FLASH_MODEL;
   
   // Config: Enable Thinking Budget only if using Pro model for complex queries
-  const config: any = {
+  const config: { systemInstruction: string; thinkingConfig?: { thinkingBudget: number } } = {
       systemInstruction: baseInstruction,
   };
 
@@ -105,7 +105,7 @@ ${message}
 }
 
 // Function to analyze Teacher Grading Data (Uses Gemini 3 Pro)
-export async function analyzeClassPerformance(grades: any[]): Promise<string> {
+export async function analyzeClassPerformance(grades: { studentName: string; subject: string; grade: string; semester: string }[]): Promise<string> {
     const prompt = `
     Analyze the following student grade data for a specific class subject. 
     Provide a pedagogical analysis including:

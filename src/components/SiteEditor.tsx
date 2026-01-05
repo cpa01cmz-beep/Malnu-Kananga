@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { ChatMessage, FeaturedProgram, LatestNews } from '../types';
 import { Sender } from '../types';
 import { getAIEditorResponse } from '../services/geminiService';
@@ -37,9 +37,9 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   const [proposedContent, setProposedContent] = useState<SiteContent | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -56,7 +56,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   // Auto-scroll whenever messages change
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isLoading, proposedContent, messages.length]);
+  }, [messages, isLoading, proposedContent, scrollToBottom]);
 
   if (!isOpen) return null;
 

@@ -5,7 +5,7 @@ declare module 'virtual:pwa-register' {
     onNeedRefresh?: () => void
     onOfflineReady?: () => void
     onRegistered?: (registration: ServiceWorkerRegistration | undefined) => void
-    onRegisterError?: (error: any) => void
+    onRegisterError?: (error: unknown) => void
   }
 
   export function registerSW(options?: RegisterSWOptions): (reloadPage?: boolean) => Promise<void>
@@ -19,7 +19,7 @@ interface ImportMetaEnv {
   readonly DEV: boolean;
   readonly PROD: boolean;
   readonly SSR: boolean;
-  [key: string]: any;
+  [key: string]: string | boolean | undefined;
 }
 
 interface ImportMeta {
