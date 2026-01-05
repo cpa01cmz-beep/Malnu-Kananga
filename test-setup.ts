@@ -3,7 +3,7 @@ import { vi } from 'vitest';
 // Mock @google/genai package to prevent actual API calls
 vi.mock('@google/genai', () => ({
   GoogleGenAI: class MockGoogleGenAI {
-    constructor(_options: any) {
+    constructor(_options: { apiKey: string }) {
       // Mock constructor
     }
     models = {

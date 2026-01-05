@@ -28,7 +28,7 @@ const SystemStats: React.FC<SystemStatsProps> = ({ onBack, onShowToast }) => {
 
   useEffect(() => {
     // Helper to safely parse JSON
-    const safeParse = (key: string, defaultVal: any) => {
+    const safeParse = (key: string, defaultVal: unknown) => {
         const saved = localStorage.getItem(key);
         return saved ? JSON.parse(saved) : defaultVal;
     }
@@ -59,7 +59,7 @@ const SystemStats: React.FC<SystemStatsProps> = ({ onBack, onShowToast }) => {
 
     setStats({
       totalUsers: users.length || 4,
-      activeUsers: users.filter((u: any) => u.status === 'active').length || 3,
+      activeUsers: users.filter((u: { status: string }) => u.status === 'active').length || 3,
       totalPrograms: content.featuredPrograms?.length || 3,
       totalNews: content.latestNews?.length || 3,
       totalPPDB: ppdb.length || 0,

@@ -34,7 +34,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
           date: newEvent.date!,
           location: newEvent.location!,
           description: newEvent.description!,
-          status: newEvent.status as any
+          status: newEvent.status as 'Upcoming' | 'Ongoing' | 'Completed'
       };
 
       setEvents([...events, event]);
