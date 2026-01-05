@@ -23,7 +23,7 @@ export interface LatestNews {
   imageUrl: string;
 }
 
-export type UserRole = 'admin' | 'teacher' | 'student';
+export type UserRole = 'admin' | 'teacher' | 'student' | 'parent';
 
 // Role tambahan untuk tugas khusus
 export type UserExtraRole = 'staff' | 'osis' | null;
@@ -49,6 +49,29 @@ export interface Teacher {
   nip: string;
   subjects: string;
   joinDate: string;
+}
+
+export interface Parent {
+  id: string;
+  userId: string;
+  children: ParentChild[];
+}
+
+export interface ParentChild {
+  relationshipId: string;
+  relationshipType: 'ayah' | 'ibu' | 'wali';
+  isPrimaryContact: boolean;
+  studentId: string;
+  nisn: string;
+  nis: string;
+  class: string;
+  className: string;
+  dateOfBirth: string;
+  studentName: string;
+  studentEmail: string;
+  classNameFull?: string;
+  academicYear?: string;
+  semester?: string;
 }
 
 export interface User {

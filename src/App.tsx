@@ -16,6 +16,7 @@ const PPDBRegistration = lazy(() => import('./components/PPDBRegistration'));
 const StudentPortal = lazy(() => import('./components/StudentPortal'));
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const TeacherDashboard = lazy(() => import('./components/TeacherDashboard'));
+const ParentDashboard = lazy(() => import('./components/ParentDashboard'));
 
 import HeroSection from './components/sections/HeroSection';
 import RelatedLinksSection from './components/sections/RelatedLinksSection';
@@ -134,7 +135,7 @@ const App: React.FC = () => {
     setIsLoginOpen(false);
     setIsPublicView(false); 
     
-    let roleName = role === 'admin' ? 'Administrator' : role === 'teacher' ? 'Guru' : 'Siswa';
+    let roleName = role === 'admin' ? 'Administrator' : role === 'teacher' ? 'Guru' : role === 'parent' ? 'Wali Murid' : 'Siswa';
     if (extraRole === 'staff') roleName += ' (Staff)';
     if (extraRole === 'osis') roleName += ' (Pengurus OSIS)';
 
@@ -176,28 +177,36 @@ const App: React.FC = () => {
           case 'admin':
               return (
                 <Suspense fallback={<div className="flex justify-center items-center h-64">Loading admin dashboard...</div>}>
-                  <AdminDashboard 
-                    onOpenEditor={() => setIsEditorOpen(true)} 
-                    onShowToast={showToast} 
-                  />
+                    <AdminDashboard
+                      onOpenEditor={() => setIsEditorOpen(true)}
+                      onShowToast={showToast}
+                    />
                 </Suspense>
               );
           case 'teacher':
               return (
                 <Suspense fallback={<div className="flex justify-center items-center h-64">Loading teacher dashboard...</div>}>
-                  <TeacherDashboard 
-                    extraRole={userExtraRole} // Pass extra role
-                    onShowToast={showToast} 
-                  />
+                    <TeacherDashboard
+                      extraRole={userExtraRole}
+                      onShowToast={showToast}
+                    />
+                </Suspense>
+              );
+          case 'parent':
+              return (
+                <Suspense fallback={<div className="flex justify-center items-center h-64">Loading parent dashboard...</div>}>
+                    <ParentDashboard
+                      onShowToast={showToast}
+                    />
                 </Suspense>
               );
           case 'student':
           default:
               return (
                 <Suspense fallback={<div className="flex justify-center items-center h-64">Loading student portal...</div>}>
-                  <StudentPortal 
-                    extraRole={userExtraRole} // Pass extra role
-                    onShowToast={showToast} 
+                    <StudentPortal
+                      extraRole={userExtraRole}
+                      onShowToast={showToast}
                   />
                 </Suspense>
               );

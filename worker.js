@@ -195,7 +195,7 @@ async function initDatabase(env) {
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
       password_hash TEXT,
-      role TEXT NOT NULL CHECK(role IN ('admin', 'teacher', 'student')),
+      role TEXT NOT NULL CHECK(role IN ('admin', 'teacher', 'student', 'parent')),
       extra_role TEXT CHECK(extra_role IN ('staff', 'osis', NULL)),
       status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -386,6 +386,18 @@ async function initDatabase(env) {
       ip_address TEXT,
       user_agent TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS parent_student_relationship (
+      id TEXT PRIMARY KEY,
+      parent_id TEXT NOT NULL,
+      student_id TEXT NOT NULL,
+      relationship_type TEXT NOT NULL CHECK(relationship_type IN ('ayah', 'ibu', 'wali')),
+      is_primary_contact BOOLEAN DEFAULT 1,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (parent_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+      UNIQUE(parent_id, student_id)
     );
   `);
   
@@ -945,6 +957,277 @@ async function handleFileList(request, env, corsHeaders) {
 }
 
 // ============================================
+// PARENT API HANDLERS
+// ============================================
+
+async function handleGetChildren(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload || payload.role !== 'parent') {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const children = await env.DB.prepare(`
+      SELECT
+        psr.id as relationship_id,
+        psr.relationship_type,
+        psr.is_primary_contact,
+        s.id as student_id,
+        s.nisn,
+        s.nis,
+        s.class,
+        s.class_name,
+        s.date_of_birth,
+        u.name as student_name,
+        u.email as student_email,
+        c.name as class_name_full,
+        c.academic_year,
+        c.semester
+      FROM parent_student_relationship psr
+      JOIN students s ON psr.student_id = s.id
+      JOIN users u ON s.user_id = u.id
+      LEFT JOIN classes c ON s.class = c.name
+      WHERE psr.parent_id = ?
+      ORDER BY psr.is_primary_contact DESC, u.name ASC
+    `).bind(payload.user_id).all();
+
+    return new Response(JSON.stringify(response.success(children, 'Data anak berhasil diambil')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    console.error('Get children error:', e);
+    return new Response(JSON.stringify(response.error('Gagal mengambil data anak')), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleGetChildGrades(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload || payload.role !== 'parent') {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const studentId = url.searchParams.get('student_id');
+
+    if (!studentId) {
+      return new Response(JSON.stringify(response.error('student_id parameter required')), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const relationship = await env.DB.prepare(`
+      SELECT * FROM parent_student_relationship
+      WHERE parent_id = ? AND student_id = ?
+    `).bind(payload.user_id, studentId).first();
+
+    if (!relationship) {
+      return new Response(JSON.stringify(response.error('Akses ditolak: Bukan orang tua dari siswa ini')), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const grades = await env.DB.prepare(`
+      SELECT
+        g.id,
+        g.assignment_type,
+        g.assignment_name,
+        g.score,
+        g.max_score,
+        g.created_at,
+        subj.name as subject_name,
+        subj.code as subject_code,
+        c.name as class_name,
+        g.academic_year,
+        g.semester
+      FROM grades g
+      JOIN subjects subj ON g.subject_id = subj.id
+      JOIN classes c ON g.class_id = c.id
+      WHERE g.student_id = ?
+      ORDER BY g.created_at DESC
+    `).bind(studentId).all();
+
+    return new Response(JSON.stringify(response.success(grades, 'Data nilai berhasil diambil')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    console.error('Get child grades error:', e);
+    return new Response(JSON.stringify(response.error('Gagal mengambil data nilai')), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleGetChildAttendance(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload || payload.role !== 'parent') {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const studentId = url.searchParams.get('student_id');
+
+    if (!studentId) {
+      return new Response(JSON.stringify(response.error('student_id parameter required')), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const relationship = await env.DB.prepare(`
+      SELECT * FROM parent_student_relationship
+      WHERE parent_id = ? AND student_id = ?
+    `).bind(payload.user_id, studentId).first();
+
+    if (!relationship) {
+      return new Response(JSON.stringify(response.error('Akses ditolak: Bukan orang tua dari siswa ini')), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const attendance = await env.DB.prepare(`
+      SELECT
+        a.id,
+        a.date,
+        a.status,
+        a.notes,
+        a.created_at,
+        c.name as class_name
+      FROM attendance a
+      JOIN classes c ON a.class_id = c.id
+      WHERE a.student_id = ?
+      ORDER BY a.date DESC
+      LIMIT 50
+    `).bind(studentId).all();
+
+    return new Response(JSON.stringify(response.success(attendance, 'Data kehadiran berhasil diambil')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    console.error('Get child attendance error:', e);
+    return new Response(JSON.stringify(response.error('Gagal mengambil data kehadiran')), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleGetChildSchedule(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload || payload.role !== 'parent') {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const studentId = url.searchParams.get('student_id');
+
+    if (!studentId) {
+      return new Response(JSON.stringify(response.error('student_id parameter required')), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const relationship = await env.DB.prepare(`
+      SELECT * FROM parent_student_relationship
+      WHERE parent_id = ? AND student_id = ?
+    `).bind(payload.user_id, studentId).first();
+
+    if (!relationship) {
+      return new Response(JSON.stringify(response.error('Akses ditolak: Bukan orang tua dari siswa ini')), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const student = await env.DB.prepare('SELECT class FROM students WHERE id = ?')
+      .bind(studentId)
+      .first();
+
+    if (!student) {
+      return new Response(JSON.stringify(response.error('Data siswa tidak ditemukan')), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const classData = await env.DB.prepare('SELECT id FROM classes WHERE name = ?')
+      .bind(student.class)
+      .first();
+
+    if (!classData) {
+      return new Response(JSON.stringify(response.success([], 'Jadwal kosong')), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const schedules = await env.DB.prepare(`
+      SELECT
+        s.id,
+        s.day_of_week,
+        s.start_time,
+        s.end_time,
+        s.room,
+        subj.name as subject_name,
+        subj.code as subject_code,
+        u.name as teacher_name
+      FROM schedules s
+      JOIN subjects subj ON s.subject_id = subj.id
+      JOIN teachers t ON s.teacher_id = t.id
+      JOIN users u ON t.user_id = u.id
+      WHERE s.class_id = ?
+      ORDER BY
+        CASE s.day_of_week
+          WHEN 'Senin' THEN 1
+          WHEN 'Selasa' THEN 2
+          WHEN 'Rabu' THEN 3
+          WHEN 'Kamis' THEN 4
+          WHEN 'Jumat' THEN 5
+          WHEN 'Sabtu' THEN 6
+          WHEN 'Minggu' THEN 7
+        END,
+        s.start_time
+    `).bind(classData.id).all();
+
+    return new Response(JSON.stringify(response.success(schedules, 'Jadwal berhasil diambil')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    console.error('Get child schedule error:', e);
+    return new Response(JSON.stringify(response.error('Gagal mengambil jadwal')), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// ============================================
 // MAIN HANDLER
 // ============================================
 
@@ -989,6 +1272,10 @@ export default {
       '/api/attendance': (r, e, c) => handleCRUD(r, e, c, 'attendance'),
       '/api/e_library': (r, e, c) => handleCRUD(r, e, c, 'e_library'),
       '/api/announcements': (r, e, c) => handleCRUD(r, e, c, 'announcements'),
+      '/api/parent/children': handleGetChildren,
+      '/api/parent/grades': handleGetChildGrades,
+      '/api/parent/attendance': handleGetChildAttendance,
+      '/api/parent/schedule': handleGetChildSchedule,
     };
     
     for (const [path, handler] of Object.entries(routes)) {

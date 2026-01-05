@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   password_hash TEXT, -- For future password-based auth if needed
-  role TEXT NOT NULL CHECK(role IN ('admin', 'teacher', 'student')),
+  role TEXT NOT NULL CHECK(role IN ('admin', 'teacher', 'student', 'parent')),
   extra_role TEXT CHECK(extra_role IN ('staff', 'osis', NULL)),
   status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -284,6 +284,24 @@ CREATE TABLE IF NOT EXISTS audit_log (
 CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_log(user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_log(action);
 CREATE INDEX IF NOT EXISTS idx_audit_table ON audit_log(table_name);
+
+-- ============================================
+-- 16. PARENT_STUDENT_RELATIONSHIP TABLE (Hubungan Wali Murid - Siswa)
+-- ============================================
+CREATE TABLE IF NOT EXISTS parent_student_relationship (
+  id TEXT PRIMARY KEY,
+  parent_id TEXT NOT NULL,
+  student_id TEXT NOT NULL,
+  relationship_type TEXT NOT NULL CHECK(relationship_type IN ('ayah', 'ibu', 'wali')),
+  is_primary_contact BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (parent_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+  UNIQUE(parent_id, student_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_parent_relationship_parent ON parent_student_relationship(parent_id);
+CREATE INDEX IF NOT EXISTS idx_parent_relationship_student ON parent_student_relationship(student_id);
 
 -- ============================================
 -- TRIGGERS for automatic timestamp updates

@@ -1,7 +1,7 @@
 // apiService.ts - Frontend API Service
 // Handles all backend API interactions
 
-import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher } from '../types';
+import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild } from '../types';
 import { logger } from '../utils/logger';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
@@ -953,6 +953,28 @@ export const announcementsAPI = {
 };
 
 // ============================================
+// PARENTS API
+// ============================================
+
+export const parentsAPI = {
+  async getChildren(): Promise<ApiResponse<ParentChild[]>> {
+    return request<ParentChild[]>('/api/parent/children');
+  },
+
+  async getChildGrades(studentId: string): Promise<ApiResponse<Grade[]>> {
+    return request<Grade[]>(`/api/parent/grades?student_id=${studentId}`);
+  },
+
+  async getChildAttendance(studentId: string): Promise<ApiResponse<Attendance[]>> {
+    return request<Attendance[]>(`/api/parent/attendance?student_id=${studentId}`);
+  },
+
+  async getChildSchedule(studentId: string): Promise<ApiResponse<Schedule[]>> {
+    return request<Schedule[]>(`/api/parent/schedule?student_id=${studentId}`);
+  },
+};
+
+// ============================================
 // EXPORT ALL APIs
 // ============================================
 
@@ -961,6 +983,7 @@ export const api = {
   users: usersAPI,
   students: studentsAPI,
   teachers: teachersAPI,
+  parents: parentsAPI,
   ppdb: ppdbAPI,
   inventory: inventoryAPI,
   events: eventsAPI,
