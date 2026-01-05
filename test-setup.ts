@@ -17,3 +17,18 @@ vi.mock('@google/genai', () => ({
     STRING: 'STRING'
   }
 }));
+
+// Suppress console errors during tests to reduce noise
+const originalError = console.error;
+console.error = (...args) => {
+  // Filter out expected mock errors
+  if (typeof args[0] === 'string' && (
+    args[0].includes('Mock API error') ||
+    args[0].includes('RAG fetch failed') ||
+    args[0].includes('Analysis failed') ||
+    args[0].includes('Error calling Gemini API')
+  )) {
+    return;
+  }
+  originalError(...args);
+};
