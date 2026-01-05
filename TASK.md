@@ -45,18 +45,21 @@ Semua fitur utama untuk fase **Simulasi & MVP** telah berhasil diimplementasikan
 
 ### Tugas Berikutnya
 - [✅] **Backend Completion**:
-    - [x] Implementasi Grade management API (Students, Teachers, Subjects, Classes, Schedules, Grades) - COMPLETED
-    - [x] Implementasi Attendance API - COMPLETED
-    - [x] Implementasi E-Library API - COMPLETED
-    - [x] Implementasi Announcements API - COMPLETED
-    - [ ] Integrasi Cloudflare R2 untuk file storage
-- [🔄] **Frontend Migration** (IN PROGRESS - BUILDER MODE):
-    - [x] Migrasi PPDB komponen ke API - COMPLETED
-    - [x] Migrasi Inventory komponen ke API - COMPLETED
-    - [x] Migrasi Events komponen ke API - COMPLETED
-    - [ ] Migrasi Academic components ke API (Subjects, Classes, Schedules, Grades, Attendance, E-Library, Announcements)
-    - [ ] Hapus dependency ke localStorage untuk data utama
-    - [ ] Implementasi proper error handling dan loading states untuk semua komponen
+     - [x] Implementasi Grade management API (Students, Teachers, Subjects, Classes, Schedules, Grades) - COMPLETED
+     - [x] Implementasi Attendance API - COMPLETED
+     - [x] Implementasi E-Library API - COMPLETED
+     - [x] Implementasi Announcements API - COMPLETED
+     - [ ] Integrasi Cloudflare R2 untuk file storage
+- [📋] **Frontend Migration - Academic Components** (PENDING - BUILDER MODE):
+     - [ ] Migrasi Academic components ke API (Subjects, Classes, Schedules, Grades, Attendance, E-Library, Announcements)
+     - [ ] Hapus dependency ke localStorage untuk data utama
+     - [ ] Implementasi proper error handling dan loading states untuk semua komponen
+
+### Tugas Terbaru (COMPLETED - BUILDER MODE)
+- [✅] **Frontend Migration - Basic Components**:
+     - [x] Migrasi PPDB komponen ke API - COMPLETED (commit: e734f7b)
+     - [x] Migrasi Inventory komponen ke API - COMPLETED (commit: e734f7b)
+     - [x] Migrasi Events komponen ke API - COMPLETED (commit: e734f7b)
 
 ---
 
