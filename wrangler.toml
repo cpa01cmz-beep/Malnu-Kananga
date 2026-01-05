@@ -12,8 +12,8 @@ name = "malnu-kananga-worker-prod"
 # D1 Database bindings - create with: wrangler d1 create malnu-kananga-db
 [[env.production.d1_databases]]
 binding = "DB"
-database_name = "malnu-kananga-db"
-database_id = "your-d1-database-id-here"  # Replace with actual ID after creation
+database_name = "malnu-kananga-db-prod"
+database_id = "placeholder-database-id"  # Replace with actual ID after creation
 
 # Vectorize index bindings - create with: wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 [[env.production.vectorize]]
@@ -24,6 +24,9 @@ index_name = "malnu-kananga-index"
 [env.production.vars]
 ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
 JWT_SECRET = "your-super-secret-jwt-key-change-this-in-production"
+GEMINI_API_KEY = "your_production_gemini_api_key_here"
+NODE_ENV = "production"
+LOG_LEVEL = "error"
 
 # Local development
 [env.dev]
