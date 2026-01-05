@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
-import { eLibraryAPI } from '../services/apiService';
+import { eLibraryAPI, fileStorageAPI } from '../services/apiService';
 import { ELibrary as ELibraryType } from '../types';
 
 interface ELibraryProps {
@@ -74,8 +74,12 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
     try {
       await eLibraryAPI.incrementDownloadCount(material.id);
+
+      const downloadUrl = fileStorageAPI.getDownloadUrl(material.fileUrl);
+      window.open(downloadUrl, '_blank');
     } catch (err) {
-      console.error('Error incrementing download count:', err);
+      console.error('Error downloading file:', err);
+      onShowToast('Gagal mengunduh file', 'error');
     }
   };
 

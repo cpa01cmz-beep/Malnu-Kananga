@@ -101,9 +101,20 @@ Semua fitur utama untuk fase **Simulasi & MVP** telah berhasil diimplementasikan
 
 ### Tugas Terbaru (COMPLETED - BUILDER MODE)
 - [✅] **Frontend Migration - Basic Components**:
-     - [x] Migrasi PPDB komponen ke API - COMPLETED (commit: e734f7b)
-     - [x] Migrasi Inventory komponen ke API - COMPLETED (commit: e734f7b)
-     - [x] Migrasi Events komponen ke API - COMPLETED (commit: e734f7b)
+      - [x] Migrasi PPDB komponen ke API - COMPLETED (commit: e734f7b)
+      - [x] Migrasi Inventory komponen ke API - COMPLETED (commit: e734f7b)
+      - [x] Migrasi Events komponen ke API - COMPLETED (commit: e734f7b)
+- [✅] **Cloudflare R2 File Storage Integration** (COMPLETED - BUILDER MODE):
+      - [x] Konfigurasi R2 bucket di wrangler.toml (production & dev) - COMPLETED
+      - [x] Implementasi R2 API endpoints (upload, download, delete, list) - COMPLETED
+      - [x] Update ppdb_registrants schema dengan document_url field - COMPLETED
+      - [x] Buat fileStorageAPI di apiService.ts - COMPLETED
+      - [x] Buat reusable FileUpload component dengan progress tracking - COMPLETED
+      - [x] Update MaterialUpload untuk gunakan R2 storage - COMPLETED
+      - [x] Update PPDBRegistration untuk support document uploads - COMPLETED
+      - [x] Update ELibrary untuk support file downloads dari R2 - COMPLETED
+      - [x] Implementasi file type dan size validation - COMPLETED
+      - [x] Buat R2_SETUP.md documentation - COMPLETED
 
 ---
 
