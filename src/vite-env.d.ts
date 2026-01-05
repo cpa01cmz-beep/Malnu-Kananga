@@ -116,14 +116,65 @@ interface SpeechSynthesis {
   onvoiceschanged: (this: SpeechSynthesis, ev: Event) => unknown;
 }
 
-interface Window {
-  SpeechRecognition: {
-    prototype: SpeechRecognition;
-    new(): SpeechRecognition;
-  };
-  webkitSpeechRecognition: {
-    prototype: SpeechRecognition;
-    new(): SpeechRecognition;
-  };
-  speechSynthesis: SpeechSynthesis;
-}
+  interface Window {
+   SpeechRecognition: {
+     prototype: SpeechRecognition;
+     new(): SpeechRecognition;
+   };
+   webkitSpeechRecognition: {
+     prototype: SpeechRecognition;
+     new(): SpeechRecognition;
+   };
+   speechSynthesis: SpeechSynthesis;
+   Notification: {
+     new (title: string, options?: NotificationOptions): Notification;
+     permission: NotificationPermission;
+     requestPermission(): Promise<NotificationPermission>;
+   };
+ }
+
+ interface Notification {
+   readonly title: string;
+   readonly body: string;
+   readonly tag: string;
+   readonly icon: string;
+   readonly badge: string;
+   readonly image: string;
+   readonly timestamp: number;
+   readonly data: Record<string, unknown>;
+   onclick: ((this: Notification, ev: Event) => void) | null;
+   close(): void;
+ }
+
+ interface NotificationOptions {
+   body?: string;
+   icon?: string;
+   badge?: string;
+   image?: string;
+   tag?: string;
+   timestamp?: number;
+   requireInteraction?: boolean;
+   vibrate?: number[];
+   data?: Record<string, unknown>;
+ }
+
+ /* eslint-disable no-undef */
+interface NotificationPermission extends string {
+/* eslint-enable no-undef */
+   readonly 'default': NotificationPermission;
+   readonly 'granted': NotificationPermission;
+   readonly 'denied': NotificationPermission;
+ }
+
+ interface PushSubscription {
+   readonly endpoint: string;
+   readonly expirationTime: number | null;
+   readonly options: PushSubscriptionOptions;
+   getKey(name: 'p256dh' | 'auth'): ArrayBuffer | null;
+   unsubscribe(): Promise<boolean>;
+ }
+
+ interface PushSubscriptionOptions {
+   userVisibleOnly: boolean;
+   applicationServerKey: Uint8Array | null;
+ }

@@ -388,3 +388,75 @@ export interface SpeechWindow {
     prototype: SpeechSynthesisUtterance;
   };
 }
+
+export type NotificationType = 'announcement' | 'grade' | 'ppdb' | 'event' | 'library' | 'system';
+
+export type NotificationPriority = 'low' | 'normal' | 'high';
+
+export interface PushNotification {
+  id: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  icon?: string;
+  badge?: string;
+  image?: string;
+  data?: Record<string, unknown>;
+  timestamp: string;
+  read: boolean;
+  priority: NotificationPriority;
+}
+
+export interface NotificationSettings {
+  enabled: boolean;
+  announcements: boolean;
+  grades: boolean;
+  ppdbStatus: boolean;
+  events: boolean;
+  library: boolean;
+  system: boolean;
+  quietHours: {
+    enabled: boolean;
+    start: string;
+    end: string;
+  };
+}
+
+export interface NotificationSubscription {
+  endpoint: string;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
+}
+
+export interface NotificationPermission {
+  granted: boolean;
+  state: 'default' | 'granted' | 'denied';
+}
+
+export interface PushSubscriptionOptions {
+  userVisibleOnly: boolean;
+  applicationServerKey: string | null;
+}
+
+export interface NotificationPayload {
+  title: string;
+  body: string;
+  icon?: string;
+  badge?: string;
+  image?: string;
+  data?: Record<string, unknown>;
+  vibrate?: number[];
+  tag?: string;
+  requireInteraction?: boolean;
+  silent?: boolean;
+}
+
+export interface NotificationHistoryItem {
+  id: string;
+  notification: PushNotification;
+  clicked: boolean;
+  dismissed: boolean;
+  deliveredAt: string;
+}

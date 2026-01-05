@@ -13,6 +13,9 @@ export const STORAGE_KEYS = {
     THEME: 'malnu_theme',
     VOICE_STORAGE_KEY: 'malnu_voice_settings',
     VOICE_SETTINGS_BACKUP_KEY: 'malnu_voice_settings_backup',
+    NOTIFICATION_SETTINGS_KEY: 'malnu_notification_settings',
+    NOTIFICATION_HISTORY_KEY: 'malnu_notification_history',
+    PUSH_SUBSCRIPTION_KEY: 'malnu_push_subscription',
 } as const;
 
 export const APP_CONFIG = {
@@ -60,4 +63,45 @@ export const VOICE_COMMANDS = {
     CLEAR_CHAT: ['hapus chat', 'clear chat', 'clear history'],
     SEND_MESSAGE: ['kirim', 'send', 'kirim pesan'],
     TOGGLE_VOICE: ['aktifkan suara', 'matikan suara', 'toggle voice', 'toggle speech'],
+} as const;
+
+export const NOTIFICATION_CONFIG = {
+    DEFAULT_SETTINGS: {
+        enabled: true,
+        announcements: true,
+        grades: true,
+        ppdbStatus: true,
+        events: true,
+        library: true,
+        system: true,
+        quietHours: {
+            enabled: false,
+            start: '22:00',
+            end: '07:00',
+        },
+    },
+    MAX_HISTORY_SIZE: 100,
+    NOTIFICATION_TTL: 2592000000, // 30 days in milliseconds
+    RETRY_ATTEMPTS: 3,
+    RETRY_DELAY: 1000,
+    VIBRATION_PATTERN: [200, 100, 200],
+} as const;
+
+export const NOTIFICATION_ERROR_MESSAGES = {
+    NOT_SUPPORTED: 'Browser Anda tidak mendukung notifikasi. Silakan gunakan Chrome, Edge, atau Firefox terbaru.',
+    PERMISSION_DENIED: 'Izin notifikasi ditolak. Silakan izinkan notifikasi di pengaturan browser Anda.',
+    SUBSCRIPTION_FAILED: 'Gagal mendaftar ke notifikasi. Silakan coba lagi.',
+    INVALID_KEYS: 'Kunci aplikasi tidak valid. Hubungi administrator.',
+    NETWORK_ERROR: 'Gagal mengirim notifikasi. Periksa koneksi internet Anda.',
+    SERVICE_WORKER_FAILED: 'Service Worker tidak tersedia. Pastikan HTTPS aktif.',
+} as const;
+
+export const NOTIFICATION_ICONS = {
+    DEFAULT: '/pwa-192x192.png',
+    ANNOUNCEMENT: '/pwa-192x192.png',
+    GRADE: '/pwa-192x192.png',
+    PPDB: '/pwa-192x192.png',
+    EVENT: '/pwa-192x192.png',
+    LIBRARY: '/pwa-192x192.png',
+    SYSTEM: '/pwa-192x192.png',
 } as const;
