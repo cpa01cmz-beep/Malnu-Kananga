@@ -26,6 +26,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
   const [isLoading, setIsLoading] = useState(false);
   const [isThinkingMode, setIsThinkingMode] = useState(false); // State for Thinking Mode
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Limit chat history to prevent memory leaks
+  const MAX_HISTORY_SIZE = 20;
+  const MAX_MESSAGES_SIZE = 100;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -37,11 +41,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
             { id: 'initial', text: initialGreeting, sender: Sender.AI }
         ]);
     }
-  }, [isOpen, messages.length]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, input]);
+  }, [messages.length]);
 
   const handleSend = useCallback(async () => {
     if (!input.trim() || isLoading) return;
@@ -79,10 +84,24 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
       fullResponse = errorMessage; 
     } finally {
       setIsLoading(false);
-      setHistory(prev => [...prev, 
-        { role: 'user', parts: userMessageText },
-        { role: 'model', parts: fullResponse }
-      ]);
+      setHistory(prev => {
+        const newHistory = [...prev, 
+          { role: 'user', parts: userMessageText },
+          { role: 'model', parts: fullResponse }
+        ];
+        // Limit history size to prevent memory leaks
+        return newHistory.length > MAX_HISTORY_SIZE 
+          ? newHistory.slice(-MAX_HISTORY_SIZE)
+          : newHistory;
+      });
+      
+      // Limit messages size to prevent memory leaks
+      setMessages(prev => {
+        if (prev.length > MAX_MESSAGES_SIZE) {
+          return prev.slice(-MAX_MESSAGES_SIZE);
+        }
+        return prev;
+      });
     }
   }, [input, isLoading, history, siteContext, isThinkingMode]);
 
