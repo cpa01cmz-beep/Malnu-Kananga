@@ -29,10 +29,10 @@ Fokus: Memindahkan penyimpanan data dari `localStorage` ke Database Serverless s
     - [x] Implementasi API endpoints untuk Attendance tracking
     - [x] Implementasi API endpoints untuk E-Library materials
     - [x] Implementasi API endpoints untuk Announcements
-- [x] **Autentikasi Aman**:
-    - [x] Ganti simulasi login dengan JWT (JSON Web Token) yang valid.
-    - [x] Implementasi Session Management dengan JWT sessions
-    - [ ] Implementasi refresh token mechanism
+ - [x] **Autentikasi Aman**:
+     - [x] Ganti simulasi login dengan JWT (JSON Web Token) yang valid.
+     - [x] Implementasi Session Management dengan JWT sessions
+     - [x] Implementasi refresh token mechanism (access token: 15min, refresh token: 7 days) - COMPLETED
 - [✅] **File Storage**:
     - [x] Integrasi Cloudflare R2 untuk penyimpanan file nyata (Upload materi guru, dokumen PPDB) - COMPLETED
     - [x] Implementasi file upload/download API endpoints - COMPLETED

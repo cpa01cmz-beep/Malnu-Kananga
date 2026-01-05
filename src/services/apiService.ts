@@ -15,6 +15,7 @@ export interface LoginResponse {
   data?: {
     user: User;
     token: string;
+    refreshToken: string;
   };
 }
 
@@ -49,10 +50,23 @@ function setAuthToken(token: string): void {
   localStorage.setItem('auth_token', token);
 }
 
-// Clear auth token
+// Get stored refresh token
+function getRefreshToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('refresh_token');
+}
+
+// Set refresh token
+function setRefreshToken(token: string): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem('refresh_token', token);
+}
+
+// Clear auth tokens
 function clearAuthToken(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem('auth_token');
+  localStorage.removeItem('refresh_token');
 }
 
 // Parse JWT token (without verification, for payload access only)
@@ -76,9 +90,34 @@ function parseJwtPayload(token: string): AuthPayload | null {
 function isTokenExpired(token: string): boolean {
   const payload = parseJwtPayload(token);
   if (!payload) return true;
-  
+
   const now = Math.floor(Date.now() / 1000);
   return payload.exp < now;
+}
+
+// Check if token is about to expire (within 5 minutes)
+function isTokenExpiringSoon(token: string): boolean {
+  const payload = parseJwtPayload(token);
+  if (!payload) return true;
+
+  const now = Math.floor(Date.now() / 1000);
+  const fiveMinutes = 5 * 60;
+  return (payload.exp - now) < fiveMinutes;
+}
+
+// Track ongoing refresh to prevent multiple simultaneous refreshes
+let isRefreshing = false;
+let refreshSubscribers: Array<(token: string) => void> = [];
+
+// Subscribe to token refresh
+function subscribeTokenRefresh(callback: (token: string) => void) {
+  refreshSubscribers.push(callback);
+}
+
+// Notify subscribers of new token
+function onTokenRefreshed(token: string): void {
+  refreshSubscribers.forEach(callback => callback(token));
+  refreshSubscribers = [];
 }
 
 // ============================================
@@ -95,11 +134,12 @@ export const authAPI = {
     });
 
     const data: LoginResponse = await response.json();
-    
-    if (data.success && data.data?.token) {
+
+    if (data.success && data.data?.token && data.data?.refreshToken) {
       setAuthToken(data.data.token);
+      setRefreshToken(data.data.refreshToken);
     }
-    
+
     return data;
   },
 
@@ -120,6 +160,33 @@ export const authAPI = {
       console.error('Logout error:', e);
     } finally {
       clearAuthToken();
+    }
+  },
+
+  // Refresh access token
+  async refreshToken(): Promise<boolean> {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) return false;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.data?.token) {
+        setAuthToken(data.data.token);
+        onTokenRefreshed(data.data.token);
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      console.error('Refresh token error:', e);
+      return false;
     }
   },
 
@@ -148,6 +215,9 @@ export const authAPI = {
 
   // Get auth token for API requests
   getAuthToken,
+
+  // Get refresh token
+  getRefreshToken,
 };
 
 // ============================================
@@ -158,8 +228,24 @@ async function request<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
-  const token = getAuthToken();
-  
+  let token = getAuthToken();
+
+  if (token && isTokenExpiringSoon(token)) {
+    if (!isRefreshing) {
+      isRefreshing = true;
+      try {
+        await authAPI.refreshToken();
+        token = getAuthToken();
+      } finally {
+        isRefreshing = false;
+      }
+    } else {
+      token = await new Promise((resolve) => {
+        subscribeTokenRefresh((newToken: string) => resolve(newToken));
+      });
+    }
+  }
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers: {
@@ -169,7 +255,23 @@ async function request<T>(
     } as HeadersInit,
   });
 
-  return response.json();
+  const json = await response.json();
+
+  if (response.status === 401 && !isRefreshing && getRefreshToken()) {
+    if (!isRefreshing) {
+      isRefreshing = true;
+      try {
+        const refreshSuccess = await authAPI.refreshToken();
+        if (refreshSuccess) {
+          return request(endpoint, options);
+        }
+      } finally {
+        isRefreshing = false;
+      }
+    }
+  }
+
+  return json;
 }
 
 // Type declarations for Web API

@@ -187,6 +187,12 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 - **Firewall & WAF**: Perlindungan dari serangan cyber
 - **Regular Security Audit**: Penetration testing berkala
 - **Backup Otomatis**: Daily backup dengan recovery plan
+- **JWT Authentication**: Token-based authentication dengan refresh token mechanism ✅
+- **Token Security**:
+  - Access token: 15 menit (short-lived)
+  - Refresh token: 7 hari
+  - Automatic token refresh saat akan kadaluarsa
+  - Session invalidation pada logout
 
 ### 6.2 Privacy & Compliance
 - **Compliance GDPR/PDPA**: Perlindungan data pribadi

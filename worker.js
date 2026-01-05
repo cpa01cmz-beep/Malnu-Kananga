@@ -370,7 +370,9 @@ async function initDatabase(env) {
       last_accessed TIMESTAMP,
       ip_address TEXT,
       user_agent TEXT,
-      is_revoked BOOLEAN DEFAULT FALSE
+      is_revoked BOOLEAN DEFAULT FALSE,
+      refresh_token TEXT UNIQUE,
+      refresh_token_expires_at TIMESTAMP
     );
     
     CREATE TABLE IF NOT EXISTS audit_log (
@@ -435,24 +437,27 @@ async function handleLogin(request, env, corsHeaders) {
       });
     }
     
-    // Create session
+    // Create session with refresh token
     const sessionId = generateId();
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    const refreshToken = generateId();
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes for access token
+    const refreshTokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days for refresh token
     
     await env.DB.prepare(`
-      INSERT INTO sessions (id, user_id, token, expires_at, ip_address, user_agent)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `).bind(sessionId, user.id, sessionId, expiresAt.toISOString(), 
+      INSERT INTO sessions (id, user_id, token, expires_at, ip_address, user_agent, refresh_token, refresh_token_expires_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(sessionId, user.id, sessionId, expiresAt.toISOString(),
            request.headers.get('CF-Connecting-IP') || 'unknown',
-           request.headers.get('User-Agent') || 'unknown').run();
+           request.headers.get('User-Agent') || 'unknown',
+           refreshToken, refreshTokenExpiresAt.toISOString()).run();
     
-    // Generate JWT
+    // Generate JWT (access token - short-lived)
     const token = await JWT.generate({
       user_id: user.id,
       email: user.email,
       role: user.role,
       session_id: sessionId
-    }, env.JWT_SECRET);
+    }, env.JWT_SECRET, '15m');
     
     return new Response(JSON.stringify(response.success({
       user: {
@@ -463,7 +468,8 @@ async function handleLogin(request, env, corsHeaders) {
         extraRole: user.extra_role,
         status: user.status
       },
-      token
+      token,
+      refreshToken
     }, 'Login berhasil')), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -485,12 +491,64 @@ async function handleLogout(request, env, corsHeaders) {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
-    
-    await env.DB.prepare('UPDATE sessions SET is_revoked = 1 WHERE id = ?')
+
+    await env.DB.prepare('UPDATE sessions SET is_revoked = 1, refresh_token = NULL WHERE id = ?')
       .bind(payload.session_id)
       .run();
-    
+
     return new Response(JSON.stringify(response.success(null, 'Logout berhasil')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch {
+    return new Response(JSON.stringify(response.error('Terjadi kesalahan pada server', 500)), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleRefreshToken(request, env, corsHeaders) {
+  try {
+    const { refreshToken } = await request.json();
+
+    if (!refreshToken) {
+      return new Response(JSON.stringify(response.error('Refresh token diperlukan')), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const session = await env.DB.prepare(`
+      SELECT s.*, u.id, u.email, u.role, u.extra_role, u.name, u.status
+      FROM sessions s
+      JOIN users u ON s.user_id = u.id
+      WHERE s.refresh_token = ? AND s.is_revoked = 0 AND s.refresh_token_expires_at > CURRENT_TIMESTAMP
+    `).bind(refreshToken).first();
+
+    if (!session) {
+      return new Response(JSON.stringify(response.error('Refresh token tidak valid atau kadaluarsa')), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes for new access token
+
+    await env.DB.prepare(`
+      UPDATE sessions SET expires_at = ?, last_accessed = CURRENT_TIMESTAMP WHERE id = ?
+    `).bind(expiresAt.toISOString(), session.id).run();
+
+    const newToken = await JWT.generate({
+      user_id: session.user_id,
+      email: session.email,
+      role: session.role,
+      session_id: session.id
+    }, env.JWT_SECRET, '15m');
+
+    return new Response(JSON.stringify(response.success({
+      token: newToken
+    }, 'Token berhasil diperbarui')), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
@@ -913,6 +971,7 @@ export default {
       '/api/chat': handleChat,
       '/auth/login': handleLogin,
       '/auth/logout': handleLogout,
+      '/auth/refresh': handleRefreshToken,
       '/api/files/upload': handleFileUpload,
       '/api/files/download': handleFileDownload,
       '/api/files/delete': handleFileDelete,

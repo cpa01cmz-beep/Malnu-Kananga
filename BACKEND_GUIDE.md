@@ -114,15 +114,29 @@ import { authAPI } from './services/apiService';
 
 const { success, data } = await authAPI.login(email, password);
 if (success) {
-  const { user, token } = data;
-  // Token is automatically stored
+  const { user, token, refreshToken } = data;
+  // Token and refreshToken are automatically stored
 }
+```
+
+#### Refresh Token
+
+```typescript
+import { authAPI } from './services/apiService';
+
+// Automatic token refresh is handled by the apiService
+// When access token expires or is about to expire (within 5 minutes),
+// it will be automatically refreshed using the refresh token
+
+// Manual refresh can also be triggered if needed
+const success = await authAPI.refreshToken();
 ```
 
 #### Logout
 
 ```typescript
 await authAPI.logout();
+// Invalidates both access token and refresh token
 ```
 
 #### Get Current User
@@ -131,6 +145,13 @@ await authAPI.logout();
 const user = authAPI.getCurrentUser();
 const isAuthenticated = authAPI.isAuthenticated();
 ```
+
+#### Token Configuration
+
+- **Access Token Expiration**: 15 minutes
+- **Refresh Token Expiration**: 7 days
+- **Automatic Refresh**: Tokens are automatically refreshed when they're about to expire (within 5 minutes)
+- **Security**: Refresh tokens are invalidated on logout
 
 ### Users API
 
