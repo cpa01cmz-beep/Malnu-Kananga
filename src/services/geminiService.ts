@@ -216,3 +216,205 @@ Please provide the updated JSON content.`;
 }
 
 export const initialGreeting = "Assalamualaikum! Saya Asisten AI MA Malnu Kananga. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?";
+
+interface FlashCard {
+  id: string;
+  front: string;
+  back: string;
+  category: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+}
+
+interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+}
+
+interface QuizData {
+  id: string;
+  title: string;
+  subject: string;
+  topic: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  questions: QuizQuestion[];
+}
+
+export async function generateFlashCardsAI(topic: string, subject: string, count: number = 10): Promise<FlashCard[]> {
+  const prompt = `
+Buat ${count} flash cards edukatif untuk topik "${topic}" dalam mata pelajaran ${subject}.
+Format response harus JSON array dengan struktur berikut:
+[
+  {
+    "id": "string",
+    "front": "string (pertanyaan/konsep singkat)",
+    "back": "string (jawaban/penjelasan detail)",
+    "category": "string",
+    "difficulty": "easy" | "medium" | "hard"
+  }
+]
+
+PENTING:
+- Gunakan Bahasa Indonesia
+- Pastikan front adalah pertanyaan yang jelas dan ringkas
+- Pastikan back memberikan penjelasan yang komprehensif
+- Sesuaikan tingkat kesulitan dengan level siswa SMA
+- Beri variasi difficulty (sekitar 30% easy, 50% medium, 20% hard)
+`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: FLASH_MODEL,
+      contents: prompt,
+      config: {
+        systemInstruction: "Anda adalah ahli pendidikan yang membuat flash cards edukatif untuk siswa SMA.",
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              id: { type: Type.STRING },
+              front: { type: Type.STRING },
+              back: { type: Type.STRING },
+              category: { type: Type.STRING },
+              difficulty: { type: Type.STRING },
+            },
+          },
+        },
+      },
+    });
+
+    const jsonText = (response.text || '').trim();
+    const firstBracket = jsonText.indexOf('[');
+    const lastBracket = jsonText.lastIndexOf(']');
+    let cleanedJsonText = jsonText;
+    if (firstBracket !== -1 && lastBracket !== -1) {
+      cleanedJsonText = jsonText.substring(firstBracket, lastBracket + 1);
+    }
+
+    return JSON.parse(cleanedJsonText);
+  } catch (error) {
+    console.error("Error generating flash cards:", error);
+    throw new Error("Gagal membuat flash cards. Silakan coba lagi.");
+  }
+}
+
+export async function generateQuizAI(
+  topic: string,
+  subject: string,
+  questionCount: number = 5,
+  difficulty: 'easy' | 'medium' | 'hard' = 'medium'
+): Promise<QuizData> {
+  const prompt = `
+Buat kuis pilihan ganda untuk topik "${topic}" dalam mata pelajaran ${subject} dengan ${questionCount} soal tingkat ${difficulty}.
+
+Format response harus JSON dengan struktur:
+{
+  "id": "string",
+  "title": "string (judul kuis yang menarik)",
+  "subject": "string",
+  "topic": "string",
+  "difficulty": "easy" | "medium" | "hard",
+  "questions": [
+    {
+      "id": "string",
+      "question": "string (soal yang jelas)",
+      "options": ["option1", "option2", "option3", "option4"],
+      "correctAnswer": number (0-3, index jawaban benar),
+      "explanation": "string (penjelasan mengapa jawaban tersebut benar)"
+    }
+  ]
+}
+
+PENTING:
+- Gunakan Bahasa Indonesia
+- Pastikan opsi jawaban jelas dan tidak ambigu
+- Berikan penjelasan yang edukatif
+- Sesuaikan tingkat kesulitan sesuai parameter
+- Pastikan correctAnswer adalah index (0-3) dari array options
+`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: PRO_THINKING_MODEL,
+      contents: prompt,
+      config: {
+        systemInstruction: "Anda adalah ahli pendidikan yang membuat kuis edukatif berkualitas untuk siswa SMA.",
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            id: { type: Type.STRING },
+            title: { type: Type.STRING },
+            subject: { type: Type.STRING },
+            topic: { type: Type.STRING },
+            difficulty: { type: Type.STRING },
+            questions: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  id: { type: Type.STRING },
+                  question: { type: Type.STRING },
+                  options: {
+                    type: Type.ARRAY,
+                    items: { type: Type.STRING },
+                  },
+                  correctAnswer: { type: Type.NUMBER },
+                  explanation: { type: Type.STRING },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const jsonText = (response.text || '').trim();
+    const firstBrace = jsonText.indexOf('{');
+    const lastBrace = jsonText.lastIndexOf('}');
+    let cleanedJsonText = jsonText;
+    if (firstBrace !== -1 && lastBrace !== -1) {
+      cleanedJsonText = jsonText.substring(firstBrace, lastBrace + 1);
+    }
+
+    return JSON.parse(cleanedJsonText);
+  } catch (error) {
+    console.error("Error generating quiz:", error);
+    throw new Error("Gagal membuat kuis. Silakan coba lagi.");
+  }
+}
+
+export async function explainConceptAI(topic: string, concept: string, context?: string): Promise<string> {
+  const prompt = `
+Jelaskan konsep "${concept}" dalam topik ${topic} untuk siswa SMA dengan cara yang mudah dipahami.
+
+${context ? `Konteks tambahan: ${context}` : ''}
+
+Berikan penjelasan dengan format:
+1. Definisi singkat
+2. Penjelasan detail dengan contoh konkret
+3. Pentingnya dalam kehidupan nyata
+4. Tips untuk mengingat konsep ini
+
+Gunakan Bahasa Indonesia yang sopan dan edukatif.
+`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: FLASH_MODEL,
+      contents: prompt,
+      config: {
+        systemInstruction: "Anda adalah tutor AI yang sabar dan dapat menjelaskan konsep kompleks dengan cara sederhana.",
+      },
+    });
+
+    return response.text || "Maaf, gagal menjelaskan konsep saat ini.";
+  } catch (error) {
+    console.error("Error explaining concept:", error);
+    throw new Error("Gagal menjelaskan konsep. Silakan coba lagi.");
+  }
+}

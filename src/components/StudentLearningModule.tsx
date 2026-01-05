@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import InteractiveQuiz from './InteractiveQuiz';
+import AIQuizGenerator from './AIQuizGenerator';
+import FlashCardDeck from './FlashCardDeck';
 
 interface CardProps {
   children: React.ReactNode;
@@ -123,7 +125,7 @@ export default function StudentLearningModule() {
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentView, setCurrentView] = useState<'modules' | 'topics' | 'lesson' | 'quiz'>('modules');
+  const [currentView, setCurrentView] = useState<'modules' | 'topics' | 'lesson' | 'quiz' | 'ai-quiz' | 'flashcards'>('modules');
 
   useEffect(() => {
     loadLearningModules();
@@ -203,6 +205,18 @@ export default function StudentLearningModule() {
     setCurrentView(lesson.type === 'quiz' ? 'quiz' : 'lesson');
   };
 
+  const handleStartAIQuiz = () => {
+    if (selectedTopic) {
+      setCurrentView('ai-quiz');
+    }
+  };
+
+  const handleStartFlashCards = () => {
+    if (selectedTopic) {
+      setCurrentView('flashcards');
+    }
+  };
+
   const handleQuizComplete = () => {
     setCurrentView('topics');
     setSelectedLesson(null);
@@ -230,47 +244,47 @@ export default function StudentLearningModule() {
             </Button>
             <h2 className="text-2xl font-bold">{selectedLesson.title}</h2>
           </div>
-          
+
           <Card>
             <CardContent className="p-6">
               <div className="prose max-w-none">
                 <h3 className="text-xl font-semibold mb-4">Konten Teori</h3>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                  <p className="text-blue-700">
-                    🤖 AI Assistant akan membantu Anda memahami materi ini. 
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4 mb-4">
+                  <p className="text-blue-700 dark:text-blue-300">
+                    🤖 AI Assistant akan membantu Anda memahami materi ini.
                     Tanyakan apa saja tentang konsep yang sulit dipahami.
                   </p>
                 </div>
-                
+
                 {/* Mock theory content */}
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-semibold mb-2">Definisi</h4>
-                    <p className="text-gray-700">
-                      Materi pembelajaran sedang dalam proses pengembangan. 
+                    <p className="text-gray-700 dark:text-gray-300">
+                      Materi pembelajaran sedang dalam proses pengembangan.
                       Sistem AI akan membantu menjelaskan konsep secara interaktif.
                     </p>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold mb-2">Contoh</h4>
-                    <div className="bg-gray-50 p-3 rounded">
-                      <p>Contoh akan ditampilkan dengan bantuan AI...</p>
+                    <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded">
+                      <p className="dark:text-gray-300">Contoh akan ditampilkan dengan bantuan AI...</p>
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-semibold mb-2">Diskusi dengan AI</h4>
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <p className="text-green-700">
-                        💭 Tanyakan pada AI tentang: "Jelaskan lebih detail", "Beri contoh lain", 
+                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg p-4">
+                      <p className="text-green-700 dark:text-green-300">
+                        💭 Tanyakan pada AI tentang: "Jelaskan lebih detail", "Beri contoh lain",
                         "Mengapa ini penting?"
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex justify-between mt-6">
                 <Button variant="outline" onClick={() => setCurrentView('topics')}>
                   Kembali ke Topik
@@ -280,7 +294,7 @@ export default function StudentLearningModule() {
                   if (selectedLesson && selectedModule) {
                     const updatedTopics = selectedModule.topics.map(topic => ({
                       ...topic,
-                      lessons: topic.lessons.map(l => 
+                      lessons: topic.lessons.map(l =>
                         l.id === selectedLesson.id ? { ...l, completed: true } : l
                       )
                     }));
@@ -306,28 +320,28 @@ export default function StudentLearningModule() {
             </Button>
             <h2 className="text-2xl font-bold">{selectedLesson.title}</h2>
           </div>
-          
+
           <Card>
             <CardContent className="p-6">
               <div className="space-y-6">
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-yellow-800 mb-2">🎯 Mode Latihan</h3>
-                  <p className="text-yellow-700">
-                    Kerjakan soal-soal berikut dengan bantuan AI. AI akan memberikan petunjuk 
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
+                  <h3 className="font-semibold text-yellow-800 dark:text-yellow-300 mb-2">🎯 Mode Latihan</h3>
+                  <p className="text-yellow-700 dark:text-yellow-300">
+                    Kerjakan soal-soal berikut dengan bantuan AI. AI akan memberikan petunjuk
                     jika Anda mengalami kesulitan.
                   </p>
                 </div>
-                
+
                 {/* Mock exercise content */}
                 <div className="space-y-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                     <h4 className="font-semibold mb-3">Soal 1</h4>
-                    <p className="mb-3">Hitung nilai dari: 2x + 5 = 13</p>
-                    <div className="bg-white p-3 border rounded mb-3">
-                      <input 
-                        type="text" 
+                    <p className="mb-3 dark:text-gray-300">Hitung nilai dari: 2x + 5 = 13</p>
+                    <div className="bg-white dark:bg-gray-800 p-3 border dark:border-gray-600 rounded mb-3">
+                      <input
+                        type="text"
                         placeholder="Jawaban Anda..."
-                        className="w-full p-2 border rounded"
+                        className="w-full p-2 border dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                       />
                     </div>
                     <div className="flex gap-2">
@@ -335,16 +349,16 @@ export default function StudentLearningModule() {
                       <Button size="sm">Periksa Jawaban</Button>
                     </div>
                   </div>
-                  
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h4 className="font-semibold text-blue-800 mb-2">💡 Bantuan AI</h4>
-                    <p className="text-blue-700 text-sm">
+
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+                    <h4 className="font-semibold text-blue-800 dark:text-blue-300 mb-2">💡 Bantuan AI</h4>
+                    <p className="text-blue-700 dark:text-blue-400 text-sm">
                       Ketik "bantuan" jika kesulitan, dan AI akan memberikan petunjuk langkah demi langkah.
                     </p>
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex justify-between mt-6">
                 <Button variant="outline" onClick={() => setCurrentView('topics')}>
                   Kembali ke Topik
@@ -353,7 +367,7 @@ export default function StudentLearningModule() {
                   if (selectedLesson && selectedModule) {
                     const updatedTopics = selectedModule.topics.map(topic => ({
                       ...topic,
-                      lessons: topic.lessons.map(l => 
+                      lessons: topic.lessons.map(l =>
                         l.id === selectedLesson.id ? { ...l, completed: true } : l
                       )
                     }));
@@ -379,9 +393,29 @@ export default function StudentLearningModule() {
 
   if (currentView === 'quiz' && selectedLesson) {
     return (
-      <InteractiveQuiz 
-        quizId={selectedLesson.id} 
+      <InteractiveQuiz
+        quizId={selectedLesson.id}
         onBack={handleQuizComplete}
+      />
+    );
+  }
+
+  if (currentView === 'ai-quiz' && selectedModule) {
+    return (
+      <AIQuizGenerator
+        topic={selectedTopic?.title || ''}
+        subject={selectedModule.subject}
+        onClose={() => setCurrentView('topics')}
+      />
+    );
+  }
+
+  if (currentView === 'flashcards' && selectedModule) {
+    return (
+      <FlashCardDeck
+        topic={selectedTopic?.title || ''}
+        subject={selectedModule.subject}
+        onClose={() => setCurrentView('topics')}
       />
     );
   }
@@ -474,22 +508,40 @@ export default function StudentLearningModule() {
         <div>
           {selectedTopic ? (
             <>
-              <h3 className="text-xl font-semibold mb-4">
-                Pelajaran: {selectedTopic.title}
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-semibold">
+                  Pelajaran: {selectedTopic.title}
+                </h3>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    onClick={handleStartFlashCards}
+                    className="bg-purple-500 hover:bg-purple-600 text-white"
+                  >
+                    📚 Flash Cards AI
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handleStartAIQuiz}
+                    className="bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    🎯 Kuis AI
+                  </Button>
+                </div>
+              </div>
               <div className="space-y-3">
                 {selectedTopic.lessons.map(lesson => (
-                  <Card 
-                    key={lesson.id} 
+                  <Card
+                    key={lesson.id}
                     className={`cursor-pointer transition-all hover:shadow-md ${
-                      lesson.completed ? 'bg-blue-50' : ''
+                      lesson.completed ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                     }`}
                     onClick={() => handleLessonClick(lesson)}
                   >
                     <CardContent className="p-4">
                       <div className="flex justify-between items-center">
                         <div className="flex-1">
-                          <h4 className="font-medium">{lesson.title}</h4>
+                          <h4 className="font-medium dark:text-gray-200">{lesson.title}</h4>
                           <div className="flex items-center gap-2 mt-2">
                             <Badge variant={
                               lesson.type === 'theory' ? 'secondary' :
@@ -515,7 +567,7 @@ export default function StudentLearningModule() {
               </div>
             </>
           ) : (
-            <div className="text-center text-gray-500 py-12">
+            <div className="text-center text-gray-500 py-12 dark:text-gray-400">
               Pilih topik untuk melihat pelajaran
             </div>
           )}
