@@ -74,7 +74,9 @@ for file in "${MD_FILES_ARRAY[@]}"; do
     if [[ -f "$file" ]]; then
         filename=$(basename "$file")
         filesize=$(stat -c%s "$file" 2>/dev/null || echo 0)
-        
+        filesize=${filesize:-0}
+        [[ ! "$filesize" =~ ^[0-9]+$ ]] && filesize=0
+
         TOTAL_FILES=$((TOTAL_FILES + 1))
         TOTAL_SIZE=$((TOTAL_SIZE + filesize))
         
@@ -99,19 +101,27 @@ for file in "${MD_FILES_ARRAY[@]}"; do
         fi
         
         # Count code examples
-        code_blocks=$(grep -c '```' "$file" 2>/dev/null || echo 0)
+        code_blocks=$(grep -c '```' "$file" 2>/dev/null | tr -d '\n' || echo 0)
+        code_blocks=${code_blocks:-0}
+        [[ ! "$code_blocks" =~ ^[0-9]+$ ]] && code_blocks=0
         CODE_EXAMPLES=$((CODE_EXAMPLES + code_blocks / 2))
-        
+
         # Count images
-        images=$(grep -c '!\[' "$file" 2>/dev/null || echo 0)
+        images=$(grep -c '!\[' "$file" 2>/dev/null | tr -d '\n' || echo 0)
+        images=${images:-0}
+        [[ ! "$images" =~ ^[0-9]+$ ]] && images=0
         IMAGE_FILES=$((IMAGE_FILES + images))
-        
+
         # Count internal links
-        internal_links=$(grep -c '\[.*\](\.\/.*\.md)' "$file" 2>/dev/null || echo 0)
+        internal_links=$(grep -c '\[.*\](\.\/.*\.md)' "$file" 2>/dev/null | tr -d '\n' || echo 0)
+        internal_links=${internal_links:-0}
+        [[ ! "$internal_links" =~ ^[0-9]+$ ]] && internal_links=0
         INTERNAL_LINKS=$((INTERNAL_LINKS + internal_links))
-        
+
         # Count external links
-        external_links=$(grep -c '\[.*\](http' "$file" 2>/dev/null || echo 0)
+        external_links=$(grep -c '\[.*\](http' "$file" 2>/dev/null | tr -d '\n' || echo 0)
+        external_links=${external_links:-0}
+        [[ ! "$external_links" =~ ^[0-9]+$ ]] && external_links=0
         EXTERNAL_LINKS=$((EXTERNAL_LINKS + external_links))
     fi
 done
