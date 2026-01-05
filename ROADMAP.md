@@ -181,8 +181,18 @@ Fokus: Meningkatkan kecerdasan sistem dengan fitur AI yang lebih canggih.
         - [x] Verify all tests passing (60/60 tests) - COMPLETED
         - [x] Verify lint passing (0 errors, 0 warnings) - COMPLETED
         - [x] Update documentation (BLUEPRINT.md, ROADMAP.md, TASK.md) - COMPLETED
-
-- [ ] **Automasi PPDB**:
+   - [✅] **File Upload Progress Indicators** (COMPLETED - BUILDER MODE) (Issue #545 - P2):
+        - [x] Update fileStorageAPI.upload() to support progress callbacks with XMLHttpRequest - COMPLETED
+        - [x] Implement upload speed tracking and ETA calculation in FileUpload component - COMPLETED
+        - [x] Add cancel upload functionality with AbortController - COMPLETED
+        - [x] Display file size, upload speed, and estimated time remaining - COMPLETED
+        - [x] Ensure proper ARIA labels for accessibility - COMPLETED
+        - [x] Verify build success (2.92s) - COMPLETED
+        - [x] Verify all tests passing (60/60 tests) - COMPLETED
+        - [x] Verify lint passing (0 errors, 0 warnings) - COMPLETED
+        - [x] Update documentation (BLUEPRINT.md, ROADMAP.md, TASK.md) - COMPLETED
+ 
+ - [ ] **Automasi PPDB**:
     - [ ] OCR (Optical Character Recognition) untuk membaca nilai dari scan ijazah pendaftar secara otomatis.
 
 ---

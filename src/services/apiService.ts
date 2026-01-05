@@ -808,8 +808,22 @@ export interface FileUploadResponse {
   name: string;
 }
 
+export interface UploadProgress {
+  loaded: number;
+  total: number;
+  percentage: number;
+}
+
 export const fileStorageAPI = {
-  async upload(file: File, path?: string): Promise<ApiResponse<FileUploadResponse>> {
+  /* eslint-disable no-undef */
+  async upload(
+    file: File,
+    path?: string,
+    options?: {
+      onProgress?: (progress: UploadProgress) => void;
+      abortController?: AbortController;
+    }
+  ): Promise<ApiResponse<FileUploadResponse>> {
     const formData = new FormData();
     formData.append('file', file);
     if (path) {
@@ -817,16 +831,59 @@ export const fileStorageAPI = {
     }
 
     const token = getAuthToken();
+    const { onProgress, abortController } = options || {};
 
-    const response = await fetch(`${API_BASE_URL}/api/files/upload`, {
-      method: 'POST',
-      headers: {
-        'Authorization': token ? `Bearer ${token}` : '',
-      },
-      body: formData,
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();  
+
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable && onProgress) {
+          const percentage = Math.round((event.loaded / event.total) * 100);
+          onProgress({
+            loaded: event.loaded,
+            total: event.total,
+            percentage,
+          });
+        }
+      });
+
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            resolve(response);
+          } catch {
+            reject(new Error('Failed to parse response'));
+          }
+        } else {
+          try {
+            const response = JSON.parse(xhr.responseText);
+            reject(response);
+          } catch {
+            reject(new Error(`Upload failed with status ${xhr.status}`));
+          }
+        }
+      });
+
+      xhr.addEventListener('error', () => {
+        reject(new Error('Upload failed due to network error'));
+      });
+
+      xhr.addEventListener('abort', () => {
+        reject(new Error('Upload cancelled'));
+      });
+
+      if (abortController) {
+        abortController.signal.addEventListener('abort', () => {
+          xhr.abort();
+        });
+      }
+
+      xhr.open('POST', `${API_BASE_URL}/api/files/upload`);
+      xhr.setRequestHeader('Authorization', token ? `Bearer ${token}` : '');
+      xhr.send(formData);
     });
-
-    return response.json();
+    /* eslint-enable no-undef */
   },
 
   async delete(key: string): Promise<ApiResponse<null>> {

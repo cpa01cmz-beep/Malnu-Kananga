@@ -84,11 +84,6 @@ interface SpeechSynthesisUtteranceEvent extends Event {
   readonly elapsedTime: number;
 }
 
-interface SpeechSynthesisErrorEvent extends Event {
-  readonly error: 'canceled' | 'interrupted' | 'not-allowed' | 'synthesis-unavailable';
-  readonly utterance: SpeechSynthesisUtterance;
-}
-
 interface SpeechSynthesisUtterance extends EventTarget {
   text: string;
   lang: string;
@@ -102,6 +97,11 @@ interface SpeechSynthesisUtterance extends EventTarget {
   onpause: (this: SpeechSynthesisUtterance, ev: Event) => unknown;
   onresume: (this: SpeechSynthesisUtterance, ev: Event) => unknown;
   onboundary: (this: SpeechSynthesisUtterance, ev: SpeechSynthesisUtteranceEvent) => unknown;
+}
+
+interface SpeechSynthesisErrorEvent extends Event {
+  readonly error: 'canceled' | 'interrupted' | 'not-allowed' | 'synthesis-unavailable';
+  readonly utterance: SpeechSynthesisUtterance;
 }
 
 interface SpeechSynthesis {
