@@ -1,10 +1,11 @@
+---
 name: OC-01
 on:
   workflow_dispatch:
   pull_request:
   issues:
   push:
-  
+
 permissions:
   contents: write
   pull-requests: write
@@ -24,7 +25,7 @@ jobs:
       IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_KEY }}
-      
+
     steps:
       - name: Wait in Queue
         uses: softprops/turnstyle@v2
