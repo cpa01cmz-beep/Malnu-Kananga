@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
-import { WORKER_LOGIN_ENDPOINT } from '../config';
 import { UserRole, UserExtraRole } from '../types';
+import { api } from '../services/apiService';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -41,23 +41,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       setError('');
 
       try {
-        const response = await fetch(WORKER_LOGIN_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Gagal mengirim link.');
-        }
+        const response = await api.auth.login(email, 'default_password');
 
-        console.log('Magic Link request submitted for:', email);
-        setFormState('success');
+        if (response.success && response.data) {
+          const user = response.data.user;
+          onLoginSuccess(user.role as UserRole, user.extraRole as UserExtraRole);
+          setFormState('success');
+        } else {
+          throw new Error(response.message || 'Login gagal');
+        }
 
       } catch (err: { message?: string } | unknown) {
         setFormState('idle');
-        setError(err instanceof Error ? err.message : 'Gagal mengirim link.');
+        setError(err instanceof Error ? err.message : 'Gagal login.');
       }
   }
 
@@ -139,12 +135,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
               </div>
-              <h3 className="mt-3 text-lg font-medium text-gray-900 dark:text-white">Link Terkirim!</h3>
+              <h3 className="mt-3 text-lg font-medium text-gray-900 dark:text-white">Login Berhasil!</h3>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Silakan periksa inbox email Anda di <strong>{email}</strong>.
+                Anda akan diarahkan ke dashboard...
               </p>
               <button
-                onClick={() => onLoginSuccess('student')}
+                onClick={onClose}
                 className="mt-6 w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 Selesai

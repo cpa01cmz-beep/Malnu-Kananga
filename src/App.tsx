@@ -10,9 +10,8 @@ import Toast, { ToastType } from './components/Toast';
 import StudentPortal from './components/StudentPortal';
 import AdminDashboard from './components/AdminDashboard';
 import TeacherDashboard from './components/TeacherDashboard';
-import PPDBRegistration from './components/PPDBRegistration'; 
+import PPDBRegistration from './components/PPDBRegistration';
 
-// Sections
 import HeroSection from './components/sections/HeroSection';
 import RelatedLinksSection from './components/sections/RelatedLinksSection';
 import ProfileSection from './components/sections/ProfileSection';
@@ -21,9 +20,10 @@ import NewsSection from './components/sections/NewsSection';
 import PPDBSection from './components/sections/PPDBSection';
 
 import { INITIAL_PROGRAMS, INITIAL_NEWS } from './data/defaults';
-import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './types'; 
+import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './types';
 import { STORAGE_KEYS } from './constants';
 import useLocalStorage from './hooks/useLocalStorage';
+import { api } from './services/apiService';
 
 // Auth Session Interface
 interface AuthSession {
@@ -74,6 +74,23 @@ const App: React.FC = () => {
     }
   }, [theme]);
 
+  // Check for existing JWT token on mount
+  useEffect(() => {
+    const checkAuth = () => {
+      if (api.auth.isAuthenticated()) {
+        const user = api.auth.getCurrentUser();
+        if (user) {
+          setAuthSession({
+            loggedIn: true,
+            role: user.role,
+            extraRole: null
+          });
+        }
+      }
+    };
+    checkAuth();
+  }, []);
+
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
@@ -105,10 +122,16 @@ const App: React.FC = () => {
     showToast(`Login berhasil! Selamat datang, ${roleName}.`, 'success');
   };
 
-  const handleLogout = () => {
-    setAuthSession({ loggedIn: false, role: null, extraRole: null });
-    setIsPublicView(false);
-    showToast('Anda telah logout.', 'info');
+  const handleLogout = async () => {
+    try {
+      await api.auth.logout();
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      setAuthSession({ loggedIn: false, role: null, extraRole: null });
+      setIsPublicView(false);
+      showToast('Anda telah logout.', 'info');
+    }
   };
 
   const handleUpdateContent = (newContent: SiteContent) => {
