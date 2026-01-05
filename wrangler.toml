@@ -23,6 +23,7 @@ index_name = "malnu-kananga-index"
 # Environment variables
 [env.production.vars]
 ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
+JWT_SECRET = "your-super-secret-jwt-key-change-this-in-production"
 
 # Local development
 [env.dev]
@@ -39,3 +40,4 @@ index_name = "malnu-kananga-index-dev"
 
 [env.dev.vars]
 ALLOWED_ORIGIN = "*"
+JWT_SECRET = "dev-jwt-secret-change-for-production"

@@ -19,17 +19,25 @@ Fokus: Membangun antarmuka pengguna (UI) lengkap dan logika bisnis menggunakan p
 
 ---
 
-## 🚀 Fase 2: Integrasi Backend Nyata (Next Steps)
+## 🚀 Fase 2: Integrasi Backend Nyata (In Progress)
 Fokus: Memindahkan penyimpanan data dari `localStorage` ke Database Serverless sesungguhnya (Cloudflare D1).
 
-- [ ] **Migrasi Database**:
-    - [ ] Buat skema tabel D1 (`users`, `students`, `teachers`, `grades`, `attendance`, `inventory`).
-    - [ ] Buat API Endpoints di Cloudflare Workers untuk operasi CRUD.
-- [ ] **Autentikasi Aman**:
-    - [ ] Ganti simulasi login dengan JWT (JSON Web Token) yang valid.
-    - [ ] Implementasi Session Cookies yang aman (HttpOnly).
+- [x] **Migrasi Database**:
+    - [x] Buat skema tabel D1 (`users`, `students`, `teachers`, `grades`, `attendance`, `inventory`, dll).
+    - [x] Buat API Endpoints di Cloudflare Workers untuk operasi CRUD (Users, PPDB, Inventory, Events).
+    - [ ] Implementasi API endpoints untuk Grade management
+    - [ ] Implementasi API endpoints untuk Attendance tracking
+    - [ ] Implementasi API endpoints untuk E-Library materials
+- [x] **Autentikasi Aman**:
+    - [x] Ganti simulasi login dengan JWT (JSON Web Token) yang valid.
+    - [x] Implementasi Session Management dengan JWT sessions
+    - [ ] Implementasi refresh token mechanism
 - [ ] **File Storage**:
     - [ ] Integrasi Cloudflare R2 untuk penyimpanan file nyata (Upload materi guru, dokumen PPDB).
+- [ ] **Frontend Migration**:
+    - [ ] Update komponen frontend untuk menggunakan apiService.ts
+    - [ ] Hapus dependency ke localStorage untuk data utama
+    - [ ] Implementasi proper error handling dan loading states
 
 ---
 

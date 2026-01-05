@@ -8,5 +8,13 @@ const env: { VITE_API_BASE_URL?: string } = import.meta.env || {};
 
 export const API_BASE_URL = env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
 
+// API Endpoints (Legacy - Use apiService.ts instead)
 export const WORKER_CHAT_ENDPOINT = `${API_BASE_URL}/api/chat`;
-export const WORKER_LOGIN_ENDPOINT = `${API_BASE_URL}/request-login-link`;
+export const WORKER_LOGIN_ENDPOINT = `${API_BASE_URL}/auth/login`;
+
+// New API Service - Import and use this for all backend interactions
+export { api, authAPI, usersAPI, ppdbAPI, inventoryAPI, eventsAPI, chatAPI } from './services/apiService';
+
+// Feature Flags
+export const ENABLE_BACKEND_API = true; // Set to true to use real backend instead of localStorage
+export const ENABLE_AUTH_JWT = true;
