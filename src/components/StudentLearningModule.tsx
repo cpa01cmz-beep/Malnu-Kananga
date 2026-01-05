@@ -125,6 +125,7 @@ export default function StudentLearningModule() {
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
+<<<<<<< HEAD
   const [currentView, setCurrentView] = useState<'modules' | 'topics' | 'lesson' | 'quiz' | 'ai-quiz' | 'flashcards'>('modules');
 
   useEffect(() => {
@@ -205,7 +206,7 @@ export default function StudentLearningModule() {
     setCurrentView(lesson.type === 'quiz' ? 'quiz' : 'lesson');
   };
 
-  const handleStartAIQuiz = () => {
+const handleStartAIQuiz = () => {
     if (selectedTopic) {
       setCurrentView('ai-quiz');
     }
@@ -216,7 +217,6 @@ export default function StudentLearningModule() {
       setCurrentView('flashcards');
     }
   };
-
   const handleQuizComplete = () => {
     setCurrentView('topics');
     setSelectedLesson(null);
@@ -249,18 +249,17 @@ export default function StudentLearningModule() {
             <CardContent className="p-6">
               <div className="prose max-w-none">
                 <h3 className="text-xl font-semibold mb-4">Konten Teori</h3>
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4 mb-4">
+<div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4 mb-4">
                   <p className="text-blue-700 dark:text-blue-300">
                     🤖 AI Assistant akan membantu Anda memahami materi ini.
                     Tanyakan apa saja tentang konsep yang sulit dipahami.
                   </p>
                 </div>
-
                 {/* Mock theory content */}
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-semibold mb-2">Definisi</h4>
-                    <p className="text-gray-700 dark:text-gray-300">
+<p className="text-gray-700 dark:text-gray-300">
                       Materi pembelajaran sedang dalam proses pengembangan.
                       Sistem AI akan membantu menjelaskan konsep secara interaktif.
                     </p>
@@ -284,7 +283,7 @@ export default function StudentLearningModule() {
                   </div>
                 </div>
               </div>
-
+<div className="text-center text-gray-500 py-12 dark:text-gray-400">
               <div className="flex justify-between mt-6">
                 <Button variant="outline" onClick={() => setCurrentView('topics')}>
                   Kembali ke Topik
@@ -294,71 +293,7 @@ export default function StudentLearningModule() {
                   if (selectedLesson && selectedModule) {
                     const updatedTopics = selectedModule.topics.map(topic => ({
                       ...topic,
-                      lessons: topic.lessons.map(l =>
-                        l.id === selectedLesson.id ? { ...l, completed: true } : l
-                      )
-                    }));
-                    setSelectedModule({ ...selectedModule, topics: updatedTopics });
-                    setCurrentView('topics');
-                  }
-                }}>
-                  Tandai Selesai
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      );
-    }
-
-    if (selectedLesson.type === 'exercise') {
-      return (
-        <div className="max-w-3xl mx-auto">
-          <div className="flex items-center gap-4 mb-6">
-            <Button variant="outline" onClick={() => setCurrentView('topics')}>
-              ← Kembali
-            </Button>
-            <h2 className="text-2xl font-bold">{selectedLesson.title}</h2>
-          </div>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="space-y-6">
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
-                  <h3 className="font-semibold text-yellow-800 dark:text-yellow-300 mb-2">🎯 Mode Latihan</h3>
-                  <p className="text-yellow-700 dark:text-yellow-300">
-                    Kerjakan soal-soal berikut dengan bantuan AI. AI akan memberikan petunjuk
-                    jika Anda mengalami kesulitan.
-                  </p>
-                </div>
-
-                {/* Mock exercise content */}
-                <div className="space-y-4">
-                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                    <h4 className="font-semibold mb-3">Soal 1</h4>
-                    <p className="mb-3 dark:text-gray-300">Hitung nilai dari: 2x + 5 = 13</p>
-                    <div className="bg-white dark:bg-gray-800 p-3 border dark:border-gray-600 rounded mb-3">
-                      <input
-                        type="text"
-                        placeholder="Jawaban Anda..."
-                        className="w-full p-2 border dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline">💬 Petunjuk AI</Button>
-                      <Button size="sm">Periksa Jawaban</Button>
-                    </div>
-                  </div>
-
-                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
-                    <h4 className="font-semibold text-blue-800 dark:text-blue-300 mb-2">💡 Bantuan AI</h4>
-                    <p className="text-blue-700 dark:text-blue-400 text-sm">
-                      Ketik "bantuan" jika kesulitan, dan AI akan memberikan petunjuk langkah demi langkah.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
+</div>
               <div className="flex justify-between mt-6">
                 <Button variant="outline" onClick={() => setCurrentView('topics')}>
                   Kembali ke Topik
@@ -367,7 +302,7 @@ export default function StudentLearningModule() {
                   if (selectedLesson && selectedModule) {
                     const updatedTopics = selectedModule.topics.map(topic => ({
                       ...topic,
-                      lessons: topic.lessons.map(l =>
+lessons: topic.lessons.map(l =>
                         l.id === selectedLesson.id ? { ...l, completed: true } : l
                       )
                     }));
@@ -393,14 +328,14 @@ export default function StudentLearningModule() {
 
   if (currentView === 'quiz' && selectedLesson) {
     return (
-      <InteractiveQuiz
+<InteractiveQuiz
         quizId={selectedLesson.id}
         onBack={handleQuizComplete}
       />
     );
   }
 
-  if (currentView === 'ai-quiz' && selectedModule) {
+if (currentView === 'ai-quiz' && selectedModule) {
     return (
       <AIQuizGenerator
         topic={selectedTopic?.title || ''}
@@ -419,7 +354,6 @@ export default function StudentLearningModule() {
       />
     );
   }
-
   if (currentView === 'lesson') {
     return renderLessonContent();
   }
@@ -508,7 +442,7 @@ export default function StudentLearningModule() {
         <div>
           {selectedTopic ? (
             <>
-              <div className="flex items-center justify-between mb-4">
+<div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-semibold">
                   Pelajaran: {selectedTopic.title}
                 </h3>
@@ -541,7 +475,7 @@ export default function StudentLearningModule() {
                     <CardContent className="p-4">
                       <div className="flex justify-between items-center">
                         <div className="flex-1">
-                          <h4 className="font-medium dark:text-gray-200">{lesson.title}</h4>
+lessons: topic.lessons.map(l =>
                           <div className="flex items-center gap-2 mt-2">
                             <Badge variant={
                               lesson.type === 'theory' ? 'secondary' :
@@ -567,7 +501,7 @@ export default function StudentLearningModule() {
               </div>
             </>
           ) : (
-            <div className="text-center text-gray-500 py-12 dark:text-gray-400">
+<h4 className="font-medium dark:text-gray-200">{lesson.title}</h4>
               Pilih topik untuk melihat pelajaran
             </div>
           )}
