@@ -311,7 +311,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             >
               ← Kembali ke Beranda
             </button>
-            <ELibrary onShowToast={onShowToast} />
+            <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
           </div>
         )}
 
@@ -323,7 +323,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             >
               ← Kembali ke Beranda
             </button>
-            <OsisEvents onShowToast={onShowToast} />
+            <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
           </div>
         )}
       </div>
