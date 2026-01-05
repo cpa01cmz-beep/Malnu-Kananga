@@ -5,19 +5,24 @@ import type {
   SpeechSynthesisError,
   SpeechSynthesisEventCallbacks,
   SpeechSynthesisState,
+  SpeechSynthesis,
+  SpeechSynthesisUtterance,
+  SpeechSynthesisErrorEvent,
+  SpeechSynthesisEvent,
+  SpeechSynthesisVoice,
 } from '../types';
 import { VOICE_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 
 class SpeechSynthesisService {
-  private synth: any;
+  private synth: SpeechSynthesis | null;
   private state: SpeechSynthesisState = 'idle';
   private config: SpeechSynthesisConfig;
   private callbacks: SpeechSynthesisEventCallbacks = {};
-  private currentUtterance: any = null;
-  private voiceCache: Map<string, any> = new Map();
+  private currentUtterance: SpeechSynthesisUtterance | null = null;
+  private voiceCache: Map<string, SpeechSynthesisUtterance> = new Map();
   private isSupported: boolean;
-  private voices: any[] = [];
+  private voices: SpeechSynthesisVoice[] = [];
 
   constructor(config?: Partial<SpeechSynthesisConfig>) {
     this.config = {
@@ -44,7 +49,7 @@ class SpeechSynthesisService {
 
   private initializeSynthesis(): void {
     try {
-      this.synth = window.speechSynthesis;
+      this.synth = window.speechSynthesis as SpeechSynthesis;
       this.loadVoices();
       this.setupVoiceChangeListener();
     } catch (error) {
@@ -86,14 +91,14 @@ class SpeechSynthesisService {
     const preferredLanguage = 'id-ID';
     const fallbackLanguage = 'en-US';
 
-    let voice = this.voices.find((v: any) => v.lang === preferredLanguage && v.localService);
+    let voice = this.voices.find((v: SpeechSynthesisVoice) => v.lang === preferredLanguage && v.localService);
 
     if (!voice) {
-      voice = this.voices.find((v: any) => v.lang === fallbackLanguage && v.localService);
+      voice = this.voices.find((v: SpeechSynthesisVoice) => v.lang === fallbackLanguage && v.localService);
     }
 
     if (!voice) {
-      voice = this.voices.find((v: any) => v.lang === preferredLanguage);
+      voice = this.voices.find((v: SpeechSynthesisVoice) => v.lang === preferredLanguage);
     }
 
     if (!voice && this.voices.length > 0) {
@@ -106,8 +111,8 @@ class SpeechSynthesisService {
     }
   }
 
-  private createUtterance(text: string): any {
-    const utterance = new (window as any).SpeechSynthesisUtterance(text);
+  private createUtterance(text: string): SpeechSynthesisUtterance {
+    const utterance = new window.SpeechSynthesisUtterance(text);
 
     utterance.rate = this.config.rate;
     utterance.pitch = this.config.pitch;
@@ -120,7 +125,7 @@ class SpeechSynthesisService {
     return utterance;
   }
 
-  private setupUtteranceListeners(utterance: any): void {
+  private setupUtteranceListeners(utterance: SpeechSynthesisUtterance): void {
     utterance.onstart = () => {
       this.state = 'speaking';
       this.callbacks.onStart?.();
@@ -132,7 +137,7 @@ class SpeechSynthesisService {
       this.callbacks.onEnd?.();
     };
 
-    utterance.onerror = (event: any) => {
+    utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
       const error: SpeechSynthesisError = {
         error: this.mapErrorType(event.error),
         message: event.error || 'Speech synthesis error occurred',
@@ -155,7 +160,7 @@ class SpeechSynthesisService {
       this.callbacks.onResume?.();
     };
 
-    utterance.onboundary = (event: any) => {
+    utterance.onboundary = (event: SpeechSynthesisEvent) => {
       this.callbacks.onBoundary?.(event);
     };
   }
@@ -171,11 +176,11 @@ class SpeechSynthesisService {
     return errorMap[errorName] || 'unknown';
   }
 
-  private checkCache(text: string): any | null {
+  private checkCache(text: string): SpeechSynthesisUtterance | null {
     return this.voiceCache.get(text) || null;
   }
 
-  private addToCache(text: string, utterance: any): void {
+  private addToCache(text: string, utterance: SpeechSynthesisUtterance): void {
     if (this.voiceCache.size >= VOICE_CONFIG.MAX_VOICE_CACHE_SIZE) {
       const firstKey = this.voiceCache.keys().next().value;
       this.voiceCache.delete(firstKey);
@@ -277,17 +282,17 @@ class SpeechSynthesisService {
     return this.state;
   }
 
-  public setVoice(voice: any): void {
+  public setVoice(voice: SpeechSynthesisVoice): void {
     this.config.voice = voice;
     logger.debug('Voice set to:', voice.name, voice.lang);
   }
 
-  public getAvailableVoices(): any[] {
+  public getAvailableVoices(): SpeechSynthesisVoice[] {
     return this.voices;
   }
 
-  public getVoicesByLanguage(language: string): any[] {
-    return this.voices.filter((voice: any) => voice.lang.startsWith(language));
+  public getVoicesByLanguage(language: string): SpeechSynthesisVoice[] {
+    return this.voices.filter((voice: SpeechSynthesisVoice) => voice.lang.startsWith(language));
   }
 
   public setRate(rate: number): void {
