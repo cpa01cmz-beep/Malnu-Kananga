@@ -7,6 +7,7 @@ import { SparklesIcon } from './icons/SparklesIcon';
 import { SunIcon } from './icons/SunIcon';
 import { MoonIcon } from './icons/MoonIcon';
 import { UserRole, UserExtraRole } from '../types';
+import NotificationCenter from './NotificationCenter';
 
 const NavLinks = () => (
     <>
@@ -24,26 +25,28 @@ interface HeaderProps {
     onEditClick: () => void;
     isLoggedIn: boolean;
     userRole: UserRole | null;
-    userExtraRole?: UserExtraRole; // New Prop
+    userExtraRole?: UserExtraRole;
     onLogout: () => void;
     isPublicView: boolean;
     onTogglePublicView: () => void;
     theme: 'light' | 'dark';
     onToggleTheme: () => void;
+    onShowToast?: (msg: string, type: 'success' | 'error' | 'info') => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ 
-    onLoginClick, 
-    onChatClick, 
-    onEditClick, 
-    isLoggedIn, 
+const Header: React.FC<HeaderProps> = ({
+    onLoginClick,
+    onChatClick,
+    onEditClick,
+    isLoggedIn,
     userRole,
     userExtraRole,
     onLogout,
     isPublicView,
     onTogglePublicView,
     theme,
-    onToggleTheme
+    onToggleTheme,
+    onShowToast
 }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -100,8 +103,15 @@ const Header: React.FC<HeaderProps> = ({
                     </nav>
 
                     <div className="flex items-center space-x-2">
-                        <button 
-                            onClick={onToggleTheme} 
+                        {isLoggedIn && userRole && (
+                            <NotificationCenter
+                                userRole={userRole}
+                                onShowToast={onShowToast}
+                            />
+                        )}
+
+                        <button
+                            onClick={onToggleTheme}
                             className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors mr-1"
                             aria-label="Ganti Tema"
                         >
