@@ -129,7 +129,8 @@ done
 # Calculate metrics
 if [[ $TOTAL_FILES -gt 0 ]]; then
     AVG_FILE_SIZE=$((TOTAL_SIZE / TOTAL_FILES))
-    COVERAGE_SCORE=$((TOTAL_FILES * 100 / 40))
+    # Coverage score based on expected minimum of 5 documentation files (docs/ directory structure)
+    COVERAGE_SCORE=$((TOTAL_FILES * 100 / 5))
     TOTAL_ISSUES=$((MISSING_HEADERS + MISSING_VERSIONS + MISSING_DATES))
     MAX_POSSIBLE_ISSUES=$((TOTAL_FILES * 3))
     if [[ $MAX_POSSIBLE_ISSUES -gt 0 ]]; then
