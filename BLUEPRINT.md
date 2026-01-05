@@ -172,6 +172,56 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 | Analisis Nilai AI | Saran performa siswa berdasarkan tren nilai | Insight pedagogis |
 | **Vocal Interaction** (NEW - Fase 3) | Voice-to-Text & Text-to-Speech untuk Chatbot | Aksesibilitas & UX |
 
+### 4.11 Penerimaan Peserta Didik Baru (PPDB) dengan OCR
+**Pengguna**: Calon Siswa, Wali Murid, Admin
+
+| Fitur | Fungsi | Output |
+|-------|--------|--------|
+| Formulir Pendaftaran Online | Input data diri calon siswa secara digital | Database pendaftar terstruktur |
+| Upload Dokumen | Upload scan ijazah/skhu asli | Dokumen digital terverifikasi |
+| **OCR Ekstrak Nilai Otomatis** (NEW - Fase 3) | Scan ijazah dan ekstrak nilai menggunakan Tesseract.js | Auto-fill nilai dari scan |
+| Validasi Data | Verifikasi NISN dan kelengkapan data | Data pendaftar valid |
+| Status Tracking | Monitoring status pendaftaran (pending/approved/rejected) | Real-time pendaftaran status |
+| Download Dokumen | Generate dan download surat pendaftaran | Dokumen resmi digital |
+
+#### 4.11.1 PPDB OCR Feature (Fase 3 - COMPLETED)
+
+**Status**: ✅ **Implemented** (Tesseract.js Integration)
+
+**Fitur Utama**:
+- **Image Upload Support**: Upload scan ijazah/skhu dalam format JPG/PNG ✅
+- **OCR Processing**: Tesseract.js untuk ekstrak teks dari gambar ✅
+- **Grade Extraction**: Auto-detection and extraction of nilai (grades) from scanned documents ✅
+- **Auto-Fill Form**: Otomatis mengisi nama lengkap, NISN, dan asal sekolah dari scan ✅
+- **Progress Tracking**: Real-time progress bar untuk status processing OCR ✅
+- **Data Preview**: Preview nilai yang terdeteksi sebelum submit ✅
+- **User Confirmation**: User dapat mengedit atau menolak hasil OCR ✅
+- **Indonesian Language Support**: Tesseract.js dengan language model 'ind' (Indonesia) ✅
+- **Graceful Error Handling**: Fallback ke manual input jika OCR gagal ✅
+
+**Teknologi**:
+- Tesseract.js (OCR library) ✅
+- Browser-based processing (client-side, no backend API needed) ✅
+- Indonesian language model (ind) ✅
+- File size validation (max 5MB per image) ✅
+- Supported formats: JPG, PNG, JPEG ✅
+
+**Komponen yang Telah Dibuat**:
+1. `ocrService.ts` - OCR service untuk text extraction ✅
+2. Enhanced `PPDBRegistration.tsx` - UI untuk scan ijazah dan preview ✅
+3. OCR progress tracking dengan status updates ✅
+4. Grade preview modal dengan edit capability ✅
+5. Auto-form fill dengan extracted data ✅
+
+**Implementasi**:
+- ✅ Install tesseract.js dependency
+- ✅ Create OCR service with Indonesian language support
+- ✅ Implement grade extraction regex patterns
+- ✅ Add image upload component to PPDB form
+- ✅ Integrate progress tracking UI
+- ✅ Add preview and confirmation for extracted grades
+- ✅ Error handling and fallback to manual input
+
 #### 4.10.1 Vocal Interaction Architecture (Fase 3 - In Progress)
 
 **Status**: ✅ **Phase 1 Completed** (Core Speech Services), ✅ **Phase 2 Completed** (UI Components), ✅ **Phase 3 Completed** (Advanced Features), ✅ **Phase 4 Completed** (Testing & Optimization)
