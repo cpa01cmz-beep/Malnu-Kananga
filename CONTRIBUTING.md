@@ -1,5 +1,10 @@
 # Panduan Kontribusi
 
+**Created**: 2025-01-01  
+**Last Updated**: 2026-01-05  
+**Version**: 2.1.0  
+**Status**: Active
+
 Terima kasih atas minat Anda untuk berkontribusi pada proyek Website MA Malnu Kananga! Kontribusi Anda sangat kami hargai.
 
 ## Cara Berkontribusi

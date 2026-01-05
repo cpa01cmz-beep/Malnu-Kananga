@@ -1,5 +1,10 @@
 # Blueprint Sistem Informasi Manajemen Sekolah Berbasis Web
 
+**Created**: 2025-01-01  
+**Last Updated**: 2026-01-05  
+**Version**: 2.1.0  
+**Status**: Active
+
 ## 1. Ringkasan Eksekutif
 
 Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information System/SMIS) adalah platform terintegrasi yang menghubungkan semua aspek pengelolaan sekolah: akademik, administratif, keuangan, dan komunikasi. Sistem ini dirancang untuk meningkatkan efisiensi operasional, transparansi data, dan kolaborasi antara guru, siswa, orang tua, dan administrasi.

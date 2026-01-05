@@ -1,6 +1,11 @@
 
 # Roadmap Pengembangan (Development Roadmap)
 
+**Created**: 2025-01-01  
+**Last Updated**: 2026-01-05  
+**Version**: 2.1.0  
+**Status**: Active
+
 Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal MA Malnu Kananga**.
 
 ---
