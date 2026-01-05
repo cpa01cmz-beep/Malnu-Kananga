@@ -169,3 +169,69 @@ export interface Announcement {
   createdAt: string;
   expiresAt: string;
 }
+
+export enum VoiceLanguage {
+  Indonesian = 'id-ID',
+  English = 'en-US',
+}
+
+export type SpeechRecognitionState = 'idle' | 'listening' | 'processing' | 'error';
+
+export interface SpeechRecognitionConfig {
+  language: VoiceLanguage;
+  continuous: boolean;
+  interimResults: boolean;
+  maxAlternatives: number;
+}
+
+export interface SpeechRecognitionError {
+  error: 'no-speech' | 'audio-capture' | 'not-allowed' | 'network' | 'aborted' | 'unknown';
+  message: string;
+}
+
+export interface SpeechRecognitionEventCallbacks {
+  onResult?: (transcript: string, isFinal: boolean) => void;
+  onError?: (error: SpeechRecognitionError) => void;
+  onStart?: () => void;
+  onEnd?: () => void;
+  onSpeechStart?: () => void;
+  onSpeechEnd?: () => void;
+}
+
+export interface SpeechSynthesisConfig {
+  voice: SpeechSynthesisVoice | null;
+  rate: number;
+  pitch: number;
+  volume: number;
+}
+
+export type SpeechSynthesisState = 'idle' | 'speaking' | 'paused' | 'error';
+
+export interface SpeechSynthesisError {
+  error: 'canceled' | 'interrupted' | 'not-allowed' | 'unknown';
+  message: string;
+}
+
+export interface SpeechSynthesisEventCallbacks {
+  onStart?: () => void;
+  onEnd?: () => void;
+  onError?: (error: SpeechSynthesisError) => void;
+  onPause?: () => void;
+  onResume?: () => void;
+  onBoundary?: (event: SpeechSynthesisUtteranceEvent) => void;
+}
+
+export interface VoiceSettings {
+  recognition: SpeechRecognitionConfig;
+  synthesis: SpeechSynthesisConfig;
+  enabled: boolean;
+  autoReadAI: boolean;
+  continuousMode: boolean;
+}
+
+export interface VoiceMessage {
+  id: string;
+  transcript: string;
+  isFinal: boolean;
+  timestamp: number;
+}

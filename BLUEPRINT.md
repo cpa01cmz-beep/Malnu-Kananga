@@ -1,8 +1,8 @@
 # Blueprint Sistem Informasi Manajemen Sekolah Berbasis Web
 
-**Created**: 2025-01-01  
-**Last Updated**: 2026-01-05  
-**Version**: 2.1.0  
+**Created**: 2025-01-01
+**Last Updated**: 2026-01-05
+**Version**: 2.2.0
 **Status**: Active
 
 ## 1. Ringkasan Eksekutif
@@ -39,6 +39,7 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 │                   Frontend Layer                     │
 │  (React + Vite - Responsif untuk Desktop/Mobile)   │
 │  State Management: React Hooks + apiService.ts      │
+│  Vocal Interaction: Web Speech API (STT/TTS) 🚧     │
 ├──────────────────────────────────────────────────────────────────┤
 │                   Application Layer                  │
 │  (Cloudflare Workers - Serverless Backend)         │
@@ -159,6 +160,48 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 | Sistem Izin Digital | Permohonan izin siswa/guru online | Approval workflow otomatis |
 | Surat Menyurat | Manajemen dokumen & surat resmi | Arsip digital terorganisir |
 | Perizinan Lanjut Pendidikan | Proses rekomendasi untuk melanjutkan | Dokumen referensi digital |
+
+### 4.10 AI & Kecerdasan Buatan
+**Pengguna**: Semua Pengguna
+
+| Fitur | Fungsi | Output |
+|-------|--------|--------|
+| RAG Chatbot | Asisten AI yang menjawab berdasarkan data sekolah | Respon cerdas & akurat |
+| AI Site Editor | Edit konten website dengan bahasa alami | Update konten cepat |
+| Analisis Nilai AI | Saran performa siswa berdasarkan tren nilai | Insight pedagogis |
+| **Vocal Interaction** (NEW - Fase 3) | Voice-to-Text & Text-to-Speech untuk Chatbot | Aksesibilitas & UX |
+
+#### 4.10.1 Vocal Interaction Architecture (Fase 3 - In Progress)
+
+**Status**: 🚧 **In Development** (See docs/VOICE_INTERACTION_ARCHITECTURE.md)
+
+**Fitur Utama**:
+- **Voice-to-Text (Speech Recognition)**: Input suara untuk Chatbot menggunakan Web Speech API
+- **Text-to-Speech (Speech Synthesis)**: Respon AI dibacakan menggunakan Web Speech API
+- **Multi-language Support**: Bahasa Indonesia (id-ID) dan English (en-US)
+- **User Settings**: Kontrol kecepatan, nada, volume, dan pilihan suara
+- **Accessibility Compliance**: WCAG 2.1 AA compliant untuk pengguna disabilitas
+- **Graceful Degradation**: Fallback ke input teks jika API tidak tersedia
+
+**Teknologi**:
+- Web Speech API (SpeechRecognition & SpeechSynthesis)
+- Browser Support: Chrome 71+, Edge 79+, Safari 14.1+, Firefox 62+ (limited)
+- Zero server dependency: Semua pemrosesan di browser
+- HTTPS requirement untuk permission microphone
+
+**Komponen yang Akan Dibuat**:
+1. `speechRecognitionService.ts` - Voice-to-Text service
+2. `speechSynthesisService.ts` - Text-to-Speech service
+3. `VoiceInputButton.tsx` - Tombol mikrofon dengan UI recording
+4. `VoiceSettings.tsx` - Panel pengaturan suara
+5. `useVoiceRecognition.ts` - React hook untuk speech recognition
+6. `useVoiceSynthesis.ts` - React hook untuk speech synthesis
+
+**Implementasi Phases**:
+- Phase 1: Core Speech Services (SpeechRecognitionService, SpeechSynthesisService)
+- Phase 2: UI Components (VoiceInputButton, VoiceSettings)
+- Phase 3: Advanced Features (Continuous mode, voice commands)
+- Phase 4: Testing & Optimization (Unit tests, compatibility tests)
 
 ---
 
