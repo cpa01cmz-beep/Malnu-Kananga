@@ -35,10 +35,14 @@ Fokus: Memindahkan penyimpanan data dari `localStorage` ke Database Serverless s
     - [ ] Implementasi refresh token mechanism
 - [ ] **File Storage**:
     - [ ] Integrasi Cloudflare R2 untuk penyimpanan file nyata (Upload materi guru, dokumen PPDB).
-- [ ] **Frontend Migration**:
-    - [ ] Update komponen frontend untuk menggunakan apiService.ts
+- [🔄] **Frontend Migration**:
+    - [x] User Management & Auth ke API (UserManagement, LoginModal, App.tsx) - COMPLETED
+    - [ ] Update PPDB komponen untuk menggunakan apiService.ts
+    - [ ] Update Inventory komponen untuk menggunakan apiService.ts
+    - [ ] Update Events komponen untuk menggunakan apiService.ts
+    - [ ] Update Academic components untuk menggunakan apiService.ts (Subjects, Classes, Schedules, Grades, Attendance, E-Library, Announcements)
     - [ ] Hapus dependency ke localStorage untuk data utama
-    - [ ] Implementasi proper error handling dan loading states
+    - [ ] Implementasi proper error handling dan loading states untuk semua komponen
 
 ---
 
