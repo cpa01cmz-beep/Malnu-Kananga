@@ -11,6 +11,7 @@
     "dev:backend": "wrangler dev",
     "env:setup": "./setup-env.sh",
     "env:validate": "./validate-env.sh",
+    "validate-config": "node scripts/validate-config.js",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 20",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "test": "vitest",

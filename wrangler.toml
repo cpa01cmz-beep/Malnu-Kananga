@@ -4,16 +4,26 @@ compatibility_date = "2024-01-01"
 
 # Production deployment - worker deployed to:
 # https://malnu-kananga-worker.cpa01cmz.workers.dev
+#
+# SETUP INSTRUCTIONS:
+# 1. Create D1 database: wrangler d1 create malnu-kananga-db
+# 2. Copy the database_id from output and replace placeholder below
+# 3. Create R2 bucket: wrangler r2 bucket create malnu-kananga-files
+# 4. Set strong JWT_SECRET environment variable (32+ characters recommended)
+# 5. Set actual GEMINI_API_KEY from Google Cloud Console
+# 6. Run: npm run validate-config to check configuration before deploying
 
 # Environment bindings for production
 [env.production]
 name = "malnu-kananga-worker-prod"
 
 # D1 Database bindings - create with: wrangler d1 create malnu-kananga-db
+# Replace the placeholder database_id below with your actual D1 database ID
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "malnu-kananga-db-prod"
-database_id = "placeholder-database-id"  # Replace with actual ID after creation
+# ⚠️ CRITICAL: Replace with actual D1 database ID from: wrangler d1 list
+database_id = "placeholder-database-id"
 
 # Vectorize index bindings - create with: wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 [[env.production.vectorize]]
@@ -27,8 +37,12 @@ bucket_name = "malnu-kananga-files"
 
 # Environment variables
 [env.production.vars]
+# Set to your production domain (for CORS)
 ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
+# ⚠️ CRITICAL: Set to a strong random key (32+ characters recommended)
+# Generate with: openssl rand -base64 32
 JWT_SECRET = "your-super-secret-jwt-key-change-this-in-production"
+# ⚠️ CRITICAL: Replace with actual Gemini API key from https://ai.google.dev
 GEMINI_API_KEY = "your_production_gemini_api_key_here"
 NODE_ENV = "production"
 LOG_LEVEL = "error"
@@ -37,10 +51,13 @@ LOG_LEVEL = "error"
 [env.dev]
 name = "malnu-kananga-worker-dev"
 
+# D1 Database for development
+# Create with: wrangler d1 create malnu-kananga-db-dev
 [[env.dev.d1_databases]]
 binding = "DB"
 database_name = "malnu-kananga-db-dev"
-database_id = "your-dev-d1-database-id-here"  # Replace with actual ID after creation
+# ⚠️ Replace with actual dev D1 database ID from: wrangler d1 list
+database_id = "your-dev-d1-database-id-here"
 
 [[env.dev.vectorize]]
 binding = "VECTORIZE_INDEX"
@@ -51,5 +68,10 @@ binding = "BUCKET"
 bucket_name = "malnu-kananga-files-dev"
 
 [env.dev.vars]
+# Allow all origins for local development
 ALLOWED_ORIGIN = "*"
+# Development secret (change for production)
 JWT_SECRET = "dev-jwt-secret-change-for-production"
+# Set your Gemini API key for AI features (same as frontend)
+# Can be set in .env file instead: GEMINI_API_KEY=your_key
+# GEMINI_API_KEY = "your_dev_gemini_api_key_here"

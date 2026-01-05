@@ -9,6 +9,8 @@
 
 This guide explains how to use the new Cloudflare D1 backend for the Smart Portal MA Malnu Kananga system.
 
+**For production deployment instructions, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).**
+
 ## Architecture
 
 ### Components
@@ -43,40 +45,46 @@ This guide explains how to use the new Cloudflare D1 backend for the Smart Porta
 
 ### Step 1: Configure Wrangler
 
-Make sure `wrangler.toml` is properly configured:
+Make sure `wrangler.toml` is properly configured.
 
-```toml
-name = "malnu-kananga-worker"
-main = "worker.js"
-compatibility_date = "2024-01-01"
+**For detailed production setup instructions, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)**
 
-[env.production]
-name = "malnu-kananga-worker-prod"
+Quick setup for development:
 
-[[env.production.d1_databases]]
-binding = "DB"
-database_name = "malnu-kananga-db"
-database_id = "your-d1-database-id-here"
+```bash
+# Create dev database
+wrangler d1 create malnu-kananga-db-dev
 
-[env.production.vars]
-ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
-JWT_SECRET = "your-super-secret-jwt-key-change-this-in-production"
+# Update wrangler.toml with the database_id from the output
 ```
 
-### Step 2: Create D1 Database
+### Step 2: Validate Configuration
+
+Before deploying, always validate your configuration:
+
+```bash
+npm run validate-config
+```
+
+This will check for:
+- Placeholder values in wrangler.toml
+- Required environment variables
+- Empty or missing configuration files
+
+### Step 3: Create D1 Database
 
 ```bash
 # Create the database
-wrangler d1 create malnu-kananga-db
+wrangler d1 create malnu-kananga-db-prod
 
 # Copy the database_id from the output and update wrangler.toml
 ```
 
-### Step 3: Initialize Database Schema
+### Step 4: Initialize Database Schema
 
 ```bash
 # Deploy the worker
-wrangler deploy
+wrangler deploy --env production
 
 # Seed the database (create tables and initial data)
 curl https://your-worker-url.workers.dev/seed
@@ -86,19 +94,21 @@ Or manually run the SQL schema:
 
 ```bash
 # Execute schema.sql
-wrangler d1 execute malnu-kananga-db --file=schema.sql
+wrangler d1 execute malnu-kananga-db-prod --env production --file=schema.sql
 ```
 
-### Step 4: Set Environment Variables
+### Step 5: Set Environment Variables
 
-Create a `.env` file in your project root:
+Create a `.env` file in your project root for development:
 
 ```env
 VITE_API_BASE_URL=https://your-worker-url.workers.dev
 VITE_GEMINI_API_KEY=your_gemini_api_key
 ```
 
-### Step 5: Deploy Frontend
+**For production, use [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete setup instructions.**
+
+### Step 6: Deploy Frontend
 
 ```bash
 # Build and deploy to Cloudflare Pages

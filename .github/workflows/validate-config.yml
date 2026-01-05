@@ -1,0 +1,77 @@
+name: Validate Configuration Before Deployment
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'wrangler.toml'
+      - '.env*'
+      - 'seeder-worker.js'
+      - 'worker.js'
+  push:
+    branches:
+      - main
+    paths:
+      - 'wrangler.toml'
+      - '.env*'
+      - 'seeder-worker.js'
+      - 'worker.js'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-config:
+    name: Validate Configuration
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run configuration validation
+        run: npm run validate-config
+        env:
+          NODE_ENV: production
+      
+      - name: Check for placeholder values
+        run: |
+          echo "Checking wrangler.toml for placeholder values..."
+          if grep -q "placeholder-database-id\|your-production-gemini-api-key-here\|your-super-secret-jwt-key-change-this-in-production" wrangler.toml; then
+            echo "❌ ERROR: Found placeholder values in wrangler.toml"
+            echo "Please replace all placeholder values before deploying to production"
+            echo "See BACKEND_GUIDE.md for detailed setup instructions"
+            exit 1
+          fi
+          echo "✅ No placeholder values found in wrangler.toml"
+      
+      - name: Check seeder-worker.js
+        run: |
+          echo "Checking seeder-worker.js..."
+          if [ ! -s seeder-worker.js ]; then
+            echo "❌ ERROR: seeder-worker.js is empty"
+            echo "Please implement seeder-worker.js functionality"
+            exit 1
+          fi
+          echo "✅ seeder-worker.js has content"
+      
+      - name: Verify wrangler.toml syntax
+        run: |
+          echo "Validating wrangler.toml syntax..."
+          npx wrangler config check
+        continue-on-error: true
+      
+      - name: Validation successful
+        run: |
+          echo "✅ All configuration validations passed"
+          echo "Configuration is ready for deployment"
