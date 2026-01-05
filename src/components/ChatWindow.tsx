@@ -235,6 +235,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
             disabled={isLoading}
             onError={(error) => {
               logger.error('Voice input error:', error);
+              // Show a brief toast message for voice errors
+              if (error && !error.includes('tidak mendukung')) {
+                // You could integrate with a toast notification system here
+                console.log('Voice Error:', error);
+              }
             }}
           />
         </div>

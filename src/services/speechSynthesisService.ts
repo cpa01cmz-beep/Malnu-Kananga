@@ -1,7 +1,7 @@
  
   
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import type {
   SpeechSynthesisConfig,
   SpeechSynthesisError,
@@ -370,4 +370,3 @@ class SpeechSynthesisService {
 }
 
 export default SpeechSynthesisService;
-/* eslint-enable @typescript-eslint/no-explicit-any */
