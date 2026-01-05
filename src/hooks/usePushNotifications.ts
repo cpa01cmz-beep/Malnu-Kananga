@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { NotificationSettings, PushNotification, NotificationHistoryItem } from '../types';
+import { NotificationSettings, PushNotification, NotificationHistoryItem, NotificationBatch, NotificationTemplate, NotificationAnalytics } from '../types';
 import { NOTIFICATION_CONFIG } from '../constants';
 import { pushNotificationService } from '../services/pushNotificationService';
 
@@ -9,6 +9,9 @@ export function usePushNotifications() {
   const [settings, setSettingsState] = useState<NotificationSettings>(NOTIFICATION_CONFIG.DEFAULT_SETTINGS);
   const [history, setHistory] = useState<NotificationHistoryItem[]>([]);
   const [subscribed, setSubscribed] = useState(false);
+  const [batches, setBatches] = useState<NotificationBatch[]>([]);
+  const [templates, setTemplates] = useState<NotificationTemplate[]>([]);
+  const [analytics, setAnalytics] = useState<NotificationAnalytics[]>([]);
 
   const loadSettings = useCallback(() => {
     const loadedSettings = pushNotificationService.getSettings();
@@ -92,9 +95,63 @@ export function usePushNotifications() {
     };
   }, []);
 
+  const loadBatches = useCallback(() => {
+    const loadedBatches = pushNotificationService.getBatches();
+    setBatches(loadedBatches);
+  }, []);
+
+  const loadTemplates = useCallback(() => {
+    const loadedTemplates = pushNotificationService.getTemplates();
+    setTemplates(loadedTemplates);
+  }, []);
+
+  const loadAnalytics = useCallback(() => {
+    const loadedAnalytics = pushNotificationService.getAnalytics();
+    setAnalytics(loadedAnalytics);
+  }, []);
+
+  const createBatch = useCallback((name: string, notifications: PushNotification[]) => {
+    const batch = pushNotificationService.createBatch(name, notifications);
+    loadBatches();
+    return batch;
+  }, [loadBatches]);
+
+  const sendBatch = useCallback(async (batchId: string): Promise<boolean> => {
+    const success = await pushNotificationService.sendBatch(batchId);
+    loadBatches();
+    return success;
+  }, [loadBatches]);
+
+  const createTemplate = useCallback((
+    name: string,
+    type: PushNotification['type'],
+    title: string,
+    body: string,
+    variables: string[] = []
+  ) => {
+    const template = pushNotificationService.createTemplate(name, type, title, body, variables);
+    loadTemplates();
+    return template;
+  }, [loadTemplates]);
+
+  const createNotificationFromTemplate = useCallback((
+    templateId: string,
+    variables: Record<string, string | number> = {}
+  ) => {
+    return pushNotificationService.createNotificationFromTemplate(templateId, variables);
+  }, []);
+
+  const recordAnalytics = useCallback((notificationId: string, action: 'delivered' | 'read' | 'clicked' | 'dismissed') => {
+    pushNotificationService.recordAnalytics(notificationId, action);
+    loadAnalytics();
+  }, [loadAnalytics]);
+
   useEffect(() => {
     loadSettings();
     loadHistory();
+    loadBatches();
+    loadTemplates();
+    loadAnalytics();
     checkPermission();
 
     const interval = setInterval(() => {
@@ -102,7 +159,7 @@ export function usePushNotifications() {
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [loadSettings, loadHistory, checkPermission]);
+  }, [loadSettings, loadHistory, loadBatches, loadTemplates, loadAnalytics, checkPermission]);
 
   return {
     permissionGranted,
@@ -110,6 +167,9 @@ export function usePushNotifications() {
     settings,
     history,
     subscribed,
+    batches,
+    templates,
+    analytics,
     requestPermission,
     subscribeToPush,
     unsubscribeFromPush,
@@ -121,5 +181,13 @@ export function usePushNotifications() {
     deleteNotification,
     createNotification,
     loadHistory,
+    loadBatches,
+    loadTemplates,
+    loadAnalytics,
+    createBatch,
+    sendBatch,
+    createTemplate,
+    createNotificationFromTemplate,
+    recordAnalytics,
   };
 }

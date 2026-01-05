@@ -436,9 +436,119 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 - Icon placeholders need PNG conversion untuk production
 - Backend integration dengan Cloudflare Workers untuk push delivery
 
+### 4.14 Unified Notification System - Centralized Notification Management (Fase 4 - COMPLETED)
+
+**Pengguna**: Semua Pengguna
+
+| Fitur | Fungsi | Output |
+|-------|--------|--------|
+| Unified Notification Center | Pusat notifikasi terpadu untuk semua role | Sistem notifikasi terintegrasi |
+| Notification Templates | Template otomatis untuk berbagai tipe event | Notifikasi konsisten dan cepat |
+| Role-Based Filtering | Filter notifikasi berdasarkan peran user | Notifikasi relevan per user |
+| Search Functionality | Pencarian riwayat notifikasi | Akses cepat ke notifikasi tertentu |
+| Unread Badge | Indikator jumlah notifikasi belum dibaca | User engagement yang lebih baik |
+
+#### 4.14.1 Unified Notification System Architecture (Fase 4 - COMPLETED)
+
+**Status**: ✅ **Implemented** (Notification Templates + Notification Center)
+
+**Fitur Utama**:
+- **Notification Template Engine**: Template otomatis dengan context interpolation ✅
+- **Role-Based Filtering**: Filter notifikasi berdasarkan user role (admin, teacher, student, parent) ✅
+- **Unified Notification Center UI**: Pusat notifikasi terpadu dengan search dan filter ✅
+- **Notification Templates**: 6 template untuk berbagai event types (announcement, grade, ppdb, event, library, system) ✅
+- **Search Functionality**: Search notifications by title and body text ✅
+- **Real-time Filtering**: Filter berdasarkan tipe, status (read/unread), dan search query ✅
+- **Unread Badge**: Bell icon dengan badge count (9+ untuk jumlah besar) ✅
+- **Notification History**: Mark as read, delete, dan clear all notifications ✅
+- **Priority Indicators**: Visual indikator berdasarkan priority level (high/normal/low) ✅
+- **Test Notifications**: Kirim notifikasi tes untuk debugging ✅
+- **Role-Aware Types**: Setiap tipe notifikasi memiliki target roles yang relevan ✅
+- **Responsive Design**: Mobile-friendly dengan proper ARIA labels ✅
+
+**Teknologi**:
+- React Hooks (useState, useCallback, useEffect) ✅
+- TypeScript untuk type safety ✅
+- Local Storage untuk notification history ✅
+- Template string interpolation untuk dynamic content ✅
+- Context-based notification generation ✅
+- Search dengan string matching (case-insensitive) ✅
+
+**Komponen yang Telah Dibuat**:
+1. `notificationTemplates.ts` - Notification template engine dengan role-based filtering ✅
+2. `NotificationCenter.tsx` - Unified notification center UI component ✅
+3. `NotificationIcons.tsx` - Additional icon components (CheckCircle, MagnifyingGlass, Funnel) ✅
+4. `Header.tsx` - Integrated NotificationCenter ✅
+5. `App.tsx` - Updated Header props untuk pass onShowToast ✅
+
+**Notification Templates**:
+- **Announcement**: Pengumuman sekolah untuk semua roles
+- **Grade**: Update nilai untuk students, parents, dan teachers
+- **PPDB**: Status pendaftaran untuk admin, students, dan parents
+- **Event**: Kegiatan baru untuk semua roles
+- **Library**: Materi baru untuk teachers dan students
+- **System**: Notifikasi sistem untuk semua roles
+
+**Template Features**:
+- Context interpolation dengan {variable} syntax
+- Role-based targeting (setiap template memiliki targetRoles)
+- Priority levels (low, normal, high)
+- Dynamic content generation berdasarkan context data
+- Graceful error handling untuk missing context values
+
+**Notification Center UI Features**:
+- Bell icon dengan unread count badge
+- Search box untuk mencari notifications
+- Filter dropdown by notification type (role-relevant only)
+- Filter dropdown by status (all, read, unread)
+- Mark all as read button
+- Test notification button untuk debugging
+- Clear all notifications button
+- Priority-based visual indicators (color-coded borders)
+- Notification cards dengan icon, title, body, dan timestamp
+- Mobile-responsive design
+- Proper ARIA labels untuk accessibility
+
+**Implementasi**:
+- ✅ Create notification template service dengan role-based filtering
+- ✅ Implement 6 notification templates untuk common events
+- ✅ Build unified notification center UI component
+- ✅ Add search functionality dengan case-insensitive matching
+- ✅ Add real-time filtering by type, status, dan search query
+- ✅ Integrate unread badge dengan count display
+- ✅ Add notification history management (mark as read, delete, clear)
+- ✅ Implement test notification feature
+- ✅ Add priority-based visual indicators
+- ✅ Integrate dengan existing pushNotificationService
+- ✅ Update Header component untuk include NotificationCenter
+- ✅ Verify build success (3.15s)
+- ✅ Verify all tests passing (60/60 tests)
+- ✅ Verify lint passing (0 errors, 1 acceptable warning)
+
+**Key Achievements**:
+- ✅ Centralized notification management untuk semua user roles
+- ✅ Template-based notification generation untuk consistency
+- ✅ Role-aware notification targeting
+- ✅ Searchable notification history
+- ✅ Real-time filtering by multiple criteria
+- ✅ User-friendly UI dengan visual indicators
+- ✅ Responsive design untuk mobile dan desktop
+- ✅ Seamless integration dengan existing push notification infrastructure
+- ✅ Zero test regressions
+- ✅ Zero build errors
+- ✅ Zero lint errors (except pre-existing warning)
+
+**Next Steps**:
+- Backend integration untuk push notifications dengan VAPID
+- Analytics untuk notification engagement tracking
+- Grouped notifications untuk similar events
+- Snooze notifications untuk later review
+- Email/SMS fallback untuk critical notifications
+- Multi-device notification synchronization
+
 ---
 
-
+ 
 
 ## 5. User Roles & Access Control
 

@@ -76,6 +76,8 @@ export const NOTIFICATION_CONFIG = {
         events: true,
         library: true,
         system: true,
+        roleBasedFiltering: false,
+        batchNotifications: false,
         quietHours: {
             enabled: false,
             start: '22:00',

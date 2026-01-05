@@ -1,4 +1,4 @@
-import { NotificationSettings, PushNotification, NotificationHistoryItem } from '../types';
+import { NotificationSettings, PushNotification, NotificationHistoryItem, NotificationBatch, NotificationTemplate, NotificationAnalytics } from '../types';
 import { NOTIFICATION_CONFIG, NOTIFICATION_ERROR_MESSAGES, NOTIFICATION_ICONS, STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 
@@ -21,9 +21,15 @@ declare global {
 class PushNotificationService {
   private swRegistration: ServiceWorkerRegistration | null = null;
   private subscription: PushSubscription | null = null;
+  private batches: Map<string, NotificationBatch> = new Map();
+  private templates: Map<string, NotificationTemplate> = new Map();
+  private analytics: Map<string, NotificationAnalytics> = new Map();
 
   constructor() {
     this.loadSubscription();
+    this.loadBatches();
+    this.loadTemplates();
+    this.loadAnalytics();
   }
 
   async requestPermission(): Promise<boolean> {
@@ -255,6 +261,10 @@ class PushNotificationService {
       return false;
     }
 
+    if (settings.roleBasedFiltering && !this.isNotificationForCurrentUser(notification)) {
+      return false;
+    }
+
     switch (notification.type) {
       case 'announcement':
         return settings.announcements;
@@ -270,6 +280,35 @@ class PushNotificationService {
         return settings.system;
       default:
         return true;
+    }
+  }
+
+  private isNotificationForCurrentUser(notification: PushNotification): boolean {
+    const currentUser = this.getCurrentUser();
+    if (!currentUser) return true;
+
+    if (notification.targetUsers && notification.targetUsers.length > 0) {
+      return notification.targetUsers.includes(currentUser.id);
+    }
+
+    if (notification.targetRoles && !notification.targetRoles.includes(currentUser.role)) {
+      return false;
+    }
+
+    if (notification.targetExtraRoles && notification.targetExtraRoles.length > 0) {
+      return currentUser.extraRole && notification.targetExtraRoles.includes(currentUser.extraRole);
+    }
+
+    return true;
+  }
+
+  private getCurrentUser() {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (!userStr) return null;
+      return JSON.parse(userStr);
+    } catch {
+      return null;
     }
   }
 
@@ -373,6 +412,253 @@ class PushNotificationService {
     } catch (error) {
       logger.error('Failed to clear subscription:', error);
     }
+  }
+
+  createBatch(name: string, notifications: PushNotification[]): NotificationBatch {
+    const batch: NotificationBatch = {
+      id: `batch-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name,
+      notifications,
+      scheduledFor: new Date().toISOString(),
+      deliveryMethod: 'manual',
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    };
+
+    this.batches.set(batch.id, batch);
+    this.saveBatches();
+    logger.info('Notification batch created:', batch.id);
+    return batch;
+  }
+
+  async sendBatch(batchId: string): Promise<boolean> {
+    const batch = this.batches.get(batchId);
+    if (!batch) {
+      logger.error('Batch not found:', batchId);
+      return false;
+    }
+
+    batch.status = 'processing';
+    this.saveBatches();
+
+    const settings = this.getSettings();
+    let successCount = 0;
+    let failureCount = 0;
+
+    for (const notification of batch.notifications) {
+      try {
+        if (settings.batchNotifications) {
+          await this.showBatchedNotification(notification, batch);
+        } else {
+          await this.showLocalNotification(notification);
+        }
+        successCount++;
+      } catch (error) {
+        logger.error('Failed to send notification in batch:', error);
+        failureCount++;
+      }
+    }
+
+    batch.status = failureCount === 0 ? 'completed' : 'failed';
+    batch.sentAt = new Date().toISOString();
+    if (failureCount > 0) {
+      batch.failureReason = `${failureCount} notifications failed`;
+    }
+
+    this.saveBatches();
+    logger.info(`Batch ${batchId} completed: ${successCount} success, ${failureCount} failures`);
+    return failureCount === 0;
+  }
+
+  private async showBatchedNotification(notification: PushNotification, batch: NotificationBatch): Promise<void> {
+    const batchedNotification = {
+      ...notification,
+      data: {
+        ...notification.data,
+        batchId: batch.id,
+        batchSize: batch.notifications.length,
+        isBatched: true,
+      },
+      title: notification.title.includes(`[${batch.notifications.length}]`) 
+        ? notification.title 
+        : `[${batch.notifications.length}] ${notification.title}`,
+    };
+
+    await this.showLocalNotification(batchedNotification);
+  }
+
+  createTemplate(
+    name: string,
+    type: PushNotification['type'],
+    title: string,
+    body: string,
+    variables: string[] = []
+  ): NotificationTemplate {
+    const template: NotificationTemplate = {
+      id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name,
+      type,
+      title,
+      body,
+      variables,
+      priority: 'normal',
+      isActive: true,
+      createdBy: this.getCurrentUser()?.id || 'system',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.templates.set(template.id, template);
+    this.saveTemplates();
+    logger.info('Notification template created:', template.id);
+    return template;
+  }
+
+  createNotificationFromTemplate(
+    templateId: string,
+    variables: Record<string, string | number> = {}
+  ): PushNotification | null {
+    const template = this.templates.get(templateId);
+    if (!template || !template.isActive) {
+      logger.error('Template not found or inactive:', templateId);
+      return null;
+    }
+
+    let title = template.title;
+    let body = template.body;
+
+    for (const [key, value] of Object.entries(variables)) {
+      const placeholder = `{{${key}}}`;
+      title = title.replace(new RegExp(placeholder, 'g'), String(value));
+      body = body.replace(new RegExp(placeholder, 'g'), String(value));
+    }
+
+    return {
+      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      type: template.type,
+      title,
+      body,
+      timestamp: new Date().toISOString(),
+      read: false,
+      priority: template.priority,
+      targetRoles: template.targetRoles,
+      targetExtraRoles: template.targetExtraRoles,
+      data: { templateId, variables },
+    };
+  }
+
+  getBatches(): NotificationBatch[] {
+    return Array.from(this.batches.values());
+  }
+
+  getTemplates(): NotificationTemplate[] {
+    return Array.from(this.templates.values()).filter(t => t.isActive);
+  }
+
+  recordAnalytics(notificationId: string, action: 'delivered' | 'read' | 'clicked' | 'dismissed'): void {
+    const existing = this.analytics.get(notificationId);
+    const currentUser = this.getCurrentUser();
+    
+    if (existing) {
+      switch (action) {
+        case 'delivered':
+          existing.delivered++;
+          break;
+        case 'read':
+          existing.read++;
+          break;
+        case 'clicked':
+          existing.clicked++;
+          break;
+        case 'dismissed':
+          existing.dismissed++;
+          break;
+      }
+      if (currentUser) {
+        existing.roleBreakdown[currentUser.role] = (existing.roleBreakdown[currentUser.role] || 0) + 1;
+      }
+    } else {
+      const analytics: NotificationAnalytics = {
+        id: `analytics-${notificationId}`,
+        notificationId,
+        delivered: action === 'delivered' ? 1 : 0,
+        read: action === 'read' ? 1 : 0,
+        clicked: action === 'clicked' ? 1 : 0,
+        dismissed: action === 'dismissed' ? 1 : 0,
+        timestamp: new Date().toISOString(),
+        roleBreakdown: currentUser ? { [currentUser.role]: 1 } : {},
+      };
+      this.analytics.set(notificationId, analytics);
+    }
+
+    this.saveAnalytics();
+  }
+
+  private saveBatches(): void {
+    try {
+      const batches = Array.from(this.batches.values());
+      localStorage.setItem('notification_batches', JSON.stringify(batches));
+    } catch (error) {
+      logger.error('Failed to save batches:', error);
+    }
+  }
+
+  private loadBatches(): void {
+    try {
+      const stored = localStorage.getItem('notification_batches');
+      if (stored) {
+        const batches: NotificationBatch[] = JSON.parse(stored);
+        batches.forEach(batch => this.batches.set(batch.id, batch));
+      }
+    } catch (error) {
+      logger.error('Failed to load batches:', error);
+    }
+  }
+
+  private saveTemplates(): void {
+    try {
+      const templates = Array.from(this.templates.values());
+      localStorage.setItem('notification_templates', JSON.stringify(templates));
+    } catch (error) {
+      logger.error('Failed to save templates:', error);
+    }
+  }
+
+  private loadTemplates(): void {
+    try {
+      const stored = localStorage.getItem('notification_templates');
+      if (stored) {
+        const templates: NotificationTemplate[] = JSON.parse(stored);
+        templates.forEach(template => this.templates.set(template.id, template));
+      }
+    } catch (error) {
+      logger.error('Failed to load templates:', error);
+    }
+  }
+
+  private saveAnalytics(): void {
+    try {
+      const analytics = Array.from(this.analytics.values());
+      localStorage.setItem('notification_analytics', JSON.stringify(analytics));
+    } catch (error) {
+      logger.error('Failed to save analytics:', error);
+    }
+  }
+
+  private loadAnalytics(): void {
+    try {
+      const stored = localStorage.getItem('notification_analytics');
+      if (stored) {
+        const analytics: NotificationAnalytics[] = JSON.parse(stored);
+        analytics.forEach(analytic => this.analytics.set(analytic.notificationId, analytic));
+      }
+    } catch (error) {
+      logger.error('Failed to load analytics:', error);
+    }
+  }
+
+  getAnalytics(): NotificationAnalytics[] {
+    return Array.from(this.analytics.values());
   }
 
   private urlBase64ToUint8Array(base64String: string): Uint8Array {

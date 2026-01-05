@@ -424,6 +424,11 @@ export interface PushNotification {
   timestamp: string;
   read: boolean;
   priority: NotificationPriority;
+  targetRoles?: UserRole[];
+  targetExtraRoles?: UserExtraRole[];
+  targetUsers?: string[];
+  batchSize?: number;
+  batchId?: string;
 }
 
 export interface NotificationSettings {
@@ -434,6 +439,8 @@ export interface NotificationSettings {
   events: boolean;
   library: boolean;
   system: boolean;
+  roleBasedFiltering: boolean;
+  batchNotifications: boolean;
   quietHours: {
     enabled: boolean;
     start: string;
@@ -457,6 +464,55 @@ export interface NotificationPermission {
 export interface PushSubscriptionOptions {
   userVisibleOnly: boolean;
   applicationServerKey: string | null;
+}
+
+export interface NotificationTemplate {
+  id: string;
+  name: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  variables: string[];
+  targetRoles?: UserRole[];
+  targetExtraRoles?: UserExtraRole[];
+  priority: NotificationPriority;
+  isActive: boolean;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NotificationBatch {
+  id: string;
+  name: string;
+  notifications: PushNotification[];
+  scheduledFor: string;
+  deliveryMethod: 'immediate' | 'scheduled' | 'manual';
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  createdAt: string;
+  sentAt?: string;
+  failureReason?: string;
+}
+
+export interface NotificationAnalytics {
+  id: string;
+  notificationId: string;
+  delivered: number;
+  read: number;
+  clicked: number;
+  dismissed: number;
+  timestamp: string;
+  roleBreakdown: Record<UserRole, number>;
+}
+
+export interface NotificationCenterItem {
+  id: string;
+  notification: PushNotification;
+  status: 'delivered' | 'read' | 'clicked' | 'dismissed';
+  deliveredAt: string;
+  readAt?: string;
+  clickedAt?: string;
+  dismissedAt?: string;
 }
 
 export interface NotificationPayload {

@@ -215,7 +215,7 @@ const App: React.FC = () => {
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 w-full min-h-screen font-sans text-gray-800 dark:text-gray-200 transition-colors duration-300">
-      <Header 
+      <Header
         onLoginClick={() => setIsLoginOpen(true)}
         onChatClick={() => setIsChatOpen(true)}
         onEditClick={() => setIsEditorOpen(true)}
@@ -227,6 +227,7 @@ const App: React.FC = () => {
         onTogglePublicView={() => setIsPublicView(!isPublicView)}
         theme={theme}
         onToggleTheme={toggleTheme}
+        onShowToast={showToast}
       />
       
       {isLoggedIn && !isPublicView ? (

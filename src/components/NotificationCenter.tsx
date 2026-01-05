@@ -1,0 +1,358 @@
+import React, { useState, useCallback } from 'react';
+import { usePushNotifications } from '../hooks/usePushNotifications';
+import { UserRole, NotificationType, NotificationHistoryItem } from '../types';
+import { NotificationTemplateService } from '../services/notificationTemplates';
+import { logger } from '../utils/logger';
+import { BellIcon } from './icons/BellIcon';
+import { BellSlashIcon } from './icons/BellSlashIcon';
+import { CheckCircleIcon, MagnifyingGlassIcon, FunnelIcon } from './icons/NotificationIcons';
+import { TrashIcon } from './icons/TrashIcon';
+
+interface NotificationCenterProps {
+  userRole: UserRole;
+  onNotificationClick?: (notification: NotificationHistoryItem) => void;
+  onShowToast?: (msg: string, type: 'success' | 'error' | 'info') => void;
+}
+
+const NotificationCenter: React.FC<NotificationCenterProps> = ({
+  userRole,
+  onNotificationClick,
+  onShowToast,
+}) => {
+  const {
+    history,
+    permissionGranted,
+    markAsRead,
+    clearHistory,
+    createNotification,
+    showNotification,
+  } = usePushNotifications();
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState<NotificationType | 'all'>('all');
+  const [selectedStatus, setSelectedStatus] = useState<'all' | 'read' | 'unread'>('all');
+
+  const relevantTypes = NotificationTemplateService.getRelevantNotificationTypes(userRole);
+
+  const filteredHistory = useCallback(() => {
+    let filtered = [...history];
+
+    if (selectedType !== 'all') {
+      filtered = filtered.filter(
+        (item) => item.notification.type === selectedType
+      );
+    }
+
+    if (selectedStatus === 'read') {
+      filtered = filtered.filter((item) => item.notification.read);
+    } else if (selectedStatus === 'unread') {
+      filtered = filtered.filter((item) => !item.notification.read);
+    }
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (item) =>
+          item.notification.title.toLowerCase().includes(query) ||
+          item.notification.body.toLowerCase().includes(query)
+      );
+    }
+
+    return filtered.reverse();
+  }, [history, selectedType, selectedStatus, searchQuery]);
+
+  const unreadCount = history.filter((item) => !item.notification.read).length;
+
+  const handleToggleOpen = useCallback(() => {
+    setIsOpen((prev) => !prev);
+    logger.info('Notification center toggled:', !isOpen);
+  }, [isOpen]);
+
+  const handleNotificationClick = useCallback(
+    (item: NotificationHistoryItem) => {
+      if (!item.notification.read) {
+        markAsRead(item.id);
+      }
+
+      if (onNotificationClick) {
+        onNotificationClick(item);
+      }
+
+      if (onShowToast) {
+        onShowToast('Notifikasi dibuka', 'info');
+      }
+
+      logger.info('Notification clicked:', item.id);
+    },
+    [markAsRead, onNotificationClick, onShowToast]
+  );
+
+  const handleMarkAllAsRead = useCallback(() => {
+    history.forEach((item) => {
+      if (!item.notification.read) {
+        markAsRead(item.id);
+      }
+    });
+
+    if (onShowToast) {
+      onShowToast('Semua notifikasi ditandai sudah dibaca', 'success');
+    }
+
+    logger.info('All notifications marked as read');
+  }, [history, markAsRead, onShowToast]);
+
+  const handleClearHistory = useCallback(() => {
+    clearHistory();
+
+    if (onShowToast) {
+      onShowToast('Riwayat notifikasi berhasil dihapus', 'success');
+    }
+
+    logger.info('Notification history cleared');
+  }, [clearHistory, onShowToast]);
+
+  const handleSendTestNotification = useCallback(async () => {
+    const testNotification = createNotification(
+      'system',
+      'Tes Notifikasi Terpadu',
+      'Ini adalah notifikasi tes dari Pusat Notifikasi Terpadu MA Malnu Kananga',
+      { type: 'test', source: 'notification-center' }
+    );
+
+    await showNotification(testNotification);
+
+    if (onShowToast) {
+      onShowToast('Notifikasi tes berhasil dikirim', 'success');
+    }
+
+    logger.info('Test notification sent from notification center');
+  }, [createNotification, showNotification, onShowToast]);
+
+  const getPriorityColor = (priority: string): string => {
+    switch (priority) {
+      case 'high':
+        return 'border-l-4 border-red-500';
+      case 'normal':
+        return 'border-l-4 border-blue-500';
+      case 'low':
+        return 'border-l-4 border-gray-400';
+      default:
+        return '';
+    }
+  };
+
+  const getTypeIcon = (type: NotificationType): string => {
+    switch (type) {
+      case 'announcement':
+        return '📢';
+      case 'grade':
+        return '📊';
+      case 'ppdb':
+        return '🎓';
+      case 'event':
+        return '🎉';
+      case 'library':
+        return '📚';
+      case 'system':
+        return '⚙️';
+      default:
+        return '🔔';
+    }
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={handleToggleOpen}
+        className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+        aria-label={`Notifikasi (${unreadCount} belum dibaca)`}
+      >
+        {permissionGranted ? (
+          <BellIcon className="w-6 h-6 text-gray-700" />
+        ) : (
+          <BellSlashIcon className="w-6 h-6 text-gray-500" />
+        )}
+
+        {unreadCount > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+            {unreadCount > 9 ? '9+' : unreadCount}
+          </span>
+        )}
+      </button>
+
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black bg-opacity-50"
+            onClick={handleToggleOpen}
+            aria-hidden="true"
+          />
+
+          <div className="absolute right-0 mt-2 w-full sm:w-96 max-h-[80vh] bg-white rounded-lg shadow-2xl z-50 overflow-hidden">
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Pusat Notifikasi
+                </h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">
+                    {unreadCount} belum dibaca
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Cari notifikasi..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    aria-label="Cari notifikasi"
+                  />
+                </div>
+
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <select
+                      value={selectedType}
+                      onChange={(e) =>
+                        setSelectedType(
+                          e.target.value as NotificationType | 'all'
+                        )
+                      }
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm appearance-none bg-white"
+                      aria-label="Filter berdasarkan tipe"
+                    >
+                      <option value="all">Semua Tipe</option>
+                      {relevantTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <select
+                    value={selectedStatus}
+                    onChange={(e) =>
+                      setSelectedStatus(e.target.value as 'all' | 'read' | 'unread')
+                    }
+                    className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"
+                    aria-label="Filter berdasarkan status"
+                  >
+                    <option value="all">Semua Status</option>
+                    <option value="unread">Belum Dibaca</option>
+                    <option value="read">Sudah Dibaca</option>
+                  </select>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleMarkAllAsRead}
+                    disabled={unreadCount === 0}
+                    className="flex-1 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <CheckCircleIcon className="w-4 h-4" />
+                    Tandai Semua Dibaca
+                  </button>
+                  <button
+                    onClick={handleSendTestNotification}
+                    disabled={!permissionGranted}
+                    className="px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Tes
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="overflow-y-auto max-h-[60vh]">
+              {filteredHistory().length === 0 ? (
+                <div className="p-8 text-center text-gray-500">
+                  {searchQuery || selectedType !== 'all' || selectedStatus !== 'all' ? (
+                    <p>Tidak ada notifikasi yang cocok dengan filter</p>
+                  ) : (
+                    <>
+                      <p className="mb-4">Belum ada notifikasi</p>
+                      <button
+                        onClick={handleSendTestNotification}
+                        disabled={!permissionGranted}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Kirim Notifikasi Tes
+                      </button>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100">
+                  {filteredHistory().map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => handleNotificationClick(item)}
+                      className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${getPriorityColor(
+                        item.notification.priority
+                      )} ${item.notification.read ? 'bg-white' : 'bg-blue-50'}`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">
+                          {getTypeIcon(item.notification.type)}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start mb-1">
+                            <h4 className="text-sm font-medium text-gray-900 truncate">
+                              {item.notification.title}
+                            </h4>
+                            {!item.notification.read && (
+                              <span className="h-2 w-2 bg-blue-500 rounded-full flex-shrink-0 ml-2" />
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                            {item.notification.body}
+                          </p>
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <span>
+                              {new Date(
+                                item.notification.timestamp
+                              ).toLocaleString('id-ID', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
+                            <span className="capitalize">
+                              {item.notification.type}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4">
+              <button
+                onClick={handleClearHistory}
+                disabled={history.length === 0}
+                className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                <TrashIcon className="w-4 h-4" />
+                Hapus Semua Notifikasi
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default NotificationCenter;
