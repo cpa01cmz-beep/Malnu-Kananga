@@ -1,7 +1,7 @@
  
   
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import type {
   SpeechRecognitionConfig,
   SpeechRecognitionError,
@@ -13,7 +13,7 @@ import type {
   SpeechRecognitionEvent,
   SpeechWindow,
 } from '../types';
-import { VOICE_CONFIG } from '../constants';
+import { VOICE_CONFIG, ERROR_MESSAGES } from '../constants';
 import { logger } from '../utils/logger';
 
 class SpeechRecognitionService {
@@ -24,6 +24,7 @@ class SpeechRecognitionService {
   private transcript: string = '';
   private timeoutId: ReturnType<typeof setTimeout> | null = null;
   private isSupported: boolean;
+  private permissionState: 'granted' | 'denied' | 'prompt' | 'unknown' = 'unknown';
 
   constructor(config?: Partial<SpeechRecognitionConfig>) {
     this.config = {
@@ -36,6 +37,7 @@ class SpeechRecognitionService {
     this.isSupported = this.checkSupport();
 
     if (this.isSupported && typeof window !== 'undefined') {
+      this.checkPermissionState();
       this.initializeRecognition();
     }
   }
@@ -48,6 +50,26 @@ class SpeechRecognitionService {
     const speechWindow = window as SpeechWindow;
     const SpeechRecognitionAPI = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
     return !!SpeechRecognitionAPI;
+  }
+
+  private async checkPermissionState(): Promise<void> {
+    if (typeof window === 'undefined' || !navigator.permissions) {
+      this.permissionState = 'unknown';
+      return;
+    }
+
+    try {
+      const permission = await navigator.permissions.query({ name: 'microphone' as const });
+      this.permissionState = permission.state as 'granted' | 'denied' | 'prompt';
+      
+      permission.addEventListener('change', () => {
+        this.permissionState = permission.state as 'granted' | 'denied' | 'prompt';
+        logger.debug('Microphone permission state changed:', this.permissionState);
+      });
+    } catch (error) {
+      logger.warn('Could not check microphone permission:', error);
+      this.permissionState = 'unknown';
+    }
   }
 
   private initializeRecognition(): void {
@@ -121,9 +143,23 @@ class SpeechRecognitionService {
   }
 
   private handleError(event: SpeechRecognitionErrorEvent): void {
+    const errorType = this.mapErrorType(event.error);
+    let errorMessage = event.message || 'Speech recognition error occurred';
+
+    // Provide specific, actionable error messages
+    if (errorType === 'not-allowed') {
+      errorMessage = this.getPermissionDeniedMessage();
+      this.permissionState = 'denied';
+      logger.warn('Microphone permission denied');
+    } else if (errorType === 'no-speech') {
+      errorMessage = ERROR_MESSAGES.NO_SPEECH_DETECTED;
+    } else if (errorType === 'audio-capture') {
+      errorMessage = 'Tidak dapat mengakses mikrofon. Pastikan mikrofon terhubung dan tidak digunakan aplikasi lain.';
+    }
+
     const error: SpeechRecognitionError = {
-      error: this.mapErrorType(event.error),
-      message: event.message || 'Speech recognition error occurred',
+      error: errorType,
+      message: errorMessage,
     };
 
     logger.error('Speech recognition error:', error);
@@ -131,10 +167,32 @@ class SpeechRecognitionService {
     this.state = 'error';
     this.clearTimeout();
     this.callbacks.onError?.(error);
+  }
 
-    if (error.error === 'not-allowed') {
-      logger.warn('Microphone permission denied');
+  private getPermissionDeniedMessage(): string {
+    const browserInfo = this.getBrowserInfo();
+    
+    if (browserInfo.isChrome) {
+      return 'Izin mikrofon ditolak. Klik ikon gembok di address bar dan pilih "Izinkan" untuk mikrofon.';
+    } else if (browserInfo.isFirefox) {
+      return 'Izin mikrofon ditolak. Klik ikon gembok di address bar dan ubah pengaturan mikrofon menjadi "Izinkan".';
+    } else if (browserInfo.isSafari) {
+      return 'Izin mikrofon ditolak. Buka Safari > Preferensi > Situs Web > Mikrofon dan izinkan situs ini.';
+    } else if (browserInfo.isEdge) {
+      return 'Izin mikrofon ditolak. Klik ikon gembok di address bar dan pilih "Izinkan" untuk mikrofon.';
     }
+    
+    return ERROR_MESSAGES.MICROPHONE_DENIED;
+  }
+
+  private getBrowserInfo(): { isChrome: boolean; isFirefox: boolean; isSafari: boolean; isEdge: boolean } {
+    const userAgent = navigator.userAgent.toLowerCase();
+    return {
+      isChrome: /chrome/.test(userAgent) && !/edg/.test(userAgent),
+      isFirefox: /firefox/.test(userAgent),
+      isSafari: /safari/.test(userAgent) && !/chrome/.test(userAgent),
+      isEdge: /edg/.test(userAgent),
+    };
   }
 
   private mapErrorType(errorName: string): SpeechRecognitionError['error'] {
@@ -169,7 +227,7 @@ class SpeechRecognitionService {
     if (!this.isSupported) {
       const error: SpeechRecognitionError = {
         error: 'unknown',
-        message: 'Browser does not support speech recognition',
+        message: ERROR_MESSAGES.VOICE_NOT_SUPPORTED,
       };
       this.callbacks.onError?.(error);
       return;
@@ -177,6 +235,16 @@ class SpeechRecognitionService {
 
     if (this.state === 'listening') {
       logger.debug('Already listening, ignoring start request');
+      return;
+    }
+
+    // Check permission state before attempting to record
+    if (this.permissionState === 'denied') {
+      const error: SpeechRecognitionError = {
+        error: 'not-allowed',
+        message: this.getPermissionDeniedMessage(),
+      };
+      this.callbacks.onError?.(error);
       return;
     }
 
@@ -188,9 +256,20 @@ class SpeechRecognitionService {
       }
     } catch (error) {
       logger.error('Failed to start speech recognition:', error);
+      let errorMessage = 'Gagal memulai perekaman suara';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('not-allowed') || error.message.includes('Permission denied')) {
+          errorMessage = this.getPermissionDeniedMessage();
+          this.permissionState = 'denied';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       const speechError: SpeechRecognitionError = {
         error: 'unknown',
-        message: error instanceof Error ? error.message : 'Failed to start recording',
+        message: errorMessage,
       };
       this.callbacks.onError?.(speechError);
     }
@@ -303,7 +382,30 @@ class SpeechRecognitionService {
   public getIsSupported(): boolean {
     return this.isSupported;
   }
+
+  public getPermissionState(): 'granted' | 'denied' | 'prompt' | 'unknown' {
+    return this.permissionState;
+  }
+
+  public async requestPermission(): Promise<boolean> {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+
+    try {
+      // Try to access getUserMedia to trigger permission prompt
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+      
+      // Re-check permission state
+      await this.checkPermissionState();
+      return this.permissionState === 'granted';
+    } catch (error) {
+      logger.warn('Microphone permission request failed:', error);
+      this.permissionState = 'denied';
+      return false;
+    }
+  }
 }
 
 export default SpeechRecognitionService;
-/* eslint-enable @typescript-eslint/no-explicit-any */

@@ -3,6 +3,7 @@ import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { MicrophoneIcon } from './icons/MicrophoneIcon';
 import { MicrophoneOffIcon } from './icons/MicrophoneOffIcon';
 import { logger } from '../utils/logger';
+import MicrophonePermissionHandler from './MicrophonePermissionHandler';
 
 interface VoiceInputButtonProps {
   onTranscript: (transcript: string) => void;
@@ -17,7 +18,7 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
   disabled = false,
   className = '',
 }) => {
-  const { transcript, state, isListening, isSupported, startRecording, stopRecording } =
+  const { transcript, state, isListening, isSupported, startRecording, stopRecording, permissionState, requestPermission } =
     useVoiceRecognition({
       onTranscript: (text, isFinal) => {
         if (isFinal) {
@@ -26,11 +27,16 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
       },
       onError: (error) => {
         logger.error('Voice recognition error:', error);
-        onError?.(error.message);
+        setLastError(error.message);
+        if (error.error === 'not-allowed' || error.message.includes('mikrofon') || error.message.includes('izin')) {
+          setShowPermissionHandler(true);
+        }
       },
     });
 
   const [pulseAnimation, setPulseAnimation] = useState(false);
+  const [showPermissionHandler, setShowPermissionHandler] = useState(false);
+  const [_lastError, setLastError] = useState<string>('');
 
   useEffect(() => {
     setPulseAnimation(isListening);
@@ -51,13 +57,22 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
     if (isListening) {
       stopRecording();
     } else {
-      startRecording();
+      startRecording().catch((error) => {
+        logger.error('Failed to start recording:', error);
+        if (error.message && (error.message.includes('mikrofon') || error.message.includes('izin'))) {
+          setShowPermissionHandler(true);
+        }
+      });
     }
   };
 
   const getButtonStyle = () => {
     if (!isSupported) {
       return 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed';
+    }
+    
+    if (permissionState === 'denied') {
+      return 'bg-orange-500 hover:bg-orange-600 text-white';
     }
 
     switch (state) {
@@ -74,6 +89,7 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
 
   const getTooltipText = () => {
     if (!isSupported) return 'Browser tidak mendukung fitur suara';
+    if (permissionState === 'denied') return 'Izin mikrofon ditolak, klik untuk mengatur ulang';
     
     switch (state) {
       case 'listening':
@@ -89,6 +105,7 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
 
   const getAriaLabel = () => {
     if (!isSupported) return 'Fitur suara tidak didukung';
+    if (permissionState === 'denied') return 'Izin mikrofon ditolak';
     
     switch (state) {
       case 'listening':
@@ -112,6 +129,42 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
       >
         <MicrophoneIcon className="w-5 h-5" />
       </button>
+    );
+  }
+
+  if (showPermissionHandler) {
+    return (
+      <div className="relative">
+        <button
+          onClick={() => setShowPermissionHandler(true)}
+          className={`
+            p-3 mb-1 rounded-full transition-all duration-300 shadow-sm flex-shrink-0
+            ${getButtonStyle()}
+            ${className}
+          `}
+          aria-label="Perlu izin mikrofon"
+          title="Perlu izin mikrofon"
+        >
+          <MicrophoneOffIcon className="w-5 h-5" />
+        </button>
+        
+        <MicrophonePermissionHandler
+          onPermissionGranted={() => {
+            setShowPermissionHandler(false);
+            setLastError('');
+            requestPermission().then((granted) => {
+              if (granted) {
+                startRecording();
+              }
+            });
+          }}
+          onFallbackToText={() => {
+            setShowPermissionHandler(false);
+            onError?.('Fitur suara tidak tersedia. Gunakan input teks.');
+          }}
+          className="absolute bottom-full right-0 mb-2 w-80 z-50"
+        />
+      </div>
     );
   }
 
