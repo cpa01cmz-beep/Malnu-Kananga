@@ -125,7 +125,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
       default:
         logger.debug('Unknown command:', command.action);
     }
-  }, [messages, autoReadAI, synthesis, voiceQueue]);
+  }, [messages, autoReadAI, synthesis, voiceQueue, handleSend]);
   
   useEffect(() => {
     if (isOpen && messages.length === 0) {

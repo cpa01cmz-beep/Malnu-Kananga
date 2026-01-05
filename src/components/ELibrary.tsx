@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { eLibraryAPI, fileStorageAPI } from '../services/apiService';
-import { ELibrary as ELibraryType } from '../types';
+import { ELibrary as ELibraryType, Subject } from '../types';
 import { logger } from '../utils/logger';
+import { categoryService } from '../services/categoryService';
+import { CategoryValidator } from '../utils/categoryValidator';
 
 interface ELibraryProps {
   onBack: () => void;
@@ -12,6 +14,7 @@ interface ELibraryProps {
 
 const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
   const [materials, setMaterials] = useState<ELibraryType[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterSubject, setFilterSubject] = useState('Semua');
@@ -19,6 +22,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
   useEffect(() => {
     fetchMaterials();
+    fetchSubjects();
   }, []);
 
   const fetchMaterials = async () => {
@@ -28,6 +32,8 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       const response = await eLibraryAPI.getAll();
       if (response.success && response.data) {
         setMaterials(response.data);
+        // Update material statistics for category service
+        categoryService.updateMaterialStats(response.data);
       } else {
         setError(response.message || 'Gagal mengambil data materi');
       }
@@ -39,8 +45,29 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
     }
   };
 
+  const fetchSubjects = async () => {
+    try {
+      const fetchedSubjects = await categoryService.getSubjects();
+      setSubjects(fetchedSubjects);
+    } catch (err) {
+      logger.error('Error fetching subjects:', err);
+    }
+  };
+
   const getSubjectName = (material: ELibraryType): string => {
+    // If material has subjectId, use it to fetch the actual subject name
+    if (material.subjectId) {
+      const subject = subjects.find(s => s.id === material.subjectId);
+      if (subject) {
+        return subject.name;
+      }
+    }
+    // Fallback to category for backwards compatibility
     return material.category || 'Umum';
+  };
+
+  const getSubjectStats = () => {
+    return CategoryValidator.getCategoryStatistics(subjects, materials);
   };
 
   const getFileType = (fileType: string): 'PDF' | 'DOCX' | 'PPT' | 'VIDEO' => {
@@ -59,14 +86,27 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const getSubjects = (): string[] => {
-    const subjects = materials.map((m) => getSubjectName(m));
-    return ['Semua', ...Array.from(new Set(subjects))];
+  const getAvailableSubjects = (): string[] => {
+    // Combine subjects from API and existing categories for backwards compatibility
+    const subjectNames = subjects.map(s => s.name);
+    const categoryNames = materials.map(m => m.category).filter(Boolean);
+    const allSubjects = ['Semua', ...Array.from(new Set([...subjectNames, ...categoryNames]))];
+    return allSubjects.sort();
+  };
+
+  const getSubjectWithCount = (subjectName: string): string => {
+    if (subjectName === 'Semua') {
+      return `Semua (${materials.length})`;
+    }
+    
+    const count = materials.filter(m => getSubjectName(m) === subjectName).length;
+    return `${subjectName} (${count})`;
   };
 
   const filteredMaterials = materials.filter((m) => {
     const matchSubject = filterSubject === 'Semua' || getSubjectName(m) === filterSubject;
-    const matchSearch = m.title.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = m.title.toLowerCase().includes(search.toLowerCase()) ||
+                       m.description.toLowerCase().includes(search.toLowerCase());
     return matchSubject && matchSearch;
   });
 
@@ -126,7 +166,8 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
     );
   }
 
-  const subjects = getSubjects();
+  const availableSubjects = getAvailableSubjects();
+  const subjectStats = getSubjectStats();
 
   return (
     <div className="animate-fade-in-up">
@@ -149,20 +190,45 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
         </div>
       </div>
 
-      <div className="flex overflow-x-auto pb-2 mb-6 gap-2 scrollbar-hide">
-        {subjects.map((subject) => (
-          <button
-            key={subject}
-            onClick={() => setFilterSubject(subject)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              filterSubject === subject
-                ? 'bg-purple-600 text-white'
-                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            }`}
-          >
-            {subject}
-          </button>
-        ))}
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="flex overflow-x-auto pb-2 gap-2 scrollbar-hide">
+          {availableSubjects.map((subject) => (
+            <button
+              key={subject}
+              onClick={() => setFilterSubject(subject)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                filterSubject === subject
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
+            >
+              {getSubjectWithCount(subject)}
+            </button>
+          ))}
+        </div>
+        
+        {subjectStats.length > 0 && (
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-4 py-2">
+            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Statistik Materi</div>
+            <div className="flex flex-wrap gap-2">
+              {subjectStats.slice(0, 3).map((stat) => (
+                <div key={stat.subject.id} className="text-xs">
+                  <span className="font-medium text-gray-700 dark:text-gray-300">
+                    {stat.subject.name}:
+                  </span>
+                  <span className="ml-1 text-gray-600 dark:text-gray-400">
+                    {stat.materialCount}
+                  </span>
+                </div>
+              ))}
+              {subjectStats.length > 3 && (
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  +{subjectStats.length - 3} lainnya
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -197,11 +263,22 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
               <div className="text-sm text-gray-500 dark:text-gray-400 space-y-1 mb-4">
                 <p>
-                  Mapel: <span className="text-gray-700 dark:text-gray-300">{getSubjectName(item)}</span>
+                  Mapel:{' '}
+                  <span className="text-gray-700 dark:text-gray-300">
+                    {getSubjectName(item)}
+                  </span>
+                  {item.subjectId && (
+                    <span className="ml-1 text-xs bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300 px-1.5 py-0.5 rounded">
+                      ✓ Valid
+                    </span>
+                  )}
+                </p>
+                <p className="text-xs">
+                  Diunggah: {new Date(item.uploadedAt).toLocaleDateString('id-ID')}
                 </p>
                 <div className="flex justify-between text-xs opacity-75">
-                  <span>{new Date(item.uploadedAt).toLocaleDateString('id-ID')}</span>
                   <span>{formatFileSize(item.fileSize)}</span>
+                  <span>{item.downloadCount} unduhan</span>
                 </div>
               </div>
 
