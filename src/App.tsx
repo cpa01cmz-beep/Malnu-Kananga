@@ -107,7 +107,7 @@ const App: React.FC = () => {
     
     checkAuth();
     loadDefaultContent();
-  }, [siteContent.featuredPrograms.length, siteContent.latestNews.length]);
+  }, [siteContent.featuredPrograms.length, siteContent.latestNews.length, setAuthSession, setSiteContent]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
