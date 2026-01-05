@@ -23,9 +23,7 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
   disabled = false,
   className = '',
 }) => {
-<<<<<<< HEAD
-  const { transcript, state, isListening, isSupported, startRecording, stopRecording, continuous, setContinuous, permissionState, requestPermission } =
->>>>>>> main
+const { transcript, state, isListening, isSupported, startRecording, stopRecording, continuous, setContinuous, permissionState, requestPermission } =
     useVoiceRecognition({
       onTranscript: (text, isFinal) => {
         if (isFinal) {
