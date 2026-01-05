@@ -1,10 +1,10 @@
 
-import React, { useState } from 'react';
-import { STORAGE_KEYS } from '../constants';
-import useLocalStorage from '../hooks/useLocalStorage';
+import React, { useState, useEffect, useCallback } from 'react';
 import { analyzeClassPerformance } from '../services/geminiService';
+import { studentsAPI, gradesAPI } from '../services/apiService';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer'; // Reuse renderer
+
 
 interface StudentGrade {
   id: string;
@@ -20,22 +20,59 @@ interface GradingManagementProps {
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
-const INITIAL_DATA: StudentGrade[] = [
-    { id: '1', name: 'Budi Santoso', nis: '2024001', assignment: 80, midExam: 75, finalExam: 0 },
-    { id: '2', name: 'Siti Aminah', nis: '2024002', assignment: 90, midExam: 85, finalExam: 0 },
-    { id: '3', name: 'Dewi Sartika', nis: '2024003', assignment: 85, midExam: 80, finalExam: 0 },
-    { id: '4', name: 'Rudi Hartono', nis: '2024004', assignment: 70, midExam: 65, finalExam: 0 },
-    { id: '5', name: 'Ahmad Dahlan', nis: '2024005', assignment: 95, midExam: 90, finalExam: 0 },
-];
-
 const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToast }) => {
-  const [grades, setGrades] = useLocalStorage<StudentGrade[]>(STORAGE_KEYS.GRADES, INITIAL_DATA);
+  const [grades, setGrades] = useState<StudentGrade[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isEditing, setIsEditing] = useState<string | null>(null);
   
   // AI Analysis State
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  
+  const className = 'XII IPA 1';
+
+  const fetchStudentsAndGrades = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // Fetch students for the class
+      const studentsResponse = await studentsAPI.getByClass(className);
+      if (!studentsResponse.success || !studentsResponse.data) {
+        throw new Error(studentsResponse.message || 'Failed to fetch students');
+      }
+      
+      // Fetch existing grades for the class/subject
+      const gradesResponse = await gradesAPI.getByClass(className);
+      const existingGrades = gradesResponse.success && gradesResponse.data ? gradesResponse.data : [];
+      
+      // Transform students to StudentGrade format
+      const studentGrades: StudentGrade[] = studentsResponse.data.map(student => {
+        const existingGrade = existingGrades.find(grade => grade.studentId === student.id);
+        return {
+          id: student.id,
+          name: student.className || `Student ${student.nis}`,
+          nis: student.nis,
+          assignment: existingGrade?.assignment || 0,
+          midExam: existingGrade?.midExam || 0,
+          finalExam: existingGrade?.finalExam || 0,
+        };
+      });
+      
+      setGrades(studentGrades);
+    } catch {
+      setError('Failed to load data');
+      onShowToast('Gagal memuat data siswa', 'error');
+    } finally {
+      setLoading(false);
+    }
+  }, [className, onShowToast]);
+
+  useEffect(() => {
+    fetchStudentsAndGrades();
+  }, [fetchStudentsAndGrades]);
 
   const calculateFinal = (g: StudentGrade) => {
       return (g.assignment * 0.3) + (g.midExam * 0.3) + (g.finalExam * 0.4);
@@ -58,9 +95,30 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       setGrades(prev => prev.map(g => g.id === id ? { ...g, [field]: numValue } : g));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      
+      // Save each student's grade
+      for (const grade of grades) {
+        await gradesAPI.update(grade.id, {
+          studentId: grade.id,
+          className: className,
+          subject: 'Matematika Wajib',
+          assignment: grade.assignment,
+          midExam: grade.midExam,
+          finalExam: grade.finalExam,
+          finalScore: calculateFinal(grade),
+        });
+      }
+      
       setIsEditing(null);
       onShowToast('Nilai berhasil disimpan ke database.', 'success');
+    } catch {
+      onShowToast('Gagal menyimpan nilai', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAIAnalysis = async () => {
@@ -127,14 +185,40 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             </div>
         )}
 
+        {/* Loading State */}
+        {loading && (
+            <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+                <span className="ml-3 text-gray-600 dark:text-gray-400">Memuat data siswa...</span>
+            </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+            <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
+                <p className="text-sm text-red-700 dark:text-red-300">
+                    <strong>Error:</strong> {error}
+                </p>
+                <button 
+                    onClick={fetchStudentsAndGrades}
+                    className="mt-2 text-sm text-red-600 dark:text-red-400 hover:underline"
+                >
+                    Coba Lagi
+                </button>
+            </div>
+        )}
+
         {/* Info Banner */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg">
-            <p className="text-sm text-blue-700 dark:text-blue-300">
-                <strong>Info Pembobotan:</strong> Tugas (30%) + UTS (30%) + UAS (40%). Nilai Akhir dan Predikat dihitung otomatis.
-            </p>
-        </div>
+        {!loading && !error && (
+            <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 mb-6 rounded-r-lg">
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                    <strong>Info Pembobotan:</strong> Tugas (30%) + UTS (30%) + UAS (40%). Nilai Akhir dan Predikat dihitung otomatis.
+                </p>
+            </div>
+        )}
 
         {/* Grading Table */}
+        {!loading && !error && (
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
@@ -229,6 +313,20 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 </table>
             </div>
         </div>
+        )}
+        
+        {/* Save Button */}
+        {!loading && !error && (
+        <div className="flex justify-end mt-6">
+            <button 
+                onClick={handleSave}
+                disabled={loading || isEditing === null}
+                className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+                {loading ? "Menyimpan..." : "Simpan Semua Nilai"}
+            </button>
+        </div>
+        )}
     </div>
   );
 };
