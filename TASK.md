@@ -116,7 +116,17 @@ Semua fitur utama untuk fase **Simulasi & MVP** telah berhasil diimplementasikan
       - [x] Implementasi file type dan size validation - COMPLETED
       - [x] Buat R2_SETUP.md documentation - COMPLETED
 
+### Tugas Terbaru (COMPLETED - SANITIZER MODE)
+- [✅] **Fix NODE_ENV Production Warning** (COMPLETED - SANITIZER MODE):
+     - [x] Remove NODE_ENV from .env.production file
+     - [x] Update Vite config to set NODE_ENV correctly for production builds
+     - [x] Test build to ensure warning is resolved
+     - [x] Verify all tests passing (30/30 tests)
+     - [x] Update documentation
+
 ---
+
+### Tugas Berikutnya
 
 **⚠️ Catatan:**
 Untuk rencana pengembangan selanjutnya (integrasi database riil, fitur lanjutan), silakan merujuk ke dokumen **[ROADMAP.md](ROADMAP.md)**.

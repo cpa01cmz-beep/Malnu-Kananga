@@ -5,6 +5,11 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
+  // Set NODE_ENV explicitly for production mode
+  if (mode === 'production' && !process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'production'
+  }
+
   const config = {
     plugins: [
       react(),
