@@ -53,7 +53,14 @@ Semua fitur utama untuk fase **Simulasi & MVP** telah berhasil diimplementasikan
    - [x] Update App.tsx untuk JWT session management - COMPLETED
 
 ### Tugas Berikutnya
-- [✅] **Repository Orchestration Improvements** (COMPLETED - OPTIMIZER MODE):
+ - [🚧] **Resolve PR #492 Merge Conflicts** (IN PROGRESS - SANITIZER MODE):
+      - [x] Analyze PR #492 merge conflict with main branch
+      - [x] Create new branch from latest main (fix/pr-492-retry-logic)
+      - [x] Apply retry logic from PR #492 to oc-01.yml workflow
+      - [ ] Verify workflow syntax is valid
+      - [ ] Commit and push changes
+      - [ ] Update/close PR #492
+ - [✅] **Repository Orchestration Improvements** (COMPLETED - OPTIMIZER MODE):
      - [x] Updated GitHub Actions to latest versions (checkout@v5, setup-node@v6, codeql-action@v4, cache@v5)
      - [x] Improved caching strategies with lockfile-based keys for better cache invalidation
      - [x] Created reusable composite actions (harden-runner, failure-notification)
