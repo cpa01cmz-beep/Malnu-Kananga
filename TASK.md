@@ -230,6 +230,20 @@ Untuk rencana pengembangan selanjutnya (integrasi database riil, fitur lanjutan)
 
 ## 🚧 Status Proyek: Fase 3 - Advanced AI & Automation (In Progress - ARCHITECT MODE)
 
+### Tugas Saat Ini (IN PROGRESS - ARCHITECT MODE)
+- [🚧] **Vocal Interaction - Advanced Features** (Phase 3 - IN PROGRESS):
+      - [x] Lock task in TASK.md - IN PROGRESS
+      - [ ] Design architecture for Continuous Mode - PENDING
+      - [ ] Design architecture for Voice Commands - PENDING
+      - [ ] Design architecture for Auto-read All - PENDING
+      - [ ] Implement Continuous Mode feature - PENDING
+      - [ ] Implement Voice Commands parser and handler - PENDING
+      - [ ] Implement Auto-read all messages feature - PENDING
+      - [ ] Integrate Phase 3 features into ChatWindow - PENDING
+      - [ ] Verify build, tests, and lint - PENDING
+      - [ ] Update documentation - PENDING
+      - [ ] Commit, push, and create PR - PENDING
+
 ### Tugas Terbaru (COMPLETED - ARCHITECT MODE)
 - [✅] **Vocal Interaction - Core Speech Services** (COMPLETED - ARCHITECT MODE) (New Feature):
       - [x] Create comprehensive architecture document (VOICE_INTERACTION_ARCHITECTURE.md) - COMPLETED
