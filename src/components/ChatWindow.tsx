@@ -16,6 +16,8 @@ import { useVoiceQueue } from '../hooks/useVoiceQueue';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 
+import { ToastType } from './Toast';
+
 interface ChatWindowProps {
   isOpen: boolean;
   closeChat: () => void;
@@ -23,12 +25,13 @@ interface ChatWindowProps {
     featuredPrograms: FeaturedProgram[];
     latestNews: LatestNews[];
   };
+  onShowToast?: (msg: string, type: ToastType) => void;
 }
 
 const MAX_HISTORY_SIZE = 20;
 const MAX_MESSAGES_SIZE = 100;
 
-const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext, onShowToast }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [history, setHistory] = useState<{role: 'user' | 'model', parts: string}[]>([]);
   const [input, setInput] = useState('');
@@ -381,6 +384,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
             disabled={isLoading}
             onError={(error) => {
               logger.error('Voice input error:', error);
+              // Show a brief toast message for voice errors
+              if (error && !error.includes('tidak mendukung')) {
+                // You could integrate with a toast notification system here
+                console.log('Voice Error:', error);
+              }
             }}
           />
           {synthesis.isSupported && messages.some((msg) => msg.sender === Sender.AI) && !voiceQueue.isPlaying && (
@@ -405,7 +413,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext 
       </div>
 
       {/* Voice Settings Modal */}
-      <VoiceSettings isOpen={showVoiceSettings} onClose={() => setShowVoiceSettings(false)} />
+      <VoiceSettings isOpen={showVoiceSettings} onClose={() => setShowVoiceSettings(false)} onShowToast={onShowToast} />
     </div>
   );
 };

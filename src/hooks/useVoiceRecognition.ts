@@ -25,6 +25,8 @@ interface UseVoiceRecognitionReturn {
   setContinuous: (continuous: boolean) => void;
   language: VoiceLanguage;
   continuous: boolean;
+  permissionState: 'granted' | 'denied' | 'prompt' | 'unknown';
+  requestPermission: () => Promise<boolean>;
 }
 
 export const useVoiceRecognition = (
@@ -38,6 +40,7 @@ export const useVoiceRecognition = (
   const [isSupported, setIsSupported] = useState(false);
   const [language, setLanguage] = useState<VoiceLanguage>('id-ID');
   const [continuous, setContinuous] = useState(false);
+  const [permissionState, setPermissionState] = useState<'granted' | 'denied' | 'prompt' | 'unknown'>('unknown');
   
   const serviceRef = useRef<SpeechRecognitionService | null>(null);
 
@@ -51,6 +54,7 @@ export const useVoiceRecognition = (
 
     const service = serviceRef.current;
     setIsSupported(service.getIsSupported());
+    setPermissionState(service.getPermissionState());
 
     service.onResult((transcriptResult, isFinal) => {
       setTranscript(transcriptResult);
@@ -59,12 +63,15 @@ export const useVoiceRecognition = (
 
     service.onError((error) => {
       setState('error');
+      setPermissionState(service.getPermissionState());
       onError?.(error);
     });
 
     service.onStart(() => {
       setState('listening');
       setIsListening(true);
+      // Update permission state after successful start
+      setPermissionState('granted');
     });
 
     service.onEnd(() => {
@@ -128,6 +135,22 @@ export const useVoiceRecognition = (
     }
   }, []);
 
+  const requestPermission = useCallback(async (): Promise<boolean> => {
+    if (!serviceRef.current) {
+      return false;
+    }
+
+    try {
+      const granted = await serviceRef.current.requestPermission();
+      setPermissionState(serviceRef.current.getPermissionState());
+      return granted;
+    } catch (error) {
+      logger.error('Permission request failed:', error);
+      setPermissionState('denied');
+      return false;
+    }
+  }, []);
+
   return {
     transcript,
     state,
@@ -140,5 +163,7 @@ export const useVoiceRecognition = (
     setContinuous,
     language,
     continuous,
+    permissionState,
+    requestPermission,
   };
 };
