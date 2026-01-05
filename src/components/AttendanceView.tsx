@@ -7,6 +7,11 @@ interface AttendanceViewProps {
   onBack: () => void;
 }
 
+interface StudentData {
+  nis: string;
+  attendanceToday: string;
+}
+
 const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
   // Simulasi Siswa Login: Budi Santoso (2024001)
   const STUDENT_NIS = '2024001';
@@ -28,7 +33,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
     if (classData) {
         try {
             const parsed = JSON.parse(classData);
-            const myData = parsed.find((s: any) => s.nis === STUDENT_NIS);
+            const myData = parsed.find((s: StudentData) => s.nis === STUDENT_NIS);
             if (myData) {
                 setTodayStatus(myData.attendanceToday);
             }

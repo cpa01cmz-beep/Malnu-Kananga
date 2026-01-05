@@ -19,6 +19,10 @@ interface AdminDashboardProps {
 
 type DashboardView = 'home' | 'users' | 'stats' | 'ppdb'; // Add 'ppdb' view
 
+interface PPDBRegistrant {
+  status: 'pending' | 'approved' | 'rejected';
+}
+
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToast }) => {
   const [currentView, setCurrentView] = useState<DashboardView>('home');
   const [pendingPPDB, setPendingPPDB] = useState(0);
@@ -30,7 +34,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
         if (saved) {
             try {
                 const data = JSON.parse(saved);
-                const count = data.filter((r: any) => r.status === 'pending').length;
+                const count = data.filter((r: PPDBRegistrant) => r.status === 'pending').length;
                 setPendingPPDB(count);
             } catch {
                 console.error("Error reading PPDB data");

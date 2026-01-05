@@ -125,7 +125,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
                                     <td className="px-6 py-4">
                                         <select 
                                             value={student.attendanceToday}
-                                            onChange={(e) => handleAttendanceChange(student.id, e.target.value as any)}
+                                            onChange={(e) => handleAttendanceChange(student.id, e.target.value as ClassStudent['attendanceToday'])}
                                             className={`text-xs font-medium rounded-full px-3 py-1.5 border-none focus:ring-2 focus:ring-green-500 cursor-pointer outline-none ${
                                                 student.attendanceToday === 'Hadir' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
                                                 student.attendanceToday === 'Sakit' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
