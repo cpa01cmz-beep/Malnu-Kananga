@@ -65,67 +65,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
-  const handleVoiceCommand = useCallback((command: VoiceCommand) => {
-    logger.debug('Handling voice command:', command);
-
-    switch (command.action) {
-      case 'OPEN_SETTINGS': {
-        setShowVoiceSettings(true);
-        synthesis.speak('Pengaturan suara dibuka');
-        break;
-      }
-      case 'CLOSE_SETTINGS': {
-        setShowVoiceSettings(false);
-        synthesis.speak('Pengaturan suara ditutup');
-        break;
-      }
-      case 'STOP_SPEAKING': {
-        voiceQueue.stop();
-        synthesis.stop();
-        synthesis.speak('Pembacaan dihentikan');
-        break;
-      }
-      case 'PAUSE_SPEAKING': {
-        voiceQueue.pause();
-        synthesis.speak('Pembacaan dijeda');
-        break;
-      }
-      case 'RESUME_SPEAKING': {
-        voiceQueue.resume();
-        synthesis.speak('Pembacaan dilanjutkan');
-        break;
-      }
-      case 'READ_ALL': {
-        const aiMessages = messages.filter((msg) => msg.sender === Sender.AI);
-        if (aiMessages.length > 0) {
-          voiceQueue.addMessages(aiMessages);
-          synthesis.speak(`Membaca ${aiMessages.length} pesan`);
-        } else {
-          synthesis.speak('Tidak ada pesan AI untuk dibaca');
-        }
-        break;
-      }
-      case 'CLEAR_CHAT': {
-        setMessages([{ id: 'initial', text: initialGreeting, sender: Sender.AI }]);
-        setHistory([]);
-        synthesis.speak('Percakapan dibersihkan');
-        break;
-      }
-      case 'SEND_MESSAGE': {
-        handleSend();
-        break;
-      }
-      case 'TOGGLE_VOICE': {
-        const newState = !autoReadAI;
-        setAutoReadAI(newState);
-        synthesis.speak(newState ? 'Fitur suara diaktifkan' : 'Fitur suara dimatikan');
-        break;
-      }
-      default:
-        logger.debug('Unknown command:', command.action);
-    }
-  }, [messages, autoReadAI, synthesis, voiceQueue, handleSend]);
   
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -205,9 +144,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
     } finally {
       setIsLoading(false);
       setHistory(prev => {
-        const newHistory = [...prev, 
-          { role: 'user', parts: userMessageText },
-          { role: 'model', parts: fullResponse }
+        const newHistory: {role: 'user' | 'model', parts: string}[] = [...prev, 
+          { role: 'user' as const, parts: userMessageText },
+          { role: 'model' as const, parts: fullResponse }
         ];
         // Limit history size to prevent memory leaks
         const limitedHistory = newHistory.length > MAX_HISTORY_SIZE 
@@ -226,6 +165,67 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
       });
     }
   }, [input, isLoading, siteContext, isThinkingMode, autoReadAI, synthesis, voiceQueue]);
+
+  const handleVoiceCommand = useCallback((command: VoiceCommand) => {
+    logger.debug('Handling voice command:', command);
+
+    switch (command.action) {
+      case 'OPEN_SETTINGS': {
+        setShowVoiceSettings(true);
+        synthesis.speak('Pengaturan suara dibuka');
+        break;
+      }
+      case 'CLOSE_SETTINGS': {
+        setShowVoiceSettings(false);
+        synthesis.speak('Pengaturan suara ditutup');
+        break;
+      }
+      case 'STOP_SPEAKING': {
+        voiceQueue.stop();
+        synthesis.stop();
+        synthesis.speak('Pembacaan dihentikan');
+        break;
+      }
+      case 'PAUSE_SPEAKING': {
+        voiceQueue.pause();
+        synthesis.speak('Pembacaan dijeda');
+        break;
+      }
+      case 'RESUME_SPEAKING': {
+        voiceQueue.resume();
+        synthesis.speak('Pembacaan dilanjutkan');
+        break;
+      }
+      case 'READ_ALL': {
+        const aiMessages = messages.filter((msg) => msg.sender === Sender.AI);
+        if (aiMessages.length > 0) {
+          voiceQueue.addMessages(aiMessages);
+          synthesis.speak(`Membaca ${aiMessages.length} pesan`);
+        } else {
+          synthesis.speak('Tidak ada pesan AI untuk dibaca');
+        }
+        break;
+      }
+      case 'CLEAR_CHAT': {
+        setMessages([{ id: 'initial', text: initialGreeting, sender: Sender.AI }]);
+        setHistory([]);
+        synthesis.speak('Percakapan dibersihkan');
+        break;
+      }
+      case 'SEND_MESSAGE': {
+        handleSend();
+        break;
+      }
+      case 'TOGGLE_VOICE': {
+        const newState = !autoReadAI;
+        setAutoReadAI(newState);
+        synthesis.speak(newState ? 'Fitur suara diaktifkan' : 'Fitur suara dimatikan');
+        break;
+      }
+      default:
+        logger.debug('Unknown command:', command.action);
+    }
+  }, [messages, autoReadAI, synthesis, voiceQueue, handleSend]);
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">

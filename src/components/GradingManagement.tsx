@@ -103,8 +103,8 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       for (const grade of grades) {
         await gradesAPI.update(grade.id, {
           studentId: grade.id,
-          className: className,
-          subject: 'Matematika Wajib',
+          classId: className,
+          subjectId: 'Matematika Wajib',
           assignment: grade.assignment,
           midExam: grade.midExam,
           finalExam: grade.finalExam,
@@ -126,9 +126,10 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       setAnalysisResult(null);
       // Prepare data for AI (add final score context)
       const dataForAI = grades.map(g => ({
-          ...g,
-          finalScore: calculateFinal(g),
-          gradeLetter: getGradeLetter(calculateFinal(g))
+          studentName: g.name,
+          subject: 'Matematika Wajib',
+          grade: getGradeLetter(calculateFinal(g)),
+          semester: 'Semester 1'
       }));
 
       const result = await analyzeClassPerformance(dataForAI);

@@ -1,6 +1,7 @@
  
 import { VOICE_COMMANDS } from '../constants';
-import type { VoiceCommand, VoiceLanguage } from '../types';
+import type { VoiceCommand } from '../types';
+import { VoiceLanguage } from '../types';
 import { logger } from '../utils/logger';
 
 interface CommandPattern {
@@ -16,7 +17,7 @@ class VoiceCommandParser {
 
   constructor() {
     this.commands = new Map();
-    this.currentLanguage = 'id-ID';
+    this.currentLanguage = VoiceLanguage.Indonesian;
     this.initializeCommands();
   }
 
@@ -25,63 +26,63 @@ class VoiceCommandParser {
       id: 'open_settings',
       patterns: VOICE_COMMANDS.OPEN_SETTINGS,
       action: 'OPEN_SETTINGS',
-      language: 'id-ID',
+      language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('close_settings', {
       id: 'close_settings',
       patterns: VOICE_COMMANDS.CLOSE_SETTINGS,
       action: 'CLOSE_SETTINGS',
-      language: 'id-ID',
+      language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('stop_speaking', {
       id: 'stop_speaking',
       patterns: VOICE_COMMANDS.STOP_SPEAKING,
       action: 'STOP_SPEAKING',
-      language: 'id-ID',
+      language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('pause_speaking', {
       id: 'pause_speaking',
       patterns: VOICE_COMMANDS.PAUSE_SPEAKING,
       action: 'PAUSE_SPEAKING',
-      language: 'id-ID',
+      language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('resume_speaking', {
       id: 'resume_speaking',
       patterns: VOICE_COMMANDS.RESUME_SPEAKING,
       action: 'RESUME_SPEAKING',
-      language: 'id-ID',
+      language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('read_all', {
       id: 'read_all',
       patterns: VOICE_COMMANDS.READ_ALL,
       action: 'READ_ALL',
-      language: 'id-ID',
+      language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('clear_chat', {
       id: 'clear_chat',
       patterns: VOICE_COMMANDS.CLEAR_CHAT,
       action: 'CLEAR_CHAT',
-      language: 'id-ID',
+      language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('send_message', {
       id: 'send_message',
       patterns: VOICE_COMMANDS.SEND_MESSAGE,
       action: 'SEND_MESSAGE',
-      language: 'id-ID',
+      language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('toggle_voice', {
       id: 'toggle_voice',
       patterns: VOICE_COMMANDS.TOGGLE_VOICE,
       action: 'TOGGLE_VOICE',
-      language: 'id-ID',
+      language: VoiceLanguage.Indonesian,
     });
 
     logger.debug(`Initialized ${this.commands.size} voice commands`);

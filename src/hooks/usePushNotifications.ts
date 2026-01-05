@@ -10,18 +10,6 @@ export function usePushNotifications() {
   const [history, setHistory] = useState<NotificationHistoryItem[]>([]);
   const [subscribed, setSubscribed] = useState(false);
 
-  useEffect(() => {
-    loadSettings();
-    loadHistory();
-    checkPermission();
-
-    const interval = setInterval(() => {
-      checkPermission();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [loadSettings, loadHistory, checkPermission]);
-
   const loadSettings = useCallback(() => {
     const loadedSettings = pushNotificationService.getSettings();
     setSettingsState(loadedSettings);
@@ -103,6 +91,18 @@ export function usePushNotifications() {
       data,
     };
   }, []);
+
+  useEffect(() => {
+    loadSettings();
+    loadHistory();
+    checkPermission();
+
+    const interval = setInterval(() => {
+      checkPermission();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [loadSettings, loadHistory, checkPermission]);
 
   return {
     permissionGranted,

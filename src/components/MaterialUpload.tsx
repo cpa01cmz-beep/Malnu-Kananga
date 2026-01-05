@@ -95,7 +95,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     // Validate category selection
     const validation = CategoryValidator.validateSubjectName(newCategory, subjects, materials.map(m => m.category));
     if (!validation.valid) {
-      onShowToast(validation.error, 'error');
+      onShowToast(validation.error || 'Kategori tidak valid', 'error');
       setCategoryValidation(validation);
       return;
     }
@@ -175,7 +175,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
 
     const validation = CategoryValidator.validateNewCategorySuggestion(newCategory, suggestionDescription, subjects);
     if (!validation.valid) {
-      onShowToast(validation.error, 'error');
+      onShowToast(validation.error || 'Saran kategori tidak valid', 'error');
       return;
     }
 
