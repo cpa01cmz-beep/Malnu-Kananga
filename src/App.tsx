@@ -245,6 +245,7 @@ const App: React.FC = () => {
           isOpen={isChatOpen} 
           closeChat={() => setIsChatOpen(false)} 
           siteContext={siteContent || { featuredPrograms: [], latestNews: [] }}
+          onShowToast={showToast}
         />
       </div>
 
