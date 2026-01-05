@@ -1,4 +1,5 @@
 name: Autonomous Team Coordination
+
 on:
   schedule:
     # Daily standup reminder
@@ -19,6 +20,15 @@ on:
         - bi-weekly-technical
         - emergency-response
         required: true
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: team-coordination
+  cancel-in-progress: false
 
 jobs:
   daily-standup:
