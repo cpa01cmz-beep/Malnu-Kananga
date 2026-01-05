@@ -44,6 +44,10 @@ export default [
         confirm: 'readonly',
         ServiceWorkerRegistration: 'readonly',
         process: 'readonly',
+        global: 'readonly',
+        EventTarget: 'readonly',
+        Touch: 'readonly',
+        Event: 'readonly',
       },
     },
     plugins: {
