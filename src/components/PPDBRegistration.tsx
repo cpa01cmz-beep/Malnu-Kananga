@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
-import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import { ppdbAPI } from '../services/apiService';
+import { FileUploadResponse } from '../services/apiService';
 import type { PPDBRegistrant } from '../types';
+import FileUpload from './FileUpload';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -23,12 +24,21 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedDocument, setUploadedDocument] = useState<FileUploadResponse | null>(null);
 
   if (!isOpen) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileUploaded = (fileResponse: FileUploadResponse) => {
+    setUploadedDocument(fileResponse);
+  };
+
+  const handleFileDeleted = () => {
+    setUploadedDocument(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,7 +55,8 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
         email: formData.email!,
         address: formData.address!,
         registrationDate: new Date().toISOString().split('T')[0],
-        status: 'pending'
+        status: 'pending',
+        documentUrl: uploadedDocument?.key,
       });
 
       if (response.success) {
@@ -62,6 +73,7 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
           address: '',
         });
 
+        setUploadedDocument(null);
         onClose();
       } else {
         throw new Error(response.error || 'Gagal mendaftar');
@@ -135,11 +147,14 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                 {/* Upload Dokumen */}
                 <div className="space-y-4">
                     <h3 className="text-sm font-bold uppercase tracking-wide text-green-600 dark:text-green-400 border-b border-green-100 dark:border-green-900 pb-2">Upload Dokumen (Opsional)</h3>
-                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
-                        <CloudArrowUpIcon className="w-8 h-8 text-gray-400 mb-2" />
-                        <p className="text-sm text-gray-600 dark:text-gray-300">Klik untuk upload Pas Foto & Scan Ijazah/SKL</p>
-                        <p className="text-xs text-gray-400 mt-1">Maks. 5MB (PDF/JPG)</p>
-                    </div>
+                    <FileUpload
+                        onFileUploaded={handleFileUploaded}
+                        onFileDeleted={handleFileDeleted}
+                        acceptedFileTypes=".pdf,.jpg,.jpeg,.png"
+                        maxSizeMB={5}
+                        uploadPath="ppdb-documents"
+                        maxFiles={1}
+                    />
                 </div>
 
                 <div className="pt-4 border-t border-gray-100 dark:border-gray-700">

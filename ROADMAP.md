@@ -33,8 +33,10 @@ Fokus: Memindahkan penyimpanan data dari `localStorage` ke Database Serverless s
     - [x] Ganti simulasi login dengan JWT (JSON Web Token) yang valid.
     - [x] Implementasi Session Management dengan JWT sessions
     - [ ] Implementasi refresh token mechanism
-- [ ] **File Storage**:
-    - [ ] Integrasi Cloudflare R2 untuk penyimpanan file nyata (Upload materi guru, dokumen PPDB).
+- [✅] **File Storage**:
+    - [x] Integrasi Cloudflare R2 untuk penyimpanan file nyata (Upload materi guru, dokumen PPDB) - COMPLETED
+    - [x] Implementasi file upload/download API endpoints - COMPLETED
+    - [x] Update PPDB dan E-Library komponen untuk gunakan R2 - COMPLETED
   - [✅] **Frontend Migration**:
       - [x] User Management & Auth ke API (UserManagement, LoginModal, App.tsx) - COMPLETED
       - [x] Update PPDB komponen untuk menggunakan apiService.ts - COMPLETED

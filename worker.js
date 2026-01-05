@@ -1,5 +1,5 @@
 // worker.js - Backend Serverless (Cloudflare Worker)
-// Integrasi: D1 (Database), Vectorize (RAG Knowledge Base), Workers AI (Embeddings)
+// Integrasi: D1 (Database), Vectorize (RAG Knowledge Base), Workers AI (Embeddings), R2 (File Storage)
 // Fitur: JWT Auth, CRUD Operations, File Upload (R2)
 
 // ============================================
@@ -240,7 +240,8 @@ async function initDatabase(env) {
       status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'rejected')),
       reviewed_by TEXT,
       reviewed_at TIMESTAMP,
-      notes TEXT
+      notes TEXT,
+      document_url TEXT
     );
     
     CREATE TABLE IF NOT EXISTS inventory (
@@ -649,32 +650,236 @@ async function handleSeed(request, env, corsHeaders) {
   try {
     // Initialize database
     await initDatabase(env);
-    
+
     // Seed Vectorize if available
     if (env.AI && env.VECTORIZE_INDEX) {
       const texts = documents.map(doc => doc.text);
       const embeddingsResponse = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: texts });
       const vectors = embeddingsResponse.data;
-      
+
       const vectorsToInsert = vectors.map((vector, i) => ({
         id: documents[i].id.toString(),
         values: vector,
         metadata: { text: documents[i].text }
       }));
-      
+
       const batchSize = 100;
       for (let i = 0; i < vectorsToInsert.length; i += batchSize) {
         const batch = vectorsToInsert.slice(i, i + batchSize);
         await env.VECTORIZE_INDEX.insert(batch);
       }
     }
-    
+
     return new Response(JSON.stringify(response.success(null, 'Database seeded successfully!')), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
     return new Response(JSON.stringify(response.error(`Error seeding data: ${e.message}`)), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// ============================================
+// R2 FILE STORAGE HANDLERS
+// ============================================
+
+async function handleFileUpload(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const formData = await request.formData();
+    const file = formData.get('file');
+    const customPath = formData.get('path');
+
+    if (!file || !(file instanceof File)) {
+      return new Response(JSON.stringify(response.error('No file provided')), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return new Response(JSON.stringify(response.error('File size exceeds 50MB limit')), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'video/mp4'
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      return new Response(JSON.stringify(response.error('File type not allowed')), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const timestamp = Date.now();
+    const sanitizedFilename = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const defaultPath = `uploads/${payload.user_id}/${timestamp}`;
+    const path = customPath || defaultPath;
+    const key = `${path}/${sanitizedFilename}`;
+
+    const arrayBuffer = await file.arrayBuffer();
+    await env.BUCKET.put(key, arrayBuffer, {
+      httpMetadata: {
+        contentType: file.type
+      },
+      customMetadata: {
+        uploadedBy: payload.user_id,
+        originalName: file.name,
+        uploadedAt: new Date().toISOString()
+      }
+    });
+
+    return new Response(JSON.stringify(response.success({
+      key,
+      url: key,
+      size: file.size,
+      type: file.type,
+      name: file.name
+    }, 'File uploaded successfully')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    console.error('File upload error:', e);
+    return new Response(JSON.stringify(response.error('Failed to upload file')), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleFileDownload(request, env, corsHeaders) {
+  try {
+    const url = new URL(request.url);
+    const key = url.searchParams.get('key');
+
+    if (!key) {
+      return new Response(JSON.stringify(response.error('Key parameter required')), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const object = await env.BUCKET.get(key);
+
+    if (!object) {
+      return new Response(JSON.stringify(response.error('File not found')), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const headers = new Headers();
+    object.writeHttpMetadata(headers);
+    headers.set('etag', object.httpEtag);
+    headers.append('Content-Disposition', `inline; filename="${object.customMetadata?.originalName || 'download'}"`);
+    headers.append('Access-Control-Allow-Origin', env.ALLOWED_ORIGIN || '*');
+
+    return new Response(object.body, {
+      headers,
+    });
+  } catch (e) {
+    console.error('File download error:', e);
+    return new Response(JSON.stringify(response.error('Failed to download file')), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleFileDelete(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const key = url.searchParams.get('key');
+
+    if (!key) {
+      return new Response(JSON.stringify(response.error('Key parameter required')), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    await env.BUCKET.delete(key);
+
+    return new Response(JSON.stringify(response.success(null, 'File deleted successfully')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    console.error('File delete error:', e);
+    return new Response(JSON.stringify(response.error('Failed to delete file')), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleFileList(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const prefix = url.searchParams.get('prefix') || '';
+
+    const listed = await env.BUCKET.list({
+      prefix,
+      limit: 100
+    });
+
+    const files = listed.objects.map(obj => ({
+      key: obj.key,
+      size: obj.size,
+      uploaded: obj.uploaded,
+      httpMetadata: {
+        contentType: obj.httpMetadata?.contentType
+      },
+      customMetadata: obj.customMetadata
+    }));
+
+    return new Response(JSON.stringify(response.success(files, 'Files listed successfully')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    console.error('File list error:', e);
+    return new Response(JSON.stringify(response.error('Failed to list files')), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
@@ -708,6 +913,10 @@ export default {
       '/api/chat': handleChat,
       '/auth/login': handleLogin,
       '/auth/logout': handleLogout,
+      '/api/files/upload': handleFileUpload,
+      '/api/files/download': handleFileDownload,
+      '/api/files/delete': handleFileDelete,
+      '/api/files/list': handleFileList,
       '/api/users': (r, e, c) => handleCRUD(r, e, c, 'users'),
       '/api/ppdb_registrants': (r, e, c) => handleCRUD(r, e, c, 'ppdb_registrants'),
       '/api/inventory': (r, e, c) => handleCRUD(r, e, c, 'inventory'),

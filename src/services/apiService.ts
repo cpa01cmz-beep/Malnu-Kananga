@@ -713,6 +713,57 @@ export const eLibraryAPI = {
 };
 
 // ============================================
+// FILE STORAGE API
+// ============================================
+
+export interface FileUploadResponse {
+  key: string;
+  url: string;
+  size: number;
+  type: string;
+  name: string;
+}
+
+export const fileStorageAPI = {
+  async upload(file: File, path?: string): Promise<ApiResponse<FileUploadResponse>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (path) {
+      formData.append('path', path);
+    }
+
+    const token = getAuthToken();
+
+    const response = await fetch(`${API_BASE_URL}/api/files/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': token ? `Bearer ${token}` : '',
+      },
+      body: formData,
+    });
+
+    return response.json();
+  },
+
+  async delete(key: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/files/delete?key=${encodeURIComponent(key)}`, {
+      method: 'DELETE',
+    });
+  },
+
+  async list(prefix?: string): Promise<ApiResponse<Array<{ key: string; size: number; uploaded: string }>>> {
+    const urlPrefix = prefix ? `?prefix=${encodeURIComponent(prefix)}` : '';
+    return request<Array<{ key: string; size: number; uploaded: string }>>(
+      `/api/files/list${urlPrefix}`
+    );
+  },
+
+  getDownloadUrl(key: string): string {
+    return `${API_BASE_URL}/api/files/download?key=${encodeURIComponent(key)}`;
+  },
+};
+
+// ============================================
 // ANNOUNCEMENTS API
 // ============================================
 
@@ -780,4 +831,5 @@ export const api = {
   attendance: attendanceAPI,
   eLibrary: eLibraryAPI,
   announcements: announcementsAPI,
+  fileStorage: fileStorageAPI,
 };
