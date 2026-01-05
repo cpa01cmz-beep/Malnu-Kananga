@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
@@ -67,6 +67,43 @@ const App: React.FC = () => {
     latestNews: []
   });
 
+  // Check for existing JWT token on mount
+  const checkAuth = useCallback(async () => {
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.JWT_TOKEN);
+      if (token) {
+        const response = await api.auth.getCurrentUser();
+        if (response.success && response.data) {
+          setAuthSession({
+            loggedIn: true,
+            role: response.data.role,
+            extraRole: response.data.extraRole
+          });
+        } else {
+          localStorage.removeItem(STORAGE_KEYS.JWT_TOKEN);
+        }
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      localStorage.removeItem(STORAGE_KEYS.JWT_TOKEN);
+    }
+  }, [setAuthSession]);
+
+  // Load default content if empty
+  const loadDefaultContent = useCallback(async () => {
+    if (siteContent.featuredPrograms.length === 0 && siteContent.latestNews.length === 0) {
+      try {
+        const { INITIAL_PROGRAMS, INITIAL_NEWS } = await import('./data/defaults');
+        setSiteContent({
+          featuredPrograms: INITIAL_PROGRAMS,
+          latestNews: INITIAL_NEWS
+        });
+      } catch (error) {
+        console.error('Failed to load default content:', error);
+      }
+    }
+  }, [siteContent.featuredPrograms.length, siteContent.latestNews.length, setSiteContent]);
+
   // Apply Theme Effect
   useEffect(() => {
     const root = document.documentElement;
@@ -78,34 +115,10 @@ const App: React.FC = () => {
   }, [theme]);
 
   // Check for existing JWT token on mount and load default content if empty
-  useEffect(() => {
-    const checkAuth = () => {
-      if (api.auth.isAuthenticated()) {
-        const user = api.auth.getCurrentUser();
-        if (user) {
-          setAuthSession({
-            loggedIn: true,
-            role: user.role,
-            extraRole: null
-          });
-        }
-      }
-    };
-    
-    // Load default content if site content is empty
-    const loadDefaultContent = async () => {
-      if (siteContent.featuredPrograms.length === 0 || siteContent.latestNews.length === 0) {
-        const { INITIAL_PROGRAMS, INITIAL_NEWS } = await import('./data/defaults');
-        setSiteContent({
-          featuredPrograms: INITIAL_PROGRAMS,
-          latestNews: INITIAL_NEWS
-        });
-      }
-    };
-    
+useEffect(() => {
     checkAuth();
     loadDefaultContent();
-  }, []);
+  }, [checkAuth, loadDefaultContent]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');

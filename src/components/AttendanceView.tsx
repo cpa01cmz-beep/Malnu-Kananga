@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import UsersIcon from './icons/UsersIcon';
 import { attendanceAPI } from '../services/apiService';
 import { Attendance } from '../types';
@@ -27,9 +27,9 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
 
   useEffect(() => {
     fetchAttendance();
-  }, []);
+  }, [fetchAttendance]);
 
-  const fetchAttendance = async () => {
+  const fetchAttendance = useCallback(async () => {
     if (!STUDENT_NIS) {
       setError('User tidak ditemukan');
       setLoading(false);
@@ -51,7 +51,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [STUDENT_NIS]);
 
   const processAttendanceData = (attendanceData: Attendance[]) => {
     const today = new Date().toISOString().split('T')[0];

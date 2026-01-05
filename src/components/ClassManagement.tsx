@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { studentsAPI, attendanceAPI } from '../services/apiService';
 import { Student, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
@@ -28,9 +28,9 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
 
   useEffect(() => {
     fetchStudents();
-  }, []);
+  }, [fetchStudents]);
 
-  const fetchStudents = async () => {
+  const fetchStudents = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -55,7 +55,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const fetchTodayAttendance = async (_studentData: ClassStudent[]) => {
     const today = new Date().toISOString().split('T')[0];
