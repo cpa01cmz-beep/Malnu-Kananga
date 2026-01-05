@@ -1,71 +1,50 @@
+import { authAPI } from './apiService';
 import { logger } from '../utils/logger';
 
 export interface User {
-  email: string
-  name?: string
+  id?: string;
+  email: string;
+  name?: string;
+  role?: 'admin' | 'teacher' | 'student';
+  status?: 'active' | 'inactive';
 }
 
 export class AuthService {
-  private readonly AUTH_KEY = 'isAuthenticated'
-  private readonly USER_KEY = 'user'
-
   async login(email: string, password: string): Promise<boolean> {
     try {
-      // Simple validation logic
       if (!email || !password) {
-        return false
+        return false;
       }
 
-      // Basic email format validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(email)) {
-        return false
-      }
-
-      // In a real app, this would validate against a backend
-      // For demo purposes, accept any valid email + non-empty password
-      if (password.length >= 6) {
-        const user: User = { email, name: email.split('@')[0] }
-        
-        localStorage.setItem(this.AUTH_KEY, 'true')
-        localStorage.setItem(this.USER_KEY, JSON.stringify(user))
-        
-        return true
-      }
-
-      return false
+      const response = await authAPI.login(email, password);
+      return response.success;
     } catch (error) {
-      logger.error('Login error:', error)
-      return false
+      logger.error('Login error:', error);
+      return false;
     }
   }
 
-  logout(): void {
+  async logout(): Promise<void> {
     try {
-      localStorage.removeItem(this.AUTH_KEY)
-      localStorage.removeItem(this.USER_KEY)
+      await authAPI.logout();
     } catch (error) {
-      logger.error('Logout error:', error)
+      logger.error('Logout error:', error);
     }
   }
 
   isAuthenticated(): boolean {
-    try {
-      const result = localStorage.getItem(this.AUTH_KEY)
-      return result === 'true'
-    } catch (error) {
-      logger.error('Auth check error:', error)
-      return false
-    }
+    return authAPI.isAuthenticated();
   }
 
   getCurrentUser(): User | null {
-    try {
-      const userData = localStorage.getItem(this.USER_KEY)
-      return userData ? JSON.parse(userData) : null
-    } catch (error) {
-      logger.error('Get user error:', error)
-      return null
-    }
+    return authAPI.getCurrentUser();
+  }
+
+  getAuthToken(): string | null {
+    return authAPI.getAuthToken();
+  }
+
+  getRefreshToken(): string | null {
+    return authAPI.getRefreshToken();
   }
 }
