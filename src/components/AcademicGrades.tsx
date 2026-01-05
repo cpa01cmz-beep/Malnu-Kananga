@@ -355,9 +355,9 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
           <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
             ← Kembali ke Portal
           </button>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Progress Akademik Siswa</h2>
-          <p className="text-gray-500 dark:text-gray-400">Semester Ganjil 2024/2025</p>
-        </div>
+           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Progress Akademik Siswa</h2>
+           <p className="text-gray-500 dark:text-gray-400">Semester Ganjil 2024/2025</p>
+         </div>
         <div className="flex gap-2">
           <button
             onClick={() => setShowGoalModal(true)}
