@@ -55,9 +55,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
         console.log('Magic Link request submitted for:', email);
         setFormState('success');
 
-      } catch (err: any) {
+      } catch (err: { message?: string } | unknown) {
         setFormState('idle');
-        setError(err.message);
+        setError(err instanceof Error ? err.message : 'Gagal mengirim link.');
       }
   }
 

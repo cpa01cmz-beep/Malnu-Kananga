@@ -11,6 +11,13 @@ interface GradeItem {
   grade: string;
 }
 
+interface StudentGradeData {
+  nis: string;
+  assignment: number;
+  midExam: number;
+  finalExam: number;
+}
+
 interface AcademicGradesProps {
   onBack: () => void;
 }
@@ -40,7 +47,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
         try {
             const parsed = JSON.parse(storedGrades);
             // Cari nilai milik Budi
-            const budiData = parsed.find((p: any) => p.nis === STUDENT_NIS);
+            const budiData = parsed.find((p: StudentGradeData) => p.nis === STUDENT_NIS);
             if (budiData) {
                 const final = (budiData.assignment * 0.3) + (budiData.midExam * 0.3) + (budiData.finalExam * 0.4);
                 let letter = 'D';
