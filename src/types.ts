@@ -198,6 +198,14 @@ export interface SpeechRecognitionEventCallbacks {
   onSpeechEnd?: () => void;
 }
 
+export interface SpeechSynthesisVoice {
+  name: string;
+  lang: string;
+  localService: boolean;
+  default: boolean;
+  voiceURI?: string;
+}
+
 export interface SpeechSynthesisConfig {
   voice: SpeechSynthesisVoice | null;
   rate: number;
@@ -218,7 +226,7 @@ export interface SpeechSynthesisEventCallbacks {
   onError?: (error: SpeechSynthesisError) => void;
   onPause?: () => void;
   onResume?: () => void;
-  onBoundary?: (event: SpeechSynthesisUtteranceEvent) => void;
+  onBoundary?: (event: Event) => void;
 }
 
 export interface VoiceSettings {
