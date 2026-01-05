@@ -579,3 +579,39 @@ export interface NotificationHistoryItem {
   dismissed: boolean;
   deliveredAt: string;
 }
+
+export interface Goal {
+  id: string;
+  studentId: string;
+  subject: string;
+  targetGrade: string;
+  currentGrade: number;
+  deadline: string;
+  status: 'in-progress' | 'achieved' | 'not-achieved';
+  createdAt: string;
+}
+
+export interface GradeTrendData {
+  date: string;
+  subject: string;
+  score: number;
+  assignmentType: string;
+}
+
+export interface SubjectPerformance {
+  subject: string;
+  averageScore: number;
+  assignment: number;
+  midExam: number;
+  finalExam: number;
+  grade: string;
+  trend: 'up' | 'down' | 'stable';
+  targetGrade?: string;
+}
+
+export interface AttendanceGradeCorrelation {
+  attendancePercentage: number;
+  averageGrade: number;
+  correlationScore: number;
+  insights: string[];
+}

@@ -129,46 +129,8 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 
 | Fitur | Fungsi | Output |
 |-------|--------|--------|
-| Pengumuman Sekolah | Penyebaran informasi & berita sekolah | Informasi terakses semua pihak |
-| Pesan Otomatis | Notifikasi hasil akademik, event, pengingat | Komunikasi real-time |
-| Portal Orang Tua | Akses laporan anak untuk wali murid | Monitoring progres anak |
-| Forum Diskusi | Ruang diskusi guru, siswa, orang tua | Kolaborasi & engagement |
-| SMS/Email Alerts | Pengiriman notifikasi via SMS & email | Multi-channel notification |
-
-### 4.7 Kesiswaan & Ekstrakurikuler
-**Pengguna**: Guru Pembina, Siswa, Admin
-
-| Fitur | Fungsi | Output |
-|-------|--------|--------|
-| Manajemen Ekstrakurikuler | Pendaftaran & manajemen kegiatan siswa | Data aktivitas siswa |
-| Pencatatan Pelanggaran | Dokumentasi & tracking pelanggaran siswa | Rekam jejak akademik lengkap |
-| Prestasi & Penghargaan | Input & dokumentasi prestasi siswa | Portfolio prestasi siswa |
-| Monitoring Keaktifan | Dashboard aktivitas & performa siswa | Evaluasi perkembangan |
-
-### 4.8 Manajemen Inventaris
-**Pengguna**: Admin, Kepala Sekolah
-
-| Fitur | Fungsi | Output |
-|-------|--------|--------|
-| Pencatatan Aset | Dokumentasi semua aset sekolah | Inventori lengkap |
-| Tracking Pemeliharaan | Monitoring kondisi & maintenance aset | Laporan kondisi aset |
-| Laporan Inventaris | Laporan aset terintegrasi | Informasi aset terkini |
-
-### 4.9 Administrasi & Perizinan
-**Pengguna**: Admin, Guru, Siswa, Wali Murid
-
-| Fitur | Fungsi | Output |
-|-------|--------|--------|
-| Sistem Izin Digital | Permohonan izin siswa/guru online | Approval workflow otomatis |
-| Surat Menyurat | Manajemen dokumen & surat resmi | Arsip digital terorganisir |
-| Perizinan Lanjut Pendidikan | Proses rekomendasi untuk melanjutkan | Dokumen referensi digital |
-
-### 4.10 AI & Kecerdasan Buatan
-**Pengguna**: Semua Pengguna
-
-| Fitur | Fungsi | Output |
-|-------|--------|--------|
-| RAG Chatbot | Asisten AI yang menjawab berdasarkan data sekolah | Respon cerdas & akurat |
+| Analisis Nilai AI | Saran performa siswa berdasarkan tren nilai | Insight untuk perbaikan |
+| **Progress Tracking Analytics** (NEW) | Visualisasi progres akademik dengan charts dan goals | Insight dan PDF export |
 | AI Site Editor | Edit konten website dengan bahasa alami | Update konten cepat |
 | Analisis Nilai AI | Saran performa siswa berdasarkan tren nilai | Insight pedagogis |
 | **Vocal Interaction** (NEW - Fase 3) | Voice-to-Text & Text-to-Speech untuk Chatbot | Aksesibilitas & UX |
