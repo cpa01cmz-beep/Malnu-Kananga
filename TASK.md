@@ -54,12 +54,12 @@ Semua fitur utama untuk fase **Simulasi & MVP** telah berhasil diimplementasikan
 
 ### Tugas Selesai Terbaru (COMPLETED - SANITIZER MODE)
  - [✅] **Resolve PR #492 Merge Conflicts** (COMPLETED - SANITIZER MODE):
-      - [x] Analyze PR #492 merge conflict with main branch
-      - [x] Create new branch from latest main (fix/pr-492-retry-logic)
-      - [x] Apply retry logic from PR #492 to oc-01.yml workflow
-      - [x] Verify workflow syntax is valid
-      - [x] Commit and push changes
-      - [x] Create PR #495 to replace PR #492
+     - [x] Analyze PR #492 merge conflict with main branch
+     - [x] Create new branch from latest main (fix/pr-492-retry-logic)
+     - [x] Apply retry logic from PR #492 to oc-01.yml workflow
+     - [x] Verify workflow syntax is valid
+     - [x] Commit and push changes
+     - [ ] Update/close PR #492
       - [x] Close PR #492 (merged conflicts resolved)
       - [x] Update documentation
       - [x] Verify build (5.05s) and tests (30/30 passing)
