@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
+import { useVoiceCommands } from '../hooks/useVoiceCommands';
 import { MicrophoneIcon } from './icons/MicrophoneIcon';
 import { MicrophoneOffIcon } from './icons/MicrophoneOffIcon';
+import { STORAGE_KEYS } from '../constants';
+import type { VoiceCommand } from '../types';
 import { logger } from '../utils/logger';
 import MicrophonePermissionHandler from './MicrophonePermissionHandler';
 
 interface VoiceInputButtonProps {
   onTranscript: (transcript: string) => void;
   onError?: (error: string) => void;
+  onCommand?: (command: VoiceCommand) => void;
   disabled?: boolean;
   className?: string;
 }
@@ -15,10 +19,11 @@ interface VoiceInputButtonProps {
 const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
   onTranscript,
   onError,
+  onCommand,
   disabled = false,
   className = '',
 }) => {
-  const { transcript, state, isListening, isSupported, startRecording, stopRecording, permissionState, requestPermission } =
+const { transcript, state, isListening, isSupported, startRecording, stopRecording, continuous, setContinuous, permissionState, requestPermission } =
     useVoiceRecognition({
       onTranscript: (text, isFinal) => {
         if (isFinal) {
@@ -34,9 +39,34 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
       },
     });
 
+  const { isCommand } = useVoiceCommands({
+    onCommand: (command) => {
+      onCommand?.(command);
+    },
+  });
+
   const [pulseAnimation, setPulseAnimation] = useState(false);
-  const [showPermissionHandler, setShowPermissionHandler] = useState(false);
+const [showPermissionHandler, setShowPermissionHandler] = useState(false);
   const [_lastError, setLastError] = useState<string>('');
+  const [transcriptBuffer, setTranscriptBuffer] = useState('');
+  const [lastActivityTime, setLastActivityTime] = useState(Date.now());
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const loadContinuousMode = () => {
+      try {
+        const savedSettings = localStorage.getItem(STORAGE_KEYS.VOICE_STORAGE_KEY);
+        if (savedSettings) {
+          const parsedSettings = JSON.parse(savedSettings);
+          setContinuous(parsedSettings.recognition?.continuous || false);
+        }
+      } catch (error) {
+        logger.error('Failed to load continuous mode setting:', error);
+      }
+    };
+
+    loadContinuousMode();
+  }, [setContinuous]);
 
   useEffect(() => {
     setPulseAnimation(isListening);
@@ -44,9 +74,48 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
 
   useEffect(() => {
     if (state === 'idle' && transcript) {
-      onTranscript(transcript);
+      const isCmd = isCommand(transcript);
+      
+      if (!isCmd) {
+        onTranscript(transcript);
+      }
+
+      if (!continuous) {
+        setTranscriptBuffer('');
+      }
     }
-  }, [state, transcript, onTranscript]);
+  }, [state, transcript, onTranscript, isCommand, continuous]);
+
+  useEffect(() => {
+    if (continuous && isListening && state === 'processing' && transcript) {
+      const currentBuffer = transcriptBuffer + ' ' + transcript;
+      setTranscriptBuffer(currentBuffer.trim());
+      setLastActivityTime(Date.now());
+    }
+  }, [transcript, state, isListening, continuous, transcriptBuffer]);
+
+  useEffect(() => {
+    if (continuous && isListening) {
+      timeoutRef.current = setTimeout(() => {
+        if (Date.now() - lastActivityTime > 10000 && transcriptBuffer) {
+          const isCmd = isCommand(transcriptBuffer);
+          
+          if (!isCmd) {
+            onTranscript(transcriptBuffer);
+          }
+          
+          setTranscriptBuffer('');
+          setLastActivityTime(Date.now());
+        }
+      }, 10000);
+
+      return () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+      };
+    }
+  }, [continuous, isListening, lastActivityTime, transcriptBuffer, onTranscript, isCommand]);
 
   const handleClick = () => {
     if (!isSupported) {
@@ -55,8 +124,18 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
     }
 
     if (isListening) {
+      if (transcriptBuffer) {
+        const isCmd = isCommand(transcriptBuffer);
+        
+        if (!isCmd) {
+          onTranscript(transcriptBuffer);
+        }
+        
+        setTranscriptBuffer('');
+      }
       stopRecording();
     } else {
+setTranscriptBuffer('');
       startRecording().catch((error) => {
         logger.error('Failed to start recording:', error);
         if (error.message && (error.message.includes('mikrofon') || error.message.includes('izin'))) {
@@ -77,7 +156,7 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
 
     switch (state) {
       case 'listening':
-        return 'bg-red-500 hover:bg-red-600 text-white';
+        return continuous ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-red-500 hover:bg-red-600 text-white';
       case 'processing':
         return 'bg-blue-500 hover:bg-blue-600 text-white';
       case 'error':
@@ -91,9 +170,13 @@ const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
     if (!isSupported) return 'Browser tidak mendukung fitur suara';
     if (permissionState === 'denied') return 'Izin mikrofon ditolak, klik untuk mengatur ulang';
     
+    if (continuous && isListening && transcriptBuffer) {
+      return `Mode berkelanjutan: "${transcriptBuffer.substring(0, 30)}${transcriptBuffer.length > 30 ? '...' : ''}"`;
+    }
+    
     switch (state) {
       case 'listening':
-        return 'Klik untuk berhenti merekam';
+        return continuous ? 'Mode berkelanjutan aktif. Klik untuk berhenti dan kirim' : 'Klik untuk berhenti merekam';
       case 'processing':
         return 'Memproses suara...';
       case 'error':

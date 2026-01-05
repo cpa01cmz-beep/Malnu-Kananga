@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import type { ChatMessage, FeaturedProgram, LatestNews } from '../types';
+import type { ChatMessage, FeaturedProgram, LatestNews, VoiceCommand } from '../types';
 import { Sender } from '../types';
 import { getAIResponseStream, initialGreeting } from '../services/geminiService';
 import { CloseIcon } from './icons/CloseIcon';
@@ -12,6 +12,7 @@ import TypingIndicator from './TypingIndicator';
 import VoiceInputButton from './VoiceInputButton';
 import VoiceSettings from './VoiceSettings';
 import { useVoiceSynthesis } from '../hooks/useVoiceSynthesis';
+import { useVoiceQueue } from '../hooks/useVoiceQueue';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 
@@ -45,9 +46,86 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
 
   const synthesis = useVoiceSynthesis();
 
+  const voiceQueue = useVoiceQueue(
+    (text) => synthesis.speak(text),
+    () => synthesis.stop(),
+    {
+      onMessageStart: (msg) => {
+        logger.debug('Reading message:', msg.id);
+      },
+      onMessageEnd: (msg) => {
+        logger.debug('Finished reading message:', msg.id);
+      },
+      onQueueError: (error) => {
+        logger.error('Queue error:', error);
+      },
+    }
+  );
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const handleVoiceCommand = useCallback((command: VoiceCommand) => {
+    logger.debug('Handling voice command:', command);
+
+    switch (command.action) {
+      case 'OPEN_SETTINGS': {
+        setShowVoiceSettings(true);
+        synthesis.speak('Pengaturan suara dibuka');
+        break;
+      }
+      case 'CLOSE_SETTINGS': {
+        setShowVoiceSettings(false);
+        synthesis.speak('Pengaturan suara ditutup');
+        break;
+      }
+      case 'STOP_SPEAKING': {
+        voiceQueue.stop();
+        synthesis.stop();
+        synthesis.speak('Pembacaan dihentikan');
+        break;
+      }
+      case 'PAUSE_SPEAKING': {
+        voiceQueue.pause();
+        synthesis.speak('Pembacaan dijeda');
+        break;
+      }
+      case 'RESUME_SPEAKING': {
+        voiceQueue.resume();
+        synthesis.speak('Pembacaan dilanjutkan');
+        break;
+      }
+      case 'READ_ALL': {
+        const aiMessages = messages.filter((msg) => msg.sender === Sender.AI);
+        if (aiMessages.length > 0) {
+          voiceQueue.addMessages(aiMessages);
+          synthesis.speak(`Membaca ${aiMessages.length} pesan`);
+        } else {
+          synthesis.speak('Tidak ada pesan AI untuk dibaca');
+        }
+        break;
+      }
+      case 'CLEAR_CHAT': {
+        setMessages([{ id: 'initial', text: initialGreeting, sender: Sender.AI }]);
+        setHistory([]);
+        synthesis.speak('Percakapan dibersihkan');
+        break;
+      }
+      case 'SEND_MESSAGE': {
+        handleSend();
+        break;
+      }
+      case 'TOGGLE_VOICE': {
+        const newState = !autoReadAI;
+        setAutoReadAI(newState);
+        synthesis.speak(newState ? 'Fitur suara diaktifkan' : 'Fitur suara dimatikan');
+        break;
+      }
+      default:
+        logger.debug('Unknown command:', command.action);
+    }
+  }, [messages, autoReadAI, synthesis, voiceQueue]);
   
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -112,7 +190,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
       lastAIResponseRef.current = fullResponse;
       
       if (autoReadAI && synthesis.isSupported && fullResponse) {
-        synthesis.speak(fullResponse);
+        const aiMessage: ChatMessage = { id: aiMessageId, text: fullResponse, sender: Sender.AI };
+        voiceQueue.addMessage(aiMessage);
       }
     } catch (error) {
       logger.error("Error streaming response:", error);
@@ -146,7 +225,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         return prev;
       });
     }
-  }, [input, isLoading, siteContext, isThinkingMode, autoReadAI, synthesis]);
+  }, [input, isLoading, siteContext, isThinkingMode, autoReadAI, synthesis, voiceQueue]);
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -157,6 +236,70 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
             <h2 className="font-bold text-lg">Asisten AI</h2>
         </div>
         <div className="flex items-center gap-2">
+            {/* Voice Queue Controls */}
+            {voiceQueue.isPlaying && (
+              <div className="flex items-center gap-1 bg-white/10 rounded-lg px-2 py-1">
+                <span className="text-xs font-medium text-white mr-2">
+                  {voiceQueue.currentIndex + 1}/{voiceQueue.queueSize}
+                </span>
+                {voiceQueue.isPaused ? (
+                  <button
+                    onClick={() => {
+                      voiceQueue.resume();
+                      synthesis.speak('Melanjutkan pembacaan');
+                    }}
+                    className="p-1 rounded-full hover:bg-white/20"
+                    title="Lanjutkan baca"
+                    aria-label="Lanjutkan baca"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      voiceQueue.pause();
+                      synthesis.speak('Pembacaan dijeda');
+                    }}
+                    className="p-1 rounded-full hover:bg-white/20"
+                    title="Jeda baca"
+                    aria-label="Jeda baca"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    voiceQueue.skip();
+                  }}
+                  className="p-1 rounded-full hover:bg-white/20"
+                  title="Lewati pesan"
+                  aria-label="Lewati pesan"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => {
+                    voiceQueue.stop();
+                    synthesis.stop();
+                    synthesis.speak('Pembacaan dihentikan');
+                  }}
+                  className="p-1 rounded-full hover:bg-white/20"
+                  title="Hentikan baca"
+                  aria-label="Hentikan baca"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
             {/* Voice Settings */}
             {synthesis.isSupported && (
               <button
@@ -235,6 +378,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
             onTranscript={(transcript) => {
               setInput(transcript);
             }}
+            onCommand={(command: VoiceCommand) => {
+              handleVoiceCommand(command);
+            }}
             disabled={isLoading}
             onError={(error) => {
               logger.error('Voice input error:', error);
@@ -245,6 +391,24 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               }
             }}
           />
+          {synthesis.isSupported && messages.some((msg) => msg.sender === Sender.AI) && !voiceQueue.isPlaying && (
+            <button
+              onClick={() => {
+                const aiMessages = messages.filter((msg) => msg.sender === Sender.AI);
+                if (aiMessages.length > 0) {
+                  voiceQueue.addMessages(aiMessages);
+                  synthesis.speak(`Membaca ${aiMessages.length} pesan`);
+                }
+              }}
+              className="p-3 mb-1 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-all shadow-sm flex-shrink-0 hover:scale-105"
+              title="Baca semua pesan AI"
+              aria-label="Baca semua pesan AI"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
 

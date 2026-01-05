@@ -237,6 +237,13 @@ export interface VoiceSettings {
   continuousMode: boolean;
 }
 
+export interface VoiceCommand {
+  id: string;
+  action: string;
+  transcript: string;
+  confidence: number;
+}
+
 export interface VoiceMessage {
   id: string;
   transcript: string;

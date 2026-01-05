@@ -34,6 +34,9 @@ export const VOICE_CONFIG = {
     SPEECH_RECOGNITION_TIMEOUT: 5000,
     DEBOUNCE_DELAY: 500,
     MAX_VOICE_CACHE_SIZE: 50,
+CONTINUOUS_MODE_TIMEOUT: 10000,
+    COMMAND_DETECTION_THRESHOLD: 0.7,
+    MESSAGE_QUEUE_MAX_SIZE: 50,
 } as const;
 
 export const ERROR_MESSAGES = {
@@ -42,4 +45,18 @@ export const ERROR_MESSAGES = {
     NO_SPEECH_DETECTED: 'Tidak ada suara terdeteksi. Silakan coba lagi.',
     SPEECH_PROCESSING_FAILED: 'Gagal memproses suara. Silakan coba lagi.',
     TTS_NOT_SUPPORTED: 'Browser Anda tidak mendukung fitur suara. Silakan gunakan Chrome, Edge, atau Safari terbaru.',
+    COMMAND_NOT_RECOGNIZED: 'Perintah tidak dikenali. Silakan coba lagi.',
+    QUEUE_FULL: 'Antrian pesan penuh. Tunggu hingga pesan selesai dibaca.',
+} as const;
+
+export const VOICE_COMMANDS = {
+    OPEN_SETTINGS: ['buka pengaturan', 'buka setting', 'open settings', 'open setting'],
+    CLOSE_SETTINGS: ['tutup pengaturan', 'tutup setting', 'close settings', 'close setting'],
+    STOP_SPEAKING: ['hentikan bicara', 'berhenti bicara', 'stop speaking', 'stop talk'],
+    PAUSE_SPEAKING: ['jeda bicara', 'pause speaking', 'pause'],
+    RESUME_SPEAKING: ['lanjutkan bicara', 'resume speaking', 'resume'],
+    READ_ALL: ['baca semua', 'baca semua pesan', 'read all', 'read all messages'],
+    CLEAR_CHAT: ['hapus chat', 'clear chat', 'clear history'],
+    SEND_MESSAGE: ['kirim', 'send', 'kirim pesan'],
+    TOGGLE_VOICE: ['aktifkan suara', 'matikan suara', 'toggle voice', 'toggle speech'],
 } as const;
