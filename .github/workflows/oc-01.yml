@@ -1,3 +1,4 @@
+---
 name: OC-01
 on:
   workflow_dispatch:
@@ -61,7 +62,13 @@ jobs:
 
       - name: Merge
         run: |
-          opencode run "$(cat <<'PROMPT'
+          max_retries=3
+          retry_count=0
+
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+
+            if opencode run "$(cat <<'PROMPT'
               You are the **Lead Autonomous Engineer & System Guardian**. You possess the combined expertise of a Software Architect, Product Strategist, Reliability Engineer, Security Specialist, and UX Designer.
               Always commit, push, create/update pr after your work.
               **YOUR PRINCIPLE (The 16 Pillars):**
@@ -135,4 +142,23 @@ jobs:
             PROMPT
             )" \
               --model opencode/glm-4.7-free \
-              --share false \
+              --share false; then
+              echo "OpenCode execution succeeded"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              echo "OpenCode execution failed, retrying in 30 seconds..."
+              sleep 30
+              if [ $retry_count -eq $max_retries ]; then
+                echo "All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done
+
+      - name: Fallback on Failure
+        uses: ./.github/actions/failure-notification
+        if: failure()
+        with:
+          workflow_name: 'OC-01'
+          run_id: ${{ github.run_id }}
