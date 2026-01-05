@@ -5,12 +5,14 @@ import { GoogleGenAI } from '@google/genai';
 
 // Mock the GoogleGenAI
 vi.mock('@google/genai', () => ({
-  GoogleGenAI: vi.fn().mockImplementation(() => ({
-    models: {
-      generateContentStream: vi.fn(),
-      generateContent: vi.fn(),
-    },
-  })),
+  GoogleGenAI: class {
+    constructor() {
+      this.models = {
+        generateContentStream: vi.fn(),
+        generateContent: vi.fn(),
+      };
+    }
+  },
   Type: {
     OBJECT: 'object',
     ARRAY: 'array',
@@ -19,7 +21,7 @@ vi.mock('@google/genai', () => ({
 }));
 
 // Mock the error handler
-vi.mock('../utils/geminiErrorHandler', () => ({
+vi.mock('../../utils/geminiErrorHandler', () => ({
   geminiErrorHandler: {
     executeWithRetry: vi.fn(),
     getFallbackModel: vi.fn(),
@@ -34,12 +36,12 @@ vi.mock('../utils/geminiErrorHandler', () => ({
 }));
 
 // Mock the config
-vi.mock('../config', () => ({
+vi.mock('../../config', () => ({
   WORKER_CHAT_ENDPOINT: 'https://example.com/chat',
 }));
 
 import { getAIResponseStream, analyzeClassPerformance, getAIEditorResponse, checkGeminiHealth } from '../geminiService';
-import { geminiErrorHandler } from '../utils/geminiErrorHandler';
+import { geminiErrorHandler } from '../../utils/geminiErrorHandler';
 
 describe('Enhanced Gemini Service', () => {
   const mockGeminiErrorHandler = geminiErrorHandler as ReturnType<typeof vi.mocked>;
