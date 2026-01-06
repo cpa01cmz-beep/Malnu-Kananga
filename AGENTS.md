@@ -20,11 +20,13 @@ src/
 ├── components/          # React components
 ├── config/             # Configuration files
 ├── constants.ts        # Centralized constants
-├── hooks/              # Custom React hooks
-├── services/           # API and business logic services
-├── types/              # TypeScript type definitions
-├── utils/              # Utility functions and helpers
-└── config.ts           # Main configuration
+├── data/              # Default data and static resources
+├── hooks/             # Custom React hooks
+├── services/          # API and business logic services
+├── tests/             # Integration tests
+├── types/             # TypeScript type definitions
+├── utils/             # Utility functions and helpers
+└── config.ts          # Main configuration
 ```
 
 ### Key Services
@@ -50,8 +52,8 @@ All localStorage keys use `malnu_` prefix:
 
 ### User Roles
 
-Primary roles: `admin`, `teacher`, `student`, `parent`, `staff`
-Extra roles: `osis`
+Primary roles: `admin`, `teacher`, `student`, `parent`
+Extra roles: `staff`, `osis`
 
 ### Testing Guidelines
 
