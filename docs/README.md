@@ -2,7 +2,7 @@
 
 **Created**: 2026-01-05
 **Last Updated**: 2026-01-06
-**Version**: 2.3.0
+**Version**: 2.4.0
 **Status**: Active
 
 ## Overview
@@ -67,8 +67,8 @@ This index provides a comprehensive overview of all documentation available for 
 ### Current Status
 
 ### Documentation Metrics
-- **Total Source Files**: 150+ TypeScript/TSX files
-- **Total Documentation Files**: 12 (consolidated from 13)
+- **Total Source Files**: 158 TypeScript/TSX files
+- **Total Documentation Files**: 11 (in /docs), plus AGENTS.md in root
 - **API Endpoints Documented**: 30+
 - **Code Examples**: 15+
 - **Troubleshooting Scenarios**: 20+
