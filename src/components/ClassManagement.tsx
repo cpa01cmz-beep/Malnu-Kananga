@@ -5,10 +5,9 @@ import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateAttendance } from '../utils/teacherValidation';
 import { 
-  executeWithRetry, 
-  createToastHandler 
+  executeWithRetry,
+  createToastHandler
 } from '../utils/teacherErrorHandler';
-import ConfirmationDialog from './ui/ConfirmationDialog';
 
 interface ClassStudent {
   id: string;
