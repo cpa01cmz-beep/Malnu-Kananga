@@ -234,8 +234,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
         }}
         className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
           disabled
-            ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
-            : 'border-gray-300 dark:border-gray-600 hover:border-green-500 hover:bg-green-50/50 dark:hover:bg-green-900/10'
+            ? 'border-neutral-200 bg-neutral-50 dark:bg-neutral-900/50 cursor-not-allowed'
+            : 'border-neutral-300 dark:border-neutral-600 hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10'
         }`}
       >
         {uploading ? (
@@ -280,11 +280,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </div>
         ) : (
           <>
-            <CloudArrowUpIcon className="w-12 h-12 text-gray-400 dark:text-gray-500 mb-4" />
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <CloudArrowUpIcon className="w-12 h-12 text-neutral-400 dark:text-neutral-500 mb-4" />
+            <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
               Click to upload or drag and drop
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">
               {acceptedFileTypes} (Max {maxSizeMB}MB)
             </p>
           </>
@@ -299,21 +299,21 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
       {files.length > 0 && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
             Uploaded Files ({files.length}/{maxFiles})
           </p>
           {files.map((file) => (
             <div
               key={file.id}
-              className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-sm transition-shadow"
+              className="flex items-center justify-between p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:shadow-sm transition-shadow"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <span className="text-2xl">{getFileIcon(file.type)}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                  <p className="text-sm font-medium text-neutral-900 dark:text-white truncate">
                     {file.name}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     {formatFileSize(file.size)}
                   </p>
                 </div>
@@ -322,7 +322,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 <button
                   onClick={() => handleDownload(file.key)}
                   disabled={disabled}
-                  className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-2 text-neutral-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Download"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -337,7 +337,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 <button
                   onClick={() => handleDelete(file)}
                   disabled={disabled}
-                  className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-2 text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Delete"
                 >
                   <TrashIcon />

@@ -13,10 +13,10 @@ const HeroSection: React.FC = () => {
           Mencetak generasi berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center animate-fade-in-up">
-          <a href="#ppdb" className="inline-flex items-center justify-center bg-primary-600 text-white font-medium px-6 py-3 rounded-lg hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+          <a href="#ppdb" className="inline-flex items-center justify-center bg-primary-600 text-white font-medium px-6 py-3 rounded-lg hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 shadow-sm hover:shadow">
             Info PPDB 2025
           </a>
-          <a href="#profil" className="inline-flex items-center justify-center bg-white dark:bg-neutral-800 text-primary-600 dark:text-white font-medium px-6 py-3 rounded-lg border border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+          <a href="#profil" className="inline-flex items-center justify-center bg-white dark:bg-neutral-800 text-primary-600 dark:text-white font-medium px-6 py-3 rounded-lg border border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 shadow-sm hover:shadow">
             Jelajahi Profil
           </a>
         </div>
