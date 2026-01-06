@@ -132,7 +132,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
   useEffect(() => {
     fetchTemplates();
     fetchSubjects();
-  }, [fetchTemplates, fetchSubjects]);
+  }, [fetchTemplates, fetchSubjects, onShowToast]);
 
   const downloadTemplate = async (template: MaterialTemplate) => {
     try {
