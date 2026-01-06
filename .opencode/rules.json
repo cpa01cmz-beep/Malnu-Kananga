@@ -1,6 +1,12 @@
 {
   "rules": [
     {
+      "name": "Git workflow - Never push directly to main",
+      "description": "Always use feature/fix branches and pull requests",
+      "pattern": "NEVER push directly to main. ALWAYS: 1) Create feature/fix branch, 2) Commit changes to branch, 3) Push branch, 4) Create pull request, 5) Wait for approval, 6) Merge to main. No exceptions - even 'small' changes must go through PR process. This ensures code review, catches bugs, and maintains main branch stability.",
+      "priority": "critical"
+    },
+    {
       "name": "TypeScript strict mode",
       "description": "Always use TypeScript strict mode and proper type annotations",
       "pattern": "Ensure all code is properly typed with TypeScript. Avoid 'any' types. Use interfaces or type aliases for complex types. Use generics when appropriate. Never suppress TypeScript errors with @ts-ignore unless absolutely necessary and documented.",
