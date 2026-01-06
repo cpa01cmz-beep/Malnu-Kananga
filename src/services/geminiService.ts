@@ -9,6 +9,7 @@ import {
   withCircuitBreaker
 } from '../utils/errorHandler';
 import { logger } from '../utils/logger';
+import { validateAICommand, validateAIResponse } from '../utils/aiEditorValidator';
 
 // Initialize the Google AI client
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' });
@@ -160,8 +161,14 @@ export async function getAIEditorResponse(
     currentContent: { featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }
 ): Promise<{ featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }> {
     
-    // Upgraded to Gemini 3 Pro for better JSON adherence and logic
-    const model = PRO_THINKING_MODEL; 
+    const commandValidation = validateAICommand(prompt);
+    if (!commandValidation.isValid) {
+        throw new Error(commandValidation.error);
+    }
+
+    const sanitizedPrompt = commandValidation.sanitizedPrompt || prompt;
+
+    const model = PRO_THINKING_MODEL;
 
     const systemInstruction = `You are an intelligent website content editor. Your task is to modify the provided JSON data based on the user's instruction.
 - You must only add, remove, or modify entries in the JSON.
@@ -177,7 +184,7 @@ export async function getAIEditorResponse(
 ${JSON.stringify(currentContent, null, 2)}
 \`\`\`
 
-Here is the user's request: "${prompt}"
+Here is the user's request: "${sanitizedPrompt}"
 
 Please provide the updated JSON content.`;
 
@@ -225,14 +232,13 @@ Please provide the updated JSON content.`;
         });
 
         const jsonText = (response.text || '').trim();
-        const firstBrace = jsonText.indexOf('{');
-        const lastBrace = jsonText.lastIndexOf('}');
-        let cleanedJsonText = jsonText;
-        if (firstBrace !== -1 && lastBrace !== -1) {
-            cleanedJsonText = jsonText.substring(firstBrace, lastBrace + 1);
+        
+        const responseValidation = validateAIResponse(jsonText, currentContent);
+        if (!responseValidation.isValid) {
+            throw new Error(responseValidation.error);
         }
 
-        return JSON.parse(cleanedJsonText);
+        return responseValidation.sanitizedContent!;
     } catch (error) {
         const classifiedError = classifyError(error, {
             operation: 'getAIEditorResponse',
