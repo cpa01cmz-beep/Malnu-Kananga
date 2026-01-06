@@ -1,8 +1,8 @@
 # Blueprint Sistem Informasi Manajemen Sekolah Berbasis Web
 
 **Created**: 2025-01-01
-**Last Updated**: 2026-01-05
-**Version**: 2.3.1
+**Last Updated**: 2026-01-06
+**Version**: 2.3.2
 **Status**: Active
 
 ## 1. Ringkasan Eksekutif
@@ -611,36 +611,45 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 
 ### 6.1 Keamanan Data
 - **Enkripsi Database**: AES-256 untuk data sensitif
- - **HTTPS/SSL**: Komunikasi terenkripsi
- - **Firewall & WAF**: Perlindungan dari serangan cyber
- - **Regular Security Audit**: Penetration testing berkala
- - **Backup Otomatis**: Daily backup dengan recovery plan
- - **JWT Authentication**: Token-based authentication dengan refresh token mechanism ✅
- - **Token Security**:
-   - Access token: 15 menit (short-lived)
-   - Refresh token: 7 hari
-   - Automatic token refresh saat akan kadaluarsa
-   - Session invalidation pada logout
-  - **AI Error Recovery**: Comprehensive error handling untuk Gemini API ✅
-    - Exponential backoff retry untuk transient failures
-    - Circuit breaker pattern untuk mencegah cascading failures
-    - Spesifik error handling untuk rate limits (429)
-    - User-friendly error messages tanpa expose sensitive data
-    - Configurable timeout thresholds
-    - **Secure Logging**: Environment-based logging system ✅
-      - Centralized logger utility (src/utils/logger.ts)
-      - Development-only logging to prevent production data exposure
-      - Configurable log levels (DEBUG, INFO, WARN, ERROR)
-      - No sensitive data logged in production
-      - Timestamp and structured log formatting
-      - All console statements in production code replaced with logger utility ✅
-      - Zero console.log/warn/error/debug statements in src/ (excluding logger.ts) ✅
-      - All 13 console statements across 6 files replaced (categoryService, ChatWindow, GradingManagement, PPDBManagement, SiteEditor, voiceOptimization) ✅
-  - **Memory Leak Prevention**: Optimized ChatWindow component ✅
-    - History size limiting to prevent unbounded growth (MAX_HISTORY_SIZE = 20)
-    - Proper useEffect cleanup to clear history on chat close
-    - Ref-based history to prevent closure capture issues
-    - Consistent performance over extended use
+  - **HTTPS/SSL**: Komunikasi terenkripsi
+  - **Firewall & WAF**: Perlindungan dari serangan cyber
+  - **Regular Security Audit**: Penetration testing berkala
+  - **Backup Otomatis**: Daily backup dengan recovery plan
+  - **JWT Authentication**: Token-based authentication dengan refresh token mechanism ✅
+  - **Token Security**:
+    - Access token: 15 menit (short-lived)
+    - Refresh token: 7 hari
+    - Automatic token refresh saat akan kadaluarsa
+    - Session invalidation pada logout
+   - **AI Error Recovery**: Comprehensive error handling untuk Gemini API ✅
+     - Exponential backoff retry untuk transient failures
+     - Circuit breaker pattern untuk mencegah cascading failures
+     - Spesifik error handling untuk rate limits (429)
+     - User-friendly error messages tanpa expose sensitive data
+     - Configurable timeout thresholds
+     - **Secure Logging**: Environment-based logging system ✅
+       - Centralized logger utility (src/utils/logger.ts)
+       - Development-only logging to prevent production data exposure
+       - Configurable log levels (DEBUG, INFO, WARN, ERROR)
+       - No sensitive data logged in production
+       - Timestamp and structured log formatting
+       - All console statements in production code replaced with logger utility ✅
+       - Zero console.log/warn/error/debug statements in src/ (excluding logger.ts) ✅
+       - All 13 console statements across 6 files replaced (categoryService, ChatWindow, GradingManagement, PPDBManagement, SiteEditor, voiceOptimization) ✅
+   - **Memory Leak Prevention**: Optimized ChatWindow component ✅
+     - History size limiting to prevent unbounded growth (MAX_HISTORY_SIZE = 20)
+     - Proper useEffect cleanup to clear history on chat close
+     - Ref-based history to prevent closure capture issues
+     - Consistent performance over extended use
+  - **Build Optimization**: Eliminated circular chunk dependencies ✅
+    - Simplified manualChunks strategy untuk prevent module load order errors
+    - Only Google GenAI library manually chunked (146.47 kB)
+    - All application code split naturally oleh Vite (no forced boundaries)
+    - Fixed P0 runtime errors: "Cannot read properties of undefined (reading 'forwardRef')" ✅
+    - Fixed P0 runtime errors: "Cannot access 'g' before initialization" ✅
+    - Reduced circular chunk dependencies dari 7 ke 0 ✅
+    - Build time improvement: 12.71s → 9.76s (23% faster) ✅
+    - Resolved Issue #583 ✅
 
 
 ### 6.2 Privacy & Compliance
