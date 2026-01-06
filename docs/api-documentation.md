@@ -434,6 +434,6 @@ VITE_LOG_LEVEL=DEBUG
 ---
 
 **Related Documentation:**
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture overview
+- [BLUEPRINT.md](./BLUEPRINT.md) - System architecture overview
 - [CODING_STANDARDS.md](./CODING_STANDARDS.md) - Development guidelines
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution process
