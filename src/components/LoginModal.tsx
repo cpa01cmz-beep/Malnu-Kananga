@@ -66,17 +66,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
 
   return (
     <div
-      className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-300"
+      className="fixed inset-0 bg-neutral-900/75 flex items-center justify-center z-50 transition-opacity duration-300"
       onClick={handleBackdropClick}
       aria-modal="true"
       role="dialog"
     >
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md m-4 transform transition-all duration-300 scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh]">
-        <div className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Login</h2>
+      <div className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-float w-full max-w-md m-4 transform transition-all duration-300 scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh]">
+        <div className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700">
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Login</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="p-2 rounded-full text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
             aria-label="Tutup modal"
           >
             <CloseIcon />
@@ -84,19 +84,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
         </div>
         
         <div className="p-6 overflow-y-auto">
-            {/* DEMO SECTION */}
-            <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-700/50">
+            <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-card-lg border border-yellow-200 dark:border-yellow-700/50">
                 <h3 className="text-sm font-bold text-yellow-800 dark:text-yellow-200 mb-2 uppercase tracking-wide">Mode Simulasi (Demo)</h3>
                 <p className="text-xs text-yellow-700 dark:text-yellow-300 mb-3">
                     Pilih peran untuk login instan:
                 </p>
                 
-                {/* Standard Roles */}
                 <div className="grid grid-cols-3 gap-2 mb-2">
-                    <button onClick={() => handleSimulatedLogin('student')} className="px-2 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <button onClick={() => handleSimulatedLogin('student')} className="px-2 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
                         Siswa
                     </button>
-                    <button onClick={() => handleSimulatedLogin('teacher')} className="px-2 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <button onClick={() => handleSimulatedLogin('teacher')} className="px-2 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
                         Guru
                     </button>
                     <button onClick={() => handleSimulatedLogin('admin')} className="px-2 py-2 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
@@ -104,7 +102,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                     </button>
                 </div>
 
-                {/* Extra Roles */}
                 <div className="grid grid-cols-2 gap-2">
                     <button 
                         onClick={() => handleSimulatedLogin('teacher', 'staff')}
@@ -123,27 +120,27 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
             
             <div className="relative mb-6">
                 <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                    <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                    <div className="w-full border-t border-neutral-300 dark:border-neutral-600"></div>
                 </div>
                 <div className="relative flex justify-center">
-                    <span className="px-2 bg-white dark:bg-gray-800 text-xs text-gray-500 uppercase">Atau Login Email (Produksi)</span>
+                    <span className="px-2 bg-white dark:bg-neutral-800 text-xs text-neutral-500 uppercase">Atau Login Email (Produksi)</span>
                 </div>
             </div>
 
           {formState === 'success' ? (
             <div className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/50">
-                  <svg className="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-pill bg-primary-100 dark:bg-primary-900/50">
+                  <svg className="h-6 w-6 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
               </div>
-              <h3 className="mt-3 text-lg font-medium text-gray-900 dark:text-white">Login Berhasil!</h3>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <h3 className="mt-3 text-lg font-medium text-neutral-900 dark:text-white">Login Berhasil!</h3>
+              <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
                 Anda akan diarahkan ke dashboard...
               </p>
               <button
                 onClick={onClose}
-                className="mt-6 w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                className="mt-6 w-full flex justify-center py-3 px-4 border border-transparent rounded-pill shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
               >
                 Selesai
               </button>
@@ -151,20 +148,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Alamat Email Terdaftar</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Alamat Email Terdaftar</label>
                 <div className="mt-1">
-                  <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-green-500" placeholder="anda@email.com" />
+                  <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors" placeholder="anda@email.com" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Password</label>
                 <div className="mt-1">
-                  <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-green-500" placeholder="Masukkan password" />
+                  <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors" placeholder="Masukkan password" />
                 </div>
               </div>
               {error && <p className="text-sm text-red-600 dark:text-red-400 text-center">{error}</p>}
               <div>
-                <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 dark:disabled:bg-gray-600">
+                <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-pill shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 transition-colors">
                   {formState === 'loading' ? 'Memproses...' : 'Login'}
                 </button>
               </div>

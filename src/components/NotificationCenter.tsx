@@ -129,14 +129,14 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
     logger.info('Test notification sent from notification center');
   }, [createNotification, showNotification, onShowToast]);
 
-  const getPriorityColor = (priority: string): string => {
+   const getPriorityColor = (priority: string): string => {
     switch (priority) {
       case 'high':
         return 'border-l-4 border-red-500';
       case 'normal':
         return 'border-l-4 border-blue-500';
       case 'low':
-        return 'border-l-4 border-gray-400';
+        return 'border-l-4 border-neutral-400';
       default:
         return '';
     }
@@ -165,17 +165,17 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
     <div className="relative">
       <button
         onClick={handleToggleOpen}
-        className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+        className="relative p-2 rounded-pill hover:bg-neutral-100 transition-colors"
         aria-label={`Notifikasi (${unreadCount} belum dibaca)`}
       >
         {permissionGranted ? (
-          <BellIcon className="w-6 h-6 text-gray-700" />
+          <BellIcon className="w-6 h-6 text-neutral-700" />
         ) : (
-          <BellSlashIcon className="w-6 h-6 text-gray-500" />
+          <BellSlashIcon className="w-6 h-6 text-neutral-500" />
         )}
 
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-pill h-5 w-5 flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -184,19 +184,19 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-black bg-opacity-50"
+            className="fixed inset-0 z-40 bg-black/50"
             onClick={handleToggleOpen}
             aria-hidden="true"
           />
 
-          <div className="absolute right-0 mt-2 w-full sm:w-96 max-h-[80vh] bg-white rounded-lg shadow-2xl z-50 overflow-hidden">
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-4">
+          <div className="absolute right-0 mt-2 w-full sm:w-96 max-h-[80vh] bg-white rounded-card-lg shadow-float z-50 overflow-hidden">
+            <div className="sticky top-0 bg-white border-b border-neutral-200 p-4">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-neutral-900">
                   Pusat Notifikasi
                 </h3>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-neutral-600">
                     {unreadCount} belum dibaca
                   </span>
                 </div>
@@ -204,20 +204,20 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
               <div className="space-y-3">
                 <div className="relative">
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
                   <input
                     type="text"
                     placeholder="Cari notifikasi..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors"
                     aria-label="Cari notifikasi"
                   />
                 </div>
 
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
                     <select
                       value={selectedType}
                       onChange={(e) =>
@@ -225,7 +225,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                           e.target.value as NotificationType | 'all'
                         )
                       }
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm appearance-none bg-white"
+                      className="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm appearance-none bg-white transition-colors"
                       aria-label="Filter berdasarkan tipe"
                     >
                       <option value="all">Semua Tipe</option>
@@ -242,7 +242,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     onChange={(e) =>
                       setSelectedStatus(e.target.value as 'all' | 'read' | 'unread')
                     }
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"
+                    className="px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white transition-colors"
                     aria-label="Filter berdasarkan status"
                   >
                     <option value="all">Semua Status</option>
@@ -255,7 +255,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   <button
                     onClick={handleMarkAllAsRead}
                     disabled={unreadCount === 0}
-                    className="flex-1 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="flex-1 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     <CheckCircleIcon className="w-4 h-4" />
                     Tandai Semua Dibaca
@@ -263,7 +263,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   <button
                     onClick={handleSendTestNotification}
                     disabled={!permissionGranted}
-                    className="px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Tes
                   </button>
@@ -273,7 +273,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
             <div className="overflow-y-auto max-h-[60vh]">
               {filteredHistory().length === 0 ? (
-                <div className="p-8 text-center text-gray-500">
+                <div className="p-8 text-center text-neutral-500">
                   {searchQuery || selectedType !== 'all' || selectedStatus !== 'all' ? (
                     <p>Tidak ada notifikasi yang cocok dengan filter</p>
                   ) : (
@@ -282,7 +282,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       <button
                         onClick={handleSendTestNotification}
                         disabled={!permissionGranted}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Kirim Notifikasi Tes
                       </button>
@@ -290,12 +290,12 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   )}
                 </div>
               ) : (
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-neutral-100">
                   {filteredHistory().map((item) => (
                     <div
                       key={item.id}
                       onClick={() => handleNotificationClick(item)}
-                      className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${getPriorityColor(
+                      className={`p-4 hover:bg-neutral-50 cursor-pointer transition-colors ${getPriorityColor(
                         item.notification.priority
                       )} ${item.notification.read ? 'bg-white' : 'bg-blue-50'}`}
                     >
@@ -305,17 +305,17 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         </span>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start mb-1">
-                            <h4 className="text-sm font-medium text-gray-900 truncate">
+                            <h4 className="text-sm font-medium text-neutral-900 truncate">
                               {item.notification.title}
                             </h4>
                             {!item.notification.read && (
-                              <span className="h-2 w-2 bg-blue-500 rounded-full flex-shrink-0 ml-2" />
+                              <span className="h-2 w-2 bg-blue-500 rounded-pill flex-shrink-0 ml-2" />
                             )}
                           </div>
-                          <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                          <p className="text-sm text-neutral-600 line-clamp-2 mb-2">
                             {item.notification.body}
                           </p>
-                          <div className="flex items-center justify-between text-xs text-gray-500">
+                          <div className="flex items-center justify-between text-xs text-neutral-500">
                             <span>
                               {new Date(
                                 item.notification.timestamp
@@ -338,11 +338,11 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
               )}
             </div>
 
-            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4">
+            <div className="sticky bottom-0 bg-white border-t border-neutral-200 p-4">
               <button
                 onClick={handleClearHistory}
                 disabled={history.length === 0}
-                className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <TrashIcon className="w-4 h-4" />
                 Hapus Semua Notifikasi
