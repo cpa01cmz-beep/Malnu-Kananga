@@ -164,7 +164,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
         setSubjectPerformance(performance);
       }
 
-      if (attendanceRes.success && attendanceRes.data) {
+      if (attendanceRes.success && attendanceRes.data && gradesRes.data) {
         setAttendance(attendanceRes.data);
         const correlationData = calculateAttendanceGradeCorrelation(gradesRes.data, attendanceRes.data);
         setCorrelation(correlationData);
@@ -484,11 +484,11 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }) => `${name}: ${((percent || 0) * 100).toFixed(0)}%`}
                   outerRadius={80}
                   fill="#8884d8"
                 >
-                  {gradeDistributionData.map((entry, index) => (
+                  {gradeDistributionData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -526,7 +526,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 <YAxis domain={[0, 100]} />
                 <Tooltip />
                 <Bar dataKey="averageScore" fill="#16a34a" name="Nilai Akhir">
-                  {subjectPerformance.map((entry, index) => (
+                  {subjectPerformance.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Bar>

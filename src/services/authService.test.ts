@@ -24,7 +24,21 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should successfully login with valid credentials', async () => {
-      const mockResponse = { success: true, data: { user: { email: 'user@test.com' } } }
+      const mockResponse = { 
+        success: true, 
+        message: 'Login successful',
+        data: { 
+          user: { 
+            id: '123',
+            name: 'Test User',
+            email: 'user@test.com',
+            role: 'student' as const,
+            status: 'active' as const
+          }, 
+          token: 'test-token',
+          refreshToken: 'test-refresh-token'
+        } 
+      }
       vi.mocked(authAPI.login).mockResolvedValue(mockResponse)
 
       const result = await authService.login('user@test.com', 'password123')
@@ -72,7 +86,7 @@ describe('AuthService', () => {
 
   describe('getCurrentUser', () => {
     it('should delegate to authAPI', () => {
-      const mockUser = { email: 'user@test.com', name: 'Test User' }
+      const mockUser = { id: '123', email: 'user@test.com', name: 'Test User', role: 'student' as const, status: 'active' as const }
       vi.mocked(authAPI.getCurrentUser).mockReturnValue(mockUser)
       
       expect(authService.getCurrentUser()).toEqual(mockUser)

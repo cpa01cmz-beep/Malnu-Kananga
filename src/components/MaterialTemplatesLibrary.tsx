@@ -186,21 +186,6 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
     }
   };
 
-  const _deleteTemplate = async (templateId: string) => {
-    if (!window.confirm('Hapus template ini?')) {
-      return;
-    }
-
-    try {
-      // Mock API call - replace with actual implementation
-      setTemplates(templates.filter(t => t.id !== templateId));
-      onShowToast('Template berhasil dihapus', 'success');
-    } catch (err) {
-      logger.error('Error deleting template:', err);
-      onShowToast('Gagal menghapus template', 'error');
-    }
-  };
-
   // Filtering and sorting
   const filteredTemplates = templates
     .filter(template => {
@@ -383,7 +368,9 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
           ))
         ) : (
           <div className="col-span-full py-12 text-center">
-            <DocumentTextIcon className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
+            <div className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600">
+              <DocumentTextIcon />
+            </div>
             <p className="text-gray-500 dark:text-gray-400">
               {searchTerm || selectedCategory || selectedSubject 
                 ? 'Tidak ada template yang cocok dengan filter' 

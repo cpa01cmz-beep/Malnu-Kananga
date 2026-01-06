@@ -235,7 +235,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
                     Slot Waktu Tersedia
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {selectedTeacher.availableSlots.map((slot, index) => (
+                    {selectedTeacher.availableSlots?.map((slot, index) => (
                       <button
                         key={index}
                         onClick={() => setSelectedSlot(slot)}

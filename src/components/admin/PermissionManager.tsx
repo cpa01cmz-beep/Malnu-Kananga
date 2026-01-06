@@ -33,11 +33,6 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
     loadAuditLogs();
   }, [loadPermissions, loadAuditLogs]);
 
-  const _togglePermission = (_permissionId: string) => {
-    // This would typically update a backend configuration
-    onShowToast('Permission updates require backend configuration', 'info');
-  };
-
   const exportPermissionMatrix = () => {
     const matrix = {
       [selectedRole]: rolePermissions.map(p => p.id),

@@ -215,7 +215,7 @@ export const ROLE_PERMISSION_MATRIX: PermissionMatrix = {
 };
 
 // Extra role permissions (added to base role permissions)
-export const EXTRA_ROLE_PERMISSIONS: Record<UserExtraRole, string[]> = {
+export const EXTRA_ROLE_PERMISSIONS: Partial<Record<NonNullable<UserExtraRole>, string[]>> & { null?: string[] } = {
   staff: ['inventory.manage'],
   osis: ['osis.events'],
   null: []

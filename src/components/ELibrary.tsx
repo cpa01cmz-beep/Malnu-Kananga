@@ -3,7 +3,7 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { StarIcon, BookmarkIcon, FunnelIcon } from './icons/MaterialIcons';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { eLibraryAPI, fileStorageAPI } from '../services/apiService';
-import { ELibrary as ELibraryType, Subject, Bookmark, Review } from '../types';
+import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress } from '../types';
 import { logger } from '../utils/logger';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
@@ -11,6 +11,7 @@ import { CategoryValidator } from '../utils/categoryValidator';
 interface ELibraryProps {
   onBack: () => void;
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
+  userId?: string;
 }
 
 const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
@@ -32,7 +33,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
-  const [readingProgress, setReadingProgress] = useState<Map<string, { currentPosition: number; lastReadAt: string; readTime: number; isCompleted: boolean }>>(new Map());
+  const [readingProgress, setReadingProgress] = useState<Map<string, ReadingProgress>>(new Map());
   const [offlineDownloads, setOfflineDownloads] = useState<Set<string>>(new Set());
   
   // Rating system
