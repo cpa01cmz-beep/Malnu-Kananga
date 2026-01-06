@@ -18,32 +18,32 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
     return (
-        <footer id="kontak" className="bg-gradient-to-t from-primary-100/80 to-transparent dark:from-primary-900/40 dark:to-transparent border-t border-neutral-200 dark:border-neutral-700/50">
+        <footer id="kontak" className="bg-gradient-to-t from-primary-50/80 to-transparent dark:from-primary-900/30 dark:to-transparent border-t border-neutral-200 dark:border-neutral-700">
             <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center sm:text-left">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center sm:text-left">
                     <div>
-                        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">MA Malnu Kananga</h3>
-                        <p className="mt-2 text-base text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                        <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">MA Malnu Kananga</h3>
+                        <p className="text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-2">
                             Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
                         </p>
-                        <p className="mt-1 text-base text-neutral-500 dark:text-neutral-400">
-                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">info@ma-malnukananga.sch.id</a>
+                        <p className="text-base text-neutral-600 dark:text-neutral-400">
+                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">info@ma-malnukananga.sch.id</a>
                         </p>
                     </div>
 
                     <div>
-                         <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Legalitas</h3>
-                         <ul className="mt-2 space-y-1 text-sm text-neutral-500 dark:text-neutral-400">
-                            <li><strong>No. SK. Pendirian:</strong> D/Wi/MA./101/2000</li>
-                            <li><strong>Tgl. SK. Pendirian:</strong> 20-09-2000</li>
-                            <li className="pt-1"><strong>No. SK Operasional:</strong> D/Wi/MA./101/2000</li>
-                            <li><strong>Tgl. SK Operasional:</strong> 20-09-2000</li>
+                         <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Legalitas</h3>
+                         <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
+                            <li><strong className="text-neutral-900 dark:text-white">No. SK. Pendirian:</strong> D/Wi/MA./101/2000</li>
+                            <li><strong className="text-neutral-900 dark:text-white">Tgl. SK. Pendirian:</strong> 20-09-2000</li>
+                            <li className="pt-1"><strong className="text-neutral-900 dark:text-white">No. SK Operasional:</strong> D/Wi/MA./101/2000</li>
+                            <li><strong className="text-neutral-900 dark:text-white">Tgl. SK Operasional:</strong> 20-09-2000</li>
                         </ul>
                     </div>
 
                     <div className="sm:justify-self-end">
-                        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Tautan Bermanfaat</h3>
-                         <ul className="mt-2 space-y-1 text-base text-neutral-500 dark:text-neutral-400">
+                        <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
+                         <ul className="space-y-2 text-base text-neutral-600 dark:text-neutral-400">
                               <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors">Pusat Bantuan</button></li>
                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Download</a></li>
                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Kebijakan Privasi</a></li>
@@ -51,15 +51,15 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Beasiswa</a></li>
                          </ul>
                         <div className="flex justify-center sm:justify-start space-x-6 mt-6">
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20" aria-label="Facebook">
                                 <span className="sr-only">Facebook</span>
                                 <FacebookIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20" aria-label="Instagram">
                                 <span className="sr-only">Instagram</span>
                                 <InstagramIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20" aria-label="YouTube">
                                 <span className="sr-only">YouTube</span>
                                 <YoutubeIcon />
                             </a>
@@ -67,7 +67,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                     </div>
                 </div>
                 <div className="mt-12 border-t border-neutral-200 dark:border-neutral-700 pt-8">
-                    <p className="text-base text-neutral-400 text-center">&copy; {new Date().getFullYear()} MA Malnu Kananga. All rights reserved.</p>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center">&copy; {new Date().getFullYear()} MA Malnu Kananga. All rights reserved.</p>
                 </div>
             </div>
         </footer>

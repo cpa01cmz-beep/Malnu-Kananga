@@ -11,11 +11,11 @@ import NotificationCenter from './NotificationCenter';
 
 const NavLinks = () => (
     <>
-        <a href="#home" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">Beranda</a>
-        <a href="#profil" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">Profil</a>
-        <a href="#berita" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">Berita</a>
-        <a href="#download" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">Download</a>
-        <a href="#login-email" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">Login Email</a>
+        <a href="#home" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium px-1">Beranda</a>
+        <a href="#profil" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium px-1">Profil</a>
+        <a href="#berita" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium px-1">Berita</a>
+        <a href="#download" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium px-1">Download</a>
+        <a href="#login-email" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium px-1">Login Email</a>
     </>
 );
 
@@ -112,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({
 
                         <button
                             onClick={onToggleTheme}
-                            className="p-2.5 rounded-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200"
+                            className="p-2.5 rounded-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 hover:scale-105"
                             aria-label="Ganti Tema"
                         >
                             {theme === 'light' ? <MoonIcon /> : <SunIcon />}
@@ -122,7 +122,7 @@ const Header: React.FC<HeaderProps> = ({
                              <div className="hidden sm:flex items-center gap-2">
                                 {userExtraRole && (
                                     <span className={`text-xs uppercase font-bold px-3 py-1.5 rounded-full ${
-                                        userExtraRole === 'staff' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300' : 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300'
+                                        userExtraRole === 'staff' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
                                     }`}>
                                         {userExtraRole}
                                     </span>
@@ -131,7 +131,7 @@ const Header: React.FC<HeaderProps> = ({
                                 {userRole === 'admin' && (
                                     <button
                                         onClick={onEditClick}
-                                        className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 px-4 py-2 rounded-pill font-medium text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-all duration-200"
+                                        className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 px-4 py-2 rounded-pill font-medium text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-all duration-200 hover:scale-105 shadow-sm"
                                         title="Buka Editor AI"
                                     >
                                         <SparklesIcon />
@@ -141,27 +141,27 @@ const Header: React.FC<HeaderProps> = ({
 
                                 <button
                                     onClick={onTogglePublicView}
-                                    className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 px-4 py-2 rounded-pill font-medium text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200"
+                                    className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 px-4 py-2 rounded-pill font-medium text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 hover:scale-105 shadow-sm"
                                 >
                                     {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                 </button>
 
-                                <button onClick={onLogout} className="bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 px-5 py-2 rounded-pill font-medium text-sm hover:bg-red-200 dark:hover:bg-red-800 transition-all duration-200">
+                                <button onClick={onLogout} className="bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 px-5 py-2 rounded-pill font-medium text-sm hover:bg-red-200 dark:hover:bg-red-800 transition-all duration-200 hover:scale-105 shadow-sm">
                                     Logout
                                 </button>
                             </div>
                         ) : (
                             <div className="hidden sm:flex items-center gap-2">
-                                <button onClick={onChatClick} className="flex items-center gap-2 bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300 px-4 py-2 rounded-pill font-medium text-sm hover:bg-primary-200 dark:hover:bg-primary-800 transition-all duration-200">
+                                <button onClick={onChatClick} className="flex items-center gap-2 bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300 px-4 py-2 rounded-pill font-medium text-sm hover:bg-primary-200 dark:hover:bg-primary-800 transition-all duration-200 hover:scale-105 shadow-sm">
                                     <ChatIcon />
                                     <span>Tanya AI</span>
                                 </button>
-                                <button onClick={onLoginClick} className="bg-primary-600 text-white px-5 py-2 rounded-pill font-medium text-sm hover:bg-primary-700 transition-all duration-200 shadow-sm hover:shadow-md">
+                                <button onClick={onLoginClick} className="bg-primary-600 text-white px-5 py-2 rounded-pill font-medium text-sm hover:bg-primary-700 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105">
                                     Login
                                 </button>
                             </div>
                         )}
-                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2.5 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200" aria-label="Buka menu">
+                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2.5 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 hover:scale-105" aria-label="Buka menu">
                             {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
                         </button>
                     </div>
