@@ -54,7 +54,7 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
             child,
             averageGrade: Math.round(averageGrade * 100) / 100,
             attendanceRate: Math.round(attendanceRate * 100) / 100,
-            totalAbsences: attendance.filter((a: any) => a.status !== 'hadir').length,
+            totalAbsences: attendance.filter((a: { status: string }) => a.status !== 'hadir').length,
             latestGrades: grades.slice(-3).map((g: { subject: string; grade: number; date: string }) => ({
               subject: g.subject,
               grade: g.grade,

@@ -262,7 +262,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
       return goal;
     });
     saveGoals(updatedGoals);
-  }, [goals, grades]);
+  }, [goals, grades, saveGoals]);
 
   useEffect(() => {
     updateGoalProgress();

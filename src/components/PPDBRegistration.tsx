@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
@@ -36,6 +36,15 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
     address: '',
   });
 
+  const initialDataRef = useRef(initialFormData);
+
+  const cleanup = useCallback(() => {
+    setFormData(initialDataRef.current);
+    setUploadedDocument(null);
+    setDiplomaImage(null);
+    setOcrProgress({ status: 'Idle', progress: 0 });
+  }, []);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedDocument, setUploadedDocument] = useState<FileUploadResponse | null>(null);
   const [isProcessingOCR, setIsProcessingOCR] = useState(false);
@@ -45,18 +54,11 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
   const [diplomaImage, setDiplomaImage] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-const cleanup = () => {
-    setFormData(initialFormData);
-    setUploadedDocument(null);
-    setDiplomaImage(null);
-    setOcrProgress({ status: 'Idle', progress: 0 });
-  };
-
   useEffect(() => {
     if (!isOpen) {
       cleanup();
     }
-  }, [isOpen]);
+  }, [isOpen, cleanup]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

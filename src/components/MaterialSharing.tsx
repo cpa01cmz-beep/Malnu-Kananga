@@ -32,11 +32,6 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchSharing();
-    fetchTeachers();
-  }, [material.id]);
-
   const fetchSharing = useCallback(async () => {
     try {
       // Mock API call - replace with actual implementation
@@ -73,7 +68,12 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
     } catch (err) {
       logger.error('Error fetching teachers:', err);
     }
-  }, []);
+  }, [material.uploadedBy]);
+
+  useEffect(() => {
+    fetchSharing();
+    fetchTeachers();
+  }, [fetchSharing, fetchTeachers]);
 
   const filteredTeachers = teachers.filter(teacher => {
     const matchesSearch = teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
