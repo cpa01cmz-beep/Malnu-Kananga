@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
-import UsersIcon from './icons/UsersIcon';
+import { UsersIcon } from './icons/UsersIcon';
 import { ToastType } from './Toast';
 import type { ParentChild } from '../types';
 import { parentsAPI } from '../services/apiService';

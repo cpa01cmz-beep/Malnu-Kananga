@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import BuildingLibraryIcon from './icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
-import UsersIcon from './icons/UsersIcon';
+import { UsersIcon } from './icons/UsersIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon'; // New Icon
 import ScheduleView from './ScheduleView';
 import ELibrary from './ELibrary';

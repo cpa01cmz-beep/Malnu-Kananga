@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import UsersIcon from './icons/UsersIcon';
+import { UsersIcon } from './icons/UsersIcon';
 import { attendanceAPI } from '../services/apiService';
 import { Attendance } from '../types';
 import { authAPI } from '../services/apiService';
