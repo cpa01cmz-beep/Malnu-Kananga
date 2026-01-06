@@ -368,7 +368,38 @@ useEffect(() => {
 
 ---
 
-## 14. Next Steps
+---
+
+## 14. Accessibility Compliance (WCAG 2.1 AA)
+
+### Overall Accessibility Score: **4.2/5.0** (84%)
+
+### Implementation Status
+
+**Completed (as of 2026-01-06):**
+- ✅ ARIA labels for all voice controls
+- ✅ Proper semantic HTML structure
+- ✅ Basic keyboard navigation support
+- ✅ Error handling with user-friendly messages
+
+**Remaining Improvements:**
+- [ ] Add keyboard shortcuts (Alt+M for microphone, Escape to stop)
+- [ ] Implement focus trap in voice settings modal
+- [ ] Add visible focus indicators for all interactive elements
+- [ ] Add aria-live regions for status announcements
+- [ ] Implement skip navigation links
+- [ ] Add `prefers-reduced-motion` support
+- [ ] Use `aria-describedby` for error associations
+- [ ] Add `role="dialog"` to voice settings modal
+
+**WCAG 2.1 AA Compliance: 10/15 (67%)**
+**Target: 15/15 (100%)**
+
+**See [VOICE_ACCESSIBILITY_AUDIT.md](./VOICE_ACCESSIBILITY_AUDIT.md) for detailed audit report.**
+
+---
+
+## 15. Next Steps
 
 1. ✅ Review and approve this architecture document
 2. ⬜ Create TypeScript interfaces in `src/types/voice.ts`
