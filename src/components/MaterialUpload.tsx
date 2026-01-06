@@ -2,14 +2,20 @@
 import React, { useState } from 'react';
 import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
+import { ShareIcon } from './icons/MaterialIcons';
 import { eLibraryAPI } from '../services/apiService';
-import { ELibrary as ELibraryType, Subject } from '../types';
+import { ELibrary as ELibraryType, Subject, MaterialFolder } from '../types';
 import FileUpload from './FileUpload';
 import { FileUploadResponse } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
 import { CategoryValidationResult } from '../services/categoryService';
+import FolderNavigation from './FolderNavigation';
+import MaterialSharing from './MaterialSharing';
+import VersionControl from './VersionControl';
+import MaterialAnalytics from './MaterialAnalytics';
+import MaterialTemplatesLibrary from './MaterialTemplatesLibrary';
 
 interface MaterialUploadProps {
   onBack: () => void;
@@ -20,6 +26,9 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
   const [materials, setMaterials] = useState<ELibraryType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedView, setSelectedView] = useState<'upload' | 'templates' | 'management'>('upload');
+  const [selectedMaterial, setSelectedMaterial] = useState<ELibraryType | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<MaterialFolder | undefined>(undefined);
 
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
@@ -112,6 +121,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
         fileType: uploadedFile.type,
         fileSize: uploadedFile.size,
         subjectId: selectedSubject?.id,
+        folderId: selectedFolder?.id,
       };
 
       const response = await eLibraryAPI.create(newMaterial);
@@ -261,15 +271,57 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
             ← Kembali ke Dashboard
           </button>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upload Materi Pembelajaran</h2>
-          <p className="text-gray-500 dark:text-gray-400">Bagikan modul, tugas, dan referensi belajar untuk siswa.</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Materi</h2>
+          <p className="text-gray-500 dark:text-gray-400">Kelola materi pembelajaran dengan folder, berbagi, dan kontrol versi.</p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setSelectedView('upload')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              selectedView === 'upload' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+            }`}
+          >
+            Upload
+          </button>
+          <button
+            onClick={() => setSelectedView('templates')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              selectedView === 'templates' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+            }`}
+          >
+            Template
+          </button>
+          <button
+            onClick={() => setSelectedView('management')}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              selectedView === 'management' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+            }`}
+          >
+            Kelola
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Formulir Upload</h3>
+      {selectedView === 'upload' && (
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="lg:col-span-1">
+            <FolderNavigation
+              selectedFolderId={selectedFolder?.id}
+              onFolderSelect={setSelectedFolder}
+              onShowToast={onShowToast}
+              materials={materials}
+            />
+          </div>
+          
+          <div className="lg:col-span-2">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Formulir Upload</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Judul Materi</label>
@@ -411,62 +463,172 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
               </button>
             </form>
           </div>
-        </div>
+          </div>
 
-        <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center">
-              <h3 className="font-bold text-gray-800 dark:text-white">Daftar Materi Saya ({materials.length})</h3>
+              <h3 className="font-bold text-gray-800 dark:text-white">
+                {selectedFolder ? selectedFolder.name : 'Semua Materi'} ({materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).length})
+              </h3>
             </div>
             <div className="divide-y divide-gray-100 dark:divide-gray-700 max-h-[600px] overflow-y-auto">
-              {materials.length > 0 ? (
-                materials.map((item) => (
-                  <div key={item.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors flex items-center justify-between">
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={`p-2 rounded-lg ${
-                          getFileIcon(item.fileType) === 'PDF'
-                            ? 'bg-red-100 text-red-600 dark:bg-red-900/20'
-                            : getFileIcon(item.fileType) === 'DOCX'
-                            ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/20'
-                            : getFileIcon(item.fileType) === 'PPT'
-                            ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/20'
-                            : 'bg-purple-100 text-purple-600 dark:bg-purple-900/20'
-                        }`}
-                      >
-                        <DocumentTextIcon />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 dark:text-white line-clamp-1">{item.title}</h4>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-gray-500 dark:text-gray-400">
-                          <span className="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">{item.category}</span>
-                          <span>•</span>
-                          <span>{formatFileSize(item.fileSize)}</span>
-                          <span>•</span>
-                          <span>{new Date(item.uploadedAt).toLocaleDateString('id-ID')}</span>
+              {materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).length > 0 ? (
+                materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).map((item) => (
+                  <div key={item.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3 flex-1">
+                        <div
+                          className={`p-2 rounded-lg ${
+                            getFileIcon(item.fileType) === 'PDF'
+                              ? 'bg-red-100 text-red-600 dark:bg-red-900/20'
+                              : getFileIcon(item.fileType) === 'DOCX'
+                              ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/20'
+                              : getFileIcon(item.fileType) === 'PPT'
+                              ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/20'
+                              : 'bg-purple-100 text-purple-600 dark:bg-purple-900/20'
+                          }`}
+                        >
+                          <DocumentTextIcon />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-900 dark:text-white line-clamp-1 cursor-pointer hover:text-blue-600" onClick={() => handleShowMaterialDetails(item)}>
+                            {item.title}
+                          </h4>
+                          <div className="flex items-center gap-2 mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            <span className="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">{item.category}</span>
+                            <span>•</span>
+                            <span>{formatFileSize(item.fileSize)}</span>
+                            <span>•</span>
+                            <span>{new Date(item.uploadedAt).toLocaleDateString('id-ID')}</span>
+                          </div>
+                          
+                          {/* Enhancement indicators */}
+                          <div className="flex items-center gap-2 mt-2">
+                            {item.isShared && (
+                              <span className="text-xs px-2 py-1 bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-300 rounded">
+                                <ShareIcon className="w-3 h-3 inline mr-1" />
+                                Dibagikan
+                              </span>
+                            )}
+                            {item.currentVersion && (
+                              <span className="text-xs px-2 py-1 bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300 rounded">
+                                v{item.currentVersion}
+                              </span>
+                            )}
+                            {item.analytics && (
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                                👁️ {item.analytics.totalDownloads}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
+                      <div className="flex gap-1 ml-4">
+                        <button
+                          onClick={() => handleShowMaterialDetails(item)}
+                          className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
+                          title="Kelola materi"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item)}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
+                          title="Hapus Materi"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => handleDelete(item)}
-                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
-                      title="Hapus Materi"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
                   </div>
                 ))
               ) : (
                 <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-                  Belum ada materi yang diunggah.
+                  {selectedFolder ? `Belum ada materi di folder "${selectedFolder.name}".` : 'Belum ada materi yang diunggah.'}
                 </div>
               )}
             </div>
           </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {selectedView === 'templates' && (
+        <MaterialTemplatesLibrary
+          onShowToast={onShowToast}
+          onSelectTemplate={(template) => {
+            setNewTitle(template.title);
+            setNewDescription(template.description);
+            setNewCategory(template.category);
+            const subject = subjects.find(s => s.id === template.subjectId);
+            if (subject) {
+              setNewCategory(subject.name);
+              setNewSubjectId(subject.id);
+            }
+            setSelectedView('upload');
+            onShowToast(`Template "${template.title}" telah dimuat. Silakan unggah file Anda.`, 'success');
+          }}
+        />
+      )}
+
+      {selectedView === 'management' && selectedMaterial && (
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{selectedMaterial.title}</h3>
+                <p className="text-gray-500 dark:text-gray-400">{selectedMaterial.description}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setSelectedMaterial(null);
+                  setSelectedView('upload');
+                }}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <div className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Berbagi Materi</h4>
+                <MaterialSharing
+                  material={selectedMaterial}
+                  onShowToast={onShowToast}
+                  onSharingUpdate={fetchMaterials}
+                />
+              </div>
+              
+              <div>
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Kontrol Versi</h4>
+                <VersionControl
+                  material={selectedMaterial}
+                  onShowToast={onShowToast}
+                  onVersionUpdate={fetchMaterials}
+                />
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Analytics</h4>
+              <MaterialAnalytics
+                material={selectedMaterial}
+                onShowToast={onShowToast}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

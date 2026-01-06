@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
-import UsersIcon from './icons/UsersIcon';
+import { UsersIcon } from './icons/UsersIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { ArchiveBoxIcon } from './icons/ArchiveBoxIcon'; // New Icon
 import GradingManagement from './GradingManagement';

@@ -348,6 +348,81 @@ export interface Attendance {
   className?: string;
 }
 
+export interface MaterialFolder {
+  id: string;
+  name: string;
+  parentId?: string;
+  path: string;
+  description?: string;
+  color: string;
+  icon: string;
+  isPublic: boolean;
+  createdBy: string;
+  createdAt: string;
+  materialCount: number;
+  subfolders: MaterialFolder[];
+}
+
+export interface MaterialVersion {
+  id: string;
+  materialId: string;
+  version: string;
+  title: string;
+  description: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  changeLog: string;
+  createdBy: string;
+  createdAt: string;
+  isActive: boolean;
+}
+
+export interface MaterialSharing {
+  id: string;
+  materialId: string;
+  sharedWith: string[]; // User IDs
+  sharedBy: string;
+  permission: 'view' | 'edit' | 'admin';
+  sharedAt: string;
+  expiresAt?: string;
+}
+
+export interface MaterialTemplate {
+  id: string;
+  title: string;
+  description: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  category: string;
+  subjectId?: string;
+  isActive: boolean;
+  usageCount: number;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface MaterialAnalytics {
+  id: string;
+  materialId: string;
+  totalDownloads: number;
+  uniqueUsers: number;
+  averageRating: number;
+  totalReviews: number;
+  lastAccessed: string;
+  dailyStats: {
+    date: string;
+    downloads: number;
+    uniqueUsers: number;
+  }[];
+  monthlyStats: {
+    month: string;
+    downloads: number;
+    uniqueUsers: number;
+  }[];
+}
+
 export interface ELibrary {
   id: string;
   title: string;
@@ -360,6 +435,13 @@ export interface ELibrary {
   uploadedBy: string;
   uploadedAt: string;
   downloadCount: number;
+  folderId?: string;
+  isShared: boolean;
+  sharedWith?: string[];
+  currentVersion?: string;
+  versions?: MaterialVersion[];
+  analytics?: MaterialAnalytics;
+  templates?: MaterialTemplate[];
 }
 
 export interface Announcement {

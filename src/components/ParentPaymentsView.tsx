@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import UserIcon from './icons/UserIcon';
+import { UserIcon } from './icons/UserIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { ToastType } from './Toast';

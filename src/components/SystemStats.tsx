@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { ChartBarIcon } from './icons/ChartBarIcon';
-import UsersIcon from './icons/UsersIcon';
+import { UsersIcon } from './icons/UsersIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
