@@ -42,16 +42,21 @@ export const INITIAL_NEWS: LatestNews[] = [
 
 export const getRelatedLinks = async () => {
     const [
-        { default: DocumentTextIcon },
-        { default: BuildingLibraryIcon },
-        { default: ClipboardDocumentCheckIcon },
-        { default: UsersIcon }
+        DocumentTextIconModule,
+        BuildingLibraryIconModule,
+        ClipboardDocumentCheckIconModule,
+        UsersIconModule
     ] = await Promise.all([
         import('../components/icons/DocumentTextIcon'),
         import('../components/icons/BuildingLibraryIcon'),
         import('../components/icons/ClipboardDocumentCheckIcon'),
         import('../components/icons/UsersIcon')
     ]);
+
+    const DocumentTextIcon = DocumentTextIconModule.default;
+    const BuildingLibraryIcon = BuildingLibraryIconModule.default;
+    const ClipboardDocumentCheckIcon = ClipboardDocumentCheckIconModule.default;
+    const UsersIcon = UsersIconModule.default;
 
     return [
         {

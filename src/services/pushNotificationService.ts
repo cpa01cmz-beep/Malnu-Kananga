@@ -26,6 +26,18 @@ class PushNotificationService {
   private analytics: Map<string, NotificationAnalytics> = new Map();
 
   constructor() {
+    // Initialize all properties first
+    this.swRegistration = null;
+    this.subscription = null;
+    this.batches = new Map();
+    this.templates = new Map();
+    this.analytics = new Map();
+    
+    // Then call initialization methods
+    this.initialize();
+  }
+
+  private initialize(): void {
     this.loadSubscription();
     this.loadBatches();
     this.loadTemplates();

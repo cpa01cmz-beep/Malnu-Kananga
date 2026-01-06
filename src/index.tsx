@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { logger } from './utils/logger';
+import './style.css';
 // Import registration function
 import { registerSW } from 'virtual:pwa-register';
 
