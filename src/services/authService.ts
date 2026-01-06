@@ -1,11 +1,13 @@
 import { authAPI } from './apiService';
 import { logger } from '../utils/logger';
+import { UserRole, UserExtraRole } from '../types/permissions';
 
 export interface User {
   id?: string;
   email: string;
   name?: string;
-  role?: 'admin' | 'teacher' | 'student';
+  role?: UserRole | 'admin' | 'teacher' | 'student';
+  extraRole?: UserExtraRole;
   status?: 'active' | 'inactive';
 }
 

@@ -29,6 +29,7 @@ import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './typ
 import { STORAGE_KEYS } from './constants';
 import useLocalStorage from './hooks/useLocalStorage';
 import { api } from './services/apiService';
+import { permissionService } from './services/permissionService';
 
 // Auth Session Interface
 interface AuthSession {
@@ -131,9 +132,21 @@ const App: React.FC = () => {
   };
 
   const handleLoginSuccess = (role: UserRole, extraRole: UserExtraRole = null) => {
+    // Validate role combination
+    if (!permissionService.isValidRoleCombination(role, extraRole)) {
+      showToast('Kombinasi peran tidak valid.', 'error');
+      return;
+    }
+
     setAuthSession({ loggedIn: true, role, extraRole });
     setIsLoginOpen(false);
     setIsPublicView(false); 
+    
+    // Log successful login
+    permissionService.hasPermission(role, extraRole, 'system.admin', {
+      userId: 'current-user',
+      ip: window.location.hostname
+    });
     
     let roleName = role === 'admin' ? 'Administrator' : role === 'teacher' ? 'Guru' : role === 'parent' ? 'Wali Murid' : 'Siswa';
     if (extraRole === 'staff') roleName += ' (Staff)';
@@ -171,8 +184,23 @@ const App: React.FC = () => {
     }
   };
 
-  // Helper to render the correct dashboard based on role
+  // Helper to render the correct dashboard based on role with permission checks
   const renderDashboard = () => {
+      // Validate user can access dashboard
+      const dashboardAccess = permissionService.canAccessResource(
+        userRole!, 
+        userExtraRole!, 
+        'content', 
+        'read', 
+        { userId: 'current-user', ip: window.location.hostname }
+      );
+      
+      if (!dashboardAccess.granted) {
+        showToast('Anda tidak memiliki akses ke dashboard.', 'error');
+        handleLogout();
+        return null;
+      }
+
       switch (userRole) {
           case 'admin':
               return (
