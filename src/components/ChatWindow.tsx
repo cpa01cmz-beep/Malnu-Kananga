@@ -298,29 +298,29 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               </div>
             )}
 
-             {synthesis.isSupported && (
-               <button
-                  onClick={() => setShowVoiceSettings(!showVoiceSettings)}
-                  className={`p-2 rounded-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white/50 active:scale-95 hover:scale-105 ${showVoiceSettings ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
-                  title="Pengaturan Suara"
-                  aria-label="Buka pengaturan suara"
-                >
-                 <SpeakerWaveIcon className="w-4 h-4" />
+              {synthesis.isSupported && (
+                <button
+                   onClick={() => setShowVoiceSettings(!showVoiceSettings)}
+                   className={`p-2 rounded-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white/50 active:scale-95 hover:scale-[1.02] ${showVoiceSettings ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
+                   title="Pengaturan Suara"
+                   aria-label="Buka pengaturan suara"
+                 >
+                  <SpeakerWaveIcon className="w-4 h-4" />
                </button>
-             )}
+              )}
 
-            <button
-                onClick={() => setIsThinkingMode(!isThinkingMode)}
-                className={`p-2 rounded-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white/50 active:scale-95 hover:scale-105 ${isThinkingMode ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
-                title={isThinkingMode ? "Mode Berpikir Dalam: Aktif" : "Aktifkan Mode Berpikir Dalam"}
-            >
-                <BrainIcon className="w-4 h-4" />
-                {isThinkingMode && <span className="text-xs font-semibold px-1">Thinking</span>}
-            </button>
+              <button
+                  onClick={() => setIsThinkingMode(!isThinkingMode)}
+                  className={`p-2 rounded-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white/50 active:scale-95 hover:scale-[1.02] ${isThinkingMode ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
+                  title={isThinkingMode ? "Mode Berpikir Dalam: Aktif" : "Aktifkan Mode Berpikir Dalam"}
+              >
+                  <BrainIcon className="w-4 h-4" />
+                  {isThinkingMode && <span className="text-xs font-semibold px-1">Thinking</span>}
+              </button>
 
-            <button onClick={closeChat} className="p-2 rounded-lg hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 active:scale-95 transition-all duration-200 hover:scale-105" aria-label="Tutup obrolan">
-                <CloseIcon />
-            </button>
+              <button onClick={closeChat} className="p-2 rounded-lg hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 active:scale-95 transition-all duration-200 hover:scale-[1.02]" aria-label="Tutup obrolan">
+                  <CloseIcon />
+              </button>
         </div>
       </header>
 
@@ -386,20 +386,20 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
            {synthesis.isSupported && messages.some((msg) => msg.sender === Sender.AI) && !voiceQueue.isPlaying && (
               <button
                 onClick={() => {
-                  const aiMessages = messages.filter((msg) => msg.sender === Sender.AI);
-                  if (aiMessages.length > 0) {
-                    voiceQueue.addMessages(aiMessages);
-                    synthesis.speak(`Membaca ${aiMessages.length} pesan`);
-                  }
-                }}
-                className="p-2.5 mb-0.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-all duration-200 ease-out flex-shrink-0 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 hover:-translate-y-0.5"
-                title="Baca semua pesan AI"
-                aria-label="Baca semua pesan AI"
-              >
+                   const aiMessages = messages.filter((msg) => msg.sender === Sender.AI);
+                   if (aiMessages.length > 0) {
+                     voiceQueue.addMessages(aiMessages);
+                     synthesis.speak(`Membaca ${aiMessages.length} pesan`);
+                   }
+                 }}
+                 className="p-2.5 mb-0.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-all duration-200 ease-out flex-shrink-0 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 hover:scale-[1.02]"
+                 title="Baca semua pesan AI"
+                 aria-label="Baca semua pesan AI"
+               >
                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                   <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                </svg>
-              </button>
+             </button>
             )}
         </div>
       </div>

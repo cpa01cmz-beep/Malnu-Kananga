@@ -176,11 +176,11 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
           </div>
         ) : error ? (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-card p-6 text-center">
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
             <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-red-600 text-white rounded-card hover:bg-red-700 transition-colors"
+              className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
             >
               Coba Lagi
             </button>
@@ -213,33 +213,33 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                 </div>
 
                 {/* Dashboard Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {menuItems.map((item) => (
-                    <div key={item.title} onClick={item.action} className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 border border-neutral-200 dark:border-neutral-700 flex flex-col items-start cursor-pointer group hover:-translate-y-0.5">
-                      <div className={`p-3 rounded-xl ${item.color} mb-4`}>
-                         <div className="w-8 h-8">{item.icon}</div>
-                      </div>
-                      <div className="flex justify-between w-full items-start">
-                         <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">{item.title}</h3>
-                         {item.active && <span className="text-[10px] bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300 px-2 py-0.5 rounded-full font-semibold">Aktif</span>}
-                      </div>
-                      <p className="text-sm text-neutral-500 dark:text-neutral-400">{item.description}</p>
-                    </div>
-                  ))}
+                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                   {menuItems.map((item) => (
+                     <div key={item.title} onClick={item.action} className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 border border-neutral-200 dark:border-neutral-700 flex flex-col items-start cursor-pointer group hover:-translate-y-1 hover:scale-[1.02]">
+                       <div className={`p-3 rounded-xl ${item.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                          <div className="w-8 h-8">{item.icon}</div>
+                       </div>
+                       <div className="flex justify-between w-full items-start">
+                          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">{item.title}</h3>
+                          {item.active && <span className="text-[10px] bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300 px-2 py-0.5 rounded-full font-semibold">Aktif</span>}
+                       </div>
+                       <p className="text-sm text-neutral-500 dark:text-neutral-400">{item.description}</p>
+                     </div>
+                   ))}
 
                   {/* OSIS Special Menu */}
-                  {extraRole === 'osis' && checkPermission('osis.events') && (
-                      <div onClick={() => setCurrentView('osis')} className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 p-6 rounded-xl shadow-card border border-orange-200 dark:border-orange-800 hover:shadow-card-hover transition-all duration-300 flex flex-col items-start cursor-pointer group hover:-translate-y-0.5">
-                          <div className="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 p-3 rounded-xl mb-4">
-                             <div className="w-8 h-8"><CalendarDaysIcon /></div>
-                          </div>
-                          <div className="flex justify-between w-full items-start">
-                             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Kegiatan OSIS</h3>
-                               <span className="text-[10px] bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300 px-2 py-0.5 rounded-full font-semibold">Extra</span>
-                          </div>
-                          <p className="text-sm text-neutral-500 dark:text-neutral-400">Kelola event dan proker sekolah.</p>
-                      </div>
-                   )}
+                   {extraRole === 'osis' && checkPermission('osis.events') && (
+                       <div onClick={() => setCurrentView('osis')} className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 p-6 rounded-xl shadow-card border border-orange-200 dark:border-orange-800 hover:shadow-card-hover transition-all duration-300 flex flex-col items-start cursor-pointer group hover:-translate-y-1 hover:scale-[1.02]">
+                           <div className="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 p-3 rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                              <div className="w-8 h-8"><CalendarDaysIcon /></div>
+                           </div>
+                           <div className="flex justify-between w-full items-start">
+                              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Kegiatan OSIS</h3>
+                                <span className="text-[10px] bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300 px-2 py-0.5 rounded-full font-semibold">Extra</span>
+                           </div>
+                           <p className="text-sm text-neutral-500 dark:text-neutral-400">Kelola event dan proker sekolah.</p>
+                       </div>
+                    )}
                   </div>
             </>
         )}

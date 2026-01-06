@@ -123,10 +123,10 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
     <div className="animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
             <div>
-                <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">← Kembali</button>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Pengguna</h2>
+                <button onClick={onBack} className="text-sm text-neutral-500 hover:text-primary-600 mb-2 flex items-center gap-1 transition-colors">← Kembali</button>
+                <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Manajemen Pengguna</h2>
             </div>
-            <button onClick={handleAddUser} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors shadow-md">
+            <button onClick={handleAddUser} className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95">
                 <PlusIcon className="w-5 h-5" /> <span className="hidden sm:inline">Tambah</span>
             </button>
         </div>
@@ -138,15 +138,15 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
             </div>
         )}
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
             <div className="overflow-x-auto">
                 {isLoading ? (
                     <div className="flex items-center justify-center py-12">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
                     </div>
                 ) : (
-                    <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                        <thead className="bg-gray-50 dark:bg-gray-700 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
+                    <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
+                        <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
                             <tr>
                                 <th className="px-6 py-4">Nama</th>
                                 <th className="px-6 py-4">Role Utama</th>
@@ -154,17 +154,17 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                                 <th className="px-6 py-4 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                        <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
                             {filteredUsers.map((user) => (
-                                <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                <tr key={user.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
+                                    <td className="px-6 py-4 font-medium text-neutral-900 dark:text-white">
                                         {user.name}
-                                        <div className="text-xs text-gray-500 font-normal">{user.email}</div>
+                                        <div className="text-xs text-neutral-500 font-normal">{user.email}</div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${
                                             user.role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                                            user.role === 'teacher' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700'
+                                            user.role === 'teacher' ? 'bg-blue-100 text-blue-700' : 'bg-neutral-100 text-neutral-700'
                                         }`}>
                                             {user.role}
                                         </span>
@@ -176,7 +176,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                                                 user.extraRole === 'osis' ? 'bg-orange-100 text-orange-700' :
                                                 user.extraRole === 'wakasek' ? 'bg-purple-100 text-purple-700' :
                                                 user.extraRole === 'kepsek' ? 'bg-red-100 text-red-700' :
-                                                'bg-gray-100 text-gray-700'
+                                                'bg-neutral-100 text-neutral-700'
                                             }`}>
                                                 {user.extraRole === 'staff' ? 'Staff' : 
                                                  user.extraRole === 'osis' ? 'OSIS' :
@@ -184,11 +184,11 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                                                  user.extraRole === 'kepsek' ? 'Kepsek' :
                                                  user.extraRole}
                                             </span>
-                                        ) : <span className="text-gray-400">-</span>}
+                                        ) : <span className="text-neutral-400">-</span>}
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <button onClick={() => handleEditUser(user)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded mr-2"><PencilIcon /></button>
-                                        <button onClick={() => handleDeleteUser(user.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded"><TrashIcon /></button>
+                                        <button onClick={() => handleEditUser(user)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500/50"><PencilIcon /></button>
+                                        <button onClick={() => handleDeleteUser(user.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-500/50"><TrashIcon /></button>
                                     </td>
                                 </tr>
                             ))}
@@ -199,32 +199,32 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
         </div>
 
         {isModalOpen && (
-            <div className="fixed inset-0 bg-gray-900/75 flex items-center justify-center z-50 p-4" onClick={() => setIsModalOpen(false)}>
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md animate-scale-in" onClick={e => e.stopPropagation()}>
-                    <div className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">{isEditing ? 'Edit User' : 'Tambah User'}</h3>
-                        <button onClick={() => setIsModalOpen(false)} className="p-2"><CloseIcon /></button>
+            <div className="fixed inset-0 bg-neutral-900/75 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setIsModalOpen(false)}>
+                <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-float w-full max-w-md animate-scale-in" onClick={e => e.stopPropagation()}>
+                    <div className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700">
+                        <h3 className="text-lg font-bold text-neutral-900 dark:text-white">{isEditing ? 'Edit User' : 'Tambah User'}</h3>
+                        <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-lg text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500/50"><CloseIcon /></button>
                     </div>
                     <form onSubmit={handleSaveUser} className="p-6 space-y-4">
                         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
                         <div>
-                            <label htmlFor="user-name" className="block text-sm font-medium mb-1 dark:text-gray-300">Nama</label>
-                            <input id="user-name" name="name" required value={currentUser.name} onChange={e => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600" autoComplete="name" />
+                            <label htmlFor="user-name" className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Nama</label>
+                            <input id="user-name" name="name" required value={currentUser.name} onChange={e => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500" autoComplete="name" />
                         </div>
                         <div>
-                            <label htmlFor="user-email" className="block text-sm font-medium mb-1 dark:text-gray-300">Email</label>
-                            <input id="user-email" name="email" required type="email" value={currentUser.email} onChange={e => setCurrentUser({...currentUser, email: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600" autoComplete="email" />
+                            <label htmlFor="user-email" className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Email</label>
+                            <input id="user-email" name="email" required type="email" value={currentUser.email} onChange={e => setCurrentUser({...currentUser, email: e.target.value})} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500" autoComplete="email" />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium mb-1 dark:text-gray-300">Role Utama</label>
+                                <label className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Role Utama</label>
                                 <select
                                     value={currentUser.role}
                                     onChange={e => {
                                         const r = e.target.value as UserRole;
                                         setCurrentUser({...currentUser, role: r, extraRole: null});
                                     }}
-                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                                    className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium"
                                 >
                                     <option value="student">Siswa</option>
                                     <option value="teacher">Guru</option>
@@ -232,11 +232,11 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium mb-1 dark:text-gray-300">Tugas Tambahan</label>
+                                <label className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Tugas Tambahan</label>
                                 <select
                                     value={currentUser.extraRole || ''}
                                     onChange={e => setCurrentUser({...currentUser, extraRole: (e.target.value as UserExtraRole) || undefined})}
-                                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                                    className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium"
                                     disabled={currentUser.role === 'admin'}
                                 >
                                     <option value="">- Tidak Ada -</option>
@@ -247,7 +247,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                                 </select>
                             </div>
                         </div>
-                        <button type="submit" disabled={isSaving} className="w-full py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold mt-4 disabled:bg-gray-400">
+                        <button type="submit" disabled={isSaving} className="w-full py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 font-semibold transition-all duration-200 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 disabled:opacity-70 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">
                             {isSaving ? 'Menyimpan...' : 'Simpan'}
                         </button>
                     </form>
