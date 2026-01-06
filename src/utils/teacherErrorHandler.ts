@@ -19,7 +19,7 @@ export interface RetryConfig {
   shouldRetry?: (error: Error) => boolean;
 }
 
-export interface AsyncOperation<T = any> {
+export interface AsyncOperation<T> {
   operation: () => Promise<T>;
   onSuccess?: (data: T) => void;
   onError?: (error: Error) => void;
@@ -99,25 +99,27 @@ export const executeWithRetry = async <T>(asyncOp: AsyncOperation<T>): Promise<O
 /**
  * Handles API errors and provides user-friendly messages
  */
-export const handleApiError = (error: any): string => {
+export const handleApiError = (error: unknown): string => {
   if (!error) {
     return 'Terjadi kesalahan yang tidak diketahui';
   }
 
+  const err = error as { name?: string; message?: string; status?: number };
+
   // Network errors
-  if (error.name === 'TypeError' && error.message.includes('fetch')) {
+  if (err.name === 'TypeError' && err.message?.includes('fetch')) {
     return 'Koneksi Internet gagal. Periksa koneksi Anda dan coba lagi.';
   }
 
-  if (error.name === 'AbortError') {
+  if (err.name === 'AbortError') {
     return 'Operasi dibatalkan karena terlalu lama. Coba lagi.';
   }
 
   // HTTP status errors
-  if (error.status) {
-    switch (error.status) {
+  if (err.status) {
+    switch (err.status) {
       case 400:
-        return error.message || 'Data yang dikirim tidak valid. Periksa kembali input Anda.';
+        return err.message || 'Data yang dikirim tidak valid. Periksa kembali input Anda.';
       case 401:
         return 'Sesi Anda telah berakhir. Silakan login kembali.';
       case 403:
@@ -127,7 +129,7 @@ export const handleApiError = (error: any): string => {
       case 409:
         return 'Konflik data. Mungkin ada perubahan yang dilakukan oleh pengguna lain.';
       case 422:
-        return error.message || 'Validasi gagal. Periksa kembali input Anda.';
+        return err.message || 'Validasi gagal. Periksa kembali input Anda.';
       case 429:
         return 'Terlalu banyak permintaan. Silakan tunggu beberapa saat dan coba lagi.';
       case 500:
@@ -139,20 +141,20 @@ export const handleApiError = (error: any): string => {
       case 504:
         return 'Server terlalu lama merespons. Silakan coba lagi.';
       default:
-        return `Terjadi kesalahan (${error.status}). Silakan coba lagi.`;
+        return `Terjadi kesalahan (${err.status}). Silakan coba lagi.`;
     }
   }
 
   // Generic error messages
-  if (error.message) {
+  if (err.message) {
     // Don't expose technical error details to users
-    if (error.message.includes('JSON') || 
-        error.message.includes('parse') || 
-        error.message.includes('syntax')) {
+    if (err.message.includes('JSON') ||
+        err.message.includes('parse') ||
+        err.message.includes('syntax')) {
       return 'Format data tidak valid. Hubungi administrator jika masalah berlanjut.';
     }
 
-    return error.message;
+    return err.message;
   }
 
   return 'Terjadi kesalahan. Silakan coba lagi.';
@@ -166,7 +168,7 @@ export const createToastHandler = (
 ) => ({
   success: (message: string) => showToast(message, 'success'),
   info: (message: string) => showToast(message, 'info'),
-  error: (error: string | Error | any) => {
+  error: (error: string | Error | unknown) => {
     const message = handleApiError(error);
     showToast(message, 'error');
   },
@@ -182,7 +184,7 @@ export const createToastHandler = (
 /**
  * Debounce utility for preventing rapid sequential operations
  */
-export const debounce = <T extends (...args: any[]) => any>(
+export const debounce = <T extends (...args: unknown[]) => unknown>(
   func: T,
   delay: number
 ): ((...args: Parameters<T>) => void) => {
@@ -197,7 +199,7 @@ export const debounce = <T extends (...args: any[]) => any>(
 /**
  * Throttle utility for limiting operation frequency
  */
-export const throttle = <T extends (...args: any[]) => any>(
+export const throttle = <T extends (...args: unknown[]) => unknown>(
   func: T,
   delay: number
 ): ((...args: Parameters<T>) => void) => {
