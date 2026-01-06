@@ -3,21 +3,28 @@
 
 Berikut adalah daftar fitur yang tersedia berdasarkan peran pengguna.
 
-| Fitur | Publik | Siswa | Guru | Admin |
-| :--- | :---: | :---: | :---: | :---: |
-| **Akses Landing Page** | ✅ | ✅ | ✅ | ✅ |
-| **Asisten Chat AI** | ✅ | ✅ | ✅ | ✅ |
-| **Portal Dashboard** | ❌ | ✅ | ✅ | ✅ |
-| **Jadwal Pelajaran** | ❌ | ✅ | ❌ | ✅ |
-| **Input Nilai** | ❌ | ✅ (View) | ✅ (Aktif) | ✅ (View) |
-| **Wali Kelas** | ❌ | ❌ | ✅ (Aktif) | ❌ |
-| **Upload Materi** | ❌ | ❌ | ✅ (Aktif) | ❌ |
-| **E-Library** | ❌ | ✅ (Download) | ❌ | ❌ |
-| **PPDB Online** | ✅ (Daftar) | ❌ | ❌ | ✅ (Kelola) |
-| **AI Site Editor** | ❌ | ❌ | ❌ | ✅ |
-| **Manajemen User** | ❌ | ❌ | ❌ | ✅ |
-| **Manajemen Inventaris**| ❌ | ❌ | ✅ (**Role Staff**) | ❌ |
-| **Kegiatan OSIS** | ❌ | ✅ (**Role OSIS**) | ❌ | ❌ |
+## Matriks Fitur (Feature Matrix)
+
+Berikut adalah daftar fitur yang tersedia berdasarkan peran pengguna.
+
+| Fitur | Publik | Siswa | Guru | Admin | Parent |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Akses Landing Page** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Asisten Chat AI** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Portal Dashboard** | ❌ | ✅ | ✅ | ✅ | ✅ |
+| **Jadwal Pelajaran** | ❌ | ✅ | ❌ | ✅ | ✅ |
+| **Input Nilai** | ❌ | ✅ (View) | ✅ (Aktif) | ✅ (View) | ❌ |
+| **Wali Kelas** | ❌ | ❌ | ✅ (Aktif) | ❌ | ❌ |
+| **Upload Materi** | ❌ | ❌ | ✅ (Aktif) | ❌ | ❌ |
+| **E-Library** | ❌ | ✅ (Download) | ❌ | ❌ | ❌ |
+| **PPDB Online** | ✅ (Daftar) | ❌ | ❌ | ✅ (Kelola) | ❌ |
+| **AI Site Editor** | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **Manajemen User** | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **Manajemen Inventaris**| ❌ | ❌ | ✅ (**Role Staff**) | ❌ | ❌ |
+| **Kegiatan OSIS** | ❌ | ✅ (**Role OSIS**) | ❌ | ❌ | ❌ |
+| **Absensi** | ❌ | ✅ (View) | ✅ (Input) | ✅ (View) | ✅ (View) |
+| **Notifikasi** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Kehadiran** | ❌ | ✅ (View) | ✅ (Input) | ✅ (View) | ✅ (View) |
 
 ## Fitur Baru: Secondary Roles
 

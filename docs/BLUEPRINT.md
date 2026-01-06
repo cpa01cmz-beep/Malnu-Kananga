@@ -101,7 +101,7 @@ src/
 ### 3.4 Sistem Penilaian & Rapor
 - Input Nilai (Tugas, UTS, UAS)
 - Kalkulasi Rapor otomatis
-- Distribusi Rapor digital ke wali murid
+- Distribusi Rapor digital ke parent (wali murid)
 - Analisis Performa akademik
 
 ### 3.5 Manajemen Keuangan
@@ -201,7 +201,7 @@ src/
 | **Administrator** | Semua modul | Manajemen sistem, user, data master |
 | **Guru** | Akademik, penilaian, presensi, komunikasi | Input nilai, kehadiran, pembelajaran |
 | **Siswa** | Portal siswa, tugas, forum, akademik | Mengikuti pembelajaran, melihat nilai |
-| **Wali Murid** | Portal orang tua, rapor, pengumuman | Monitoring prestasi anak |
+| **Parent (Wali Murid)** | Portal orang tua, rapor, pengumuman | Monitoring prestasi anak |
 | **Staff (Guru Tambahan)** | Inventaris | Manajemen aset sekolah |
 | **OSIS (Siswa Tambahan)** | Kegiatan OSIS | Menjadwalkan acara sekolah |
 
