@@ -298,30 +298,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               </div>
             )}
 
-            {synthesis.isSupported && (
-              <button
-                 onClick={() => setShowVoiceSettings(!showVoiceSettings)}
-                 className={`p-2 rounded-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white/50 active:scale-95 hover:scale-105 ${showVoiceSettings ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
-                 title="Pengaturan Suara"
-                 aria-label="Buka pengaturan suara"
-               >
-                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-            )}
-
-            {synthesis.isSupported && (
-              <button
-                 onClick={() => setShowVoiceSettings(!showVoiceSettings)}
-                 className={`p-2 rounded-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white/50 active:scale-95 ${showVoiceSettings ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
-                 title="Pengaturan Suara"
-                 aria-label="Buka pengaturan suara"
-               >
-                <SpeakerWaveIcon className="w-4 h-4" />
-              </button>
-            )}
+             {synthesis.isSupported && (
+               <button
+                  onClick={() => setShowVoiceSettings(!showVoiceSettings)}
+                  className={`p-2 rounded-lg transition-all duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white/50 active:scale-95 hover:scale-105 ${showVoiceSettings ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
+                  title="Pengaturan Suara"
+                  aria-label="Buka pengaturan suara"
+                >
+                 <SpeakerWaveIcon className="w-4 h-4" />
+               </button>
+             )}
 
             <button
                 onClick={() => setIsThinkingMode(!isThinkingMode)}
