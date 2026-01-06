@@ -1,0 +1,160 @@
+{
+  "rules": [
+    {
+      "name": "TypeScript strict mode",
+      "description": "Always use TypeScript strict mode and proper type annotations",
+      "pattern": "Ensure all code is properly typed with TypeScript. Avoid 'any' types. Use interfaces or type aliases for complex types. Use generics when appropriate. Never suppress TypeScript errors with @ts-ignore unless absolutely necessary and documented.",
+      "priority": "high"
+    },
+    {
+      "name": "Storage keys constants",
+      "description": "Always use STORAGE_KEYS from constants.ts for localStorage",
+      "pattern": "Never hardcode localStorage keys. Always import and use constants from src/constants.ts. This prevents typos and ensures consistency across the codebase.",
+      "priority": "high"
+    },
+    {
+      "name": "Error handling",
+      "description": "Use centralized error handling",
+      "pattern": "Import and use errorHandler.ts from utils for consistent error handling. Always catch and log errors appropriately. Provide meaningful error messages to users.",
+      "priority": "high"
+    },
+    {
+      "name": "Logging",
+      "description": "Use logger utility for consistent logging",
+      "pattern": "Import and use logger.ts from utils for all logging. Use appropriate log levels (error, warn, info, debug). Include context in log messages.",
+      "priority": "medium"
+    },
+    {
+      "name": "Service patterns",
+      "description": "Follow existing service patterns",
+      "pattern": "When creating services in src/services/, follow the patterns in apiService.ts: proper TypeScript types, error handling, async/await, clear function naming, and comprehensive test coverage.",
+      "priority": "high"
+    },
+    {
+      "name": "Naming conventions",
+      "description": "Follow project naming conventions",
+      "pattern": "Use UPPER_SNAKE_CASE for constants and configuration values. Use camelCase for functions, variables, services, and hooks. Use PascalCase for React components and TypeScript interfaces/types.",
+      "priority": "high"
+    },
+    {
+      "name": "Voice feature patterns",
+      "description": "Follow voice feature implementation patterns",
+      "pattern": "When working with voice features: use VOICE_CONFIG constants from src/constants.ts, handle browser compatibility checks (Chrome/Edge/Safari), support Indonesian language by default, implement proper error messages from VOICE_COMMANDS, and use speechRecognitionService.ts/speechSynthesisService.ts patterns.",
+      "priority": "medium"
+    },
+    {
+      "name": "API service usage",
+      "description": "Always use apiService.ts for backend interactions",
+      "pattern": "Don't make direct fetch calls. Use the centralized apiService.ts for all API interactions. This ensures consistent authentication, error handling, and token refresh across the application.",
+      "priority": "high"
+    },
+    {
+      "name": "React hooks",
+      "description": "Follow React hooks best practices",
+      "pattern": "Follow the rules of hooks: only call hooks at the top level, only call hooks from React functions. Use custom hooks from src/hooks/ for reusable logic. Properly define dependencies in useEffect, useCallback, useMemo.",
+      "priority": "high"
+    },
+    {
+      "name": "Permission checks",
+      "description": "Always verify permissions for protected features",
+      "pattern": "Use permissionService.ts to check user permissions before allowing access to features. Maintain permission definitions in src/config/permissions.ts. Support role-based access control.",
+      "priority": "high"
+    },
+    {
+      "name": "Component testing",
+      "description": "Write tests for all components",
+      "pattern": "Every React component should have corresponding tests in __tests__ folders. Use React Testing Library. Test user interactions, props rendering, and edge cases. Maintain good test coverage.",
+      "priority": "medium"
+    },
+    {
+      "name": "Service testing",
+      "description": "Write tests for all services",
+      "pattern": "Every service should have corresponding tests in src/services/__tests__/. Test async functions, error cases, and edge cases. Mock external dependencies like API calls.",
+      "priority": "medium"
+    },
+    {
+      "name": "PWA offline support",
+      "description": "Ensure PWA features work offline",
+      "pattern": "When implementing PWA features: use localStorage keys from STORAGE_KEYS for offline data, implement proper service worker integration, handle network errors gracefully, provide user feedback for offline status using networkStatus.ts.",
+      "priority": "medium"
+    },
+    {
+      "name": "AI/LLM integration",
+      "description": "Follow geminiService.ts patterns for AI features",
+      "pattern": "When implementing AI features: use geminiService.ts for API calls, implement proper error handling, consider rate limiting and caching, use appropriate prompt engineering, and provide clear error messages to users.",
+      "priority": "medium"
+    },
+    {
+      "name": "JWT authentication",
+      "description": "Follow JWT authentication patterns",
+      "pattern": "Use apiService.ts for token management. Implement proper token refresh logic. Check token expiration before making requests. Handle authentication errors gracefully (redirect to login if needed).",
+      "priority": "high"
+    },
+    {
+      "name": "Notification patterns",
+      "description": "Follow push notification patterns",
+      "pattern": "Use pushNotificationService.ts for notifications. Respect user notification settings from NOTIFICATION_CONFIG constants. Implement quiet hours if configured. Use proper notification icons from NOTIFICATION_ICONS.",
+      "priority": "low"
+    },
+    {
+      "name": "Type exports",
+      "description": "Export types from centralized files",
+      "pattern": "Type definitions should be in centralized location: src/types.ts or src/types/ folder. Export types that are used across multiple files. Avoid inline type definitions in multiple places.",
+      "priority": "medium"
+    },
+    {
+      "name": "Environment variables",
+      "description": "Use environment variables for configuration",
+      "pattern": "Use VITE_ prefixed environment variables for build-time configuration. Access via import.meta.env. Define required env vars in .env.example or documentation. Never hardcode API keys or sensitive data.",
+      "priority": "high"
+    },
+    {
+      "name": "Tailwind CSS usage",
+      "description": "Use Tailwind CSS classes appropriately",
+      "pattern": "Use Tailwind utility classes for styling. Avoid custom CSS when possible. Use Tailwind's responsive prefixes (md:, lg:) appropriately. Keep component styling consistent with the design system.",
+      "priority": "medium"
+    },
+    {
+      "name": "React component structure",
+      "description": "Follow React component best practices",
+      "pattern": "Use functional components with hooks. Keep components focused and small. Extract complex logic into custom hooks. Use TypeScript interfaces for props. Implement proper accessibility (aria attributes, keyboard navigation).",
+      "priority": "medium"
+    },
+    {
+      "name": "Error boundaries",
+      "description": "Use error boundaries for error handling",
+      "pattern": "Wrap major features/components in error boundaries. Provide user-friendly error messages. Log errors for debugging. Consider recovery options (retry buttons, alternative paths).",
+      "priority": "low"
+    },
+    {
+      "name": "Form validation",
+      "description": "Follow form validation patterns",
+      "pattern": "Use existing validation patterns from the codebase (e.g., studentValidation.ts, teacherValidation.ts). Provide clear validation messages. Validate on both client and server sides.",
+      "priority": "medium"
+    },
+    {
+      "name": "Data migration",
+      "description": "Handle data migrations properly",
+      "pattern": "When migrating data structures, use migrationService.ts patterns if available. Handle edge cases in existing data. Provide rollback options. Test migrations thoroughly.",
+      "priority": "low"
+    },
+    {
+      "name": "Performance optimization",
+      "description": "Optimize for performance",
+      "pattern": "Use React.memo for expensive renders. Use useMemo and useCallback to optimize dependencies. Implement lazy loading for routes and components. Optimize images and assets.",
+      "priority": "medium"
+    },
+    {
+      "name": "Security",
+      "description": "Follow security best practices",
+      "pattern": "Never expose sensitive data. Validate all user inputs. Implement proper authentication and authorization. Use HTTPS in production. Run security scans before deployment. Handle errors without exposing stack traces to users.",
+      "priority": "high"
+    },
+    {
+      "name": "Documentation",
+      "description": "Document complex logic",
+      "pattern": "Add JSDoc comments for complex functions. Document API endpoints and their parameters. Document component props and usage examples. Update README and documentation when adding features.",
+      "priority": "low"
+    }
+  ]
+}

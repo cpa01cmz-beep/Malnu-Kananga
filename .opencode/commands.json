@@ -1,0 +1,114 @@
+{
+  "commands": [
+    {
+      "name": "test",
+      "description": "Run tests and verify everything passes",
+      "prompt": "Run the test suite using 'npm run test:run'. If there are any failing tests, analyze the failure and fix the issues. After fixing, run the tests again to confirm they pass."
+    },
+    {
+      "name": "typecheck",
+      "description": "Run TypeScript type checking",
+      "prompt": "Run TypeScript type checking using 'npm run typecheck'. If there are any type errors, analyze them and fix all issues. Ensure all fixes maintain type safety."
+    },
+    {
+      "name": "lint",
+      "description": "Run linting and fix issues",
+      "prompt": "Run linting using 'npm run lint:fix'. Review any linting issues and fix them. Ensure the code follows the project's linting rules and best practices."
+    },
+    {
+      "name": "full-check",
+      "description": "Run all quality checks (typecheck, lint, test)",
+      "prompt": "Run all quality checks in sequence: typecheck, lint:fix, and test:run. If any check fails, analyze and fix the issues. Then rerun all checks until everything passes."
+    },
+    {
+      "name": "build-verify",
+      "description": "Build the project and verify production readiness",
+      "prompt": "Build the production bundle using 'npm run build'. Verify there are no build errors or warnings. Check the dist folder is created correctly with all necessary assets."
+    },
+    {
+      "name": "backend-dev",
+      "description": "Start backend development server",
+      "prompt": "Start the Cloudflare Worker development server using 'npm run dev:backend'. Monitor for any startup errors or issues with the local development environment."
+    },
+    {
+      "name": "security-check",
+      "description": "Run security audit",
+      "prompt": "Run security scan using 'npm run security:scan'. Review any security vulnerabilities and provide recommendations for addressing them. Check for any exposed secrets or sensitive data."
+    },
+    {
+      "name": "add-service",
+      "description": "Add a new service following project conventions",
+      "prompt": "Create a new service file in src/services/ following the existing patterns in apiService.ts. Include proper TypeScript types, error handling using errorHandler.ts, and logging using logger.ts. Also create a test file in src/services/__tests__/."
+    },
+    {
+      "name": "add-component",
+      "description": "Add a new React component with tests",
+      "prompt": "Create a new React component in the appropriate location following the project's component patterns. Include proper TypeScript types and styling using Tailwind CSS. Also create a test file using React Testing Library in a __tests__ folder."
+    },
+    {
+      "name": "add-hook",
+      "description": "Add a new custom React hook with tests",
+      "prompt": "Create a new custom React hook in src/hooks/ following the existing patterns. Include proper TypeScript types and error handling. Also create a test file in src/hooks/__tests__/."
+    },
+    {
+      "name": "update-permissions",
+      "description": "Update permissions for a new feature",
+      "prompt": "When adding a new feature that requires permissions: 1) Update src/config/permissions.ts with the new permission, 2) Update permissionService.ts to handle the new permission check, 3) Document which roles have access to this feature."
+    },
+    {
+      "name": "api-endpoint",
+      "description": "Add a new API endpoint",
+      "prompt": "Add a new API endpoint to the codebase: 1) Update apiService.ts with the new endpoint function, 2) Add TypeScript types for request/response in types.ts or a new types file, 3) Update the Cloudflare Worker in worker.js to handle the new route, 4) Add tests for the new endpoint."
+    },
+    {
+      "name": "voice-feature",
+      "description": "Add voice recognition/synthesis feature",
+      "prompt": "Implement a voice feature following the patterns in speechRecognitionService.ts and speechSynthesisService.ts. Include proper error handling using VOICE_CONFIG constants, support for Indonesian language, and browser compatibility checks. Add tests and follow the project's voice command patterns."
+    },
+    {
+      "name": "ai-feature",
+      "description": "Add AI feature using Gemini API",
+      "prompt": "Implement an AI feature using geminiService.ts. Follow the existing patterns for API calls, error handling, and response processing. Include proper TypeScript types and tests. Consider caching strategies and rate limiting."
+    },
+    {
+      "name": "pwa-feature",
+      "description": "Add PWA functionality",
+      "prompt": "Implement PWA functionality ensuring offline support: 1) Use pushNotificationService.ts for notifications, 2) Implement proper service worker integration, 3) Add offline data storage using localStorage keys from STORAGE_KEYS, 4) Test offline functionality."
+    },
+    {
+      "name": "migrate-storage",
+      "description": "Migrate localStorage usage to API",
+      "prompt": "Migrate a feature from localStorage to backend API: 1) Identify the localStorage keys being used, 2) Update the service to use apiService.ts instead, 3) Handle data migration, 4) Add error handling for API failures with localStorage fallback, 5) Update tests accordingly."
+    },
+    {
+      "name": "review-code",
+      "description": "Review code for best practices",
+      "prompt": "Review the specified code or files for: 1) TypeScript type safety, 2) React best practices, 3) Performance optimizations, 4) Security concerns, 5) Accessibility, 6) Error handling, 7) Code style consistency with the project. Provide specific recommendations for improvements."
+    },
+    {
+      "name": "refactor",
+      "description": "Refactor code following project patterns",
+      "prompt": "Refactor the specified code following the project's established patterns. Ensure: 1) Proper TypeScript types are used, 2) Code follows the naming conventions (UPPER_SNAKE_CASE for constants, camelCase for services, PascalCase for components), 3) Error handling is consistent, 4) Logging is used appropriately, 5) Code is DRY and maintainable."
+    },
+    {
+      "name": "debug-test",
+      "description": "Debug failing test",
+      "prompt": "Analyze the failing test: 1) Read the test file and understand what's being tested, 2) Check the implementation code, 3) Identify why it's failing, 4) Fix the implementation or the test as appropriate, 5) Run the specific test to verify the fix, 6) Run all tests to ensure no regressions."
+    },
+    {
+      "name": "env-setup",
+      "description": "Set up environment variables",
+      "prompt": "Help set up environment variables: 1) Check if .env or .env.local exists, 2) List required environment variables from the codebase (VITE_API_BASE_URL, etc.), 3) Create or update the .env file with appropriate values, 4) Document the environment setup."
+    },
+    {
+      "name": "check-auth",
+      "description": "Review authentication implementation",
+      "prompt": "Review authentication implementation: 1) Check authService.ts for auth patterns, 2) Verify JWT token handling in apiService.ts, 3) Check token refresh logic, 4) Verify role-based access control using permissionService.ts, 5) Identify any security concerns or improvements needed."
+    },
+    {
+      "name": "optimize-performance",
+      "description": "Optimize component or service performance",
+      "prompt": "Analyze and optimize the performance of the specified component or service: 1) Check for unnecessary re-renders in React components, 2) Look for inefficient algorithms or data structures, 3) Check for proper memoization (useMemo, useCallback), 4) Review API calls for batching or caching opportunities, 5) Identify memory leaks or resource cleanup issues."
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "tools": [
+    {
+      "name": "generate-types",
+      "description": "Generate TypeScript types based on backend API response structure",
+      "command": "echo 'Use this tool to generate TypeScript types matching backend API responses. Read the worker.js file to understand API response structures, then generate corresponding TypeScript interfaces/types in the appropriate files (types.ts or specific type files).'",
+      "enabled": true
+    },
+    {
+      "name": "check-storage-keys",
+      "description": "Check if all localStorage keys are using STORAGE_KEYS constants",
+      "command": "grep -r 'localStorage\\.' src/ --include='*.ts' --include='*.tsx' -n | grep -v 'STORAGE_KEYS' || echo 'No hardcoded localStorage keys found'",
+      "enabled": true
+    },
+    {
+      "name": "generate-permission-doc",
+      "description": "Generate documentation for all permissions and their roles",
+      "command": "echo 'Read src/config/permissions.ts and src/services/permissionService.ts to generate a comprehensive permission matrix showing which roles have access to which features.'",
+      "enabled": true
+    },
+    {
+      "name": "find-untyped",
+      "description": "Find files with TypeScript 'any' type usage",
+      "command": "grep -r ': any' src/ --include='*.ts' --include='*.tsx' -n || echo 'No any types found'",
+      "enabled": true
+    },
+    {
+      "name": "check-missing-tests",
+      "description": "Find services/components without corresponding tests",
+      "command": "find src/services src/components -name '*.ts' -o -name '*.tsx' | while read f; do [ ! -f \"${f%.*}.test.ts\" ] && [ ! -d \"$(dirname $f)/__tests__\" ] && echo $f; done",
+      "enabled": true
+    },
+    {
+      "name": "generate-service-structure",
+      "description": "Generate a new service file with proper structure",
+      "command": "echo 'Generate a service file following apiService.ts patterns: imports, types, utility functions, main API functions, error handling with errorHandler.ts, logging with logger.ts'",
+      "enabled": true
+    },
+    {
+      "name": "find-hardcoded-urls",
+      "description": "Find hardcoded API URLs instead of using config",
+      "command": "grep -r 'https://\\|http://' src/ --include='*.ts' --include='*.tsx' -n | grep -v 'API_BASE_URL\\|config.ts' || echo 'No hardcoded URLs found'",
+      "enabled": true
+    },
+    {
+      "name": "check-env-vars",
+      "description": "Find all environment variable usage in the codebase",
+      "command": "grep -r 'import.meta.env' src/ --include='*.ts' --include='*.tsx' -n || echo 'No env vars found'",
+      "enabled": true
+    },
+    {
+      "name": "analyze-imports",
+      "description": "Analyze import patterns and dependencies",
+      "command": "grep -r '^import' src/ --include='*.ts' --include='*.tsx' | sort | uniq -c | sort -rn | head -20",
+      "enabled": true
+    },
+    {
+      "name": "find-unused-imports",
+      "description": "Find potentially unused imports",
+      "command": "npm run lint 2>&1 | grep 'unused-vars' | head -20 || echo 'No unused imports detected'",
+      "enabled": true
+    },
+    {
+      "name": "generate-component-doc",
+      "description": "Generate documentation for React components",
+      "command": "echo 'Analyze component props, usage patterns, and generate markdown documentation with examples'",
+      "enabled": true
+    },
+    {
+      "name": "check-voice-commands",
+      "description": "Verify all voice commands are registered",
+      "command": "echo 'Compare voice commands in src/constants.ts VOICE_COMMANDS with actual command parsing in voiceCommandParser.ts to ensure all commands are handled'",
+      "enabled": true
+    },
+    {
+      "name": "generate-api-client-code",
+      "description": "Generate TypeScript API client code from backend",
+      "command": "echo 'Read worker.js API routes and generate corresponding TypeScript API functions in apiService.ts with proper types',
+      "enabled": true
+    },
+    {
+      "name": "find-missing-error-handling",
+      "description": "Find async functions without proper error handling",
+      "command": "grep -r 'async function\\|const.*= async' src/ --include='*.ts' --include='*.tsx' -A 10 | grep -v 'try\\|catch\\|throw' | head -30",
+      "enabled": true
+    },
+    {
+      "name": "check-console-logs",
+      "description": "Find console.log usage (should use logger instead)",
+      "command": "grep -r 'console\\.log\\|console\\.error\\|console\\.warn' src/ --include='*.ts' --include='*.tsx' -n || echo 'No console.log found'",
+      "enabled": true
+    },
+    {
+      "name": "generate-test-mocks",
+      "description": "Generate test mocks for services",
+      "command": "echo 'Read a service file and generate appropriate mocks for testing: mock API responses, mock localStorage, mock dependencies'",
+      "enabled": true
+    },
+    {
+      "name": "check-type-exports",
+      "description": "Find types that should be exported",
+      "command": "echo 'Check src/types.ts and src/types/ for type definitions that are used in multiple files but not exported, or types defined inline that should be centralized'",
+      "enabled": true
+    },
+    {
+      "name": "find-large-files",
+      "description": "Find large files that might need refactoring",
+      "command": "find src/ -name '*.ts' -o -name '*.tsx' | xargs wc -l | sort -rn | head -20",
+      "enabled": true
+    },
+    {
+      "name": "generate-deployment-checklist",
+      "description": "Generate deployment checklist",
+      "command": "echo 'Generate deployment checklist: run tests, run typecheck, run build, check environment variables, verify API endpoints, verify PWA service worker'",
+      "enabled": true
+    },
+    {
+      "name": "analyze-voice-features",
+      "description": "Analyze voice feature implementation",
+      "command": "echo 'Analyze voice recognition and synthesis features: browser support checks, error handling, Indonesian language support, command patterns, user feedback'",
+      "enabled": true
+    },
+    {
+      "name": "check-pwa-compatibility",
+      "description": "Check PWA implementation",
+      "command": "echo 'Verify PWA implementation: service worker registration, manifest.json, offline support, push notifications, install prompts, caching strategies'",
+      "enabled": true
+    },
+    {
+      "name": "generate-role-matrix",
+      "description": "Generate role permission matrix",
+      "command": "echo 'Generate a matrix showing all user roles (admin, teacher, student, parent, staff, osis, wakasek, kepsek) and their access to different features based on permissionService.ts'",
+      "enabled": true
+    },
+    {
+      "name": "find-security-issues",
+      "description": "Find potential security issues",
+      "command": "grep -r 'eval(\\|innerHTML\\|dangerouslySetInnerHTML' src/ --include='*.ts' --include='*.tsx' -n || echo 'No obvious security issues found'",
+      "enabled": true
+    },
+    {
+      "name": "check-naming-conventions",
+      "description": "Check for naming convention violations",
+      "command": "echo 'Check that constants use UPPER_SNAKE_CASE, functions use camelCase, components use PascalCase. Look for violations in the codebase.'",
+      "enabled": true
+    },
+    {
+      "name": "generate-changelog",
+      "description": "Generate changelog from git commits",
+      "command": "git log --oneline -20 || echo 'No git history available'",
+      "enabled": true
+    }
+  ]
+}
