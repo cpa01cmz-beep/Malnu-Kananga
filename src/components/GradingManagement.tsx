@@ -36,7 +36,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set());
   const [isBatchMode, setIsBatchMode] = useState(false);
   const [showStats, setShowStats] = useState(false);
-  const [autoSaveTimeout, setAutoSaveTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [autoSaveTimeout, setAutoSaveTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   
   const className = 'XII IPA 1';
@@ -187,7 +187,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
           setGrades(updatedGrades);
           setIsBatchMode(false);
           onShowToast('CSV import successful! Grades updated.', 'success');
-        } catch (error) {
+        } catch {
           onShowToast('CSV import failed. Please check the file format.', 'error');
         }
       },
