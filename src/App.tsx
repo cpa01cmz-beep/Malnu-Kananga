@@ -28,6 +28,7 @@ import PPDBSection from './components/sections/PPDBSection';
 import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './types';
 import { STORAGE_KEYS } from './constants';
 import useLocalStorage from './hooks/useLocalStorage';
+import { NotificationProvider } from './contexts/NotificationContext';
 import { api } from './services/apiService';
 import { permissionService } from './services/permissionService';
 
@@ -242,7 +243,8 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950 w-full min-h-screen font-sans text-neutral-800 dark:text-neutral-200 transition-colors duration-300 antialiased">
+    <NotificationProvider>
+      <div className="bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950 w-full min-h-screen font-sans text-neutral-800 dark:text-neutral-200 transition-colors duration-300 antialiased">
       <Header
         onLoginClick={() => setIsLoginOpen(true)}
         onChatClick={() => setIsChatOpen(true)}
@@ -325,6 +327,7 @@ const App: React.FC = () => {
         onClose={hideToast}
       />
     </div>
+    </NotificationProvider>
   );
 };
 

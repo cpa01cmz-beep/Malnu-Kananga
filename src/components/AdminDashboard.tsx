@@ -14,6 +14,7 @@ import { ToastType } from './Toast';
 import { STORAGE_KEYS } from '../constants'; // Import constants
 import { logger } from '../utils/logger';
 import { permissionService } from '../services/permissionService';
+import { usePushNotifications } from '../hooks/usePushNotifications';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -31,13 +32,43 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
   const [currentView, setCurrentView] = useState<DashboardView>('home');
   const [pendingPPDB, setPendingPPDB] = useState(0);
 
+  // Initialize push notifications
+  const { 
+    showNotification, 
+    createNotification,
+    requestPermission 
+  } = usePushNotifications();
+
   // Check permissions for admin role
   const checkPermission = (permission: string) => {
     const result = permissionService.hasPermission('admin', null, permission);
     return result.granted;
   };
 
-  // Refresh stats when view changes to home
+  // Request notification permission on first load
+  useEffect(() => {
+    const initializeNotifications = async () => {
+      try {
+        const granted = await requestPermission();
+        if (granted) {
+          logger.info('Admin notifications enabled');
+          await showNotification(
+            createNotification(
+              'system',
+              'Notifikasi Aktif',
+              'Sistem notifikasi admin telah diaktifkan'
+            )
+          );
+        }
+      } catch (error) {
+        logger.error('Failed to initialize notifications:', error);
+      }
+    };
+
+    initializeNotifications();
+  }, [requestPermission, showNotification, createNotification]);
+
+  // Notify admin of new PPDB registrations
   useEffect(() => {
     if (currentView === 'home') {
         const saved = localStorage.getItem(STORAGE_KEYS.PPDB_REGISTRANTS); // Use Constant
@@ -45,13 +76,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
             try {
                 const data = JSON.parse(saved);
                 const count = data.filter((r: PPDBRegistrant) => r.status === 'pending').length;
+                
+                // Notify if new pending registrations
+                if (count > 0 && count !== pendingPPDB && pendingPPDB > 0) {
+                  showNotification(
+                    createNotification(
+                      'ppdb',
+                      'Pendaftaran Baru PPDB',
+                      `Ada ${count} pendaftaran PPDB yang menunggu persetujuan`
+                    )
+                  );
+                }
+                
                 setPendingPPDB(count);
             } catch {
                 logger.error("Error reading PPDB data");
             }
         }
     }
-  }, [currentView]);
+  }, [currentView, pendingPPDB, showNotification, createNotification]);
 
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
