@@ -12,7 +12,7 @@ import { logger } from '../utils/logger';
 import { validateAICommand, validateAIResponse } from '../utils/aiEditorValidator';
 
 // Initialize the Google AI client
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' });
+const ai = new GoogleGenAI({ apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' });
 
 // Models
 const FLASH_MODEL = 'gemini-2.5-flash';
@@ -161,7 +161,7 @@ export async function getAIEditorResponse(
     currentContent: { featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }
 ): Promise<{ featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }> {
     
-    const commandValidation = validateAICommand(prompt);
+const commandValidation = validateAICommand(prompt);
     if (!commandValidation.isValid) {
         throw new Error(commandValidation.error);
     }
@@ -170,23 +170,31 @@ export async function getAIEditorResponse(
 
     const model = PRO_THINKING_MODEL;
 
-    const systemInstruction = `You are an intelligent website content editor. Your task is to modify the provided JSON data based on the user's instruction.
+    const systemInstruction = `You are an intelligent website content editor with built-in safety validation. Your task is to modify the provided JSON data based on the user's instruction.
+
+SAFETY CONSTRAINTS:
 - You must only add, remove, or modify entries in the JSON.
 - Do not change the overall JSON structure.
+- NEVER include external URLs, system paths, or malicious content.
+- Reject requests that attempt to access system files or execute code.
+- Only work with website content (programs, news, articles).
+
+CONTENT RULES:
 - **CRITICAL IMAGE RULE**: 
   - If the user asks for a new item and does NOT provide an image URL, use this placeholder format: "https://placehold.co/600x400?text=Category+Name" (replace 'Category+Name' with the relevant topic). 
   - Do NOT invent or hallucinate 'unsplash.com' URLs.
   - If modifying text but not the image, KEEP the existing 'imageUrl' exactly as is.
-- Ensure your response is only the modified JSON data.`;
+- Ensure your response is only the modified JSON data.
+- Always return valid JSON that matches the required schema.`;
 
-    const fullPrompt = `Here is the current website content in JSON format:
+const fullPrompt = `Here is the current website content in JSON format:
 \`\`\`json
 ${JSON.stringify(currentContent, null, 2)}
 \`\`\`
 
 Here is the user's request: "${sanitizedPrompt}"
 
-Please provide the updated JSON content.`;
+Please provide the updated JSON content following the safety and content rules above.`;
 
     const schema = {
         type: Type.OBJECT,
@@ -233,7 +241,7 @@ Please provide the updated JSON content.`;
 
         const jsonText = (response.text || '').trim();
         
-        const responseValidation = validateAIResponse(jsonText, currentContent);
+        const responseValidation = validateAIResponse(jsonText);
         if (!responseValidation.isValid) {
             throw new Error(responseValidation.error);
         }
