@@ -33,12 +33,25 @@ Feature availability by user role.
 The system now supports **Extra Roles** for Teachers and Students with special responsibilities:
 
 1. **Teacher as Staff (Administration/Facilities)**
-   - Gets additional **"Inventaris"** menu in dashboard
-   - Can add, edit, and delete school asset data (Desks, Chairs, Electronics)
+    - Gets additional **"Inventaris"** menu in dashboard
+    - Can add, edit, and delete school asset data (Desks, Chairs, Electronics)
 
 2. **Student as OSIS Officer**
-   - Gets additional **"Kegiatan OSIS"** menu in portal
-   - Can schedule school events and monitor activity status (Upcoming/Done)
+    - Gets additional **"Kegiatan OSIS"** menu in portal
+    - Can schedule school events and monitor activity status (Upcoming/Done)
+
+3. **Teacher as Wakasek (Academic Oversight)**
+    - Gets additional academic oversight permissions
+    - Can evaluate teacher performance
+    - Can manage student discipline
+    - Can access academic reports and oversee operations
+
+4. **Teacher as Kepsek (Principal)**
+    - Gets maximum academic and administrative permissions
+    - Can manage and approve curriculum changes
+    - Can create and update school policies
+    - Can evaluate teachers and approve PPDB applications
+    - Full access to school reports and oversight
 
 ## Feature Descriptions
 

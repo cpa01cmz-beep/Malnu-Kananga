@@ -209,11 +209,13 @@ src/
 | **Parent (Wali Murid)** | Portal orang tua, rapor, pengumuman | Monitoring prestasi anak |
 | **Staff (Guru Tambahan)** | Inventaris | Manajemen aset sekolah |
 | **OSIS (Siswa Tambahan)** | Kegiatan OSIS | Menjadwalkan acara sekolah |
+| **Wakasek (Guru Tambahan)** | Pengawasan akademik, evaluasi guru, disiplin | Mengawasi operasional akademik dan mengevaluasi guru |
+| **Kepsek (Guru Tambahan)** | Pengawasan akademik, kurikulum, kebijakan sekolah | Menetapkan kurikulum dan kebijakan sekolah |
 
 ### 4.1 Access Control
 - Role-Based Access Control (RBAC)
 - JWT Authentication dengan refresh token mechanism
-- Extra role support (staff, osis)
+- Extra role support (staff, osis, wakasek, kepsek)
 - Audit trail untuk tracking aktivitas
 
 ## 5. Keamanan & Compliance
