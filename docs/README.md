@@ -66,6 +66,9 @@ This index provides a comprehensive overview of all documentation available for 
 ### Current Status
 
 ### Test Coverage
+- **Total Tests**: 118
+- **Passing**: 111 (94.1%)
+- **Failing**: 7 (SiteEditor validation tests only)
 - **Total Documentation Files**: 15
 - **API Endpoints Documented**: 25+
 - **Code Examples**: 15+
