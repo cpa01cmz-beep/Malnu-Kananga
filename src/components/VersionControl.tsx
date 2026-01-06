@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import { ClockIcon, TrashIcon, XMarkIcon, EyeIcon } from './icons/MaterialIcons';
 import { MaterialVersion, ELibrary } from '../types';
@@ -25,9 +25,9 @@ const VersionControl: React.FC<VersionControlProps> = ({
 
   useEffect(() => {
     fetchVersions();
-  }, [material.id, fetchVersions]);
+  }, [material.id]);
 
-  const fetchVersions = async () => {
+  const fetchVersions = useCallback(async () => {
     try {
       // Mock API call - replace with actual implementation
       const mockVersions: MaterialVersion[] = material.versions || [
@@ -50,7 +50,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
     } catch (err) {
       logger.error('Error fetching versions:', err);
     }
-  };
+  }, [material]);
 
   const createVersion = async () => {
     if (!newFile || !versionTitle.trim() || !changeLog.trim()) {
@@ -61,13 +61,14 @@ const VersionControl: React.FC<VersionControlProps> = ({
     setLoading(true);
     try {
       // Mock file upload - replace with actual implementation
+      const versionId = `v${Date.now()}`;
       const newVersion: MaterialVersion = {
-        id: `v${Date.now()}`,
+        id: versionId,
         materialId: material.id,
         version: generateNextVersion(),
         title: versionTitle.trim(),
         description: material.description,
-        fileUrl: `versions/${newVersion.id}/${newFile.name}`,
+        fileUrl: `versions/${versionId}/${newFile.name}`,
         fileType: newFile.type,
         fileSize: newFile.size,
         changeLog: changeLog.trim(),
