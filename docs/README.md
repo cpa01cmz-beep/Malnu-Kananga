@@ -64,7 +64,9 @@ This index provides a comprehensive overview of all documentation available for 
 ## Documentation Metrics
 
 ### Current Status
-- **Total Documentation Files**: 15
+
+### Test Coverage
+- **Total Documentation Files**: 14
 - **API Endpoints Documented**: 25+
 - **Code Examples**: 15+
 - **Troubleshooting Scenarios**: 20+
@@ -84,7 +86,7 @@ This index provides a comprehensive overview of all documentation available for 
 - **Date Coverage**: 100%
 - **Version Coverage**: 90%
 - **Internal Links**: 95%
-- **Code Examples**: 19+
+- **Code Examples**: 15+
 
 ---
 
@@ -173,17 +175,14 @@ This index maintains relationships between documents:
 
 ---
 
-## Recent Changes (v2.1.0 - 2026-01-06)
+## Recent Changes (v2.2.0 - 2026-01-06)
 
-- **Removed Outdated Documentation**: Deleted PROJECT_SERVICES.md (describes non-existent magic link auth)
-- **Removed Operational Documents**: Deleted INFRASTRUCTURE_BUDGET.md (outdated 2024 data)
-- **Removed Internal Protocols**: Deleted team-coordination-protocol.md (AI agent-specific)
-- **Security Fix**: Removed `.env.production` from git tracking (file preserved locally)
-- **Updated Metrics**: Documentation count updated to 15 files
-- **Single Source of Truth**: Established `/docs` as the authoritative documentation directory
-- **Repository Cleanup**: Removed duplicate .github/GH directory (consolidated with .github/prompt)
-- **Script Cleanup**: Removed unused .cjs script versions (setup-env.cjs, validate-env.cjs)
-- **Fixed Broken Links**: Removed reference to non-existent deployment/README.md
+- **Synthesized TASK.md**: Removed outdated merge conflict task, corrected test counts from 71 to 118
+- **Removed Autonomous Workflows**: Deleted team-coordination.yml (over-engineered for this repo)
+- **Removed Agent Protocols**: Deleted opencode-prompt.md (AI agent-specific, not repo-relevant)
+- **Updated Documentation Count**: Corrected from 15 to 14 files
+- **Repository Cleanup**: Removed unnecessary workflow files and agent-specific documentation
+- **Type Safety**: Documented 5 TypeScript errors in voice services requiring attention
 
 ---
 
