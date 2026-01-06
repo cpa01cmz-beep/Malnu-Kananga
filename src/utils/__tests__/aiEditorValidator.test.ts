@@ -161,7 +161,7 @@ Let me know if you need anything else.`;
     it('should preserve existing content when AI returns empty arrays', () => {
       const jsonEmpty = JSON.stringify({ featuredPrograms: [], latestNews: [] });
       const result = validateAIResponse(jsonEmpty, mockCurrentContent);
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
       expect(result.sanitizedContent?.featuredPrograms).toEqual(mockCurrentContent.featuredPrograms);
       expect(result.sanitizedContent?.latestNews).toEqual(mockCurrentContent.latestNews);
     });
