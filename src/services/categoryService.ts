@@ -1,6 +1,7 @@
 import { Subject, Class } from '../types';
 import { subjectsAPI, classesAPI } from './apiService';
 import { logger } from '../utils/logger';
+import { STORAGE_KEYS } from '../constants';
 // import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export interface SubjectWithUsage {
@@ -24,12 +25,6 @@ export interface NewCategorySuggestion {
 }
 
 const CACHE_EXPIRY = 30 * 60 * 1000; // 30 minutes
-const STORAGE_KEYS = {
-  SUBJECTS_CACHE: 'malnu_subjects_cache',
-  CLASSES_CACHE: 'malnu_classes_cache',
-  CATEGORY_SUGGESTIONS: 'malnu_category_suggestions',
-  MATERIAL_STATS: 'malnu_material_stats'
-} as const;
 
 interface CacheData<T> {
   data: T;
@@ -237,10 +232,12 @@ export class CategoryService {
 
   clearCache(): void {
     Object.values(STORAGE_KEYS).forEach(key => {
-      try {
-        localStorage.removeItem(key);
-      } catch (error) {
-        logger.warn(`Failed to clear cache key ${key}:`, error);
+      if (typeof key === 'string') {
+        try {
+          localStorage.removeItem(key);
+        } catch (error) {
+          logger.warn(`Failed to clear cache key ${key}:`, error);
+        }
       }
     });
 

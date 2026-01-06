@@ -4,6 +4,7 @@
 import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, UserRole, UserExtraRole } from '../types';
 import { logger } from '../utils/logger';
 import { permissionService } from './permissionService';
+import { STORAGE_KEYS } from '../constants';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
 
@@ -44,32 +45,32 @@ export interface AuthPayload {
 // Get stored auth token
 function getAuthToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('auth_token');
+  return localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
 }
 
 // Set auth token
 function setAuthToken(token: string): void {
   if (typeof window === 'undefined') return;
-  localStorage.setItem('auth_token', token);
+  localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
 }
 
 // Get stored refresh token
 function getRefreshToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('refresh_token');
+  return localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
 }
 
 // Set refresh token
 function setRefreshToken(token: string): void {
   if (typeof window === 'undefined') return;
-  localStorage.setItem('refresh_token', token);
+  localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, token);
 }
 
 // Clear auth tokens
 function clearAuthToken(): void {
   if (typeof window === 'undefined') return;
-  localStorage.removeItem('auth_token');
-  localStorage.removeItem('refresh_token');
+  localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+  localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
 }
 
 // Parse JWT token (without verification, for payload access only)

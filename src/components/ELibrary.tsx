@@ -7,6 +7,7 @@ import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress } 
 import { logger } from '../utils/logger';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
+import { STORAGE_KEYS } from '../constants';
 
 interface ELibraryProps {
   onBack: () => void;
@@ -46,31 +47,31 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
   const loadStudentData = useCallback(() => {
     // Load bookmarks from localStorage
     try {
-      const savedBookmarks = localStorage.getItem('student_bookmarks');
+      const savedBookmarks = localStorage.getItem(STORAGE_KEYS.STUDENT_BOOKMARKS);
       if (savedBookmarks) {
         setBookmarks(JSON.parse(savedBookmarks));
       }
       
       // Load favorites from localStorage
-      const savedFavorites = localStorage.getItem('student_favorites');
+      const savedFavorites = localStorage.getItem(STORAGE_KEYS.STUDENT_FAVORITES);
       if (savedFavorites) {
         setFavorites(new Set(JSON.parse(savedFavorites)));
       }
       
       // Load reading progress from localStorage
-      const savedProgress = localStorage.getItem('student_reading_progress');
+      const savedProgress = localStorage.getItem(STORAGE_KEYS.STUDENT_READING_PROGRESS);
       if (savedProgress) {
         setReadingProgress(new Map(JSON.parse(savedProgress)));
       }
       
       // Load offline downloads from localStorage
-      const savedOffline = localStorage.getItem('student_offline_downloads');
+      const savedOffline = localStorage.getItem(STORAGE_KEYS.STUDENT_OFFLINE_DOWNLOADS);
       if (savedOffline) {
         setOfflineDownloads(new Set(JSON.parse(savedOffline)));
       }
       
       // Load reviews from localStorage
-      const savedReviews = localStorage.getItem('student_reviews');
+      const savedReviews = localStorage.getItem(STORAGE_KEYS.STUDENT_REVIEWS);
       if (savedReviews) {
         setReviews(JSON.parse(savedReviews));
       }
@@ -133,7 +134,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
     }
     
     setBookmarks(newBookmarks);
-    localStorage.setItem('student_bookmarks', JSON.stringify(newBookmarks));
+    localStorage.setItem(STORAGE_KEYS.STUDENT_BOOKMARKS, JSON.stringify(newBookmarks));
   };
 
   const toggleFavorite = (materialId: string) => {
@@ -146,7 +147,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       onShowToast('Ditambahkan ke favorit', 'success');
     }
     setFavorites(newFavorites);
-    localStorage.setItem('student_favorites', JSON.stringify(Array.from(newFavorites)));
+    localStorage.setItem(STORAGE_KEYS.STUDENT_FAVORITES, JSON.stringify(Array.from(newFavorites)));
   };
 
   const updateReadingProgress = (materialId: string, progress: number, isCompleted: boolean = false) => {
@@ -160,7 +161,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       isCompleted
     });
     setReadingProgress(newProgress);
-    localStorage.setItem('student_reading_progress', JSON.stringify(Array.from(newProgress)));
+    localStorage.setItem(STORAGE_KEYS.STUDENT_READING_PROGRESS, JSON.stringify(Array.from(newProgress)));
   };
 
   const toggleOfflineDownload = (materialId: string, _fileUrl: string) => {
@@ -174,7 +175,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
         // Register offline download
         newOfflineDownloads.add(materialId);
         setOfflineDownloads(newOfflineDownloads);
-        localStorage.setItem('student_offline_downloads', JSON.stringify(Array.from(newOfflineDownloads)));
+        localStorage.setItem(STORAGE_KEYS.STUDENT_OFFLINE_DOWNLOADS, JSON.stringify(Array.from(newOfflineDownloads)));
         onShowToast('Materi tersedia untuk akses offline', 'success');
       } else {
         onShowToast('Browser tidak mendukung akses offline', 'error');
@@ -207,7 +208,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
     const updatedReviews = [...reviews, newReview];
     setReviews(updatedReviews);
-    localStorage.setItem('student_reviews', JSON.stringify(updatedReviews));
+    localStorage.setItem(STORAGE_KEYS.STUDENT_REVIEWS, JSON.stringify(updatedReviews));
 
     // Update material rating (in real app, this would be saved to server)
     onShowToast('Review berhasil ditambahkan!', 'success');

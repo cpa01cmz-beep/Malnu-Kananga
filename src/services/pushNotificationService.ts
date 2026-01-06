@@ -339,7 +339,7 @@ class PushNotificationService {
 
   private getCurrentUser() {
     try {
-      const userStr = localStorage.getItem('user');
+      const userStr = localStorage.getItem(STORAGE_KEYS.USER);
       if (!userStr) return null;
       return JSON.parse(userStr);
     } catch {
@@ -616,7 +616,7 @@ class PushNotificationService {
   private saveBatches(): void {
     try {
       const batches = Array.from(this.batches.values());
-      localStorage.setItem('notification_batches', JSON.stringify(batches));
+      localStorage.setItem(STORAGE_KEYS.NOTIFICATION_BATCHES, JSON.stringify(batches));
     } catch (error) {
       logger.error('Failed to save batches:', error);
     }
@@ -624,7 +624,7 @@ class PushNotificationService {
 
   private loadBatches(): void {
     try {
-      const stored = localStorage.getItem('notification_batches');
+      const stored = localStorage.getItem(STORAGE_KEYS.NOTIFICATION_BATCHES);
       if (stored) {
         const batches: NotificationBatch[] = JSON.parse(stored);
         batches.forEach(batch => this.batches.set(batch.id, batch));
@@ -637,7 +637,7 @@ class PushNotificationService {
   private saveTemplates(): void {
     try {
       const templates = Array.from(this.templates.values());
-      localStorage.setItem('notification_templates', JSON.stringify(templates));
+      localStorage.setItem(STORAGE_KEYS.NOTIFICATION_TEMPLATES, JSON.stringify(templates));
     } catch (error) {
       logger.error('Failed to save templates:', error);
     }
@@ -645,7 +645,7 @@ class PushNotificationService {
 
   private loadTemplates(): void {
     try {
-      const stored = localStorage.getItem('notification_templates');
+      const stored = localStorage.getItem(STORAGE_KEYS.NOTIFICATION_TEMPLATES);
       if (stored) {
         const templates: NotificationTemplate[] = JSON.parse(stored);
         templates.forEach(template => this.templates.set(template.id, template));
@@ -658,7 +658,7 @@ class PushNotificationService {
   private saveAnalytics(): void {
     try {
       const analytics = Array.from(this.analytics.values());
-      localStorage.setItem('notification_analytics', JSON.stringify(analytics));
+      localStorage.setItem(STORAGE_KEYS.NOTIFICATION_ANALYTICS, JSON.stringify(analytics));
     } catch (error) {
       logger.error('Failed to save analytics:', error);
     }
@@ -666,7 +666,7 @@ class PushNotificationService {
 
   private loadAnalytics(): void {
     try {
-      const stored = localStorage.getItem('notification_analytics');
+      const stored = localStorage.getItem(STORAGE_KEYS.NOTIFICATION_ANALYTICS);
       if (stored) {
         const analytics: NotificationAnalytics[] = JSON.parse(stored);
         analytics.forEach(analytic => this.analytics.set(analytic.notificationId, analytic));

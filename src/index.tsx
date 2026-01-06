@@ -6,6 +6,11 @@ import { logger } from './utils/logger';
 import './style.css';
 // Import registration function
 import { registerSW } from 'virtual:pwa-register';
+// Import storage migration
+import { runStorageMigration } from './services/storageMigration';
+
+// Run storage migration before initialization
+runStorageMigration();
 
 // Register PWA Service Worker
 const updateSW = registerSW({

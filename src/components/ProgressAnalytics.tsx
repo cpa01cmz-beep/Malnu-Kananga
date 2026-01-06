@@ -18,6 +18,7 @@ import { logger } from '../utils/logger';
 import { validateStudentProgress, getGradeStatus } from '../utils/studentValidation';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { STORAGE_KEYS } from '../constants';
 
 interface ProgressAnalyticsProps {
   onBack: () => void;
@@ -183,7 +184,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
 
   const loadGoals = (): Goal[] => {
     try {
-      const saved = localStorage.getItem(`student_goals_${STUDENT_NIS}`);
+      const saved = localStorage.getItem(STORAGE_KEYS.STUDENT_GOALS(STUDENT_NIS));
       return saved ? JSON.parse(saved) : [];
     } catch (error) {
       logger.error('Error loading goals:', error);
@@ -193,7 +194,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
 
   const saveGoals = (goalsToSave: Goal[]) => {
     try {
-      localStorage.setItem(`student_goals_${STUDENT_NIS}`, JSON.stringify(goalsToSave));
+      localStorage.setItem(STORAGE_KEYS.STUDENT_GOALS(STUDENT_NIS), JSON.stringify(goalsToSave));
       setGoals(goalsToSave);
     } catch (error) {
       logger.error('Error saving goals:', error);

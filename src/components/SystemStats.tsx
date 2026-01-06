@@ -80,11 +80,11 @@ const SystemStats: React.FC<SystemStatsProps> = ({ onBack, onShowToast }) => {
       logger.info('Voice settings backed up before factory reset');
 
       const keysToRemove = Object.values(STORAGE_KEYS).filter(
-        key => key !== STORAGE_KEYS.VOICE_SETTINGS_BACKUP_KEY
+        key => typeof key === 'string' && key !== STORAGE_KEYS.VOICE_SETTINGS_BACKUP_KEY
       );
 
       keysToRemove.forEach(key => {
-          localStorage.removeItem(key);
+          localStorage.removeItem(key as string);
       });
 
       onShowToast('Sistem berhasil di-reset. Halaman akan dimuat ulang.', 'success');

@@ -15,6 +15,7 @@ import { gradesAPI, subjectsAPI, attendanceAPI } from '../services/apiService';
 import { Grade, Subject, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { STORAGE_KEYS } from '../constants';
 
 interface GradeItem {
   subject: string;
@@ -112,7 +113,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
   }, [STUDENT_NIS]);
 
   const loadGoals = useCallback(() => {
-    const savedGoals = localStorage.getItem(`goals_${STUDENT_NIS}`);
+    const savedGoals = localStorage.getItem(STORAGE_KEYS.STUDENT_GOALS(STUDENT_NIS));
     if (savedGoals) {
       setGoals(JSON.parse(savedGoals));
     }
@@ -227,7 +228,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
   };
 
   const saveGoals = useCallback((updatedGoals: AcademicGoal[]) => {
-    localStorage.setItem(`goals_${STUDENT_NIS}`, JSON.stringify(updatedGoals));
+    localStorage.setItem(STORAGE_KEYS.STUDENT_GOALS(STUDENT_NIS), JSON.stringify(updatedGoals));
     setGoals(updatedGoals);
   }, [STUDENT_NIS]);
 
