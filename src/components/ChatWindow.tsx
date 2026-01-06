@@ -232,7 +232,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
       <header className="flex items-center justify-between px-4 py-3 bg-primary-600 text-white flex-shrink-0">
         <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 bg-white rounded-full mr-1 animate-pulse"></div>
-            <h2 className="font-semibold">Asisten AI</h2>
+            <h2 className="font-semibold text-sm">Asisten AI</h2>
         </div>
         <div className="flex items-center gap-1.5">
             {voiceQueue.isPlaying && (
