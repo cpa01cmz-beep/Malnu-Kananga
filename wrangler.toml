@@ -22,8 +22,8 @@ name = "malnu-kananga-worker-prod"
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "malnu-kananga-db-prod"
-# ⚠️ CRITICAL: Replace with actual D1 database ID from: wrangler d1 list
-database_id = "placeholder-database-id"
+# Use D1 database ID from environment variable
+database_id = "${D1_DATABASE_ID}"
 
 # Vectorize index bindings - create with: wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 [[env.production.vectorize]]
@@ -39,13 +39,12 @@ bucket_name = "malnu-kananga-files"
 [env.production.vars]
 # Set to your production domain (for CORS)
 ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
-# ⚠️ CRITICAL: Set to a strong random key (32+ characters recommended)
-# Generate with: openssl rand -base64 32
-JWT_SECRET = "your-super-secret-jwt-key-change-this-in-production"
-# ⚠️ CRITICAL: Replace with actual Gemini API key from https://ai.google.dev
+# Use JWT secret from environment variable
+JWT_SECRET = "${JWT_SECRET}"
+# Use Gemini API key from environment variable
 # NOTE: Cloudflare Workers use GEMINI_API_KEY (WITHOUT VITE_ prefix)
 # Frontend uses VITE_GEMINI_API_KEY (WITH VITE_ prefix) - these are DIFFERENT services
-GEMINI_API_KEY = "your_production_gemini_api_key_here"
+GEMINI_API_KEY = "${GEMINI_API_KEY}"
 NODE_ENV = "production"
 LOG_LEVEL = "error"
 
@@ -58,8 +57,8 @@ name = "malnu-kananga-worker-dev"
 [[env.dev.d1_databases]]
 binding = "DB"
 database_name = "malnu-kananga-db-dev"
-# ⚠️ Replace with actual dev D1 database ID from: wrangler d1 list
-database_id = "your-dev-d1-database-id-here"
+# Use dev D1 database ID from environment variable
+database_id = "${D1_DATABASE_ID_DEV}"
 
 [[env.dev.vectorize]]
 binding = "VECTORIZE_INDEX"
@@ -72,8 +71,8 @@ bucket_name = "malnu-kananga-files-dev"
 [env.dev.vars]
 # Allow all origins for local development
 ALLOWED_ORIGIN = "*"
-# Development secret (change for production)
-JWT_SECRET = "dev-jwt-secret-change-for-production"
+# Use development JWT secret from environment variable
+JWT_SECRET = "${JWT_SECRET_DEV}"
 # Set your Gemini API key for AI features
 # NOTE: Worker uses GEMINI_API_KEY (WITHOUT VITE_ prefix)
 # Frontend uses VITE_GEMINI_API_KEY (WITH VITE_ prefix) - these are DIFFERENT services
