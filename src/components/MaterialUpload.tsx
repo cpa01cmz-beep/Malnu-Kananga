@@ -48,6 +48,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
   const [categoryValidation, setCategoryValidation] = useState<CategoryValidationResult | null>(null);
   const [showSuggestionForm, setShowSuggestionForm] = useState(false);
   const [suggestionDescription, setSuggestionDescription] = useState('');
+  const [_validationErrors, setValidationErrors] = useState<string[]>([]);
   
   // Enhanced error handling state
   const [confirmDialog, setConfirmDialog] = useState<{
