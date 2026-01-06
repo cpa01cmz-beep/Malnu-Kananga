@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { ChatMessage, FeaturedProgram, LatestNews } from '../types';
 import { Sender } from '../types';
 import { getAIEditorResponse } from '../services/geminiService';
+import { validateAICommand } from '../utils/aiEditorValidator';
 import { CloseIcon } from './icons/CloseIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
@@ -50,6 +51,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   const [pendingContent, setPendingContent] = useState<SiteContent | null>(null);
   const [characterCount, setCharacterCount] = useState(0);
   const [inputError, setInputError] = useState('');
+  const [validationError, setValidationError] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -60,12 +62,13 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
     if (isOpen) {
       if (messages.length === 0) {
         setMessages([
-            { id: 'initial', text: 'Halo! Saya asisten editor AI Anda. Beri tahu saya perubahan apa yang ingin Anda buat pada konten **"Program Unggulan"** atau **"Berita Terbaru"**. \n\nContoh:\n- "Tambahkan program baru tentang Robotika"\n- "Ubah judul berita pertama menjadi lebih menarik"\n\n💡 **Tips:** Anda dapat membatalkan hingga 5 perubahan terakhir menggunakan tombol Undo.', sender: Sender.AI }
+            { id: 'initial', text: 'Halo! Saya asisten editor AI Anda dengan sistem validasi keamanan. Beri tahu saya perubahan apa yang ingin Anda buat pada konten **"Program Unggulan"** atau **"Berita Terbaru"**. \n\nContoh perintah yang valid:\n- "Tambahkan program baru tentang Robotika"\n- "Ubah judul berita pertama menjadi lebih menarik"\n- "Hapus program terakhir"\n\n🛡️ **Keamanan**: Perintah berbahaya atau akses sistem akan diblokir otomatis.\n\n💡 **Tips:** Anda dapat membatalkan hingga 5 perubahan terakhir menggunakan tombol Undo.', sender: Sender.AI }
         ]);
       }
       setProposedContent(null);
       setInput('');
       setInputError('');
+      setValidationError('');
     }
   }, [isOpen, messages.length]);
 
@@ -78,7 +81,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   useEffect(() => {
     setCharacterCount(input.length);
     
-    // Validate input
+    // Basic input validation
     if (input.length > 1000) {
       setInputError('Maksimal 1000 karakter');
     } else if (input.trim().length > 0 && input.trim().length < 3) {
@@ -168,6 +171,21 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   const handleSend = async () => {
     if (!input.trim() || isLoading || inputError) return;
 
+    // Validate command using centralized validator
+    const validation = validateAICommand(input);
+    if (!validation.isValid) {
+      setValidationError(validation.error || 'Perintah tidak valid');
+      const errorMessage: ChatMessage = {
+        id: Date.now().toString(),
+        text: validation.error || '❌ **Perintah tidak valid**: Silakan periksa kembali input Anda.',
+        sender: Sender.AI
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      return;
+    }
+    
+    setValidationError('');
+
     const userMessage: ChatMessage = { id: Date.now().toString(), text: input, sender: Sender.User };
     setMessages(prev => [...prev, userMessage]);
     const requestText = input;
@@ -177,6 +195,12 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
 
     try {
       const newContent = await getAIEditorResponse(requestText, currentContent);
+      
+      // The service now handles all validation, so we just need basic checks
+      if (!newContent || typeof newContent !== 'object') {
+        throw new Error('Respon AI mengembalikan format yang tidak valid');
+      }
+      
       setProposedContent(newContent);
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -194,8 +218,10 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
           errorMessage = '⏱️ **Timeout**: Permintaan terlalu lama. Silakan coba lagi dengan permintaan yang lebih sederhana.';
         } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
           errorMessage = '🚫 **Batas terlampaui**: Terlalu banyak permintaan. Silakan tunggu beberapa saat sebelum mencoba lagi.';
-        } else if (error.message.includes('invalid') || error.message.includes('parse')) {
-          errorMessage = '🔧 **Format tidak valid**: AI tidak memahami permintaan Anda. Silakan tulis ulang dengan kalimat yang lebih jelas.';
+        } else if (error.message.includes('invalid') || error.message.includes('parse') || error.message.includes('format')) {
+          errorMessage = '🔧 **Format tidak valid**: AI mengembalikan data yang tidak benar. Silakan coba instruksi yang lebih spesifik atau sederhana.';
+        } else if (error.message.includes('struktur') || error.message.includes('valid') || error.message.includes('keamanan')) {
+          errorMessage = '🛡️ **Validasi gagal**: Respon AI tidak memenuhi format keamanan. Silakan coba lagi dengan instruksi yang berbeda.';
         } else {
           errorMessage = `❌ **Error**: ${error.message}`;
         }
@@ -261,7 +287,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
 <header className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
           <div className="flex items-center gap-3">
             <SparklesIcon className="h-6 w-6 text-green-500" />
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">AI Website Editor</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">AI Website Editor <span className="text-xs font-normal text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">🛡️ Dilindungi</span></h2>
             {changeHistory.length > 0 && (
               <div className="flex items-center gap-1">
                 <button 
@@ -388,6 +414,11 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                 {inputError && (
                   <span className="text-xs text-red-500 animate-pulse">
                     {inputError}
+                  </span>
+                )}
+                {validationError && (
+                  <span className="text-xs text-orange-500 animate-pulse">
+                    🛡️ {validationError}
                   </span>
                 )}
               </div>

@@ -188,7 +188,6 @@ jobs:
           GOALS:
           - Normalize all issues
           - Remove duplicates
-          - Solve exactly ONE highest-impact issue
           
           STEP 1 — ISSUE NORMALIZATION
           For EACH open issue:
@@ -202,28 +201,7 @@ jobs:
           - If duplicates found:
             - Select canonical issue
             - Close duplicates with reference
-            - Do NOT lose information
-          
-          STEP 3 — ISSUE SELECTION
-          Select exactly ONE issue based on:
-          1. Highest priority (P0 > P1 > P2 > P3)
-          2. Highest impact on core codebase
-          3. Lowest risk of merge conflict
-          
-          Document WHY this issue was chosen.
-          
-          STEP 4 — ISSUE RESOLUTION
-          - Create NEW branch from DEFAULT_BRANCH
-          - Sync branch BEFORE any change
-          - Implement fix or feature
-          - Add or update tests
-          - Run full build & tests
-          
-          STEP 5 — PR CREATION
-          - Create PR from THIS SINGLE branch
-          - PR must reference the issue
-          - Ensure CI passes
-          - Merge PR if all checks are green (dont wait for 'on-pull' check, its you)
+            - Do NOT lose information        
                     
           ========================
           PHASE 1 — DEEP CODE & DOC ANALYSIS
@@ -231,10 +209,10 @@ jobs:
           
           ACTIVATION CONDITION:
           - No open PRs
-          - No open issues
+          - Issue <10
           
           OBJECTIVE:
-          Discover real bugs or errors and convert them into issues.
+          Discover all real bugs or errors and convert them into issues.
           
           PROCESS:
           1. Scan entire codebase
@@ -249,17 +227,11 @@ jobs:
             - Exact file locations
             - Severity analysis
             - Suggested fix
-          
-          RULE:
-          - If at least ONE issue is created → STOP and do NOT continue to Phase 2.
-          
+                   
           ========================
           PHASE 2 — PRODUCT THINKING MODE
           ========================
-          
-          ACTIVATION CONDITION:
-          - Phase 1 produced ZERO issues
-          
+             
           PRIORITY 1 — FEATURE GAP ANALYSIS
           - Analyze existing features
           - Identify:
@@ -329,7 +301,7 @@ jobs:
           END OF PROMPT
           PROMPT
           )" \
-            --model opencode/minimax-m2.1-free \
+            --model opencode/grok-code \
             --share false \
 
       - name: ui-ux
@@ -356,17 +328,3 @@ jobs:
             fi
           done
           
-      - name: Auto-merge and Finalize
-        if: steps.lint.outcome == 'success' && steps.test.outcome == 'success' && steps.build.outcome == 'success'
-        run: |
-          echo "✅ All checks passed on agent-workspace."
-          # Find the PR from agent-workspace to main
-          PR_URL=$(gh pr list --head agent-workspace --base main --json url --jq '.[0].url')
-
-          if [ -n "$PR_URL" ]; then
-            echo "Merging PR: $PR_URL"
-            gh pr merge "$PR_URL" --merge --admin || gh pr merge "$PR_URL" --auto --merge
-            echo "🚀 PR merged/auto-merge enabled. This will trigger the next Analyzer run on main."
-          else
-            echo "⚠️ No open PR found for agent-workspace to develop. Check if changes were actually pushed."
-          fi
