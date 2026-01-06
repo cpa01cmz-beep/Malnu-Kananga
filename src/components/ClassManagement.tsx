@@ -4,7 +4,11 @@ import { Student, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateAttendance } from '../utils/teacherValidation';
-import ConfirmationDialog from './ConfirmationDialog';
+import { 
+  executeWithRetry, 
+  createToastHandler 
+} from '../utils/teacherErrorHandler';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 
 interface ClassStudent {
   id: string;
@@ -26,11 +30,12 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const className = 'XII IPA 1';
+  
 
   const currentUser = authAPI.getCurrentUser();
+  const toast = createToastHandler(onShowToast);
 
-  const [showAttendanceConfirm, setShowAttendanceConfirm] = useState(false);
-  const [pendingAttendance, setPendingAttendance] = useState<{ id: string; status: 'hadir' | 'sakit' | 'izin' | 'alpa' } | null>(null);
+  
 
   const fetchStudents = useCallback(async () => {
     setLoading(true);
@@ -84,16 +89,10 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
     }
   };
 
-  const handleAttendanceChange = async (id: string, status: ClassStudent['attendanceToday']) => {
-    setPendingAttendance({ id, status });
-    setShowAttendanceConfirm(true);
-  };
-
-  const confirmAttendanceChange = async () => {
-    if (!pendingAttendance) return;
-
-    const { id, status } = pendingAttendance;
-
+const handleAttendanceChange = async (id: string, status: ClassStudent['attendanceToday']) => {
+    const prevStudents = [...students];
+    
+    // Optimistic update
     setStudents((prev) =>
       prev.map((s) => (s.id === id ? { ...s, attendanceToday: status } : s))
     );
@@ -114,25 +113,35 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
 
       const validation = validateAttendance(attendanceData);
       if (!validation.isValid) {
-        onShowToast(validation.errors.join(', '), 'error');
-        setShowAttendanceConfirm(false);
-        setPendingAttendance(null);
+        setStudents(prevStudents);
+        toast.error(validation.errors.join(', '));
         return;
       }
 
-      const response = await attendanceAPI.create(attendanceData);
+      const updateOperation = async () => {
+        return await attendanceAPI.create(attendanceData);
+      };
 
-      if (response.success) {
-        onShowToast('Status kehadiran diperbarui', 'success');
+      const result = await executeWithRetry({
+        operation: updateOperation,
+        config: {
+          maxRetries: 3,
+          retryDelay: 1000
+        }
+      });
+      
+      if (result.success && result.data?.success) {
+        toast.success('Status kehadiran diperbarui');
       } else {
-        onShowToast(response.message || 'Gagal memperbarui kehadiran', 'error');
+        // Revert optimistic update
+        setStudents(prevStudents);
+        toast.error(result.data?.message || 'Gagal memperbarui kehadiran');
       }
     } catch (err) {
+      // Revert optimistic update
+      setStudents(prevStudents);
       logger.error('Error updating attendance:', err);
-      onShowToast('Terjadi kesalahan saat memperbarui kehadiran', 'error');
-    } finally {
-      setShowAttendanceConfirm(false);
-      setPendingAttendance(null);
+      toast.error('Terjadi kesalahan saat memperbarui kehadiran');
     }
   };
 
@@ -302,20 +311,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
         </div>
       </div>
 
-      {/* Confirmation Dialog */}
-      <ConfirmationDialog
-        isOpen={showAttendanceConfirm}
-        title="Ubah Status Kehadiran"
-        message={`Apakah Anda yakin ingin mengubah status kehadiran siswa ini menjadi "${pendingAttendance?.status}"?`}
-        confirmText="Ya, Ubah"
-        cancelText="Batal"
-        type="warning"
-        onConfirm={() => confirmAttendanceChange()}
-        onCancel={() => {
-          setShowAttendanceConfirm(false);
-          setPendingAttendance(null);
-        }}
-      />
+      
     </div>
   );
 };
