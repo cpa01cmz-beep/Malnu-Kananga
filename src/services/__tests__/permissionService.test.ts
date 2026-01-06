@@ -61,6 +61,42 @@ describe('PermissionService', () => {
       const result = permissionService.hasPermission('student', null, 'osis.events');
       expect(result.granted).toBe(false);
     });
+
+    // Academic Leadership Roles Tests
+    it('should grant academic oversight to wakasek', () => {
+      const result = permissionService.hasPermission('teacher', 'wakasek', 'academic.oversight');
+      expect(result.granted).toBe(true);
+    });
+
+    it('should grant teacher evaluation to wakasek', () => {
+      const result = permissionService.hasPermission('teacher', 'wakasek', 'academic.teacher_evaluation');
+      expect(result.granted).toBe(true);
+    });
+
+    it('should grant academic oversight to kepsek', () => {
+      const result = permissionService.hasPermission('teacher', 'kepsek', 'academic.oversight');
+      expect(result.granted).toBe(true);
+    });
+
+    it('should grant curriculum management to kepsek', () => {
+      const result = permissionService.hasPermission('teacher', 'kepsek', 'academic.curriculum');
+      expect(result.granted).toBe(true);
+    });
+
+    it('should grant school policies to kepsek', () => {
+      const result = permissionService.hasPermission('teacher', 'kepsek', 'school.policies');
+      expect(result.granted).toBe(true);
+    });
+
+    it('should deny kepsek permissions to regular teachers', () => {
+      const result = permissionService.hasPermission('teacher', null, 'school.policies');
+      expect(result.granted).toBe(false);
+    });
+
+    it('should deny wakasek permissions to students', () => {
+      const result = permissionService.hasPermission('student', 'wakasek', 'academic.oversight');
+      expect(result.granted).toBe(false);
+    });
   });
 
   describe('hasAnyPermission', () => {
@@ -143,6 +179,31 @@ describe('PermissionService', () => {
 
     it('should allow parent role with null extra role', () => {
       expect(permissionService.isValidRoleCombination('parent', null)).toBe(true);
+    });
+
+    // Academic Leadership Role Validation Tests
+    it('should allow teacher role with wakasek extra role', () => {
+      expect(permissionService.isValidRoleCombination('teacher', 'wakasek')).toBe(true);
+    });
+
+    it('should allow teacher role with kepsek extra role', () => {
+      expect(permissionService.isValidRoleCombination('teacher', 'kepsek')).toBe(true);
+    });
+
+    it('should reject student role with wakasek extra role', () => {
+      expect(permissionService.isValidRoleCombination('student', 'wakasek')).toBe(false);
+    });
+
+    it('should reject student role with kepsek extra role', () => {
+      expect(permissionService.isValidRoleCombination('student', 'kepsek')).toBe(false);
+    });
+
+    it('should reject parent role with wakasek extra role', () => {
+      expect(permissionService.isValidRoleCombination('parent', 'wakasek')).toBe(false);
+    });
+
+    it('should reject admin role with wakasek extra role', () => {
+      expect(permissionService.isValidRoleCombination('admin', 'wakasek')).toBe(false);
     });
   });
 

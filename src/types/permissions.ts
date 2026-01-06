@@ -18,7 +18,7 @@ export interface PermissionMatrix {
 }
 
 export type UserRole = 'admin' | 'teacher' | 'student' | 'parent';
-export type UserExtraRole = 'staff' | 'osis' | null;
+export type UserExtraRole = 'staff' | 'osis' | 'wakasek' | 'kepsek' | null;
 
 export interface AccessResult {
   granted: boolean;

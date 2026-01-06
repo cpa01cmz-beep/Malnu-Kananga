@@ -26,7 +26,7 @@ export interface LatestNews {
 export type UserRole = 'admin' | 'teacher' | 'student' | 'parent';
 
 // Role tambahan untuk tugas khusus
-export type UserExtraRole = 'staff' | 'osis' | null;
+export type UserExtraRole = 'staff' | 'osis' | 'wakasek' | 'kepsek' | null;
 
 export interface Student {
   id: string;

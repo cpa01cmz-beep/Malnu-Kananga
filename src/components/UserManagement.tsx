@@ -88,6 +88,10 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
       if (userData.role === 'admin') userData.extraRole = null;
       if (userData.role === 'teacher' && userData.extraRole === 'osis') userData.extraRole = null;
       if (userData.role === 'student' && userData.extraRole === 'staff') userData.extraRole = null;
+      if (userData.role === 'student' && (userData.extraRole === 'wakasek' || userData.extraRole === 'kepsek')) userData.extraRole = null;
+      if (userData.role === 'parent' && userData.extraRole !== null) userData.extraRole = null;
+      if (userData.role === 'student' && (userData.extraRole === 'wakasek' || userData.extraRole === 'kepsek')) userData.extraRole = null;
+      if (userData.role === 'parent' && userData.extraRole !== null) userData.extraRole = null;
 
       try {
           setIsSaving(true);
@@ -168,9 +172,17 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                                     <td className="px-6 py-4">
                                         {user.extraRole ? (
                                             <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                                                user.extraRole === 'staff' ? 'bg-indigo-100 text-indigo-700' : 'bg-orange-100 text-orange-700'
+                                                user.extraRole === 'staff' ? 'bg-indigo-100 text-indigo-700' : 
+                                                user.extraRole === 'osis' ? 'bg-orange-100 text-orange-700' :
+                                                user.extraRole === 'wakasek' ? 'bg-purple-100 text-purple-700' :
+                                                user.extraRole === 'kepsek' ? 'bg-red-100 text-red-700' :
+                                                'bg-gray-100 text-gray-700'
                                             }`}>
-                                                {user.extraRole === 'staff' ? 'Staff' : 'OSIS'}
+                                                {user.extraRole === 'staff' ? 'Staff' : 
+                                                 user.extraRole === 'osis' ? 'OSIS' :
+                                                 user.extraRole === 'wakasek' ? 'Wakasek' :
+                                                 user.extraRole === 'kepsek' ? 'Kepsek' :
+                                                 user.extraRole}
                                             </span>
                                         ) : <span className="text-gray-400">-</span>}
                                     </td>
@@ -229,6 +241,8 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                                 >
                                     <option value="">- Tidak Ada -</option>
                                     {currentUser.role === 'teacher' && <option value="staff">Staff TU/Sarpras</option>}
+                                    {currentUser.role === 'teacher' && <option value="wakasek">Wakasek</option>}
+                                    {currentUser.role === 'teacher' && <option value="kepsek">Kepsek</option>}
                                     {currentUser.role === 'student' && <option value="osis">Pengurus OSIS</option>}
                                 </select>
                             </div>

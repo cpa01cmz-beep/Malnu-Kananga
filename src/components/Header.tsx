@@ -9,7 +9,7 @@ import { MoonIcon } from './icons/MoonIcon';
 import { UserRole, UserExtraRole } from '../types';
 import NotificationCenter from './NotificationCenter';
 
-const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 font-medium px-4 py-2.5 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800";
+const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 font-medium px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800";
 
 const NavLinks = () => (
     <>
@@ -114,16 +114,16 @@ const Header: React.FC<HeaderProps> = ({
 
                         <button
                             onClick={onToggleTheme}
-                            className="p-2.5 rounded-xl text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="p-2 sm:p-2.5 rounded-xl text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
                             aria-label="Ganti Tema"
                         >
                             {theme === 'light' ? <MoonIcon /> : <SunIcon />}
                         </button>
 
                           {isLoggedIn ? (
-                               <div className="hidden sm:flex items-center gap-2">
+                               <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
                                 {userExtraRole && (
-                                    <span className={`text-xs font-semibold px-3.5 py-2 rounded-lg ${
+                                    <span className={`text-xs font-semibold px-3 sm:px-3.5 py-2 rounded-lg ${
                                         userExtraRole === 'staff' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300'
                                     }`}>
                                         {userExtraRole}
@@ -133,7 +133,7 @@ const Header: React.FC<HeaderProps> = ({
                                 {userRole === 'admin' && (
                                     <button
                                         onClick={onEditClick}
-                                        className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-semibold text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         title="Buka Editor AI"
                                     >
                                         <SparklesIcon />
@@ -143,27 +143,27 @@ const Header: React.FC<HeaderProps> = ({
 
                                 <button
                                     onClick={onTogglePublicView}
-                                    className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500"
+                                    className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-semibold text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500"
                                 >
                                     {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                 </button>
 
-                                <button onClick={onLogout} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-red-200 dark:hover:bg-red-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                <button onClick={onLogout} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-semibold text-sm hover:bg-red-200 dark:hover:bg-red-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500">
                                     Logout
                                 </button>
                             </div>
                         ) : (
-                            <div className="hidden sm:flex items-center gap-2">
-                                <button onClick={onChatClick} className="flex items-center gap-2 bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-primary-200 dark:hover:bg-primary-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
+                                <button onClick={onChatClick} className="flex items-center gap-2 bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-semibold text-sm hover:bg-primary-200 dark:hover:bg-primary-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
                                     <ChatIcon />
                                     <span>Tanya AI</span>
                                 </button>
-                                <button onClick={onLoginClick} className="bg-primary-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm hover:shadow-md">
+                                <button onClick={onLoginClick} className="bg-primary-600 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-semibold text-sm hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm hover:shadow-md">
                                     Login
                                 </button>
                             </div>
                         )}
-                          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2.5 rounded-xl text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Buka menu">
+                          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 sm:p-2.5 rounded-xl text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Buka menu">
                             {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
                         </button>
                     </div>
@@ -171,10 +171,10 @@ const Header: React.FC<HeaderProps> = ({
             </div>
 
             {isMenuOpen && (
-                <div className="md:hidden bg-white dark:bg-neutral-800 shadow-card mx-2 sm:mx-4 rounded-2xl mt-2 p-4 animate-fade-in border border-neutral-200 dark:border-neutral-700">
-                    <nav className="flex flex-col gap-3 font-semibold text-center">
+                <div className="md:hidden bg-white dark:bg-neutral-800 shadow-card mx-2 sm:mx-4 rounded-2xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700">
+                    <nav className="flex flex-col gap-2.5 sm:gap-3 font-semibold text-center">
                         <NavLinks />
-                          <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-3">
+                          <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-2.5 sm:gap-3">
                              {isLoggedIn ? (
                                  <>
                                       <button onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }} className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 w-full px-4 py-3 rounded-xl text-sm font-semibold hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500">

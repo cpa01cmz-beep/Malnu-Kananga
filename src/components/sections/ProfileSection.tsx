@@ -3,11 +3,11 @@ import React from 'react';
 
 const ProfileSection: React.FC = () => {
   return (
-    <section id="profil" className="py-20 sm:py-24 bg-gradient-to-b from-white to-neutral-50/60 dark:from-neutral-800/60 dark:to-neutral-900/40">
+    <section id="profil" className="py-24 sm:py-28 bg-gradient-to-b from-white to-neutral-50/60 dark:from-neutral-800/60 dark:to-neutral-900/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-neutral-900 dark:text-white tracking-tight mb-4">Profil Madrasah</h2>
-          <p className="text-lg sm:text-xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto leading-relaxed font-semibold">Mengenal Lebih Dekat MA Malnu Kananga</p>
+        <div className="text-center mb-12 sm:mb-16 animate-fade-in">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-neutral-900 dark:text-white tracking-tight mb-4 sm:mb-5">Profil Madrasah</h2>
+          <p className="text-base sm:text-lg md:text-xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto leading-relaxed font-semibold">Mengenal Lebih Dekat MA Malnu Kananga</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start animate-fade-in-up">
             <div className="lg:col-span-3 text-base sm:text-lg text-neutral-700 dark:text-neutral-300 space-y-8 text-left sm:text-justify leading-[1.8]">

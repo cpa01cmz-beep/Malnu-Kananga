@@ -131,6 +131,50 @@ export const PERMISSIONS: Record<string, Permission> = {
     action: 'approve'
   },
 
+  // Academic Leadership Roles
+  'academic.oversight': {
+    id: 'academic.oversight',
+    name: 'Academic Oversight',
+    description: 'Oversee academic operations and performance',
+    resource: 'academic',
+    action: 'oversight'
+  },
+  'academic.curriculum': {
+    id: 'academic.curriculum',
+    name: 'Curriculum Management',
+    description: 'Manage and approve curriculum changes',
+    resource: 'academic',
+    action: 'curriculum'
+  },
+  'academic.teacher_evaluation': {
+    id: 'academic.teacher_evaluation',
+    name: 'Teacher Evaluation',
+    description: 'Evaluate and assess teacher performance',
+    resource: 'academic',
+    action: 'evaluate'
+  },
+  'academic.discipline': {
+    id: 'academic.discipline',
+    name: 'Student Discipline',
+    description: 'Manage student discipline and conduct',
+    resource: 'academic',
+    action: 'discipline'
+  },
+  'school.policies': {
+    id: 'school.policies',
+    name: 'School Policies',
+    description: 'Create and manage school policies',
+    resource: 'school',
+    action: 'policies'
+  },
+  'school.reports': {
+    id: 'school.reports',
+    name: 'School Reports',
+    description: 'Generate and view comprehensive school reports',
+    resource: 'school',
+    action: 'reports'
+  },
+
   // Special Roles
   'inventory.manage': {
     id: 'inventory.manage',
@@ -194,6 +238,8 @@ export const ROLE_PERMISSION_MATRIX: PermissionMatrix = {
     'users.create', 'users.read', 'users.update', 'users.delete',
     'content.create', 'content.read', 'content.update', 'content.delete',
     'academic.grades', 'academic.attendance', 'academic.schedule', 'academic.classes',
+    'academic.oversight', 'academic.curriculum', 'academic.teacher_evaluation', 'academic.discipline',
+    'school.policies', 'school.reports',
     'ppdb.manage', 'ppdb.approve',
     'inventory.manage', 'osis.events',
     'parent.monitor', 'parent.reports', 'parent.communication',
@@ -216,6 +262,32 @@ export const ROLE_PERMISSION_MATRIX: PermissionMatrix = {
 
 // Extra role permissions (added to base role permissions)
 export const EXTRA_ROLE_PERMISSIONS: Partial<Record<NonNullable<UserExtraRole>, string[]>> & { null?: string[] } = {
+  wakasek: [
+    'academic.oversight',
+    'academic.teacher_evaluation', 
+    'academic.discipline',
+    'academic.grades',
+    'academic.attendance',
+    'academic.schedule',
+    'content.read',
+    'users.read',
+    'school.reports'
+  ],
+  kepsek: [
+    'academic.oversight',
+    'academic.curriculum',
+    'academic.teacher_evaluation',
+    'academic.discipline',
+    'school.policies',
+    'school.reports',
+    'academic.grades',
+    'academic.attendance',
+    'academic.schedule',
+    'users.read',
+    'users.update',
+    'content.read',
+    'ppdb.approve'
+  ],
   staff: ['inventory.manage'],
   osis: ['osis.events'],
   null: []

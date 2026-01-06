@@ -1,6 +1,6 @@
 // Type definitions for common user-related interfaces
 export type UserRole = 'admin' | 'teacher' | 'student' | 'parent' | 'staff' | 'osis';
-export type UserExtraRole = UserRole | null;
+export type UserExtraRole = 'wakasek' | 'kepsek' | 'staff' | 'osis' | null;
 
 export interface UserPermission {
   resource: string;
