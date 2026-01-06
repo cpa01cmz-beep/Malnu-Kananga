@@ -1,5 +1,7 @@
 # OpenCode Configuration for MA Malnu Kananga
 
+**Last Updated**: 2026-01-06 (Updated user roles documentation)
+
 ## Project Overview
 
 MA Malnu Kananga is a modern school management system with AI integration, built with React + TypeScript + Vite.
@@ -53,7 +55,7 @@ All localStorage keys use `malnu_` prefix:
 ### User Roles
 
 Primary roles: `admin`, `teacher`, `student`, `parent`
-Extra roles: `staff`, `osis`
+Extra roles: `staff`, `osis`, `wakasek`, `kepsek`
 
 ### Testing Guidelines
 
