@@ -15,6 +15,7 @@ class AIResponseCache {
     misses: number;
     totalRequests: number;
   };
+  private cleanupIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor(config: Partial<CacheConfig> = {}) {
     this.config = {
@@ -164,8 +165,7 @@ class AIResponseCache {
    * Start automatic cleanup interval
    */
   private startCleanupInterval(): void {
-    // Clean up every 5 minutes
-    setInterval(() => this.cleanup(), 5 * 60 * 1000);
+    this.cleanupIntervalId = setInterval(() => this.cleanup(), 5 * 60 * 1000);
   }
 
   /**
@@ -302,6 +302,19 @@ class AIResponseCache {
     this.saveCacheToStorage();
     
     logger.info(`AI cache cleared ${keysToDelete.length} entries for operation: ${operation}`);
+  }
+
+  /**
+   * Destroy the cache instance and clean up resources
+   */
+  public destroy(): void {
+    if (this.cleanupIntervalId) {
+      clearInterval(this.cleanupIntervalId);
+      this.cleanupIntervalId = null;
+    }
+    this.cache.clear();
+    this.stats = { hits: 0, misses: 0, totalRequests: 0 };
+    logger.info('AIResponseCache destroyed and cleaned up');
   }
 
   /**

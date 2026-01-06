@@ -211,6 +211,47 @@ describe('AI Cache Service', () => {
       chatCache.clear();
       expect(chatCache.has(params)).toBe(false);
     });
+
+    it('should destroy cache and clean up resources', async () => {
+      const testCache = new AIResponseCache({ maxSize: 10, ttl: 60000 });
+      
+      // Add some data
+      testCache.set({ operation: 'chat', input: 'test1' }, 'response1');
+      testCache.set({ operation: 'chat', input: 'test2' }, 'response2');
+      
+      // Verify data exists before destroy
+      expect(testCache.getStats().totalEntries).toBe(2);
+      expect(testCache.get({ operation: 'chat', input: 'test1' })).toBe('response1');
+      
+      // Call destroy
+      expect(() => testCache.destroy()).not.toThrow();
+      
+      // Verify cache is cleared after destroy
+      expect(testCache.getStats().totalEntries).toBe(0);
+      expect(testCache.get({ operation: 'chat', input: 'test1' })).toBeNull();
+      
+      // Verify stats are reset (accounting for the get() call that increments misses)
+      const stats = testCache.getStats();
+      expect(stats.totalHits).toBe(0);
+      expect(stats.totalMisses).toBe(1); // One miss from the get() call after destroy
+      
+      // Verify destroy can be called multiple times safely
+      expect(() => testCache.destroy()).not.toThrow();
+    });
+
+    it('should prevent memory leaks by clearing cleanup interval', async () => {
+      const testCache = new AIResponseCache({ maxSize: 5, ttl: 1000 });
+      
+      // Add data and verify it works
+      testCache.set({ operation: 'chat', input: 'test' }, 'response');
+      expect(testCache.get({ operation: 'chat', input: 'test' })).toBe('response');
+      
+      // Destroy should not throw and should clean up intervals
+      expect(() => testCache.destroy()).not.toThrow();
+      
+      // Cache should be empty after destroy
+      expect(testCache.getStats().totalEntries).toBe(0);
+    });
   });
 
   describe('Contextual Caching', () => {
