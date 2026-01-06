@@ -229,9 +229,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-lg shadow-float border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-      <header className="flex items-center justify-between px-4 py-3 bg-primary-600 text-white flex-shrink-0">
+      <header className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white flex-shrink-0">
         <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 bg-white rounded-full mr-1 animate-pulse"></div>
+            <div className="w-2.5 h-2.5 bg-white rounded-full mr-1 animate-pulse shadow-sm"></div>
             <h2 className="font-semibold text-sm">Asisten AI</h2>
         </div>
         <div className="flex items-center gap-1.5">
@@ -334,12 +334,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               }`}
             >
               <div
-                className={`rounded-lg px-3 py-2 text-sm md:text-base leading-relaxed ${
-                  message.sender === Sender.User
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200'
-                }`}
-              >
+                 className={`rounded-lg px-3.5 py-2.5 text-sm md:text-base leading-relaxed shadow-sm ${
+                   message.sender === Sender.User
+                     ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white'
+                     : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200'
+                 }`}
+               >
                 {message.sender === Sender.AI ? (
                     <MarkdownRenderer content={message.text} />
                 ) : (

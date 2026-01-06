@@ -134,18 +134,18 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
 
           {formState === 'success' ? (
             <div className="text-center py-4">
-              <div className="mx-auto flex items-center justify-center h-14 w-14 rounded-xl bg-primary-100 dark:bg-primary-900/50">
-                  <svg className="h-7 w-7 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-2xl bg-primary-100 dark:bg-primary-900/50 shadow-lg">
+                  <svg className="h-8 w-8 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-neutral-900 dark:text-white">Login Berhasil!</h3>
+              <h3 className="mt-4 text-xl font-bold text-neutral-900 dark:text-white">Login Berhasil!</h3>
               <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
                 Anda akan diarahkan ke dashboard...
               </p>
               <button
                 onClick={onClose}
-                className="mt-6 w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200 shadow-sm"
+                className="mt-6 w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-sm hover:shadow-md"
               >
                 Selesai
               </button>

@@ -11,11 +11,11 @@ import NotificationCenter from './NotificationCenter';
 
 const NavLinks = () => (
     <>
-        <a href="#home" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg">Beranda</a>
-        <a href="#profil" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg">Profil</a>
-        <a href="#berita" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg">Berita</a>
-        <a href="#download" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg">Download</a>
-        <a href="#login-email" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg">Login Email</a>
+        <a href="#home" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-3 py-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">Beranda</a>
+        <a href="#profil" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-3 py-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">Profil</a>
+        <a href="#berita" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-3 py-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">Berita</a>
+        <a href="#download" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-3 py-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">Download</a>
+        <a href="#login-email" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-3 py-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">Login Email</a>
     </>
 );
 
@@ -70,13 +70,13 @@ const Header: React.FC<HeaderProps> = ({
     }, []);
 
     const headerClasses = `
-        fixed top-0 left-0 right-0 z-40 transition-all duration-300
+        fixed top-0 left-0 right-0 z-40 transition-all duration-300 ease-out
         ${isScrolled ? 'mt-0 rounded-none shadow-md' : 'mt-4 mx-2 sm:mx-4 rounded-pill'}
     `;
 
     const navContainerClasses = `
         w-full max-w-7xl mx-auto px-4 sm:px-6
-        ${isScrolled ? '' : 'bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-pill ring-1 ring-neutral-900/5 dark:ring-white/10 shadow-card'}
+        ${isScrolled ? '' : 'bg-white/85 dark:bg-neutral-800/85 backdrop-blur-xl rounded-pill ring-1 ring-neutral-900/5 dark:ring-white/10 shadow-card'}
     `;
 
     const innerNavClasses = `
@@ -89,7 +89,7 @@ const Header: React.FC<HeaderProps> = ({
             <div className={navContainerClasses}>
                  <div className={`${innerNavClasses} ${isScrolled ? 'max-w-7xl mx-auto px-4' : ''}`}>
                        <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0 w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                        <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm hover:shadow-md transition-shadow duration-200">
                             M
                         </div>
                         <div>
@@ -169,19 +169,19 @@ const Header: React.FC<HeaderProps> = ({
             </div>
 
             {isMenuOpen && (
-                <div className="md:hidden bg-white dark:bg-neutral-800 shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 animate-fade-in">
+                <div className="md:hidden bg-white dark:bg-neutral-800 shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 animate-fade-in border border-neutral-200 dark:border-neutral-700">
                     <nav className="flex flex-col gap-3 font-medium text-center">
                         <NavLinks />
                           <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-3">
                              {isLoggedIn ? (
                                  <>
-                                      <button onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }} className="bg-neutral-100 text-neutral-700 w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500">
+                                      <button onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }} className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500">
                                           {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                       </button>
-                                      <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-red-100 text-red-700 w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500">Logout</button>
+                                      <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500">Logout</button>
                                   </>
                               ) : (
-                                  <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-primary-600 text-white w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">Login</button>
+                                  <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-primary-600 text-white w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">Login</button>
                               )}
                           </div>
                     </nav>
