@@ -44,9 +44,9 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
           setMessages(messagesResponse.data || []);
         }
 
-        if (teachersResponse.success) {
-          setAvailableTeachers(teachersResponse.data || []);
-          if (teachersResponse.data?.length > 0) {
+        if (teachersResponse.success && teachersResponse.data) {
+          setAvailableTeachers(teachersResponse.data);
+          if (teachersResponse.data.length > 0) {
             setSelectedTeacher(teachersResponse.data[0]);
           }
         }

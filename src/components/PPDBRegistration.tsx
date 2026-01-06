@@ -242,8 +242,10 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                                         : 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-900/20 dark:hover:bg-green-900/30'
                                 }`}
                             >
-                                <div className="flex flex-col items-center space-y-2">
-                                    <DocumentTextIcon className="w-8 h-8 text-green-600 dark:text-green-400" />
+                                    <div className="flex flex-col items-center space-y-2">
+                                    <div className="w-8 h-8 text-green-600 dark:text-green-400">
+                                        <DocumentTextIcon />
+                                    </div>
                                     <span className="text-sm text-gray-700 dark:text-gray-300">
                                         {isProcessingOCR ? 'Memproses...' : 'Klik untuk upload ijazah (JPG/PNG)'}
                                     </span>
@@ -253,8 +255,10 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                             <div className="relative">
                                 <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
                                     <div className="flex items-center space-x-3">
-                                        <DocumentTextIcon className="w-8 h-8 text-green-600 dark:text-green-400" />
-                                        <div>
+                                    <div className="w-8 h-8 text-green-600 dark:text-green-400">
+                                        <DocumentTextIcon />
+                                    </div>
+                                    <div>
                                             <p className="text-sm font-medium text-gray-900 dark:text-white">
                                                 {diplomaImage.name}
                                             </p>

@@ -101,6 +101,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
       const apiStatus = status.toLowerCase() as 'hadir' | 'sakit' | 'izin' | 'alpa';
 
       const attendanceData = {
+        id: Date.now().toString(),
         studentId: id,
         classId: className,
         date: today,
@@ -129,12 +130,11 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
         }
       });
       
-      if (result.success && result.data?.success) {
+      if (result.success) {
         toast.success('Status kehadiran diperbarui');
       } else {
-        // Revert optimistic update
         setStudents(prevStudents);
-        toast.error(result.data?.message || 'Gagal memperbarui kehadiran');
+        toast.error(result.error || 'Gagal memperbarui kehadiran');
       }
     } catch (err) {
       // Revert optimistic update

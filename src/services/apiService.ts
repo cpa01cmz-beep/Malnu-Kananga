@@ -316,6 +316,7 @@ async function request<T>(
         if (!permissionCheck.allowed) {
           return {
             success: false,
+            message: 'Access denied: ' + (permissionCheck.reason || 'Insufficient permissions'),
             error: 'Access denied: ' + (permissionCheck.reason || 'Insufficient permissions')
           };
         }

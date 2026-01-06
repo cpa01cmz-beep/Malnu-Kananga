@@ -1,0 +1,15 @@
+declare module 'recharts/es6/chart/LineChart';
+declare module 'recharts/es6/cartesian/Line';
+declare module 'recharts/es6/chart/BarChart';
+declare module 'recharts/es6/cartesian/Bar';
+declare module 'recharts/es6/cartesian/XAxis';
+declare module 'recharts/es6/cartesian/YAxis';
+declare module 'recharts/es6/cartesian/CartesianGrid';
+declare module 'recharts/es6/cartesian/Area';
+declare module 'recharts/es6/chart/AreaChart';
+declare module 'recharts/es6/component/Tooltip';
+declare module 'recharts/es6/component/Legend';
+declare module 'recharts/es6/component/ResponsiveContainer';
+declare module 'recharts/es6/chart/PieChart';
+declare module 'recharts/es6/polar/Pie';
+declare module 'recharts/es6/component/Cell';

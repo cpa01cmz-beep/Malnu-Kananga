@@ -4,7 +4,7 @@ import DocumentTextIcon from './icons/DocumentTextIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { UsersIcon } from './icons/UsersIcon';
 import { ToastType } from './Toast';
-import type { ParentChild } from '../types';
+import type { ParentChild, Grade } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 
@@ -43,7 +43,7 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
           const attendance = attendanceResponse.success ? attendanceResponse.data || [] : [];
 
           const averageGrade = grades.length > 0 
-            ? grades.reduce((sum: number, g: { grade: number }) => sum + g.grade, 0) / grades.length 
+            ? grades.reduce((sum: number, g: Grade) => sum + g.score, 0) / grades.length 
             : 0;
 
           const attendanceRate = attendance.length > 0 
@@ -55,12 +55,12 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
             averageGrade: Math.round(averageGrade * 100) / 100,
             attendanceRate: Math.round(attendanceRate * 100) / 100,
             totalAbsences: attendance.filter((a: { status: string }) => a.status !== 'hadir').length,
-            latestGrades: grades.slice(-3).map((g: { subject: string; grade: number; date: string }) => ({
-              subject: g.subject,
-              grade: g.grade,
-              date: g.date
+            latestGrades: grades.slice(-3).map((g: Grade) => ({
+              subject: g.subjectName || g.subjectId,
+              grade: g.score,
+              date: g.createdAt
             })),
-            recentActivity: grades.length > 0 ? `Nilai terakhir: ${grades[grades.length - 1].subject}` : 'Tidak ada aktivitas terkini'
+            recentActivity: grades.length > 0 ? `Nilai terakhir: ${grades[grades.length - 1].subjectName || grades[grades.length - 1].subjectId}` : 'Tidak ada aktivitas terkini'
           };
         });
 
