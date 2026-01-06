@@ -627,14 +627,15 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
     - Spesifik error handling untuk rate limits (429)
     - User-friendly error messages tanpa expose sensitive data
     - Configurable timeout thresholds
-   - **Secure Logging**: Environment-based logging system ✅
-     - Centralized logger utility (src/utils/logger.ts)
-     - Development-only logging to prevent production data exposure
-     - Configurable log levels (DEBUG, INFO, WARN, ERROR)
-     - No sensitive data logged in production
-     - Timestamp and structured log formatting
-     - All console statements in production code replaced with logger utility ✅
-     - Zero console.log/warn/error/debug statements in src/ (excluding logger.ts) ✅
+    - **Secure Logging**: Environment-based logging system ✅
+      - Centralized logger utility (src/utils/logger.ts)
+      - Development-only logging to prevent production data exposure
+      - Configurable log levels (DEBUG, INFO, WARN, ERROR)
+      - No sensitive data logged in production
+      - Timestamp and structured log formatting
+      - All console statements in production code replaced with logger utility ✅
+      - Zero console.log/warn/error/debug statements in src/ (excluding logger.ts) ✅
+      - All 13 console statements across 6 files replaced (categoryService, ChatWindow, GradingManagement, PPDBManagement, SiteEditor, voiceOptimization) ✅
   - **Memory Leak Prevention**: Optimized ChatWindow component ✅
     - History size limiting to prevent unbounded growth (MAX_HISTORY_SIZE = 20)
     - Proper useEffect cleanup to clear history on chat close

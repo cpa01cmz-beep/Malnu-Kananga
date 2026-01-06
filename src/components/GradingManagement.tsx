@@ -4,7 +4,8 @@ import Papa from 'papaparse';
 import { analyzeClassPerformance } from '../services/geminiService';
 import { studentsAPI, gradesAPI } from '../services/apiService';
 import { LightBulbIcon } from './icons/LightBulbIcon';
-import MarkdownRenderer from './MarkdownRenderer'; // Reuse renderer
+import MarkdownRenderer from './MarkdownRenderer';
+import { logger } from '../utils/logger';
 
 
 interface StudentGrade {
@@ -128,9 +129,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
           finalExam: grade.finalExam,
         });
       }
-      console.log('Auto-save completed successfully');
+      logger.info('Auto-save completed successfully');
     } catch (error) {
-      console.error('Auto-save failed:', error);
+      logger.error('Auto-save failed:', error);
     } finally {
       setIsAutoSaving(false);
     }

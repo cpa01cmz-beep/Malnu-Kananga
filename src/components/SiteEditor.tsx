@@ -5,12 +5,13 @@ import { Sender } from '../types';
 import { getAIEditorResponse } from '../services/geminiService';
 import { CloseIcon } from './icons/CloseIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
-import { ArrowPathIcon } from './icons/ArrowPathIcon'; 
+import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import ProgramCard from './ProgramCard';
 import NewsCard from './NewsCard';
 import MarkdownRenderer from './MarkdownRenderer';
 import AutoResizeTextarea from './AutoResizeTextarea';
 import TypingIndicator from './TypingIndicator';
+import { logger } from '../utils/logger';
 
 interface SiteEditorProps {
   isOpen: boolean;
@@ -101,7 +102,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
             timestamp: new Date(entry.timestamp)
           })));
         } catch (e) {
-          console.warn('Failed to load change history:', e);
+          logger.warn('Failed to load change history:', e);
         }
       }
     }

@@ -3,6 +3,7 @@ import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, 
 
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
+import { logger } from '../utils/logger';
 
 interface PPDBManagementProps {
   onBack: () => void;
@@ -62,8 +63,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
       if (r.id === id) {
         const template = templates.find(t => t.id === templateId);
         if (template && template.type === (newStatus === 'approved' ? 'approval' : 'rejection')) {
-          // Simulate sending notification email
-          console.log('Sending email:', template.subject, template.body.replace('{fullName}', r.fullName));
+          logger.info('Sending email:', template.subject, template.body.replace('{fullName}', r.fullName));
         }
         return { ...r, status: newStatus };
       }
@@ -98,8 +98,8 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
     const letter = template.body
       .replace('{fullName}', registrant.fullName)
       .replace('{registrationDate}', registrant.registrationDate);
-    
-    console.log('Generating PDF:', template.subject, letter);
+
+    logger.info('Generating PDF:', template.subject, letter);
     onShowToast(`Surat ${type === 'approval' ? 'penerimaan' : 'penolakan'} berhasil dibuat`, 'success');
   };
 
