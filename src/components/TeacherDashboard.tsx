@@ -80,8 +80,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
                     {checkPermission('academic.classes') && (
-                    <div onClick={() => setCurrentView('class')} className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-0.5 group">
-                        <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-xl w-fit mb-4"><UsersIcon /></div>
+                    <div onClick={() => setCurrentView('class')} className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:scale-[1.02] group">
+                        <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform duration-300"><UsersIcon /></div>
                         <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Wali Kelas</h3>
                         <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-2">Kelola data siswa di kelas perwalian Anda.</p>
                         <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded-full">Aktif</span>
@@ -89,8 +89,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                     )}
 
                     {checkPermission('academic.grades') && (
-                    <div onClick={() => setCurrentView('grading')} className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-0.5 group">
-                        <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-xl w-fit mb-4"><ClipboardDocumentCheckIcon /></div>
+                    <div onClick={() => setCurrentView('grading')} className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:scale-[1.02] group">
+                        <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform duration-300"><ClipboardDocumentCheckIcon /></div>
                         <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Input Nilai</h3>
                         <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-2">Masukkan nilai tugas, UTS, dan UAS.</p>
                         <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded-full">Aktif</span>
@@ -98,8 +98,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                     )}
 
                     {checkPermission('content.create') && (
-                    <div onClick={() => setCurrentView('upload')} className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-0.5 group">
-                        <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-xl w-fit mb-4"><DocumentTextIcon /></div>
+                    <div onClick={() => setCurrentView('upload')} className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:scale-[1.02] group">
+                        <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform duration-300"><DocumentTextIcon /></div>
                         <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Upload Materi</h3>
                         <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-2">Bagikan modul dan bahan ajar digital.</p>
                         <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded-full">Aktif</span>
@@ -108,8 +108,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
 
                     {/* INVENTORY MANAGEMENT (STAFF ONLY) */}
                     {extraRole === 'staff' && checkPermission('inventory.manage') && (
-                        <div onClick={() => setCurrentView('inventory')} className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-6 rounded-xl shadow-card border border-blue-200 dark:border-blue-800 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-0.5 group">
-                            <div className="bg-blue-200 dark:bg-blue-800 p-3 rounded-xl w-fit mb-4 text-blue-700 dark:text-blue-300"><ArchiveBoxIcon /></div>
+                        <div onClick={() => setCurrentView('inventory')} className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-6 rounded-xl shadow-card border border-blue-200 dark:border-blue-800 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:scale-[1.02] group">
+                            <div className="bg-blue-200 dark:bg-blue-800 p-3 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform duration-300 text-blue-700 dark:text-blue-300"><ArchiveBoxIcon /></div>
                             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Inventaris</h3>
                             <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-2">Manajemen aset dan sarana prasarana sekolah.</p>
                             <span className="text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full">Tugas Tambahan</span>

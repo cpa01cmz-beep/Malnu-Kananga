@@ -112,9 +112,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
                     <div
                         onClick={onOpenEditor}
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 ease-out hover:shadow-card-hover hover:-translate-y-0.5 group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 ease-out hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
-                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300 ease-out">
+                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
                             <SparklesIcon className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Site Editor</h3>
@@ -124,9 +124,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('content.update') && (
                     <div
                         onClick={onOpenEditor}
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 ease-out hover:shadow-card-hover hover:-translate-y-0.5 group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 ease-out hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
-                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300 ease-out">
+                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
                             <SparklesIcon className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Site Editor</h3>
@@ -137,14 +137,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('ppdb.manage') && (
                     <div
                         onClick={() => setCurrentView('ppdb')}
-                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 ease-out cursor-pointer relative hover:-translate-y-0.5 group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 ease-out cursor-pointer relative hover:-translate-y-1 hover:scale-[1.02] group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
                         {pendingPPDB > 0 && (
                             <span className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-semibold text-white shadow-md animate-pulse ring-2 ring-white dark:ring-neutral-800">
                                 {pendingPPDB}
                             </span>
                         )}
-                        <div className="bg-orange-100 dark:bg-orange-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
+                        <div className="bg-orange-100 dark:bg-orange-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 text-orange-600 dark:text-orange-400">
                             <ClipboardDocumentCheckIcon />
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white mb-2">PPDB Online</h3>
@@ -156,9 +156,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('users.read') && (
                     <div
                         onClick={() => setCurrentView('users')}
-                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 ease-out cursor-pointer hover:-translate-y-0.5 group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 ease-out cursor-pointer hover:-translate-y-1 hover:scale-[1.02] group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
-                        <div className="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
+                        <div className="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 text-blue-600 dark:text-blue-400">
                             <UsersIcon />
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white mb-2">Manajemen User</h3>
@@ -170,9 +170,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('system.stats') && (
                     <div
                         onClick={() => setCurrentView('stats')}
-                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 ease-out cursor-pointer hover:-translate-y-0.5 group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 ease-out cursor-pointer hover:-translate-y-1 hover:scale-[1.02] group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
-                        <div className="bg-primary-100 dark:bg-primary-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-primary-600 dark:text-primary-400">
+                        <div className="bg-primary-100 dark:bg-primary-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 text-primary-600 dark:text-primary-400">
                             <ChartBarIcon />
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white mb-2">Laporan & Log</h3>
@@ -184,9 +184,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('system.admin') && (
                     <div
                         onClick={() => setCurrentView('ai-cache')}
-                        className="bg-gradient-to-br from-green-500 to-teal-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 ease-out hover:shadow-card-hover hover:-translate-y-0.5 group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        className="bg-gradient-to-br from-green-500 to-teal-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 ease-out hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
-                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300 ease-out">
+                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
                             <ChartBarIcon className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Cache Manager</h3>
@@ -197,9 +197,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('system.admin') && (
                     <div
                         onClick={() => setCurrentView('permissions')}
-                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 ease-out hover:shadow-card-hover hover:-translate-y-0.5 group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 ease-out hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
-                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300 ease-out">
+                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
                             <UsersIcon className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold mb-2">Permission System</h3>

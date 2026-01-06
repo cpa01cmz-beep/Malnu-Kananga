@@ -149,20 +149,20 @@ setTranscriptBuffer('');
     if (!isSupported) {
       return 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed';
     }
-    
+
     if (permissionState === 'denied') {
-      return 'bg-orange-500 hover:bg-orange-600 text-white';
+      return 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105 active:scale-95 shadow-sm hover:shadow-md';
     }
 
     switch (state) {
       case 'listening':
-        return continuous ? 'bg-orange-500 hover:bg-orange-600 text-white' : 'bg-red-500 hover:bg-red-600 text-white';
+        return continuous ? 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105 active:scale-95 shadow-md hover:shadow-lg' : 'bg-red-500 hover:bg-red-600 text-white hover:scale-105 active:scale-95 shadow-md hover:shadow-lg';
       case 'processing':
-        return 'bg-blue-500 hover:bg-blue-600 text-white';
+        return 'bg-blue-500 hover:bg-blue-600 text-white hover:scale-105 active:scale-95 shadow-md hover:shadow-lg';
       case 'error':
-        return 'bg-red-600 hover:bg-red-700 text-white';
+        return 'bg-red-600 hover:bg-red-700 text-white hover:scale-105 active:scale-95 shadow-md hover:shadow-lg';
       default:
-        return 'bg-green-500 hover:bg-green-600 text-white dark:bg-green-600 dark:hover:bg-green-700';
+        return 'bg-green-500 hover:bg-green-600 text-white dark:bg-green-600 dark:hover:bg-green-700 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md';
     }
   };
 
