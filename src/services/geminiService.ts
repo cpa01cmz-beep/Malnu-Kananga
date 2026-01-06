@@ -9,6 +9,7 @@ import {
   withCircuitBreaker
 } from '../utils/errorHandler';
 import { logger } from '../utils/logger';
+import { validateAICommand, validateAIResponse } from '../utils/aiEditorValidator';
 
 // Initialize the Google AI client
 const ai = new GoogleGenAI({ apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' });
@@ -160,26 +161,14 @@ export async function getAIEditorResponse(
     currentContent: { featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }
 ): Promise<{ featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }> {
     
-    // Validate input prompt
-    if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
-        throw new Error('Permintaan tidak valid: prompt kosong');
+const commandValidation = validateAICommand(prompt);
+    if (!commandValidation.isValid) {
+        throw new Error(commandValidation.error);
     }
-    
-    if (prompt.length > 1000) {
-        throw new Error('Permintaan terlalu panjang: maksimal 1000 karakter');
-    }
-    
-    // Validate currentContent structure
-    if (!currentContent || typeof currentContent !== 'object') {
-        throw new Error('Struktur konten tidak valid');
-    }
-    
-    if (!Array.isArray(currentContent.featuredPrograms) || !Array.isArray(currentContent.latestNews)) {
-        throw new Error('Format data featuredPrograms atau latestNews tidak valid');
-    }
-    
-    // Upgraded to Gemini 3 Pro for better JSON adherence and logic
-    const model = PRO_THINKING_MODEL; 
+
+    const sanitizedPrompt = commandValidation.sanitizedPrompt || prompt;
+
+    const model = PRO_THINKING_MODEL;
 
     const systemInstruction = `You are an intelligent website content editor with built-in safety validation. Your task is to modify the provided JSON data based on the user's instruction.
 
@@ -198,12 +187,12 @@ CONTENT RULES:
 - Ensure your response is only the modified JSON data.
 - Always return valid JSON that matches the required schema.`;
 
-    const fullPrompt = `Here is the current website content in JSON format:
+const fullPrompt = `Here is the current website content in JSON format:
 \`\`\`json
 ${JSON.stringify(currentContent, null, 2)}
 \`\`\`
 
-Here is the user's request: "${prompt}"
+Here is the user's request: "${sanitizedPrompt}"
 
 Please provide the updated JSON content following the safety and content rules above.`;
 
@@ -252,99 +241,12 @@ Please provide the updated JSON content following the safety and content rules a
 
         const jsonText = (response.text || '').trim();
         
-        // Enhanced validation of AI response
-        if (!jsonText || jsonText.length === 0) {
-            throw new Error('AI mengembalikan respon kosong');
-        }
-        
-        // Check for potential malicious content
-        const maliciousPatterns = [
-            /(\.\.\/|..\\)/,  // Directory traversal
-            /(\/etc\/|\/var\/|\/usr\/|\/bin\/|\/sbin\/)/,  // System paths
-            /(file:\/\/|ftp:\/\/|http:\/\/|https:\/\/)/,  // External URLs
-            /(import|require|export|module)/,  // Module imports
-            /(document|window|global|process)/,  // Global objects
-            /(__dirname|__filename|process\.cwd|fs\.)/,  // Node.js system
-            /(config|\.env|secret|key|password|token)/i,  // Sensitive data
-            /(javascript:|data:|vbscript:)/,  // Protocol injection
-            /<script|<iframe|<object|<embed/i,  // HTML injection
-        ];
-        
-        for (const pattern of maliciousPatterns) {
-            if (pattern.test(jsonText)) {
-                logger.error('AI response contains malicious content', { response: jsonText.substring(0, 200) });
-                throw new Error('AI response rejected for security reasons');
-            }
-        }
-        
-        const firstBrace = jsonText.indexOf('{');
-        const lastBrace = jsonText.lastIndexOf('}');
-        let cleanedJsonText = jsonText;
-        if (firstBrace !== -1 && lastBrace !== -1) {
-            cleanedJsonText = jsonText.substring(firstBrace, lastBrace + 1);
+        const responseValidation = validateAIResponse(jsonText);
+        if (!responseValidation.isValid) {
+            throw new Error(responseValidation.error);
         }
 
-        let parsedContent;
-        try {
-            parsedContent = JSON.parse(cleanedJsonText);
-        } catch {
-            logger.error('Failed to parse AI response JSON', { text: cleanedJsonText.substring(0, 500) });
-            throw new Error('AI mengembalikan format JSON yang tidak valid');
-        }
-        
-        // Validate parsed content structure
-        if (!parsedContent || typeof parsedContent !== 'object') {
-            throw new Error('Struktur respon AI tidak valid');
-        }
-        
-        // AI response structure validation
-        if (!parsedContent.featuredPrograms || !parsedContent.latestNews) {
-            throw new Error('Structure validation failed: Missing required fields');
-        }
-        
-        if (!Array.isArray(parsedContent.featuredPrograms) || !Array.isArray(parsedContent.latestNews)) {
-            throw new Error('Struktur data dari AI tidak sesuai format yang diharapkan');
-        }
-        
-        // Validate each featured program
-        for (let i = 0; i < parsedContent.featuredPrograms.length; i++) {
-            const program = parsedContent.featuredPrograms[i];
-            if (!program.title || !program.description || !program.imageUrl) {
-                throw new Error(`Data program ke-${i + 1} tidak lengkap`);
-            }
-            
-            // Validate imageUrl format
-            if (typeof program.imageUrl !== 'string' || 
-                (!program.imageUrl.startsWith('https://placehold.co/') && 
-                 !program.imageUrl.startsWith('/') && 
-                 !program.imageUrl.includes('unsplash.com'))) {
-                // If image URL looks suspicious, use placeholder
-                program.imageUrl = `https://placehold.co/600x400?text=Program`;
-            }
-        }
-        
-        // Validate each news item
-        for (let i = 0; i < parsedContent.latestNews.length; i++) {
-            const news = parsedContent.latestNews[i];
-            if (!news.title || !news.date || !news.category || !news.imageUrl) {
-                throw new Error(`Data berita ke-${i + 1} tidak lengkap`);
-            }
-            
-            // Validate imageUrl and date format
-            if (typeof news.imageUrl !== 'string' || 
-                (!news.imageUrl.startsWith('https://placehold.co/') && 
-                 !news.imageUrl.startsWith('/') && 
-                 !news.imageUrl.includes('unsplash.com'))) {
-                news.imageUrl = `https://placehold.co/600x400?text=News`;
-            }
-            
-            // Basic date validation
-            if (typeof news.date !== 'string' || news.date.length === 0) {
-                news.date = new Date().toISOString().split('T')[0];
-            }
-        }
-
-        return parsedContent;
+        return responseValidation.sanitizedContent!;
     } catch (error) {
         const classifiedError = classifyError(error, {
             operation: 'getAIEditorResponse',

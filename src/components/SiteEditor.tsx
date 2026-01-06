@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { ChatMessage, FeaturedProgram, LatestNews } from '../types';
 import { Sender } from '../types';
 import { getAIEditorResponse } from '../services/geminiService';
+import { validateAICommand } from '../utils/aiEditorValidator';
 import { CloseIcon } from './icons/CloseIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
@@ -80,7 +81,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   useEffect(() => {
     setCharacterCount(input.length);
     
-    // Validate input
+    // Basic input validation
     if (input.length > 1000) {
       setInputError('Maksimal 1000 karakter');
     } else if (input.trim().length > 0 && input.trim().length < 3) {
@@ -91,56 +92,6 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       setInputError('');
     }
   }, [input]);
-
-  // Command validation function
-  const validateCommand = useCallback((command: string): { isValid: boolean; error?: string } => {
-    const trimmedCommand = command.trim().toLowerCase();
-    
-    // Block system file access attempts
-    const dangerousPatterns = [
-      /(\.\.\/|..\\)/,  // Directory traversal
-      /(\/etc\/|\/var\/|\/usr\/|\/bin\/|\/sbin\/)/,  // System paths
-      /(system|exec|eval|function|script|javascript:)/,  // Code execution
-      /(file:\/\/|ftp:\/\/|http:\/\/|https:\/\/)/,  // External URLs
-      /(import|require|export|module)/,  // Module imports
-      /(document|window|global|process)/,  // Global objects
-      /(__dirname|__filename|process\.cwd|fs\.)/,  // Node.js system
-      /(config|\.env|secret|key|password|token)/i,  // Sensitive data
-      /(delete|drop|truncate|alter)/i,  // Database operations
-      /(sudo|admin|root|chmod|chown)/i,  // System commands
-      /(cmd|powershell|bash|sh)/i,  // Shell commands
-    ];
-    
-    // Check for dangerous patterns
-    for (const pattern of dangerousPatterns) {
-      if (pattern.test(trimmedCommand)) {
-        return {
-          isValid: false,
-          error: '⚠️ Perintah tidak aman terdeteksi. Mohon hindari akses sistem atau perintah berbahaya.'
-        };
-      }
-    }
-    
-    // Validate that command is content-related
-    const validKeywords = [
-      'tambah', 'ubah', 'hapus', 'edit', 'ganti', 'perbarui', 'modifikasi',
-      'program', 'berita', 'konten', 'judul', 'deskripsi', 'gambar', 'foto',
-      'jadwal', 'kegiatan', 'pengumuman', 'artikel', 'informasi'
-    ];
-    
-    const hasValidKeyword = validKeywords.some(keyword => 
-      trimmedCommand.includes(keyword)
-    );
-    
-    if (!hasValidKeyword && trimmedCommand.length > 10) {
-      return {
-        isValid: false,
-        error: '📝 Perintah tidak relevan. Gunakan kata kunci seperti "tambah", "ubah", "hapus" untuk konten website.'
-      };
-    }
-    
-    return { isValid: true };
-  }, []);
 
   // Save initial content to localStorage for undo functionality
   useEffect(() => {
@@ -220,8 +171,8 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   const handleSend = async () => {
     if (!input.trim() || isLoading || inputError) return;
 
-    // Validate command before sending
-    const validation = validateCommand(input);
+    // Validate command using centralized validator
+    const validation = validateAICommand(input);
     if (!validation.isValid) {
       setValidationError(validation.error || 'Perintah tidak valid');
       const errorMessage: ChatMessage = {
@@ -245,13 +196,9 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
     try {
       const newContent = await getAIEditorResponse(requestText, currentContent);
       
-      // Validate AI response structure
+      // The service now handles all validation, so we just need basic checks
       if (!newContent || typeof newContent !== 'object') {
         throw new Error('Respon AI mengembalikan format yang tidak valid');
-      }
-      
-      if (!Array.isArray(newContent.featuredPrograms) || !Array.isArray(newContent.latestNews)) {
-        throw new Error('Struktur data dari AI tidak sesuai format yang diharapkan');
       }
       
       setProposedContent(newContent);
@@ -273,8 +220,8 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
           errorMessage = '🚫 **Batas terlampaui**: Terlalu banyak permintaan. Silakan tunggu beberapa saat sebelum mencoba lagi.';
         } else if (error.message.includes('invalid') || error.message.includes('parse') || error.message.includes('format')) {
           errorMessage = '🔧 **Format tidak valid**: AI mengembalikan data yang tidak benar. Silakan coba instruksi yang lebih spesifik atau sederhana.';
-        } else if (error.message.includes('struktur') || error.message.includes('valid')) {
-          errorMessage = '🛡️ ** Validasi gagal**: Respon AI tidak memenuhi format keamanan. Silakan coba lagi dengan instruksi yang berbeda.';
+        } else if (error.message.includes('struktur') || error.message.includes('valid') || error.message.includes('keamanan')) {
+          errorMessage = '🛡️ **Validasi gagal**: Respon AI tidak memenuhi format keamanan. Silakan coba lagi dengan instruksi yang berbeda.';
         } else {
           errorMessage = `❌ **Error**: ${error.message}`;
         }
