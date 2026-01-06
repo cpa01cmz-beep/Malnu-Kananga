@@ -42,12 +42,6 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
   const [userReview, setUserReview] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
 
-  useEffect(() => {
-    fetchMaterials();
-    fetchSubjects();
-    loadStudentData();
-  }, [loadStudentData]);
-
   const loadStudentData = useCallback(() => {
     // Load bookmarks from localStorage
     try {
@@ -83,6 +77,12 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       logger.error('Error loading student data:', err);
     }
   }, []);
+
+  useEffect(() => {
+    fetchMaterials();
+    fetchSubjects();
+    loadStudentData();
+  }, [loadStudentData]);
 
   const fetchMaterials = async () => {
     setLoading(true);

@@ -101,6 +101,13 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
     }
   }, [STUDENT_NIS]);
 
+  const loadGoals = useCallback(() => {
+    const savedGoals = localStorage.getItem(`goals_${STUDENT_NIS}`);
+    if (savedGoals) {
+      setGoals(JSON.parse(savedGoals));
+    }
+  }, [STUDENT_NIS]);
+
   useEffect(() => {
     fetchGrades();
     loadGoals();
@@ -208,13 +215,6 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
       grade: grade.grade
     }));
   };
-
-  const loadGoals = useCallback(() => {
-    const savedGoals = localStorage.getItem(`goals_${STUDENT_NIS}`);
-    if (savedGoals) {
-      setGoals(JSON.parse(savedGoals));
-    }
-  }, [STUDENT_NIS]);
 
   const saveGoals = useCallback((updatedGoals: AcademicGoal[]) => {
     localStorage.setItem(`goals_${STUDENT_NIS}`, JSON.stringify(updatedGoals));

@@ -61,7 +61,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     if (selectedEvent) {
       loadEventData();
     }
-  }, [selectedEvent, activeTab, loadEventData]);
+  }, [selectedEvent, activeTab]);
 
   const loadEventData = useCallback(async () => {
     if (!selectedEvent) return;

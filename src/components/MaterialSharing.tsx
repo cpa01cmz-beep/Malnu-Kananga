@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { UsersIcon } from './icons/UsersIcon';
 import { ShareIcon, ShieldIcon, XMarkIcon } from './icons/MaterialIcons';
 import { MaterialSharing, ELibrary } from '../types';
@@ -35,9 +35,9 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
   useEffect(() => {
     fetchSharing();
     fetchTeachers();
-  }, [material.id, fetchSharing, fetchTeachers]);
+  }, [material.id]);
 
-  const fetchSharing = async () => {
+  const fetchSharing = useCallback(async () => {
     try {
       // Mock API call - replace with actual implementation
       const mockSharing: MaterialSharing[] = material.isShared ? [
@@ -54,9 +54,9 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
     } catch (err) {
       logger.error('Error fetching sharing:', err);
     }
-  };
+  }, [material]);
 
-  const fetchTeachers = async () => {
+  const fetchTeachers = useCallback(async () => {
     try {
       // Mock API call - replace with actual implementation
       const mockTeachers: Teacher[] = [
@@ -73,7 +73,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
     } catch (err) {
       logger.error('Error fetching teachers:', err);
     }
-  };
+  }, []);
 
   const filteredTeachers = teachers.filter(teacher => {
     const matchesSearch = teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
