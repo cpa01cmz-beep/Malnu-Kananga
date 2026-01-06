@@ -194,18 +194,22 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
         }
       });
       
-      if (result.success && result.data?.success && result.data.data) {
-        setMaterials((prev) => [result.data.data, ...prev]);
-        setNewTitle('');
-        setNewDescription('');
-        setUploadedFile(null);
-        setCategoryValidation(null);
-        toast.success('Materi berhasil ditambahkan');
-        
-        // Update material statistics
-        categoryService.updateMaterialStats([...materials, result.data.data]);
+      if (result.success && result.data) {
+        const uploadResult = result.data as { success: boolean; data: ELibraryType; message?: string };
+        if (uploadResult.success && uploadResult.data) {
+          setMaterials((prev) => [uploadResult.data, ...prev]);
+          setNewTitle('');
+          setNewDescription('');
+          setUploadedFile(null);
+          setCategoryValidation(null);
+          toast.success('Materi berhasil ditambahkan');
+          
+          categoryService.updateMaterialStats([...materials, uploadResult.data]);
+        } else {
+          toast.error(uploadResult.message || 'Gagal menambahkan materi');
+        }
       } else {
-        toast.error(result.data?.message || 'Gagal menambahkan materi');
+        toast.error(result.error || 'Gagal menambahkan materi');
       }
     } catch (err) {
       logger.error('Error creating material:', err);
@@ -242,15 +246,14 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
         }
       });
       
-      if (result.success && result.data?.success) {
+      if (result.success) {
         const updatedMaterials = materials.filter((m) => m.id !== material.id);
         setMaterials(updatedMaterials);
         toast.info('Materi dihapus');
         
-        // Update material statistics
         categoryService.updateMaterialStats(updatedMaterials);
       } else {
-        toast.error(result.data?.message || 'Gagal menghapus materi');
+        toast.error(result.error || 'Gagal menghapus materi');
       }
     } catch (err) {
       logger.error('Error deleting material:', err);

@@ -36,14 +36,16 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
       name: 'Persetujuan Standar',
       type: 'approval',
       subject: 'Selamat! Diterima di SMA Negeri 1 Malang',
-      body: 'Dear {fullName},\n\nKami dengan senang hati menginformasikan bahwa Anda telah diterima di SMA Negeri 1 Malang untuk tahun ajaran 2025/2026.\n\nSilakan melakukan daftar ulang pada {registrationDate}.\n\nHormat kami,\nPanitia PPDB'
+      body: 'Dear {fullName},\n\nKami dengan senang hati menginformasikan bahwa Anda telah diterima di SMA Negeri 1 Malang untuk tahun ajaran 2025/2026.\n\nSilakan melakukan daftar ulang pada {registrationDate}.\n\nHormat kami,\nPanitia PPDB',
+      variables: ['fullName', 'registrationDate']
     },
     {
       id: 'rejection-default',
       name: 'Penolakan Standar',
       type: 'rejection',
       subject: 'Hasil Seleksi PPDB SMA Negeri 1 Malang',
-      body: 'Dear {fullName},\n\nTerima kasih telah mendaftar di SMA Negeri 1 Malang. Setelah melalui proses seleksi, mohon maaf kami belum dapat menerima Anda pada tahun ajaran ini.\n\nJangan menyerah dan tetap semangat!\n\nHormat kami,\nPanitia PPDB'
+      body: 'Dear {fullName},\n\nTerima kasih telah mendaftar di SMA Negeri 1 Malang. Setelah melalui proses seleksi, mohon maaf kami belum dapat menerima Anda pada tahun ajaran ini.\n\nJangan menyerah dan tetap semangat!\n\nHormat kami,\nPanitia PPDB',
+      variables: ['fullName']
     }
   ]);
 
@@ -187,7 +189,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
 
     selectedIds.forEach(id => {
       updateStatus(id, action === 'approve' ? 'approved' : 'rejected', template.id);
-      generatePDFLetter(registrants.find(r => r.id === id)!, action);
+      generatePDFLetter(registrants.find(r => r.id === id)!, action === 'approve' ? 'approval' : 'rejection');
     });
 
     setSelectedIds([]);

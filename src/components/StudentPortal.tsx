@@ -64,7 +64,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
 
   useEffect(() => {
     if (isSlow && isOnline) {
-      onShowToast(getSlowConnectionMessage(), 'warning');
+      onShowToast(getSlowConnectionMessage(), 'info');
     }
   }, [isSlow, isOnline, onShowToast]);
 

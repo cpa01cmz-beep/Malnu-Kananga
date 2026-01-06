@@ -776,7 +776,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`Rp ${(value as number).toLocaleString()}`, 'Nilai']} />
+                  <Tooltip formatter={(value: number) => [`Rp ${value.toLocaleString()}`, 'Nilai']} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -790,7 +790,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="condition" />
                   <YAxis />
-                  <Tooltip formatter={(value) => [`${value} barang`, 'Jumlah']} />
+                  <Tooltip formatter={(value: number) => [`${value} barang`, 'Jumlah']} />
                   <Bar dataKey="count" fill="#16a34a" />
                 </BarChart>
               </ResponsiveContainer>
@@ -805,7 +805,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="itemName" angle={-45} textAnchor="end" height={80} />
                 <YAxis />
-                <Tooltip formatter={(value) => [`Rp ${(value as number).toLocaleString()}`, '']} />
+                <Tooltip formatter={(value: number) => [`Rp ${value.toLocaleString()}`, '']} />
                 <Legend />
                 <Area type="monotone" dataKey="purchaseValue" stackId="1" stroke="#8b5cf6" fill="#8b5cf6" name="Nilai Pembelian" />
                 <Area type="monotone" dataKey="currentValue" stackId="2" stroke="#10b981" fill="#10b981" name="Nilai Saat Ini" />

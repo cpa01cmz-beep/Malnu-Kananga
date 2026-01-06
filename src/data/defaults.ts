@@ -56,7 +56,7 @@ export const getRelatedLinks = async () => {
     const DocumentTextIcon = DocumentTextIconModule.default;
     const BuildingLibraryIcon = BuildingLibraryIconModule.default;
     const ClipboardDocumentCheckIcon = ClipboardDocumentCheckIconModule.default;
-    const UsersIcon = UsersIconModule.default;
+    const UsersIcon = UsersIconModule.UsersIcon;
 
     return [
         {

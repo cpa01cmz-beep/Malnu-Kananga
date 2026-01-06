@@ -147,17 +147,16 @@ const readingProgressService = {
   ): void => {
     try {
       const timestamp = new Date().toISOString();
-      const progressPercentage = Math.round((currentPage / totalPages) * 100);
       const existing = readingProgressService.getProgress(materialId, userId);
 
       const newProgress: ReadingProgress = {
         materialId,
         userId,
-        currentPage,
+        currentPosition: currentPage,
         totalPages,
-        progressPercentage,
         lastReadAt: timestamp,
-        timeSpentMinutes: existing ? existing.timeSpentMinutes + timeSpentMinutes : timeSpentMinutes,
+        readTime: existing ? existing.readTime + timeSpentMinutes : timeSpentMinutes,
+        isCompleted: false
       };
 
       const allProgress = localStorage.getItem(STORAGE_KEYS.READING_PROGRESS);

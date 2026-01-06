@@ -50,6 +50,7 @@ interface AcademicGoal {
 
 interface AcademicGradesProps {
   onBack: () => void;
+  onShowToast?: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
 const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {

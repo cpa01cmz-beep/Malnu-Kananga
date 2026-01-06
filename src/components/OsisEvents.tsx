@@ -197,7 +197,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     if (!selectedEvent || !selectedFile) return;
 
     try {
-      const uploadResponse = await fileStorageAPI.upload(selectedFile, setUploadProgress);
+      const uploadResponse = await fileStorageAPI.upload(selectedFile, undefined, {
+        onProgress: (progress) => setUploadProgress(progress.percentage)
+      });
       if (uploadResponse.success && uploadResponse.data?.url) {
         const response = await eventPhotosAPI.create({
           eventId: selectedEvent.id,
