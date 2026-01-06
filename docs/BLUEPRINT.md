@@ -267,5 +267,5 @@ src/
 ---
 
 **Last Updated**: 2026-01-06
-**Version**: 2.2.0
+**Version**: 2.1.0
 **Status**: Active
