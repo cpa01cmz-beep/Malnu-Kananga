@@ -21,27 +21,49 @@ declare global {
 class PushNotificationService {
   private swRegistration: ServiceWorkerRegistration | null = null;
   private subscription: PushSubscription | null = null;
-  private batches: Map<string, NotificationBatch> = new Map();
-  private templates: Map<string, NotificationTemplate> = new Map();
-  private analytics: Map<string, NotificationAnalytics> = new Map();
+  private batches: Map<string, NotificationBatch>;
+  private templates: Map<string, NotificationTemplate>;
+  private analytics: Map<string, NotificationAnalytics>;
 
   constructor() {
-    // Initialize all properties first
+    // Initialize all properties first to prevent temporal dead zone issues
     this.swRegistration = null;
     this.subscription = null;
     this.batches = new Map();
     this.templates = new Map();
     this.analytics = new Map();
     
-    // Then call initialization methods
-    this.initialize();
+    // Defer initialization to prevent access before initialization errors
+    setTimeout(() => {
+      this.initialize();
+    }, 0);
   }
 
   private initialize(): void {
-    this.loadSubscription();
-    this.loadBatches();
-    this.loadTemplates();
-    this.loadAnalytics();
+    // Initialize in try-catch to prevent crashes from individual methods
+    try {
+      this.loadSubscription();
+    } catch (error) {
+      logger.error('Failed to load subscription during initialization:', error);
+    }
+    
+    try {
+      this.loadBatches();
+    } catch (error) {
+      logger.error('Failed to load batches during initialization:', error);
+    }
+    
+    try {
+      this.loadTemplates();
+    } catch (error) {
+      logger.error('Failed to load templates during initialization:', error);
+    }
+    
+    try {
+      this.loadAnalytics();
+    } catch (error) {
+      logger.error('Failed to load analytics during initialization:', error);
+    }
   }
 
   async requestPermission(): Promise<boolean> {
@@ -411,6 +433,7 @@ class PushNotificationService {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.PUSH_SUBSCRIPTION_KEY);
       if (stored) {
+        // Only log if storage key exists, don't try to access uninitialized variables
         logger.info('Loaded existing subscription from storage');
       }
     } catch (error) {
