@@ -3,9 +3,11 @@ import { studentsAPI, attendanceAPI } from '../services/apiService';
 import { Student, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { validateAttendance } from '../utils/teacherValidation';
+import ConfirmationDialog from './ConfirmationDialog';
 import { 
-  executeWithRetry, 
-  createToastHandler 
+  _executeWithRetry, 
+  _createToastHandler 
 } from '../utils/teacherErrorHandler';
 
 interface ClassStudent {
@@ -28,10 +30,11 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const className = 'XII IPA 1';
-  
 
   const currentUser = authAPI.getCurrentUser();
-  const toast = createToastHandler(onShowToast);
+
+  const [showAttendanceConfirm, setShowAttendanceConfirm] = useState(false);
+  const [pendingAttendance, setPendingAttendance] = useState<{ id: string; status: 'hadir' | 'sakit' | 'izin' | 'alpa' } | null>(null);
 
   const fetchStudents = useCallback(async () => {
     setLoading(true);
@@ -85,10 +88,16 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
     }
   };
 
-const handleAttendanceChange = async (id: string, status: ClassStudent['attendanceToday']) => {
-    const prevStudents = [...students];
-    
-    // Optimistic update
+  const handleAttendanceChange = async (id: string, status: ClassStudent['attendanceToday']) => {
+    setPendingAttendance({ id, status });
+    setShowAttendanceConfirm(true);
+  };
+
+  const confirmAttendanceChange = async () => {
+    if (!pendingAttendance) return;
+
+    const { id, status } = pendingAttendance;
+
     setStudents((prev) =>
       prev.map((s) => (s.id === id ? { ...s, attendanceToday: status } : s))
     );
@@ -97,38 +106,37 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
       const today = new Date().toISOString().split('T')[0];
       const apiStatus = status.toLowerCase() as 'hadir' | 'sakit' | 'izin' | 'alpa';
 
-      const updateOperation = async () => {
-        return await attendanceAPI.create({
-          studentId: id,
-          classId: className,
-          date: today,
-          status: apiStatus,
-          notes: '',
-          recordedBy: currentUser?.id || '',
-          createdAt: new Date().toISOString(),
-        });
+      const attendanceData = {
+        studentId: id,
+        classId: className,
+        date: today,
+        status: apiStatus,
+        notes: '',
+        recordedBy: currentUser?.id || '',
+        createdAt: new Date().toISOString(),
       };
 
-      const result = await executeWithRetry({
-        operation: updateOperation,
-        config: {
-          maxRetries: 3,
-          retryDelay: 1000
-        }
-      });
-      
-      if (result.success && result.data?.success) {
-        toast.success('Status kehadiran diperbarui');
+      const validation = validateAttendance(attendanceData);
+      if (!validation.isValid) {
+        onShowToast(validation.errors.join(', '), 'error');
+        setShowAttendanceConfirm(false);
+        setPendingAttendance(null);
+        return;
+      }
+
+      const response = await attendanceAPI.create(attendanceData);
+
+      if (response.success) {
+        onShowToast('Status kehadiran diperbarui', 'success');
       } else {
-        // Revert optimistic update
-        setStudents(prevStudents);
-        toast.error(result.data?.message || 'Gagal memperbarui kehadiran');
+        onShowToast(response.message || 'Gagal memperbarui kehadiran', 'error');
       }
     } catch (err) {
-      // Revert optimistic update
-      setStudents(prevStudents);
       logger.error('Error updating attendance:', err);
-      toast.error(err);
+      onShowToast('Terjadi kesalahan saat memperbarui kehadiran', 'error');
+    } finally {
+      setShowAttendanceConfirm(false);
+      setPendingAttendance(null);
     }
   };
 
@@ -297,6 +305,21 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
           </table>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={showAttendanceConfirm}
+        title="Ubah Status Kehadiran"
+        message={`Apakah Anda yakin ingin mengubah status kehadiran siswa ini menjadi "${pendingAttendance?.status}"?`}
+        confirmText="Ya, Ubah"
+        cancelText="Batal"
+        type="warning"
+        onConfirm={() => confirmAttendanceChange()}
+        onCancel={() => {
+          setShowAttendanceConfirm(false);
+          setPendingAttendance(null);
+        }}
+      />
     </div>
   );
 };
