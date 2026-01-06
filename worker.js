@@ -186,289 +186,338 @@ const documents = [
 
 // Database Initialization
 async function initDatabase(env) {
-  // Create tables
-  await env.DB.exec(`
-    PRAGMA foreign_keys = ON;
-    
-    CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      email TEXT UNIQUE NOT NULL,
-      password_hash TEXT,
-      role TEXT NOT NULL CHECK(role IN ('admin', 'teacher', 'student', 'parent')),
-      extra_role TEXT CHECK(extra_role IN ('staff', 'osis', NULL)),
-      status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    
-    CREATE TABLE IF NOT EXISTS students (
-      id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL,
-      nisn TEXT UNIQUE,
-      nis TEXT UNIQUE,
-      class TEXT,
-      class_name TEXT,
-      address TEXT,
-      phone_number TEXT,
-      parent_name TEXT,
-      parent_phone TEXT,
-      date_of_birth DATE,
-      enrollment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    
-    CREATE TABLE IF NOT EXISTS teachers (
-      id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL,
-      nip TEXT UNIQUE,
-      subjects TEXT,
-      join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-    );
-    
-    CREATE TABLE IF NOT EXISTS ppdb_registrants (
-      id TEXT PRIMARY KEY,
-      full_name TEXT NOT NULL,
-      nisn TEXT UNIQUE NOT NULL,
-      origin_school TEXT NOT NULL,
-      parent_name TEXT NOT NULL,
-      phone_number TEXT NOT NULL,
-      email TEXT NOT NULL,
-      address TEXT NOT NULL,
-      registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'rejected')),
-      reviewed_by TEXT,
-      reviewed_at TIMESTAMP,
-      notes TEXT,
-      document_url TEXT
-    );
-    
-    CREATE TABLE IF NOT EXISTS inventory (
-      id TEXT PRIMARY KEY,
-      item_name TEXT NOT NULL,
-      category TEXT NOT NULL,
-      quantity INTEGER NOT NULL CHECK(quantity >= 0),
-      condition TEXT NOT NULL CHECK(condition IN ('Baik', 'Rusak Ringan', 'Rusak Berat')),
-      location TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      last_checked_by TEXT
-    );
-    
-    CREATE TABLE IF NOT EXISTS school_events (
-      id TEXT PRIMARY KEY,
-      event_name TEXT NOT NULL,
-      description TEXT,
-      date TIMESTAMP NOT NULL,
-      location TEXT,
-      status TEXT DEFAULT 'Upcoming' CHECK(status IN ('Upcoming', 'Ongoing', 'Completed')),
-      organizer TEXT NOT NULL,
-      created_by TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    
-    CREATE TABLE IF NOT EXISTS subjects (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      code TEXT UNIQUE NOT NULL,
-      description TEXT,
-      credit_hours INTEGER DEFAULT 2
-    );
-    
-    CREATE TABLE IF NOT EXISTS classes (
-      id TEXT PRIMARY KEY,
-      name TEXT UNIQUE NOT NULL,
-      homeroom_teacher_id TEXT,
-      academic_year TEXT NOT NULL,
-      semester TEXT NOT NULL CHECK(semester IN ('1', '2')),
-      FOREIGN KEY (homeroom_teacher_id) REFERENCES teachers(id) ON DELETE SET NULL
-    );
-    
-    CREATE TABLE IF NOT EXISTS schedules (
-      id TEXT PRIMARY KEY,
-      class_id TEXT NOT NULL,
-      subject_id TEXT NOT NULL,
-      teacher_id TEXT NOT NULL,
-      day_of_week TEXT NOT NULL CHECK(day_of_week IN ('Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')),
-      start_time TEXT NOT NULL,
-      end_time TEXT NOT NULL,
-      room TEXT,
-      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
-      FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
-      FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE CASCADE
-    );
-    
-    CREATE TABLE IF NOT EXISTS attendance (
-      id TEXT PRIMARY KEY,
-      student_id TEXT NOT NULL,
-      class_id TEXT NOT NULL,
-      date DATE NOT NULL,
-      status TEXT NOT NULL CHECK(status IN ('hadir', 'sakit', 'izin', 'alpa')),
-      notes TEXT,
-      recorded_by TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
-      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
-      FOREIGN KEY (recorded_by) REFERENCES users(id)
-    );
-    
-    CREATE TABLE IF NOT EXISTS grades (
-      id TEXT PRIMARY KEY,
-      student_id TEXT NOT NULL,
-      subject_id TEXT NOT NULL,
-      class_id TEXT NOT NULL,
-      academic_year TEXT NOT NULL,
-      semester TEXT NOT NULL,
-      assignment_type TEXT NOT NULL,
-      assignment_name TEXT NOT NULL,
-      score REAL NOT NULL CHECK(score >= 0 AND score <= 100),
-      max_score REAL DEFAULT 100,
-      created_by TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
-      FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
-      FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
-      FOREIGN KEY (created_by) REFERENCES users(id)
-    );
-    
-    CREATE TABLE IF NOT EXISTS e_library (
-      id TEXT PRIMARY KEY,
-      title TEXT NOT NULL,
-      description TEXT,
-      category TEXT NOT NULL,
-      file_url TEXT NOT NULL,
-      file_type TEXT NOT NULL,
-      file_size INTEGER,
-      subject_id TEXT,
-      uploaded_by TEXT NOT NULL,
-      uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      download_count INTEGER DEFAULT 0,
-      FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE SET NULL,
-      FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE CASCADE
-    );
-    
-    CREATE TABLE IF NOT EXISTS announcements (
-      id TEXT PRIMARY KEY,
-      title TEXT NOT NULL,
-      content TEXT NOT NULL,
-      category TEXT NOT NULL CHECK(category IN ('umum', 'akademik', 'kegiatan', 'keuangan')),
-      target_audience TEXT,
-      is_active BOOLEAN DEFAULT 1,
-      created_by TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      expires_at TIMESTAMP,
-      FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
-    );
-    
-    CREATE TABLE IF NOT EXISTS sessions (
-      id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL,
-      token TEXT UNIQUE NOT NULL,
-      expires_at TIMESTAMP NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      last_accessed TIMESTAMP,
-      ip_address TEXT,
-      user_agent TEXT,
-      is_revoked BOOLEAN DEFAULT FALSE,
-      refresh_token TEXT UNIQUE,
-      refresh_token_expires_at TIMESTAMP
-    );
+  try {
+    // Enable foreign keys
+    try {
+      const pragmaResult = await env.DB.exec('PRAGMA foreign_keys = ON;');
+      console.log('Foreign keys enabled:', pragmaResult);
+    } catch (pragmaError) {
+      console.error('PRAGMA error:', pragmaError);
+      // Continue even if PRAGMA fails
+    }
 
-    CREATE TABLE IF NOT EXISTS event_registrations (
-      id TEXT PRIMARY KEY,
-      event_id TEXT NOT NULL,
-      student_id TEXT NOT NULL,
-      student_name TEXT NOT NULL,
-      student_class TEXT NOT NULL,
-      registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      attendance_status TEXT DEFAULT 'registered' CHECK(attendance_status IN ('registered', 'attended', 'absent')),
-      notes TEXT,
-      FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE
-    );
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT,
+        role TEXT NOT NULL CHECK(role IN ('admin', 'teacher', 'student', 'parent')),
+        extra_role TEXT CHECK(extra_role IN ('staff', 'osis', NULL)),
+        status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
 
-    CREATE TABLE IF NOT EXISTS event_budgets (
-      id TEXT PRIMARY KEY,
-      event_id TEXT NOT NULL,
-      category TEXT NOT NULL,
-      item_name TEXT NOT NULL,
-      estimated_cost REAL NOT NULL,
-      actual_cost REAL,
-      quantity INTEGER DEFAULT 1,
-      status TEXT DEFAULT 'planned' CHECK(status IN ('planned', 'approved', 'purchased', 'completed')),
-      approved_by TEXT,
-      approved_at TIMESTAMP,
-      notes TEXT,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE,
-      FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL
-    );
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS students (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        nisn TEXT UNIQUE,
+        nis TEXT UNIQUE,
+        class TEXT,
+        class_name TEXT,
+        address TEXT,
+        phone_number TEXT,
+        parent_name TEXT,
+        parent_phone TEXT,
+        date_of_birth DATE,
+        enrollment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
 
-    CREATE TABLE IF NOT EXISTS event_photos (
-      id TEXT PRIMARY KEY,
-      event_id TEXT NOT NULL,
-      photo_url TEXT NOT NULL,
-      caption TEXT,
-      uploaded_by TEXT NOT NULL,
-      uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE,
-      FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
-    );
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS teachers (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        nip TEXT UNIQUE,
+        subjects TEXT,
+        join_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
 
-    CREATE TABLE IF NOT EXISTS event_feedback (
-      id TEXT PRIMARY KEY,
-      event_id TEXT NOT NULL,
-      student_id TEXT NOT NULL,
-      student_name TEXT NOT NULL,
-      student_class TEXT NOT NULL,
-      overall_rating INTEGER CHECK(overall_rating >= 1 AND overall_rating <= 5),
-      organization_rating INTEGER CHECK(organization_rating >= 1 AND organization_rating <= 5),
-      content_rating INTEGER CHECK(content_rating >= 1 AND content_rating <= 5),
-      comments TEXT,
-      would_recommend BOOLEAN,
-      submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE
-    );
-    
-    CREATE TABLE IF NOT EXISTS audit_log (
-      id TEXT PRIMARY KEY,
-      user_id TEXT,
-      action TEXT NOT NULL,
-      table_name TEXT NOT NULL,
-      record_id TEXT,
-      old_value TEXT,
-      new_value TEXT,
-      ip_address TEXT,
-      user_agent TEXT,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS ppdb_registrants (
+        id TEXT PRIMARY KEY,
+        full_name TEXT NOT NULL,
+        nisn TEXT UNIQUE NOT NULL,
+        origin_school TEXT NOT NULL,
+        parent_name TEXT NOT NULL,
+        phone_number TEXT NOT NULL,
+        email TEXT NOT NULL,
+        address TEXT NOT NULL,
+        registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'approved', 'rejected')),
+        reviewed_by TEXT,
+        reviewed_at TIMESTAMP,
+        notes TEXT,
+        document_url TEXT
+      );
+    `);
 
-    CREATE TABLE IF NOT EXISTS parent_student_relationship (
-      id TEXT PRIMARY KEY,
-      parent_id TEXT NOT NULL,
-      student_id TEXT NOT NULL,
-      relationship_type TEXT NOT NULL CHECK(relationship_type IN ('ayah', 'ibu', 'wali')),
-      is_primary_contact BOOLEAN DEFAULT 1,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (parent_id) REFERENCES users(id) ON DELETE CASCADE,
-      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
-      UNIQUE(parent_id, student_id)
-    );
-  `);
-  
-  // Seed initial admin user if not exists
-  const adminExists = await env.DB.prepare('SELECT id FROM users WHERE email = ?')
-    .bind('admin@malnu.sch.id')
-    .first();
-  
-  if (!adminExists) {
-    const adminId = generateId();
-    const passwordHash = await hashPassword('admin123'); // Default password
-    
-    await env.DB.prepare(`
-      INSERT INTO users (id, name, email, password_hash, role, status)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `).bind(adminId, 'Ahmad Dahlan', 'admin@malnu.sch.id', passwordHash, 'admin', 'active').run();
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS inventory (
+        id TEXT PRIMARY KEY,
+        item_name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        quantity INTEGER NOT NULL CHECK(quantity >= 0),
+        condition TEXT NOT NULL CHECK(condition IN ('Baik', 'Rusak Ringan', 'Rusak Berat')),
+        location TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_checked_by TEXT
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS school_events (
+        id TEXT PRIMARY KEY,
+        event_name TEXT NOT NULL,
+        description TEXT,
+        date TIMESTAMP NOT NULL,
+        location TEXT,
+        status TEXT DEFAULT 'Upcoming' CHECK(status IN ('Upcoming', 'Ongoing', 'Completed')),
+        organizer TEXT NOT NULL,
+        created_by TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS subjects (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        code TEXT UNIQUE NOT NULL,
+        description TEXT,
+        credit_hours INTEGER DEFAULT 2
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS classes (
+        id TEXT PRIMARY KEY,
+        name TEXT UNIQUE NOT NULL,
+        homeroom_teacher_id TEXT,
+        academic_year TEXT NOT NULL,
+        semester TEXT NOT NULL CHECK(semester IN ('1', '2')),
+        FOREIGN KEY (homeroom_teacher_id) REFERENCES teachers(id) ON DELETE SET NULL
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS schedules (
+        id TEXT PRIMARY KEY,
+        class_id TEXT NOT NULL,
+        subject_id TEXT NOT NULL,
+        teacher_id TEXT NOT NULL,
+        day_of_week TEXT NOT NULL CHECK(day_of_week IN ('Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')),
+        start_time TEXT NOT NULL,
+        end_time TEXT NOT NULL,
+        room TEXT,
+        FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+        FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+        FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS attendance (
+        id TEXT PRIMARY KEY,
+        student_id TEXT NOT NULL,
+        class_id TEXT NOT NULL,
+        date DATE NOT NULL,
+        status TEXT NOT NULL CHECK(status IN ('hadir', 'sakit', 'izin', 'alpa')),
+        notes TEXT,
+        recorded_by TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+        FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+        FOREIGN KEY (recorded_by) REFERENCES users(id)
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS grades (
+        id TEXT PRIMARY KEY,
+        student_id TEXT NOT NULL,
+        subject_id TEXT NOT NULL,
+        class_id TEXT NOT NULL,
+        academic_year TEXT NOT NULL,
+        semester TEXT NOT NULL,
+        assignment_type TEXT NOT NULL,
+        assignment_name TEXT NOT NULL,
+        score REAL NOT NULL CHECK(score >= 0 AND score <= 100),
+        max_score REAL DEFAULT 100,
+        created_by TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+        FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+        FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+        FOREIGN KEY (created_by) REFERENCES users(id)
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS e_library (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT,
+        category TEXT NOT NULL,
+        file_url TEXT NOT NULL,
+        file_type TEXT NOT NULL,
+        file_size INTEGER,
+        subject_id TEXT,
+        uploaded_by TEXT NOT NULL,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        download_count INTEGER DEFAULT 0,
+        FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE SET NULL,
+        FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS announcements (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        category TEXT NOT NULL CHECK(category IN ('umum', 'akademik', 'kegiatan', 'keuangan')),
+        target_audience TEXT,
+        is_active BOOLEAN DEFAULT 1,
+        created_by TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP,
+        FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS sessions (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        token TEXT UNIQUE NOT NULL,
+        expires_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_accessed TIMESTAMP,
+        ip_address TEXT,
+        user_agent TEXT,
+        is_revoked BOOLEAN DEFAULT FALSE,
+        refresh_token TEXT UNIQUE,
+        refresh_token_expires_at TIMESTAMP
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS event_registrations (
+        id TEXT PRIMARY KEY,
+        event_id TEXT NOT NULL,
+        student_id TEXT NOT NULL,
+        student_name TEXT NOT NULL,
+        student_class TEXT NOT NULL,
+        registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        attendance_status TEXT DEFAULT 'registered' CHECK(attendance_status IN ('registered', 'attended', 'absent')),
+        notes TEXT,
+        FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS event_budgets (
+        id TEXT PRIMARY KEY,
+        event_id TEXT NOT NULL,
+        category TEXT NOT NULL,
+        item_name TEXT NOT NULL,
+        estimated_cost REAL NOT NULL,
+        actual_cost REAL,
+        quantity INTEGER DEFAULT 1,
+        status TEXT DEFAULT 'planned' CHECK(status IN ('planned', 'approved', 'purchased', 'completed')),
+        approved_by TEXT,
+        approved_at TIMESTAMP,
+        notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE,
+        FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS event_photos (
+        id TEXT PRIMARY KEY,
+        event_id TEXT NOT NULL,
+        photo_url TEXT NOT NULL,
+        caption TEXT,
+        uploaded_by TEXT NOT NULL,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE,
+        FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS event_feedback (
+        id TEXT PRIMARY KEY,
+        event_id TEXT NOT NULL,
+        student_id TEXT NOT NULL,
+        student_name TEXT NOT NULL,
+        student_class TEXT NOT NULL,
+        overall_rating INTEGER CHECK(overall_rating >= 1 AND overall_rating <= 5),
+        organization_rating INTEGER CHECK(organization_rating >= 1 AND organization_rating <= 5),
+        content_rating INTEGER CHECK(content_rating >= 1 AND content_rating <= 5),
+        comments TEXT,
+        would_recommend BOOLEAN,
+        submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS audit_log (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        action TEXT NOT NULL,
+        table_name TEXT NOT NULL,
+        record_id TEXT,
+        old_value TEXT,
+        new_value TEXT,
+        ip_address TEXT,
+        user_agent TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS parent_student_relationship (
+        id TEXT PRIMARY KEY,
+        parent_id TEXT NOT NULL,
+        student_id TEXT NOT NULL,
+        relationship_type TEXT NOT NULL CHECK(relationship_type IN ('ayah', 'ibu', 'wali')),
+        is_primary_contact BOOLEAN DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (parent_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+        UNIQUE(parent_id, student_id)
+      );
+    `);
+
+    // Seed initial admin user if not exists
+    const adminExists = await env.DB.prepare('SELECT id FROM users WHERE email = ?')
+      .bind('admin@malnu.sch.id')
+      .first();
+
+    if (!adminExists) {
+      const adminId = generateId();
+      const passwordHash = await hashPassword('admin123'); // Default password
+
+      await env.DB.prepare(`
+        INSERT INTO users (id, name, email, password_hash, role, status)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `).bind(adminId, 'Ahmad Dahlan', 'admin@malnu.sch.id', passwordHash, 'admin', 'active').run();
+    }
+  } catch (e) {
+    console.error('Database initialization error:', e);
+    throw e;
   }
 }
 
@@ -775,15 +824,18 @@ async function handleChat(request, env, corsHeaders) {
 // Seed Handler
 async function handleSeed(request, env, corsHeaders) {
   try {
+    console.log('Starting database seeding...');
+
     // Initialize database
     await initDatabase(env);
+    console.log('Database tables created');
 
     // Seed Vectorize if available
     try {
       if (env.AI && env.VECTORIZE_INDEX) {
         const texts = documents.map(doc => doc.text);
         const embeddingsResponse = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: texts });
-        const vectors = embeddingsResponse.data;
+        const vectors = embeddingsResponse.data || [];
 
         const vectorsToInsert = vectors.map((vector, i) => ({
           id: documents[i].id.toString(),
@@ -796,16 +848,20 @@ async function handleSeed(request, env, corsHeaders) {
           const batch = vectorsToInsert.slice(i, i + batchSize);
           await env.VECTORIZE_INDEX.insert(batch);
         }
+        console.log('Vectorize seeded');
       }
     } catch (aiError) {
       console.log('AI/Vectorize seeding skipped:', aiError.message);
     }
 
+    console.log('Seed completed successfully');
     return new Response(JSON.stringify(response.success(null, 'Database seeded successfully!')), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
+    console.error('Seed error:', e);
+    console.error('Error details:', JSON.stringify(e));
     return new Response(JSON.stringify(response.error(`Error seeding data: ${e.message}`)), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -819,6 +875,13 @@ async function handleSeed(request, env, corsHeaders) {
 
 async function handleFileUpload(request, env, corsHeaders) {
   try {
+    if (!env.BUCKET) {
+      return new Response(JSON.stringify(response.error('R2 storage not enabled')), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     const payload = await authenticate(request, env);
     if (!payload) {
       return new Response(JSON.stringify(response.unauthorized()), {
@@ -904,6 +967,13 @@ async function handleFileUpload(request, env, corsHeaders) {
 
 async function handleFileDownload(request, env, corsHeaders) {
   try {
+    if (!env.BUCKET) {
+      return new Response(JSON.stringify(response.error('R2 storage not enabled')), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     const url = new URL(request.url);
     const key = url.searchParams.get('key');
 
@@ -943,6 +1013,13 @@ async function handleFileDownload(request, env, corsHeaders) {
 
 async function handleFileDelete(request, env, corsHeaders) {
   try {
+    if (!env.BUCKET) {
+      return new Response(JSON.stringify(response.error('R2 storage not enabled')), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     const payload = await authenticate(request, env);
     if (!payload) {
       return new Response(JSON.stringify(response.unauthorized()), {
@@ -978,6 +1055,13 @@ async function handleFileDelete(request, env, corsHeaders) {
 
 async function handleFileList(request, env, corsHeaders) {
   try {
+    if (!env.BUCKET) {
+      return new Response(JSON.stringify(response.error('R2 storage not enabled')), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     const payload = await authenticate(request, env);
     if (!payload) {
       return new Response(JSON.stringify(response.unauthorized()), {
