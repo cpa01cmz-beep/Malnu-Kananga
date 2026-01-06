@@ -12,21 +12,21 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { gradesAPI, attendanceAPI } from '../services/apiService';
+import { gradesAPI, attendanceAPI, subjectsAPI, authAPI } from '../services/apiService';
 import { Grade, Attendance, Subject, SubjectPerformance, AttendanceGradeCorrelation, Goal } from '../types';
-import { subjectsAPI } from '../services/apiService';
-import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { validateStudentProgress, getGradeStatus } from '../utils/studentValidation';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 interface ProgressAnalyticsProps {
   onBack: () => void;
+  onShowToast?: (msg: string, type: 'success' | 'error' | 'warning' | 'info') => void;
 }
 
 const COLORS = ['#16a34a', '#2563eb', '#eab308', '#dc2626', '#7c3aed', '#db2777'];
 
-const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack }) => {
+const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToast = () => {} }) => {
   const currentUser = authAPI.getCurrentUser();
   const STUDENT_NIS = currentUser?.id || '';
   const STUDENT_NAME = currentUser?.name || 'Siswa';
@@ -182,17 +182,36 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack }) => {
   }, [fetchData]);
 
   const loadGoals = (): Goal[] => {
-    const saved = localStorage.getItem(`student_goals_${STUDENT_NIS}`);
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem(`student_goals_${STUDENT_NIS}`);
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      logger.error('Error loading goals:', error);
+      return [];
+    }
   };
 
   const saveGoals = (goalsToSave: Goal[]) => {
-    localStorage.setItem(`student_goals_${STUDENT_NIS}`, JSON.stringify(goalsToSave));
-    setGoals(goalsToSave);
+    try {
+      localStorage.setItem(`student_goals_${STUDENT_NIS}`, JSON.stringify(goalsToSave));
+      setGoals(goalsToSave);
+    } catch (error) {
+      logger.error('Error saving goals:', error);
+      throw error;
+    }
   };
 
   const addGoal = () => {
-    if (!newGoal.subject || !newGoal.targetGrade || !newGoal.deadline) {
+    const tempGoal = {
+      subject: newGoal.subject,
+      targetGrade: newGoal.targetGrade,
+      currentGrade: 0,
+      deadline: newGoal.deadline
+    };
+
+    const validation = validateStudentProgress(tempGoal);
+    if (!validation.isValid) {
+      onShowToast(validation.errors.join(', '), 'error');
       return;
     }
 
@@ -208,29 +227,42 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack }) => {
       createdAt: new Date().toISOString()
     };
 
-    const updatedGoals = [...loadGoals(), goal];
-    saveGoals(updatedGoals);
-    setNewGoal({ subject: '', targetGrade: 'A', deadline: '' });
+    try {
+      const updatedGoals = [...loadGoals(), goal];
+      saveGoals(updatedGoals);
+      setNewGoal({ subject: '', targetGrade: 'A', deadline: '' });
+      onShowToast('Target berhasil ditambahkan', 'success');
+    } catch (error) {
+      logger.error('Error saving goal:', error);
+      onShowToast('Gagal menyimpan target', 'error');
+    }
   };
 
   const deleteGoal = (goalId: string) => {
-    const updatedGoals = goals.filter(g => g.id !== goalId);
-    saveGoals(updatedGoals);
+    try {
+      const updatedGoals = goals.filter(g => g.id !== goalId);
+      saveGoals(updatedGoals);
+      onShowToast('Target berhasil dihapus', 'success');
+    } catch (error) {
+      logger.error('Error deleting goal:', error);
+      onShowToast('Gagal menghapus target', 'error');
+    }
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
 
-    doc.setFontSize(20);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Laporan Akademik Siswa', pageWidth / 2, 20, { align: 'center' });
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Laporan Akademik Siswa', pageWidth / 2, 20, { align: 'center' });
 
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Nama: ${STUDENT_NAME}`, 20, 35);
-    doc.text(`NIS: ${STUDENT_NIS}`, 20, 42);
-    doc.text(`Tanggal: ${new Date().toLocaleDateString('id-ID')}`, pageWidth - 20, 42, { align: 'right' });
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Nama: ${STUDENT_NAME}`, 20, 35);
+      doc.text(`NIS: ${STUDENT_NIS}`, 20, 42);
+      doc.text(`Tanggal: ${new Date().toLocaleDateString('id-ID')}`, pageWidth - 20, 42, { align: 'right' });
 
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
@@ -291,7 +323,12 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack }) => {
       });
     }
 
-    doc.save(`laporan-akademik-${STUDENT_NIS}-${Date.now()}.pdf`);
+      doc.save(`laporan-akademik-${STUDENT_NIS}-${Date.now()}.pdf`);
+      onShowToast('Laporan berhasil diekspor', 'success');
+    } catch (error) {
+      logger.error('Error exporting PDF:', error);
+      onShowToast('Gagal mengekspor laporan', 'error');
+    }
   };
 
   const gradeDistributionData = [
@@ -666,11 +703,6 @@ const getGradeMin = (grade: string): number => {
     case 'D': return 0;
     default: return 0;
   }
-};
-
-const getGradeStatus = (target: string, current: string): 'achieved' | 'not-achieved' | 'in-progress' => {
-  const gradeValue = { A: 4, B: 3, C: 2, D: 1 };
-  return gradeValue[current] >= gradeValue[target] ? 'achieved' : 'not-achieved';
 };
 
 export default ProgressAnalytics;
