@@ -6,6 +6,8 @@ import { studentsAPI, gradesAPI } from '../services/apiService';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
+import { validateGradeInput, sanitizeGradeInput, calculateGradeLetter, calculateFinalGrade } from '../utils/teacherValidation';
+import ConfirmationDialog from './ConfirmationDialog';
 
 
 interface StudentGrade {
@@ -28,19 +30,26 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isEditing, setIsEditing] = useState<string | null>(null);
-  
+
   // AI Analysis State
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
-  
+
   // Enhanced Grading State
   const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set());
   const [isBatchMode, setIsBatchMode] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [autoSaveTimeout, setAutoSaveTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
-  
+
+  // Configuration
   const className = 'XII IPA 1';
+  const subjectId = 'Matematika Wajib';
+
+  // Confirmation Dialog State
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [resetStudentId, setResetStudentId] = useState<string | null>(null);
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 
   const fetchStudentsAndGrades = useCallback(async () => {
     setLoading(true);
@@ -83,55 +92,54 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     fetchStudentsAndGrades();
   }, [fetchStudentsAndGrades]);
 
-  const calculateFinal = (g: StudentGrade) => {
-      return (g.assignment * 0.3) + (g.midExam * 0.3) + (g.finalExam * 0.4);
-  };
-
-  const getGradeLetter = (score: number) => {
-      if (score >= 85) return 'A';
-      if (score >= 75) return 'B';
-      if (score >= 60) return 'C';
-      return 'D';
-  };
-
-  const filteredData = grades.filter(g => 
-      g.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredData = grades.filter(g =>
+      g.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       g.nis.includes(searchTerm)
   );
 
   const handleInputChange = (id: string, field: keyof StudentGrade, value: string) => {
-      const numValue = Math.min(100, Math.max(0, Number(value) || 0));
+      const numValue = sanitizeGradeInput(value);
+
+      const validation = validateGradeInput(numValue, field);
+      if (!validation.isValid) {
+        onShowToast(validation.errors[0], 'error');
+        return;
+      }
+
       setGrades(prev => prev.map(g => g.id === id ? { ...g, [field]: numValue } : g));
-      
+
       // Auto-save functionality with debouncing
       if (autoSaveTimeout) {
         clearTimeout(autoSaveTimeout);
       }
-      
+
       const newTimeout = setTimeout(() => {
         handleAutoSave();
       }, 2000); // 2 second debounce
-      
+
       setAutoSaveTimeout(newTimeout);
   };
   
   const handleAutoSave = async () => {
     setIsAutoSaving(true);
     try {
-      // Save only the current grades state
-      for (const grade of grades) {
-        await gradesAPI.update(grade.id, {
+      const savePromises = grades.map(grade =>
+        gradesAPI.update(grade.id, {
           studentId: grade.id,
           classId: className,
-          subjectId: 'Matematika Wajib',
+          subjectId: subjectId,
           assignment: grade.assignment,
           midExam: grade.midExam,
           finalExam: grade.finalExam,
-        });
-      }
+        })
+      );
+
+      await Promise.all(savePromises);
       logger.info('Auto-save completed successfully');
+      onShowToast('Nilai otomatis disimpan', 'success');
     } catch (error) {
       logger.error('Auto-save failed:', error);
+      onShowToast('Gagal menyimpan nilai otomatis', 'error');
     } finally {
       setIsAutoSaving(false);
     }
@@ -153,8 +161,15 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   };
   
   const handleBatchGradeInput = (field: keyof StudentGrade, value: string) => {
-    const numValue = Math.min(100, Math.max(0, Number(value) || 0));
-    setGrades(prev => prev.map(g => 
+    const numValue = sanitizeGradeInput(value);
+
+    const validation = validateGradeInput(numValue, field);
+    if (!validation.isValid) {
+      onShowToast(validation.errors[0], 'error');
+      return;
+    }
+
+    setGrades(prev => prev.map(g =>
       selectedStudents.has(g.id) ? { ...g, [field]: numValue } : g
     ));
   };
@@ -162,41 +177,56 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const handleCSVImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    
+
     Papa.parse(file, {
       header: true,
       complete: (results) => {
         try {
-          const csvData = results.data as any[];
+          const csvData = results.data as Record<string, string>[];
           const updatedGrades = grades.map(grade => {
-            const csvRow = csvData.find(row => 
-              row.nis === grade.nis || 
+            const csvRow = csvData.find(row =>
+              row.nis === grade.nis ||
               row.name?.toLowerCase() === grade.name.toLowerCase()
             );
-            
+
             if (csvRow) {
+              const assignment = sanitizeGradeInput(csvRow.assignment || csvRow.tugas || grade.assignment);
+              const midExam = sanitizeGradeInput(csvRow.midExam || csvRow.uts || grade.midExam);
+              const finalExam = sanitizeGradeInput(csvRow.finalExam || csvRow.uas || grade.finalExam);
+
+              const assignmentValidation = validateGradeInput(assignment, 'assignment');
+              const midExamValidation = validateGradeInput(midExam, 'midExam');
+              const finalExamValidation = validateGradeInput(finalExam, 'finalExam');
+
+              if (!assignmentValidation.isValid || !midExamValidation.isValid || !finalExamValidation.isValid) {
+                onShowToast(`Invalid grades for ${grade.name}: ${assignmentValidation.errors.concat(midExamValidation.errors, finalExamValidation.errors).join(', ')}`, 'error');
+                return grade;
+              }
+
               return {
                 ...grade,
-                assignment: Math.min(100, Math.max(0, Number(csvRow.assignment) || grade.assignment)),
-                midExam: Math.min(100, Math.max(0, Number(csvRow.midExam || csvRow.uts) || grade.midExam)),
-                finalExam: Math.min(100, Math.max(0, Number(csvRow.finalExam || csvRow.uas) || grade.finalExam))
+                assignment,
+                midExam,
+                finalExam
               };
             }
             return grade;
           });
-          
+
           setGrades(updatedGrades);
           setIsBatchMode(false);
-          onShowToast('CSV import successful! Grades updated.', 'success');
-        } catch {
-          onShowToast('CSV import failed. Please check the file format.', 'error');
+          onShowToast('CSV import berhasil! Nilai diperbarui.', 'success');
+        } catch (err) {
+          logger.error('CSV import error:', err);
+          onShowToast('Gagal impor CSV. Mohon periksa format file.', 'error');
         }
       },
-      error: () => {
-        onShowToast('CSV parsing failed. Please check the file format.', 'error');
+      error: (err) => {
+        logger.error('CSV parsing error:', err);
+        onShowToast('Gagal parsing CSV. Mohon periksa format file.', 'error');
       }
     });
-    
+
     // Reset file input
     if (event.target) {
       event.target.value = '';
@@ -210,15 +240,15 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       assignment: g.assignment,
       midExam: g.midExam,
       finalExam: g.finalExam,
-      finalScore: calculateFinal(g).toFixed(1),
-      grade: getGradeLetter(calculateFinal(g))
+      finalScore: calculateFinalGrade(g.assignment, g.midExam, g.finalExam).toFixed(1),
+      grade: calculateGradeLetter(calculateFinalGrade(g.assignment, g.midExam, g.finalExam))
     }));
-    
+
     const csv = Papa.unparse(csvData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    
+
     link.setAttribute('href', url);
     link.setAttribute('download', `grades_${className}_${new Date().toISOString().split('T')[0]}.csv`);
     link.style.visibility = 'hidden';
@@ -232,41 +262,42 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   
   const calculateGradeStatistics = () => {
     if (grades.length === 0) return null;
-    
-    const finalScores = grades.map(g => calculateFinal(g));
+
+    const finalScores = grades.map(g => calculateFinalGrade(g.assignment, g.midExam, g.finalExam));
     const average = finalScores.reduce((a, b) => a + b, 0) / finalScores.length;
     const maxScore = Math.max(...finalScores);
     const minScore = Math.min(...finalScores);
-    
+
     const gradeDistribution = {
       A: finalScores.filter(score => score >= 85).length,
       B: finalScores.filter(score => score >= 75 && score < 85).length,
       C: finalScores.filter(score => score >= 60 && score < 75).length,
       D: finalScores.filter(score => score < 60).length
     };
-    
+
     return { average, maxScore, minScore, gradeDistribution };
   };
 
   const handleSave = async () => {
     try {
       setLoading(true);
-      
-      // Save each student's grade
-      for (const grade of grades) {
-        await gradesAPI.update(grade.id, {
+
+      const savePromises = grades.map(grade =>
+        gradesAPI.update(grade.id, {
           studentId: grade.id,
           classId: className,
-          subjectId: 'Matematika Wajib',
+          subjectId: subjectId,
           assignment: grade.assignment,
           midExam: grade.midExam,
           finalExam: grade.finalExam,
-        });
-      }
-      
+        })
+      );
+
+      await Promise.all(savePromises);
       setIsEditing(null);
       onShowToast('Nilai berhasil disimpan ke database.', 'success');
-    } catch {
+    } catch (error) {
+      logger.error('Error saving grades:', error);
       onShowToast('Gagal menyimpan nilai', 'error');
     } finally {
       setLoading(false);
@@ -280,7 +311,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       const dataForAI = grades.map(g => ({
           studentName: g.name,
           subject: 'Matematika Wajib',
-          grade: getGradeLetter(calculateFinal(g)),
+          grade: calculateGradeLetter(calculateFinalGrade(g.assignment, g.midExam, g.finalExam)),
           semester: 'Semester 1'
       }));
 
@@ -297,8 +328,8 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
                     ← Kembali ke Dashboard
                 </button>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Input Nilai Siswa</h2>
-                <p className="text-gray-500 dark:text-gray-400">Mata Pelajaran: <strong>Matematika Wajib (XII IPA 1)</strong></p>
+                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Input Nilai Siswa</h2>
+                 <p className="text-gray-500 dark:text-gray-400">Mata Pelajaran: <strong>{subjectId} ({className})</strong></p>
             </div>
             
             {/* Enhanced Toolbar */}
@@ -554,8 +585,8 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     </thead>
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                         {filteredData.map((student) => {
-                            const finalScore = calculateFinal(student);
-                            const gradeLetter = getGradeLetter(finalScore);
+                            const finalScore = calculateFinalGrade(student.assignment, student.midExam, student.finalExam);
+                            const gradeLetter = calculateGradeLetter(finalScore);
                             const isRowEditing = isEditing === student.id;
                             const isSelected = selectedStudents.has(student.id);
 
@@ -565,7 +596,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                 }`}>
                                     {isBatchMode && (
                                         <td className="px-4 py-4 text-center">
-                                            <input 
+                                            <input
                                                 type="checkbox"
                                                 checked={isSelected}
                                                 onChange={() => toggleStudentSelection(student.id)}
@@ -577,34 +608,34 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                         <div className="font-medium text-gray-900 dark:text-white">{student.name}</div>
                                         <div className="text-xs text-gray-500">NIS: {student.nis}</div>
                                     </td>
-                                    
+
                                     {/* Enhanced Input Columns - Always enabled */}
                                     <td className="px-4 py-4 text-center">
-                                        <input 
-                                            type="number" 
+                                        <input
+                                            type="number"
                                             value={student.assignment}
                                             onChange={(e) => handleInputChange(student.id, 'assignment', e.target.value)}
-                                            min="0" 
+                                            min="0"
                                             max="100"
                                             className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-green-500"
                                         />
                                     </td>
                                     <td className="px-4 py-4 text-center">
-                                        <input 
-                                            type="number" 
+                                        <input
+                                            type="number"
                                             value={student.midExam}
                                             onChange={(e) => handleInputChange(student.id, 'midExam', e.target.value)}
-                                            min="0" 
+                                            min="0"
                                             max="100"
                                             className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-green-500"
                                         />
                                     </td>
                                     <td className="px-4 py-4 text-center">
-                                        <input 
-                                            type="number" 
+                                        <input
+                                            type="number"
                                             value={student.finalExam}
                                             onChange={(e) => handleInputChange(student.id, 'finalExam', e.target.value)}
-                                            min="0" 
+                                            min="0"
                                             max="100"
                                             className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-green-500"
                                         />
@@ -615,7 +646,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                         <div className="flex flex-col">
                                             <span>{finalScore.toFixed(1)}</span>
                                             <span className="text-xs text-gray-500 dark:text-gray-400">
-                                                {(0.3 * student.assignment + 0.3 * student.midExam + 0.4 * student.finalExam).toFixed(1)}
+                                                {calculateFinalGrade(student.assignment, student.midExam, student.finalExam).toFixed(1)}
                                             </span>
                                         </div>
                                     </td>
@@ -632,28 +663,24 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex gap-2 justify-end">
                                             {isRowEditing ? (
-                                                <button 
-                                                    onClick={handleSave}
+                                                <button
+                                                    onClick={() => setShowSaveConfirm(true)}
                                                     className="text-xs font-medium bg-green-600 text-white px-3 py-1.5 rounded-full hover:bg-green-700 transition-colors"
                                                 >
                                                     Simpan
                                                 </button>
                                             ) : (
-                                                <button 
+                                                <button
                                                     onClick={() => setIsEditing(student.id)}
                                                     className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
                                                 >
                                                     Edit
                                                 </button>
                                             )}
-                                            <button 
+                                            <button
                                                 onClick={() => {
-                                                    setGrades(prev => prev.map(g => g.id === student.id ? {
-                                                        ...g, 
-                                                        assignment: 0, 
-                                                        midExam: 0, 
-                                                        finalExam: 0
-                                                    } : g));
+                                                    setResetStudentId(student.id);
+                                                    setShowResetConfirm(true);
                                                 }}
                                                 className="text-xs font-medium text-red-600 dark:text-red-400 hover:underline"
                                             >
@@ -673,8 +700,8 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         {/* Save Button */}
         {!loading && !error && (
         <div className="flex justify-end mt-6">
-            <button 
-                onClick={handleSave}
+            <button
+                onClick={() => setShowSaveConfirm(true)}
                 disabled={loading || isEditing === null}
                 className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
@@ -682,6 +709,49 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             </button>
         </div>
         )}
+
+        {/* Confirmation Dialogs */}
+        <ConfirmationDialog
+            isOpen={showResetConfirm}
+            title="Reset Nilai Siswa"
+            message={`Apakah Anda yakin ingin mereset semua nilai untuk siswa ini? Tindakan ini tidak dapat dibatalkan.`}
+            confirmText="Ya, Reset"
+            cancelText="Batal"
+            type="danger"
+            onConfirm={() => {
+                if (resetStudentId) {
+                    setGrades(prev => prev.map(g => g.id === resetStudentId ? {
+                        ...g,
+                        assignment: 0,
+                        midExam: 0,
+                        finalExam: 0
+                    } : g));
+                    setResetStudentId(null);
+                    onShowToast('Nilai direset', 'info');
+                }
+                setShowResetConfirm(false);
+            }}
+            onCancel={() => {
+                setResetStudentId(null);
+                setShowResetConfirm(false);
+            }}
+        />
+
+        <ConfirmationDialog
+            isOpen={showSaveConfirm}
+            title="Simpan Semua Nilai"
+            message={`Apakah Anda yakin ingin menyimpan semua nilai untuk ${grades.length} siswa?`}
+            confirmText="Ya, Simpan"
+            cancelText="Batal"
+            type="warning"
+            onConfirm={() => {
+                handleSave();
+                setShowSaveConfirm(false);
+            }}
+            onCancel={() => {
+                setShowSaveConfirm(false);
+            }}
+        />
     </div>
   );
 };

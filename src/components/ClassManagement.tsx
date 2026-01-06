@@ -3,6 +3,8 @@ import { studentsAPI, attendanceAPI } from '../services/apiService';
 import { Student, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { validateAttendance } from '../utils/teacherValidation';
+import ConfirmationDialog from './ConfirmationDialog';
 
 interface ClassStudent {
   id: string;
@@ -26,6 +28,9 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
   const className = 'XII IPA 1';
 
   const currentUser = authAPI.getCurrentUser();
+
+  const [showAttendanceConfirm, setShowAttendanceConfirm] = useState(false);
+  const [pendingAttendance, setPendingAttendance] = useState<{ id: string; status: 'hadir' | 'sakit' | 'izin' | 'alpa' } | null>(null);
 
   const fetchStudents = useCallback(async () => {
     setLoading(true);
@@ -80,6 +85,15 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
   };
 
   const handleAttendanceChange = async (id: string, status: ClassStudent['attendanceToday']) => {
+    setPendingAttendance({ id, status });
+    setShowAttendanceConfirm(true);
+  };
+
+  const confirmAttendanceChange = async () => {
+    if (!pendingAttendance) return;
+
+    const { id, status } = pendingAttendance;
+
     setStudents((prev) =>
       prev.map((s) => (s.id === id ? { ...s, attendanceToday: status } : s))
     );
@@ -88,7 +102,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
       const today = new Date().toISOString().split('T')[0];
       const apiStatus = status.toLowerCase() as 'hadir' | 'sakit' | 'izin' | 'alpa';
 
-      const response = await attendanceAPI.create({
+      const attendanceData = {
         studentId: id,
         classId: className,
         date: today,
@@ -96,7 +110,17 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
         notes: '',
         recordedBy: currentUser?.id || '',
         createdAt: new Date().toISOString(),
-      });
+      };
+
+      const validation = validateAttendance(attendanceData);
+      if (!validation.isValid) {
+        onShowToast(validation.errors.join(', '), 'error');
+        setShowAttendanceConfirm(false);
+        setPendingAttendance(null);
+        return;
+      }
+
+      const response = await attendanceAPI.create(attendanceData);
 
       if (response.success) {
         onShowToast('Status kehadiran diperbarui', 'success');
@@ -106,6 +130,9 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
     } catch (err) {
       logger.error('Error updating attendance:', err);
       onShowToast('Terjadi kesalahan saat memperbarui kehadiran', 'error');
+    } finally {
+      setShowAttendanceConfirm(false);
+      setPendingAttendance(null);
     }
   };
 
@@ -274,6 +301,21 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
           </table>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={showAttendanceConfirm}
+        title="Ubah Status Kehadiran"
+        message={`Apakah Anda yakin ingin mengubah status kehadiran siswa ini menjadi "${pendingAttendance?.status}"?`}
+        confirmText="Ya, Ubah"
+        cancelText="Batal"
+        type="warning"
+        onConfirm={() => confirmAttendanceChange()}
+        onCancel={() => {
+          setShowAttendanceConfirm(false);
+          setPendingAttendance(null);
+        }}
+      />
     </div>
   );
 };
