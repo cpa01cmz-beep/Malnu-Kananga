@@ -50,16 +50,16 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                 <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Karir</a></li>
                                 <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Beasiswa</a></li>
                           </ul>
-                        <div className="flex justify-center sm:justify-start gap-3 mt-6">
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 hover:scale-110 transition-all duration-200 p-3 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800" aria-label="Facebook">
+                         <div className="flex justify-center sm:justify-start gap-3 mt-6">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 hover:scale-110 transition-all duration-200 p-3 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 active:scale-95" aria-label="Facebook">
                                 <span className="sr-only">Facebook</span>
                                 <FacebookIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 hover:scale-110 transition-all duration-200 p-3 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800" aria-label="Instagram">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 hover:scale-110 transition-all duration-200 p-3 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 active:scale-95" aria-label="Instagram">
                                 <span className="sr-only">Instagram</span>
                                 <InstagramIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 hover:scale-110 transition-all duration-200 p-3 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800" aria-label="YouTube">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 hover:scale-110 transition-all duration-200 p-3 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 active:scale-95" aria-label="YouTube">
                                 <span className="sr-only">YouTube</span>
                                 <YoutubeIcon />
                             </a>

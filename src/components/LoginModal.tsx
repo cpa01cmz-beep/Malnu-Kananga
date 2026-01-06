@@ -95,14 +95,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                     Pilih peran untuk login instan:
                 </p>
 
-                <div className="grid grid-cols-3 gap-2.5">
-                    <button onClick={() => handleSimulatedLogin('student')} className="px-3 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-lg text-xs sm:text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
+                 <div className="grid grid-cols-3 gap-2.5">
+                    <button onClick={() => handleSimulatedLogin('student')} className="px-3 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-lg text-xs sm:text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 shadow-subtle hover:shadow-md">
                         Siswa
                     </button>
-                    <button onClick={() => handleSimulatedLogin('teacher')} className="px-3 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-lg text-xs sm:text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
+                    <button onClick={() => handleSimulatedLogin('teacher')} className="px-3 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-lg text-xs sm:text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 shadow-subtle hover:shadow-md">
                         Guru
                     </button>
-                    <button onClick={() => handleSimulatedLogin('admin')} className="px-3 py-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 rounded-lg text-xs sm:text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
+                    <button onClick={() => handleSimulatedLogin('admin')} className="px-3 py-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 rounded-lg text-xs sm:text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 shadow-subtle hover:shadow-md">
                         Admin
                     </button>
                 </div>
@@ -110,13 +110,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                 <div className="grid grid-cols-2 gap-2.5 mt-2.5">
                     <button
                         onClick={() => handleSimulatedLogin('teacher', 'staff')}
-                        className="px-3 py-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-semibold hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5"
+                        className="px-3 py-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-semibold hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 shadow-subtle hover:shadow-md"
                     >
                         Guru (Staff)
                     </button>
                     <button
                         onClick={() => handleSimulatedLogin('student', 'osis')}
-                        className="px-3 py-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 rounded-lg text-xs font-semibold hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5"
+                        className="px-3 py-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 rounded-lg text-xs font-semibold hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 shadow-subtle hover:shadow-md"
                     >
                         Siswa (OSIS)
                     </button>
@@ -143,29 +143,29 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
               <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
                 Anda akan diarahkan ke dashboard...
               </p>
-              <button
-                onClick={onClose}
-                className="mt-6 w-full flex justify-center py-3 px-5 border border-transparent rounded-lg text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
-              >
-                Selesai
-              </button>
+               <button
+                 onClick={onClose}
+                 className="mt-6 w-full flex justify-center py-3 px-5 border border-transparent rounded-lg text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 hover:-translate-y-0.5"
+               >
+                 Selesai
+               </button>
             </div>
               ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Alamat Email Terdaftar</label>
-                <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 ease-out font-medium placeholder-neutral-400 dark:placeholder-neutral-500" placeholder="anda@email.com" />
+                 <label htmlFor="email" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Alamat Email Terdaftar</label>
+                 <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 ease-out font-medium placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-neutral-400 dark:hover:border-neutral-500" placeholder="anda@email.com" />
               </div>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Password</label>
-                <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 ease-out font-medium placeholder-neutral-400 dark:placeholder-neutral-500" placeholder="Masukkan password" />
+                 <label htmlFor="password" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Password</label>
+                 <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 ease-out font-medium placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-neutral-400 dark:hover:border-neutral-500" placeholder="Masukkan password" />
               </div>
               {error && <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-300 text-center font-medium">{error}</div>}
-              <div>
-                <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3 px-5 border border-transparent rounded-lg text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 transition-all duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-70 shadow-md hover:shadow-lg hover:-translate-y-0.5">
-                  {formState === 'loading' ? 'Memproses...' : 'Login'}
-                </button>
-              </div>
+               <div>
+                 <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3 px-5 border border-transparent rounded-lg text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 transition-all duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-70 shadow-md hover:shadow-lg active:scale-95 hover:-translate-y-0.5">
+                   {formState === 'loading' ? 'Memproses...' : 'Login'}
+                 </button>
+               </div>
             </form>
           )}
         </div>
