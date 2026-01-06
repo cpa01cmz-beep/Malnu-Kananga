@@ -29,12 +29,26 @@ interface SiteContent {
     latestNews: LatestNews[];
 }
 
+// Change history entry interface
+interface ChangeHistoryEntry {
+  id: string;
+  timestamp: Date;
+  changes: string;
+  appliedContent: SiteContent;
+  previousContent: SiteContent;
+}
+
 const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent, onUpdateContent, onResetContent }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   // FIX: Properly typed state instead of 'any'
   const [proposedContent, setProposedContent] = useState<SiteContent | null>(null);
+  const [changeHistory, setChangeHistory] = useState<ChangeHistoryEntry[]>([]);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingContent, setPendingContent] = useState<SiteContent | null>(null);
+  const [characterCount, setCharacterCount] = useState(0);
+  const [inputError, setInputError] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -45,11 +59,12 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
     if (isOpen) {
       if (messages.length === 0) {
         setMessages([
-            { id: 'initial', text: 'Halo! Saya asisten editor AI Anda. Beri tahu saya perubahan apa yang ingin Anda buat pada konten **"Program Unggulan"** atau **"Berita Terbaru"**. \n\nContoh:\n- "Tambahkan program baru tentang Robotika"\n- "Ubah judul berita pertama menjadi lebih menarik"', sender: Sender.AI }
+            { id: 'initial', text: 'Halo! Saya asisten editor AI Anda. Beri tahu saya perubahan apa yang ingin Anda buat pada konten **"Program Unggulan"** atau **"Berita Terbaru"**. \n\nContoh:\n- "Tambahkan program baru tentang Robotika"\n- "Ubah judul berita pertama menjadi lebih menarik"\n\n💡 **Tips:** Anda dapat membatalkan hingga 5 perubahan terakhir menggunakan tombol Undo.', sender: Sender.AI }
         ]);
       }
       setProposedContent(null);
       setInput('');
+      setInputError('');
     }
   }, [isOpen, messages.length]);
 
@@ -58,33 +73,139 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
     scrollToBottom();
   }, [messages, isLoading, proposedContent, scrollToBottom]);
 
+  // Character count and validation
+  useEffect(() => {
+    setCharacterCount(input.length);
+    
+    // Validate input
+    if (input.length > 1000) {
+      setInputError('Maksimal 1000 karakter');
+    } else if (input.trim().length > 0 && input.trim().length < 3) {
+      setInputError('Minimal 3 karakter untuk permintaan yang bermakna');
+    } else if (/[<>]/.test(input)) {
+      setInputError('Mohon hindari penggunaan tag HTML');
+    } else {
+      setInputError('');
+    }
+  }, [input]);
+
+  // Save initial content to localStorage for undo functionality
+  useEffect(() => {
+    if (isOpen) {
+      const savedHistory = localStorage.getItem('siteEditorHistory');
+      if (savedHistory) {
+        try {
+          const parsed = JSON.parse(savedHistory);
+          setChangeHistory(parsed.map((entry: ChangeHistoryEntry) => ({
+            ...entry,
+            timestamp: new Date(entry.timestamp)
+          })));
+        } catch (e) {
+          console.warn('Failed to load change history:', e);
+        }
+      }
+    }
+  }, [isOpen]);
+
+  const saveToHistory = (changes: string, appliedContent: SiteContent, previousContent: SiteContent) => {
+    const newEntry: ChangeHistoryEntry = {
+      id: Date.now().toString(),
+      timestamp: new Date(),
+      changes,
+      appliedContent,
+      previousContent
+    };
+    
+    const updatedHistory = [newEntry, ...changeHistory].slice(0, 5); // Keep only last 5 changes
+    setChangeHistory(updatedHistory);
+    localStorage.setItem('siteEditorHistory', JSON.stringify(updatedHistory));
+  };
+
+  const undoLastChange = () => {
+    if (changeHistory.length > 0) {
+      const lastChange = changeHistory[0];
+      onUpdateContent(lastChange.previousContent);
+      setChangeHistory(prev => prev.slice(1));
+      localStorage.setItem('siteEditorHistory', JSON.stringify(changeHistory.slice(1)));
+      
+      const undoMessage: ChatMessage = {
+        id: Date.now().toString(),
+        text: `✅ Perubahan terakhir telah dibatalkan: "${lastChange.changes}"`,
+        sender: Sender.AI
+      };
+      setMessages(prev => [...prev, undoMessage]);
+      setProposedContent(null);
+    }
+  };
+
+  const generateChangeSummary = (before: SiteContent, after: SiteContent): string => {
+    const changes: string[] = [];
+    
+    // Compare featured programs
+    const beforePrograms = before.featuredPrograms.length;
+    const afterPrograms = after.featuredPrograms.length;
+    if (beforePrograms !== afterPrograms) {
+      changes.push(`${afterPrograms > beforePrograms ? 'Menambah' : 'Menghapus'} ${Math.abs(afterPrograms - beforePrograms)} program unggulan`);
+    }
+    
+    // Compare news
+    const beforeNews = before.latestNews.length;
+    const afterNews = after.latestNews.length;
+    if (beforeNews !== afterNews) {
+      changes.push(`${afterNews > beforeNews ? 'Menambah' : 'Menghapus'} ${Math.abs(afterNews - beforeNews)} berita`);
+    }
+    
+    if (changes.length === 0) {
+      changes.push('Memperbarui konten yang ada');
+    }
+    
+    return changes.join(', ');
+  };
+
   if (!isOpen) return null;
 
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || inputError) return;
 
     const userMessage: ChatMessage = { id: Date.now().toString(), text: input, sender: Sender.User };
     setMessages(prev => [...prev, userMessage]);
+    const requestText = input;
     setInput('');
     setIsLoading(true);
     setProposedContent(null);
 
     try {
-      const newContent = await getAIEditorResponse(userMessage.text, currentContent);
+      const newContent = await getAIEditorResponse(requestText, currentContent);
       setProposedContent(newContent);
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        text: "Tentu, saya sudah menyiapkan perubahannya. Silakan tinjau **pratinjau visual** di bawah ini dan klik 'Terapkan Perubahan' jika sudah sesuai.",
+        text: "✨ Saya sudah menyiapkan perubahannya. Silakan tinjau **pratinjau visual** di bawah ini dan klik 'Terapkan Perubahan' jika sudah sesuai.",
         sender: Sender.AI
       };
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
-      const errorMessage: ChatMessage = {
+      let errorMessage = 'Maaf, terjadi kesalahan yang tidak diketahui. Silakan coba lagi.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('network') || error.message.includes('fetch')) {
+          errorMessage = '❌ **Koneksi gagal**: Tidak dapat terhubung ke server AI. Silakan periksa koneksi internet Anda dan coba lagi.';
+        } else if (error.message.includes('timeout')) {
+          errorMessage = '⏱️ **Timeout**: Permintaan terlalu lama. Silakan coba lagi dengan permintaan yang lebih sederhana.';
+        } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
+          errorMessage = '🚫 **Batas terlampaui**: Terlalu banyak permintaan. Silakan tunggu beberapa saat sebelum mencoba lagi.';
+        } else if (error.message.includes('invalid') || error.message.includes('parse')) {
+          errorMessage = '🔧 **Format tidak valid**: AI tidak memahami permintaan Anda. Silakan tulis ulang dengan kalimat yang lebih jelas.';
+        } else {
+          errorMessage = `❌ **Error**: ${error.message}`;
+        }
+      }
+      
+      const errorChatMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        text: `Maaf, terjadi kesalahan: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        text: errorMessage,
         sender: Sender.AI
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, errorChatMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +213,26 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
 
   const handleApply = () => {
     if (proposedContent) {
-        onUpdateContent(proposedContent);
+      setPendingContent(proposedContent);
+      setShowConfirmation(true);
+    }
+  };
+
+  const handleConfirmApply = () => {
+    if (pendingContent) {
+      const changeSummary = generateChangeSummary(currentContent, pendingContent);
+      saveToHistory(changeSummary, pendingContent, currentContent);
+      onUpdateContent(pendingContent);
+      setProposedContent(null);
+      setPendingContent(null);
+      setShowConfirmation(false);
+      
+      const confirmMessage: ChatMessage = {
+        id: Date.now().toString(),
+        text: `✅ **Berhasil!** Perubahan telah diterapkan: ${changeSummary}`,
+        sender: Sender.AI
+      };
+      setMessages(prev => [...prev, confirmMessage]);
     }
   };
 
@@ -100,7 +240,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       setProposedContent(null);
       const cancelMessage: ChatMessage = {
           id: Date.now().toString(),
-          text: "Perubahan dibatalkan. Ada lagi yang ingin Anda ubah?",
+          text: "🚫 Perubahan dibatalkan. Ada lagi yang ingin Anda ubah?",
           sender: Sender.AI
       };
       setMessages(prev => [...prev, cancelMessage]);
@@ -117,10 +257,21 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
         className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+<header className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
           <div className="flex items-center gap-3">
             <SparklesIcon className="h-6 w-6 text-green-500" />
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">AI Website Editor</h2>
+            {changeHistory.length > 0 && (
+              <div className="flex items-center gap-1">
+                <button 
+                  onClick={undoLastChange}
+                  className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
+                  title={`Undo ${changeHistory.length} perubahan terakhir`}
+                >
+                  ↶ Undo ({changeHistory.length})
+                </button>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <button 
@@ -132,7 +283,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                 <ArrowPathIcon />
             </button>
             <button onClick={onClose} className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="Tutup">
-                <CloseIcon />
+              <CloseIcon />
             </button>
           </div>
         </header>
@@ -218,18 +369,129 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
         </main>
 
         <footer className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
-          <AutoResizeTextarea
-             value={input}
-             onChange={setInput}
-             onSend={handleSend}
-             disabled={isLoading}
-             placeholder={isLoading ? "AI sedang berpikir..." : "Ketik permintaan Anda..."}
-          />
-           <p className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
-                Perubahan hanya bersifat sementara di sesi ini.
+          <div className="space-y-2">
+            <AutoResizeTextarea
+               value={input}
+               onChange={setInput}
+               onSend={handleSend}
+               disabled={isLoading}
+               placeholder={isLoading ? "AI sedang berpikir..." : "Ketik permintaan Anda..."}
+            />
+            
+            {/* Character count and validation */}
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <span className={`text-xs ${characterCount > 1000 ? 'text-red-500 font-medium' : 'text-gray-400 dark:text-gray-500'}`}>
+                  {characterCount}/1000 karakter
+                </span>
+                {inputError && (
+                  <span className="text-xs text-red-500 animate-pulse">
+                    {inputError}
+                  </span>
+                )}
+              </div>
+              
+              {/* Status indicators */}
+              <div className="flex items-center gap-2">
+                {input.length > 0 && !inputError && (
+                  <span className="text-xs text-green-500">✓ Siap dikirim</span>
+                )}
+                {isLoading && (
+                  <span className="text-xs text-blue-500">🔄 Memproses...</span>
+                )}
+              </div>
+            </div>
+            
+            <p className="text-center text-xs text-gray-400 dark:text-gray-500">
+              💡 Anda dapat membatalkan hingga 5 perubahan terakhir • Perubahan tersimpan di browser
             </p>
+          </div>
         </footer>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmation && pendingContent && (
+        <div
+          className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4"
+          aria-modal="true"
+          role="dialog"
+        >
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg transform transition-all duration-300 scale-95 opacity-0 animate-scale-in">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+                  <span className="text-yellow-600 text-lg">⚠️</span>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                  Konfirmasi Perubahan
+                </h3>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  Apakah Anda yakin ingin menerapkan perubahan berikut?
+                </p>
+                
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div className="text-xs uppercase tracking-wide font-semibold text-gray-500 dark:text-gray-400 mb-2">
+                    Ringkasan Perubahan:
+                  </div>
+                  <div className="text-sm text-gray-800 dark:text-gray-200">
+                    {generateChangeSummary(currentContent, pendingContent)}
+                  </div>
+                  
+                  <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                    <div className="text-xs uppercase tracking-wide font-semibold text-gray-500 dark:text-gray-400 mb-2">
+                      Rincian:
+                    </div>
+                    <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
+                      {pendingContent.featuredPrograms.map((prog, idx) => (
+                        <li key={`preview-prog-${idx}`} className="flex items-center gap-1">
+                          <span className="text-green-500">•</span>
+                          <span>Program: {prog.title}</span>
+                        </li>
+                      ))}
+                      {pendingContent.latestNews.map((news, idx) => (
+                        <li key={`preview-news-${idx}`} className="flex items-center gap-1">
+                          <span className="text-blue-500">•</span>
+                          <span>Berita: {news.title}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+                  <div className="flex items-start gap-2">
+                    <span className="text-yellow-600 text-sm">ℹ️</span>
+                    <p className="text-xs text-yellow-800 dark:text-yellow-200">
+                      Perubahan akan disimpan di riwayat dan dapat dibatalkan dengan tombol Undo.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowConfirmation(false);
+                    setPendingContent(null);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleConfirmApply}
+                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-full hover:bg-green-700 shadow-lg hover:shadow-green-500/30 transition-all transform hover:-translate-y-0.5"
+                >
+                  Ya, Terapkan Perubahan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
