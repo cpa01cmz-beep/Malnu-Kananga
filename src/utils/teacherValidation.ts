@@ -261,7 +261,7 @@ export const validateSearchInput = (searchTerm: string): ValidationResult => {
 /**
  * Validates attendance data
  */
-export const validateAttendance = (attendance: any): ValidationResult => {
+export const validateAttendance = (attendance: Attendance): ValidationResult => {
   const errors: string[] = [];
 
   if (!attendance.studentId || attendance.studentId.trim() === '') {

@@ -41,7 +41,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
   const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'goals' | 'correlation'>('overview');
   const [newGoal, setNewGoal] = useState({ subject: '', targetGrade: 'A', deadline: '' });
 
-  const analyzeSubjectPerformance = (gradeData: Grade[], subjectData: Subject[]): SubjectPerformance[] => {
+  const analyzeSubjectPerformance = useCallback((gradeData: Grade[], subjectData: Subject[]): SubjectPerformance[] => {
     const subjectMap = new Map<string, {
       assignment: number;
       midExam: number;
@@ -105,7 +105,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
     });
 
     return performance;
-  };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const calculateAttendanceGradeCorrelation = (gradeData: Grade[], attendanceData: Attendance[]): AttendanceGradeCorrelation => {
     const totalAttendance = attendanceData.length;
@@ -175,7 +175,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
     } finally {
       setLoading(false);
     }
-  }, [STUDENT_NIS]);
+  }, [STUDENT_NIS, analyzeSubjectPerformance]);
 
   useEffect(() => {
     fetchData();

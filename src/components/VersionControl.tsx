@@ -23,10 +23,6 @@ const VersionControl: React.FC<VersionControlProps> = ({
   const [loading, setLoading] = useState(false);
   const [showVersionHistory, setShowVersionHistory] = useState(false);
 
-  useEffect(() => {
-    fetchVersions();
-  }, [material.id]);
-
   const fetchVersions = useCallback(async () => {
     try {
       // Mock API call - replace with actual implementation
@@ -51,6 +47,10 @@ const VersionControl: React.FC<VersionControlProps> = ({
       logger.error('Error fetching versions:', err);
     }
   }, [material]);
+
+  useEffect(() => {
+    fetchVersions();
+  }, [fetchVersions]);
 
   const createVersion = async () => {
     if (!newFile || !versionTitle.trim() || !changeLog.trim()) {

@@ -28,14 +28,9 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
   const [newFolderDescription, setNewFolderDescription] = useState('');
   const [editingFolder, setEditingFolder] = useState<MaterialFolder | null>(null);
 
-  useEffect(() => {
-    fetchFolders();
-  }, []);
-
   const fetchFolders = useCallback(async () => {
     setLoading(true);
     try {
-      // Mock API call - replace with actual implementation
       const mockFolders: MaterialFolder[] = [
         {
           id: 'root',
@@ -96,7 +91,11 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [materials]);
+  }, [materials, onShowToast]);
+
+  useEffect(() => {
+    fetchFolders();
+  }, [fetchFolders]);
 
   const toggleFolderExpansion = (folderId: string) => {
     const newExpanded = new Set(expandedFolders);
