@@ -507,15 +507,7 @@ export interface MaterialRating {
   updatedAt: string;
 }
 
-export interface ReadingProgress {
-  materialId: string;
-  userId: string;
-  currentPage: number;
-  totalPages: number;
-  progressPercentage: number;
-  lastReadAt: string;
-  timeSpentMinutes: number;
-}
+
 
 export interface MaterialSearchFilters {
   subject?: string;
