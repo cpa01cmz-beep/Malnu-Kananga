@@ -12,7 +12,9 @@ import AttendanceView from './AttendanceView';
 import OsisEvents from './OsisEvents';
 import { ToastType } from './Toast';
 import { UserExtraRole, Student } from '../types';
+import { UserRole, UserExtraRole as PermUserExtraRole } from '../types/permissions';
 import { authAPI, studentsAPI } from '../services/apiService';
+import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 
@@ -29,6 +31,12 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { isOnline, isSlow } = useNetworkStatus();
+
+  // Check permissions for student role with extra role
+  const checkPermission = (permission: string) => {
+    const result = permissionService.hasPermission('student' as UserRole, extraRole as PermUserExtraRole, permission);
+    return result.granted;
+  };
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -68,13 +76,14 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
     }
   }, [isSlow, isOnline, onShowToast]);
 
-  const menuItems = [
+  const allMenuItems = [
     {
       title: 'Jadwal Pelajaran',
       description: 'Lihat jadwal kelas mingguan Anda.',
       icon: <DocumentTextIcon />,
       color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400',
       action: () => setCurrentView('schedule'),
+      permission: 'academic.schedule',
       active: true
     },
     {
@@ -83,6 +92,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       icon: <BuildingLibraryIcon />,
       color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400',
       action: () => setCurrentView('library'),
+      permission: 'content.read',
       active: true
     },
     {
@@ -91,6 +101,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       icon: <ClipboardDocumentCheckIcon />,
       color: 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400',
       action: () => setCurrentView('grades'),
+      permission: 'content.read',
       active: true
     },
     {
@@ -99,9 +110,13 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       icon: <UsersIcon />,
       color: 'bg-orange-100 text-orange-600 dark:bg-orange-900/50 dark:text-orange-400',
       action: () => setCurrentView('attendance'),
+      permission: 'content.read',
       active: true
     },
   ];
+
+  // Filter menu items based on permissions
+  const menuItems = allMenuItems.filter(item => checkPermission(item.permission));
 
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
@@ -182,7 +197,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                   ))}
 
                   {/* OSIS Special Menu */}
-                  {extraRole === 'osis' && (
+                  {extraRole === 'osis' && checkPermission('osis.events') && (
                       <div onClick={() => setCurrentView('osis')} className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 p-6 rounded-card shadow-card border border-orange-100 dark:border-orange-800 hover:shadow-card-hover transition-all duration-300 flex flex-col items-start cursor-pointer group transform hover:-translate-y-1">
                           <div className="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 p-3 rounded-card mb-4 group-hover:scale-110 transition-transform duration-300">
                              <div className="w-8 h-8"><CalendarDaysIcon /></div>

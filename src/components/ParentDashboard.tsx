@@ -17,7 +17,9 @@ import ParentPaymentsView from './ParentPaymentsView';
 import ParentMeetingsView from './ParentMeetingsView';
 import { ToastType } from './Toast';
 import type { ParentChild } from '../types';
+import { UserRole, UserExtraRole } from '../types/permissions';
 import { parentsAPI, authAPI } from '../services/apiService';
+import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { validateMultiChildDataIsolation } from '../utils/parentValidation';
@@ -35,6 +37,12 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [children, setChildren] = useState<ParentChild[]>([]);
   const [loading, setLoading] = useState(true);
   const networkStatus = useNetworkStatus();
+
+  // Check permissions for parent role
+  const checkPermission = (permission: string) => {
+    const result = permissionService.hasPermission('parent' as UserRole, null as UserExtraRole, permission);
+    return result.granted;
+  };
 
   useEffect(() => {
     const fetchChildren = async () => {
@@ -78,7 +86,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     setCurrentView('home');
   };
 
-  const menuItems = [
+  const allMenuItems = [
     ...(children.length > 1 ? [{
       title: showConsolidatedView ? 'Tinjau Per Anak' : 'Tinjau Konsolidasi',
       description: showConsolidatedView ? 'Lihat per anak' : 'Lihat semua anak dalam satu tampilan',
@@ -93,7 +101,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       icon: <UserIcon />,
       color: 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400',
       action: () => setCurrentView('profile'),
-      active: true
+      permission: 'parent.monitor'
     },
     {
       title: 'Jadwal Pelajaran',
@@ -101,7 +109,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       icon: <DocumentTextIcon />,
       color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400',
       action: () => setCurrentView('schedule'),
-      active: true
+      permission: 'academic.schedule'
     },
     {
       title: 'E-Library',
@@ -109,7 +117,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       icon: <BuildingLibraryIcon />,
       color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400',
       action: () => setCurrentView('library'),
-      active: true
+      permission: 'content.read'
     },
     {
       title: 'Nilai Akademik',
@@ -117,7 +125,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       icon: <ClipboardDocumentCheckIcon />,
       color: 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400',
       action: () => setCurrentView('grades'),
-      active: true
+      permission: 'parent.monitor'
     },
     {
       title: 'Kehadiran',
@@ -125,7 +133,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       icon: <UsersIcon />,
       color: 'bg-orange-100 text-orange-600 dark:bg-orange-900/50 dark:text-orange-400',
       action: () => setCurrentView('attendance'),
-      active: true
+      permission: 'parent.monitor'
     },
     {
       title: 'Kegiatan Sekolah',
@@ -133,7 +141,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       icon: <AcademicCapIcon />,
       color: 'bg-pink-100 text-pink-600 dark:bg-pink-900/50 dark:text-pink-400',
       action: () => setCurrentView('events'),
-      active: true
+      permission: 'content.read'
     },
     {
       title: 'Laporan Konsolidasi',
@@ -141,7 +149,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       icon: <DocumentTextIcon />,
       color: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400',
       action: () => setCurrentView('reports'),
-      active: true
+      permission: 'parent.reports'
     },
     {
       title: 'Pesan Guru',
@@ -149,7 +157,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       icon: <SendIcon />,
       color: 'bg-cyan-100 text-cyan-600 dark:bg-cyan-900/50 dark:text-cyan-400',
       action: () => setCurrentView('messaging'),
-      active: true
+      permission: 'parent.communication'
     },
     {
       title: 'Pembayaran',
@@ -157,7 +165,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       icon: <UsersIcon />,
       color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/50 dark:text-yellow-400',
       action: () => setCurrentView('payments'),
-      active: true
+      permission: 'parent.monitor'
     },
     {
       title: 'Jadwal Pertemuan',
@@ -165,9 +173,12 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       icon: <AcademicCapIcon />,
       color: 'bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400',
       action: () => setCurrentView('meetings'),
-      active: true
+      permission: 'parent.communication'
     },
   ];
+
+  // Filter menu items based on permissions
+  const menuItems = allMenuItems.filter(item => !item.permission || checkPermission(item.permission));
 
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
