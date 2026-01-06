@@ -13,10 +13,11 @@ const RelatedLinksSection: React.FC = () => {
   }, []);
 
   return (
-    <section id="tautan" className="py-16 sm:py-20">
+    <section id="tautan" className="py-20 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
+            <div className="text-center mb-16 animate-fade-in">
                 <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 dark:text-white tracking-tight">Tautan Terkait</h2>
+                <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">Akses cepat ke portal dan layanan terkait.</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                 {links.map((link) => (

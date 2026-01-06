@@ -49,7 +49,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   const styles = typeStyles[type];
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm transition-opacity duration-300">
       <div className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-float border max-w-md w-full border-neutral-200 dark:border-neutral-700 animate-scale-in">
         <div className="p-6">
           <div className="flex items-start gap-4">
@@ -70,16 +70,16 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
             <button
               onClick={onCancel}
               disabled={isLoading}
-              className="px-5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
             >
               {cancelText}
             </button>
             <button
               onClick={onConfirm}
               disabled={isLoading}
-              className={`px-5 py-2.5 text-white rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-md ${
+              className={`px-5 py-2.5 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 ${
                 isLoading ? styles.confirmDisabled : styles.confirmBg
-              }`}
+              } ${type === 'danger' ? 'focus:ring-red-500' : type === 'warning' ? 'focus:ring-yellow-500' : 'focus:ring-blue-500'}`}
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">

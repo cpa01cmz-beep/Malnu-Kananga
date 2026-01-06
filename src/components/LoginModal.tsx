@@ -66,12 +66,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
 
   return (
     <div
-      className="fixed inset-0 bg-neutral-900/75 flex items-center justify-center z-50 transition-opacity duration-300"
+      className="fixed inset-0 bg-neutral-900/75 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity duration-300"
       onClick={handleBackdropClick}
       aria-modal="true"
       role="dialog"
     >
-      <div className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-float w-full max-w-md m-4 transform transition-all duration-300 scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh]">
+      <div className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-float w-full max-w-md m-4 transform transition-all duration-300 scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh] border border-neutral-200 dark:border-neutral-700">
         <div className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700">
           <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Login</h2>
           <button
@@ -83,9 +83,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
           </button>
         </div>
         
-        <div className="p-6 overflow-y-auto">
-            <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-card-lg border border-yellow-200 dark:border-yellow-700/50">
-                <h3 className="text-sm font-bold text-yellow-800 dark:text-yellow-200 mb-2 uppercase tracking-wide">Mode Simulasi (Demo)</h3>
+         <div className="p-6 overflow-y-auto">
+            <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-card-lg border border-yellow-200 dark:border-yellow-700/50 focus-within:ring-2 focus-within:ring-yellow-500 focus-within:ring-offset-2 transition-shadow">
+                <h3 className="text-sm font-bold text-yellow-800 dark:text-yellow-200 mb-2 uppercase tracking-wide flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Mode Simulasi (Demo)
+                </h3>
                 <p className="text-xs text-yellow-700 dark:text-yellow-300 mb-3">
                     Pilih peran untuk login instan:
                 </p>
