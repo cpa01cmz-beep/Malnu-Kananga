@@ -60,7 +60,7 @@ jobs:
           else
             git checkout -b agent-workspace
           fi
-          git merge origin/develop --no-edit || echo "Merge conflict or already up to date"
+          git merge origin/main --no-edit || echo "Merge conflict or already up to date"
 
       - name: Install Dependencies
         continue-on-error: true
@@ -139,7 +139,7 @@ jobs:
           $(cat ci-context.txt)
 
           Steps:
-          1. **Synchronize**: `git fetch --all && git checkout agent-workspace && git merge origin/develop --no-edit`.
+          1. **Synchronize**: `git fetch --all && git checkout agent-workspace && git merge origin/main --no-edit`.
           2. **Fix**: Address every failure (lint errors, test failures, build breaks).
           3. **Verify**: Run lint, test, and build commands from package.json.
           4. **Final Gate**: If ANY check still fails, keep iterating until all pass.
@@ -149,7 +149,7 @@ jobs:
           Constraints:
           - DO NOT compromise on quality. Fix the root cause.
           - Do not bypass tests.
-          - Ensure the PR to `develop` is updated and merged to keep the chain alive.
+          - Ensure the PR to `main` is updated and merged to keep the chain alive.
           PROMPT
           )" \
             --model opencode/minimax-m2.1-free \
@@ -159,13 +159,13 @@ jobs:
         if: steps.lint.outcome == 'success' && steps.test.outcome == 'success' && steps.build.outcome == 'success'
         run: |
           echo "✅ All checks passed on agent-workspace."
-          # Find the PR from agent-workspace to develop
-          PR_URL=$(gh pr list --head agent-workspace --base develop --json url --jq '.[0].url')
+          # Find the PR from agent-workspace to main
+          PR_URL=$(gh pr list --head agent-workspace --base main --json url --jq '.[0].url')
 
           if [ -n "$PR_URL" ]; then
             echo "Merging PR: $PR_URL"
             gh pr merge "$PR_URL" --merge --admin || gh pr merge "$PR_URL" --auto --merge
-            echo "🚀 PR merged/auto-merge enabled. This will trigger the next Analyzer run on develop."
+            echo "🚀 PR merged/auto-merge enabled. This will trigger the next Analyzer run on main."
           else
             echo "⚠️ No open PR found for agent-workspace to develop. Check if changes were actually pushed."
           fi
