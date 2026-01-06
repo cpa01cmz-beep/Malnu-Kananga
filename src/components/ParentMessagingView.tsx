@@ -3,38 +3,21 @@ import { UserIcon } from './icons/UserIcon';
 import { SendIcon } from './icons/SendIcon';
 
 import { ToastType } from './Toast';
-import type { ParentChild } from '../types';
+import type { ParentChild, ParentTeacher, ParentMessage } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { validateAndSanitizeMessage, validateParentMessage } from '../utils/parentValidation';
 
 interface ParentMessagingViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
   children: ParentChild[];
 }
 
-interface Message {
-  id: string;
-  sender: 'parent' | 'teacher';
-  teacherName?: string;
-  childName?: string;
-  subject: string;
-  message: string;
-  timestamp: string;
-  status: 'sent' | 'delivered' | 'read';
-}
-
-interface Teacher {
-  teacherId: string;
-  teacherName: string;
-  subject: string;
-  className: string;
-}
-
 const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, children }) => {
   const [selectedChild, setSelectedChild] = useState<ParentChild | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [availableTeachers, setAvailableTeachers] = useState<Teacher[]>([]);
-  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  const [messages, setMessages] = useState<ParentMessage[]>([]);
+  const [availableTeachers, setAvailableTeachers] = useState<ParentTeacher[]>([]);
+  const [selectedTeacher, setSelectedTeacher] = useState<ParentTeacher | null>(null);
   const [newMessage, setNewMessage] = useState('');
   const [messageSubject, setMessageSubject] = useState('');
   const [loading, setLoading] = useState(true);
@@ -84,28 +67,31 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
       return;
     }
 
+    const messageInput = {
+      sender: 'parent' as const,
+      childName: selectedChild.studentName,
+      teacherName: selectedTeacher.teacherName,
+      subject: messageSubject,
+      message: newMessage.trim()
+    };
+
+    const validation = validateAndSanitizeMessage(messageInput);
+    if (!validation.isValid) {
+      onShowToast('Validasi gagal: ' + validation.errors.join(', '), 'error');
+      return;
+    }
+
     setSending(true);
     try {
-      const response = await parentsAPI.sendMessage({
-        childId: selectedChild.studentId,
-        teacherId: selectedTeacher.teacherId,
-        subject: messageSubject,
-        message: newMessage.trim()
-      });
+      const response = await parentsAPI.sendMessage(validation.sanitized!);
 
-      if (response.success) {
-        const newMsg: Message = {
-          id: Date.now().toString(),
-          sender: 'parent',
-          childName: selectedChild.studentName,
-          teacherName: selectedTeacher.teacherName,
-          subject: messageSubject,
-          message: newMessage.trim(),
-          timestamp: new Date().toISOString(),
-          status: 'sent'
-        };
+      if (response.success && response.data) {
+        const messageValidation = validateParentMessage(response.data);
+        if (!messageValidation.isValid) {
+          logger.error('Server returned invalid message data:', messageValidation.errors);
+        }
 
-        setMessages([newMsg, ...messages]);
+        setMessages([response.data, ...messages]);
         setNewMessage('');
         setMessageSubject('');
         onShowToast('Pesan terkirim', 'success');

@@ -1,7 +1,7 @@
 // apiService.ts - Frontend API Service
 // Handles all backend API interactions
 
-import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback } from '../types';
+import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment } from '../types';
 import { logger } from '../utils/logger';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
@@ -1122,38 +1122,38 @@ export const parentsAPI = {
     return request<Schedule[]>(`/api/parent/schedule?student_id=${studentId}`);
   },
 
-  async getMeetings(studentId: string): Promise<ApiResponse<any[]>> {
-    return request<any[]>(`/api/parent/meetings?student_id=${studentId}`);
+  async getMeetings(studentId: string): Promise<ApiResponse<ParentMeeting[]>> {
+    return request<ParentMeeting[]>(`/api/parent/meetings?student_id=${studentId}`);
   },
 
-  async getAvailableTeachersForMeetings(studentId: string): Promise<ApiResponse<any[]>> {
-    return request<any[]>(`/api/parent/meetings/teachers?student_id=${studentId}`);
+  async getAvailableTeachersForMeetings(studentId: string): Promise<ApiResponse<ParentTeacher[]>> {
+    return request<ParentTeacher[]>(`/api/parent/meetings/teachers?student_id=${studentId}`);
   },
 
-  async scheduleMeeting(meetingData: any): Promise<ApiResponse<any>> {
-    return request<any>('/api/parent/meetings', {
+  async scheduleMeeting(meetingData: Omit<ParentMeeting, 'id' | 'childName' | 'teacherName' | 'status'>): Promise<ApiResponse<ParentMeeting>> {
+    return request<ParentMeeting>('/api/parent/meetings', {
       method: 'POST',
       body: JSON.stringify(meetingData),
     });
   },
 
-  async getMessages(studentId: string): Promise<ApiResponse<any[]>> {
-    return request<any[]>(`/api/parent/messages?student_id=${studentId}`);
+  async getMessages(studentId: string): Promise<ApiResponse<ParentMessage[]>> {
+    return request<ParentMessage[]>(`/api/parent/messages?student_id=${studentId}`);
   },
 
-  async getAvailableTeachers(studentId: string): Promise<ApiResponse<any[]>> {
-    return request<any[]>(`/api/parent/messages/teachers?student_id=${studentId}`);
+  async getAvailableTeachers(studentId: string): Promise<ApiResponse<ParentTeacher[]>> {
+    return request<ParentTeacher[]>(`/api/parent/messages/teachers?student_id=${studentId}`);
   },
 
-  async sendMessage(messageData: any): Promise<ApiResponse<any>> {
-    return request<any>('/api/parent/messages', {
+  async sendMessage(messageData: Omit<ParentMessage, 'id' | 'timestamp' | 'status'>): Promise<ApiResponse<ParentMessage>> {
+    return request<ParentMessage>('/api/parent/messages', {
       method: 'POST',
       body: JSON.stringify(messageData),
     });
   },
 
-  async getPaymentHistory(studentId: string): Promise<ApiResponse<any[]>> {
-    return request<any[]>(`/api/parent/payments?student_id=${studentId}`);
+  async getPaymentHistory(studentId: string): Promise<ApiResponse<ParentPayment[]>> {
+    return request<ParentPayment[]>(`/api/parent/payments?student_id=${studentId}`);
   },
 };
 

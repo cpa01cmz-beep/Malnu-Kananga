@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-06
-**Version**: 2.3.3
+**Version**: 2.3.4
 **Status**: Active
 
 ## 1. Ringkasan Eksekutif
@@ -703,6 +703,7 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 ## 6. Fitur Keamanan & Compliance
 
 ### 6.1 Keamanan Data
+- **Enkripsi Database**: AES-256 untuk data sensitif
 - **Enkripsi Database**: AES-256 untuk data sensitif
   - **HTTPS/SSL**: Komunikasi terenkripsi
   - **Firewall & WAF**: Perlindungan dari serangan cyber

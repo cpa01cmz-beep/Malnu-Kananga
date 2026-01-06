@@ -3,24 +3,14 @@ import { UserIcon } from './icons/UserIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { ToastType } from './Toast';
-import type { ParentChild } from '../types';
+import type { ParentChild, ParentPayment } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { validateParentPayment } from '../utils/parentValidation';
 
 interface ParentPaymentsViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
   children: ParentChild[];
-}
-
-interface Payment {
-  id: string;
-  paymentType: string;
-  amount: number;
-  dueDate: string;
-  status: 'pending' | 'paid' | 'overdue';
-  paymentDate?: string;
-  method?: string;
-  description: string;
 }
 
 interface ChildPaymentSummary {
@@ -29,7 +19,7 @@ interface ChildPaymentSummary {
   paidAmount: number;
   pendingAmount: number;
   overdueAmount: number;
-  payments: Payment[];
+  payments: ParentPayment[];
 }
 
 const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, children }) => {
@@ -48,15 +38,23 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
           const response = await parentsAPI.getPaymentHistory(child.studentId);
           const payments = response.success ? (response.data || []) : [];
 
-          const paidAmount = payments
+          const validPayments = payments.filter(payment => {
+            const validation = validateParentPayment(payment);
+            if (!validation.isValid) {
+              logger.error(`Invalid payment data for child ${child.studentId}:`, validation.errors);
+            }
+            return validation.isValid;
+          });
+
+          const paidAmount = validPayments
             .filter(p => p.status === 'paid')
             .reduce((sum, p) => sum + p.amount, 0);
 
-          const pendingAmount = payments
+          const pendingAmount = validPayments
             .filter(p => p.status === 'pending')
             .reduce((sum, p) => sum + p.amount, 0);
 
-          const overdueAmount = payments
+          const overdueAmount = validPayments
             .filter(p => p.status === 'overdue')
             .reduce((sum, p) => sum + p.amount, 0);
 
@@ -66,7 +64,7 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
             paidAmount,
             pendingAmount,
             overdueAmount,
-            payments
+            payments: validPayments
           };
         });
 
@@ -99,7 +97,7 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
     });
   };
 
-  const getStatusColor = (status: Payment['status']) => {
+  const getStatusColor = (status: ParentPayment['status']) => {
     switch (status) {
       case 'paid': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
       case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
@@ -108,7 +106,7 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
     }
   };
 
-  const getStatusText = (status: Payment['status']) => {
+  const getStatusText = (status: ParentPayment['status']) => {
     switch (status) {
       case 'paid': return 'Lunas';
       case 'pending': return 'Menunggu';

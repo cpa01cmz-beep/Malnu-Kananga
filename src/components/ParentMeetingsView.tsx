@@ -3,51 +3,22 @@ import React, { useState, useEffect } from 'react';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { ToastType } from './Toast';
-import type { ParentChild } from '../types';
+import type { ParentChild, ParentTeacher, ParentMeeting } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { validateAndSanitizeMeeting, validateParentMeeting } from '../utils/parentValidation';
 
 interface ParentMeetingsViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
   children: ParentChild[];
 }
 
-interface Teacher {
-  teacherId: string;
-  teacherName: string;
-  subject: string;
-  className: string;
-  availableSlots: TimeSlot[];
-}
-
-interface TimeSlot {
-  day: string;
-  startTime: string;
-  endTime: string;
-}
-
-interface Meeting {
-  id: string;
-  childId: string;
-  childName: string;
-  teacherId: string;
-  teacherName: string;
-  subject: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  status: 'scheduled' | 'completed' | 'cancelled';
-  agenda: string;
-  notes?: string;
-  location: string;
-}
-
 const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, children }) => {
   const [selectedChild, setSelectedChild] = useState<ParentChild | null>(null);
-  const [availableTeachers, setAvailableTeachers] = useState<Teacher[]>([]);
-  const [meetings, setMeetings] = useState<Meeting[]>([]);
-  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
-  const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
+  const [availableTeachers, setAvailableTeachers] = useState<ParentTeacher[]>([]);
+  const [meetings, setMeetings] = useState<ParentMeeting[]>([]);
+  const [selectedTeacher, setSelectedTeacher] = useState<ParentTeacher | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<{ day: string; startTime: string; endTime: string } | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [agenda, setAgenda] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -95,33 +66,38 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
       return;
     }
 
+    const meetingInput = {
+      childId: selectedChild.studentId,
+      teacherId: selectedTeacher.teacherId,
+      subject: selectedTeacher.subject,
+      date: selectedDate,
+      startTime: selectedSlot.startTime,
+      endTime: selectedSlot.endTime,
+      agenda: agenda.trim(),
+      location: 'Ruang Guru'
+    };
+
+    const validation = validateAndSanitizeMeeting(meetingInput);
+    if (!validation.isValid) {
+      onShowToast('Validasi gagal: ' + validation.errors.join(', '), 'error');
+      return;
+    }
+
     setScheduling(true);
     try {
-      const response = await parentsAPI.scheduleMeeting({
-        childId: selectedChild.studentId,
-        teacherId: selectedTeacher.teacherId,
-        date: selectedDate,
-        startTime: selectedSlot.startTime,
-        endTime: selectedSlot.endTime,
-        agenda: agenda.trim(),
-        location: 'Ruang Guru' // Default location
-      });
+      const response = await parentsAPI.scheduleMeeting(validation.sanitized!);
 
-      if (response.success) {
-        const newMeeting: Meeting = {
-          id: Date.now().toString(),
-          childId: selectedChild.studentId,
+      if (response.success && response.data) {
+        const newMeeting: ParentMeeting = {
+          ...response.data,
           childName: selectedChild.studentName,
-          teacherId: selectedTeacher.teacherId,
-          teacherName: selectedTeacher.teacherName,
-          subject: selectedTeacher.subject,
-          date: selectedDate,
-          startTime: selectedSlot.startTime,
-          endTime: selectedSlot.endTime,
-          status: 'scheduled',
-          agenda: agenda.trim(),
-          location: 'Ruang Guru'
+          teacherName: selectedTeacher.teacherName
         };
+
+        const meetingValidation = validateParentMeeting(newMeeting);
+        if (!meetingValidation.isValid) {
+          logger.error('Server returned invalid meeting data:', meetingValidation.errors);
+        }
 
         setMeetings([newMeeting, ...meetings]);
         setAgenda('');
@@ -152,7 +128,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
     });
   };
 
-  const getStatusColor = (status: Meeting['status']) => {
+  const getStatusColor = (status: ParentMeeting['status']) => {
     switch (status) {
       case 'scheduled': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
       case 'completed': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
@@ -161,7 +137,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
     }
   };
 
-  const getStatusText = (status: Meeting['status']) => {
+  const getStatusText = (status: ParentMeeting['status']) => {
     switch (status) {
       case 'scheduled': return 'Terjadwal';
       case 'completed': return 'Selesai';

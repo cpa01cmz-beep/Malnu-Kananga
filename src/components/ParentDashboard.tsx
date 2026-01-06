@@ -19,6 +19,8 @@ import { ToastType } from './Toast';
 import type { ParentChild } from '../types';
 import { parentsAPI, authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
+import { validateMultiChildDataIsolation } from '../utils/parentValidation';
 
 interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -32,12 +34,19 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [showConsolidatedView, setShowConsolidatedView] = useState(false);
   const [children, setChildren] = useState<ParentChild[]>([]);
   const [loading, setLoading] = useState(true);
+  const networkStatus = useNetworkStatus();
 
   useEffect(() => {
     const fetchChildren = async () => {
       try {
         const response = await parentsAPI.getChildren();
         if (response.success && response.data) {
+          const validation = validateMultiChildDataIsolation(response.data, '');
+          if (!validation.isValid) {
+            logger.error('Parent child data validation failed:', validation.errors);
+            onShowToast('Validasi data anak gagal: ' + validation.errors.join(', '), 'error');
+          }
+
           setChildren(response.data);
           if (response.data.length > 0) {
             setSelectedChild(response.data[0]);
@@ -45,14 +54,18 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         }
       } catch (error) {
         logger.error('Failed to fetch children:', error);
-        onShowToast('Gagal memuat data anak', 'error');
+        if (!networkStatus.isOnline) {
+          onShowToast(getOfflineMessage(), 'error');
+        } else {
+          onShowToast('Gagal memuat data anak', 'error');
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchChildren();
-  }, [onShowToast]);
+  }, [onShowToast, networkStatus.isOnline]);
 
   const handleSelectChild = (child: ParentChild) => {
     setSelectedChild(child);
@@ -159,6 +172,22 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {(!networkStatus.isOnline || networkStatus.isSlow) && (
+          <div className={`rounded-2xl p-4 mb-6 border-2 ${
+            !networkStatus.isOnline
+              ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+              : 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800'
+          }`}>
+            <p className={`text-sm font-medium ${
+              !networkStatus.isOnline
+                ? 'text-red-700 dark:text-red-300'
+                : 'text-yellow-700 dark:text-yellow-300'
+            }`}>
+              {!networkStatus.isOnline ? '⚠️ ' : '⚡ '}
+              {!networkStatus.isOnline ? getOfflineMessage() : getSlowConnectionMessage()}
+            </p>
+          </div>
+        )}
         {currentView === 'home' && (
           <>
             {/* Welcome Banner */}

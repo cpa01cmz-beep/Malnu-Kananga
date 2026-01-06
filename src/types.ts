@@ -74,6 +74,59 @@ export interface ParentChild {
   semester?: string;
 }
 
+export interface ParentTeacher {
+  teacherId: string;
+  teacherName: string;
+  subject: string;
+  className: string;
+  availableSlots?: TimeSlot[];
+}
+
+export interface TimeSlot {
+  day: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface ParentMeeting {
+  id: string;
+  childId: string;
+  childName: string;
+  teacherId: string;
+  teacherName: string;
+  subject: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  status: 'scheduled' | 'completed' | 'cancelled';
+  agenda: string;
+  notes?: string;
+  location: string;
+}
+
+export interface ParentMessage {
+  id: string;
+  sender: 'parent' | 'teacher';
+  teacherName?: string;
+  childName?: string;
+  subject: string;
+  message: string;
+  timestamp: string;
+  status: 'sent' | 'delivered' | 'read';
+}
+
+export interface ParentPayment {
+  id: string;
+  childId?: string;
+  paymentType: string;
+  amount: number;
+  dueDate: string;
+  status: 'pending' | 'paid' | 'overdue';
+  paymentDate?: string;
+  method?: string;
+  description: string;
+}
+
 export interface User {
   id: string;
   name: string;
