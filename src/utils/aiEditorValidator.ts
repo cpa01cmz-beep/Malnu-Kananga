@@ -36,6 +36,9 @@ const DANGEROUS_PATTERNS = [
   /\/proc\//gi,
   /\/sys\//gi,
   /0x[0-9a-fA-F]+/gi,
+  /javascript\s*:/gi,
+  /\.env/gi,
+  /SECRET/gi,
 ];
 
 const MAX_PROGRAMS = 20;
