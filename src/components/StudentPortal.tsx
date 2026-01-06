@@ -144,7 +144,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
         )}
 
         {currentView === 'schedule' && <ScheduleView onBack={() => setCurrentView('home')} />}
-        {currentView === 'library' && <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+        {currentView === 'library' && <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />}
         {currentView === 'grades' && <AcademicGrades onBack={() => setCurrentView('home')} />}
         {currentView === 'attendance' && <AttendanceView onBack={() => setCurrentView('home')} />}
         {currentView === 'osis' && <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
