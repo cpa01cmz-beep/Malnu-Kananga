@@ -17,7 +17,7 @@ import ParentPaymentsView from './ParentPaymentsView';
 import ParentMeetingsView from './ParentMeetingsView';
 import { ToastType } from './Toast';
 import type { ParentChild } from '../types';
-import { parentsAPI } from '../services/apiService';
+import { parentsAPI, authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 
 interface ParentDashboardProps {
@@ -363,7 +363,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             >
               ← Kembali ke Beranda
             </button>
-            <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
+            <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />
           </div>
         )}
 

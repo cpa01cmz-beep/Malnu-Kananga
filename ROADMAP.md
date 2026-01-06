@@ -3,7 +3,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-06
-**Version**: 2.3.1
+**Version**: 2.3.2
 **Status**: Active
 
 Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal MA Malnu Kananga**.
@@ -294,11 +294,27 @@ Fokus: Meningkatkan aksesibilitas melalui perangkat seluler.
           - [x] Add role-based notification filtering logic - COMPLETED
           - [x] Integrate with existing pushNotificationService - COMPLETED
           - [x] Test notification center across all user roles - COMPLETED
-       - [x] Verify build success (3.15s) - COMPLETED
-       - [x] Verify all tests passing (60/60 tests) - COMPLETED
-       - [x] Verify lint passing (0 errors, 1 warning - acceptable) - COMPLETED
-       - [x] Update documentation (BLUEPRINT.md, ROADMAP.md, TASK.md) - COMPLETED
-       - [x] Commit, push, and create PR - COMPLETED (Direct push, no PR needed)
+            - [x] Verify build success (3.15s) - COMPLETED
+        - [x] Verify all tests passing (60/60 tests) - COMPLETED
+        - [x] Verify lint passing (0 errors, 1 warning - acceptable) - COMPLETED
+        - [x] Update documentation (BLUEPRINT.md, ROADMAP.md, TASK.md) - COMPLETED
+        - [x] Commit, push, and create PR - COMPLETED (Direct push, no PR needed)
+    - [✅] **Improved E-Library Experience** (COMPLETED - BUILDER MODE) (Issue #559 - P2):
+         - [x] Add advanced search with filters (subject, teacher, date) - COMPLETED
+         - [x] Implement material favoriting and bookmarking - COMPLETED
+         - [x] Include reading progress tracking - COMPLETED
+         - [x] Add material rating and review system - COMPLETED
+         - [x] Create offline download capability - COMPLETED (PWA support)
+         - [x] Update types.ts with new E-Library interfaces - COMPLETED
+         - [x] Update constants.ts with storage keys - COMPLETED
+         - [x] Create eLibrary enhancements service - COMPLETED
+         - [x] Create HeartIcon and StarIcon components - COMPLETED
+         - [x] Update StudentPortal and ParentDashboard to pass userId - COMPLETED
+         - [x] Verify build success (10.77s) - COMPLETED
+         - [x] Verify all tests passing (60/60 tests) - COMPLETED
+         - [x] Verify lint passing (0 errors, 11 warnings - acceptable) - COMPLETED
+         - [x] Update documentation (BLUEPRINT.md, ROADMAP.md, TASK.md) - COMPLETED
+         - [x] Resolve Issue #559 - COMPLETED
       - [✅] **Fix P0 Console Error: Circular Chunk Dependencies** (COMPLETED - SANITIZER MODE) (Issue #583 - P0):
            - [x] Analyze circular chunk dependencies in manual chunk configuration - COMPLETED
            - [x] Fix circular references between vendor/modals/dashboards/ui-components/sections - COMPLETED

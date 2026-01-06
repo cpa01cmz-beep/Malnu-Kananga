@@ -433,6 +433,7 @@ export interface ELibrary {
   fileSize: number;
   subjectId: string;
   uploadedBy: string;
+  uploadedByTeacherName?: string;
   uploadedAt: string;
   downloadCount: number;
   folderId?: string;
@@ -488,6 +489,40 @@ export interface OfflineDownload {
   downloadedAt: string;
   fileSize: number;
   isAvailable: boolean;
+}
+
+export interface MaterialFavorite {
+  materialId: string;
+  userId: string;
+  createdAt: string;
+}
+
+export interface MaterialRating {
+  id: string;
+  materialId: string;
+  userId: string;
+  rating: number;
+  review?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReadingProgress {
+  materialId: string;
+  userId: string;
+  currentPage: number;
+  totalPages: number;
+  progressPercentage: number;
+  lastReadAt: string;
+  timeSpentMinutes: number;
+}
+
+export interface MaterialSearchFilters {
+  subject?: string;
+  teacher?: string;
+  dateRange?: 'all' | 'today' | 'week' | 'month' | 'year';
+  fileType?: string;
+  minRating?: number;
 }
 
 export interface Announcement {

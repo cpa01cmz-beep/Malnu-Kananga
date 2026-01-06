@@ -18,6 +18,10 @@ export const STORAGE_KEYS = {
     NOTIFICATION_SETTINGS_KEY: 'malnu_notification_settings',
     NOTIFICATION_HISTORY_KEY: 'malnu_notification_history',
     PUSH_SUBSCRIPTION_KEY: 'malnu_push_subscription',
+    MATERIAL_FAVORITES: 'malnu_material_favorites',
+    MATERIAL_RATINGS: 'malnu_material_ratings',
+    READING_PROGRESS: 'malnu_reading_progress',
+    OFFLINE_MATERIALS: 'malnu_offline_materials',
 } as const;
 
 export const APP_CONFIG = {
