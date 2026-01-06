@@ -55,7 +55,12 @@ graph TD
 ```
 src/
 ├── components/          # React UI components
+│   ├── admin/         # Admin-specific components
+│   ├── icons/         # Icon components
+│   ├── sections/      # Page sections
+│   └── ui/           # Reusable UI components
 ├── config/             # Configuration files (permissions, notification templates)
+├── contexts/           # React contexts
 ├── constants.ts        # Centralized constants (STORAGE_KEYS)
 ├── data/              # Default data and static resources
 ├── hooks/             # Custom React hooks (useVoiceRecognition, useVoiceSynthesis)

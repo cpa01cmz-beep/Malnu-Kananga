@@ -59,8 +59,8 @@ This index provides a comprehensive overview of all documentation available for 
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 153 TypeScript/TSX files
-- **Total Documentation Files**: 11 (in /docs), plus AGENTS.md in root
+- **Total Source Files**: 163 TypeScript/TSX files
+- **Total Documentation Files**: 12 (in /docs), plus AGENTS.md in root
 - **API Endpoints Documented**: 30+
 - **Code Examples**: 15+
 - **Troubleshooting Scenarios**: 20+
@@ -172,9 +172,9 @@ This index maintains relationships between documents:
 ## Recent Changes (v2.1.0 - 2026-01-06)
 
 - **Updated Version**: Corrected all documentation versions to match package.json (2.1.0)
-- **Fixed Documentation Metrics**: Corrected source file count to 159 TypeScript/TSX files
-- **Removed Outdated Audit**: Deleted PR-AUDIT-SUMMARY.md (11K outdated audit summary from previous PR)
-- **Consolidated Documentation**: Maintained current structure with 11 files in /docs/ directory
+- **Fixed Documentation Metrics**: Corrected source file count to 163 TypeScript/TSX files
+- **Updated Documentation Count**: Updated to reflect 12 files in /docs/ directory
+- **Consolidated Documentation**: Maintained current structure with 12 files in /docs/ directory
 
 ---
 
