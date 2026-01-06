@@ -6,6 +6,15 @@ import { studentsAPI, gradesAPI } from '../services/apiService';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
+import { 
+  validateGradeInput, 
+  GradeInput 
+} from '../utils/teacherValidation';
+import { 
+  executeWithRetry, 
+  createToastHandler 
+} from '../utils/teacherErrorHandler';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 
 
 interface StudentGrade {
@@ -40,7 +49,24 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const [autoSaveTimeout, setAutoSaveTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   
+  // Validation and Error Handling State
+  const [isSaving, setIsSaving] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'danger' | 'warning' | 'info';
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'warning',
+    onConfirm: () => {}
+  });
+  
   const className = 'XII IPA 1';
+  const toast = createToastHandler(onShowToast);
 
   const fetchStudentsAndGrades = useCallback(async () => {
     setLoading(true);
@@ -100,19 +126,35 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   );
 
   const handleInputChange = (id: string, field: keyof StudentGrade, value: string) => {
-      const numValue = Math.min(100, Math.max(0, Number(value) || 0));
-      setGrades(prev => prev.map(g => g.id === id ? { ...g, [field]: numValue } : g));
+      // Validate input
+      const numValue = Number(value);
+      const gradeInput: GradeInput = { [field]: isNaN(numValue) ? 0 : numValue };
+      const validation = validateGradeInput(gradeInput);
       
-      // Auto-save functionality with debouncing
-      if (autoSaveTimeout) {
-        clearTimeout(autoSaveTimeout);
+      // Note: Validation errors and warnings are logged but not displayed in this version
+      if (!validation.isValid) {
+        console.warn('Validation errors:', validation.errors);
+      }
+      if (validation.warnings.length > 0) {
+        console.warn('Validation warnings:', validation.warnings);
       }
       
-      const newTimeout = setTimeout(() => {
-        handleAutoSave();
-      }, 2000); // 2 second debounce
-      
-      setAutoSaveTimeout(newTimeout);
+      // Only update if valid
+      if (validation.isValid) {
+        const clampedValue = Math.min(100, Math.max(0, numValue || 0));
+        setGrades(prev => prev.map(g => g.id === id ? { ...g, [field]: clampedValue } : g));
+        
+        // Auto-save functionality with debouncing
+        if (autoSaveTimeout) {
+          clearTimeout(autoSaveTimeout);
+        }
+        
+        const newTimeout = setTimeout(() => {
+          handleAutoSave();
+        }, 2000); // 2 second debounce
+        
+        setAutoSaveTimeout(newTimeout);
+      }
   };
   
   const handleAutoSave = async () => {
@@ -249,28 +291,93 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   };
 
   const handleSave = async () => {
-    try {
-      setLoading(true);
+    // Validate all grades before saving
+    let hasErrors = false;
+    const errors: Record<string, string[]> = {};
+    
+    grades.forEach(grade => {
+      const validation = validateGradeInput({
+        assignment: grade.assignment,
+        midExam: grade.midExam,
+        finalExam: grade.finalExam
+      });
       
-      // Save each student's grade
-      for (const grade of grades) {
-        await gradesAPI.update(grade.id, {
-          studentId: grade.id,
-          classId: className,
-          subjectId: 'Matematika Wajib',
-          assignment: grade.assignment,
-          midExam: grade.midExam,
-          finalExam: grade.finalExam,
-        });
+      if (!validation.isValid) {
+        hasErrors = true;
+        errors[grade.id] = validation.errors;
+      }
+    });
+    
+    if (hasErrors) {
+      toast.error('Perbaiki kesalahan validasi sebelum menyimpan');
+      return;
+    }
+    
+    // Show confirmation for batch save
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Simpan Semua Nilai',
+      message: `Apakah Anda yakin ingin menyimpan nilai untuk ${grades.length} siswa? Pastikan semua data sudah benar.`,
+      type: 'warning',
+      onConfirm: async () => {
+        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        await doBatchSave();
+      }
+    });
+  };
+  
+  const doBatchSave = async () => {
+    setIsSaving(true);
+    
+    const saveOperation = async () => {
+      // Save each student's grade with retry mechanism
+      const savePromises = grades.map(grade => 
+        executeWithRetry({
+          operation: () => gradesAPI.update(grade.id, {
+            studentId: grade.id,
+            classId: className,
+            subjectId: 'Matematika Wajib',
+            assignment: grade.assignment,
+            midExam: grade.midExam,
+            finalExam: grade.finalExam,
+          }),
+          config: {
+            maxRetries: 3,
+            retryDelay: 1000
+          }
+        })
+      );
+      
+      const results = await Promise.allSettled(savePromises);
+      
+      const failed = results.filter(result => 
+        result.status === 'rejected' || 
+        (result.status === 'fulfilled' && !result.value.success)
+      );
+      
+      if (failed.length > 0) {
+        throw new Error(`${failed.length} nilai gagal disimpan. Silakan coba lagi.`);
       }
       
+      return results;
+    };
+    
+    const result = await executeWithRetry({
+      operation: saveOperation,
+      config: {
+        maxRetries: 2,
+        retryDelay: 2000
+      }
+    });
+    
+    if (result.success) {
       setIsEditing(null);
-      onShowToast('Nilai berhasil disimpan ke database.', 'success');
-    } catch {
-      onShowToast('Gagal menyimpan nilai', 'error');
-    } finally {
-      setLoading(false);
+      toast.success('Semua nilai berhasil disimpan ke database.');
+    } else {
+      toast.error(result.error || 'Gagal menyimpan nilai. Silakan coba lagi.');
     }
+    
+    setIsSaving(false);
   };
 
   const handleAIAnalysis = async () => {
@@ -682,6 +789,18 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             </button>
         </div>
         )}
+        
+        {/* Confirmation Dialog */}
+        <ConfirmationDialog
+          isOpen={confirmDialog.isOpen}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          type={confirmDialog.type}
+          isLoading={isSaving}
+          confirmText="Ya, Simpan"
+          onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+          onConfirm={confirmDialog.onConfirm}
+        />
     </div>
   );
 };

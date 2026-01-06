@@ -3,6 +3,10 @@ import { studentsAPI, attendanceAPI } from '../services/apiService';
 import { Student, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { 
+  executeWithRetry, 
+  createToastHandler 
+} from '../utils/teacherErrorHandler';
 
 interface ClassStudent {
   id: string;
@@ -24,8 +28,10 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const className = 'XII IPA 1';
+  
 
   const currentUser = authAPI.getCurrentUser();
+  const toast = createToastHandler(onShowToast);
 
   const fetchStudents = useCallback(async () => {
     setLoading(true);
@@ -79,7 +85,10 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
     }
   };
 
-  const handleAttendanceChange = async (id: string, status: ClassStudent['attendanceToday']) => {
+const handleAttendanceChange = async (id: string, status: ClassStudent['attendanceToday']) => {
+    const prevStudents = [...students];
+    
+    // Optimistic update
     setStudents((prev) =>
       prev.map((s) => (s.id === id ? { ...s, attendanceToday: status } : s))
     );
@@ -88,24 +97,38 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
       const today = new Date().toISOString().split('T')[0];
       const apiStatus = status.toLowerCase() as 'hadir' | 'sakit' | 'izin' | 'alpa';
 
-      const response = await attendanceAPI.create({
-        studentId: id,
-        classId: className,
-        date: today,
-        status: apiStatus,
-        notes: '',
-        recordedBy: currentUser?.id || '',
-        createdAt: new Date().toISOString(),
-      });
+      const updateOperation = async () => {
+        return await attendanceAPI.create({
+          studentId: id,
+          classId: className,
+          date: today,
+          status: apiStatus,
+          notes: '',
+          recordedBy: currentUser?.id || '',
+          createdAt: new Date().toISOString(),
+        });
+      };
 
-      if (response.success) {
-        onShowToast('Status kehadiran diperbarui', 'success');
+      const result = await executeWithRetry({
+        operation: updateOperation,
+        config: {
+          maxRetries: 3,
+          retryDelay: 1000
+        }
+      });
+      
+      if (result.success && result.data?.success) {
+        toast.success('Status kehadiran diperbarui');
       } else {
-        onShowToast(response.message || 'Gagal memperbarui kehadiran', 'error');
+        // Revert optimistic update
+        setStudents(prevStudents);
+        toast.error(result.data?.message || 'Gagal memperbarui kehadiran');
       }
     } catch (err) {
+      // Revert optimistic update
+      setStudents(prevStudents);
       logger.error('Error updating attendance:', err);
-      onShowToast('Terjadi kesalahan saat memperbarui kehadiran', 'error');
+      toast.error(err);
     }
   };
 
