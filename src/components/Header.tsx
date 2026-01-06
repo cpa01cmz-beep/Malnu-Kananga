@@ -9,7 +9,7 @@ import { MoonIcon } from './icons/MoonIcon';
 import { UserRole, UserExtraRole } from '../types';
 import NotificationCenter from './NotificationCenter';
 
-const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 font-medium px-3 py-2 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800";
+const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800";
 
 const NavLinks = () => (
     <>

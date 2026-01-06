@@ -63,8 +63,12 @@ This index provides a comprehensive overview of all documentation available for 
 ### Current Status
 
 ### Documentation Metrics
-- **Total Source Files**: 153 TypeScript/TSX files
-- **Total Documentation Files**: 11 (consolidated from 13)
+
+### Current Status
+
+### Documentation Metrics
+- **Total Source Files**: 150+ TypeScript/TSX files
+- **Total Documentation Files**: 12 (consolidated from 13)
 - **API Endpoints Documented**: 30+
 - **Code Examples**: 15+
 - **Troubleshooting Scenarios**: 20+
@@ -173,15 +177,17 @@ This index maintains relationships between documents:
 
 ---
 
-## Recent Changes (v2.3.0 - 2026-01-06)
+## Recent Changes (v2.4.0 - 2026-01-06)
 
-- **Consolidated Documentation**: Merged BACKEND_GUIDE.md into api-documentation.md (now API Reference)
-- **Consolidated Voice Docs**: Merged VOICE_ACCESSIBILITY_AUDIT.md into VOICE_INTERACTION_ARCHITECTURE.md
-- **Synthesized TASK.md**: Simplified from verbose 45-line version to concise actionable format
-- **Removed Redundant Files**: Deleted BACKEND_GUIDE.md and VOICE_ACCESSIBILITY_AUDIT.md
-- **Updated API Reference**: Enhanced with Users, PPDB, Inventory, Events APIs
-- **Updated Documentation Count**: Reduced from 13 to 11 files (18% reduction)
-- **Updated API Endpoints**: Increased from 25+ to 30+ documented endpoints
+- **Fixed Documentation Metrics**: Corrected total documentation files count from 11 to 12
+- **Updated AGENTS.md**: Fixed user roles to match code (parent as primary, staff/osis as extra)
+- **Updated Project Structure**: Added /data and /tests directories to documented structure
+- **Previous Changes (v2.3.0)**:
+  - Consolidated Documentation: Merged BACKEND_GUIDE.md into api-documentation.md
+  - Consolidated Voice Docs: Merged VOICE_ACCESSIBILITY_AUDIT.md into VOICE_INTERACTION_ARCHITECTURE.md
+  - Removed Redundant Files: Deleted BACKEND_GUIDE.md and VOICE_ACCESSIBILITY_AUDIT.md
+  - Updated API Reference: Enhanced with Users, PPDB, Inventory, Events APIs
+  - Updated API Endpoints: Increased from 25+ to 30+ documented endpoints
 
 ---
 
