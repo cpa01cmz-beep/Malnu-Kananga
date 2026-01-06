@@ -27,22 +27,37 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 
   const typeStyles = {
     danger: {
-      icon: '🗑️',
-      confirmBg: 'bg-red-600 hover:bg-red-700',
+      icon: (
+        <svg className="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      ),
+      confirmBg: 'bg-red-600 hover:bg-red-700 active:bg-red-800',
       confirmDisabled: 'bg-red-400 cursor-not-allowed',
-      border: 'border-red-200 dark:border-red-800'
+      border: 'border-red-200 dark:border-red-800',
+      bg: 'bg-red-50 dark:bg-red-900/20'
     },
     warning: {
-      icon: '⚠️',
-      confirmBg: 'bg-yellow-600 hover:bg-yellow-700',
-      confirmDisabled: 'bg-yellow-400 cursor-not-allowed',
-      border: 'border-yellow-200 dark:border-yellow-800'
+      icon: (
+        <svg className="w-6 h-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      ),
+      confirmBg: 'bg-amber-600 hover:bg-amber-700 active:bg-amber-800',
+      confirmDisabled: 'bg-amber-400 cursor-not-allowed',
+      border: 'border-amber-200 dark:border-amber-800',
+      bg: 'bg-amber-50 dark:bg-amber-900/20'
     },
     info: {
-      icon: 'ℹ️',
-      confirmBg: 'bg-blue-600 hover:bg-blue-700',
+      icon: (
+        <svg className="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      confirmBg: 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800',
       confirmDisabled: 'bg-blue-400 cursor-not-allowed',
-      border: 'border-blue-200 dark:border-blue-800'
+      border: 'border-blue-200 dark:border-blue-800',
+      bg: 'bg-blue-50 dark:bg-blue-900/20'
     }
   };
 
@@ -53,33 +68,33 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       <div className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-float border max-w-md w-full border-neutral-200 dark:border-neutral-700 animate-scale-in">
         <div className="p-6">
           <div className="flex items-start gap-4">
-            <div className="text-2xl flex-shrink-0">
+            <div className={`p-3 rounded-xl flex-shrink-0 ${styles.bg}`}>
               {styles.icon}
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">
                 {title}
               </h3>
-              <p className="text-neutral-600 dark:text-neutral-300 mb-6">
+              <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
                 {message}
               </p>
             </div>
           </div>
           
-          <div className="flex gap-3 justify-end">
+          <div className="flex gap-3 justify-end mt-6">
             <button
               onClick={onCancel}
               disabled={isLoading}
-              className="px-5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+              className="px-5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
             >
               {cancelText}
             </button>
             <button
               onClick={onConfirm}
               disabled={isLoading}
-              className={`px-5 py-2.5 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 ${
+              className={`px-5 py-2.5 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 shadow-sm hover:shadow ${
                 isLoading ? styles.confirmDisabled : styles.confirmBg
-              } ${type === 'danger' ? 'focus:ring-red-500' : type === 'warning' ? 'focus:ring-yellow-500' : 'focus:ring-blue-500'}`}
+              } ${type === 'danger' ? 'focus:ring-red-500' : type === 'warning' ? 'focus:ring-amber-500' : 'focus:ring-blue-500'}`}
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">

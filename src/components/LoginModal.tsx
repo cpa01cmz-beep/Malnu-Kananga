@@ -71,9 +71,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       aria-modal="true"
       role="dialog"
     >
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-float w-full max-w-md m-4 transform transition-all duration-300 scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh] border border-neutral-200 dark:border-neutral-700">
-        <div className="flex justify-between items-center p-6 border-b border-neutral-200 dark:border-neutral-700">
-          <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">Login</h2>
+      <div className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-float w-full max-w-md m-4 transform transition-all duration-300 scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh] border border-neutral-200 dark:border-neutral-700">
+        <div className="flex justify-between items-center px-6 py-5 border-b border-neutral-200 dark:border-neutral-700">
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Login</h2>
           <button
             onClick={onClose}
             className="p-2 rounded-lg text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -84,7 +84,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
         </div>
 
          <div className="p-6 overflow-y-auto">
-            <div className="mb-5 p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg border border-neutral-200 dark:border-neutral-700">
+            <div className="mb-5 p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
                 <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2 flex items-center gap-2">
                     <svg className="w-4 h-4 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -133,19 +133,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
             </div>
 
           {formState === 'success' ? (
-            <div className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-lg bg-primary-100 dark:bg-primary-900/50">
-                  <svg className="h-6 w-6 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+            <div className="text-center py-4">
+              <div className="mx-auto flex items-center justify-center h-14 w-14 rounded-xl bg-primary-100 dark:bg-primary-900/50">
+                  <svg className="h-7 w-7 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
               </div>
-              <h3 className="mt-3 text-lg font-semibold text-neutral-900 dark:text-white">Login Berhasil!</h3>
-              <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+              <h3 className="mt-4 text-lg font-semibold text-neutral-900 dark:text-white">Login Berhasil!</h3>
+              <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
                 Anda akan diarahkan ke dashboard...
               </p>
               <button
                 onClick={onClose}
-                className="mt-6 w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
+                className="mt-6 w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200 shadow-sm"
               >
                 Selesai
               </button>
@@ -154,15 +154,15 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">Alamat Email Terdaftar</label>
-                <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3.5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200" placeholder="anda@email.com" />
+                <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200" placeholder="anda@email.com" />
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">Password</label>
-                <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3.5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200" placeholder="Masukkan password" />
+                <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200" placeholder="Masukkan password" />
               </div>
-              {error && <p className="text-sm text-red-600 dark:text-red-400 text-center font-medium">{error}</p>}
+              {error && <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-300 text-center font-medium">{error}</div>}
               <div>
-                <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-70">
+                <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-70 shadow-sm hover:shadow">
                   {formState === 'loading' ? 'Memproses...' : 'Login'}
                 </button>
               </div>

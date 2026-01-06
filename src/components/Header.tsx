@@ -75,26 +75,26 @@ const Header: React.FC<HeaderProps> = ({
     `;
 
     const navContainerClasses = `
-        w-full max-w-7xl mx-auto px-4
-        ${isScrolled ? '' : 'bg-white/70 dark:bg-neutral-800/70 backdrop-blur-lg rounded-pill ring-1 ring-neutral-900/5 dark:ring-white/10 shadow-card'}
+        w-full max-w-7xl mx-auto px-4 sm:px-6
+        ${isScrolled ? '' : 'bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl rounded-pill ring-1 ring-neutral-900/5 dark:ring-white/10 shadow-card'}
     `;
 
     const innerNavClasses = `
         flex items-center justify-between h-16
-        ${isScrolled ? 'bg-white/95 dark:bg-neutral-800/95 backdrop-blur-lg' : ''}
+        ${isScrolled ? 'bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl' : ''}
     `;
 
     return (
         <header className={headerClasses}>
             <div className={navContainerClasses}>
                  <div className={`${innerNavClasses} ${isScrolled ? 'max-w-7xl mx-auto px-4' : ''}`}>
-                      <div className="flex items-center gap-3">
+                       <div className="flex items-center gap-3">
                         <div className="flex-shrink-0 w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
                             M
                         </div>
                         <div>
                             <span className="font-bold text-lg text-neutral-900 dark:text-white leading-tight">Malnu Kananga</span>
-                            <span className="block text-xs text-neutral-500 dark:text-neutral-400 leading-tight tracking-wider">NPSN: 69881502</span>
+                            <span className="block text-xs text-neutral-500 dark:text-neutral-400 leading-tight tracking-wide">NPSN: 69881502</span>
                         </div>
                     </div>
 
@@ -112,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({
 
                         <button
                             onClick={onToggleTheme}
-                            className="p-2.5 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="p-2 rounded-lg text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
                             aria-label="Ganti Tema"
                         >
                             {theme === 'light' ? <MoonIcon /> : <SunIcon />}
@@ -161,7 +161,7 @@ const Header: React.FC<HeaderProps> = ({
                                 </button>
                             </div>
                         )}
-                         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2.5 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Buka menu">
+                          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Buka menu">
                             {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
                         </button>
                     </div>
@@ -169,7 +169,7 @@ const Header: React.FC<HeaderProps> = ({
             </div>
 
             {isMenuOpen && (
-                <div className="md:hidden bg-white dark:bg-neutral-800 shadow-card mx-2 sm:mx-4 rounded-lg mt-2 p-4 animate-fade-in">
+                <div className="md:hidden bg-white dark:bg-neutral-800 shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 animate-fade-in">
                     <nav className="flex flex-col gap-3 font-medium text-center">
                         <NavLinks />
                           <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-3">
