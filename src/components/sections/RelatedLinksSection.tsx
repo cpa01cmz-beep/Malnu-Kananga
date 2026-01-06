@@ -13,7 +13,7 @@ const RelatedLinksSection: React.FC = () => {
   }, []);
 
   return (
-    <section id="tautan" className="py-16 sm:py-20">
+    <section id="tautan" className="py-20 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
                 {links.map((link) => (
@@ -22,7 +22,7 @@ const RelatedLinksSection: React.FC = () => {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex flex-col items-center p-4 sm:p-6 bg-neutral-100/50 dark:bg-neutral-800/50 rounded-card-lg shadow-card hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-1 hover:bg-white dark:hover:bg-neutral-700"
+                        className="group flex flex-col items-center p-6 sm:p-8 bg-neutral-100/50 dark:bg-neutral-800/50 rounded-card shadow-card hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-1 hover:bg-white dark:hover:bg-neutral-700"
                     >
                         <div className={`flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 rounded-pill ${link.color} transition-colors duration-300`}>
                             {link.icon}

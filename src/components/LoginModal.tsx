@@ -90,60 +90,60 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                 <p className="text-xs text-yellow-700 dark:text-yellow-300 mb-3">
                     Pilih peran untuk login instan:
                 </p>
-                
+
                 {/* Standard Roles */}
                 <div className="grid grid-cols-3 gap-2 mb-2">
-                    <button onClick={() => handleSimulatedLogin('student')} className="px-2 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <button onClick={() => handleSimulatedLogin('student')} className="px-2 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-card text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
                         Siswa
                     </button>
-                    <button onClick={() => handleSimulatedLogin('teacher')} className="px-2 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <button onClick={() => handleSimulatedLogin('teacher')} className="px-2 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-card text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors">
                         Guru
                     </button>
-                    <button onClick={() => handleSimulatedLogin('admin')} className="px-2 py-2 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors">
+                    <button onClick={() => handleSimulatedLogin('admin')} className="px-2 py-2 bg-primary-100 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-700 text-primary-700 dark:text-primary-300 rounded-card text-sm font-medium hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors">
                         Admin
                     </button>
                 </div>
 
                 {/* Extra Roles */}
                 <div className="grid grid-cols-2 gap-2">
-                    <button 
+                    <button
                         onClick={() => handleSimulatedLogin('teacher', 'staff')}
-                        className="px-2 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
+                        className="px-2 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-card text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
                     >
                         Guru (Staff)
                     </button>
-                    <button 
+                    <button
                         onClick={() => handleSimulatedLogin('student', 'osis')}
-                        className="px-2 py-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 rounded-lg text-xs font-medium hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors"
+                        className="px-2 py-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 rounded-card text-xs font-medium hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-colors"
                     >
                         Siswa (OSIS)
                     </button>
                 </div>
             </div>
-            
+
             <div className="relative mb-6">
                 <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                    <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                    <div className="w-full border-t border-neutral-300 dark:border-neutral-600"></div>
                 </div>
                 <div className="relative flex justify-center">
-                    <span className="px-2 bg-white dark:bg-gray-800 text-xs text-gray-500 uppercase">Atau Login Email (Produksi)</span>
+                    <span className="px-2 bg-white dark:bg-neutral-800 text-xs text-neutral-500 uppercase">Atau Login Email (Produksi)</span>
                 </div>
             </div>
 
           {formState === 'success' ? (
             <div className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/50">
-                  <svg className="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-pill bg-primary-100 dark:bg-primary-900/50">
+                  <svg className="h-6 w-6 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
               </div>
-              <h3 className="mt-3 text-lg font-medium text-gray-900 dark:text-white">Login Berhasil!</h3>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <h3 className="mt-3 text-lg font-medium text-neutral-900 dark:text-white">Login Berhasil!</h3>
+              <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
                 Anda akan diarahkan ke dashboard...
               </p>
               <button
                 onClick={onClose}
-                className="mt-6 w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                className="mt-6 w-full flex justify-center py-3 px-4 border border-transparent rounded-pill shadow-card text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200"
               >
                 Selesai
               </button>
@@ -151,20 +151,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Alamat Email Terdaftar</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Alamat Email Terdaftar</label>
                 <div className="mt-1">
-                  <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-green-500" placeholder="anda@email.com" />
+                  <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-card bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors" placeholder="anda@email.com" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">Password</label>
                 <div className="mt-1">
-                  <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-green-500" placeholder="Masukkan password" />
+                  <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-card bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors" placeholder="Masukkan password" />
                 </div>
               </div>
               {error && <p className="text-sm text-red-600 dark:text-red-400 text-center">{error}</p>}
               <div>
-                <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 dark:disabled:bg-gray-600">
+                <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-pill shadow-card text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 transition-all duration-200">
                   {formState === 'loading' ? 'Memproses...' : 'Login'}
                 </button>
               </div>

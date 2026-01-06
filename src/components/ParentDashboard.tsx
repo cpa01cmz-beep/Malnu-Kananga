@@ -170,10 +170,10 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   ];
 
   return (
-    <main className="pt-24 sm:pt-32 min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {(!networkStatus.isOnline || networkStatus.isSlow) && (
-          <div className={`rounded-2xl p-4 mb-6 border-2 ${
+          <div className={`rounded-card p-4 mb-6 border-2 ${
             !networkStatus.isOnline
               ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
               : 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800'
@@ -191,14 +191,14 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'home' && (
           <>
             {/* Welcome Banner */}
-            <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700 mb-8 animate-fade-in-up relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-green-100 to-transparent dark:from-green-900/20 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+            <div className="bg-white dark:bg-neutral-800 rounded-card-lg p-8 shadow-card border border-neutral-100 dark:border-neutral-700 mb-8 animate-fade-in-up relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-100 to-transparent dark:from-primary-900/20 rounded-pill -translate-y-1/2 translate-x-1/2 opacity-50"></div>
               <div className="relative z-10">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Portal Wali Murid</h1>
-                <p className="mt-2 text-gray-600 dark:text-gray-300 text-lg">
+                <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Portal Wali Murid</h1>
+                <p className="mt-2 text-neutral-600 dark:text-neutral-300 text-lg">
                   Selamat datang, <strong>{loading ? 'Loading...' : 'Orang Tua'}</strong>!
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
                   Pantau perkembangan pendidikan anak Anda dengan mudah.
                 </p>
               </div>
@@ -206,25 +206,25 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
             {/* Child Selection */}
             {children.length > 1 && (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-8">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Pilih Anak</h2>
+              <div className="bg-white dark:bg-neutral-800 rounded-card p-6 shadow-card border border-neutral-100 dark:border-neutral-700 mb-8">
+                <h2 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">Pilih Anak</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {children.map((child) => (
                     <button
                       key={child.studentId}
                       onClick={() => handleSelectChild(child)}
-                      className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                      className={`p-4 rounded-card border-2 transition-all duration-200 ${
                         selectedChild?.studentId === child.studentId
-                          ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                          ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20'
+                          : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
                       }`}
                     >
                       <div className="text-center">
-                        <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-pill flex items-center justify-center mx-auto mb-3">
                           <UserIcon />
                         </div>
-                        <p className="font-semibold text-gray-900 dark:text-white">{child.studentName}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{child.className || 'Tanpa Kelas'}</p>
+                        <p className="font-semibold text-neutral-900 dark:text-white">{child.studentName}</p>
+                        <p className="text-sm text-neutral-600 dark:text-neutral-400">{child.className || 'Tanpa Kelas'}</p>
                       </div>
                     </button>
                   ))}
@@ -234,33 +234,33 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
             {/* Selected Child Info */}
             {selectedChild && (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-8 animate-fade-in-up">
+              <div className="bg-white dark:bg-neutral-800 rounded-card p-6 shadow-card border border-neutral-100 dark:border-neutral-700 mb-8 animate-fade-in-up">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
                       {selectedChild.studentName}
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-gray-500 dark:text-gray-400">NISN</p>
-                        <p className="font-medium text-gray-900 dark:text-white">{selectedChild.nisn || '-'}</p>
+                        <p className="text-neutral-500 dark:text-neutral-400">NISN</p>
+                        <p className="font-medium text-neutral-900 dark:text-white">{selectedChild.nisn || '-'}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500 dark:text-gray-400">NIS</p>
-                        <p className="font-medium text-gray-900 dark:text-white">{selectedChild.nis || '-'}</p>
+                        <p className="text-neutral-500 dark:text-neutral-400">NIS</p>
+                        <p className="font-medium text-neutral-900 dark:text-white">{selectedChild.nis || '-'}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500 dark:text-gray-400">Kelas</p>
-                        <p className="font-medium text-gray-900 dark:text-white">{selectedChild.className || '-'}</p>
+                        <p className="text-neutral-500 dark:text-neutral-400">Kelas</p>
+                        <p className="font-medium text-neutral-900 dark:text-white">{selectedChild.className || '-'}</p>
                       </div>
                       <div>
-                        <p className="text-gray-500 dark:text-gray-400">Tahun Ajaran</p>
-                        <p className="font-medium text-gray-900 dark:text-white">{selectedChild.academicYear || '-'}</p>
+                        <p className="text-neutral-500 dark:text-neutral-400">Tahun Ajaran</p>
+                        <p className="font-medium text-neutral-900 dark:text-white">{selectedChild.academicYear || '-'}</p>
                       </div>
                     </div>
                   </div>
                   <div className="ml-6 flex-shrink-0">
-                    <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                    <div className="w-20 h-20 bg-gradient-to-br from-primary-400 to-primary-600 rounded-card flex items-center justify-center text-white text-3xl font-bold shadow-card">
                       {selectedChild.studentName.charAt(0).toUpperCase()}
                     </div>
                   </div>
@@ -275,22 +275,22 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                   key={index}
                   onClick={item.action}
                   disabled={loading || !selectedChild}
-                  className={`group p-6 rounded-2xl border-2 transition-all duration-200 ${
+                  className={`group p-6 rounded-card border-2 transition-all duration-200 ${
                     loading || !selectedChild
-                      ? 'border-gray-200 dark:border-gray-700 opacity-50 cursor-not-allowed'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-500 hover:shadow-lg transform hover:-translate-y-1'
-                  } bg-white dark:bg-gray-800`}
+                      ? 'border-neutral-200 dark:border-neutral-700 opacity-50 cursor-not-allowed'
+                      : 'border-neutral-200 dark:border-neutral-700 hover:border-primary-500 dark:hover:border-primary-400 hover:shadow-card-hover transform hover:-translate-y-1'
+                  } bg-white dark:bg-neutral-800`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${item.color}`}>
+                    <div className={`w-12 h-12 rounded-card flex items-center justify-center flex-shrink-0 ${item.color}`}>
                       {item.icon}
                     </div>
                     <div className="flex-1 text-left">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                         {item.title}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
                         {item.description}
                       </p>
                     </div>
@@ -302,30 +302,30 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         )}
 
         {currentView === 'profile' && selectedChild && (
-          <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700 animate-fade-in-up">
+          <div className="bg-white dark:bg-neutral-800 rounded-card-lg p-8 shadow-card border border-neutral-100 dark:border-neutral-700 animate-fade-in-up">
             <button
               onClick={() => setCurrentView('home')}
-              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
+              className="mb-6 text-primary-600 dark:text-primary-400 hover:underline font-medium flex items-center gap-2"
             >
               ← Kembali ke Beranda
             </button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Profil Anak</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">Profil Anak</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                  <div className="w-20 h-20 bg-gradient-to-br from-primary-400 to-primary-600 rounded-card flex items-center justify-center text-white text-3xl font-bold shadow-card">
                     {selectedChild.studentName.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">{selectedChild.studentName}</h3>
-                    <p className="text-gray-600 dark:text-gray-400">{selectedChild.className || 'Tanpa Kelas'}</p>
+                    <h3 className="text-xl font-bold text-neutral-900 dark:text-white">{selectedChild.studentName}</h3>
+                    <p className="text-neutral-600 dark:text-neutral-400">{selectedChild.className || 'Tanpa Kelas'}</p>
                   </div>
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">NISN</p>
-                  <p className="text-lg font-medium text-gray-900 dark:text-white">{selectedChild.nisn || '-'}</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">NISN</p>
+                  <p className="text-lg font-medium text-neutral-900 dark:text-white">{selectedChild.nisn || '-'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">NIS</p>
