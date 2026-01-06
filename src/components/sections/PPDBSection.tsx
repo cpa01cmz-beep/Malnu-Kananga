@@ -10,49 +10,49 @@ interface PPDBSectionProps {
 
 const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
   return (
-    <section id="ppdb" className="py-20 sm:py-24 bg-gradient-to-b from-primary-50 via-primary-50/50 to-white dark:from-primary-900/20 dark:via-primary-900/10 dark:to-neutral-900">
+    <section id="ppdb" className="py-16 sm:py-20 bg-gradient-to-b from-primary-50/50 via-primary-50/30 to-white dark:from-primary-900/15 dark:via-primary-900/10 dark:to-neutral-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 animate-fade-in">
-          <span className="text-primary-600 dark:text-primary-400 font-bold tracking-wider uppercase text-sm animate-scale-in">Penerimaan Peserta Didik Baru</span>
-          <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 dark:text-white mt-3 tracking-tight animate-fade-in-up">Bergabunglah Bersama Kami</h2>
-          <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
+        <div className="text-center mb-12 animate-fade-in">
+          <span className="text-primary-600 dark:text-primary-400 font-semibold tracking-wider uppercase text-xs sm:text-sm animate-scale-in">Penerimaan Peserta Didik Baru</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mt-3 tracking-tight animate-fade-in-up">Bergabunglah Bersama Kami</h2>
+          <p className="mt-4 text-base sm:text-lg text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
             Jadilah bagian dari generasi unggul MA Malnu Kananga. Pendaftaran Tahun Ajaran 2025/2026 telah dibuka.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div className="bg-white dark:bg-neutral-800 p-8 rounded-card-lg shadow-card border border-neutral-200 dark:border-neutral-700 text-center relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 hover:shadow-card-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
-                <div className="absolute top-0 right-0 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 font-bold px-4 py-2 rounded-bl-xl text-sm">01</div>
-                <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12">
+            <div className="bg-white dark:bg-neutral-800 p-6 sm:p-8 rounded-card-lg shadow-card border border-neutral-200 dark:border-neutral-700 text-center relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 hover:shadow-card-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
+                <div className="absolute top-0 right-0 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 font-semibold px-4 py-2 rounded-bl-xl text-xs sm:text-sm">01</div>
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
                     <DocumentTextIcon />
                 </div>
-                <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-3">Isi Formulir</h3>
-                <p className="text-neutral-500 dark:text-neutral-400 leading-relaxed">Lengkapi data diri dan data sekolah asal melalui formulir pendaftaran online kami.</p>
+                <h3 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white mb-3">Isi Formulir</h3>
+                <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed">Lengkapi data diri dan data sekolah asal melalui formulir pendaftaran online kami.</p>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-8 rounded-card-lg shadow-card border border-neutral-200 dark:border-neutral-700 text-center relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 hover:shadow-card-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
-                <div className="absolute top-0 right-0 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 font-bold px-4 py-2 rounded-bl-xl text-sm">02</div>
-                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+            <div className="bg-white dark:bg-neutral-800 p-6 sm:p-8 rounded-card-lg shadow-card border border-neutral-200 dark:border-neutral-700 text-center relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 hover:shadow-card-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
+                <div className="absolute top-0 right-0 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 font-semibold px-4 py-2 rounded-bl-xl text-xs sm:text-sm">02</div>
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
                     <ClipboardDocumentCheckIcon />
                 </div>
-                <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-3">Verifikasi Berkas</h3>
-                <p className="text-neutral-500 dark:text-neutral-400 leading-relaxed">Panitia akan memverifikasi data yang Anda kirimkan dalam waktu 1x24 jam.</p>
+                <h3 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white mb-3">Verifikasi Berkas</h3>
+                <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed">Panitia akan memverifikasi data yang Anda kirimkan dalam waktu 1x24 jam.</p>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 p-8 rounded-card-lg shadow-card border border-neutral-200 dark:border-neutral-700 text-center relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 hover:shadow-card-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
-                <div className="absolute top-0 right-0 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 font-bold px-4 py-2 rounded-bl-xl text-sm">03</div>
-                <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+            <div className="bg-white dark:bg-neutral-800 p-6 sm:p-8 rounded-card-lg shadow-card border border-neutral-200 dark:border-neutral-700 text-center relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 hover:shadow-card-hover focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
+                <div className="absolute top-0 right-0 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 font-semibold px-4 py-2 rounded-bl-xl text-xs sm:text-sm">03</div>
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
                     <UsersIcon />
                 </div>
-                <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-3">Wawancara & Tes</h3>
-                <p className="text-neutral-500 dark:text-neutral-400 leading-relaxed">Ikuti tes akademik dan wawancara sesuai jadwal yang ditentukan.</p>
+                <h3 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white mb-3">Wawancara & Tes</h3>
+                <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 leading-relaxed">Ikuti tes akademik dan wawancara sesuai jadwal yang ditentukan.</p>
             </div>
         </div>
 
         <div className="text-center">
             <button
                 onClick={onRegisterClick}
-                className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-300 bg-primary-600 rounded-pill hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-400 focus:ring-opacity-50 shadow-card hover:shadow-float transform hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white transition-all duration-300 bg-primary-600 rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 shadow-card hover:shadow-card-hover transform hover:-translate-y-0.5"
             >
                 Daftar Sekarang
                 <svg className="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
