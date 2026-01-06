@@ -7,7 +7,7 @@ const HeroSection: React.FC = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary-50/80 via-white/70 to-primary-100/60 dark:from-primary-900/30 dark:via-neutral-900/70 dark:to-primary-900/20"></div>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary-200/30 via-transparent to-transparent dark:from-primary-800/30"></div>
       <div className="relative z-10 w-full max-w-6xl mx-auto">
-        <div className="inline-flex items-center gap-2.5 px-5 py-2.5 mb-8 sm:mb-10 rounded-full bg-primary-100 dark:bg-primary-900/70 border border-primary-200/80 dark:border-primary-700/80 backdrop-blur-md shadow-md animate-scale-in">
+        <div className="inline-flex items-center gap-2.5 px-5 py-2.5 mb-8 sm:mb-10 rounded-full bg-primary-100 dark:bg-primary-900/70 border border-primary-200/80 dark:border-primary-700/80 backdrop-blur-md shadow-sm animate-scale-in">
           <span className="flex h-2.5 w-2.5 rounded-full bg-primary-500 animate-pulse-slow ring-2 ring-primary-300 dark:ring-primary-700"></span>
           <span className="text-sm font-semibold tracking-wide text-primary-700 dark:text-primary-300">Penerimaan Siswa Baru 2025</span>
         </div>

@@ -334,7 +334,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               }`}
             >
               <div
-                  className={`rounded-lg px-4 py-3 text-sm md:text-base leading-relaxed shadow-sm ${
+                  className={`rounded-xl px-4 py-3 text-sm md:text-base leading-relaxed shadow-sm ${
                     message.sender === Sender.User
                       ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white'
                       : 'bg-neutral-200/95 dark:bg-neutral-700/95 backdrop-blur-sm text-neutral-800 dark:text-neutral-200'
@@ -359,7 +359,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         </div>
       </div>
 
-      <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white/95 dark:bg-neutral-800/95 backdrop-blur-sm flex-shrink-0 rounded-b-xl">
+      <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white/95 dark:bg-neutral-800/95 backdrop-blur-sm flex-shrink-0 rounded-b-xl shadow-sm">
         <div className="flex items-end gap-2">
           <AutoResizeTextarea
               value={input}

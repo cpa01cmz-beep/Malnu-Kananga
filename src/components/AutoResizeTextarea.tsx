@@ -37,7 +37,7 @@ const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
   };
 
   return (
-    <div className={`flex items-end gap-2 bg-neutral-100 dark:bg-neutral-700 rounded-2xl p-2.5 border border-neutral-200 dark:border-neutral-600 focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 transition-all ${className}`}>
+    <div className={`flex items-end gap-2 bg-neutral-100 dark:bg-neutral-700 rounded-2xl p-2.5 border border-neutral-200 dark:border-neutral-600 focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 shadow-sm transition-all ${className}`}>
       <textarea
         ref={textareaRef}
         value={value}
@@ -52,7 +52,7 @@ const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
       <button
         onClick={onSend}
         disabled={disabled || !value.trim()}
-        className="p-2.5 mb-0.5 bg-primary-600 text-white rounded-xl disabled:bg-neutral-400 disabled:cursor-not-allowed hover:bg-primary-700 transition-all shadow-sm hover:shadow-md flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+        className="p-2.5 mb-0.5 bg-primary-600 text-white rounded-xl disabled:bg-neutral-400 disabled:cursor-not-allowed hover:bg-primary-700 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95"
         aria-label="Kirim"
       >
         <SendIcon />
