@@ -147,13 +147,31 @@ PHASE 1 — DATABASE AUDIT (IF ANY)
 - Align with existing structure
 - Never weaken RLS or security
 
-PHASE 2 — DEPLOYMENT AUDIT (CLOUDFLARE)
-- Detect:
-  - Wrangler usage
-  - Existing environments
-  - Secrets/bindings expectations
-- Validate Free Tier compatibility
-- Avoid breaking existing deployments
+PHASE 2 — DEPLOYMENT (CLOUDFLARE)
+1. Detect all bindings used in the Worker code.
+2. For each KV namespace or Durable Object binding:
+   - If missing, create via Wrangler CLI:
+     - KV: `wrangler kv:namespace create --title "<NAMESPACE>" --preview`
+     - Durable Object: `wrangler generate durable-object <NAME>`
+   - Update `wrangler.toml` if required
+3. For each secret binding:
+   - If missing in Cloudflare, set from GitHub Secrets:
+     - `wrangler secret put <NAME> --env <ENV>` using secret value
+   - If GitHub Secret not available, use placeholder and note in report
+4. For non-CLI resources (e.g., R2 bucket):
+   - Check if bucket exists
+   - If missing, create placeholder name in `wrangler.toml`
+   - Add instructions in PR for manual creation
+5. Validate deployment configuration:
+   - `wrangler validate`
+   - `wrangler deploy --dry-run`
+6. Deploy Worker if validation passes:
+   - `wrangler deploy`
+7. Generate Markdown report:
+   - List of auto-created resources
+   - List of placeholders/manual actions required
+   - Deployment status
+   - Missing secrets placeholders (never expose actual secrets)
 
 PHASE 3 — DEPLOYMENT STANDARDIZATION (MINIMAL)
 - Only standardize if no clear path exists
