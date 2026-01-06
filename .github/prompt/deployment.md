@@ -34,6 +34,8 @@ CLOUDFLARE & DEPLOYMENT CONSTRAINTS (ABSOLUTE)
 - ❌ NEVER commit secrets to the repository
 - ❌ NEVER require `.env` committed to git
 - ❌ NEVER assume paid Cloudflare features
+- ❌ NEVER call Cloudflare REST API directly
+- ❌ NEVER perform interactive authentication
 
 Secrets handling MUST follow one of:
 - `wrangler secret put`
@@ -50,6 +52,31 @@ If deployment cannot proceed without secrets:
 - Provide **explicit, copy-paste-safe instructions**
 - Use placeholders
 - Never leak values
+
+────────────────────────────────────────
+DEPLOYMENT EXECUTION GUARDS (ABSOLUTE)
+────────────────────────────────────────
+
+The agent MAY deploy to Cloudflare ONLY IF ALL conditions below are satisfied:
+
+1. `wrangler.toml` exists and is valid
+2. `CLOUDFLARE_API_TOKEN` is present in the runtime environment
+3. `CLOUDFLARE_ACCOUNT_ID` is present in the runtime environment
+4. The target environment (default or named) is explicit and unambiguous
+5. Production-relevant changes are detected since the last deployment
+6. No interactive login or authorization is required
+
+The agent MUST:
+- Deploy ONLY via `wrangler deploy`
+- Use existing Wrangler configuration without modification unless strictly required
+- NEVER print, echo, inspect, serialize, or log any secret
+- NEVER attempt `wrangler login`
+- NEVER generate, rotate, or modify secrets
+
+If ANY condition above is NOT met:
+- STOP immediately
+- DO NOT deploy
+- Produce a clear, human-readable report explaining why deployment was skipped
 
 ────────────────────────────────────────
 SCOPE (NON-NEGOTIABLE)
