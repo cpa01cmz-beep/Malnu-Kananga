@@ -46,6 +46,8 @@ export default {
         'card-hover': '0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08)',
         'float': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
         'subtle': '0 2px 4px 0 rgb(0 0 0 / 0.02)',
+        'focus': '0 0 0 3px rgba(22, 163, 74, 0.3)',
+        'focus-ring': '0 0 0 3px rgb(59 130 246 / 0.3)',
       },
       fontFamily: {
         sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
