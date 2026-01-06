@@ -3,6 +3,7 @@
 
 import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, UserRole, UserExtraRole } from '../types';
 import { logger } from '../utils/logger';
+import { permissionService } from './permissionService';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
 
@@ -238,8 +239,7 @@ async function validateRequestPermissions(
   userRole: string,
   userExtraRole: string | null
 ): Promise<{ allowed: boolean; reason?: string }> {
-  // Import here to avoid circular dependencies
-  const { permissionService } = await import('./permissionService');
+  // Use statically imported permissionService
   
   // Extract resource and action from endpoint
   const pathParts = endpoint.split('/').filter(Boolean);
