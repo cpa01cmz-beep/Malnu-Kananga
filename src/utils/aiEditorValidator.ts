@@ -26,10 +26,10 @@ const DANGEROUS_PATTERNS = [
   /fetch\s*\(/gi,
   /XMLHttpRequest/gi,
   /fetch\s*\(\s*['"`]\s*https?:/gi,
-  /delete\s+.*\s+from/gi,
+  /delete\s+from\s+\w+/gi,
   /drop\s+table/gi,
   /truncate/gi,
-  /update\s+.*\s+set/gi,
+  /update\s+\w+\s+set/gi,
   /insert\s+into/gi,
   /\.\.\/.*\.\./gi,
   /\/etc\//gi,
@@ -67,18 +67,18 @@ export function validateAICommand(prompt: string): AICommandValidationResult {
     }
   }
 
-  if (/[<>]/.test(prompt)) {
+  const sanitized = prompt
+    .replace(/javascript:/gi, 'javascript-removed:')
+    .replace(/data:/gi, 'data-removed:')
+    .replace(/vbscript:/gi, 'vbscript-removed:')
+    .trim();
+
+  if (/[<>]/.test(sanitized)) {
     return { 
       isValid: false, 
       error: 'Mohon hindari penggunaan tag HTML atau XML' 
     };
   }
-
-  const sanitized = prompt
-    .replace(/javascript:/gi, '')
-    .replace(/data:/gi, '')
-    .replace(/vbscript:/gi, '')
-    .trim();
 
   return { isValid: true, sanitizedPrompt: sanitized };
 }
@@ -162,8 +162,19 @@ export function validateAIResponse(
     }
   }
 
-  if (sanitizedPrograms.length === 0 && sanitizedNews.length === 0) {
-    return { isValid: false, error: 'Tidak ada data valid yang dapat diekstrak dari respon AI' };
+  // If AI returned empty arrays, preserve existing content but mark as invalid
+  const hasInputPrograms = content.featuredPrograms && Array.isArray(content.featuredPrograms) && content.featuredPrograms.length > 0;
+  const hasInputNews = content.latestNews && Array.isArray(content.latestNews) && content.latestNews.length > 0;
+  
+  if (!hasInputPrograms && !hasInputNews) {
+    return { 
+      isValid: false, 
+      error: 'AI tidak mengembalikan data program atau berita',
+      sanitizedContent: {
+        featuredPrograms: currentContent.featuredPrograms,
+        latestNews: currentContent.latestNews
+      }
+    };
   }
 
   return {

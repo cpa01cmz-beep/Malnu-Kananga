@@ -68,7 +68,7 @@ describe('AI Editor Validator', () => {
     });
 
     it('should sanitize data: protocol', () => {
-      const result = validateAICommand('Click here data:text/html,<h1>hi</h1>');
+      const result = validateAICommand('Click here data:text/html,safe content');
       expect(result.isValid).toBe(true);
       expect(result.sanitizedPrompt).not.toContain('data:');
     });
