@@ -196,12 +196,12 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                     <form onSubmit={handleSaveUser} className="p-6 space-y-4">
                         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
                         <div>
-                            <label className="block text-sm font-medium mb-1 dark:text-gray-300">Nama</label>
-                            <input required value={currentUser.name} onChange={e => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600" />
+                            <label htmlFor="user-name" className="block text-sm font-medium mb-1 dark:text-gray-300">Nama</label>
+                            <input id="user-name" name="name" required value={currentUser.name} onChange={e => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600" autoComplete="name" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1 dark:text-gray-300">Email</label>
-                            <input required type="email" value={currentUser.email} onChange={e => setCurrentUser({...currentUser, email: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600" />
+                            <label htmlFor="user-email" className="block text-sm font-medium mb-1 dark:text-gray-300">Email</label>
+                            <input id="user-email" name="email" required type="email" value={currentUser.email} onChange={e => setCurrentUser({...currentUser, email: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600" autoComplete="email" />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>

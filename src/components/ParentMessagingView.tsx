@@ -230,20 +230,26 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
             {selectedTeacher && (
               <div className="space-y-3">
                 <input
+                  id="message-subject"
+                  name="subject"
                   type="text"
                   placeholder="Subjek pesan"
                   value={messageSubject}
                   onChange={(e) => setMessageSubject(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  autoComplete="off"
                 />
                 <div className="flex gap-2">
                   <input
+                    id="message-body"
+                    name="message"
                     type="text"
                     placeholder="Ketik pesan..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                     className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                    autoComplete="off"
                   />
                   <button
                     onClick={handleSendMessage}

@@ -11,6 +11,12 @@ import { logger } from '../utils/logger';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
 import { CategoryValidationResult } from '../services/categoryService';
+import { validateMaterialData } from '../utils/teacherValidation';
+import { 
+  executeWithRetry, 
+  createToastHandler 
+} from '../utils/teacherErrorHandler';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 import FolderNavigation from './FolderNavigation';
 import MaterialSharing from './MaterialSharing';
 import VersionControl from './VersionControl';
@@ -42,6 +48,24 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
   const [categoryValidation, setCategoryValidation] = useState<CategoryValidationResult | null>(null);
   const [showSuggestionForm, setShowSuggestionForm] = useState(false);
   const [suggestionDescription, setSuggestionDescription] = useState('');
+  const [_validationErrors, setValidationErrors] = useState<string[]>([]);
+  
+  // Enhanced error handling state
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'danger' | 'warning' | 'info';
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'warning',
+    onConfirm: () => {}
+  });
+  
+  const toast = createToastHandler(onShowToast);
 
   React.useEffect(() => {
     fetchMaterials();
@@ -96,76 +120,141 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle || !uploadedFile) {
-      onShowToast('Mohon lengkapi judul dan unggah file', 'error');
+    
+    // Clear previous errors
+    
+    // Validate form data
+    const materialData = {
+      title: newTitle,
+      description: newDescription,
+      category: newCategory,
+      fileUrl: uploadedFile?.key,
+      fileType: uploadedFile?.type,
+      fileSize: uploadedFile?.size
+    };
+    
+    const validation = validateMaterialData(materialData);
+    if (!validation.isValid) {
+      toast.error('Perbaiki kesalahan validasi sebelum melanjutkan');
+      return;
+    }
+    
+    if (!uploadedFile) {
+      setValidationErrors(['Mohon unggah file']);
       return;
     }
 
     // Validate category selection
-    const validation = CategoryValidator.validateSubjectName(newCategory, subjects, materials.map(m => m.category));
-    if (!validation.valid) {
-      onShowToast(validation.error || 'Kategori tidak valid', 'error');
-      setCategoryValidation(validation);
+    const categoryValidation = CategoryValidator.validateSubjectName(newCategory, subjects, materials.map(m => m.category));
+    if (!categoryValidation.valid) {
+      setCategoryValidation(categoryValidation);
+      toast.error(categoryValidation.error || 'Kategori tidak valid');
       return;
     }
 
+    // Show confirmation dialog
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Tambah Materi Baru',
+      message: `Apakah Anda yakin ingin menambahkan materi "${newTitle}" ke kategori "${newCategory}"?`,
+      type: 'info',
+      onConfirm: () => {
+        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        doSubmitMaterial();
+      }
+    });
+  };
+  
+  const doSubmitMaterial = async () => {
     setSubmitting(true);
+
     try {
       const selectedSubject = subjects.find(s => s.name === newCategory);
       
       const newMaterial: Partial<ELibraryType> = {
-        title: newTitle,
-        description: newDescription,
-        category: newCategory,
-        fileUrl: uploadedFile.key,
-        fileType: uploadedFile.type,
-        fileSize: uploadedFile.size,
+        title: newTitle.trim(),
+        description: newDescription.trim(),
+        category: newCategory.trim(),
+        fileUrl: uploadedFile!.key,
+        fileType: uploadedFile!.type,
+        fileSize: uploadedFile!.size,
         subjectId: selectedSubject?.id,
         folderId: selectedFolder?.id,
       };
 
-      const response = await eLibraryAPI.create(newMaterial);
-      if (response.success && response.data) {
-        setMaterials((prev) => [response.data!, ...prev]);
+      const createOperation = async () => {
+        return await eLibraryAPI.create(newMaterial);
+      };
+
+      const result = await executeWithRetry({
+        operation: createOperation,
+        config: {
+          maxRetries: 3,
+          retryDelay: 2000
+        }
+      });
+      
+      if (result.success && result.data?.success && result.data.data) {
+        setMaterials((prev) => [result.data.data, ...prev]);
         setNewTitle('');
         setNewDescription('');
         setUploadedFile(null);
         setCategoryValidation(null);
-        onShowToast('Materi berhasil ditambahkan', 'success');
+        toast.success('Materi berhasil ditambahkan');
         
         // Update material statistics
-        categoryService.updateMaterialStats([...materials, response.data]);
+        categoryService.updateMaterialStats([...materials, result.data.data]);
       } else {
-        onShowToast(response.message || 'Gagal menambahkan materi', 'error');
+        toast.error(result.data?.message || 'Gagal menambahkan materi');
       }
     } catch (err) {
-      onShowToast('Terjadi kesalahan saat menambahkan materi', 'error');
       logger.error('Error creating material:', err);
+      toast.error(err);
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDelete = async (material: ELibraryType) => {
-    if (!window.confirm('Hapus materi ini? Siswa tidak akan bisa mengaksesnya lagi.')) {
-      return;
-    }
-
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Hapus Materi',
+      message: `Apakah Anda yakin ingin menghapus materi "${material.title}"? Siswa tidak akan bisa mengakses materi ini lagi dan tindakan ini tidak dapat dibatalkan.`,
+      type: 'danger',
+      onConfirm: () => {
+        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        doDeleteMaterial(material);
+      }
+    });
+  };
+  
+  const doDeleteMaterial = async (material: ELibraryType) => {
     try {
-      const response = await eLibraryAPI.delete(material.id);
-      if (response.success) {
+      const deleteOperation = async () => {
+        return await eLibraryAPI.delete(material.id);
+      };
+
+      const result = await executeWithRetry({
+        operation: deleteOperation,
+        config: {
+          maxRetries: 3,
+          retryDelay: 1000
+        }
+      });
+      
+      if (result.success && result.data?.success) {
         const updatedMaterials = materials.filter((m) => m.id !== material.id);
         setMaterials(updatedMaterials);
-        onShowToast('Materi dihapus', 'info');
+        toast.info('Materi dihapus');
         
         // Update material statistics
         categoryService.updateMaterialStats(updatedMaterials);
       } else {
-        onShowToast(response.message || 'Gagal menghapus materi', 'error');
+        toast.error(result.data?.message || 'Gagal menghapus materi');
       }
     } catch (err) {
-      onShowToast('Terjadi kesalahan saat menghapus materi', 'error');
       logger.error('Error deleting material:', err);
+      toast.error(err);
     }
   };
 
@@ -329,14 +418,17 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Formulir Upload</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Judul Materi</label>
+                <label htmlFor="material-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Judul Materi</label>
                 <input
+                  id="material-title"
+                  name="title"
                   type="text"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="Contoh: Modul Bab 3..."
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
                   required
+                  autoComplete="off"
                 />
               </div>
 
@@ -634,6 +726,17 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           </div>
         </div>
       )}
+        
+        {/* Confirmation Dialog */}
+        <ConfirmationDialog
+          isOpen={confirmDialog.isOpen}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          type={confirmDialog.type}
+          isLoading={submitting}
+          onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+          onConfirm={confirmDialog.onConfirm}
+        />
     </div>
   );
 };

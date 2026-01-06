@@ -31,6 +31,7 @@ export interface AuthPayload {
   user_id: string;
   email: string;
   role: string;
+  extra_role?: string | null;
   session_id: string;
   exp: number;
 }
@@ -309,7 +310,7 @@ async function request<T>(
           endpoint,
           options,
           payload.role,
-          null // TODO: Extract extra role from JWT or user session
+          payload.extra_role || null
         );
         
         if (!permissionCheck.allowed) {

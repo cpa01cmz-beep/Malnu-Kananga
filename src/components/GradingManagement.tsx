@@ -6,8 +6,14 @@ import { studentsAPI, gradesAPI } from '../services/apiService';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
-import { validateGradeInput, sanitizeGradeInput, calculateGradeLetter, calculateFinalGrade } from '../utils/teacherValidation';
-import ConfirmationDialog from './ConfirmationDialog';
+import { 
+  validateGradeInput, 
+  sanitizeGradeInput, 
+  calculateGradeLetter, 
+  calculateFinalGrade,
+  GradeInput 
+} from '../utils/teacherValidation';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 
 
 interface StudentGrade {
@@ -41,16 +47,32 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const [showStats, setShowStats] = useState(false);
   const [autoSaveTimeout, setAutoSaveTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
-
-  // Configuration
+// Configuration
   const className = 'XII IPA 1';
   const subjectId = 'Matematika Wajib';
+
+  // Validation and Error Handling State
+  const [isSaving, setIsSaving] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'danger' | 'warning' | 'info';
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'warning',
+    onConfirm: () => {}
+  });
 
   // Confirmation Dialog State
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [resetStudentId, setResetStudentId] = useState<string | null>(null);
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 
+  const toast = createToastHandler(onShowToast);
   const fetchStudentsAndGrades = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -99,13 +121,18 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
   const handleInputChange = (id: string, field: keyof StudentGrade, value: string) => {
       const numValue = sanitizeGradeInput(value);
-
-      const validation = validateGradeInput(numValue, field);
+      const gradeInput: GradeInput = { [field]: numValue };
+      const validation = validateGradeInput(gradeInput);
+      
       if (!validation.isValid) {
-        onShowToast(validation.errors[0], 'error');
+        toast.error(validation.errors[0]);
         return;
       }
-
+      
+      if (validation.warnings.length > 0) {
+        console.warn('Validation warnings:', validation.warnings);
+      }
+      
       setGrades(prev => prev.map(g => g.id === id ? { ...g, [field]: numValue } : g));
 
       // Auto-save functionality with debouncing
@@ -162,10 +189,11 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   
   const handleBatchGradeInput = (field: keyof StudentGrade, value: string) => {
     const numValue = sanitizeGradeInput(value);
-
-    const validation = validateGradeInput(numValue, field);
+    const gradeInput: GradeInput = { [field]: numValue };
+    const validation = validateGradeInput(gradeInput);
+    
     if (!validation.isValid) {
-      onShowToast(validation.errors[0], 'error');
+      toast.error(validation.errors[0]);
       return;
     }
 
@@ -279,6 +307,31 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   };
 
   const handleSave = async () => {
+    // Validate all grades before saving
+    let hasErrors = false;
+    
+    grades.forEach(grade => {
+      const validation = validateGradeInput({
+        assignment: grade.assignment,
+        midExam: grade.midExam,
+        finalExam: grade.finalExam
+      });
+      
+      if (!validation.isValid) {
+        hasErrors = true;
+      }
+    });
+    
+    if (hasErrors) {
+      toast.error('Perbaiki kesalahan validasi sebelum menyimpan');
+      return;
+    }
+    
+    // Show confirmation for batch save
+    setShowSaveConfirm(true);
+  };
+  
+  const doBatchSave = async () => {
     try {
       setLoading(true);
 
@@ -295,10 +348,10 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
       await Promise.all(savePromises);
       setIsEditing(null);
-      onShowToast('Nilai berhasil disimpan ke database.', 'success');
+      toast.success('Nilai berhasil disimpan ke database.');
     } catch (error) {
       logger.error('Error saving grades:', error);
-      onShowToast('Gagal menyimpan nilai', 'error');
+      toast.error('Gagal menyimpan nilai');
     } finally {
       setLoading(false);
     }
@@ -664,23 +717,23 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                         <div className="flex gap-2 justify-end">
                                             {isRowEditing ? (
                                                 <button
-                                                    onClick={() => setShowSaveConfirm(true)}
+                                                    onClick={doBatchSave}
                                                     className="text-xs font-medium bg-green-600 text-white px-3 py-1.5 rounded-full hover:bg-green-700 transition-colors"
                                                 >
                                                     Simpan
                                                 </button>
-                                            ) : (
-                                                <button
-                                                    onClick={() => setIsEditing(student.id)}
-                                                    className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
-                                                >
-                                                    Edit
-                                                </button>
-                                            )}
+                                            ) : null}
                                             <button
                                                 onClick={() => {
-                                                    setResetStudentId(student.id);
-                                                    setShowResetConfirm(true);
+                                                    if (confirm('Reset nilai siswa ini ke 0?')) {
+                                                        setGrades(prev => prev.map(g => g.id === student.id ? {
+                                                            ...g,
+                                                            assignment: 0,
+                                                            midExam: 0,
+                                                            finalExam: 0
+                                                        } : g));
+                                                        toast.info('Nilai direset');
+                                                    }
                                                 }}
                                                 className="text-xs font-medium text-red-600 dark:text-red-400 hover:underline"
                                             >
@@ -696,62 +749,30 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             </div>
         </div>
         )}
-        
+
         {/* Save Button */}
         {!loading && !error && (
-        <div className="flex justify-end mt-6">
+<div className="flex justify-end mt-6">
             <button
-                onClick={() => setShowSaveConfirm(true)}
-                disabled={loading || isEditing === null}
+                onClick={handleSave}
+                disabled={loading || isSaving}
                 className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-                {loading ? "Menyimpan..." : "Simpan Semua Nilai"}
+                {loading || isSaving ? "Menyimpan..." : "Simpan Semua Nilai"}
             </button>
         </div>
         )}
 
-        {/* Confirmation Dialogs */}
         <ConfirmationDialog
-            isOpen={showResetConfirm}
-            title="Reset Nilai Siswa"
-            message={`Apakah Anda yakin ingin mereset semua nilai untuk siswa ini? Tindakan ini tidak dapat dibatalkan.`}
-            confirmText="Ya, Reset"
-            cancelText="Batal"
-            type="danger"
-            onConfirm={() => {
-                if (resetStudentId) {
-                    setGrades(prev => prev.map(g => g.id === resetStudentId ? {
-                        ...g,
-                        assignment: 0,
-                        midExam: 0,
-                        finalExam: 0
-                    } : g));
-                    setResetStudentId(null);
-                    onShowToast('Nilai direset', 'info');
-                }
-                setShowResetConfirm(false);
-            }}
-            onCancel={() => {
-                setResetStudentId(null);
-                setShowResetConfirm(false);
-            }}
-        />
-
-        <ConfirmationDialog
-            isOpen={showSaveConfirm}
-            title="Simpan Semua Nilai"
-            message={`Apakah Anda yakin ingin menyimpan semua nilai untuk ${grades.length} siswa?`}
-            confirmText="Ya, Simpan"
-            cancelText="Batal"
-            type="warning"
-            onConfirm={() => {
-                handleSave();
-                setShowSaveConfirm(false);
-            }}
-            onCancel={() => {
-                setShowSaveConfirm(false);
-            }}
-        />
+          isOpen={confirmDialog.isOpen}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          type={confirmDialog.type}
+          isLoading={isSaving}
+          confirmText="Ya, Simpan"
+          onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+          onConfirm={confirmDialog.onConfirm}
+         />
     </div>
   );
 };
