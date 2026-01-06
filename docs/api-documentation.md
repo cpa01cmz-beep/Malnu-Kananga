@@ -1,28 +1,63 @@
-# API Documentation
+# API Reference
 
-**Created**: 2026-01-05  
-**Last Updated**: 2026-01-05  
-**Version**: 1.0.0  
+**Created**: 2026-01-05
+**Last Updated**: 2026-01-06
+**Version**: 2.0.0
 **Status**: Active
 
 ## Overview
 
-This document provides comprehensive API documentation for the MA Malnu Kananga web application. The application uses a hybrid architecture with both frontend (React) and backend (Cloudflare Workers) APIs.
+This document provides comprehensive API reference for the MA Malnu Kananga web application. The application uses Cloudflare Workers as the backend with JWT-based authentication.
+
+**For deployment and setup instructions, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).**
+
+## Architecture
+
+### Components
+
+1. **Frontend** (React + Vite)
+   - Runs on Cloudflare Pages or any static hosting
+   - Uses `apiService.ts` for backend communication
+   - Stores JWT tokens in localStorage for authentication
+
+2. **Backend** (Cloudflare Worker)
+   - Handles API requests and business logic
+   - Implements JWT-based authentication with refresh tokens
+   - Serves as the API gateway for the frontend
+
+3. **Database** (Cloudflare D1)
+   - SQLite-based serverless database
+   - Stores all application data
+   - Managed via SQL queries in the Worker
+
+### Authentication Flow
+
+1. User logs in → Frontend sends credentials to `/api/auth/login`
+2. Backend validates credentials → Returns JWT tokens (access + refresh)
+3. Frontend stores tokens → Access token (15min), Refresh token (7 days)
+4. All API requests include access token in Authorization header
+5. When access token expires → Frontend uses refresh token to get new access token
+6. When refresh token expires → User must login again
 
 ## Table of Contents
 
 - [Authentication API](#authentication-api)
-- [Student Services API](#student-services-api)
+- [Users API](#users-api)
+- [PPDB Registrants API](#ppdb-registrants-api)
+- [Inventory API](#inventory-api)
+- [School Events API](#school-events-api)
 - [AI Services API](#ai-services-api)
 - [File Management API](#file-management-api)
-- [Admin Management API](#admin-management-api)
 - [Error Handling](#error-handling)
-- [Rate Limiting](#rate-limiting)
-- [Security](#security)
+- [Security Best Practices](#security-best-practices)
 
 ---
 
-**Related Documentation**: See [BLUEPRINT.md](./BLUEPRINT.md) for complete system architecture
+**Related Documentation**:
+- [BLUEPRINT.md](./BLUEPRINT.md) - System architecture overview
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Deployment and setup
+- [CODING_STANDARDS.md](./CODING_STANDARDS.md) - Development guidelines
+- [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution process
 
 ---
 
@@ -67,11 +102,11 @@ Authorization: Bearer <token>
 
 ---
 
-## Student Services API
+## Users API
 
-### Get Student Profile
+### Get All Users
 ```typescript
-GET /api/student/profile
+GET /api/users
 Authorization: Bearer <token>
 ```
 
@@ -79,39 +114,201 @@ Authorization: Bearer <token>
 ```typescript
 {
   "success": true,
-  "data": {
-    "id": "string",
-    "name": "string",
-    "class": "string",
-    "grades": Grade[],
-    "attendance": AttendanceRecord[],
-    "schedule": ScheduleItem[]
-  }
+  "data": User[]
 }
 ```
 
-### Update Student Profile
+### Get User by ID
 ```typescript
-PUT /api/student/profile
+GET /api/users/:id
+Authorization: Bearer <token>
+```
+
+### Create User
+```typescript
+POST /api/users
 Authorization: Bearer <token>
 Content-Type: application/json
 
 {
   "name": "string",
   "email": "string",
-  "phone": "string"
+  "role": "teacher|student|staff|osis",
+  "status": "active"
 }
 ```
 
-### Get Academic Grades
+### Update User
 ```typescript
-GET /api/student/grades?semester=1
+PUT /api/users/:id
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "name": "string",
+  "email": "string",
+  "status": "active"
+}
+```
+
+### Delete User
+```typescript
+DELETE /api/users/:id
 Authorization: Bearer <token>
 ```
 
-### Get Attendance Records
+---
+
+## PPDB Registrants API
+
+### Get All Registrants
 ```typescript
-GET /api/student/attendance?startDate=2024-01-01&endDate=2024-12-31
+GET /api/ppdb_registrants
+Authorization: Bearer <token>
+```
+
+**Response:**
+```typescript
+{
+  "success": true,
+  "data": PPDBRegistrant[]
+}
+```
+
+### Create Registration
+```typescript
+POST /api/ppdb_registrants
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "fullName": "string",
+  "nisn": "string",
+  "originSchool": "string",
+  "parentName": "string",
+  "phoneNumber": "string",
+  "email": "string",
+  "address": "string"
+}
+```
+
+### Update Status
+```typescript
+PUT /api/ppdb_registrants/:id/status
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "status": "approved|rejected|pending",
+  "notes": "string"
+}
+```
+
+### Delete Registrant
+```typescript
+DELETE /api/ppdb_registrants/:id
+Authorization: Bearer <token>
+```
+
+---
+
+## Inventory API
+
+### Get All Items
+```typescript
+GET /api/inventory
+Authorization: Bearer <token>
+```
+
+**Response:**
+```typescript
+{
+  "success": true,
+  "data": InventoryItem[]
+}
+```
+
+### Create Item
+```typescript
+POST /api/inventory
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "itemName": "string",
+  "category": "string",
+  "quantity": number,
+  "condition": "Baik|Rusak|Perlu Perbaikan",
+  "location": "string"
+}
+```
+
+### Update Item
+```typescript
+PUT /api/inventory/:id
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "quantity": number,
+  "condition": "string"
+}
+```
+
+### Delete Item
+```typescript
+DELETE /api/inventory/:id
+Authorization: Bearer <token>
+```
+
+---
+
+## School Events API
+
+### Get All Events
+```typescript
+GET /api/school_events
+Authorization: Bearer <token>
+```
+
+**Response:**
+```typescript
+{
+  "success": true,
+  "data": SchoolEvent[]
+}
+```
+
+### Create Event
+```typescript
+POST /api/school_events
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "eventName": "string",
+  "description": "string",
+  "date": "ISO date string",
+  "location": "string",
+  "status": "Upcoming|Ongoing|Done",
+  "organizer": "string"
+}
+```
+
+### Update Event
+```typescript
+PUT /api/school_events/:id
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "status": "Ongoing"
+}
+```
+
+### Delete Event
+```typescript
+DELETE /api/school_events/:id
 Authorization: Bearer <token>
 ```
 
@@ -210,49 +407,6 @@ Authorization: Bearer <token>
 
 ---
 
-## Admin Management API
-
-### Get Users List
-```typescript
-GET /api/admin/users?role=student&page=1&limit=20
-Authorization: Bearer <token>
-```
-
-### Create User
-```typescript
-POST /api/admin/users
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "name": "string",
-  "email": "string",
-  "role": "teacher|student|staff|osis",
-  "class": "string" // for students
-}
-```
-
-### Update User
-```typescript
-PUT /api/admin/users/:userId
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "name": "string",
-  "email": "string",
-  "role": "string"
-}
-```
-
-### Delete User
-```typescript
-DELETE /api/admin/users/:userId
-Authorization: Bearer <token>
-```
-
----
-
 ## Error Handling
 
 ### Standard Error Response
@@ -293,23 +447,23 @@ X-RateLimit-Reset: 1640995200
 
 ---
 
-## Security
+## Security Best Practices
 
 ### Authentication
-- JWT tokens with 24-hour expiration
-- Token refresh mechanism
-- Secure cookie storage for web clients
+- JWT tokens with 15min access token, 7-day refresh token expiration
+- Automatic token refresh when access token expires
+- Token invalidation on logout
 
 ### Authorization
-- Role-based access control (RBAC)
+- Role-based access control (RBAC) with extra roles (staff, osis)
 - Permission checks on all protected endpoints
 - Audit logging for admin actions
 
 ### Data Protection
 - HTTPS enforcement in production
 - Input validation and sanitization
-- SQL injection prevention
-- XSS protection
+- SQL injection prevention (parameterized queries)
+- XSS protection via React's built-in escaping
 
 ---
 
@@ -425,9 +579,18 @@ VITE_LOG_LEVEL=DEBUG
 
 ## Changelog
 
+### v2.0.0 (2026-01-06)
+- Added Users API (comprehensive CRUD operations)
+- Added PPDB Registrants API
+- Added Inventory API
+- Added School Events API
+- Removed duplicate Admin Management API (now part of Users API)
+- Updated architecture section
+- Updated security best practices to reflect JWT refresh mechanism
+
 ### v1.0.0 (2026-01-05)
 - Initial API documentation
-- Comprehensive endpoint coverage
+- Core endpoints covered
 - Security guidelines
 - Code examples added
 
@@ -435,5 +598,6 @@ VITE_LOG_LEVEL=DEBUG
 
 **Related Documentation:**
 - [BLUEPRINT.md](./BLUEPRINT.md) - System architecture overview
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Deployment and setup
 - [CODING_STANDARDS.md](./CODING_STANDARDS.md) - Development guidelines
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution process
