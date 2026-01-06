@@ -59,17 +59,6 @@ jobs:
           git config --global user.name "analyzer"
           git config --global user.email "analyzer@sanaabililhuda.com"
 
-      - name: Branch Management
-        run: |
-          git fetch --all
-          if git branch -r | grep "origin/agent-workspace"; then
-            git checkout agent-workspace
-            git pull origin agent-workspace
-          else
-            git checkout -b agent-workspace
-          fi
-          git merge origin/develop --no-edit || echo "Merge conflict or already up to date"
-
       - name: Install OpenCode
         run: |
           curl -fsSL https://opencode.ai/install | bash
@@ -108,6 +97,30 @@ jobs:
             fi
           done
 
+      - name: ui-ux
+        run: |
+          max_retries=2
+          retry_count=0
+
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+
+            if opencode run "$(cat .github/prompt/ui-ux.md)" \
+              --model opencode/glm-4.7-free \
+              --share false; then
+              echo "OpenCode execution succeeded"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              echo "OpenCode execution failed, retrying in 30 seconds..."
+              sleep 30
+              if [ $retry_count -eq $max_retries ]; then
+                echo "All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done
+          
       - name: Maintenance
         run: |
           max_retries=2

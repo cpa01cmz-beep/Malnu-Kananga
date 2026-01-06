@@ -49,8 +49,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        {/* Conditional Rendering based on View */}
+        
         {currentView === 'home' && (
             <>
                 <div className="bg-white dark:bg-neutral-800 rounded-card-lg p-8 shadow-card border border-neutral-100 dark:border-neutral-700 mb-8 animate-fade-in-up">
@@ -61,10 +60,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in-up">
-                    {/* AI Editor Card */}
-                    <div
+                    <div 
                         onClick={onOpenEditor}
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-card p-6 text-white shadow-card cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-card-hover"
+                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-card-lg p-6 text-white shadow-card cursor-pointer transform hover:scale-105 transition-transform"
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-pill flex items-center justify-center mb-4">
                             <SparklesIcon className="w-6 h-6 text-white" />
@@ -73,8 +71,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         <p className="text-indigo-100 text-sm">Edit konten Program Unggulan dan Berita menggunakan bantuan AI.</p>
                     </div>
 
-                    {/* PPDB Management - NEW */}
-                    <div
+                    <div 
                         onClick={() => {
                             const hasPermission = permissionService.hasPermission('admin', null, 'ppdb.manage');
                             if (hasPermission.granted) {
@@ -83,23 +80,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                                 onShowToast('Anda tidak memiliki akses ke manajemen PPDB', 'error');
                             }
                         }}
-                        className="bg-white dark:bg-neutral-800 rounded-card p-6 shadow-card border border-neutral-100 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer transform hover:-translate-y-1 relative"
+                        className="bg-white dark:bg-neutral-800 rounded-card-lg p-6 shadow-card border border-neutral-100 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer transform hover:-translate-y-1 relative"
                     >
                         {pendingPPDB > 0 && (
                             <span className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-pill bg-red-500 text-xs font-bold text-white shadow-md animate-pulse">
                                 {pendingPPDB}
                             </span>
                         )}
-                        <div className="bg-primary-100 dark:bg-primary-900/30 w-12 h-12 rounded-pill flex items-center justify-center mb-4 text-primary-600 dark:text-primary-400">
+                        <div className="bg-orange-100 dark:bg-orange-900/30 w-12 h-12 rounded-pill flex items-center justify-center mb-4 text-orange-600 dark:text-orange-400">
                             <ClipboardDocumentCheckIcon />
                         </div>
                         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">PPDB Online</h3>
                         <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-4">Verifikasi data calon siswa baru.</p>
-                        <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded-pill">Aktif</span>
+                        <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded-full">Aktif</span>
                     </div>
 
-                    {/* User Management Card - Active */}
-                    <div
+                    <div 
                         onClick={() => {
                             const hasPermission = permissionService.hasPermission('admin', null, 'users.read');
                             if (hasPermission.granted) {
@@ -108,18 +104,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                                 onShowToast('Anda tidak memiliki akses ke manajemen user', 'error');
                             }
                         }}
-                        className="bg-white dark:bg-neutral-800 rounded-card p-6 shadow-card border border-neutral-100 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
+                        className="bg-white dark:bg-neutral-800 rounded-card-lg p-6 shadow-card border border-neutral-100 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
                     >
                         <div className="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-pill flex items-center justify-center mb-4">
                             <UsersIcon />
                         </div>
                         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">Manajemen User</h3>
                         <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-4">Kelola akun guru, siswa, dan staff.</p>
-                        <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded-pill">Aktif</span>
+                        <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded-full">Aktif</span>
                     </div>
 
-                    {/* Content Stats - NOW ACTIVE */}
-                    <div
+                    <div 
                         onClick={() => {
                             const hasPermission = permissionService.hasPermission('admin', null, 'system.stats');
                             if (hasPermission.granted) {
@@ -128,18 +123,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                                 onShowToast('Anda tidak memiliki akses ke statistik sistem', 'error');
                             }
                         }}
-                        className="bg-white dark:bg-neutral-800 rounded-card p-6 shadow-card border border-neutral-100 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
+                        className="bg-white dark:bg-neutral-800 rounded-card-lg p-6 shadow-card border border-neutral-100 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
                     >
                         <div className="bg-primary-100 dark:bg-primary-900/30 w-12 h-12 rounded-pill flex items-center justify-center mb-4">
                             <ChartBarIcon />
                         </div>
                         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">Laporan & Log</h3>
                         <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-4">Pantau statistik sistem dan factory reset.</p>
-                        <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded-pill">Aktif</span>
+                        <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2 py-1 rounded-full">Aktif</span>
                     </div>
 
-                    {/* Permission Management */}
-                    <div
+                    <div 
                         onClick={() => {
                             const hasPermission = permissionService.hasPermission('admin', null, 'system.admin');
                             if (hasPermission.granted) {
@@ -148,7 +142,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                                 onShowToast('Anda tidak memiliki akses ke manajemen perizinan', 'error');
                             }
                         }}
-                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-card p-6 text-white shadow-card cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-card-hover"
+                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-card-lg p-6 text-white shadow-card cursor-pointer transform hover:scale-105 transition-transform"
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-pill flex items-center justify-center mb-4">
                             <UsersIcon className="w-6 h-6 text-white" />
