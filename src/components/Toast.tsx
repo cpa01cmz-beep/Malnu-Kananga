@@ -22,9 +22,9 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
 
   const baseClasses = "fixed top-20 right-4 sm:top-6 sm:right-6 z-50 px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl shadow-float flex items-center gap-3 transition-all duration-300 transform max-w-md border-2 backdrop-blur-sm";
   const typeClasses = {
-    success: "bg-white/98 dark:bg-neutral-800/98 border-primary-500/30 dark:border-primary-500/40 text-neutral-900 dark:text-white",
-    info: "bg-white/98 dark:bg-neutral-800/98 border-blue-500/30 dark:border-blue-500/40 text-neutral-900 dark:text-white",
-    error: "bg-white/98 dark:bg-neutral-800/98 border-red-500/30 dark:border-red-500/40 text-neutral-900 dark:text-white",
+    success: "bg-white dark:bg-neutral-800 border-primary-500/30 dark:border-primary-500/40 text-neutral-900 dark:text-white",
+    info: "bg-white dark:bg-neutral-800 border-blue-500/30 dark:border-blue-500/40 text-neutral-900 dark:text-white",
+    error: "bg-white dark:bg-neutral-800 border-red-500/30 dark:border-red-500/40 text-neutral-900 dark:text-white",
   };
 
   const visibilityClasses = isVisible

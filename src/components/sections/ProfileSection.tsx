@@ -3,7 +3,7 @@ import React from 'react';
 
 const ProfileSection: React.FC = () => {
   return (
-    <section id="profil" className="py-24 sm:py-28 bg-gradient-to-b from-white to-neutral-50/50 dark:from-neutral-800/50 dark:to-neutral-900/30">
+    <section id="profil" className="py-20 sm:py-24 bg-gradient-to-b from-white to-neutral-50/60 dark:from-neutral-800/50 dark:to-neutral-900/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 sm:mb-16 animate-fade-in">
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white tracking-tight mb-4 sm:mb-5">Profil Madrasah</h2>
@@ -18,19 +18,19 @@ const ProfileSection: React.FC = () => {
                     Kurikulum yang digunakan memadukan <strong className="text-neutral-900 dark:text-white font-semibold">pendidikan salafiyah</strong> dengan <strong className="text-neutral-900 dark:text-white font-semibold">pendidikan modern</strong>, termasuk pemantapan keterampilan abad 21 untuk menjawab kebutuhan masa depan.
                 </p>
                 <div className="flex flex-wrap gap-3 pt-2">
-                    <span className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 border border-primary-200/80 dark:border-primary-700/80 shadow-sm">
+                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 border border-primary-200/70 dark:border-primary-700/70 shadow-sm">
                         Kemenag RI
                     </span>
-                    <span className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200/80 dark:border-blue-700/80 shadow-sm">
+                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200/70 dark:border-blue-700/70 shadow-sm">
                         Kurikulum Terpadu
                     </span>
-                    <span className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200/80 dark:border-purple-700/80 shadow-sm">
+                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200/70 dark:border-purple-700/70 shadow-sm">
                         Berakhlak Mulia
                     </span>
                 </div>
             </div>
             <div className="lg:col-span-2 space-y-6">
-                <div className="p-6 bg-gradient-to-br from-neutral-50 to-neutral-100/60 dark:from-neutral-800 dark:to-neutral-800/60 rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5">
+                <div className="p-6 bg-gradient-to-br from-neutral-50 to-neutral-100/60 dark:from-neutral-800 dark:to-neutral-800/60 rounded-xl shadow-card border border-neutral-200/80 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/50 dark:to-primary-900/70 rounded-lg shadow-sm">
                             <svg className="w-5.5 h-5.5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -42,7 +42,7 @@ const ProfileSection: React.FC = () => {
                     </div>
                     <p className="text-neutral-700 dark:text-neutral-200 leading-[1.75]">Melahirkan peserta didik berakhlak mulia, akademis unggul, serta berjiwa wirausaha.</p>
                 </div>
-                <div className="p-6 bg-gradient-to-br from-neutral-50 to-neutral-100/60 dark:from-neutral-800 dark:to-neutral-800/60 rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5">
+                <div className="p-6 bg-gradient-to-br from-neutral-50 to-neutral-100/60 dark:from-neutral-800 dark:to-neutral-800/60 rounded-xl shadow-card border border-neutral-200/80 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/50 dark:to-primary-900/70 rounded-lg shadow-sm">
                             <svg className="w-5.5 h-5.5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

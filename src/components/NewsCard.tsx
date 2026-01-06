@@ -18,7 +18,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ newsItem }) => {
           fallbackText="Gambar Berita Tidak Tersedia"
         />
         <div className="absolute top-3 left-3">
-          <span className="text-xs font-semibold inline-block py-1.5 px-3 uppercase tracking-wide rounded-full text-primary-700 dark:text-primary-300 bg-primary-100/95 dark:bg-primary-900/90 backdrop-blur-sm shadow-sm">
+          <span className="text-xs font-semibold inline-block py-1.5 px-3 uppercase tracking-wide rounded-full text-primary-700 dark:text-primary-300 bg-primary-100 dark:bg-primary-900/90 backdrop-blur-sm shadow-sm">
             {newsItem.category}
           </span>
         </div>

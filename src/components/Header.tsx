@@ -78,12 +78,12 @@ const Header: React.FC<HeaderProps> = ({
 
     const navContainerClasses = `
         w-full max-w-7xl mx-auto px-4 sm:px-6
-        ${isScrolled ? '' : 'bg-white/85 dark:bg-neutral-800/85 backdrop-blur-xl rounded-pill ring-1 ring-neutral-900/5 dark:ring-white/10 shadow-card'}
+        ${isScrolled ? '' : 'bg-white dark:bg-neutral-800 backdrop-blur-xl rounded-pill ring-1 ring-neutral-900/5 dark:ring-white/10 shadow-card'}
     `;
 
     const innerNavClasses = `
         flex items-center justify-between h-16
-        ${isScrolled ? 'bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl' : ''}
+        ${isScrolled ? 'bg-white dark:bg-neutral-800 backdrop-blur-xl' : ''}
     `;
 
     return (
