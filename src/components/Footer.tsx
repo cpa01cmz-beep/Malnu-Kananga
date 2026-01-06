@@ -18,56 +18,56 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
     return (
-        <footer id="kontak" className="bg-gradient-to-t from-primary-50/60 via-primary-50/30 to-transparent dark:from-primary-900/20 dark:via-primary-900/10 dark:to-transparent border-t border-neutral-200 dark:border-neutral-700">
-            <div className="max-w-7xl mx-auto py-12 sm:py-14 px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 text-center sm:text-left">
+        <footer id="kontak" className="bg-gradient-to-t from-primary-50/80 via-primary-50/40 to-transparent dark:from-primary-900/30 dark:via-primary-900/15 dark:to-transparent border-t border-neutral-200/80 dark:border-neutral-700/80">
+            <div className="max-w-7xl mx-auto py-14 sm:py-16 px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-12 text-center sm:text-left">
                     <div>
-                        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">MA Malnu Kananga</h3>
-                        <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed mb-2">
+                        <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-5">MA Malnu Kananga</h3>
+                        <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-3">
                             Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
                         </p>
-                        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1">info@ma-malnukananga.sch.id</a>
+                        <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
+                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 font-medium">info@ma-malnukananga.sch.id</a>
                         </p>
                     </div>
 
                     <div>
-                         <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Legalitas</h3>
-                          <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
-                             <li><strong className="text-neutral-900 dark:text-white">No. SK. Pendirian:</strong> D/Wi/MA./101/2000</li>
-                             <li><strong className="text-neutral-900 dark:text-white">Tgl. SK. Pendirian:</strong> 20-09-2000</li>
-                             <li className="pt-1"><strong className="text-neutral-900 dark:text-white">No. SK Operasional:</strong> D/Wi/MA./101/2000</li>
-                             <li><strong className="text-neutral-900 dark:text-white">Tgl. SK Operasional:</strong> 20-09-2000</li>
+                         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-5">Legalitas</h3>
+                          <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
+                             <li><strong className="text-neutral-900 dark:text-white font-semibold">No. SK. Pendirian:</strong> D/Wi/MA./101/2000</li>
+                             <li><strong className="text-neutral-900 dark:text-white font-semibold">Tgl. SK. Pendirian:</strong> 20-09-2000</li>
+                             <li className="pt-1"><strong className="text-neutral-900 dark:text-white font-semibold">No. SK Operasional:</strong> D/Wi/MA./101/2000</li>
+                             <li><strong className="text-neutral-900 dark:text-white font-semibold">Tgl. SK Operasional:</strong> 20-09-2000</li>
                         </ul>
                     </div>
 
                     <div className="sm:justify-self-end">
-                        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
-                          <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
-                               <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Pusat Bantuan</button></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Download</a></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Kebijakan Privasi</a></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Karir</a></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Beasiswa</a></li>
+                        <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-5">Tautan Bermanfaat</h3>
+                          <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
+                               <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5 font-medium">Download</a></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5 font-medium">Kebijakan Privasi</a></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5 font-medium">Karir</a></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5 font-medium">Beasiswa</a></li>
                           </ul>
-                        <div className="flex justify-center sm:justify-start gap-3 mt-5">
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Facebook">
+                        <div className="flex justify-center sm:justify-start gap-3 mt-6">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 hover:scale-110 transition-all duration-200 p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Facebook">
                                 <span className="sr-only">Facebook</span>
                                 <FacebookIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Instagram">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 hover:scale-110 transition-all duration-200 p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Instagram">
                                 <span className="sr-only">Instagram</span>
                                 <InstagramIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="YouTube">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 hover:scale-110 transition-all duration-200 p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="YouTube">
                                 <span className="sr-only">YouTube</span>
                                 <YoutubeIcon />
                             </a>
                         </div>
                     </div>
                 </div>
-                <div className="mt-10 border-t border-neutral-200 dark:border-neutral-700 pt-6">
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center">&copy; {new Date().getFullYear()} MA Malnu Kananga. All rights reserved.</p>
+                <div className="mt-12 border-t border-neutral-200 dark:border-neutral-700 pt-8">
+                    <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 text-center">&copy; {new Date().getFullYear()} MA Malnu Kananga. All rights reserved.</p>
                 </div>
             </div>
         </footer>
