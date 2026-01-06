@@ -59,17 +59,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
         {currentView === 'home' && (
             <>
-                <div className="bg-white dark:bg-neutral-800 rounded-card-lg p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up">
+                <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up">
                     <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">Dashboard Administrator</h1>
                     <p className="mt-3 text-base text-neutral-600 dark:text-neutral-300 leading-relaxed">
                         Selamat datang, Admin. Kelola konten website dan pengguna dari sini.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 animate-fade-in-up">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
                     <div
                         onClick={onOpenEditor}
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-card-lg p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
+                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
                             <SparklesIcon className="w-6 h-6 text-white" />
@@ -81,7 +81,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('content.update') && (
                     <div
                         onClick={onOpenEditor}
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-card-lg p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
+                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
                             <SparklesIcon className="w-6 h-6 text-white" />
@@ -94,10 +94,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('ppdb.manage') && (
                     <div
                         onClick={() => setCurrentView('ppdb')}
-                        className="bg-white dark:bg-neutral-800 rounded-card-lg p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer relative hover:-translate-y-1 group"
+                        className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer relative hover:-translate-y-1 group"
                     >
                         {pendingPPDB > 0 && (
-                            <span className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-pill bg-red-500 text-xs font-bold text-white shadow-md animate-pulse ring-2 ring-white dark:ring-neutral-800">
+                            <span className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white shadow-md animate-pulse ring-2 ring-white dark:ring-neutral-800">
                                 {pendingPPDB}
                             </span>
                         )}
@@ -113,7 +113,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('users.read') && (
                     <div
                         onClick={() => setCurrentView('users')}
-                        className="bg-white dark:bg-neutral-800 rounded-card-lg p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1 group"
+                        className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1 group"
                     >
                         <div className="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
                             <UsersIcon />
@@ -127,7 +127,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('system.stats') && (
                     <div
                         onClick={() => setCurrentView('stats')}
-                        className="bg-white dark:bg-neutral-800 rounded-card-lg p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1 group"
+                        className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1 group"
                     >
                         <div className="bg-primary-100 dark:bg-primary-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform duration-300">
                             <ChartBarIcon />
@@ -141,7 +141,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('system.admin') && (
                     <div
                         onClick={() => setCurrentView('ai-cache')}
-                        className="bg-gradient-to-br from-green-500 to-teal-600 rounded-card-lg p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
+                        className="bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
                             <ChartBarIcon className="w-6 h-6 text-white" />
@@ -154,7 +154,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('system.admin') && (
                     <div
                         onClick={() => setCurrentView('permissions')}
-                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-card-lg p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
+                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
                             <UsersIcon className="w-6 h-6 text-white" />

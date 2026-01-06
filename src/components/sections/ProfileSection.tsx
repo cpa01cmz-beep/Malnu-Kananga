@@ -17,14 +17,14 @@ const ProfileSection: React.FC = () => {
                 <p>
                     Kurikulum yang digunakan memadukan <strong className="text-neutral-900 dark:text-white font-bold">pendidikan salafiyah</strong> dengan <strong className="text-neutral-900 dark:text-white font-bold">pendidikan modern</strong>, termasuk pemantapan keterampilan abad 21 untuk menjawab kebutuhan masa depan.
                 </p>
-                <div className="flex flex-wrap gap-4 pt-2">
-                    <span className="inline-flex items-center px-6 py-3 rounded-full text-sm font-bold bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 border border-primary-200/80 dark:border-primary-700/80 shadow-sm">
+                <div className="flex flex-wrap gap-3 pt-2">
+                    <span className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 border border-primary-200/80 dark:border-primary-700/80 shadow-sm">
                         Kemenag RI
                     </span>
-                    <span className="inline-flex items-center px-6 py-3 rounded-full text-sm font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200/80 dark:border-blue-700/80 shadow-sm">
+                    <span className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200/80 dark:border-blue-700/80 shadow-sm">
                         Kurikulum Terpadu
                     </span>
-                    <span className="inline-flex items-center px-6 py-3 rounded-full text-sm font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200/80 dark:border-purple-700/80 shadow-sm">
+                    <span className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border border-purple-200/80 dark:border-purple-700/80 shadow-sm">
                         Berakhlak Mulia
                     </span>
                 </div>
@@ -51,7 +51,7 @@ const ProfileSection: React.FC = () => {
                         </div>
                         <h3 className="text-2xl font-extrabold text-primary-600 dark:text-primary-400">Misi</h3>
                     </div>
-                    <ul className="space-y-4.5 text-neutral-700 dark:text-neutral-200 text-sm sm:text-base leading-[1.8]">
+                    <ul className="space-y-4 text-neutral-700 dark:text-neutral-200 text-sm sm:text-base leading-[1.8]">
                         <li className="flex items-start gap-3.5">
                             <span className="flex-shrink-0 w-2 h-2 rounded-full bg-primary-500 mt-2 shadow-sm"></span>
                             <span className="font-medium">Penguatan pendidikan agama Islam berlandasan nilai salafiyah.</span>
