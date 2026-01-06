@@ -32,7 +32,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
         </svg>
       ),
-      confirmBg: 'bg-red-600 hover:bg-red-700 active:bg-red-800 focus:ring-red-500/50',
+      confirmBg: 'bg-red-600 hover:bg-red-700 focus:ring-red-500/50',
       confirmDisabled: 'bg-red-400 cursor-not-allowed',
       border: 'border-red-200 dark:border-red-800',
       bg: 'bg-red-50 dark:bg-red-900/20'
@@ -43,7 +43,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
       ),
-      confirmBg: 'bg-amber-600 hover:bg-amber-700 active:bg-amber-800 focus:ring-amber-500/50',
+      confirmBg: 'bg-amber-600 hover:bg-amber-700 focus:ring-amber-500/50',
       confirmDisabled: 'bg-amber-400 cursor-not-allowed',
       border: 'border-amber-200 dark:border-amber-800',
       bg: 'bg-amber-50 dark:bg-amber-900/20'
@@ -54,7 +54,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
-      confirmBg: 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:ring-blue-500/50',
+      confirmBg: 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500/50',
       confirmDisabled: 'bg-blue-400 cursor-not-allowed',
       border: 'border-blue-200 dark:border-blue-800',
       bg: 'bg-blue-50 dark:bg-blue-900/20'
@@ -68,7 +68,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-float border max-w-md w-full border-neutral-200 dark:border-neutral-700 animate-scale-in">
         <div className="p-6">
           <div className="flex items-start gap-4">
-            <div className={`p-3 rounded-xl flex-shrink-0 ${styles.bg}`}>
+            <div className={`p-3 rounded-xl flex-shrink-0 ${styles.bg} shadow-sm`}>
               {styles.icon}
             </div>
             <div className="flex-1">
@@ -85,14 +85,14 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
             <button
               onClick={onCancel}
               disabled={isLoading}
-              className="px-5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-xl font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95"
+              className="px-5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-xl font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 shadow-sm hover:shadow-md"
             >
               {cancelText}
             </button>
             <button
               onClick={onConfirm}
               disabled={isLoading}
-              className={`px-5 py-2.5 text-white rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 shadow-sm hover:shadow-md active:scale-95 ${
+              className={`px-5 py-2.5 text-white rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-95 ${
                 isLoading ? styles.confirmDisabled : styles.confirmBg
               }`}
             >
