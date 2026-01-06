@@ -51,15 +51,15 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Beasiswa</a></li>
                          </ul>
                         <div className="flex justify-center sm:justify-start space-x-6 mt-6">
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20" aria-label="Facebook">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800" aria-label="Facebook">
                                 <span className="sr-only">Facebook</span>
                                 <FacebookIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20" aria-label="Instagram">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800" aria-label="Instagram">
                                 <span className="sr-only">Instagram</span>
                                 <InstagramIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20" aria-label="YouTube">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800" aria-label="YouTube">
                                 <span className="sr-only">YouTube</span>
                                 <YoutubeIcon />
                             </a>

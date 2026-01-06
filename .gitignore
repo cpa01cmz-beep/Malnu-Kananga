@@ -17,9 +17,6 @@ build/
 .env.production
 .env.*.local
 
-# Secrets
-.secrets.baseline
-
 # IDE and editor files
 .vscode/
 .idea/

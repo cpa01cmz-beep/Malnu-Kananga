@@ -9,7 +9,7 @@ interface NewsCardProps {
 
 const NewsCard: React.FC<NewsCardProps> = ({ newsItem }) => {
   return (
-    <article className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-card hover:shadow-card-hover border border-neutral-200 dark:border-neutral-700 transition-all duration-300 overflow-hidden transform hover:-translate-y-1 flex flex-col h-full">
+    <article className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-card hover:shadow-card-hover border border-neutral-200 dark:border-neutral-700 transition-all duration-200 overflow-hidden flex flex-col h-full">
       <ImageWithFallback
         className="h-48 w-full object-cover"
         src={newsItem.imageUrl}
