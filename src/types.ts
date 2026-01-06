@@ -920,7 +920,7 @@ export interface NotificationAnalytics {
   clicked: number;
   dismissed: number;
   timestamp: string;
-  roleBreakdown: Record<UserRole, number>;
+  roleBreakdown: Partial<Record<UserRole, number>>;
 }
 
 export interface NotificationCenterItem {

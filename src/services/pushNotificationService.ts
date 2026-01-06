@@ -1,6 +1,7 @@
 import { NotificationSettings, PushNotification, NotificationHistoryItem, NotificationBatch, NotificationTemplate, NotificationAnalytics } from '../types';
 import { NOTIFICATION_CONFIG, NOTIFICATION_ERROR_MESSAGES, NOTIFICATION_ICONS, STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
+import type { UserRole } from '../types';
 
 /* eslint-disable no-undef */
 declare global {
@@ -13,8 +14,8 @@ declare global {
   }
 
   interface PushSubscriptionOptions {
-    userVisibleOnly: boolean;
-    applicationServerKey: Uint8Array | null;
+    readonly userVisibleOnly: boolean;
+    readonly applicationServerKey: ArrayBuffer | null;
   }
 }
 
@@ -109,7 +110,7 @@ class PushNotificationService {
 
       this.subscription = await this.swRegistration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlBase64ToUint8Array(applicationServerKey),
+        applicationServerKey: this.urlBase64ToUint8Array(applicationServerKey).buffer as ArrayBuffer,
       });
 
       this.saveSubscription(this.subscription);
@@ -149,7 +150,7 @@ class PushNotificationService {
     try {
       if (Notification.permission !== 'granted') {
         await this.requestPermission();
-        if (Notification.permission !== 'granted') {
+        if ((Notification.permission as string) !== 'granted') {
           throw new Error(NOTIFICATION_ERROR_MESSAGES.PERMISSION_DENIED);
         }
       }
@@ -168,7 +169,7 @@ class PushNotificationService {
         tag: notification.id,
         timestamp: new Date(notification.timestamp).getTime(),
         requireInteraction: notification.priority === 'high',
-        vibrate: NOTIFICATION_CONFIG.VIBRATION_PATTERN,
+        vibrate: [...NOTIFICATION_CONFIG.VIBRATION_PATTERN],
         data: notification.data as Record<string, unknown>,
       });
       
@@ -346,25 +347,7 @@ class PushNotificationService {
     }
   }
 
-  private isInQuietHours(settings: NotificationSettings): boolean {
-    if (!settings.quietHours.enabled) {
-      return false;
-    }
 
-    const now = new Date();
-    const currentTime = now.getHours() * 60 + now.getMinutes();
-    const [startHours, startMinutes] = settings.quietHours.start.split(':').map(Number);
-    const [endHours, endMinutes] = settings.quietHours.end.split(':').map(Number);
-    
-    const startTime = startHours * 60 + startMinutes;
-    const endTime = endHours * 60 + endMinutes;
-
-    if (startTime <= endTime) {
-      return currentTime >= startTime && currentTime < endTime;
-    } else {
-      return currentTime >= startTime || currentTime < endTime;
-    }
-  }
 
   private addToHistory(notification: PushNotification): void {
     try {

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import SiteEditor from '../src/components/SiteEditor';
+import SiteEditor from '../components/SiteEditor';
 import type { FeaturedProgram, LatestNews } from '../types';
 
 // Mock the geminiService

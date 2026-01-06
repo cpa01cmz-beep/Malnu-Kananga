@@ -7,7 +7,7 @@ const RelatedLinksSection: React.FC = () => {
     const loadLinks = async () => {
       const { getRelatedLinks } = await import('../../data/defaults');
       const relatedLinks = await getRelatedLinks();
-      setLinks(relatedLinks);
+      setLinks(relatedLinks as unknown as typeof links);
     };
     loadLinks();
   }, []);

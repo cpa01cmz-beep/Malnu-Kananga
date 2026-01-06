@@ -1,5 +1,16 @@
 import { createWorker, PSM } from 'tesseract.js';
 
+type TesseractWorker = {
+  setParameters(params: { tessedit_pageseg_mode: PSM }): Promise<any>;
+  recognize(image: File | string): Promise<{
+    data: {
+      text: string;
+      confidence: number;
+    };
+  }>;
+  terminate(): Promise<any>;
+};
+
 export interface OCRExtractionResult {
   text: string;
   confidence: number;
@@ -18,16 +29,7 @@ export interface OCRProgress {
 
 type ProgressCallback = (progress: OCRProgress) => void;
 
-type TesseractWorker = {
-  setParameters(params: { tessedit_pageseg_mode: PSM }): Promise<void>;
-  recognize(image: File | string): Promise<{
-    data: {
-      text: string;
-      confidence: number;
-    };
-  }>;
-  terminate(): Promise<void>;
-};
+
 
 class OCRService {
   private worker: TesseractWorker | null = null;
@@ -53,9 +55,9 @@ class OCRService {
             });
           }
         }
-      });
+      }) as TesseractWorker;
 
-      await this.worker.setParameters({
+      await this.worker!.setParameters({
         tessedit_pageseg_mode: PSM.AUTO,
       });
 
@@ -74,7 +76,7 @@ class OCRService {
     }
 
     try {
-      const result = await this.worker.recognize(imageFile);
+      const result = await this.worker!.recognize(imageFile);
 
       const extractedData = this.parseExtractedText(result.data.text);
 

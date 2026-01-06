@@ -240,8 +240,8 @@ Please provide the updated JSON content following the safety and content rules a
         });
 
         const jsonText = (response.text || '').trim();
-        
-        const responseValidation = validateAIResponse(jsonText);
+
+        const responseValidation = validateAIResponse(jsonText, currentContent);
         if (!responseValidation.isValid) {
             throw new Error(responseValidation.error);
         }

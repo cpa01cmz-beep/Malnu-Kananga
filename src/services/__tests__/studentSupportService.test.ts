@@ -2,6 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock Student Support Service
 class StudentSupportService {
+  supportRequests: any[]
+  isInitialized: boolean
+
   constructor() {
     this.supportRequests = []
     this.isInitialized = false

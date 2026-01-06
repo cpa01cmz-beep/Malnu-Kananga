@@ -74,9 +74,9 @@ class SpeechRecognitionService {
 
   private initializeRecognition(): void {
     try {
-      const speechWindow = window as SpeechWindow;
+    const speechWindow = window as unknown as SpeechWindow;
       const SpeechRecognitionAPI = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
-      this.recognition = new SpeechRecognitionAPI();
+      this.recognition = new (SpeechRecognitionAPI as any)() as SpeechRecognition;
       this.configureRecognition();
       this.setupEventListeners();
     } catch (error) {
