@@ -130,7 +130,7 @@ function onTokenRefreshed(token: string): void {
 export const authAPI = {
   // Login
   async login(email: string, password: string): Promise<LoginResponse> {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: 'POST',
 
       headers: { 'Content-Type': 'application/json' },
@@ -153,7 +153,7 @@ export const authAPI = {
     if (!token) return;
 
     try {
-      await fetch(`${API_BASE_URL}/auth/logout`, {
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: 'POST',
 
         headers: {
@@ -174,7 +174,7 @@ export const authAPI = {
     if (!refreshToken) return false;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
         method: 'POST',
 
         headers: { 'Content-Type': 'application/json' },
