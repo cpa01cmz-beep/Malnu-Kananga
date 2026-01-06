@@ -610,7 +610,8 @@ class PushNotificationService {
           break;
       }
       if (currentUser) {
-        existing.roleBreakdown[currentUser.role] = (existing.roleBreakdown[currentUser.role] || 0) + 1;
+        const userRole = currentUser.role as UserRole;
+        existing.roleBreakdown[userRole] = (existing.roleBreakdown[userRole] || 0) + 1;
       }
     } else {
       const analytics: NotificationAnalytics = {

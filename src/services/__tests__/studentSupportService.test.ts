@@ -17,7 +17,7 @@ class StudentSupportService {
     return true
   }
 
-  async createSupportRequest(studentName, issue) {
+  async createSupportRequest(studentName: string, issue: string) {
     if (!this.isInitialized) {
       throw new Error('Service not initialized')
     }
@@ -42,7 +42,7 @@ class StudentSupportService {
     return this.supportRequests
   }
 
-  async updateRequestStatus(requestId, newStatus) {
+  async updateRequestStatus(requestId: string | number, newStatus: string) {
     if (!this.isInitialized) {
       throw new Error('Service not initialized')
     }
@@ -59,7 +59,7 @@ class StudentSupportService {
 }
 
 describe('StudentSupportService', () => {
-  let service
+  let service: StudentSupportService
 
   beforeEach(async () => {
     service = new StudentSupportService()
