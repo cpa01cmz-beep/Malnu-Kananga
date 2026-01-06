@@ -1,17 +1,9 @@
-import React, { createContext, useContext } from 'react';
+import React from 'react';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
-
-interface NotificationContextType {
-  // Push notification hooks
-  pushNotificationHelpers: ReturnType<typeof usePushNotifications>;
-  // Event notification helpers
-  eventNotificationHelpers: ReturnType<typeof useEventNotifications>;
-}
-
-const NotificationContext = createContext<NotificationContextType | null>(null);
+import { NotificationContext } from './NotificationContext.types';
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const pushNotificationHelpers = usePushNotifications();
@@ -75,10 +67,3 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   );
 }
 
-export function useNotifications() {
-  const context = useContext(NotificationContext);
-  if (!context) {
-    throw new Error('useNotifications must be used within a NotificationProvider');
-  }
-  return context;
-}
