@@ -18,9 +18,9 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
     return (
-        <footer id="kontak" className="bg-gradient-to-t from-primary-50/80 via-primary-50/40 to-transparent dark:from-primary-900/30 dark:via-primary-900/15 dark:to-transparent border-t border-neutral-200 dark:border-neutral-700">
-            <div className="max-w-7xl mx-auto py-14 px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-center sm:text-left">
+        <footer id="kontak" className="bg-gradient-to-t from-primary-50/60 via-primary-50/30 to-transparent dark:from-primary-900/20 dark:via-primary-900/10 dark:to-transparent border-t border-neutral-200 dark:border-neutral-700">
+            <div className="max-w-7xl mx-auto py-12 sm:py-14 px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 text-center sm:text-left">
                     <div>
                         <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">MA Malnu Kananga</h3>
                         <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed mb-2">
