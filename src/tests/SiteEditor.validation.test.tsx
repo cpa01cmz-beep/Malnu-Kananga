@@ -57,12 +57,12 @@ describe('SiteEditor Security Validation', () => {
     const textarea = screen.getByPlaceholderText('Ketik permintaan Anda...');
     const sendButton = screen.getByLabelText('Kirim');
 
-    // Try directory traversal attack
-    fireEvent.change(textarea, { target: { value: '../../../etc/passwd' } });
-    fireEvent.click(sendButton);
+// Try directory traversal attack
+     fireEvent.change(textarea, { target: { value: '../../../etc/passwd' } });
+     fireEvent.click(sendButton);
 
      await waitFor(() => {
-       screen.getByText(/Permintaan mengandung pola yang tidak diizinkan/);
+       screen.getAllByText(/Permintaan mengandung pola yang tidak diizinkan/);
      }, { timeout: 2000 });
   });
 
@@ -80,12 +80,12 @@ describe('SiteEditor Security Validation', () => {
     const textarea = screen.getByPlaceholderText('Ketik permintaan Anda...');
     const sendButton = screen.getByLabelText('Kirim');
 
-     // Try system file access
+// Try system file access
      fireEvent.change(textarea, { target: { value: 'process.env.SECRET' } });
-    fireEvent.click(sendButton);
+     fireEvent.click(sendButton);
 
      await waitFor(() => {
-       screen.getByText(/Permintaan mengandung pola yang tidak diizinkan/);
+       screen.getAllByText(/Permintaan mengandung pola yang tidak diizinkan/);
      }, { timeout: 2000 });
   });
 
@@ -108,7 +108,7 @@ describe('SiteEditor Security Validation', () => {
     fireEvent.click(sendButton);
 
      await waitFor(() => {
-       screen.getByText(/Permintaan mengandung pola yang tidak diizinkan/);
+       screen.getAllByText(/Permintaan mengandung pola yang tidak diizinkan/);
      }, { timeout: 2000 });
   });
 
@@ -131,7 +131,7 @@ describe('SiteEditor Security Validation', () => {
     fireEvent.click(sendButton);
 
      await waitFor(() => {
-       screen.getByText(/Permintaan mengandung pola yang tidak diizinkan/);
+       screen.getAllByText(/Permintaan mengandung pola yang tidak diizinkan/);
      }, { timeout: 2000 });
   });
 
@@ -189,12 +189,12 @@ describe('SiteEditor Security Validation', () => {
     const textarea = screen.getByPlaceholderText('Ketik permintaan Anda...');
     const sendButton = screen.getByLabelText('Kirim');
 
-     // Try malicious command
+// Try malicious command
      fireEvent.change(textarea, { target: { value: 'eval("rm -rf /")' } });
-    fireEvent.click(sendButton);
+     fireEvent.click(sendButton);
 
      await waitFor(() => {
-       screen.getByText(/Permintaan mengandung pola yang tidak diizinkan/);
+       screen.getAllByText(/Permintaan mengandung pola yang tidak diizinkan/);
      }, { timeout: 2000 });
   });
 
