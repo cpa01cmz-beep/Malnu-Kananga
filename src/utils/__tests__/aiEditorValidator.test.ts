@@ -12,52 +12,52 @@ describe('AI Editor Validator', () => {
 
     it('should reject empty prompt', () => {
       const result = validateAICommand('');
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
       expect(result.error).toContain('tidak valid');
     });
 
     it('should reject prompt with dangerous patterns - import', () => {
       const result = validateAICommand('import os from system');
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
       expect(result.error).toContain('tidak diizinkan');
     });
 
     it('should reject prompt with dangerous patterns - eval', () => {
       const result = validateAICommand('eval("malicious code")');
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
     });
 
     it('should reject prompt with dangerous patterns - file path traversal', () => {
       const result = validateAICommand('../../../etc/passwd');
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
     });
 
     it('should reject prompt with dangerous patterns - fetch API', () => {
       const result = validateAICommand('fetch("https://evil.com/api")');
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
     });
 
     it('should reject prompt with dangerous patterns - SQL injection', () => {
       const result = validateAICommand('DELETE FROM users WHERE 1=1');
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
     });
 
     it('should reject prompt with HTML tags', () => {
       const result = validateAICommand('Ubah judul menjadi <script>alert(1)</script>');
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
       expect(result.error).toContain('HTML');
     });
 
     it('should reject too short prompt', () => {
       const result = validateAICommand('ab');
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
       expect(result.error).toContain('Minimal');
     });
 
     it('should reject too long prompt', () => {
       const longPrompt = 'a'.repeat(1001);
       const result = validateAICommand(longPrompt);
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
       expect(result.error).toContain('Maksimal');
     });
 
@@ -69,7 +69,7 @@ describe('AI Editor Validator', () => {
 
     it('should sanitize data: protocol', () => {
       const result = validateAICommand('Click here data:text/html,<h1>hi</h1>');
-      expect(result.isValid).toBe(false);
+      expect(result.isValid).toBe(true);
       expect(result.sanitizedPrompt).not.toContain('data:');
     });
   });
@@ -93,12 +93,12 @@ describe('AI Editor Validator', () => {
 
     it('should reject empty response', () => {
       const result = validateAIResponse('', mockCurrentContent);
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
     });
 
     it('should reject response without JSON structure', () => {
       const result = validateAIResponse('This is not JSON', mockCurrentContent);
-      expect(result.isValid).toBe(true);
+      expect(result.isValid).toBe(false);
       expect(result.error).toContain('JSON');
     });
 
@@ -137,8 +137,8 @@ Let me know if you need anything else.`;
         featuredPrograms: [{ title: 'Test Program', description: 'Description', imageUrl: null }],
         latestNews: []
       });
-      const result = validateAIResponse(JSON.stringify(jsonNoImage), mockCurrentContent);
-      expect(result.isValid).toBe(false);
+      const result = validateAIResponse(jsonNoImage, mockCurrentContent);
+      expect(result.isValid).toBe(true);
       expect(result.sanitizedContent?.featuredPrograms[0].imageUrl).toContain('placehold.co');
     });
 
@@ -161,7 +161,7 @@ Let me know if you need anything else.`;
     it('should preserve existing content when AI returns empty arrays', () => {
       const jsonEmpty = JSON.stringify({ featuredPrograms: [], latestNews: [] });
       const result = validateAIResponse(jsonEmpty, mockCurrentContent);
-      expect(result.isValid).toBe(false);
+      expect(result.isValid).toBe(true);
       expect(result.sanitizedContent?.featuredPrograms).toEqual(mockCurrentContent.featuredPrograms);
       expect(result.sanitizedContent?.latestNews).toEqual(mockCurrentContent.latestNews);
     });
@@ -172,7 +172,7 @@ Let me know if you need anything else.`;
         latestNews: [{ title: 'News', date: 'invalid-date', category: 'Umum', imageUrl: 'https://example.com/img.jpg' }]
       });
       const result = validateAIResponse(jsonWithDate, mockCurrentContent);
-      expect(result.isValid).toBe(false);
+      expect(result.isValid).toBe(true);
     });
 
     it('should accept valid ISO date format', () => {
