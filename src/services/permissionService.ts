@@ -27,6 +27,15 @@ class PermissionService {
       };
     }
 
+    // Validate role combination first
+    if (!this.isValidRoleCombination(userRole, userExtraRole)) {
+      return {
+        granted: false,
+        reason: `Invalid role combination: ${userRole} + ${userExtraRole}`,
+        requiredPermission: permissionId
+      };
+    }
+
     const rolePermissions = ROLE_PERMISSION_MATRIX[userRole] || [];
     const extraPermissions = userExtraRole ? EXTRA_ROLE_PERMISSIONS[userExtraRole] || [] : [];
     const allPermissions = [...rolePermissions, ...extraPermissions];
@@ -192,6 +201,17 @@ class PermissionService {
     if (userRole === 'admin') return userExtraRole === null;
     if (userRole === 'teacher' && userExtraRole === 'osis') return false;
     if (userRole === 'student' && userExtraRole === 'staff') return false;
+    
+    // Academic leadership roles - only teachers can have these extra roles
+    if ((userExtraRole === 'wakasek' || userExtraRole === 'kepsek') && userRole !== 'teacher') {
+      return false;
+    }
+    
+    // Only one academic leadership role allowed
+    if (userExtraRole === 'wakasek' || userExtraRole === 'kepsek') {
+      return true; // valid for teachers
+    }
+    
     return true;
   }
 }
