@@ -20,11 +20,11 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     }
   }, [isVisible, duration, onClose]);
 
-  const baseClasses = "fixed top-20 right-4 sm:top-6 sm:right-6 z-50 px-5 py-3.5 rounded-xl shadow-card-hover flex items-center gap-3 transition-all duration-300 ease-out transform max-w-md border backdrop-blur-md hover:scale-[1.02]";
+  const baseClasses = "fixed top-20 right-4 sm:top-6 sm:right-6 z-50 px-5 py-3.5 rounded-xl shadow-card flex items-center gap-3 transition-all duration-300 ease-out transform max-w-md border backdrop-blur-md";
   const typeClasses = {
-    success: "bg-white/98 dark:bg-neutral-800/98 border-primary-500/40 dark:border-primary-500/50 text-neutral-900 dark:text-white",
-    info: "bg-white/98 dark:bg-neutral-800/98 border-blue-500/40 dark:border-blue-500/50 text-neutral-900 dark:text-white",
-    error: "bg-white/98 dark:bg-neutral-800/98 border-red-500/40 dark:border-red-500/50 text-neutral-900 dark:text-white",
+    success: "bg-white/98 dark:bg-neutral-800/98 border-primary-200/80 dark:border-primary-700/50 text-neutral-900 dark:text-white",
+    info: "bg-white/98 dark:bg-neutral-800/98 border-blue-200/80 dark:border-blue-700/50 text-neutral-900 dark:text-white",
+    error: "bg-white/98 dark:bg-neutral-800/98 border-red-200/80 dark:border-red-700/50 text-neutral-900 dark:text-white",
   };
 
   const visibilityClasses = isVisible
@@ -54,7 +54,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       <div className="flex-shrink-0">
         {icons[type]}
       </div>
-      <span className="font-medium text-base leading-snug">{message}</span>
+      <span className="font-medium text-sm leading-snug">{message}</span>
     </div>
   );
 };

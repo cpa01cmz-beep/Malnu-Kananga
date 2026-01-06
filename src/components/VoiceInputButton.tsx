@@ -147,22 +147,22 @@ setTranscriptBuffer('');
 
   const getButtonStyle = () => {
     if (!isSupported) {
-      return 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed';
+      return 'bg-neutral-300 dark:bg-neutral-600 text-neutral-500 cursor-not-allowed';
     }
 
     if (permissionState === 'denied') {
-      return 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105 active:scale-95 shadow-sm hover:shadow-md';
+      return 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md';
     }
 
     switch (state) {
       case 'listening':
-        return continuous ? 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105 active:scale-95 shadow-md hover:shadow-lg' : 'bg-red-500 hover:bg-red-600 text-white hover:scale-105 active:scale-95 shadow-md hover:shadow-lg';
+        return continuous ? 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-[1.02] active:scale-95 shadow-md hover:shadow-lg' : 'bg-red-500 hover:bg-red-600 text-white hover:scale-[1.02] active:scale-95 shadow-md hover:shadow-lg';
       case 'processing':
-        return 'bg-blue-500 hover:bg-blue-600 text-white hover:scale-105 active:scale-95 shadow-md hover:shadow-lg';
+        return 'bg-blue-500 hover:bg-blue-600 text-white hover:scale-[1.02] active:scale-95 shadow-md hover:shadow-lg';
       case 'error':
-        return 'bg-red-600 hover:bg-red-700 text-white hover:scale-105 active:scale-95 shadow-md hover:shadow-lg';
+        return 'bg-red-600 hover:bg-red-700 text-white hover:scale-[1.02] active:scale-95 shadow-md hover:shadow-lg';
       default:
-        return 'bg-green-500 hover:bg-green-600 text-white dark:bg-green-600 dark:hover:bg-green-700 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md';
+        return 'bg-green-500 hover:bg-green-600 text-white dark:bg-green-600 dark:hover:bg-green-700 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md';
     }
   };
 
@@ -206,7 +206,7 @@ setTranscriptBuffer('');
     return (
       <button
         disabled
-        className={`p-3 mb-1 bg-gray-300 dark:bg-gray-600 text-gray-400 rounded-full cursor-not-allowed transition-colors ${className}`}
+        className={`p-3 mb-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-400 rounded-full cursor-not-allowed transition-colors ${className}`}
         aria-label="Input suara dinonaktifkan"
         title="Input suara dinonaktifkan"
       >
@@ -258,7 +258,7 @@ setTranscriptBuffer('');
       className={`
         p-3 mb-1 rounded-full transition-all duration-300 shadow-sm flex-shrink-0
         ${getButtonStyle()}
-        ${pulseAnimation ? 'animate-pulse scale-110' : 'hover:scale-105'}
+        ${pulseAnimation ? 'animate-pulse scale-110' : 'hover:scale-[1.02]'}
         ${className}
       `}
       aria-label={getAriaLabel()}
