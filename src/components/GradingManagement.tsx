@@ -14,6 +14,7 @@ import {
   GradeInput 
 } from '../utils/teacherValidation';
 import ConfirmationDialog from './ui/ConfirmationDialog';
+import { createToastHandler } from '../utils/teacherErrorHandler';
 
 
 interface StudentGrade {
@@ -52,7 +53,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const subjectId = 'Matematika Wajib';
 
   // Validation and Error Handling State
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving, _setIsSaving] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     title: string;
@@ -68,9 +69,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   });
 
   // Confirmation Dialog State
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [resetStudentId, setResetStudentId] = useState<string | null>(null);
-  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+  const [_showResetConfirm, _setShowResetConfirm] = useState(false);
+  const [_resetStudentId, _setResetStudentId] = useState<string | null>(null);
+  const [_showSaveConfirm, setShowSaveConfirm] = useState(false);
 
   const toast = createToastHandler(onShowToast);
   const fetchStudentsAndGrades = useCallback(async () => {
@@ -222,9 +223,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               const midExam = sanitizeGradeInput(csvRow.midExam || csvRow.uts || grade.midExam);
               const finalExam = sanitizeGradeInput(csvRow.finalExam || csvRow.uas || grade.finalExam);
 
-              const assignmentValidation = validateGradeInput(assignment, 'assignment');
-              const midExamValidation = validateGradeInput(midExam, 'midExam');
-              const finalExamValidation = validateGradeInput(finalExam, 'finalExam');
+              const assignmentValidation = validateGradeInput({ assignment });
+              const midExamValidation = validateGradeInput({ midExam });
+              const finalExamValidation = validateGradeInput({ finalExam });
 
               if (!assignmentValidation.isValid || !midExamValidation.isValid || !finalExamValidation.isValid) {
                 onShowToast(`Invalid grades for ${grade.name}: ${assignmentValidation.errors.concat(midExamValidation.errors, finalExamValidation.errors).join(', ')}`, 'error');
