@@ -13,74 +13,72 @@ interface CommandPattern {
 
 class VoiceCommandParser {
   private commands: Map<string, CommandPattern>;
-  private currentLanguage: VoiceLanguage;
 
   constructor() {
     this.commands = new Map();
-    this.currentLanguage = VoiceLanguage.Indonesian;
     this.initializeCommands();
   }
 
   private initializeCommands(): void {
     this.commands.set('open_settings', {
       id: 'open_settings',
-      patterns: VOICE_COMMANDS.OPEN_SETTINGS,
+      patterns: [...VOICE_COMMANDS.OPEN_SETTINGS],
       action: 'OPEN_SETTINGS',
       language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('close_settings', {
       id: 'close_settings',
-      patterns: VOICE_COMMANDS.CLOSE_SETTINGS,
+      patterns: [...VOICE_COMMANDS.CLOSE_SETTINGS],
       action: 'CLOSE_SETTINGS',
       language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('stop_speaking', {
       id: 'stop_speaking',
-      patterns: VOICE_COMMANDS.STOP_SPEAKING,
+      patterns: [...VOICE_COMMANDS.STOP_SPEAKING],
       action: 'STOP_SPEAKING',
       language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('pause_speaking', {
       id: 'pause_speaking',
-      patterns: VOICE_COMMANDS.PAUSE_SPEAKING,
+      patterns: [...VOICE_COMMANDS.PAUSE_SPEAKING],
       action: 'PAUSE_SPEAKING',
       language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('resume_speaking', {
       id: 'resume_speaking',
-      patterns: VOICE_COMMANDS.RESUME_SPEAKING,
+      patterns: [...VOICE_COMMANDS.RESUME_SPEAKING],
       action: 'RESUME_SPEAKING',
       language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('read_all', {
       id: 'read_all',
-      patterns: VOICE_COMMANDS.READ_ALL,
+      patterns: [...VOICE_COMMANDS.READ_ALL],
       action: 'READ_ALL',
       language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('clear_chat', {
       id: 'clear_chat',
-      patterns: VOICE_COMMANDS.CLEAR_CHAT,
+      patterns: [...VOICE_COMMANDS.CLEAR_CHAT],
       action: 'CLEAR_CHAT',
       language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('send_message', {
       id: 'send_message',
-      patterns: VOICE_COMMANDS.SEND_MESSAGE,
+      patterns: [...VOICE_COMMANDS.SEND_MESSAGE],
       action: 'SEND_MESSAGE',
       language: VoiceLanguage.Indonesian,
     });
 
     this.commands.set('toggle_voice', {
       id: 'toggle_voice',
-      patterns: VOICE_COMMANDS.TOGGLE_VOICE,
+      patterns: [...VOICE_COMMANDS.TOGGLE_VOICE],
       action: 'TOGGLE_VOICE',
       language: VoiceLanguage.Indonesian,
     });
@@ -151,7 +149,6 @@ class VoiceCommandParser {
   }
 
   public setLanguage(language: VoiceLanguage): void {
-    this.currentLanguage = language;
     logger.debug('Language set to:', language);
   }
 

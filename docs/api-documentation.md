@@ -22,6 +22,10 @@ This document provides comprehensive API documentation for the MA Malnu Kananga 
 
 ---
 
+**Related Documentation**: See [BLUEPRINT.md](./BLUEPRINT.md) for complete system architecture
+
+---
+
 ## Authentication API
 
 ### Login User

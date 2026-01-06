@@ -243,11 +243,6 @@ export class CircuitBreaker {
     }
   }
 
-  private reset(): void {
-    this.failureCount = 0;
-    this.state = 'closed';
-  }
-
   private shouldAttempt(): boolean {
     const now = this.timeProvider();
     if (this.state === 'open' && now - this.lastFailureTime > this.timeoutMs) {

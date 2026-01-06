@@ -21,13 +21,15 @@ class Logger {
   }
 
   info(message: string, ...args: unknown[]): void {
-    if (isDevelopment && ['DEBUG', 'INFO'].includes(import.meta.env.VITE_LOG_LEVEL || 'INFO')) {
+    const logLevel = import.meta.env.VITE_LOG_LEVEL as string || 'INFO';
+    if (isDevelopment && ['DEBUG', 'INFO'].includes(logLevel)) {
       console.log(this.formatMessage(LogLevel.INFO, message, ...args))
     }
   }
 
   warn(message: string, ...args: unknown[]): void {
-    if (isDevelopment && ['DEBUG', 'INFO', 'WARN'].includes(import.meta.env.VITE_LOG_LEVEL || 'WARN')) {
+    const logLevel = import.meta.env.VITE_LOG_LEVEL as string || 'WARN';
+    if (isDevelopment && ['DEBUG', 'INFO', 'WARN'].includes(logLevel)) {
       console.warn(this.formatMessage(LogLevel.WARN, message, ...args))
     }
   }

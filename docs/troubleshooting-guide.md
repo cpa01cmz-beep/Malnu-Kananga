@@ -441,7 +441,7 @@ npx wrangler d1 execute malnu-kananga-db --command "EXPLAIN QUERY PLAN SELECT * 
 
 ### Internal Resources
 - Check [API Documentation](./api-documentation.md) for API issues
-- Review [ARCHITECTURE.md](./ARCHITECTURE.md) for system understanding
+- Review [BLUEPRINT.md](./BLUEPRINT.md) for system understanding
 - Consult [CONTRIBUTING.md](./CONTRIBUTING.md) for development guidelines
 
 ### External Resources

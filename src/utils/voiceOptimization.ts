@@ -170,7 +170,7 @@ export const performanceMetrics = {
       try {
         const entries = window.performance.getEntriesByName(name);
         const lastEntry = entries[entries.length - 1];
-        return lastEntry?.duration || 0;
+        return (lastEntry as any)?.duration || 0;
       } catch (error) {
         logger.error('Performance measurement error:', error);
         return 0;
@@ -178,12 +178,22 @@ export const performanceMetrics = {
     }
     return 0;
   },
-  
-  clear: () => {
-    if (typeof window.performance !== 'undefined' && window.performance.clearMarks) {
-      window.performance.clearMarks();
-      window.performance.clearMeasures();
+
+  checkMemoryUsage: () => {
+    if (typeof window.performance !== 'undefined' && (window.performance as any).memory) {
+      const memory = (window.performance as any).memory;
+      const usedMB = memory.usedJSHeapSize / (1024 * 1024);
+      const totalMB = memory.totalJSHeapSize / (1024 * 1024);
+      const limitMB = memory.jsHeapSizeLimit / (1024 * 1024);
+
+      logger.debug(`Memory: ${usedMB.toFixed(2)}MB / ${totalMB.toFixed(2)}MB (Limit: ${limitMB.toFixed(2)}MB)`);
+
+      if (usedMB / totalMB > 0.9) {
+        logger.warn('Memory usage is approaching limit, clearing voice cache');
+        return 'high';
+      }
     }
+    return 'normal';
   },
 };
 

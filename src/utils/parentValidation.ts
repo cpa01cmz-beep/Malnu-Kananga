@@ -262,12 +262,12 @@ export function validateAndSanitizeMeeting(meeting: Omit<ParentMeeting, 'id' | '
   sanitized?: Omit<ParentMeeting, 'id' | 'childName' | 'teacherName' | 'status'>;
 } {
   const sanitized = sanitizeMeetingInput(meeting);
-  const tempMeeting = {
+  const tempMeeting: Partial<ParentMeeting> = {
     ...sanitized,
     id: 'temp',
     childName: 'temp',
     teacherName: 'temp',
-    status: 'scheduled' as const
+    status: 'scheduled'
   };
 
   const validation = validateParentMeeting(tempMeeting);

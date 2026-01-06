@@ -1,7 +1,5 @@
- 
   
-
-
+ 
 import type {
   SpeechSynthesisConfig,
   SpeechSynthesisError,
@@ -21,8 +19,8 @@ class SpeechSynthesisService {
   private state: SpeechSynthesisState = 'idle';
   private config: SpeechSynthesisConfig;
   private callbacks: SpeechSynthesisEventCallbacks = {};
-  private currentUtterance: SpeechSynthesisUtterance | null = null;
   private voiceCache: Map<string, SpeechSynthesisUtterance> = new Map();
+  private currentUtterance: SpeechSynthesisUtterance | null = null;
   private isSupported: boolean;
   private voices: SpeechSynthesisVoice[] = [];
 
@@ -141,8 +139,8 @@ class SpeechSynthesisService {
 
     utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
       const error: SpeechSynthesisError = {
-        error: this.mapErrorType(event.error),
-        message: event.error || 'Speech synthesis error occurred',
+        error: this.mapErrorType((event as any).error || 'unknown'),
+        message: (event as any).message || 'Speech synthesis error occurred',
       };
 
       logger.error('Speech synthesis error:', error);
@@ -172,7 +170,7 @@ class SpeechSynthesisService {
       'canceled': 'canceled',
       'interrupted': 'interrupted',
       'not-allowed': 'not-allowed',
-      'synthesis-unavailable': 'not-allowed',
+      'unknown': 'unknown',
     };
 
     return errorMap[errorName] || 'unknown';
