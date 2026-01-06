@@ -11,11 +11,11 @@ import NotificationCenter from './NotificationCenter';
 
 const NavLinks = () => (
     <>
-        <a href="#home" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-1 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded">Beranda</a>
-        <a href="#profil" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-1 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded">Profil</a>
-        <a href="#berita" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-1 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded">Berita</a>
-        <a href="#download" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-1 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded">Download</a>
-        <a href="#login-email" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-1 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded">Login Email</a>
+        <a href="#home" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded">Beranda</a>
+        <a href="#profil" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded">Profil</a>
+        <a href="#berita" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded">Berita</a>
+        <a href="#download" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded">Download</a>
+        <a href="#login-email" className="text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded">Login Email</a>
     </>
 );
 
@@ -98,11 +98,11 @@ const Header: React.FC<HeaderProps> = ({
                         </div>
                     </div>
 
-                    <nav className="hidden md:flex items-center gap-8">
+                    <nav className="hidden md:flex items-center gap-1">
                         <NavLinks />
                     </nav>
 
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                         {isLoggedIn && userRole && (
                             <NotificationCenter
                                 userRole={userRole}
@@ -112,14 +112,14 @@ const Header: React.FC<HeaderProps> = ({
 
                         <button
                             onClick={onToggleTheme}
-                            className="p-2.5 rounded-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors duration-200"
+                            className="p-2.5 rounded-full text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
                             aria-label="Ganti Tema"
                         >
                             {theme === 'light' ? <MoonIcon /> : <SunIcon />}
                         </button>
 
-                        {isLoggedIn ? (
-                             <div className="hidden sm:flex items-center gap-2">
+                         {isLoggedIn ? (
+                              <div className="hidden sm:flex items-center gap-2">
                                 {userExtraRole && (
                                     <span className={`text-xs uppercase font-bold px-3 py-1.5 rounded-full ${
                                         userExtraRole === 'staff' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300'
@@ -131,7 +131,7 @@ const Header: React.FC<HeaderProps> = ({
                                 {userRole === 'admin' && (
                                     <button
                                         onClick={onEditClick}
-                                        className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 px-4 py-2.5 rounded-pill font-medium text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors duration-200 shadow-sm"
+                                        className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 px-4 py-2.5 rounded-pill font-medium text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         title="Buka Editor AI"
                                     >
                                         <SparklesIcon />
@@ -141,27 +141,27 @@ const Header: React.FC<HeaderProps> = ({
 
                                 <button
                                     onClick={onTogglePublicView}
-                                    className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 px-4 py-2.5 rounded-pill font-medium text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors duration-200 shadow-sm"
+                                    className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 px-4 py-2.5 rounded-pill font-medium text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-neutral-500"
                                 >
                                     {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                 </button>
 
-                                <button onClick={onLogout} className="bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 px-5 py-2.5 rounded-pill font-medium text-sm hover:bg-red-200 dark:hover:bg-red-800 transition-colors duration-200 shadow-sm">
+                                <button onClick={onLogout} className="bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 px-5 py-2.5 rounded-pill font-medium text-sm hover:bg-red-200 dark:hover:bg-red-800 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500">
                                     Logout
                                 </button>
                             </div>
                         ) : (
                             <div className="hidden sm:flex items-center gap-2">
-                                <button onClick={onChatClick} className="flex items-center gap-2 bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300 px-4 py-2.5 rounded-pill font-medium text-sm hover:bg-primary-200 dark:hover:bg-primary-800 transition-colors duration-200 shadow-sm">
+                                <button onClick={onChatClick} className="flex items-center gap-2 bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300 px-4 py-2.5 rounded-pill font-medium text-sm hover:bg-primary-200 dark:hover:bg-primary-800 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
                                     <ChatIcon />
                                     <span>Tanya AI</span>
                                 </button>
-                                <button onClick={onLoginClick} className="bg-primary-600 text-white px-5 py-2.5 rounded-pill font-medium text-sm hover:bg-primary-700 transition-colors duration-200 shadow-sm hover:shadow-md">
+                                <button onClick={onLoginClick} className="bg-primary-600 text-white px-5 py-2.5 rounded-pill font-medium text-sm hover:bg-primary-700 transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500">
                                     Login
                                 </button>
                             </div>
                         )}
-                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2.5 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors duration-200" aria-label="Buka menu">
+                         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2.5 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Buka menu">
                             {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
                         </button>
                     </div>
@@ -175,14 +175,14 @@ const Header: React.FC<HeaderProps> = ({
                           <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-3">
                              {isLoggedIn ? (
                                  <>
-                                     <button onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }} className="bg-neutral-100 text-neutral-700 w-full px-5 py-3 rounded-pill text-sm font-medium hover:bg-neutral-200 transition-colors duration-200">
-                                         {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
-                                     </button>
-                                     <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-red-100 text-red-700 w-full px-5 py-3 rounded-pill text-sm font-medium hover:bg-red-200 transition-colors duration-200">Logout</button>
-                                 </>
-                             ) : (
-                                 <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-primary-600 text-white w-full px-5 py-3 rounded-pill text-sm font-medium hover:bg-primary-700 transition-colors duration-200">Login</button>
-                             )}
+                                      <button onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }} className="bg-neutral-100 text-neutral-700 w-full px-5 py-3 rounded-pill text-sm font-medium hover:bg-neutral-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500">
+                                          {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
+                                      </button>
+                                      <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-red-100 text-red-700 w-full px-5 py-3 rounded-pill text-sm font-medium hover:bg-red-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500">Logout</button>
+                                  </>
+                              ) : (
+                                  <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-primary-600 text-white w-full px-5 py-3 rounded-pill text-sm font-medium hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">Login</button>
+                              )}
                           </div>
                     </nav>
                 </div>

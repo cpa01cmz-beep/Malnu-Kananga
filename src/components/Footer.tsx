@@ -27,30 +27,30 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                             Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
                         </p>
                         <p className="text-base text-neutral-600 dark:text-neutral-400">
-                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors font-medium">info@ma-malnukananga.sch.id</a>
+                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 font-medium">info@ma-malnukananga.sch.id</a>
                         </p>
                     </div>
 
                     <div>
                          <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Legalitas</h3>
-                         <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
-                            <li><strong className="text-neutral-900 dark:text-white">No. SK. Pendirian:</strong> D/Wi/MA./101/2000</li>
-                            <li><strong className="text-neutral-900 dark:text-white">Tgl. SK. Pendirian:</strong> 20-09-2000</li>
-                            <li className="pt-1"><strong className="text-neutral-900 dark:text-white">No. SK Operasional:</strong> D/Wi/MA./101/2000</li>
-                            <li><strong className="text-neutral-900 dark:text-white">Tgl. SK Operasional:</strong> 20-09-2000</li>
+                          <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
+                             <li><strong className="text-neutral-900 dark:text-white">No. SK. Pendirian:</strong> D/Wi/MA./101/2000</li>
+                             <li><strong className="text-neutral-900 dark:text-white">Tgl. SK. Pendirian:</strong> 20-09-2000</li>
+                             <li className="pt-1"><strong className="text-neutral-900 dark:text-white">No. SK Operasional:</strong> D/Wi/MA./101/2000</li>
+                             <li><strong className="text-neutral-900 dark:text-white">Tgl. SK Operasional:</strong> 20-09-2000</li>
                         </ul>
                     </div>
 
                     <div className="sm:justify-self-end">
                         <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
-                         <ul className="space-y-2 text-base text-neutral-600 dark:text-neutral-400">
+                          <ul className="space-y-2 text-base text-neutral-600 dark:text-neutral-400">
                                <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Pusat Bantuan</button></li>
                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Download</a></li>
                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Kebijakan Privasi</a></li>
                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Karir</a></li>
                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Beasiswa</a></li>
                           </ul>
-                        <div className="flex justify-center sm:justify-start space-x-6 mt-6">
+                        <div className="flex justify-center sm:justify-start space-x-4 mt-6">
                             <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800" aria-label="Facebook">
                                 <span className="sr-only">Facebook</span>
                                 <FacebookIcon />

@@ -76,13 +76,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
           <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Login</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+            className="p-2 rounded-full text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
             aria-label="Tutup modal"
           >
             <CloseIcon />
           </button>
         </div>
-        
+
          <div className="p-6 overflow-y-auto">
             <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-card-lg border border-yellow-200 dark:border-yellow-700/50 focus-within:ring-2 focus-within:ring-yellow-500 focus-within:ring-offset-2 transition-shadow">
                 <h3 className="text-sm font-bold text-yellow-800 dark:text-yellow-200 mb-2 uppercase tracking-wide flex items-center gap-2">
@@ -95,14 +95,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                     Pilih peran untuk login instan:
                 </p>
                 
-                <div className="grid grid-cols-3 gap-2 mb-2">
-                    <button onClick={() => handleSimulatedLogin('student')} className="px-3 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">
+                 <div className="grid grid-cols-3 gap-2 mb-2">
+                    <button onClick={() => handleSimulatedLogin('student')} className="px-3 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500">
                         Siswa
                     </button>
-                    <button onClick={() => handleSimulatedLogin('teacher')} className="px-3 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">
+                    <button onClick={() => handleSimulatedLogin('teacher')} className="px-3 py-2.5 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-lg text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500">
                         Guru
                     </button>
-                    <button onClick={() => handleSimulatedLogin('admin')} className="px-3 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">
+                    <button onClick={() => handleSimulatedLogin('admin')} className="px-3 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 rounded-lg text-sm font-medium hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         Admin
                     </button>
                 </div>
@@ -110,13 +110,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                 <div className="grid grid-cols-2 gap-2">
                     <button
                         onClick={() => handleSimulatedLogin('teacher', 'staff')}
-                        className="px-3 py-2.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+                        className="px-3 py-2.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-medium hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         Guru (Staff)
                     </button>
                     <button
                         onClick={() => handleSimulatedLogin('student', 'osis')}
-                        className="px-3 py-2.5 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 rounded-lg text-xs font-medium hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+                        className="px-3 py-2.5 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 rounded-lg text-xs font-medium hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     >
                         Siswa (OSIS)
                     </button>

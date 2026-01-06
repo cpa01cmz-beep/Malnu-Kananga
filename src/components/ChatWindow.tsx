@@ -246,7 +246,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                       voiceQueue.resume();
                       synthesis.speak('Melanjutkan pembacaan');
                     }}
-                    className="p-1 rounded-full hover:bg-white/20"
+                    className="p-1 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
                     title="Lanjutkan baca"
                     aria-label="Lanjutkan baca"
                   >
@@ -260,7 +260,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                       voiceQueue.pause();
                       synthesis.speak('Pembacaan dijeda');
                     }}
-                    className="p-1 rounded-full hover:bg-white/20"
+                    className="p-1 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
                     title="Jeda baca"
                     aria-label="Jeda baca"
                   >
@@ -273,7 +273,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                   onClick={() => {
                     voiceQueue.skip();
                   }}
-                  className="p-1 rounded-full hover:bg-white/20"
+                  className="p-1 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
                   title="Lewati pesan"
                   aria-label="Lewati pesan"
                 >
@@ -287,7 +287,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                     synthesis.stop();
                     synthesis.speak('Pembacaan dihentikan');
                   }}
-                  className="p-1 rounded-full hover:bg-white/20"
+                  className="p-1 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
                   title="Hentikan baca"
                   aria-label="Hentikan baca"
                 >
@@ -301,7 +301,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
             {synthesis.isSupported && (
               <button
                 onClick={() => setShowVoiceSettings(!showVoiceSettings)}
-                className={`p-2 rounded-pill transition-all flex items-center gap-1 ${showVoiceSettings ? 'bg-white text-primary-700 shadow-md' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
+                className={`p-2 rounded-pill transition-all flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white ${showVoiceSettings ? 'bg-white text-primary-700 shadow-md' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
                 title="Pengaturan Suara"
                 aria-label="Buka pengaturan suara"
               >
@@ -309,16 +309,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               </button>
             )}
 
-            <button 
+            <button
                 onClick={() => setIsThinkingMode(!isThinkingMode)}
-                className={`p-2 rounded-pill transition-all flex items-center gap-1 ${isThinkingMode ? 'bg-white text-primary-700 shadow-md' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
+                className={`p-2 rounded-pill transition-all flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white ${isThinkingMode ? 'bg-white text-primary-700 shadow-md' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
                 title={isThinkingMode ? "Mode Berpikir Dalam: Aktif" : "Aktifkan Mode Berpikir Dalam"}
             >
                 <BrainIcon className="w-5 h-5" />
                 {isThinkingMode && <span className="text-xs font-bold px-1">Thinking</span>}
             </button>
-            
-            <button onClick={closeChat} className="p-1 rounded-pill hover:bg-white/20" aria-label="Tutup obrolan">
+
+            <button onClick={closeChat} className="p-1 rounded-pill hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white" aria-label="Tutup obrolan">
                 <CloseIcon />
             </button>
         </div>
