@@ -1,14 +1,11 @@
-name: on pull
+name: on-push
 on:
   workflow_dispatch:
   pull_request:
-  issues:
-  push:
   
 permissions:
   contents: write
   pull-requests: write
-  actions: read
 
 concurrency:
   group: global
@@ -16,7 +13,7 @@ concurrency:
 
 jobs:
   analyze:
-    name: on pull
+    name: on-push
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
     env:
@@ -62,12 +59,106 @@ jobs:
           git config --global user.name "analyzer"
           git config --global user.email "analyzer@sanaabililhuda.com"
 
+      - name: Branch Management
+        run: |
+          git fetch --all
+          if git branch -r | grep "origin/agent-workspace"; then
+            git checkout agent-workspace
+            git pull origin agent-workspace
+          else
+            git checkout -b agent-workspace
+          fi
+          git merge origin/develop --no-edit || echo "Merge conflict or already up to date"
+
       - name: Install OpenCode
         run: |
           curl -fsSL https://opencode.ai/install | bash
           echo "$HOME/.opencode/bin" >> $GITHUB_PATH
 
-      - name: Merge
+      - name: Check Open Issues
+        id: check_issues
+        run: |
+          count=$(gh issue list --state open --json number --jq 'length')
+          echo "open_issue_count=$count" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: User Story
+        if: steps.check_issues.outputs.open_issue_count == '0'
+        run: |
+          max_retries=2
+          retry_count=0
+
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+
+            if opencode run "$(cat .github/prompt/user-story.md)" \
+              --model opencode/glm-4.7-free \
+              --share false; then
+              echo "OpenCode execution succeeded"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              echo "OpenCode execution failed, retrying in 30 seconds..."
+              sleep 30
+              if [ $retry_count -eq $max_retries ]; then
+                echo "All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done
+
+      - name: Maintenance
+        run: |
+          max_retries=2
+          retry_count=0
+
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+
+            if opencode run "$(cat .github/prompt/maintenance.md)" \
+              --model opencode/glm-4.7-free \
+              --share false; then
+              echo "OpenCode execution succeeded"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              echo "OpenCode execution failed, retrying in 30 seconds..."
+              sleep 30
+              if [ $retry_count -eq $max_retries ]; then
+                echo "All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done
+
+
+      - name: Deployment
+        run: |
+          max_retries=2
+          retry_count=0
+
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+
+            if opencode run "$(cat .github/prompt/deployment.md)" \
+              --model opencode/glm-4.7-free \
+              --share false; then
+              echo "OpenCode execution succeeded"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              echo "OpenCode execution failed, retrying in 30 seconds..."
+              sleep 30
+              if [ $retry_count -eq $max_retries ]; then
+                echo "All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done
+
+
+      - name: on-push
         run: |
           opencode run "$(cat <<'PROMPT'
           YOU ARE AN AUTONOMOUS SOFTWARE ENGINEERING AGENT.
@@ -428,10 +519,3 @@ jobs:
           )" \
             --model iflowcn/glm-4.6 \
             --share false \
-
-      - name: Fallback on Failure
-        uses: ./.github/actions/failure-notification
-        if: failure()
-        with:
-          workflow_name: 'oc analyzer'
-          run_id: ${{ github.run_id }}

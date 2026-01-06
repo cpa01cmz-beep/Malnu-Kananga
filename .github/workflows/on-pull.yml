@@ -1,0 +1,173 @@
+name: on-pull
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+concurrency:
+  group: oc-agent
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    name: on-pull
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+
+    steps:
+      - name: Wait in Queue
+        uses: softprops/turnstyle@v2
+        with:
+          poll-interval-seconds: 30
+          same-branch-only: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        continue-on-error: true
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "sulhicmz"
+          git config --global user.email "22936450+sulhicmz@users.noreply.github.com"
+
+      - name: Branch Management
+        run: |
+          git fetch --all
+          if git branch -r | grep "origin/agent-workspace"; then
+            git checkout agent-workspace
+            git pull origin agent-workspace
+          else
+            git checkout -b agent-workspace
+          fi
+          git merge origin/develop --no-edit || echo "Merge conflict or already up to date"
+
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm ci
+
+      - name: Lint
+        id: lint
+        continue-on-error: true
+        run: |
+          npm run lint --if-present 2>&1 | tee lint.log
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+
+      - name: Test
+        id: test
+        continue-on-error: true
+        run: |
+          npm run test:run --if-present 2>&1 | tee test.log
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+
+      - name: Build
+        id: build
+        continue-on-error: true
+        run: |
+          npm run build --if-present 2>&1 | tee build.log
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+
+      - name: Prepare CI Context
+        if: steps.lint.outcome == 'failure' || steps.test.outcome == 'failure' || steps.build.outcome == 'failure'
+        run: |
+          echo "### LINT LOG (last 200 lines)" > ci-context.txt
+          tail -n 200 lint.log >> ci-context.txt || echo "no lint log" >> ci-context.txt
+
+          echo "\n### TEST LOG (last 200 lines)" >> ci-context.txt
+          tail -n 200 test.log >> ci-context.txt || echo "no test log" >> ci-context.txt
+
+          echo "\n### BUILD LOG (last 200 lines)" >> ci-context.txt
+          tail -n 200 build.log >> ci-context.txt || echo "no build log" >> ci-context.txt
+
+      - name: Install OpenCode CLI
+        if: steps.lint.outcome == 'failure' || steps.test.outcome == 'failure' || steps.build.outcome == 'failure'
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+
+      - name: Auto-fix CI Failures
+        if: steps.lint.outcome == 'failure' || steps.test.outcome == 'failure' || steps.build.outcome == 'failure'
+        env:
+          LINT_STATUS: ${{ steps.lint.outcome }}
+          TEST_STATUS: ${{ steps.test.outcome }}
+          BUILD_STATUS: ${{ steps.build.outcome }}
+        run: |
+          opencode run "$(cat <<'PROMPT'
+          You are a **Final Quality Gate Agent**.
+          CI has failures on the `agent-workspace` branch. Your mission is to fix them so the codebase is 100% compliant and ready for merge.
+
+          **CONTEXT:**
+          - Read `doc/project/blueprint.md` to understand the tech stack.
+          - Read `AGENTS.md` for coding guidelines.
+          - Check package.json for available scripts.
+
+          ====================
+          CI EXECUTION RESULT
+          ====================
+          Lint outcome : ${{ steps.lint.outcome }}
+          Test outcome : ${{ steps.test.outcome }}
+          Build outcome: ${{ steps.build.outcome }}
+
+          Exit codes:
+          - Lint  : ${{ steps.lint.outputs.exit_code }}
+          - Test  : ${{ steps.test.outputs.exit_code }}
+          - Build : ${{ steps.build.outputs.exit_code }}
+
+          ====================
+          RAW ERROR CONTEXT
+          ====================
+          Below is the REAL CI output captured from the runner:
+
+          $(cat ci-context.txt)
+
+          Steps:
+          1. **Synchronize**: `git fetch --all && git checkout agent-workspace && git merge origin/develop --no-edit`.
+          2. **Fix**: Address every failure (lint errors, test failures, build breaks).
+          3. **Verify**: Run lint, test, and build commands from package.json.
+          4. **Final Gate**: If ANY check still fails, keep iterating until all pass.
+          5. **Commit & Push**: Commit with `fix(ci): auto-resolve all check failures` and push to `agent-workspace`.
+          6. **Merge**: merge or set to automerge if all success and check passed.
+
+          Constraints:
+          - DO NOT compromise on quality. Fix the root cause.
+          - Do not bypass tests.
+          - Ensure the PR to `develop` is updated and merged to keep the chain alive.
+          PROMPT
+          )" \
+            --model opencode/minimax-m2.1-free \
+            --share false \
+
+      - name: Auto-merge and Finalize
+        if: steps.lint.outcome == 'success' && steps.test.outcome == 'success' && steps.build.outcome == 'success'
+        run: |
+          echo "✅ All checks passed on agent-workspace."
+          # Find the PR from agent-workspace to develop
+          PR_URL=$(gh pr list --head agent-workspace --base develop --json url --jq '.[0].url')
+
+          if [ -n "$PR_URL" ]; then
+            echo "Merging PR: $PR_URL"
+            gh pr merge "$PR_URL" --merge --admin || gh pr merge "$PR_URL" --auto --merge
+            echo "🚀 PR merged/auto-merge enabled. This will trigger the next Analyzer run on develop."
+          else
+            echo "⚠️ No open PR found for agent-workspace to develop. Check if changes were actually pushed."
+          fi
