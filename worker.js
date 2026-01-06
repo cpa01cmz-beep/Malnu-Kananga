@@ -374,6 +374,61 @@ async function initDatabase(env) {
       refresh_token TEXT UNIQUE,
       refresh_token_expires_at TIMESTAMP
     );
+
+    CREATE TABLE IF NOT EXISTS event_registrations (
+      id TEXT PRIMARY KEY,
+      event_id TEXT NOT NULL,
+      student_id TEXT NOT NULL,
+      student_name TEXT NOT NULL,
+      student_class TEXT NOT NULL,
+      registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      attendance_status TEXT DEFAULT 'registered' CHECK(attendance_status IN ('registered', 'attended', 'absent')),
+      notes TEXT,
+      FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS event_budgets (
+      id TEXT PRIMARY KEY,
+      event_id TEXT NOT NULL,
+      category TEXT NOT NULL,
+      item_name TEXT NOT NULL,
+      estimated_cost REAL NOT NULL,
+      actual_cost REAL,
+      quantity INTEGER DEFAULT 1,
+      status TEXT DEFAULT 'planned' CHECK(status IN ('planned', 'approved', 'purchased', 'completed')),
+      approved_by TEXT,
+      approved_at TIMESTAMP,
+      notes TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE,
+      FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS event_photos (
+      id TEXT PRIMARY KEY,
+      event_id TEXT NOT NULL,
+      photo_url TEXT NOT NULL,
+      caption TEXT,
+      uploaded_by TEXT NOT NULL,
+      uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE,
+      FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS event_feedback (
+      id TEXT PRIMARY KEY,
+      event_id TEXT NOT NULL,
+      student_id TEXT NOT NULL,
+      student_name TEXT NOT NULL,
+      student_class TEXT NOT NULL,
+      overall_rating INTEGER CHECK(overall_rating >= 1 AND overall_rating <= 5),
+      organization_rating INTEGER CHECK(organization_rating >= 1 AND organization_rating <= 5),
+      content_rating INTEGER CHECK(content_rating >= 1 AND content_rating <= 5),
+      comments TEXT,
+      would_recommend BOOLEAN,
+      submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE
+    );
     
     CREATE TABLE IF NOT EXISTS audit_log (
       id TEXT PRIMARY KEY,
@@ -1263,6 +1318,10 @@ export default {
       '/api/ppdb_registrants': (r, e, c) => handleCRUD(r, e, c, 'ppdb_registrants'),
       '/api/inventory': (r, e, c) => handleCRUD(r, e, c, 'inventory'),
       '/api/school_events': (r, e, c) => handleCRUD(r, e, c, 'school_events'),
+      '/api/event_registrations': (r, e, c) => handleCRUD(r, e, c, 'event_registrations'),
+      '/api/event_budgets': (r, e, c) => handleCRUD(r, e, c, 'event_budgets'),
+      '/api/event_photos': (r, e, c) => handleCRUD(r, e, c, 'event_photos'),
+      '/api/event_feedback': (r, e, c) => handleCRUD(r, e, c, 'event_feedback'),
       '/api/students': (r, e, c) => handleCRUD(r, e, c, 'students'),
       '/api/teachers': (r, e, c) => handleCRUD(r, e, c, 'teachers'),
       '/api/subjects': (r, e, c) => handleCRUD(r, e, c, 'subjects'),

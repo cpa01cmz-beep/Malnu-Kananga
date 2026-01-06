@@ -234,6 +234,58 @@ export interface SchoolEvent {
   location: string;
   description: string;
   status: 'Upcoming' | 'Ongoing' | 'Completed';
+  organizer?: string;
+  createdBy?: string;
+  createdAt?: string;
+}
+
+export interface EventRegistration {
+  id: string;
+  eventId: string;
+  studentId: string;
+  studentName: string;
+  studentClass: string;
+  registrationDate: string;
+  attendanceStatus: 'registered' | 'attended' | 'absent';
+  notes?: string;
+}
+
+export interface EventBudget {
+  id: string;
+  eventId: string;
+  category: 'Food' | 'Decoration' | 'Equipment' | 'Venue' | 'Marketing' | 'Other';
+  itemName: string;
+  estimatedCost: number;
+  actualCost?: number;
+  quantity: number;
+  status: 'planned' | 'approved' | 'purchased' | 'completed';
+  approvedBy?: string;
+  approvedAt?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface EventPhoto {
+  id: string;
+  eventId: string;
+  photoUrl: string;
+  caption?: string;
+  uploadedBy: string;
+  uploadedAt: string;
+}
+
+export interface EventFeedback {
+  id: string;
+  eventId: string;
+  studentId: string;
+  studentName: string;
+  studentClass: string;
+  overallRating: number;
+  organizationRating: number;
+  contentRating: number;
+  comments?: string;
+  wouldRecommend: boolean;
+  submittedAt: string;
 }
 
 export interface Subject {

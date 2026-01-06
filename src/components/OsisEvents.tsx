@@ -3,21 +3,41 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { PlusIcon } from './icons/PlusIcon';
 import { TrashIcon } from './icons/TrashIcon';
-import { eventsAPI } from '../services/apiService';
-import type { SchoolEvent } from '../types';
+import { PhotoIcon } from './icons/PhotoIcon';
+import { UserGroupIcon, CurrencyDollarIcon, MegaphoneIcon, StarIcon } from './icons/EventIcons';
+import { eventsAPI, eventRegistrationsAPI, eventBudgetsAPI, eventPhotosAPI, eventFeedbackAPI, fileStorageAPI } from '../services/apiService';
+import type { SchoolEvent, EventRegistration, EventBudget, EventPhoto, EventFeedback } from '../types';
 
 interface OsisEventsProps {
   onBack: () => void;
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
+type TabType = 'events' | 'registrations' | 'budget' | 'photos' | 'announcements' | 'feedback';
+
 const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
   const [events, setEvents] = useState<SchoolEvent[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<SchoolEvent | null>(null);
+  const [activeTab, setActiveTab] = useState<TabType>('events');
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const [newEvent, setNewEvent] = useState<Partial<SchoolEvent>>({
-      eventName: '', date: '', location: '', description: '', status: 'Upcoming'
+    eventName: '', date: '', location: '', description: '', status: 'Upcoming'
   });
+
+  const [registrations, setRegistrations] = useState<EventRegistration[]>([]);
+  const [newRegistration, setNewRegistration] = useState<Partial<EventRegistration>>({});
+
+  const [budgets, setBudgets] = useState<EventBudget[]>([]);
+  const [newBudget, setNewBudget] = useState<Partial<EventBudget>>({});
+
+  const [photos, setPhotos] = useState<EventPhoto[]>([]);
+  const [newPhoto, setNewPhoto] = useState<Partial<EventPhoto>>({});
+
+  const [feedback, setFeedback] = useState<EventFeedback[]>([]);
+  const [newFeedback, setNewFeedback] = useState<Partial<EventFeedback>>({});
 
   const loadEvents = useCallback(async () => {
     setIsLoading(true);
@@ -37,128 +57,665 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     loadEvents();
   }, [loadEvents]);
 
-  const handleAddEvent = async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!newEvent.eventName) return;
+  useEffect(() => {
+    if (selectedEvent) {
+      loadEventData();
+    }
+  }, [selectedEvent, activeTab, loadEventData]);
 
-      try {
-        const response = await eventsAPI.create({
-          eventName: newEvent.eventName!,
-          date: newEvent.date!,
-          location: newEvent.location!,
-          description: newEvent.description!,
-          status: (newEvent.status as 'Upcoming' | 'Ongoing' | 'Completed')
-        });
+  const loadEventData = useCallback(async () => {
+    if (!selectedEvent) return;
 
-        if (response.success && response.data) {
-          setEvents([...events, response.data]);
-          setNewEvent({ eventName: '', date: '', location: '', description: '', status: 'Upcoming' });
-          onShowToast('Kegiatan berhasil dijadwalkan.', 'success');
-        } else {
-          throw new Error(response.error || 'Gagal menambahkan kegiatan');
-        }
-      } catch {
-        onShowToast('Gagal menambahkan kegiatan. Silakan coba lagi.', 'error');
+    try {
+      let response;
+      switch (activeTab) {
+        case 'registrations':
+          response = await eventRegistrationsAPI.getByEventId(selectedEvent.id);
+          if (response.success && response.data) {
+            setRegistrations(response.data);
+          }
+          break;
+        case 'budget':
+          response = await eventBudgetsAPI.getByEventId(selectedEvent.id);
+          if (response.success && response.data) {
+            setBudgets(response.data);
+          }
+          break;
+        case 'photos':
+          response = await eventPhotosAPI.getByEventId(selectedEvent.id);
+          if (response.success && response.data) {
+            setPhotos(response.data);
+          }
+          break;
+        case 'feedback':
+          response = await eventFeedbackAPI.getByEventId(selectedEvent.id);
+          if (response.success && response.data) {
+            setFeedback(response.data);
+          }
+          break;
+        default:
+          break;
       }
+    } catch {
+      onShowToast('Gagal memuat data kegiatan', 'error');
+    }
+  }, [selectedEvent, activeTab, onShowToast]);
+
+  const handleAddEvent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEvent.eventName) return;
+
+    try {
+      const response = await eventsAPI.create({
+        eventName: newEvent.eventName!,
+        date: newEvent.date!,
+        location: newEvent.location!,
+        description: newEvent.description!,
+        status: (newEvent.status as 'Upcoming' | 'Ongoing' | 'Completed')
+      });
+
+      if (response.success && response.data) {
+        setEvents([...events, response.data]);
+        setNewEvent({ eventName: '', date: '', location: '', description: '', status: 'Upcoming' });
+        onShowToast('Kegiatan berhasil dijadwalkan.', 'success');
+      } else {
+        throw new Error(response.error || 'Gagal menambahkan kegiatan');
+      }
+    } catch {
+      onShowToast('Gagal menambahkan kegiatan. Silakan coba lagi.', 'error');
+    }
   };
 
   const handleDelete = async (id: string) => {
-      if(!window.confirm('Batalkan kegiatan ini?')) return;
+    if (!window.confirm('Batalkan kegiatan ini?')) return;
 
-      try {
-        const response = await eventsAPI.delete(id);
-        if (response.success) {
-          setEvents(events.filter(e => e.id !== id));
-          onShowToast('Kegiatan dihapus.', 'info');
-        } else {
-          throw new Error(response.error || 'Gagal menghapus kegiatan');
+    try {
+      const response = await eventsAPI.delete(id);
+      if (response.success) {
+        setEvents(events.filter(e => e.id !== id));
+        if (selectedEvent?.id === id) {
+          setSelectedEvent(null);
         }
-      } catch {
-        onShowToast('Gagal menghapus kegiatan. Silakan coba lagi.', 'error');
+        onShowToast('Kegiatan dihapus.', 'info');
+      } else {
+        throw new Error(response.error || 'Gagal menghapus kegiatan');
       }
+    } catch {
+      onShowToast('Gagal menghapus kegiatan. Silakan coba lagi.', 'error');
+    }
+  };
+
+  const handleAddRegistration = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedEvent || !newRegistration.studentId) return;
+
+    try {
+      const response = await eventRegistrationsAPI.create({
+        eventId: selectedEvent.id,
+        studentId: newRegistration.studentId,
+        studentName: newRegistration.studentName || '',
+        studentClass: newRegistration.studentClass || '',
+        attendanceStatus: 'registered'
+      });
+
+      if (response.success && response.data) {
+        setRegistrations([...registrations, response.data]);
+        setNewRegistration({});
+        onShowToast('Pendaftaran berhasil.', 'success');
+      }
+    } catch {
+      onShowToast('Gagal mendaftarkan siswa.', 'error');
+    }
+  };
+
+  const handleAddBudget = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedEvent || !newBudget.itemName) return;
+
+    try {
+      const response = await eventBudgetsAPI.create({
+        eventId: selectedEvent.id,
+        category: newBudget.category || 'Other',
+        itemName: newBudget.itemName,
+        estimatedCost: newBudget.estimatedCost || 0,
+        quantity: newBudget.quantity || 1,
+        status: 'planned'
+      });
+
+      if (response.success && response.data) {
+        setBudgets([...budgets, response.data]);
+        setNewBudget({});
+        onShowToast('Anggaran ditambahkan.', 'success');
+      }
+    } catch {
+      onShowToast('Gagal menambahkan anggaran.', 'error');
+    }
+  };
+
+  const handleUploadPhoto = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedEvent || !selectedFile) return;
+
+    try {
+      const uploadResponse = await fileStorageAPI.upload(selectedFile, setUploadProgress);
+      if (uploadResponse.success && uploadResponse.data?.url) {
+        const response = await eventPhotosAPI.create({
+          eventId: selectedEvent.id,
+          photoUrl: uploadResponse.data.url,
+          caption: newPhoto.caption
+        });
+
+        if (response.success && response.data) {
+          setPhotos([...photos, response.data]);
+          setNewPhoto({});
+          setSelectedFile(null);
+          setUploadProgress(0);
+          onShowToast('Foto berhasil diunggah.', 'success');
+        }
+      }
+    } catch {
+      onShowToast('Gagal mengunggah foto.', 'error');
+    }
+  };
+
+  const handleAddFeedback = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedEvent || !newFeedback.studentId) return;
+
+    try {
+      const response = await eventFeedbackAPI.create({
+        eventId: selectedEvent.id,
+        studentId: newFeedback.studentId,
+        studentName: newFeedback.studentName || '',
+        studentClass: newFeedback.studentClass || '',
+        overallRating: newFeedback.overallRating || 5,
+        organizationRating: newFeedback.organizationRating || 5,
+        contentRating: newFeedback.contentRating || 5,
+        comments: newFeedback.comments,
+        wouldRecommend: newFeedback.wouldRecommend || false
+      });
+
+      if (response.success && response.data) {
+        setFeedback([...feedback, response.data]);
+        setNewFeedback({});
+        onShowToast('Umpan balik berhasil dikirim.', 'success');
+      }
+    } catch {
+      onShowToast('Gagal mengirim umpan balik.', 'error');
+    }
+  };
+
+  const handleBudgetApproval = async (budgetId: string) => {
+    try {
+      const response = await eventBudgetsAPI.approve(budgetId);
+      if (response.success) {
+        setBudgets(budgets.map(b => b.id === budgetId ? { ...b, status: 'approved' as const } : b));
+        onShowToast('Anggaran disetujui.', 'success');
+      }
+    } catch {
+      onShowToast('Gagal menyetujui anggaran.', 'error');
+    }
+  };
+
+  const renderTabContent = () => {
+    if (!selectedEvent) {
+      return (
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
+          <p className="text-yellow-800 dark:text-yellow-200">Pilih kegiatan untuk melihat detail dan fitur pengelolaan.</p>
+        </div>
+      );
+    }
+
+    switch (activeTab) {
+      case 'registrations':
+        return (
+          <div className="space-y-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-bold mb-4">Daftar Pendaftar</h3>
+              <form onSubmit={handleAddRegistration} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <input
+                  type="text"
+                  placeholder="NISN Siswa"
+                  value={newRegistration.studentId || ''}
+                  onChange={e => setNewRegistration({ ...newRegistration, studentId: e.target.value })}
+                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Nama Siswa"
+                  value={newRegistration.studentName || ''}
+                  onChange={e => setNewRegistration({ ...newRegistration, studentName: e.target.value })}
+                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Kelas"
+                  value={newRegistration.studentClass || ''}
+                  onChange={e => setNewRegistration({ ...newRegistration, studentClass: e.target.value })}
+                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  required
+                />
+                <button type="submit" className="flex items-center justify-center gap-2 py-2 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700">
+                  <PlusIcon className="w-4 h-4" /> Daftar
+                </button>
+              </form>
+              <div className="space-y-2">
+                {registrations.map(reg => (
+                  <div key={reg.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div>
+                      <p className="font-semibold">{reg.studentName}</p>
+                      <p className="text-sm text-gray-500">{reg.studentClass} • {reg.registrationDate}</p>
+                    </div>
+                    <select
+                      value={reg.attendanceStatus}
+                      onChange={async (e) => {
+                        const status = e.target.value as 'registered' | 'attended' | 'absent';
+                        await eventRegistrationsAPI.updateAttendance(reg.id, status);
+                        setRegistrations(registrations.map(r => r.id === reg.id ? { ...r, attendanceStatus: status } : r));
+                      }}
+                      className="px-2 py-1 border rounded text-sm"
+                    >
+                      <option value="registered">Terdaftar</option>
+                      <option value="attended">Hadir</option>
+                      <option value="absent">Tidak Hadir</option>
+                    </select>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'budget':
+        return (
+          <div className="space-y-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-bold mb-4">Anggaran Kegiatan</h3>
+              <form onSubmit={handleAddBudget} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <select
+                  value={newBudget.category || 'Other'}
+                  onChange={e => setNewBudget({ ...newBudget, category: e.target.value as EventBudget['category'] })}
+                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  required
+                >
+                  <option value="Food">Makanan & Minuman</option>
+                  <option value="Decoration">Dekorasi</option>
+                  <option value="Equipment">Perlengkapan</option>
+                  <option value="Venue">Tempat</option>
+                  <option value="Marketing">Pemasaran</option>
+                  <option value="Other">Lainnya</option>
+                </select>
+                <input
+                  type="text"
+                  placeholder="Nama Item"
+                  value={newBudget.itemName || ''}
+                  onChange={e => setNewBudget({ ...newBudget, itemName: e.target.value })}
+                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  required
+                />
+                <input
+                  type="number"
+                  placeholder="Estimasi Biaya"
+                  value={newBudget.estimatedCost || ''}
+                  onChange={e => setNewBudget({ ...newBudget, estimatedCost: parseFloat(e.target.value) })}
+                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  required
+                />
+                <input
+                  type="number"
+                  placeholder="Jumlah"
+                  value={newBudget.quantity || ''}
+                  onChange={e => setNewBudget({ ...newBudget, quantity: parseInt(e.target.value) })}
+                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                />
+                <button type="submit" className="md:col-span-2 flex items-center justify-center gap-2 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700">
+                  <PlusIcon className="w-4 h-4" /> Tambah Anggaran
+                </button>
+              </form>
+              <div className="space-y-2">
+                {budgets.map(budget => (
+                  <div key={budget.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div>
+                      <p className="font-semibold">{budget.itemName}</p>
+                      <p className="text-sm text-gray-500">{budget.category} • {budget.quantity}x</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="font-semibold text-green-600">Rp {budget.estimatedCost.toLocaleString()}</span>
+                      {budget.status === 'planned' && (
+                        <button
+                          onClick={() => handleBudgetApproval(budget.id)}
+                          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                        >
+                          Setujui
+                        </button>
+                      )}
+                      <span className={`px-2 py-1 text-xs rounded ${
+                        budget.status === 'approved' ? 'bg-green-100 text-green-700' :
+                        budget.status === 'purchased' ? 'bg-blue-100 text-blue-700' :
+                        budget.status === 'completed' ? 'bg-gray-100 text-gray-700' :
+                        'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {budget.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'photos':
+        return (
+          <div className="space-y-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-bold mb-4">Galeri Foto</h3>
+              <form onSubmit={handleUploadPhoto} className="mb-4">
+                <div className="flex gap-4 mb-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={e => setSelectedFile(e.target.files?.[0] || null)}
+                    className="flex-1 px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                    required
+                  />
+                  <button type="submit" className="px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700">
+                    Unggah
+                  </button>
+                </div>
+                {uploadProgress > 0 && uploadProgress < 100 && (
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-purple-600 h-2 rounded-full transition-all" style={{ width: `${uploadProgress}%` }}></div>
+                  </div>
+                )}
+                <input
+                  type="text"
+                  placeholder="Keterangan foto"
+                  value={newPhoto.caption || ''}
+                  onChange={e => setNewPhoto({ ...newPhoto, caption: e.target.value })}
+                  className="w-full mt-2 px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                />
+              </form>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {photos.map(photo => (
+                  <div key={photo.id} className="relative group">
+                    <img
+                      src={photo.photoUrl}
+                      alt={photo.caption}
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
+                    {photo.caption && (
+                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{photo.caption}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'feedback':
+        return (
+          <div className="space-y-4">
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-bold mb-4">Umpan Balik Kegiatan</h3>
+              <form onSubmit={handleAddFeedback} className="space-y-4 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder="NISN Siswa"
+                    value={newFeedback.studentId || ''}
+                    onChange={e => setNewFeedback({ ...newFeedback, studentId: e.target.value })}
+                    className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Nama Siswa"
+                    value={newFeedback.studentName || ''}
+                    onChange={e => setNewFeedback({ ...newFeedback, studentName: e.target.value })}
+                    className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Rating Keseluruhan</label>
+                    <select
+                      value={newFeedback.overallRating || 5}
+                      onChange={e => setNewFeedback({ ...newFeedback, overallRating: parseInt(e.target.value) })}
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                      required
+                    >
+                      {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Rating Organisasi</label>
+                    <select
+                      value={newFeedback.organizationRating || 5}
+                      onChange={e => setNewFeedback({ ...newFeedback, organizationRating: parseInt(e.target.value) })}
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                      required
+                    >
+                      {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Rating Konten</label>
+                    <select
+                      value={newFeedback.contentRating || 5}
+                      onChange={e => setNewFeedback({ ...newFeedback, contentRating: parseInt(e.target.value) })}
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                      required
+                    >
+                      {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <textarea
+                  rows={3}
+                  placeholder="Komentar atau saran..."
+                  value={newFeedback.comments || ''}
+                  onChange={e => setNewFeedback({ ...newFeedback, comments: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={newFeedback.wouldRecommend || false}
+                    onChange={e => setNewFeedback({ ...newFeedback, wouldRecommend: e.target.checked })}
+                    className="w-4 h-4 text-green-600"
+                  />
+                  <span className="text-sm font-medium">Saya merekomendasikan kegiatan ini</span>
+                </label>
+                <button type="submit" className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">
+                  Kirim Umpan Balik
+                </button>
+              </form>
+              <div className="space-y-3">
+                {feedback.map(fb => (
+                  <div key={fb.id} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="font-semibold">{fb.studentName} ({fb.studentClass})</p>
+                      <div className="flex gap-1">
+                        <span title="Rating Keseluruhan">⭐ {fb.overallRating}</span>
+                        <span title="Rating Organisasi">🏆 {fb.organizationRating}</span>
+                        <span title="Rating Konten">📝 {fb.contentRating}</span>
+                      </div>
+                    </div>
+                    {fb.comments && <p className="text-sm text-gray-600 dark:text-gray-300 italic">"{fb.comments}"</p>}
+                    {fb.wouldRecommend && <p className="text-xs text-green-600 font-semibold">✓ Merekomendasikan</p>}
+                    <p className="text-xs text-gray-500 mt-1">{fb.submittedAt}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'announcements':
+        return (
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-3 mb-4">
+              <MegaphoneIcon className="w-6 h-6 text-orange-600" />
+              <div>
+                <h3 className="text-lg font-bold">Buat Pengumuman Kegiatan</h3>
+                <p className="text-sm text-gray-500">Buat pengumuman untuk kegiatan "{selectedEvent.eventName}"</p>
+              </div>
+            </div>
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                Pengumuman kegiatan akan dikirim ke semua siswa melalui sistem notifikasi terpusat.
+              </p>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
     <div className="animate-fade-in-up">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-            <div>
-                <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
-                    ← Kembali ke Portal
-                </button>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Kegiatan OSIS</h2>
-                <p className="text-gray-500 dark:text-gray-400">Rencanakan dan kelola event sekolah.</p>
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+        <div>
+          <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+            ← Kembali ke Portal
+          </button>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Kegiatan OSIS</h2>
+          <p className="text-gray-500 dark:text-gray-400">Kelola dan pantau kegiatan sekolah dengan lengkap.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Buat Kegiatan Baru</h3>
+            <form onSubmit={handleAddEvent} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Kegiatan</label>
+                <input required type="text" value={newEvent.eventName} onChange={e => setNewEvent({...newEvent, eventName: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Pelaksanaan</label>
+                <input required type="date" value={newEvent.date} onChange={e => setNewEvent({...newEvent, date: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lokasi</label>
+                <input required type="text" value={newEvent.location} onChange={e => setNewEvent({...newEvent, location: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Singkat</label>
+                <textarea required rows={3} value={newEvent.description} onChange={e => setNewEvent({...newEvent, description: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
+              </div>
+              <button type="submit" className="w-full flex items-center justify-center gap-2 py-2.5 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-colors">
+                <PlusIcon className="w-5 h-5" /> Simpan Kegiatan
+              </button>
+            </form>
+          </div>
+
+          {selectedEvent && (
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+              <h4 className="font-bold text-gray-900 dark:text-white mb-3">Navigasi Fitur</h4>
+              <div className="space-y-2">
+                {[
+                  { id: 'registrations' as TabType, label: 'Pendaftaran', icon: <UserGroupIcon className="w-4 h-4" /> },
+                  { id: 'budget' as TabType, label: 'Anggaran', icon: <CurrencyDollarIcon className="w-4 h-4" /> },
+                  { id: 'photos' as TabType, label: 'Galeri Foto', icon: <PhotoIcon className="w-4 h-4" /> },
+                  { id: 'announcements' as TabType, label: 'Pengumuman', icon: <MegaphoneIcon className="w-4 h-4" /> },
+                  { id: 'feedback' as TabType, label: 'Umpan Balik', icon: <StarIcon className="w-4 h-4" /> },
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                      activeTab === tab.id
+                        ? 'bg-orange-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    {tab.icon}
+                    <span className="text-sm font-medium">{tab.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Form */}
-            <div className="lg:col-span-1">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Buat Kegiatan Baru</h3>
-                    <form onSubmit={handleAddEvent} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Kegiatan</label>
-                            <input required type="text" value={newEvent.eventName} onChange={e => setNewEvent({...newEvent, eventName: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Pelaksanaan</label>
-                            <input required type="date" value={newEvent.date} onChange={e => setNewEvent({...newEvent, date: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lokasi</label>
-                            <input required type="text" value={newEvent.location} onChange={e => setNewEvent({...newEvent, location: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Singkat</label>
-                            <textarea required rows={3} value={newEvent.description} onChange={e => setNewEvent({...newEvent, description: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
-                        </div>
-                        <button type="submit" className="w-full flex items-center justify-center gap-2 py-2.5 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-colors">
-                            <PlusIcon className="w-5 h-5" /> Simpan Kegiatan
-                        </button>
-                    </form>
+        <div className="lg:col-span-2 space-y-4">
+          <div className="space-y-4">
+            {isLoading ? (
+              <p className="text-center text-gray-500 mt-8">Memuat kegiatan...</p>
+            ) : events.length === 0 ? (
+              <p className="text-center text-gray-500 mt-8">Belum ada kegiatan.</p>
+            ) : (
+              events.map(event => (
+                <div
+                  key={event.id}
+                  onClick={() => setSelectedEvent(event)}
+                  className={`cursor-pointer bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border ${
+                    selectedEvent?.id === event.id
+                      ? 'border-orange-500 ring-2 ring-orange-200'
+                      : 'border-gray-100 dark:border-gray-700 hover:border-orange-300'
+                  } flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-2xl text-orange-600 dark:text-orange-400">
+                      <CalendarDaysIcon className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-gray-900 dark:text-white">{event.eventName}</h4>
+                      <div className="flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        <span>📅 {event.date}</span>
+                        <span>📍 {event.location}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{event.description}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 self-end md:self-center">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      event.status === 'Upcoming' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
+                      event.status === 'Ongoing' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+                      'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                    }`}>
+                      {event.status}
+                    </span>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(event.id); }}
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
+                    >
+                      <TrashIcon />
+                    </button>
+                  </div>
                 </div>
-            </div>
+              ))
+            )}
+          </div>
 
-            {/* List */}
-            <div className="lg:col-span-2 space-y-4">
-                {isLoading ? (
-                    <p className="text-center text-gray-500 mt-8">Memuat kegiatan...</p>
-                ) : events.length === 0 ? (
-                    <p className="text-center text-gray-500 mt-8">Belum ada kegiatan.</p>
-                ) : (
-                    events.map(event => (
-                        <div key={event.id} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:shadow-md transition-shadow">
-                            <div className="flex items-start gap-4">
-                                <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-2xl text-orange-600 dark:text-orange-400">
-                                    <CalendarDaysIcon className="w-8 h-8" />
-                                </div>
-                                <div>
-                                    <h4 className="text-lg font-bold text-gray-900 dark:text-white">{event.eventName}</h4>
-                                    <div className="flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                        <span>📅 {event.date}</span>
-                                        <span>📍 {event.location}</span>
-                                    </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{event.description}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3 self-end md:self-center">
-                                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                    event.status === 'Upcoming' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
-                                    event.status === 'Ongoing' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                                    'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
-                                }`}>
-                                    {event.status}
-                                </span>
-                                <button onClick={() => handleDelete(event.id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors">
-                                    <TrashIcon />
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                )}
+          {selectedEvent && (
+            <div className="bg-gradient-to-r from-orange-50 to-green-50 dark:from-orange-900/20 dark:to-green-900/20 border border-orange-200 dark:border-orange-800 rounded-2xl p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">{selectedEvent.eventName}</h3>
+                  <p className="text-sm text-gray-500">Kelola fitur kegiatan ini</p>
+                </div>
+                <button
+                  onClick={() => setSelectedEvent(null)}
+                  className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
+                  Tutup
+                </button>
+              </div>
+              {renderTabContent()}
             </div>
+          )}
         </div>
+      </div>
     </div>
   );
 };

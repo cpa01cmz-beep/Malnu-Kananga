@@ -207,6 +207,84 @@ CREATE TABLE IF NOT EXISTS school_events (
 CREATE INDEX IF NOT EXISTS idx_events_date ON school_events(date);
 
 -- ============================================
+-- 11.1 EVENT_REGISTRATIONS TABLE (Pendaftaran Kegiatan)
+-- ============================================
+CREATE TABLE IF NOT EXISTS event_registrations (
+  id TEXT PRIMARY KEY,
+  event_id TEXT NOT NULL,
+  student_id TEXT NOT NULL,
+  student_name TEXT NOT NULL,
+  student_class TEXT NOT NULL,
+  registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  attendance_status TEXT DEFAULT 'registered' CHECK(attendance_status IN ('registered', 'attended', 'absent')),
+  notes TEXT,
+  FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_event_registrations_event ON event_registrations(event_id);
+CREATE INDEX IF NOT EXISTS idx_event_registrations_student ON event_registrations(student_id);
+
+-- ============================================
+-- 11.2 EVENT_BUDGETS TABLE (Anggaran Kegiatan)
+-- ============================================
+CREATE TABLE IF NOT EXISTS event_budgets (
+  id TEXT PRIMARY KEY,
+  event_id TEXT NOT NULL,
+  category TEXT NOT NULL, -- e.g., 'Food', 'Decoration', 'Equipment', 'Venue', 'Marketing'
+  item_name TEXT NOT NULL,
+  estimated_cost REAL NOT NULL,
+  actual_cost REAL,
+  quantity INTEGER DEFAULT 1,
+  status TEXT DEFAULT 'planned' CHECK(status IN ('planned', 'approved', 'purchased', 'completed')),
+  approved_by TEXT, -- User ID of admin
+  approved_at TIMESTAMP,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE,
+  FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_event_budgets_event ON event_budgets(event_id);
+CREATE INDEX IF NOT EXISTS idx_event_budgets_status ON event_budgets(status);
+
+-- ============================================
+-- 11.3 EVENT_PHOTOS TABLE (Galeri Foto Kegiatan)
+-- ============================================
+CREATE TABLE IF NOT EXISTS event_photos (
+  id TEXT PRIMARY KEY,
+  event_id TEXT NOT NULL,
+  photo_url TEXT NOT NULL, -- Cloudflare R2 URL
+  caption TEXT,
+  uploaded_by TEXT NOT NULL, -- User ID
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE,
+  FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_event_photos_event ON event_photos(event_id);
+
+-- ============================================
+-- 11.4 EVENT_FEEDBACK TABLE (Umpan Balik Kegiatan)
+-- ============================================
+CREATE TABLE IF NOT EXISTS event_feedback (
+  id TEXT PRIMARY KEY,
+  event_id TEXT NOT NULL,
+  student_id TEXT NOT NULL,
+  student_name TEXT NOT NULL,
+  student_class TEXT NOT NULL,
+  overall_rating INTEGER CHECK(overall_rating >= 1 AND overall_rating <= 5),
+  organization_rating INTEGER CHECK(organization_rating >= 1 AND organization_rating <= 5),
+  content_rating INTEGER CHECK(content_rating >= 1 AND content_rating <= 5),
+  comments TEXT,
+  would_recommend BOOLEAN,
+  submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (event_id) REFERENCES school_events(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_event_feedback_event ON event_feedback(event_id);
+CREATE INDEX IF NOT EXISTS idx_event_feedback_student ON event_feedback(student_id);
+
+-- ============================================
 -- 12. E_LIBRARY TABLE (E-Library Materials)
 -- ============================================
 CREATE TABLE IF NOT EXISTS e_library (
