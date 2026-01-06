@@ -19,20 +19,20 @@ interface FooterProps {
 const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
     return (
         <footer id="kontak" className="bg-gradient-to-t from-primary-50/80 via-primary-50/40 to-transparent dark:from-primary-900/30 dark:via-primary-900/15 dark:to-transparent border-t border-neutral-200 dark:border-neutral-700">
-            <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center sm:text-left">
+            <div className="max-w-7xl mx-auto py-14 px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 text-center sm:text-left">
                     <div>
-                        <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">MA Malnu Kananga</h3>
-                        <p className="text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-2">
+                        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">MA Malnu Kananga</h3>
+                        <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed mb-2">
                             Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
                         </p>
-                        <p className="text-base text-neutral-600 dark:text-neutral-400">
-                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 font-medium">info@ma-malnukananga.sch.id</a>
+                        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1">info@ma-malnukananga.sch.id</a>
                         </p>
                     </div>
 
                     <div>
-                         <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Legalitas</h3>
+                         <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Legalitas</h3>
                           <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
                              <li><strong className="text-neutral-900 dark:text-white">No. SK. Pendirian:</strong> D/Wi/MA./101/2000</li>
                              <li><strong className="text-neutral-900 dark:text-white">Tgl. SK. Pendirian:</strong> 20-09-2000</li>
@@ -42,31 +42,31 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                     </div>
 
                     <div className="sm:justify-self-end">
-                        <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
-                          <ul className="space-y-2 text-base text-neutral-600 dark:text-neutral-400">
+                        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
+                          <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
                                <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Pusat Bantuan</button></li>
                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Download</a></li>
                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Kebijakan Privasi</a></li>
                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Karir</a></li>
                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Beasiswa</a></li>
                           </ul>
-                        <div className="flex justify-center sm:justify-start space-x-4 mt-6">
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800" aria-label="Facebook">
+                        <div className="flex justify-center sm:justify-start gap-3 mt-5">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Facebook">
                                 <span className="sr-only">Facebook</span>
                                 <FacebookIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800" aria-label="Instagram">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Instagram">
                                 <span className="sr-only">Instagram</span>
                                 <InstagramIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800" aria-label="YouTube">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="YouTube">
                                 <span className="sr-only">YouTube</span>
                                 <YoutubeIcon />
                             </a>
                         </div>
                     </div>
                 </div>
-                <div className="mt-12 border-t border-neutral-200 dark:border-neutral-700 pt-8">
+                <div className="mt-10 border-t border-neutral-200 dark:border-neutral-700 pt-6">
                     <p className="text-sm text-neutral-500 dark:text-neutral-400 text-center">&copy; {new Date().getFullYear()} MA Malnu Kananga. All rights reserved.</p>
                 </div>
             </div>
