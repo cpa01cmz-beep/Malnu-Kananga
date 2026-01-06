@@ -47,10 +47,22 @@ jobs:
       - name: Check for placeholder values
         run: |
           echo "Checking wrangler.toml for placeholder values..."
-          if grep -q "placeholder-database-id\|your-production-gemini-api-key-here\|your-super-secret-jwt-key-change-this-in-production" wrangler.toml; then
+          if grep -q "placeholder-database-id\|your-production-gemini-api-key-here\|your-super-secret-jwt-key-change-this-in-production\|your-dev-d1-database-id-here\|dev-jwt-secret-change-for-production" wrangler.toml; then
             echo "❌ ERROR: Found placeholder values in wrangler.toml"
             echo "Please replace all placeholder values before deploying to production"
             echo "See BACKEND_GUIDE.md for detailed setup instructions"
+            echo ""
+            echo "To fix this issue:"
+            echo "1. Set required environment variables:"
+            echo "   - D1_DATABASE_ID (production database ID)"
+            echo "   - D1_DATABASE_ID_DEV (development database ID)"
+            echo "   - JWT_SECRET (production JWT secret, 32+ chars)"
+            echo "   - JWT_SECRET_DEV (development JWT secret)"
+            echo "   - GEMINI_API_KEY (Gemini API key)"
+            echo ""
+            echo "2. Or create D1 databases:"
+            echo "   npx wrangler d1 create malnu-kananga-db-prod"
+            echo "   npx wrangler d1 create malnu-kananga-db-dev"
             exit 1
           fi
           echo "✅ No placeholder values found in wrangler.toml"
