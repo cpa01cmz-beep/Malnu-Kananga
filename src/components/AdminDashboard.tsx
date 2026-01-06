@@ -9,6 +9,7 @@ import UserManagement from './UserManagement';
 import SystemStats from './SystemStats';
 import PPDBManagement from './PPDBManagement'; // Import PPDB Component
 import PermissionManager from './admin/PermissionManager'; // Import Permission Manager
+import AICacheManager from './AICacheManager'; // Import AI Cache Manager
 import { ToastType } from './Toast';
 import { STORAGE_KEYS } from '../constants'; // Import constants
 import { logger } from '../utils/logger';
@@ -20,7 +21,7 @@ interface AdminDashboardProps {
     onShowToast: (msg: string, type: ToastType) => void;
 }
 
-type DashboardView = 'home' | 'users' | 'stats' | 'ppdb' | 'permissions'; // Add 'permissions' view
+type DashboardView = 'home' | 'users' | 'stats' | 'ppdb' | 'permissions' | 'ai-cache'; // Add 'ai-cache' view
 
 interface PPDBRegistrant {
   status: 'pending' | 'approved' | 'rejected';
@@ -137,6 +138,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         onClick={() => {
                             const hasPermission = permissionService.hasPermission('admin', null, 'system.admin');
                             if (hasPermission.granted) {
+                                setCurrentView('ai-cache');
+                            } else {
+                                onShowToast('Anda tidak memiliki akses ke manajemen cache AI', 'error');
+                            }
+                        }}
+                        className="bg-gradient-to-br from-green-500 to-teal-600 rounded-card-lg p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
+                    >
+                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
+                            <ChartBarIcon className="w-6 h-6 text-white" />
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-bold mb-2">AI Cache Manager</h3>
+                        <p className="text-green-100 text-sm leading-relaxed">Monitor dan kelola cache respons AI untuk performa optimal.</p>
+                    </div>
+
+                    <div
+                        onClick={() => {
+                            const hasPermission = permissionService.hasPermission('admin', null, 'system.admin');
+                            if (hasPermission.granted) {
                                 setCurrentView('permissions');
                             } else {
                                 onShowToast('Anda tidak memiliki akses ke manajemen perizinan', 'error');
@@ -183,6 +202,27 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
             <PermissionManager
                 onShowToast={onShowToast}
             />
+        )}
+
+        {/* AI Cache Management View */}
+        {currentView === 'ai-cache' && (
+            <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">AI Cache Management</h2>
+                        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                            Monitor dan kelola cache respons AI untuk performa optimal
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => setCurrentView('home')}
+                        className="px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
+                    >
+                        Kembali ke Dashboard
+                    </button>
+                </div>
+                <AICacheManager />
+            </div>
         )}
 
       </div>

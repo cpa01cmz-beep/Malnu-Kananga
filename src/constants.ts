@@ -22,6 +22,7 @@ export const STORAGE_KEYS = {
     MATERIAL_RATINGS: 'malnu_material_ratings',
     READING_PROGRESS: 'malnu_reading_progress',
     OFFLINE_MATERIALS: 'malnu_offline_materials',
+    AI_CACHE: 'malnu_ai_cache',
 } as const;
 
 export const APP_CONFIG = {
