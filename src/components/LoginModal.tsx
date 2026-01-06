@@ -72,8 +72,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       role="dialog"
     >
       <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-float w-full max-w-md m-4 transform transition-all duration-300 scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh] border border-neutral-200 dark:border-neutral-700">
-        <div className="flex justify-between items-center px-6 py-5 border-b border-neutral-200 dark:border-neutral-700">
-          <h2 className="text-2xl font-extrabold text-neutral-900 dark:text-white">Login</h2>
+        <div className="flex justify-between items-center px-5 sm:px-6 py-4 sm:py-5 border-b border-neutral-200 dark:border-neutral-700">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-neutral-900 dark:text-white">Login</h2>
           <button
             onClick={onClose}
             className="p-2.5 rounded-xl text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
@@ -83,47 +83,47 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
           </button>
         </div>
 
-         <div className="p-6 overflow-y-auto">
-            <div className="mb-6 p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <h3 className="text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2.5 flex items-center gap-2">
+         <div className="p-5 sm:p-6 overflow-y-auto">
+            <div className="mb-5 sm:mb-6 p-4 sm:p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <h3 className="text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-2 sm:mb-2.5 flex items-center gap-2">
                     <svg className="w-4 h-4 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                     Login Cepat (Demo)
                 </h3>
-                <p className="text-xs text-neutral-600 dark:text-neutral-400 mb-4 font-medium">
+                <p className="text-xs text-neutral-600 dark:text-neutral-400 mb-3 sm:mb-4 font-medium">
                     Pilih peran untuk login instan:
                 </p>
 
-                <div className="grid grid-cols-3 gap-2.5">
-                    <button onClick={() => handleSimulatedLogin('student')} className="px-3 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
+                    <button onClick={() => handleSimulatedLogin('student')} className="px-2.5 sm:px-3 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl text-xs sm:text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
                         Siswa
                     </button>
-                    <button onClick={() => handleSimulatedLogin('teacher')} className="px-3 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    <button onClick={() => handleSimulatedLogin('teacher')} className="px-2.5 sm:px-3 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl text-xs sm:text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500">
                         Guru
                     </button>
-                    <button onClick={() => handleSimulatedLogin('admin')} className="px-3 py-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 rounded-xl text-sm font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button onClick={() => handleSimulatedLogin('admin')} className="px-2.5 sm:px-3 py-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 rounded-xl text-xs sm:text-sm font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         Admin
                     </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2.5 mt-2.5">
+                <div className="grid grid-cols-2 gap-2 sm:gap-2.5 mt-2 sm:mt-2.5">
                     <button
                         onClick={() => handleSimulatedLogin('teacher', 'staff')}
-                        className="px-3 py-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-xl text-xs font-bold hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-2.5 sm:px-3 py-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-xl text-xs font-bold hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         Guru (Staff)
                     </button>
                     <button
                         onClick={() => handleSimulatedLogin('student', 'osis')}
-                        className="px-3 py-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 rounded-xl text-xs font-bold hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="px-2.5 sm:px-3 py-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 rounded-xl text-xs font-bold hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     >
                         Siswa (OSIS)
                     </button>
                 </div>
             </div>
 
-            <div className="relative mb-6">
+            <div className="relative mb-5 sm:mb-6">
                 <div className="absolute inset-0 flex items-center" aria-hidden="true">
                     <div className="w-full border-t border-neutral-200 dark:border-neutral-700"></div>
                 </div>
@@ -151,14 +151,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
               </button>
             </div>
               ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
               <div>
                 <label htmlFor="email" className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Alamat Email Terdaftar</label>
-                <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500" placeholder="anda@email.com" />
+                <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500 shadow-sm focus:shadow-md" placeholder="anda@email.com" />
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Password</label>
-                <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500" placeholder="Masukkan password" />
+                <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500 shadow-sm focus:shadow-md" placeholder="Masukkan password" />
               </div>
               {error && <div className="p-3.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-700 dark:text-red-300 text-center font-semibold">{error}</div>}
               <div>
