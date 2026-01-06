@@ -74,7 +74,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
 
   useEffect(() => {
     fetchAnalytics();
-  }, [fetchAnalytics]);
+  }, [fetchAnalytics, onShowToast]);
 
   const getTrend = (current: number, previous: number) => {
     if (previous === 0) return { isUp: true, percentage: 100 };

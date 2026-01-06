@@ -99,7 +99,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     if (selectedEvent) {
       loadEventData();
     }
-  }, [selectedEvent, activeTab, loadEventData]);
+  }, [selectedEvent, activeTab, loadEventData, onShowToast]);
 
   const handleAddEvent = async (e: React.FormEvent) => {
     e.preventDefault();
