@@ -179,7 +179,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       setValidationError(validation.error || 'Perintah tidak valid');
       const errorMessage: ChatMessage = {
         id: Date.now().toString(),
-        text: validation.error || '❌ **Perintah tidak valid**: Silakan periksa kembali input Anda.',
+        text: `🛡️ **Permintaan mengandung pola yang tidak diizinkan**: ${validation.error || 'Perintah tidak valid'}. Silakan periksa kembali input Anda.`,
         sender: Sender.AI
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -223,7 +223,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
         } else if (error.message.includes('invalid') || error.message.includes('parse') || error.message.includes('format')) {
           errorMessage = '🔧 **Format tidak valid**: AI mengembalikan data yang tidak benar. Silakan coba instruksi yang lebih spesifik atau sederhana.';
         } else if (error.message.includes('struktur') || error.message.includes('valid') || error.message.includes('keamanan')) {
-          errorMessage = '🛡️ **Validasi gagal**: Respon AI tidak memenuhi format keamanan. Silakan coba lagi dengan instruksi yang berbeda.';
+          errorMessage = '🛡️ Validasi gagal: Respon AI tidak memenuhi format keamanan. Silakan coba lagi dengan instruksi yang berbeda.';
         } else {
           errorMessage = `❌ **Error**: ${error.message}`;
         }

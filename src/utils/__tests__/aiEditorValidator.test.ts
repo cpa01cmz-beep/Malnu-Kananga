@@ -61,10 +61,10 @@ describe('AI Editor Validator', () => {
       expect(result.error).toContain('Maksimal');
     });
 
-    it('should sanitize javascript: protocol', () => {
+    it('should block javascript: protocol', () => {
       const result = validateAICommand('javascript:alert(1)');
-      expect(result.isValid).toBe(true);
-      expect(result.sanitizedPrompt).not.toContain('javascript:');
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('tidak diizinkan');
     });
 
     it('should sanitize data: protocol', () => {
