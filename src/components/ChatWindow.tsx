@@ -228,11 +228,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
   }, [messages, autoReadAI, synthesis, voiceQueue, handleSend]);
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-xl shadow-float border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+    <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-xl shadow-float border border-neutral-200/90 dark:border-neutral-700 overflow-hidden">
       <header className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white flex-shrink-0">
         <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 bg-white rounded-full mr-1 animate-pulse shadow-sm"></div>
-            <h2 className="font-medium text-sm">Asisten AI</h2>
+            <h2 className="font-semibold text-sm">Asisten AI</h2>
         </div>
         <div className="flex items-center gap-1.5">
             {voiceQueue.isPlaying && (
@@ -324,7 +324,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         </div>
       </header>
 
-      <div className="flex-1 px-4 py-3 overflow-y-auto bg-neutral-50 dark:bg-neutral-900 custom-scrollbar">
+      <div className="flex-1 px-4 py-3 overflow-y-auto bg-neutral-50/80 dark:bg-neutral-900/80 custom-scrollbar">
         <div className="flex flex-col gap-3">
           {messages.map((message) => (
             <div
@@ -337,7 +337,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                   className={`rounded-lg px-4 py-3 text-sm md:text-base leading-relaxed shadow-sm ${
                     message.sender === Sender.User
                       ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white'
-                      : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200'
+                      : 'bg-neutral-200/95 dark:bg-neutral-700/95 backdrop-blur-sm text-neutral-800 dark:text-neutral-200'
                   }`}
                >
                 {message.sender === Sender.AI ? (
@@ -359,7 +359,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         </div>
       </div>
 
-      <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex-shrink-0 rounded-b-xl">
+      <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white/95 dark:bg-neutral-800/95 backdrop-blur-sm flex-shrink-0 rounded-b-xl">
         <div className="flex items-end gap-2">
           <AutoResizeTextarea
               value={input}
@@ -392,15 +392,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                     synthesis.speak(`Membaca ${aiMessages.length} pesan`);
                   }
                 }}
-                className="p-2.5 mb-0.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-all flex-shrink-0 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800"
+                className="p-2.5 mb-0.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-all duration-200 ease-out flex-shrink-0 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5"
                 title="Baca semua pesan AI"
                 aria-label="Baca semua pesan AI"
               >
                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                </svg>
-            </button>
-          )}
+              </button>
+            )}
         </div>
       </div>
 
