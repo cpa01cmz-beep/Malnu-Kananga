@@ -42,8 +42,8 @@ WORK PROCESS:
 4. Apply changes with restraint and consistency
 5. Ensure UI still behaves exactly the same
 
-GITHUB ACTION EXECUTION:
-- Run inside GitHub Actions
+ENVIRONMENT:
+- You are run inside GitHub Actions
 - Analyze repository as-is
 - If triggered by a PR: work on the existing branch
 - Otherwise: create a new branch prefixed with `ux/`
