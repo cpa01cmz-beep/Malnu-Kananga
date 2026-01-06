@@ -9,7 +9,7 @@ interface NewsCardProps {
 
 const NewsCard: React.FC<NewsCardProps> = ({ newsItem }) => {
   return (
-    <article className="bg-white dark:bg-neutral-800 rounded-xl shadow-card hover:shadow-card-hover border border-neutral-200/90 dark:border-neutral-700 transition-all duration-300 ease-out overflow-hidden flex flex-col h-full group focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
+    <article className="bg-white dark:bg-neutral-800 rounded-xl shadow-card hover:shadow-card-hover border border-neutral-200/80 dark:border-neutral-700/80 transition-all duration-300 ease-out overflow-hidden flex flex-col h-full group focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
       <div className="relative overflow-hidden aspect-video bg-neutral-100 dark:bg-neutral-700">
         <ImageWithFallback
           className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
@@ -18,7 +18,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ newsItem }) => {
           fallbackText="Gambar Berita Tidak Tersedia"
         />
         <div className="absolute top-3 left-3">
-          <span className="text-xs font-semibold inline-block py-1.5 px-3 uppercase tracking-wide rounded-full text-primary-700 dark:text-primary-300 bg-primary-100/95 dark:bg-primary-900/95 backdrop-blur-sm shadow-sm">
+          <span className="text-xs font-medium inline-block py-1.5 px-3 uppercase tracking-wide rounded-full text-primary-700 dark:text-primary-300 bg-primary-100/95 dark:bg-primary-900/95 backdrop-blur-sm">
             {newsItem.category}
           </span>
         </div>
