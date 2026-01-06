@@ -162,6 +162,7 @@ jobs:
              - Rebase or merge DEFAULT_BRANCH INTO PR branch
              - Resolve conflicts ONLY if trivial and deterministic
                - If not trivial → comment with explanation and STOP on that PR
+             - All comments must be resolved.
              - Run build and test suite
              - Fix:
                - Lint errors
