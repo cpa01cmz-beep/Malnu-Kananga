@@ -1391,9 +1391,9 @@ export default {
     const routes = {
       '/seed': handleSeed,
       '/api/chat': handleChat,
-      '/auth/login': handleLogin,
-      '/auth/logout': handleLogout,
-      '/auth/refresh': handleRefreshToken,
+      '/api/auth/login': handleLogin,
+      '/api/auth/logout': handleLogout,
+      '/api/auth/refresh': handleRefreshToken,
       '/api/files/upload': handleFileUpload,
       '/api/files/download': handleFileDownload,
       '/api/files/delete': handleFileDelete,
