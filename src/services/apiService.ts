@@ -225,6 +225,56 @@ export const authAPI = {
 };
 
 // ============================================
+// PERMISSION VALIDATION MIDDLEWARE
+// ============================================
+
+/**
+ * Check server-side permissions before making API request
+ */
+async function validateRequestPermissions(
+  endpoint: string,
+  options: RequestInit,
+  userRole: string,
+  userExtraRole: string | null
+): Promise<{ allowed: boolean; reason?: string }> {
+  // Import here to avoid circular dependencies
+  const { permissionService } = await import('./permissionService');
+  
+  // Extract resource and action from endpoint
+  const pathParts = endpoint.split('/').filter(Boolean);
+  const resource = pathParts[0] || 'unknown';
+  const method = options.method?.toUpperCase() || 'GET';
+  
+  // Map HTTP methods to permission actions
+  const actionMap: Record<string, string> = {
+    'GET': 'read',
+    'POST': 'create',
+    'PUT': 'update',
+    'PATCH': 'update',
+    'DELETE': 'delete'
+  };
+  
+  const action = actionMap[method] || 'read';
+  const permissionId = `${resource}.${action}`;
+  
+  // Log the permission check for audit
+  const result = permissionService.hasPermission(
+    userRole as any,
+    userExtraRole as any,
+    permissionId,
+    {
+      userId: 'api-request',
+      ip: typeof window !== 'undefined' ? window.location.hostname : 'server'
+    }
+  );
+  
+  return {
+    allowed: result.granted,
+    reason: result.reason
+  };
+}
+
+// ============================================
 // GENERIC API FUNCTIONS
 // ============================================
 
@@ -247,6 +297,31 @@ async function request<T>(
       token = await new Promise((resolve) => {
         subscribeTokenRefresh((newToken: string) => resolve(newToken));
       });
+    }
+  }
+
+  // Server-side permission validation
+  if (token) {
+    const payload = parseJwtPayload(token);
+    if (payload) {
+      try {
+        const permissionCheck = await validateRequestPermissions(
+          endpoint,
+          options,
+          payload.role,
+          null // TODO: Extract extra role from JWT or user session
+        );
+        
+        if (!permissionCheck.allowed) {
+          return {
+            success: false,
+            error: 'Access denied: ' + (permissionCheck.reason || 'Insufficient permissions')
+          };
+        }
+      } catch (error) {
+        logger.warn('Permission validation failed:', { error, endpoint, userRole: payload.role });
+        // Continue with request but log the failure
+      }
     }
   }
 

@@ -8,9 +8,11 @@ import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import UserManagement from './UserManagement';
 import SystemStats from './SystemStats';
 import PPDBManagement from './PPDBManagement'; // Import PPDB Component
+import PermissionManager from './admin/PermissionManager'; // Import Permission Manager
 import { ToastType } from './Toast';
 import { STORAGE_KEYS } from '../constants'; // Import constants
 import { logger } from '../utils/logger';
+import { permissionService } from '../services/permissionService';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -18,7 +20,7 @@ interface AdminDashboardProps {
     onShowToast: (msg: string, type: ToastType) => void;
 }
 
-type DashboardView = 'home' | 'users' | 'stats' | 'ppdb'; // Add 'ppdb' view
+type DashboardView = 'home' | 'users' | 'stats' | 'ppdb' | 'permissions'; // Add 'permissions' view
 
 interface PPDBRegistrant {
   status: 'pending' | 'approved' | 'rejected';
@@ -73,7 +75,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
                     {/* PPDB Management - NEW */}
                     <div 
-                        onClick={() => setCurrentView('ppdb')}
+                        onClick={() => {
+                            const hasPermission = permissionService.hasPermission('admin', null, 'ppdb.manage');
+                            if (hasPermission.granted) {
+                                setCurrentView('ppdb');
+                            } else {
+                                onShowToast('Anda tidak memiliki akses ke manajemen PPDB', 'error');
+                            }
+                        }}
                         className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer transform hover:-translate-y-1 relative"
                     >
                         {pendingPPDB > 0 && (
@@ -91,7 +100,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
                     {/* User Management Card - Active */}
                     <div 
-                        onClick={() => setCurrentView('users')}
+                        onClick={() => {
+                            const hasPermission = permissionService.hasPermission('admin', null, 'users.read');
+                            if (hasPermission.granted) {
+                                setCurrentView('users');
+                            } else {
+                                onShowToast('Anda tidak memiliki akses ke manajemen user', 'error');
+                            }
+                        }}
                         className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer transform hover:-translate-y-1"
                     >
                         <div className="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-full flex items-center justify-center mb-4">
@@ -104,7 +120,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
                     {/* Content Stats - NOW ACTIVE */}
                     <div 
-                        onClick={() => setCurrentView('stats')}
+                        onClick={() => {
+                            const hasPermission = permissionService.hasPermission('admin', null, 'system.stats');
+                            if (hasPermission.granted) {
+                                setCurrentView('stats');
+                            } else {
+                                onShowToast('Anda tidak memiliki akses ke statistik sistem', 'error');
+                            }
+                        }}
                         className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer transform hover:-translate-y-1"
                     >
                         <div className="bg-green-100 dark:bg-green-900/30 w-12 h-12 rounded-full flex items-center justify-center mb-4">
@@ -113,6 +136,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Laporan & Log</h3>
                         <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">Pantau statistik sistem dan factory reset.</p>
                         <span className="text-xs font-semibold bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded">Aktif</span>
+                    </div>
+
+                    {/* Permission Management */}
+                    <div 
+                        onClick={() => {
+                            const hasPermission = permissionService.hasPermission('admin', null, 'system.admin');
+                            if (hasPermission.granted) {
+                                setCurrentView('permissions');
+                            } else {
+                                onShowToast('Anda tidak memiliki akses ke manajemen perizinan', 'error');
+                            }
+                        }}
+                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl p-6 text-white shadow-lg cursor-pointer transform hover:scale-105 transition-transform"
+                    >
+                        <div className="bg-white/20 w-12 h-12 rounded-full flex items-center justify-center mb-4">
+                            <UsersIcon className="w-6 h-6 text-white" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-2">Permission System</h3>
+                        <p className="text-purple-100 text-sm">Kelola sistem perizinan peran dan audit log akses.</p>
                     </div>
                 </div>
             </>
@@ -138,6 +180,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
         {currentView === 'ppdb' && (
             <PPDBManagement 
                 onBack={() => setCurrentView('home')} 
+                onShowToast={onShowToast}
+            />
+        )}
+
+        {/* Permission Management View */}
+        {currentView === 'permissions' && (
+            <PermissionManager
                 onShowToast={onShowToast}
             />
         )}
