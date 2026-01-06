@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from '../../utils/logger';
 
 const RelatedLinksSection: React.FC = () => {
   const [links, setLinks] = useState<{name: string; href: string; icon: React.ReactNode; color: string}[]>([]);
@@ -10,7 +11,7 @@ const RelatedLinksSection: React.FC = () => {
         const relatedLinks = await getRelatedLinks();
         setLinks(relatedLinks as unknown as typeof links);
       } catch (error) {
-        console.error('Failed to load related links:', error);
+        logger.error('Failed to load related links:', error);
       }
     };
     loadLinks();

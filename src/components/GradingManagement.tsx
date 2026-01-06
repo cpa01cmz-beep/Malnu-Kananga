@@ -128,7 +128,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       }
       
       if (validation.warnings.length > 0) {
-        console.warn('Validation warnings:', validation.warnings);
+        logger.warn('Validation warnings:', validation.warnings);
       }
       
       setGrades(prev => prev.map(g => g.id === id ? { ...g, [field]: numValue } : g));
