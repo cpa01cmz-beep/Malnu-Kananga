@@ -50,6 +50,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   const [pendingContent, setPendingContent] = useState<SiteContent | null>(null);
   const [characterCount, setCharacterCount] = useState(0);
   const [inputError, setInputError] = useState('');
+  const [validationError, setValidationError] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -60,12 +61,13 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
     if (isOpen) {
       if (messages.length === 0) {
         setMessages([
-            { id: 'initial', text: 'Halo! Saya asisten editor AI Anda. Beri tahu saya perubahan apa yang ingin Anda buat pada konten **"Program Unggulan"** atau **"Berita Terbaru"**. \n\nContoh:\n- "Tambahkan program baru tentang Robotika"\n- "Ubah judul berita pertama menjadi lebih menarik"\n\n💡 **Tips:** Anda dapat membatalkan hingga 5 perubahan terakhir menggunakan tombol Undo.', sender: Sender.AI }
+            { id: 'initial', text: 'Halo! Saya asisten editor AI Anda dengan sistem validasi keamanan. Beri tahu saya perubahan apa yang ingin Anda buat pada konten **"Program Unggulan"** atau **"Berita Terbaru"**. \n\nContoh perintah yang valid:\n- "Tambahkan program baru tentang Robotika"\n- "Ubah judul berita pertama menjadi lebih menarik"\n- "Hapus program terakhir"\n\n🛡️ **Keamanan**: Perintah berbahaya atau akses sistem akan diblokir otomatis.\n\n💡 **Tips:** Anda dapat membatalkan hingga 5 perubahan terakhir menggunakan tombol Undo.', sender: Sender.AI }
         ]);
       }
       setProposedContent(null);
       setInput('');
       setInputError('');
+      setValidationError('');
     }
   }, [isOpen, messages.length]);
 
@@ -89,6 +91,56 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       setInputError('');
     }
   }, [input]);
+
+  // Command validation function
+  const validateCommand = useCallback((command: string): { isValid: boolean; error?: string } => {
+    const trimmedCommand = command.trim().toLowerCase();
+    
+    // Block system file access attempts
+    const dangerousPatterns = [
+      /(\.\.\/|..\\)/,  // Directory traversal
+      /(\/etc\/|\/var\/|\/usr\/|\/bin\/|\/sbin\/)/,  // System paths
+      /(system|exec|eval|function|script|javascript:)/,  // Code execution
+      /(file:\/\/|ftp:\/\/|http:\/\/|https:\/\/)/,  // External URLs
+      /(import|require|export|module)/,  // Module imports
+      /(document|window|global|process)/,  // Global objects
+      /(__dirname|__filename|process\.cwd|fs\.)/,  // Node.js system
+      /(config|\.env|secret|key|password|token)/i,  // Sensitive data
+      /(delete|drop|truncate|alter)/i,  // Database operations
+      /(sudo|admin|root|chmod|chown)/i,  // System commands
+      /(cmd|powershell|bash|sh)/i,  // Shell commands
+    ];
+    
+    // Check for dangerous patterns
+    for (const pattern of dangerousPatterns) {
+      if (pattern.test(trimmedCommand)) {
+        return {
+          isValid: false,
+          error: '⚠️ Perintah tidak aman terdeteksi. Mohon hindari akses sistem atau perintah berbahaya.'
+        };
+      }
+    }
+    
+    // Validate that command is content-related
+    const validKeywords = [
+      'tambah', 'ubah', 'hapus', 'edit', 'ganti', 'perbarui', 'modifikasi',
+      'program', 'berita', 'konten', 'judul', 'deskripsi', 'gambar', 'foto',
+      'jadwal', 'kegiatan', 'pengumuman', 'artikel', 'informasi'
+    ];
+    
+    const hasValidKeyword = validKeywords.some(keyword => 
+      trimmedCommand.includes(keyword)
+    );
+    
+    if (!hasValidKeyword && trimmedCommand.length > 10) {
+      return {
+        isValid: false,
+        error: '📝 Perintah tidak relevan. Gunakan kata kunci seperti "tambah", "ubah", "hapus" untuk konten website.'
+      };
+    }
+    
+    return { isValid: true };
+  }, []);
 
   // Save initial content to localStorage for undo functionality
   useEffect(() => {
@@ -168,6 +220,21 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   const handleSend = async () => {
     if (!input.trim() || isLoading || inputError) return;
 
+    // Validate command before sending
+    const validation = validateCommand(input);
+    if (!validation.isValid) {
+      setValidationError(validation.error || 'Perintah tidak valid');
+      const errorMessage: ChatMessage = {
+        id: Date.now().toString(),
+        text: validation.error || '❌ **Perintah tidak valid**: Silakan periksa kembali input Anda.',
+        sender: Sender.AI
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      return;
+    }
+    
+    setValidationError('');
+
     const userMessage: ChatMessage = { id: Date.now().toString(), text: input, sender: Sender.User };
     setMessages(prev => [...prev, userMessage]);
     const requestText = input;
@@ -177,6 +244,16 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
 
     try {
       const newContent = await getAIEditorResponse(requestText, currentContent);
+      
+      // Validate AI response structure
+      if (!newContent || typeof newContent !== 'object') {
+        throw new Error('Respon AI mengembalikan format yang tidak valid');
+      }
+      
+      if (!Array.isArray(newContent.featuredPrograms) || !Array.isArray(newContent.latestNews)) {
+        throw new Error('Struktur data dari AI tidak sesuai format yang diharapkan');
+      }
+      
       setProposedContent(newContent);
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -194,8 +271,10 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
           errorMessage = '⏱️ **Timeout**: Permintaan terlalu lama. Silakan coba lagi dengan permintaan yang lebih sederhana.';
         } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
           errorMessage = '🚫 **Batas terlampaui**: Terlalu banyak permintaan. Silakan tunggu beberapa saat sebelum mencoba lagi.';
-        } else if (error.message.includes('invalid') || error.message.includes('parse')) {
-          errorMessage = '🔧 **Format tidak valid**: AI tidak memahami permintaan Anda. Silakan tulis ulang dengan kalimat yang lebih jelas.';
+        } else if (error.message.includes('invalid') || error.message.includes('parse') || error.message.includes('format')) {
+          errorMessage = '🔧 **Format tidak valid**: AI mengembalikan data yang tidak benar. Silakan coba instruksi yang lebih spesifik atau sederhana.';
+        } else if (error.message.includes('struktur') || error.message.includes('valid')) {
+          errorMessage = '🛡️ ** Validasi gagal**: Respon AI tidak memenuhi format keamanan. Silakan coba lagi dengan instruksi yang berbeda.';
         } else {
           errorMessage = `❌ **Error**: ${error.message}`;
         }
@@ -261,7 +340,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
 <header className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
           <div className="flex items-center gap-3">
             <SparklesIcon className="h-6 w-6 text-green-500" />
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">AI Website Editor</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">AI Website Editor <span className="text-xs font-normal text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">🛡️ Dilindungi</span></h2>
             {changeHistory.length > 0 && (
               <div className="flex items-center gap-1">
                 <button 
@@ -388,6 +467,11 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                 {inputError && (
                   <span className="text-xs text-red-500 animate-pulse">
                     {inputError}
+                  </span>
+                )}
+                {validationError && (
+                  <span className="text-xs text-orange-500 animate-pulse">
+                    🛡️ {validationError}
                   </span>
                 )}
               </div>
