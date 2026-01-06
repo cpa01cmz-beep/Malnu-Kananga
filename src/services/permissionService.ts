@@ -1,5 +1,6 @@
 import { Permission, UserRole, UserExtraRole, AccessResult, AuditLog } from '../types/permissions';
 import { PERMISSIONS, ROLE_PERMISSION_MATRIX, EXTRA_ROLE_PERMISSIONS } from '../config/permissions';
+import { logger } from '../utils/logger';
 
 class PermissionService {
   private auditLogs: AuditLog[] = [];
@@ -131,17 +132,15 @@ class PermissionService {
     }
 
 // In production, this would be sent to a logging service
-    if (import.meta.env.DEV) {
-      console.log('Permission Check:', {
-        timestamp: log.timestamp.toISOString(),
-        userId: log.userId,
-        role: log.userRole,
-        extraRole: log.userExtraRole,
-        resource: log.resource,
-        action: log.action,
-        granted: log.granted
-      });
-    }
+    logger.info('Permission Check:', {
+      timestamp: log.timestamp.toISOString(),
+      userId: log.userId,
+      role: log.userRole,
+      extraRole: log.userExtraRole,
+      resource: log.resource,
+      action: log.action,
+      granted: log.granted
+    });
   }
 
   /**
