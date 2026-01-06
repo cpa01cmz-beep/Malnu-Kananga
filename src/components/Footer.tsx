@@ -27,7 +27,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                             Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
                         </p>
                         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1">info@ma-malnukananga.sch.id</a>
+                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1">info@ma-malnukananga.sch.id</a>
                         </p>
                     </div>
 
@@ -44,22 +44,22 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                     <div className="sm:justify-self-end">
                         <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
                           <ul className="space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
-                               <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Pusat Bantuan</button></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Download</a></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Kebijakan Privasi</a></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Karir</a></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Beasiswa</a></li>
+                               <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Pusat Bantuan</button></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Download</a></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Kebijakan Privasi</a></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Karir</a></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded px-1 py-0.5">Beasiswa</a></li>
                           </ul>
                         <div className="flex justify-center sm:justify-start gap-3 mt-5">
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Facebook">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Facebook">
                                 <span className="sr-only">Facebook</span>
                                 <FacebookIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Instagram">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="Instagram">
                                 <span className="sr-only">Instagram</span>
                                 <InstagramIcon />
                             </a>
-                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="YouTube">
+                            <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 p-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 focus:outline-none focus:ring-2 focus:ring-primary-500" aria-label="YouTube">
                                 <span className="sr-only">YouTube</span>
                                 <YoutubeIcon />
                             </a>

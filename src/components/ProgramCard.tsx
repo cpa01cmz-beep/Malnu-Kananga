@@ -17,7 +17,7 @@ const ProgramCard: React.FC<ProgramCardProps> = ({ program }) => {
         fallbackText="Gambar Program Tidak Tersedia"
       />
       <div className="p-6 flex-grow flex flex-col">
-        <h3 className="text-lg font-semibold mb-2.5 text-neutral-900 dark:text-white leading-snug group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200">{program.title}</h3>
+        <h3 className="text-lg font-semibold mb-2.5 text-neutral-900 dark:text-white leading-snug group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 line-clamp-2">{program.title}</h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed flex-grow line-clamp-3">{program.description}</p>
       </div>
     </article>

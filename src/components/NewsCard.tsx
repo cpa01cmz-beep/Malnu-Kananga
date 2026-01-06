@@ -23,7 +23,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ newsItem }) => {
           </span>
         </div>
         <h3 className="text-base font-semibold mb-2 text-neutral-900 dark:text-white flex-grow leading-snug group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 line-clamp-2">{newsItem.title}</h3>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-auto">{newsItem.date}</p>
+        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-auto">{newsItem.date}</p>
       </div>
     </article>
   );
