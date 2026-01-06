@@ -31,7 +31,6 @@ This index provides a comprehensive overview of all documentation available for 
 ### 🚀 Deployment & Infrastructure
 - **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Complete deployment procedures (includes R2 setup)
 - **[BACKEND_GUIDE.md](./BACKEND_GUIDE.md)** - Backend setup and configuration
-- **[Deployment README](../scripts/deployment/README.md)** - Quick deployment reference
 
 ### 🎤 Voice & Accessibility
 - **[Voice Accessibility Audit](./VOICE_ACCESSIBILITY_AUDIT.md)** - Voice interaction compliance
@@ -54,7 +53,6 @@ This index provides a comprehensive overview of all documentation available for 
 ### For DevOps Engineers
 1. Read [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete deployment steps
 2. Follow [BACKEND_GUIDE.md](./BACKEND_GUIDE.md) for backend setup
-3. Check [Deployment README](../scripts/deployment/README.md) for quick reference
 
 ### For Project Managers
 1. Review [BLUEPRINT.md](./BLUEPRINT.md) for project specifications
@@ -70,7 +68,7 @@ This index provides a comprehensive overview of all documentation available for 
 - **API Endpoints Documented**: 25+
 - **Code Examples**: 15+
 - **Troubleshooting Scenarios**: 20+
-- **Architecture Diagrams**: 5+
+- **Architecture Diagrams**: 1+
 
 ### Coverage Areas
 - ✅ **Frontend Documentation** - React components, state management
@@ -183,6 +181,9 @@ This index maintains relationships between documents:
 - **Security Fix**: Removed `.env.production` from git tracking (file preserved locally)
 - **Updated Metrics**: Documentation count updated to 15 files
 - **Single Source of Truth**: Established `/docs` as the authoritative documentation directory
+- **Repository Cleanup**: Removed duplicate .github/GH directory (consolidated with .github/prompt)
+- **Script Cleanup**: Removed unused .cjs script versions (setup-env.cjs, validate-env.cjs)
+- **Fixed Broken Links**: Removed reference to non-existent deployment/README.md
 
 ---
 
