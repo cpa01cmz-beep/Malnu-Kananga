@@ -18,10 +18,10 @@ const HeroSection: React.FC = () => {
           Mencetak generasi berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up">
-          <a href="#ppdb" className="inline-flex items-center justify-center bg-gradient-to-r from-primary-600 to-primary-700 text-white font-bold px-10 py-4 rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-base">
+          <a href="#ppdb" className="inline-flex items-center justify-center bg-gradient-to-r from-primary-600 to-primary-700 text-white font-bold px-8 py-3.5 rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-base">
             Info PPDB 2025
           </a>
-          <a href="#profil" className="inline-flex items-center justify-center bg-white/95 dark:bg-neutral-800/95 text-neutral-700 dark:text-neutral-200 font-bold px-10 py-4 rounded-xl border-2 border-neutral-200/90 dark:border-neutral-600 hover:border-primary-400 dark:hover:border-primary-500 hover:bg-primary-50/80 dark:hover:bg-primary-900/40 backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-base">
+          <a href="#profil" className="inline-flex items-center justify-center bg-white/95 dark:bg-neutral-800/95 text-neutral-700 dark:text-neutral-200 font-bold px-8 py-3.5 rounded-xl border-2 border-neutral-200/90 dark:border-neutral-600 hover:border-primary-400 dark:hover:border-primary-500 hover:bg-primary-50/80 dark:hover:bg-primary-900/40 backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-base">
             Jelajahi Profil
           </a>
         </div>

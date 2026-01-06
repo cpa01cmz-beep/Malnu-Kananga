@@ -12,7 +12,7 @@ Before executing the main prompt, you MUST:
    - Project structure (components/, services/, hooks/, types/, utils/)
    - Key services: apiService.ts, authService.ts, geminiService.ts, speechRecognitionService.ts, speechSynthesisService.ts
    - Storage keys convention: use STORAGE_KEYS from constants.ts (malnu_ prefix)
-   - User roles: admin, teacher, student, parent, staff, osis, wakasek, kepsek
+    - User roles: admin, teacher, student, parent, staff, osis
    - Testing guidelines: Vitest, React Testing Library
    - Build commands: npm run dev, build, typecheck, lint, test
    - Code style: TypeScript strict mode, UPPER_SNAKE_CASE for constants, camelCase for services, PascalCase for components

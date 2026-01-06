@@ -76,7 +76,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
           <h2 className="text-2xl font-extrabold text-neutral-900 dark:text-white">Login</h2>
           <button
             onClick={onClose}
-            className="p-2.5 rounded-xl text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="p-2.5 rounded-xl text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
             aria-label="Tutup modal"
           >
             <CloseIcon />
@@ -133,19 +133,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
             </div>
 
           {formState === 'success' ? (
-            <div className="text-center py-4">
+            <div className="text-center py-6">
               <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-2xl bg-primary-100 dark:bg-primary-900/50 shadow-lg">
                   <svg className="h-8 w-8 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
               </div>
-              <h3 className="mt-4 text-2xl font-extrabold text-neutral-900 dark:text-white">Login Berhasil!</h3>
+              <h3 className="mt-5 text-2xl font-extrabold text-neutral-900 dark:text-white">Login Berhasil!</h3>
               <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed font-medium">
                 Anda akan diarahkan ke dashboard...
               </p>
               <button
                 onClick={onClose}
-                className="mt-6 w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-md hover:shadow-lg"
+                className="mt-6 w-full flex justify-center py-3 px-5 border border-transparent rounded-xl text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 Selesai
               </button>
@@ -154,15 +154,15 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label htmlFor="email" className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Alamat Email Terdaftar</label>
-                <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 font-medium" placeholder="anda@email.com" />
+                <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500" placeholder="anda@email.com" />
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Password</label>
-                <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 font-medium" placeholder="Masukkan password" />
+                <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500" placeholder="Masukkan password" />
               </div>
-              {error && <div className="p-3.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-700 dark:text-red-300 text-center font-bold">{error}</div>}
+              {error && <div className="p-3.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-700 dark:text-red-300 text-center font-semibold">{error}</div>}
               <div>
-                <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-70 shadow-md hover:shadow-lg">
+                <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3 px-5 border border-transparent rounded-xl text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-70 shadow-md hover:shadow-lg">
                   {formState === 'loading' ? 'Memproses...' : 'Login'}
                 </button>
               </div>

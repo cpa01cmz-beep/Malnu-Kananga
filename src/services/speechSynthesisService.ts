@@ -121,10 +121,10 @@ class SpeechSynthesisService {
     utterance.volume = this.config.volume;
 
     if (this.config.voice) {
-      utterance.voice = this.config.voice as any;
+      (utterance as unknown as { voice: unknown }).voice = this.config.voice;
     }
 
-    return utterance as any;
+    return utterance as unknown as SpeechSynthesisUtterance;
   }
 
   private setupUtteranceListeners(utterance: SpeechSynthesisUtterance): void {
@@ -141,8 +141,8 @@ class SpeechSynthesisService {
 
     utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
       const error: SpeechSynthesisError = {
-        error: this.mapErrorType((event as any).error || 'unknown'),
-        message: (event as any).message || 'Speech synthesis error occurred',
+        error: this.mapErrorType(event.error || 'unknown'),
+        message: (event as unknown as { message?: string }).message || 'Speech synthesis error occurred',
       };
 
       logger.error('Speech synthesis error:', error);

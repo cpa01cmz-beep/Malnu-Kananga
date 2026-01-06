@@ -12,6 +12,7 @@ import type {
   SpeechRecognitionErrorEvent,
   SpeechRecognitionEvent,
   SpeechWindow,
+  SpeechRecognitionConstructor,
 } from '../types';
 import { VOICE_CONFIG, ERROR_MESSAGES } from '../constants';
 import { logger } from '../utils/logger';
@@ -76,7 +77,7 @@ class SpeechRecognitionService {
     try {
     const speechWindow = window as unknown as SpeechWindow;
       const SpeechRecognitionAPI = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
-      this.recognition = new (SpeechRecognitionAPI as any)() as SpeechRecognition;
+      this.recognition = new (SpeechRecognitionAPI as SpeechRecognitionConstructor)() as SpeechRecognition;
       this.configureRecognition();
       this.setupEventListeners();
     } catch (error) {

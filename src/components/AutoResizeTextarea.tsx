@@ -37,7 +37,7 @@ const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
   };
 
   return (
-    <div className={`flex items-end gap-2 bg-gray-100 dark:bg-gray-700 rounded-3xl p-2 border border-transparent focus-within:border-green-500 focus-within:ring-1 focus-within:ring-green-500 transition-all ${className}`}>
+    <div className={`flex items-end gap-2 bg-neutral-100 dark:bg-neutral-700 rounded-2xl p-2.5 border border-neutral-200 dark:border-neutral-600 focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 transition-all ${className}`}>
       <textarea
         ref={textareaRef}
         value={value}
@@ -46,13 +46,13 @@ const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
         placeholder={placeholder}
         disabled={disabled}
         rows={1}
-        className="flex-1 max-h-[150px] w-full bg-transparent border-none focus:ring-0 resize-none py-3 px-2 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 leading-relaxed custom-scrollbar"
+        className="flex-1 max-h-[150px] w-full bg-transparent border-none focus:ring-0 resize-none py-2.5 px-3 text-neutral-800 dark:text-neutral-200 placeholder-neutral-500 dark:placeholder-neutral-400 leading-relaxed custom-scrollbar"
         style={{ minHeight: '44px' }}
       />
       <button
         onClick={onSend}
         disabled={disabled || !value.trim()}
-        className="p-3 mb-1 bg-green-600 text-white rounded-full disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-green-700 transition-colors shadow-sm flex-shrink-0"
+        className="p-2.5 mb-0.5 bg-primary-600 text-white rounded-xl disabled:bg-neutral-400 disabled:cursor-not-allowed hover:bg-primary-700 transition-all shadow-sm hover:shadow-md flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
         aria-label="Kirim"
       >
         <SendIcon />

@@ -7,6 +7,22 @@ import { logger } from './logger';
  */
 
 /**
+ * Chrome-specific PerformanceMemory API
+ * Not standard but available in Chrome/Chromium browsers
+ */
+interface PerformanceMemory {
+  usedJSHeapSize: number;
+  totalJSHeapSize: number;
+  jsHeapSizeLimit: number;
+}
+
+declare global {
+  interface Performance {
+    memory?: PerformanceMemory;
+  }
+}
+
+/**
  * Debounce hook - Delays function execution until after delay
  * Useful for preventing excessive voice recognition triggers
  */
@@ -170,7 +186,7 @@ export const performanceMetrics = {
       try {
         const entries = window.performance.getEntriesByName(name);
         const lastEntry = entries[entries.length - 1];
-        return (lastEntry as any)?.duration || 0;
+        return lastEntry?.duration ?? 0;
       } catch (error) {
         logger.error('Performance measurement error:', error);
         return 0;
@@ -180,8 +196,8 @@ export const performanceMetrics = {
   },
 
   checkMemoryUsage: () => {
-    if (typeof window.performance !== 'undefined' && (window.performance as any).memory) {
-      const memory = (window.performance as any).memory;
+    if (typeof window.performance !== 'undefined' && window.performance.memory) {
+      const memory = window.performance.memory;
       const usedMB = memory.usedJSHeapSize / (1024 * 1024);
       const totalMB = memory.totalJSHeapSize / (1024 * 1024);
       const limitMB = memory.jsHeapSizeLimit / (1024 * 1024);
@@ -202,8 +218,8 @@ export const performanceMetrics = {
  */
 export const memoryMonitor = {
   getCurrentUsage: () => {
-    if (typeof window.performance !== 'undefined' && (window.performance as any).memory) {
-      const memory = (window.performance as any).memory;
+    if (typeof window.performance !== 'undefined' && window.performance.memory) {
+      const memory = window.performance.memory;
       return {
         usedJSHeapSize: memory.usedJSHeapSize,
         totalJSHeapSize: memory.totalJSHeapSize,
