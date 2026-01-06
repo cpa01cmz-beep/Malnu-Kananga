@@ -3,10 +3,10 @@ import React from 'react';
 
 const ProfileSection: React.FC = () => {
   return (
-    <section id="profil" className="py-24 sm:py-28 bg-gradient-to-b from-white via-neutral-50/60 to-neutral-100/50 dark:from-neutral-800/50 dark:via-neutral-900/40 dark:to-neutral-900/60">
+    <section id="profil" className="py-20 sm:py-24 bg-gradient-to-b from-white via-neutral-50/60 to-neutral-100/50 dark:from-neutral-800/50 dark:via-neutral-900/40 dark:to-neutral-900/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-14 sm:mb-16 animate-fade-in">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white tracking-tight mb-4 sm:mb-5">Profil Madrasah</h2>
+        <div className="text-center mb-12 sm:mb-16 animate-fade-in">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white tracking-tight mb-4">Profil Madrasah</h2>
           <p className="text-lg sm:text-xl md:text-2xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto leading-relaxed font-medium">Mengenal Lebih Dekat MA Malnu Kananga</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12 items-start animate-fade-in-up">
@@ -30,7 +30,7 @@ const ProfileSection: React.FC = () => {
                 </div>
             </div>
             <div className="lg:col-span-2 space-y-6">
-                <div className="p-6 sm:p-7 bg-gradient-to-br from-neutral-50 to-neutral-100/80 dark:from-neutral-800 dark:to-neutral-800/80 rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out">
+                <div className="p-6 sm:p-7 bg-gradient-to-br from-neutral-50 to-neutral-100/80 dark:from-neutral-800 dark:to-neutral-800/80 rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 ease-out">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/60 dark:to-primary-900/80 rounded-lg shadow-sm">
                             <svg className="w-5.5 h-5.5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -42,7 +42,7 @@ const ProfileSection: React.FC = () => {
                     </div>
                     <p className="text-neutral-700 dark:text-neutral-200 leading-[1.75]">Melahirkan peserta didik berakhlak mulia, akademis unggul, serta berjiwa wirausaha.</p>
                 </div>
-                <div className="p-6 sm:p-7 bg-gradient-to-br from-neutral-50 to-neutral-100/80 dark:from-neutral-800 dark:to-neutral-800/80 rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out">
+                <div className="p-6 sm:p-7 bg-gradient-to-br from-neutral-50 to-neutral-100/80 dark:from-neutral-800 dark:to-neutral-800/80 rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 ease-out">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/60 dark:to-primary-900/80 rounded-lg shadow-sm">
                             <svg className="w-5.5 h-5.5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -22,8 +22,8 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
             <div className="max-w-7xl mx-auto py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16 text-center sm:text-left">
                     <div>
-                        <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">MA Malnu Kananga</h3>
-                        <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-4">
+                        <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white mb-4">MA Malnu Kananga</h3>
+                        <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-3">
                             Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
                         </p>
                         <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
@@ -32,7 +32,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                     </div>
 
                     <div>
-                          <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">Legalitas</h3>
+                          <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white mb-4">Legalitas</h3>
                             <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
                                 <li><strong className="text-neutral-900 dark:text-white font-semibold">No. SK. Pendirian:</strong> D/Wi/MA./101/2000</li>
                                 <li><strong className="text-neutral-900 dark:text-white font-semibold">Tgl. SK. Pendirian:</strong> 20-09-2000</li>
@@ -42,7 +42,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                     </div>
 
                     <div className="sm:justify-self-end">
-                        <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">Tautan Bermanfaat</h3>
+                        <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
                           <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
                                 <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button></li>
                                 <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Download</a></li>
@@ -50,7 +50,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                 <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Karir</a></li>
                                 <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Beasiswa</a></li>
                           </ul>
-                        <div className="flex justify-center sm:justify-start gap-3 mt-8">
+                        <div className="flex justify-center sm:justify-start gap-3 mt-6">
                             <a href="#" className="text-neutral-400 hover:text-primary-600 hover:scale-110 transition-all duration-200 p-3 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800" aria-label="Facebook">
                                 <span className="sr-only">Facebook</span>
                                 <FacebookIcon />

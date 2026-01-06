@@ -9,7 +9,7 @@ import { MoonIcon } from './icons/MoonIcon';
 import { UserRole, UserExtraRole } from '../types';
 import NotificationCenter from './NotificationCenter';
 
-const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 font-medium px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800";
+const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-200 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 font-medium px-3 sm:px-4 py-2 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800";
 
 const NavLinks = () => (
     <>
@@ -120,10 +120,10 @@ const Header: React.FC<HeaderProps> = ({
                             {theme === 'light' ? <MoonIcon /> : <SunIcon />}
                         </button>
 
-                          {isLoggedIn ? (
-                               <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
+                           {isLoggedIn ? (
+                               <div className="hidden sm:flex items-center gap-2">
                                 {userExtraRole && (
-                                    <span className={`text-xs font-semibold px-3 sm:px-3.5 py-2 rounded-lg transition-all hover:opacity-80 ${
+                                    <span className={`text-xs font-semibold px-3 sm:px-4 py-2 rounded-lg transition-all hover:opacity-80 ${
                                         userExtraRole === 'staff' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300'
                                     }`}>
                                         {userExtraRole}
@@ -133,7 +133,7 @@ const Header: React.FC<HeaderProps> = ({
                                 {userRole === 'admin' && (
                                     <button
                                         onClick={onEditClick}
-                                        className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5"
+                                        className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 px-3 sm:px-4 py-2 rounded-lg font-semibold text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5"
                                         title="Buka Editor AI"
                                     >
                                         <SparklesIcon />
@@ -143,29 +143,29 @@ const Header: React.FC<HeaderProps> = ({
 
                                 <button
                                     onClick={onTogglePublicView}
-                                    className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5"
+                                    className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 px-3 sm:px-4 py-2 rounded-lg font-semibold text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5"
                                 >
                                     {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                 </button>
 
-                                <button onClick={onLogout} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold text-sm hover:bg-red-200 dark:hover:bg-red-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
+                                <button onClick={onLogout} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 px-3 sm:px-4 py-2 rounded-lg font-semibold text-sm hover:bg-red-200 dark:hover:bg-red-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
                                     Logout
                                 </button>
                             </div>
                          ) : (
-                             <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
-                                  <button onClick={onChatClick} className="flex items-center gap-2 bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-semibold text-sm hover:bg-primary-200 dark:hover:bg-primary-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
+                             <div className="hidden sm:flex items-center gap-2">
+                                  <button onClick={onChatClick} className="flex items-center gap-2 bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 px-3 sm:px-4 py-2 rounded-lg font-semibold text-sm hover:bg-primary-200 dark:hover:bg-primary-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
                                       <ChatIcon />
                                       <span>Tanya AI</span>
                                   </button>
-                                  <button onClick={onLoginClick} className="bg-primary-600 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg font-semibold text-sm hover:bg-primary-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                                  <button onClick={onLoginClick} className="bg-primary-600 text-white px-3 sm:px-4 py-2 rounded-lg font-semibold text-sm hover:bg-primary-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5">
                                       Login
                                   </button>
                              </div>
                          )}
                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 sm:p-2.5 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5" aria-label="Buka menu">
-                              {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
-                          </button>
+                               {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
+                           </button>
                     </div>
                 </div>
             </div>
@@ -180,7 +180,7 @@ const Header: React.FC<HeaderProps> = ({
                                         <button onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }} className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 w-full px-4 py-3 rounded-lg text-sm font-semibold hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
                                              {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                         </button>
-                                        <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 w-full px-4 py-3 rounded-lg text-sm font-semibold hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">Logout</button>
+                                        <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 w-full px-4 py-3 rounded-lg text-sm font-semibold hover:bg-red-200 dark:hover:bg-red-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">Logout</button>
                                     </>
                                 ) : (
                                     <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-primary-600 text-white w-full px-4 py-3 rounded-lg text-sm font-semibold hover:bg-primary-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5">Login</button>
