@@ -4,16 +4,17 @@ import DocumentTextIcon from './icons/DocumentTextIcon';
 import BuildingLibraryIcon from './icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { UsersIcon } from './icons/UsersIcon';
-import { CalendarDaysIcon } from './icons/CalendarDaysIcon'; // New Icon
+import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import ScheduleView from './ScheduleView';
 import ELibrary from './ELibrary';
 import AcademicGrades from './AcademicGrades';
 import AttendanceView from './AttendanceView';
-import OsisEvents from './OsisEvents'; // New Component
+import OsisEvents from './OsisEvents';
 import { ToastType } from './Toast';
 import { UserExtraRole, Student } from '../types';
 import { authAPI, studentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -26,26 +27,46 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
   const [currentView, setCurrentView] = useState<PortalView>('home');
   const [studentData, setStudentData] = useState<Student | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { isOnline, isSlow } = useNetworkStatus();
 
   useEffect(() => {
     const fetchStudentData = async () => {
+      if (!isOnline) {
+        setError(getOfflineMessage());
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
       try {
         const currentUser = authAPI.getCurrentUser();
         if (currentUser) {
           const studentResponse = await studentsAPI.getByUserId(currentUser.id);
           if (studentResponse.success && studentResponse.data) {
             setStudentData(studentResponse.data);
+          } else {
+            setError('Data siswa tidak ditemukan');
           }
         }
-      } catch (error) {
-        logger.error('Failed to fetch student data:', error);
+      } catch (err) {
+        logger.error('Failed to fetch student data:', err);
+        setError('Gagal memuat data siswa. Silakan coba lagi.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchStudentData();
-  }, []);
+  }, [isOnline]);
+
+  useEffect(() => {
+    if (isSlow && isOnline) {
+      onShowToast(getSlowConnectionMessage(), 'warning');
+    }
+  }, [isSlow, isOnline, onShowToast]);
 
   const menuItems = [
     {
@@ -85,7 +106,41 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
+
+        {!isOnline && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <p className="text-red-700 dark:text-red-300 text-sm font-medium">{getOfflineMessage()}</p>
+          </div>
+        )}
+
+        {isSlow && isOnline && (
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4 mb-6 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-600 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-yellow-700 dark:text-yellow-300 text-sm font-medium">{getSlowConnectionMessage()}</p>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
+            <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        ) : (
+          <>
         {currentView === 'home' && (
             <>
                 {/* Welcome Banner */}
@@ -138,14 +193,16 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                           </div>
                           <p className="text-sm text-gray-500 dark:text-gray-400">Kelola event dan proker sekolah.</p>
                       </div>
-                  )}
-                </div>
+                   )}
+                 </div>
             </>
+        )}
+        </>
         )}
 
         {currentView === 'schedule' && <ScheduleView onBack={() => setCurrentView('home')} />}
         {currentView === 'library' && <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />}
-        {currentView === 'grades' && <AcademicGrades onBack={() => setCurrentView('home')} />}
+        {currentView === 'grades' && <AcademicGrades onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
         {currentView === 'attendance' && <AttendanceView onBack={() => setCurrentView('home')} />}
         {currentView === 'osis' && <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
       </div>
