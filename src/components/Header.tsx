@@ -133,7 +133,7 @@ const Header: React.FC<HeaderProps> = ({
                                 {userRole === 'admin' && (
                                     <button
                                         onClick={onEditClick}
-                                        className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800"
+                                        className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5"
                                         title="Buka Editor AI"
                                     >
                                         <SparklesIcon />
@@ -143,22 +143,22 @@ const Header: React.FC<HeaderProps> = ({
 
                                 <button
                                     onClick={onTogglePublicView}
-                                    className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800"
+                                    className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5"
                                 >
                                     {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                 </button>
 
-                                <button onClick={onLogout} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-sm hover:bg-red-200 dark:hover:bg-red-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800">
+                                <button onClick={onLogout} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-sm hover:bg-red-200 dark:hover:bg-red-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
                                     Logout
                                 </button>
                             </div>
                          ) : (
                              <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
-                                 <button onClick={onChatClick} className="flex items-center gap-2 bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-sm hover:bg-primary-200 dark:hover:bg-primary-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800">
+                                 <button onClick={onChatClick} className="flex items-center gap-2 bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg font-medium text-sm hover:bg-primary-200 dark:hover:bg-primary-800/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
                                      <ChatIcon />
                                      <span>Tanya AI</span>
                                  </button>
-                                 <button onClick={onLoginClick} className="bg-primary-600 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg font-medium text-sm hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 shadow-sm hover:shadow-md">
+                                 <button onClick={onLoginClick} className="bg-primary-600 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg font-medium text-sm hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5">
                                      Login
                                  </button>
                              </div>
@@ -174,18 +174,18 @@ const Header: React.FC<HeaderProps> = ({
                 <div className="md:hidden bg-white dark:bg-neutral-800 shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700">
                     <nav className="flex flex-col gap-2.5 sm:gap-3 font-medium text-center">
                         <NavLinks />
-                          <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-2.5 sm:gap-3">
-                             {isLoggedIn ? (
-                                 <>
-                                      <button onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }} className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800">
-                                          {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
-                                      </button>
-                                      <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800">Logout</button>
-                                  </>
-                              ) : (
-                                  <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-primary-600 text-white w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 shadow-sm hover:shadow-md">Login</button>
-                              )}
-                          </div>
+                           <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-2.5 sm:gap-3">
+                              {isLoggedIn ? (
+                                  <>
+                                       <button onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }} className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">
+                                           {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
+                                       </button>
+                                       <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:-translate-y-0.5">Logout</button>
+                                   </>
+                               ) : (
+                                   <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-primary-600 text-white w-full px-4 py-3 rounded-lg text-sm font-medium hover:bg-primary-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 shadow-md hover:shadow-lg hover:-translate-y-0.5">Login</button>
+                               )}
+                           </div>
                     </nav>
                 </div>
             )}
