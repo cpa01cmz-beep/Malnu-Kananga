@@ -2,7 +2,7 @@
 
 **Created**: 2026-01-05  
 **Last Updated**: 2026-01-06  
-**Version**: 2.0.0  
+**Version**: 2.1.0  
 **Status**: Active
 
 ## Overview
@@ -31,12 +31,7 @@ This index provides a comprehensive overview of all documentation available for 
 ### 🚀 Deployment & Infrastructure
 - **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Complete deployment procedures (includes R2 setup)
 - **[BACKEND_GUIDE.md](./BACKEND_GUIDE.md)** - Backend setup and configuration
-- **[INFRASTRUCTURE_BUDGET.md](./INFRASTRUCTURE_BUDGET.md)** - Infrastructure costs and budgeting
 - **[Deployment README](../scripts/deployment/README.md)** - Quick deployment reference
-
-### 🤖 AI & Automation
-- **[Team Coordination Protocol](./team-coordination-protocol.md)** - Autonomous agent coordination
-- **[PROJECT_SERVICES.md](./PROJECT_SERVICES.md)** - AI-powered project services
 
 ### 🎤 Voice & Accessibility
 - **[Voice Accessibility Audit](./VOICE_ACCESSIBILITY_AUDIT.md)** - Voice interaction compliance
@@ -72,7 +67,7 @@ This index provides a comprehensive overview of all documentation available for 
 ## Documentation Metrics
 
 ### Current Status
-- **Total Documentation Files**: 18
+- **Total Documentation Files**: 15
 - **API Endpoints Documented**: 25+
 - **Code Examples**: 15+
 - **Troubleshooting Scenarios**: 20+
@@ -181,12 +176,13 @@ This index maintains relationships between documents:
 
 ---
 
-## Recent Changes (v2.0.0 - 2026-01-06)
+## Recent Changes (v2.1.0 - 2026-01-06)
 
-- **Consolidated Documentation**: All documentation moved to `/docs` directory
-- **Removed Redundancy**: Deleted empty and issue-specific files (TO-DO.md, RESOLUTION.md, TEST_TIMEOUT_RESOLUTION.md)
-- **Merged Deployment Guides**: R2_SETUP.md content integrated into DEPLOYMENT_GUIDE.md
-- **Updated References**: Fixed all internal documentation links
+- **Removed Outdated Documentation**: Deleted PROJECT_SERVICES.md (describes non-existent magic link auth)
+- **Removed Operational Documents**: Deleted INFRASTRUCTURE_BUDGET.md (outdated 2024 data)
+- **Removed Internal Protocols**: Deleted team-coordination-protocol.md (AI agent-specific)
+- **Security Fix**: Removed `.env.production` from git tracking (file preserved locally)
+- **Updated Metrics**: Documentation count updated to 15 files
 - **Single Source of Truth**: Established `/docs` as the authoritative documentation directory
 
 ---
