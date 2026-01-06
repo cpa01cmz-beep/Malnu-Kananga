@@ -8,6 +8,7 @@ permissions:
   contents: write
   pull-requests: write
   actions: read
+  repository-projects: write
 
 concurrency:
   group: oc-agent
@@ -171,16 +172,21 @@ jobs:
              - Commit fixes directly to PR branch
           
           3. Merge Conditions:
-             ONLY merge if:
-             - No conflicts
-             - Build passes
-             - All checks green (dont wait for 'on-pull' check, its you)
-             - No security-sensitive change without review
-          
-          4. After merge:
-             - Close linked issues
-             - Delete remote branch if policy allows
-             - Log action
+              ONLY merge if:
+              - No conflicts
+              - Build passes
+              - All checks green (dont wait for 'on-pull' check, its you)
+              - All PR comments resolved
+              - No security-sensitive change without review
+
+              Use `gh pr merge --admin` to bypass branch protection when conditions are met.
+
+              NEVER delete branch if merge fails.
+           
+           4. After successful merge:
+              - Close linked issues
+              - Delete remote branch ONLY after successful merge
+              - Log action
                     
           ========================
           ISSUE MANAGER MODE
