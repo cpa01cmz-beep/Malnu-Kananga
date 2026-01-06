@@ -59,7 +59,8 @@ This index provides a comprehensive overview of all documentation available for 
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 173 TypeScript/TSX/JS/JSX files
+- **Total Source Files**: 173 TypeScript/TSX/JS/JSX files (163 in src/, 10 in root & tests)
+- **Test Files**: 10 test files
 - **Documentation Files**: 12 (in /docs directory)
 - **API Endpoints Documented**: 30+
 - **Code Examples**: 15+
@@ -172,10 +173,13 @@ This index maintains relationships between documents:
 ## Recent Changes (v2.1.0 - 2026-01-06)
 
 - **Updated Version**: Corrected all documentation versions to match package.json (2.1.0)
-- **Fixed Documentation Metrics**: Corrected source file count to 173 TypeScript/TSX/JS/JSX files
+- **Fixed Documentation Metrics**: Corrected source file count to 173 TypeScript/TSX/JS/JSX files (163 in src/, 10 in root & tests)
 - **Updated Documentation Count**: Updated to reflect 12 files in /docs/ directory
+- **Added Test File Count**: Documented 10 test files across services, utils, and components
 - **Removed Redundant Documentation**: Deleted branch-cleanup-guide.md (branch management covered in CONTRIBUTING.md)
 - **Added Extra Roles Documentation**: Added wakasek and kepsek extra roles to documentation
+- **Removed Redundant Scripts**: Deleted scripts/one-click-deploy.sh and scripts/verify-deployment.sh (redundant deployment scripts)
+- **Fixed Metadata Inconsistencies**: Corrected troubleshooting-guide.md last updated date
 
 ---
 
