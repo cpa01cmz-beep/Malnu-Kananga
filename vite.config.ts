@@ -88,34 +88,20 @@ export default defineConfig(({ mode }) => {
         external: ['fsevents'],
         output: {
           manualChunks: (id) => {
-            // Core React libraries
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor';
-            }
-            // AI library
+            // Minimal chunking strategy to prevent circular dependencies
+            // Only split the largest third-party libraries
+
+            // Google GenAI library (very large, keep separate)
             if (id.includes('@google/genai')) {
-              return 'genai';
+              return 'vendor-genai';
             }
             // Test libraries (only in test mode)
             if (id.includes('vitest') || id.includes('@vitest')) {
               return 'tests';
             }
-            // Dashboard components
-            if (id.includes('AdminDashboard') || id.includes('StudentPortal') || id.includes('TeacherDashboard')) {
-              return 'dashboards';
-            }
-            // Modal components (lazy loaded)
-            if (id.includes('DocumentationPage') || id.includes('SiteEditor') || id.includes('PPDBRegistration')) {
-              return 'modals';
-            }
-            // Section components
-            if (id.includes('sections/')) {
-              return 'sections';
-            }
-            // Individual components
-            if (id.includes('components/') && !id.includes('icons/')) {
-              return 'ui-components';
-            }
+
+            // Don't manually split anything else - let Vite handle optimally
+            return undefined;
           }
         }
       },
