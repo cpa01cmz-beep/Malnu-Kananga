@@ -20,7 +20,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     }
   }, [isVisible, duration, onClose]);
 
-  const baseClasses = "fixed top-24 right-5 z-50 px-6 py-4 rounded-card-lg shadow-float flex items-center gap-3 transition-all duration-300 transform";
+  const baseClasses = "fixed top-24 right-5 z-50 px-6 py-4 rounded-card-lg shadow-float flex items-center gap-3 transition-all duration-300 transform max-w-md";
   const typeClasses = {
     success: "bg-white dark:bg-neutral-800 border-l-4 border-primary-500 text-neutral-800 dark:text-white",
     info: "bg-white dark:bg-neutral-800 border-l-4 border-blue-500 text-neutral-800 dark:text-white",
@@ -50,9 +50,11 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
   }
 
   return (
-    <div className={`${baseClasses} ${typeClasses[type]} ${visibilityClasses}`}>
-      {icons[type]}
-      <span className="font-medium">{message}</span>
+    <div className={`${baseClasses} ${typeClasses[type]} ${visibilityClasses}`} role="alert" aria-live="polite">
+      <div className="flex-shrink-0">
+        {icons[type]}
+      </div>
+      <span className="font-medium text-sm md:text-base">{message}</span>
     </div>
   );
 };

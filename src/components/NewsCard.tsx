@@ -9,7 +9,7 @@ interface NewsCardProps {
 
 const NewsCard: React.FC<NewsCardProps> = ({ newsItem }) => {
   return (
-    <article className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-card hover:shadow-card-hover border border-neutral-200 dark:border-neutral-700 transition-all duration-200 overflow-hidden flex flex-col h-full">
+    <article className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-card hover:shadow-card-hover border border-neutral-200 dark:border-neutral-700 transition-all duration-300 overflow-hidden flex flex-col h-full group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 transform hover:-translate-y-1">
       <ImageWithFallback
         className="h-48 w-full object-cover"
         src={newsItem.imageUrl}
@@ -22,7 +22,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ newsItem }) => {
             {newsItem.category}
           </span>
         </div>
-        <h3 className="text-lg font-semibold mb-2 text-neutral-900 dark:text-white flex-grow leading-snug">{newsItem.title}</h3>
+        <h3 className="text-lg font-semibold mb-2 text-neutral-900 dark:text-white flex-grow leading-snug group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">{newsItem.title}</h3>
         <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-auto">{newsItem.date}</p>
       </div>
     </article>

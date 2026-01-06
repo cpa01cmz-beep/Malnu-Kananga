@@ -32,7 +32,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'home' && (
             <>
                 <div className="bg-white dark:bg-neutral-800 rounded-card-lg p-8 shadow-card border border-neutral-100 dark:border-neutral-700 mb-8 animate-fade-in-up">
-                    <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Portal Guru</h1>
+                    <h1 className="text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">Portal Guru</h1>
                     <p className="mt-2 text-neutral-600 dark:text-neutral-300">
                         Selamat datang, Bapak/Ibu Guru.
                         {extraRole === 'staff' && <span className="font-semibold text-primary-600 dark:text-primary-400"> (Mode Staff Aktif)</span>}
