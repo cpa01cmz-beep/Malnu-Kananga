@@ -125,3 +125,4 @@ docs/reports/
 # Test artifacts
 test-results/
 .vitest/
+coverage/
