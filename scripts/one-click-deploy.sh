@@ -82,7 +82,14 @@ npm run build
 
 # Setup Cloudflare resources
 log_info "Setup Cloudflare resources..."
-node scripts/setup-cloudflare-resources.js
+log_warning "Manual Cloudflare setup required."
+log_info "Please follow these steps:"
+echo "  1. Create D1 database: wrangler d1 create malnu-kananga-db-prod"
+echo "  2. Create R2 bucket: wrangler r2 bucket create malnu-kananga-files"
+echo "  3. Create Vectorize index: wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine"
+echo "  4. Update wrangler.toml with database_id"
+echo ""
+log_info "See docs/DEPLOYMENT_GUIDE.md for complete instructions."
 
 # Set API key if provided
 if [ ! -z "$1" ]; then

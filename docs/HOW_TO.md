@@ -104,7 +104,7 @@ Akses: Login sebagai **Admin**.
 ## 💡 Tips & Trik Troubleshooting
 
 *   **Data tidak muncul?**
-    Cobalah refresh halaman. Sistem menggunakan `localStorage`, jadi data tersimpan di browser Anda.
+    Cobalah refresh halaman. Data tersimpan di Cloudflare D1 database dan disinkronisasi secara otomatis.
 *   **Ingin kembali ke awal?**
     Masuk sebagai Admin -> Laporan & Log -> Klik **"Lakukan Factory Reset"**.
 *   **Gambar rusak?**

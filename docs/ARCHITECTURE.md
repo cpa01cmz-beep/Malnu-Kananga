@@ -71,13 +71,15 @@ graph TD
 ## Struktur Direktori
 
 *   `src/components`: Komponen UI (Atomic & Organism).
-*   `src/hooks`: Custom React Hooks (`useLocalStorage`, `useAPI`).
+*   `src/hooks`: Custom React Hooks (`useLocalStorage`, `useAPI`, `useVoiceRecognition`, dll).
 *   `src/services`:
     *   `apiService.ts`: Backend API client (Users, PPDB, Inventory, Events, Auth)
     *   `geminiService.ts`: Integrasi AI (Gemini, Fetch)
+    *   `authService.ts`: Authentication & session management
+    *   `permissionService.ts`: Permission & authorization logic
+*   `src/utils`: Utility functions (validators, error handlers, retry logic).
 *   `src/data`: Data inisial/default untuk seeding.
-*   `src/types.ts`: Definisi tipe TypeScript global.
-*   `src/config.ts`: Konfigurasi API dan feature flags.
+*   `src/config`: Konfigurasi (API, permissions, feature flags).
+*   `src/types`: Definisi tipe TypeScript global (permissions, Recharts types).
 *   `worker.js`: Cloudflare Worker backend server.
 *   `schema.sql`: D1 Database schema SQL.
-*   `BACKEND_GUIDE.md`: Panduan lengkap integrasi backend.

@@ -104,3 +104,7 @@ jspm_packages/
 # Temporary files
 *.tmp
 *.temp
+
+# CI/CD generated files
+ci-context.txt
+docs/reports/
