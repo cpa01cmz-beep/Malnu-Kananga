@@ -230,7 +230,7 @@ export const authAPI = {
 
 async function request<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: any = {}
 ): Promise<ApiResponse<T>> {
   let token = getAuthToken();
 
@@ -1120,6 +1120,40 @@ export const parentsAPI = {
 
   async getChildSchedule(studentId: string): Promise<ApiResponse<Schedule[]>> {
     return request<Schedule[]>(`/api/parent/schedule?student_id=${studentId}`);
+  },
+
+  async getMeetings(studentId: string): Promise<ApiResponse<any[]>> {
+    return request<any[]>(`/api/parent/meetings?student_id=${studentId}`);
+  },
+
+  async getAvailableTeachersForMeetings(studentId: string): Promise<ApiResponse<any[]>> {
+    return request<any[]>(`/api/parent/meetings/teachers?student_id=${studentId}`);
+  },
+
+  async scheduleMeeting(meetingData: any): Promise<ApiResponse<any>> {
+    return request<any>('/api/parent/meetings', {
+      method: 'POST',
+      body: JSON.stringify(meetingData),
+    });
+  },
+
+  async getMessages(studentId: string): Promise<ApiResponse<any[]>> {
+    return request<any[]>(`/api/parent/messages?student_id=${studentId}`);
+  },
+
+  async getAvailableTeachers(studentId: string): Promise<ApiResponse<any[]>> {
+    return request<any[]>(`/api/parent/messages/teachers?student_id=${studentId}`);
+  },
+
+  async sendMessage(messageData: any): Promise<ApiResponse<any>> {
+    return request<any>('/api/parent/messages', {
+      method: 'POST',
+      body: JSON.stringify(messageData),
+    });
+  },
+
+  async getPaymentHistory(studentId: string): Promise<ApiResponse<any[]>> {
+    return request<any[]>(`/api/parent/payments?student_id=${studentId}`);
   },
 };
 

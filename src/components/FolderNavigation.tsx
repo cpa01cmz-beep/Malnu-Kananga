@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PlusIcon } from './icons/PlusIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { TrashIcon } from './icons/TrashIcon';
@@ -30,9 +30,9 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
 
   useEffect(() => {
     fetchFolders();
-  }, [fetchFolders]);
+  }, []);
 
-  const fetchFolders = async () => {
+  const fetchFolders = useCallback(async () => {
     setLoading(true);
     try {
       // Mock API call - replace with actual implementation
@@ -96,7 +96,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [materials]);
 
   const toggleFolderExpansion = (folderId: string) => {
     const newExpanded = new Set(expandedFolders);

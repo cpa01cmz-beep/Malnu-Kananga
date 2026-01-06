@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ChartBarIcon } from './icons/ChartBarIcon';
 import { UserIcon } from './icons/UserIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
@@ -40,9 +40,9 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
 
   useEffect(() => {
     fetchAnalytics();
-  }, [material.id, fetchAnalytics]);
+  }, [material.id]);
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     try {
       // Mock API call - replace with actual implementation
@@ -74,7 +74,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [material]);
 
   const getTrend = (current: number, previous: number) => {
     if (previous === 0) return { isUp: true, percentage: 100 };

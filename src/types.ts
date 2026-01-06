@@ -443,6 +443,52 @@ export interface ELibrary {
   versions?: MaterialVersion[];
   analytics?: MaterialAnalytics;
   templates?: MaterialTemplate[];
+  averageRating?: number;
+  totalReviews?: number;
+  readingProgress?: ReadingProgress;
+  isBookmarked?: boolean;
+  isFavorite?: boolean;
+}
+
+export interface ReadingProgress {
+  materialId: string;
+  userId: string;
+  currentPosition: number;
+  totalPages?: number;
+  lastReadAt: string;
+  readTime: number;
+  isCompleted: boolean;
+  completedAt?: string;
+}
+
+export interface Bookmark {
+  id: string;
+  materialId: string;
+  userId: string;
+  pageNumber?: number;
+  position?: number;
+  note?: string;
+  createdAt: string;
+}
+
+export interface Review {
+  id: string;
+  materialId: string;
+  userId: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OfflineDownload {
+  id: string;
+  materialId: string;
+  userId: string;
+  downloadUrl: string;
+  downloadedAt: string;
+  fileSize: number;
+  isAvailable: boolean;
 }
 
 export interface MaterialFavorite {
