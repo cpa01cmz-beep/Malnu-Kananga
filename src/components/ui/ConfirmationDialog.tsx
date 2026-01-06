@@ -64,8 +64,8 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   const styles = typeStyles[type];
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm transition-opacity duration-300">
-      <div className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-float border max-w-md w-full border-neutral-200 dark:border-neutral-700 animate-scale-in">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm transition-opacity duration-300" onClick={(e) => e.target === e.currentTarget && onCancel()}>
+      <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-float border max-w-md w-full border-neutral-200 dark:border-neutral-700 animate-scale-in">
         <div className="p-6">
           <div className="flex items-start gap-4">
             <div className={`p-3 rounded-xl flex-shrink-0 ${styles.bg}`}>
@@ -75,24 +75,24 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">
                 {title}
               </h3>
-              <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
+              <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed font-medium">
                 {message}
               </p>
             </div>
           </div>
-          
+
           <div className="flex gap-3 justify-end mt-6">
             <button
               onClick={onCancel}
               disabled={isLoading}
-              className="px-5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+              className="px-5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-xl font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
             >
               {cancelText}
             </button>
             <button
               onClick={onConfirm}
               disabled={isLoading}
-              className={`px-5 py-2.5 text-white rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 shadow-sm hover:shadow ${
+              className={`px-5 py-2.5 text-white rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 shadow-sm hover:shadow-md ${
                 isLoading ? styles.confirmDisabled : styles.confirmBg
               } ${type === 'danger' ? 'focus:ring-red-500' : type === 'warning' ? 'focus:ring-amber-500' : 'focus:ring-blue-500'}`}
             >

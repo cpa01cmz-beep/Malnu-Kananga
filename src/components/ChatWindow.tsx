@@ -334,11 +334,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               }`}
             >
               <div
-                 className={`rounded-lg px-3.5 py-2.5 text-sm md:text-base leading-relaxed shadow-sm ${
-                   message.sender === Sender.User
-                     ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white'
-                     : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200'
-                 }`}
+                  className={`rounded-xl px-4 py-3 text-sm md:text-base leading-relaxed shadow-sm ${
+                    message.sender === Sender.User
+                      ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white'
+                      : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200'
+                  }`}
                >
                 {message.sender === Sender.AI ? (
                     <MarkdownRenderer content={message.text} />
@@ -359,7 +359,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         </div>
       </div>
 
-      <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex-shrink-0">
+      <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex-shrink-0 rounded-b-lg">
         <div className="flex items-end gap-2">
           <AutoResizeTextarea
               value={input}
@@ -384,21 +384,21 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
             }}
           />
            {synthesis.isSupported && messages.some((msg) => msg.sender === Sender.AI) && !voiceQueue.isPlaying && (
-             <button
-               onClick={() => {
-                 const aiMessages = messages.filter((msg) => msg.sender === Sender.AI);
-                 if (aiMessages.length > 0) {
-                   voiceQueue.addMessages(aiMessages);
-                   synthesis.speak(`Membaca ${aiMessages.length} pesan`);
-                 }
-               }}
-               className="p-2.5 mb-0.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all flex-shrink-0"
-               title="Baca semua pesan AI"
-               aria-label="Baca semua pesan AI"
-             >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                 <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-              </svg>
+              <button
+                onClick={() => {
+                  const aiMessages = messages.filter((msg) => msg.sender === Sender.AI);
+                  if (aiMessages.length > 0) {
+                    voiceQueue.addMessages(aiMessages);
+                    synthesis.speak(`Membaca ${aiMessages.length} pesan`);
+                  }
+                }}
+                className="p-2.5 mb-0.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl transition-all flex-shrink-0 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+                title="Baca semua pesan AI"
+                aria-label="Baca semua pesan AI"
+              >
+               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+               </svg>
             </button>
           )}
         </div>

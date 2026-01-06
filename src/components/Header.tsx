@@ -96,7 +96,7 @@ const Header: React.FC<HeaderProps> = ({
                         </div>
                         <div>
                             <span className="font-bold text-lg text-neutral-900 dark:text-white leading-tight">Malnu Kananga</span>
-                            <span className="block text-xs text-neutral-500 dark:text-neutral-400 leading-tight tracking-wide font-medium">NPSN: 69881502</span>
+                            <span className="block text-xs text-neutral-500 dark:text-neutral-400 leading-tight tracking-wide font-semibold">NPSN: 69881502</span>
                         </div>
                     </div>
 
