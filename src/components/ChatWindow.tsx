@@ -228,11 +228,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
   }, [messages, autoReadAI, synthesis, voiceQueue, handleSend]);
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-card-lg shadow-float border border-neutral-200 dark:border-neutral-700 overflow-hidden">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 bg-green-600 text-white flex-shrink-0">
+      <header className="flex items-center justify-between p-4 bg-primary-600 text-white flex-shrink-0">
         <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-white rounded-full mr-1 animate-pulse"></div>
+            <div className="w-3 h-3 bg-white rounded-pill mr-1 animate-pulse"></div>
             <h2 className="font-bold text-lg">Asisten AI</h2>
         </div>
         <div className="flex items-center gap-2">
@@ -329,7 +329,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
       </header>
 
       {/* Messages */}
-      <div className="flex-1 p-4 overflow-y-auto bg-gray-50 dark:bg-gray-900 custom-scrollbar">
+      <div className="flex-1 p-4 overflow-y-auto bg-neutral-50 dark:bg-neutral-900 custom-scrollbar">
         <div className="flex flex-col space-y-4">
           {messages.map((message) => (
             <div
@@ -339,10 +339,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               }`}
             >
               <div
-                className={`rounded-2xl p-3 text-sm md:text-base ${
+                className={`rounded-card-lg p-3 text-sm md:text-base ${
                   message.sender === Sender.User
-                    ? 'bg-green-500 text-white rounded-br-lg whitespace-pre-wrap'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-lg'
+                    ? 'bg-primary-600 text-white whitespace-pre-wrap'
+                    : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200'
                 }`}
               >
                 {message.sender === Sender.AI ? (
@@ -365,7 +365,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
+      <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex-shrink-0">
         <div className="flex items-end gap-2">
           <AutoResizeTextarea 
               value={input}
@@ -400,7 +400,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                   synthesis.speak(`Membaca ${aiMessages.length} pesan`);
                 }
               }}
-              className="p-3 mb-1 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-all shadow-sm flex-shrink-0 hover:scale-105"
+              className="p-3 mb-1 bg-primary-500 hover:bg-primary-600 text-white rounded-pill transition-all duration-200 shadow-card flex-shrink-0 hover:scale-105"
               title="Baca semua pesan AI"
               aria-label="Baca semua pesan AI"
             >

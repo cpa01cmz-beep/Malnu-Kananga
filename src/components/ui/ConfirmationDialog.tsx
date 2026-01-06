@@ -40,44 +40,44 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     },
     info: {
       icon: 'ℹ️',
-      confirmBg: 'bg-blue-600 hover:bg-blue-700',
-      confirmDisabled: 'bg-blue-400 cursor-not-allowed',
-      border: 'border-blue-200 dark:border-blue-800'
+      confirmBg: 'bg-primary-600 hover:bg-primary-700',
+      confirmDisabled: 'bg-primary-400 cursor-not-allowed',
+      border: 'border-primary-200 dark:border-primary-800'
     }
   };
 
   const styles = typeStyles[type];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border-2 max-w-md w-full border-gray-200 dark:border-gray-700">
+    <div className="fixed inset-0 bg-neutral-900/75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-float border-2 max-w-md w-full border-neutral-200 dark:border-neutral-700">
         <div className="p-6">
           <div className="flex items-start gap-4">
             <div className="text-2xl flex-shrink-0">
               {styles.icon}
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
                 {title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
+              <p className="text-neutral-600 dark:text-neutral-300 mb-6">
                 {message}
               </p>
             </div>
           </div>
-          
+
           <div className="flex gap-3 justify-end">
             <button
               onClick={onCancel}
               disabled={isLoading}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-card hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {cancelText}
             </button>
             <button
               onClick={onConfirm}
               disabled={isLoading}
-              className={`px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+              className={`px-4 py-2 text-white rounded-card transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
                 isLoading ? styles.confirmDisabled : styles.confirmBg
               }`}
             >
