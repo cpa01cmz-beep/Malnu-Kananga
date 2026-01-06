@@ -68,10 +68,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     onConfirm: () => {}
   });
 
-  // Confirmation Dialog State
-  const [_showResetConfirm, _setShowResetConfirm] = useState(false);
-  const [_resetStudentId, _setResetStudentId] = useState<string | null>(null);
-  const [_showSaveConfirm, setShowSaveConfirm] = useState(false);
+  // Confirmation Dialog State (removed unused variables)
 
   const toast = createToastHandler(onShowToast);
   const fetchStudentsAndGrades = useCallback(async () => {
@@ -309,9 +306,11 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
   const handleSave = async () => {
     // Validate all grades before saving
+    const validationErrors: string[] = [];
+    const validationWarnings: string[] = [];
     let hasErrors = false;
     
-    grades.forEach(grade => {
+    grades.forEach((grade, index) => {
       const validation = validateGradeInput({
         assignment: grade.assignment,
         midExam: grade.midExam,
@@ -320,41 +319,94 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       
       if (!validation.isValid) {
         hasErrors = true;
+        validationErrors.push(`${grade.name || `Siswa ${index + 1}`}: ${validation.errors.join(', ')}`);
+      }
+      
+      if (validation.warnings.length > 0) {
+        validationWarnings.push(`${grade.name || `Siswa ${index + 1}`}: ${validation.warnings.join(', ')}`);
       }
     });
     
     if (hasErrors) {
-      toast.error('Perbaiki kesalahan validasi sebelum menyimpan');
+      setConfirmDialog({
+        isOpen: true,
+        title: 'Validasi Gagal',
+        message: `Terdapat kesalahan validasi:\n\n${validationErrors.join('\n')}\n\nPerbaiki kesalahan tersebut sebelum menyimpan.`,
+        type: 'danger',
+        onConfirm: () => {}
+      });
       return;
     }
     
-    // Show confirmation for batch save
-    setShowSaveConfirm(true);
+    // Show confirmation with warnings if any
+    const confirmMessage = validationWarnings.length > 0 
+      ? `Akan menyimpan nilai untuk ${grades.length} siswa.\n\nPeringatan:\n${validationWarnings.join('\n')}\n\nLanjutkan penyimpanan?`
+      : `Akan menyimpan nilai untuk ${grades.length} siswa. Lanjutkan?`;
+    
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Konfirmasi Penyimpanan',
+      message: confirmMessage,
+      type: 'warning',
+      onConfirm: () => doBatchSave()
+    });
   };
   
   const doBatchSave = async () => {
     try {
-      setLoading(true);
+      _setIsSaving(true);
+      
+      // Track save progress
+      let successCount = 0;
+      let failureCount = 0;
+      const failureDetails: string[] = [];
 
-      const savePromises = grades.map(grade =>
-        gradesAPI.update(grade.id, {
-          studentId: grade.id,
-          classId: className,
-          subjectId: subjectId,
-          assignment: grade.assignment,
-          midExam: grade.midExam,
-          finalExam: grade.finalExam,
-        })
-      );
+      const savePromises = grades.map(async (grade, index) => {
+        try {
+          await gradesAPI.update(grade.id, {
+            studentId: grade.id,
+            classId: className,
+            subjectId: subjectId,
+            assignment: grade.assignment,
+            midExam: grade.midExam,
+            finalExam: grade.finalExam,
+          });
+          successCount++;
+          return { success: true, studentName: grade.name };
+        } catch (error) {
+          failureCount++;
+          failureDetails.push(`${grade.name || `Siswa ${index + 1}`}: ${error instanceof Error ? error.message : 'Terjadi kesalahan'}`);
+          logger.error(`Failed to save grade for student ${grade.id}:`, error);
+          return { success: false, studentName: grade.name, error };
+        }
+      });
 
       await Promise.all(savePromises);
-      setIsEditing(null);
-      toast.success('Nilai berhasil disimpan ke database.');
+      
+      if (failureCount === 0) {
+        toast.success(`Berhasil menyimpan nilai untuk ${successCount} siswa.`);
+        setIsEditing(null);
+      } else if (successCount > 0) {
+        toast.warning(`Berhasil menyimpan ${successCount} siswa, gagal ${failureCount} siswa. Silakan periksa kembali.`);
+      } else {
+        toast.error(`Gagal menyimpan semua nilai. ${failureDetails[0]}`);
+      }
+      
+      // Show detailed error dialog if there are failures
+      if (failureCount > 0) {
+        setConfirmDialog({
+          isOpen: true,
+          title: 'Detail Penyimpanan',
+          message: `Hasil penyimpanan:\n\n✓ Berhasil: ${successCount} siswa\n✗ Gagal: ${failureCount} siswa\n\nDetail kesalahan:\n${failureDetails.join('\n')}`,
+          type: 'danger',
+          onConfirm: () => {}
+        });
+      }
     } catch (error) {
-      logger.error('Error saving grades:', error);
-      toast.error('Gagal menyimpan nilai');
+      logger.error('Error in batch save:', error);
+      toast.error('Terjadi kesalahan sistem saat menyimpan nilai');
     } finally {
-      setLoading(false);
+      _setIsSaving(false);
     }
   };
 
@@ -718,7 +770,36 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                         <div className="flex gap-2 justify-end">
                                             {isRowEditing ? (
                                                 <button
-                                                    onClick={doBatchSave}
+                                                    onClick={() => {
+                                                        const validation = validateGradeInput({
+                                                            assignment: student.assignment,
+                                                            midExam: student.midExam,
+                                                            finalExam: student.finalExam
+                                                        });
+                                                        
+                                                        if (!validation.isValid) {
+                                                            setConfirmDialog({
+                                                                isOpen: true,
+                                                                title: 'Validasi Gagal',
+                                                                message: `Kesalahan validasi untuk ${student.name}:\n\n${validation.errors.join(', ')}\n\nPerbaiki sebelum menyimpan.`,
+                                                                type: 'danger',
+                                                                onConfirm: () => {}
+                                                            });
+                                                            return;
+                                                        }
+                                                        
+                                                        if (validation.warnings.length > 0) {
+                                                            setConfirmDialog({
+                                                                isOpen: true,
+                                                                title: 'Konfirmasi Penyimpanan',
+                                                                message: `Simpan nilai untuk ${student.name}?\n\nPeringatan:\n${validation.warnings.join(', ')}`,
+                                                                type: 'warning',
+                                                                onConfirm: () => doBatchSave()
+                                                            });
+                                                        } else {
+                                                            doBatchSave();
+                                                        }
+                                                    }}
                                                     className="text-xs font-medium bg-green-600 text-white px-3 py-1.5 rounded-full hover:bg-green-700 transition-colors"
                                                 >
                                                     Simpan

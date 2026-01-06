@@ -13,14 +13,14 @@ describe('Gemini Service', () => {
   describe('initialGreeting', () => {
     it('should return expected greeting message', async () => {
       // Import the service function directly
-      const { initialGreeting } = await import('./src/services/geminiService');
+      const { initialGreeting } = await import('../geminiService');
       expect(initialGreeting).toBe("Assalamualaikum! Saya Asisten AI MA Malnu Kananga. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?");
     });
   });
 
   describe('getAIResponseStream', () => {
     it('should return fallback message on API error', async () => {
-      const { getAIResponseStream } = await import('./src/services/geminiService');
+      const { getAIResponseStream } = await import('../geminiService');
       
       const chunks = [];
       for await (const chunk of getAIResponseStream('test', [])) {
@@ -43,7 +43,7 @@ describe('Gemini Service', () => {
       vi.stubEnv('VITE_GEMINI_API_KEY', 'test-api-key');
 
       // Create a fresh import to ensure proper mocking
-      const { getAIResponseStream } = await import('./src/services/geminiService');
+      const { getAIResponseStream } = await import('../geminiService');
       
       const chunks = [];
       try {
@@ -64,7 +64,7 @@ describe('Gemini Service', () => {
 
   describe('analyzeClassPerformance', () => {
     it('should return fallback message on API error', async () => {
-      const { analyzeClassPerformance } = await import('./src/services/geminiService');
+      const { analyzeClassPerformance } = await import('../geminiService');
       
       const result = await analyzeClassPerformance([]);
       
@@ -75,13 +75,14 @@ describe('Gemini Service', () => {
 
   describe('getAIEditorResponse', () => {
     it('should throw error on API failure', async () => {
-      const { getAIEditorResponse } = await import('./src/services/geminiService');
+      const { getAIEditorResponse } = await import('../geminiService');
       
       try {
         await getAIEditorResponse('test', { featuredPrograms: [], latestNews: [] });
         // Should not reach here
         expect(true).toBe(false);
       } catch (error) {
+        if (!(error instanceof Error)) return;
         // Expected to throw error
         expect(error instanceof Error).toBe(true);
         expect(error.message).toBe("Gagal memproses respon dari AI. Mohon coba instruksi yang lebih spesifik.");
