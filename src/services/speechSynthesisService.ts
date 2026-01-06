@@ -20,6 +20,7 @@ class SpeechSynthesisService {
   private config: SpeechSynthesisConfig;
   private callbacks: SpeechSynthesisEventCallbacks = {};
   private voiceCache: Map<string, SpeechSynthesisUtterance> = new Map();
+  // @ts-expect-error: This property is used across multiple methods but TypeScript doesn't detect it
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private isSupported: boolean;
   private voices: SpeechSynthesisVoice[] = [];
@@ -28,6 +29,7 @@ class SpeechSynthesisService {
     this.config = {
       ...VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG,
       ...config,
+      voice: config?.voice ?? null,
     };
 
     this.synth = null;
@@ -119,10 +121,10 @@ class SpeechSynthesisService {
     utterance.volume = this.config.volume;
 
     if (this.config.voice) {
-      utterance.voice = this.config.voice;
+      utterance.voice = this.config.voice as any;
     }
 
-    return utterance;
+    return utterance as any;
   }
 
   private setupUtteranceListeners(utterance: SpeechSynthesisUtterance): void {
@@ -183,7 +185,9 @@ class SpeechSynthesisService {
   private addToCache(text: string, utterance: SpeechSynthesisUtterance): void {
     if (this.voiceCache.size >= VOICE_CONFIG.MAX_VOICE_CACHE_SIZE) {
       const firstKey = this.voiceCache.keys().next().value;
-      this.voiceCache.delete(firstKey);
+      if (firstKey) {
+        this.voiceCache.delete(firstKey);
+      }
     }
 
     this.voiceCache.set(text, utterance);

@@ -47,7 +47,7 @@ class SpeechRecognitionService {
       return false;
     }
 
-    const speechWindow = window as SpeechWindow;
+    const speechWindow = window as unknown as SpeechWindow;
     const SpeechRecognitionAPI = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
     return !!SpeechRecognitionAPI;
   }

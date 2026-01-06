@@ -251,8 +251,7 @@ export function sanitizeMessageInput(input: Omit<ParentMessage, 'id' | 'timestam
     teacherName: input.teacherName?.trim(),
     childName: input.childName?.trim(),
     subject: input.subject.trim(),
-    message: input.message.trim(),
-    status: 'sent'
+    message: input.message.trim()
   };
 }
 
@@ -270,7 +269,7 @@ export function validateAndSanitizeMeeting(meeting: Omit<ParentMeeting, 'id' | '
     status: 'scheduled'
   };
 
-  const validation = validateParentMeeting(tempMeeting);
+  const validation = validateParentMeeting(tempMeeting as ParentMeeting);
 
   return {
     isValid: validation.isValid,
