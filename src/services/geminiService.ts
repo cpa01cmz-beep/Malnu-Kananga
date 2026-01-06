@@ -10,6 +10,7 @@ import {
 } from '../utils/errorHandler';
 import { logger } from '../utils/logger';
 import { validateAICommand, validateAIResponse } from '../utils/aiEditorValidator';
+import { chatCache, analysisCache, editorCache } from './aiCacheService';
 
 // Initialize the Google AI client
 const ai = new GoogleGenAI({ apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' });
@@ -31,6 +32,24 @@ export async function* getAIResponseStream(
     localContext?: LocalContext,
     useThinkingMode: boolean = false // Toggle for Gemini 3 Pro with Thinking
 ): AsyncGenerator<string> {
+  // Check cache first for identical requests
+  const contextString = localContext ? 
+    `${localContext.featuredPrograms.map(p => p.title).join(', ')}|${localContext.latestNews.map(n => n.title).join(', ')}` : '';
+  
+  const cacheKey = {
+    operation: 'chat',
+    input: message,
+    context: contextString,
+    thinkingMode: useThinkingMode
+  };
+  
+  const cachedResponse = chatCache.get<string>(cacheKey);
+  if (cachedResponse) {
+    logger.debug('Returning cached chat response');
+    yield* [cachedResponse];
+    return;
+  }
+  
   let ragContext = "";
   
   // 1. Fetch RAG context from the Worker
@@ -103,8 +122,16 @@ ${message}
       });
     });
 
+    let accumulatedResponse = "";
     for await (const chunk of responseStream) {
-      yield chunk.text || '';
+      const text = chunk.text || '';
+      accumulatedResponse += text;
+      yield text;
+    }
+    
+    // Cache the complete response
+    if (accumulatedResponse) {
+      chatCache.set(cacheKey, accumulatedResponse);
     }
   } catch (error) {
     const classifiedError = classifyError(error, {
@@ -121,6 +148,19 @@ ${message}
 
 // Function to analyze Teacher Grading Data (Uses Gemini 3 Pro)
 export async function analyzeClassPerformance(grades: { studentName: string; subject: string; grade: string; semester: string }[]): Promise<string> {
+    // Check cache for existing analysis
+    const cacheKey = {
+      operation: 'classAnalysis',
+      input: JSON.stringify(grades),
+      model: PRO_THINKING_MODEL
+    };
+    
+    const cachedAnalysis = analysisCache.get<string>(cacheKey);
+    if (cachedAnalysis) {
+      logger.debug('Returning cached class performance analysis');
+      return cachedAnalysis;
+    }
+
     const prompt = `
     Analyze the following student grade data for a specific class subject. 
     Provide a pedagogical analysis including:
@@ -141,7 +181,12 @@ export async function analyzeClassPerformance(grades: { studentName: string; sub
                 }
             });
         });
-        return response.text || "Gagal melakukan analisis.";
+        const analysis = response.text || "Gagal melakukan analisis.";
+        
+        // Cache the analysis result
+        analysisCache.set(cacheKey, analysis);
+        
+        return analysis;
     } catch (error) {
         const classifiedError = classifyError(error, {
             operation: 'analyzeClassPerformance',
@@ -167,6 +212,20 @@ const commandValidation = validateAICommand(prompt);
     }
 
     const sanitizedPrompt = commandValidation.sanitizedPrompt || prompt;
+
+    // Check cache for similar editor requests
+    const cacheKey = {
+      operation: 'editor',
+      input: sanitizedPrompt,
+      context: JSON.stringify(currentContent),
+      model: PRO_THINKING_MODEL
+    };
+    
+    const cachedResult = editorCache.get<{ featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }>(cacheKey);
+    if (cachedResult) {
+      logger.debug('Returning cached editor response');
+      return cachedResult;
+    }
 
     const model = PRO_THINKING_MODEL;
 
@@ -246,7 +305,12 @@ Please provide the updated JSON content following the safety and content rules a
             throw new Error(responseValidation.error);
         }
 
-        return responseValidation.sanitizedContent!;
+        const result = responseValidation.sanitizedContent!;
+        
+        // Cache the editor result
+        editorCache.set(cacheKey, result);
+        
+        return result;
     } catch (error) {
         const classifiedError = classifyError(error, {
             operation: 'getAIEditorResponse',
