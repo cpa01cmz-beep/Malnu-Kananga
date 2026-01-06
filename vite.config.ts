@@ -48,6 +48,20 @@ export default defineConfig(({ mode }) => {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
           runtimeCaching: [
             {
+              urlPattern: /\.css$/,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'css-cache',
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 60 * 60 * 24 // <== 24 hours
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
               handler: 'CacheFirst',
               options: {
@@ -107,7 +121,7 @@ export default defineConfig(({ mode }) => {
       },
       chunkSizeWarningLimit: 300,
       target: 'esnext',
-      minify: 'terser',
+      minify: 'terser' as const,
       terserOptions: {
         compress: {
           drop_console: true,
