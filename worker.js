@@ -523,6 +523,7 @@ async function handleLogin(request, env, corsHeaders) {
       user_id: user.id,
       email: user.email,
       role: user.role,
+      extra_role: user.extra_role,
       session_id: sessionId
     }, env.JWT_SECRET, '15m');
     
@@ -610,6 +611,7 @@ async function handleRefreshToken(request, env, corsHeaders) {
       user_id: session.user_id,
       email: session.email,
       role: session.role,
+      extra_role: session.extra_role,
       session_id: session.id
     }, env.JWT_SECRET, '15m');
 
