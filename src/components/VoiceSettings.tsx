@@ -304,8 +304,10 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Output Suara</h3>
 
               <div className="space-y-2">
-                <label className="block text-sm text-gray-600 dark:text-gray-400">Kecepatan Bicara ({rate.toFixed(1)}x)</label>
+                <label htmlFor="voice-rate" className="block text-sm text-gray-600 dark:text-gray-400">Kecepatan Bicara ({rate.toFixed(1)}x)</label>
                 <input
+                  id="voice-rate"
+                  name="rate"
                   type="range"
                   min="0.5"
                   max="2"
@@ -318,8 +320,10 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm text-gray-600 dark:text-gray-400">Nada ({pitch.toFixed(1)})</label>
+                <label htmlFor="voice-pitch" className="block text-sm text-gray-600 dark:text-gray-400">Nada ({pitch.toFixed(1)})</label>
                 <input
+                  id="voice-pitch"
+                  name="pitch"
                   type="range"
                   min="0"
                   max="2"
