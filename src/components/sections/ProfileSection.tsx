@@ -30,7 +30,7 @@ const ProfileSection: React.FC = () => {
                 </div>
             </div>
             <div className="lg:col-span-2 space-y-6">
-                <div className="p-6 bg-gradient-to-br from-neutral-50 to-neutral-100/60 dark:from-neutral-800 dark:to-neutral-800/60 rounded-xl shadow-card border border-neutral-200/80 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5">
+                <div className="p-6 bg-gradient-to-br from-neutral-50 to-neutral-100/60 dark:from-neutral-800 dark:to-neutral-800/60 rounded-xl shadow-card border border-neutral-200/80 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/50 dark:to-primary-900/70 rounded-lg shadow-sm">
                             <svg className="w-5.5 h-5.5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -42,7 +42,7 @@ const ProfileSection: React.FC = () => {
                     </div>
                     <p className="text-neutral-700 dark:text-neutral-200 leading-[1.75]">Melahirkan peserta didik berakhlak mulia, akademis unggul, serta berjiwa wirausaha.</p>
                 </div>
-                <div className="p-6 bg-gradient-to-br from-neutral-50 to-neutral-100/60 dark:from-neutral-800 dark:to-neutral-800/60 rounded-xl shadow-card border border-neutral-200/80 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5">
+                <div className="p-6 bg-gradient-to-br from-neutral-50 to-neutral-100/60 dark:from-neutral-800 dark:to-neutral-800/60 rounded-xl shadow-card border border-neutral-200/80 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
                     <div className="flex items-center gap-3 mb-4">
                         <div className="p-3 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/50 dark:to-primary-900/70 rounded-lg shadow-sm">
                             <svg className="w-5.5 h-5.5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -112,9 +112,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
                     <div
                         onClick={onOpenEditor}
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
+                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-float hover:-translate-y-1 group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
-                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
+                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300 group-hover:scale-110">
                             <SparklesIcon className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-bold mb-2">AI Site Editor</h3>
@@ -124,9 +124,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('content.update') && (
                     <div
                         onClick={onOpenEditor}
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
+                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-float hover:-translate-y-1 group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
-                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
+                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300 group-hover:scale-110">
                             <SparklesIcon className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-bold mb-2">AI Site Editor</h3>
@@ -137,7 +137,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('ppdb.manage') && (
                     <div
                         onClick={() => setCurrentView('ppdb')}
-                        className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer relative hover:-translate-y-1 group"
+                        className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-float transition-all duration-300 cursor-pointer relative hover:-translate-y-1 group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
                         {pendingPPDB > 0 && (
                             <span className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white shadow-md animate-pulse ring-2 ring-white dark:ring-neutral-800">
@@ -156,7 +156,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('users.read') && (
                     <div
                         onClick={() => setCurrentView('users')}
-                        className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1 group"
+                        className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-float transition-all duration-300 cursor-pointer hover:-translate-y-1 group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
                         <div className="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
                             <UsersIcon />
@@ -170,7 +170,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('system.stats') && (
                     <div
                         onClick={() => setCurrentView('stats')}
-                        className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-300 cursor-pointer hover:-translate-y-1 group"
+                        className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-float transition-all duration-300 cursor-pointer hover:-translate-y-1 group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
                         <div className="bg-primary-100 dark:bg-primary-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform duration-300">
                             <ChartBarIcon />
@@ -184,9 +184,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('system.admin') && (
                     <div
                         onClick={() => setCurrentView('ai-cache')}
-                        className="bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
+                        className="bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-float hover:-translate-y-1 group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
-                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
+                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300 group-hover:scale-110">
                             <ChartBarIcon className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-bold mb-2">AI Cache Manager</h3>
@@ -197,9 +197,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     {checkPermission('system.admin') && (
                     <div
                         onClick={() => setCurrentView('permissions')}
-                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1 group"
+                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 hover:shadow-float hover:-translate-y-1 group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
-                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300">
+                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 transition-colors duration-300 group-hover:scale-110">
                             <UsersIcon className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-bold mb-2">Permission System</h3>
