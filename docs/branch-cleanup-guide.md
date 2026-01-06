@@ -1,7 +1,12 @@
 # Repository Branch Cleanup Guide
 
+**Created**: 2026-01-06
+**Last Updated**: 2026-01-06
+**Version**: 2.1.0
+**Status**: Active
+
 ## Overview
-This document outlines the process for cleaning up stale and merged branches in the MA Malnu Kananga repository.
+This document outlines the process for cleaning up stale and merged branches in MA Malnu Kananga repository.
 
 ## Current Status
 - All previously listed merged branches have been automatically cleaned up
@@ -35,7 +40,7 @@ git remote prune origin
 ## Branch Naming Convention
 
 - **Features**: `feature/feature-name`
-- **Bug fixes**: `fix/bug-description`  
+- **Bug fixes**: `fix/bug-description`
 - **Hotfixes**: `hotfix/critical-fix`
 - **Documentation**: `docs/update-description`
 - **Chores**: `chore/maintenance-task`
@@ -51,7 +56,7 @@ git remote prune origin
 1. **Never** delete branches without verification
 2. Always check for open PRs before deletion
 3. Use branch protection settings for critical branches
-4. Document the deletion reason
+4. Document deletion reason
 
 ## Automation Opportunities
 
@@ -62,5 +67,6 @@ Consider implementing:
 
 ---
 
-Last Updated: 2026-01-06
-Repository: MA Malnu Kananga
+**Last Updated**: 2026-01-06
+**Version**: 2.1.0
+**Repository**: MA Malnu Kananga

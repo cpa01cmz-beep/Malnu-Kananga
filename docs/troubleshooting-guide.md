@@ -1,8 +1,8 @@
 # Troubleshooting Guide
 
-**Created**: 2026-01-05  
-**Last Updated**: 2026-01-06  
-**Version**: 2.1.0  
+**Created**: 2026-01-05
+**Last Updated**: 2026-01-06
+**Version**: 2.1.0
 **Status**: Active  
 
 ## Overview
