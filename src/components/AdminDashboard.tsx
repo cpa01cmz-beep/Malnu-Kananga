@@ -110,17 +110,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
-                    <div
-                        onClick={onOpenEditor}
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-300 ease-out hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
-                    >
-                        <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
-                            <SparklesIcon className="w-6 h-6 text-white" />
-                        </div>
-                        <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Site Editor</h3>
-                        <p className="text-indigo-100 text-sm leading-relaxed">Edit konten Program Unggulan dan Berita menggunakan bantuan AI.</p>
-                    </div>
-
                     {checkPermission('content.update') && (
                     <div
                         onClick={onOpenEditor}
