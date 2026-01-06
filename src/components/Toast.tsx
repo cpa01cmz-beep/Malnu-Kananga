@@ -20,20 +20,20 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     }
   }, [isVisible, duration, onClose]);
 
-  const baseClasses = "fixed top-24 right-5 z-50 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform";
+  const baseClasses = "fixed top-24 right-5 z-50 px-6 py-4 rounded-card-lg shadow-float flex items-center gap-3 transition-all duration-300 transform";
   const typeClasses = {
-    success: "bg-white dark:bg-gray-800 border-l-4 border-green-500 text-gray-800 dark:text-white",
-    info: "bg-white dark:bg-gray-800 border-l-4 border-blue-500 text-gray-800 dark:text-white",
-    error: "bg-white dark:bg-gray-800 border-l-4 border-red-500 text-gray-800 dark:text-white",
+    success: "bg-white dark:bg-neutral-800 border-l-4 border-primary-500 text-neutral-800 dark:text-white",
+    info: "bg-white dark:bg-neutral-800 border-l-4 border-blue-500 text-neutral-800 dark:text-white",
+    error: "bg-white dark:bg-neutral-800 border-l-4 border-red-500 text-neutral-800 dark:text-white",
   };
-  
-  const visibilityClasses = isVisible 
-    ? "translate-x-0 opacity-100" 
+
+  const visibilityClasses = isVisible
+    ? "translate-x-0 opacity-100"
     : "translate-x-10 opacity-0 pointer-events-none";
 
   const icons = {
       success: (
-          <svg className="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-6 h-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
       ),

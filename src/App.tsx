@@ -242,7 +242,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 w-full min-h-screen font-sans text-gray-800 dark:text-gray-200 transition-colors duration-300">
+    <div className="bg-neutral-50 dark:bg-neutral-900 w-full min-h-screen font-sans text-neutral-800 dark:text-neutral-200 transition-colors duration-300">
       <Header
         onLoginClick={() => setIsLoginOpen(true)}
         onChatClick={() => setIsChatOpen(true)}
