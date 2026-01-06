@@ -5,11 +5,16 @@ import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import UsersIcon from './icons/UsersIcon';
 import UserIcon from './icons/UserIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
+import { SendIcon } from './icons/SendIcon';
 import ParentScheduleView from './ParentScheduleView';
 import ParentGradesView from './ParentGradesView';
 import ParentAttendanceView from './ParentAttendanceView';
 import ELibrary from './ELibrary';
 import OsisEvents from './OsisEvents';
+import ConsolidatedReportsView from './ConsolidatedReportsView';
+import ParentMessagingView from './ParentMessagingView';
+import ParentPaymentsView from './ParentPaymentsView';
+import ParentMeetingsView from './ParentMeetingsView';
 import { ToastType } from './Toast';
 import type { ParentChild } from '../types';
 import { parentsAPI } from '../services/apiService';
@@ -19,11 +24,12 @@ interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
 }
 
-type PortalView = 'home' | 'profile' | 'schedule' | 'library' | 'grades' | 'attendance' | 'events';
+type PortalView = 'home' | 'profile' | 'schedule' | 'library' | 'grades' | 'attendance' | 'events' | 'messaging' | 'payments' | 'meetings' | 'reports';
 
 const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [currentView, setCurrentView] = useState<PortalView>('home');
   const [selectedChild, setSelectedChild] = useState<ParentChild | null>(null);
+  const [showConsolidatedView, setShowConsolidatedView] = useState(false);
   const [children, setChildren] = useState<ParentChild[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,10 +56,24 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
   const handleSelectChild = (child: ParentChild) => {
     setSelectedChild(child);
+    setShowConsolidatedView(false);
+    setCurrentView('home');
+  };
+
+  const handleToggleConsolidatedView = () => {
+    setShowConsolidatedView(!showConsolidatedView);
     setCurrentView('home');
   };
 
   const menuItems = [
+    ...(children.length > 1 ? [{
+      title: showConsolidatedView ? 'Tinjau Per Anak' : 'Tinjau Konsolidasi',
+      description: showConsolidatedView ? 'Lihat per anak' : 'Lihat semua anak dalam satu tampilan',
+      icon: <UsersIcon />,
+      color: 'bg-teal-100 text-teal-600 dark:bg-teal-900/50 dark:text-teal-400',
+      action: () => handleToggleConsolidatedView(),
+      active: true
+    }] : []),
     {
       title: 'Profil Anak',
       description: 'Lihat biodata dan informasi kelas anak.',
@@ -100,6 +120,38 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       icon: <AcademicCapIcon />,
       color: 'bg-pink-100 text-pink-600 dark:bg-pink-900/50 dark:text-pink-400',
       action: () => setCurrentView('events'),
+      active: true
+    },
+    {
+      title: 'Laporan Konsolidasi',
+      description: 'Pantau semua anak dalam laporan menyeluruh.',
+      icon: <DocumentTextIcon />,
+      color: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400',
+      action: () => setCurrentView('reports'),
+      active: true
+    },
+    {
+      title: 'Pesan Guru',
+      description: 'Komunikasi dengan guru anak.',
+      icon: <SendIcon />,
+      color: 'bg-cyan-100 text-cyan-600 dark:bg-cyan-900/50 dark:text-cyan-400',
+      action: () => setCurrentView('messaging'),
+      active: true
+    },
+    {
+      title: 'Pembayaran',
+      description: 'Pantau status pembayaran SPP dan biaya.',
+      icon: <UsersIcon />,
+      color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/50 dark:text-yellow-400',
+      action: () => setCurrentView('payments'),
+      active: true
+    },
+    {
+      title: 'Jadwal Pertemuan',
+      description: 'Atur jadwal temu guru.',
+      icon: <AcademicCapIcon />,
+      color: 'bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400',
+      action: () => setCurrentView('meetings'),
       active: true
     },
   ];
@@ -324,6 +376,54 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
               ← Kembali ke Beranda
             </button>
             <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
+          </div>
+        )}
+
+        {currentView === 'reports' && (
+          <div className="animate-fade-in-up">
+            <button
+              onClick={() => setCurrentView('home')}
+              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
+            >
+              ← Kembali ke Beranda
+            </button>
+            <ConsolidatedReportsView onShowToast={onShowToast} children={children} />
+          </div>
+        )}
+
+        {currentView === 'messaging' && (
+          <div className="animate-fade-in-up">
+            <button
+              onClick={() => setCurrentView('home')}
+              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
+            >
+              ← Kembali ke Beranda
+            </button>
+            <ParentMessagingView onShowToast={onShowToast} children={children} />
+          </div>
+        )}
+
+        {currentView === 'payments' && (
+          <div className="animate-fade-in-up">
+            <button
+              onClick={() => setCurrentView('home')}
+              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
+            >
+              ← Kembali ke Beranda
+            </button>
+            <ParentPaymentsView onShowToast={onShowToast} children={children} />
+          </div>
+        )}
+
+        {currentView === 'meetings' && (
+          <div className="animate-fade-in-up">
+            <button
+              onClick={() => setCurrentView('home')}
+              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
+            >
+              ← Kembali ke Beranda
+            </button>
+            <ParentMeetingsView onShowToast={onShowToast} children={children} />
           </div>
         )}
       </div>

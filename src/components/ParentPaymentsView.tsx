@@ -1,0 +1,302 @@
+import React, { useState, useEffect } from 'react';
+import UserIcon from './icons/UserIcon';
+import DocumentTextIcon from './icons/DocumentTextIcon';
+import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
+import { ToastType } from './Toast';
+import type { ParentChild } from '../types';
+import { parentsAPI } from '../services/apiService';
+import { logger } from '../utils/logger';
+
+interface ParentPaymentsViewProps {
+  onShowToast: (msg: string, type: ToastType) => void;
+  children: ParentChild[];
+}
+
+interface Payment {
+  id: string;
+  paymentType: string;
+  amount: number;
+  dueDate: string;
+  status: 'pending' | 'paid' | 'overdue';
+  paymentDate?: string;
+  method?: string;
+  description: string;
+}
+
+interface ChildPaymentSummary {
+  child: ParentChild;
+  totalAmount: number;
+  paidAmount: number;
+  pendingAmount: number;
+  overdueAmount: number;
+  payments: Payment[];
+}
+
+const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, children }) => {
+  const [paymentData, setPaymentData] = useState<ChildPaymentSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedPeriod, setSelectedPeriod] = useState<'current' | 'all'>('current');
+  const [showDetails, setShowDetails] = useState<{ [key: string]: boolean }>({});
+
+  useEffect(() => {
+    const fetchPaymentData = async () => {
+      if (children.length === 0) return;
+
+      setLoading(true);
+      try {
+        const childPromises = children.map(async (child) => {
+          const response = await parentsAPI.getPaymentHistory(child.studentId);
+          const payments = response.success ? (response.data || []) : [];
+
+          const paidAmount = payments
+            .filter(p => p.status === 'paid')
+            .reduce((sum, p) => sum + p.amount, 0);
+
+          const pendingAmount = payments
+            .filter(p => p.status === 'pending')
+            .reduce((sum, p) => sum + p.amount, 0);
+
+          const overdueAmount = payments
+            .filter(p => p.status === 'overdue')
+            .reduce((sum, p) => sum + p.amount, 0);
+
+          return {
+            child,
+            totalAmount: paidAmount + pendingAmount + overdueAmount,
+            paidAmount,
+            pendingAmount,
+            overdueAmount,
+            payments
+          };
+        });
+
+        const results = await Promise.all(childPromises);
+        setPaymentData(results);
+      } catch (error) {
+        logger.error('Failed to fetch payment data:', error);
+        onShowToast('Gagal memuat data pembayaran', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPaymentData();
+  }, [children, onShowToast]);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(amount);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  const getStatusColor = (status: Payment['status']) => {
+    switch (status) {
+      case 'paid': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      case 'overdue': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+    }
+  };
+
+  const getStatusText = (status: Payment['status']) => {
+    switch (status) {
+      case 'paid': return 'Lunas';
+      case 'pending': return 'Menunggu';
+      case 'overdue': return 'Terlambat';
+      default: return status;
+    }
+  };
+
+  const toggleDetails = (childId: string) => {
+    setShowDetails(prev => ({
+      ...prev,
+      [childId]: !prev[childId]
+    }));
+  };
+
+  const exportPaymentReport = () => {
+    onShowToast('Mengunduh laporan pembayaran...', 'info');
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg mb-6"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const totalPending = paymentData.reduce((sum, data) => sum + data.pendingAmount, 0);
+  const totalOverdue = paymentData.reduce((sum, data) => sum + data.overdueAmount, 0);
+  const totalPaid = paymentData.reduce((sum, data) => sum + data.paidAmount, 0);
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Pembayaran</h2>
+          <div className="flex items-center gap-4">
+            <select
+              value={selectedPeriod}
+              onChange={(e) => setSelectedPeriod(e.target.value as 'current' | 'all')}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="current">Periode Saat Ini</option>
+              <option value="all">Semua Periode</option>
+            </select>
+            <button
+              onClick={exportPaymentReport}
+              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+            >
+              <DocumentTextIcon />
+              Unduh Laporan
+            </button>
+          </div>
+        </div>
+
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl p-6 border border-yellow-200 dark:border-yellow-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-yellow-600 dark:text-yellow-400 mb-1">Menunggu Pembayaran</p>
+                <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">
+                  {formatCurrency(totalPending)}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/50 rounded-xl flex items-center justify-center">
+                <CalendarDaysIcon />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-red-50 dark:bg-red-900/20 rounded-2xl p-6 border border-red-200 dark:border-red-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-red-600 dark:text-red-400 mb-1">Terlambat</p>
+                <p className="text-2xl font-bold text-red-700 dark:text-red-300">
+                  {formatCurrency(totalOverdue)}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-red-100 dark:bg-red-900/50 rounded-xl flex items-center justify-center">
+                <CalendarDaysIcon />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-green-50 dark:bg-green-900/20 rounded-2xl p-6 border border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-green-600 dark:text-green-400 mb-1">Sudah Dibayar</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                  {formatCurrency(totalPaid)}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/50 rounded-xl flex items-center justify-center">
+                <UserIcon />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Individual Payment Details */}
+      {paymentData.map((data) => (
+        <div key={data.child.studentId} className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                {data.child.studentName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{data.child.studentName}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{data.child.className}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => toggleDetails(data.child.studentId)}
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
+            >
+              {showDetails[data.child.studentId] ? 'Sembunyikan' : 'Lihat'} Detail
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">
+                {formatCurrency(data.totalAmount)}
+              </p>
+            </div>
+            <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4">
+              <p className="text-sm text-green-600 dark:text-green-400 mb-1">Lunas</p>
+              <p className="text-lg font-bold text-green-700 dark:text-green-300">
+                {formatCurrency(data.paidAmount)}
+              </p>
+            </div>
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4">
+              <p className="text-sm text-yellow-600 dark:text-yellow-400 mb-1">Menunggu</p>
+              <p className="text-lg font-bold text-yellow-700 dark:text-yellow-300">
+                {formatCurrency(data.pendingAmount)}
+              </p>
+            </div>
+            <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4">
+              <p className="text-sm text-red-600 dark:text-red-400 mb-1">Terlambat</p>
+              <p className="text-lg font-bold text-red-700 dark:text-red-300">
+                {formatCurrency(data.overdueAmount)}
+              </p>
+            </div>
+          </div>
+
+          {showDetails[data.child.studentId] && (
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Rincian Pembayaran</h4>
+              <div className="space-y-3">
+                {data.payments.map((payment) => (
+                  <div key={payment.id} className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900 dark:text-white">{payment.paymentType}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{payment.description}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500">
+                          Jatuh tempo: {formatDate(payment.dueDate)}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-gray-900 dark:text-white mb-2">
+                          {formatCurrency(payment.amount)}
+                        </p>
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(payment.status)}`}>
+                          {getStatusText(payment.status)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default ParentPaymentsView;
