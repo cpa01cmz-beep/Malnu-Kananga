@@ -9,7 +9,7 @@ interface ProgramCardProps {
 
 const ProgramCard: React.FC<ProgramCardProps> = ({ program }) => {
   return (
-    <article className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-card hover:shadow-card-hover border border-neutral-200 dark:border-neutral-700 transition-all duration-300 overflow-hidden transform hover:-translate-y-1 h-full flex flex-col">
+    <article className="bg-white dark:bg-neutral-800 rounded-card-lg shadow-card hover:shadow-card-hover border border-neutral-200 dark:border-neutral-700 transition-all duration-200 overflow-hidden h-full flex flex-col">
       <ImageWithFallback
         className="h-48 w-full object-cover"
         src={program.imageUrl}
