@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
-import DocumentTextIcon from './icons/DocumentTextIcon';
-import { ClockIcon, TrashIcon, CheckIcon, XMarkIcon, EyeIcon } from './icons/MaterialIcons';
+import { ClockIcon, TrashIcon, XMarkIcon, EyeIcon } from './icons/MaterialIcons';
 import { MaterialVersion, ELibrary } from '../types';
 import { logger } from '../utils/logger';
 
@@ -26,7 +25,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
 
   useEffect(() => {
     fetchVersions();
-  }, [material.id]);
+  }, [material.id, fetchVersions]);
 
   const fetchVersions = async () => {
     try {

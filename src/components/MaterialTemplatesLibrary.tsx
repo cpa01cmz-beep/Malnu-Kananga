@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { PlusIcon } from './icons/PlusIcon';
 import { StarIcon } from './icons/MaterialIcons';
-import { EyeIcon, DownloadIcon, MagnifyingGlassIcon, TagIcon } from './icons/MaterialIcons';
+import { DownloadIcon, MagnifyingGlassIcon } from './icons/MaterialIcons';
 import { MaterialTemplate, Subject } from '../types';
 import { logger } from '../utils/logger';
 
@@ -186,7 +186,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
     }
   };
 
-  const deleteTemplate = async (templateId: string) => {
+  const _deleteTemplate = async (templateId: string) => {
     if (!window.confirm('Hapus template ini?')) {
       return;
     }

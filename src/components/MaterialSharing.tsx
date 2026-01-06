@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { UsersIcon } from './icons/UsersIcon';
-import { ShareIcon, ClockIcon, ShieldIcon, XMarkIcon, CheckIcon } from './icons/MaterialIcons';
-import { MaterialSharing, User, ELibrary } from '../types';
+import { ShareIcon, ShieldIcon, XMarkIcon } from './icons/MaterialIcons';
+import { MaterialSharing, ELibrary } from '../types';
 import { logger } from '../utils/logger';
 
 interface MaterialSharingProps {
@@ -23,7 +23,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
   onSharingUpdate
 }) => {
   const [showShareModal, setShowShareModal] = useState(false);
-  const [sharedSharing, setSharing] = useState<MaterialSharing[]>([]);
+  const [sharing, setSharing] = useState<MaterialSharing[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [selectedTeachers, setSelectedTeachers] = useState<string[]>([]);
   const [permission, setPermission] = useState<'view' | 'edit' | 'admin'>('view');
@@ -35,7 +35,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
   useEffect(() => {
     fetchSharing();
     fetchTeachers();
-  }, [material.id]);
+  }, [material.id, fetchSharing, fetchTeachers]);
 
   const fetchSharing = async () => {
     try {

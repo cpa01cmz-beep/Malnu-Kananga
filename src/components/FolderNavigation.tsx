@@ -30,7 +30,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
 
   useEffect(() => {
     fetchFolders();
-  }, []);
+  }, [fetchFolders]);
 
   const fetchFolders = async () => {
     setLoading(true);

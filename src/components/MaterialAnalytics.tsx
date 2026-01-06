@@ -4,7 +4,7 @@ import { UserIcon } from './icons/UserIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { StarIcon } from './icons/MaterialIcons';
 import { ClockIcon, TrendingUpIcon, TrendingDownIcon } from './icons/MaterialIcons';
-import { MaterialAnalytics, ELibrary } from '../types';
+import { ELibrary } from '../types';
 import { logger } from '../utils/logger';
 
 interface MaterialAnalyticsProps {
@@ -40,7 +40,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
 
   useEffect(() => {
     fetchAnalytics();
-  }, [material.id]);
+  }, [material.id, fetchAnalytics]);
 
   const fetchAnalytics = async () => {
     setLoading(true);

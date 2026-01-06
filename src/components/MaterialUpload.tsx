@@ -206,6 +206,11 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     }
   };
 
+  const handleShowMaterialDetails = (material: ELibraryType) => {
+    // Placeholder for material details functionality
+    onShowToast(`Detail materi: ${material.title}`, 'info');
+  };
+
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 B';
     const k = 1024;
