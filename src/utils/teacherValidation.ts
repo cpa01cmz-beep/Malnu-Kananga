@@ -49,7 +49,7 @@ export interface MaterialFormData {
 
 export interface OperationResult {
   success: boolean;
-  data?: any;
+  data?: unknown;
   error?: string;
   canRetry?: boolean;
 }
