@@ -228,16 +228,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
   }, [messages, autoReadAI, synthesis, voiceQueue, handleSend]);
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-card-lg shadow-float border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-      <header className="flex items-center justify-between p-4 bg-primary-600 text-white flex-shrink-0">
+    <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-lg shadow-float border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+      <header className="flex items-center justify-between px-4 py-3 bg-primary-600 text-white flex-shrink-0">
         <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-white rounded-pill mr-1 animate-pulse"></div>
-            <h2 className="font-bold text-lg">Asisten AI</h2>
+            <div className="w-2.5 h-2.5 bg-white rounded-full mr-1 animate-pulse"></div>
+            <h2 className="font-semibold">Asisten AI</h2>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
             {voiceQueue.isPlaying && (
               <div className="flex items-center gap-1 bg-white/10 rounded-lg px-2 py-1">
-                <span className="text-xs font-medium text-white mr-2">
+                <span className="text-xs font-medium text-white mr-1.5">
                   {voiceQueue.currentIndex + 1}/{voiceQueue.queueSize}
                 </span>
                 {voiceQueue.isPaused ? (
@@ -246,11 +246,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                       voiceQueue.resume();
                       synthesis.speak('Melanjutkan pembacaan');
                     }}
-                    className="p-1 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
+                    className="p-1.5 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
                     title="Lanjutkan baca"
                     aria-label="Lanjutkan baca"
                   >
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                     </svg>
                   </button>
@@ -260,11 +260,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                       voiceQueue.pause();
                       synthesis.speak('Pembacaan dijeda');
                     }}
-                    className="p-1 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
+                    className="p-1.5 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
                     title="Jeda baca"
                     aria-label="Jeda baca"
                   >
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                     </svg>
                   </button>
@@ -273,11 +273,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                   onClick={() => {
                     voiceQueue.skip();
                   }}
-                  className="p-1 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
+                  className="p-1.5 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
                   title="Lewati pesan"
                   aria-label="Lewati pesan"
                 >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z" />
                   </svg>
                 </button>
@@ -287,11 +287,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                     synthesis.stop();
                     synthesis.speak('Pembacaan dihentikan');
                   }}
-                  className="p-1 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
+                  className="p-1.5 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
                   title="Hentikan baca"
                   aria-label="Hentikan baca"
                 >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clipRule="evenodd" />
                   </svg>
                 </button>
@@ -301,31 +301,31 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
             {synthesis.isSupported && (
               <button
                 onClick={() => setShowVoiceSettings(!showVoiceSettings)}
-                className={`p-2 rounded-pill transition-all flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white ${showVoiceSettings ? 'bg-white text-primary-700 shadow-md' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
+                className={`p-2 rounded-lg transition-all flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white ${showVoiceSettings ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
                 title="Pengaturan Suara"
                 aria-label="Buka pengaturan suara"
               >
-                <SpeakerWaveIcon className="w-5 h-5" />
+                <SpeakerWaveIcon className="w-4 h-4" />
               </button>
             )}
 
             <button
                 onClick={() => setIsThinkingMode(!isThinkingMode)}
-                className={`p-2 rounded-pill transition-all flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white ${isThinkingMode ? 'bg-white text-primary-700 shadow-md' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
+                className={`p-2 rounded-lg transition-all flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-white ${isThinkingMode ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
                 title={isThinkingMode ? "Mode Berpikir Dalam: Aktif" : "Aktifkan Mode Berpikir Dalam"}
             >
-                <BrainIcon className="w-5 h-5" />
-                {isThinkingMode && <span className="text-xs font-bold px-1">Thinking</span>}
+                <BrainIcon className="w-4 h-4" />
+                {isThinkingMode && <span className="text-xs font-semibold px-1">Thinking</span>}
             </button>
 
-            <button onClick={closeChat} className="p-1 rounded-pill hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white" aria-label="Tutup obrolan">
+            <button onClick={closeChat} className="p-2 rounded-lg hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white" aria-label="Tutup obrolan">
                 <CloseIcon />
             </button>
         </div>
       </header>
 
-      <div className="flex-1 p-4 overflow-y-auto bg-neutral-50 dark:bg-neutral-900 custom-scrollbar">
-        <div className="flex flex-col space-y-4">
+      <div className="flex-1 px-4 py-3 overflow-y-auto bg-neutral-50 dark:bg-neutral-900 custom-scrollbar">
+        <div className="flex flex-col gap-3">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -334,10 +334,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               }`}
             >
               <div
-                className={`rounded-card-lg p-3 text-sm md:text-base ${
+                className={`rounded-lg px-3 py-2 text-sm md:text-base leading-relaxed ${
                   message.sender === Sender.User
-                    ? 'bg-primary-500 text-white rounded-br-lg whitespace-pre-wrap'
-                    : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 rounded-bl-lg'
+                    ? 'bg-primary-500 text-white'
+                    : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200'
                 }`}
               >
                 {message.sender === Sender.AI ? (
@@ -349,7 +349,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                   {isLoading && message.sender === Sender.AI && !message.text && (
                      <div className="mt-1">
                          <TypingIndicator />
-                         {isThinkingMode && <span className="text-[10px] text-neutral-500 dark:text-neutral-400 block mt-1">Sedang berpikir mendalam...</span>}
+                         {isThinkingMode && <span className="text-xs text-neutral-500 dark:text-neutral-400 block mt-1">Sedang berpikir mendalam...</span>}
                      </div>
                   )}
               </div>
@@ -361,7 +361,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
 
       <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex-shrink-0">
         <div className="flex items-end gap-2">
-          <AutoResizeTextarea 
+          <AutoResizeTextarea
               value={input}
               onChange={setInput}
               onSend={handleSend}
@@ -378,9 +378,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
             disabled={isLoading}
             onError={(error) => {
               logger.error('Voice input error:', error);
-              // Show a brief toast message for voice errors
               if (error && !error.includes('tidak mendukung')) {
-                // You could integrate with a toast notification system here
                 logger.info('Voice Error:', error);
               }
             }}
@@ -394,12 +392,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                    synthesis.speak(`Membaca ${aiMessages.length} pesan`);
                  }
                }}
-               className="p-3 mb-1 bg-blue-500 hover:bg-blue-600 text-white rounded-pill transition-all shadow-sm flex-shrink-0 hover:scale-105"
+               className="p-2.5 mb-0.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all flex-shrink-0"
                title="Baca semua pesan AI"
                aria-label="Baca semua pesan AI"
              >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                 <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
               </svg>
             </button>
           )}
