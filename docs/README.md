@@ -65,7 +65,7 @@ This index provides a comprehensive overview of all documentation available for 
 ### Current Status
 
 ### Test Coverage
-- **Total Tests**: 153 TypeScript source files
+- **Total Source Files**: 153 TypeScript/TSX files
 - **Total Documentation Files**: 13
 - **API Endpoints Documented**: 25+
 - **Code Examples**: 15+
