@@ -58,8 +58,45 @@ jobs:
 
       - name: Install OpenCode
         run: |
-          curl -fsSL https://opencode.ai/install | bash
-          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+          max_retries=3
+          retry_count=0
+          install_script=$(mktemp)
+
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries to install OpenCode"
+
+            if curl -fsSL --retry 3 --retry-delay 5 --connect-timeout 30 --max-time 300 https://opencode.ai/install -o "$install_script"; then
+              if [ -s "$install_script" ]; then
+                if head -n 1 "$install_script" | grep -q "#!/"; then
+                  echo "OpenCode installation script downloaded successfully"
+                  chmod +x "$install_script"
+                  "$install_script"
+                  echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+                  rm -f "$install_script"
+                  echo "OpenCode installation completed"
+                  exit 0
+                else
+                  echo "Downloaded file is not a valid shell script"
+                fi
+              else
+                echo "Downloaded file is empty"
+              fi
+            else
+              echo "Failed to download OpenCode installation script"
+            fi
+
+            retry_count=$((retry_count + 1))
+            rm -f "$install_script"
+
+            if [ $retry_count -lt $max_retries ]; then
+              wait_time=$((retry_count * 10))
+              echo "Retrying in ${wait_time} seconds..."
+              sleep $wait_time
+            fi
+          done
+
+          echo "All OpenCode installation attempts failed"
+          exit 1
 
       - name: Merge
         run: |
