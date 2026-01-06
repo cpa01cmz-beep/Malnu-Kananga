@@ -9,7 +9,7 @@ interface PermissionManagerProps {
 
 const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) => {
   const [selectedRole, setSelectedRole] = useState<UserRole>('admin');
-  const [selectedExtraRole, setSelectedExtraRole] = useState<UserExtraRole>(null);
+  const [selectedExtraRole, setSelectedExtraRole] = useState<UserExtraRole | null>(null);
   const [rolePermissions, setRolePermissions] = useState<Permission[]>([]);
   const [allPermissions, setAllPermissions] = useState<Permission[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);

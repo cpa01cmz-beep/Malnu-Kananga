@@ -95,7 +95,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
 
   useEffect(() => {
     fetchFolders();
-  }, [fetchFolders]);
+  }, [fetchFolders, onShowToast]);
 
   const toggleFolderExpansion = (folderId: string) => {
     const newExpanded = new Set(expandedFolders);

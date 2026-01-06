@@ -73,7 +73,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
   useEffect(() => {
     fetchSharing();
     fetchTeachers();
-  }, [fetchSharing, fetchTeachers]);
+  }, [fetchSharing, fetchTeachers, material.uploadedBy]);
 
   const filteredTeachers = teachers.filter(teacher => {
     const matchesSearch = teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -132,7 +132,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
     }
   };
 
-  const getPermissionIcon = (perm: string) => {
+  const getPermissionIcon = (perm: 'admin' | 'edit' | 'view') => {
     switch (perm) {
       case 'admin':
         return <ShieldIcon className="w-4 h-4 text-red-500" />;
@@ -143,7 +143,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
     }
   };
 
-  const getPermissionLabel = (perm: string) => {
+  const getPermissionLabel = (perm: 'admin' | 'edit' | 'view') => {
     switch (perm) {
       case 'admin':
         return 'Admin';
