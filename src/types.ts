@@ -292,6 +292,43 @@ export interface SchoolEvent {
   createdAt?: string;
 }
 
+// Enhanced Teacher Data Types for Validation
+export interface GradeFormData {
+  studentId: string;
+  assignment: number;
+  midExam: number;
+  finalExam: number;
+}
+
+export interface TeacherFormData {
+  name: string;
+  email: string;
+  phone?: string;
+  subject?: string;
+  class?: string;
+  room?: string;
+}
+
+export interface GradeBatchOperation {
+  studentIds: string[];
+  operation: 'reset' | 'bulk_fill' | 'delete';
+  data?: Partial<GradeFormData>;
+}
+
+export interface ClassBatchOperation {
+  studentIds: string[];
+  operation: 'mark_present' | 'mark_absent' | 'move_class';
+  targetClass?: string;
+  notes?: string;
+}
+
+export interface MaterialBatchOperation {
+  materialIds: string[];
+  operation: 'move_folder' | 'change_category' | 'delete' | 'archive';
+  targetFolder?: string;
+  targetCategory?: string;
+}
+
 export interface EventRegistration {
   id: string;
   eventId: string;
