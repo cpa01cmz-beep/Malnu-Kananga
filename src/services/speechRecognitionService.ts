@@ -26,6 +26,7 @@ class SpeechRecognitionService {
   private timeoutId: ReturnType<typeof setTimeout> | null = null;
   private isSupported: boolean;
   private permissionState: 'granted' | 'denied' | 'prompt' | 'unknown' = 'unknown';
+  private permissionChangeListener: ((this: globalThis.PermissionStatus, ev: Event) => unknown) | null = null;
 
   constructor(config?: Partial<SpeechRecognitionConfig>) {
     this.config = {
@@ -63,10 +64,11 @@ class SpeechRecognitionService {
       const permission = await navigator.permissions.query({ name: 'microphone' as const });
       this.permissionState = permission.state as 'granted' | 'denied' | 'prompt';
       
-      permission.addEventListener('change', () => {
+      this.permissionChangeListener = () => {
         this.permissionState = permission.state as 'granted' | 'denied' | 'prompt';
         logger.debug('Microphone permission state changed:', this.permissionState);
-      });
+      };
+      permission.addEventListener('change', this.permissionChangeListener);
     } catch (error) {
       logger.warn('Could not check microphone permission:', error);
       this.permissionState = 'unknown';
@@ -374,9 +376,26 @@ class SpeechRecognitionService {
   public cleanup(): void {
     this.clearTimeout();
     this.abortRecording();
+    
     this.callbacks = {};
     this.transcript = '';
     this.state = 'idle';
+    
+    // Remove permission change listener to prevent memory leak
+    if (this.permissionChangeListener && typeof window !== 'undefined' && navigator.permissions) {
+      const listenerToRemove = this.permissionChangeListener;
+      this.permissionChangeListener = null;
+      
+      navigator.permissions.query({ name: 'microphone' as const })
+        .then(permission => {
+          permission.removeEventListener('change', listenerToRemove);
+        })
+        .catch(error => {
+          logger.warn('Failed to remove permission listener:', error);
+        });
+    } else {
+      this.permissionChangeListener = null;
+    }
     logger.debug('SpeechRecognitionService cleaned up');
   }
 
