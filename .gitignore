@@ -126,3 +126,11 @@ docs/reports/
 test-results/
 .vitest/
 coverage/
+
+# System files
+*.bak
+*.swp
+*~.nib
+.local/
+Thumbs.db
+Desktop.ini

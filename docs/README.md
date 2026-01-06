@@ -59,7 +59,7 @@ This index provides a comprehensive overview of all documentation available for 
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 160 TypeScript/TSX files
+- **Total Source Files**: 172 TypeScript/TSX/JS/JSX files
 - **Total Documentation Files**: 13 (in /docs), plus AGENTS.md in root
 - **API Endpoints Documented**: 30+
 - **Code Examples**: 15+
