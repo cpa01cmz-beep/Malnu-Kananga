@@ -5,9 +5,13 @@ const RelatedLinksSection: React.FC = () => {
 
   useEffect(() => {
     const loadLinks = async () => {
-      const { getRelatedLinks } = await import('../../data/defaults');
-      const relatedLinks = await getRelatedLinks();
-      setLinks(relatedLinks as unknown as typeof links);
+      try {
+        const { getRelatedLinks } = await import('../../data/defaults');
+        const relatedLinks = await getRelatedLinks();
+        setLinks(relatedLinks as unknown as typeof links);
+      } catch (error) {
+        console.error('Failed to load related links:', error);
+      }
     };
     loadLinks();
   }, []);
