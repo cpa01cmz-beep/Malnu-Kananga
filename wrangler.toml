@@ -21,8 +21,6 @@ database_id = "69605f72-4b69-4dd6-a72c-a17006f61254"
 
 [vars]
 ALLOWED_ORIGIN = "*"
-JWT_SECRET = "dev-jwt-secret-for-testing-change-in-production"
-GEMINI_API_KEY = "your_gemini_api_key_here"
 NODE_ENV = "development"
 LOG_LEVEL = "info"
 
@@ -30,13 +28,12 @@ LOG_LEVEL = "info"
 [env.production]
 name = "malnu-kananga-worker-prod"
 
-# D1 Database bindings - create with: wrangler d1 create malnu-kananga-db
-# Replace the placeholder database_id below with your actual D1 database ID
+# D1 Database bindings - created with: wrangler d1 create malnu-kananga-db-prod
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "malnu-kananga-db-prod"
-# Use D1 database ID from environment variable
-database_id = "${D1_DATABASE_ID}"
+# Production D1 database ID
+database_id = "7fbd7834-0fd2-475f-8787-55ce81988642"
 
 # Vectorize index bindings - create with: wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 [[env.production.vectorize]]
@@ -66,12 +63,12 @@ LOG_LEVEL = "error"
 name = "malnu-kananga-worker-dev"
 
 # D1 Database for development
-# Create with: wrangler d1 create malnu-kananga-db-dev
+# Created with: wrangler d1 create malnu-kananga-db-dev
 [[env.dev.d1_databases]]
 binding = "DB"
 database_name = "malnu-kananga-db-dev"
-# Use dev D1 database ID from environment variable
-database_id = "${D1_DATABASE_ID_DEV}"
+# Dev D1 database ID
+database_id = "69605f72-4b69-4dd6-a72c-a17006f61254"
 
 [[env.dev.vectorize]]
 binding = "VECTORIZE_INDEX"

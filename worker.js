@@ -779,22 +779,26 @@ async function handleSeed(request, env, corsHeaders) {
     await initDatabase(env);
 
     // Seed Vectorize if available
-    if (env.AI && env.VECTORIZE_INDEX) {
-      const texts = documents.map(doc => doc.text);
-      const embeddingsResponse = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: texts });
-      const vectors = embeddingsResponse.data;
+    try {
+      if (env.AI && env.VECTORIZE_INDEX) {
+        const texts = documents.map(doc => doc.text);
+        const embeddingsResponse = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: texts });
+        const vectors = embeddingsResponse.data;
 
-      const vectorsToInsert = vectors.map((vector, i) => ({
-        id: documents[i].id.toString(),
-        values: vector,
-        metadata: { text: documents[i].text }
-      }));
+        const vectorsToInsert = vectors.map((vector, i) => ({
+          id: documents[i].id.toString(),
+          values: vector,
+          metadata: { text: documents[i].text }
+        }));
 
-      const batchSize = 100;
-      for (let i = 0; i < vectorsToInsert.length; i += batchSize) {
-        const batch = vectorsToInsert.slice(i, i + batchSize);
-        await env.VECTORIZE_INDEX.insert(batch);
+        const batchSize = 100;
+        for (let i = 0; i < vectorsToInsert.length; i += batchSize) {
+          const batch = vectorsToInsert.slice(i, i + batchSize);
+          await env.VECTORIZE_INDEX.insert(batch);
+        }
       }
+    } catch (aiError) {
+      console.log('AI/Vectorize seeding skipped:', aiError.message);
     }
 
     return new Response(JSON.stringify(response.success(null, 'Database seeded successfully!')), {
