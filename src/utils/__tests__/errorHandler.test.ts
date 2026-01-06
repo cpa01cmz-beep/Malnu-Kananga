@@ -188,10 +188,10 @@ describe('Error Handler Utility', () => {
     it('should use exponential backoff delays', async () => {
       const delays: number[] = [];
       const originalSetTimeout = global.setTimeout;
-      global.setTimeout = vi.fn(((callback, delay) => {
-        delays.push(delay as number);
+      global.setTimeout = vi.fn().mockImplementation((callback: any, delay: number) => {
+        delays.push(delay);
         return originalSetTimeout(callback, delay);
-      }) as any);
+      }) as any;
 
       const operation = vi.fn()
         .mockRejectedValueOnce(new Error('Network error'))

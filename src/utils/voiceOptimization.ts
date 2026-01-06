@@ -166,7 +166,7 @@ export const performanceMetrics = {
   },
   
   measure: (name: string, _startMark: string, _endMark: string) => {
-    if (typeof window.performance !== 'undefined' && window.performance.measure) {
+    if (typeof window.performance !== 'undefined' && typeof window.performance.measure === 'function') {
       try {
         const entries = window.performance.getEntriesByName(name);
         const lastEntry = entries[entries.length - 1];
@@ -202,8 +202,8 @@ export const performanceMetrics = {
  */
 export const memoryMonitor = {
   getCurrentUsage: () => {
-    if (typeof window.performance !== 'undefined' && window.performance.memory) {
-      const memory = window.performance.memory;
+    if (typeof window.performance !== 'undefined' && (window.performance as any).memory) {
+      const memory = (window.performance as any).memory;
       return {
         usedJSHeapSize: memory.usedJSHeapSize,
         totalJSHeapSize: memory.totalJSHeapSize,
