@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Permission, UserRole, UserExtraRole } from '../../types/permissions';
+import { Permission, UserRole, UserExtraRole, AuditLog } from '../../types/permissions';
 import { permissionService } from '../../services/permissionService';
 import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../../config/permissions';
 
@@ -12,7 +12,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
   const [selectedExtraRole, setSelectedExtraRole] = useState<UserExtraRole>(null);
   const [rolePermissions, setRolePermissions] = useState<Permission[]>([]);
   const [allPermissions, setAllPermissions] = useState<Permission[]>([]);
-  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [activeTab, setActiveTab] = useState<'permissions' | 'audit' | 'matrix'>('permissions');
 
   const loadPermissions = useCallback(() => {

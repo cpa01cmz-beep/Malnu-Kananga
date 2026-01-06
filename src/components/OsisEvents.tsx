@@ -53,16 +53,6 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     }
   }, [onShowToast]);
 
-  useEffect(() => {
-    loadEvents();
-  }, [loadEvents]);
-
-  useEffect(() => {
-    if (selectedEvent) {
-      loadEventData();
-    }
-  }, [selectedEvent, activeTab]);
-
   const loadEventData = useCallback(async () => {
     if (!selectedEvent) return;
 
@@ -100,6 +90,16 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
       onShowToast('Gagal memuat data kegiatan', 'error');
     }
   }, [selectedEvent, activeTab, onShowToast]);
+
+  useEffect(() => {
+    loadEvents();
+  }, [loadEvents]);
+
+  useEffect(() => {
+    if (selectedEvent) {
+      loadEventData();
+    }
+  }, [selectedEvent, activeTab, loadEventData]);
 
   const handleAddEvent = async (e: React.FormEvent) => {
     e.preventDefault();

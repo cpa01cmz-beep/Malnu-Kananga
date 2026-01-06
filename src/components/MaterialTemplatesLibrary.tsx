@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { PlusIcon } from './icons/PlusIcon';
 import { StarIcon } from './icons/MaterialIcons';
@@ -30,12 +30,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
     subjectId: '',
   });
 
-  useEffect(() => {
-    fetchTemplates();
-    fetchSubjects();
-  }, []);
-
-  const fetchTemplates = async () => {
+  const fetchTemplates = useCallback(async () => {
     setLoading(true);
     try {
       // Mock API call - replace with actual implementation
@@ -117,9 +112,9 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [onShowToast]);
 
-  const fetchSubjects = async () => {
+  const fetchSubjects = useCallback(async () => {
     try {
       // Mock API call - replace with actual implementation
       const mockSubjects: Subject[] = [
@@ -132,7 +127,12 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
     } catch (err) {
       logger.error('Error fetching subjects:', err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchTemplates();
+    fetchSubjects();
+  }, [fetchTemplates, fetchSubjects]);
 
   const downloadTemplate = async (template: MaterialTemplate) => {
     try {

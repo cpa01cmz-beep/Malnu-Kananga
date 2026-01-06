@@ -1,7 +1,7 @@
 // apiService.ts - Frontend API Service
 // Handles all backend API interactions
 
-import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment } from '../types';
+import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, UserRole, UserExtraRole } from '../types';
 import { logger } from '../utils/logger';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
@@ -260,8 +260,8 @@ async function validateRequestPermissions(
   
   // Log the permission check for audit
   const result = permissionService.hasPermission(
-    userRole as any,
-    userExtraRole as any,
+    userRole as UserRole,
+    userExtraRole as UserExtraRole,
     permissionId,
     {
       userId: 'api-request',
@@ -281,7 +281,7 @@ async function validateRequestPermissions(
 
 async function request<T>(
   endpoint: string,
-  options: any = {}
+  options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
   let token = getAuthToken();
 
@@ -362,7 +362,9 @@ declare global {
 }
 
 interface RequestInit {
+  method?: string;
   headers?: Record<string, string>;
+  body?: string | FormData;
 }
 
 interface HeadersInit {

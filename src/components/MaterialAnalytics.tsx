@@ -38,10 +38,6 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
   const [loading, setLoading] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [material.id]);
-
   const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     try {
@@ -74,7 +70,11 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [material]);
+  }, [material, onShowToast]);
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   const getTrend = (current: number, previous: number) => {
     if (previous === 0) return { isUp: true, percentage: 100 };
