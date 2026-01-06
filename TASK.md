@@ -3,6 +3,17 @@
 
 ## 🎯 Status Proyek: Fase 4 - Permission System Enhancement
 
+### Tugas Saat Ini (IN PROGRESS - SANITIZER MODE)
+- [🔄] **Fix unresolved merge conflicts blocking build** (Issue #604 - P0):
+       - [x] Lock task in TASK.md - IN PROGRESS
+       - [ ] Analyze merge conflicts in teacherValidation.ts
+       - [ ] Resolve all conflict markers (<<<<<<<, =======, >>>>>>>)
+       - [ ] Ensure proper syntax and structure
+       - [ ] Verify build passes
+       - [ ] Verify all tests passing
+       - [ ] Commit and push to main
+       - [ ] Update documentation (BLUEPRINT.md, ROADMAP.md, TASK.md)
+
 ### Tugas Terbaru (COMPLETED - SANITIZER MODE)
 - [✅] **Fix: Extract extra role from JWT for proper permission system**:
       - [x] Lock task in TASK.md - IN PROGRESS → COMPLETED

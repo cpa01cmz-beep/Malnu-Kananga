@@ -13,10 +13,6 @@ import {
   calculateFinalGrade,
   GradeInput 
 } from '../utils/teacherValidation';
-import { 
-  executeWithRetry, 
-  createToastHandler 
-} from '../utils/teacherErrorHandler';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 
 
@@ -75,9 +71,8 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [resetStudentId, setResetStudentId] = useState<string | null>(null);
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
-  
-  const toast = createToastHandler(onShowToast);
 
+  const toast = createToastHandler(onShowToast);
   const fetchStudentsAndGrades = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -754,7 +749,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             </div>
         </div>
         )}
-        
+
         {/* Save Button */}
         {!loading && !error && (
 <div className="flex justify-end mt-6">
@@ -766,25 +761,8 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 {loading || isSaving ? "Menyimpan..." : "Simpan Semua Nilai"}
             </button>
         </div>
+        )}
 
-        {/* Confirmation Dialogs */}
-        <ConfirmationDialog
-            isOpen={showSaveConfirm}
-            title="Simpan Semua Nilai"
-            message={`Apakah Anda yakin ingin menyimpan semua nilai untuk ${grades.length} siswa?`}
-            confirmText="Ya, Simpan"
-            cancelText="Batal"
-            type="warning"
-            onConfirm={() => {
-                doBatchSave();
-                setShowSaveConfirm(false);
-            }}
-            onCancel={() => {
-                setShowSaveConfirm(false);
-            }}
-        />
-        
-        {/* Enhanced Confirmation Dialog */}
         <ConfirmationDialog
           isOpen={confirmDialog.isOpen}
           title={confirmDialog.title}
@@ -794,36 +772,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
           confirmText="Ya, Simpan"
           onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
           onConfirm={confirmDialog.onConfirm}
-        />
-
-        <ConfirmationDialog
-            isOpen={showSaveConfirm}
-            title="Simpan Semua Nilai"
-            message={`Apakah Anda yakin ingin menyimpan semua nilai untuk ${grades.length} siswa?`}
-            confirmText="Ya, Simpan"
-            cancelText="Batal"
-            type="warning"
-            onConfirm={() => {
-                handleSave();
-                setShowSaveConfirm(false);
-            }}
-            onCancel={() => {
-                setShowSaveConfirm(false);
-            }}
-=======
-        
-        {/* Confirmation Dialog */}
-        <ConfirmationDialog
-          isOpen={confirmDialog.isOpen}
-          title={confirmDialog.title}
-          message={confirmDialog.message}
-          type={confirmDialog.type}
-          isLoading={isSaving}
-          confirmText="Ya, Simpan"
-          onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
-          onConfirm={confirmDialog.onConfirm}
->>>>>>> 2ca35a5 (Enhance teacher workflow with comprehensive validation and error handling)
-        />
+         />
     </div>
   );
 };
