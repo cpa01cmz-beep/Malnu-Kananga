@@ -446,11 +446,11 @@ wrangler deploy --env production
 
 ## Support and Resources
 
-- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
+ - [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
 - [Cloudflare D1 Documentation](https://developers.cloudflare.com/d1/)
 - [Cloudflare R2 Documentation](https://developers.cloudflare.com/r2/)
 - [Wrangler CLI Documentation](https://developers.cloudflare.com/workers/wrangler/)
-- [Backend Guide](./BACKEND_GUIDE.md)
+- [API Reference](./api-documentation.md)
 
 ## Version History
 

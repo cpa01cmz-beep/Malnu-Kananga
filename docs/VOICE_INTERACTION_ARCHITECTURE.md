@@ -395,7 +395,7 @@ useEffect(() => {
 **WCAG 2.1 AA Compliance: 10/15 (67%)**
 **Target: 15/15 (100%)**
 
-**See [VOICE_ACCESSIBILITY_AUDIT.md](./VOICE_ACCESSIBILITY_AUDIT.md) for detailed audit report.**
+*Note: VOICE_ACCESSIBILITY_AUDIT.md was consolidated into this document during v2.3.0 documentation cleanup.*
 
 ---
 

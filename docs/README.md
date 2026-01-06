@@ -49,7 +49,7 @@ This index provides a comprehensive overview of all documentation available for 
 
 ### For DevOps Engineers
 1. Read [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete deployment steps
-2. Follow [BACKEND_GUIDE.md](./BACKEND_GUIDE.md) for backend setup
+2. See [API Reference](./api-documentation.md) for backend endpoints
 
 ### For Project Managers
 1. Review [BLUEPRINT.md](./BLUEPRINT.md) for project specifications
