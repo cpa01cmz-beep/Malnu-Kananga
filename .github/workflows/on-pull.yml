@@ -88,7 +88,7 @@ jobs:
           echo "exit_code=$?" >> $GITHUB_OUTPUT
 
       - name: Prepare CI Context
-        if: steps.lint.outcome == 'failure' || steps.test.outcome == 'failure' || steps.build.outcome == 'failure'
+        continue-on-error: true
         run: |
           echo "### LINT LOG (last 200 lines)" > ci-context.txt
           tail -n 200 lint.log >> ci-context.txt || echo "no lint log" >> ci-context.txt
@@ -100,13 +100,11 @@ jobs:
           tail -n 200 build.log >> ci-context.txt || echo "no build log" >> ci-context.txt
 
       - name: Install OpenCode CLI
-        if: steps.lint.outcome == 'failure' || steps.test.outcome == 'failure' || steps.build.outcome == 'failure'
         run: |
           curl -fsSL https://opencode.ai/install | bash
           echo "$HOME/.opencode/bin" >> $GITHUB_PATH
 
       - name: Auto-fix CI Failures
-        if: steps.lint.outcome == 'failure' || steps.test.outcome == 'failure' || steps.build.outcome == 'failure'
         env:
           LINT_STATUS: ${{ steps.lint.outcome }}
           TEST_STATUS: ${{ steps.test.outcome }}
