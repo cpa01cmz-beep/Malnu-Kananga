@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
+import Papa from 'papaparse';
 import { analyzeClassPerformance } from '../services/geminiService';
 import { studentsAPI, gradesAPI } from '../services/apiService';
 import { LightBulbIcon } from './icons/LightBulbIcon';
@@ -30,6 +31,13 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   // AI Analysis State
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  
+  // Enhanced Grading State
+  const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set());
+  const [isBatchMode, setIsBatchMode] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+  const [autoSaveTimeout, setAutoSaveTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   
   const className = 'XII IPA 1';
 
@@ -93,6 +101,150 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const handleInputChange = (id: string, field: keyof StudentGrade, value: string) => {
       const numValue = Math.min(100, Math.max(0, Number(value) || 0));
       setGrades(prev => prev.map(g => g.id === id ? { ...g, [field]: numValue } : g));
+      
+      // Auto-save functionality with debouncing
+      if (autoSaveTimeout) {
+        clearTimeout(autoSaveTimeout);
+      }
+      
+      const newTimeout = setTimeout(() => {
+        handleAutoSave();
+      }, 2000); // 2 second debounce
+      
+      setAutoSaveTimeout(newTimeout);
+  };
+  
+  const handleAutoSave = async () => {
+    setIsAutoSaving(true);
+    try {
+      // Save only the current grades state
+      for (const grade of grades) {
+        await gradesAPI.update(grade.id, {
+          studentId: grade.id,
+          classId: className,
+          subjectId: 'Matematika Wajib',
+          assignment: grade.assignment,
+          midExam: grade.midExam,
+          finalExam: grade.finalExam,
+        });
+      }
+      console.log('Auto-save completed successfully');
+    } catch (error) {
+      console.error('Auto-save failed:', error);
+    } finally {
+      setIsAutoSaving(false);
+    }
+  };
+  
+  const toggleBatchMode = () => {
+    setIsBatchMode(!isBatchMode);
+    setSelectedStudents(new Set());
+  };
+  
+  const toggleStudentSelection = (studentId: string) => {
+    const newSelected = new Set(selectedStudents);
+    if (newSelected.has(studentId)) {
+      newSelected.delete(studentId);
+    } else {
+      newSelected.add(studentId);
+    }
+    setSelectedStudents(newSelected);
+  };
+  
+  const handleBatchGradeInput = (field: keyof StudentGrade, value: string) => {
+    const numValue = Math.min(100, Math.max(0, Number(value) || 0));
+    setGrades(prev => prev.map(g => 
+      selectedStudents.has(g.id) ? { ...g, [field]: numValue } : g
+    ));
+  };
+  
+  const handleCSVImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    Papa.parse(file, {
+      header: true,
+      complete: (results) => {
+        try {
+          const csvData = results.data as any[];
+          const updatedGrades = grades.map(grade => {
+            const csvRow = csvData.find(row => 
+              row.nis === grade.nis || 
+              row.name?.toLowerCase() === grade.name.toLowerCase()
+            );
+            
+            if (csvRow) {
+              return {
+                ...grade,
+                assignment: Math.min(100, Math.max(0, Number(csvRow.assignment) || grade.assignment)),
+                midExam: Math.min(100, Math.max(0, Number(csvRow.midExam || csvRow.uts) || grade.midExam)),
+                finalExam: Math.min(100, Math.max(0, Number(csvRow.finalExam || csvRow.uas) || grade.finalExam))
+              };
+            }
+            return grade;
+          });
+          
+          setGrades(updatedGrades);
+          setIsBatchMode(false);
+          onShowToast('CSV import successful! Grades updated.', 'success');
+        } catch (error) {
+          onShowToast('CSV import failed. Please check the file format.', 'error');
+        }
+      },
+      error: () => {
+        onShowToast('CSV parsing failed. Please check the file format.', 'error');
+      }
+    });
+    
+    // Reset file input
+    if (event.target) {
+      event.target.value = '';
+    }
+  };
+  
+  const handleCSVExport = () => {
+    const csvData = grades.map(g => ({
+      name: g.name,
+      nis: g.nis,
+      assignment: g.assignment,
+      midExam: g.midExam,
+      finalExam: g.finalExam,
+      finalScore: calculateFinal(g).toFixed(1),
+      grade: getGradeLetter(calculateFinal(g))
+    }));
+    
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `grades_${className}_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    onShowToast('Grades exported to CSV successfully', 'success');
+  };
+  
+  const calculateGradeStatistics = () => {
+    if (grades.length === 0) return null;
+    
+    const finalScores = grades.map(g => calculateFinal(g));
+    const average = finalScores.reduce((a, b) => a + b, 0) / finalScores.length;
+    const maxScore = Math.max(...finalScores);
+    const minScore = Math.min(...finalScores);
+    
+    const gradeDistribution = {
+      A: finalScores.filter(score => score >= 85).length,
+      B: finalScores.filter(score => score >= 75 && score < 85).length,
+      C: finalScores.filter(score => score >= 60 && score < 75).length,
+      D: finalScores.filter(score => score < 60).length
+    };
+    
+    return { average, maxScore, minScore, gradeDistribution };
   };
 
   const handleSave = async () => {
@@ -108,7 +260,6 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
           assignment: grade.assignment,
           midExam: grade.midExam,
           finalExam: grade.finalExam,
-          finalScore: calculateFinal(grade),
         });
       }
       
@@ -139,8 +290,8 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
   return (
     <div className="animate-fade-in-up">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+        {/* Header with Enhanced Controls */}
+        <div className="flex flex-col gap-4 mb-6">
             <div>
                 <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
                     ← Kembali ke Dashboard
@@ -148,15 +299,61 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Input Nilai Siswa</h2>
                 <p className="text-gray-500 dark:text-gray-400">Mata Pelajaran: <strong>Matematika Wajib (XII IPA 1)</strong></p>
             </div>
-            <div className="flex gap-3">
-                <button 
-                    onClick={handleAIAnalysis}
-                    disabled={isAnalyzing}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-md disabled:bg-gray-400"
-                >
-                    <LightBulbIcon className="w-5 h-5" />
-                    {isAnalyzing ? "Menganalisis..." : "Analisis AI"}
-                </button>
+            
+            {/* Enhanced Toolbar */}
+            <div className="flex flex-col md:flex-row gap-3">
+                {/* Left Controls */}
+                <div className="flex gap-2 flex-wrap">
+                    <button 
+                        onClick={toggleBatchMode}
+                        className={`px-4 py-2 rounded-full transition-colors shadow-md ${
+                            isBatchMode 
+                                ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300'
+                        }`}
+                    >
+                        {isBatchMode ? `Selected: ${selectedStudents.size}` : 'Batch Mode'}
+                    </button>
+                    
+                    <button 
+                        onClick={() => setShowStats(!showStats)}
+                        className={`px-4 py-2 rounded-full transition-colors shadow-md ${
+                            showStats 
+                                ? 'bg-green-600 text-white hover:bg-green-700' 
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300'
+                        }`}
+                    >
+                        Statistics
+                    </button>
+                    
+                    <label className="px-4 py-2 bg-orange-600 text-white rounded-full hover:bg-orange-700 transition-colors shadow-md cursor-pointer">
+                        Import CSV
+                        <input 
+                            type="file" 
+                            accept=".csv" 
+                            onChange={handleCSVImport}
+                            className="hidden"
+                        />
+                    </label>
+                    
+                    <button 
+                        onClick={handleCSVExport}
+                        className="px-4 py-2 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition-colors shadow-md"
+                    >
+                        Export CSV
+                    </button>
+                    
+                    <button 
+                        onClick={handleAIAnalysis}
+                        disabled={isAnalyzing}
+                        className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-md disabled:bg-gray-400"
+                    >
+                        <LightBulbIcon className="w-5 h-5" />
+                        {isAnalyzing ? "Menganalisis..." : "Analisis AI"}
+                    </button>
+                </div>
+                
+                {/* Search */}
                 <input 
                     type="text" 
                     placeholder="Cari Nama / NIS..." 
@@ -164,8 +361,125 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full md:w-64 px-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
                 />
+                
+                {/* Auto-save indicator */}
+                {isAutoSaving && (
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                        Auto-saving...
+                    </div>
+                )}
             </div>
         </div>
+        
+        {/* Grade Statistics Panel */}
+        {showStats && !loading && !error && (() => {
+            const stats = calculateGradeStatistics();
+            if (!stats) return null;
+            
+            return (
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6 mb-6 animate-scale-in">
+                    <h3 className="text-lg font-bold text-blue-800 dark:text-blue-300 mb-4">Grade Distribution Statistics</h3>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.average.toFixed(1)}</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">Class Average</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.maxScore}</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">Highest Score</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.minScore}</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">Lowest Score</div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-gray-900 dark:text-white">{filteredData.length}</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">Total Students</div>
+                        </div>
+                    </div>
+                    
+                    {/* Grade Distribution Bars */}
+                    <div className="space-y-2">
+                        {Object.entries(stats.gradeDistribution).map(([grade, count]) => {
+                            const percentage = (count / filteredData.length) * 100;
+                            const colors = {
+                                A: 'bg-green-500',
+                                B: 'bg-blue-500',
+                                C: 'bg-yellow-500',
+                                D: 'bg-red-500'
+                            };
+                            
+                            return (
+                                <div key={grade} className="flex items-center gap-3">
+                                    <div className="w-8 text-center font-bold text-gray-700 dark:text-gray-300">{grade}</div>
+                                    <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-6 relative overflow-hidden">
+                                        <div 
+                                            className={`${colors[grade as keyof typeof colors]} h-full rounded-full transition-all duration-500`}
+                                            style={{ width: `${percentage}%` }}
+                                        />
+                                        <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-800 dark:text-gray-100">
+                                            {count} students ({percentage.toFixed(1)}%)
+                                        </span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        })()}
+        
+        {/* Batch Operation Controls */}
+        {isBatchMode && (
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-2xl p-4 mb-6 flex gap-3 flex-wrap items-center">
+                <span className="font-medium text-yellow-800 dark:text-yellow-300">
+                    Batch Operations ({selectedStudents.size} selected):
+                </span>
+                
+                <input 
+                    type="number" 
+                    placeholder="Assignment" 
+                    min="0" 
+                    max="100"
+                    onChange={(e) => handleBatchGradeInput('assignment', e.target.value)}
+                    className="w-24 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500"
+                />
+                
+                <input 
+                    type="number" 
+                    placeholder="UTS" 
+                    min="0" 
+                    max="100"
+                    onChange={(e) => handleBatchGradeInput('midExam', e.target.value)}
+                    className="w-24 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500"
+                />
+                
+                <input 
+                    type="number" 
+                    placeholder="UAS" 
+                    min="0" 
+                    max="100"
+                    onChange={(e) => handleBatchGradeInput('finalExam', e.target.value)}
+                    className="w-24 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500"
+                />
+                
+                <button 
+                    className="px-3 py-1 bg-blue-600 text-white rounded-full hover:bg-blue-700 text-sm"
+                    onClick={() => setSelectedStudents(new Set(grades.map(g => g.id)))}
+                >
+                    Select All
+                </button>
+                
+                <button 
+                    className="px-3 py-1 bg-gray-600 text-white rounded-full hover:bg-gray-700 text-sm"
+                    onClick={() => setSelectedStudents(new Set())}
+                >
+                    Clear Selection
+                </button>
+            </div>
+        )}
 
         {/* AI Analysis Result Area */}
         {analysisResult && (
@@ -225,6 +539,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
                     <thead className="bg-gray-50 dark:bg-gray-700 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
                         <tr>
+                            {isBatchMode && (
+                                <th className="px-4 py-4 text-center w-12">Select</th>
+                            )}
                             <th className="px-6 py-4">Siswa</th>
                             <th className="px-4 py-4 text-center w-24">Tugas (30%)</th>
                             <th className="px-4 py-4 text-center w-24">UTS (30%)</th>
@@ -239,46 +556,67 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                             const finalScore = calculateFinal(student);
                             const gradeLetter = getGradeLetter(finalScore);
                             const isRowEditing = isEditing === student.id;
+                            const isSelected = selectedStudents.has(student.id);
 
                             return (
-                                <tr key={student.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                                <tr key={student.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
+                                    isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                                }`}>
+                                    {isBatchMode && (
+                                        <td className="px-4 py-4 text-center">
+                                            <input 
+                                                type="checkbox"
+                                                checked={isSelected}
+                                                onChange={() => toggleStudentSelection(student.id)}
+                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                            />
+                                        </td>
+                                    )}
                                     <td className="px-6 py-4">
                                         <div className="font-medium text-gray-900 dark:text-white">{student.name}</div>
                                         <div className="text-xs text-gray-500">NIS: {student.nis}</div>
                                     </td>
                                     
-                                    {/* Input Columns */}
+                                    {/* Enhanced Input Columns - Always enabled */}
                                     <td className="px-4 py-4 text-center">
                                         <input 
                                             type="number" 
-                                            disabled={!isRowEditing}
                                             value={student.assignment}
                                             onChange={(e) => handleInputChange(student.id, 'assignment', e.target.value)}
-                                            className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 disabled:opacity-60 disabled:border-transparent focus:ring-2 focus:ring-green-500"
+                                            min="0" 
+                                            max="100"
+                                            className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-green-500"
                                         />
                                     </td>
                                     <td className="px-4 py-4 text-center">
                                         <input 
                                             type="number" 
-                                            disabled={!isRowEditing}
                                             value={student.midExam}
                                             onChange={(e) => handleInputChange(student.id, 'midExam', e.target.value)}
-                                            className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 disabled:opacity-60 disabled:border-transparent focus:ring-2 focus:ring-green-500"
+                                            min="0" 
+                                            max="100"
+                                            className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-green-500"
                                         />
                                     </td>
                                     <td className="px-4 py-4 text-center">
                                         <input 
                                             type="number" 
-                                            disabled={!isRowEditing}
                                             value={student.finalExam}
                                             onChange={(e) => handleInputChange(student.id, 'finalExam', e.target.value)}
-                                            className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 disabled:opacity-60 disabled:border-transparent focus:ring-2 focus:ring-green-500"
+                                            min="0" 
+                                            max="100"
+                                            className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-green-500"
                                         />
                                     </td>
 
                                     {/* Calculated Columns */}
                                     <td className="px-6 py-4 text-center font-bold text-gray-900 dark:text-white">
-                                        {finalScore.toFixed(1)}
+                                        <div className="flex flex-col">
+                                            <span>{finalScore.toFixed(1)}</span>
+                                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                                                {(0.3 * student.assignment + 0.3 * student.midExam + 0.4 * student.finalExam).toFixed(1)}
+                                            </span>
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold ${
@@ -291,21 +629,36 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        {isRowEditing ? (
+                                        <div className="flex gap-2 justify-end">
+                                            {isRowEditing ? (
+                                                <button 
+                                                    onClick={handleSave}
+                                                    className="text-xs font-medium bg-green-600 text-white px-3 py-1.5 rounded-full hover:bg-green-700 transition-colors"
+                                                >
+                                                    Simpan
+                                                </button>
+                                            ) : (
+                                                <button 
+                                                    onClick={() => setIsEditing(student.id)}
+                                                    className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                                                >
+                                                    Edit
+                                                </button>
+                                            )}
                                             <button 
-                                                onClick={handleSave}
-                                                className="text-xs font-medium bg-green-600 text-white px-3 py-1.5 rounded-full hover:bg-green-700 transition-colors"
+                                                onClick={() => {
+                                                    setGrades(prev => prev.map(g => g.id === student.id ? {
+                                                        ...g, 
+                                                        assignment: 0, 
+                                                        midExam: 0, 
+                                                        finalExam: 0
+                                                    } : g));
+                                                }}
+                                                className="text-xs font-medium text-red-600 dark:text-red-400 hover:underline"
                                             >
-                                                Simpan
+                                                Reset
                                             </button>
-                                        ) : (
-                                            <button 
-                                                onClick={() => setIsEditing(student.id)}
-                                                className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
-                                            >
-                                                Edit
-                                            </button>
-                                        )}
+                                        </div>
                                     </td>
                                 </tr>
                             );
