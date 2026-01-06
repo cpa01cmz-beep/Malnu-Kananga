@@ -6,21 +6,19 @@ import { ChartBarIcon } from './icons/ChartBarIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer, 
-  PieChart, 
-  Pie, 
-  Cell,
-  Area,
-  AreaChart
-} from 'recharts';
+import { BarChart } from 'recharts/es6/chart/BarChart';
+import { Bar } from 'recharts/es6/cartesian/Bar';
+import { XAxis } from 'recharts/es6/cartesian/XAxis';
+import { YAxis } from 'recharts/es6/cartesian/YAxis';
+import { CartesianGrid } from 'recharts/es6/cartesian/CartesianGrid';
+import { Tooltip } from 'recharts/es6/component/Tooltip';
+import { Legend } from 'recharts/es6/component/Legend';
+import { ResponsiveContainer } from 'recharts/es6/component/ResponsiveContainer';
+import { PieChart } from 'recharts/es6/chart/PieChart';
+import { Pie } from 'recharts/es6/polar/Pie';
+import { Cell } from 'recharts/es6/component/Cell';
+import { Area } from 'recharts/es6/cartesian/Area';
+import { AreaChart } from 'recharts/es6/chart/AreaChart';
 import QRCode from 'qrcode';
 import { inventoryAPI } from '../services/apiService';
 import type { 
