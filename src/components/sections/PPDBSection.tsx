@@ -25,7 +25,7 @@ const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
             <div className="bg-white/95 dark:bg-neutral-800/95 p-7 sm:p-8 rounded-2xl shadow-card hover:shadow-float border border-neutral-200/90 dark:border-neutral-700 text-center relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
                 <div className="absolute top-0 right-0 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 text-primary-700 dark:text-primary-300 font-bold px-5 py-2.5 rounded-bl-xl text-sm shadow-sm">01</div>
                 <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">

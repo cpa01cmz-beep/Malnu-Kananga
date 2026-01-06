@@ -54,7 +54,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       <div className="flex-shrink-0">
         {icons[type]}
       </div>
-      <span className="font-semibold text-sm">{message}</span>
+      <span className="font-medium text-sm">{message}</span>
     </div>
   );
 };

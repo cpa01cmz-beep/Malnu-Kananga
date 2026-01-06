@@ -27,28 +27,28 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                             Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
                         </p>
                         <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 font-medium">
-                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-bold">info@ma-malnukananga.sch.id</a>
+                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-semibold">info@ma-malnukananga.sch.id</a>
                         </p>
                     </div>
 
                     <div>
                          <h3 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-6">Legalitas</h3>
-                           <ul className="space-y-4 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
-                              <li><strong className="text-neutral-900 dark:text-white font-bold">No. SK. Pendirian:</strong> D/Wi/MA./101/2000</li>
-                              <li><strong className="text-neutral-900 dark:text-white font-bold">Tgl. SK. Pendirian:</strong> 20-09-2000</li>
-                              <li className="pt-1"><strong className="text-neutral-900 dark:text-white font-bold">No. SK Operasional:</strong> D/Wi/MA./101/2000</li>
-                              <li><strong className="text-neutral-900 dark:text-white font-bold">Tgl. SK Operasional:</strong> 20-09-2000</li>
-                         </ul>
+                           <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
+                               <li><strong className="text-neutral-900 dark:text-white font-bold">No. SK. Pendirian:</strong> D/Wi/MA./101/2000</li>
+                               <li><strong className="text-neutral-900 dark:text-white font-bold">Tgl. SK. Pendirian:</strong> 20-09-2000</li>
+                               <li><strong className="text-neutral-900 dark:text-white font-bold">No. SK Operasional:</strong> D/Wi/MA./101/2000</li>
+                               <li><strong className="text-neutral-900 dark:text-white font-bold">Tgl. SK Operasional:</strong> 20-09-2000</li>
+                          </ul>
                     </div>
 
                     <div className="sm:justify-self-end">
                         <h3 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-6">Tautan Bermanfaat</h3>
-                          <ul className="space-y-4 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
-                               <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-bold">Pusat Bantuan</button></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-bold">Download</a></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-bold">Kebijakan Privasi</a></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-bold">Karir</a></li>
-                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-bold">Beasiswa</a></li>
+                          <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
+                               <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-semibold">Pusat Bantuan</button></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-semibold">Download</a></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-semibold">Kebijakan Privasi</a></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-semibold">Karir</a></li>
+                               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-semibold">Beasiswa</a></li>
                           </ul>
                         <div className="flex justify-center sm:justify-start gap-4 mt-8">
                             <a href="#" className="text-neutral-400 hover:text-primary-600 hover:scale-110 transition-all duration-200 p-3.5 rounded-xl hover:bg-primary-50/95 dark:hover:bg-primary-900/40 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800" aria-label="Facebook">
