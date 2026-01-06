@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-06
-**Version**: 2.3.8
+**Version**: 2.3.9
 **Status**: Active
 
 ## 1. Ringkasan Eksekutif
@@ -1179,7 +1179,16 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
     - Fixed P0 runtime errors: "Cannot access 'g' before initialization" ✅
     - Reduced circular chunk dependencies dari 7 ke 0 ✅
     - Build time improvement: 12.71s → 9.76s (23% faster) ✅
-    - Resolved Issue #583 ✅
+     - Resolved Issue #583 ✅
+   - **Permission System Enhancement**: Extra role support in JWT ✅
+     - Added `extra_role` field to JWT token payload for user permissions
+     - Updated handleLogin to include user's extra_role in access token
+     - Updated handleRefreshToken to preserve extra_role in token refresh
+     - Extracted extra_role from JWT in frontend permission validation
+     - Replaced hardcoded null with actual extra_role value
+     - Extra role permissions (staff: inventory.manage, osis: osis.events) now functional ✅
+     - Eliminated hardcoded values (Pillar 15: Dynamic Coding) ✅
+     - Enhanced security by validating all user permissions (Pillar 4: Security) ✅
 
 
 ### 6.2 Privacy & Compliance
