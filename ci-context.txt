@@ -1,0 +1,257 @@
+### LINT LOG (last 200 lines)
+
+> asisten-ai-ma-malnu-kananga@2.1.0 lint
+> eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 20
+
+\n### TEST LOG (last 200 lines)
+[22m[39m[2026-01-06T07:33:26.511Z] [ERROR] [GeminiAPIError] ["{\n  \"type\": \"NETWORK_ERROR\",\n  \"operation\": \"test\",\n  \"isRetryable\": true,\n  \"timestamp\": \"2026-01-06T07:33:26.511Z\",\n  \"message\": \"Tidak dapat terhubung ke server AI. Silakan periksa koneksi internet Anda.\",\n  \"errorName\": \"GeminiAPIError\"\n}"]
+[2026-01-06T07:33:26.511Z] [ERROR] [GeminiAPIError] Attempt 1 of 2
+
+[90mstdout[2m | src/services/__tests__/permissionService.test.ts[2m > [22m[2mPermissionService[2m > [22m[2mhasAnyPermission[2m > [22m[2mshould grant access if user has any of the specified permissions
+[22m[39mPermission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.513Z'[39m,
+  userId: [32m'unknown'[39m,
+  role: [32m'teacher'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'users'[39m,
+  action: [32m'create'[39m,
+  granted: [33mfalse[39m
+}
+Permission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.513Z'[39m,
+  userId: [32m'unknown'[39m,
+  role: [32m'teacher'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'content'[39m,
+  action: [32m'create'[39m,
+  granted: [33mtrue[39m
+}
+
+[90mstdout[2m | src/services/__tests__/permissionService.test.ts[2m > [22m[2mPermissionService[2m > [22m[2mhasAnyPermission[2m > [22m[2mshould deny access if user has none of the specified permissions
+[22m[39mPermission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.514Z'[39m,
+  userId: [32m'unknown'[39m,
+  role: [32m'student'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'users'[39m,
+  action: [32m'create'[39m,
+  granted: [33mfalse[39m
+}
+Permission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.514Z'[39m,
+  userId: [32m'unknown'[39m,
+  role: [32m'student'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'system'[39m,
+  action: [32m'admin'[39m,
+  granted: [33mfalse[39m
+}
+Permission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.514Z'[39m,
+  userId: [32m'unknown'[39m,
+  role: [32m'student'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'ppdb'[39m,
+  action: [32m'manage'[39m,
+  granted: [33mfalse[39m
+}
+
+[90mstdout[2m | src/services/__tests__/permissionService.test.ts[2m > [22m[2mPermissionService[2m > [22m[2mcanAccessResource[2m > [22m[2mshould check resource-based access correctly
+[22m[39mPermission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.515Z'[39m,
+  userId: [32m'unknown'[39m,
+  role: [32m'teacher'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'content'[39m,
+  action: [32m'read'[39m,
+  granted: [33mtrue[39m
+}
+
+[90mstdout[2m | src/services/__tests__/permissionService.test.ts[2m > [22m[2mPermissionService[2m > [22m[2mcanAccessResource[2m > [22m[2mshould deny resource access for unauthorized roles
+[22m[39mPermission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.516Z'[39m,
+  userId: [32m'unknown'[39m,
+  role: [32m'student'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'users'[39m,
+  action: [32m'create'[39m,
+  granted: [33mfalse[39m
+}
+
+[90mstdout[2m | src/services/__tests__/permissionService.test.ts[2m > [22m[2mPermissionService[2m > [22m[2mAudit Logging[2m > [22m[2mshould log permission checks
+[22m[39mPermission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.519Z'[39m,
+  userId: [32m'test-user'[39m,
+  role: [32m'teacher'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'academic'[39m,
+  action: [32m'grade'[39m,
+  granted: [33mtrue[39m
+}
+
+[90mstdout[2m | src/services/__tests__/permissionService.test.ts[2m > [22m[2mPermissionService[2m > [22m[2mAudit Logging[2m > [22m[2mshould filter audit logs by user role
+[22m[39mPermission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.519Z'[39m,
+  userId: [32m'unknown'[39m,
+  role: [32m'admin'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'system'[39m,
+  action: [32m'admin'[39m,
+  granted: [33mtrue[39m
+}
+Permission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.519Z'[39m,
+  userId: [32m'unknown'[39m,
+  role: [32m'student'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'student'[39m,
+  action: [32m'library'[39m,
+  granted: [33mtrue[39m
+}
+
+[90mstdout[2m | src/services/__tests__/permissionService.test.ts[2m > [22m[2mPermissionService[2m > [22m[2mAudit Logging[2m > [22m[2mshould filter audit logs by granted status
+[22m[39mPermission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.520Z'[39m,
+  userId: [32m'unknown'[39m,
+  role: [32m'student'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'system'[39m,
+  action: [32m'admin'[39m,
+  granted: [33mfalse[39m
+}
+Permission Check: {
+  timestamp: [32m'2026-01-06T07:33:26.520Z'[39m,
+  userId: [32m'unknown'[39m,
+  role: [32m'student'[39m,
+  extraRole: [1mnull[22m,
+  resource: [32m'student'[39m,
+  action: [32m'library'[39m,
+  granted: [33mtrue[39m
+}
+
+[90mstderr[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mretryWithBackoff[2m > [22m[2mshould stop after max attempts
+[22m[39m[2026-01-06T07:33:26.521Z] [ERROR] [GeminiAPIError] ["{\n  \"type\": \"NETWORK_ERROR\",\n  \"operation\": \"test\",\n  \"isRetryable\": true,\n  \"timestamp\": \"2026-01-06T07:33:26.521Z\",\n  \"message\": \"Tidak dapat terhubung ke server AI. Silakan periksa koneksi internet Anda.\",\n  \"errorName\": \"GeminiAPIError\"\n}"]
+[2026-01-06T07:33:26.521Z] [ERROR] [GeminiAPIError] Attempt 2 of 2
+
+[90mstdout[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mretryWithBackoff[2m > [22m[2mshould use exponential backoff delays
+[22m[39m[2026-01-06T07:33:26.522Z] [INFO] [Retry] Retrying test in 100ms (attempt 1/3)
+
+[90mstderr[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mretryWithBackoff[2m > [22m[2mshould use exponential backoff delays
+[22m[39m[2026-01-06T07:33:26.522Z] [ERROR] [GeminiAPIError] ["{\n  \"type\": \"NETWORK_ERROR\",\n  \"operation\": \"test\",\n  \"isRetryable\": true,\n  \"timestamp\": \"2026-01-06T07:33:26.522Z\",\n  \"message\": \"Tidak dapat terhubung ke server AI. Silakan periksa koneksi internet Anda.\",\n  \"errorName\": \"GeminiAPIError\"\n}"]
+[2026-01-06T07:33:26.522Z] [ERROR] [GeminiAPIError] Attempt 1 of 3
+
+ [32m✓[39m src/services/__tests__/permissionService.test.ts [2m([22m[2m30 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+[90mstdout[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mretryWithBackoff[2m > [22m[2mshould use exponential backoff delays
+[22m[39m[2026-01-06T07:33:26.623Z] [INFO] [Retry] Retrying test in 200ms (attempt 2/3)
+
+[90mstderr[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mretryWithBackoff[2m > [22m[2mshould use exponential backoff delays
+[22m[39m[2026-01-06T07:33:26.623Z] [ERROR] [GeminiAPIError] ["{\n  \"type\": \"NETWORK_ERROR\",\n  \"operation\": \"test\",\n  \"isRetryable\": true,\n  \"timestamp\": \"2026-01-06T07:33:26.622Z\",\n  \"message\": \"Tidak dapat terhubung ke server AI. Silakan periksa koneksi internet Anda.\",\n  \"errorName\": \"GeminiAPIError\"\n}"]
+[2026-01-06T07:33:26.623Z] [ERROR] [GeminiAPIError] Attempt 2 of 3
+
+[90mstderr[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mCircuitBreaker[2m > [22m[2mshould open after threshold failures
+[22m[39m[2026-01-06T07:33:26.827Z] [WARN] [CircuitBreaker] Circuit opened after 2 failures
+
+[90mstderr[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mCircuitBreaker[2m > [22m[2mshould reject operations when open
+[22m[39m[2026-01-06T07:33:26.829Z] [WARN] [CircuitBreaker] Circuit opened after 2 failures
+
+[90mstderr[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mCircuitBreaker[2m > [22m[2mshould reject operations when open
+[22m[39m[2026-01-06T07:33:26.832Z] [WARN] [CircuitBreaker] Circuit is open, using fallback or throwing
+
+[90mstderr[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mCircuitBreaker[2m > [22m[2mshould transition to half-open after timeout
+[22m[39m[2026-01-06T07:33:26.835Z] [WARN] [CircuitBreaker] Circuit opened after 2 failures
+
+[90mstdout[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mCircuitBreaker[2m > [22m[2mshould transition to half-open after timeout
+[22m[39m[2026-01-06T07:33:26.835Z] [INFO] [CircuitBreaker] Transitioned to half-open state
+
+[90mstderr[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mCircuitBreaker[2m > [22m[2mshould close on success in half-open state
+[22m[39m[2026-01-06T07:33:26.839Z] [WARN] [CircuitBreaker] Circuit opened after 2 failures
+
+[90mstdout[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mCircuitBreaker[2m > [22m[2mshould close on success in half-open state
+[22m[39m[2026-01-06T07:33:26.989Z] [INFO] [CircuitBreaker] Transitioned to half-open state
+
+[90mstderr[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mCircuitBreaker[2m > [22m[2mshould use fallback when open
+[22m[39m[2026-01-06T07:33:26.845Z] [WARN] [CircuitBreaker] Circuit opened after 2 failures
+
+[90mstderr[2m | src/utils/__tests__/errorHandler.test.ts[2m > [22m[2mError Handler Utility[2m > [22m[2mCircuitBreaker[2m > [22m[2mshould use fallback when open
+[22m[39m[2026-01-06T07:33:26.845Z] [WARN] [CircuitBreaker] Circuit is open, using fallback or throwing
+
+ [32m✓[39m src/utils/__tests__/errorHandler.test.ts [2m([22m[2m29 tests[22m[2m)[22m[33m 368[2mms[22m[39m
+       [33m[2m✓[22m[39m should use exponential backoff delays [33m 303[2mms[22m[39m
+[90mstderr[2m | src/services/authService.test.ts[2m > [22m[2mAuthService[2m > [22m[2mlogout[2m > [22m[2mshould handle logout errors
+[22m[39m[2026-01-06T07:33:27.227Z] [ERROR] Logout error: [{}]
+
+ [32m✓[39m src/services/authService.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/touch-gestures.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+[90mstderr[2m | src/services/__tests__/geminiService.test.ts[2m > [22m[2mGemini Service[2m > [22m[2mgetAIResponseStream[2m > [22m[2mshould return fallback message on API error
+[22m[39m[2026-01-06T07:33:27.520Z] [WARN] RAG fetch failed, proceeding with local context only: [{}]
+
+[90mstderr[2m | src/services/__tests__/geminiService.test.ts[2m > [22m[2mGemini Service[2m > [22m[2mgetAIResponseStream[2m > [22m[2mshould return fallback message on API error
+[22m[39m[2026-01-06T07:33:27.522Z] [ERROR] [GeminiAPIError] ["{\n  \"type\": \"UNKNOWN_ERROR\",\n  \"operation\": \"getAIResponseStream\",\n  \"isRetryable\": true,\n  \"timestamp\": \"2026-01-06T07:33:27.522Z\",\n  \"message\": \"Terjadi kesalahan yang tidak terduga. Silakan coba lagi.\",\n  \"errorName\": \"GeminiAPIError\"\n}"]
+
+[90mstderr[2m | src/services/__tests__/geminiService.test.ts[2m > [22m[2mGemini Service[2m > [22m[2mgetAIResponseStream[2m > [22m[2mshould handle successful response with context
+[22m[39m[2026-01-06T07:33:27.524Z] [ERROR] [GeminiAPIError] ["{\n  \"type\": \"UNKNOWN_ERROR\",\n  \"operation\": \"getAIResponseStream\",\n  \"isRetryable\": true,\n  \"timestamp\": \"2026-01-06T07:33:27.524Z\",\n  \"message\": \"Terjadi kesalahan yang tidak terduga. Silakan coba lagi.\",\n  \"errorName\": \"GeminiAPIError\"\n}"]
+
+[90mstderr[2m | src/services/__tests__/geminiService.test.ts[2m > [22m[2mGemini Service[2m > [22m[2manalyzeClassPerformance[2m > [22m[2mshould return fallback message on API error
+[22m[39m[2026-01-06T07:33:27.525Z] [ERROR] [GeminiAPIError] ["{\n  \"type\": \"UNKNOWN_ERROR\",\n  \"operation\": \"analyzeClassPerformance\",\n  \"isRetryable\": true,\n  \"timestamp\": \"2026-01-06T07:33:27.525Z\",\n  \"message\": \"Terjadi kesalahan yang tidak terduga. Silakan coba lagi.\",\n  \"errorName\": \"GeminiAPIError\"\n}"]
+
+[90mstderr[2m | src/services/__tests__/geminiService.test.ts[2m > [22m[2mGemini Service[2m > [22m[2mgetAIEditorResponse[2m > [22m[2mshould throw error on API failure
+[22m[39m[2026-01-06T07:33:27.525Z] [ERROR] [GeminiAPIError] ["{\n  \"type\": \"UNKNOWN_ERROR\",\n  \"operation\": \"getAIEditorResponse\",\n  \"isRetryable\": true,\n  \"timestamp\": \"2026-01-06T07:33:27.525Z\",\n  \"message\": \"Terjadi kesalahan yang tidak terduga. Silakan coba lagi.\",\n  \"errorName\": \"GeminiAPIError\"\n}"]
+
+ [32m✓[39m src/services/__tests__/geminiService.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m86 passed[39m[22m[90m (86)[39m
+[2m   Start at [22m 07:33:25
+[2m   Duration [22m 1.96s[2m (transform 457ms, setup 244ms, import 496ms, tests 455ms, environment 3.20s)[22m
+
+\n### BUILD LOG (last 200 lines)
+
+> asisten-ai-ma-malnu-kananga@2.1.0 build
+> vite build
+
+[36mvite v7.3.0 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32m✓[39m 1106 modules transformed.
+rendering chunks...
+[33m[plugin vite:reporter] 
+(!) /home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/permissionService.ts is dynamically imported by /home/runner/work/Malnu-Kananga/Malnu-Kananga/src/services/apiService.ts but also statically imported by /home/runner/work/Malnu-Kananga/Malnu-Kananga/src/App.tsx, /home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/AdminDashboard.tsx, /home/runner/work/Malnu-Kananga/Malnu-Kananga/src/components/admin/PermissionManager.tsx, dynamic import will not move module into another chunk.
+[39m
+computing gzip size...
+[2mdist/[22m[32mmanifest.webmanifest                        [39m[1m[2m  0.52 kB[22m[1m[22m
+[2mdist/[22m[32mindex.html                                  [39m[1m[2m  2.78 kB[22m[1m[22m[2m │ gzip:   1.05 kB[22m
+[2mdist/[22m[2massets/[22m[35mindex-DpWGQ_v0.css                   [39m[1m[2m 16.78 kB[22m[1m[22m[2m │ gzip:   3.28 kB[22m
+[2mdist/[22m[2massets/[22m[36mPlusIcon-DV_W7PKa.js                 [39m[1m[2m  0.32 kB[22m[1m[22m[2m │ gzip:   0.26 kB[22m
+[2mdist/[22m[2massets/[22m[36mUserIcon-CIKIhd01.js                 [39m[1m[2m  0.41 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[2mdist/[22m[2massets/[22m[36mArrowPathIcon-CJ1Qk3gF.js            [39m[1m[2m  0.47 kB[22m[1m[22m[2m │ gzip:   0.33 kB[22m
+[2mdist/[22m[2massets/[22m[36mBuildingLibraryIcon-C9eRX8cM.js      [39m[1m[2m  0.50 kB[22m[1m[22m[2m │ gzip:   0.37 kB[22m
+[2mdist/[22m[2massets/[22m[36mPencilIcon-B2Q7pewr.js               [39m[1m[2m  1.25 kB[22m[1m[22m[2m │ gzip:   0.55 kB[22m
+[2mdist/[22m[2massets/[22m[36mdefaults-CSJYdp_V.js                 [39m[1m[2m  2.77 kB[22m[1m[22m[2m │ gzip:   1.18 kB[22m
+[2mdist/[22m[2massets/[22m[36mDocumentationPage-TzfnftYd.js        [39m[1m[2m  4.05 kB[22m[1m[22m[2m │ gzip:   1.72 kB[22m
+[2mdist/[22m[2massets/[22m[36mworkbox-window.prod.es5-DaSx2M5h.js  [39m[1m[2m  5.73 kB[22m[1m[22m[2m │ gzip:   2.25 kB[22m
+[2mdist/[22m[2massets/[22m[36mFileUpload-CZMqNV_B.js               [39m[1m[2m  7.03 kB[22m[1m[22m[2m │ gzip:   2.78 kB[22m
+[2mdist/[22m[2massets/[22m[36mcategoryValidator-LxTrtW6m.js        [39m[1m[2m 12.79 kB[22m[1m[22m[2m │ gzip:   3.65 kB[22m
+[2mdist/[22m[2massets/[22m[36mSiteEditor-DCOgDUGi.js               [39m[1m[2m 13.15 kB[22m[1m[22m[2m │ gzip:   4.01 kB[22m
+[2mdist/[22m[2massets/[22m[36mpurify.es-DKaE7E5m.js                [39m[1m[2m 22.79 kB[22m[1m[22m[2m │ gzip:   8.64 kB[22m
+[2mdist/[22m[2massets/[22m[36mPPDBRegistration-DbhvgpQO.js         [39m[1m[2m 29.05 kB[22m[1m[22m[2m │ gzip:  10.30 kB[22m
+[2mdist/[22m[2massets/[22m[36mnetworkStatus-Bo-OSilB.js            [39m[1m[2m 43.54 kB[22m[1m[22m[2m │ gzip:  10.15 kB[22m
+[2mdist/[22m[2massets/[22m[36mAdminDashboard-tWJdvLTF.js           [39m[1m[2m 45.33 kB[22m[1m[22m[2m │ gzip:   9.49 kB[22m
+[2mdist/[22m[2massets/[22m[36mParentDashboard-BpkRUxKk.js          [39m[1m[2m 60.26 kB[22m[1m[22m[2m │ gzip:  10.51 kB[22m
+[2mdist/[22m[2massets/[22m[36mvendor-genai-CsfhM9Qz.js             [39m[1m[2m146.47 kB[22m[1m[22m[2m │ gzip:  23.66 kB[22m
+[2mdist/[22m[2massets/[22m[36mindex.es-_ghs1jp7.js                 [39m[1m[2m158.61 kB[22m[1m[22m[2m │ gzip:  52.52 kB[22m
+[2mdist/[22m[2massets/[22m[36mTeacherDashboard-ueoMyXPh.js         [39m[1m[2m201.54 kB[22m[1m[22m[2m │ gzip:  50.49 kB[22m
+[2mdist/[22m[2massets/[22m[36mindex-CXYkckpd.js                    [39m[1m[2m298.52 kB[22m[1m[22m[2m │ gzip:  87.62 kB[22m
+[2mdist/[22m[2massets/[22m[36mBar-bussrPPX.js                      [39m[1m[33m350.16 kB[39m[22m[2m │ gzip:  99.38 kB[22m
+[2mdist/[22m[2massets/[22m[36mStudentPortal-DK1l09Jr.js            [39m[1m[33m630.19 kB[39m[22m[2m │ gzip: 182.72 kB[22m
+[33m
+(!) Some chunks are larger than 300 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[32m✓ built in 10.63s[39m
+
+[36mPWA v1.2.0[39m
+mode      [35mgenerateSW[39m
+precache  [32m37 entries[39m [2m(2008.09 KiB)[22m
+files generated
+  [2mdist/sw.js[22m
+  [2mdist/workbox-1d305bb8.js[22m
