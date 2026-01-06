@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-06
-**Version**: 2.1.0
+**Version**: 2.2.0
 **Status**: Active
 
 ## 1. Ringkasan
@@ -13,27 +13,41 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 
 ### 2.1 Arsitektur Umum
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│         Web-Based School Management System          │
-├──────────────────────────────────────────────────────────────────┤
-│                   Frontend Layer                     │
-│  (React + Vite - Responsif untuk Desktop/Mobile)   │
-│  State Management: React Hooks + apiService.ts      │
-│  Vocal Interaction: Web Speech API (STT/TTS)       │
-├──────────────────────────────────────────────────────────────────┤
-│                   Application Layer                  │
-│  (Cloudflare Workers - Serverless Backend)         │
-│  Business Logic, API Endpoints, JWT Auth           │
-├──────────────────────────────────────────────────────────────────┤
-│                   Database Layer                    │
-│  (Cloudflare D1 - SQLite Serverless Database)       │
-│  15+ Tables: Users, Students, Teachers, etc.       │
-├──────────────────────────────────────────────────────────────────┤
-│                   AI & Search Layer                   │
-│  (Cloudflare Vectorize + Workers AI)               │
-│  RAG Chatbot, Document Embeddings                  │
-└──────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    User[Pengguna] --> |Akses Web| Frontend[React App (Vite)]
+
+    subgraph "Frontend Layer"
+        Frontend --> |State Management| AppState[React State]
+        AppState --> |Persistence Strategy| CustomHooks[Custom Hooks]
+        CustomHooks --> |Logic| ApiService[apiService.ts]
+        ApiService --> |HTTP Requests| Backend[Cloudflare Workers]
+
+        Frontend --> |Render UI| Components[Komponen UI]
+    end
+
+    subgraph "AI Services Layer"
+        Frontend --> |Chat & Edit Prompt| GeminiAPI[Google Gemini API]
+        GeminiAPI --> |Response Text/JSON| Frontend
+    end
+
+    subgraph "Backend Layer (Cloudflare)"
+        Frontend --> |Auth Request| WorkerAuth[Worker: JWT Auth]
+        WorkerAuth --> |Verify & Store| Sessions[JWT Sessions]
+        WorkerAuth --> |Query Users| D1[Cloudflare D1 Database]
+
+        Frontend --> |CRUD Operations| WorkerAPI[Worker: API Endpoints]
+        WorkerAPI --> |SQL Operations| D1
+
+        Frontend --> |Cari Konteks Chat| WorkerRAG[Worker: RAG Endpoint]
+        WorkerRAG --> |Vector Search| Vectorize[Cloudflare Vectorize]
+        WorkerRAG --> |Embeddings| CFAi[Cloudflare Workers AI]
+    end
+
+    subgraph "Storage Layer"
+        D1 -->|Relational Data| Tables[15+ Tables]
+        WorkerAPI -->|File Upload| R2[Cloudflare R2 Storage]
+    end
 ```
 
 ### 2.2 Teknologi Stack
@@ -235,5 +249,5 @@ Sistem Informasi Manajemen Sekolah Berbasis Web (School Management Information S
 ---
 
 **Last Updated**: 2026-01-06
-**Version**: 2.4.0
+**Version**: 2.2.0
 **Status**: Active

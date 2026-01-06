@@ -1299,12 +1299,6 @@ export default {
     
     const url = new URL(request.url);
     
-    // Database initialization on first request
-    if (!env.DB_INITIALIZED) {
-      await initDatabase(env);
-      env.DB_INITIALIZED = true;
-    }
-    
     // Route handlers
     const routes = {
       '/seed': handleSeed,

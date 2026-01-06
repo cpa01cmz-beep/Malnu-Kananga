@@ -242,7 +242,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="bg-neutral-50 dark:bg-neutral-900 w-full min-h-screen font-sans text-neutral-800 dark:text-neutral-200 transition-colors duration-300">
+    <div className="bg-neutral-50 dark:bg-neutral-900 w-full min-h-screen font-sans text-neutral-800 dark:text-neutral-200 transition-colors duration-300 antialiased">
       <Header
         onLoginClick={() => setIsLoginOpen(true)}
         onChatClick={() => setIsChatOpen(true)}
@@ -318,11 +318,11 @@ const App: React.FC = () => {
         />
       </Suspense>
 
-      <Toast 
-        message={toast.message} 
-        type={toast.type} 
-        isVisible={toast.isVisible} 
-        onClose={hideToast} 
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
       />
     </div>
   );

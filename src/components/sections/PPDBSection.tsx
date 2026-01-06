@@ -10,11 +10,11 @@ interface PPDBSectionProps {
 
 const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
   return (
-    <section id="ppdb" className="py-20 sm:py-24 bg-gradient-to-b from-primary-50 to-white dark:from-primary-900/20 dark:to-neutral-900">
+    <section id="ppdb" className="py-20 sm:py-24 bg-gradient-to-b from-primary-50 via-primary-50/50 to-white dark:from-primary-900/20 dark:via-primary-900/10 dark:to-neutral-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <span className="text-primary-600 dark:text-primary-400 font-bold tracking-wider uppercase text-sm">Penerimaan Peserta Didik Baru</span>
-          <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 dark:text-white mt-3 tracking-tight">Bergabunglah Bersama Kami</h2>
+        <div className="text-center mb-16 animate-fade-in">
+          <span className="text-primary-600 dark:text-primary-400 font-bold tracking-wider uppercase text-sm animate-scale-in">Penerimaan Peserta Didik Baru</span>
+          <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 dark:text-white mt-3 tracking-tight animate-fade-in-up">Bergabunglah Bersama Kami</h2>
           <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
             Jadilah bagian dari generasi unggul MA Malnu Kananga. Pendaftaran Tahun Ajaran 2025/2026 telah dibuka.
           </p>

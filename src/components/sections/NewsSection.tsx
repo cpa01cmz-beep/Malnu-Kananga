@@ -11,7 +11,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ news }) => {
   return (
     <section id="berita" className="py-20 sm:py-24 bg-white dark:bg-neutral-800/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
+            <div className="text-center mb-16 animate-fade-in">
                 <h2 className="text-4xl sm:text-5xl font-bold text-neutral-900 dark:text-white tracking-tight">Berita & Kegiatan Terbaru</h2>
                 <p className="mt-4 text-lg text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">Ikuti perkembangan dan prestasi terbaru dari sekolah kami.</p>
             </div>
