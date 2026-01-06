@@ -1,8 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+type SupportRequest = {
+  id: number
+  student: string
+  issue: string
+  status: string
+  createdAt?: string
+  updatedAt?: string
+}
+
 // Mock Student Support Service
 class StudentSupportService {
-  supportRequests: any[]
+  supportRequests: SupportRequest[]
   isInitialized: boolean
 
   constructor() {
@@ -168,7 +177,7 @@ describe('StudentSupportService', () => {
       // Check in requests list
       const requests = await service.getSupportRequests()
       const foundRequest = requests.find(req => req.id === request.id)
-      expect(foundRequest.status).toBe('in-progress')
+      expect(foundRequest?.status).toBe('in-progress')
     })
   })
 })

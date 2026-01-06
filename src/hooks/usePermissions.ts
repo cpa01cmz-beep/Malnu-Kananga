@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { UserRole, UserExtraRole } from '../types/permissions';
+import { UserRole, UserExtraRole, AccessResult } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
 
 /**
@@ -14,7 +14,7 @@ export const usePermissions = (
     userAgent?: string;
   }
 ) => {
-  const [lastCheckResult, setLastCheckResult] = useState<any>(null);
+  const [lastCheckResult, setLastCheckResult] = useState<AccessResult | null>(null);
 
   /**
    * Check if user has a specific permission
