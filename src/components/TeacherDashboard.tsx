@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { UsersIcon } from './icons/UsersIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
@@ -11,6 +11,8 @@ import SchoolInventory from './SchoolInventory'; // New Component
 import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
+import { usePushNotifications } from '../hooks/usePushNotifications';
+import { logger } from '../utils/logger';
 
 interface TeacherDashboardProps {
     onShowToast?: (msg: string, type: ToastType) => void;
@@ -22,9 +24,39 @@ type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory';
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<ViewState>('home');
 
+  // Initialize push notifications
+  const { 
+    showNotification, 
+    createNotification,
+    requestPermission 
+  } = usePushNotifications();
+
   const handleToast = (msg: string, type: ToastType) => {
       if (onShowToast) onShowToast(msg, type);
   };
+
+  // Request notification permission on first load
+  useEffect(() => {
+    const initializeNotifications = async () => {
+      try {
+        const granted = await requestPermission();
+        if (granted) {
+          logger.info('Teacher notifications enabled');
+          await showNotification(
+            createNotification(
+              'system',
+              'Notifikasi Guru Aktif',
+              'Sistem notifikasi guru telah diaktifkan'
+            )
+          );
+        }
+      } catch (error) {
+        logger.error('Failed to initialize teacher notifications:', error);
+      }
+    };
+
+    initializeNotifications();
+  }, [requestPermission, showNotification, createNotification]);
 
   // Check permissions for teacher role with extra role
   const checkPermission = (permission: string) => {

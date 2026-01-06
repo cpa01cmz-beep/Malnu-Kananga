@@ -17,6 +17,7 @@ import { authAPI, studentsAPI } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
+import { usePushNotifications } from '../hooks/usePushNotifications';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -28,6 +29,13 @@ type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'attendance' | 'o
 const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<PortalView>('home');
   const [studentData, setStudentData] = useState<Student | null>(null);
+
+  // Initialize push notifications
+  const { 
+    showNotification, 
+    createNotification,
+    requestPermission 
+  } = usePushNotifications();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { isOnline, isSlow } = useNetworkStatus();
@@ -75,6 +83,29 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       onShowToast(getSlowConnectionMessage(), 'info');
     }
   }, [isSlow, isOnline, onShowToast]);
+
+  // Request notification permission on first load
+  useEffect(() => {
+    const initializeNotifications = async () => {
+      try {
+        const granted = await requestPermission();
+        if (granted) {
+          logger.info('Student notifications enabled');
+          await showNotification(
+            createNotification(
+              'system',
+              'Notifikasi Siswa Aktif',
+              'Sistem notifikasi siswa telah diaktifkan'
+            )
+          );
+        }
+      } catch (error) {
+        logger.error('Failed to initialize student notifications:', error);
+      }
+    };
+
+    initializeNotifications();
+  }, [requestPermission, showNotification, createNotification]);
 
   const allMenuItems = [
     {

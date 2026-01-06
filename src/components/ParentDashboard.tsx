@@ -23,6 +23,7 @@ import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { validateMultiChildDataIsolation } from '../utils/parentValidation';
+import { usePushNotifications } from '../hooks/usePushNotifications';
 
 interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -37,6 +38,13 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [children, setChildren] = useState<ParentChild[]>([]);
   const [loading, setLoading] = useState(true);
   const networkStatus = useNetworkStatus();
+
+  // Initialize push notifications
+  const { 
+    showNotification, 
+    createNotification,
+    requestPermission 
+  } = usePushNotifications();
 
   // Check permissions for parent role
   const checkPermission = (permission: string) => {
@@ -74,6 +82,29 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
     fetchChildren();
   }, [onShowToast, networkStatus.isOnline]);
+
+  // Request notification permission on first load
+  useEffect(() => {
+    const initializeNotifications = async () => {
+      try {
+        const granted = await requestPermission();
+        if (granted) {
+          logger.info('Parent notifications enabled');
+          await showNotification(
+            createNotification(
+              'system',
+              'Notifikasi Orang Tua Aktif',
+              'Sistem notifikasi orang tua telah diaktifkan'
+            )
+          );
+        }
+      } catch (error) {
+        logger.error('Failed to initialize parent notifications:', error);
+      }
+    };
+
+    initializeNotifications();
+  }, [requestPermission, showNotification, createNotification]);
 
   const handleSelectChild = (child: ParentChild) => {
     setSelectedChild(child);
