@@ -36,14 +36,16 @@ database_name = "malnu-kananga-db-prod"
 database_id = "7fbd7834-0fd2-475f-8787-55ce81988642"
 
 # Vectorize index bindings - create with: wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
-[[env.production.vectorize]]
-binding = "VECTORIZE_INDEX"
-index_name = "malnu-kananga-index"
+# Note: Vectorize is optional. If not configured, AI chat features will be disabled gracefully.
+# [[env.production.vectorize]]
+# binding = "VECTORIZE_INDEX"
+# index_name = "malnu-kananga-index"
 
 # R2 Bucket bindings - create with: wrangler r2 bucket create malnu-kananga-files
-[[env.production.r2_buckets]]
-binding = "BUCKET"
-bucket_name = "malnu-kananga-files"
+# Note: R2 must be enabled in Cloudflare Dashboard first. If not configured, file operations will return 503.
+# [[env.production.r2_buckets]]
+# binding = "BUCKET"
+# bucket_name = "malnu-kananga-files"
 
 # Environment variables
 [env.production.vars]
@@ -70,19 +72,27 @@ database_name = "malnu-kananga-db-dev"
 # Dev D1 database ID
 database_id = "69605f72-4b69-4dd6-a72c-a17006f61254"
 
-[[env.dev.vectorize]]
-binding = "VECTORIZE_INDEX"
-index_name = "malnu-kananga-index-dev"
+# Vectorize index bindings - create with: wrangler vectorize create malnu-kananga-index-dev --dimensions=768 --metric=cosine
+# Note: Vectorize is optional. If not configured, AI chat features will be disabled gracefully.
+# [[env.dev.vectorize]]
+# binding = "VECTORIZE_INDEX"
+# index_name = "malnu-kananga-index-dev"
 
-[[env.dev.r2_buckets]]
-binding = "BUCKET"
-bucket_name = "malnu-kananga-files-dev"
+# R2 Bucket bindings - create with: wrangler r2 bucket create malnu-kananga-files-dev
+# Note: R2 must be enabled in Cloudflare Dashboard first. If not configured, file operations will return 503.
+# [[env.dev.r2_buckets]]
+# binding = "BUCKET"
+# bucket_name = "malnu-kananga-files-dev"
 
 [env.dev.vars]
 # Allow all origins for local development
 ALLOWED_ORIGIN = "*"
 # Use development JWT secret from environment variable
 JWT_SECRET = "${JWT_SECRET_DEV}"
+# Node environment
+NODE_ENV = "development"
+# Log level
+LOG_LEVEL = "info"
 # Set your Gemini API key for AI features
 # NOTE: Worker uses GEMINI_API_KEY (WITHOUT VITE_ prefix)
 # Frontend uses VITE_GEMINI_API_KEY (WITH VITE_ prefix) - these are DIFFERENT services
