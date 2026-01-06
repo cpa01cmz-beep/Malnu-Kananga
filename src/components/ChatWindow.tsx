@@ -228,7 +228,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
   }, [messages, autoReadAI, synthesis, voiceQueue, handleSend]);
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-xl shadow-float border border-neutral-200/90 dark:border-neutral-700 overflow-hidden">
+    <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-xl shadow-card-hover border border-neutral-200 dark:border-neutral-700 overflow-hidden">
       <header className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-primary-600 to-primary-700 text-white flex-shrink-0">
         <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 bg-white rounded-full mr-1 animate-pulse shadow-sm"></div>

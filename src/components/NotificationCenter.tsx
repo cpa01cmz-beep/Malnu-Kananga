@@ -189,7 +189,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
             aria-hidden="true"
           />
 
-          <div className="absolute right-0 mt-2 w-full sm:w-96 max-h-[80vh] bg-white rounded-card-lg shadow-float z-50 overflow-hidden">
+          <div className="absolute right-0 mt-2 w-full sm:w-96 max-h-[80vh] bg-white rounded-xl shadow-card-hover z-50 overflow-hidden">
             <div className="sticky top-0 bg-white border-b border-neutral-200 p-4">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-neutral-900">

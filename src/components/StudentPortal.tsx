@@ -190,7 +190,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
          {currentView === 'home' && (
             <>
                 {/* Welcome Banner */}
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up relative overflow-hidden">
+                <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up relative overflow-hidden">
                   <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
                       <h1 className="text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">Portal Siswa</h1>
@@ -215,13 +215,13 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                 {/* Dashboard Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {menuItems.map((item) => (
-                    <div key={item.title} onClick={item.action} className="bg-white dark:bg-neutral-800 p-6 rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 border border-neutral-200 dark:border-neutral-700 flex flex-col items-start cursor-pointer group transform hover:-translate-y-1">
-                      <div className={`p-3 rounded-xl ${item.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <div key={item.title} onClick={item.action} className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 border border-neutral-200 dark:border-neutral-700 flex flex-col items-start cursor-pointer group hover:-translate-y-0.5">
+                      <div className={`p-3 rounded-xl ${item.color} mb-4`}>
                          <div className="w-8 h-8">{item.icon}</div>
                       </div>
                       <div className="flex justify-between w-full items-start">
                          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">{item.title}</h3>
-                         {item.active && <span className="text-[10px] bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300 px-2 py-0.5 rounded-full font-bold">Aktif</span>}
+                         {item.active && <span className="text-[10px] bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300 px-2 py-0.5 rounded-full font-semibold">Aktif</span>}
                       </div>
                       <p className="text-sm text-neutral-500 dark:text-neutral-400">{item.description}</p>
                     </div>
@@ -229,13 +229,13 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
 
                   {/* OSIS Special Menu */}
                   {extraRole === 'osis' && checkPermission('osis.events') && (
-                      <div onClick={() => setCurrentView('osis')} className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 p-6 rounded-2xl shadow-card border border-orange-100 dark:border-orange-800 hover:shadow-card-hover transition-all duration-300 flex flex-col items-start cursor-pointer group transform hover:-translate-y-1">
-                          <div className="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 p-3 rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                      <div onClick={() => setCurrentView('osis')} className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 p-6 rounded-xl shadow-card border border-orange-200 dark:border-orange-800 hover:shadow-card-hover transition-all duration-300 flex flex-col items-start cursor-pointer group hover:-translate-y-0.5">
+                          <div className="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 p-3 rounded-xl mb-4">
                              <div className="w-8 h-8"><CalendarDaysIcon /></div>
                           </div>
                           <div className="flex justify-between w-full items-start">
                              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Kegiatan OSIS</h3>
-                               <span className="text-[10px] bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300 px-2 py-0.5 rounded-full font-bold">Extra</span>
+                               <span className="text-[10px] bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300 px-2 py-0.5 rounded-full font-semibold">Extra</span>
                           </div>
                           <p className="text-sm text-neutral-500 dark:text-neutral-400">Kelola event dan proker sekolah.</p>
                       </div>

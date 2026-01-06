@@ -71,7 +71,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       aria-modal="true"
       role="dialog"
     >
-      <div className="bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl rounded-xl shadow-float w-full max-w-md m-4 transform transition-all duration-300 ease-out scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh] border border-neutral-200 dark:border-neutral-700">
+      <div className="bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl rounded-xl shadow-card-hover w-full max-w-md m-4 transform transition-all duration-300 ease-out scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh] border border-neutral-200 dark:border-neutral-700">
         <div className="flex justify-between items-center px-6 py-5 border-b border-neutral-200/90 dark:border-neutral-700">
           <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">Login</h2>
           <button
