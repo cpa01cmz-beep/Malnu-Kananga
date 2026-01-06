@@ -140,9 +140,9 @@ Karena proyek ini menggunakan database (D1 & Vectorize), deployment dilakukan da
 
 ## 📚 Dokumentasi Lanjutan
 
-*   **[Panduan Pengguna (User Guide)](HOW_TO.md)**: Cara menggunakan fitur.
-*   **[Arsitektur Sistem](ARCHITECTURE.md)**: Penjelasan teknis.
-*   **[Roadmap](ROADMAP.md)**: Rencana masa depan.
+*   **[Panduan Pengguna (User Guide)](docs/HOW_TO.md)**: Cara menggunakan fitur.
+*   **[Arsitektur Sistem](docs/ARCHITECTURE.md)**: Penjelasan teknis.
+*   **[Roadmap](docs/ROADMAP.md)**: Rencana masa depan.
 
 ---
 

@@ -57,6 +57,66 @@ wrangler r2 bucket create malnu-kananga-files
 wrangler r2 bucket create malnu-kananga-files-dev
 ```
 
+#### R2 File Storage Organization
+
+The R2 bucket uses the following structure:
+```
+malnu-kananga-files/
+├── ppdb-documents/
+│   └── {year}/
+│       └── {registrant_id}/
+│           └── ijazah.pdf
+├── e-library/
+│   ├── {subject_id}/
+│   │   └── {material_id}/
+│   │       └── {filename}
+│   └── {category}/
+│       └── {material_id}/
+│           └── {filename}
+└── uploads/
+    └── {user_id}/
+        └── {timestamp}/
+            └── {filename}
+```
+
+#### File Validation Rules
+
+**PPDB Documents:**
+- Allowed Types: PDF, JPG, PNG, JPEG
+- Max Size: 5 MB
+- Required Fields: Ijazah, KK, Akta Kelahiran
+
+**E-Library Materials:**
+- Allowed Types: PDF, DOCX, PPT, PPTX, MP4, JPG, PNG
+- Max Size: 50 MB
+- Categories: Matematika, Bahasa, IPA, IPS, Agama, etc.
+
+**General Uploads:**
+- Allowed Types: All common document and image formats
+- Max Size: 10 MB
+
+#### R2 API Endpoints
+
+**Upload File**
+```bash
+POST /api/files/upload
+Content-Type: multipart/form-data
+
+Parameters:
+- file: File to upload
+- path: Optional custom path (default: uploads/{user_id}/{timestamp})
+```
+
+**Download File**
+```bash
+GET /api/files/download?key={key}
+```
+
+**Delete File**
+```bash
+DELETE /api/files/delete?key={key}
+```
+
 ### 1.4 (Optional) Create Vectorize Index
 
 ```bash
@@ -270,7 +330,20 @@ wrangler d1 execute malnu-kananga-db-prod --env production --command="SELECT COU
 wrangler d1 export malnu-kananga-db-prod --env production --output=backup.sql
 ```
 
-### 7.3 Performance Monitoring
+### 7.3 R2 Storage Management
+
+```bash
+# View bucket contents
+wrangler r2 object list malnu-kananga-files --prefix="ppdb-documents/2024/"
+
+# Get file info
+wrangler r2 object get malnu-kananga-files --key=ppdb-documents/2024/abc123/ijazah.pdf
+
+# Delete file
+wrangler r2 object delete malnu-kananga-files --key=ppdb-documents/2024/abc123/ijazah.pdf
+```
+
+### 7.4 Performance Monitoring
 
 Monitor key metrics:
 - Worker response time
@@ -313,6 +386,16 @@ ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
 # Verify R2 bucket is created and bound
 # Check file size limits (50MB max)
 # Verify file types are allowed
+# Check authentication token is valid
+```
+
+**5. R2-Specific Issues**
+
+```bash
+# "Bucket not found" - Create bucket: wrangler r2 bucket create malnu-kananga-files
+# "File upload failed" - Check file size limits, Content-Type, JWT token
+# "CORS error on download" - Check worker response headers (already configured)
+# "Storage quota exceeded" - Monitor usage, implement cleanup policies
 ```
 
 **5. AI Features Not Working**
@@ -333,6 +416,20 @@ ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
 6. **Keep dependencies updated** - Run `npm audit` regularly
 7. **Use strong passwords** - Change default passwords
 8. **Implement backup strategy** - Regular database backups
+9. **Secure file uploads** - Validate file types, enforce size limits, authenticate all requests
+10. **Signed URLs** - Use expiring signed URLs for file downloads
+
+## Cost Considerations
+
+- **R2 Storage**: No egress fees (unlike S3)
+  - Storage: ~$0.015/GB/month
+  - Class A operations: $4.50/1M requests
+  - Class B operations: $0.36/1M requests
+- **D1 Database**: Free tier includes 5GB storage, 5M reads/day
+- **Workers**: Free tier includes 100,000 requests/day
+- **Vectorize**: Based on vector dimensions and query volume
+
+Estimated monthly cost for small deployment: <$5
 
 ## Rollback Procedures
 
@@ -354,7 +451,6 @@ wrangler deploy --env production
 - [Cloudflare R2 Documentation](https://developers.cloudflare.com/r2/)
 - [Wrangler CLI Documentation](https://developers.cloudflare.com/workers/wrangler/)
 - [Backend Guide](./BACKEND_GUIDE.md)
-- [R2 Setup Guide](./R2_SETUP.md)
 
 ## Version History
 
