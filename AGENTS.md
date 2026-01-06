@@ -51,7 +51,7 @@ All localStorage keys use `malnu_` prefix:
 ### User Roles
 
 Primary roles: `admin`, `teacher`, `student`, `parent`, `staff`
-Extra roles: `osis`, `wakasek`, `kepsek`
+Extra roles: `osis`
 
 ### Testing Guidelines
 
