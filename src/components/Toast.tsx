@@ -23,7 +23,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
   const baseClasses = "fixed top-24 right-5 z-50 px-6 py-4 rounded-card-lg shadow-float flex items-center gap-3 transition-all duration-300 transform";
   const typeClasses = {
     success: "bg-white dark:bg-neutral-800 border-l-4 border-primary-500 text-neutral-800 dark:text-white",
-    info: "bg-white dark:bg-neutral-800 border-l-4 border-blue-500 text-neutral-800 dark:text-white",
+    info: "bg-white dark:bg-neutral-800 border-l-4 border-primary-500 text-neutral-800 dark:text-white",
     error: "bg-white dark:bg-neutral-800 border-l-4 border-red-500 text-neutral-800 dark:text-white",
   };
 
@@ -38,7 +38,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
           </svg>
       ),
       info: (
-        <svg className="w-6 h-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-6 h-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
