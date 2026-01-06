@@ -49,8 +49,7 @@ This index provides a comprehensive overview of all documentation available for 
 
 ### For Administrators
 1. Review [API Documentation](./api-documentation.md) for integration
-2. Check [Team Coordination Protocol](./team-coordination-protocol.md) for autonomous operations
-3. Use [Troubleshooting Guide](./troubleshooting-guide.md) for issue resolution
+2. Use [Troubleshooting Guide](./troubleshooting-guide.md) for issue resolution
 
 ### For DevOps Engineers
 1. Read [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete deployment steps
