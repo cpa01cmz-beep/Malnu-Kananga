@@ -1,7 +1,8 @@
 # Vocal Interaction Architecture
 
 **Created**: 2026-01-05
-**Version**: 1.0.0
+**Last Updated**: 2026-01-06
+**Version**: 2.1.0
 **Status**: Design Document
 **Phase**: Fase 3 - Advanced AI & Automation
 

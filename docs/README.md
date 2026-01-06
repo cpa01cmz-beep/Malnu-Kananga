@@ -2,7 +2,7 @@
 
 **Created**: 2026-01-05
 **Last Updated**: 2026-01-06
-**Version**: 2.4.0
+**Version**: 2.1.0
 **Status**: Active
 
 ## Overview
@@ -67,7 +67,7 @@ This index provides a comprehensive overview of all documentation available for 
 ### Current Status
 
 ### Documentation Metrics
-- **Total Source Files**: 158 TypeScript/TSX files
+- **Total Source Files**: 159 TypeScript/TSX files
 - **Total Documentation Files**: 11 (in /docs), plus AGENTS.md in root
 - **API Endpoints Documented**: 30+
 - **Code Examples**: 15+
@@ -177,17 +177,12 @@ This index maintains relationships between documents:
 
 ---
 
-## Recent Changes (v2.4.0 - 2026-01-06)
+## Recent Changes (v2.1.0 - 2026-01-06)
 
-- **Fixed Documentation Metrics**: Corrected total documentation files count from 11 to 12
-- **Updated AGENTS.md**: Fixed user roles to match code (parent as primary, staff/osis as extra)
-- **Updated Project Structure**: Added /data and /tests directories to documented structure
-- **Previous Changes (v2.3.0)**:
-  - Consolidated Documentation: Merged BACKEND_GUIDE.md into api-documentation.md
-  - Consolidated Voice Docs: Merged VOICE_ACCESSIBILITY_AUDIT.md into VOICE_INTERACTION_ARCHITECTURE.md
-  - Removed Redundant Files: Deleted BACKEND_GUIDE.md and VOICE_ACCESSIBILITY_AUDIT.md
-  - Updated API Reference: Enhanced with Users, PPDB, Inventory, Events APIs
-  - Updated API Endpoints: Increased from 25+ to 30+ documented endpoints
+- **Updated Version**: Corrected all documentation versions to match package.json (2.1.0)
+- **Fixed Documentation Metrics**: Corrected source file count to 159 TypeScript/TSX files
+- **Removed Outdated Audit**: Deleted PR-AUDIT-SUMMARY.md (11K outdated audit summary from previous PR)
+- **Consolidated Documentation**: Maintained current structure with 11 files in /docs/ directory
 
 ---
 
