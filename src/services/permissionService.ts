@@ -28,7 +28,7 @@ class PermissionService {
     }
 
     const rolePermissions = ROLE_PERMISSION_MATRIX[userRole] || [];
-    const extraPermissions = EXTRA_ROLE_PERMISSIONS[userExtraRole] || [];
+    const extraPermissions = userExtraRole ? EXTRA_ROLE_PERMISSIONS[userExtraRole] || [] : [];
     const allPermissions = [...rolePermissions, ...extraPermissions];
 
     const granted = allPermissions.includes(permissionId);
@@ -84,7 +84,7 @@ class PermissionService {
    */
   getUserPermissions(userRole: UserRole, userExtraRole: UserExtraRole): Permission[] {
     const rolePermissionIds = ROLE_PERMISSION_MATRIX[userRole] || [];
-    const extraPermissionIds = EXTRA_ROLE_PERMISSIONS[userExtraRole] || [];
+    const extraPermissionIds = userExtraRole ? EXTRA_ROLE_PERMISSIONS[userExtraRole] || [] : [];
     const allPermissionIds = [...new Set([...rolePermissionIds, ...extraPermissionIds])];
 
     return allPermissionIds
@@ -121,16 +121,18 @@ class PermissionService {
       this.auditLogs = this.auditLogs.slice(-1000);
     }
 
-    // In production, this would be sent to a logging service
-    console.log('Permission Check:', {
-      timestamp: log.timestamp.toISOString(),
-      userId: log.userId,
-      role: log.userRole,
-      extraRole: log.userExtraRole,
-      resource: log.resource,
-      action: log.action,
-      granted: log.granted
-    });
+// In production, this would be sent to a logging service
+    if (import.meta.env.DEV) {
+      console.log('Permission Check:', {
+        timestamp: log.timestamp.toISOString(),
+        userId: log.userId,
+        role: log.userRole,
+        extraRole: log.userExtraRole,
+        resource: log.resource,
+        action: log.action,
+        granted: log.granted
+      });
+    }
   }
 
   /**
