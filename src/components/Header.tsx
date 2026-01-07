@@ -9,6 +9,7 @@ import { MoonIcon } from './icons/MoonIcon';
 import { UserRole, UserExtraRole } from '../types';
 import NotificationCenter from './NotificationCenter';
 import Button from './ui/Button';
+import IconButton from './ui/IconButton';
 import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
 
@@ -128,14 +129,13 @@ const Header: React.FC<HeaderProps> = ({
                             />
                         )}
 
-                        <button
+                        <IconButton
+                            icon={currentTheme?.isDark ? <SunIcon /> : <MoonIcon />}
+                            ariaLabel="Pilih Tema"
+                            tooltip={currentTheme ? `${currentTheme.displayName} - Klik untuk Ubah Tema` : undefined}
+                            size="lg"
                             onClick={onToggleTheme}
-                            className="p-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800 hover:scale-110 active:scale-95"
-                            aria-label="Pilih Tema"
-                        title={currentTheme ? `${currentTheme.displayName} - Klik untuk Ubah Tema` : 'Pilih Tema'}
-                        >
-                            {currentTheme?.isDark ? <SunIcon /> : <MoonIcon />}
-                        </button>
+                        />
 
                            {isLoggedIn ? (
                                <div className="hidden sm:flex items-center gap-2">
@@ -179,21 +179,14 @@ const Header: React.FC<HeaderProps> = ({
                                     </Button>
                               </div>
                           )}
-<button
+<IconButton
+                                    icon={isMenuOpen ? <CloseIcon /> : <MenuIcon />}
+                                    ariaLabel={isMenuOpen ? "Tutup menu" : "Buka menu"}
+                                    size="lg"
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter' || e.key === ' ') {
-                                            e.preventDefault();
-                                            setIsMenuOpen(!isMenuOpen);
-                                        }
-                                    }}
-                                    className="md:hidden p-2.5 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95"
-                                    aria-label={isMenuOpen ? "Tutup menu" : "Buka menu"}
                                     aria-expanded={isMenuOpen}
                                     aria-controls="mobile-menu"
-                                >
-                                  {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
-                              </button>
+                                />
                     </div>
                 </div>
             </div>

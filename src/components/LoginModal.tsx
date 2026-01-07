@@ -4,6 +4,7 @@ import { CloseIcon } from './icons/CloseIcon';
 import { UserRole, UserExtraRole } from '../types';
 import Button from './ui/Button';
 import Input from './ui/Input';
+import IconButton from './ui/IconButton';
 import { api } from '../services/apiService';
 import { getGradientClass } from '../config/gradients';
 
@@ -77,13 +78,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       <div className="bg-white/98 dark:bg-neutral-800/98 backdrop-blur-xl rounded-xl shadow-float w-full max-w-md m-4 transform transition-all duration-300 ease-out scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh] border border-neutral-200 dark:border-neutral-700">
          <div className="flex justify-between items-center px-6 py-5 border-b border-neutral-200 dark:border-neutral-700/60">
            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">Login</h2>
-            <button
+            <IconButton
+              icon={<CloseIcon />}
+              ariaLabel="Tutup modal"
               onClick={onClose}
-              className="p-2 rounded-xl text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95"
-              aria-label="Tutup modal"
-            >
-             <CloseIcon />
-           </button>
+            />
          </div>
 
            <div className="p-6 overflow-y-auto">

@@ -6,6 +6,7 @@ import { CloseIcon } from './icons/CloseIcon';
 import { User, UserRole, UserExtraRole } from '../types';
 import { STORAGE_KEYS } from '../constants';
 import Button from './ui/Button';
+import IconButton from './ui/IconButton';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import { api } from '../services/apiService';
@@ -294,7 +295,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                 <div ref={dialogRef} className="bg-white dark:bg-neutral-800 rounded-2xl shadow-float w-full max-w-md animate-scale-in" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="modal-title">
                     <div className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700">
                         <h3 id="modal-title" className="text-lg font-bold text-neutral-900 dark:text-white">{isEditing ? 'Edit User' : 'Tambah User'}</h3>
-                        <button onClick={() => setIsModalOpen(false)} aria-label="Tutup modal" className="p-2 rounded-lg text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500/50"><CloseIcon /></button>
+                        <IconButton icon={<CloseIcon />} ariaLabel="Tutup modal" onClick={() => setIsModalOpen(false)} />
                     </div>
                     <form onSubmit={handleSaveUser} className="p-6 space-y-4">
                         {errorState.hasError && <p className="text-sm text-red-600 dark:text-red-400">{errorState.message}</p>}

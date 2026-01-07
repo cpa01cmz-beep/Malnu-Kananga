@@ -253,6 +253,436 @@ Potential improvements to consider:
 
 ---
 
+## IconButton Component
+
+**Location**: `src/components/ui/IconButton.tsx`
+
+A reusable icon-only button component for consistent icon button patterns across the application.
+
+### Features
+
+- **8 Variants**: `default`, `primary`, `secondary`, `danger`, `success`, `info`, `warning`, `ghost`
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Accessibility**: Full ARIA support, keyboard navigation, focus management
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Animations**: Smooth hover and active scale animations
+- **Tooltip Support**: Optional tooltip attribute for enhanced UX
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | `ReactNode` | Required | Icon to display (wrapped in span with aria-hidden) |
+| `ariaLabel` | `string` | Required | Accessibility label for screen readers |
+| `variant` | `IconButtonVariant` | `'default'` | Visual style variant |
+| `size` | `IconButtonSize` | `'md'` | Button size |
+| `tooltip` | `string` | `ariaLabel` | Optional tooltip text (defaults to ariaLabel) |
+| `className` | `string` | `''` | Additional CSS classes |
+| `onClick` | `() => void` | `undefined` | Click handler function |
+| `disabled` | `boolean` | `false` | Disable button interaction |
+| All standard button attributes | - | - | Passes through all standard HTML button props |
+
+### Variants
+
+#### 1. Default Variant
+
+Standard icon button with neutral colors, ideal for generic actions.
+
+```tsx
+import IconButton from './ui/IconButton';
+import { CloseIcon } from './icons/CloseIcon';
+
+<IconButton
+  icon={<CloseIcon />}
+  ariaLabel="Close dialog"
+  onClick={handleClose}
+/>
+```
+
+#### 2. Primary Variant
+
+Icon button with primary color scheme for main actions.
+
+```tsx
+<IconButton
+  icon={<PlusIcon />}
+  ariaLabel="Add new item"
+  variant="primary"
+  onClick={handleAdd}
+/>
+```
+
+#### 3. Secondary Variant
+
+Icon button with secondary styling for alternative actions.
+
+```tsx
+<IconButton
+  icon={<EditIcon />}
+  ariaLabel="Edit item"
+  variant="secondary"
+  onClick={handleEdit}
+/>
+```
+
+#### 4. Danger Variant
+
+Icon button with red styling for destructive actions.
+
+```tsx
+<IconButton
+  icon={<TrashIcon />}
+  ariaLabel="Delete item"
+  variant="danger"
+  onClick={handleDelete}
+/>
+```
+
+#### 5. Success Variant
+
+Icon button with green styling for success-related actions.
+
+```tsx
+<IconButton
+  icon={<CheckIcon />}
+  ariaLabel="Confirm action"
+  variant="success"
+  onClick={handleConfirm}
+/>
+```
+
+#### 6. Info Variant
+
+Icon button with blue styling for informational actions.
+
+```tsx
+<IconButton
+  icon={<InfoIcon />}
+  ariaLabel="View details"
+  variant="info"
+  onClick={handleView}
+/>
+```
+
+#### 7. Warning Variant
+
+Icon button with orange styling for warning-related actions.
+
+```tsx
+<IconButton
+  icon={<WarningIcon />}
+  ariaLabel="Proceed with caution"
+  variant="warning"
+  onClick={handleProceed}
+/>
+```
+
+#### 8. Ghost Variant
+
+Icon button with transparent background for minimal visual impact.
+
+```tsx
+<IconButton
+  icon={<MenuIcon />}
+  ariaLabel="Open menu"
+  variant="ghost"
+  onClick={handleMenu}
+/>
+```
+
+### Sizes
+
+Icon buttons come in three sizes to fit different contexts:
+
+#### Small (sm)
+
+Compact size for dense interfaces.
+
+```tsx
+<IconButton
+  icon={<CloseIcon />}
+  ariaLabel="Close"
+  size="sm"
+  onClick={handleClose}
+/>
+```
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<IconButton
+  icon={<CloseIcon />}
+  ariaLabel="Close"
+  size="md"
+  onClick={handleClose}
+/>
+```
+
+#### Large (lg)
+
+Larger size for important actions or mobile-friendly touch targets.
+
+```tsx
+<IconButton
+  icon={<CloseIcon />}
+  ariaLabel="Close"
+  size="lg"
+  onClick={handleClose}
+/>
+```
+
+### Tooltip Support
+
+Add tooltips for enhanced user experience:
+
+```tsx
+<IconButton
+  icon={<SettingsIcon />}
+  ariaLabel="Open settings"
+  tooltip="Open application settings"
+  onClick={openSettings}
+/>
+```
+
+### Styling Customization
+
+Add custom classes while preserving default button styling:
+
+```tsx
+<IconButton
+  icon={<CloseIcon />}
+  ariaLabel="Close"
+  className="absolute top-4 right-4"
+  onClick={handleClose}
+/>
+```
+
+### Disabled State
+
+Disable the button when needed:
+
+```tsx
+<IconButton
+  icon={<UploadIcon />}
+  ariaLabel="Upload file"
+  disabled={isUploading}
+  onClick={handleUpload}
+/>
+```
+
+### Accessibility Features
+
+1. **ARIA Labels**: Required `ariaLabel` prop ensures screen reader support
+2. **Icon Hiding**: Icon is wrapped in span with `aria-hidden="true"`
+3. **Focus Management**: `focus:ring-2` with `focus:ring-offset-2` for clear focus indication
+4. **Keyboard Navigation**: Full keyboard support with Enter and Space activation
+5. **Disabled State**: Proper `disabled` attribute and visual feedback
+
+```tsx
+<IconButton
+  icon={<CloseIcon />}
+  ariaLabel="Close dialog and return to dashboard"
+  tooltip="Close dialog"
+  size="md"
+  variant="default"
+  onClick={handleClose}
+/>
+```
+
+### Real-World Examples
+
+#### Modal Close Button
+
+```tsx
+<div className="flex justify-between items-center p-5">
+  <h2>Dialog Title</h2>
+  <IconButton
+    icon={<CloseIcon />}
+    ariaLabel="Close dialog"
+    onClick={handleClose}
+  />
+</div>
+```
+
+#### Theme Toggle Button
+
+```tsx
+<IconButton
+  icon={isDark ? <SunIcon /> : <MoonIcon />}
+  ariaLabel={isDark ? "Switch to light mode" : "Switch to dark mode"}
+  tooltip={isDark ? "Light mode" : "Dark mode"}
+  size="lg"
+  onClick={toggleTheme}
+/>
+```
+
+#### Mobile Menu Toggle
+
+```tsx
+<IconButton
+  icon={isMenuOpen ? <CloseIcon /> : <MenuIcon />}
+  ariaLabel={isMenuOpen ? "Close menu" : "Open menu"}
+  aria-expanded={isMenuOpen}
+  size="lg"
+  onClick={toggleMenu}
+/>
+```
+
+#### Delete Action
+
+```tsx
+<IconButton
+  icon={<TrashIcon />}
+  ariaLabel={`Delete ${item.name}`}
+  variant="danger"
+  onClick={() => confirmDelete(item.id)}
+/>
+```
+
+#### Toast Dismiss Button
+
+```tsx
+<div className="flex items-center gap-3">
+  <span>{message}</span>
+  <IconButton
+    icon={<CloseIcon />}
+    ariaLabel="Dismiss notification"
+    size="sm"
+    onClick={dismiss}
+  />
+</div>
+```
+
+### Dark Mode
+
+All variants automatically support dark mode with dedicated color classes:
+
+- **Default**: `text-neutral-600` → `dark:text-neutral-400`
+- **Primary**: `bg-primary-600` → maintains primary color in dark mode
+- **Colored variants**: Maintain visual hierarchy in dark mode
+- **Hover states**: Adapt to dark theme background colors
+
+### Animations
+
+IconButton includes smooth transitions:
+
+- **Hover Scale**: `hover:scale-110` (default) or `hover:scale-[1.02]` (colored variants)
+- **Active Scale**: `active:scale-95` for press feedback
+- **Duration**: `duration-200` for responsive feel
+- **Easing**: `ease-out` for natural motion
+
+### Performance Considerations
+
+The IconButton component is optimized using:
+- Functional component with hooks
+- Proper TypeScript typing with generics
+- CSS-only animations and transitions
+- No unnecessary re-renders
+- ARIA attributes for accessibility without JavaScript
+
+### Migration Guide
+
+To migrate existing icon button implementations:
+
+**Before:**
+```tsx
+<button
+  onClick={handleClose}
+  className="p-2 rounded-lg text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+  aria-label="Close modal"
+>
+  <CloseIcon />
+</button>
+```
+
+**After:**
+```tsx
+import IconButton from './ui/IconButton';
+
+<IconButton
+  icon={<CloseIcon />}
+  ariaLabel="Close modal"
+  onClick={handleClose}
+/>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Reduced code duplication
+- ✅ Built-in variants and sizes
+- ✅ Dark mode support
+- ✅ Smooth animations
+- ✅ Keyboard navigation
+
+### Test Coverage
+
+The IconButton component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/IconButton.test.tsx
+```
+
+Test scenarios include:
+- Rendering with all variants
+- Rendering with all sizes
+- Icon wrapper with proper attributes
+- ARIA label generation
+- Tooltip functionality
+- Custom className application
+- Click handler invocation
+- Disabled state behavior
+- Focus ring visibility
+- Keyboard accessibility
+- Dark mode styling
+- Animation classes
+- Props passthrough
+
+### Usage in Application
+
+Currently integrated in:
+- `src/components/Toast.tsx` (dismiss button)
+- `src/components/ThemeSelector.tsx` (close button and trigger)
+- `src/components/LoginModal.tsx` (close button)
+- `src/components/Header.tsx` (theme toggle and mobile menu)
+- `src/components/UserManagement.tsx` (modal close button)
+
+**Common Patterns:**
+
+```tsx
+// Modal close buttons
+<IconButton icon={<CloseIcon />} ariaLabel="Close modal" onClick={handleClose} />
+
+// Theme toggle
+<IconButton
+  icon={isDark ? <SunIcon /> : <MoonIcon />}
+  ariaLabel="Toggle theme"
+  size="lg"
+  onClick={toggleTheme}
+/>
+
+// Dismissible notifications
+<IconButton icon={<CloseIcon />} ariaLabel="Dismiss" size="sm" onClick={dismiss} />
+
+// Action buttons
+<IconButton icon={<EditIcon />} ariaLabel="Edit" variant="secondary" onClick={edit} />
+<IconButton icon={<TrashIcon />} ariaLabel="Delete" variant="danger" onClick={delete} />
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Loading state with spinner icon
+- Badge overlay for notification counts
+- Keyboard shortcut support
+- Ripple effect for enhanced feedback
+- Size-aware icon scaling
+
+---
+
 ## BackButton Component
 
 **Location**: `src/components/ui/BackButton.tsx`

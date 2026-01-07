@@ -4,6 +4,7 @@ import { ThemeManager } from '../services/themeManager';
 import { SunIcon } from './icons/SunIcon';
 import { MoonIcon } from './icons/MoonIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
+import IconButton from './ui/IconButton';
 
 interface ThemeSelectorProps {
   isOpen: boolean;
@@ -59,15 +60,15 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
                 Pilih Tema
               </h3>
             </div>
-            <button
+            <IconButton
+              icon={
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              }
+              ariaLabel="Tutup"
               onClick={onClose}
-              className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors"
-            >
-              <span className="sr-only">Tutup</span>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            />
           </div>
           
           {/* Current Theme Display */}
@@ -190,19 +191,17 @@ export const ThemeSelectorTrigger: React.FC<{ onClick: () => void; currentTheme:
   currentTheme 
 }) => {
   return (
-    <button
-      onClick={onClick}
-      className="p-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800 hover:scale-110 active:scale-95"
-      aria-label="Pilih Tema"
-    >
-      {currentTheme ? (
-        <span className="text-xl" title={`${currentTheme.displayName} - ${currentTheme.description}`}>
-          {currentTheme.icon}
-        </span>
+    <IconButton
+      icon={currentTheme ? (
+        <span className="text-xl">{currentTheme.icon}</span>
       ) : (
-        <SparklesIcon className="w-5 h-5" />
+        <SparklesIcon />
       )}
-    </button>
+      ariaLabel="Pilih Tema"
+      tooltip={currentTheme ? `${currentTheme.displayName} - ${currentTheme.description}` : undefined}
+      size="lg"
+      onClick={onClick}
+    />
   );
 };
 

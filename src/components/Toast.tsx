@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
+import IconButton from './ui/IconButton';
 
 export type ToastType = 'success' | 'info' | 'error';
 
@@ -56,13 +57,12 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
         {icons[type]}
       </div>
       <span className="font-medium text-base leading-snug flex-grow">{message}</span>
-      <button
+      <IconButton
+        icon={<CloseIcon />}
+        ariaLabel="Tutup notifikasi"
+        size="sm"
         onClick={onClose}
-        className="flex-shrink-0 p-1 rounded-lg text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-110 active:scale-95"
-        aria-label="Tutup notifikasi"
-      >
-        <CloseIcon />
-      </button>
+      />
     </div>
   );
 };

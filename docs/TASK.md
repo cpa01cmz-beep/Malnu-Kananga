@@ -71,8 +71,8 @@
  | Build | ✅ Success | ~10s build time |
  | Linting | ✅ Passing | <20 warnings |
  | Security | ✅ Clean | 0 vulnerabilities |
-  | Accessibility | ✅ Compliant | WCAG 2.1 AA compliant |
-  | UI Components | ✅ Enhanced | New Badge component added (2026-01-07); Form inputs refactored (2026-01-07) |
+   | Accessibility | ✅ Compliant | WCAG 2.1 AA compliant |
+   | UI Components | ✅ Enhanced | New IconButton component added (2026-01-07); Refactored 5+ components to use IconButton (2026-01-07) |
 
 ---
 
@@ -80,12 +80,14 @@
 
 ### Q1 2026 (January - March)
  - [x] Complete color system migration (gray → neutral)
- - [x] Create reusable Textarea component with auto-resize (2026-01-07)
- - [x] Create reusable Modal component with focus trap and accessibility (2026-01-07)
- - [x] Extract repeated BackButton pattern into reusable component with accessibility (2026-01-07)
- - [x] Create reusable Badge component for status indicators (2026-01-07)
- - [x] Refactor UserManagement and OsisEvents forms to use Input/Select components (2026-01-07)
- - [ ] Achieve 80% test coverage
+  - [x] Create reusable Textarea component with auto-resize (2026-01-07)
+  - [x] Create reusable Modal component with focus trap and accessibility (2026-01-07)
+  - [x] Extract repeated BackButton pattern into reusable component with accessibility (2026-01-07)
+  - [x] Create reusable Badge component for status indicators (2026-01-07)
+  - [x] Refactor UserManagement and OsisEvents forms to use Input/Select components (2026-01-07)
+  - [x] Create reusable IconButton component for icon-only buttons (2026-01-07)
+  - [x] Refactor Toast, ThemeSelector, LoginModal, Header, UserManagement to use IconButton (2026-01-07)
+  - [ ] Achieve 80% test coverage
 - [ ] Complete API documentation
 - [ ] Optimize bundle size to <500KB
 
