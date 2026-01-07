@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import DashboardActionCard from './DashboardActionCard';
+import DashboardActionCard from '../DashboardActionCard';
 
 describe('DashboardActionCard', () => {
   it('renders correctly with all props', () => {

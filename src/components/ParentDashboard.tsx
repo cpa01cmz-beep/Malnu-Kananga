@@ -325,7 +325,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                   disabled={loading || !selectedChild}
                   onClick={item.action}
                   ariaLabel={item.title}
-                  style={{ animationDelay: `${index * 0.1}s` }}
                 />
               ))}
             </div>
