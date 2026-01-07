@@ -10,18 +10,26 @@ vi.mock('../utils/logger', () => ({
   },
 }));
 
-// Mock Notification API (using any for browser API mocks)
-const mockNotification: any = {
+// Mock Notification API with proper typing
+interface MockNotification {
+  close: ReturnType<typeof vi.fn>;
+  onclick: ((this: MockNotification, ev: globalThis.MouseEvent) => unknown) | null;
+  title: string;
+  [key: string]: unknown;
+}
+
+const mockNotification: MockNotification = {
   close: vi.fn(),
   onclick: null,
+  title: '',
 };
 
-global.Notification = {
+(global.Notification as any) = {
   requestPermission: vi.fn(),
   permission: 'granted',
-} as any;
+};
 
-global.navigator = {
+(global.navigator as any) = {
   serviceWorker: {
     ready: Promise.resolve({
       pushManager: {
@@ -29,23 +37,31 @@ global.navigator = {
       },
     }),
   },
-} as any;
+};
 
 describe('Push Notification Integration Tests', () => {
-  beforeEach(() => {
+beforeEach(() => {
     vi.clearAllMocks();
     // Clear localStorage
     localStorage.clear();
     
-    // Mock Notification constructor (using any for browser API mocks)
-    global.Notification = vi.fn().mockImplementation((title, options) => ({
+    // Clear notification service history and settings
+    pushNotificationService.clearHistory();
+    pushNotificationService.resetSettings();
+    
+    // Mock Notification constructor (using necessary type bypass for browser API)
+    const mockNotificationConstructor = vi.fn().mockImplementation((title, options) => ({
       ...mockNotification,
       title,
       ...options,
       close: vi.fn(),
-    })) as any;
-    (global.Notification as any).permission = 'granted';
-    (global.Notification as any).requestPermission = vi.fn().mockResolvedValue('granted');
+    }));
+    // Type assertion needed for browser API mocking
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mockNotificationConstructor as any).permission = 'granted';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (mockNotificationConstructor as any).requestPermission = vi.fn().mockResolvedValue('granted');
+    (global.Notification as any) = mockNotificationConstructor;
   });
 
   describe('PPDB Status Change Notifications', () => {
