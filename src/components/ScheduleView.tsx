@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { CalendarDaysIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { schedulesAPI, subjectsAPI } from '../services/apiService';
 import { Schedule, Subject } from '../types';
 import { logger } from '../utils/logger';
+import CalendarView from './CalendarView';
 
 interface ScheduleItem {
   id: string;
@@ -28,6 +30,8 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeDay, setActiveDay] = useState('Senin');
+  const [viewMode, setViewMode] = useState<'list' | 'month' | 'week' | 'day'>('list');
+  const [selectedEvent, setSelectedEvent] = useState<Schedule | null>(null);
 
   useEffect(() => {
     fetchSchedules();
@@ -100,6 +104,19 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
 
   const dailySchedule = groupSchedulesByDay();
 
+  const handleEventClick = (event: Schedule) => {
+    setSelectedEvent(event);
+  };
+
+  const handleDateSelect = (date: Date) => {
+    const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const dayName = dayNames[date.getDay()];
+    if (DAYS.includes(dayName)) {
+      setActiveDay(dayName);
+      setViewMode('list');
+    }
+  };
+
   if (loading) {
     return (
       <div className="animate-fade-in-up">
@@ -154,66 +171,164 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
             Kelas: <strong>{className}</strong> • Semester Ganjil
           </p>
         </div>
-      </div>
-
-      <div className="flex overflow-x-auto pb-2 mb-4 gap-2 scrollbar-hide">
-        {DAYS.map((day) => (
+        
+        <div className="flex gap-2">
           <button
-            key={day}
-            onClick={() => setActiveDay(day)}
-            className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
-              activeDay === day
-                ? 'bg-green-600 text-white shadow-md shadow-green-200 dark:shadow-none'
-                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-            }`}
+            onClick={() => setViewMode('list')}
+            className={`p-2 rounded-lg transition-colors flex items-center gap-2
+              ${viewMode === 'list' 
+                ? 'bg-green-600 text-white' 
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} border`}
           >
-            {day}
+            <ListBulletIcon className="w-5 h-5" />
+            <span className="text-sm font-medium">Daftar</span>
           </button>
-        ))}
+          <button
+            onClick={() => setViewMode('month')}
+            className={`p-2 rounded-lg transition-colors flex items-center gap-2
+              ${viewMode === 'month' 
+                ? 'bg-green-600 text-white' 
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} border`}
+          >
+            <CalendarDaysIcon className="w-5 h-5" />
+            <span className="text-sm font-medium">Kalender</span>
+          </button>
+        </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden min-h-[400px]">
-        <div className="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-          <h3 className="font-bold text-lg text-gray-800 dark:text-white">Jadwal Hari {activeDay}</h3>
+      {viewMode === 'list' && (
+        <div className="flex overflow-x-auto pb-2 mb-4 gap-2 scrollbar-hide">
+          {DAYS.map((day) => (
+            <button
+              key={day}
+              onClick={() => setActiveDay(day)}
+              className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
+                activeDay === day
+                  ? 'bg-green-600 text-white shadow-md shadow-green-200 dark:shadow-none'
+                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
+            >
+              {day}
+            </button>
+          ))}
         </div>
+      )}
 
-        <div className="divide-y divide-gray-100 dark:divide-gray-700">
-          {dailySchedule[activeDay].length > 0 ? (
-            dailySchedule[activeDay].map((item) => (
-              <div
-                key={item.id}
-                className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-24 flex-shrink-0">
-                    <span className="text-sm font-bold text-green-600 dark:text-green-400 block">
-                      {item.time.split(' - ')[0]}
-                    </span>
-                    <span className="text-xs text-gray-400 dark:text-gray-500">s.d. {item.time.split(' - ')[1]}</span>
-                  </div>
-                  <div>
-                    <h4 className="text-base font-bold text-gray-900 dark:text-white">{item.subject}</h4>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
-                        {item.teacher}
+      {viewMode === 'list' && (
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden min-h-[400px]">
+          <div className="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+            <h3 className="font-bold text-lg text-gray-800 dark:text-white">Jadwal Hari {activeDay}</h3>
+          </div>
+
+          <div className="divide-y divide-gray-100 dark:divide-gray-700">
+            {dailySchedule[activeDay].length > 0 ? (
+              dailySchedule[activeDay].map((item) => (
+                <div
+                  key={item.id}
+                  className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-24 flex-shrink-0">
+                      <span className="text-sm font-bold text-green-600 dark:text-green-400 block">
+                        {item.time.split(' - ')[0]}
                       </span>
+                      <span className="text-xs text-gray-400 dark:text-gray-500">s.d. {item.time.split(' - ')[1]}</span>
+                    </div>
+                    <div>
+                      <h4 className="text-base font-bold text-gray-900 dark:text-white">{item.subject}</h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                          {item.teacher}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                  <div className="flex items-center gap-2 self-start sm:self-center">
+                    <span className="text-xs font-medium px-2 py-1 rounded-full border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400">
+                      {item.room}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 self-start sm:self-center">
-                  <span className="text-xs font-medium px-2 py-1 rounded-full border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400">
-                    {item.room}
-                  </span>
-                </div>
+              ))
+            ) : (
+              <div className="p-12 text-center text-gray-500 dark:text-gray-400">
+                Tidak ada jadwal untuk hari ini.
               </div>
-            ))
-          ) : (
-            <div className="p-12 text-center text-gray-500 dark:text-gray-400">
-              Tidak ada jadwal untuk hari ini.
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
+
+      {viewMode !== 'list' && (
+        <CalendarView
+          schedules={schedules}
+          viewMode={viewMode}
+          onDateSelect={handleDateSelect}
+          onEventClick={handleEventClick}
+          className="mb-6"
+        />
+      )}
+
+      {selectedEvent && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={() => setSelectedEvent(null)}
+        >
+          <div 
+            className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                Detail Jadwal
+              </h3>
+              <button
+                onClick={() => setSelectedEvent(null)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm text-gray-500 dark:text-gray-400">Mata Pelajaran</label>
+                <p className="font-semibold text-gray-900 dark:text-white">
+                  {getSubjectName(selectedEvent.subjectId)}
+                </p>
+              </div>
+              
+              <div>
+                <label className="text-sm text-gray-500 dark:text-gray-400">Guru</label>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  {getTeacherName(selectedEvent.teacherId)}
+                </p>
+              </div>
+              
+              <div>
+                <label className="text-sm text-gray-500 dark:text-gray-400">Waktu</label>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  {formatTime(selectedEvent.startTime)} - {formatTime(selectedEvent.endTime)}
+                </p>
+              </div>
+              
+              <div>
+                <label className="text-sm text-gray-500 dark:text-gray-400">Hari</label>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  {selectedEvent.dayOfWeek}
+                </p>
+              </div>
+              
+              <div>
+                <label className="text-sm text-gray-500 dark:text-gray-400">Ruangan</label>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  {selectedEvent.room}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
