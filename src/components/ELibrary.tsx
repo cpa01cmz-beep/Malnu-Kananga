@@ -3,11 +3,12 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { StarIcon, BookmarkIcon, FunnelIcon } from './icons/MaterialIcons';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { eLibraryAPI, fileStorageAPI } from '../services/apiService';
-import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress } from '../types';
+import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress, OCRStatus, OCRProcessingState, SearchOptions } from '../types';
 import { logger } from '../utils/logger';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
 import { STORAGE_KEYS } from '../constants';
+import { ocrService } from '../services/ocrService';
 
 interface ELibraryProps {
   onBack: () => void;
@@ -43,6 +44,18 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
   const [userRating, setUserRating] = useState(0);
   const [userReview, setUserReview] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
+
+  // OCR Integration State
+  const [ocrProcessing, setOcrProcessing] = useState<Map<string, OCRProcessingState>>(new Map());
+  const [selectedForOCR, setSelectedForOCR] = useState<Set<string>>(new Set());
+  const [showOCROptions, setShowOCROptions] = useState(false);
+  const [ocrEnabled, setOcrEnabled] = useState(() => {
+    return localStorage.getItem(STORAGE_KEYS.MATERIALS_OCR_ENABLED) === 'true';
+  });
+  const [searchOptions, setSearchOptions] = useState<SearchOptions>({
+    includeOCR: true,
+    minConfidence: 50
+  });
 
   const loadStudentData = useCallback(() => {
     // Load bookmarks from localStorage
@@ -272,8 +285,28 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
   const filteredMaterials = materials.filter((m) => {
     const matchSubject = filterSubject === 'Semua' || getSubjectName(m) === filterSubject;
-    const matchSearch = m.title.toLowerCase().includes(search.toLowerCase()) ||
-                       m.description.toLowerCase().includes(search.toLowerCase());
+    
+    // Enhanced search with OCR support
+    let matchSearch = false;
+    if (search.trim()) {
+      const lowerQuery = search.toLowerCase();
+      
+      // Search in metadata
+      const inMetadata = 
+        m.title.toLowerCase().includes(lowerQuery) ||
+        m.description?.toLowerCase().includes(lowerQuery) ||
+        m.category.toLowerCase().includes(lowerQuery);
+
+      // Search in OCR text if enabled and available
+      const inOCR = searchOptions.includeOCR && 
+                     m.ocrStatus === 'completed' && 
+                     (m.isSearchable === true) &&
+                     m.ocrText?.toLowerCase().includes(lowerQuery);
+
+      matchSearch = Boolean(inMetadata || inOCR);
+    } else {
+      matchSearch = true; // No search query = match all
+    }
     
     // Advanced filters
     const matchTeacher = !filterTeacher || m.uploadedBy.toLowerCase().includes(filterTeacher.toLowerCase());
@@ -373,6 +406,183 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
     );
   }
 
+  // OCR Integration Functions
+  const initializeOCR = async (): Promise<void> => {
+    try {
+      await ocrService.initialize((progress) => {
+        logger.debug('OCR initialization progress:', progress);
+      });
+    } catch (error) {
+      logger.error('OCR initialization failed:', error);
+      onShowToast('Gagal menginisialisasi OCR', 'error');
+    }
+  };
+
+  const processDocumentOCR = async (material: ELibraryType): Promise<void> => {
+    if (!ocrEnabled) {
+      onShowToast('Fitur OCR tidak diaktifkan', 'info');
+      return;
+    }
+
+    try {
+      // Update processing state
+      const processingState: OCRProcessingState = {
+        materialId: material.id,
+        status: 'processing',
+        progress: 0,
+        startTime: new Date()
+      };
+      
+      setOcrProcessing(prev => new Map(prev.set(material.id, processingState)));
+      
+      // Initialize OCR if not already done
+      await initializeOCR();
+
+      // Create file object from file URL
+      const response = await fetch(material.fileUrl);
+      const blob = await response.blob();
+      const file = new File([blob], material.title, { type: material.fileType });
+
+      // Extract text from document
+      const result = await ocrService.extractTextFromImage(
+        file,
+        (progress) => {
+          setOcrProcessing(prev => {
+            const updated = new Map(prev);
+            const existing = updated.get(material.id);
+            if (existing) {
+              updated.set(material.id, {
+                ...existing,
+                progress: progress.progress
+              });
+            }
+            return updated;
+          });
+        }
+      );
+
+      // Calculate confidence-based searchable status
+      const isSearchable = (result.confidence || 0) >= 50;
+      const ocrText = result.text.trim();
+
+      // Update material with OCR results
+      const updatedMaterial = {
+        ...material,
+        ocrStatus: 'completed' as OCRStatus,
+        ocrProgress: 100,
+        ocrText,
+        ocrConfidence: result.confidence,
+        ocrProcessedAt: new Date().toISOString(),
+        isSearchable
+      };
+
+      // Update material via API
+      await eLibraryAPI.update(material.id, updatedMaterial);
+      
+      // Update local state
+      setMaterials(prev => prev.map(m => 
+        m.id === material.id ? updatedMaterial : m
+      ));
+
+      // Clear processing state
+      setOcrProcessing(prev => {
+        const updated = new Map(prev);
+        updated.delete(material.id);
+        return updated;
+      });
+
+      onShowToast(
+        `Dokumen "${material.title}" berhasil diproses${isSearchable ? ' dan dapat dicari' : ' (rendah keyakinan)'}`, 
+        'success'
+      );
+    } catch (error) {
+      logger.error('OCR processing failed:', error);
+      
+      // Update with error status
+      const errorState: OCRProcessingState = {
+        materialId: material.id,
+        status: 'failed',
+        progress: 0,
+        startTime: new Date(),
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+      
+      setOcrProcessing(prev => new Map(prev.set(material.id, errorState)));
+      
+      onShowToast(`Gagal memproses dokumen "${material.title}"`, 'error');
+    }
+  };
+
+  const batchProcessOCR = async (materialIds: string[]): Promise<void> => {
+    if (!ocrEnabled) {
+      onShowToast('Fitur OCR tidak diaktifkan', 'info');
+      return;
+    }
+
+    let processed = 0;
+    let failed = 0;
+
+    onShowToast(`Memproses ${materialIds.length} dokumen...`, 'info');
+
+    for (const materialId of materialIds) {
+      const material = materials.find(m => m.id === materialId);
+      if (material && material.ocrStatus !== 'completed' && material.ocrStatus !== 'processing') {
+        try {
+          await processDocumentOCR(material);
+          processed++;
+        } catch (error) {
+          logger.error(`Failed to process material ${materialId}:`, error);
+          failed++;
+        }
+      }
+    }
+
+    onShowToast(
+      `Selesai: ${processed} berhasil, ${failed} gagal`, 
+      failed > 0 ? 'error' : 'success'
+    );
+  };
+
+  const toggleOCRForMaterial = async (materialId: string): Promise<void> => {
+    const material = materials.find(m => m.id === materialId);
+    if (!material) return;
+
+    if (selectedForOCR.has(materialId)) {
+      setSelectedForOCR(prev => {
+        const updated = new Set(prev);
+        updated.delete(materialId);
+        return updated;
+      });
+    } else {
+      setSelectedForOCR(prev => new Set(prev).add(materialId));
+    }
+  };
+
+  const processSelectedOCR = async (): Promise<void> => {
+    if (selectedForOCR.size === 0) {
+      onShowToast('Pilih minimal satu dokumen untuk diproses', 'info');
+      return;
+    }
+
+    await batchProcessOCR(Array.from(selectedForOCR));
+    setSelectedForOCR(new Set());
+  };
+
+  const enableOCR = (): void => {
+    setOcrEnabled(true);
+    localStorage.setItem(STORAGE_KEYS.MATERIALS_OCR_ENABLED, 'true');
+    initializeOCR();
+    onShowToast('Fitur OCR diaktifkan', 'success');
+  };
+
+  const disableOCR = (): void => {
+    setOcrEnabled(false);
+    localStorage.setItem(STORAGE_KEYS.MATERIALS_OCR_ENABLED, 'false');
+    onShowToast('Fitur OCR dinonaktifkan', 'info');
+  };
+
+  
+
   const availableSubjects = getAvailableSubjects();
   const subjectStats = getSubjectStats();
 
@@ -415,6 +625,21 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             title="Tampilkan hanya favorit"
           >
             <StarIcon className="w-5 h-5" />
+          </button>
+          
+          {/* OCR Controls */}
+          <button
+            onClick={() => setShowOCROptions(!showOCROptions)}
+            className={`p-2 rounded-lg border transition-colors ${
+              showOCROptions || ocrEnabled 
+                ? 'bg-purple-100 border-purple-300 text-purple-700 dark:bg-purple-900/20 dark:border-purple-600 dark:text-purple-300'
+                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
+            }`}
+            title="Pengaturan OCR"
+          >
+            <div className="w-5 h-5 flex items-center justify-center text-gray-700 dark:text-gray-300">
+              <DocumentTextIcon />
+            </div>
           </button>
         </div>
       </div>
@@ -507,6 +732,110 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             >
               Hapus Filter
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* OCR Options Panel */}
+      {showOCROptions && (
+        <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 mb-6 border border-purple-200 dark:border-purple-700">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Pengaturan OCR</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* OCR Status */}
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Status OCR</h4>
+              <div className="space-y-2">
+                {!ocrEnabled ? (
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">OCR dinonaktifkan</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span className="text-sm text-green-600 dark:text-green-400">OCR aktif</span>
+                  </div>
+                )}
+                
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  {materials.filter(m => m.ocrStatus === 'completed').length} dari {materials.length} dokumen diproses
+                </div>
+              </div>
+            </div>
+
+            {/* OCR Controls */}
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Kontrol</h4>
+              <div className="space-y-2">
+                {ocrEnabled ? (
+                  <button
+                    onClick={disableOCR}
+                    className="w-full px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
+                  >
+                    Nonaktifkan OCR
+                  </button>
+                ) : (
+                  <button
+                    onClick={enableOCR}
+                    className="w-full px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
+                  >
+                    Aktifkan OCR
+                  </button>
+                )}
+                
+                {ocrEnabled && (
+                  <>
+                    <button
+                      onClick={() => batchProcessOCR(materials.filter(m => m.ocrStatus !== 'completed').map(m => m.id))}
+                      disabled={!ocrEnabled || materials.filter(m => m.ocrStatus !== 'completed').length === 0}
+                      className="w-full px-3 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                    >
+                      Proses Semua ({materials.filter(m => m.ocrStatus !== 'completed').length})
+                    </button>
+                    
+                    <button
+                      onClick={processSelectedOCR}
+                      disabled={selectedForOCR.size === 0}
+                      className="w-full px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                    >
+                      Proses Dipilih ({selectedForOCR.size})
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Search Settings */}
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Pencarian</h4>
+              <div className="space-y-3">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={searchOptions.includeOCR}
+                    onChange={(e) => setSearchOptions(prev => ({ ...prev, includeOCR: e.target.checked }))}
+                    className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Sertakan teks OCR</span>
+                </label>
+                
+                <div>
+                  <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                    Keyakinan minimum: {searchOptions.minConfidence}%
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="10"
+                    value={searchOptions.minConfidence}
+                    onChange={(e) => setSearchOptions(prev => ({ ...prev, minConfidence: parseInt(e.target.value) }))}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -655,7 +984,92 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                     </div>
                   </div>
                 )}
+                
+                {/* OCR Status */}
+                {ocrEnabled && (
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-gray-600 dark:text-gray-400">OCR</span>
+                      {ocrProcessing.has(item.id) && (
+                        <span className="text-blue-600 dark:text-blue-400">
+                          {ocrProcessing.get(item.id)?.progress || 0}%
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* OCR Status Display */}
+                    {ocrProcessing.has(item.id) ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                          <div 
+                            className="bg-blue-500 h-1.5 rounded-full transition-all"
+                            style={{ width: `${ocrProcessing.get(item.id)?.progress || 0}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-xs text-blue-600 dark:text-blue-400">
+                          Memproses...
+                        </span>
+                      </div>
+                    ) : item.ocrStatus === 'completed' ? (
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs ${
+                          item.isSearchable 
+                            ? 'text-green-600 dark:text-green-400' 
+                            : 'text-yellow-600 dark:text-yellow-400'
+                        }`}>
+                          ✓ {item.ocrConfidence}% keyakinan
+                        </span>
+                        {item.isSearchable && (
+                          <span className="text-xs text-purple-600 dark:text-purple-400">
+                            ( dapat dicari )
+                          </span>
+                        )}
+                      </div>
+                    ) : item.ocrStatus === 'failed' ? (
+                      <span className="text-xs text-red-600 dark:text-red-400">
+                        ✗ Gagal diproses
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                        Belum diproses
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
+
+              {ocrEnabled && (
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={() => toggleOCRForMaterial(item.id)}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                      selectedForOCR.has(item.id)
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                    disabled={ocrProcessing.has(item.id)}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedForOCR.has(item.id)}
+                      onChange={() => {}}
+                      className="w-3 h-3 rounded border-gray-300"
+                      readOnly
+                    />
+                    {selectedForOCR.has(item.id) ? 'Dipilih' : 'Pilih'}
+                  </button>
+                  
+                  {item.ocrStatus !== 'processing' && (
+                    <button
+                      onClick={() => processDocumentOCR(item)}
+                      className="px-3 py-1 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300 rounded-lg text-xs font-medium hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors"
+                      disabled={ocrProcessing.has(item.id)}
+                    >
+                      Proses
+                    </button>
+                  )}
+                </div>
+              )}
 
               <div className="flex gap-2">
                 <button

@@ -538,6 +538,43 @@ export interface ELibrary {
   readingProgress?: ReadingProgress;
   isBookmarked?: boolean;
   isFavorite?: boolean;
+  // OCR Integration Fields
+  ocrStatus?: 'pending' | 'processing' | 'completed' | 'failed';
+  ocrProgress?: number;
+  ocrText?: string;
+  ocrConfidence?: number;
+  ocrProcessedAt?: string;
+  ocrError?: string;
+  isSearchable?: boolean;
+}
+
+// OCR Related Types
+export type OCRStatus = 'pending' | 'processing' | 'completed' | 'failed';
+
+export interface OCRUpdate {
+  ocrStatus: OCRStatus;
+  ocrProgress?: number;
+  ocrText?: string;
+  ocrConfidence?: number;
+  ocrProcessedAt?: string;
+  ocrError?: string;
+  isSearchable?: boolean;
+}
+
+export interface OCRProcessingState {
+  materialId: string;
+  status: OCRStatus;
+  progress: number;
+  startTime: Date;
+  estimatedTimeRemaining?: number;
+  error?: string;
+}
+
+export interface SearchOptions {
+  includeOCR?: boolean;
+  minConfidence?: number;
+  limit?: number;
+  offset?: number;
 }
 
 export interface ReadingProgress {
