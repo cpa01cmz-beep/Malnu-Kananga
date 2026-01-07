@@ -405,7 +405,7 @@ wrangler d1 info malnu-kananga-db-prod --env production
 
 ## 🔗 Related Resources
 
-- **API Documentation**: See `api-documentation.md`
+- **API Reference**: See `api-documentation.md`
 - **Deployment Guide**: See `DEPLOYMENT_GUIDE.md`
 - **Configuration**: `wrangler.toml`
 - **Worker Code**: `worker.js`

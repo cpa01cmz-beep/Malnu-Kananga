@@ -50,7 +50,7 @@ These files are operational instructions for AI agents and should not be conside
 4. Use [CODING_STANDARDS.md](./CODING_STANDARDS.md) for code guidelines
 
 ### For Administrators
-1. Review [API Documentation](./api-documentation.md) for integration
+1. Review [API Reference](./api-documentation.md) for integration
 2. Use [Troubleshooting Guide](./troubleshooting-guide.md) for issue resolution
 
 ### For DevOps Engineers
