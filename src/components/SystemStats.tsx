@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { ChartBarIcon } from './icons/ChartBarIcon';
-import { UsersIcon } from './icons/UsersIcon';
-import DocumentTextIcon from './icons/DocumentTextIcon';
-import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import { backupVoiceSettings } from '../services/voiceSettingsBackup';
 import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
-import Button from './ui/Button';
 import PermissionGuard from './PermissionGuard';
 import { STORAGE_KEYS } from '../constants';
 import { User, UserRole, UserExtraRole } from '../types';
@@ -49,9 +44,7 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
         return saved ? JSON.parse(saved) : defaultVal;
     }
 
-    // Calculate totals
     const users = safeParse(STORAGE_KEYS.USERS, []);
-    const materials = safeParse(STORAGE_KEYS.MATERIALS, []);
     const programs = safeParse('malnu_programs', []);
     const news = safeParse('malnu_news', []);
     const ppdb = safeParse(STORAGE_KEYS.PPDB_REGISTRANTS, []);
@@ -60,7 +53,7 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
 
     setStats({
         totalUsers: users.length,
-        activeUsers: users.filter((u: any) => u.status === 'active').length,
+        activeUsers: users.filter((u: { status?: string }) => u.status === 'active').length,
         totalPrograms: programs.length,
         totalNews: news.length,
         totalPPDB: ppdb.length,
@@ -74,7 +67,7 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
   const calculateLocalStorageSize = () => {
     let total = 0;
     for (let key in localStorage) {
-        if (localStorage.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(localStorage, key)) {
             total += localStorage[key].length + key.length;
         }
     }

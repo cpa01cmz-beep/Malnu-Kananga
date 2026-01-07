@@ -50,11 +50,6 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const canManageGrades = permissionService.hasPermission(userRole, userExtraRole, 'academic.grades').granted;
   const canCreateContent = permissionService.hasPermission(userRole, userExtraRole, 'content.create').granted;
 
-  // If user cannot manage grades, show access denied
-  if (!canManageGrades) {
-    return <AccessDenied onBack={onBack} message="You don't have permission to manage grades" requiredPermission="academic.grades" />;
-  }
-
   const [grades, setGrades] = useState<StudentGrade[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -97,18 +92,18 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const fetchStudentsAndGrades = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       // Fetch students for the class
       const studentsResponse = await studentsAPI.getByClass(className);
       if (!studentsResponse.success || !studentsResponse.data) {
         throw new Error(studentsResponse.message || 'Failed to fetch students');
       }
-      
+
       // Fetch existing grades for the class/subject
       const gradesResponse = await gradesAPI.getByClass(className);
       const existingGrades = gradesResponse.success && gradesResponse.data ? gradesResponse.data : [];
-      
+
       // Transform students to StudentGrade format
       const studentGrades: StudentGrade[] = studentsResponse.data.map(student => {
         const existingGrade = existingGrades.find(grade => grade.studentId === student.id);
@@ -121,7 +116,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
           finalExam: existingGrade?.finalExam || 0,
         };
       });
-      
+
       setGrades(studentGrades);
     } catch {
       setError('Failed to load data');
@@ -134,6 +129,11 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   useEffect(() => {
     fetchStudentsAndGrades();
   }, [fetchStudentsAndGrades]);
+
+  // If user cannot manage grades, show access denied
+  if (!canManageGrades) {
+    return <AccessDenied onBack={onBack} message="You don't have permission to manage grades" requiredPermission="academic.grades" />;
+  }
 
   const filteredData = grades.filter(g =>
       g.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

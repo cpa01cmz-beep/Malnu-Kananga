@@ -15,25 +15,6 @@ interface PPDBManagementProps {
 
 const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) => {
   const [registrants, setRegistrants] = useLocalStorage<PPDBRegistrant[]>(STORAGE_KEYS.PPDB_REGISTRANTS, []);
-  
-  // Get current user for permission checking
-  const getCurrentUser = (): User | null => {
-    const userJson = localStorage.getItem('malnu_user');
-    return userJson ? JSON.parse(userJson) : null;
-  };
-
-  const authUser = getCurrentUser();
-  const userRole = authUser?.role as UserRole || 'student';
-  const userExtraRole = authUser?.extraRole as UserExtraRole;
-
-  // Check permissions
-  const canManagePPDB = permissionService.hasPermission(userRole, userExtraRole, 'ppdb.manage').granted;
-  const canApprovePPDB = permissionService.hasPermission(userRole, userExtraRole, 'ppdb.approve').granted;
-
-  // If user cannot manage PPDB, show access denied
-  if (!canManagePPDB) {
-    return <AccessDenied onBack={onBack} message="You don't have permission to manage PPDB registrations" requiredPermission="ppdb.manage" />;
-  }
 
   const [filters, setFilters] = useState<PPDBFilterOptions>({
     status: 'all',
@@ -41,12 +22,12 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
     scoreRange: 'all',
     schoolFilter: ''
   });
-  
+
   const [sort, setSort] = useState<PPDBSortOptions>({
     field: 'registrationDate',
     direction: 'desc'
   });
-  
+
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showDocumentPreview, setShowDocumentPreview] = useState<string | null>(null);
   const [showScoringModal, setShowScoringModal] = useState<string | null>(null);
@@ -81,6 +62,25 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
       { id: 'interview', name: 'Wawancara', weight: 0.3, maxScore: 100, description: 'Hasil wawancara dengan calon siswa' }
     ]
   });
+
+  // Get current user for permission checking
+  const getCurrentUser = (): User | null => {
+    const userJson = localStorage.getItem('malnu_user');
+    return userJson ? JSON.parse(userJson) : null;
+  };
+
+  const authUser = getCurrentUser();
+  const userRole = authUser?.role as UserRole || 'student';
+  const userExtraRole = authUser?.extraRole as UserExtraRole;
+
+  // Check permissions
+  const canManagePPDB = permissionService.hasPermission(userRole, userExtraRole, 'ppdb.manage').granted;
+  const canApprovePPDB = permissionService.hasPermission(userRole, userExtraRole, 'ppdb.approve').granted;
+
+  // If user cannot manage PPDB, show access denied
+  if (!canManagePPDB) {
+    return <AccessDenied onBack={onBack} message="You don't have permission to manage PPDB registrations" requiredPermission="ppdb.manage" />;
+  }
 
   const updateStatus = (id: string, newStatus: PPDBRegistrant['status'], templateId?: string) => {
     const updated = registrants.map(r => {
