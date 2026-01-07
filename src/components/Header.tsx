@@ -117,7 +117,7 @@ const Header: React.FC<HeaderProps> = ({
                         </div>
                     </div>
 
-                    <nav className="hidden md:flex items-center gap-1">
+                    <nav className="hidden md:flex items-center gap-1" aria-label="Menu navigasi desktop">
                         <NavLinks />
                     </nav>
 
@@ -184,6 +184,12 @@ const Header: React.FC<HeaderProps> = ({
                                     ariaLabel={isMenuOpen ? "Tutup menu" : "Buka menu"}
                                     size="lg"
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setIsMenuOpen(!isMenuOpen);
+                                        }
+                                    }}
                                     aria-expanded={isMenuOpen}
                                     aria-controls="mobile-menu"
                                 />
@@ -193,12 +199,14 @@ const Header: React.FC<HeaderProps> = ({
 
             {isMenuOpen && (
                 <div
-                    id="mobile-menu"
                     className="md:hidden bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700"
-                    role="navigation"
-                    aria-label="Menu navigasi utama"
                 >
-                    <nav className="flex flex-col gap-2.5 sm:gap-3 font-medium text-center">
+                    <nav
+                        id="mobile-menu"
+                        className="flex flex-col gap-2.5 sm:gap-3 font-medium text-center"
+                        role="navigation"
+                        aria-label="Menu navigasi utama"
+                    >
                         <NavLinks />
                            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-2">
                                {isLoggedIn ? (

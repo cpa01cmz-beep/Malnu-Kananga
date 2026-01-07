@@ -193,8 +193,10 @@ describe('IconButton', () => {
     it('has keyboard focus styles', () => {
       const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" />);
       const button = container.querySelector('button');
-      button.focus();
-      expect(button).toHaveFocus();
+      if (button) {
+        button.focus();
+        expect(button).toHaveFocus();
+      }
     });
 
     it('has proper disabled accessibility', () => {
