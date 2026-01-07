@@ -64,6 +64,10 @@ export const STORAGE_KEYS = {
     ADMIN_DASHBOARD_CACHE: 'malnu_admin_dashboard_cache',
     ATTENDANCE_CACHE: 'malnu_attendance_cache',
     QUEUED_ACTIONS: 'malnu_queued_actions',
+    
+    // Programs and News storage keys
+    PROGRAMS: 'malnu_programs',
+    NEWS: 'malnu_news',
 } as const;
 
 export const APP_CONFIG = {

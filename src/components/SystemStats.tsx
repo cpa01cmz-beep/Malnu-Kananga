@@ -45,8 +45,8 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
     }
 
     const users = safeParse(STORAGE_KEYS.USERS, []);
-    const programs = safeParse('malnu_programs', []);
-    const news = safeParse('malnu_news', []);
+    const programs = safeParse(STORAGE_KEYS.PROGRAMS, []);
+    const news = safeParse(STORAGE_KEYS.NEWS, []);
     const ppdb = safeParse(STORAGE_KEYS.PPDB_REGISTRANTS, []);
     const inventory = safeParse(STORAGE_KEYS.INVENTORY, []);
     const events = safeParse(STORAGE_KEYS.EVENTS, []);
