@@ -27,6 +27,15 @@
 - [x] All 27 tests passing (13 Input + 14 Select)
 - **Impact**: Enhanced screen reader experience for form controls with contextual helper/error information
 
+### P3: Accessibility Enhancement - Button Component (High) - ✅ COMPLETED 2026-01-07
+- [x] Added `ariaLabel` prop support for icon-only buttons to provide accessible labels
+- [x] Added `aria-busy` attribute when button is in loading state to indicate async operation
+- [x] Added `role="status"` and `aria-hidden="true"` to loading spinner SVG for proper screen reader behavior
+- [x] Created comprehensive test suite for Button component with 21 test cases
+- [x] Added 9 dedicated accessibility tests covering icon-only buttons, loading states, focus management, and keyboard navigation
+- [x] All 21 tests passing (12 functional + 9 accessibility)
+- **Impact**: Improved WCAG 2.1 AA compliance for button components, especially icon-only buttons commonly used in UI
+
 ## Active Tasks
 
 ### P2: Code Quality (Medium)
