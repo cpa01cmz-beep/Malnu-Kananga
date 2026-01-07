@@ -18,7 +18,7 @@ import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { usePushNotifications } from '../hooks/usePushNotifications';
-import { getGradientClass, DARK_GRADIENT_CLASSES } from '../config/gradients';
+import { getGradientClass } from '../config/gradients';
 import ErrorMessage from './ui/ErrorMessage';
 import DashboardActionCard from './ui/DashboardActionCard';
 import { CardSkeleton } from './ui/Skeleton';

@@ -33,6 +33,7 @@ interface DashboardActionCardProps {
   onClick?: () => void;
   ariaLabel?: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const colorThemeClasses: Record<ColorTheme, { icon: string; badge: string; badgeOffline: string }> = {
@@ -119,7 +120,8 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
   layout = 'vertical',
   onClick,
   ariaLabel,
-  className = ''
+  className = '',
+  style
 }) => {
   const theme = colorThemeClasses[colorTheme];
   const isDisabled = disabled || !isOnline;
@@ -132,6 +134,7 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
         onClick={isDisabled ? undefined : onClick}
         aria-label={ariaLabel || title}
         className={`${isDisabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+        style={style}
       >
         <div className="flex items-start gap-4">
           <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${theme.icon}`}>
@@ -157,6 +160,7 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
       onClick={isDisabled ? undefined : onClick}
       aria-label={ariaLabel || title}
       className={`${isDisabled ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
+      style={style}
     >
       <div className={`p-3 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform duration-300 ${theme.icon}`}>
         {icon}
