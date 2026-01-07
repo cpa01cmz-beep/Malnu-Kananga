@@ -3,6 +3,7 @@ import React from 'react';
 import ClipboardDocumentCheckIcon from '../icons/ClipboardDocumentCheckIcon';
 import DocumentTextIcon from '../icons/DocumentTextIcon';
 import { UsersIcon } from '../icons/UsersIcon';
+import Card from '../ui/Card';
 
 interface PPDBSectionProps {
   onRegisterClick: () => void;
@@ -26,32 +27,44 @@ const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 mb-12 sm:mb-14">
-            <div className="bg-white dark:bg-neutral-800 p-6 sm:p-7 lg:p-8 rounded-xl shadow-card hover:shadow-float border border-neutral-200 dark:border-neutral-700 text-center relative overflow-hidden group hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 active:scale-95">
+            <Card
+                variant="hover"
+                className="text-center relative overflow-hidden group"
+                padding="lg"
+            >
                 <div className="absolute top-0 right-0 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 text-primary-700 dark:text-primary-300 font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-bl-xl text-xs sm:text-sm shadow-subtle">01</div>
                 <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-subtle">
                     <DocumentTextIcon />
                 </div>
                 <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-neutral-900 dark:text-white mb-2 sm:mb-3">Isi Formulir</h3>
                 <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">Lengkapi data diri dan data sekolah asal melalui formulir pendaftaran online kami.</p>
-            </div>
+            </Card>
 
-            <div className="bg-white dark:bg-neutral-800 p-6 sm:p-7 lg:p-8 rounded-xl shadow-card hover:shadow-float border border-neutral-200 dark:border-neutral-700 text-center relative overflow-hidden group hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 active:scale-95">
+            <Card
+                variant="hover"
+                className="text-center relative overflow-hidden group"
+                padding="lg"
+            >
                 <div className="absolute top-0 right-0 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 text-primary-700 dark:text-primary-300 font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-bl-xl text-xs sm:text-sm shadow-subtle">02</div>
                 <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-subtle">
                     <ClipboardDocumentCheckIcon />
                 </div>
                 <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-neutral-900 dark:text-white mb-2 sm:mb-3">Verifikasi Berkas</h3>
                 <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">Panitia akan memverifikasi data yang Anda kirimkan dalam waktu 1x24 jam.</p>
-            </div>
+            </Card>
 
-            <div className="bg-white dark:bg-neutral-800 p-6 sm:p-7 lg:p-8 rounded-xl shadow-card hover:shadow-float border border-neutral-200 dark:border-neutral-700 text-center relative overflow-hidden group hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 active:scale-95">
+            <Card
+                variant="hover"
+                className="text-center relative overflow-hidden group"
+                padding="lg"
+            >
                 <div className="absolute top-0 right-0 bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 text-primary-700 dark:text-primary-300 font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-bl-xl text-xs sm:text-sm shadow-subtle">03</div>
                 <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/30 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-subtle">
                     <UsersIcon />
                 </div>
                 <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-neutral-900 dark:text-white mb-2 sm:mb-3">Wawancara & Tes</h3>
                 <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">Ikuti tes akademik and wawancara sesuai jadwal yang ditentukan.</p>
-            </div>
+            </Card>
         </div>
 
         <div className="text-center">
