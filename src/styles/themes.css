@@ -150,6 +150,7 @@
 /* Custom scrollbar colors based on theme */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -164,6 +165,172 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-primary);
 }
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-text-secondary) var(--color-surface);
+}
+
+/* Custom scrollbar utility class for consistent styled scrollbars */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--color-neutral-400) / 0.5) hsl(var(--color-neutral-100));
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--color-neutral-100));
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--color-neutral-400) / 0.5);
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--color-primary-500));
+}
+
+/* Dark mode custom scrollbar */
+@media (prefers-color-scheme: dark) {
+  .custom-scrollbar {
+    scrollbar-color: hsl(var(--color-neutral-500) / 0.6) hsl(var(--color-neutral-800));
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--color-neutral-800));
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--color-neutral-500) / 0.6);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--color-primary-400));
+  }
+}
+
+.dark .custom-scrollbar {
+  scrollbar-color: hsl(var(--color-neutral-500) / 0.6) hsl(var(--color-neutral-800));
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--color-neutral-800));
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--color-neutral-500) / 0.6);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--color-primary-400));
+}
+
+/* Compact scrollbar for smaller spaces */
+.custom-scrollbar-compact {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--color-neutral-400) / 0.5) hsl(var(--color-neutral-100));
+}
+
+.custom-scrollbar-compact::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar-compact::-webkit-scrollbar-track {
+  background: hsl(var(--color-neutral-100));
+  border-radius: 3px;
+}
+
+.custom-scrollbar-compact::-webkit-scrollbar-thumb {
+  background: hsl(var(--color-neutral-400) / 0.5);
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.custom-scrollbar-compact::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--color-primary-500));
+}
+
+@media (prefers-color-scheme: dark) {
+  .custom-scrollbar-compact {
+    scrollbar-color: hsl(var(--color-neutral-500) / 0.6) hsl(var(--color-neutral-800));
+  }
+
+  .custom-scrollbar-compact::-webkit-scrollbar-track {
+    background: hsl(var(--color-neutral-800));
+  }
+
+  .custom-scrollbar-compact::-webkit-scrollbar-thumb {
+    background: hsl(var(--color-neutral-500) / 0.6);
+  }
+
+  .custom-scrollbar-compact::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--color-primary-400));
+  }
+}
+
+.dark .custom-scrollbar-compact {
+  scrollbar-color: hsl(var(--color-neutral-500) / 0.6) hsl(var(--color-neutral-800));
+}
+
+.dark .custom-scrollbar-compact::-webkit-scrollbar-track {
+  background: hsl(var(--color-neutral-800));
+}
+
+.dark .custom-scrollbar-compact::-webkit-scrollbar-thumb {
+  background: hsl(var(--color-neutral-500) / 0.6);
+}
+
+.dark .custom-scrollbar-compact::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--color-primary-400));
+}
+
+/* Touch-optimized scrollbar for mobile devices */
+@media (hover: none) and (pointer: coarse) {
+  .custom-scrollbar::-webkit-scrollbar,
+  .custom-scrollbar-compact::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb,
+  .custom-scrollbar-compact::-webkit-scrollbar-thumb {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+/* Accessible scrollbar visibility - ensures scrollbar is always visible for keyboard users */
+.scrollbar-accessible {
+  overflow: auto !important;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar-track {
+  display: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+/* Warning: scrollbar-hide should only be used when necessary */
+/* It can reduce accessibility for keyboard and mouse users */
 
 /* Ensure proper contrast for all theme variants */
 @media (prefers-contrast: high) {
