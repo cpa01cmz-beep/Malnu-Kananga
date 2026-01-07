@@ -3,6 +3,8 @@ import { ToastType } from './Toast';
 import type { ParentChild, Grade } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import PDFExportButton from './ui/PDFExportButton';
+import { pdfExportService } from '../services/pdfExportService';
 
 interface ParentGradesViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -14,6 +16,7 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string>('all');
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const fetchGrades = async () => {
@@ -43,6 +46,31 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
     ? grades 
     : grades.filter(g => g.subjectName === selectedSubject);
 
+  const handleExportPDF = async () => {
+    try {
+      setExporting(true);
+      const gradesData = filteredGrades.map(grade => ({
+        subjectName: grade.subjectName || grade.assignmentName,
+        grade: grade.score,
+        className: '-',
+        semester: grade.semester,
+        remarks: grade.assignmentType
+      }));
+      
+      pdfExportService.createGradesReport(gradesData, {
+        name: child.studentName,
+        id: child.studentId
+      });
+      
+      onShowToast('Laporan nilai berhasil diexport ke PDF', 'success');
+    } catch (error) {
+      logger.error('Failed to export grades PDF:', error);
+      onShowToast('Gagal melakukan export PDF', 'error');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const calculateAverage = (subjectGrades: Grade[]) => {
     if (subjectGrades.length === 0) return 0;
     const total = subjectGrades.reduce((sum, g) => sum + (g.score / g.maxScore) * 100, 0);
@@ -69,6 +97,18 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
         </div>
       ) : (
         <>
+          {/* Header with Export */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Nilai {child.studentName}
+            </h3>
+            <PDFExportButton
+              onExport={handleExportPDF}
+              loading={exporting}
+              label="Export Nilai"
+            />
+          </div>
+
           {/* Subject Filter */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
