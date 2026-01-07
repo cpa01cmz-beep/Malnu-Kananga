@@ -101,7 +101,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         external: ['fsevents'],
         output: {
-          manualChunks: (id) => {
+          manualChunks: (id: string) => {
             // Minimal chunking strategy to prevent circular dependencies
             // Only split the largest third-party libraries
 
