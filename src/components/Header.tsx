@@ -9,6 +9,7 @@ import { MoonIcon } from './icons/MoonIcon';
 import { UserRole, UserExtraRole } from '../types';
 import NotificationCenter from './NotificationCenter';
 import Button from './ui/Button';
+import { ThemeManager } from '../services/themeManager';
 
 const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95";
 
@@ -32,7 +33,6 @@ interface HeaderProps {
     onLogout: () => void;
     isPublicView: boolean;
     onTogglePublicView: () => void;
-    theme: 'light' | 'dark';
     onToggleTheme: () => void;
     onShowToast?: (msg: string, type: 'success' | 'error' | 'info') => void;
 }
@@ -47,12 +47,26 @@ const Header: React.FC<HeaderProps> = ({
     onLogout,
     isPublicView,
     onTogglePublicView,
-    theme,
     onToggleTheme,
     onShowToast
 }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [currentTheme, setCurrentTheme] = useState<import('../config/themes').Theme | null>(null);
+
+    useEffect(() => {
+        const themeManager = ThemeManager.getInstance();
+        const handleThemeChange = (theme: import('../config/themes').Theme) => {
+            setCurrentTheme(theme);
+        };
+
+        setCurrentTheme(themeManager.getCurrentTheme());
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -116,9 +130,10 @@ const Header: React.FC<HeaderProps> = ({
                         <button
                             onClick={onToggleTheme}
                             className="p-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800 hover:scale-110 active:scale-95"
-                            aria-label="Ganti Tema"
+                            aria-label="Pilih Tema"
+                        title={currentTheme ? `${currentTheme.displayName} - Klik untuk Ubah Tema` : 'Pilih Tema'}
                         >
-                            {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+                            {currentTheme?.isDark ? <SunIcon /> : <MoonIcon />}
                         </button>
 
                            {isLoggedIn ? (

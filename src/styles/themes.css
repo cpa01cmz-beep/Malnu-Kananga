@@ -1,0 +1,84 @@
+/* Theme System CSS Variables */
+
+/* Base theme CSS variables - will be updated by JavaScript */
+:root {
+  /* These variables will be set dynamically by the theme system */
+  --color-primary: #10b981;
+  --color-secondary: #6b7280;
+  --color-accent: #06b6d4;
+  --color-background: #ffffff;
+  --color-surface: #f9fafb;
+  --color-text: #111827;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  --color-success: #10b981;
+}
+
+/* Theme-specific styles */
+.theme-emerald-light {
+  --tw-colors-primary: var(--color-primary);
+}
+
+.theme-midnight-dark {
+  --tw-colors-primary: var(--color-primary);
+}
+
+.theme-ocean-blue {
+  --tw-colors-primary: var(--color-primary);
+}
+
+.theme-sunset-warm {
+  --tw-colors-primary: var(--color-primary);
+}
+
+.theme-forest-green {
+  --tw-colors-primary: var(--color-primary);
+}
+
+.theme-royal-purple {
+  --tw-colors-primary: var(--color-primary);
+}
+
+.theme-obsidian-dark {
+  --tw-colors-primary: var(--color-primary);
+}
+
+/* Enable smooth transitions for theme changes */
+* {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Custom scrollbar colors based on theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* Ensure proper contrast for all theme variants */
+@media (prefers-contrast: high) {
+  :root {
+    --color-border: #000000;
+    --color-text: #000000;
+    --color-background: #ffffff;
+  }
+  
+  .theme-obsidian-dark {
+    --color-border: #ffffff;
+    --color-text: #ffffff;
+    --color-background: #000000;
+  }
+}

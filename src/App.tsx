@@ -5,7 +5,9 @@ import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
 import ChatWindow from './components/ChatWindow';
 import Toast, { ToastType } from './components/Toast';
+import ThemeSelector from './components/ThemeSelector';
 import { logger } from './utils/logger';
+import { ThemeManager } from './services/themeManager';
 
 // Lazy load modal/dialog components
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
@@ -52,6 +54,7 @@ const App: React.FC = () => {
   const [isPPDBOpen, setIsPPDBOpen] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isPublicView, setIsPublicView] = useState(false);
+  const [isThemeSelectorOpen, setIsThemeSelectorOpen] = useState(false);
 
   // Auth State with Persistence via Hook
   const [authSession, setAuthSession] = useLocalStorage<AuthSession>(STORAGE_KEYS.AUTH_SESSION, {
@@ -62,24 +65,17 @@ const App: React.FC = () => {
 
   const { loggedIn: isLoggedIn, role: userRole, extraRole: userExtraRole } = authSession;
 
-  // Theme State via Hook
-  const [theme, setTheme] = useLocalStorage<'light' | 'dark'>(STORAGE_KEYS.THEME, 'light');
+  // Initialize Advanced Theme System
+  useEffect(() => {
+    ThemeManager.getInstance();
+    // Theme system handles its own initialization
+  }, []);
 
   // Content State via Hook - lazy load defaults to reduce initial bundle
   const [siteContent, setSiteContent] = useLocalStorage<SiteContent>(STORAGE_KEYS.SITE_CONTENT, {
     featuredPrograms: [],
     latestNews: []
   });
-
-  // Apply Theme Effect
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-  }, [theme]);
 
   // Check for existing JWT token on mount and load default content if empty
   const hasLoadedContent = useRef(false);
@@ -114,7 +110,7 @@ const App: React.FC = () => {
   }, [siteContent.featuredPrograms.length, siteContent.latestNews.length, setAuthSession, setSiteContent]);
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    setIsThemeSelectorOpen(true);
   };
   
   // Toast State
@@ -255,7 +251,6 @@ const App: React.FC = () => {
         onLogout={handleLogout}
         isPublicView={isPublicView}
         onTogglePublicView={() => setIsPublicView(!isPublicView)}
-        theme={theme}
         onToggleTheme={toggleTheme}
         onShowToast={showToast}
       />
@@ -325,6 +320,11 @@ const App: React.FC = () => {
         type={toast.type}
         isVisible={toast.isVisible}
         onClose={hideToast}
+      />
+      
+      <ThemeSelector
+        isOpen={isThemeSelectorOpen}
+        onClose={() => setIsThemeSelectorOpen(false)}
       />
     </div>
     </NotificationProvider>
