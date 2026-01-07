@@ -52,6 +52,12 @@ export const STORAGE_KEYS = {
     CLASSES_CACHE: 'malnu_classes_cache',
     CATEGORY_SUGGESTIONS: 'malnu_category_suggestions',
     MATERIAL_STATS: 'malnu_material_stats',
+    
+    // OCR Integration (new)
+    MATERIALS_OCR_ENABLED: 'malnu_materials_ocr_enabled',
+    OCR_PROCESSING_STATE: 'malnu_ocr_processing_state',
+    OCR_CACHE: 'malnu_ocr_cache',
+    SEARCH_INDEX: 'malnu_search_index',
 } as const;
 
 export const APP_CONFIG = {
