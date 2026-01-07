@@ -94,10 +94,22 @@ POST /api/auth/logout
 Authorization: Bearer <token>
 ```
 
-### Verify Token
+### Refresh Access Token
 ```typescript
-GET /api/auth/verify
-Authorization: Bearer <token>
+POST /api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "string"
+}
+```
+
+**Response:**
+```typescript
+{
+  "success": true,
+  "token": "string"
+}
 ```
 
 ---
