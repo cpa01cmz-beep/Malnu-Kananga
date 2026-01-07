@@ -54,6 +54,7 @@ export default [
         HTMLButtonElement: 'readonly',
         KeyboardEvent: 'readonly',
         MouseEvent: 'readonly',
+        HTMLSpanElement: 'readonly',
       },
     },
     plugins: {

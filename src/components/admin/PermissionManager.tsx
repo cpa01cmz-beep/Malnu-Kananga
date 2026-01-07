@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Permission, UserRole, UserExtraRole, AuditLog } from '../../types/permissions';
 import { permissionService } from '../../services/permissionService';
 import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../../config/permissions';
+import Badge from '../ui/Badge';
 
 interface PermissionManagerProps {
   onShowToast: (message: string, type: 'success' | 'error' | 'info') => void;
@@ -219,13 +220,9 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                             {permission.action}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              status === 'granted'
-                                ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200'
-                                : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-200'
-                            }`}>
+                            <Badge variant={status === 'granted' ? 'success' : 'error'}>
                               {status}
-                            </span>
+                            </Badge>
                           </td>
                         </tr>
                       );
@@ -341,13 +338,9 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                         {log.action}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          log.granted
-                            ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-200'
-                            : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-200'
-                        }`}>
+                        <Badge variant={log.granted ? 'success' : 'error'}>
                           {log.granted ? 'Granted' : 'Denied'}
-                        </span>
+                        </Badge>
                       </td>
                     </tr>
                   ))}
