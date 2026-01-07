@@ -89,12 +89,12 @@ const Header: React.FC<HeaderProps> = ({
 
     const headerClasses = `
         fixed top-0 left-0 right-0 z-40 transition-all duration-300 ease-out
-        ${isScrolled ? 'mt-0 rounded-none shadow-card' : 'mt-4 mx-2 sm:mx-4 rounded-pill'}
+        ${isScrolled ? 'mt-0 rounded-none shadow-card' : 'mt-4 mx-2 sm:mx-4 rounded-full'}
     `;
 
     const navContainerClasses = `
         w-full max-w-7xl mx-auto px-4 sm:px-6
-        ${isScrolled ? '' : 'bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl rounded-pill ring-1 ring-neutral-900/10 dark:ring-white/10 shadow-card'}
+        ${isScrolled ? '' : 'bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl rounded-full ring-1 ring-neutral-900/10 dark:ring-white/10 shadow-card'}
     `;
 
     const innerNavClasses = `

@@ -234,7 +234,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
           <>
             {/* Welcome Banner */}
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-100 to-transparent dark:from-primary-900/20 rounded-pill -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-100 to-transparent dark:from-primary-900/20 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50"></div>
               <div className="relative z-10">
                 <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Portal Wali Murid</h1>
                 <p className="mt-2 text-neutral-600 dark:text-neutral-300 text-lg">
@@ -262,7 +262,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                       }`}
                     >
                       <div className="text-center">
-                        <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-pill flex items-center justify-center mx-auto mb-3">
+                        <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center mx-auto mb-3">
                           <UserIcon />
                         </div>
                         <p className="font-semibold text-neutral-900 dark:text-white">{child.studentName}</p>
