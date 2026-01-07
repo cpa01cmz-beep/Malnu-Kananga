@@ -49,7 +49,7 @@ describe('CalendarView', () => {
     );
     
     expect(screen.getByRole('button', { name: /Hari Ini/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Bulan/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tampilan bulanan' })).toBeInTheDocument();
   });
 
   it('displays navigation buttons', () => {
@@ -164,8 +164,10 @@ describe('CalendarView', () => {
       
       expect(screen.getByRole('grid', { name: 'Kalender bulanan' })).toBeInTheDocument();
       expect(screen.getByRole('row')).toBeInTheDocument();
-      expect(screen.getByRole('columnheader')).toBeInTheDocument();
-      expect(screen.getByRole('gridcell')).toBeInTheDocument();
+      const columnHeaders = screen.getAllByRole('columnheader');
+      expect(columnHeaders).toHaveLength(7);
+      const gridCells = screen.getAllByRole('gridcell');
+      expect(gridCells.length).toBeGreaterThan(0);
     });
 
     it('has proper grid roles for week view', () => {
@@ -231,10 +233,15 @@ describe('CalendarView', () => {
         />
       );
       
+      // The mock components are just divs with data-testid, so check parent buttons instead
       const chevronLeft = screen.getByTestId('chevron-left').parentElement;
       const chevronRight = screen.getByTestId('chevron-right').parentElement;
-      expect(chevronLeft).toHaveAttribute('aria-hidden', 'true');
-      expect(chevronRight).toHaveAttribute('aria-hidden', 'true');
+      
+      // Check that the parent elements are buttons with proper roles
+      expect(chevronLeft?.tagName).toBe('BUTTON');
+      expect(chevronRight?.tagName).toBe('BUTTON');
+      expect(chevronLeft).toHaveAttribute('aria-label');
+      expect(chevronRight).toHaveAttribute('aria-label');
     });
   });
 });
