@@ -9,6 +9,11 @@
 
 This index provides a comprehensive overview of all documentation available for the MA Malnu Kananga web application project. All documentation is centralized in the `/docs` directory.
 
+**Note**: The following files are NOT part of documentation:
+- `AGENTS.md` (root) - AI agent configuration for OpenCode CLI tool
+- `.github/prompt/` directory - AI agent prompts for specialized tasks (deployment, maintenance, UI/UX, user stories)
+These files are operational instructions for AI agents and should not be considered user-facing documentation.
+
 ## Documentation Structure
 
 ### 📚 Core Documentation
@@ -60,8 +65,8 @@ This index provides a comprehensive overview of all documentation available for 
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 166 TypeScript/TSX/JS/JSX files in src/ (including 10 test files)
-- **Test Files**: 10 test files
+- **Total Source Files**: 169 TypeScript/TSX/JS/JSX files in src/ (including 11 test files)
+- **Test Files**: 11 test files
 - **Documentation Files**: 13 (in /docs directory)
 - **API Endpoints Documented**: 30+
 - **Code Examples**: 15+
@@ -173,12 +178,14 @@ This index maintains relationships between documents:
 
 ## Recent Changes (v2.1.0 - 2026-01-07)
 
-- **Repository Cleanup (2026-01-07)**:
-  - Removed STALE_BRANCHES_REPORT.md (temporary analysis report)
-  - Removed stale_branches_final.txt (generated list, no references)
-  - Corrected file count metrics to 166 total files in src/ (including 10 test files)
+- **Repository Cleanup (2026-01-07 - Current)**:
+  - Corrected file count metrics to 169 total files in src/ (including 11 test files)
   - Removed duplicate P2 section in TASK.md
   - Fixed test count inconsistencies across documentation files
+  - Added clarification about AGENTS.md and .github/prompt/ being AI agent instructions, not documentation
+- **Repository Cleanup (2026-01-07 - Earlier)**:
+  - Removed STALE_BRANCHES_REPORT.md (temporary analysis report)
+  - Removed stale_branches_final.txt (generated list, no references)
 - **Previous Cleanup (2026-01-07 - earlier)**:
   - Removed historical REFACTOR_SUMMARY.md (no references, outdated)
   - Removed outdated scripts/deployment/deploy-worker.sh (hardcoded URLs, replaced by DEPLOYMENT_GUIDE.md)
