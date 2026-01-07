@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NotificationBatch, PushNotification } from '../types';
 import { CloseIcon } from './icons/CloseIcon';
+import Textarea from './ui/Textarea';
 
 interface BatchManagementProps {
   batches: NotificationBatch[];
@@ -156,18 +157,15 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
-                  Konten Notifikasi (contoh)
-                </label>
-                <textarea
-                  value={notificationText}
-                  onChange={(e) => setNotificationText(e.target.value)}
-                  className="w-full border border-neutral-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  rows={3}
-                  placeholder="Isi pesan notifikasi..."
-                />
-              </div>
+              <Textarea
+                label="Konten Notifikasi (contoh)"
+                value={notificationText}
+                onChange={(e) => setNotificationText(e.target.value)}
+                size="md"
+                placeholder="Isi pesan notifikasi..."
+                minRows={3}
+                maxRows={5}
+              />
 
               <div className="flex gap-3">
                 <button
