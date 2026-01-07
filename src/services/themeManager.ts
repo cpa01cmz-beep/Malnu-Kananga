@@ -1,4 +1,5 @@
 import { Theme, themes, getThemeById, getLightThemes, getDarkThemes } from '../config/themes';
+import { logger } from '../utils/logger';
 
 export const THEMES_STORAGE_KEY = 'malnu_advanced_theme';
 
@@ -84,7 +85,7 @@ export class ThemeManager {
         timestamp: Date.now()
       }));
     } catch (error) {
-      console.error('Failed to save theme:', error);
+      logger.error('Failed to save theme:', error);
     }
   }
 
@@ -101,7 +102,7 @@ export class ThemeManager {
         }
       }
     } catch (error) {
-      console.error('Failed to load theme:', error);
+      logger.error('Failed to load theme:', error);
     }
 
     // Fallback to default theme
