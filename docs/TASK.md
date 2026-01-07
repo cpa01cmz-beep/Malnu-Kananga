@@ -69,6 +69,22 @@
   - Maintained all existing functionality
 - Benefits: Improved maintainability, consistent styling, better accessibility
 
+### P1: Component Extraction - LoginModal Button Standardization (Completed 2026-01-08)
+- Migrated LoginModal quick login buttons to use centralized Button component
+  - Replaced 6 inline button elements with reusable Button component
+  - Added 'indigo' variant to Button component for Admin button
+  - Extended Tailwind config with indigo, blue, orange, red, and green color scales
+  - Improved consistency with design system
+  - Reduced code duplication (95 lines modified, 37 lines removed)
+- Button mapping:
+  - Siswa → variant="secondary"
+  - Guru → variant="secondary"
+  - Admin → variant="indigo"
+  - Guru (Staff) → variant="info"
+  - Siswa (OSIS) → variant="warning"
+  - Selesai → variant="primary"
+- Benefits: Improved maintainability, consistent styling, better design system alignment
+
 ## Current Status
 
 | Metric | Status |
