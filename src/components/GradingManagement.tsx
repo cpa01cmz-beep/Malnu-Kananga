@@ -8,6 +8,7 @@ import { pushNotificationService } from '../services/pushNotificationService';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
+import { STORAGE_KEYS } from '../constants';
 import { 
   validateGradeInput, 
   sanitizeGradeInput, 
@@ -39,7 +40,7 @@ interface GradingManagementProps {
 const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToast }) => {
   // Get current user for permission checking
   const getCurrentUser = (): User | null => {
-    const userJson = localStorage.getItem('malnu_user');
+    const userJson = localStorage.getItem(STORAGE_KEYS.USER);
     return userJson ? JSON.parse(userJson) : null;
   };
 
