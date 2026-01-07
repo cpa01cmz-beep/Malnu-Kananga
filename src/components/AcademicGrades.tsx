@@ -17,6 +17,7 @@ import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import Button from './ui/Button';
+import LoadingSpinner from './ui/LoadingSpinner';
 
 interface GradeItem {
   subject: string;
@@ -330,7 +331,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
           </div>
         </div>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+          <LoadingSpinner size="lg" text="Memuat data akademik..." color="success" />
         </div>
       </div>
     );

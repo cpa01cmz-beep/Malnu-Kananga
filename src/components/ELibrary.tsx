@@ -10,6 +10,7 @@ import { CategoryValidator } from '../utils/categoryValidator';
 import { STORAGE_KEYS } from '../constants';
 import { ocrService } from '../services/ocrService';
 import Button from './ui/Button';
+import LoadingSpinner from './ui/LoadingSpinner';
 
 interface ELibraryProps {
   onBack: () => void;
@@ -377,7 +378,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           </div>
         </div>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+          <LoadingSpinner size="lg" text="Memuat perpustakaan..." color="success" />
         </div>
       </div>
     );

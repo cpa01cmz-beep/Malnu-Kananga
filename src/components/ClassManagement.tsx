@@ -9,6 +9,7 @@ import {
   createToastHandler
 } from '../utils/teacherErrorHandler';
 import Button from './ui/Button';
+import LoadingSpinner from './ui/LoadingSpinner';
 
 interface ClassStudent {
   id: string;
@@ -162,7 +163,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
           </div>
         </div>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+          <LoadingSpinner size="lg" text="Memuat data kelas..." color="success" />
         </div>
       </div>
     );

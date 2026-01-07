@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserExtraRole } from '../types';
 import { GoogleGenAI } from '@google/genai';
 import { withCircuitBreaker, classifyError, logError, getUserFriendlyMessage } from '../utils/errorHandler';
+import LoadingSpinner from './ui/LoadingSpinner';
 
 interface StudentLearningModuleProps {
     onShowToast: (msg: string, type: 'success' | 'error' | 'info' | 'warning') => void;
@@ -270,9 +271,8 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                 <h3 className="text-lg font-semibold mb-4">AI Quiz</h3>
                                 
                                 {aiQuizState.isGenerating ? (
-                                    <div className="flex items-center justify-center py-8">
-                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-                                        <span className="ml-2 text-neutral-600">Sedang membuat kuis...</span>
+                                    <div className="flex flex-col items-center justify-center py-8">
+                                        <LoadingSpinner size="md" color="primary" text="Sedang membuat kuis..." />
                                     </div>
                                 ) : aiQuizState.questions.length === 0 ? (
                                     <div className="text-center py-8 text-neutral-600">

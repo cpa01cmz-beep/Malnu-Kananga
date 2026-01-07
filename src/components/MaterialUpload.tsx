@@ -18,6 +18,7 @@ import {
 } from '../utils/teacherErrorHandler';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import FolderNavigation from './FolderNavigation';
+import LoadingSpinner from './ui/LoadingSpinner';
 import MaterialSharing from './MaterialSharing';
 import VersionControl from './VersionControl';
 import MaterialAnalytics from './MaterialAnalytics';
@@ -332,7 +333,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           </div>
         </div>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+          <LoadingSpinner size="lg" text="Memuat materi..." color="success" />
         </div>
       </div>
     );

@@ -5,6 +5,7 @@ import { Schedule, Subject, ParentMeeting } from '../types';
 import { logger } from '../utils/logger';
 import CalendarView from './CalendarView';
 import Button from './ui/Button';
+import LoadingSpinner from './ui/LoadingSpinner';
 
 interface ScheduleItem {
   id: string;
@@ -132,7 +133,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
           </div>
         </div>
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+          <LoadingSpinner size="lg" text="Memuat jadwal..." color="success" />
         </div>
       </div>
     );

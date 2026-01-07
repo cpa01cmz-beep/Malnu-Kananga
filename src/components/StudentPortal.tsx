@@ -19,6 +19,7 @@ import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { getGradientClass, DARK_GRADIENT_CLASSES } from '../config/gradients';
+import LoadingSpinner from './ui/LoadingSpinner';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -174,7 +175,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            <LoadingSpinner size="lg" text="Memuat data..." color="primary" />
           </div>
         ) : error ? (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
