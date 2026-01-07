@@ -55,6 +55,18 @@ describe('Badge Component', () => {
       const badge = screen.getByText('Neutral');
       expect(badge).toHaveClass('bg-neutral-100', 'text-neutral-800', 'dark:bg-neutral-700', 'dark:text-neutral-300');
     });
+
+    it('renders primary variant', () => {
+      render(<Badge variant="primary">Primary</Badge>);
+      const badge = screen.getByText('Primary');
+      expect(badge).toHaveClass('bg-primary-100', 'text-primary-800', 'dark:bg-primary-900/50', 'dark:text-primary-300');
+    });
+
+    it('renders purple variant', () => {
+      render(<Badge variant="purple">Purple</Badge>);
+      const badge = screen.getByText('Purple');
+      expect(badge).toHaveClass('bg-purple-100', 'text-purple-800', 'dark:bg-purple-900/50', 'dark:text-purple-300');
+    });
   });
 
   describe('Sizes', () => {
@@ -74,6 +86,12 @@ describe('Badge Component', () => {
       render(<Badge size="lg">Large</Badge>);
       const badge = screen.getByText('Large');
       expect(badge).toHaveClass('px-2.5', 'py-1.5', 'text-sm');
+    });
+
+    it('renders extra large size', () => {
+      render(<Badge size="xl">Extra Large</Badge>);
+      const badge = screen.getByText('Extra Large');
+      expect(badge).toHaveClass('px-5', 'py-2.5', 'text-sm');
     });
   });
 
@@ -104,6 +122,20 @@ describe('Badge Component', () => {
       const badge = screen.getByText('Not Rounded');
       expect(badge).toHaveClass('rounded-lg');
       expect(badge).not.toHaveClass('rounded-full');
+    });
+
+    it('renders xl size with rounded corners when rounded=false', () => {
+      render(<Badge size="xl" rounded={false}>XL Not Rounded</Badge>);
+      const badge = screen.getByText('XL Not Rounded');
+      expect(badge).toHaveClass('rounded-2xl');
+      expect(badge).not.toHaveClass('rounded-full');
+    });
+
+    it('renders xl size with fully rounded when rounded=true', () => {
+      render(<Badge size="xl" rounded>XL Rounded</Badge>);
+      const badge = screen.getByText('XL Rounded');
+      expect(badge).toHaveClass('rounded-full');
+      expect(badge).not.toHaveClass('rounded-2xl');
     });
   });
 
