@@ -1,9 +1,9 @@
 # Documentation Index
 
-**Created**: 2026-01-05
-**Last Updated**: 2026-01-07 (Repository cleanup - corrected file count metrics to 210/184/26)
-**Version**: 2.1.0
-**Status**: Active
+ **Created**: 2026-01-05
+ **Last Updated**: 2026-01-07
+ **Version**: 2.1.0
+ **Status**: Active
 
 ## Overview
 
@@ -65,9 +65,9 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 210 TypeScript/TSX files (184 non-test + 26 test files)
+- **Total Source Files**: 208 TypeScript/TSX files (182 non-test + 26 test files)
 - **Test Files**: 26 test files
-- **Documentation Files**: 15 (in /docs directory)
+- **Documentation Files**: 16 (in /docs directory)
 - **API Endpoints Documented**: 150+
 - **Code Examples**: 20+
 - **Troubleshooting Scenarios**: 25+
@@ -179,27 +179,15 @@ This index maintains relationships between documents:
 ## Recent Changes (v2.1.0 - 2026-01-07)
 
 - **Repository Cleanup (2026-01-07 - Current)**:
-    - Fixed documentation metrics to reflect actual file counts: 210 total source files (184 non-test + 26 test files)
-    - Removed redundant src/style.css file (duplicate of @import in index.css)
-    - Fixed TypeScript linting errors in test files
-    - Updated documentation index with accurate metrics
+    - Fixed documentation metrics to reflect actual file counts: 208 total source files (182 non-test + 26 test files), 16 documentation files
     - Verified all documentation aligns with codebase structure
     - Confirmed deployment guides serve distinct purposes (DEPLOYMENT_GUIDE.md for procedures, CLOUDFLARE_DEPLOYMENT.md for status)
     - Validated .gitignore is comprehensive and appropriate
-    - All tests passing, TypeScript compilation successful, linting passing
-    - TASK.md verified as concise and actionable (110 lines, well-structured)
-- **Previous Cleanup (2026-01-07)**:
-   - Removed duplicate P2 section in TASK.md
-   - Removed STALE_BRANCHES_REPORT.md (temporary analysis report)
-   - Removed stale_branches_final.txt (generated list, no references)
-   - Removed historical REFACTOR_SUMMARY.md (no references, outdated)
-   - Removed outdated scripts/deployment/deploy-worker.sh (hardcoded URLs, replaced by DEPLOYMENT_GUIDE.md)
-- **Previous Changes (2026-01-06)**:
-   - Corrected all documentation versions to match package.json (2.1.0)
-   - Added test file count documentation
-   - Added extra roles documentation (wakasek, kepsek)
-   - Removed redundant deployment scripts (one-click-deploy.sh, verify-deployment.sh)
-   - Fixed metadata inconsistencies
+    - All tests passing (462 tests, 26 test files)
+    - TypeScript compilation successful
+    - Linting successful
+    - Build successful
+    - TASK.md verified as concise and actionable (113 lines, well-structured)
 
 ---
 

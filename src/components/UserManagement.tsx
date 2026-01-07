@@ -6,6 +6,8 @@ import { CloseIcon } from './icons/CloseIcon';
 import { User, UserRole, UserExtraRole } from '../types';
 import { STORAGE_KEYS } from '../constants';
 import Button from './ui/Button';
+import Input from './ui/Input';
+import Select from './ui/Select';
 import { api } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
 import { pushNotificationService } from '../services/pushNotificationService';
@@ -296,53 +298,68 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                     </div>
                     <form onSubmit={handleSaveUser} className="p-6 space-y-4">
                         {errorState.hasError && <p className="text-sm text-red-600 dark:text-red-400">{errorState.message}</p>}
-                        <div>
-                            <label htmlFor="user-name" className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Nama</label>
-                            <input id="user-name" name="name" required value={currentUser.name} onChange={e => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500" autoComplete="name" />
-                        </div>
-                        <div>
-                            <label htmlFor="user-email" className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Email</label>
-                            <input id="user-email" name="email" required type="email" value={currentUser.email} onChange={e => setCurrentUser({...currentUser, email: e.target.value})} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500" autoComplete="email" />
-                        </div>
+                        <Input
+                            id="user-name"
+                            label="Nama"
+                            name="name"
+                            required
+                            value={currentUser.name || ''}
+                            onChange={e => setCurrentUser({...currentUser, name: e.target.value})}
+                            autoComplete="name"
+                            fullWidth
+                        />
+                        <Input
+                            id="user-email"
+                            label="Email"
+                            name="email"
+                            required
+                            type="email"
+                            value={currentUser.email || ''}
+                            onChange={e => setCurrentUser({...currentUser, email: e.target.value})}
+                            autoComplete="email"
+                            fullWidth
+                        />
                          <div className="grid grid-cols-2 gap-4">
-                             <div>
-                                 <label htmlFor="user-role" className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Role Utama</label>
-                                 <select
-                                     id="user-role"
-                                     name="role"
-                                     value={currentUser.role}
-                                     onChange={e => {
-                                         const r = e.target.value as UserRole;
-                                         setCurrentUser({...currentUser, role: r, extraRole: null});
-                                     }}
-                                     className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium"
-                                 >
-                                     <option value="student">Siswa</option>
-                                     <option value="teacher">Guru</option>
-                                     <option value="admin">Admin</option>
-                                 </select>
-                             </div>
-                             <div>
-                                 <label htmlFor="user-extrarole" className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Tugas Tambahan</label>
-                                 <select
-                                     id="user-extrarole"
-                                     name="extraRole"
-                                     value={currentUser.extraRole || ''}
-                                     onChange={e => setCurrentUser({...currentUser, extraRole: (e.target.value as UserExtraRole) || undefined})}
-                                     className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium"
-                                     disabled={currentUser.role === 'admin'}
-                                 >
-                                     <option value="">- Tidak Ada -</option>
-                                     {currentUser.role === 'teacher' && <option value="staff">Staff TU/Sarpras</option>}
-                                     {currentUser.role === 'teacher' && <option value="wakasek">Wakasek</option>}
-                                     {currentUser.role === 'teacher' && <option value="kepsek">Kepsek</option>}
-                                     {currentUser.role === 'student' && <option value="osis">Pengurus OSIS</option>}
-                                 </select>
-                             </div>
+                             <Select
+                                 id="user-role"
+                                 label="Role Utama"
+                                 name="role"
+                                 value={currentUser.role}
+                                 onChange={e => {
+                                     const r = e.target.value as UserRole;
+                                     setCurrentUser({...currentUser, role: r, extraRole: null});
+                                 }}
+                                 options={[
+                                     { value: 'student', label: 'Siswa' },
+                                     { value: 'teacher', label: 'Guru' },
+                                     { value: 'admin', label: 'Admin' },
+                                 ]}
+                                 fullWidth
+                             />
+                             <Select
+                                 id="user-extrarole"
+                                 label="Tugas Tambahan"
+                                 name="extraRole"
+                                 value={currentUser.extraRole || ''}
+                                 onChange={e => setCurrentUser({...currentUser, extraRole: (e.target.value as UserExtraRole) || undefined})}
+                                 options={[
+                                     { value: '', label: '- Tidak Ada -' },
+                                     ...(currentUser.role === 'teacher' ? [
+                                         { value: 'staff', label: 'Staff TU/Sarpras' },
+                                         { value: 'wakasek', label: 'Wakasek' },
+                                         { value: 'kepsek', label: 'Kepsek' },
+                                     ] : []),
+                                     ...(currentUser.role === 'student' ? [
+                                         { value: 'osis', label: 'Pengurus OSIS' },
+                                     ] : []),
+                                 ]}
+                                 disabled={currentUser.role === 'admin'}
+                                 fullWidth
+                             />
                          </div>
-                        <button type="submit" disabled={isSaving} className="w-full py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 font-semibold transition-all duration-200 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 disabled:opacity-70 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">
+                        <Button type="submit" fullWidth isLoading={isSaving}>
                              {isSaving ? 'Menyimpan...' : 'Simpan'}
-                        </button>
+                        </Button>
                     </form>
                 </div>
             </div>

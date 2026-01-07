@@ -8,6 +8,8 @@ import { UserGroupIcon, CurrencyDollarIcon, MegaphoneIcon, StarIcon } from './ic
 import { eventsAPI, eventRegistrationsAPI, eventBudgetsAPI, eventPhotosAPI, eventFeedbackAPI, fileStorageAPI } from '../services/apiService';
 import type { SchoolEvent, EventRegistration, EventBudget, EventPhoto, EventFeedback } from '../types';
 import Button from './ui/Button';
+import Input from './ui/Input';
+import Select from './ui/Select';
 import Textarea from './ui/Textarea';
 
 interface OsisEventsProps {
@@ -277,28 +279,25 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
               <h3 className="text-lg font-bold mb-4">Daftar Pendaftar</h3>
               <form onSubmit={handleAddRegistration} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <input
+                <Input
                   type="text"
                   placeholder="NISN Siswa"
                   value={newRegistration.studentId || ''}
                   onChange={e => setNewRegistration({ ...newRegistration, studentId: e.target.value })}
-                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                   required
                 />
-                <input
+                <Input
                   type="text"
                   placeholder="Nama Siswa"
                   value={newRegistration.studentName || ''}
                   onChange={e => setNewRegistration({ ...newRegistration, studentName: e.target.value })}
-                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                   required
                 />
-                <input
+                <Input
                   type="text"
                   placeholder="Kelas"
                   value={newRegistration.studentClass || ''}
                   onChange={e => setNewRegistration({ ...newRegistration, studentClass: e.target.value })}
-                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                   required
                 />
                 <Button type="submit" variant="warning" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left">
@@ -338,41 +337,38 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
               <h3 className="text-lg font-bold mb-4">Anggaran Kegiatan</h3>
               <form onSubmit={handleAddBudget} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <select
+                <Select
                   value={newBudget.category || 'Other'}
                   onChange={e => setNewBudget({ ...newBudget, category: e.target.value as EventBudget['category'] })}
-                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                  options={[
+                    { value: 'Food', label: 'Makanan & Minuman' },
+                    { value: 'Decoration', label: 'Dekorasi' },
+                    { value: 'Equipment', label: 'Perlengkapan' },
+                    { value: 'Venue', label: 'Tempat' },
+                    { value: 'Marketing', label: 'Pemasaran' },
+                    { value: 'Other', label: 'Lainnya' },
+                  ]}
                   required
-                >
-                  <option value="Food">Makanan & Minuman</option>
-                  <option value="Decoration">Dekorasi</option>
-                  <option value="Equipment">Perlengkapan</option>
-                  <option value="Venue">Tempat</option>
-                  <option value="Marketing">Pemasaran</option>
-                  <option value="Other">Lainnya</option>
-                </select>
-                <input
+                />
+                <Input
                   type="text"
                   placeholder="Nama Item"
                   value={newBudget.itemName || ''}
                   onChange={e => setNewBudget({ ...newBudget, itemName: e.target.value })}
-                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                   required
                 />
-                <input
+                <Input
                   type="number"
                   placeholder="Estimasi Biaya"
                   value={newBudget.estimatedCost || ''}
                   onChange={e => setNewBudget({ ...newBudget, estimatedCost: parseFloat(e.target.value) })}
-                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                   required
                 />
-                <input
+                <Input
                   type="number"
                   placeholder="Jumlah"
                   value={newBudget.quantity || ''}
                   onChange={e => setNewBudget({ ...newBudget, quantity: parseInt(e.target.value) })}
-                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                 />
                 <Button type="submit" variant="success" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" className="md:col-span-2">
                   Tambah Anggaran
@@ -600,31 +596,42 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
           <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Buat Kegiatan Baru</h3>
             <form onSubmit={handleAddEvent} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Kegiatan</label>
-                <input required type="text" value={newEvent.eventName} onChange={e => setNewEvent({...newEvent, eventName: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tanggal Pelaksanaan</label>
-                <input required type="date" value={newEvent.date} onChange={e => setNewEvent({...newEvent, date: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Lokasi</label>
-                <input required type="text" value={newEvent.location} onChange={e => setNewEvent({...newEvent, location: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" />
-              </div>
-              <div>
-                <Textarea
-                  label="Deskripsi Singkat"
-                  required
-                  value={newEvent.description}
-                  onChange={e => setNewEvent({...newEvent, description: e.target.value})}
-                  size="md"
-                  minRows={3}
-                />
-              </div>
-              <button type="submit" className="w-full flex items-center justify-center gap-2 py-2.5 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-colors">
-                <PlusIcon className="w-5 h-5" /> Simpan Kegiatan
-              </button>
+              <Input
+                label="Nama Kegiatan"
+                required
+                type="text"
+                value={newEvent.eventName || ''}
+                onChange={e => setNewEvent({...newEvent, eventName: e.target.value})}
+                fullWidth
+              />
+              <Input
+                label="Tanggal Pelaksanaan"
+                required
+                type="date"
+                value={newEvent.date || ''}
+                onChange={e => setNewEvent({...newEvent, date: e.target.value})}
+                fullWidth
+              />
+              <Input
+                label="Lokasi"
+                required
+                type="text"
+                value={newEvent.location || ''}
+                onChange={e => setNewEvent({...newEvent, location: e.target.value})}
+                fullWidth
+              />
+              <Textarea
+                label="Deskripsi Singkat"
+                required
+                value={newEvent.description}
+                onChange={e => setNewEvent({...newEvent, description: e.target.value})}
+                size="md"
+                minRows={3}
+                fullWidth
+              />
+              <Button type="submit" fullWidth icon={<PlusIcon className="w-5 h-5" />}>
+                Simpan Kegiatan
+              </Button>
             </form>
           </div>
 
