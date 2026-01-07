@@ -1,7 +1,7 @@
 # Documentation Index
 
 **Created**: 2026-01-05
-**Last Updated**: 2026-01-07 (Repository cleanup - removed orphan mock test, corrected to 10 test files, removed outdated references)
+**Last Updated**: 2026-01-07 (Repository cleanup - fixed TypeScript error, corrected test file count to 13, updated metrics)
 **Version**: 2.1.0
 **Status**: Active
 
@@ -65,8 +65,8 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 181 TypeScript/TSX files in src/ (169 non-test + 12 test files)
-- **Test Files**: 12 test files
+- **Total Source Files**: 180 TypeScript/TSX files in src/ (167 non-test + 13 test files)
+- **Test Files**: 13 test files
 - **Documentation Files**: 13 (in /docs directory)
 - **API Endpoints Documented**: 150+
 - **Code Examples**: 20+
@@ -179,11 +179,12 @@ This index maintains relationships between documents:
 ## Recent Changes (v2.1.0 - 2026-01-07)
 
 - **Repository Cleanup (2026-01-07 - Current)**:
-   - Removed orphan test file: src/components/__tests__/touch-gestures.test.ts (mocked test with no production code)
-   - Updated documentation metrics to reflect actual file counts: 181 total source files (169 non-test + 12 test files)
-   - Verified all documentation aligns with codebase structure
-   - Confirmed deployment guides serve distinct purposes (DEPLOYMENT_GUIDE.md for procedures, CLOUDFLARE_DEPLOYMENT.md for status)
-   - Validated .gitignore is comprehensive and appropriate
+    - Removed orphan test file: src/components/__tests__/touch-gestures.test.ts (mocked test with no production code)
+    - Updated documentation metrics to reflect actual file counts: 180 total source files (167 non-test + 13 test files)
+    - Fixed TypeScript error: SendIcon component className prop in AutoResizeTextarea.tsx
+    - Verified all documentation aligns with codebase structure
+    - Confirmed deployment guides serve distinct purposes (DEPLOYMENT_GUIDE.md for procedures, CLOUDFLARE_DEPLOYMENT.md for status)
+    - Validated .gitignore is comprehensive and appropriate
 - **Previous Cleanup (2026-01-07)**:
    - Removed duplicate P2 section in TASK.md
    - Removed STALE_BRANCHES_REPORT.md (temporary analysis report)

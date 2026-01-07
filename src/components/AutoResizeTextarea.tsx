@@ -55,7 +55,7 @@ const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
         size="sm"
         onClick={onSend}
         disabled={disabled || !value.trim()}
-        icon={<SendIcon className="w-4 h-4" />}
+        icon={<SendIcon />}
         aria-label="Kirim"
       />
     </div>
