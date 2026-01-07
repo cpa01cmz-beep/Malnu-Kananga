@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import Button from './Button';
 import { CardSkeleton, ListItemSkeleton, TableSkeleton } from './Skeleton';
-import { AlertCircleIcon, CheckCircleIcon } from '../icons/StatusIcons';
+import { AlertCircleIcon } from '../icons/StatusIcons';
 
 export type LoadingStateSize = 'sm' | 'md' | 'lg';
 export type LoadingStateType = 'page' | 'section' | 'inline' | 'table' | 'list';
@@ -141,7 +141,7 @@ const LoadingState: React.FC<LoadingStateProps> = ({
         return (
           <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <PageLoadingState variant={variant} count={count} />
+              <PageLoadingState _variant={variant} count={count} />
             </div>
           </main>
         );
@@ -194,8 +194,8 @@ const LoadingState: React.FC<LoadingStateProps> = ({
   return <>{children}</>;
 };
 
-const PageLoadingState: React.FC<{ variant: LoadingStateVariant; count: number }> = ({
-  variant,
+const PageLoadingState: React.FC<{ _variant: LoadingStateVariant; count: number }> = ({
+  _variant,
   count
 }) => (
   <div className="space-y-6">
