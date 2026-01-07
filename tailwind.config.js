@@ -48,6 +48,7 @@ export default {
         'subtle': '0 2px 4px 0 rgb(0 0 0 / 0.02)',
         'focus': '0 0 0 3px rgba(22, 163, 74, 0.3)',
         'focus-ring': '0 0 0 3px rgb(59 130 246 / 0.3)',
+        'focus-visible': '0 0 0 3px rgba(22, 163, 74, 0.4), 0 0 0 1px rgb(255 255 255)',
       },
       fontFamily: {
         sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
@@ -57,6 +58,7 @@ export default {
         'fade-in-up': 'fadeInUp 0.4s ease-out',
         'scale-in': 'scaleIn 0.2s ease-out',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'wave': 'wave 1.5s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -70,6 +72,10 @@ export default {
         scaleIn: {
           '0%': { transform: 'scale(0.95)', opacity: '0' },
           '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        wave: {
+          '0%, 100%': { opacity: '1', transform: 'translateX(0)' },
+          '50%': { opacity: '0.5', transform: 'translateX(20px)' },
         },
       },
     },

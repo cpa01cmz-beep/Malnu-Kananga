@@ -9,7 +9,7 @@ import { MoonIcon } from './icons/MoonIcon';
 import { UserRole, UserExtraRole } from '../types';
 import NotificationCenter from './NotificationCenter';
 
-const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95";
+const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95";
 
 const NavLinks = () => (
     <>
@@ -114,7 +114,7 @@ const Header: React.FC<HeaderProps> = ({
 
                         <button
                             onClick={onToggleTheme}
-                            className="p-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95"
+                            className="p-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800 hover:scale-110 active:scale-95"
                             aria-label="Ganti Tema"
                         >
                             {theme === 'light' ? <MoonIcon /> : <SunIcon />}
@@ -130,16 +130,16 @@ const Header: React.FC<HeaderProps> = ({
                                     </span>
                                 )}
 
-                                {userRole === 'admin' && (
+                                 {userRole === 'admin' && (
                                       <button
-                                         onClick={onEditClick}
-                                         className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 px-4 py-2.5 rounded-lg font-semibold text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95"
-                                         title="Buka Editor AI"
-                                     >
-                                         <SparklesIcon />
-                                         <span className="hidden lg:inline">Editor AI</span>
-                                     </button>
-                                )}
+                                          onClick={onEditClick}
+                                          className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 px-4 py-2.5 rounded-lg font-semibold text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800/50 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95"
+                                          title="Buka Editor AI"
+                                      >
+                                          <SparklesIcon />
+                                          <span className="hidden lg:inline">Editor AI</span>
+                                      </button>
+                                 )}
 
                                 <button
                                      onClick={onTogglePublicView}

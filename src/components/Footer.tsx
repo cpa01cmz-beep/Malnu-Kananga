@@ -27,7 +27,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                             Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
                         </p>
                         <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
-                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">info@ma-malnukananga.sch.id</a>
+                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">info@ma-malnukananga.sch.id</a>
                         </p>
                     </div>
 
@@ -44,22 +44,22 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                     <div className="sm:justify-self-end">
                         <h3 className="text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
                           <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
-                                <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button></li>
-                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Download</a></li>
-                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Kebijakan Privasi</a></li>
-                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Karir</a></li>
-                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Beasiswa</a></li>
+                                <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button></li>
+                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Download</a></li>
+                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Kebijakan Privasi</a></li>
+                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Karir</a></li>
+                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Beasiswa</a></li>
                           </ul>
                            <div className="flex justify-center sm:justify-start gap-3 mt-6">
-                               <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 ease-out p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95 shadow-sm hover:shadow-md" aria-label="Facebook">
+                               <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-300 ease-out p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-110 active:scale-95 shadow-sm hover:shadow-md" aria-label="Facebook">
                                   <span className="sr-only">Facebook</span>
                                   <FacebookIcon />
                               </a>
-                               <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 ease-out p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95 shadow-sm hover:shadow-md" aria-label="Instagram">
+                               <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-300 ease-out p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-110 active:scale-95 shadow-sm hover:shadow-md" aria-label="Instagram">
                                   <span className="sr-only">Instagram</span>
                                   <InstagramIcon />
                               </a>
-                               <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-200 ease-out p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95 shadow-sm hover:shadow-md" aria-label="YouTube">
+                               <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-300 ease-out p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-110 active:scale-95 shadow-sm hover:shadow-md" aria-label="YouTube">
                                   <span className="sr-only">YouTube</span>
                                   <YoutubeIcon />
                               </a>
