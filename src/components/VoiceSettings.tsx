@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useVoiceSynthesis } from '../hooks/useVoiceSynthesis';
 import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
-import { CloseIcon } from './icons/CloseIcon';
 import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';
 import { STORAGE_KEYS, VOICE_CONFIG } from '../constants';
 import type { SpeechSynthesisVoice } from '../types';
@@ -14,6 +13,8 @@ import {
   getBackupDate,
   deleteBackup,
 } from '../services/voiceSettingsBackup';
+import Modal from './ui/Modal';
+import Button from './ui/Button';
 
 interface VoiceSettingsProps {
   isOpen: boolean;
@@ -239,26 +240,23 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl w-full max-w-md mx-4 border border-neutral-200 dark:border-neutral-700">
-        <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
-          <div className="flex items-center gap-2">
-            <SpeakerWaveIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
-            <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Pengaturan Suara</h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-1 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
-            aria-label="Tutup pengaturan"
-          >
-            <CloseIcon />
-          </button>
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Pengaturan Suara"
+        size="md"
+        animation="scale-in"
+        closeOnBackdropClick={true}
+        closeOnEscape={true}
+        showCloseButton={true}
+        className="max-h-[70vh]"
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <SpeakerWaveIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
         </div>
-
-        <div className="p-4 space-y-6 max-h-[70vh] overflow-y-auto">
+        <div className="space-y-6 overflow-y-auto pr-2">
           {recognition.isSupported && (
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Input Suara</h3>
@@ -466,68 +464,58 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
             </button>
           </div>
         </div>
-      </div>
+      </Modal>
 
-      {/* Reset Confirmation Modal */}
-      {showResetConfirmation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl w-full max-w-sm mx-4 border border-neutral-200 dark:border-neutral-700">
-            <div className="p-6">
-              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-                Reset Pengaturan Suara?
-              </h3>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
-                Semua pengaturan suara akan dikembalikan ke nilai default. Tindakan ini tidak dapat dibatalkan.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowResetConfirmation(false)}
-                  className="flex-1 px-4 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
-                >
-                  Batal
-                </button>
-                <button
-                  onClick={resetToDefaults}
-                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-                >
-                  Reset
-                </button>
-              </div>
-            </div>
+      <Modal
+        isOpen={showResetConfirmation}
+        onClose={() => setShowResetConfirmation(false)}
+        title="Reset Pengaturan Suara?"
+        size="sm"
+        animation="scale-in"
+        closeOnBackdropClick={true}
+        closeOnEscape={true}
+        showCloseButton={false}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            Semua pengaturan suara akan dikembalikan ke nilai default. Tindakan ini tidak dapat dibatalkan.
+          </p>
+          <div className="flex gap-3">
+            <Button variant="secondary" onClick={() => setShowResetConfirmation(false)} fullWidth>
+              Batal
+            </Button>
+            <Button variant="danger" onClick={resetToDefaults} fullWidth>
+              Reset
+            </Button>
           </div>
         </div>
-      )}
+      </Modal>
 
-      {/* Restore Confirmation Modal */}
-      {showRestoreConfirmation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl w-full max-w-sm mx-4 border border-neutral-200 dark:border-neutral-700">
-            <div className="p-6">
-              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-                Pulihkan Pengaturan Suara?
-              </h3>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
-                Pengaturan suara akan dikembalikan ke nilai dari backup: {backupDate}. Pengaturan saat ini akan ditimpa.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowRestoreConfirmation(false)}
-                  className="flex-1 px-4 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
-                >
-                  Batal
-                </button>
-                <button
-                  onClick={handleRestore}
-                  className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                >
-                  Pulihkan
-                </button>
-              </div>
-            </div>
+      <Modal
+        isOpen={showRestoreConfirmation}
+        onClose={() => setShowRestoreConfirmation(false)}
+        title="Pulihkan Pengaturan Suara?"
+        size="sm"
+        animation="scale-in"
+        closeOnBackdropClick={true}
+        closeOnEscape={true}
+        showCloseButton={false}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            Pengaturan suara akan dikembalikan ke nilai dari backup: {backupDate}. Pengaturan saat ini akan ditimpa.
+          </p>
+          <div className="flex gap-3">
+            <Button variant="secondary" onClick={() => setShowRestoreConfirmation(false)} fullWidth>
+              Batal
+            </Button>
+            <Button variant="info" onClick={handleRestore} fullWidth>
+              Pulihkan
+            </Button>
           </div>
         </div>
-      )}
-    </div>
+      </Modal>
+    </>
   );
 };
 

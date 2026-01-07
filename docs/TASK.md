@@ -71,7 +71,7 @@
  | Build | ✅ Success | ~12s build time |
  | Linting | ✅ Passing | <20 warnings |
  | Security | ✅ Clean | 0 vulnerabilities |
-     | Accessibility | ✅ Compliant | WCAG 2.1 AA compliant |
+     | Accessibility | ✅ Compliant | WCAG 2.1 AA compliant; Refactored all modal implementations to use reusable Modal component with proper focus trap (2026-01-07) |
      | UI Components | ✅ Enhanced | New DashboardActionCard component added (2026-01-07); Refactored 4+ dashboards to use DashboardActionCard (2026-01-07) |
 
 ---
@@ -89,6 +89,9 @@
    - [x] Refactor Toast, ThemeSelector, LoginModal, Header, UserManagement to use IconButton (2026-01-07)
    - [x] Create reusable DashboardActionCard component with icon, title, description, color theme, and online/offline status (2026-01-07)
    - [x] Refactor TeacherDashboard, StudentPortal, ParentDashboard, AdminDashboard to use DashboardActionCard (2026-01-07)
+   - [x] Fix useFocusTrap hook code formatting issue (2026-01-07)
+   - [x] Refactor VoiceSettings to use reusable Modal component with proper focus trap (3 modals) (2026-01-07)
+   - [x] Refactor LoginModal to use reusable Modal component with proper focus trap (2026-01-07)
    - [ ] Achieve 80% test coverage
 - [ ] Complete API documentation
 - [ ] Optimize bundle size to <500KB

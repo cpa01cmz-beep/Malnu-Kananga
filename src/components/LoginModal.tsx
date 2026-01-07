@@ -1,12 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { CloseIcon } from './icons/CloseIcon';
 import { UserRole, UserExtraRole } from '../types';
 import Button from './ui/Button';
 import Input from './ui/Input';
-import IconButton from './ui/IconButton';
 import { api } from '../services/apiService';
 import { getGradientClass } from '../config/gradients';
+import Modal from './ui/Modal';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -30,14 +29,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
         }, 300);
     }
   }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -69,23 +60,18 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-neutral-900/80 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity duration-300"
-      onClick={handleBackdropClick}
-      aria-modal="true"
-      role="dialog"
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Login"
+      size="md"
+      animation="scale-in"
+      closeOnBackdropClick={true}
+      closeOnEscape={true}
+      showCloseButton={true}
+      className="max-h-[90vh]"
     >
-      <div className="bg-white/98 dark:bg-neutral-800/98 backdrop-blur-xl rounded-xl shadow-float w-full max-w-md m-4 transform transition-all duration-300 ease-out scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh] border border-neutral-200 dark:border-neutral-700">
-         <div className="flex justify-between items-center px-6 py-5 border-b border-neutral-200 dark:border-neutral-700/60">
-           <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">Login</h2>
-            <IconButton
-              icon={<CloseIcon />}
-              ariaLabel="Tutup modal"
-              onClick={onClose}
-            />
-         </div>
-
-           <div className="p-6 overflow-y-auto">
+      <div className="overflow-y-auto">
             <div className={`mb-6 p-5 ${getGradientClass('NEUTRAL')} dark:from-neutral-900/60 dark:to-neutral-800/60 rounded-xl border border-neutral-200/70 dark:border-neutral-700/70`}>
                  <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2.5 flex items-center gap-2">
                      <svg className="w-4 h-4 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -177,10 +163,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                    {formState === 'loading' ? '' : 'Login'}
                  </Button>
                </form>
-           )}
+            )}
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 };
 
