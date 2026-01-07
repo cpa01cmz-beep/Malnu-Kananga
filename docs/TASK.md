@@ -85,6 +85,23 @@
   - Selesai → variant="primary"
 - Benefits: Improved maintainability, consistent styling, better design system alignment
 
+### P1: Component Extraction - Button Standardization Round 2 (Completed 2026-01-07)
+- Migrated AccessDenied.tsx to use centralized Button component
+  - Replaced inline button with Button component (variant="info")
+  - Added dark mode support with proper Tailwind classes
+- Migrated VersionControl.tsx to use centralized Button component
+  - Replaced 9 inline button elements with Button component
+  - Used appropriate variants: secondary, info, ghost, danger, primary
+  - Implemented icon-only buttons with aria-labels for accessibility
+  - Maintained all existing functionality while improving consistency
+- Migrated NotificationSettings.tsx to use centralized Button component
+  - Replaced 9 inline button elements with Button component
+  - Used variants: ghost, primary, secondary, danger, info
+  - Added dark mode support throughout component
+  - Improved accessibility with proper ARIA labels
+- Total improvements: 3 components migrated, 27 buttons standardized
+- Benefits: Consistent design system alignment, improved accessibility, better maintainability
+
 ## Current Status
 
 | Metric | Status |

@@ -8,6 +8,7 @@ import TemplateManagement from './TemplateManagement';
 import NotificationAnalyticsComponent from './NotificationAnalytics';
 import { NotificationSettings as NotificationSettingsType } from '../types';
 import { logger } from '../utils/logger';
+import Button from './ui/Button';
 
 interface NotificationSettingsProps {
   isOpen: boolean;
@@ -136,20 +137,21 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
       />
       
       <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+        <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-gray-200 dark:border-neutral-700 p-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <BellIcon className="w-6 h-6 text-gray-700" />
-            <h2 className="text-xl font-semibold text-gray-900">
+            <BellIcon className="w-6 h-6 text-gray-700 dark:text-neutral-300" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               Pengaturan Notifikasi
             </h2>
           </div>
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            iconOnly
+            icon={<CloseIcon className="w-5 h-5" />}
             aria-label="Tutup"
-          >
-            <CloseIcon className="w-5 h-5" />
-          </button>
+          />
         </div>
 
         {/* Tabs */}
@@ -221,7 +223,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                 ) : (
                   <BellIcon className="w-5 h-5 text-yellow-600" />
                 )}
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-gray-700 dark:text-neutral-300">
                   {permissionGranted
                     ? 'Notifikasi diizinkan'
                     : permissionDenied
@@ -230,12 +232,13 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                 </span>
               </div>
               {!permissionGranted && !permissionDenied && (
-                <button
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={handleRequestPermission}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
                 >
                   Izinkan Notifikasi
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -473,31 +476,32 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
           <div className="px-6 pb-6">
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-3">
-            <button
+            <Button
+              variant="primary"
               onClick={handleSaveSettings}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+              fullWidth
             >
               Simpan Pengaturan
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="secondary"
               onClick={handleTestNotification}
               disabled={!permissionGranted || !localSettings.enabled}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Tes Notifikasi
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="secondary"
               onClick={() => setShowHistory(true)}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
             >
               Lihat Riwayat ({history.length})
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="danger"
               onClick={() => setShowResetConfirmation(true)}
-              className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors text-sm font-medium"
             >
               Reset
-            </button>
+            </Button>
             </div>
           </div>
         )}
@@ -505,26 +509,26 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
         {/* Reset Confirmation Modal */}
         {showResetConfirmation && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg p-6 max-w-sm w-full">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 max-w-sm w-full">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 Reset Pengaturan Notifikasi?
               </h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-gray-600 dark:text-neutral-400 mb-4">
                 Pengaturan akan dikembalikan ke nilai default. Tindakan ini tidak dapat dibatalkan.
               </p>
               <div className="flex justify-end gap-3">
-                <button
+                <Button
+                  variant="secondary"
                   onClick={() => setShowResetConfirmation(false)}
-                  className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors text-sm font-medium"
                 >
                   Batal
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="danger"
                   onClick={handleResetSettings}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-medium"
                 >
                   Reset
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -533,18 +537,19 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
         {/* History Modal */}
         {showHistory && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-              <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">
+            <div className="bg-white dark:bg-neutral-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-gray-200 dark:border-neutral-700 p-4 flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Riwayat Notifikasi
                 </h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowHistory(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  iconOnly
+                  icon={<CloseIcon className="w-5 h-5" />}
                   aria-label="Tutup"
-                >
-                  <CloseIcon className="w-5 h-5" />
-                </button>
+                />
               </div>
 
               <div className="p-4">
@@ -555,22 +560,24 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                 ) : (
                   <>
                     <div className="flex justify-between items-center mb-4">
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-neutral-400">
                         Total: {history.length} notifikasi
                       </p>
                       <div className="flex gap-2">
-                        <button
+                        <Button
+                          variant="info"
+                          size="sm"
                           onClick={handleMarkAllAsRead}
-                          className="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                         >
                           Tandai Semua Dibaca
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="danger"
+                          size="sm"
                           onClick={handleClearHistory}
-                          className="px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors"
                         >
                           Hapus Semua
-                        </button>
+                        </Button>
                       </div>
                     </div>
 
@@ -585,16 +592,17 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                           }`}
                         >
                           <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-medium text-gray-900">
+                            <h4 className="font-medium text-gray-900 dark:text-white">
                               {item.notification.title}
                             </h4>
-                            <button
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               onClick={() => handleDeleteNotification(item.id)}
-                              className="text-gray-400 hover:text-red-600 transition-colors"
+                              iconOnly
+                              icon={<CloseIcon className="w-4 h-4" />}
                               aria-label="Hapus notifikasi"
-                            >
-                              <CloseIcon className="w-4 h-4" />
-                            </button>
+                            />
                           </div>
                           <p className="text-sm text-gray-600 mb-2">
                             {item.notification.body}

@@ -3,6 +3,7 @@ import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import { ClockIcon, TrashIcon, XMarkIcon, EyeIcon } from './icons/MaterialIcons';
 import { MaterialVersion, ELibrary } from '../types';
 import { logger } from '../utils/logger';
+import Button from './ui/Button';
 
 interface VersionControlProps {
   material: ELibrary;
@@ -183,27 +184,27 @@ const VersionControl: React.FC<VersionControlProps> = ({
     <div className="version-control">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setShowVersionHistory(!showVersionHistory)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            icon={<ClockIcon className="w-4 h-4" />}
           >
-            <ClockIcon className="w-4 h-4" />
-            <span className="text-sm font-medium">
-              Versi {activeVersion?.version || 'N/A'}
-            </span>
-          </button>
+            Versi {activeVersion?.version || 'N/A'}
+          </Button>
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {versionCount} versi
           </span>
         </div>
-        
-        <button
+
+        <Button
+          variant="info"
+          size="sm"
           onClick={() => setShowCreateVersion(true)}
-          className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/30 transition-colors"
+          icon={<ArrowPathIcon className="w-4 h-4" />}
         >
-          <ArrowPathIcon className="w-4 h-4" />
-          <span className="text-sm font-medium">Versi Baru</span>
-        </button>
+          Versi Baru
+        </Button>
       </div>
 
       {/* Version History */}
@@ -241,32 +242,35 @@ const VersionControl: React.FC<VersionControlProps> = ({
                   </div>
                   
                   <div className="flex items-center gap-1 ml-4">
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => downloadVersion(version)}
-                      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
-                      title="Unduh versi ini"
-                    >
-                      <EyeIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    </button>
-                    
+                      iconOnly
+                      icon={<EyeIcon className="w-4 h-4" />}
+                      aria-label="Unduh versi ini"
+                    />
+
                     {!version.isActive && (
-                      <button
+                      <Button
+                        variant="info"
+                        size="sm"
                         onClick={() => restoreVersion(version)}
-                        className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/20 rounded-lg"
-                        title="Aktifkan kembali versi ini"
-                      >
-                        <ArrowPathIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                      </button>
+                        iconOnly
+                        icon={<ArrowPathIcon className="w-4 h-4" />}
+                        aria-label="Aktifkan kembali versi ini"
+                      />
                     )}
-                    
+
                     {versions.length > 1 && (
-                      <button
+                      <Button
+                        variant="danger"
+                        size="sm"
                         onClick={() => deleteVersion(version.id)}
-                        className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-lg"
-                        title="Hapus versi ini"
-                      >
-                        <TrashIcon className="w-4 h-4 text-red-500" />
-                      </button>
+                        iconOnly
+                        icon={<TrashIcon className="w-4 h-4" />}
+                        aria-label="Hapus versi ini"
+                      />
                     )}
                   </div>
                 </div>
@@ -290,12 +294,14 @@ const VersionControl: React.FC<VersionControlProps> = ({
                     "{material.title}"
                   </p>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowCreateVersion(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-                >
-                  <XMarkIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                </button>
+                  iconOnly
+                  icon={<XMarkIcon className="w-5 h-5" />}
+                  aria-label="Tutup modal"
+                />
               </div>
             </div>
 
@@ -357,19 +363,20 @@ const VersionControl: React.FC<VersionControlProps> = ({
             </div>
 
             <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
-              <button
+              <Button
+                variant="secondary"
                 onClick={() => setShowCreateVersion(false)}
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
                 Batal
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="primary"
                 onClick={createVersion}
-                disabled={!newFile || !versionTitle.trim() || !changeLog.trim() || loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!newFile || !versionTitle.trim() || !changeLog.trim()}
+                isLoading={loading}
               >
                 {loading ? 'Membuat...' : 'Buat Versi'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
