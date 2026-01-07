@@ -253,5 +253,301 @@ Potential improvements to consider:
 
 ---
 
+## BackButton Component
+
+**Location**: `src/components/ui/BackButton.tsx`
+
+A reusable back navigation button component with consistent styling and accessibility support.
+
+### Features
+
+- **3 Variants**: `primary`, `green`, `custom`
+- **Customizable Labels**: Supports custom button text
+- **Accessibility**: Full ARIA support, keyboard navigation, focus management
+- **Icon Integration**: Includes chevron left icon for clear visual indicator
+- **Hover Effects**: Smooth underline and left-slide animation on hover
+- **Dark Mode**: Consistent styling across light and dark themes
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `'Kembali'` | Button text label |
+| `onClick` | `() => void` | Required | Click handler function |
+| `variant` | `BackButtonVariant` | `'primary'` | Color style variant |
+| `className` | `string` | `''` | Additional CSS classes |
+| `ariaLabel` | `string` | Auto-generated | Accessibility label |
+
+### Variants
+
+#### 1. Primary Variant
+
+Default back button with primary color scheme (blue/indigo).
+
+```tsx
+import BackButton from './ui/BackButton';
+
+<BackButton
+  label="Kembali ke Beranda"
+  onClick={() => setCurrentView('home')}
+/>
+```
+
+#### 2. Green Variant
+
+Back button with green color scheme for different visual contexts.
+
+```tsx
+<BackButton
+  label="Kembali ke Beranda"
+  onClick={() => setCurrentView('home')}
+  variant="green"
+/>
+```
+
+#### 3. Custom Variant
+
+Base variant without preset colors, useful for custom styling.
+
+```tsx
+<BackButton
+  label="Custom Label"
+  onClick={() => handleBack()}
+  variant="custom"
+  className="text-purple-600"
+/>
+```
+
+### Custom Label
+
+Override the default "Kembali" label with custom text:
+
+```tsx
+<BackButton
+  label="Back to Dashboard"
+  onClick={() => navigate('/dashboard')}
+/>
+
+<BackButton
+  label="← Kembali"
+  onClick={() => setView('previous')}
+/>
+```
+
+### Accessibility Features
+
+The BackButton component includes comprehensive accessibility support:
+
+1. **ARIA Labels**: Automatically generated `aria-label` with navigation context
+2. **Keyboard Navigation**: Full keyboard support with visible focus ring
+3. **Focus Management**: `focus:ring-2` with `focus:ring-offset-2` for clear focus indication
+4. **Screen Reader Support**: Icon is hidden with `aria-hidden="true"`, label is announced
+
+```tsx
+<BackButton
+  label="Settings"
+  onClick={() => navigate('home')}
+  ariaLabel="Navigate back to home screen"
+/>
+```
+
+### Styling Customization
+
+Add custom classes while preserving default button styling:
+
+```tsx
+<BackButton
+  label="Kembali"
+  onClick={() => goBack()}
+  className="mt-4 mb-8 text-lg"
+/>
+```
+
+### Hover Effects
+
+The component includes smooth hover animations:
+
+- **Underline**: Text underlines on hover
+- **Left Slide**: Button slides slightly left (-4px) on hover
+- **Color Darkening**: Primary color darkens on hover for visual feedback
+
+### Real-World Examples
+
+#### Dashboard Navigation
+
+```tsx
+{currentView === 'profile' && (
+  <div className="bg-white dark:bg-neutral-800 rounded-xl p-6">
+    <div className="mb-6">
+      <BackButton
+        label="Kembali ke Beranda"
+        onClick={() => setCurrentView('home')}
+      />
+    </div>
+    <h2 className="text-2xl font-semibold">Profil Pengguna</h2>
+  </div>
+)}
+```
+
+#### Section Navigation
+
+```tsx
+<div className="animate-fade-in-up">
+  <div className="mb-6">
+    <BackButton
+      label="Kembali ke Beranda"
+      onClick={() => setCurrentView('home')}
+      variant="green"
+    />
+  </div>
+  <ScheduleView />
+</div>
+```
+
+#### Multi-Level Navigation
+
+```tsx
+const BreadcrumbBackButton = ({ level, onBack }: { level: number, onBack: () => void }) => (
+  <BackButton
+    label={level === 1 ? 'Kembali ke Beranda' : 'Kembali ke Daftar'}
+    onClick={onBack}
+    variant={level === 1 ? 'green' : 'primary'}
+  />
+);
+```
+
+### Accessibility Guidelines
+
+1. **Provide descriptive labels** that indicate where navigation leads:
+   ```tsx
+   <BackButton
+     label="Kembali ke Dashboard"
+     onClick={() => navigate('/dashboard')}
+   />
+   ```
+
+2. **Use appropriate variant for context**:
+   - `primary`: Default navigation within main sections
+   - `green`: Navigation from detailed views to main views
+   - `custom`: Special cases requiring custom styling
+
+3. **Wrap with spacing div** for proper layout:
+   ```tsx
+   <div className="mb-6">
+     <BackButton label="Back" onClick={handleBack} />
+   </div>
+   ```
+
+4. **Focus Management**: Component automatically handles:
+   - Visible focus ring (`focus:ring-2 focus:ring-primary-500/50`)
+   - Focus offset in dark mode (`dark:focus:ring-offset-neutral-900`)
+   - Keyboard activation (Enter/Space keys)
+
+### Dark Mode
+
+All variants automatically support dark mode:
+
+- Primary: `text-primary-600` → `dark:text-primary-400`
+- Green: `text-green-600` → `dark:text-green-400`
+- Hover states adapt to dark theme
+
+### Performance Considerations
+
+The BackButton component is optimized using:
+- Functional component with hooks
+- Proper TypeScript typing
+- CSS-only animations and transitions
+- No unnecessary re-renders
+
+### Migration Guide
+
+To migrate existing back button implementations:
+
+**Before:**
+```tsx
+<button
+  onClick={() => setCurrentView('home')}
+  className="mb-6 text-primary-600 dark:text-primary-400 hover:underline font-medium flex items-center gap-2"
+>
+  ← Kembali ke Beranda
+</button>
+```
+
+**After:**
+```tsx
+import BackButton from './ui/BackButton';
+
+<div className="mb-6">
+  <BackButton
+    label="Kembali ke Beranda"
+    onClick={() => setCurrentView('home')}
+  />
+</div>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper ARIA labels
+- ✅ Icon component instead of character `←`
+- ✅ Keyboard navigation support
+- ✅ Hover animations
+- ✅ Reduced code duplication
+
+### Test Coverage
+
+The BackButton component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/BackButton.test.tsx
+```
+
+Test scenarios include:
+- Rendering with default and custom labels
+- All variant rendering (primary, green, custom)
+- Custom className application
+- Click handler invocation
+- ARIA label generation
+- Icon rendering with proper attributes
+- Focus ring visibility
+- Hover effects
+- Keyboard accessibility
+
+### Usage in Application
+
+Currently integrated in:
+- `src/components/ParentDashboard.tsx` (9 instances)
+  - Profile view (primary variant)
+  - Schedule, grades, attendance, library, events, reports, messaging, payments, meetings views (green variant)
+
+**Usage Pattern:**
+
+```tsx
+// For main section navigation
+<BackButton
+  label="Kembali ke Beranda"
+  onClick={() => setCurrentView('home')}
+  variant="primary"
+/>
+
+// For detail view navigation
+<BackButton
+  label="Kembali ke Beranda"
+  onClick={() => setCurrentView('home')}
+  variant="green"
+/>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Loading state variant
+- Disabled state support
+- Icon-only variant for mobile layouts
+- Animation variants (fade, slide)
+- Tooltip integration for accessibility
+
+---
+
 **Last Updated**: 2026-01-07
 **Component Version**: 1.0.0

@@ -24,6 +24,7 @@ import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { validateMultiChildDataIsolation } from '../utils/parentValidation';
 import { usePushNotifications } from '../hooks/usePushNotifications';
+import BackButton from './ui/BackButton';
 
 interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -345,12 +346,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
         {currentView === 'profile' && selectedChild && (
           <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 animate-fade-in-up">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="mb-6 text-primary-600 dark:text-primary-400 hover:underline font-medium flex items-center gap-2"
-            >
-              ← Kembali ke Beranda
-            </button>
+            <div className="mb-6">
+              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} />
+            </div>
             <h2 className="text-2xl font-semibold text-neutral-900 dark:text-white mb-6">Profil Anak</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
@@ -392,108 +390,81 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
         {currentView === 'schedule' && selectedChild && (
           <div className="animate-fade-in-up">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
-            >
-              ← Kembali ke Beranda
-            </button>
+            <div className="mb-6">
+              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+            </div>
             <ParentScheduleView onShowToast={onShowToast} child={selectedChild} />
           </div>
         )}
 
         {currentView === 'grades' && selectedChild && (
           <div className="animate-fade-in-up">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
-            >
-              ← Kembali ke Beranda
-            </button>
+            <div className="mb-6">
+              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+            </div>
             <ParentGradesView onShowToast={onShowToast} child={selectedChild} />
           </div>
         )}
 
         {currentView === 'attendance' && selectedChild && (
           <div className="animate-fade-in-up">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
-            >
-              ← Kembali ke Beranda
-            </button>
+            <div className="mb-6">
+              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+            </div>
             <ParentAttendanceView onShowToast={onShowToast} child={selectedChild} />
           </div>
         )}
 
         {currentView === 'library' && (
           <div className="animate-fade-in-up">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
-            >
-              ← Kembali ke Beranda
-            </button>
+            <div className="mb-6">
+              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+            </div>
             <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />
           </div>
         )}
 
         {currentView === 'events' && (
           <div className="animate-fade-in-up">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
-            >
-              ← Kembali ke Beranda
-            </button>
+            <div className="mb-6">
+              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+            </div>
             <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
           </div>
         )}
 
         {currentView === 'reports' && (
           <div className="animate-fade-in-up">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
-            >
-              ← Kembali ke Beranda
-            </button>
+            <div className="mb-6">
+              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+            </div>
             <ConsolidatedReportsView onShowToast={onShowToast} children={children} />
           </div>
         )}
 
         {currentView === 'messaging' && (
           <div className="animate-fade-in-up">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
-            >
-              ← Kembali ke Beranda
-            </button>
+            <div className="mb-6">
+              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+            </div>
             <ParentMessagingView onShowToast={onShowToast} children={children} />
           </div>
         )}
 
         {currentView === 'payments' && (
           <div className="animate-fade-in-up">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
-            >
-              ← Kembali ke Beranda
-            </button>
+            <div className="mb-6">
+              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+            </div>
             <ParentPaymentsView onShowToast={onShowToast} children={children} />
           </div>
         )}
 
         {currentView === 'meetings' && (
           <div className="animate-fade-in-up">
-            <button
-              onClick={() => setCurrentView('home')}
-              className="mb-6 text-green-600 dark:text-green-400 hover:underline font-medium flex items-center gap-2"
-            >
-              ← Kembali ke Beranda
-            </button>
+            <div className="mb-6">
+              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+            </div>
             <ParentMeetingsView onShowToast={onShowToast} children={children} />
           </div>
         )}

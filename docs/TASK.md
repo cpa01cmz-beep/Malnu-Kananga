@@ -82,6 +82,7 @@
 - [x] Complete color system migration (gray → neutral)
 - [x] Create reusable Textarea component with auto-resize (2026-01-07)
 - [x] Create reusable Modal component with focus trap and accessibility (2026-01-07)
+- [x] Extract repeated BackButton pattern into reusable component with accessibility (2026-01-07)
 - [ ] Achieve 80% test coverage
 - [ ] Complete API documentation
 - [ ] Optimize bundle size to <500KB
