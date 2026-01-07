@@ -65,8 +65,8 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 212 TypeScript/TSX files
-- **Test Files**: 174 test files (including test files in `__tests__/` directories)
+- **Total Source Files**: 187 TypeScript/TSX files (excluding tests)
+- **Test Files**: 30 test files (including test files in `__tests__/` directories)
 - **Documentation Files**: 16 (in /docs directory)
 - **Total Markdown Files**: 29 (including root-level docs)
 - **API Endpoints Documented**: 150+
@@ -180,12 +180,12 @@ This index maintains relationships between documents:
 ## Recent Changes (v2.1.0 - 2026-01-07)
 
 - **Repository Cleanup (2026-01-07 - Current)**:
-    - Fixed documentation metrics to reflect actual file counts: 212 total source files, 174 test files, 16 documentation files, 29 total markdown files
+    - Fixed documentation metrics to reflect actual file counts: 187 total source files, 30 test files, 16 documentation files, 29 total markdown files
     - Verified all documentation aligns with codebase structure
     - Confirmed deployment guides serve distinct purposes (DEPLOYMENT_GUIDE.md for procedures, CLOUDFLARE_DEPLOYMENT.md for status)
     - Validated .gitignore is comprehensive and appropriate
     - All documentation files serve distinct purposes - no redundancy found
-    - TASK.md verified as concise and actionable (118 lines, well-structured)
+    - TASK.md verified as concise and actionable (120 lines, well-structured)
 
 ---
 
