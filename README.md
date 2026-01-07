@@ -39,7 +39,7 @@ npm run build
 
 ## Tech Stack
 
-- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS
 - **Backend**: Cloudflare Workers (Serverless)
 - **Database**: Cloudflare D1 (SQLite)
 - **Storage**: Cloudflare R2 (S3-compatible)

@@ -75,7 +75,7 @@ src/
 
 ### 2.2 Teknologi Stack
 
-**Frontend**: React 18, TypeScript, Vite, Tailwind CSS
+**Frontend**: React 19, TypeScript, Vite, Tailwind CSS
 **Backend**: Cloudflare Workers (Serverless)
 **Database**: Cloudflare D1 (SQLite-based)
 **Search/AI**: Cloudflare Vectorize + Workers AI

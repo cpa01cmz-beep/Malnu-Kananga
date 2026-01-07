@@ -8,7 +8,7 @@ PROJECT CONTEXT (MANDATORY)
 Before executing the main prompt, you MUST:
 
 1. READ AGENTS.md in project root to understand:
-   - Project overview and tech stack (React 18, TypeScript, Vite, Tailwind CSS 4, Cloudflare Workers, D1, R2, Gemini AI)
+   - Project overview and tech stack (React 19, TypeScript, Vite, Tailwind CSS 4, Cloudflare Workers, D1, R2, Gemini AI)
    - Project structure (components/, services/, hooks/, types/, utils/)
    - Key services: apiService.ts, authService.ts, geminiService.ts, speechRecognitionService.ts, speechSynthesisService.ts
    - Storage keys convention: use STORAGE_KEYS from constants.ts (malnu_ prefix)

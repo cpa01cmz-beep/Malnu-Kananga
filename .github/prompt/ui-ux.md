@@ -8,7 +8,7 @@ PROJECT CONTEXT (MANDATORY)
 Before executing the main prompt, you MUST:
 
 1. READ AGENTS.md in project root to understand:
-   - Project tech stack: React 18, TypeScript, Vite, Tailwind CSS 4
+   - Project tech stack: React 19, TypeScript, Vite, Tailwind CSS 4
    - Component location: src/components/
    - Styling convention: Use Tailwind CSS utility classes, avoid inline styles
    - Testing: React Testing Library, Vitest
