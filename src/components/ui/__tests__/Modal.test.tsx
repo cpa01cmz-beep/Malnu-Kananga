@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Modal from '../Modal';
 
@@ -359,7 +359,7 @@ describe('Modal', () => {
 
     it('handles rapid open/close', async () => {
       const handleClose = vi.fn();
-      const user = userEvent.setup();
+      const _user = userEvent.setup();
       const { rerender } = render(<Modal isOpen={true} onClose={handleClose}>Content</Modal>);
       
       expect(screen.getByText('Content')).toBeInTheDocument();

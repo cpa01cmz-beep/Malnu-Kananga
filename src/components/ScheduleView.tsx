@@ -5,7 +5,7 @@ import { Schedule, Subject, ParentMeeting } from '../types';
 import { logger } from '../utils/logger';
 import CalendarView from './CalendarView';
 import Button from './ui/Button';
-import LoadingSpinner from './ui/LoadingSpinner';
+import { TableSkeleton } from './ui/Skeleton';
 
 interface ScheduleItem {
   id: string;
@@ -132,9 +132,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Jadwal Pelajaran</h2>
           </div>
         </div>
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Memuat jadwal..." color="success" />
-        </div>
+        <TableSkeleton rows={8} cols={5} />
       </div>
     );
   }
