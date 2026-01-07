@@ -7,7 +7,7 @@
 MA Malnu Kananga is a modern school management system with AI integration, built with React + TypeScript + Vite.
 
 ### Tech Stack
-- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS 4
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS 4
 - **Backend**: Cloudflare Workers (Serverless)
 - **Database**: Cloudflare D1 (SQLite)
 - **Storage**: Cloudflare R2 (S3-compatible)

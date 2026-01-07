@@ -20,7 +20,7 @@ Before executing the main prompt, you MUST:
 
 1. READ AGENTS.md in project root to understand:
    - Project overview: MA Malnu Kananga - School management system with AI integration
-   - Tech stack: React 18, TypeScript, Vite, Tailwind CSS 4, Cloudflare Workers, D1, R2, Gemini AI
+   - Tech stack: React 19, TypeScript, Vite, Tailwind CSS 4, Cloudflare Workers, D1, R2, Gemini AI
    - Project structure: src/components/, src/services/, src/hooks/, src/types/, src/utils/
    - Key services: apiService.ts (JWT auth), authService.ts, geminiService.ts, speechRecognitionService.ts, speechSynthesisService.ts, pushNotificationService.ts, ocrService.ts, permissionService.ts
    - Storage keys: Use STORAGE_KEYS from src/constants.ts (all use malnu_ prefix)

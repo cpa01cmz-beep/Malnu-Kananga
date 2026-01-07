@@ -13,7 +13,7 @@ Before executing main prompt, you MUST:
 1. READ AGENTS.md in project root to understand:
    - Project: MA Malnu Kananga - School management system
    - Backend: Cloudflare Workers (serverless), D1 (SQLite), R2 (S3-compatible storage)
-   - Frontend: React 18, TypeScript, Vite, deployed to Cloudflare Pages
+   - Frontend: React 19, TypeScript, Vite, deployed to Cloudflare Pages
    - Deployment commands: npm run dev:backend (local), npm run deploy:backend (production)
    - Backend entry: worker.js (Cloudflare Worker)
    - Environment variables: VITE_API_BASE_URL, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN, GEMINI_API_KEY
