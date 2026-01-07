@@ -6,7 +6,7 @@ import LoginModal from './components/LoginModal';
 import ChatWindow from './components/ChatWindow';
 import Toast, { ToastType } from './components/Toast';
 import ThemeSelector from './components/ThemeSelector';
-import SkipLink from './components/ui/SkipLink';
+import SkipLink, { SkipTarget } from './components/ui/SkipLink';
 import { logger } from './utils/logger';
 import { ThemeManager } from './services/themeManager';
 
@@ -242,7 +242,13 @@ const App: React.FC = () => {
   return (
     <NotificationProvider>
       <div className="bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950 w-full min-h-screen font-sans text-neutral-800 dark:text-neutral-200 transition-colors duration-300 antialiased">
-      <SkipLink />
+      <SkipLink 
+        targets={[
+          { id: 'main-nav', label: 'Langsung ke navigasi utama' },
+          { id: 'main-content', label: 'Langsung ke konten utama' },
+          { id: 'kontak', label: 'Langsung ke footer' },
+        ] as SkipTarget[]} 
+      />
       <Header
         onLoginClick={() => setIsLoginOpen(true)}
         onChatClick={() => setIsChatOpen(true)}

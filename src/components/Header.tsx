@@ -104,7 +104,7 @@ const Header: React.FC<HeaderProps> = ({
     `;
 
     return (
-        <header className={headerClasses}>
+        <header id="main-nav" className={headerClasses}>
             <div className={navContainerClasses}>
                  <div className={`${innerNavClasses} ${isScrolled ? 'max-w-7xl mx-auto px-4' : ''}`}>
                         <div className="flex items-center gap-3">
