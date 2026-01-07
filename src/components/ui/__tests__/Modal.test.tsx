@@ -288,6 +288,10 @@ describe('Modal', () => {
       const firstButton = screen.getByRole('button', { name: 'First Button' });
       const secondButton = screen.getByRole('button', { name: 'Second Button' });
       
+      // Check that focus is initially in the modal (close button is auto-focused)
+      const closeButton = screen.getByRole('button', { name: 'Close modal' });
+      expect(closeButton).toHaveFocus();
+      
       await user.tab();
       expect(firstButton).toHaveFocus();
       
@@ -295,7 +299,7 @@ describe('Modal', () => {
       expect(secondButton).toHaveFocus();
       
       await user.tab();
-      expect(firstButton).toHaveFocus();
+      expect(closeButton).toHaveFocus(); // Focus should cycle back to close button
     });
 
     it('closes modal when escape is pressed', async () => {
