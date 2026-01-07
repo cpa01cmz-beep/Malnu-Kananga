@@ -2,6 +2,7 @@
 import React from 'react';
 import { FeaturedProgram } from '../types';
 import ImageWithFallback from './ImageWithFallback';
+import Card from './ui/Card';
 
 interface ProgramCardProps {
   program: FeaturedProgram;
@@ -9,9 +10,10 @@ interface ProgramCardProps {
 
 const ProgramCard: React.FC<ProgramCardProps> = ({ program }) => {
   return (
-    <article
-      className="bg-white dark:bg-neutral-800 rounded-xl shadow-card hover:shadow-float border border-neutral-200 dark:border-neutral-700 transition-all duration-300 ease-out overflow-hidden h-full flex flex-col group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 hover:-translate-y-1 hover:scale-[1.01]"
-      tabIndex={0}
+    <Card
+      variant="hover"
+      className="overflow-hidden h-full flex flex-col group"
+      padding="none"
     >
       <div className="relative overflow-hidden aspect-video bg-neutral-100 dark:bg-neutral-700">
         <ImageWithFallback
@@ -25,7 +27,7 @@ const ProgramCard: React.FC<ProgramCardProps> = ({ program }) => {
         <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-4 text-neutral-900 dark:text-white leading-snug group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300 line-clamp-2">{program.title}</h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed flex-grow line-clamp-3">{program.description}</p>
       </div>
-    </article>
+    </Card>
   );
 };
 
