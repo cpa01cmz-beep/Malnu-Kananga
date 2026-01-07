@@ -19,7 +19,7 @@ export interface CardProps {
   'aria-describedby'?: string;
 }
 
-interface InteractiveCardProps extends CardProps, Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'variant'> {
+interface InteractiveCardProps extends Omit<CardProps, 'onClick'>, Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'variant' | 'children'> {
   variant: 'interactive';
 }
 

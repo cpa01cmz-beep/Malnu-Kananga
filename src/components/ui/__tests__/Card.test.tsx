@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Card from './Card';
+import Card from '../Card';
 
 describe('Card', () => {
   describe('Rendering', () => {
@@ -216,7 +216,7 @@ describe('Card', () => {
 
   describe('Edge Cases', () => {
     it('handles empty children', () => {
-      render(<Card />);
+      render(<Card>{null}</Card>);
       const card = document.querySelector('.rounded-xl');
       expect(card).toBeInTheDocument();
     });
