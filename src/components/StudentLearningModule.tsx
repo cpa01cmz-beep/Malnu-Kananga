@@ -201,14 +201,15 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {topics.map(topic => (
-                        <div
+                        <button
                             key={topic.id}
                             onClick={() => setSelectedTopic(topic)}
-                            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-md cursor-pointer"
+                            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-md cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-all duration-200 ease-out hover:-translate-y-0.5 active:scale-95"
+                            aria-pressed={selectedTopic?.id === topic.id}
                         >
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{topic.title}</h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400">{topic.description}</p>
-                        </div>
+                        </button>
                     ))}
                 </div>
 
