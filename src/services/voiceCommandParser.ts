@@ -20,6 +20,7 @@ class VoiceCommandParser {
   }
 
   private initializeCommands(): void {
+    // Common commands
     this.commands.set('open_settings', {
       id: 'open_settings',
       patterns: [...VOICE_COMMANDS.OPEN_SETTINGS],
@@ -80,6 +81,151 @@ class VoiceCommandParser {
       id: 'toggle_voice',
       patterns: [...VOICE_COMMANDS.TOGGLE_VOICE],
       action: 'TOGGLE_VOICE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    // Common dashboard commands
+    this.commands.set('go_home', {
+      id: 'go_home',
+      patterns: [...VOICE_COMMANDS.GO_HOME],
+      action: 'GO_HOME',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('logout', {
+      id: 'logout',
+      patterns: [...VOICE_COMMANDS.LOGOUT],
+      action: 'LOGOUT',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('help', {
+      id: 'help',
+      patterns: [...VOICE_COMMANDS.HELP],
+      action: 'HELP',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    // Admin dashboard commands
+    this.commands.set('show_ppdb', {
+      id: 'show_ppdb',
+      patterns: [...VOICE_COMMANDS.SHOW_PPDB],
+      action: 'SHOW_PPDB',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_grades_overview', {
+      id: 'view_grades_overview',
+      patterns: [...VOICE_COMMANDS.VIEW_GRADES_OVERVIEW],
+      action: 'VIEW_GRADES_OVERVIEW',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('open_library', {
+      id: 'open_library',
+      patterns: [...VOICE_COMMANDS.OPEN_LIBRARY],
+      action: 'OPEN_LIBRARY',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('go_to_calendar', {
+      id: 'go_to_calendar',
+      patterns: [...VOICE_COMMANDS.GO_TO_CALENDAR],
+      action: 'GO_TO_CALENDAR',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('show_statistics', {
+      id: 'show_statistics',
+      patterns: [...VOICE_COMMANDS.SHOW_STATISTICS],
+      action: 'SHOW_STATISTICS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    // Teacher dashboard commands
+    this.commands.set('show_my_classes', {
+      id: 'show_my_classes',
+      patterns: [...VOICE_COMMANDS.SHOW_MY_CLASSES],
+      action: 'SHOW_MY_CLASSES',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('open_grading', {
+      id: 'open_grading',
+      patterns: [...VOICE_COMMANDS.OPEN_GRADING],
+      action: 'OPEN_GRADING',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_attendance', {
+      id: 'view_attendance',
+      patterns: [...VOICE_COMMANDS.VIEW_ATTENDANCE],
+      action: 'VIEW_ATTENDANCE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('create_announcement', {
+      id: 'create_announcement',
+      patterns: [...VOICE_COMMANDS.CREATE_ANNOUNCEMENT],
+      action: 'CREATE_ANNOUNCEMENT',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_schedule', {
+      id: 'view_schedule',
+      patterns: [...VOICE_COMMANDS.VIEW_SCHEDULE],
+      action: 'VIEW_SCHEDULE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    // Student dashboard commands
+    this.commands.set('show_my_grades', {
+      id: 'show_my_grades',
+      patterns: [...VOICE_COMMANDS.SHOW_MY_GRADES],
+      action: 'SHOW_MY_GRADES',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('check_attendance', {
+      id: 'check_attendance',
+      patterns: [...VOICE_COMMANDS.CHECK_ATTENDANCE],
+      action: 'CHECK_ATTENDANCE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_insights', {
+      id: 'view_insights',
+      patterns: [...VOICE_COMMANDS.VIEW_INSIGHTS],
+      action: 'VIEW_INSIGHTS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    // Parent dashboard commands
+    this.commands.set('view_child_grades', {
+      id: 'view_child_grades',
+      patterns: [...VOICE_COMMANDS.VIEW_CHILD_GRADES],
+      action: 'VIEW_CHILD_GRADES',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_child_attendance', {
+      id: 'view_child_attendance',
+      patterns: [...VOICE_COMMANDS.VIEW_CHILD_ATTENDANCE],
+      action: 'VIEW_CHILD_ATTENDANCE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_child_schedule', {
+      id: 'view_child_schedule',
+      patterns: [...VOICE_COMMANDS.VIEW_CHILD_SCHEDULE],
+      action: 'VIEW_CHILD_SCHEDULE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('see_notifications', {
+      id: 'see_notifications',
+      patterns: [...VOICE_COMMANDS.SEE_NOTIFICATIONS],
+      action: 'SEE_NOTIFICATIONS',
       language: VoiceLanguage.Indonesian,
     });
 

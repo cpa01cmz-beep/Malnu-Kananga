@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SparklesIcon } from './icons/SparklesIcon';
 import { UsersIcon } from './icons/UsersIcon';
 
@@ -20,6 +20,10 @@ import { getGradientClass } from '../config/gradients';
 import ErrorMessage from './ui/ErrorMessage';
 import DashboardActionCard from './ui/DashboardActionCard';
 import { CardSkeleton } from './ui/Skeleton';
+import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
+import type { VoiceCommand } from '../types';
+import VoiceInputButton from './VoiceInputButton';
+import VoiceCommandsHelp from './VoiceCommandsHelp';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -39,6 +43,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<{ lastSync?: string; stats?: Record<string, unknown> } | null>(null);
+  const [showVoiceHelp, setShowVoiceHelp] = useState(false);
 
   // Initialize push notifications
   const { 
@@ -127,6 +132,53 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
     initializeNotifications();
   }, [requestPermission, showNotification, createNotification]);
 
+  // Initialize voice commands
+  const {
+    isSupported: voiceSupported,
+    handleVoiceCommand,
+    getAvailableCommands,
+  } = useDashboardVoiceCommands({
+    userRole: 'admin',
+    onNavigate: (view: string) => {
+      const validViews: DashboardView[] = ['home', 'ppdb', 'stats'];
+      if (validViews.includes(view as DashboardView)) {
+        setCurrentView(view as DashboardView);
+        onShowToast(`Navigasi ke ${view}`, 'success');
+      }
+    },
+    onAction: (action: string) => {
+      switch (action) {
+        case 'open_library':
+          onOpenEditor();
+          onShowToast('Membuka perpustakaan', 'success');
+          break;
+        case 'open_calendar':
+          onShowToast('Kalender akan segera tersedia', 'info');
+          break;
+        default:
+          onShowToast(`Menjalankan: ${action}`, 'info');
+      }
+    },
+    onShowHelp: () => {
+      setShowVoiceHelp(true);
+    },
+    onLogout: () => {
+      onShowToast('Keluar dari sistem...', 'info');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1500);
+    },
+  });
+
+  const handleVoiceCommandCallback = useCallback((command: VoiceCommand) => {
+    const success = handleVoiceCommand(command);
+    if (success) {
+      logger.info('Voice command executed:', command.action);
+    } else {
+      onShowToast('Perintah tidak dikenali atau tidak tersedia', 'error');
+    }
+  }, [handleVoiceCommand, onShowToast]);
+
   // Notify admin of new PPDB registrations
   useEffect(() => {
     if (currentView === 'home') {
@@ -205,6 +257,38 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         )}
                     </p>
                 </div>
+
+                {/* Voice Commands Section */}
+                {voiceSupported && (
+                    <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up`}>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
+                                    Perintah Suara
+                                </h2>
+                                <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                                    Gunakan suara untuk navigasi cepat dashboard
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setShowVoiceHelp(true)}
+                                    className="px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                                >
+                                    Bantuan
+                                </button>
+                                <VoiceInputButton
+                                    onTranscript={(transcript) => {
+                                      onShowToast(`Transkripsi: ${transcript}`, 'info');
+                                    }}
+                                    onCommand={handleVoiceCommandCallback}
+                                    onError={(errorMsg) => onShowToast(errorMsg, 'error')}
+                                    className="flex-shrink-0"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
                     {checkPermission('content.update') && (
@@ -350,6 +434,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                 <AICacheManager />
             </div>
         )}
+
+        {/* Voice Commands Help Modal */}
+        <VoiceCommandsHelp
+          isOpen={showVoiceHelp}
+          onClose={() => setShowVoiceHelp(false)}
+          userRole="admin"
+          availableCommands={getAvailableCommands()}
+        />
 
       </div>
     </main>

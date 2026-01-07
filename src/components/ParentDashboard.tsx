@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import BuildingLibraryIcon from './icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
@@ -26,6 +26,10 @@ import { validateMultiChildDataIsolation } from '../utils/parentValidation';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import BackButton from './ui/BackButton';
 import DashboardActionCard from './ui/DashboardActionCard';
+import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
+import type { VoiceCommand } from '../types';
+import VoiceInputButton from './VoiceInputButton';
+import VoiceCommandsHelp from './VoiceCommandsHelp';
 
 interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -39,6 +43,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [showConsolidatedView, setShowConsolidatedView] = useState(false);
   const [children, setChildren] = useState<ParentChild[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showVoiceHelp, setShowVoiceHelp] = useState(false);
   const networkStatus = useNetworkStatus();
 
   // Initialize push notifications
@@ -107,6 +112,61 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
     initializeNotifications();
   }, [requestPermission, showNotification, createNotification]);
+
+  // Initialize voice commands
+  const {
+    isSupported: voiceSupported,
+    handleVoiceCommand,
+    getAvailableCommands,
+  } = useDashboardVoiceCommands({
+    userRole: 'parent',
+    onNavigate: (view: string) => {
+      const validViews: PortalView[] = ['profile', 'schedule', 'grades', 'attendance', 'events', 'messaging', 'payments', 'meetings', 'reports'];
+      if (validViews.includes(view as PortalView)) {
+        setCurrentView(view as PortalView);
+        onShowToast(`Navigasi ke ${view}`, 'success');
+      }
+    },
+    onAction: (action: string) => {
+      switch (action) {
+        case 'view_child_grades':
+          setCurrentView('grades');
+          onShowToast('Menampilkan nilai anak', 'success');
+          break;
+        case 'view_child_attendance':
+          setCurrentView('attendance');
+          onShowToast('Menampilkan absensi anak', 'success');
+          break;
+        case 'view_child_schedule':
+          setCurrentView('schedule');
+          onShowToast('Menampilkan jadwal anak', 'success');
+          break;
+        case 'see_notifications':
+          onShowToast('Menampilkan notifikasi', 'info');
+          break;
+        default:
+          onShowToast(`Menjalankan: ${action}`, 'info');
+      }
+    },
+    onShowHelp: () => {
+      setShowVoiceHelp(true);
+    },
+    onLogout: () => {
+      onShowToast('Keluar dari sistem...', 'info');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1500);
+    },
+  });
+
+  const handleVoiceCommandCallback = useCallback((command: VoiceCommand) => {
+    const success = handleVoiceCommand(command);
+    if (success) {
+      logger.info('Voice command executed:', command.action);
+    } else {
+      onShowToast('Perintah tidak dikenali atau tidak tersedia', 'error');
+    }
+  }, [handleVoiceCommand, onShowToast]);
 
   const handleSelectChild = (child: ParentChild) => {
     setSelectedChild(child);
@@ -312,6 +372,38 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
               </div>
             )}
 
+            {/* Voice Commands Section */}
+            {voiceSupported && (
+                <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
+                                Perintah Suara
+                            </h2>
+                            <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                                Gunakan suara untuk navigasi cepat portal
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setShowVoiceHelp(true)}
+                                className="px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                            >
+                                Bantuan
+                            </button>
+                            <VoiceInputButton
+                                onTranscript={(transcript) => {
+                                  onShowToast(`Transkripsi: ${transcript}`, 'info');
+                                }}
+                                onCommand={handleVoiceCommandCallback}
+                                onError={(errorMsg) => onShowToast(errorMsg, 'error')}
+                                className="flex-shrink-0"
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Menu Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {menuItems.map((item, index) => (
@@ -456,6 +548,15 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             <ParentMeetingsView onShowToast={onShowToast} children={children} />
           </div>
         )}
+
+        {/* Voice Commands Help Modal */}
+        <VoiceCommandsHelp
+          isOpen={showVoiceHelp}
+          onClose={() => setShowVoiceHelp(false)}
+          userRole="parent"
+          availableCommands={getAvailableCommands()}
+        />
+
       </div>
     </main>
   );

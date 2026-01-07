@@ -19,6 +19,10 @@ import Card from './ui/Card';
 import DashboardActionCard from './ui/DashboardActionCard';
 import ErrorMessage from './ui/ErrorMessage';
 import { CardSkeleton } from './ui/Skeleton';
+import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
+import type { VoiceCommand } from '../types';
+import VoiceInputButton from './VoiceInputButton';
+import VoiceCommandsHelp from './VoiceCommandsHelp';
 
 interface TeacherDashboardProps {
     onShowToast?: (msg: string, type: ToastType) => void;
@@ -32,6 +36,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<{ lastSync?: string } | null>(null);
+  const [showVoiceHelp, setShowVoiceHelp] = useState(false);
 
   // Initialize push notifications
   const { 
@@ -123,6 +128,56 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     initializeNotifications();
   }, [requestPermission, showNotification, createNotification]);
 
+  // Initialize voice commands
+  const {
+    isSupported: voiceSupported,
+    handleVoiceCommand,
+    getAvailableCommands,
+  } = useDashboardVoiceCommands({
+    userRole: 'teacher',
+    extraRole,
+    onNavigate: (view: string) => {
+      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory'];
+      if (validViews.includes(view as ViewState)) {
+        setCurrentView(view as ViewState);
+        handleToast(`Navigasi ke ${view}`, 'success');
+      }
+    },
+    onAction: (action: string) => {
+      switch (action) {
+        case 'view_attendance':
+          handleToast('Fitur absensi akan segera tersedia', 'info');
+          break;
+        case 'create_announcement':
+          handleToast('Fitur pengumuman akan segera tersedia', 'info');
+          break;
+        case 'view_schedule':
+          handleToast('Jadwal akan ditampilkan', 'info');
+          break;
+        default:
+          handleToast(`Menjalankan: ${action}`, 'info');
+      }
+    },
+    onShowHelp: () => {
+      setShowVoiceHelp(true);
+    },
+    onLogout: () => {
+      handleToast('Keluar dari sistem...', 'info');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1500);
+    },
+  });
+
+  const handleVoiceCommandCallback = useCallback((command: VoiceCommand) => {
+    const success = handleVoiceCommand(command);
+    if (success) {
+      logger.info('Voice command executed:', command.action);
+    } else {
+      handleToast('Perintah tidak dikenali atau tidak tersedia', 'error');
+    }
+  }, [handleVoiceCommand, handleToast]);
+
   // Check permissions for teacher role with extra role
   const checkPermission = (permission: string) => {
     const result = permissionService.hasPermission('teacher' as UserRole, extraRole, permission);
@@ -180,6 +235,38 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         )}
                     </p>
                 </Card>
+
+                {/* Voice Commands Section */}
+                {voiceSupported && (
+                    <Card padding="lg" className={`mb-8 animate-fade-in-up`}>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
+                                    Perintah Suara
+                                </h2>
+                                <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                                    Gunakan suara untuk navigasi cepat dashboard
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setShowVoiceHelp(true)}
+                                    className="px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                                >
+                                    Bantuan
+                                </button>
+                                <VoiceInputButton
+                                    onTranscript={(transcript) => {
+                                      handleToast(`Transkripsi: ${transcript}`, 'info');
+                                    }}
+                                    onCommand={handleVoiceCommandCallback}
+                                    onError={(errorMsg) => handleToast(errorMsg, 'error')}
+                                    className="flex-shrink-0"
+                                />
+                            </div>
+                        </div>
+                    </Card>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
                     {checkPermission('academic.classes') && (
@@ -247,6 +334,14 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'class' && <ClassManagement onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'upload' && <MaterialUpload onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'inventory' && <SchoolInventory onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
+
+        {/* Voice Commands Help Modal */}
+        <VoiceCommandsHelp
+          isOpen={showVoiceHelp}
+          onClose={() => setShowVoiceHelp(false)}
+          userRole="teacher"
+          availableCommands={getAvailableCommands()}
+        />
 
       </div>
     </main>
