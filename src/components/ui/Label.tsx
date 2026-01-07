@@ -1,8 +1,8 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, type LabelHTMLAttributes } from 'react';
 
 export type LabelSize = 'sm' | 'md' | 'lg';
 
-interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   htmlFor: string;
   required?: boolean;
   helperText?: string;
@@ -29,21 +29,21 @@ const Label = forwardRef<HTMLLabelElement, LabelProps>(({
     font-semibold
     text-neutral-700 dark:text-neutral-300
     block
-    ${className}
-  `.replace(/\s+/g, ' ').trim();
+  `;
 
   return (
-    <>
-      <label ref={ref} htmlFor={htmlFor} className={labelClasses} {...props}>
+    <div className="flex flex-col gap-1">
+      <label
+        ref={ref}
+        htmlFor={htmlFor}
+        className={`${labelClasses} ${className}`}
+        {...props}
+      >
         {children}
-        {required && <span className="text-red-500 ml-1" aria-label="required">*</span>}
+        {required && <span className="text-red-500 ml-1">*</span>}
       </label>
-      {helperText && (
-        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-          {helperText}
-        </p>
-      )}
-    </>
+      {helperText && <span className="text-xs text-neutral-500 dark:text-neutral-400">{helperText}</span>}
+    </div>
   );
 });
 

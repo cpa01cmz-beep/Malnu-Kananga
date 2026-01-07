@@ -1,8 +1,8 @@
 # API Reference
 
-**Created**: 2026-01-05
+ **Created**: 2026-01-05
 **Last Updated**: 2026-01-07
-**Version**: 3.0.0
+**Version**: 2.1.0
 **Status**: Active
 
 ## Overview

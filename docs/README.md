@@ -64,14 +64,14 @@ These files are operational instructions for AI agents and should not be conside
 
 ---
 
-## Documentation Metrics
-- **Total Source Files**: 172 TypeScript/TSX files in src/ (162 non-test + 10 test files)
-- **Test Files**: 10 test files
-- **Documentation Files**: 13 (in /docs directory)
-- **API Endpoints Documented**: 150+
-- **Code Examples**: 20+
-- **Troubleshooting Scenarios**: 25+
-- **Architecture Diagrams**: 1+
+ ## Documentation Metrics
+ - **Total Source Files**: 178 TypeScript/TSX files in src/ (165 non-test + 13 test files)
+ - **Test Files**: 13 test files
+ - **Documentation Files**: 13 (in /docs directory)
+ - **API Endpoints Documented**: 150+
+ - **Code Examples**: 20+
+ - **Troubleshooting Scenarios**: 25+
+ - **Architecture Diagrams**: 1+
 
 ### Coverage Areas
 - ✅ **Frontend Documentation** - React components, state management

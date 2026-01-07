@@ -56,6 +56,6 @@ describe('Label Component', () => {
   it('has correct default styling classes', () => {
     render(<Label htmlFor="test">Default Label</Label>);
     const label = screen.getByText('Default Label');
-    expect(label).toHaveClass('font-semibold', 'text-neutral-700', 'dark:text-neutral-300', 'block');
+    expect(label).toHaveClass('text-sm', 'font-semibold', 'text-neutral-700', 'dark:text-neutral-300', 'block');
   });
 });

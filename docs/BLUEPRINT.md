@@ -52,26 +52,30 @@ graph TD
 
 ### 2.2 Struktur Frontend
 
-```
-src/
-├── components/          # React UI components
-│   ├── admin/         # Admin-specific components
-│   ├── icons/         # Icon components
-│   ├── sections/      # Page sections
-│   └── ui/           # Reusable UI components
-├── config/             # Configuration files (permissions, notification templates)
-├── contexts/           # React contexts
-├── constants.ts        # Centralized constants (STORAGE_KEYS)
-├── data/              # Default data and static resources
-├── hooks/             # Custom React hooks (useVoiceRecognition, useVoiceSynthesis)
-├── services/          # API and business logic services
-├── tests/             # Integration tests
-├── types/             # TypeScript type definitions
-├── utils/             # Utility functions and helpers
-├── App.tsx            # Main application component
-├── config.ts          # Main configuration
-└── index.tsx          # Entry point
-```
+ ```
+ src/
+ ├── components/          # React UI components
+ │   ├── admin/         # Admin-specific components
+ │   ├── icons/         # Icon components
+ │   ├── sections/      # Page sections
+ │   ├── ui/           # Reusable UI components
+ │   └── __tests__/     # Component tests
+ ├── config/             # Configuration files (permissions, notification templates)
+ ├── contexts/           # React contexts
+ ├── constants.ts        # Centralized constants (STORAGE_KEYS)
+ ├── data/              # Default data and static resources
+ ├── hooks/             # Custom React hooks (useVoiceRecognition, useVoiceSynthesis)
+ ├── services/          # API and business logic services
+ │   └── __tests__/     # Service tests
+ ├── tests/             # Integration tests
+ ├── types/             # TypeScript type definitions
+ ├── utils/             # Utility functions and helpers
+ │   └── __tests__/     # Utility tests
+ ├── vite-env.d.ts       # Vite type definitions
+ ├── App.tsx            # Main application component
+ ├── config.ts          # Main configuration
+ └── index.tsx          # Entry point
+ ```
 
 ### 2.2 Teknologi Stack
 

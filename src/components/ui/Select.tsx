@@ -1,9 +1,9 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, type SelectHTMLAttributes } from 'react';
 
 export type SelectSize = 'sm' | 'md' | 'lg';
 export type SelectState = 'default' | 'error' | 'success';
 
-interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
   label?: string;
   helperText?: string;
   errorText?: string;

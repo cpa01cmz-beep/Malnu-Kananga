@@ -107,16 +107,17 @@ jspm_packages/
 # TernJS port file
 .tern-port
 
-# Cloudflare
-.wrangler/
+ # Cloudflare
+ .wrangler/
+ .wrangler-state/
+ .wrangler/metadata/
 
-# Temporary files
-*.tmp
-*.temp
+ # Temporary files
+ *.tmp
 
-# CI/CD generated files
-ci-context.txt
-docs/reports/
+ # CI/CD generated files
+ ci-context.txt
+ docs/reports/
 
 # OpenCode
 .opencode/node_modules/
@@ -127,10 +128,9 @@ test-results/
 .vitest/
 coverage/
 
-# System files
-*.bak
-*.swp
-*~.nib
-.local/
-Thumbs.db
-Desktop.ini
+ # System files
+ *.bak
+ *.swp
+ .local/
+ Thumbs.db
+ Desktop.ini
