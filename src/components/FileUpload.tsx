@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import { TrashIcon } from './icons/TrashIcon';
 import { CloseIcon } from './icons/CloseIcon';
+import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { fileStorageAPI, FileUploadResponse } from '../services/apiService';
 import { logger } from '../utils/logger';
+import Button from './ui/Button';
 
 interface UploadedFile {
   id: string;
@@ -265,18 +267,17 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 </span>
               </div>
             )}
-            <button
-              type="button"
+            <Button
+              variant="danger"
+              size="sm"
               onClick={(e) => {
                 e.stopPropagation();
                 handleCancelUpload();
               }}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/30 transition-colors text-sm font-semibold"
-              aria-label="Cancel upload"
+              icon={<CloseIcon />}
             >
-              <CloseIcon />
               Cancel Upload
-            </button>
+            </Button>
           </div>
         ) : (
           <>
@@ -319,29 +320,24 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button
+                <Button
+                  variant="success"
+                  size="sm"
                   onClick={() => handleDownload(file.key)}
                   disabled={disabled}
-                  className="p-2 text-neutral-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Download"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                </button>
-                <button
+                  iconOnly
+                  icon={<ArrowDownTrayIcon className="w-4 h-4" />}
+                  aria-label="Download file"
+                />
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={() => handleDelete(file)}
                   disabled={disabled}
-                  className="p-2 text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  title="Delete"
-                >
-                  <TrashIcon />
-                </button>
+                  iconOnly
+                  icon={<TrashIcon className="w-4 h-4" />}
+                  aria-label="Delete file"
+                />
               </div>
             </div>
           ))}

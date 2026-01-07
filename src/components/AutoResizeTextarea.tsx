@@ -1,6 +1,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import { SendIcon } from './icons/SendIcon';
+import Button from './ui/Button';
 
 interface AutoResizeTextareaProps {
   value: string;
@@ -49,14 +50,14 @@ const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
         className="flex-1 max-h-[150px] w-full bg-transparent border-none focus:ring-0 resize-none py-2.5 px-3 text-neutral-800 dark:text-neutral-200 placeholder-neutral-500 dark:placeholder-neutral-400 leading-relaxed custom-scrollbar"
         style={{ minHeight: '44px' }}
       />
-      <button
+      <Button
+        variant="primary"
+        size="sm"
         onClick={onSend}
         disabled={disabled || !value.trim()}
-        className="p-2.5 mb-0.5 bg-primary-600 text-white rounded-xl disabled:bg-neutral-400 disabled:cursor-not-allowed hover:bg-primary-700 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 duration-200 ease-out"
+        icon={<SendIcon className="w-4 h-4" />}
         aria-label="Kirim"
-      >
-        <SendIcon />
-      </button>
+      />
     </div>
   );
 };

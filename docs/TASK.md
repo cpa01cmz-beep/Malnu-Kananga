@@ -102,6 +102,21 @@
 - Total improvements: 3 components migrated, 27 buttons standardized
 - Benefits: Consistent design system alignment, improved accessibility, better maintainability
 
+### P1: Component Extraction - Button Standardization Round 3 (Completed 2026-01-08)
+- Migrated FileUpload.tsx to use centralized Button component
+  - Replaced 3 inline button elements with Button component
+  - Cancel Upload: variant="danger", size="sm" with CloseIcon
+  - Download: variant="success", size="sm", iconOnly with ArrowDownTrayIcon
+  - Delete: variant="danger", size="sm", iconOnly with TrashIcon
+  - Improved accessibility with proper ARIA labels
+- Migrated AutoResizeTextarea.tsx to use centralized Button component
+  - Replaced 1 inline button element with Button component
+  - Send button: variant="primary", size="sm" with SendIcon
+  - Improved consistency with design system
+  - Enhanced accessibility with proper aria-label
+- Total improvements: 2 components migrated, 4 buttons standardized
+- Benefits: Consistent design system alignment, improved accessibility, better maintainability
+
 ## Current Status
 
 | Metric | Status |
