@@ -6,6 +6,26 @@
 
 ## Completed UI/UX Tasks
 
+### P1: Accessibility Enhancement - CalendarView Navigation (High) - ✅ COMPLETED 2026-01-07
+- [x] Added `aria-label` to month navigation buttons ("Bulan sebelumnya", "Bulan berikutnya")
+- [x] Added `aria-label` to week navigation buttons ("Minggu sebelumnya", "Minggu berikutnya")
+- [x] Added `aria-label` to day navigation buttons ("Hari sebelumnya", "Hari berikutnya")
+- [x] Added `aria-label` to Today button ("Kembali ke hari ini")
+- [x] Added `aria-label` to view mode buttons ("Tampilan bulanan", "Tampilan mingguan", "Tampilan harian")
+- [x] Added `aria-pressed` to view mode buttons to indicate selection
+- [x] Added `aria-hidden="true"` to icon SVG elements
+- [x] Added proper grid roles for month view (`role="grid"`, `role="row"`, `role="columnheader"`, `role="gridcell"`)
+- [x] Added proper grid roles for week view
+- [x] Added `aria-label` for day view
+- [x] Added `role="list"` and `role="listitem"` for day view events
+- [x] Added `aria-label` to calendar date cells with full date information
+- [x] Added `aria-selected` for selected dates
+- [x] Added `tabIndex` for keyboard navigation
+- [x] Added `role="button"` to clickable event items
+- [x] Added focus rings to all navigation buttons
+- [x] Updated test suite with 9 accessibility tests for CalendarView
+- **Impact**: Significantly improved WCAG 2.1 AA compliance for CalendarView component, making navigation and date selection fully accessible for screen reader and keyboard users
+
 ### P2: Accessibility Enhancement - VoiceSettings Component Form (High) - ✅ COMPLETED 2026-01-07
 - [x] Added `id` and `name` attributes to voice language select input
 - [x] Added `id` attribute to continuous mode toggle button
@@ -76,12 +96,13 @@
 | Metric | Status |
 |--------|--------|
 | TypeScript | ✅ 0 errors |
-| Tests | ✅ 16 test files (Input: 13 tests, Select: 14 tests) |
+| Tests | ✅ 16 test files (Input: 13 tests, Select: 14 tests, CalendarView: 9 accessibility tests) |
 | Build | ✅ ~12-13s build time |
 | Linting | ✅ Passes (max-warnings: 20) |
 | Documentation | ✅ Aligned with codebase |
 | Accessibility | ✅ WCAG 2.1 AA compliant |
 | Theme System | ✅ Dynamic CSS custom properties integrated |
+| Calendar Navigation | ✅ Fully accessible with ARIA labels |
 
 ## Related Documentation
 
