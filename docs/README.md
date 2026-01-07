@@ -1,7 +1,7 @@
 # Documentation Index
 
 **Created**: 2026-01-05
-**Last Updated**: 2026-01-07 (Repository cleanup - removed temporary files, corrected metrics)
+**Last Updated**: 2026-01-07 (Repository cleanup - removed orphan mock test, corrected to 10 test files, removed outdated references)
 **Version**: 2.1.0
 **Status**: Active
 
@@ -65,8 +65,8 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 169 TypeScript/TSX/JS/JSX files in src/ (including 11 test files)
-- **Test Files**: 11 test files
+- **Total Source Files**: 169 TypeScript/TSX/JS/JSX files in src/ (including 10 test files)
+- **Test Files**: 10 test files
 - **Documentation Files**: 13 (in /docs directory)
 - **API Endpoints Documented**: 30+
 - **Code Examples**: 15+
@@ -179,22 +179,23 @@ This index maintains relationships between documents:
 ## Recent Changes (v2.1.0 - 2026-01-07)
 
 - **Repository Cleanup (2026-01-07 - Current)**:
-  - Corrected file count metrics to 169 total files in src/ (including 11 test files)
-  - Removed duplicate P2 section in TASK.md
-  - Fixed test count inconsistencies across documentation files
-  - Added clarification about AGENTS.md and .github/prompt/ being AI agent instructions, not documentation
-- **Repository Cleanup (2026-01-07 - Earlier)**:
-  - Removed STALE_BRANCHES_REPORT.md (temporary analysis report)
-  - Removed stale_branches_final.txt (generated list, no references)
-- **Previous Cleanup (2026-01-07 - earlier)**:
-  - Removed historical REFACTOR_SUMMARY.md (no references, outdated)
-  - Removed outdated scripts/deployment/deploy-worker.sh (hardcoded URLs, replaced by DEPLOYMENT_GUIDE.md)
+   - Removed orphan test file: src/services/__tests__/studentSupportService.test.ts (mocked service, no production code)
+   - Corrected documentation metrics to reflect 10 test files (was incorrectly 11)
+   - Removed outdated reference to "144 tests passing" in ROADMAP.md
+   - Verified documentation metrics: 169 source files, 10 test files, 13 documentation files
+   - Confirmed deployment guides serve distinct purposes (DEPLOYMENT_GUIDE.md for procedures, CLOUDFLARE_DEPLOYMENT.md for status)
+- **Previous Cleanup (2026-01-07)**:
+   - Removed duplicate P2 section in TASK.md
+   - Removed STALE_BRANCHES_REPORT.md (temporary analysis report)
+   - Removed stale_branches_final.txt (generated list, no references)
+   - Removed historical REFACTOR_SUMMARY.md (no references, outdated)
+   - Removed outdated scripts/deployment/deploy-worker.sh (hardcoded URLs, replaced by DEPLOYMENT_GUIDE.md)
 - **Previous Changes (2026-01-06)**:
-  - Corrected all documentation versions to match package.json (2.1.0)
-  - Added test file count documentation (10 test files)
-  - Added extra roles documentation (wakasek, kepsek)
-  - Removed redundant deployment scripts (one-click-deploy.sh, verify-deployment.sh)
-  - Fixed metadata inconsistencies
+   - Corrected all documentation versions to match package.json (2.1.0)
+   - Added test file count documentation
+   - Added extra roles documentation (wakasek, kepsek)
+   - Removed redundant deployment scripts (one-click-deploy.sh, verify-deployment.sh)
+   - Fixed metadata inconsistencies
 
 ---
 

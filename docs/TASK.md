@@ -26,7 +26,7 @@
 
 ### P1: Documentation Consistency
 - User roles documented consistently across all files
-- Documentation metrics updated to reflect actual file counts (169 total, 11 tests)
+- Documentation metrics updated to reflect actual file counts (169 total, 10 tests)
 - All directories added to project structure docs
 
 ### P2: Accessibility Fixes
@@ -42,7 +42,7 @@
 | Metric | Status |
 |--------|--------|
 | TypeScript | ✅ 0 errors (when dependencies installed) |
-| Tests | ✅ 11 test files |
+| Tests | ✅ 10 test files |
 | Build | ✅ ~9-10s build time |
 | Documentation | ✅ Aligned with codebase |
 
