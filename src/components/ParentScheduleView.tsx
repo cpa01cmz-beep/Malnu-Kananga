@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import {
+  CalendarDaysIcon,
+  ListBulletIcon,
+  UserGroupIcon
+} from '@heroicons/react/24/outline';
 import { ToastType } from './Toast';
-import type { ParentChild, Schedule } from '../types';
+import type { ParentChild, Schedule, ParentMeeting, ParentTeacher } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import CalendarView from './CalendarView';
 
 interface ParentScheduleViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -11,30 +17,48 @@ interface ParentScheduleViewProps {
 
 const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, child }) => {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [meetings, setMeetings] = useState<ParentMeeting[]>([]);
+  const [availableTeachers, setAvailableTeachers] = useState<ParentTeacher[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'month' | 'week' | 'day'>('list');
+  const [showMeetingRequest, setShowMeetingRequest] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Schedule | ParentMeeting | null>(null);
 
   useEffect(() => {
-    const fetchSchedule = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await parentsAPI.getChildSchedule(child.studentId);
-        if (response.success && response.data) {
-          setSchedules(response.data);
-          setError(null);
+        const [scheduleRes, meetingsRes, teachersRes] = await Promise.all([
+          parentsAPI.getChildSchedule(child.studentId),
+          parentsAPI.getMeetings(child.studentId),
+          parentsAPI.getAvailableTeachersForMeetings(child.studentId)
+        ]);
+
+        if (scheduleRes.success && scheduleRes.data) {
+          setSchedules(scheduleRes.data);
         } else {
-          setError(response.message || 'Gagal memuat jadwal');
+          setError(scheduleRes.message || 'Gagal memuat jadwal');
         }
+
+        if (meetingsRes.success && meetingsRes.data) {
+          setMeetings(meetingsRes.data);
+        }
+
+        if (teachersRes.success && teachersRes.data) {
+          setAvailableTeachers(teachersRes.data);
+        }
+        setError(null);
       } catch (err) {
-        logger.error('Failed to fetch child schedule:', err);
-        setError('Gagal memuat jadwal');
-        onShowToast('Gagal memuat jadwal', 'error');
+        logger.error('Failed to fetch parent data:', err);
+        setError('Gagal memuat data');
+        onShowToast('Gagal memuat data', 'error');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSchedule();
+    fetchData();
   }, [child.studentId, onShowToast]);
 
   const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as const;
@@ -43,11 +67,94 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
     return schedules.filter(s => s.dayOfWeek === day);
   };
 
+  const handleEventClick = (event: Schedule | ParentMeeting) => {
+    setSelectedEvent(event);
+  };
+
+  const handleMeetingRequest = async (teacherId: string, date: string, time: string, agenda: string, subject: string, _teacherName: string) => {
+    try {
+      const response = await parentsAPI.scheduleMeeting({
+        childId: child.studentId,
+        teacherId,
+        subject,
+        date,
+        startTime: time,
+        endTime: time,
+        agenda,
+        location: 'Online',
+        notes: ''
+      });
+
+      if (response.success) {
+        onShowToast('Pertemuan berhasil dijadwalkan', 'success');
+        setShowMeetingRequest(false);
+        
+        // Refresh meetings
+        const meetingsRes = await parentsAPI.getMeetings(child.studentId);
+        if (meetingsRes.success && meetingsRes.data) {
+          setMeetings(meetingsRes.data);
+        }
+      } else {
+        onShowToast(response.message || 'Gagal menjadwalkan pertemuan', 'error');
+      }
+    } catch (err) {
+      logger.error('Failed to schedule meeting:', err);
+      onShowToast('Gagal menjadwalkan pertemuan', 'error');
+    }
+  };
+
+  const handleDateSelect = (date: Date) => {
+    const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const dayName = dayNames[date.getDay()];
+    if (['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'].includes(dayName)) {
+      setViewMode('day');
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-        Jadwal Pelajaran - {child.className}
-      </h2>
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Jadwal Pelajaran - {child.className}
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400">
+            {child.studentName} • {availableTeachers.length} guru tersedia untuk pertemuan
+          </p>
+        </div>
+        
+        <div className="flex gap-2">
+          <button
+            onClick={() => setViewMode('list')}
+            className={`p-2 rounded-lg transition-colors flex items-center gap-2
+              ${viewMode === 'list' 
+                ? 'bg-green-600 text-white' 
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+          >
+            <ListBulletIcon className="w-5 h-5" />
+            <span className="text-sm font-medium">Daftar</span>
+          </button>
+          
+          <button
+            onClick={() => setViewMode('month')}
+            className={`p-2 rounded-lg transition-colors flex items-center gap-2
+              ${viewMode === 'month' 
+                ? 'bg-green-600 text-white' 
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+          >
+            <CalendarDaysIcon className="w-5 h-5" />
+            <span className="text-sm font-medium">Kalender</span>
+          </button>
+          
+          <button
+            onClick={() => setShowMeetingRequest(true)}
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+          >
+            <UserGroupIcon className="w-5 h-5" />
+            <span className="text-sm font-medium">Ajak Pertemuan</span>
+          </button>
+        </div>
+      </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
@@ -57,11 +164,11 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
         <div className="text-center py-12">
           <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
         </div>
-      ) : schedules.length === 0 ? (
+      ) : schedules.length === 0 && meetings.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600 dark:text-gray-400">Tidak ada jadwal tersedia untuk {child.className}</p>
+          <p className="text-gray-600 dark:text-gray-400">Tidak ada jadwal atau pertemuan tersedia untuk {child.className}</p>
         </div>
-      ) : (
+      ) : viewMode === 'list' ? (
         <div className="space-y-6">
           {days.map((day) => {
             const daySchedules = getSchedulesByDay(day);
@@ -96,6 +203,194 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
               </div>
             );
           })}
+        </div>
+      ) : (
+        <CalendarView
+          schedules={schedules}
+          meetings={meetings}
+          viewMode={viewMode}
+          onDateSelect={handleDateSelect}
+          onEventClick={handleEventClick}
+        />
+      )}
+
+      {/* Meeting Request Modal */}
+      {showMeetingRequest && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                Ajukan Pertemuan dengan Guru
+              </h3>
+              <button
+                onClick={() => setShowMeetingRequest(false)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {availableTeachers.map((teacher) => (
+                <div key={teacher.teacherId} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="mb-3">
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                      {teacher.teacherName}
+                    </h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {teacher.subject} • {teacher.className}
+                    </p>
+                  </div>
+
+                  {teacher.availableSlots && teacher.availableSlots.length > 0 ? (
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Waktu Tersedia:
+                      </p>
+                      <div className="space-y-2">
+                        {teacher.availableSlots.map((slot, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              // Handle meeting request with this slot
+                              handleMeetingRequest(
+                                teacher.teacherId,
+                                slot.day,
+                                slot.startTime,
+                                `Pertemuan orang tua dengan ${teacher.teacherName}`,
+                                teacher.subject,
+                                teacher.teacherName
+                              );
+                            }}
+                            className="w-full text-left p-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                          >
+                            <div className="text-sm font-medium text-green-800 dark:text-green-300">
+                              {slot.day}
+                            </div>
+                            <div className="text-xs text-green-600 dark:text-green-400">
+                              {slot.startTime} - {slot.endTime}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Tidak ada jadwal tersedia
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {availableTeachers.length === 0 && (
+              <div className="text-center py-8">
+                <p className="text-gray-500 dark:text-gray-400">
+                  Tidak ada guru yang tersedia untuk pertemuan saat ini
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Event Detail Modal */}
+      {selectedEvent && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          onClick={() => setSelectedEvent(null)}
+        >
+          <div 
+            className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                {'status' in selectedEvent ? 'Detail Pertemuan' : 'Detail Jadwal'}
+              </h3>
+              <button
+                onClick={() => setSelectedEvent(null)}
+                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              {'status' in selectedEvent ? (
+                <>
+                  <div>
+                    <label className="text-sm text-gray-500 dark:text-gray-400">Jenis</label>
+                    <p className="font-medium text-gray-900 dark:text-white">Pertemuan Orang Tua-Guru</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500 dark:text-gray-400">Guru</label>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedEvent.teacherName}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500 dark:text-gray-400">Tanggal</label>
+                    <p className="font-medium text-gray-900 dark:text-white">{selectedEvent.date}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500 dark:text-gray-400">Waktu</label>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {selectedEvent.startTime} - {selectedEvent.endTime}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500 dark:text-gray-400">Status</label>
+                    <p className={`font-medium
+                      ${selectedEvent.status === 'scheduled' ? 'text-blue-600 dark:text-blue-400' : ''}
+                      ${selectedEvent.status === 'completed' ? 'text-green-600 dark:text-green-400' : ''}
+                      ${selectedEvent.status === 'cancelled' ? 'text-red-600 dark:text-red-400' : ''}`}
+                    >
+                      {selectedEvent.status === 'scheduled' ? 'Terjadwal' : 
+                       selectedEvent.status === 'completed' ? 'Selesai' : 'Dibatalkan'}
+                    </p>
+                  </div>
+                  {selectedEvent.agenda && (
+                    <div>
+                      <label className="text-sm text-gray-500 dark:text-gray-400">Agenda</label>
+                      <p className="font-medium text-gray-900 dark:text-white">{selectedEvent.agenda}</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label className="text-sm text-gray-500 dark:text-gray-400">Mata Pelajaran</label>
+                    <p className="font-semibold text-gray-900 dark:text-white">
+                      {selectedEvent.subjectName}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500 dark:text-gray-400">Guru</label>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {selectedEvent.teacherName}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500 dark:text-gray-400">Waktu</label>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {selectedEvent.startTime} - {selectedEvent.endTime}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500 dark:text-gray-400">Hari</label>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {selectedEvent.dayOfWeek}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500 dark:text-gray-400">Ruangan</label>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {selectedEvent.room}
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
