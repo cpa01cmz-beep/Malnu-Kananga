@@ -17,6 +17,12 @@
 
 ## Completed UI/UX Tasks
 
+### P1: Color Palette Alignment - Standardized Color System (2026-01-07)
+- Replaced all `gray-*` color classes with `neutral-*` across 9 components for consistency
+- Updated components: VersionControl, MaterialUpload, CalendarView, ELibrary, GradingManagement, MaterialSharing, ClassManagement, MaterialTemplatesLibrary, FolderNavigation
+- All UI components now consistently use `neutral-*` color scale matching design system
+- **Impact**: Improved visual consistency and professional appearance across application
+
 ### P1: Component Extraction - Reusable Card Component (2026-01-07)
 - Created flexible, reusable Card component with 4 variants (default, hover, interactive, gradient)
 - Added configurable padding options (none, sm, md, lg)

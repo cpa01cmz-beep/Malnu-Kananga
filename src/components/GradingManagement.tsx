@@ -510,8 +510,8 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
                     ← Kembali ke Dashboard
                 </Button>
-                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Input Nilai Siswa</h2>
-                 <p className="text-gray-500 dark:text-gray-400">Mata Pelajaran: <strong>{subjectId} ({className})</strong></p>
+                 <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Input Nilai Siswa</h2>
+                 <p className="text-neutral-500 dark:text-neutral-400">Mata Pelajaran: <strong>{subjectId} ({className})</strong></p>
             </div>
             
             {/* Enhanced Toolbar */}
@@ -523,7 +523,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                         className={`px-4 py-2 rounded-full transition-colors shadow-md ${
                             isBatchMode 
                                 ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300'
+                                : 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300'
                         }`}
                     >
                         {isBatchMode ? `Selected: ${selectedStudents.size}` : 'Batch Mode'}
@@ -534,7 +534,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                         className={`px-4 py-2 rounded-full transition-colors shadow-md ${
                             showStats 
                                 ? 'bg-green-600 text-white hover:bg-green-700' 
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300'
+                                : 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300'
                         }`}
                     >
                         Statistics
@@ -561,7 +561,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     <button 
                         onClick={handleAIAnalysis}
                         disabled={isAnalyzing}
-                        className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-md disabled:bg-gray-400"
+                        className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-md disabled:bg-neutral-400"
                     >
                         <LightBulbIcon className="w-5 h-5" />
                         {isAnalyzing ? "Menganalisis..." : "Analisis AI"}
@@ -575,12 +575,12 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     placeholder="Cari Nama / NIS..." 
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full md:w-64 px-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
+                    className="w-full md:w-64 px-4 py-2 rounded-full border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
                 />
                 
                 {/* Auto-save indicator */}
                 {isAutoSaving && (
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <div className="flex items-center gap-2 text-sm text-neutral-500">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                         Auto-saving...
                     </div>
@@ -599,20 +599,20 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                         <div className="text-center">
-                            <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.average.toFixed(1)}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">Class Average</div>
+                            <div className="text-2xl font-bold text-neutral-900 dark:text-white">{stats.average.toFixed(1)}</div>
+                            <div className="text-sm text-neutral-600 dark:text-neutral-400">Class Average</div>
                         </div>
                         <div className="text-center">
                             <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.maxScore}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">Highest Score</div>
+                            <div className="text-sm text-neutral-600 dark:text-neutral-400">Highest Score</div>
                         </div>
                         <div className="text-center">
                             <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.minScore}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">Lowest Score</div>
+                            <div className="text-sm text-neutral-600 dark:text-neutral-400">Lowest Score</div>
                         </div>
                         <div className="text-center">
-                            <div className="text-2xl font-bold text-gray-900 dark:text-white">{filteredData.length}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">Total Students</div>
+                            <div className="text-2xl font-bold text-neutral-900 dark:text-white">{filteredData.length}</div>
+                            <div className="text-sm text-neutral-600 dark:text-neutral-400">Total Students</div>
                         </div>
                     </div>
                     
@@ -629,13 +629,13 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                             
                             return (
                                 <div key={grade} className="flex items-center gap-3">
-                                    <div className="w-8 text-center font-bold text-gray-700 dark:text-gray-300">{grade}</div>
-                                    <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-6 relative overflow-hidden">
+                                    <div className="w-8 text-center font-bold text-neutral-700 dark:text-neutral-300">{grade}</div>
+                                    <div className="flex-1 bg-neutral-200 dark:bg-neutral-700 rounded-full h-6 relative overflow-hidden">
                                         <div 
                                             className={`${colors[grade as keyof typeof colors]} h-full rounded-full transition-all duration-500`}
                                             style={{ width: `${percentage}%` }}
                                         />
-                                        <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-800 dark:text-gray-100">
+                                        <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-neutral-800 dark:text-neutral-100">
                                             {count} students ({percentage.toFixed(1)}%)
                                         </span>
                                     </div>
@@ -660,7 +660,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     min="0" 
                     max="100"
                     onChange={(e) => handleBatchGradeInput('assignment', e.target.value)}
-                    className="w-24 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500"
+                    className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
                 />
                 
                 <input 
@@ -669,7 +669,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     min="0" 
                     max="100"
                     onChange={(e) => handleBatchGradeInput('midExam', e.target.value)}
-                    className="w-24 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500"
+                    className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
                 />
                 
                 <input 
@@ -678,7 +678,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     min="0" 
                     max="100"
                     onChange={(e) => handleBatchGradeInput('finalExam', e.target.value)}
-                    className="w-24 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500"
+                    className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
                 />
                 
                 <button 
@@ -689,7 +689,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 </button>
                 
                 <button 
-                    className="px-3 py-1 bg-gray-600 text-white rounded-full hover:bg-gray-700 text-sm"
+                    className="px-3 py-1 bg-neutral-600 text-white rounded-full hover:bg-neutral-700 text-sm"
                     onClick={() => setSelectedStudents(new Set())}
                 >
                     Clear Selection
@@ -704,7 +704,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     <LightBulbIcon className="w-5 h-5" />
                     Hasil Analisis Pedagogis (Gemini 3 Pro)
                 </h3>
-                <div className="text-gray-700 dark:text-gray-300 text-sm">
+                <div className="text-neutral-700 dark:text-neutral-300 text-sm">
                     <MarkdownRenderer content={analysisResult} />
                 </div>
                 <button 
@@ -720,7 +720,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         {loading && (
             <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-                <span className="ml-3 text-gray-600 dark:text-gray-400">Memuat data siswa...</span>
+                <span className="ml-3 text-neutral-600 dark:text-neutral-400">Memuat data siswa...</span>
             </div>
         )}
 
@@ -750,10 +750,10 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
         {/* Grading Table */}
         {!loading && !error && (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
             <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                    <thead className="bg-gray-50 dark:bg-gray-700 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
+                <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
+                    <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
                         <tr>
                             {isBatchMode && (
                                 <th className="px-4 py-4 text-center w-12">Select</th>
@@ -767,7 +767,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                             <th className="px-6 py-4 text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
                         {filteredData.map((student) => {
                             const finalScore = calculateFinalGrade(student.assignment, student.midExam, student.finalExam);
                             const gradeLetter = calculateGradeLetter(finalScore);
@@ -775,7 +775,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                             const isSelected = selectedStudents.has(student.id);
 
                             return (
-                                <tr key={student.id} className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
+                                <tr key={student.id} className={`hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors ${
                                     isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                                 }`}>
                                     {isBatchMode && (
@@ -784,13 +784,13 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                                 type="checkbox"
                                                 checked={isSelected}
                                                 onChange={() => toggleStudentSelection(student.id)}
-                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                className="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600"
                                             />
                                         </td>
                                     )}
                                     <td className="px-6 py-4">
-                                        <div className="font-medium text-gray-900 dark:text-white">{student.name}</div>
-                                        <div className="text-xs text-gray-500">NIS: {student.nis}</div>
+                                        <div className="font-medium text-neutral-900 dark:text-white">{student.name}</div>
+                                        <div className="text-xs text-neutral-500">NIS: {student.nis}</div>
                                     </td>
 
                                     {/* Enhanced Input Columns - Always enabled */}
@@ -801,7 +801,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                             onChange={(e) => handleInputChange(student.id, 'assignment', e.target.value)}
                                             min="0"
                                             max="100"
-                                            className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-green-500"
+                                            className="w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
                                         />
                                     </td>
                                     <td className="px-4 py-4 text-center">
@@ -811,7 +811,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                             onChange={(e) => handleInputChange(student.id, 'midExam', e.target.value)}
                                             min="0"
                                             max="100"
-                                            className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-green-500"
+                                            className="w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
                                         />
                                     </td>
                                     <td className="px-4 py-4 text-center">
@@ -821,15 +821,15 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                             onChange={(e) => handleInputChange(student.id, 'finalExam', e.target.value)}
                                             min="0"
                                             max="100"
-                                            className="w-16 text-center p-1 rounded border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-green-500"
+                                            className="w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
                                         />
                                     </td>
 
                                     {/* Calculated Columns */}
-                                    <td className="px-6 py-4 text-center font-bold text-gray-900 dark:text-white">
+                                    <td className="px-6 py-4 text-center font-bold text-neutral-900 dark:text-white">
                                         <div className="flex flex-col">
                                             <span>{finalScore.toFixed(1)}</span>
-                                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                                            <span className="text-xs text-neutral-500 dark:text-neutral-400">
                                                 {calculateFinalGrade(student.assignment, student.midExam, student.finalExam).toFixed(1)}
                                             </span>
                                         </div>
@@ -916,7 +916,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             <button
                 onClick={handleSave}
                 disabled={loading || isSaving}
-                className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors shadow-md disabled:bg-neutral-400 disabled:cursor-not-allowed"
             >
                 {loading || isSaving ? "Menyimpan..." : "Simpan Semua Nilai"}
             </button>
