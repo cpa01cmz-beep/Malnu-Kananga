@@ -230,7 +230,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
       <div className="animate-pulse">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-gray-200 dark:bg-gray-700 rounded-xl h-64"></div>
+            <div key={i} className="bg-neutral-200 dark:bg-neutral-700 rounded-xl h-64"></div>
           ))}
         </div>
       </div>
@@ -241,8 +241,8 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
     <div className="material-templates">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Template Materi</h2>
-          <p className="text-gray-500 dark:text-gray-400">Gunakan template untuk mempercepat pembuatan materi</p>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Template Materi</h2>
+          <p className="text-neutral-500 dark:text-neutral-400">Gunakan template untuk mempercepat pembuatan materi</p>
         </div>
         <button
           onClick={() => setShowCreateTemplate(true)}
@@ -254,17 +254,17 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-6">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Cari template..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
           </div>
@@ -272,7 +272,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             <option value="">Semua Kategori</option>
             {categories.map(category => (
@@ -283,7 +283,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             <option value="">Semua Mata Pelajaran</option>
             {subjects.map(subject => (
@@ -294,7 +294,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'name' | 'usage' | 'created')}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             <option value="usage">Paling Populer</option>
             <option value="name">Nama (A-Z)</option>
@@ -307,7 +307,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {filteredTemplates.length > 0 ? (
           filteredTemplates.map((template) => (
-            <div key={template.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md transition-all hover:-translate-y-1">
+            <div key={template.id} className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-5 hover:shadow-md transition-all hover:-translate-y-1">
               <div className="flex justify-between items-start mb-4">
                 <div className={`p-3 rounded-lg ${
                   template.fileType === 'pptx' ? 'bg-orange-50 text-orange-600 dark:bg-orange-900/20' :
@@ -317,20 +317,20 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
                 </div>
                 <div className="flex items-center gap-1">
                   <StarIcon className="w-4 h-4 text-yellow-500" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{template.usageCount}</span>
+                  <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{template.usageCount}</span>
                 </div>
               </div>
 
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2 line-clamp-2">
                 {template.title}
               </h3>
 
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4 line-clamp-3">
                 {template.description}
               </p>
 
               <div className="flex items-center gap-2 mb-4 text-xs">
-                <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded">
+                <span className="px-2 py-1 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 rounded">
                   {template.category}
                 </span>
                 {template.subjectId !== 'general' && (
@@ -340,7 +340,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
                 )}
               </div>
 
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+              <div className="text-xs text-neutral-500 dark:text-neutral-400 mb-4">
                 <div>📁 {formatFileSize(template.fileSize)}</div>
                 <div>👤 {template.createdBy}</div>
                 <div>📅 {formatDate(template.createdAt)}</div>
@@ -357,7 +357,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
                 {onSelectTemplate && (
                   <button
                     onClick={() => onSelectTemplate(template)}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
+                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors text-sm font-medium"
                   >
                     <PlusIcon className="w-4 h-4" />
                     Gunakan
@@ -368,10 +368,10 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
           ))
         ) : (
           <div className="col-span-full py-12 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600">
+            <div className="w-16 h-16 mx-auto mb-4 text-neutral-300 dark:text-neutral-600">
               <DocumentTextIcon />
             </div>
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-neutral-500 dark:text-neutral-400">
               {searchTerm || selectedCategory || selectedSubject 
                 ? 'Tidak ada template yang cocok dengan filter' 
                 : 'Belum ada template tersedia'}
@@ -383,16 +383,16 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
       {/* Create Template Modal */}
       {showCreateTemplate && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl max-w-lg w-full">
+            <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
                 Buat Template Baru
               </h3>
             </div>
 
             <div className="p-6">
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Judul Template
                 </label>
                 <input
@@ -400,12 +400,12 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
                   value={newTemplate.title}
                   onChange={(e) => setNewTemplate({...newTemplate, title: e.target.value})}
                   placeholder="Contoh: Template Soal Ulangan"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Deskripsi
                 </label>
                 <textarea
@@ -413,12 +413,12 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
                   onChange={(e) => setNewTemplate({...newTemplate, description: e.target.value})}
                   placeholder="Jelaskan kegunaan template ini..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Kategori
                 </label>
                 <input
@@ -426,18 +426,18 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
                   value={newTemplate.category}
                   onChange={(e) => setNewTemplate({...newTemplate, category: e.target.value})}
                   placeholder="Contoh: Penilaian, Presentasi, Laporan"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Mata Pelajaran (opsional)
                 </label>
                 <select
                   value={newTemplate.subjectId}
                   onChange={(e) => setNewTemplate({...newTemplate, subjectId: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Umum (semua mata pelajaran)</option>
                   {subjects.map(subject => (
@@ -447,21 +447,21 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   File Template
                 </label>
                 <input
                   type="file"
                   accept=".doc,.docx,.ppt,.pptx,.pdf"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                 />
               </div>
             </div>
 
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+            <div className="p-6 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-2">
               <button
                 onClick={() => setShowCreateTemplate(false)}
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="px-4 py-2 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors"
               >
                 Batal
               </button>

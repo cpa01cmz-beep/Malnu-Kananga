@@ -125,17 +125,17 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       <div className="flex items-center justify-between p-4 border-b">
         <button
           onClick={previousMonth}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
           aria-label="Bulan sebelumnya"
         >
           <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
         </button>
-        <h3 className="text-lg font-semibold text-gray-900" id="month-calendar-heading">
+        <h3 className="text-lg font-semibold text-neutral-900" id="month-calendar-heading">
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
         </h3>
         <button
           onClick={nextMonth}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
           aria-label="Bulan berikutnya"
         >
           <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
@@ -145,7 +145,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       {/* Day headers */}
       <div className="grid grid-cols-7 border-b" role="row">
         {dayNames.map(day => (
-          <div key={day} className="p-2 text-center text-sm font-medium text-gray-700" role="columnheader" aria-label={fullDayNames[dayNames.indexOf(day)]}>
+          <div key={day} className="p-2 text-center text-sm font-medium text-neutral-700" role="columnheader" aria-label={fullDayNames[dayNames.indexOf(day)]}>
             {day}
           </div>
         ))}
@@ -166,16 +166,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               role="gridcell"
               onClick={() => handleDateClick(date)}
               className={`min-h-[100px] p-2 border-r border-b cursor-pointer transition-colors
-                ${!isCurrentMonth ? 'bg-gray-50 text-gray-400' : 'bg-white'}
+                ${!isCurrentMonth ? 'bg-neutral-50 text-neutral-400' : 'bg-white'}
                 ${isToday ? 'bg-blue-50' : ''}
                 ${isSelected ? 'ring-2 ring-blue-500' : ''}
-                hover:bg-gray-50`}
+                hover:bg-neutral-50`}
               aria-label={fullDateLabel}
               aria-selected={isSelected}
               tabIndex={isToday ? 0 : -1}
             >
               <div className={`text-sm font-medium mb-1
-                ${isToday ? 'text-blue-600' : 'text-gray-900'}`}
+                ${isToday ? 'text-blue-600' : 'text-neutral-900'}`}
               >
                 {date.getDate()}
               </div>
@@ -199,7 +199,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                   );
                 })}
                 {events.length > 3 && (
-                  <div className="text-xs text-gray-500">+{events.length - 3} lagi</div>
+                  <div className="text-xs text-neutral-500">+{events.length - 3} lagi</div>
                 )}
               </div>
             </div>
@@ -215,18 +215,18 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       <div className="flex items-center justify-between p-4 border-b">
         <button
           onClick={previousWeek}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
           aria-label="Minggu sebelumnya"
         >
           <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
         </button>
-        <h3 className="text-lg font-semibold text-gray-900" id="week-calendar-heading">
+        <h3 className="text-lg font-semibold text-neutral-900" id="week-calendar-heading">
           {weekDays[0].toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })} - {' '}
           {weekDays[6].toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
         </h3>
         <button
           onClick={nextWeek}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
           aria-label="Minggu berikutnya"
         >
           <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
@@ -236,15 +236,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       {/* Week grid */}
       <div className="grid grid-cols-8" role="row">
         {/* Time column header */}
-        <div className="p-2 border-r border-b bg-gray-50 text-sm font-medium text-gray-700" role="columnheader">
+        <div className="p-2 border-r border-b bg-neutral-50 text-sm font-medium text-neutral-700" role="columnheader">
           Waktu
         </div>
         {/* Day headers */}
         {weekDays.map(date => (
           <div key={date.toISOString()} className="p-2 border-r border-b text-center" role="columnheader" aria-label={fullDayNames[date.getDay()]}>
-            <div className="text-xs font-medium text-gray-500">{dayNames[date.getDay()]}</div>
+            <div className="text-xs font-medium text-neutral-500">{dayNames[date.getDay()]}</div>
             <div className={`text-sm font-bold
-              ${date.toDateString() === new Date().toDateString() ? 'text-blue-600' : 'text-gray-900'}`}
+              ${date.toDateString() === new Date().toDateString() ? 'text-blue-600' : 'text-neutral-900'}`}
             >
               {date.getDate()}
             </div>
@@ -256,7 +256,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       {Array.from({ length: 14 }, (_, i) => i + 6).map(hour => (
         <div key={hour} className="grid grid-cols-8" role="row">
           {/* Time label */}
-          <div className="p-2 border-r border-b text-sm text-gray-600 text-right" role="gridcell">
+          <div className="p-2 border-r border-b text-sm text-neutral-600 text-right" role="gridcell">
             {hour.toString().padStart(2, '0')}:00
           </div>
           {/* Day columns */}
@@ -273,7 +273,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 onClick={() => handleDateClick(date)}
                 className={`min-h-[60px] p-1 border-r border-b cursor-pointer
                   ${date.toDateString() === new Date().toDateString() ? 'bg-blue-50' : 'bg-white'}
-                  hover:bg-gray-50`}
+                  hover:bg-neutral-50`}
                 role="gridcell"
                 aria-label={`${fullDayNames[date.getDay()]} ${date.getDate()}, ${hour}:00`}
               >
@@ -319,12 +319,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         <div className="flex items-center justify-between p-4 border-b">
           <button
             onClick={previousDay}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label="Hari sebelumnya"
           >
             <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
           </button>
-          <h3 className="text-lg font-semibold text-gray-900" id="day-calendar-heading">
+          <h3 className="text-lg font-semibold text-neutral-900" id="day-calendar-heading">
             {currentDate.toLocaleDateString('id-ID', { 
               weekday: 'long', 
               day: 'numeric', 
@@ -334,7 +334,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           </h3>
           <button
             onClick={nextDay}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label="Hari berikutnya"
           >
             <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
@@ -344,8 +344,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         {/* Events list */}
         <div className="p-4" role="list" aria-label="Daftar jadwal dan pertemuan">
           {events.length === 0 ? (
-            <div className="text-center py-8 text-gray-500" role="status" aria-live="polite">
-              <CalendarDaysIcon className="w-12 h-12 mx-auto mb-4 text-gray-300" aria-hidden="true" />
+            <div className="text-center py-8 text-neutral-500" role="status" aria-live="polite">
+              <CalendarDaysIcon className="w-12 h-12 mx-auto mb-4 text-neutral-300" aria-hidden="true" />
               <p>Tidak ada jadwal atau pertemuan pada hari ini</p>
             </div>
           ) : (
@@ -358,7 +358,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                     role="listitem"
                     onClick={() => onEventClick?.(event)}
                     className="p-4 border rounded-lg cursor-pointer transition-all
-                      hover:shadow-md hover:border-gray-300"
+                      hover:shadow-md hover:border-neutral-300"
                     tabIndex={0}
                   >
                     <div className="flex items-start justify-between">
@@ -372,19 +372,19 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                             {isMeeting ? 'Pertemuan' : 'Jadwal'}
                           </span>
                           {event.startTime && (
-                            <span className="text-sm text-gray-600">
+                            <span className="text-sm text-neutral-600">
                               {event.startTime} - {event.endTime || 'Selesai'}
                             </span>
                           )}
                         </div>
-                        <h4 className="font-semibold text-gray-900 mb-1">
+                        <h4 className="font-semibold text-neutral-900 mb-1">
                           {'subjectName' in event ? event.subjectName : ('subject' in event ? event.subject : 'Pertemuan')}
                         </h4>
-                        <p className="text-sm text-gray-600 mb-2">
+                        <p className="text-sm text-neutral-600 mb-2">
                           {'teacherName' in event ? event.teacherName : event.teacherName}
                         </p>
                         {'room' in event && event.room && (
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-neutral-500">
                             <span className="font-medium">Ruangan:</span> {event.room}
                           </p>
                         )}
@@ -399,7 +399,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                                       event.status === 'completed' ? 'Selesai' : 'Dibatalkan'}
                             </p>
                             {event.agenda && (
-                              <p className="text-gray-600 mt-1">
+                              <p className="text-neutral-600 mt-1">
                                 <span className="font-medium">Agenda:</span> {event.agenda}
                               </p>
                             )}
@@ -423,7 +423,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       <div className="mb-4 flex gap-2" role="toolbar" aria-label="Mode tampilan kalender">
         <button
           onClick={() => setCurrentDate(new Date())}
-          className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-3 py-2 text-sm font-medium text-neutral-700 bg-white border rounded-lg hover:bg-neutral-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
           aria-label="Kembali ke hari ini"
         >
           Hari Ini
@@ -436,7 +436,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors
                 ${viewMode === mode 
                   ? 'bg-blue-600 text-white' 
-                  : 'text-gray-700 hover:bg-gray-50'}`}
+                  : 'text-neutral-700 hover:bg-neutral-50'}`}
               aria-label={`Tampilan ${mode === 'month' ? 'bulanan' : mode === 'week' ? 'mingguan' : 'harian'}`}
               aria-pressed={viewMode === mode}
             >

@@ -192,7 +192,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
           >
             Versi {activeVersion?.version || 'N/A'}
           </Button>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <span className="text-xs text-neutral-500 dark:text-neutral-400">
             {versionCount} versi
           </span>
         </div>
@@ -209,17 +209,17 @@ const VersionControl: React.FC<VersionControlProps> = ({
 
       {/* Version History */}
       {showVersionHistory && (
-        <div className="mt-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-600">
-            <h4 className="font-medium text-gray-900 dark:text-white">Riwayat Versi</h4>
+        <div className="mt-4 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-600">
+          <div className="p-4 border-b border-neutral-200 dark:border-neutral-600">
+            <h4 className="font-medium text-neutral-900 dark:text-white">Riwayat Versi</h4>
           </div>
-          <div className="divide-y divide-gray-200 dark:divide-gray-600">
+          <div className="divide-y divide-neutral-200 dark:divide-neutral-600">
             {versions.map((version) => (
-              <div key={version.id} className="p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <div key={version.id} className="p-4 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="font-medium text-gray-900 dark:text-white">
+                      <span className="font-medium text-neutral-900 dark:text-white">
                         Versi {version.version}
                       </span>
                       {version.isActive && (
@@ -229,11 +229,11 @@ const VersionControl: React.FC<VersionControlProps> = ({
                       )}
                     </div>
                     
-                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                    <p className="text-sm text-neutral-700 dark:text-neutral-300 mb-1">
                       {version.title}
                     </p>
                     
-                    <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                    <div className="text-xs text-neutral-500 dark:text-neutral-400 space-y-1">
                       <p>📝 {changeLog}</p>
                       <p>👤 {version.createdBy}</p>
                       <p>📅 {formatDate(version.createdAt)}</p>
@@ -283,14 +283,14 @@ const VersionControl: React.FC<VersionControlProps> = ({
       {/* Create Version Modal */}
       {showCreateVersion && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-lg w-full">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl max-w-lg w-full">
+            <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
                     Buat Versi Baru
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
                     "{material.title}"
                   </p>
                 </div>
@@ -307,19 +307,19 @@ const VersionControl: React.FC<VersionControlProps> = ({
 
             <div className="p-6">
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Versi
                 </label>
                 <input
                   type="text"
                   value={generateNextVersion()}
                   disabled
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Judul Versi
                 </label>
                 <input
@@ -327,12 +327,12 @@ const VersionControl: React.FC<VersionControlProps> = ({
                   value={versionTitle}
                   onChange={(e) => setVersionTitle(e.target.value)}
                   placeholder="Mis: Update materi bab 3"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Catatan Perubahan
                 </label>
                 <textarea
@@ -340,29 +340,29 @@ const VersionControl: React.FC<VersionControlProps> = ({
                   onChange={(e) => setChangeLog(e.target.value)}
                   placeholder="Jelaskan perubahan yang dilakukan pada versi ini..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   File Baru
                 </label>
                 <input
                   type="file"
                   onChange={(e) => setNewFile(e.target.files?.[0] || null)}
                   accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4,.jpg,.jpeg,.png"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                 />
                 {newFile && (
-                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
                     {newFile.name} • {formatFileSize(newFile.size)}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+            <div className="p-6 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-2">
               <Button
                 variant="secondary"
                 onClick={() => setShowCreateVersion(false)}

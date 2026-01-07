@@ -170,7 +170,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${
             isShared 
               ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300'
-              : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
           }`}
         >
           <ShareIcon className="w-4 h-4" />
@@ -180,7 +180,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
         </button>
         
         {isShared && (
-          <span className="text-xs text-gray-500 dark:text-gray-400">
+          <span className="text-xs text-neutral-500 dark:text-neutral-400">
             {sharing.reduce((acc, s) => acc + s.sharedWith.length, 0)} guru
           </span>
         )}
@@ -189,22 +189,22 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
       {/* Share Modal */}
       {showShareModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
                     Bagikan Materi
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
                     "{material.title}"
                   </p>
                 </div>
                 <button
                   onClick={() => setShowShareModal(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                  className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg"
                 >
-                  <XMarkIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                  <XMarkIcon className="w-5 h-5 text-neutral-500 dark:text-neutral-400" />
                 </button>
               </div>
             </div>
@@ -213,17 +213,17 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
               {/* Current Sharing */}
               {sharing.length > 0 && (
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Sedang Dibagikan</h4>
+                  <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">Sedang Dibagikan</h4>
                   <div className="space-y-2">
                     {sharing.map((share) => (
-                      <div key={share.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div key={share.id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
                         <div className="flex items-center gap-3">
                           {getPermissionIcon(share.permission)}
                           <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            <p className="text-sm font-medium text-neutral-900 dark:text-white">
                               {getPermissionLabel(share.permission)} - {share.sharedWith.length} guru
                             </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">
                               Dibagikan {new Date(share.sharedAt).toLocaleDateString('id-ID')}
                               {share.expiresAt && (
                                 <span> • Berakhir dalam {getExpirationDays(share.expiresAt)} hari</span>
@@ -245,7 +245,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
 
               {/* Share Form */}
               <div>
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Bagikan ke Guru</h4>
+                <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">Bagikan ke Guru</h4>
                 
                 {/* Search */}
                 <div className="mb-4">
@@ -254,17 +254,17 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Cari guru berdasarkan nama, email, atau mata pelajaran..."
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
 
                 {/* Teacher Selection */}
-                <div className="mb-4 max-h-48 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded-lg">
+                <div className="mb-4 max-h-48 overflow-y-auto border border-neutral-200 dark:border-neutral-600 rounded-lg">
                   {filteredTeachers.length > 0 ? (
                     filteredTeachers.map((teacher) => (
                       <label
                         key={teacher.id}
-                        className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-600 last:border-b-0"
+                        className="flex items-center gap-3 p-3 hover:bg-neutral-50 dark:hover:bg-neutral-700 cursor-pointer border-b border-neutral-100 dark:border-neutral-600 last:border-b-0"
                       >
                         <input
                           type="checkbox"
@@ -276,19 +276,19 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
                               setSelectedTeachers(selectedTeachers.filter(id => id !== teacher.id));
                             }
                           }}
-                          className="rounded border-gray-300 dark:border-gray-600"
+                          className="rounded border-neutral-300 dark:border-neutral-600"
                         />
                         <div className="flex-1">
-                          <p className="font-medium text-gray-900 dark:text-white">{teacher.name}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{teacher.email}</p>
+                          <p className="font-medium text-neutral-900 dark:text-white">{teacher.name}</p>
+                          <p className="text-sm text-neutral-500 dark:text-neutral-400">{teacher.email}</p>
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                        <div className="text-xs text-neutral-500 dark:text-neutral-400">
                           {teacher.subjects.join(', ')}
                         </div>
                       </label>
                     ))
                   ) : (
-                    <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                    <div className="p-4 text-center text-neutral-500 dark:text-neutral-400">
                       {searchTerm ? 'Tidak ada guru yang cocok dengan pencarian' : 'Semua guru sudah memiliki akses'}
                     </div>
                   )}
@@ -296,7 +296,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
 
                 {/* Permission Settings */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                     Izin Akses
                   </label>
                   <div className="grid grid-cols-3 gap-2">
@@ -307,19 +307,19 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
                         className={`p-3 rounded-lg border-2 transition-colors ${
                           permission === perm
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                            : 'border-neutral-200 dark:border-neutral-600 hover:border-neutral-300 dark:hover:border-neutral-500'
                         }`}
                       >
                         <div className="flex items-center justify-center mb-1">
                           {getPermissionIcon(perm)}
                         </div>
-                        <p className="text-xs font-medium text-gray-900 dark:text-white">
+                        <p className="text-xs font-medium text-neutral-900 dark:text-white">
                           {getPermissionLabel(perm)}
                         </p>
                       </button>
                     ))}
                   </div>
-                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <div className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
                     {permission === 'view' && 'Hanya dapat melihat dan mengunduh materi'}
                     {permission === 'edit' && 'Dapat mengedit materi dan membuat versi baru'}
                     {permission === 'admin' && 'Punya kontrol penuh termasuk menghapus materi'}
@@ -333,9 +333,9 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
                       type="checkbox"
                       checked={expirationEnabled}
                       onChange={(e) => setExpirationEnabled(e.target.checked)}
-                      className="rounded border-gray-300 dark:border-gray-600"
+                      className="rounded border-neutral-300 dark:border-neutral-600"
                     />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                       Batasi waktu akses
                     </span>
                   </label>
@@ -346,17 +346,17 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
                       value={expirationDate}
                       onChange={(e) => setExpirationDate(e.target.value)}
                       min={new Date().toISOString().split('T')[0]}
-                      className="mt-2 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="mt-2 w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                   )}
                 </div>
               </div>
             </div>
 
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+            <div className="p-6 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-2">
               <button
                 onClick={() => setShowShareModal(false)}
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="px-4 py-2 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors"
               >
                 Batal
               </button>

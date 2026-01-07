@@ -158,7 +158,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Dashboard
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Data Kelas Perwalian</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Data Kelas Perwalian</h2>
           </div>
         </div>
         <div className="flex items-center justify-center py-12">
@@ -176,7 +176,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Dashboard
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Data Kelas Perwalian</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Data Kelas Perwalian</h2>
           </div>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
@@ -199,8 +199,8 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
           <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Dashboard
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Data Kelas Perwalian</h2>
-          <p className="text-gray-500 dark:text-gray-400">
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Data Kelas Perwalian</h2>
+          <p className="text-neutral-500 dark:text-neutral-400">
             Kelas: <strong>{className}</strong> • Total Siswa: <strong>{students.length}</strong>
           </p>
         </div>
@@ -210,42 +210,42 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
             placeholder="Cari Nama / NIS..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full md:w-64 px-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
+            className="w-full md:w-64 px-4 py-2 rounded-full border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <p className="text-xs text-gray-500 dark:text-gray-400">Hadir Hari Ini</p>
+        <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Hadir Hari Ini</p>
           <p className="text-xl font-bold text-green-600 dark:text-green-400">
             {students.filter((s) => s.attendanceToday === 'hadir').length}
           </p>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <p className="text-xs text-gray-500 dark:text-gray-400">Sakit</p>
+        <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Sakit</p>
           <p className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
             {students.filter((s) => s.attendanceToday === 'sakit').length}
           </p>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <p className="text-xs text-gray-500 dark:text-gray-400">Izin</p>
+        <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Izin</p>
           <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
             {students.filter((s) => s.attendanceToday === 'izin').length}
           </p>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <p className="text-xs text-gray-500 dark:text-gray-400">Alpa</p>
+        <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Alpa</p>
           <p className="text-xl font-bold text-red-600 dark:text-red-400">
             {students.filter((s) => s.attendanceToday === 'alpa').length}
           </p>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-            <thead className="bg-gray-50 dark:bg-gray-700 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
+          <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
+            <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
               <tr>
                 <th className="px-6 py-4">NIS</th>
                 <th className="px-6 py-4">Nama Lengkap</th>
@@ -254,14 +254,14 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
                 <th className="px-6 py-4">Kehadiran (Hari Ini)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
               {filteredStudents.length > 0 ? (
                 filteredStudents.map((student) => (
-                  <tr key={student.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                  <tr key={student.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
                     <td className="px-6 py-4 font-mono text-xs">{student.nis}</td>
-                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 font-medium text-neutral-900 dark:text-white">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-200">
+                        <div className="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-600 flex items-center justify-center text-xs font-bold text-neutral-600 dark:text-neutral-200">
                           {student.name.charAt(0)}
                         </div>
                         {student.name}
@@ -301,7 +301,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={5} className="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
                     Tidak ada data siswa ditemukan.
                   </td>
                 </tr>

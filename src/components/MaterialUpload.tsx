@@ -328,7 +328,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Dashboard
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upload Materi Pembelajaran</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Upload Materi Pembelajaran</h2>
           </div>
         </div>
         <div className="flex items-center justify-center py-12">
@@ -346,7 +346,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Dashboard
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upload Materi Pembelajaran</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Upload Materi Pembelajaran</h2>
           </div>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
@@ -369,8 +369,8 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Dashboard
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Materi</h2>
-          <p className="text-gray-500 dark:text-gray-400">Kelola materi pembelajaran dengan folder, berbagi, dan kontrol versi.</p>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Manajemen Materi</h2>
+          <p className="text-neutral-500 dark:text-neutral-400">Kelola materi pembelajaran dengan folder, berbagi, dan kontrol versi.</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -378,7 +378,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               selectedView === 'upload' 
                 ? 'bg-blue-600 text-white' 
-                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                : 'bg-white dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600'
             }`}
           >
             Upload
@@ -388,7 +388,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               selectedView === 'templates' 
                 ? 'bg-blue-600 text-white' 
-                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                : 'bg-white dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600'
             }`}
           >
             Template
@@ -398,7 +398,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               selectedView === 'management' 
                 ? 'bg-blue-600 text-white' 
-                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'
+                : 'bg-white dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600'
             }`}
           >
             Kelola
@@ -418,11 +418,11 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           </div>
           
           <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Formulir Upload</h3>
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Formulir Upload</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="material-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Judul Materi</label>
+                <label htmlFor="material-title" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Judul Materi</label>
                 <input
                   id="material-title"
                   name="title"
@@ -430,38 +430,38 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="Contoh: Modul Bab 3..."
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
                   required
                   autoComplete="off"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Deskripsi</label>
                 <textarea
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                   placeholder="Deskripsi singkat materi..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kategori</label>
                 {subjectsLoading ? (
                   <div className="animate-pulse">
-                    <div className="w-full h-10 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                    <div className="w-full h-10 bg-neutral-200 dark:bg-neutral-700 rounded-lg"></div>
                   </div>
                 ) : (
                   <>
                     <select
                       value={newCategory}
                       onChange={(e) => handleCategoryChange(e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none ${
+                      className={`w-full px-3 py-2 border rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none ${
                         categoryValidation && !categoryValidation.valid
                           ? 'border-red-300 dark:border-red-600'
-                          : 'border-gray-300 dark:border-gray-600'
+                          : 'border-neutral-300 dark:border-neutral-600'
                       }`}
                     >
                       <option value="">Pilih Kategori</option>
@@ -489,7 +489,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                     )}
                     
                     <div className="mt-2 flex items-center justify-between">
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-xs text-neutral-500 dark:text-neutral-400">
                         {subjects.length} mata pelajaran tersedia
                       </span>
                       <button
@@ -502,8 +502,8 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                     </div>
 
                     {showSuggestionForm && (
-                      <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <div className="mt-3 p-3 bg-neutral-50 dark:bg-neutral-700 rounded-lg border border-neutral-200 dark:border-neutral-600">
+                        <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                           Usul Kategori Baru
                         </h4>
                         <input
@@ -511,14 +511,14 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                           value={newCategory}
                           onChange={(e) => setNewCategory(e.target.value)}
                           placeholder="Nama kategori baru"
-                          className="w-full px-3 py-2 mb-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none text-sm"
+                          className="w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none text-sm"
                         />
                         <textarea
                           value={suggestionDescription}
                           onChange={(e) => setSuggestionDescription(e.target.value)}
                           placeholder="Jelaskan mengapa kategori ini diperlukan..."
                           rows={2}
-                          className="w-full px-3 py-2 mb-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none text-sm"
+                          className="w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none text-sm"
                         />
                         <div className="flex gap-2">
                           <button
@@ -534,7 +534,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                               setShowSuggestionForm(false);
                               setSuggestionDescription('');
                             }}
-                            className="px-3 py-1 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
+                            className="px-3 py-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300 text-sm rounded-lg hover:bg-neutral-400 dark:hover:bg-neutral-500 transition-colors"
                           >
                             Batal
                           </button>
@@ -567,16 +567,16 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           </div>
 
           <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center">
-              <h3 className="font-bold text-gray-800 dark:text-white">
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+            <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50 flex justify-between items-center">
+              <h3 className="font-bold text-neutral-800 dark:text-white">
                 {selectedFolder ? selectedFolder.name : 'Semua Materi'} ({materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).length})
               </h3>
             </div>
-            <div className="divide-y divide-gray-100 dark:divide-gray-700 max-h-[600px] overflow-y-auto">
+            <div className="divide-y divide-neutral-100 dark:divide-neutral-700 max-h-[600px] overflow-y-auto">
               {materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).length > 0 ? (
                 materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).map((item) => (
-                  <div key={item.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                  <div key={item.id} className="p-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3 flex-1">
                         <div
@@ -593,11 +593,11 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                           <DocumentTextIcon />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900 dark:text-white line-clamp-1 cursor-pointer hover:text-blue-600" onClick={() => handleShowMaterialDetails(item)}>
+                          <h4 className="font-semibold text-neutral-900 dark:text-white line-clamp-1 cursor-pointer hover:text-blue-600" onClick={() => handleShowMaterialDetails(item)}>
                             {item.title}
                           </h4>
-                          <div className="flex items-center gap-2 mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            <span className="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">{item.category}</span>
+                          <div className="flex items-center gap-2 mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                            <span className="bg-neutral-100 dark:bg-neutral-700 px-2 py-0.5 rounded">{item.category}</span>
                             <span>•</span>
                             <span>{formatFileSize(item.fileSize)}</span>
                             <span>•</span>
@@ -618,7 +618,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                               </span>
                             )}
                             {item.analytics && (
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                              <span className="text-xs text-neutral-500 dark:text-neutral-400">
                                 👁️ {item.analytics.totalDownloads}
                               </span>
                             )}
@@ -628,7 +628,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                       <div className="flex gap-1 ml-4">
                         <button
                           onClick={() => handleShowMaterialDetails(item)}
-                          className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
+                          className="p-2 text-neutral-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
                           title="Kelola materi"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -637,7 +637,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                         </button>
                         <button
                           onClick={() => handleDelete(item)}
-                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
+                          className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
                           title="Hapus Materi"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -649,7 +649,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                   </div>
                 ))
               ) : (
-                <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                <div className="p-8 text-center text-neutral-500 dark:text-neutral-400">
                   {selectedFolder ? `Belum ada materi di folder "${selectedFolder.name}".` : 'Belum ada materi yang diunggah.'}
                 </div>
               )}
@@ -678,19 +678,19 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
       )}
 
       {selectedView === 'management' && selectedMaterial && (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700">
+          <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{selectedMaterial.title}</h3>
-                <p className="text-gray-500 dark:text-gray-400">{selectedMaterial.description}</p>
+                <h3 className="text-xl font-bold text-neutral-900 dark:text-white">{selectedMaterial.title}</h3>
+                <p className="text-neutral-500 dark:text-neutral-400">{selectedMaterial.description}</p>
               </div>
               <button
                 onClick={() => {
                   setSelectedMaterial(null);
                   setSelectedView('upload');
                 }}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -702,7 +702,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           <div className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Berbagi Materi</h4>
+                <h4 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Berbagi Materi</h4>
                 <MaterialSharing
                   material={selectedMaterial}
                   onShowToast={onShowToast}
@@ -711,7 +711,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
               </div>
               
               <div>
-                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Kontrol Versi</h4>
+                <h4 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Kontrol Versi</h4>
                 <VersionControl
                   material={selectedMaterial}
                   onShowToast={onShowToast}
@@ -721,7 +721,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             </div>
             
             <div>
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Analytics</h4>
+              <h4 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Analytics</h4>
               <MaterialAnalytics
                 material={selectedMaterial}
                 onShowToast={onShowToast}

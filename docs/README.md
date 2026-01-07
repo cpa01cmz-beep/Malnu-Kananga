@@ -65,8 +65,8 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 189 TypeScript/TSX files (172 non-test + 17 test files)
-- **Test Files**: 17 test files
+- **Total Source Files**: 194 TypeScript/TSX files (176 non-test + 18 test files)
+- **Test Files**: 18 test files
 - **Documentation Files**: 13 (in /docs directory)
 - **API Endpoints Documented**: 150+
 - **Code Examples**: 20+
@@ -179,7 +179,8 @@ This index maintains relationships between documents:
 ## Recent Changes (v2.1.0 - 2026-01-07)
 
 - **Repository Cleanup (2026-01-07 - Current)**:
-    - Fixed documentation metrics to reflect actual file counts: 188 total source files (172 non-test + 16 test files)
+    - Fixed documentation metrics to reflect actual file counts: 194 total source files (176 non-test + 18 test files)
+    - Fixed TypeScript configuration for vitest/globals types in tsconfig.test.json
     - Updated documentation version and metadata
     - Verified all documentation aligns with codebase structure
     - Verified all documentation aligns with codebase structure
