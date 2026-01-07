@@ -19,6 +19,15 @@ export interface TableOptions extends Partial<UserOptions> {
   data: (string | number)[][];
 }
 
+export interface GradeData {
+  grade?: number;
+  nilai?: number;
+}
+
+export interface AttendanceData {
+  status: string;
+}
+
 class PDFExportService {
   private schoolName: string;
   private schoolAddress?: string;
@@ -131,9 +140,6 @@ class PDFExportService {
   
   private addTable(doc: jsPDF, options: TableOptions): void {
     autoTable(doc, options);
-    
-    // jsPDF-autotable returns the final Y position
-    return (doc as any).lastAutoTable.finalY || 0;
   }
   
   private addFooter(doc: jsPDF, pageWidth: number, pageHeight: number): void {
@@ -203,7 +209,7 @@ class PDFExportService {
     });
   }
   
-  createConsolidatedReport(studentInfo: Record<string, string>, grades: any[], attendance: any[]): void {
+  createConsolidatedReport(studentInfo: Record<string, string>, grades: GradeData[], attendance: AttendanceData[]): void {
     const headers = ['Kategori', 'Data'];
     const data = [
       ['Nama Siswa', studentInfo.name || studentInfo.nama || '-'],
