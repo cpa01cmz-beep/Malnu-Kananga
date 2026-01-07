@@ -20,6 +20,7 @@ import { validateStudentProgress, getGradeStatus } from '../utils/studentValidat
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { STORAGE_KEYS } from '../constants';
+import { getGradientClass, DARK_GRADIENT_CLASSES } from '../config/gradients';
 
 interface ProgressAnalyticsProps {
   onBack: () => void;
@@ -449,15 +450,15 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
       {activeTab === 'overview' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-6 text-white">
+            <div className={`${getGradientClass('GREEN_MAIN')} rounded-xl p-6 text-white`}>
               <p className="text-green-100 text-sm mb-2">Rata-rata Nilai</p>
               <h3 className="text-3xl font-bold">{correlation?.averageGrade || 0}</h3>
             </div>
-            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-6 text-white">
+            <div className={`${getGradientClass('BLUE_MAIN')} rounded-xl p-6 text-white`}>
               <p className="text-blue-100 text-sm mb-2">Persentase Kehadiran</p>
               <h3 className="text-3xl font-bold">{correlation?.attendancePercentage || 0}%</h3>
             </div>
-            <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white">
+            <div className={`${getGradientClass('PURPLE_MAIN')} rounded-xl p-6 text-white`}>
               <p className="text-purple-100 text-sm mb-2">Skor Korelasi</p>
               <h3 className="text-3xl font-bold">{correlation?.correlationScore || 0}/100</h3>
             </div>
@@ -660,7 +661,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
+          <div className={`${getGradientClass('PURPLE_SOFT')} ${DARK_GRADIENT_CLASSES.PURPLE_SOFT} rounded-xl p-6 border border-purple-200 dark:border-purple-800`}>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Skor Korelasi Kesehatan Akademik</h3>
             <div className="flex items-center justify-center">
               <div className="relative w-48 h-48">

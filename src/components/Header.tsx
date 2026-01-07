@@ -10,6 +10,7 @@ import { UserRole, UserExtraRole } from '../types';
 import NotificationCenter from './NotificationCenter';
 import Button from './ui/Button';
 import { ThemeManager } from '../services/themeManager';
+import { getGradientClass } from '../config/gradients';
 
 const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95";
 
@@ -106,7 +107,7 @@ const Header: React.FC<HeaderProps> = ({
             <div className={navContainerClasses}>
                  <div className={`${innerNavClasses} ${isScrolled ? 'max-w-7xl mx-auto px-4' : ''}`}>
                         <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0 w-11 h-11 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm hover:shadow-md transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
+                        <div className={`flex-shrink-0 w-11 h-11 ${getGradientClass('PRIMARY')} rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm hover:shadow-md transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}>
                             M
                         </div>
                         <div>

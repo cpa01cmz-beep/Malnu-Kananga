@@ -18,6 +18,7 @@ import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { usePushNotifications } from '../hooks/usePushNotifications';
+import { getGradientClass, DARK_GRADIENT_CLASSES } from '../config/gradients';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -227,7 +228,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                    ))}
 
                    {extraRole === 'osis' && checkPermission('osis.events') && (
-                       <button onClick={() => setCurrentView('osis')} aria-label="Buka Kegiatan OSIS" className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 p-6 rounded-xl shadow-card border border-orange-200 dark:border-orange-800 hover:shadow-card-hover transition-all duration-300 flex flex-col items-start hover:-translate-y-1 hover:scale-[1.02] text-left focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
+                       <button onClick={() => setCurrentView('osis')} aria-label="Buka Kegiatan OSIS" className={`${getGradientClass('ORANGE_SOFT')} ${DARK_GRADIENT_CLASSES.ORANGE_SOFT} p-6 rounded-xl shadow-card border border-orange-200 dark:border-orange-800 hover:shadow-card-hover transition-all duration-300 flex flex-col items-start hover:-translate-y-1 hover:scale-[1.02] text-left focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}>
                            <div className="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 p-3 rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300">
                               <div className="w-8 h-8"><CalendarDaysIcon /></div>
                            </div>

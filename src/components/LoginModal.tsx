@@ -5,6 +5,7 @@ import { UserRole, UserExtraRole } from '../types';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import { api } from '../services/apiService';
+import { getGradientClass } from '../config/gradients';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -85,14 +86,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
            </button>
          </div>
 
-          <div className="p-6 overflow-y-auto">
-            <div className="mb-6 p-5 bg-gradient-to-br from-neutral-50 to-neutral-100/50 dark:from-neutral-900/60 dark:to-neutral-800/60 rounded-xl border border-neutral-200/70 dark:border-neutral-700/70">
-                <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2.5 flex items-center gap-2">
-                    <svg className="w-4 h-4 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    Login Cepat (Demo)
-                </h3>
+           <div className="p-6 overflow-y-auto">
+            <div className={`mb-6 p-5 ${getGradientClass('NEUTRAL')} dark:from-neutral-900/60 dark:to-neutral-800/60 rounded-xl border border-neutral-200/70 dark:border-neutral-700/70`}>
+                 <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2.5 flex items-center gap-2">
+                     <svg className="w-4 h-4 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                     </svg>
+                     Login Cepat (Demo)
+                 </h3>
                 <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
                     Pilih peran untuk login instan:
                 </p>
