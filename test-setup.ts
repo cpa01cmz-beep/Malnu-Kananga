@@ -1,4 +1,5 @@
 import { vi } from 'vitest';
+import '@testing-library/jest-dom';
 
 // Mock @google/genai package to prevent actual API calls
 vi.mock('@google/genai', () => ({
