@@ -979,5 +979,477 @@ Potential improvements to consider:
 
 ---
 
+## LoadingState Component
+
+**Location**: `src/components/ui/LoadingState.tsx`
+
+A comprehensive loading state component that handles loading, error, and empty states with consistent UI patterns.
+
+### Features
+
+- **5 Types**: `page`, `section`, `inline`, `table`, `list`
+- **3 Variants**: `card`, `list`, `table`, `custom` (for section type)
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Accessibility**: Full ARIA support with proper live regions and busy states
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Error Handling**: Built-in error state with retry functionality
+- **Empty States**: Empty state with custom messages and icons
+- **Skeleton Loading**: Integrated skeleton screens for perceived performance
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isLoading` | `boolean` | `false` | Whether the component is in a loading state |
+| `error` | `string \| null` | `null` | Error message to display (takes precedence over loading) |
+| `empty` | `boolean` | `false` | Whether to display empty state |
+| `emptyMessage` | `string` | `'Tidak ada data'` | Message to display in empty state |
+| `emptyIcon` | `ReactNode` | `undefined` | Custom icon for empty state |
+| `onRetry` | `() => void` | `undefined` | Retry callback for error state |
+| `type` | `LoadingStateType` | `'section'` | Type of loading state to display |
+| `variant` | `LoadingStateVariant` | `'card'` | Variant for section-type loading |
+| `size` | `LoadingStateSize` | `'md'` | Size of the loading/empty/error state |
+| `rows` | `number` | `5` | Number of skeleton rows (for table type) |
+| `cols` | `number` | `4` | Number of skeleton columns (for table type) |
+| `count` | `number` | `3` | Number of skeleton items (for list, card, table types) |
+| `children` | `ReactNode` | Required | Content to display when not loading/error/empty |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Types
+
+- **LoadingStateType**: `'page' \| 'section' \| 'inline' \| 'table' \| 'list'`
+- **LoadingStateVariant**: `'card' \| 'list' \| 'table' \| 'custom'`
+- **LoadingStateSize**: `'sm' \| 'md' \| 'lg'`
+
+### Basic Usage
+
+#### Loading State
+
+```tsx
+import LoadingState from './ui/LoadingState';
+
+<LoadingState isLoading={true}>
+  <div>Your content here</div>
+</LoadingState>
+```
+
+#### Error State
+
+```tsx
+<LoadingState
+  isLoading={false}
+  error="Failed to load data"
+  onRetry={() => fetchData()}
+>
+  <div>Your content here</div>
+</LoadingState>
+```
+
+#### Empty State
+
+```tsx
+<LoadingState
+  isLoading={false}
+  empty={true}
+  emptyMessage="No records found"
+  emptyIcon={<InboxIcon />}
+>
+  <div>Your content here</div>
+</LoadingState>
+```
+
+### Loading Types
+
+#### 1. Page Loading Type
+
+Full-page loading with header skeletons and card grid.
+
+```tsx
+<LoadingState
+  isLoading={true}
+  type="page"
+  variant="card"
+  count={3}
+>
+  <div>Content</div>
+</LoadingState>
+```
+
+**Use case**: Initial page load when entire page content is loading.
+
+#### 2. Section Loading Type
+
+Section-level loading with configurable variant.
+
+```tsx
+<LoadingState
+  isLoading={true}
+  type="section"
+  variant="card"
+  count={6}
+>
+  <div>Content</div>
+</LoadingState>
+```
+
+**Variants**:
+- `card`: Grid of card skeletons (default)
+- `list`: List of item skeletons
+- `table`: Table skeleton with configurable rows/columns
+
+**Use case**: Loading data in specific sections like dashboards, grids, or lists.
+
+#### 3. Inline Loading Type
+
+Inline loading with spinner and text.
+
+```tsx
+<LoadingState
+  isLoading={true}
+  type="inline"
+  size="md"
+>
+  <div>Content</div>
+</LoadingState>
+```
+
+**Sizes**:
+- `sm`: Small spinner (h-4 w-4), small text
+- `md`: Medium spinner (h-5 w-5), medium text (default)
+- `lg`: Large spinner (h-8 w-8), large text
+
+**Use case**: Loading within specific components, modals, or small sections.
+
+#### 4. Table Loading Type
+
+Table skeleton with configurable rows and columns.
+
+```tsx
+<LoadingState
+  isLoading={true}
+  type="table"
+  rows={10}
+  cols={6}
+>
+  <table><tbody><tr><td>Data</td></tr></tbody></table>
+</LoadingState>
+```
+
+**Use case**: Loading table data in data tables, reports, or grids.
+
+#### 5. List Loading Type
+
+List of item skeletons.
+
+```tsx
+<LoadingState
+  isLoading={true}
+  type="list"
+  count={5}
+>
+  <ul><li>Item 1</li></ul>
+</LoadingState>
+```
+
+**Use case**: Loading list data, notifications, feed items, etc.
+
+### Error Handling
+
+#### Basic Error State
+
+```tsx
+<LoadingState
+  isLoading={false}
+  error="Gagal memuat data"
+>
+  <div>Content</div>
+</LoadingState>
+```
+
+#### Error with Retry
+
+```tsx
+<LoadingState
+  isLoading={false}
+  error="Network error occurred"
+  onRetry={() => fetchData()}
+  size="lg"
+>
+  <div>Content</div>
+</LoadingState>
+```
+
+### Empty States
+
+#### Default Empty State
+
+```tsx
+<LoadingState
+  isLoading={false}
+  empty={true}
+>
+  <div>Content</div>
+</LoadingState>
+```
+
+#### Custom Empty Message
+
+```tsx
+<LoadingState
+  isLoading={false}
+  empty={true}
+  emptyMessage="Tidak ada pesan baru"
+>
+  <div>Content</div>
+</LoadingState>
+```
+
+#### Empty State with Custom Icon
+
+```tsx
+import { InboxIcon } from './icons/InboxIcon';
+
+<LoadingState
+  isLoading={false}
+  empty={true}
+  emptyMessage="Kotak masuk kosong"
+  emptyIcon={<InboxIcon />}
+  size="lg"
+>
+  <div>Content</div>
+</LoadingState>
+```
+
+### State Priority
+
+The component follows this priority order:
+1. **Error** (highest priority) - displays error state if `error` prop is provided
+2. **Loading** - displays loading state if `isLoading` is true
+3. **Empty** - displays empty state if `empty` is true
+4. **Children** - displays children content if none of the above states are active
+
+### Real-World Examples
+
+#### Dashboard Loading
+
+```tsx
+function TeacherDashboard() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [students, setStudents] = useState([]);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const data = await studentsAPI.getAll();
+        setStudents(data);
+      } catch (err) {
+        setError('Gagal memuat data siswa');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudents();
+  }, []);
+
+  return (
+    <LoadingState
+      isLoading={loading}
+      error={error}
+      type="page"
+      variant="card"
+      count={6}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {students.map(student => (
+          <StudentCard key={student.id} student={student} />
+        ))}
+      </div>
+    </LoadingState>
+  );
+}
+```
+
+#### Data Table with Loading
+
+```tsx
+function GradingTable() {
+  const [loading, setLoading] = useState(false);
+  const [grades, setGrades] = useState<Grade[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleRefresh = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await gradesAPI.getAll();
+      setGrades(data);
+    } catch (err) {
+      setError('Gagal memuat nilai');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="mb-4">
+        <Button onClick={handleRefresh}>Refresh</Button>
+      </div>
+
+      <LoadingState
+        isLoading={loading}
+        error={error}
+        empty={grades.length === 0}
+        emptyMessage="Belum ada nilai"
+        type="table"
+        rows={10}
+        cols={6}
+      >
+        <table className="w-full">
+          {/* Table content */}
+        </table>
+      </LoadingState>
+    </div>
+  );
+}
+```
+
+#### List with Empty State
+
+```tsx
+function NotificationList() {
+  const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  return (
+    <LoadingState
+      isLoading={loading}
+      empty={notifications.length === 0}
+      emptyMessage="Tidak ada notifikasi"
+      type="list"
+      count={5}
+    >
+      <ul className="space-y-3">
+        {notifications.map(notif => (
+          <NotificationItem key={notif.id} notification={notif} />
+        ))}
+      </ul>
+    </LoadingState>
+  );
+}
+```
+
+### Accessibility Features
+
+1. **ARIA Live Regions**:
+   - Loading states: `role="status"`, `aria-live="polite"`, `aria-busy="true"`
+   - Error states: `role="alert"`, `aria-live="polite"`
+
+2. **Screen Reader Support**:
+   - Skeleton elements have `aria-hidden="true"`
+   - Loading spinner has `aria-hidden="true"` (text provides context)
+   - Error and empty states use proper semantic HTML
+
+3. **Keyboard Navigation**:
+   - Retry buttons are keyboard accessible
+   - Full focus management with visible focus rings
+
+4. **Text Alternatives**:
+   - "Memuat..." text provides context for screen readers
+   - Error messages are clearly announced
+   - Empty state messages are descriptive
+
+### Dark Mode Support
+
+All LoadingState variants automatically support dark mode:
+- Loading spinners: `text-primary-600` maintains primary color in dark mode
+- Skeleton backgrounds: `bg-neutral-200` → `dark:bg-neutral-700`
+- Error icons: `text-red-400` → `dark:text-red-500`
+- Text colors: Adapted for both light and dark themes
+
+### Performance Considerations
+
+The LoadingState component is optimized using:
+- Functional components with hooks
+- Skeleton screens reduce perceived loading time
+- No unnecessary re-renders
+- CSS-only animations
+- Proper TypeScript typing
+
+### Migration Guide
+
+**Before:**
+```tsx
+{loading ? (
+  <div className="animate-pulse">
+    <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded w-1/3"></div>
+  </div>
+) : error ? (
+  <div className="text-red-600">
+    {error}
+    <button onClick={retry}>Coba Lagi</button>
+  </div>
+) : empty ? (
+  <div>Tidak ada data</div>
+) : (
+  <div>{content}</div>
+)}
+```
+
+**After:**
+```tsx
+import LoadingState from './ui/LoadingState';
+
+<LoadingState
+  isLoading={loading}
+  error={error}
+  empty={empty}
+  onRetry={retry}
+  type="section"
+>
+  {content}
+</LoadingState>
+```
+
+**Benefits:**
+- ✅ Consistent loading/error/empty patterns across app
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Built-in skeleton screens for better UX
+- ✅ Reduced code duplication
+- ✅ Dark mode support
+- ✅ Comprehensive error handling
+- ✅ Empty state management
+
+### Test Coverage
+
+The LoadingState component has comprehensive test coverage:
+- Loading state rendering for all types (page, section, inline, table, list)
+- Error state rendering with and without retry
+- Empty state rendering with custom messages and icons
+- State priority (error > loading > empty > children)
+- Accessibility tests (ARIA attributes, keyboard navigation)
+- Dark mode tests
+- Size variants (sm, md, lg)
+- Custom className application
+- Button interaction (retry, action)
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/LoadingState.test.tsx
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Loading progress bar for slow operations
+- Skeleton variants for different content types
+- Animated empty states
+- Custom loading messages
+- Transition animations between states
+
+---
+
 **Last Updated**: 2026-01-07
 **Component Version**: 1.0.0
