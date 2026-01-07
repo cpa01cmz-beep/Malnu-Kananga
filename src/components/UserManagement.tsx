@@ -31,9 +31,8 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const [isEditing, setIsEditing] = useState(false);
   const dialogRef = useFocusTrap({ isOpen: isModalOpen, onClose: () => setIsModalOpen(false) });
 
-// Get current user for permission checking
-  const getCurrentUser = (): User | null => {
-    const userJson = localStorage.getItem('malnu_user');
+const getCurrentUser = (): User | null => {
+    const userJson = localStorage.getItem(STORAGE_KEYS.USER);
     return userJson ? JSON.parse(userJson) : null;
   };
 
