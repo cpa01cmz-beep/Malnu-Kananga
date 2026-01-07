@@ -1,15 +1,14 @@
 # Task List
 
 **Created**: 2025-01-01
-**Last Updated**: 2026-01-07
+**Last Updated**: 2026-01-08
 **Version**: 2.1.0
 
 ## Active Tasks
 
-### P1: Accessibility Improvements (High)
-- [ ] Fix remaining accessibility issues (UserManagement.tsx, ConfirmationDialog.tsx, etc.)
-- [ ] Run automated accessibility audit
-- [ ] Add keyboard navigation tests
+### P2: Code Quality (Medium)
+- [ ] Run `npm run security:scan` to identify potential vulnerabilities
+- [ ] Review and update test coverage
 
 ### P2: Code Quality (Medium)
 - [ ] Run `npm run security:scan` to identify potential vulnerabilities
@@ -34,13 +33,23 @@
 - Documentation metrics updated to reflect actual file counts
 - All directories added to project structure docs
 
-### P2: Accessibility Fix (Completed)
+### P2: Accessibility Fix - Dashboard & Portal (Completed)
 - TeacherDashboard.tsx: Converted interactive divs to semantic button elements
 - StudentPortal.tsx: Converted interactive divs to semantic button elements
 - Added proper ARIA labels for screen readers
 - Added keyboard navigation support (focus rings, focus-visible)
 - Removed cursor-pointer class (buttons have default cursor)
 - Maintained all visual styling and hover effects
+
+### P1: Accessibility Fix - UserManagement & ConfirmationDialog (Completed)
+- UserManagement.tsx: Added aria-label to edit/delete icon-only buttons
+- UserManagement.tsx: Added proper ARIA attributes to modal (role, aria-modal, aria-labelledby)
+- UserManagement.tsx: Fixed label-input associations for select dropdowns (id, htmlFor, name)
+- ConfirmationDialog.tsx: Added proper ARIA attributes to dialog (role, aria-modal, aria-labelledby, aria-describedby)
+- ConfirmationDialog.tsx: Added aria-hidden to decorative icon
+- Created reusable useFocusTrap hook for focus management
+- Integrated focus trap with ESC key support and focus restoration
+- Updated eslint.config.js to include HTMLElement and KeyboardEvent globals
 
 ---
 

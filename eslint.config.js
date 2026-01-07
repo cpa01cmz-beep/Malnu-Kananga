@@ -41,6 +41,7 @@ export default [
         HTMLTextAreaElement: 'readonly',
         HTMLInputElement: 'readonly',
         HTMLImageElement: 'readonly',
+        HTMLElement: 'readonly',
         confirm: 'readonly',
         ServiceWorkerRegistration: 'readonly',
         process: 'readonly',
@@ -49,6 +50,7 @@ export default [
         Touch: 'readonly',
         Event: 'readonly',
         HTMLButtonElement: 'readonly',
+        KeyboardEvent: 'readonly',
       },
     },
     plugins: {
