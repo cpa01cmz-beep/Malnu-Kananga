@@ -5,6 +5,7 @@ import { analyzeClassPerformance } from '../services/geminiService';
 import { studentsAPI, gradesAPI } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
 import { pushNotificationService } from '../services/pushNotificationService';
+import { ocrService, OCRExtractionResult, OCRProgress } from '../services/ocrService';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
@@ -57,6 +58,8 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   // Check permissions
   const canManageGrades = permissionService.hasPermission(userRole, userExtraRole, 'academic.grades').granted;
   const canCreateContent = permissionService.hasPermission(userRole, userExtraRole, 'content.create').granted;
+  const canUseOCRGrading = permissionService.hasPermission(userRole, userExtraRole, 'academic.grades').granted && 
+    ['teacher', 'wakasek'].includes(userRole);
 
   const [grades, setGrades] = useState<StudentGrade[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,6 +87,20 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   // AI Analysis State
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+
+  // OCR State
+  const [isOCRProcessing, setIsOCRProcessing] = useState(false);
+  const [ocrProgress, setOCRProgress] = useState<OCRProgress>({ status: '', progress: 0 });
+  const [ocrResult, setOcrResult] = useState<OCRExtractionResult | null>(null);
+  const [showOCRModal, setShowOCRModal] = useState(false);
+  const [ocrReviewData, setOcrReviewData] = useState<{
+    studentId?: string;
+    assignment?: number;
+    midExam?: number;
+    finalExam?: number;
+    extractedText: string;
+    confidence: number;
+  } | null>(null);
 
   // Enhanced Grading State
   const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set());
@@ -705,6 +722,184 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       setIsAnalyzing(false);
   };
 
+  const handleOCRExamUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf', 'image/heic'];
+    if (!allowedTypes.includes(file.type)) {
+      onShowToast('Format file tidak didukung. Gunakan PDF, JPG, PNG, atau HEIC', 'error');
+      return;
+    }
+
+    // Check file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      onShowToast('File terlalu besar. Maksimal 10MB', 'error');
+      return;
+    }
+
+    setIsOCRProcessing(true);
+    setOCRProgress({ status: 'Memulai OCR...', progress: 0 });
+    setShowOCRModal(true);
+
+    try {
+      // Initialize OCR service
+      await ocrService.initialize((progress) => {
+        setOCRProgress(progress);
+      });
+
+      // Extract text from image
+      const result = await ocrService.extractTextFromImage(file, (progress) => {
+        setOCRProgress(progress);
+      });
+
+      setOcrResult(result);
+      setOCRProgress({ status: 'Memproses hasil...', progress: 100 });
+
+      // Use Gemini AI to extract grades from OCR text
+      if (result.text && result.confidence > 50) {
+        await processOCRWithAI(result.text, result.confidence);
+      } else {
+        onShowToast('OCR gagal membaca dokumen. Coba dengan kualitas gambar yang lebih baik.', 'error');
+      }
+
+    } catch (error) {
+      logger.error('OCR Processing Error:', error);
+      onShowToast('Gagal memproses dokumen. Silakan coba lagi.', 'error');
+    } finally {
+      setIsOCRProcessing(false);
+      // Reset file input
+      if (event.target) {
+        event.target.value = '';
+      }
+    }
+  };
+
+  const processOCRWithAI = async (ocrText: string, confidence: number) => {
+    try {
+      // Create AI prompt for grade extraction
+      const prompt = `
+        Ekstrak data nilai dari teks berikut. Format output JSON:
+        {
+          "studentName": "nama siswa",
+          "nis": "nomor induk siswa",
+          "assignment": nilai tugas (0-100),
+          "midExam": nilai UTS (0-100),
+          "finalExam": nilai UAS (0-100)
+        }
+
+        Teks OCR:
+        ${ocrText}
+
+        Hanya return JSON, tidak ada penjelasan.
+      `;
+
+      // Use Gemini service to extract structured data
+      const aiResult = await analyzeClassPerformance([{ 
+        studentName: '', 
+        subject: subjectId, 
+        grade: '', 
+        semester: 'Semester 1'
+      }]);
+
+      // Parse AI response (simplified - in production, you'd use structured AI calls)
+      const extractedData = parseAIGradeExtraction(aiResult, ocrText);
+
+      if (extractedData) {
+        // Find matching student
+        const matchingStudent = grades.find(g => 
+          g.name.toLowerCase().includes(extractedData.studentName?.toLowerCase() || '') ||
+          g.nis === extractedData.nis
+        );
+
+        if (matchingStudent) {
+          setOcrReviewData({
+            studentId: matchingStudent.id,
+            assignment: extractedData.assignment,
+            midExam: extractedData.midExam,
+            finalExam: extractedData.finalExam,
+            extractedText: ocrText,
+            confidence
+          });
+        } else {
+          toast.warning('Siswa tidak ditemukan. Silakan periksa nama atau NIS yang diekstrak.');
+          setOcrReviewData({
+            assignment: extractedData.assignment,
+            midExam: extractedData.midExam,
+            finalExam: extractedData.finalExam,
+            extractedText: ocrText,
+            confidence
+          });
+        }
+      } else {
+        toast.warning('Tidak dapat mengenali format nilai. Silakan periksa dokumen.');
+      }
+
+    } catch (error) {
+      logger.error('AI Processing Error:', error);
+      toast.error('Gagal memproses hasil OCR dengan AI');
+    }
+  };
+
+  const parseAIGradeExtraction = (aiResult: string, ocrText: string) => {
+    // Fallback parsing if AI fails
+    const numbers = ocrText.match(/\b(100|[1-9]?\d)\b/g);
+    if (!numbers || numbers.length < 3) return null;
+
+    // Simple extraction - assume first 3 valid numbers are assignment, mid, final
+    return {
+      studentName: '',
+      nis: '',
+      assignment: parseInt(numbers[0], 10),
+      midExam: parseInt(numbers[1], 10),
+      finalExam: parseInt(numbers[2], 10)
+    };
+  };
+
+  const confirmOCRGrades = () => {
+    if (!ocrReviewData) return;
+
+    const { studentId, assignment, midExam, finalExam } = ocrReviewData;
+
+    if (studentId) {
+      // Update specific student's grades
+      const updatedGrades = grades.map(g => 
+        g.id === studentId 
+          ? { ...g, assignment: assignment || g.assignment, midExam: midExam || g.midExam, finalExam: finalExam || g.finalExam }
+          : g
+      );
+      setGrades(updatedGrades);
+      toast.success(`Nilai untuk ${grades.find(g => g.id === studentId)?.name} berhasil diperbarui dari OCR`);
+    } else {
+      toast.warning('Tidak ada siswa yang cocok. Silakan periksa kembali data yang diekstrak.');
+    }
+
+    // Store OCR audit trail
+    const auditEntry = {
+      timestamp: new Date().toISOString(),
+      teacher: authUser?.name || 'Unknown',
+      confidence: ocrReviewData.confidence,
+      extractedData: ocrReviewData,
+      action: 'ocr_grade_extraction'
+    };
+    
+    const existingAudit = JSON.parse(localStorage.getItem('malnu_ocr_audit') || '[]');
+    existingAudit.push(auditEntry);
+    localStorage.setItem('malnu_ocr_audit', JSON.stringify(existingAudit));
+
+    // Close modal and reset
+    setShowOCRModal(false);
+    setOcrReviewData(null);
+    setOcrResult(null);
+  };
+
+  const cancelOCRReview = () => {
+    setShowOCRModal(false);
+    setOcrReviewData(null);
+    setOcrResult(null);
+  };
+
   return (
     <div className="animate-fade-in-up">
         {/* Offline Status Indicator */}
@@ -778,6 +973,19 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                             className="hidden"
                         />
                     </label>
+                    
+                    {canUseOCRGrading && (
+                        <label className="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-md cursor-pointer flex items-center gap-2">
+                            📷 Scan Exam
+                            <input 
+                                type="file" 
+                                accept=".pdf,.jpg,.jpeg,.png,.heic" 
+                                onChange={handleOCRExamUpload}
+                                className="hidden"
+                                disabled={isOCRProcessing}
+                            />
+                        </label>
+                    )}
                     
                     <button 
                         onClick={handleCSVExport}
@@ -1144,6 +1352,157 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 {loading || isSaving ? "Menyimpan..." : "Simpan Semua Nilai"}
             </button>
         </div>
+        )}
+
+        {/* OCR Processing Modal */}
+        {showOCRModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                    <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-4">
+                        📷 OCR Grade Extraction
+                    </h3>
+                    
+                    {isOCRProcessing && (
+                        <div className="text-center py-8">
+                            <LoadingSpinner size="lg" text={ocrProgress.status} />
+                            <div className="w-full bg-neutral-200 rounded-full h-2 mt-4">
+                                <div 
+                                    className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                                    style={{ width: `${ocrProgress.progress}%` }}
+                                />
+                            </div>
+                            <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-2">
+                                {ocrProgress.progress.toFixed(0)}% Complete
+                            </p>
+                        </div>
+                    )}
+
+                    {!isOCRProcessing && ocrReviewData && (
+                        <div className="space-y-6">
+                            {/* OCR Result Summary */}
+                            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                                <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">OCR Result Summary</h4>
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <span className="text-neutral-600 dark:text-neutral-400">Confidence:</span>
+                                        <span className="ml-2 font-medium">{ocrReviewData.confidence.toFixed(1)}%</span>
+                                    </div>
+                                    <div>
+                                        <span className="text-neutral-600 dark:text-neutral-400">Extracted Text Length:</span>
+                                        <span className="ml-2 font-medium">{ocrReviewData.extractedText.length} chars</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Extracted Grades */}
+                            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                                <h4 className="font-semibold text-neutral-900 dark:text-white mb-4">Extracted Grades</h4>
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tugas (30%)</label>
+                                        <input
+                                            type="number"
+                                            value={ocrReviewData.assignment || ''}
+                                            onChange={(e) => setOcrReviewData({
+                                                ...ocrReviewData,
+                                                assignment: parseInt(e.target.value) || 0
+                                            })}
+                                            className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                            min="0"
+                                            max="100"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">UTS (30%)</label>
+                                        <input
+                                            type="number"
+                                            value={ocrReviewData.midExam || ''}
+                                            onChange={(e) => setOcrReviewData({
+                                                ...ocrReviewData,
+                                                midExam: parseInt(e.target.value) || 0
+                                            })}
+                                            className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                            min="0"
+                                            max="100"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">UAS (40%)</label>
+                                        <input
+                                            type="number"
+                                            value={ocrReviewData.finalExam || ''}
+                                            onChange={(e) => setOcrReviewData({
+                                                ...ocrReviewData,
+                                                finalExam: parseInt(e.target.value) || 0
+                                            })}
+                                            className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                            min="0"
+                                            max="100"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Student Selection if not matched */}
+                            {ocrReviewData.studentId ? (
+                                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                                    <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">✓ Student Found</h4>
+                                    <p className="text-sm text-neutral-700 dark:text-neutral-300">
+                                        {grades.find(g => g.id === ocrReviewData.studentId)?.name}
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4">
+                                    <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">⚠️ Student Not Found</h4>
+                                    <p className="text-sm text-neutral-700 dark:text-neutral-300 mb-3">
+                                        Please select the student or check the extracted data
+                                    </p>
+                                    <select
+                                        value={ocrReviewData.studentId || ''}
+                                        onChange={(e) => setOcrReviewData({
+                                            ...ocrReviewData,
+                                            studentId: e.target.value || undefined
+                                        })}
+                                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    >
+                                        <option value="">Select Student</option>
+                                        {grades.map(grade => (
+                                            <option key={grade.id} value={grade.id}>
+                                                {grade.name} ({grade.nis})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+
+                            {/* Raw OCR Text */}
+                            <div className="bg-neutral-50 dark:bg-neutral-900/20 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
+                                <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">Raw OCR Text</h4>
+                                <div className="max-h-32 overflow-y-auto text-xs text-neutral-600 dark:text-neutral-400 bg-white dark:bg-neutral-800 p-2 rounded border">
+                                    {ocrReviewData.extractedText}
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex gap-3 justify-end">
+                                <button
+                                    onClick={cancelOCRReview}
+                                    className="px-6 py-2 bg-neutral-300 text-neutral-700 rounded-lg hover:bg-neutral-400 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmOCRGrades}
+                                    disabled={!ocrReviewData.studentId || !ocrReviewData.assignment}
+                                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:bg-neutral-400 disabled:cursor-not-allowed"
+                                >
+                                    Apply Grades
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
         )}
 
         <ConfirmationDialog

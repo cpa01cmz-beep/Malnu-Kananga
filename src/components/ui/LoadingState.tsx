@@ -1,0 +1,272 @@
+import React, { ReactNode } from 'react';
+import Button from './Button';
+import { CardSkeleton, ListItemSkeleton, TableSkeleton } from './Skeleton';
+import { AlertCircleIcon, CheckCircleIcon } from '../icons/StatusIcons';
+
+export type LoadingStateSize = 'sm' | 'md' | 'lg';
+export type LoadingStateType = 'page' | 'section' | 'inline' | 'table' | 'list';
+export type LoadingStateVariant = 'card' | 'list' | 'table' | 'custom';
+
+interface LoadingStateProps {
+  isLoading: boolean;
+  error?: string | null;
+  empty?: boolean;
+  emptyMessage?: string;
+  emptyIcon?: ReactNode;
+  onRetry?: () => void;
+  type?: LoadingStateType;
+  variant?: LoadingStateVariant;
+  size?: LoadingStateSize;
+  rows?: number;
+  cols?: number;
+  count?: number;
+  children: ReactNode;
+  className?: string;
+}
+
+interface EmptyStateProps {
+  message: string;
+  icon?: ReactNode;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  size?: LoadingStateSize;
+}
+
+interface ErrorStateProps {
+  message: string;
+  onRetry?: () => void;
+  size?: LoadingStateSize;
+}
+
+const sizeClasses: Record<LoadingStateSize, string> = {
+  sm: 'p-4 text-sm',
+  md: 'p-8 text-base',
+  lg: 'p-12 text-lg',
+};
+
+const iconSizeClasses: Record<LoadingStateSize, string> = {
+  sm: 'w-8 h-8',
+  md: 'w-12 h-12',
+  lg: 'w-16 h-16',
+};
+
+const EmptyState: React.FC<EmptyStateProps> = ({
+  message,
+  icon,
+  action,
+  size = 'md'
+}) => (
+  <div className={`${sizeClasses[size]} text-center`}>
+    <div className="flex flex-col items-center justify-center space-y-4">
+      {icon && (
+        <div className={`${iconSizeClasses[size]} text-neutral-400 dark:text-neutral-500`}>
+          {icon}
+        </div>
+      )}
+      <p className="text-neutral-600 dark:text-neutral-400 font-medium">
+        {message}
+      </p>
+      {action && (
+        <Button
+          variant="primary"
+          onClick={action.onClick}
+          size={size === 'lg' ? 'lg' : 'md'}
+        >
+          {action.label}
+        </Button>
+      )}
+    </div>
+  </div>
+);
+
+const ErrorState: React.FC<ErrorStateProps> = ({
+  message,
+  onRetry,
+  size = 'md'
+}) => (
+  <div className={`${sizeClasses[size]} text-center`}>
+    <div className="flex flex-col items-center justify-center space-y-4">
+      <div className={`${iconSizeClasses[size]} text-red-400 dark:text-red-500`}>
+        <AlertCircleIcon />
+      </div>
+      <p className="text-neutral-700 dark:text-neutral-300 font-medium">
+        {message}
+      </p>
+      {onRetry && (
+        <Button
+          variant="primary"
+          onClick={onRetry}
+          size={size === 'lg' ? 'lg' : 'md'}
+        >
+          Coba Lagi
+        </Button>
+      )}
+    </div>
+  </div>
+);
+
+const LoadingState: React.FC<LoadingStateProps> = ({
+  isLoading,
+  error = null,
+  empty = false,
+  emptyMessage = 'Tidak ada data',
+  emptyIcon,
+  onRetry,
+  type = 'section',
+  variant = 'card',
+  size = 'md',
+  rows = 5,
+  cols = 4,
+  count = 3,
+  children,
+  className = ''
+}) => {
+  const containerClasses = `
+    ${className}
+  `.replace(/\s+/g, ' ').trim();
+
+  if (error) {
+    return (
+      <div className={containerClasses} role="alert" aria-live="polite">
+        <ErrorState message={error} onRetry={onRetry} size={size} />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    switch (type) {
+      case 'page':
+        return (
+          <main className="min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <PageLoadingState variant={variant} count={count} />
+            </div>
+          </main>
+        );
+
+      case 'table':
+        return (
+          <div className={containerClasses} role="status" aria-live="polite" aria-busy="true">
+            <TableSkeleton rows={rows} cols={cols} />
+          </div>
+        );
+
+      case 'list':
+        return (
+          <div className={`${containerClasses} space-y-3`} role="status" aria-live="polite" aria-busy="true">
+            {Array.from({ length: count }).map((_, i) => (
+              <ListItemSkeleton key={i} />
+            ))}
+          </div>
+        );
+
+      case 'inline':
+        return (
+          <div className={containerClasses} role="status" aria-live="polite" aria-busy="true">
+            <InlineLoadingState size={size} />
+          </div>
+        );
+
+      case 'section':
+      default:
+        return (
+          <div className={containerClasses} role="status" aria-live="polite" aria-busy="true">
+            <SectionLoadingState variant={variant} count={count} />
+          </div>
+        );
+    }
+  }
+
+  if (empty) {
+    return (
+      <div className={containerClasses}>
+        <EmptyState
+          message={emptyMessage}
+          icon={emptyIcon}
+          size={size}
+        />
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+};
+
+const PageLoadingState: React.FC<{ variant: LoadingStateVariant; count: number }> = ({
+  variant,
+  count
+}) => (
+  <div className="space-y-6">
+    <div className="animate-pulse">
+      <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded w-1/3 mb-4" aria-hidden="true"></div>
+      <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2" aria-hidden="true"></div>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {Array.from({ length: count }).map((_, i) => (
+        <CardSkeleton key={i} />
+      ))}
+    </div>
+  </div>
+);
+
+const SectionLoadingState: React.FC<{ variant: LoadingStateVariant; count: number }> = ({
+  variant,
+  count
+}) => {
+  switch (variant) {
+    case 'list':
+      return (
+        <div className="space-y-3">
+          {Array.from({ length: count }).map((_, i) => (
+            <ListItemSkeleton key={i} />
+          ))}
+        </div>
+      );
+    case 'table':
+      return <TableSkeleton rows={count} cols={4} />;
+    case 'card':
+    default:
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: count }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </div>
+      );
+  }
+};
+
+const InlineLoadingState: React.FC<{ size: LoadingStateSize }> = ({ size }) => {
+  const spinnerSize = size === 'lg' ? 'lg' : size === 'sm' ? 'sm' : 'md';
+  const textClass = size === 'lg' ? 'text-lg' : size === 'sm' ? 'text-sm' : 'text-base';
+
+  const sizeClasses = {
+    sm: 'h-4 w-4',
+    md: 'h-5 w-5',
+    lg: 'h-8 w-8',
+  };
+
+  return (
+    <div className="flex items-center justify-center space-x-3">
+      <svg
+        className={`animate-spin ${sizeClasses[spinnerSize]} text-primary-600`}
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        role="status"
+        aria-hidden="true"
+      >
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span className={`${textClass} text-neutral-600 dark:text-neutral-400 animate-pulse`}>
+        Memuat...
+      </span>
+    </div>
+  );
+};
+
+export { LoadingState, EmptyState, ErrorState };
+export default LoadingState;
