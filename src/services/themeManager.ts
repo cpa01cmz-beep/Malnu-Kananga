@@ -1,7 +1,6 @@
 import { Theme, themes, getThemeById } from '../config/themes';
 import { logger } from '../utils/logger';
-
-export const THEMES_STORAGE_KEY = 'malnu_advanced_theme';
+import { STORAGE_KEYS } from '../constants';
 
 export class ThemeManager {
   private static instance: ThemeManager;
@@ -179,7 +178,7 @@ export class ThemeManager {
 
   private saveTheme(theme: Theme): void {
     try {
-      localStorage.setItem(THEMES_STORAGE_KEY, JSON.stringify({
+      localStorage.setItem(STORAGE_KEYS.THEME, JSON.stringify({
         id: theme.id,
         timestamp: Date.now()
       }));
@@ -190,7 +189,7 @@ export class ThemeManager {
 
   private loadCurrentTheme(): void {
     try {
-      const stored = localStorage.getItem(THEMES_STORAGE_KEY);
+      const stored = localStorage.getItem(STORAGE_KEYS.THEME);
       if (stored) {
         const data = JSON.parse(stored);
         const theme = getThemeById(data.id);
