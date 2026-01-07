@@ -4,7 +4,7 @@ import { schedulesAPI, subjectsAPI } from '../services/apiService';
 import { Schedule, Subject, ParentMeeting } from '../types';
 import { logger } from '../utils/logger';
 import CalendarView from './CalendarView';
-import Button from './ui/Button';
+import PageHeader from './ui/PageHeader';
 import { TableSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 
@@ -125,14 +125,12 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
   if (loading) {
     return (
       <div className="animate-fade-in-up">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-          <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
-              ← Kembali ke Portal
-            </Button>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Jadwal Pelajaran</h2>
-          </div>
-        </div>
+        <PageHeader
+          title="Jadwal Pelajaran"
+          showBackButton={true}
+          onBackButtonClick={onBack}
+          backButtonLabel="Kembali ke Portal"
+        />
         <TableSkeleton rows={8} cols={5} />
       </div>
     );
@@ -141,19 +139,17 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
   if (error) {
     return (
       <div className="animate-fade-in-up">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-          <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
-              ← Kembali ke Portal
-            </Button>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Jadwal Pelajaran</h2>
-          </div>
-        </div>
+        <PageHeader
+          title="Jadwal Pelajaran"
+          showBackButton={true}
+          onBackButtonClick={onBack}
+          backButtonLabel="Kembali ke Portal"
+        />
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <ErrorMessage 
-            title="Error Loading Schedule" 
-            message={error} 
-            variant="card" 
+          <ErrorMessage
+            title="Error Loading Schedule"
+            message={error}
+            variant="card"
           />
           <button
             onClick={fetchSchedules}
@@ -168,40 +164,37 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
 
   return (
     <div className="animate-fade-in-up">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-        <div>
-          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
-            ← Kembali ke Portal
-          </Button>
-          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Jadwal Pelajaran</h2>
-          <p className="text-neutral-500 dark:text-neutral-400">
-            Kelas: <strong>{className}</strong> • Semester Ganjil
-          </p>
-        </div>
-        
-        <div className="flex gap-2">
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded-lg transition-colors flex items-center gap-2
-              ${viewMode === 'list' 
-                ? 'bg-green-600 text-white' 
-                : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'} border`}
-          >
-            <ListBulletIcon className="w-5 h-5" />
-            <span className="text-sm font-medium">Daftar</span>
-          </button>
-          <button
-            onClick={() => setViewMode('month')}
-            className={`p-2 rounded-lg transition-colors flex items-center gap-2
-              ${viewMode === 'month' 
-                ? 'bg-green-600 text-white' 
-                : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'} border`}
-          >
-            <CalendarDaysIcon className="w-5 h-5" />
-            <span className="text-sm font-medium">Kalender</span>
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="Jadwal Pelajaran"
+        subtitle={`Kelas: ${className} • Semester Ganjil`}
+        showBackButton={true}
+        onBackButtonClick={onBack}
+        backButtonLabel="Kembali ke Portal"
+        actions={
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-lg transition-colors flex items-center gap-2
+                ${viewMode === 'list'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'} border`}
+            >
+              <ListBulletIcon className="w-5 h-5" />
+              <span className="text-sm font-medium">Daftar</span>
+            </button>
+            <button
+              onClick={() => setViewMode('month')}
+              className={`p-2 rounded-lg transition-colors flex items-center gap-2
+                ${viewMode === 'month'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'} border`}
+            >
+              <CalendarDaysIcon className="w-5 h-5" />
+              <span className="text-sm font-medium">Kalender</span>
+            </button>
+          </div>
+        }
+      />
 
       {viewMode === 'list' && (
         <div className="flex overflow-x-auto pb-2 mb-4 gap-2 scrollbar-hide">

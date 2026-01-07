@@ -4,11 +4,11 @@ import { Student, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateAttendance } from '../utils/teacherValidation';
-import { 
+import {
   executeWithRetry,
   createToastHandler
 } from '../utils/teacherErrorHandler';
-import Button from './ui/Button';
+import PageHeader from './ui/PageHeader';
 import { TableSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 
@@ -155,14 +155,12 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
   if (loading) {
     return (
       <div className="animate-fade-in-up">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-          <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
-              ← Kembali ke Dashboard
-            </Button>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Data Kelas Perwalian</h2>
-          </div>
-        </div>
+        <PageHeader
+          title="Data Kelas Perwalian"
+          showBackButton={true}
+          onBackButtonClick={onBack}
+          backButtonLabel="Kembali ke Dashboard"
+        />
         <TableSkeleton rows={10} cols={5} />
       </div>
     );
@@ -171,19 +169,17 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
   if (error) {
     return (
       <div className="animate-fade-in-up">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-          <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
-              ← Kembali ke Dashboard
-            </Button>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Data Kelas Perwalian</h2>
-          </div>
-        </div>
+        <PageHeader
+          title="Data Kelas Perwalian"
+          showBackButton={true}
+          onBackButtonClick={onBack}
+          backButtonLabel="Kembali ke Dashboard"
+        />
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <ErrorMessage 
-            title="Error Loading Class Data" 
-            message={error} 
-            variant="card" 
+          <ErrorMessage
+            title="Error Loading Class Data"
+            message={error}
+            variant="card"
           />
           <button
             onClick={fetchStudents}
@@ -198,26 +194,24 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
 
   return (
     <div className="animate-fade-in-up">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-        <div>
-          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
-            ← Kembali ke Dashboard
-          </Button>
-          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Data Kelas Perwalian</h2>
-          <p className="text-neutral-500 dark:text-neutral-400">
-            Kelas: <strong>{className}</strong> • Total Siswa: <strong>{students.length}</strong>
-          </p>
-        </div>
-        <div>
-          <input
-            type="text"
-            placeholder="Cari Nama / NIS..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full md:w-64 px-4 py-2 rounded-full border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
-          />
-        </div>
-      </div>
+      <PageHeader
+        title="Data Kelas Perwalian"
+        subtitle={`Kelas: ${className} • Total Siswa: ${students.length}`}
+        showBackButton={true}
+        onBackButtonClick={onBack}
+        backButtonLabel="Kembali ke Dashboard"
+        actions={
+          <div>
+            <input
+              type="text"
+              placeholder="Cari Nama / NIS..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full md:w-64 px-4 py-2 rounded-full border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
+            />
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
