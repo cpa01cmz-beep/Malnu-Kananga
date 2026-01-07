@@ -23,6 +23,35 @@ export const STORAGE_KEYS = {
     READING_PROGRESS: 'malnu_reading_progress',
     OFFLINE_MATERIALS: 'malnu_offline_materials',
     AI_CACHE: 'malnu_ai_cache',
+    
+    // Authentication tokens (refactored from hardcoded)
+    AUTH_TOKEN: 'malnu_auth_token',
+    REFRESH_TOKEN: 'malnu_refresh_token',
+    
+    // User and push notification data (refactored from hardcoded)
+    USER: 'malnu_user',
+    NOTIFICATION_BATCHES: 'malnu_notification_batches',
+    NOTIFICATION_TEMPLATES: 'malnu_notification_templates',
+    NOTIFICATION_ANALYTICS: 'malnu_notification_analytics',
+    
+    // E-Library student features (refactored from hardcoded)
+    STUDENT_BOOKMARKS: 'malnu_student_bookmarks',
+    STUDENT_FAVORITES: 'malnu_student_favorites',
+    STUDENT_READING_PROGRESS: 'malnu_student_reading_progress',
+    STUDENT_OFFLINE_DOWNLOADS: 'malnu_student_offline_downloads',
+    STUDENT_REVIEWS: 'malnu_student_reviews',
+    
+    // Academic goals (dynamic factory function)
+    STUDENT_GOALS: (studentNIS: string) => `malnu_student_goals_${studentNIS}`,
+    
+    // Site editor (refactored from hardcoded)
+    SITE_EDITOR_HISTORY: 'malnu_site_editor_history',
+    
+    // Category service cache keys (refactored from hardcoded)
+    SUBJECTS_CACHE: 'malnu_subjects_cache',
+    CLASSES_CACHE: 'malnu_classes_cache',
+    CATEGORY_SUGGESTIONS: 'malnu_category_suggestions',
+    MATERIAL_STATS: 'malnu_material_stats',
 } as const;
 
 export const APP_CONFIG = {

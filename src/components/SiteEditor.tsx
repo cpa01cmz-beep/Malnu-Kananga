@@ -13,6 +13,7 @@ import MarkdownRenderer from './MarkdownRenderer';
 import AutoResizeTextarea from './AutoResizeTextarea';
 import TypingIndicator from './TypingIndicator';
 import { logger } from '../utils/logger';
+import { STORAGE_KEYS } from '../constants';
 
 interface SiteEditorProps {
   isOpen: boolean;
@@ -98,7 +99,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   // Save initial content to localStorage for undo functionality
   useEffect(() => {
     if (isOpen) {
-      const savedHistory = localStorage.getItem('siteEditorHistory');
+      const savedHistory = localStorage.getItem(STORAGE_KEYS.SITE_EDITOR_HISTORY);
       if (savedHistory) {
         try {
           const parsed = JSON.parse(savedHistory);
@@ -124,7 +125,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
     
     const updatedHistory = [newEntry, ...changeHistory].slice(0, 5); // Keep only last 5 changes
     setChangeHistory(updatedHistory);
-    localStorage.setItem('siteEditorHistory', JSON.stringify(updatedHistory));
+    localStorage.setItem(STORAGE_KEYS.SITE_EDITOR_HISTORY, JSON.stringify(updatedHistory));
   };
 
   const undoLastChange = () => {
@@ -132,7 +133,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       const lastChange = changeHistory[0];
       onUpdateContent(lastChange.previousContent);
       setChangeHistory(prev => prev.slice(1));
-      localStorage.setItem('siteEditorHistory', JSON.stringify(changeHistory.slice(1)));
+      localStorage.setItem(STORAGE_KEYS.SITE_EDITOR_HISTORY, JSON.stringify(changeHistory.slice(1)));
       
       const undoMessage: ChatMessage = {
         id: Date.now().toString(),
