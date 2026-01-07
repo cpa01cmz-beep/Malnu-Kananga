@@ -1,7 +1,7 @@
 # Documentation Index
 
 **Created**: 2026-01-05
-**Last Updated**: 2026-01-07 (Repository cleanup - corrected file count metrics to 196/176/20)
+**Last Updated**: 2026-01-07 (Repository cleanup - corrected file count metrics to 203/181/22)
 **Version**: 2.1.0
 **Status**: Active
 
@@ -65,8 +65,8 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 196 TypeScript/TSX files (176 non-test + 20 test files)
-- **Test Files**: 20 test files
+- **Total Source Files**: 203 TypeScript/TSX files (181 non-test + 22 test files)
+- **Test Files**: 22 test files
 - **Documentation Files**: 15 (in /docs directory)
 - **API Endpoints Documented**: 150+
 - **Code Examples**: 20+

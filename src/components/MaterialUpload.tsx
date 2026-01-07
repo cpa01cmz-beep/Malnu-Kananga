@@ -19,6 +19,7 @@ import {
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import FolderNavigation from './FolderNavigation';
 import { CardSkeleton } from './ui/Skeleton';
+import ErrorMessage from './ui/ErrorMessage';
 import MaterialSharing from './MaterialSharing';
 import VersionControl from './VersionControl';
 import MaterialAnalytics from './MaterialAnalytics';
@@ -353,7 +354,11 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           </div>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
+          <ErrorMessage 
+            title="Error Loading Materials" 
+            message={error} 
+            variant="card" 
+          />
           <button
             onClick={fetchMaterials}
             className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -476,9 +481,13 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                     </select>
                     
                     {categoryValidation && !categoryValidation.valid && (
-                      <div className="mt-1 text-sm text-red-600 dark:text-red-400">
-                        {categoryValidation.error}
-                        {categoryValidation.suggestions && categoryValidation.suggestions.length > 0 && (
+                      <div>
+                      <ErrorMessage 
+                        title="Validation Error" 
+                        message={categoryValidation.error || 'Invalid category'} 
+                        variant="inline" 
+                      />
+                      {categoryValidation.suggestions && categoryValidation.suggestions.length > 0 && (
                           <ul className="mt-1 ml-4 list-disc">
                             {categoryValidation.suggestions.map((suggestion, index) => (
                               <li key={index} className="cursor-pointer hover:text-green-600" 

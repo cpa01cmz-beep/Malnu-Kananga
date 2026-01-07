@@ -6,6 +6,7 @@ import { authAPI } from '../services/apiService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import Button from './ui/Button';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
+import ErrorMessage from './ui/ErrorMessage';
 
 interface AttendanceViewProps {
   onBack: () => void;
@@ -132,7 +133,11 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
           </div>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <p className="text-red-700 dark:text-red-300 mb-4">{errorState.message}</p>
+          <ErrorMessage 
+            title="Error Loading Attendance" 
+            message={errorState.message || 'Unknown error occurred'} 
+            variant="card" 
+          />
           <button
             onClick={fetchAttendance}
             className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"

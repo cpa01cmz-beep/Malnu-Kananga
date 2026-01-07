@@ -64,10 +64,10 @@
 
 ## Current Status
 
-| Metric | Status | Details |
+ | Metric | Status | Details |
 |--------|--------|---------|
 | TypeScript | ✅ Passing | 0 errors, strict mode enabled |
-| Tests | ⚠️ Minor Issues | 268 passing, 9 failing (non-critical) |
+| Tests | ⚠️ Minor Issues | 354 passing, 42 failing (non-critical) |
 | Build | ✅ Success | ~10s build time |
 | Linting | ✅ Passing | <20 warnings |
 | Security | ✅ Clean | 0 vulnerabilities |

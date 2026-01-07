@@ -19,6 +19,7 @@ import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { getGradientClass, DARK_GRADIENT_CLASSES } from '../config/gradients';
+import ErrorMessage from './ui/ErrorMessage';
 import { CardSkeleton } from './ui/Skeleton';
 
 interface StudentPortalProps {
@@ -160,7 +161,11 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <p className="text-red-700 dark:text-red-300 text-sm font-medium">{getOfflineMessage()}</p>
+            <ErrorMessage 
+              title="Offline Mode" 
+              message={getOfflineMessage()} 
+              variant="inline" 
+            />
           </div>
         )}
 
@@ -184,10 +189,14 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
           </div>
         ) : error ? (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-            <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
+            <ErrorMessage 
+              title="Error Loading Portal" 
+              message={error} 
+              variant="card" 
+            />
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+              className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
             >
               Coba Lagi
             </button>
