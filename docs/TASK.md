@@ -24,6 +24,15 @@
 - ✅ **P1**: Accessibility Fix - Mobile menu ARIA compliance
 - ✅ **P2**: Accessibility Enhancement - VoiceSettings form attributes
 - ✅ **P2**: Input & Select Components - ARIA-describedby integration
+- ✅ **P1**: Accessibility Enhancement - NotificationCenter component (2026-01-07)
+  - Replaced custom `rounded-pill` with standard `rounded-full`
+  - Added `role="dialog"` and `aria-modal="true"` to dropdown
+  - Fixed search input with proper `id` and `aria-label`
+  - Added `aria-expanded` to toggle button
+  - Implemented ESC key to close dropdown
+  - Added keyboard navigation (Enter/Space) for notification items
+  - Enhanced dark mode support
+  - Added proper `role="list"` and `role="listitem"` attributes
 - ✅ **P4**: Theme System Integration - HSL-based CSS custom properties
 
 ### Documentation & Quality
