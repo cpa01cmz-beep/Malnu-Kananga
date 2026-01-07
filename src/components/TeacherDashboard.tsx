@@ -18,6 +18,7 @@ import { STORAGE_KEYS } from '../constants';
 import Card from './ui/Card';
 import DashboardActionCard from './ui/DashboardActionCard';
 import ErrorMessage from './ui/ErrorMessage';
+import { CardSkeleton } from './ui/Skeleton';
 
 interface TeacherDashboardProps {
     onShowToast?: (msg: string, type: ToastType) => void;
@@ -140,11 +141,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map(i => (
-                <div key={i} className="animate-pulse">
-                  <div className="bg-neutral-100 dark:bg-neutral-800 h-32 rounded-xl mb-4"></div>
-                  <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-3/4 mb-2"></div>
-                  <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2"></div>
-                </div>
+                <CardSkeleton key={i} />
               ))}
             </div>
           </div>
