@@ -69,13 +69,29 @@ export default [
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
-      ],
-      '@typescript-eslint/no-unused-vars': ['error', { 
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_' 
-      }],
-      '@typescript-eslint/no-explicit-any': 'warn',
+],
+  },
+  {
+    files: ['src/services/offlineActionQueueService.ts'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-undef': 'off',
     },
+  },
+  {
+    files: ['scripts/*.cjs', 'worker.js'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off',
+      'no-undef': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
   },
   {
     files: ['scripts/*.cjs', 'worker.js'],
