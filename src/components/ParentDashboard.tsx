@@ -25,6 +25,7 @@ import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '.
 import { validateMultiChildDataIsolation } from '../utils/parentValidation';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import BackButton from './ui/BackButton';
+import DashboardActionCard from './ui/DashboardActionCard';
 
 interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -123,7 +124,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       title: showConsolidatedView ? 'Tinjau Per Anak' : 'Tinjau Konsolidasi',
       description: showConsolidatedView ? 'Lihat per anak' : 'Lihat semua anak dalam satu tampilan',
       icon: <UsersIcon />,
-      color: 'bg-teal-100 text-teal-600 dark:bg-teal-900/50 dark:text-teal-400',
+      colorTheme: 'teal' as const,
       action: () => handleToggleConsolidatedView(),
       active: true
     }] : []),
@@ -131,7 +132,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       title: 'Profil Anak',
       description: 'Lihat biodata dan informasi kelas anak.',
       icon: <UserIcon />,
-      color: 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400',
+      colorTheme: 'indigo' as const,
       action: () => setCurrentView('profile'),
       permission: 'parent.monitor'
     },
@@ -139,7 +140,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       title: 'Jadwal Pelajaran',
       description: 'Lihat jadwal kelas mingguan anak.',
       icon: <DocumentTextIcon />,
-      color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400',
+      colorTheme: 'blue' as const,
       action: () => setCurrentView('schedule'),
       permission: 'academic.schedule'
     },
@@ -147,7 +148,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       title: 'E-Library',
       description: 'Akses buku digital dan materi pelajaran.',
       icon: <BuildingLibraryIcon />,
-      color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400',
+      colorTheme: 'purple' as const,
       action: () => setCurrentView('library'),
       permission: 'content.read'
     },
@@ -155,7 +156,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       title: 'Nilai Akademik',
       description: 'Pantau hasil belajar dan transkrip nilai.',
       icon: <ClipboardDocumentCheckIcon />,
-      color: 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400',
+      colorTheme: 'green' as const,
       action: () => setCurrentView('grades'),
       permission: 'parent.monitor'
     },
@@ -163,7 +164,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       title: 'Kehadiran',
       description: 'Cek rekapitulasi absensi semester ini.',
       icon: <UsersIcon />,
-      color: 'bg-orange-100 text-orange-600 dark:bg-orange-900/50 dark:text-orange-400',
+      colorTheme: 'orange' as const,
       action: () => setCurrentView('attendance'),
       permission: 'parent.monitor'
     },
@@ -171,7 +172,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       title: 'Kegiatan Sekolah',
       description: 'Lihat agenda dan kegiatan OSIS.',
       icon: <AcademicCapIcon />,
-      color: 'bg-pink-100 text-pink-600 dark:bg-pink-900/50 dark:text-pink-400',
+      colorTheme: 'pink' as const,
       action: () => setCurrentView('events'),
       permission: 'content.read'
     },
@@ -179,7 +180,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       title: 'Laporan Konsolidasi',
       description: 'Pantau semua anak dalam laporan menyeluruh.',
       icon: <DocumentTextIcon />,
-      color: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400',
+      colorTheme: 'emerald' as const,
       action: () => setCurrentView('reports'),
       permission: 'parent.reports'
     },
@@ -187,7 +188,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       title: 'Pesan Guru',
       description: 'Komunikasi dengan guru anak.',
       icon: <SendIcon />,
-      color: 'bg-cyan-100 text-cyan-600 dark:bg-cyan-900/50 dark:text-cyan-400',
+      colorTheme: 'cyan' as const,
       action: () => setCurrentView('messaging'),
       permission: 'parent.communication'
     },
@@ -195,7 +196,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       title: 'Pembayaran',
       description: 'Pantau status pembayaran SPP dan biaya.',
       icon: <UsersIcon />,
-      color: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/50 dark:text-yellow-400',
+      colorTheme: 'yellow' as const,
       action: () => setCurrentView('payments'),
       permission: 'parent.monitor'
     },
@@ -203,7 +204,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       title: 'Jadwal Pertemuan',
       description: 'Atur jadwal temu guru.',
       icon: <AcademicCapIcon />,
-      color: 'bg-rose-100 text-rose-600 dark:bg-rose-900/50 dark:text-rose-400',
+      colorTheme: 'rose' as const,
       action: () => setCurrentView('meetings'),
       permission: 'parent.communication'
     },
@@ -314,31 +315,18 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             {/* Menu Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {menuItems.map((item, index) => (
-                <button
+                <DashboardActionCard
                   key={index}
-                  onClick={item.action}
+                  icon={item.icon}
+                  title={item.title}
+                  description={item.description}
+                  colorTheme={item.colorTheme}
+                  layout="horizontal"
                   disabled={loading || !selectedChild}
-                  className={`group p-6 rounded-xl border-2 transition-all duration-200 ${
-                    loading || !selectedChild
-                      ? 'border-neutral-200 dark:border-neutral-700 opacity-50 cursor-not-allowed'
-                      : 'border-neutral-200 dark:border-neutral-700 hover:border-primary-500 dark:hover:border-primary-400 hover:shadow-card-hover hover:-translate-y-0.5'
-                  } bg-white dark:bg-neutral-800`}
+                  onClick={item.action}
+                  ariaLabel={item.title}
                   style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${item.color}`}>
-                      {item.icon}
-                    </div>
-                    <div className="flex-1 text-left">
-                      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                </button>
+                />
               ))}
             </div>
           </>
