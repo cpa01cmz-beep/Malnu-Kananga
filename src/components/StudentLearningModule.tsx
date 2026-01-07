@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { UserExtraRole } from '../types';
+import { GoogleGenAI } from '@google/genai';
+import { withCircuitBreaker, classifyError, logError, getUserFriendlyMessage } from '../utils/errorHandler';
 
 interface StudentLearningModuleProps {
     onShowToast: (msg: string, type: 'success' | 'error' | 'info' | 'warning') => void;
@@ -34,11 +36,37 @@ interface Flashcard {
     mastered: boolean;
 }
 
-const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToast: _onShowToast, extraRole: _extraRole }) => {
+interface AIQuizQuestion {
+    id: string;
+    question: string;
+    options: string[];
+    correctAnswer: number;
+    explanation: string;
+    difficulty: 'easy' | 'medium' | 'hard';
+}
+
+interface AIQuizState {
+    questions: AIQuizQuestion[];
+    currentQuestionIndex: number;
+    userAnswers: number[];
+    isSubmitted: boolean;
+    score: number;
+    isGenerating: boolean;
+}
+
+const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToast }) => {
     const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
     const [showQuiz, setShowQuiz] = useState(false);
     const [showAIQuiz, setShowAIQuiz] = useState(false);
     const [showFlashcards, setShowFlashcards] = useState(false);
+    const [aiQuizState, setAIQuizState] = useState<AIQuizState>({
+        questions: [],
+        currentQuestionIndex: 0,
+        userAnswers: [],
+        isSubmitted: false,
+        score: 0,
+        isGenerating: false
+    });
     const [topics] = useState<Topic[]>([
         { id: '1', title: 'Matematika', description: 'Pemahaman konsep matematika dasar', completed: false },
         { id: '2', title: 'Bahasa Indonesia', description: 'Keterampilan berbahasa Indonesia', completed: false },
@@ -55,6 +83,116 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
     const [flashcards] = useState<Flashcard[]>([
         { id: '1', front: 'Question', back: 'Answer', mastered: false }
     ]);
+
+    // Initialize Google AI
+    const ai = new GoogleGenAI({ apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' });
+
+    // Generate AI Quiz questions
+    const generateAIQuiz = async (topic: Topic) => {
+        setAIQuizState(prev => ({ ...prev, isGenerating: true }));
+        
+        try {
+            const systemInstruction = `Anda adalah seorang guru yang ahli dalam ${topic.title}. 
+            Buatkan 5 soal pilihan ganda tentang ${topic.title} dengan format JSON berikut:
+            
+            {
+              "questions": [
+                {
+                  "question": "string",
+                  "options": ["string", "string", "string", "string"],
+                  "correctAnswer": number,
+                  "explanation": "string",
+                  "difficulty": "easy" | "medium" | "hard"
+                }
+              ]
+            }
+            
+            Requirements:
+            - Soal harus sesuai dengan tingkat SMA/MA
+            - Opsi jawaban harus masuk akal
+            - Berikan penjelasan singkat untuk jawaban benar
+            - Campur tingkat kesulitan (easy, medium, hard)
+            - Kembalikan response dalam bentuk JSON yang valid
+            - Gunakan Bahasa Indonesia`;
+
+            const response = await withCircuitBreaker(async () => {
+                return await ai.models.generateContent({
+                    model: 'gemini-2.0-flash-exp',
+                    contents: `Buatkan 5 soal pilihan ganda tentang ${topic.title} untuk tingkat SMA/MA`,
+                    config: {
+                        systemInstruction,
+                        responseMimeType: "application/json"
+                    }
+                });
+            });
+
+            const jsonResponse = JSON.parse(response.text || '{}');
+            const questions = jsonResponse.questions || [];
+
+            setAIQuizState({
+                questions,
+                currentQuestionIndex: 0,
+                userAnswers: new Array(questions.length).fill(-1),
+                isSubmitted: false,
+                score: 0,
+                isGenerating: false
+            });
+
+            onShowToast('Kuis AI berhasil dibuat!', 'success');
+        } catch (error) {
+            const classifiedError = classifyError(error, {
+                operation: 'generateAIQuiz',
+                timestamp: Date.now()
+            });
+            logError(classifiedError);
+            const message = getUserFriendlyMessage(classifiedError);
+            onShowToast(message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.' 
+                ? 'Gagal membuat kuis AI. Silakan coba lagi.' 
+                : message, 'error');
+            setAIQuizState(prev => ({ ...prev, isGenerating: false }));
+        }
+    };
+
+    // Handle AI Quiz answer selection
+    const handleAIQuizAnswer = (questionIndex: number, answerIndex: number) => {
+        if (aiQuizState.isSubmitted) return;
+        
+        setAIQuizState(prev => {
+            const newUserAnswers = [...prev.userAnswers];
+            newUserAnswers[questionIndex] = answerIndex;
+            return { ...prev, userAnswers: newUserAnswers };
+        });
+    };
+
+    // Submit AI Quiz
+    const submitAIQuiz = () => {
+        let correctAnswers = 0;
+        aiQuizState.questions.forEach((question, index) => {
+            if (aiQuizState.userAnswers[index] === question.correctAnswer) {
+                correctAnswers++;
+            }
+        });
+
+        setAIQuizState(prev => ({
+            ...prev,
+            isSubmitted: true,
+            score: correctAnswers
+        }));
+
+        onShowToast(`Kuis selesai! Skor: ${correctAnswers}/${aiQuizState.questions.length}`, 'info');
+    };
+
+    // Reset AI Quiz
+    const resetAIQuiz = () => {
+        setAIQuizState({
+            questions: [],
+            currentQuestionIndex: 0,
+            userAnswers: [],
+            isSubmitted: false,
+            score: 0,
+            isGenerating: false
+        });
+    };
 
     return (
         <main className="pt-24 min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -86,10 +224,16 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                 Quiz
                             </button>
                             <button
-                                onClick={() => setShowAIQuiz(!showAIQuiz)}
+                                onClick={() => {
+                                    if (!showAIQuiz && selectedTopic) {
+                                        generateAIQuiz(selectedTopic);
+                                    }
+                                    setShowAIQuiz(!showAIQuiz);
+                                }}
                                 className="w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                                disabled={!selectedTopic || aiQuizState.isGenerating}
                             >
-                                AI Quiz
+                                {aiQuizState.isGenerating ? 'Membuat Kuis...' : 'AI Quiz'}
                             </button>
                             <button
                                 onClick={() => setShowFlashcards(!showFlashcards)}
@@ -123,7 +267,141 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                         {showAIQuiz && (
                             <div className="mt-6">
                                 <h3 className="text-lg font-semibold mb-4">AI Quiz</h3>
-                                <p className="text-gray-600 dark:text-gray-300">AI-powered quiz coming soon...</p>
+                                
+                                {aiQuizState.isGenerating ? (
+                                    <div className="flex items-center justify-center py-8">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+                                        <span className="ml-2 text-gray-600">Sedang membuat kuis...</span>
+                                    </div>
+                                ) : aiQuizState.questions.length === 0 ? (
+                                    <div className="text-center py-8 text-gray-600">
+                                        {selectedTopic ? (
+                                            <div>
+                                                <p>Belum ada kuis untuk topik "{selectedTopic.title}"</p>
+                                                <button
+                                                    onClick={() => selectedTopic && generateAIQuiz(selectedTopic)}
+                                                    className="mt-4 px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+                                                >
+                                                    Buat Kuis Baru
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <p>Silakan pilih topik terlebih dahulu</p>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div>
+                                        {!aiQuizState.isSubmitted ? (
+                                            <div className="space-y-6">
+                                                {aiQuizState.questions.map((question, qIndex) => (
+                                                    <div key={question.id} className="border rounded-lg p-4">
+                                                        <div className="flex justify-between items-start mb-3">
+                                                            <span className="font-medium">
+                                                                {qIndex + 1}. {question.question}
+                                                            </span>
+                                                            <span className={`text-xs px-2 py-1 rounded ${
+                                                                question.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
+                                                                question.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                                                'bg-red-100 text-red-800'
+                                                            }`}>
+                                                                {question.difficulty}
+                                                            </span>
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            {question.options.map((option, oIndex) => (
+                                                                <label key={oIndex} className="flex items-center space-x-2 cursor-pointer">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={`ai-quiz-${qIndex}`}
+                                                                        checked={aiQuizState.userAnswers[qIndex] === oIndex}
+                                                                        onChange={() => handleAIQuizAnswer(qIndex, oIndex)}
+                                                                        className="text-purple-500"
+                                                                    />
+                                                                    <span className={`${aiQuizState.userAnswers[qIndex] === oIndex ? 'font-medium text-purple-600' : ''}`}>
+                                                                        {option}
+                                                                    </span>
+                                                                </label>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                                
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm text-gray-600">
+                                                        {aiQuizState.userAnswers.filter(answer => answer !== -1).length} dari {aiQuizState.questions.length} soal dijawab
+                                                    </span>
+                                                    <button
+                                                        onClick={submitAIQuiz}
+                                                        disabled={aiQuizState.userAnswers.some(answer => answer === -1)}
+                                                        className="px-6 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                                    >
+                                                        Submit Kuis
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-6">
+                                                <div className="text-center py-6 bg-purple-50 rounded-lg">
+                                                    <h4 className="text-xl font-bold text-purple-800 mb-2">
+                                                        Kuis Selesai!
+                                                    </h4>
+                                                    <p className="text-3xl font-bold text-purple-600 mb-2">
+                                                        {aiQuizState.score}/{aiQuizState.questions.length}
+                                                    </p>
+                                                    <p className="text-gray-600">
+                                                        {aiQuizState.score === aiQuizState.questions.length ? 'Sempurna!' :
+                                                         aiQuizState.score >= aiQuizState.questions.length * 0.8 ? 'Bagus!' :
+                                                         aiQuizState.score >= aiQuizState.questions.length * 0.6 ? 'Cukup Baik' : 'Perlu Belajar Lagi'}
+                                                    </p>
+                                                </div>
+
+                                                <div className="space-y-4">
+                                                    {aiQuizState.questions.map((question, qIndex) => (
+                                                        <div key={question.id} className={`border rounded-lg p-4 ${
+                                                            aiQuizState.userAnswers[qIndex] === question.correctAnswer 
+                                                                ? 'border-green-200 bg-green-50' 
+                                                                : 'border-red-200 bg-red-50'
+                                                        }`}>
+                                                            <div className="flex justify-between items-start mb-2">
+                                                                <span className="font-medium">
+                                                                    {qIndex + 1}. {question.question}
+                                                                </span>
+                                                                <span className={`text-sm font-medium ${
+                                                                    aiQuizState.userAnswers[qIndex] === question.correctAnswer 
+                                                                        ? 'text-green-600' 
+                                                                        : 'text-red-600'
+                                                                }`}>
+                                                                    {aiQuizState.userAnswers[qIndex] === question.correctAnswer ? 'Benar' : 'Salah'}
+                                                                </span>
+                                                            </div>
+                                                            
+                                                            <div className="text-sm space-y-1">
+                                                                <div>
+                                                                    <strong>Jawaban Anda:</strong> {question.options[aiQuizState.userAnswers[qIndex]]}
+                                                                </div>
+                                                                <div>
+                                                                    <strong>Jawaban Benar:</strong> {question.options[question.correctAnswer]}
+                                                                </div>
+                                                                <div className="mt-2 p-2 bg-blue-50 rounded text-blue-800">
+                                                                    <strong>Penjelasan:</strong> {question.explanation}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                <div className="text-center">
+                                                    <button
+                                                        onClick={resetAIQuiz}
+                                                        className="px-6 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+                                                    >
+                                                        Buat Kuis Baru
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         )}
 
