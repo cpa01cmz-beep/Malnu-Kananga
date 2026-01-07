@@ -60,7 +60,7 @@ This index provides a comprehensive overview of all documentation available for 
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 176 TypeScript/TSX/JS/JSX files in src/ (including 10 test files)
+- **Total Source Files**: 166 TypeScript/TSX/JS/JSX files in src/ (including 10 test files)
 - **Test Files**: 10 test files
 - **Documentation Files**: 13 (in /docs directory)
 - **API Endpoints Documented**: 30+
@@ -176,7 +176,8 @@ This index maintains relationships between documents:
 - **Repository Cleanup (2026-01-07)**:
   - Removed STALE_BRANCHES_REPORT.md (temporary analysis report)
   - Removed stale_branches_final.txt (generated list, no references)
-  - Corrected file count metrics to 176 total files in src/ (including 10 test files)
+  - Corrected file count metrics to 166 total files in src/ (including 10 test files)
+  - Removed duplicate P2 section in TASK.md
   - Fixed test count inconsistencies across documentation files
 - **Previous Cleanup (2026-01-07 - earlier)**:
   - Removed historical REFACTOR_SUMMARY.md (no references, outdated)

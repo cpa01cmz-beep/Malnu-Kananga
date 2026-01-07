@@ -15,10 +15,6 @@
 - [ ] Run `npm run security:scan` to identify potential vulnerabilities
 - [ ] Review and update test coverage
 
-### P2: Code Quality (Medium)
-- [ ] Run `npm run security:scan` to identify potential vulnerabilities
-- [ ] Review and update test coverage
-
 ### P3: Maintenance (Low)
 - [ ] Review and update dependencies regularly
 - [ ] Keep documentation up-to-date with feature changes
