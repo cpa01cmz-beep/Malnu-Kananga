@@ -48,8 +48,8 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
     const programs = safeParse('malnu_programs', []);
     const news = safeParse('malnu_news', []);
     const ppdb = safeParse(STORAGE_KEYS.PPDB_REGISTRANTS, []);
-    const inventory = safeParse('malnu_inventory', []);
-    const events = safeParse('malnu_events', []);
+    const inventory = safeParse(STORAGE_KEYS.INVENTORY, []);
+    const events = safeParse(STORAGE_KEYS.EVENTS, []);
 
     setStats({
         totalUsers: users.length,
@@ -207,7 +207,7 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
 const SystemStats: React.FC<SystemStatsProps> = (props) => {
   // Get current user for permission checking
   const getCurrentUser = (): User | null => {
-    const userJson = localStorage.getItem('malnu_user');
+    const userJson = localStorage.getItem(STORAGE_KEYS.USER);
     return userJson ? JSON.parse(userJson) : null;
   };
 
