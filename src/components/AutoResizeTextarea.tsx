@@ -52,7 +52,7 @@ const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
       <button
         onClick={onSend}
         disabled={disabled || !value.trim()}
-        className="p-2.5 mb-0.5 bg-primary-600 text-white rounded-xl disabled:bg-neutral-400 disabled:cursor-not-allowed hover:bg-primary-700 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95"
+        className="p-2.5 mb-0.5 bg-primary-600 text-white rounded-xl disabled:bg-neutral-400 disabled:cursor-not-allowed hover:bg-primary-700 transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 duration-200 ease-out"
         aria-label="Kirim"
       >
         <SendIcon />

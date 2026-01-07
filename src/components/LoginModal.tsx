@@ -74,11 +74,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       <div className="bg-white/98 dark:bg-neutral-800/98 backdrop-blur-xl rounded-xl shadow-float w-full max-w-md m-4 transform transition-all duration-300 ease-out scale-95 opacity-0 animate-scale-in flex flex-col max-h-[90vh] border border-neutral-200 dark:border-neutral-700">
          <div className="flex justify-between items-center px-6 py-5 border-b border-neutral-200 dark:border-neutral-700/60">
            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">Login</h2>
-           <button
-             onClick={onClose}
-             className="p-2 rounded-xl text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-105 active:scale-95"
-             aria-label="Tutup modal"
-           >
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95"
+              aria-label="Tutup modal"
+            >
              <CloseIcon />
            </button>
          </div>
@@ -95,29 +95,29 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                     Pilih peran untuk login instan:
                 </p>
 
-                  <div className="grid grid-cols-3 gap-2.5">
-                     <button onClick={() => handleSimulatedLogin('student')} className="px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md">
+                     <div className="grid grid-cols-3 gap-2.5">
+                      <button onClick={() => handleSimulatedLogin('student')} className="px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md">
                          Siswa
                      </button>
-                     <button onClick={() => handleSimulatedLogin('teacher')} className="px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md">
+                      <button onClick={() => handleSimulatedLogin('teacher')} className="px-4 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-600 rounded-xl text-sm font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md">
                          Guru
                      </button>
-                     <button onClick={() => handleSimulatedLogin('admin')} className="px-4 py-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 rounded-xl text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md">
+                      <button onClick={() => handleSimulatedLogin('admin')} className="px-4 py-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 rounded-xl text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md">
                          Admin
                      </button>
                  </div>
 
                  <div className="grid grid-cols-2 gap-2.5 mt-3">
-                     <button
-                         onClick={() => handleSimulatedLogin('teacher', 'staff')}
-                         className="px-4 py-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-xl text-sm font-semibold hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md"
-                     >
+                      <button
+                          onClick={() => handleSimulatedLogin('teacher', 'staff')}
+                          className="px-4 py-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-300 rounded-xl text-sm font-semibold hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md"
+                      >
                          Guru (Staff)
                      </button>
-                     <button
-                         onClick={() => handleSimulatedLogin('student', 'osis')}
-                         className="px-4 py-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 rounded-xl text-sm font-semibold hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md"
-                     >
+                      <button
+                          onClick={() => handleSimulatedLogin('student', 'osis')}
+                          className="px-4 py-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300 rounded-xl text-sm font-semibold hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md"
+                      >
                          Siswa (OSIS)
                      </button>
                  </div>
@@ -143,10 +143,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                <p className="mt-2 text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">
                  Anda akan diarahkan ke dashboard...
                </p>
-                  <button
-                    onClick={onClose}
-                    className="mt-6 w-full flex justify-center py-3.5 px-5 border border-transparent rounded-xl text-base font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
-                  >
+                   <button
+                     onClick={onClose}
+                     className="mt-6 w-full flex justify-center py-3.5 px-5 border border-transparent rounded-xl text-base font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95"
+                   >
                      Selesai
                   </button>
              </div>
@@ -162,7 +162,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                 </div>
                 {error && <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-700 dark:text-red-300 text-center font-semibold">{error}</div>}
                      <div>
-                     <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3.5 px-5 border border-transparent rounded-xl text-base font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 transition-all duration-300 ease-out disabled:cursor-not-allowed disabled:opacity-70 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95">
+                      <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3.5 px-5 border border-transparent rounded-xl text-base font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 transition-all duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-70 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95">
                        {formState === 'loading' ? 'Memproses...' : 'Login'}
                      </button>
                    </div>
