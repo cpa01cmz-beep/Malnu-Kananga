@@ -115,6 +115,36 @@ export const VOICE_COMMANDS = {
     CLEAR_CHAT: ['hapus chat', 'clear chat', 'clear history'],
     SEND_MESSAGE: ['kirim', 'send', 'kirim pesan'],
     TOGGLE_VOICE: ['aktifkan suara', 'matikan suara', 'toggle voice', 'toggle speech'],
+    
+    // Common dashboard commands
+    GO_HOME: ['pulang', 'kembali', 'go home', 'beranda', 'dashboard'],
+    LOGOUT: ['keluar', 'logout', 'sign out'],
+    HELP: ['bantuan', 'help', 'bisa ngapain saja'],
+    
+    // Admin dashboard commands
+    SHOW_PPDB: ['tampilkan ppdb', 'lihat pendaftaran', 'show ppdb', 'buka ppdb'],
+    VIEW_GRADES_OVERVIEW: ['lihat nilai', 'tampilkan nilai', 'view grades', 'grades overview'],
+    OPEN_LIBRARY: ['buka perpustakaan', 'perpustakaan', 'open library'],
+    GO_TO_CALENDAR: ['kalender', 'buka kalender', 'calendar', 'go to calendar'],
+    SHOW_STATISTICS: [' statistik', 'tampilkan statistik', 'show statistics', 'stats'],
+    
+    // Teacher dashboard commands
+    SHOW_MY_CLASSES: ['kelas saya', 'tampilkan kelas', 'show my classes', 'my classes'],
+    OPEN_GRADING: ['nilai', 'buka penilaian', 'open grading', 'grading'],
+    VIEW_ATTENDANCE: ['absensi', 'lihat absensi', 'view attendance', 'attendance'],
+    CREATE_ANNOUNCEMENT: ['buat pengumuman', 'pengumuman baru', 'create announcement', 'announcement'],
+    VIEW_SCHEDULE: ['jadwal', 'lihat jadwal', 'view schedule', 'schedule'],
+    
+    // Student dashboard commands
+    SHOW_MY_GRADES: ['nilai saya', 'lihat nilai saya', 'show my grades', 'my grades'],
+    CHECK_ATTENDANCE: ['cek absensi', 'absensi saya', 'check attendance', 'my attendance'],
+    VIEW_INSIGHTS: ['insight', 'lihat insight', 'view insights', 'my insights'],
+    
+    // Parent dashboard commands
+    VIEW_CHILD_GRADES: ['nilai anak', 'lihat nilai anak', 'view child grades', 'child grades'],
+    VIEW_CHILD_ATTENDANCE: ['absensi anak', 'lihat absensi anak', 'view child attendance', 'child attendance'],
+    VIEW_CHILD_SCHEDULE: ['jadwal anak', 'lihat jadwal anak', 'view child schedule', 'child schedule'],
+    SEE_NOTIFICATIONS: ['notifikasi', 'lihat notifikasi', 'see notifications', 'notifications'],
 } as const;
 
 export const NOTIFICATION_CONFIG = {
