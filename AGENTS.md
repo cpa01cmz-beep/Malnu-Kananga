@@ -77,6 +77,7 @@ Extra roles: `staff`, `osis`, `wakasek`, `kepsek`
 ### Code Style
 
 - Use TypeScript strict mode
+- NEVER use "any", "unknown", or implicit types
 - Follow existing naming conventions
 - Constants use UPPER_SNAKE_CASE
 - Services use camelCase
