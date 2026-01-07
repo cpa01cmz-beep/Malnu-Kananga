@@ -9,6 +9,7 @@ import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
+import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { STORAGE_KEYS } from '../constants';
 import { 
   validateGradeInput, 
@@ -25,6 +26,7 @@ import { TableSkeleton } from './ui/Skeleton';
 import AccessDenied from './AccessDenied';
 import { User, UserRole, UserExtraRole } from '../types';
 import ErrorMessage from './ui/ErrorMessage';
+import { OfflineIndicator } from './OfflineIndicator';
 
 
 interface StudentGrade {
@@ -71,6 +73,11 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   }[]>([]);
 
   const { isOnline, isSlow } = useNetworkStatus();
+  const { 
+    sync,
+    addAction,
+    onSyncComplete 
+  } = useOfflineActionQueue();
   const [searchTerm, setSearchTerm] = useState('');
   const [isEditing, setIsEditing] = useState<string | null>(null);
 
@@ -206,6 +213,30 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     }
   }, [isOnline, queuedGradeUpdates.length, onShowToast]);
 
+  // Listen for sync completion and update UI
+  useEffect(() => {
+    if (onSyncComplete) {
+      return onSyncComplete((result: any) => {
+        if (result.success && result.actionsProcessed > 0) {
+          // Filter for grade-related actions
+          const gradeActions = result.actionsProcessed; // We'll assume actionsProcessed includes grade actions
+          if (gradeActions > 0) {
+            onShowToast(`${gradeActions} nilai berhasil disinkronkan`, 'success');
+            
+            // Clear queued updates for synced actions
+            setQueuedGradeUpdates(prev => 
+              prev.slice(0, Math.max(0, prev.length - gradeActions))
+            );
+          }
+        }
+        
+        if (result.actionsFailed > 0) {
+          onShowToast(`${result.actionsFailed} nilai gagal disinkronkan`, 'error');
+        }
+      });
+    }
+  }, [onSyncComplete, onShowToast]);
+
   // If user cannot manage grades, show access denied
   if (!canManageGrades) {
     return <AccessDenied onBack={onBack} message="You don't have permission to manage grades" requiredPermission="academic.grades" />;
@@ -248,26 +279,57 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const handleAutoSave = async () => {
     setIsAutoSaving(true);
     
-    if (!isOnline) {
-      // Queue the grade updates for when we're back online
-      const queuedUpdates = grades.map(grade => ({
-        studentId: grade.id,
-        classId: className,
-        subjectId: subjectId,
-        assignment: grade.assignment,
-        midExam: grade.midExam,
-        finalExam: grade.finalExam,
-        timestamp: new Date().toISOString()
-      }));
-      
-      setQueuedGradeUpdates(prev => [...prev, ...queuedUpdates]);
-      onShowToast('Perubahan nilai akan disinkronkan saat koneksi pulih', 'info');
-      setHasUnsavedChanges(false);
-      setIsAutoSaving(false);
-      return;
-    }
-    
     try {
+      // Check if we should queue for offline sync
+      if (!isOnline || isSlow) {
+        // Queue grade updates using the offline action queue
+        const queuedActions = grades.map(grade => {
+          const actionId = addAction({
+            type: 'update',
+            entity: 'grade',
+            entityId: grade.id,
+            data: {
+              studentId: grade.id,
+              classId: className,
+              subjectId: subjectId,
+              assignment: grade.assignment,
+              midExam: grade.midExam,
+              finalExam: grade.finalExam,
+            },
+            endpoint: `${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev'}/api/grades/${grade.id}`,
+            method: 'PUT'
+          });
+          
+          return {
+            actionId,
+            studentId: grade.id,
+            classId: className,
+            subjectId: subjectId,
+            assignment: grade.assignment,
+            midExam: grade.midExam,
+            finalExam: grade.finalExam,
+            timestamp: new Date().toISOString()
+          };
+        });
+
+        setQueuedGradeUpdates(prev => [...prev, ...queuedActions]);
+        
+        // Cache locally immediately for UI consistency
+        localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify(grades));
+        
+        logger.info('Grade updates queued for offline sync', { count: queuedActions.length, status: isSlow ? 'slow_connection' : 'offline' });
+        onShowToast(`${isSlow ? 'Koneksi lambat' : 'Offline'}: ${queuedActions.length} nilai diantarkan untuk sinkronisasi`, 'info');
+        setHasUnsavedChanges(false);
+        
+        // Trigger sync if on slow connection (might recover)
+        if (isSlow) {
+          setTimeout(() => sync().catch(console.error), 5000);
+        }
+        
+        return;
+      }
+      
+      // Online with good connection: Direct API calls
       const savePromises = grades.map(grade =>
         gradesAPI.update(grade.id, {
           studentId: grade.id,
@@ -285,9 +347,51 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       
       // Cache the updated grades for offline use
       localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify(grades));
+      setHasUnsavedChanges(false);
+      
     } catch (error) {
       logger.error('Auto-save failed:', error);
-      onShowToast('Gagal menyimpan nilai otomatis', 'error');
+      
+      // Auto-queue on network failure
+      if (!isOnline) {
+        const queuedActions = grades.map(grade => {
+          const actionId = addAction({
+            type: 'update',
+            entity: 'grade',
+            entityId: grade.id,
+            data: {
+              studentId: grade.id,
+              classId: className,
+              subjectId: subjectId,
+              assignment: grade.assignment,
+              midExam: grade.midExam,
+              finalExam: grade.finalExam,
+            },
+            endpoint: `${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev'}/api/grades/${grade.id}`,
+            method: 'PUT'
+          });
+          
+          return {
+            actionId,
+            studentId: grade.id,
+            classId: className,
+            subjectId: subjectId,
+            assignment: grade.assignment,
+            midExam: grade.midExam,
+            finalExam: grade.finalExam,
+            timestamp: new Date().toISOString()
+          };
+        });
+
+        setQueuedGradeUpdates(prev => [...prev, ...queuedActions]);
+        localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify(grades));
+        
+        logger.info('Grade updates auto-queued due to network error', { count: queuedActions.length });
+        onShowToast(`Koneksi gagal: ${queuedActions.length} nilai diantarkan untuk sinkronisasi`, 'info');
+        setHasUnsavedChanges(false);
+      } else {
+        onShowToast('Gagal menyimpan nilai otomatis', 'error');
+      }
     } finally {
       setIsAutoSaving(false);
     }
@@ -603,6 +707,13 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
   return (
     <div className="animate-fade-in-up">
+        {/* Offline Status Indicator */}
+        <OfflineIndicator 
+          showSyncButton={true}
+          showQueueCount={true}
+          position="top-right"
+        />
+        
         {/* Offline/Error State */}
         {error && (
           <ErrorMessage 

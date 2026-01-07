@@ -1,0 +1,573 @@
+// offlineActionQueueService.ts - Offline Action Queue and Sync System
+// Handles queuing actions when offline and syncing when online
+
+import { logger } from '../utils/logger';
+import { STORAGE_KEYS } from '../constants';
+import { isNetworkError } from '../utils/networkStatus';
+import type { ApiResponse } from './apiService';
+
+// ============================================
+// TYPES
+// ============================================
+
+export type ActionType = 
+  | 'create'
+  | 'update'
+  | 'delete'
+  | 'publish'
+  | 'submit'
+  | 'approve'
+  | 'reject';
+
+export type EntityType = 
+  | 'grade'
+  | 'attendance'
+  | 'assignment'
+  | 'material'
+  | 'announcement'
+  | 'event'
+  | 'ppdb'
+  | 'inventory'
+  | 'schedule'
+  | 'meeting'
+  | 'user';
+
+export type ActionStatus = 
+  | 'pending'
+  | 'syncing'
+  | 'completed'
+  | 'failed'
+  | 'conflict';
+
+export interface OfflineAction {
+  id: string;
+  type: ActionType;
+  entity: EntityType;
+  entityId: string;
+  data: unknown;
+  timestamp: number;
+  status: ActionStatus;
+  retryCount: number;
+  lastError?: string;
+  serverVersion?: number; // For conflict detection
+  endpoint: string;
+  method: 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+}
+
+export interface SyncResult {
+  success: boolean;
+  actionsProcessed: number;
+  actionsFailed: number;
+  conflicts: OfflineAction[];
+  errors: string[];
+}
+
+export interface ConflictResolution {
+  actionId: string;
+  resolution: 'keep_local' | 'use_server' | 'merge';
+  mergedData?: any;
+}
+
+// ============================================
+// CONFIGURATION
+// ============================================
+
+const SYNC_BATCH_SIZE = 5;
+const CONFLICT_THRESHOLD = 3; // Max attempts before marking as conflict
+
+// ============================================
+// OFFLINE ACTION QUEUE SERVICE
+// ============================================
+
+class OfflineActionQueueService {
+  private queue: OfflineAction[] = [];
+  private isSyncing = false;
+  private syncCallbacks: Set<(result: SyncResult) => void> = new Set();
+
+  constructor() {
+    this.loadQueue();
+    this.setupNetworkListener();
+  }
+
+  // ============================================
+  // QUEUE MANAGEMENT
+  // ============================================
+
+  /**
+   * Add an action to the offline queue
+   */
+  public addAction(action: Omit<OfflineAction, 'id' | 'timestamp' | 'status' | 'retryCount'>): string {
+    const queueAction: OfflineAction = {
+      ...action,
+      id: `offline_action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      timestamp: Date.now(),
+      status: 'pending',
+      retryCount: 0,
+    };
+
+    this.queue.push(queueAction);
+    this.saveQueue();
+    
+    logger.info('Offline action added to queue', {
+      actionId: queueAction.id,
+      type: queueAction.type,
+      entity: queueAction.entity,
+      endpoint: queueAction.endpoint,
+    });
+
+    // Note: Sync will be triggered by network listener when comes online
+    // This avoids hook usage in class constructor
+
+    return queueAction.id;
+  }
+
+  /**
+   * Remove an action from the queue
+   */
+  public removeAction(actionId: string): boolean {
+    const index = this.queue.findIndex(action => action.id === actionId);
+    if (index !== -1) {
+      this.queue.splice(index, 1);
+      this.saveQueue();
+      logger.info('Offline action removed from queue', { actionId });
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Get all actions in the queue
+   */
+  public getQueue(): OfflineAction[] {
+    return [...this.queue];
+  }
+
+  /**
+   * Get actions by status
+   */
+  public getActionsByStatus(status: ActionStatus): OfflineAction[] {
+    return this.queue.filter(action => action.status === status);
+  }
+
+  /**
+   * Get pending actions count
+   */
+  public getPendingCount(): number {
+    return this.queue.filter(action => action.status === 'pending').length;
+  }
+
+  /**
+   * Get failed actions count
+   */
+  public getFailedCount(): number {
+    return this.queue.filter(action => action.status === 'failed').length;
+  }
+
+  /**
+   * Clear completed actions (older than 1 hour)
+   */
+  public clearCompletedActions(): void {
+    const oneHourAgo = Date.now() - (60 * 60 * 1000);
+    const initialLength = this.queue.length;
+    
+    this.queue = this.queue.filter(action => {
+      return !(action.status === 'completed' && action.timestamp < oneHourAgo);
+    });
+
+    if (this.queue.length !== initialLength) {
+      this.saveQueue();
+      logger.info('Cleared completed offline actions', {
+        cleared: initialLength - this.queue.length,
+        remaining: this.queue.length,
+      });
+    }
+  }
+
+  // ============================================
+  // SYNC OPERATIONS
+  // ============================================
+
+  /**
+   * Sync all pending actions
+   */
+  public async sync(): Promise<SyncResult> {
+    if (this.isSyncing) {
+      return {
+        success: false,
+        actionsProcessed: 0,
+        actionsFailed: 0,
+        conflicts: [],
+        errors: ['Sync already in progress'],
+      };
+    }
+
+    this.isSyncing = true;
+    logger.info('Starting offline action sync');
+
+    const result: SyncResult = {
+      success: true,
+      actionsProcessed: 0,
+      actionsFailed: 0,
+      conflicts: [],
+      errors: [],
+    };
+
+    try {
+      const pendingActions = this.queue.filter(action => action.status === 'pending');
+      const batches = this.createBatches(pendingActions, SYNC_BATCH_SIZE);
+
+      for (const batch of batches) {
+        const batchResult = await this.processBatch(batch);
+        result.actionsProcessed += batchResult.processed;
+        result.actionsFailed += batchResult.failed;
+        result.conflicts.push(...batchResult.conflicts);
+        result.errors.push(...batchResult.errors);
+
+        // Small delay between batches
+        if (batches.indexOf(batch) !== batches.length - 1) {
+          await this.delay(100);
+        }
+      }
+
+      // Remove completed actions
+      this.queue = this.queue.filter(action => action.status !== 'completed');
+      this.saveQueue();
+
+      logger.info('Offline action sync completed', {
+        processed: result.actionsProcessed,
+        failed: result.actionsFailed,
+        conflicts: result.conflicts.length,
+        errors: result.errors.length,
+      });
+
+    } catch (error) {
+      result.success = false;
+      result.errors.push(`Sync failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      logger.error('Offline action sync failed', { error });
+    } finally {
+      this.isSyncing = false;
+      this.notifySyncComplete(result);
+    }
+
+    return result;
+  }
+
+  /**
+   * Retry failed actions
+   */
+  public async retryFailedActions(): Promise<SyncResult> {
+    const failedActions = this.getActionsByStatus('failed');
+    
+    // Reset failed actions to pending
+    failedActions.forEach(action => {
+      action.status = 'pending';
+      action.retryCount = 0;
+      action.lastError = undefined;
+    });
+
+    this.saveQueue();
+    logger.info('Retrying failed offline actions', { count: failedActions.length });
+
+    return this.sync();
+  }
+
+  /**
+   * Resolve conflicts
+   */
+  public resolveConflict(resolution: ConflictResolution): void {
+    const action = this.queue.find(a => a.id === resolution.actionId);
+    if (!action) {
+      logger.error('Action not found for conflict resolution', { actionId: resolution.actionId });
+      return;
+    }
+
+    if (resolution.resolution === 'use_server') {
+      // Remove local action, keep server version
+      this.removeAction(action.id);
+    } else if (resolution.resolution === 'keep_local') {
+      // Force update server with local data
+      action.status = 'pending';
+      action.retryCount = 0;
+      action.lastError = undefined;
+    } else if (resolution.resolution === 'merge' && resolution.mergedData) {
+      // Update with merged data and retry
+      action.data = resolution.mergedData;
+      action.status = 'pending';
+      action.retryCount = 0;
+      action.lastError = undefined;
+    }
+
+    this.saveQueue();
+    logger.info('Conflict resolved', { 
+      actionId: resolution.actionId, 
+      resolution: resolution.resolution 
+    });
+  }
+
+  // ============================================
+  // PRIVATE METHODS
+  // ============================================
+
+  private async processBatch(batch: OfflineAction[]): Promise<{
+    processed: number;
+    failed: number;
+    conflicts: OfflineAction[];
+    errors: string[];
+  }> {
+    const result = {
+      processed: 0,
+      failed: 0,
+      conflicts: [] as OfflineAction[],
+      errors: [] as string[],
+    };
+
+    for (const action of batch) {
+      try {
+        action.status = 'syncing';
+        this.saveQueue();
+
+        const success = await this.executeAction(action);
+        
+        if (success) {
+          action.status = 'completed';
+          result.processed++;
+        } else {
+          result.failed++;
+        }
+      } catch (error) {
+        action.status = 'failed';
+        action.lastError = error instanceof Error ? error.message : 'Unknown error';
+        action.retryCount++;
+
+        if (action.retryCount >= CONFLICT_THRESHOLD) {
+          action.status = 'conflict';
+          result.conflicts.push(action);
+        }
+
+        result.failed++;
+        result.errors.push(`${action.entity} ${action.type} failed: ${action.lastError}`);
+      }
+    }
+
+    this.saveQueue();
+    return result;
+  }
+
+  private async executeAction(action: OfflineAction): Promise<boolean> {
+    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(action.endpoint, {
+      method: action.method,
+      headers,
+      body: action.method !== 'DELETE' ? JSON.stringify(action.data) : undefined,
+    });
+
+    if (response.ok) {
+      return true;
+    }
+
+    // Handle different error types
+    if (response.status === 409) {
+      // Conflict - server version changed
+      const serverData = await response.json().catch(() => ({}));
+      action.serverVersion = serverData.version;
+      throw new Error('Conflict detected - server data changed');
+    }
+
+    if (response.status >= 400 && response.status < 500) {
+      // Client error - don't retry
+      throw new Error(`Client error: ${response.status} ${response.statusText}`);
+    }
+
+    // Server error or network error - retryable
+    throw new Error(`Server error: ${response.status} ${response.statusText}`);
+  }
+
+  private createBatches<T>(items: T[], batchSize: number): T[][] {
+    const batches: T[][] = [];
+    for (let i = 0; i < items.length; i += batchSize) {
+      batches.push(items.slice(i, i + batchSize));
+    }
+    return batches;
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private setupNetworkListener(): void {
+    // Listen for online events to trigger sync
+    window.addEventListener('online', () => {
+      if (this.getPendingCount() > 0 && !this.isSyncing) {
+        setTimeout(() => this.sync(), 1000);
+      }
+    });
+  }
+
+  private loadQueue(): void {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.QUEUED_ACTIONS);
+      if (stored) {
+        this.queue = JSON.parse(stored);
+        logger.info('Offline action queue loaded', { count: this.queue.length });
+      }
+    } catch (error) {
+      logger.error('Failed to load offline action queue', { error });
+      this.queue = [];
+    }
+  }
+
+  private saveQueue(): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.QUEUED_ACTIONS, JSON.stringify(this.queue));
+    } catch (error) {
+      logger.error('Failed to save offline action queue', { error });
+    }
+  }
+
+  private notifySyncComplete(result: SyncResult): void {
+    this.syncCallbacks.forEach(callback => {
+      try {
+        callback(result);
+      } catch (error) {
+        logger.error('Sync callback error', { error });
+      }
+    });
+  }
+
+  // ============================================
+  // EVENT LISTENERS
+  // ============================================
+
+  /**
+   * Register callback for sync completion
+   */
+  public onSyncComplete(callback: (result: SyncResult) => void): () => void {
+    this.syncCallbacks.add(callback);
+    return () => this.syncCallbacks.delete(callback);
+  }
+}
+
+// ============================================
+// EXPORTS
+// ============================================
+
+export const offlineActionQueueService = new OfflineActionQueueService();
+
+/**
+ * Hook for using offline action queue
+ */
+export function useOfflineActionQueue() {
+  // Use the imported hook
+   
+  // eslint-disable-next-line @typescript-eslint/no-require-imports, no-undef
+  const { useNetworkStatus } = require('../utils/networkStatus');
+  const networkStatus = useNetworkStatus();
+
+  return {
+    // Queue operations
+    addAction: offlineActionQueueService.addAction.bind(offlineActionQueueService),
+    removeAction: offlineActionQueueService.removeAction.bind(offlineActionQueueService),
+    getQueue: offlineActionQueueService.getQueue.bind(offlineActionQueueService),
+    getPendingCount: offlineActionQueueService.getPendingCount.bind(offlineActionQueueService),
+    getFailedCount: offlineActionQueueService.getFailedCount.bind(offlineActionQueueService),
+    clearCompletedActions: offlineActionQueueService.clearCompletedActions.bind(offlineActionQueueService),
+
+    // Sync operations
+    sync: offlineActionQueueService.sync.bind(offlineActionQueueService),
+    retryFailedActions: offlineActionQueueService.retryFailedActions.bind(offlineActionQueueService),
+    resolveConflict: offlineActionQueueService.resolveConflict.bind(offlineActionQueueService),
+    onSyncComplete: offlineActionQueueService.onSyncComplete.bind(offlineActionQueueService),
+
+    // Status
+    isOnline: networkStatus.isOnline,
+    isSlow: networkStatus.isSlow,
+    isSyncing: offlineActionQueueService['isSyncing'],
+  };
+}
+
+/**
+ * Enhanced API service wrapper for offline support
+ */
+export function createOfflineApiCall<T>(
+  endpoint: string,
+  method: 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+  actionType: ActionType,
+  entityType: EntityType,
+  data?: any
+) {
+  return async (): Promise<ApiResponse<T>> => {
+    // We can't use hooks here, so we'll check the navigator directly
+    const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
+    const isSlow = false; // We can't detect slow connections without hooks
+
+    if (!isOnline || isSlow) {
+      // Queue for offline
+      const actionId = offlineActionQueueService.addAction({
+        type: actionType,
+        entity: entityType,
+        entityId: data ? String((data as any).id || 'unknown') : 'unknown',
+        data,
+        endpoint,
+        method,
+      });
+
+      return {
+        success: true,
+        message: 'Action queued for offline sync',
+        data: { actionId, queued: true } as T,
+      };
+    }
+
+    // Try online execution
+    try {
+      const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+      const response = await fetch(endpoint, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+        body: method !== 'DELETE' ? JSON.stringify(data) : undefined,
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return {
+        success: true,
+        message: 'Success',
+        data: result,
+      };
+    } catch (error) {
+      // Auto-queue on network failure
+      if (isNetworkError(error) || !isOnline) {
+        const actionId = offlineActionQueueService.addAction({
+          type: actionType,
+          entity: entityType,
+          entityId: data?.id || 'unknown',
+          data,
+          endpoint,
+          method,
+        });
+
+return {
+        success: false,
+        message: `Network error. Action queued: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        data: { actionId, queued: true } as T,
+      };
+      }
+
+      throw error;
+    }
+  };
+}

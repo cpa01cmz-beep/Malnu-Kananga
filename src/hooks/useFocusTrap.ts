@@ -37,10 +37,7 @@ export const useFocusTrap = ({ isOpen, onClose }: UseFocusTrapProps) => {
       } else {
         if (document.activeElement === lastElement) {
           event.preventDefault();
-// Delay focusing to ensure DOM is ready
-    setTimeout(() => {
-      firstElement?.focus();
-    }, 0);
+          firstElement?.focus();
         }
       }
     };
