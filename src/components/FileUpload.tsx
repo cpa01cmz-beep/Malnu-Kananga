@@ -223,19 +223,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
         className="hidden"
       />
 
-      <div
+      <button
+        type="button"
         onClick={() => !disabled && !uploading && fileInputRef.current?.click()}
-        role="button"
-        tabIndex={disabled ? -1 : 0}
+        disabled={disabled || uploading}
         aria-label={uploading ? `Uploading file, ${uploadProgress}% complete` : 'Click to upload or drag and drop'}
-        onKeyDown={(e) => {
-          if ((e.key === 'Enter' || e.key === ' ') && !disabled && !uploading) {
-            e.preventDefault();
-            fileInputRef.current?.click();
-          }
-        }}
-        className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
-          disabled
+        className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all w-full ${
+          disabled || uploading
             ? 'border-neutral-200 bg-neutral-50 dark:bg-neutral-900/50 cursor-not-allowed'
             : 'border-neutral-300 dark:border-neutral-600 hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10'
         }`}
@@ -271,7 +265,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
               variant="danger"
               size="sm"
               onClick={(e) => {
-                e.stopPropagation();
+                e.preventDefault();
                 handleCancelUpload();
               }}
               icon={<CloseIcon />}
@@ -290,7 +284,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
             </p>
           </>
         )}
-      </div>
+      </button>
 
       {error && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3 text-sm text-red-700 dark:text-red-300">
