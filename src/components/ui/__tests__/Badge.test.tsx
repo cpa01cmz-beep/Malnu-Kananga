@@ -184,7 +184,7 @@ describe('Badge Component', () => {
 
   describe('Edge Cases', () => {
     it('renders empty badge', () => {
-      render(<Badge></Badge>);
+      render(<Badge>Empty</Badge>);
       const badge = document.querySelector('span');
       expect(badge).toBeInTheDocument();
     });
