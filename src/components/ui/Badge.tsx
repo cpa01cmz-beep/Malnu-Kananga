@@ -1,7 +1,7 @@
 import React from 'react';
 
-export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral';
-export type BadgeSize = 'sm' | 'md' | 'lg';
+export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'purple';
+export type BadgeSize = 'sm' | 'md' | 'lg' | 'xl';
 export type BadgeStyle = 'solid' | 'outline';
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -35,24 +35,35 @@ const variantClasses: Record<BadgeVariant, Record<BadgeStyle, string>> = {
     solid: "bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-300",
     outline: "border-2 border-neutral-500 text-neutral-700 dark:border-neutral-400 dark:text-neutral-300",
   },
+  primary: {
+    solid: "bg-primary-100 text-primary-800 dark:bg-primary-900/50 dark:text-primary-300",
+    outline: "border-2 border-primary-500 text-primary-700 dark:border-primary-400 dark:text-primary-300",
+  },
+  purple: {
+    solid: "bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300",
+    outline: "border-2 border-purple-500 text-purple-700 dark:border-purple-400 dark:text-purple-300",
+  },
 };
 
 const sizeClasses: Record<BadgeSize, string> = {
   sm: "px-1.5 py-0.5 text-xs",
   md: "px-2 py-1 text-xs",
   lg: "px-2.5 py-1.5 text-sm",
+  xl: "px-5 py-2.5 text-sm",
 };
 
 const roundedClasses: Record<BadgeSize, string> = {
   sm: "rounded-md",
   md: "rounded-lg",
   lg: "rounded-xl",
+  xl: "rounded-2xl",
 };
 
 const fullRoundedClasses: Record<BadgeSize, string> = {
   sm: "rounded-full",
   md: "rounded-full",
   lg: "rounded-full",
+  xl: "rounded-full",
 };
 
 const Badge: React.FC<BadgeProps> = ({

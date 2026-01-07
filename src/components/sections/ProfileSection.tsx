@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Badge from '../ui/Badge';
 
 const ProfileSection: React.FC = () => {
   return (
@@ -18,15 +19,33 @@ const ProfileSection: React.FC = () => {
                     Kurikulum yang digunakan memadukan <strong className="text-neutral-900 dark:text-white font-semibold">pendidikan salafiyah</strong> dengan <strong className="text-neutral-900 dark:text-white font-semibold">pendidikan modern</strong>, termasuk pemantapan keterampilan abad 21 untuk menjawab kebutuhan masa depan.
                 </p>
                 <div className="flex flex-wrap gap-3.5 pt-3">
-                    <span className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300 border border-primary-200/80 dark:border-primary-700/80 shadow-subtle transition-all duration-200 hover:shadow-md hover:bg-primary-200/50 dark:hover:bg-primary-900/70 hover:scale-105 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95">
+                    <Badge 
+                        variant="primary" 
+                        size="xl" 
+                        styleType="solid"
+                        rounded
+                        className="border border-primary-200/80 dark:border-primary-700/80 shadow-subtle hover:shadow-md hover:bg-primary-200/50 dark:hover:bg-primary-900/70 hover:scale-105 hover:-translate-y-0.5 focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95"
+                    >
                         Kemenag RI
-                    </span>
-                    <span className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border border-blue-200/80 dark:border-blue-700/80 shadow-subtle transition-all duration-200 hover:shadow-md hover:bg-blue-200/50 dark:hover:bg-blue-900/70 hover:scale-105 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95">
+                    </Badge>
+                    <Badge 
+                        variant="info" 
+                        size="xl" 
+                        styleType="solid"
+                        rounded
+                        className="border border-blue-200/80 dark:border-blue-700/80 shadow-subtle hover:shadow-md hover:bg-blue-200/50 dark:hover:bg-blue-900/70 hover:scale-105 hover:-translate-y-0.5 focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95"
+                    >
                         Kurikulum Terpadu
-                    </span>
-                    <span className="inline-flex items-center px-5 py-2.5 rounded-full text-sm font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 border border-purple-200/80 dark:border-purple-700/80 shadow-subtle transition-all duration-200 hover:shadow-md hover:bg-purple-200/50 dark:hover:bg-purple-900/70 hover:scale-105 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95">
+                    </Badge>
+                    <Badge 
+                        variant="purple" 
+                        size="xl" 
+                        styleType="solid"
+                        rounded
+                        className="border border-purple-200/80 dark:border-purple-700/80 shadow-subtle hover:shadow-md hover:bg-purple-200/50 dark:hover:bg-purple-900/70 hover:scale-105 hover:-translate-y-0.5 focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95"
+                    >
                         Berakhlak Mulia
-                    </span>
+                    </Badge>
                 </div>
             </div>
             <div className="lg:col-span-2 space-y-6">
