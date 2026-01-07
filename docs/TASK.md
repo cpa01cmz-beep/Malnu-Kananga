@@ -143,7 +143,13 @@
   - Added keyboard navigation (Enter/Space) for notification items
   - Enhanced dark mode support
   - Added proper `role="list"` and `role="listitem"` attributes
-- ✅ Theme System Integration - HSL-based CSS custom properties
+ - ✅ Theme System Integration - HSL-based CSS custom properties
+- ✅ Design System Alignment - Replaced all `rounded-pill` with `rounded-full`
+  - Replaced 4 instances in Header.tsx (2) and ParentDashboard.tsx (2)
+  - Aligned with design system (NotificationCenter already completed 2026-01-07)
+  - Eliminated non-standard CSS class, used Tailwind's built-in utilities
+  - Maintained visual consistency (rounded-full equivalent to rounded-pill)
+
 
 ## Current Status
 
