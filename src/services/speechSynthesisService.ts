@@ -20,7 +20,6 @@ class SpeechSynthesisService {
   private config: SpeechSynthesisConfig;
   private callbacks: SpeechSynthesisEventCallbacks = {};
   private voiceCache: Map<string, SpeechSynthesisUtterance> = new Map();
-  // @ts-expect-error: This property is used across multiple methods but TypeScript doesn't detect it
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private isSupported: boolean;
   private voices: SpeechSynthesisVoice[] = [];
