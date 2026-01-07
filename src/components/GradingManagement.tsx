@@ -4,6 +4,7 @@ import Papa from 'papaparse';
 import { analyzeClassPerformance } from '../services/geminiService';
 import { studentsAPI, gradesAPI } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
+import { pushNotificationService } from '../services/pushNotificationService';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
@@ -395,7 +396,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             finalExam: grade.finalExam,
           });
           successCount++;
-          return { success: true, studentName: grade.name };
+          return { success: true, studentName: grade.name, studentId: grade.id };
         } catch (error) {
           failureCount++;
           failureDetails.push(`${grade.name || `Siswa ${index + 1}`}: ${error instanceof Error ? error.message : 'Terjadi kesalahan'}`);
@@ -404,7 +405,59 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         }
       });
 
-      await Promise.all(savePromises);
+      const results = await Promise.all(savePromises);
+      
+      // Send push notifications to students and parents for successful saves
+      if (successCount > 0) {
+        const successfulSaves = results.filter(r => r.success);
+        
+        for (const save of successfulSaves) {
+          const grade = grades.find(g => g.id === save.studentId);
+          if (grade) {
+            const finalScore = calculateFinalGrade(grade.assignment, grade.midExam, grade.finalExam);
+            const gradeLetter = calculateGradeLetter(finalScore);
+            
+            // Notify student
+            await pushNotificationService.showLocalNotification({
+              id: `grade-${save.studentId}-${subjectId}-${Date.now()}`,
+              type: 'grade',
+              title: 'Nilai Baru Tersedia',
+              body: `Nilai ${subjectId} Anda telah dipublikasikan: ${finalScore.toFixed(1)} (${gradeLetter})`,
+              icon: '📊',
+              timestamp: new Date().toISOString(),
+              read: false,
+              priority: 'normal',
+              targetUsers: [save.studentId],
+              data: {
+                action: 'view_grades',
+                subjectId: subjectId,
+                className: className
+              }
+            });
+            
+            // TODO: Also notify parents when parent API is available
+            // const parents = await parentsAPI.getByStudentId(save.studentId);
+            // for (const parent of parents) {
+            //   await pushNotificationService.showLocalNotification({
+            //     id: `parent-grade-${save.studentId}-${subjectId}-${Date.now()}`,
+            //     type: 'grade',
+            //     title: `Nilai ${grade.name}`,
+            //     body: `Nilai ${subjectId}: ${finalScore.toFixed(1)} (${gradeLetter})`,
+            //     icon: '📊',
+            //     timestamp: new Date().toISOString(),
+            //     read: false,
+            //     priority: 'normal',
+            //     targetUsers: [parent.userId],
+            //     data: {
+            //       action: 'view_child_grades',
+            //       studentId: save.studentId,
+            //       subjectId: subjectId
+            //     }
+            //   });
+            // }
+          }
+        }
+      }
       
       if (failureCount === 0) {
         toast.success(`Berhasil menyimpan nilai untuk ${successCount} siswa.`);

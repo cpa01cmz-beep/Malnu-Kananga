@@ -4,6 +4,7 @@ import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, 
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
+import { pushNotificationService } from '../services/pushNotificationService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import AccessDenied from './AccessDenied';
@@ -82,12 +83,32 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
     return <AccessDenied onBack={onBack} message="You don't have permission to manage PPDB registrations" requiredPermission="ppdb.manage" />;
   }
 
-  const updateStatus = (id: string, newStatus: PPDBRegistrant['status'], templateId?: string) => {
+  const updateStatus = async (id: string, newStatus: PPDBRegistrant['status'], templateId?: string) => {
     const updated = registrants.map(r => {
       if (r.id === id) {
         const template = templates.find(t => t.id === templateId);
         if (template && template.type === (newStatus === 'approved' ? 'approval' : 'rejection')) {
           logger.info('Sending email:', template.subject, template.body.replace('{fullName}', r.fullName));
+          
+          // Send push notification to applicant
+          pushNotificationService.showLocalNotification({
+            id: `ppdb-status-${id}-${Date.now()}`,
+            type: 'ppdb',
+            title: newStatus === 'approved' ? 'Selamat! Anda Diterima' : 'Hasil Seleksi PPDB',
+            body: newStatus === 'approved' 
+              ? `Selamat ${r.fullName}, Anda telah diterima di MA Malnu Kananga!`
+              : `Terima kasih ${r.fullName} telah mendaftar. Mohon maaf, Anda belum dapat diterima pada tahun ajaran ini.`,
+            icon: newStatus === 'approved' ? '✅' : '❌',
+            timestamp: new Date().toISOString(),
+            read: false,
+            priority: 'high',
+            targetUsers: [r.userId || r.nisn], // Use userId or fallback to NISN
+            data: {
+              action: 'view_ppdb_status',
+              registrantId: r.id,
+              status: newStatus
+            }
+          });
         }
         return { ...r, status: newStatus };
       }

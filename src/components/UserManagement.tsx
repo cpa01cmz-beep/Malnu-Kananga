@@ -7,6 +7,7 @@ import { User, UserRole, UserExtraRole } from '../types';
 import Button from './ui/Button';
 import { api } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
+import { pushNotificationService } from '../services/pushNotificationService';
 import { logger } from '../utils/logger';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import PermissionGuard from './PermissionGuard';
@@ -118,9 +119,54 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
 
           let response;
           if (isEditing) {
+              const previousUserData = users.find(u => u.id === userData.id)!;
+              const roleChanged = previousUserData.role !== userData.role || previousUserData.extraRole !== userData.extraRole;
+              
               response = await api.users.update(userData.id!, userData);
+              
+              if (response.success && roleChanged) {
+                // Send notification about role change
+                await pushNotificationService.showLocalNotification({
+                  id: `role-change-${userData.id}-${Date.now()}`,
+                  type: 'system',
+                  title: 'Perubahan Hak Akses',
+                  body: `Peran Anda telah diubah menjadi ${userData.role}${userData.extraRole ? ` (${userData.extraRole})` : ''}`,
+                  icon: '🔐',
+                  timestamp: new Date().toISOString(),
+                  read: false,
+                  priority: 'high',
+                  targetUsers: [userData.id!],
+                  data: {
+                    action: 'login_required',
+                    oldRole: previousUserData.role,
+                    newRole: userData.role,
+                    oldExtraRole: previousUserData.extraRole,
+                    newExtraRole: userData.extraRole
+                  }
+                });
+              }
           } else {
               response = await api.users.create(userData);
+              
+              if (response.success) {
+                // Send welcome notification to new user
+                await pushNotificationService.showLocalNotification({
+                  id: `welcome-${userData.id}-${Date.now()}`,
+                  type: 'system',
+                  title: 'Selamat Datang!',
+                  body: `Akun Anda telah dibuat. Selamat menggunakan sistem MA Malnu Kananga.`,
+                  icon: '👋',
+                  timestamp: new Date().toISOString(),
+                  read: false,
+                  priority: 'normal',
+                  targetUsers: [userData.id!],
+                  data: {
+                    action: 'welcome',
+                    role: userData.role,
+                    extraRole: userData.extraRole
+                  }
+                });
+              }
           }
 
           if (response.success && response.data) {
