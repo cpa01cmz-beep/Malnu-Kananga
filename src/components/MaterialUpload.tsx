@@ -22,6 +22,7 @@ import MaterialSharing from './MaterialSharing';
 import VersionControl from './VersionControl';
 import MaterialAnalytics from './MaterialAnalytics';
 import MaterialTemplatesLibrary from './MaterialTemplatesLibrary';
+import Button from './ui/Button';
 
 interface MaterialUploadProps {
   onBack: () => void;
@@ -324,9 +325,9 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
       <div className="animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
           <div>
-            <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Dashboard
-            </button>
+            </Button>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upload Materi Pembelajaran</h2>
           </div>
         </div>
@@ -342,9 +343,9 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
       <div className="animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
           <div>
-            <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Dashboard
-            </button>
+            </Button>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upload Materi Pembelajaran</h2>
           </div>
         </div>
@@ -365,9 +366,9 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     <div className="animate-fade-in-up">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Dashboard
-          </button>
+          </Button>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Materi</h2>
           <p className="text-gray-500 dark:text-gray-400">Kelola materi pembelajaran dengan folder, berbagi, dan kontrol versi.</p>
         </div>

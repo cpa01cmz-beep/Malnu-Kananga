@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { ChatMessage, FeaturedProgram, LatestNews } from '../types';
 import { Sender } from '../types';
+import Button from './ui/Button';
 import { getAIEditorResponse } from '../services/geminiService';
 import { validateAICommand } from '../utils/aiEditorValidator';
 import { CloseIcon } from './icons/CloseIcon';
@@ -387,12 +388,12 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                 </details>
 
                  <div className="mt-6 flex justify-end gap-3 sticky bottom-0 bg-white dark:bg-gray-800 py-4 border-t border-gray-100 dark:border-gray-700/50">
-                    <button onClick={handleCancel} className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors">
+                    <Button variant="secondary" onClick={handleCancel}>
                         Batalkan
-                    </button>
-                    <button onClick={handleApply} className="px-5 py-2.5 text-sm font-medium text-white bg-green-600 border border-transparent rounded-full hover:bg-green-700 shadow-lg hover:shadow-green-500/30 transition-all transform hover:-translate-y-0.5">
+                    </Button>
+                    <Button variant="success" onClick={handleApply}>
                         Terapkan Perubahan
-                    </button>
+                    </Button>
                 </div>
             </div>
           )}

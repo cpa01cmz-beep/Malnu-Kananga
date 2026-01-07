@@ -4,6 +4,7 @@ import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, 
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { logger } from '../utils/logger';
+import Button from './ui/Button';
 
 interface PPDBManagementProps {
   onBack: () => void;
@@ -202,9 +203,9 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
         {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
             <div>
-                <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+                <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
                     ← Kembali ke Dashboard
-                </button>
+                </Button>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Penerimaan Siswa Baru</h2>
                 <p className="text-gray-500 dark:text-gray-400">Kelola data calon siswa yang mendaftar online.</p>
             </div>

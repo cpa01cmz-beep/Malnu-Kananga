@@ -4,6 +4,7 @@ import { schedulesAPI, subjectsAPI } from '../services/apiService';
 import { Schedule, Subject, ParentMeeting } from '../types';
 import { logger } from '../utils/logger';
 import CalendarView from './CalendarView';
+import Button from './ui/Button';
 
 interface ScheduleItem {
   id: string;
@@ -124,9 +125,9 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
       <div className="animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
           <div>
-            <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
-            </button>
+            </Button>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Jadwal Pelajaran</h2>
           </div>
         </div>
@@ -142,9 +143,9 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
       <div className="animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
           <div>
-            <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
-            </button>
+            </Button>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Jadwal Pelajaran</h2>
           </div>
         </div>
@@ -165,9 +166,9 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
     <div className="animate-fade-in-up">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Portal
-          </button>
+          </Button>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Jadwal Pelajaran</h2>
           <p className="text-gray-500 dark:text-gray-400">
             Kelas: <strong>{className}</strong> • Semester Ganjil

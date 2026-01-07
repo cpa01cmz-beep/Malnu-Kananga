@@ -8,6 +8,7 @@ import { SunIcon } from './icons/SunIcon';
 import { MoonIcon } from './icons/MoonIcon';
 import { UserRole, UserExtraRole } from '../types';
 import NotificationCenter from './NotificationCenter';
+import Button from './ui/Button';
 
 const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95";
 
@@ -148,19 +149,18 @@ const Header: React.FC<HeaderProps> = ({
                                      {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                  </button>
 
-                                <button onClick={onLogout} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 px-4 py-2.5 rounded-lg font-semibold text-sm hover:bg-red-200 dark:hover:bg-red-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95">
+                                <Button variant="danger" onClick={onLogout}>
                                     Logout
-                                </button>
+                                </Button>
                             </div>
                           ) : (
                               <div className="hidden sm:flex items-center gap-2">
-                                   <button onClick={onChatClick} className="flex items-center gap-2 bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 px-4 py-2.5 rounded-lg font-semibold text-sm hover:bg-primary-200 dark:hover:bg-primary-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95">
-                                        <ChatIcon />
+                                   <Button variant="info" onClick={onChatClick} icon={<ChatIcon />} iconPosition="left">
                                         <span>Tanya AI</span>
-                                    </button>
-                                    <button onClick={onLoginClick} className="bg-primary-600 text-white px-4 py-2.5 rounded-lg font-semibold text-sm hover:bg-primary-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95">
+                                    </Button>
+                                    <Button onClick={onLoginClick}>
                                         Login
-                                    </button>
+                                    </Button>
                               </div>
                           )}
                               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2.5 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95" aria-label="Buka menu">
