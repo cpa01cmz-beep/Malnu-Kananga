@@ -9,7 +9,7 @@ import type { ParentChild, Schedule, ParentMeeting, ParentTeacher } from '../typ
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import CalendarView from './CalendarView';
-import LoadingSpinner from './ui/LoadingSpinner';
+import { TableSkeleton } from './ui/Skeleton';
 
 interface ParentScheduleViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -158,9 +158,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Memuat jadwal..." color="success" />
-        </div>
+        <TableSkeleton rows={8} cols={5} />
       ) : error ? (
         <div className="text-center py-12">
           <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>

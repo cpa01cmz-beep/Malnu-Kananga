@@ -5,7 +5,7 @@ import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import PDFExportButton from './ui/PDFExportButton';
 import { pdfExportService } from '../services/pdfExportService';
-import LoadingSpinner from './ui/LoadingSpinner';
+import { TableSkeleton } from './ui/Skeleton';
 
 interface ParentGradesViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -85,9 +85,7 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
       </h2>
 
       {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Memuat nilai..." color="success" />
-        </div>
+        <TableSkeleton rows={8} cols={6} />
       ) : error ? (
         <div className="text-center py-12">
           <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
