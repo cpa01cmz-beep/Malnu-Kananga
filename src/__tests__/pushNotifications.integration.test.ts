@@ -1,6 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { pushNotificationService } from '../services/pushNotificationService';
 
+interface NotificationOptions {
+  body?: string;
+  icon?: string;
+  tag?: string;
+  requireInteraction?: boolean;
+  data?: Record<string, unknown>;
+}
+
 // Mock logger
 vi.mock('../utils/logger', () => ({
   logger: {
@@ -49,17 +57,20 @@ beforeEach(() => {
     // Clear localStorage
     localStorage.clear();
     
-    // Clear notification service history and settings
+    // Clear notification service history, analytics and settings
     pushNotificationService.clearHistory();
+    pushNotificationService.clearAnalytics();
     pushNotificationService.resetSettings();
     
     // Mock Notification constructor (using necessary type bypass for browser API)
-    const mockNotificationConstructor = vi.fn().mockImplementation((title, options) => ({
-      ...mockNotification,
-      title,
-      ...options,
-      close: vi.fn(),
-    }));
+    const mockNotificationConstructor = vi.fn().mockImplementation(function(title: string, options?: NotificationOptions) {
+      return {
+        ...mockNotification,
+        title,
+        ...options,
+        close: vi.fn(),
+      };
+    });
     // Type assertion needed for browser API mocking
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (mockNotificationConstructor as any).permission = 'granted';

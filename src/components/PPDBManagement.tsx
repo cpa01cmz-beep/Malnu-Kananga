@@ -66,7 +66,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
 
   // Get current user for permission checking
   const getCurrentUser = (): User | null => {
-    const userJson = localStorage.getItem('malnu_user');
+    const userJson = localStorage.getItem(STORAGE_KEYS.USER);
     return userJson ? JSON.parse(userJson) : null;
   };
 

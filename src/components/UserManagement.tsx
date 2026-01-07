@@ -4,6 +4,7 @@ import { PencilIcon } from './icons/PencilIcon';
 import { TrashIcon } from './icons/TrashIcon';
 import { CloseIcon } from './icons/CloseIcon';
 import { User, UserRole, UserExtraRole } from '../types';
+import { STORAGE_KEYS } from '../constants';
 import Button from './ui/Button';
 import { api } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
@@ -351,9 +352,9 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
 };
 
 const UserManagement: React.FC<UserManagementProps> = (props) => {
-  // Get current user for permission checking
+// Get current user for permission checking
   const getCurrentUser = (): User | null => {
-    const userJson = localStorage.getItem('malnu_user');
+    const userJson = localStorage.getItem(STORAGE_KEYS.USER);
     return userJson ? JSON.parse(userJson) : null;
   };
 
