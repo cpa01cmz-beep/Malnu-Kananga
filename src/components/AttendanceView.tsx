@@ -49,7 +49,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
       processAttendanceData(result.data);
     }
     setLoading(false);
-  }, [STUDENT_NIS]);
+  }, [STUDENT_NIS, clearError, handleApiError]);
 
   useEffect(() => {
     fetchAttendance();

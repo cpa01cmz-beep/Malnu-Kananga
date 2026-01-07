@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PlusIcon } from './icons/PlusIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { TrashIcon } from './icons/TrashIcon';
@@ -30,26 +30,21 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const [isEditing, setIsEditing] = useState(false);
   const dialogRef = useFocusTrap({ isOpen: isModalOpen, onClose: () => setIsModalOpen(false) });
 
-  // Get current user for permission checking
+// Get current user for permission checking
   const getCurrentUser = (): User | null => {
     const userJson = localStorage.getItem('malnu_user');
     return userJson ? JSON.parse(userJson) : null;
   };
 
-  const authUser = getCurrentUser();
-  const userRole = authUser?.role as UserRole || 'student';
-  const userExtraRole = authUser?.extraRole as UserExtraRole;
-
-  // Check permissions
+  const currentUserData = getCurrentUser();
+  const userRole = currentUserData?.role || 'student';
+  const userExtraRole = currentUserData?.extraRole || null;
+  
   const canCreateUser = permissionService.hasPermission(userRole, userExtraRole, 'users.create').granted;
   const canUpdateUser = permissionService.hasPermission(userRole, userExtraRole, 'users.update').granted;
   const canDeleteUser = permissionService.hasPermission(userRole, userExtraRole, 'users.delete').granted;
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     clearError();
     const result = await handleApiError(
@@ -65,9 +60,13 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
       setUsers(result.data);
     }
     setIsLoading(false);
-  };
+  }, [clearError, handleApiError]);
 
-  const filteredUsers = users.filter(user => 
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+  
+  const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
