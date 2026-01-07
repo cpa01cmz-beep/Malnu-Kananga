@@ -195,27 +195,27 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
     };
 
     return (
-        <main className="pt-24 min-h-screen bg-gray-50 dark:bg-gray-900">
+        <main className="pt-24 min-h-screen bg-neutral-50 dark:bg-neutral-900">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Learning Module</h1>
+                <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-8">Learning Module</h1>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {topics.map(topic => (
                         <button
                             key={topic.id}
                             onClick={() => setSelectedTopic(topic)}
-                            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-md cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-all duration-200 ease-out hover:-translate-y-0.5 active:scale-95"
+                            className="bg-white dark:bg-neutral-800 p-6 rounded-lg shadow hover:shadow-md cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 transition-all duration-200 ease-out hover:-translate-y-0.5 active:scale-95"
                             aria-pressed={selectedTopic?.id === topic.id}
                         >
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{topic.title}</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">{topic.description}</p>
+                            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">{topic.title}</h3>
+                            <p className="text-sm text-neutral-500 dark:text-neutral-400">{topic.description}</p>
                         </button>
                     ))}
                 </div>
 
                 {selectedTopic && (
-                    <div className="mt-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{selectedTopic.title}</h2>
+                    <div className="mt-8 bg-white dark:bg-neutral-800 p-6 rounded-lg shadow">
+                        <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">{selectedTopic.title}</h2>
                         
                         <div className="space-y-4">
                             <button
@@ -272,10 +272,10 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                 {aiQuizState.isGenerating ? (
                                     <div className="flex items-center justify-center py-8">
                                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-                                        <span className="ml-2 text-gray-600">Sedang membuat kuis...</span>
+                                        <span className="ml-2 text-neutral-600">Sedang membuat kuis...</span>
                                     </div>
                                 ) : aiQuizState.questions.length === 0 ? (
-                                    <div className="text-center py-8 text-gray-600">
+                                    <div className="text-center py-8 text-neutral-600">
                                         {selectedTopic ? (
                                             <div>
                                                 <p>Belum ada kuis untuk topik "{selectedTopic.title}"</p>
@@ -328,13 +328,13 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                                 ))}
                                                 
                                                 <div className="flex justify-between items-center">
-                                                    <span className="text-sm text-gray-600">
+                                                    <span className="text-sm text-neutral-600">
                                                         {aiQuizState.userAnswers.filter(answer => answer !== -1).length} dari {aiQuizState.questions.length} soal dijawab
                                                     </span>
                                                     <button
                                                         onClick={submitAIQuiz}
                                                         disabled={aiQuizState.userAnswers.some(answer => answer === -1)}
-                                                        className="px-6 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                                        className="px-6 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:bg-neutral-300 disabled:cursor-not-allowed"
                                                     >
                                                         Submit Kuis
                                                     </button>
@@ -349,7 +349,7 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                                     <p className="text-3xl font-bold text-purple-600 mb-2">
                                                         {aiQuizState.score}/{aiQuizState.questions.length}
                                                     </p>
-                                                    <p className="text-gray-600">
+                                                    <p className="text-neutral-600">
                                                         {aiQuizState.score === aiQuizState.questions.length ? 'Sempurna!' :
                                                          aiQuizState.score >= aiQuizState.questions.length * 0.8 ? 'Bagus!' :
                                                          aiQuizState.score >= aiQuizState.questions.length * 0.6 ? 'Cukup Baik' : 'Perlu Belajar Lagi'}
@@ -413,7 +413,7 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                     {flashcards.map(card => (
                                         <div key={card.id} className="p-4 border rounded-lg">
                                             <div className="font-medium">Front: {card.front}</div>
-                                            <div className="text-gray-600">Back: {card.back}</div>
+                                            <div className="text-neutral-600">Back: {card.back}</div>
                                         </div>
                                     ))}
                                 </div>

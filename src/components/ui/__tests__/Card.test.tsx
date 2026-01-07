@@ -12,13 +12,15 @@ describe('Card', () => {
 
     it('renders with default variant', () => {
       render(<Card>Default Card</Card>);
-      const card = screen.getByText('Default Card').parentElement;
+      const card = screen.getByText('Default Card').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('rounded-xl', 'shadow-card', 'border');
     });
 
     it('renders with hover variant', () => {
       render(<Card variant="hover">Hover Card</Card>);
-      const card = screen.getByText('Hover Card').parentElement;
+      const card = screen.getByText('Hover Card').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('hover:shadow-card-hover', 'hover:-translate-y-1');
     });
 
@@ -38,7 +40,8 @@ describe('Card', () => {
           Gradient Card
         </Card>
       );
-      const card = screen.getByText('Gradient Card').parentElement;
+      const card = screen.getByText('Gradient Card').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('bg-gradient-to-br', 'from-blue-500', 'to-purple-600');
     });
 
@@ -51,7 +54,8 @@ describe('Card', () => {
           Gradient Light Text
         </Card>
       );
-      const card = screen.getByText('Gradient Light Text').parentElement;
+      const card = screen.getByText('Gradient Light Text').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('text-white');
     });
   });
@@ -59,25 +63,29 @@ describe('Card', () => {
   describe('Padding', () => {
     it('renders with none padding', () => {
       render(<Card padding="none">No Padding</Card>);
-      const card = screen.getByText('No Padding').parentElement;
+      const card = screen.getByText('No Padding').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).not.toHaveClass('p-4', 'p-6', 'p-8');
     });
 
     it('renders with small padding', () => {
       render(<Card padding="sm">Small Padding</Card>);
-      const card = screen.getByText('Small Padding').parentElement;
+      const card = screen.getByText('Small Padding').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('p-4');
     });
 
     it('renders with medium padding (default)', () => {
       render(<Card padding="md">Medium Padding</Card>);
-      const card = screen.getByText('Medium Padding').parentElement;
+      const card = screen.getByText('Medium Padding').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('p-6');
     });
 
     it('renders with large padding', () => {
       render(<Card padding="lg">Large Padding</Card>);
-      const card = screen.getByText('Large Padding').parentElement;
+      const card = screen.getByText('Large Padding').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('p-6', 'sm:p-8');
     });
   });
@@ -85,13 +93,15 @@ describe('Card', () => {
   describe('Custom Classes', () => {
     it('applies custom className', () => {
       render(<Card className="custom-class">Custom Classes</Card>);
-      const card = screen.getByText('Custom Classes').parentElement;
+      const card = screen.getByText('Custom Classes').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('custom-class');
     });
 
     it('preserves default classes when custom className provided', () => {
       render(<Card className="custom-class">Preserved Classes</Card>);
-      const card = screen.getByText('Preserved Classes').parentElement;
+      const card = screen.getByText('Preserved Classes').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('rounded-xl', 'shadow-card', 'custom-class');
     });
   });
@@ -133,7 +143,8 @@ describe('Card', () => {
           <span id="card-description">Card description</span>
         </>
       );
-      const card = screen.getByText('Card Content').parentElement;
+      const card = screen.getByText('Card Content').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveAttribute('aria-describedby', 'card-description');
     });
 
@@ -156,7 +167,8 @@ describe('Card', () => {
   describe('Dark Mode', () => {
     it('has dark mode border classes', () => {
       render(<Card>Dark Mode Card</Card>);
-      const card = screen.getByText('Dark Mode Card').parentElement;
+      const card = screen.getByText('Dark Mode Card').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('dark:border-neutral-700');
     });
 
@@ -195,7 +207,8 @@ describe('Card', () => {
   describe('Variant Combinations', () => {
     it('hover variant with custom padding', () => {
       render(<Card variant="hover" padding="lg">Hover Large</Card>);
-      const card = screen.getByText('Hover Large').parentElement;
+      const card = screen.getByText('Hover Large').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('hover:shadow-card-hover', 'hover:-translate-y-1', 'p-6', 'sm:p-8');
     });
 
@@ -209,7 +222,8 @@ describe('Card', () => {
           Gradient Large Light
         </Card>
       );
-      const card = screen.getByText('Gradient Large Light').parentElement;
+      const card = screen.getByText('Gradient Large Light').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('bg-gradient-to-br', 'from-indigo-500', 'to-purple-600', 'text-white');
     });
   });
@@ -232,7 +246,8 @@ describe('Card', () => {
           Multiple Classes
         </Card>
       );
-      const card = screen.getByText('Multiple Classes').parentElement;
+      const card = screen.getByText('Multiple Classes').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
       expect(card).toHaveClass('class-1', 'class-2', 'class-3', 'p-4');
     });
   });

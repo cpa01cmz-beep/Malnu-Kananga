@@ -113,58 +113,58 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <button onClick={onBack} className="mb-4 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+          <button onClick={onBack} className="mb-4 text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors">
             <svg className="w-6 h-6 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Kembali
           </button>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Statistik Sistem</h1>
-          <p className="text-gray-600 dark:text-gray-300">Monitor kinerja dan statistik penggunaan sistem</p>
+          <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">Statistik Sistem</h1>
+          <p className="text-neutral-600 dark:text-neutral-300">Monitor kinerja dan statistik penggunaan sistem</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Total Pendaftar</p>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Pendaftar</p>
                 <p className="text-xl font-bold text-green-600">{stats.totalPPDB}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Total User</p>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Total User</p>
                 <p className="text-xl font-bold text-blue-600">{stats.totalUsers}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Total Program</p>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Program</p>
                 <p className="text-xl font-bold text-purple-600">{stats.totalPrograms}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Total Berita</p>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Berita</p>
                 <p className="text-xl font-bold text-orange-600">{stats.totalNews}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Total Inventaris</p>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Inventaris</p>
                 <p className="text-xl font-bold text-teal-600">{stats.totalInventory}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Total Events</p>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Events</p>
                 <p className="text-xl font-bold text-pink-600">{stats.totalEvents}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Pengguna Aktif</p>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Pengguna Aktif</p>
                 <p className="text-xl font-bold text-indigo-600">{stats.activeUsers}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Penyimpanan</p>
-                <p className="text-xl font-bold text-gray-600">{stats.storageUsed}</p>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Penyimpanan</p>
+                <p className="text-xl font-bold text-neutral-600">{stats.storageUsed}</p>
             </div>
         </div>
 
         {/* Factory Reset Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700 p-6">
+            <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-4">
                 <span className="flex items-center gap-2">
                     <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -192,7 +192,7 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
                         Lakukan Factory Reset
                     </button>
                 ) : (
-                    <div className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-400 font-bold rounded-full cursor-not-allowed">
+                    <div className="flex items-center gap-2 px-6 py-3 bg-neutral-100 text-neutral-400 font-bold rounded-full cursor-not-allowed">
                         <ArrowPathIcon className="w-5 h-5" />
                         Factory Reset (Permission Required)
                     </div>

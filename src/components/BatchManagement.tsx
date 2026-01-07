@@ -59,14 +59,14 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
       case 'processing': return 'bg-blue-100 text-blue-800';
       case 'completed': return 'bg-green-100 text-green-800';
       case 'failed': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      default: return 'bg-neutral-100 text-neutral-800';
     }
   };
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Manajemen Batch</h3>
+        <h3 className="text-lg font-medium text-neutral-900">Manajemen Batch</h3>
         <button
           onClick={() => setShowCreateModal(true)}
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
@@ -76,7 +76,7 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
       </div>
 
       {batches.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-neutral-500">
           <p>Belum ada batch notifikasi</p>
         </div>
       ) : (
@@ -85,8 +85,8 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
             <div key={batch.id} className="border rounded-lg p-4">
               <div className="flex justify-between items-start mb-2">
                 <div>
-                  <h4 className="font-medium text-gray-900">{batch.name}</h4>
-                  <p className="text-sm text-gray-600">
+                  <h4 className="font-medium text-neutral-900">{batch.name}</h4>
+                  <p className="text-sm text-neutral-600">
                     {batch.notifications.length} notifikasi
                   </p>
                 </div>
@@ -95,7 +95,7 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
                 </span>
               </div>
               
-              <div className="flex justify-between items-center text-sm text-gray-500 mb-3">
+              <div className="flex justify-between items-center text-sm text-neutral-500 mb-3">
                 <span>Dibuat: {new Date(batch.createdAt).toLocaleString('id-ID')}</span>
                 {batch.sentAt && (
                   <span>Dikirim: {new Date(batch.sentAt).toLocaleString('id-ID')}</span>
@@ -133,10 +133,10 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
           />
           <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Buat Batch Baru</h3>
+              <h3 className="text-lg font-semibold text-neutral-900">Buat Batch Baru</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
+                className="p-2 hover:bg-neutral-100 rounded-full"
               >
                 <CloseIcon className="w-4 h-4" />
               </button>
@@ -144,26 +144,26 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
                   Nama Batch
                 </label>
                 <input
                   type="text"
                   value={batchName}
                   onChange={(e) => setBatchName(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-neutral-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Contoh: Pengumuman Libur"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
                   Konten Notifikasi (contoh)
                 </label>
                 <textarea
                   value={notificationText}
                   onChange={(e) => setNotificationText(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-neutral-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   rows={3}
                   placeholder="Isi pesan notifikasi..."
                 />
@@ -179,7 +179,7 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
                 </button>
                 <button
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 text-neutral-700 border border-neutral-300 rounded-md hover:bg-neutral-50 transition-colors"
                 >
                   Batal
                 </button>

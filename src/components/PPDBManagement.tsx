@@ -248,12 +248,12 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                 <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
                     ← Kembali ke Dashboard
                 </Button>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Penerimaan Siswa Baru</h2>
-                <p className="text-gray-500 dark:text-gray-400">Kelola data calon siswa yang mendaftar online.</p>
+                <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Penerimaan Siswa Baru</h2>
+                <p className="text-neutral-500 dark:text-neutral-400">Kelola data calon siswa yang mendaftar online.</p>
             </div>
             {selectedIds.length > 0 && canApprovePPDB && (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">{selectedIds.length} dipilih</span>
+                <span className="text-sm text-neutral-600">{selectedIds.length} dipilih</span>
                 <button
                   onClick={() => handleBulkAction('approve')}
                   className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
@@ -272,33 +272,33 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Total Pendaftar</p>
-                <p className="text-xl font-bold text-gray-900 dark:text-white">{registrants.length}</p>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Pendaftar</p>
+                <p className="text-xl font-bold text-neutral-900 dark:text-white">{registrants.length}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Perlu Verifikasi</p>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Perlu Verifikasi</p>
                 <p className="text-xl font-bold text-yellow-600">{registrants.filter(r => r.status === 'pending').length}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Diterima</p>
+            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Diterima</p>
                 <p className="text-xl font-bold text-green-600">{registrants.filter(r => r.status === 'approved').length}</p>
             </div>
-             <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Ditolak</p>
+             <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Ditolak</p>
                 <p className="text-xl font-bold text-red-600">{registrants.filter(r => r.status === 'rejected').length}</p>
             </div>
         </div>
 
         {/* Advanced Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6">
+        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Status</label>
+              <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300 block mb-1">Status</label>
               <select
                 value={filters.status}
                 onChange={(e) => setFilters({...filters, status: e.target.value as PPDBFilterOptions['status'] })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"
+                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-sm"
               >
                 <option value="all">Semua</option>
                 <option value="pending">Menunggu</option>
@@ -308,11 +308,11 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
             </div>
             
             <div>
-              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Tanggal</label>
+              <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300 block mb-1">Tanggal</label>
               <select
                 value={filters.dateRange}
                 onChange={(e) => setFilters({...filters, dateRange: e.target.value as PPDBFilterOptions['dateRange'] })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"
+                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-sm"
               >
                 <option value="all">Semua waktu</option>
                 <option value="today">Hari ini</option>
@@ -322,11 +322,11 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
             </div>
             
             <div>
-              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Skor</label>
+              <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300 block mb-1">Skor</label>
               <select
                 value={filters.scoreRange}
                 onChange={(e) => setFilters({...filters, scoreRange: e.target.value as PPDBFilterOptions['scoreRange'] })}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"
+                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-sm"
               >
                 <option value="all">Semua skor</option>
                 <option value="high">Tinggi (80-100)</option>
@@ -336,24 +336,24 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
             </div>
             
             <div>
-              <label className="text-xs font-medium text-gray-700 dark:text-gray-300 block mb-1">Asal Sekolah</label>
+              <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300 block mb-1">Asal Sekolah</label>
               <input
                 type="text"
                 value={filters.schoolFilter}
                 onChange={(e) => setFilters({...filters, schoolFilter: e.target.value})}
                 placeholder="Cari sekolah..."
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm"
+                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-sm"
               />
             </div>
           </div>
           
-          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
             <div className="flex items-center gap-2">
-              <label className="text-xs font-medium text-gray-700 dark:text-gray-300">Urutkan:</label>
+              <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300">Urutkan:</label>
               <select
                 value={sort.field}
                 onChange={(e) => setSort({...sort, field: e.target.value as PPDBSortOptions['field'] })}
-                className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-xs"
+                className="px-2 py-1 border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-700 text-xs"
               >
                 <option value="registrationDate">Tanggal</option>
                 <option value="fullName">Nama</option>
@@ -362,7 +362,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
               </select>
               <button
                 onClick={() => setSort({...sort, direction: sort.direction === 'asc' ? 'desc' : 'asc'})}
-                className="p-1 text-gray-600 hover:text-gray-900 dark:hover:text-white"
+                className="p-1 text-neutral-600 hover:text-neutral-900 dark:hover:text-white"
               >
                 {sort.direction === 'asc' ? '↑' : '↓'}
               </button>
@@ -371,17 +371,17 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
         </div>
 
         {/* Table */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
             <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                    <thead className="bg-gray-50 dark:bg-gray-700 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
+                <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
+                    <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
                         <tr>
                             <th className="px-6 py-4">
                               <input
                                 type="checkbox"
                                 checked={selectedIds.length === filteredRegistrants.length && filteredRegistrants.length > 0}
                                 onChange={(e) => setSelectedIds(e.target.checked ? filteredRegistrants.map(r => r.id) : [])}
-                                className="rounded border-gray-300 dark:border-gray-600"
+                                className="rounded border-neutral-300 dark:border-neutral-600"
                               />
                             </th>
                             <th className="px-6 py-4">Tanggal</th>
@@ -392,10 +392,10 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                             <th className="px-6 py-4 text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
                         {filteredRegistrants.length > 0 ? (
                             filteredRegistrants.map((reg) => (
-                                <tr key={reg.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                <tr key={reg.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
                                     <td className="px-6 py-4">
                                       <input
                                         type="checkbox"
@@ -407,13 +407,13 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                             setSelectedIds(selectedIds.filter(id => id !== reg.id));
                                           }
                                         }}
-                                        className="rounded border-gray-300 dark:border-gray-600"
+                                        className="rounded border-neutral-300 dark:border-neutral-600"
                                       />
                                     </td>
                                     <td className="px-6 py-4 text-xs font-mono">{reg.registrationDate}</td>
                                     <td className="px-6 py-4">
-                                        <div className="font-medium text-gray-900 dark:text-white">{reg.fullName}</div>
-                                        <div className="text-xs text-gray-500">NISN: {reg.nisn}</div>
+                                        <div className="font-medium text-neutral-900 dark:text-white">{reg.fullName}</div>
+                                        <div className="text-xs text-neutral-500">NISN: {reg.nisn}</div>
                                     </td>
                                     <td className="px-6 py-4">{reg.originSchool}</td>
                                     <td className="px-6 py-4">
@@ -458,7 +458,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                             {reg.documentUrl && (
                                               <button 
                                                 onClick={() => setShowDocumentPreview(reg.id)}
-                                                className="p-1.5 bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors"
+                                                className="p-1.5 bg-neutral-100 text-neutral-600 rounded hover:bg-neutral-200 transition-colors"
                                                 title="Lihat dokumen"
                                               >
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -494,7 +494,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={7} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                <td colSpan={7} className="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
                                     Belum ada data pendaftar.
                                 </td>
                             </tr>
@@ -507,8 +507,8 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
         {/* Scoring Modal */}
         {showScoringModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md">
-              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Penilaian Calon Siswa</h3>
+            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 w-full max-w-md">
+              <h3 className="text-lg font-semibold mb-4 text-neutral-900 dark:text-white">Penilaian Calon Siswa</h3>
               <div className="space-y-4">
                 {rubric.criteria.map(criterion => {
                   const registrant = registrants.find(r => r.id === showScoringModal);
@@ -517,10 +517,10 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                   return (
                     <div key={criterion.id}>
                       <div className="flex justify-between items-center mb-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                           {criterion.name}
                         </label>
-                        <span className="text-xs text-gray-500">{criterion.weight * 100}%</span>
+                        <span className="text-xs text-neutral-500">{criterion.weight * 100}%</span>
                       </div>
                       <input
                         type="range"
@@ -537,12 +537,12 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                         }}
                         className="w-full"
                       />
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                      <div className="flex justify-between text-xs text-neutral-500 mt-1">
                         <span>0</span>
                         <span className="font-semibold">{currentScore}</span>
                         <span>{criterion.maxScore}</span>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">{criterion.description}</p>
+                      <p className="text-xs text-neutral-500 mt-1">{criterion.description}</p>
                     </div>
                   );
                 })}
@@ -550,7 +550,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
               <div className="flex justify-end gap-2 mt-6">
                 <button
                   onClick={() => setShowScoringModal(null)}
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+                  className="px-4 py-2 text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600"
                 >
                   Tutup
                 </button>
@@ -562,18 +562,18 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
         {/* Document Preview Modal */}
         {showDocumentPreview && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-2xl">
+            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 w-full max-w-2xl">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Preview Dokumen</h3>
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Preview Dokumen</h3>
                 <button
                   onClick={() => setShowDocumentPreview(null)}
-                  className="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  className="p-2 text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
               </div>
-              <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 min-h-[400px] flex items-center justify-center">
-                <p className="text-gray-500 dark:text-gray-400">Preview dokumen akan ditampilkan di sini</p>
+              <div className="bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4 min-h-[400px] flex items-center justify-center">
+                <p className="text-neutral-500 dark:text-neutral-400">Preview dokumen akan ditampilkan di sini</p>
               </div>
             </div>
           </div>

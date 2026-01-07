@@ -163,8 +163,8 @@ const MicrophonePermissionHandler: React.FC<MicrophonePermissionHandlerProps> = 
           ) : (
             <div className="space-y-3">
               {browserInfo && (
-                <div className="bg-white dark:bg-gray-800 rounded p-3 border border-blue-200 dark:border-blue-700">
-                  <p className="font-medium text-sm text-gray-800 dark:text-gray-200 mb-2">
+                <div className="bg-white dark:bg-neutral-800 rounded p-3 border border-blue-200 dark:border-blue-700">
+                  <p className="font-medium text-sm text-neutral-800 dark:text-neutral-200 mb-2">
                     Panduan untuk {browserInfo.name}:
                   </p>
                   {getBrowserSpecificInstructions()}

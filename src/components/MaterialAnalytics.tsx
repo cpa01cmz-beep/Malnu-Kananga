@@ -112,7 +112,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
       <div className="animate-pulse">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-gray-200 dark:bg-gray-700 rounded-lg p-4 h-20"></div>
+            <div key={i} className="bg-neutral-200 dark:bg-neutral-700 rounded-lg p-4 h-20"></div>
           ))}
         </div>
       </div>
@@ -121,7 +121,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
 
   if (!analytics) {
     return (
-      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+      <div className="text-center py-8 text-neutral-500 dark:text-neutral-400">
         <ChartBarIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
         <p>Analytics tidak tersedia</p>
       </div>
@@ -142,7 +142,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
   return (
     <div className="material-analytics">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Analytics</h3>
+        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Analytics</h3>
         <button
           onClick={() => setShowDetails(!showDetails)}
           className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
@@ -158,7 +158,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
             <ArrowDownTrayIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">Total Unduhan</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-2xl font-bold text-neutral-900 dark:text-white">
             {analytics.totalDownloads}
           </p>
           {downloadsTrend.isUp ? (
@@ -183,7 +183,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
             <UserIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
             <span className="text-xs text-green-600 dark:text-green-400 font-medium">Pengguna Unik</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-2xl font-bold text-neutral-900 dark:text-white">
             {analytics.uniqueUsers}
           </p>
           <div className="flex items-center gap-1 mt-1">
@@ -191,7 +191,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
               engagementLevel === 'high' ? 'bg-green-500' :
               engagementLevel === 'medium' ? 'bg-yellow-500' : 'bg-red-500'
             }`}></div>
-            <span className="text-xs text-gray-600 dark:text-gray-400">
+            <span className="text-xs text-neutral-600 dark:text-neutral-400">
               Engagement {engagementLevel}
             </span>
           </div>
@@ -202,10 +202,10 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
             <StarIcon className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
             <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">Rating</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-2xl font-bold text-neutral-900 dark:text-white">
             {analytics.averageRating.toFixed(1)}
           </p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
             {analytics.totalReviews} review
           </p>
         </div>
@@ -215,12 +215,12 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
             <ClockIcon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             <span className="text-xs text-purple-600 dark:text-purple-400 font-medium">Terakhir Diakses</span>
           </div>
-          <p className="text-sm font-bold text-gray-900 dark:text-white">
+          <p className="text-sm font-bold text-neutral-900 dark:text-white">
             {daysSinceLastAccess === 0 ? 'Hari ini' :
              daysSinceLastAccess === 1 ? 'Kemarin' :
              `${daysSinceLastAccess} hari lalu`}
           </p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
             {formatDate(analytics.lastAccessed)}
           </p>
         </div>
@@ -230,15 +230,15 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
         <div className="space-y-6">
           {/* Daily Activity */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Aktivitas Harian (7 Hari Terakhir)</h4>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Aktivitas Harian (7 Hari Terakhir)</h4>
+            <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4">
               <div className="space-y-2">
                 {analytics.dailyStats.slice(-7).map((stat) => {
                   const isActive = stat.date === new Date().toISOString().split('T')[0];
                   return (
                     <div key={stat.date} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className={`text-sm font-medium ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'}`}>
+                        <span className={`text-sm font-medium ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-neutral-600 dark:text-neutral-400'}`}>
                           {new Date(stat.date).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' })}
                         </span>
                         {isActive && (
@@ -247,10 +247,10 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center gap-4 text-xs text-neutral-500 dark:text-neutral-400">
                         <span>{stat.downloads} unduhan</span>
                         <span>{stat.uniqueUsers} pengguna</span>
-                        <div className="w-20 bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden">
+                        <div className="w-20 bg-neutral-200 dark:bg-neutral-600 rounded-full h-2 overflow-hidden">
                           <div 
                             className="bg-blue-500 h-full rounded-full transition-all duration-300"
                             style={{ width: `${(stat.downloads / Math.max(...analytics.dailyStats.map(d => d.downloads))) * 100}%` }}
@@ -266,17 +266,17 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
 
           {/* Monthly Trends */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Trend Bulanan (6 Bulan Terakhir)</h4>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Trend Bulanan (6 Bulan Terakhir)</h4>
+            <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h5 className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Unduhan per Bulan</h5>
+                  <h5 className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">Unduhan per Bulan</h5>
                   <div className="space-y-1">
                     {analytics.monthlyStats.map((stat) => (
                       <div key={stat.month} className="flex items-center justify-between text-xs">
-                        <span className="text-gray-600 dark:text-gray-400">{stat.month}</span>
-                        <span className="font-medium text-gray-900 dark:text-white">{stat.downloads}</span>
-                        <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5 overflow-hidden">
+                        <span className="text-neutral-600 dark:text-neutral-400">{stat.month}</span>
+                        <span className="font-medium text-neutral-900 dark:text-white">{stat.downloads}</span>
+                        <div className="w-16 bg-neutral-200 dark:bg-neutral-600 rounded-full h-1.5 overflow-hidden">
                           <div 
                             className="bg-blue-500 h-full rounded-full transition-all duration-300"
                             style={{ width: `${(stat.downloads / Math.max(...analytics.monthlyStats.map(s => s.downloads))) * 100}%` }}
@@ -287,13 +287,13 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
                   </div>
                 </div>
                 <div>
-                  <h5 className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Pengguna Unik per Bulan</h5>
+                  <h5 className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">Pengguna Unik per Bulan</h5>
                   <div className="space-y-1">
                     {analytics.monthlyStats.map((stat) => (
                       <div key={stat.month} className="flex items-center justify-between text-xs">
-                        <span className="text-gray-600 dark:text-gray-400">{stat.month}</span>
-                        <span className="font-medium text-gray-900 dark:text-white">{stat.uniqueUsers}</span>
-                        <div className="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-1.5 overflow-hidden">
+                        <span className="text-neutral-600 dark:text-neutral-400">{stat.month}</span>
+                        <span className="font-medium text-neutral-900 dark:text-white">{stat.uniqueUsers}</span>
+                        <div className="w-16 bg-neutral-200 dark:bg-neutral-600 rounded-full h-1.5 overflow-hidden">
                           <div 
                             className="bg-green-500 h-full rounded-full transition-all duration-300"
                             style={{ width: `${(stat.uniqueUsers / Math.max(...analytics.monthlyStats.map(s => s.uniqueUsers))) * 100}%` }}
@@ -309,27 +309,27 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
 
           {/* Engagement Insights */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Insight Engagement</h4>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Insight Engagement</h4>
+            <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <div className="text-2xl font-bold text-neutral-900 dark:text-white">
                     {analytics.totalDownloads / analytics.uniqueUsers > 0 ? 
                       (analytics.totalDownloads / analytics.uniqueUsers).toFixed(1) : '0'}
                   </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">Rata-rata Unduhan per Pengguna</div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Rata-rata Unduhan per Pengguna</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <div className="text-2xl font-bold text-neutral-900 dark:text-white">
                     {recentDaily.reduce((sum, d) => sum + d.downloads, 0)}
                   </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">Unduhan 7 Hari Terakhir</div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Unduhan 7 Hari Terakhir</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <div className="text-2xl font-bold text-neutral-900 dark:text-white">
                     {recentDaily.reduce((sum, d) => sum + d.uniqueUsers, 0)}
                   </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">Pengguna Unik 7 Hari Terakhir</div>
+                  <div className="text-xs text-neutral-600 dark:text-neutral-400">Pengguna Unik 7 Hari Terakhir</div>
                 </div>
               </div>
             </div>

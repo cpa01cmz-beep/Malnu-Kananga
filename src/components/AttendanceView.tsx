@@ -109,7 +109,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Rekapitulasi Kehadiran</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Rekapitulasi Kehadiran</h2>
           </div>
         </div>
         <LoadingSpinner size="lg" text="Memuat data kehadiran..." color="success" />
@@ -125,7 +125,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Rekapitulasi Kehadiran</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Rekapitulasi Kehadiran</h2>
           </div>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
@@ -155,17 +155,17 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
           <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Portal
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Rekapitulasi Kehadiran</h2>
-          <p className="text-gray-500 dark:text-gray-400">Semester Ganjil 2024/2025</p>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Rekapitulasi Kehadiran</h2>
+          <p className="text-neutral-500 dark:text-neutral-400">Semester Ganjil 2024/2025</p>
         </div>
         <div className="text-right">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Nama Siswa</p>
-          <p className="font-bold text-gray-900 dark:text-white text-lg">{STUDENT_NAME}</p>
-          <p className="text-xs font-mono text-gray-400">NIS: {STUDENT_NIS}</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">Nama Siswa</p>
+          <p className="font-bold text-neutral-900 dark:text-white text-lg">{STUDENT_NAME}</p>
+          <p className="text-xs font-mono text-neutral-400">NIS: {STUDENT_NIS}</p>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-8 flex items-center gap-6">
+      <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-100 dark:border-neutral-700 mb-8 flex items-center gap-6">
         <div
           className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl shadow-inner ${
             todayStatus === 'Hadir'
@@ -180,7 +180,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
           <UsersIcon />
         </div>
         <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Status Kehadiran Hari Ini</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Status Kehadiran Hari Ini</p>
           <h3
             className={`text-3xl font-bold ${
               todayStatus === 'Hadir'
@@ -194,7 +194,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
           >
             {todayStatus}
           </h3>
-          <p className="text-xs text-gray-400 mt-1">Data sinkron dengan Wali Kelas</p>
+          <p className="text-xs text-neutral-400 mt-1">Data sinkron dengan Wali Kelas</p>
         </div>
       </div>
 
@@ -217,12 +217,12 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="p-4 bg-gray-50 dark:bg-gray-700/30 border-b border-gray-100 dark:border-gray-700">
-          <h4 className="font-bold text-gray-800 dark:text-white">Riwayat 5 Hari Terakhir</h4>
+      <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+        <div className="p-4 bg-neutral-50 dark:bg-neutral-700/30 border-b border-neutral-100 dark:border-neutral-700">
+          <h4 className="font-bold text-neutral-800 dark:text-white">Riwayat 5 Hari Terakhir</h4>
         </div>
-        <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-          <thead className="bg-gray-50 dark:bg-gray-700 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
+        <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
+          <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
             <tr>
               <th className="px-6 py-3">Tanggal</th>
               <th className="px-6 py-3">Hari</th>
@@ -230,10 +230,10 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
               <th className="px-6 py-3 text-right">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+          <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
             {history.length > 0 ? (
               history.map((h, i) => (
-                <tr key={i} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <tr key={i} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
                   <td className="px-6 py-3">{h.date}</td>
                   <td className="px-6 py-3">{h.day}</td>
                   <td className="px-6 py-3 font-mono text-xs">{h.time}</td>
@@ -250,7 +250,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                <td colSpan={4} className="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
                   Belum ada riwayat kehadiran.
                 </td>
               </tr>

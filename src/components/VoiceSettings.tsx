@@ -243,15 +243,15 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl w-full max-w-md mx-4 border border-neutral-200 dark:border-neutral-700">
+        <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
           <div className="flex items-center gap-2">
             <SpeakerWaveIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Pengaturan Suara</h2>
+            <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Pengaturan Suara</h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="p-1 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
             aria-label="Tutup pengaturan"
           >
             <CloseIcon />
@@ -261,16 +261,16 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
         <div className="p-4 space-y-6 max-h-[70vh] overflow-y-auto">
           {recognition.isSupported && (
             <div className="space-y-4">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Input Suara</h3>
+              <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Input Suara</h3>
 
               <div className="space-y-2">
-                <label htmlFor="voice-language" className="block text-sm text-gray-600 dark:text-gray-400">Bahasa</label>
+                <label htmlFor="voice-language" className="block text-sm text-neutral-600 dark:text-neutral-400">Bahasa</label>
                 <select
                   id="voice-language"
                   name="language"
                   value={language}
                   onChange={(e) => handleLanguageChange(e.target.value as VoiceLanguage)}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
                   <option value="id-ID">Bahasa Indonesia</option>
                   <option value="en-US">English (US)</option>
@@ -278,7 +278,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
               </div>
 
               <div className="flex items-center justify-between">
-                <label htmlFor="continuous-mode-toggle" className="text-sm text-gray-600 dark:text-gray-400">Mode berkelanjutan</label>
+                <label htmlFor="continuous-mode-toggle" className="text-sm text-neutral-600 dark:text-neutral-400">Mode berkelanjutan</label>
                 <button
                   id="continuous-mode-toggle"
                   onClick={() => {
@@ -287,7 +287,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                     recognition.setContinuous(newValue);
                   }}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    continuous ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-600'
+                    continuous ? 'bg-green-600' : 'bg-neutral-300 dark:bg-neutral-600'
                   }`}
                   role="switch"
                   aria-checked={continuous}
@@ -304,10 +304,10 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
 
           {synthesis.isSupported && synthesis.voices.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Output Suara</h3>
+              <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Output Suara</h3>
 
               <div className="space-y-2">
-                <label htmlFor="voice-rate" className="block text-sm text-gray-600 dark:text-gray-400">Kecepatan Bicara ({rate.toFixed(1)}x)</label>
+                <label htmlFor="voice-rate" className="block text-sm text-neutral-600 dark:text-neutral-400">Kecepatan Bicara ({rate.toFixed(1)}x)</label>
                 <input
                   id="voice-rate"
                   name="rate"
@@ -317,13 +317,13 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                   step="0.1"
                   value={rate}
                   onChange={(e) => handleRateChange(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-green-600"
+                  className="w-full h-2 bg-neutral-200 dark:bg-neutral-600 rounded-lg appearance-none cursor-pointer accent-green-600"
                   aria-label="Kecepatan bicara"
                 />
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="voice-pitch" className="block text-sm text-gray-600 dark:text-gray-400">Nada ({pitch.toFixed(1)})</label>
+                <label htmlFor="voice-pitch" className="block text-sm text-neutral-600 dark:text-neutral-400">Nada ({pitch.toFixed(1)})</label>
                 <input
                   id="voice-pitch"
                   name="pitch"
@@ -333,13 +333,13 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                   step="0.1"
                   value={pitch}
                   onChange={(e) => handlePitchChange(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-green-600"
+                  className="w-full h-2 bg-neutral-200 dark:bg-neutral-600 rounded-lg appearance-none cursor-pointer accent-green-600"
                   aria-label="Nada bicara"
                 />
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="voice-volume" className="block text-sm text-gray-600 dark:text-gray-400">Volume ({Math.round(volume * 100)}%)</label>
+                <label htmlFor="voice-volume" className="block text-sm text-neutral-600 dark:text-neutral-400">Volume ({Math.round(volume * 100)}%)</label>
                 <input
                   id="voice-volume"
                   name="volume"
@@ -349,13 +349,13 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                   step="0.1"
                   value={volume}
                   onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-green-600"
+                  className="w-full h-2 bg-neutral-200 dark:bg-neutral-600 rounded-lg appearance-none cursor-pointer accent-green-600"
                   aria-label="Volume"
                 />
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="voice-select" className="block text-sm text-gray-600 dark:text-gray-400">Suara</label>
+                <label htmlFor="voice-select" className="block text-sm text-neutral-600 dark:text-neutral-400">Suara</label>
                 <select
                   id="voice-select"
                   name="voice"
@@ -366,7 +366,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                       handleVoiceChange(voice);
                     }
                   }}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-700 border border-neutral-300 dark:border-neutral-600 rounded-lg text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
                   {synthesis.voices
                     .filter((v) => v.lang.startsWith(language === VoiceLanguage.Indonesian ? 'id' : 'en'))
@@ -392,8 +392,8 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 id="auto-read-ai-label" className="text-sm font-medium text-gray-700 dark:text-gray-300">Baca Pesan AI</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <h3 id="auto-read-ai-label" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Baca Pesan AI</h3>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
                   Secara otomatis membaca respon AI
                 </p>
               </div>
@@ -402,7 +402,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                 aria-labelledby="auto-read-ai-label"
                 onClick={() => setAutoReadAI(!autoReadAI)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  autoReadAI ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-600'
+                  autoReadAI ? 'bg-green-600' : 'bg-neutral-300 dark:bg-neutral-600'
                 }`}
                 role="switch"
                 aria-checked={autoReadAI}
@@ -418,7 +418,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
 
           <div className="space-y-4">
             <div className="space-y-3">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Backup & Restore</h3>
+              <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Backup & Restore</h3>
 
               {hasSettingsBackup && backupDate ? (
                 <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -434,7 +434,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                     </button>
                     <button
                       onClick={handleDeleteBackup}
-                      className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                      className="px-3 py-1.5 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 text-sm rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
                     >
                       Hapus
                     </button>
@@ -471,18 +471,18 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
       {/* Reset Confirmation Modal */}
       {showResetConfirmation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm mx-4 border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl w-full max-w-sm mx-4 border border-neutral-200 dark:border-neutral-700">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
                 Reset Pengaturan Suara?
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
                 Semua pengaturan suara akan dikembalikan ke nilai default. Tindakan ini tidak dapat dibatalkan.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowResetConfirmation(false)}
-                  className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className="flex-1 px-4 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
                 >
                   Batal
                 </button>
@@ -501,18 +501,18 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
       {/* Restore Confirmation Modal */}
       {showRestoreConfirmation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm mx-4 border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl w-full max-w-sm mx-4 border border-neutral-200 dark:border-neutral-700">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
                 Pulihkan Pengaturan Suara?
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
                 Pengaturan suara akan dikembalikan ke nilai dari backup: {backupDate}. Pengaturan saat ini akan ditimpa.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowRestoreConfirmation(false)}
-                  className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className="flex-1 px-4 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
                 >
                   Batal
                 </button>

@@ -64,20 +64,20 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-6">
+        <h2 className="text-2xl font-bold mb-4 text-neutral-800 dark:text-neutral-200">
           Permission Management System
         </h2>
 
         {/* Tab Navigation */}
-        <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
+        <div className="border-b border-neutral-200 dark:border-neutral-700 mb-6">
           <nav className="-mb-px flex space-x-8">
             <button
               onClick={() => setActiveTab('permissions')}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'permissions'
                   ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
               }`}
             >
               User Permissions
@@ -87,7 +87,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'matrix'
                   ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
               }`}
             >
               Role Matrix
@@ -97,7 +97,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'audit'
                   ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
               }`}
             >
               Audit Logs
@@ -110,13 +110,13 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
             {/* Role Selection */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                   User Role
                 </label>
                 <select
                   value={selectedRole}
                   onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-700 dark:text-neutral-200"
                 >
                   <option value="admin">Administrator</option>
                   <option value="teacher">Teacher</option>
@@ -126,13 +126,13 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                   Extra Role
                 </label>
                 <select
                   value={selectedExtraRole || ''}
                   onChange={(e) => setSelectedExtraRole(e.target.value as UserExtraRole)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-700 dark:text-neutral-200"
                 >
                   <option value="">None</option>
                   <option value="staff">Staff</option>
@@ -158,7 +158,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
 
             {/* Current Permissions */}
             <div>
-              <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">
+              <h3 className="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-200">
                 Current Permissions ({rolePermissions.length})
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -183,39 +183,39 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
 
             {/* All Permissions Overview */}
             <div>
-              <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">
+              <h3 className="text-lg font-semibold mb-3 text-neutral-800 dark:text-neutral-200">
                 All Permissions Overview
               </h3>
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead className="bg-gray-50 dark:bg-gray-700">
+                <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
+                  <thead className="bg-neutral-50 dark:bg-neutral-700">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Permission
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Resource
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Action
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                         Status
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
                     {allPermissions.map((permission) => {
                       const status = getPermissionStatus(permission);
                       return (
                         <tr key={permission.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-200">
                             {permission.name}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
                             {permission.resource}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
                             {permission.action}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -239,45 +239,45 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
 
         {activeTab === 'matrix' && (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+            <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
               Role-Permission Matrix
             </h3>
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700">
+              <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
+                <thead className="bg-neutral-50 dark:bg-neutral-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                       Role
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                       Permission Count
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                       Key Permissions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
                   {Object.entries(ROLE_PERMISSION_MATRIX).map(([role, permissions]) => (
                     <tr key={role}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-200">
                         {role}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
                         {permissions.length}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
                         <div className="max-w-xs">
                           {permissions.slice(0, 3).map(permId => {
                             const perm = PERMISSIONS[permId];
                             return perm ? (
-                              <span key={permId} className="inline-block bg-gray-100 dark:bg-gray-700 rounded px-2 py-1 text-xs mr-1 mb-1">
+                              <span key={permId} className="inline-block bg-neutral-100 dark:bg-neutral-700 rounded px-2 py-1 text-xs mr-1 mb-1">
                                 {perm.name}
                               </span>
                             ) : null;
                           })}
                           {permissions.length > 3 && (
-                            <span className="text-xs text-gray-400">+{permissions.length - 3} more</span>
+                            <span className="text-xs text-neutral-400">+{permissions.length - 3} more</span>
                           )}
                         </div>
                       </td>
@@ -292,7 +292,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
         {activeTab === 'audit' && (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
                 Recent Audit Logs (Last 24 hours)
               </h3>
               <button
@@ -304,40 +304,40 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
             </div>
             
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700">
+              <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
+                <thead className="bg-neutral-50 dark:bg-neutral-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                       Timestamp
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                       Role
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                       Resource
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                       Action
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                       Status
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
                   {auditLogs.slice(0, 50).map((log, index) => (
                     <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
                         {new Date(log.timestamp).toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-200">
                         {log.userRole}
                         {log.userExtraRole && ` (${log.userExtraRole})`}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
                         {log.resource}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
                         {log.action}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -354,7 +354,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                 </tbody>
               </table>
               {auditLogs.length === 0 && (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <div className="text-center py-8 text-neutral-500 dark:text-neutral-400">
                   No audit logs found for the last 24 hours
                 </div>
               )}

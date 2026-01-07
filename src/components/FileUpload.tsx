@@ -237,26 +237,26 @@ const FileUpload: React.FC<FileUploadProps> = ({
         {uploading ? (
           <div className="w-full max-w-sm">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 Uploading...
               </span>
               <span className="text-sm font-semibold text-green-600 dark:text-green-400">
                 {uploadProgress}%
               </span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-3" role="progressbar" aria-valuenow={uploadProgress} aria-valuemin={0} aria-valuemax={100}>
+            <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2.5 mb-3" role="progressbar" aria-valuenow={uploadProgress} aria-valuemin={0} aria-valuemax={100}>
               <div
                 className="bg-green-600 h-2.5 rounded-full transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
               ></div>
             </div>
-            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">
+            <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400 mb-3">
               <span>{formatFileSize(uploadedBytes)} / {formatFileSize(uploadedBytes / (uploadProgress / 100) || 0)}</span>
               <span>{formatSpeed(uploadSpeed)}</span>
             </div>
             {uploadSpeed > 0 && (
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-gray-500 dark:text-gray-400">
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">
                   Estimated time remaining: {formatTimeRemaining(estimatedTimeRemaining)}
                 </span>
               </div>

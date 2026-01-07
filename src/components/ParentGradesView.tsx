@@ -78,8 +78,8 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+    <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+      <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">
         Nilai Akademik - {child.studentName}
       </h2>
 
@@ -93,13 +93,13 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
         </div>
       ) : grades.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600 dark:text-gray-400">Belum ada nilai tersedia</p>
+          <p className="text-neutral-600 dark:text-neutral-400">Belum ada nilai tersedia</p>
         </div>
       ) : (
         <>
           {/* Header with Export */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
               Nilai {child.studentName}
             </h3>
             <PDFExportButton
@@ -111,13 +111,13 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
 
           {/* Subject Filter */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               Filter Mata Pelajaran
             </label>
             <select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value)}
-              className="w-full sm:w-64 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full sm:w-64 px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
             >
               <option value="all">Semua Mata Pelajaran</option>
               {subjects.map(subject => (
@@ -130,24 +130,24 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <th className="pb-3 font-semibold text-gray-900 dark:text-white">Mata Pelajaran</th>
-                  <th className="pb-3 font-semibold text-gray-900 dark:text-white">Tipe</th>
-                  <th className="pb-3 font-semibold text-gray-900 dark:text-white">Nama Tugas</th>
-                  <th className="pb-3 font-semibold text-gray-900 dark:text-white">Nilai</th>
-                  <th className="pb-3 font-semibold text-gray-900 dark:text-white">Tahun</th>
+                <tr className="border-b border-neutral-200 dark:border-neutral-700">
+                  <th className="pb-3 font-semibold text-neutral-900 dark:text-white">Mata Pelajaran</th>
+                  <th className="pb-3 font-semibold text-neutral-900 dark:text-white">Tipe</th>
+                  <th className="pb-3 font-semibold text-neutral-900 dark:text-white">Nama Tugas</th>
+                  <th className="pb-3 font-semibold text-neutral-900 dark:text-white">Nilai</th>
+                  <th className="pb-3 font-semibold text-neutral-900 dark:text-white">Tahun</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredGrades.map((grade) => (
-                  <tr key={grade.id} className="border-b border-gray-100 dark:border-gray-800">
-                    <td className="py-3 text-gray-900 dark:text-white">{grade.subjectName}</td>
+                  <tr key={grade.id} className="border-b border-neutral-100 dark:border-neutral-800">
+                    <td className="py-3 text-neutral-900 dark:text-white">{grade.subjectName}</td>
                     <td className="py-3">
                       <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                         {grade.assignmentType}
                       </span>
                     </td>
-                    <td className="py-3 text-gray-600 dark:text-gray-400">{grade.assignmentName}</td>
+                    <td className="py-3 text-neutral-600 dark:text-neutral-400">{grade.assignmentName}</td>
                     <td className="py-3">
                       <span className={`font-bold ${
                         grade.score >= 80 ? 'text-green-600 dark:text-green-400' :
@@ -158,7 +158,7 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
                         {grade.score}/{grade.maxScore}
                       </span>
                     </td>
-                    <td className="py-3 text-gray-600 dark:text-gray-400">{grade.academicYear}</td>
+                    <td className="py-3 text-neutral-600 dark:text-neutral-400">{grade.academicYear}</td>
                   </tr>
                 ))}
               </tbody>
@@ -172,8 +172,8 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
                 const subjectGrades = grades.filter(g => g.subjectName === subject);
                 const avg = calculateAverage(subjectGrades);
                 return (
-                  <div key={subject} className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
-                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">{subject}</div>
+                  <div key={subject} className="p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg">
+                    <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">{subject}</div>
                     <div className={`text-2xl font-bold ${
                       avg >= 80 ? 'text-green-600 dark:text-green-400' :
                       avg >= 70 ? 'text-blue-600 dark:text-blue-400' :
@@ -182,7 +182,7 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
                     }`}>
                       {avg}
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-500">Rata-rata</div>
+                    <div className="text-xs text-neutral-500 dark:text-neutral-500">Rata-rata</div>
                   </div>
                 );
               })}
