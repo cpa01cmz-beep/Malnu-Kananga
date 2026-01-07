@@ -20,6 +20,7 @@ import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '.
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { getGradientClass, DARK_GRADIENT_CLASSES } from '../config/gradients';
 import ErrorMessage from './ui/ErrorMessage';
+import DashboardActionCard from './ui/DashboardActionCard';
 import { CardSkeleton } from './ui/Skeleton';
 
 interface StudentPortalProps {
@@ -115,7 +116,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       title: 'Jadwal Pelajaran',
       description: 'Lihat jadwal kelas mingguan Anda.',
       icon: <DocumentTextIcon />,
-      color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400',
+      colorTheme: 'blue' as const,
       action: () => setCurrentView('schedule'),
       permission: 'academic.schedule',
       active: true
@@ -124,7 +125,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       title: 'E-Library',
       description: 'Akses buku digital dan materi pelajaran.',
       icon: <BuildingLibraryIcon />,
-      color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/50 dark:text-purple-400',
+      colorTheme: 'purple' as const,
       action: () => setCurrentView('library'),
       permission: 'content.read',
       active: true
@@ -133,7 +134,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       title: 'Nilai Akademik',
       description: 'Pantau hasil belajar dan transkrip nilai.',
       icon: <ClipboardDocumentCheckIcon />,
-      color: 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400',
+      colorTheme: 'green' as const,
       action: () => setCurrentView('grades'),
       permission: 'content.read',
       active: true
@@ -142,7 +143,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       title: 'Kehadiran',
       description: 'Cek rekapitulasi absensi semester ini.',
       icon: <UsersIcon />,
-      color: 'bg-orange-100 text-orange-600 dark:bg-orange-900/50 dark:text-orange-400',
+      colorTheme: 'orange' as const,
       action: () => setCurrentView('attendance'),
       permission: 'content.read',
       active: true
@@ -230,31 +231,37 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
 
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                    {menuItems.map((item) => (
-                     <button key={item.title} onClick={item.action} aria-label={`Buka ${item.title}`} className="bg-white dark:bg-neutral-800 p-6 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 border border-neutral-200 dark:border-neutral-700 flex flex-col items-start hover:-translate-y-1 hover:scale-[1.02] text-left focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
-                       <div className={`p-3 rounded-xl ${item.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                          <div className="w-8 h-8">{item.icon}</div>
-                       </div>
-                       <div className="flex justify-between w-full items-start">
-                          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">{item.title}</h3>
-                          {item.active && <span className="text-[10px] bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-300 px-2 py-0.5 rounded-full font-semibold">Aktif</span>}
-                       </div>
-                       <p className="text-sm text-neutral-500 dark:text-neutral-400">{item.description}</p>
-                     </button>
+                     <DashboardActionCard
+                        key={item.title}
+                        icon={item.icon}
+                        title={item.title}
+                        description={item.description}
+                        colorTheme={item.colorTheme}
+                        statusBadge={item.active ? 'Aktif' : undefined}
+                        isOnline={isOnline}
+                        onClick={item.action}
+                        ariaLabel={`Buka ${item.title}`}
+                     />
                    ))}
 
                    {extraRole === 'osis' && checkPermission('osis.events') && (
-                       <button onClick={() => setCurrentView('osis')} aria-label="Buka Kegiatan OSIS" className={`${getGradientClass('ORANGE_SOFT')} ${DARK_GRADIENT_CLASSES.ORANGE_SOFT} p-6 rounded-xl shadow-card border border-orange-200 dark:border-orange-800 hover:shadow-card-hover transition-all duration-300 flex flex-col items-start hover:-translate-y-1 hover:scale-[1.02] text-left focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}>
-                           <div className="bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 p-3 rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                              <div className="w-8 h-8"><CalendarDaysIcon /></div>
-                           </div>
-                           <div className="flex justify-between w-full items-start">
-                              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Kegiatan OSIS</h3>
-                                <span className="text-[10px] bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300 px-2 py-0.5 rounded-full font-semibold">Extra</span>
-                           </div>
-                           <p className="text-sm text-neutral-500 dark:text-neutral-400">Kelola event dan proker sekolah.</p>
-                       </button>
-                    )}
-                  </div>
+                     <DashboardActionCard
+                        icon={<CalendarDaysIcon />}
+                        title="Kegiatan OSIS"
+                        description="Kelola event dan proker sekolah."
+                        colorTheme="orange"
+                        variant="gradient"
+                        gradient={getGradientClass('ORANGE_SOFT').includes('ORANGE_SOFT') ? undefined : { from: 'from-orange-50', to: 'to-red-50' }}
+                        statusBadge="Aktif"
+                        isExtraRole={true}
+                        extraRoleBadge="Extra"
+                        isOnline={isOnline}
+                        onClick={() => setCurrentView('osis')}
+                        ariaLabel="Buka Kegiatan OSIS"
+                        className={getGradientClass('ORANGE_SOFT')}
+                     />
+                   )}
+                   </div>
             </>
         )}
         </>
