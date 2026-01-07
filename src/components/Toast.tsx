@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { CloseIcon } from './icons/CloseIcon';
 
 export type ToastType = 'success' | 'info' | 'error';
 
@@ -44,7 +45,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       ),
       error: (
         <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77-1.333.192 3 1.732 3z" />
         </svg>
       )
   }
@@ -54,7 +55,14 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       <div className="flex-shrink-0">
         {icons[type]}
       </div>
-      <span className="font-medium text-base leading-snug">{message}</span>
+      <span className="font-medium text-base leading-snug flex-grow">{message}</span>
+      <button
+        onClick={onClose}
+        className="flex-shrink-0 p-1 rounded-lg text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-110 active:scale-95"
+        aria-label="Tutup notifikasi"
+      >
+        <CloseIcon />
+      </button>
     </div>
   );
 };

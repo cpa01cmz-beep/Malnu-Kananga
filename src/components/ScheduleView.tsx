@@ -104,7 +104,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
 
   const dailySchedule = groupSchedulesByDay();
 
-  const handleEventClick = (event: Schedule | ParentMeeting) => {
+const handleEventClick = (event: Schedule | ParentMeeting) => {
     if ('classId' in event) {
       setSelectedEvent(event);
     }

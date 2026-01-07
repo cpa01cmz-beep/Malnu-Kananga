@@ -185,7 +185,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                           : 'bg-blue-100 text-blue-800 hover:bg-blue-200'}`}
                     >
 {event.startTime && `${event.startTime} `}
-                        {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
+{'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
                     </div>
                   );
                 })}
@@ -277,7 +277,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                             : 'bg-blue-100 text-blue-800 hover:bg-blue-200'}`}
                       >
 {event.startTime && `${event.startTime} `}
-                        {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
+{'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
                       </div>
                     );
                   })}

@@ -2,6 +2,26 @@
 
 **Last Updated**: 2026-01-07
 **Repository**: MA Malnu Kananga
+**Deployment Status**: ⚠️ DEPLOYED but requires manual configuration
+
+---
+
+## 🚨 CRITICAL ACTION REQUIRED
+
+The Cloudflare Worker is deployed and database is initialized, but **production secrets are not configured**. Without these secrets, authentication and AI features will NOT work.
+
+**Required Actions**:
+1. Generate JWT secret: `openssl rand -base64 32`
+2. Get Gemini API key from https://ai.google.dev
+3. Set secrets:
+   ```bash
+   echo "your-jwt-secret" | wrangler secret put JWT_SECRET --env production
+   echo "your-gemini-key" | wrangler secret put GEMINI_API_KEY --env production
+   ```
+4. Redeploy worker: `wrangler deploy --env production`
+5. Test login: See Testing Deployment section below
+
+**⚠️ WARNING**: Do NOT commit secrets to git repository. Use wrangler CLI only.
 
 ---
 
@@ -13,16 +33,16 @@
 
 **Status**: ✅ DEPLOYED
 
-**Last Deployment**: 2026-01-06T21:45:24.814Z
+**Last Deployment**: 2026-01-07T03:27:35.000Z (Version: 2598b090-80be-469a-b745-45a7dbece061)
 
 **Database**: `malnu-kananga-db-prod` (ID: `7fbd7834-0fd2-475f-8787-55ce81988642`)
-- Tables: ❌ **NOT INITIALIZED** (only system tables)
-- Size: 12.3 kB
-- Status: Needs seeding via `/seed` endpoint
+- Tables: ✅ **INITIALIZED** (20 tables including sessions with refresh_token columns)
+- Size: 352.3 kB
+- Status: Active with default admin user (admin@malnu.sch.id / admin123)
 
 **Secrets Configured**:
-- ✅ JWT_SECRET
-- ✅ GEMINI_API_KEY
+- ❌ JWT_SECRET - **NOT SET** (Needs manual configuration)
+- ❌ GEMINI_API_KEY - **NOT SET** (Needs manual configuration)
 
 **Bindings**:
 - ✅ DB (D1 Database) - Connected
@@ -94,11 +114,21 @@ wrangler dev --env dev
 - [x] GitHub Actions CI/CD configured
 - [x] Configuration validation scripts
 
+### ✅ Completed (since 2026-01-07)
+
+- [x] **Initialize Production Database**
+  - Database seeded on 2026-01-07 with 20 tables
+  - Added missing columns to sessions table (refresh_token, refresh_token_expires_at)
+  - Default admin user created (admin@malnu.sch.id / admin123)
+  - **IMPORTANT**: Change default admin password after first login
+
 ### ❌ Pending
 
-- [ ] **Initialize Production Database**
+- [ ] **Configure Production Secrets** (CRITICAL - Authentication and AI features won't work)
   ```bash
-  curl -X POST https://malnu-kananga-worker-prod.cpa01cmz.workers.dev/seed
+  echo "your-generated-secret" | wrangler secret put JWT_SECRET --env production
+  echo "your-gemini-api-key" | wrangler secret put GEMINI_API_KEY --env production
+  # Then redeploy: wrangler deploy --env production
   ```
 
 - [ ] **Enable R2 Storage** (Optional - for file uploads)
@@ -129,10 +159,52 @@ All secrets are managed via Wrangler CLI, never committed to Git.
 
 | Secret | Environment | Purpose | Status |
 |--------|-------------|-----------|---------|
-| `JWT_SECRET` | Production | JWT token generation/verification | ✅ Set |
+| `JWT_SECRET` | Production | JWT token generation/verification | ❌ **NOT SET** - Manual configuration required |
 | `JWT_SECRET` | Development | JWT token generation/verification | ✅ Set |
-| `GEMINI_API_KEY` | Production | Google Gemini AI integration | ✅ Set |
+| `GEMINI_API_KEY` | Production | Google Gemini AI integration | ❌ **NOT SET** - Manual configuration required |
 | `GEMINI_API_KEY` | Development | Google Gemini AI integration | ✅ Set |
+
+### Setting Up Production Secrets
+
+⚠️ **IMPORTANT**: Production secrets are NOT currently configured. Authentication and AI features will NOT work until secrets are set.
+
+#### 1. Generate JWT Secret
+
+```bash
+# Generate a secure JWT_SECRET (32+ characters)
+openssl rand -base64 32
+```
+
+#### 2. Get Gemini API Key
+
+1. Go to [Google AI Studio](https://ai.google.dev/)
+2. Sign in with your Google account
+3. Go to API Keys section
+4. Create a new API key
+5. Copy the API key
+
+#### 3. Set Secrets for Production
+
+```bash
+# Set JWT_SECRET
+echo "your-generated-secret" | wrangler secret put JWT_SECRET --env production
+
+# Set GEMINI_API_KEY
+echo "your-gemini-api-key" | wrangler secret put GEMINI_API_KEY --env production
+
+# Verify secrets are set
+wrangler secret list --env production
+```
+
+#### 4. Redeploy Worker
+
+After setting secrets, redeploy the worker:
+
+```bash
+npm run deploy:backend
+# or
+wrangler deploy --env production
+```
 
 ### Secret Management Commands
 
@@ -256,6 +328,18 @@ curl -X POST https://malnu-kananga-worker-prod.cpa01cmz.workers.dev/api/chat \
 3. Check token hasn't expired (15 minutes default)
 4. Use refresh token endpoint to get new access token
 
+### Issue: Login failing with "Terjadi kesalahan pada server"
+
+**Root Cause**: Sessions table was missing `refresh_token` and `refresh_token_expires_at` columns. This was fixed on 2026-01-07 by adding these columns to production database.
+
+**Solution**: Database has been updated. If you encounter this error again, verify sessions table schema:
+
+```bash
+wrangler d1 execute malnu-kananga-db-prod --env production --command="PRAGMA table_info(sessions);" --remote
+```
+
+Expected columns: 11 (including refresh_token and refresh_token_expires_at)
+
 ### Issue: CORS errors
 
 **Solution**:
@@ -295,17 +379,28 @@ npm run build
 git checkout main
 git pull origin main
 
-# 2. Deploy worker
+# 2. Set production secrets (if not already set)
+# Generate JWT secret
+openssl rand -base64 32
+# Set JWT_SECRET
+echo "your-generated-secret" | wrangler secret put JWT_SECRET --env production
+# Set GEMINI_API_KEY (get from https://ai.google.dev)
+echo "your-gemini-api-key" | wrangler secret put GEMINI_API_KEY --env production
+
+# 3. Verify secrets are set
+wrangler secret list --env production
+
+# 4. Deploy worker
 wrangler deploy --env production
 
-# 3. Verify deployment
+# 5. Verify deployment
 curl https://malnu-kananga-worker-prod.cpa01cmz.workers.dev/
 
-# 4. Seed database if needed
+# 6. Seed database if needed
 curl -X POST https://malnu-kananga-worker-prod.cpa01cmz.workers.dev/seed
 
-# 5. Test critical endpoints
-# - Login
+# 7. Test critical endpoints
+# - Login: curl -X POST https://malnu-kananga-worker-prod.cpa01cmz.workers.dev/api/auth/login -H "Content-Type: application/json" -d '{"email":"admin@malnu.sch.id","password":"admin123"}'
 # - CRUD operations
 # - AI chat (if configured)
 ```
