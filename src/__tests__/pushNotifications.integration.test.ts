@@ -44,7 +44,7 @@ const mockNotification: MockNotification = {
 };
 
 describe('Push Notification Integration Tests', () => {
-beforeEach(() => {
+  beforeEach(() => {
     vi.clearAllMocks();
     // Clear localStorage
     localStorage.clear();
@@ -55,7 +55,7 @@ beforeEach(() => {
     pushNotificationService.resetSettings();
     
     // Mock Notification constructor (using necessary type bypass for browser API)
-    const mockNotificationConstructor = vi.fn().mockImplementation(function(title: string, options?: any) {
+    const mockNotificationConstructor = vi.fn().mockImplementation(function(title: string, options?: Record<string, unknown>) {
       return {
         ...mockNotification,
         title,

@@ -58,7 +58,7 @@ describe('SkipLink', () => {
     render(<SkipLink />);
     
     const skipLink = screen.getByRole('link');
-    const clickEvent = new MouseEvent('click', { bubbles: true });
+    const clickEvent = new window.MouseEvent('click', { bubbles: true }) as MouseEvent;
     Object.defineProperty(clickEvent, 'target', { writable: true, value: skipLink });
     
     skipLink.dispatchEvent(clickEvent);

@@ -53,6 +53,7 @@ export default [
         Event: 'readonly',
         HTMLButtonElement: 'readonly',
         KeyboardEvent: 'readonly',
+        MouseEvent: 'readonly',
       },
     },
     plugins: {
