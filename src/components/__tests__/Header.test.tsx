@@ -215,7 +215,7 @@ describe('Header', () => {
     });
   });
 
-  it('is keyboard accessible - menu button can be focused and activated', () => {
+  it('is keyboard accessible - menu button can be focused and activated with Enter key', () => {
     render(<Header {...defaultProps} />);
     
     const menuButton = screen.getByRole('button', { name: 'Buka menu' });
@@ -224,6 +224,19 @@ describe('Header', () => {
     expect(menuButton).toHaveFocus();
     
     fireEvent.keyDown(menuButton, { key: 'Enter', code: 'Enter' });
+    
+    expect(screen.getByRole('navigation', { name: 'Menu navigasi utama' })).toBeInTheDocument();
+  });
+
+  it('is keyboard accessible - menu button can be activated with Space key', () => {
+    render(<Header {...defaultProps} />);
+    
+    const menuButton = screen.getByRole('button', { name: 'Buka menu' });
+    
+    menuButton.focus();
+    expect(menuButton).toHaveFocus();
+    
+    fireEvent.keyDown(menuButton, { key: ' ', code: 'Space' });
     
     expect(screen.getByRole('navigation', { name: 'Menu navigasi utama' })).toBeInTheDocument();
   });
