@@ -198,6 +198,7 @@ src/
 - Proper label-to-input associations dengan `htmlFor`
 - ARIA labels maintained untuk voice settings
 - WCAG 2.1 AA compliant
+- Enhanced NotificationCenter keyboard navigation and ARIA compliance (2026-01-07)
 
 ### 3.18 UI Component System (Fase 5 - COMPLETED 2026-01-07)
 - Reusable Card component with 4 variants (default, hover, interactive, gradient)

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { UserRole, NotificationType, NotificationHistoryItem } from '../types';
 import { NotificationTemplateService } from '../services/notificationTemplates';
@@ -68,6 +68,23 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const handleToggleOpen = useCallback(() => {
     setIsOpen((prev) => !prev);
     logger.info('Notification center toggled:', !isOpen);
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+        logger.info('Notification center closed via Escape key');
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
   }, [isOpen]);
 
   const handleNotificationClick = useCallback(
@@ -166,17 +183,19 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
     <div className="relative">
       <button
         onClick={handleToggleOpen}
-        className="relative p-2 rounded-pill hover:bg-neutral-100 transition-colors"
+        className="relative p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
         aria-label={`Notifikasi (${unreadCount} belum dibaca)`}
+        aria-expanded={isOpen}
+        aria-controls="notification-dropdown"
       >
         {permissionGranted ? (
-          <BellIcon className="w-6 h-6 text-neutral-700" />
+          <BellIcon className="w-6 h-6 text-neutral-700 dark:text-neutral-300" />
         ) : (
-          <BellSlashIcon className="w-6 h-6 text-neutral-500" />
+          <BellSlashIcon className="w-6 h-6 text-neutral-500 dark:text-neutral-400" />
         )}
 
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-pill h-5 w-5 flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center" aria-live="polite">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -190,7 +209,13 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
             aria-hidden="true"
           />
 
-          <div className="absolute right-0 mt-2 w-full sm:w-96 max-h-[80vh] bg-white rounded-xl shadow-card-hover z-50 overflow-hidden">
+          <div
+            id="notification-dropdown"
+            className="absolute right-0 mt-2 w-full sm:w-96 max-h-[80vh] bg-white dark:bg-neutral-900 rounded-xl shadow-card-hover z-50 overflow-hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Pusat Notifikasi"
+          >
             <div className="sticky top-0 bg-white border-b border-neutral-200 p-4">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-neutral-900">
@@ -205,28 +230,32 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
               <div className="space-y-3">
                 <div className="relative">
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                  <label htmlFor="notification-search" className="sr-only">Cari notifikasi</label>
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400 dark:text-neutral-500" aria-hidden="true" />
                   <input
-                    type="text"
+                    id="notification-search"
+                    type="search"
                     placeholder="Cari notifikasi..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors"
+                    className="w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors"
                     aria-label="Cari notifikasi"
                   />
                 </div>
 
                 <div className="flex gap-2">
                   <div className="relative flex-1">
-                    <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                    <label htmlFor="notification-type-filter" className="sr-only">Filter berdasarkan tipe</label>
+                    <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400 dark:text-neutral-500" aria-hidden="true" />
                     <select
+                      id="notification-type-filter"
                       value={selectedType}
                       onChange={(e) =>
                         setSelectedType(
                           e.target.value as NotificationType | 'all'
                         )
                       }
-                      className="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm appearance-none bg-white transition-colors"
+                      className="w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm appearance-none bg-white transition-colors focus:outline-none"
                       aria-label="Filter berdasarkan tipe"
                     >
                       <option value="all">Semua Tipe</option>
@@ -238,12 +267,14 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     </select>
                   </div>
 
+                  <label htmlFor="notification-status-filter" className="sr-only">Filter berdasarkan status</label>
                   <select
+                    id="notification-status-filter"
                     value={selectedStatus}
                     onChange={(e) =>
                       setSelectedStatus(e.target.value as 'all' | 'read' | 'unread')
                     }
-                    className="px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white transition-colors"
+                    className="px-3 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white transition-colors focus:outline-none"
                     aria-label="Filter berdasarkan status"
                   >
                     <option value="all">Semua Status</option>
@@ -277,7 +308,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
             <div className="overflow-y-auto max-h-[60vh]">
               {filteredHistory().length === 0 ? (
-                <div className="p-8 text-center text-neutral-500">
+                <div className="p-8 text-center text-neutral-500 dark:text-neutral-400" role="status">
                   {searchQuery || selectedType !== 'all' || selectedStatus !== 'all' ? (
                     <p>Tidak ada notifikasi yang cocok dengan filter</p>
                   ) : (
@@ -295,32 +326,42 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   )}
                 </div>
               ) : (
-                <div className="divide-y divide-neutral-100">
+                 <div className="divide-y divide-neutral-100 dark:divide-neutral-800" role="list" aria-label="Daftar notifikasi">
                   {filteredHistory().map((item) => (
                     <div
                       key={item.id}
                       onClick={() => handleNotificationClick(item)}
-                      className={`p-4 hover:bg-neutral-50 cursor-pointer transition-colors ${getPriorityColor(
+                      role="listitem"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleNotificationClick(item);
+                        }
+                      }}
+                      className={`p-4 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors ${getPriorityColor(
                         item.notification.priority
-                      )} ${item.notification.read ? 'bg-white' : 'bg-blue-50'}`}
+                      )} ${item.notification.read ? 'bg-white dark:bg-neutral-900' : 'bg-blue-50 dark:bg-blue-900/20'} focus:outline-none focus:ring-2 focus:ring-primary-500/50`}
+                      aria-label={`${item.notification.title}, ${item.notification.body}`}
+                      aria-current={!item.notification.read ? 'true' : undefined}
                     >
                       <div className="flex items-start gap-3">
-                        <span className="text-2xl">
+                        <span className="text-2xl" role="img" aria-label={getTypeIcon(item.notification.type)}>
                           {getTypeIcon(item.notification.type)}
                         </span>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start mb-1">
-                            <h4 className="text-sm font-medium text-neutral-900 truncate">
+                            <h4 className="text-sm font-medium text-neutral-900 dark:text-white truncate">
                               {item.notification.title}
                             </h4>
                             {!item.notification.read && (
-                              <span className="h-2 w-2 bg-blue-500 rounded-pill flex-shrink-0 ml-2" />
+                              <span className="h-2 w-2 bg-blue-500 rounded-full flex-shrink-0 ml-2" aria-label="Belum dibaca" />
                             )}
                           </div>
-                          <p className="text-sm text-neutral-600 line-clamp-2 mb-2">
+                          <p className="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 mb-2">
                             {item.notification.body}
                           </p>
-                          <div className="flex items-center justify-between text-xs text-neutral-500">
+                          <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-500">
                             <span>
                               {new Date(
                                 item.notification.timestamp
