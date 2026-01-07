@@ -4,8 +4,8 @@ import { attendanceAPI } from '../services/apiService';
 import { Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
-import LoadingSpinner from './ui/LoadingSpinner';
 import Button from './ui/Button';
+import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
 
 interface AttendanceViewProps {
   onBack: () => void;
@@ -112,7 +112,10 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Rekapitulasi Kehadiran</h2>
           </div>
         </div>
-        <LoadingSpinner size="lg" text="Memuat data kehadiran..." color="success" />
+        <div className="space-y-6">
+          <CardSkeleton />
+          <TableSkeleton rows={10} cols={4} />
+        </div>
       </div>
     );
   }
