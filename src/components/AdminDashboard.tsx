@@ -15,6 +15,7 @@ import { STORAGE_KEYS } from '../constants'; // Import constants
 import { logger } from '../utils/logger';
 import { permissionService } from '../services/permissionService';
 import { usePushNotifications } from '../hooks/usePushNotifications';
+import { getGradientClass } from '../config/gradients';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -114,7 +115,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     <button
                         onClick={onOpenEditor}
                         aria-label="Buka AI Site Editor"
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        className={`${getGradientClass('INDIGO_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
                             <SparklesIcon className="w-6 h-6 text-white" />
@@ -178,7 +179,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     <button
                         onClick={() => setCurrentView('ai-cache')}
                         aria-label="Buka AI Cache Manager"
-                        className="bg-gradient-to-br from-green-500 to-teal-600 rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        className={`${getGradientClass('GREEN_TEAL')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
                             <ChartBarIcon className="w-6 h-6 text-white" />
@@ -192,7 +193,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     <button
                         onClick={() => setCurrentView('permissions')}
                         aria-label="Buka Permission System"
-                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        className={`${getGradientClass('PURPLE_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
                             <UsersIcon className="w-6 h-6 text-white" />
