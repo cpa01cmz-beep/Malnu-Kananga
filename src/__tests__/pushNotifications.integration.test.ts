@@ -10,12 +10,27 @@ vi.mock('../utils/logger', () => ({
   },
 }));
 
-// Mock Notification API with proper typing
-interface MockNotification {
+interface NotificationOptions {
+  body?: string;
+  icon?: string;
+  data?: unknown;
+  badge?: string;
+  dir?: 'auto' | 'ltr' | 'rtl';
+  lang?: string;
+  tag?: string;
+  image?: string;
+  vibrate?: number[];
+  timestamp?: number;
+  renotify?: boolean;
+  requireInteraction?: boolean;
+  silent?: boolean;
+  [key: string]: unknown;
+}
+
+interface MockNotification extends NotificationOptions {
   close: ReturnType<typeof vi.fn>;
   onclick: ((this: MockNotification, ev: globalThis.MouseEvent) => unknown) | null;
   title: string;
-  [key: string]: unknown;
 }
 
 const mockNotification: MockNotification = {
@@ -55,7 +70,7 @@ beforeEach(() => {
     pushNotificationService.resetSettings();
     
     // Mock Notification constructor (using necessary type bypass for browser API)
-    const mockNotificationConstructor = vi.fn().mockImplementation(function(title: string, options?: any) {
+    const mockNotificationConstructor = vi.fn().mockImplementation(function(title: string, options?: NotificationOptions) {
       return {
         ...mockNotification,
         title,
