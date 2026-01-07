@@ -48,6 +48,7 @@ export default [
         EventTarget: 'readonly',
         Touch: 'readonly',
         Event: 'readonly',
+        HTMLButtonElement: 'readonly',
       },
     },
     plugins: {
