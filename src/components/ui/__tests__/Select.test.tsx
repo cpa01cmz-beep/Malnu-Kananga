@@ -101,6 +101,42 @@ describe('Select Component', () => {
     expect(select).toHaveAccessibleName('Test Select');
   });
 
+  it('associates helper text with select using aria-describedby', () => {
+    render(
+      <Select
+        label="Category"
+        helperText="Choose a category from the list"
+        options={mockOptions}
+      />
+    );
+    const select = screen.getByRole('combobox');
+    const helperText = screen.getByText('Choose a category from the list');
+    expect(select).toHaveAttribute('aria-describedby');
+    expect(helperText.id).toBe(select.getAttribute('aria-describedby'));
+  });
+
+  it('associates error text with select using aria-describedby and role="alert"', () => {
+    render(
+      <Select
+        label="Status"
+        errorText="Please select a valid status"
+        options={mockOptions}
+      />
+    );
+    const select = screen.getByRole('combobox');
+    const errorText = screen.getByText('Please select a valid status');
+    expect(select).toHaveAttribute('aria-describedby');
+    expect(select).toHaveAttribute('aria-invalid', 'true');
+    expect(errorText).toHaveAttribute('role', 'alert');
+    expect(errorText.id).toBe(select.getAttribute('aria-describedby'));
+  });
+
+  it('sets aria-invalid to false for non-error states', () => {
+    render(<Select label="Test" options={mockOptions} />);
+    const select = screen.getByRole('combobox');
+    expect(select).toHaveAttribute('aria-invalid', 'false');
+  });
+
   it('supports fullWidth prop', () => {
     render(<Select options={mockOptions} fullWidth />);
     const select = screen.getByRole('combobox');

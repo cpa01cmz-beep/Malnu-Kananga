@@ -84,6 +84,40 @@ describe('Input Component', () => {
     expect(input).toHaveAccessibleName('Test Label');
   });
 
+  it('associates helper text with input using aria-describedby', () => {
+    render(
+      <Input
+        label="Email"
+        helperText="Enter your email address"
+      />
+    );
+    const input = screen.getByRole('textbox');
+    const helperText = screen.getByText('Enter your email address');
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(helperText.id).toBe(input.getAttribute('aria-describedby'));
+  });
+
+  it('associates error text with input using aria-describedby and role="alert"', () => {
+    render(
+      <Input
+        label="Password"
+        errorText="Password is required"
+      />
+    );
+    const input = screen.getByRole('textbox');
+    const errorText = screen.getByText('Password is required');
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(errorText).toHaveAttribute('role', 'alert');
+    expect(errorText.id).toBe(input.getAttribute('aria-describedby'));
+  });
+
+  it('sets aria-invalid to false for non-error states', () => {
+    render(<Input label="Test" />);
+    const input = screen.getByRole('textbox');
+    expect(input).toHaveAttribute('aria-invalid', 'false');
+  });
+
   it('supports fullWidth prop', () => {
     render(<Input fullWidth />);
     const input = screen.getByRole('textbox');

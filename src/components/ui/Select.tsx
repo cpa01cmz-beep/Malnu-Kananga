@@ -54,6 +54,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
   ...props
 }, ref) => {
   const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`;
+  const helperTextId = helperText ? `${selectId}-helper` : undefined;
+  const errorTextId = errorText ? `${selectId}-error` : undefined;
+  const describedBy = [helperTextId, errorTextId].filter(Boolean).join(' ') || undefined;
 
   const selectClasses = `
     ${baseClasses}
@@ -83,6 +86,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
           ref={ref}
           id={selectId}
           className={selectClasses}
+          aria-describedby={describedBy}
+          aria-invalid={state === 'error'}
           {...props}
         >
           {placeholder && (
@@ -108,9 +113,15 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
         </div>
       </div>
 
-      {(helperText || errorText) && (
-        <p className={`${helperTextSizeClasses[size]} ${state === 'error' ? 'text-red-600 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'}`}>
-          {errorText || helperText}
+      {helperText && (
+        <p id={helperTextId} className={`${helperTextSizeClasses[size]} text-neutral-500 dark:text-neutral-400`}>
+          {helperText}
+        </p>
+      )}
+
+      {errorText && (
+        <p id={errorTextId} className={`${helperTextSizeClasses[size]} text-red-600 dark:text-red-400`} role="alert">
+          {errorText}
         </p>
       )}
     </div>

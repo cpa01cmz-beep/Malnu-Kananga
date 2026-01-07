@@ -60,6 +60,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   ...props
 }, ref) => {
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+  const helperTextId = helperText ? `${inputId}-helper` : undefined;
+  const errorTextId = errorText ? `${inputId}-error` : undefined;
+  const describedBy = [helperTextId, errorTextId].filter(Boolean).join(' ') || undefined;
 
   const inputClasses = `
     ${baseClasses}
@@ -93,6 +96,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           ref={ref}
           id={inputId}
           className={inputClasses}
+          aria-describedby={describedBy}
+          aria-invalid={state === 'error'}
           {...props}
         />
 
@@ -103,9 +108,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         )}
       </div>
 
-      {(helperText || errorText) && (
-        <p className={`${helperTextSizeClasses[size]} ${state === 'error' ? 'text-red-600 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'}`}>
-          {errorText || helperText}
+      {helperText && (
+        <p id={helperTextId} className={`${helperTextSizeClasses[size]} text-neutral-500 dark:text-neutral-400`}>
+          {helperText}
+        </p>
+      )}
+
+      {errorText && (
+        <p id={errorTextId} className={`${helperTextSizeClasses[size]} text-red-600 dark:text-red-400`} role="alert">
+          {errorText}
         </p>
       )}
     </div>
