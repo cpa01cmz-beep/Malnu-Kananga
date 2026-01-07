@@ -8,6 +8,7 @@ import { UserGroupIcon, CurrencyDollarIcon, MegaphoneIcon, StarIcon } from './ic
 import { eventsAPI, eventRegistrationsAPI, eventBudgetsAPI, eventPhotosAPI, eventFeedbackAPI, fileStorageAPI } from '../services/apiService';
 import type { SchoolEvent, EventRegistration, EventBudget, EventPhoto, EventFeedback } from '../types';
 import Button from './ui/Button';
+import Textarea from './ui/Textarea';
 
 interface OsisEventsProps {
   onBack: () => void;
@@ -518,12 +519,12 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     </select>
                   </div>
                 </div>
-                <textarea
+                <Textarea
                   rows={3}
                   placeholder="Komentar atau saran..."
                   value={newFeedback.comments || ''}
                   onChange={e => setNewFeedback({ ...newFeedback, comments: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                  size="md"
                 />
                 <label className="flex items-center gap-2">
                   <input
@@ -612,8 +613,14 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 <input required type="text" value={newEvent.location} onChange={e => setNewEvent({...newEvent, location: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Deskripsi Singkat</label>
-                <textarea required rows={3} value={newEvent.description} onChange={e => setNewEvent({...newEvent, description: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" />
+                <Textarea
+                  label="Deskripsi Singkat"
+                  required
+                  value={newEvent.description}
+                  onChange={e => setNewEvent({...newEvent, description: e.target.value})}
+                  size="md"
+                  minRows={3}
+                />
               </div>
               <button type="submit" className="w-full flex items-center justify-center gap-2 py-2.5 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-colors">
                 <PlusIcon className="w-5 h-5" /> Simpan Kegiatan

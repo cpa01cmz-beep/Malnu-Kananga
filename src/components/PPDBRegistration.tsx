@@ -8,6 +8,7 @@ import { FileUploadResponse } from '../services/apiService';
 import type { PPDBRegistrant } from '../types';
 import FileUpload from './FileUpload';
 import { ocrService, type OCRExtractionResult, type OCRProgress } from '../services/ocrService';
+import Textarea from './ui/Textarea';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -368,8 +369,15 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                             <input id="ppdb-email" name="email" required type="email" value={formData.email} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="email" />
                         </div>
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Alamat Lengkap</label>
-                            <textarea name="address" required value={formData.address} onChange={handleChange} rows={3} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"></textarea>
+                            <Textarea
+                                name="address"
+                                label="Alamat Lengkap"
+                                required
+                                value={formData.address}
+                                onChange={handleChange}
+                                rows={3}
+                                size="md"
+                            />
                         </div>
                      </div>
                 </div>
