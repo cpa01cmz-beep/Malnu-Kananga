@@ -81,11 +81,11 @@ export function ConflictResolutionModal({
             <div className="flex gap-2 items-center">
               <span className="text-xs text-gray-500">Local:</span>
               <span className="text-xs text-gray-700 dark:text-gray-300 flex-1">
-                {JSON.stringify(conflict.data?.[key])}
+                {JSON.stringify((conflict.data as any)?.[key])}
               </span>
               <span className="text-xs text-gray-500">Server:</span>
               <span className="text-xs text-gray-700 dark:text-gray-300 flex-1">
-                {JSON.stringify(serverData?.[key])}
+                {JSON.stringify((serverData as any)?.[key])}
               </span>
             </div>
             <input
