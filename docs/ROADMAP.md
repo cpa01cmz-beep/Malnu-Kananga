@@ -182,7 +182,7 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
 - **Status**: ✅ All checks passing
 - **Build Time**: ~9-10s
 - **TypeScript**: 0 errors
-- **Tests**: 144 passing (12 test files)
+- **Tests**: 10 test files
 
 ---
 
