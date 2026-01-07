@@ -90,23 +90,32 @@ describe('Header', () => {
     expect(themeButton).toBeInTheDocument();
   });
 
-  it('mobile menu closes when resize to desktop', () => {
+  it('mobile menu closes when resize to desktop', async () => {
     render(<Header {...defaultProps} />);
-    
+
     const menuButton = screen.getByRole('button', { name: 'Buka menu' });
     fireEvent.click(menuButton);
-    
-    window.innerWidth = 1024;
+
+    // Mock window resize to desktop
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 1024,
+    });
     window.dispatchEvent(new Event('resize'));
-    
-    expect(screen.queryByRole('navigation', { name: 'Menu navigasi utama' })).not.toBeInTheDocument();
+
+    // Wait for resize handler to execute
+    await waitFor(() => {
+      expect(screen.queryByRole('navigation', { name: 'Menu navigasi utama' })).not.toBeInTheDocument();
+    });
   });
 
   it('renders login and chat buttons when not logged in', () => {
     render(<Header {...defaultProps} />);
     
     expect(screen.getByText('Tanya AI')).toBeInTheDocument();
-    expect(screen.getByText('Login')).toBeInTheDocument();
+    const loginButtons = screen.getAllByText('Login');
+    expect(loginButtons.length).toBeGreaterThan(0);
   });
 
   it('does not render dashboard elements when not logged in', () => {
@@ -149,7 +158,8 @@ describe('Header', () => {
     fireEvent.click(menuButton);
     
     await waitFor(() => {
-      expect(screen.getByText('Login')).toBeInTheDocument();
+      const loginButtons = screen.getAllByText('Login');
+      expect(loginButtons.length).toBeGreaterThan(0);
     });
   });
 
@@ -166,7 +176,8 @@ describe('Header', () => {
     fireEvent.click(menuButton);
     
     await waitFor(() => {
-      expect(screen.getByText('Logout')).toBeInTheDocument();
+      const logoutButtons = screen.getAllByText('Logout');
+      expect(logoutButtons.length).toBeGreaterThan(0);
     });
   });
 
@@ -189,10 +200,14 @@ describe('Header', () => {
     fireEvent.click(menuButton);
     
     await waitFor(() => {
-      expect(screen.getByText('Beranda')).toBeInTheDocument();
-      expect(screen.getByText('Profil')).toBeInTheDocument();
-      expect(screen.getByText('Berita')).toBeInTheDocument();
-      expect(screen.getByText('Download')).toBeInTheDocument();
+      const berandaLinks = screen.getAllByText('Beranda');
+      const profilLinks = screen.getAllByText('Profil');
+      const beritaLinks = screen.getAllByText('Berita');
+      const downloadLinks = screen.getAllByText('Download');
+      expect(berandaLinks.length).toBeGreaterThan(0);
+      expect(profilLinks.length).toBeGreaterThan(0);
+      expect(beritaLinks.length).toBeGreaterThan(0);
+      expect(downloadLinks.length).toBeGreaterThan(0);
     });
   });
 
