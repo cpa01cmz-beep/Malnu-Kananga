@@ -1,10 +1,15 @@
 # Task List
 
 **Created**: 2025-01-01
-**Last Updated**: 2026-01-06
+**Last Updated**: 2026-01-07
 **Version**: 2.1.0
 
 ## Active Tasks
+
+### P1: Accessibility Improvements (High)
+- [ ] Fix remaining accessibility issues (UserManagement.tsx, ConfirmationDialog.tsx, etc.)
+- [ ] Run automated accessibility audit
+- [ ] Add keyboard navigation tests
 
 ### P2: Code Quality (Medium)
 - [ ] Run `npm run security:scan` to identify potential vulnerabilities
@@ -28,6 +33,14 @@
 - User roles documented consistently across all files
 - Documentation metrics updated to reflect actual file counts
 - All directories added to project structure docs
+
+### P2: Accessibility Fix (Completed)
+- TeacherDashboard.tsx: Converted interactive divs to semantic button elements
+- StudentPortal.tsx: Converted interactive divs to semantic button elements
+- Added proper ARIA labels for screen readers
+- Added keyboard navigation support (focus rings, focus-visible)
+- Removed cursor-pointer class (buttons have default cursor)
+- Maintained all visual styling and hover effects
 
 ---
 
