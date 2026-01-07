@@ -1,14 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { pushNotificationService } from '../services/pushNotificationService';
 
-interface NotificationOptions {
-  body?: string;
-  icon?: string;
-  tag?: string;
-  requireInteraction?: boolean;
-  data?: Record<string, unknown>;
-}
-
 // Mock logger
 vi.mock('../utils/logger', () => ({
   logger: {
@@ -63,7 +55,7 @@ beforeEach(() => {
     pushNotificationService.resetSettings();
     
     // Mock Notification constructor (using necessary type bypass for browser API)
-    const mockNotificationConstructor = vi.fn().mockImplementation(function(title: string, options?: NotificationOptions) {
+    const mockNotificationConstructor = vi.fn().mockImplementation(function(title: string, options?: any) {
       return {
         ...mockNotification,
         title,
