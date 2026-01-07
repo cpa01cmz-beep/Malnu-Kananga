@@ -1,7 +1,7 @@
 # Documentation Index
 
 **Created**: 2026-01-05
-**Last Updated**: 2026-01-06 (Removed duplicate content)
+**Last Updated**: 2026-01-07 (Removed duplicate content)
 **Version**: 2.1.0
 **Status**: Active
 
@@ -59,9 +59,9 @@ This index provides a comprehensive overview of all documentation available for 
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 173 TypeScript/TSX/JS/JSX files (163 in src/, 10 in root & tests)
+- **Total Source Files**: 174 TypeScript/TSX/JS/JSX files (164 in src/, 10 test files)
 - **Test Files**: 10 test files
-- **Documentation Files**: 12 (in /docs directory)
+- **Documentation Files**: 11 (in /docs directory)
 - **API Endpoints Documented**: 30+
 - **Code Examples**: 15+
 - **Troubleshooting Scenarios**: 20+
@@ -170,23 +170,26 @@ This index maintains relationships between documents:
 
 ---
 
-## Recent Changes (v2.1.0 - 2026-01-06)
+## Recent Changes (v2.1.0 - 2026-01-07)
 
-- **Updated Version**: Corrected all documentation versions to match package.json (2.1.0)
-- **Fixed Documentation Metrics**: Corrected source file count to 173 TypeScript/TSX/JS/JSX files (163 in src/, 10 in root & tests)
-- **Updated Documentation Count**: Updated to reflect 12 files in /docs/ directory
-- **Added Test File Count**: Documented 10 test files across services, utils, and components
-- **Removed Redundant Documentation**: Deleted branch-cleanup-guide.md (branch management covered in CONTRIBUTING.md)
-- **Added Extra Roles Documentation**: Added wakasek and kepsek extra roles to documentation
-- **Removed Redundant Scripts**: Deleted scripts/one-click-deploy.sh and scripts/verify-deployment.sh (redundant deployment scripts)
-- **Fixed Metadata Inconsistencies**: Corrected troubleshooting-guide.md last updated date
+- **Repository Cleanup (2026-01-07)**:
+  - Removed historical REFACTOR_SUMMARY.md (no references, outdated)
+  - Removed outdated scripts/deployment/deploy-worker.sh (hardcoded URLs, replaced by DEPLOYMENT_GUIDE.md)
+- **Updated Metrics**: Corrected file counts to 174 total TypeScript/TSX/JS/JSX files (164 in src/, 10 test files)
+- **Updated Documentation Count**: Reduced to 11 files in /docs/ directory (removed redundant docs)
+- **Previous Changes (2026-01-06)**:
+  - Corrected all documentation versions to match package.json (2.1.0)
+  - Added test file count documentation (10 test files)
+  - Added extra roles documentation (wakasek, kepsek)
+  - Removed redundant deployment scripts (one-click-deploy.sh, verify-deployment.sh)
+  - Fixed metadata inconsistencies
 
 ---
 
 **Documentation Maintainer**: Repository Team
 **Review Frequency**: Monthly (first Friday of each month)
-**Last Comprehensive Review**: 2026-01-06
-**Next Scheduled Review**: 2026-02-06
+**Last Comprehensive Review**: 2026-01-07
+**Next Scheduled Review**: 2026-02-07
 
 ---
 

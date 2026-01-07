@@ -4,7 +4,7 @@ import { logger } from '../utils/logger';
 
 interface MigrationMap {
   oldKey: string;
-  newKey: string | ((...args: any[]) => string);
+  newKey: string | ((...args: string[]) => string);
   isDynamic?: boolean;
   dynamicArg?: string;
 }

@@ -2,16 +2,18 @@ name = "malnu-kananga-worker"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 
-# Production deployment - worker deployed to:
-# https://malnu-kananga-worker.cpa01cmz.workers.dev
+# Deployment Status:
+# - Production: https://malnu-kananga-worker-prod.cpa01cmz.workers.dev ✅ DEPLOYED
+# - Development: Local only (wrangler dev --env dev)
 #
-# SETUP INSTRUCTIONS:
-# 1. Create D1 database: wrangler d1 create malnu-kananga-db
+# SETUP INSTRUCTIONS (for new deployments):
+# 1. Create D1 database: wrangler d1 create malnu-kananga-db-prod
 # 2. Copy the database_id from output and replace placeholder below
-# 3. Create R2 bucket: wrangler r2 bucket create malnu-kananga-files
-# 4. Set strong JWT_SECRET environment variable (32+ characters recommended)
-# 5. Set actual VITE_GEMINI_API_KEY from Google Cloud Console
+# 3. (Optional) Create R2 bucket: wrangler r2 bucket create malnu-kananga-files
+# 4. Set JWT_SECRET environment variable (32+ characters): openssl rand -base64 32
+# 5. Set GEMINI_API_KEY from Google AI Studio: https://ai.google.dev
 # 6. Run: npm run validate-config to check configuration before deploying
+# 7. After deployment, seed database: curl -X POST <WORKER_URL>/seed
 
 # Default environment (for basic deployment without production/separate dev configs)
 [[d1_databases]]
@@ -96,5 +98,4 @@ LOG_LEVEL = "info"
 # Set your Gemini API key for AI features
 # NOTE: Worker uses GEMINI_API_KEY (WITHOUT VITE_ prefix)
 # Frontend uses VITE_GEMINI_API_KEY (WITH VITE_ prefix) - these are DIFFERENT services
-# Can be set in .env file instead: GEMINI_API_KEY=your_key
-# GEMINI_API_KEY = "your_dev_gemini_api_key_here"
+# Set via Wrangler: echo "your_key" | wrangler secret put GEMINI_API_KEY --env dev

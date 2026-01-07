@@ -205,7 +205,7 @@ const App: React.FC = () => {
       switch (userRole) {
           case 'admin':
               return (
-                <Suspense fallback={<div className="flex justify-center items-center h-64">Loading admin dashboard...</div>}>
+                <Suspense fallback={<div className="flex flex-col justify-center items-center h-64 space-y-3 animate-pulse"><div className="w-16 h-16 rounded-2xl bg-neutral-200 dark:bg-neutral-700"></div><p className="text-neutral-500 dark:text-neutral-400 font-medium">Memuat dashboard admin...</p></div>}>
                     <AdminDashboard
                       onOpenEditor={() => setIsEditorOpen(true)}
                       onShowToast={showToast}
@@ -214,7 +214,7 @@ const App: React.FC = () => {
               );
           case 'teacher':
               return (
-                <Suspense fallback={<div className="flex justify-center items-center h-64">Loading teacher dashboard...</div>}>
+                <Suspense fallback={<div className="flex flex-col justify-center items-center h-64 space-y-3 animate-pulse"><div className="w-16 h-16 rounded-2xl bg-neutral-200 dark:bg-neutral-700"></div><p className="text-neutral-500 dark:text-neutral-400 font-medium">Memuat dashboard guru...</p></div>}>
                     <TeacherDashboard
                       extraRole={userExtraRole}
                       onShowToast={showToast}
@@ -223,7 +223,7 @@ const App: React.FC = () => {
               );
           case 'parent':
               return (
-                <Suspense fallback={<div className="flex justify-center items-center h-64">Loading parent dashboard...</div>}>
+                <Suspense fallback={<div className="flex flex-col justify-center items-center h-64 space-y-3 animate-pulse"><div className="w-16 h-16 rounded-2xl bg-neutral-200 dark:bg-neutral-700"></div><p className="text-neutral-500 dark:text-neutral-400 font-medium">Memuat dashboard wali murid...</p></div>}>
                     <ParentDashboard
                       onShowToast={showToast}
                     />
@@ -232,7 +232,7 @@ const App: React.FC = () => {
           case 'student':
           default:
               return (
-                <Suspense fallback={<div className="flex justify-center items-center h-64">Loading student portal...</div>}>
+                <Suspense fallback={<div className="flex flex-col justify-center items-center h-64 space-y-3 animate-pulse"><div className="w-16 h-16 rounded-2xl bg-neutral-200 dark:bg-neutral-700"></div><p className="text-neutral-500 dark:text-neutral-400 font-medium">Memuat portal siswa...</p></div>}>
                     <StudentPortal
                       extraRole={userExtraRole}
                       onShowToast={showToast}
@@ -295,7 +295,7 @@ const App: React.FC = () => {
         onLoginSuccess={handleLoginSuccess}
       />
       
-      <Suspense fallback={<div className="flex justify-center items-center h-64">Loading registration form...</div>}>
+      <Suspense fallback={<div className="flex flex-col justify-center items-center h-64 space-y-3 animate-pulse"><div className="w-16 h-16 rounded-2xl bg-neutral-200 dark:bg-neutral-700"></div><p className="text-neutral-500 dark:text-neutral-400 font-medium">Memuat formulir pendaftaran...</p></div>}>
         <PPDBRegistration 
           isOpen={isPPDBOpen}
           onClose={() => setIsPPDBOpen(false)}
@@ -303,14 +303,14 @@ const App: React.FC = () => {
         />
       </Suspense>
 
-      <Suspense fallback={<div className="flex justify-center items-center h-64">Loading documentation...</div>}>
+      <Suspense fallback={<div className="flex flex-col justify-center items-center h-64 space-y-3 animate-pulse"><div className="w-16 h-16 rounded-2xl bg-neutral-200 dark:bg-neutral-700"></div><p className="text-neutral-500 dark:text-neutral-400 font-medium">Memuat dokumentasi...</p></div>}>
         <DocumentationPage 
           isOpen={isDocsOpen} 
           onClose={() => setIsDocsOpen(false)} 
         />
       </Suspense>
 
-      <Suspense fallback={<div className="flex justify-center items-center h-64">Loading editor...</div>}>
+      <Suspense fallback={<div className="flex flex-col justify-center items-center h-64 space-y-3 animate-pulse"><div className="w-16 h-16 rounded-2xl bg-neutral-200 dark:bg-neutral-700"></div><p className="text-neutral-500 dark:text-neutral-400 font-medium">Memuat editor...</p></div>}>
         <SiteEditor 
           isOpen={isEditorOpen}
           onClose={() => setIsEditorOpen(false)}
