@@ -15,6 +15,7 @@ export interface CardProps {
   padding?: 'none' | 'sm' | 'md' | 'lg';
   className?: string;
   onClick?: () => void;
+  disabled?: boolean;
   'aria-label'?: string;
   'aria-describedby'?: string;
 }
@@ -39,6 +40,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
   padding = 'md',
   className = '',
   onClick,
+  disabled,
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedby,
   ...rest
@@ -79,6 +81,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
         ref={ref as React.RefObject<HTMLButtonElement>}
         type="button"
         onClick={onClick}
+        disabled={disabled}
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedby}
         className={getCardClasses()}

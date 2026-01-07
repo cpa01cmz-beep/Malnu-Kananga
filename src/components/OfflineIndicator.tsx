@@ -5,6 +5,8 @@ import React, { useEffect, useState } from 'react';
 import { useOfflineActionQueue, type SyncResult } from '../services/offlineActionQueueService';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
+import Button from './ui/Button';
+import Badge from './ui/Badge';
 
 interface OfflineIndicatorProps {
   className?: string;
@@ -111,21 +113,23 @@ export function OfflineIndicator({
 
           {/* Queue count badge */}
           {showQueueCount && (pendingCount > 0 || failedCount > 0) && (
-            <span className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded-full">
+            <Badge variant="neutral" size="sm" rounded>
               {pendingCount + failedCount}
-            </span>
+            </Badge>
           )}
 
           {/* Sync button */}
           {showSyncButton && !isOnline && (pendingCount > 0 || failedCount > 0) && (
-            <button
+            <Button
+              variant="info"
+              size="sm"
               onClick={handleSync}
+              isLoading={isSyncing}
               disabled={isSyncing}
-              className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white text-xs px-2 py-1 rounded transition-colors"
               title="Sync pending actions"
             >
               {isSyncing ? 'Syncing...' : 'Sync Now'}
-            </button>
+            </Button>
           )}
         </div>
 
@@ -232,44 +236,48 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
               </span>
               
               {getPendingCount() > 0 && (
-                <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full text-sm font-medium">
+                <Badge variant="info" size="sm" rounded>
                   {getPendingCount()} Pending
-                </span>
+                </Badge>
               )}
-              
+
               {getFailedCount() > 0 && (
-                <span className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 px-2 py-1 rounded-full text-sm font-medium">
+                <Badge variant="error" size="sm" rounded>
                   {getFailedCount()} Failed
-                </span>
+                </Badge>
               )}
             </div>
 
             <div className="flex gap-2">
               {isOnline && getPendingCount() > 0 && (
-                <button
+                <Button
+                  variant="info"
+                  size="sm"
                   onClick={handleSync}
+                  isLoading={isSyncing}
                   disabled={isSyncing}
-                  className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-3 py-1 rounded text-sm transition-colors"
                 >
                   {isSyncing ? 'Syncing...' : 'Sync Now'}
-                </button>
+                </Button>
               )}
-              
+
               {getFailedCount() > 0 && (
-                <button
+                <Button
+                  variant="warning"
+                  size="sm"
                   onClick={retryFailedActions}
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm transition-colors"
                 >
                   Retry Failed
-                </button>
+                </Button>
               )}
-              
-              <button
+
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={clearCompletedActions}
-                className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm transition-colors"
               >
                 Clear Completed
-              </button>
+              </Button>
             </div>
           </div>
         </div>

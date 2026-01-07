@@ -129,9 +129,10 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
   if (layout === 'horizontal') {
     return (
       <Card
-        variant={isDisabled ? 'default' : variant}
+        variant={variant}
         gradient={isDisabled ? undefined : gradient}
-        onClick={isDisabled ? undefined : onClick}
+        onClick={onClick}
+        disabled={isDisabled}
         aria-label={ariaLabel || title}
         className={`${isDisabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         style={style}
@@ -155,9 +156,10 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
 
   return (
     <Card
-      variant={isDisabled ? 'default' : variant}
+      variant={variant}
       gradient={isDisabled ? undefined : gradient}
-      onClick={isDisabled ? undefined : onClick}
+      onClick={onClick}
+      disabled={isDisabled}
       aria-label={ariaLabel || title}
       className={`${isDisabled ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
       style={style}
@@ -188,7 +190,7 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
       
       {!isOnline && (
         <p className="text-xs text-amber-600 dark:text-amber-400">
-          {offlineBadge ? '' : 'Memerlukan koneksi internet'}
+          Memerlukan koneksi internet
         </p>
       )}
     </Card>

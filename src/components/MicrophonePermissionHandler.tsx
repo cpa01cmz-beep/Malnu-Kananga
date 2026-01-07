@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { logger } from '../utils/logger';
+import Button from './ui/Button';
 
 interface MicrophonePermissionHandlerProps {
   onPermissionGranted: () => void;
@@ -116,12 +117,13 @@ const MicrophonePermissionHandler: React.FC<MicrophonePermissionHandlerProps> = 
             <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-3">
               Browser Anda tidak mendukung pengenalan suara. Silakan gunakan Chrome, Edge, Firefox, atau Safari versi terbaru.
             </p>
-            <button
+            <Button
+              variant="warning"
+              size="sm"
               onClick={onFallbackToText}
-              className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors"
             >
               Gunakan Input Teks
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -146,19 +148,22 @@ const MicrophonePermissionHandler: React.FC<MicrophonePermissionHandlerProps> = 
           
           {!showInstructions ? (
             <div className="flex gap-2">
-              <button
+              <Button
+                variant="info"
+                size="sm"
                 onClick={handleRequestPermission}
+                isLoading={isRequesting}
                 disabled={isRequesting}
-                className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded text-sm font-medium transition-colors"
               >
                 {isRequesting ? 'Meminta Izin...' : 'Izinkan Mikrofon'}
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={onFallbackToText}
-                className="text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 px-4 py-2 rounded text-sm font-medium transition-colors"
               >
                 Lewati
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="space-y-3">
@@ -171,21 +176,23 @@ const MicrophonePermissionHandler: React.FC<MicrophonePermissionHandlerProps> = 
                 </div>
               )}
               <div className="flex gap-2">
-                <button
+                <Button
+                  variant="info"
+                  size="sm"
                   onClick={() => {
                     setShowInstructions(false);
                     handleRequestPermission();
                   }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors"
                 >
                   Coba Lagi
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={onFallbackToText}
-                  className="text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 px-4 py-2 rounded text-sm font-medium transition-colors"
                 >
                   Gunakan Teks
-                </button>
+                </Button>
               </div>
             </div>
           )}
