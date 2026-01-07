@@ -10,6 +10,7 @@ import { CategoryValidator } from '../utils/categoryValidator';
 import { STORAGE_KEYS } from '../constants';
 import { ocrService } from '../services/ocrService';
 import Button from './ui/Button';
+import Badge from './ui/Badge';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 
@@ -945,9 +946,9 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                     {getSubjectName(item)}
                   </span>
                   {item.subjectId && (
-                    <span className="ml-1 text-xs bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-300 px-1.5 py-0.5 rounded">
+                    <Badge variant="success" size="sm">
                       ✓ Valid
-                    </span>
+                    </Badge>
                   )}
                 </p>
                 <p className="text-xs">

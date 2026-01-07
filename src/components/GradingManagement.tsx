@@ -1276,16 +1276,18 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className="flex gap-2 justify-end">
+                                            <div className="flex gap-2 justify-end">
                                             {isRowEditing ? (
-                                                <button
+                                                <Button
+                                                    variant="success"
+                                                    size="sm"
                                                     onClick={() => {
                                                         const validation = validateGradeInput({
                                                             assignment: student.assignment,
                                                             midExam: student.midExam,
                                                             finalExam: student.finalExam
                                                         });
-                                                        
+
                                                         if (!validation.isValid) {
                                                             setConfirmDialog({
                                                                 isOpen: true,
@@ -1296,7 +1298,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                                             });
                                                             return;
                                                         }
-                                                        
+
                                                         if (validation.warnings.length > 0) {
                                                             setConfirmDialog({
                                                                 isOpen: true,
@@ -1309,10 +1311,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                                             doBatchSave();
                                                         }
                                                     }}
-                                                    className="text-xs font-medium bg-green-600 text-white px-3 py-1.5 rounded-full hover:bg-green-700 transition-colors"
                                                 >
                                                     Simpan
-                                                </button>
+                                                </Button>
                                             ) : null}
                                             <button
                                                 onClick={() => {

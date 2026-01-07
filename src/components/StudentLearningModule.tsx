@@ -3,6 +3,7 @@ import { UserExtraRole } from '../types';
 import { GoogleGenAI } from '@google/genai';
 import { withCircuitBreaker, classifyError, logError, getUserFriendlyMessage } from '../utils/errorHandler';
 import LoadingSpinner from './ui/LoadingSpinner';
+import Button from './ui/Button';
 
 interface StudentLearningModuleProps {
     onShowToast: (msg: string, type: 'success' | 'error' | 'info' | 'warning') => void;
@@ -219,30 +220,34 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                         <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">{selectedTopic.title}</h2>
                         
                         <div className="space-y-4">
-                            <button
+                            <Button
+                                variant="info"
+                                fullWidth
                                 onClick={() => setShowQuiz(!showQuiz)}
-                                className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                             >
                                 Quiz
-                            </button>
-                            <button
+                            </Button>
+                            <Button
+                                variant="indigo"
+                                fullWidth
                                 onClick={() => {
                                     if (!showAIQuiz && selectedTopic) {
                                         generateAIQuiz(selectedTopic);
                                     }
                                     setShowAIQuiz(!showAIQuiz);
                                 }}
-                                className="w-full bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                                isLoading={aiQuizState.isGenerating}
                                 disabled={!selectedTopic || aiQuizState.isGenerating}
                             >
                                 {aiQuizState.isGenerating ? 'Membuat Kuis...' : 'AI Quiz'}
-                            </button>
-                            <button
+                            </Button>
+                            <Button
+                                variant="success"
+                                fullWidth
                                 onClick={() => setShowFlashcards(!showFlashcards)}
-                                className="w-full bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                             >
                                 Flashcards
-                            </button>
+                            </Button>
                         </div>
 
                         {showQuiz && (
