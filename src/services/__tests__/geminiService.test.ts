@@ -50,9 +50,9 @@ describe('Gemini Service', () => {
         for await (const chunk of getAIResponseStream('test', [])) {
           chunks.push(chunk);
         }
-      } catch (error) {
+      } catch {
         // Since we don't have proper mocks for the API, test the error handling path
-        console.log('Expected error due to lack of API key:', error);
+        // Expected error due to lack of API key in test environment
       }
       
       // Since we can't easily mock the @google/genai package without affecting other tests,
