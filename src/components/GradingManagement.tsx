@@ -10,7 +10,7 @@ import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
-import { useOfflineActionQueue } from '../services/offlineActionQueueService';
+import { useOfflineActionQueue, type SyncResult } from '../services/offlineActionQueueService';
 import { STORAGE_KEYS } from '../constants';
 import { 
   validateGradeInput, 
@@ -91,7 +91,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   // OCR State
   const [isOCRProcessing, setIsOCRProcessing] = useState(false);
   const [ocrProgress, setOCRProgress] = useState<OCRProgress>({ status: '', progress: 0 });
-  const [ocrResult, setOcrResult] = useState<OCRExtractionResult | null>(null);
+  const [_ocrResult, setOcrResult] = useState<OCRExtractionResult | null>(null);
   const [showOCRModal, setShowOCRModal] = useState(false);
   const [ocrReviewData, setOcrReviewData] = useState<{
     studentId?: string;
@@ -233,7 +233,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   // Listen for sync completion and update UI
   useEffect(() => {
     if (onSyncComplete) {
-      return onSyncComplete((result: any) => {
+      return onSyncComplete((result: SyncResult) => {
         if (result.success && result.actionsProcessed > 0) {
           // Filter for grade-related actions
           const gradeActions = result.actionsProcessed; // We'll assume actionsProcessed includes grade actions
@@ -340,7 +340,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         
         // Trigger sync if on slow connection (might recover)
         if (isSlow) {
-          setTimeout(() => sync().catch(console.error), 5000);
+          setTimeout(() => sync().catch((error) => logger.error('Sync failed:', error)), 5000);
         }
         
         return;
@@ -779,7 +779,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const processOCRWithAI = async (ocrText: string, confidence: number) => {
     try {
       // Create AI prompt for grade extraction
-      const prompt = `
+      const _prompt = `
         Ekstrak data nilai dari teks berikut. Format output JSON:
         {
           "studentName": "nama siswa",

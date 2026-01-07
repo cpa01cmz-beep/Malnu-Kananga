@@ -4,6 +4,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import GradingManagement from '../GradingManagement';
+import { type SyncResult } from '../../services/offlineActionQueueService';
 
 // Mock services
 vi.mock('../../services/apiService', () => ({
@@ -241,7 +242,7 @@ describe('GradingManagement Offline Integration', () => {
         sync: () => Promise.resolve({ success: true, actionsProcessed: 2, actionsFailed: 0, conflicts: [], errors: [] }),
         retryFailedActions: () => Promise.resolve({ success: true, actionsProcessed: 0, actionsFailed: 0, conflicts: [], errors: [] }),
         clearCompletedActions: () => {},
-        onSyncComplete: (callback: (result: any) => void) => {
+        onSyncComplete: (callback: (result: SyncResult) => void) => {
           mockSyncCallback.mockImplementation(callback);
           return () => {};
         },
