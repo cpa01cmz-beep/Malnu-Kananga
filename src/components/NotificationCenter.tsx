@@ -33,7 +33,6 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<NotificationType | 'all'>('all');
   const [selectedStatus, setSelectedStatus] = useState<'all' | 'read' | 'unread'>('all');
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   const relevantTypes = NotificationTemplateService.getRelevantNotificationTypes(userRole);
 
