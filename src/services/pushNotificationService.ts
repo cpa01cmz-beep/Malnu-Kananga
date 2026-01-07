@@ -678,7 +678,30 @@ class PushNotificationService {
   }
 
   getAnalytics(): NotificationAnalytics[] {
-    return Array.from(this.analytics.values());
+    try {
+      // Ensure analytics are loaded from storage first
+      if (this.analytics.size === 0) {
+        const stored = localStorage.getItem(STORAGE_KEYS.NOTIFICATION_ANALYTICS);
+        if (stored) {
+          const analytics: NotificationAnalytics[] = JSON.parse(stored);
+          analytics.forEach(analytic => this.analytics.set(analytic.notificationId, analytic));
+        }
+      }
+      return Array.from(this.analytics.values());
+    } catch (error) {
+      logger.error('Failed to get analytics:', error);
+      return [];
+    }
+  }
+
+  clearAnalytics(): void {
+    try {
+      this.analytics.clear();
+      localStorage.removeItem(STORAGE_KEYS.NOTIFICATION_ANALYTICS);
+      logger.info('Notification analytics cleared');
+    } catch (error) {
+      logger.error('Failed to clear notification analytics:', error);
+    }
   }
 
   private urlBase64ToUint8Array(base64String: string): Uint8Array {
