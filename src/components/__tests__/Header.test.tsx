@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import Header from '../Header';
 import { UserRole } from '../../types';
@@ -96,8 +96,14 @@ describe('Header', () => {
     const menuButton = screen.getByRole('button', { name: 'Buka menu' });
     fireEvent.click(menuButton);
     
-    window.innerWidth = 1024;
-    window.dispatchEvent(new Event('resize'));
+    // Simulate window resize by triggering the resize event
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 1024,
+    });
+    
+    fireEvent.resize(window);
     
     expect(screen.queryByRole('navigation', { name: 'Menu navigasi utama' })).not.toBeInTheDocument();
   });
@@ -149,7 +155,12 @@ describe('Header', () => {
     fireEvent.click(menuButton);
     
     await waitFor(() => {
-      expect(screen.getByText('Login')).toBeInTheDocument();
+      // Get the mobile menu navigation to scope the query
+      const mobileMenu = screen.getByRole('navigation', { name: 'Menu navigasi utama' });
+      expect(mobileMenu).toBeInTheDocument();
+      // Find the login button within the mobile menu
+      const loginButton = within(mobileMenu).getByText('Login');
+      expect(loginButton).toBeInTheDocument();
     });
   });
 
@@ -166,7 +177,12 @@ describe('Header', () => {
     fireEvent.click(menuButton);
     
     await waitFor(() => {
-      expect(screen.getByText('Logout')).toBeInTheDocument();
+      // Get the mobile menu navigation to scope the query
+      const mobileMenu = screen.getByRole('navigation', { name: 'Menu navigasi utama' });
+      expect(mobileMenu).toBeInTheDocument();
+      // Find the logout button within the mobile menu
+      const logoutButton = within(mobileMenu).getByText('Logout');
+      expect(logoutButton).toBeInTheDocument();
     });
   });
 
@@ -189,10 +205,13 @@ describe('Header', () => {
     fireEvent.click(menuButton);
     
     await waitFor(() => {
-      expect(screen.getByText('Beranda')).toBeInTheDocument();
-      expect(screen.getByText('Profil')).toBeInTheDocument();
-      expect(screen.getByText('Berita')).toBeInTheDocument();
-      expect(screen.getByText('Download')).toBeInTheDocument();
+      const mobileMenu = screen.getByRole('navigation', { name: 'Menu navigasi utama' });
+      expect(mobileMenu).toBeInTheDocument();
+      // Scope the navigation link queries to within the mobile menu
+      expect(within(mobileMenu).getByText('Beranda')).toBeInTheDocument();
+      expect(within(mobileMenu).getByText('Profil')).toBeInTheDocument();
+      expect(within(mobileMenu).getByText('Berita')).toBeInTheDocument();
+      expect(within(mobileMenu).getByText('Download')).toBeInTheDocument();
     });
   });
 
