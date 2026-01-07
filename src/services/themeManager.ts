@@ -51,6 +51,64 @@ export class ThemeManager {
     this.listeners.forEach(listener => listener(theme));
   }
 
+  private hexToHsl(hex: string): string {
+    let r = 0, g = 0, b = 0;
+
+    if (hex.length === 4) {
+      r = parseInt(hex[1] + hex[1], 16);
+      g = parseInt(hex[2] + hex[2], 16);
+      b = parseInt(hex[3] + hex[3], 16);
+    } else if (hex.length === 7) {
+      r = parseInt(hex.substring(1, 3), 16);
+      g = parseInt(hex.substring(3, 5), 16);
+      b = parseInt(hex.substring(5, 7), 16);
+    }
+
+    r /= 255;
+    g /= 255;
+    b /= 255;
+
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = 0, s = 0, l = (max + min) / 2;
+
+    if (max !== min) {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+      switch (max) {
+        case r:
+          h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+          break;
+        case g:
+          h = ((b - r) / d + 2) / 6;
+          break;
+        case b:
+          h = ((r - g) / d + 4) / 6;
+          break;
+      }
+    }
+
+    return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+  }
+
+  private generateColorScale(baseColor: string, steps: number): Record<string, string> {
+    const hsl = this.hexToHsl(baseColor);
+    const [h, s] = hsl.split(' ').map((v, i) => i === 0 ? parseInt(v) : parseInt(v));
+    
+    const scale: Record<string, string> = {};
+    const lightnessSteps = [95, 90, 80, 70, 60, 50, 40, 30, 20, 10];
+    
+    for (let i = 0; i < steps; i++) {
+      const step = 50 + i * 50;
+      const lightness = i < 5 ? lightnessSteps[i] : lightnessSteps[i];
+      scale[`${step}`] = `${h} ${s}% ${lightness}%`;
+    }
+    
+    scale['DEFAULT'] = hsl;
+    
+    return scale;
+  }
+
   private applyTheme(theme: Theme): void {
     const root = document.documentElement;
     
@@ -67,15 +125,56 @@ export class ThemeManager {
       root.classList.remove('dark');
     }
 
-    // Apply CSS custom properties
-    Object.entries(theme.colors).forEach(([key, value]) => {
-      root.style.setProperty(`--color-${key}`, value);
+    // Generate and apply color scales for primary
+    const primaryScale = this.generateColorScale(theme.colors.primary, 10);
+    Object.entries(primaryScale).forEach(([key, value]) => {
+      if (key !== 'DEFAULT') {
+        root.style.setProperty(`--color-primary-${key}`, value);
+      }
+    });
+    root.style.setProperty('--color-primary', this.hexToHsl(theme.colors.primary));
+
+    // Generate and apply color scales for neutral (using base neutral color)
+    const neutralScale = this.generateColorScale(theme.colors.border, 10);
+    Object.entries(neutralScale).forEach(([key, value]) => {
+      if (key !== 'DEFAULT') {
+        root.style.setProperty(`--color-neutral-${key}`, value);
+      }
+    });
+    root.style.setProperty('--color-neutral', this.hexToHsl(theme.colors.border));
+
+    // Generate and apply semantic color scales
+    const semanticColors = [
+      { name: 'red', color: theme.colors.error },
+      { name: 'green', color: theme.colors.success },
+      { name: 'orange', color: theme.colors.warning },
+      { name: 'blue', color: theme.colors.accent },
+    ];
+
+    semanticColors.forEach(({ name, color }) => {
+      const scale = this.generateColorScale(color, 10);
+      Object.entries(scale).forEach(([key, value]) => {
+        if (key !== 'DEFAULT') {
+          root.style.setProperty(`--color-${name}-${key}`, value);
+        }
+      });
+      root.style.setProperty(`--color-${name}`, this.hexToHsl(color));
     });
 
-    // Set CSS variables for Tailwind custom colors
-    root.style.setProperty('--color-primary', theme.colors.primary);
-    root.style.setProperty('--color-secondary', theme.colors.secondary);
-    root.style.setProperty('--color-accent', theme.colors.accent);
+    // Generate and apply indigo scale (using secondary color as base)
+    const indigoScale = this.generateColorScale(theme.colors.secondary, 10);
+    Object.entries(indigoScale).forEach(([key, value]) => {
+      if (key !== 'DEFAULT') {
+        root.style.setProperty(`--color-indigo-${key}`, value);
+      }
+    });
+    root.style.setProperty('--color-indigo', this.hexToHsl(theme.colors.secondary));
+
+    // Apply background, surface, text, and text-secondary colors
+    root.style.setProperty('--color-background', theme.colors.background);
+    root.style.setProperty('--color-surface', theme.colors.surface);
+    root.style.setProperty('--color-text', theme.colors.text);
+    root.style.setProperty('--color-text-secondary', theme.colors.textSecondary);
   }
 
   private saveTheme(theme: Theme): void {

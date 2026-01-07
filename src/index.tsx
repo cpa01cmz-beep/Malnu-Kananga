@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { logger } from './utils/logger';
 import './style.css';
+import './index.css';
 import './styles/themes.css';
 // Import registration function
 import { registerSW } from 'virtual:pwa-register';
