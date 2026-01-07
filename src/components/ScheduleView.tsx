@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CalendarDaysIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { schedulesAPI, subjectsAPI } from '../services/apiService';
-import { Schedule, Subject } from '../types';
+import { Schedule, Subject, ParentMeeting } from '../types';
 import { logger } from '../utils/logger';
 import CalendarView from './CalendarView';
 
@@ -104,8 +104,10 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
 
   const dailySchedule = groupSchedulesByDay();
 
-  const handleEventClick = (event: Schedule) => {
-    setSelectedEvent(event);
+  const handleEventClick = (event: Schedule | ParentMeeting) => {
+    if ('classId' in event) {
+      setSelectedEvent(event);
+    }
   };
 
   const handleDateSelect = (date: Date) => {
