@@ -37,7 +37,7 @@ const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
   };
 
   return (
-    <div className={`flex items-end gap-2 bg-neutral-100 dark:bg-neutral-700 rounded-2xl p-2.5 border border-neutral-200 dark:border-neutral-600 focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 shadow-sm transition-all ${className}`}>
+    <div className={`flex items-end gap-2 bg-neutral-100 dark:bg-neutral-700 rounded-xl p-2.5 border border-neutral-200 dark:border-neutral-600 focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 shadow-sm transition-all ${className}`}>
       <textarea
         ref={textareaRef}
         value={value}
