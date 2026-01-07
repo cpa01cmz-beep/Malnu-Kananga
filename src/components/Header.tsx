@@ -178,13 +178,19 @@ const Header: React.FC<HeaderProps> = ({
                                     </Button>
                               </div>
                           )}
-                               <button
-                                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                   className="md:hidden p-2.5 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95"
-                                   aria-label={isMenuOpen ? "Tutup menu" : "Buka menu"}
-                                   aria-expanded={isMenuOpen}
-                                   aria-controls="mobile-menu"
-                               >
+<button
+                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                                            e.preventDefault();
+                                            setIsMenuOpen(!isMenuOpen);
+                                        }
+                                    }}
+                                    className="md:hidden p-2.5 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95"
+                                    aria-label={isMenuOpen ? "Tutup menu" : "Buka menu"}
+                                    aria-expanded={isMenuOpen}
+                                    aria-controls="mobile-menu"
+                                >
                                   {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
                               </button>
                     </div>
