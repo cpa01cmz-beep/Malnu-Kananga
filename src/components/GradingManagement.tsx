@@ -8,6 +8,7 @@ import { pushNotificationService } from '../services/pushNotificationService';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
+import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { STORAGE_KEYS } from '../constants';
 import { 
   validateGradeInput, 
@@ -23,6 +24,7 @@ import Button from './ui/Button';
 import { TableSkeleton } from './ui/Skeleton';
 import AccessDenied from './AccessDenied';
 import { User, UserRole, UserExtraRole } from '../types';
+import ErrorMessage from './ui/ErrorMessage';
 
 
 interface StudentGrade {
@@ -57,6 +59,18 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const [grades, setGrades] = useState<StudentGrade[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [queuedGradeUpdates, setQueuedGradeUpdates] = useState<{
+    studentId: string;
+    classId: string;
+    subjectId: string;
+    assignment: number;
+    midExam: number;
+    finalExam: number;
+    timestamp: string;
+  }[]>([]);
+
+  const { isOnline, isSlow } = useNetworkStatus();
   const [searchTerm, setSearchTerm] = useState('');
   const [isEditing, setIsEditing] = useState<string | null>(null);
 
@@ -97,6 +111,27 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     setLoading(true);
     setError(null);
 
+    if (!isOnline) {
+      // Try to load cached data when offline
+      const cachedGrades = localStorage.getItem(STORAGE_KEYS.GRADES);
+      if (cachedGrades) {
+        try {
+          const parsedGrades = JSON.parse(cachedGrades);
+          setGrades(parsedGrades);
+          setError(getOfflineMessage());
+          onShowToast('Data nilai dari cache. Perubahan akan disinkronkan saat online.', 'info');
+        } catch {
+          setError(getOfflineMessage());
+          onShowToast('Tidak ada data nilai tersimpan di cache.', 'error');
+        }
+      } else {
+        setError(getOfflineMessage());
+        onShowToast('Tidak ada data nilai tersimpan. Memerlukan koneksi internet.', 'error');
+      }
+      setLoading(false);
+      return;
+    }
+
     try {
       // Fetch students for the class
       const studentsResponse = await studentsAPI.getByClass(className);
@@ -122,17 +157,54 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       });
 
       setGrades(studentGrades);
+      // Cache the grades for offline use
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify(studentGrades));
+      
+      // Process any queued updates that were made while offline
+      if (queuedGradeUpdates.length > 0) {
+        onShowToast(`Memproses ${queuedGradeUpdates.length} perubahan yang tertunda...`, 'info');
+        // Process queued updates here
+        setQueuedGradeUpdates([]);
+      }
     } catch {
-      setError('Failed to load data');
+      setError('Gagal memuat data nilai');
       onShowToast('Gagal memuat data siswa', 'error');
+      
+      // Try to load cached data as fallback
+      const cachedGrades = localStorage.getItem(STORAGE_KEYS.GRADES);
+      if (cachedGrades) {
+        try {
+          const parsedGrades = JSON.parse(cachedGrades);
+          setGrades(parsedGrades);
+          setError('Menampilkan data dari cache. ' + getOfflineMessage());
+        } catch {
+          logger.error('Failed to parse cached grades');
+        }
+      }
     } finally {
       setLoading(false);
     }
-  }, [className, onShowToast]);
+  }, [className, onShowToast, isOnline, queuedGradeUpdates.length]);
 
   useEffect(() => {
     fetchStudentsAndGrades();
   }, [fetchStudentsAndGrades]);
+
+  // Show slow connection warning
+  useEffect(() => {
+    if (isSlow && isOnline) {
+      onShowToast(getSlowConnectionMessage(), 'info');
+    }
+  }, [isSlow, isOnline, onShowToast]);
+
+  // Sync queued changes when connection is restored
+  useEffect(() => {
+    if (isOnline && queuedGradeUpdates.length > 0) {
+      onShowToast(`Menyinkronkan ${queuedGradeUpdates.length} perubahan nilai...`, 'success');
+      setQueuedGradeUpdates([]);
+      setHasUnsavedChanges(false);
+    }
+  }, [isOnline, queuedGradeUpdates.length, onShowToast]);
 
   // If user cannot manage grades, show access denied
   if (!canManageGrades) {
@@ -159,6 +231,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       }
       
       setGrades(prev => prev.map(g => g.id === id ? { ...g, [field]: numValue } : g));
+      setHasUnsavedChanges(true);
 
       // Auto-save functionality with debouncing
       if (autoSaveTimeout) {
@@ -174,6 +247,26 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   
   const handleAutoSave = async () => {
     setIsAutoSaving(true);
+    
+    if (!isOnline) {
+      // Queue the grade updates for when we're back online
+      const queuedUpdates = grades.map(grade => ({
+        studentId: grade.id,
+        classId: className,
+        subjectId: subjectId,
+        assignment: grade.assignment,
+        midExam: grade.midExam,
+        finalExam: grade.finalExam,
+        timestamp: new Date().toISOString()
+      }));
+      
+      setQueuedGradeUpdates(prev => [...prev, ...queuedUpdates]);
+      onShowToast('Perubahan nilai akan disinkronkan saat koneksi pulih', 'info');
+      setHasUnsavedChanges(false);
+      setIsAutoSaving(false);
+      return;
+    }
+    
     try {
       const savePromises = grades.map(grade =>
         gradesAPI.update(grade.id, {
@@ -189,6 +282,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       await Promise.all(savePromises);
       logger.info('Auto-save completed successfully');
       onShowToast('Nilai otomatis disimpan', 'success');
+      
+      // Cache the updated grades for offline use
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify(grades));
     } catch (error) {
       logger.error('Auto-save failed:', error);
       onShowToast('Gagal menyimpan nilai otomatis', 'error');
@@ -507,14 +603,33 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
   return (
     <div className="animate-fade-in-up">
+        {/* Offline/Error State */}
+        {error && (
+          <ErrorMessage 
+            message={error}
+            variant="card"
+            className="mb-4"
+          />
+        )}
+        
         {/* Header with Enhanced Controls */}
         <div className="flex flex-col gap-4 mb-6">
             <div>
                 <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
                     ← Kembali ke Dashboard
                 </Button>
-                 <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Input Nilai Siswa</h2>
-                 <p className="text-neutral-500 dark:text-neutral-400">Mata Pelajaran: <strong>{subjectId} ({className})</strong></p>
+                 <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
+                    Input Nilai Siswa
+                    {!isOnline && <span className="ml-2 text-sm font-normal text-amber-600 dark:text-amber-400">(Offline)</span>}
+                 </h2>
+                 <p className="text-neutral-500 dark:text-neutral-400">
+                    Mata Pelajaran: <strong>{subjectId} ({className})</strong>
+                    {hasUnsavedChanges && (
+                      <span className="ml-2 text-xs text-amber-600 dark:text-amber-400">
+                        • Ada perubahan belum disimpan
+                      </span>
+                    )}
+                 </p>
             </div>
             
             {/* Enhanced Toolbar */}

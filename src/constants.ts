@@ -58,6 +58,12 @@ export const STORAGE_KEYS = {
     OCR_PROCESSING_STATE: 'malnu_ocr_processing_state',
     OCR_CACHE: 'malnu_ocr_cache',
     SEARCH_INDEX: 'malnu_search_index',
+    
+    // Dashboard cache keys for offline support
+    TEACHER_DASHBOARD_CACHE: 'malnu_teacher_dashboard_cache',
+    ADMIN_DASHBOARD_CACHE: 'malnu_admin_dashboard_cache',
+    ATTENDANCE_CACHE: 'malnu_attendance_cache',
+    QUEUED_ACTIONS: 'malnu_queued_actions',
 } as const;
 
 export const APP_CONFIG = {

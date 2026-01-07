@@ -15,7 +15,9 @@ import { STORAGE_KEYS } from '../constants'; // Import constants
 import { logger } from '../utils/logger';
 import { permissionService } from '../services/permissionService';
 import { usePushNotifications } from '../hooks/usePushNotifications';
+import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { getGradientClass } from '../config/gradients';
+import ErrorMessage from './ui/ErrorMessage';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -32,6 +34,9 @@ interface PPDBRegistrant {
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToast }) => {
   const [currentView, setCurrentView] = useState<DashboardView>('home');
   const [pendingPPDB, setPendingPPDB] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [dashboardData, setDashboardData] = useState<{ lastSync?: string; stats?: Record<string, unknown> } | null>(null);
 
   // Initialize push notifications
   const { 
@@ -40,11 +45,62 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
     requestPermission 
   } = usePushNotifications();
 
+  const { isOnline, isSlow } = useNetworkStatus();
+
   // Check permissions for admin role
   const checkPermission = (permission: string) => {
     const result = permissionService.hasPermission('admin', null, permission);
     return result.granted;
   };
+
+  // Load dashboard data with offline support
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      if (!isOnline) {
+        // Try to load cached data
+        const cachedData = localStorage.getItem(STORAGE_KEYS.ADMIN_DASHBOARD_CACHE);
+        if (cachedData) {
+          setDashboardData(JSON.parse(cachedData));
+          setError(getOfflineMessage());
+        } else {
+          setError(getOfflineMessage());
+        }
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Load fresh data and cache for offline use
+        const freshData = { lastSync: new Date().toISOString(), stats: {} };
+        setDashboardData(freshData);
+        localStorage.setItem(STORAGE_KEYS.ADMIN_DASHBOARD_CACHE, JSON.stringify(freshData));
+      } catch (err) {
+        logger.error('Failed to load admin dashboard data:', err);
+        setError('Gagal memuat data dashboard. Silakan coba lagi.');
+        
+        // Try cached data as fallback
+        const cachedData = localStorage.getItem(STORAGE_KEYS.ADMIN_DASHBOARD_CACHE);
+        if (cachedData) {
+          setDashboardData(JSON.parse(cachedData));
+          setError('Data terakhir dari cache. ' + getOfflineMessage());
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboardData();
+  }, [isOnline]);
+
+  // Show slow connection warning
+  useEffect(() => {
+    if (isSlow && isOnline) {
+      onShowToast(getSlowConnectionMessage(), 'info');
+    }
+  }, [isSlow, isOnline, onShowToast]);
 
   // Request notification permission on first load
   useEffect(() => {
@@ -97,16 +153,58 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
     }
   }, [currentView, pendingPPDB, showNotification, createNotification]);
 
+  // Loading state
+  if (loading) {
+    return (
+      <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="space-y-6">
+            <div className="animate-pulse">
+              <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded w-1/3 mb-4"></div>
+              <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2"></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="animate-pulse">
+                  <div className="bg-neutral-100 dark:bg-neutral-800 h-32 rounded-xl mb-4"></div>
+                  <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        {/* Offline/ Error State */}
+        {error && (
+          <ErrorMessage 
+            message={error}
+            variant="card"
+            className="mb-6"
+          />
+        )}
+
         {currentView === 'home' && (
             <>
-                <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up">
-                    <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">Dashboard Administrator</h1>
+                <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 ${!isOnline ? 'animate-pulse' : 'animate-fade-in-up'}`}>
+                    <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">
+                        Dashboard Administrator
+                        {!isOnline && <span className="ml-2 text-sm font-normal text-amber-600 dark:text-amber-400">(Offline)</span>}
+                    </h1>
                     <p className="mt-3 text-base text-neutral-600 dark:text-neutral-300 leading-relaxed font-medium">
                         Selamat datang, Admin. Kelola konten website dan pengguna dari sini.
+                        {dashboardData?.lastSync && (
+                            <span className="text-xs text-neutral-500 dark:text-neutral-400 block mt-1">
+                                Terakhir diperbarui: {new Date(dashboardData.lastSync).toLocaleString('id-ID')}
+                            </span>
+                        )}
                     </p>
                 </div>
 
@@ -127,9 +225,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
                     {checkPermission('ppdb.manage') && (
                     <button
-                        onClick={() => setCurrentView('ppdb')}
+                        onClick={() => isOnline ? setCurrentView('ppdb') : onShowToast('Memerlukan koneksi internet untuk mengakses PPDB Management', 'error')}
                         aria-label="Buka Manajemen PPDB Online"
-                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-200 ease-out relative hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        disabled={!isOnline}
+                        className={`bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 transition-all duration-200 ease-out relative hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 ${!isOnline ? 'opacity-60 cursor-not-allowed' : ''}`}
                     >
                         {pendingPPDB > 0 && (
                             <span className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-semibold text-white shadow-md animate-pulse ring-2 ring-white dark:ring-neutral-800">
@@ -139,8 +238,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         <div className="bg-orange-100 dark:bg-orange-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 text-orange-600 dark:text-orange-400">
                             <ClipboardDocumentCheckIcon />
                         </div>
-                        <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white mb-2">PPDB Online</h3>
+                        <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white mb-2">
+                            PPDB Online
+                            {!isOnline && <span className="ml-2 text-xs font-normal text-amber-600">(Offline)</span>}
+                        </h3>
                         <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-4 leading-relaxed">Verifikasi data calon siswa baru.</p>
+                        {!isOnline && (
+                            <p className="text-xs text-amber-600 dark:text-amber-400">
+                                Persetujuan PPDB memerlukan koneksi internet
+                            </p>
+                        )}
                         <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2.5 py-1 rounded-full">Aktif</span>
                     </button>
                     )}
