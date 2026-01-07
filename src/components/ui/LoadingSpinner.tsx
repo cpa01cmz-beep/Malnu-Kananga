@@ -3,12 +3,16 @@ import React from 'react';
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   color?: 'primary' | 'secondary' | 'success' | 'error';
+  text?: string;
+  fullScreen?: boolean;
   className?: string;
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 'md',
   color = 'primary',
+  text,
+  fullScreen = false,
   className = ''
 }) => {
   const sizeClasses = {
@@ -23,6 +27,31 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     success: 'border-green-600',
     error: 'border-red-600'
   };
+
+  const containerClasses = fullScreen 
+    ? 'fixed inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-gray-900/80 z-50'
+    : 'flex flex-col items-center justify-center';
+
+  if (fullScreen || text) {
+    return (
+      <div className={`${containerClasses} ${className}`}>
+        <div className="flex flex-col items-center gap-3">
+          <div 
+            className={`animate-spin rounded-full border-2 border-t-transparent ${sizeClasses[size]} ${colorClasses[color]}`}
+            role="status"
+            aria-label={text || "Loading"}
+          >
+            <span className="sr-only">Loading...</span>
+          </div>
+          {text && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 animate-pulse">
+              {text}
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 

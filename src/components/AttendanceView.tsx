@@ -3,7 +3,8 @@ import { UsersIcon } from './icons/UsersIcon';
 import { attendanceAPI } from '../services/apiService';
 import { Attendance } from '../types';
 import { authAPI } from '../services/apiService';
-import { logger } from '../utils/logger';
+import { useErrorHandler } from '../hooks/useErrorHandler';
+import LoadingSpinner from './ui/LoadingSpinner';
 import Button from './ui/Button';
 
 interface AttendanceViewProps {
@@ -25,30 +26,29 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
   const [todayStatus, setTodayStatus] = useState<string>('Hadir');
   const [history, setHistory] = useState<AttendanceHistory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { errorState, handleApiError, clearError } = useErrorHandler();
 
   const fetchAttendance = useCallback(async () => {
     if (!STUDENT_NIS) {
-      setError('User tidak ditemukan');
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    setError(null);
-    try {
-      const response = await attendanceAPI.getByStudent(STUDENT_NIS);
-      if (response.success && response.data) {
-        processAttendanceData(response.data);
-      } else {
-        setError(response.message || 'Gagal mengambil data kehadiran');
+    clearError();
+    const result = await handleApiError(
+      () => attendanceAPI.getByStudent(STUDENT_NIS),
+      { 
+        operation: 'fetchAttendance', 
+        component: 'AttendanceView',
+        fallbackMessage: 'Gagal mengambil data kehadiran'
       }
-    } catch (err) {
-      setError('Terjadi kesalahan saat mengambil data kehadiran');
-      logger.error('Error fetching attendance:', err);
-    } finally {
-      setLoading(false);
+    );
+    
+    if (result && result.success && result.data) {
+      processAttendanceData(result.data);
     }
+    setLoading(false);
   }, [STUDENT_NIS]);
 
   useEffect(() => {
@@ -112,14 +112,12 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Rekapitulasi Kehadiran</h2>
           </div>
         </div>
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-        </div>
+        <LoadingSpinner size="lg" text="Memuat data kehadiran..." color="success" />
       </div>
     );
   }
 
-  if (error) {
+  if (errorState.hasError) {
     return (
       <div className="animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
@@ -131,7 +129,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
           </div>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
+          <p className="text-red-700 dark:text-red-300 mb-4">{errorState.message}</p>
           <button
             onClick={fetchAttendance}
             className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"

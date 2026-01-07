@@ -8,8 +8,9 @@ import Button from './ui/Button';
 import { api } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
 import { pushNotificationService } from '../services/pushNotificationService';
-import { logger } from '../utils/logger';
+import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useFocusTrap } from '../hooks/useFocusTrap';
+import LoadingSpinner from './ui/LoadingSpinner';
 import PermissionGuard from './PermissionGuard';
 
 interface UserManagementProps {
@@ -21,7 +22,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState('');
+  const { errorState, handleApiError, clearError } = useErrorHandler();
 
   const [searchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,21 +50,21 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   }, []);
 
   const fetchUsers = async () => {
-    try {
-      setIsLoading(true);
-      setError('');
-      const response = await api.users.getAll();
-      if (response.success && response.data) {
-        setUsers(response.data);
-      } else {
-        setError(response.message || 'Gagal memuat data pengguna');
+    setIsLoading(true);
+    clearError();
+    const result = await handleApiError(
+      () => api.users.getAll(),
+      { 
+        operation: 'fetchUsers', 
+        component: 'UserManagement',
+        fallbackMessage: 'Gagal memuat data pengguna'
       }
-    } catch (err) {
-      setError('Terjadi kesalahan saat memuat data');
-      logger.error('Error fetching users:', err);
-    } finally {
-      setIsLoading(false);
+    );
+    
+    if (result && result.success && result.data) {
+      setUsers(result.data);
     }
+    setIsLoading(false);
   };
 
   const filteredUsers = users.filter(user => 
@@ -85,17 +86,18 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
 
   const handleDeleteUser = async (id: string) => {
       if (window.confirm('Hapus pengguna ini?')) {
-          try {
-              const response = await api.users.delete(id);
-              if (response.success) {
-                  setUsers(prev => prev.filter(u => u.id !== id));
-                  onShowToast('Pengguna dihapus', 'success');
-              } else {
-                  onShowToast(response.message || 'Gagal menghapus pengguna', 'error');
+          const result = await handleApiError(
+              () => api.users.delete(id),
+              { 
+                operation: 'deleteUser', 
+                component: 'UserManagement',
+                fallbackMessage: 'Gagal menghapus pengguna'
               }
-          } catch (err) {
-              onShowToast('Terjadi kesalahan saat menghapus pengguna', 'error');
-              logger.error('Error deleting user:', err);
+          );
+          
+          if (result && result.success) {
+              setUsers(prev => prev.filter(u => u.id !== id));
+              onShowToast('Pengguna dihapus', 'success');
           }
       }
   };
@@ -115,7 +117,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
 
       try {
           setIsSaving(true);
-          setError('');
+          clearError();
 
           let response;
           if (isEditing) {
@@ -169,16 +171,20 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
               }
           }
 
-          if (response.success && response.data) {
+          if (response && response.success && response.data) {
               await fetchUsers();
               onShowToast(isEditing ? 'User diperbarui' : 'User ditambahkan', 'success');
               setIsModalOpen(false);
-          } else {
-              setError(response.message || 'Gagal menyimpan pengguna');
           }
       } catch (err) {
-          setError('Terjadi kesalahan saat menyimpan pengguna');
-          logger.error('Error saving user:', err);
+          await handleApiError(
+            async () => { throw err; },
+            { 
+              operation: 'saveUser', 
+              component: 'UserManagement',
+              fallbackMessage: 'Gagal menyimpan pengguna'
+            }
+          );
       } finally {
           setIsSaving(false);
       }
@@ -198,9 +204,9 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
             )}
         </div>
 
-        {error && (
+        {errorState.hasError && (
             <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg text-red-700 dark:text-red-300">
-                {error}
+                {errorState.message}
                 <button onClick={fetchUsers} className="ml-4 underline hover:text-red-800">Coba lagi</button>
             </div>
         )}
@@ -208,9 +214,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
         <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
             <div className="overflow-x-auto">
                 {isLoading ? (
-                    <div className="flex items-center justify-center py-12">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-                    </div>
+                    <LoadingSpinner size="md" text="Memuat data pengguna..." className="py-12" />
                 ) : (
                     <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
                         <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
@@ -291,7 +295,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                         <button onClick={() => setIsModalOpen(false)} aria-label="Tutup modal" className="p-2 rounded-lg text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500/50"><CloseIcon /></button>
                     </div>
                     <form onSubmit={handleSaveUser} className="p-6 space-y-4">
-                        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+                        {errorState.hasError && <p className="text-sm text-red-600 dark:text-red-400">{errorState.message}</p>}
                         <div>
                             <label htmlFor="user-name" className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Nama</label>
                             <input id="user-name" name="name" required value={currentUser.name} onChange={e => setCurrentUser({...currentUser, name: e.target.value})} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500" autoComplete="name" />
