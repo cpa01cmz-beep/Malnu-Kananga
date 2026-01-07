@@ -10,8 +10,8 @@ vi.mock('../utils/logger', () => ({
   },
 }));
 
-// Mock Notification API
-const mockNotification = {
+// Mock Notification API (using any for browser API mocks)
+const mockNotification: any = {
   close: vi.fn(),
   onclick: null,
 };
@@ -37,7 +37,7 @@ describe('Push Notification Integration Tests', () => {
     // Clear localStorage
     localStorage.clear();
     
-    // Mock Notification constructor
+    // Mock Notification constructor (using any for browser API mocks)
     global.Notification = vi.fn().mockImplementation((title, options) => ({
       ...mockNotification,
       title,
