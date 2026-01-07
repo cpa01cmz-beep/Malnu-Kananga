@@ -197,7 +197,7 @@ describe('DashboardActionCard', () => {
         className="custom-class"
         onClick={vi.fn()}
       />
-    );
+);
 
     const card = screen.getByRole('button');
     expect(card).toHaveClass('custom-class');
