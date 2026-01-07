@@ -111,22 +111,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
                     {checkPermission('content.update') && (
-                    <div
+                    <button
                         onClick={onOpenEditor}
-                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        aria-label="Buka AI Site Editor"
+                        className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
                             <SparklesIcon className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Site Editor</h3>
                         <p className="text-indigo-100 text-sm leading-relaxed">Edit konten Program Unggulan dan Berita menggunakan bantuan AI.</p>
-                    </div>
+                    </button>
                     )}
 
                     {checkPermission('ppdb.manage') && (
-                    <div
+                    <button
                         onClick={() => setCurrentView('ppdb')}
-                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-200 ease-out cursor-pointer relative hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        aria-label="Buka Manajemen PPDB Online"
+                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-200 ease-out relative hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
                         {pendingPPDB > 0 && (
                             <span className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-semibold text-white shadow-md animate-pulse ring-2 ring-white dark:ring-neutral-800">
@@ -139,13 +141,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white mb-2">PPDB Online</h3>
                         <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-4 leading-relaxed">Verifikasi data calon siswa baru.</p>
                         <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2.5 py-1 rounded-full">Aktif</span>
-                    </div>
+                    </button>
                     )}
 
                     {checkPermission('users.read') && (
-                    <div
+                    <button
                         onClick={() => setCurrentView('users')}
-                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-200 ease-out cursor-pointer hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        aria-label="Buka Manajemen User"
+                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
                         <div className="bg-blue-100 dark:bg-blue-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 text-blue-600 dark:text-blue-400">
                             <UsersIcon />
@@ -153,13 +156,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white mb-2">Manajemen User</h3>
                         <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-4 leading-relaxed">Kelola akun guru, siswa, dan staff.</p>
                         <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2.5 py-1 rounded-full">Aktif</span>
-                    </div>
+                    </button>
                     )}
 
                     {checkPermission('system.stats') && (
-                    <div
+                    <button
                         onClick={() => setCurrentView('stats')}
-                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-200 ease-out cursor-pointer hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        aria-label="Buka Laporan & Log Sistem"
+                        className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 hover:shadow-card-hover transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
                         <div className="bg-primary-100 dark:bg-primary-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 text-primary-600 dark:text-primary-400">
                             <ChartBarIcon />
@@ -167,33 +171,35 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         <h3 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white mb-2">Laporan & Log</h3>
                         <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-4 leading-relaxed">Pantau statistik sistem dan factory reset.</p>
                         <span className="text-xs font-semibold bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 px-2.5 py-1 rounded-full">Aktif</span>
-                    </div>
+                    </button>
                     )}
 
                     {checkPermission('system.admin') && (
-                    <div
+                    <button
                         onClick={() => setCurrentView('ai-cache')}
-                        className="bg-gradient-to-br from-green-500 to-teal-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        aria-label="Buka AI Cache Manager"
+                        className="bg-gradient-to-br from-green-500 to-teal-600 rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
                             <ChartBarIcon className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Cache Manager</h3>
                         <p className="text-green-100 text-sm leading-relaxed">Monitor dan kelola cache respons AI untuk performa optimal.</p>
-                    </div>
+                    </button>
                     )}
 
                     {checkPermission('system.admin') && (
-                    <div
+                    <button
                         onClick={() => setCurrentView('permissions')}
-                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white shadow-card cursor-pointer transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                        aria-label="Buka Permission System"
+                        className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
                         <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
                             <UsersIcon className="w-6 h-6 text-white" />
                         </div>
                         <h3 className="text-lg sm:text-xl font-semibold mb-2">Permission System</h3>
                         <p className="text-purple-100 text-sm leading-relaxed">Kelola sistem perizinan peran dan audit log akses.</p>
-                    </div>
+                    </button>
                     )}
                 </div>
             </>
