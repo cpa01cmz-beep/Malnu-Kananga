@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import { UserRole, UserExtraRole } from '../types';
 import Button from './ui/Button';
+import Input from './ui/Input';
 import { api } from '../services/apiService';
 
 interface LoginModalProps {
@@ -151,24 +152,35 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                      Selesai
                   </button>
              </div>
-              ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                   <label htmlFor="email" className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Alamat Email Terdaftar</label>
-                   <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-300 ease-out font-semibold placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-neutral-400 dark:hover:border-neutral-500" placeholder="anda@email.com" />
-                </div>
-                <div>
-                   <label htmlFor="password" className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">Password</label>
-                   <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-300 ease-out font-semibold placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-neutral-400 dark:hover:border-neutral-500" placeholder="Masukkan password" />
-                </div>
-                {error && <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-700 dark:text-red-300 text-center font-semibold">{error}</div>}
-                     <div>
-                      <Button type="submit" disabled={formState === 'loading'} isLoading={formState === 'loading'} fullWidth className="py-3.5">
-                       {formState === 'loading' ? '' : 'Login'}
-                     </Button>
-                   </div>
-              </form>
-          )}
+               ) : (
+               <form onSubmit={handleSubmit} className="space-y-5">
+                 <Input
+                   id="email"
+                   type="email"
+                   label="Alamat Email Terdaftar"
+                   placeholder="anda@email.com"
+                   value={email}
+                   onChange={(e) => setEmail(e.target.value)}
+                   required
+                   errorText={error && !password ? error : undefined}
+                   fullWidth
+                 />
+                 <Input
+                   id="password"
+                   type="password"
+                   label="Password"
+                   placeholder="Masukkan password"
+                   value={password}
+                   onChange={(e) => setPassword(e.target.value)}
+                   required
+                   errorText={error && email ? error : undefined}
+                   fullWidth
+                 />
+                 <Button type="submit" disabled={formState === 'loading'} isLoading={formState === 'loading'} fullWidth className="py-3.5">
+                   {formState === 'loading' ? '' : 'Login'}
+                 </Button>
+               </form>
+           )}
         </div>
       </div>
     </div>

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric } from '../types';
+import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole } from '../types';
 
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
+import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
+import AccessDenied from './AccessDenied';
 
 interface PPDBManagementProps {
   onBack: () => void;
@@ -13,19 +15,19 @@ interface PPDBManagementProps {
 
 const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) => {
   const [registrants, setRegistrants] = useLocalStorage<PPDBRegistrant[]>(STORAGE_KEYS.PPDB_REGISTRANTS, []);
-  
+
   const [filters, setFilters] = useState<PPDBFilterOptions>({
     status: 'all',
     dateRange: 'all',
     scoreRange: 'all',
     schoolFilter: ''
   });
-  
+
   const [sort, setSort] = useState<PPDBSortOptions>({
     field: 'registrationDate',
     direction: 'desc'
   });
-  
+
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showDocumentPreview, setShowDocumentPreview] = useState<string | null>(null);
   const [showScoringModal, setShowScoringModal] = useState<string | null>(null);
@@ -60,6 +62,25 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
       { id: 'interview', name: 'Wawancara', weight: 0.3, maxScore: 100, description: 'Hasil wawancara dengan calon siswa' }
     ]
   });
+
+  // Get current user for permission checking
+  const getCurrentUser = (): User | null => {
+    const userJson = localStorage.getItem('malnu_user');
+    return userJson ? JSON.parse(userJson) : null;
+  };
+
+  const authUser = getCurrentUser();
+  const userRole = authUser?.role as UserRole || 'student';
+  const userExtraRole = authUser?.extraRole as UserExtraRole;
+
+  // Check permissions
+  const canManagePPDB = permissionService.hasPermission(userRole, userExtraRole, 'ppdb.manage').granted;
+  const canApprovePPDB = permissionService.hasPermission(userRole, userExtraRole, 'ppdb.approve').granted;
+
+  // If user cannot manage PPDB, show access denied
+  if (!canManagePPDB) {
+    return <AccessDenied onBack={onBack} message="You don't have permission to manage PPDB registrations" requiredPermission="ppdb.manage" />;
+  }
 
   const updateStatus = (id: string, newStatus: PPDBRegistrant['status'], templateId?: string) => {
     const updated = registrants.map(r => {
@@ -209,7 +230,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Penerimaan Siswa Baru</h2>
                 <p className="text-gray-500 dark:text-gray-400">Kelola data calon siswa yang mendaftar online.</p>
             </div>
-            {selectedIds.length > 0 && (
+            {selectedIds.length > 0 && canApprovePPDB && (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">{selectedIds.length} dipilih</span>
                 <button
@@ -422,7 +443,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                               </button>
                                             )}
-                                            {reg.status === 'pending' && (
+                                            {reg.status === 'pending' && canApprovePPDB && (
                                               <>
                                                 <button 
                                                   onClick={() => {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { PlusIcon } from './icons/PlusIcon';
 import { PencilIcon } from './icons/PencilIcon';
@@ -7,15 +6,17 @@ import { CloseIcon } from './icons/CloseIcon';
 import { User, UserRole, UserExtraRole } from '../types';
 import Button from './ui/Button';
 import { api } from '../services/apiService';
+import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useFocusTrap } from '../hooks/useFocusTrap';
+import PermissionGuard from './PermissionGuard';
 
 interface UserManagementProps {
   onBack: () => void;
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
-const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) => {
+const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowToast }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -26,6 +27,21 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
   const [currentUser, setCurrentUser] = useState<Partial<User>>({});
   const [isEditing, setIsEditing] = useState(false);
   const dialogRef = useFocusTrap({ isOpen: isModalOpen, onClose: () => setIsModalOpen(false) });
+
+  // Get current user for permission checking
+  const getCurrentUser = (): User | null => {
+    const userJson = localStorage.getItem('malnu_user');
+    return userJson ? JSON.parse(userJson) : null;
+  };
+
+  const authUser = getCurrentUser();
+  const userRole = authUser?.role as UserRole || 'student';
+  const userExtraRole = authUser?.extraRole as UserExtraRole;
+
+  // Check permissions
+  const canCreateUser = permissionService.hasPermission(userRole, userExtraRole, 'users.create').granted;
+  const canUpdateUser = permissionService.hasPermission(userRole, userExtraRole, 'users.update').granted;
+  const canDeleteUser = permissionService.hasPermission(userRole, userExtraRole, 'users.delete').granted;
 
   useEffect(() => {
     fetchUsers();
@@ -129,9 +145,11 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                 <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">← Kembali</Button>
                 <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Manajemen Pengguna</h2>
             </div>
-            <Button onClick={handleAddUser} icon={<PlusIcon className="w-5 h-5" />}>
-                <span className="hidden sm:inline">Tambah</span>
-            </Button>
+            {canCreateUser && (
+                <Button onClick={handleAddUser} icon={<PlusIcon className="w-5 h-5" />}>
+                    <span className="hidden sm:inline">Tambah</span>
+                </Button>
+            )}
         </div>
 
         {error && (
@@ -190,22 +208,26 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                                         ) : <span className="text-neutral-400">-</span>}
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <Button 
-                                          variant="info" 
-                                          size="sm" 
-                                          iconOnly 
-                                          onClick={() => handleEditUser(user)} 
-                                          icon={<PencilIcon />} 
-                                          aria-label={`Edit pengguna ${user.name}`}
-                                        />
-                                        <Button 
-                                          variant="danger" 
-                                          size="sm" 
-                                          iconOnly 
-                                          onClick={() => handleDeleteUser(user.id)} 
-                                          icon={<TrashIcon />} 
-                                          aria-label={`Hapus pengguna ${user.name}`}
-                                        />
+                                        {canUpdateUser && (
+                                            <Button 
+                                              variant="info" 
+                                              size="sm" 
+                                              iconOnly 
+                                              onClick={() => handleEditUser(user)} 
+                                              icon={<PencilIcon />} 
+                                              aria-label={`Edit pengguna ${user.name}`}
+                                            />
+                                        )}
+                                        {canDeleteUser && (
+                                            <Button 
+                                              variant="danger" 
+                                              size="sm" 
+                                              iconOnly 
+                                              onClick={() => handleDeleteUser(user.id)} 
+                                              icon={<TrashIcon />} 
+                                              aria-label={`Hapus pengguna ${user.name}`}
+                                            />
+                                        )}
                                     </td>
                                 </tr>
                             ))}
@@ -269,13 +291,37 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                              </div>
                          </div>
                         <button type="submit" disabled={isSaving} className="w-full py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 font-semibold transition-all duration-200 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 disabled:opacity-70 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">
-                            {isSaving ? 'Menyimpan...' : 'Simpan'}
+                             {isSaving ? 'Menyimpan...' : 'Simpan'}
                         </button>
                     </form>
                 </div>
             </div>
         )}
     </div>
+  );
+};
+
+const UserManagement: React.FC<UserManagementProps> = (props) => {
+  // Get current user for permission checking
+  const getCurrentUser = (): User | null => {
+    const userJson = localStorage.getItem('malnu_user');
+    return userJson ? JSON.parse(userJson) : null;
+  };
+
+  const authUser = getCurrentUser();
+  const userRole = authUser?.role as UserRole || 'student';
+  const userExtraRole = authUser?.extraRole as UserExtraRole;
+
+  return (
+    <PermissionGuard
+      userRole={userRole}
+      userExtraRole={userExtraRole}
+      requiredPermissions={['users.create', 'users.update', 'users.delete']}
+      onBack={props.onBack}
+      message="You don't have permission to manage users"
+    >
+      <UserManagementContent {...props} />
+    </PermissionGuard>
   );
 };
 
