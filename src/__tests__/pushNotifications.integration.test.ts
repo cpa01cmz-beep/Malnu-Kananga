@@ -11,14 +11,44 @@ vi.mock('../utils/logger', () => ({
 }));
 
 // Mock Notification API (using any for browser API mocks)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockNotification: any = {
   close: vi.fn(),
   onclick: null,
 };
 
-global.Notification = {
-  requestPermission: vi.fn(),
-  permission: 'granted',
+// Create a proper mock for Notification constructor with static properties
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockNotificationConstructor: any = vi.fn().mockImplementation((title: string, options: any) => ({
+  ...mockNotification,
+  title,
+  ...options,
+  close: vi.fn(),
+}));
+
+// Add static properties to mock using Object.defineProperty
+Object.defineProperty(mockNotificationConstructor, 'permission', {
+  value: 'granted',
+  writable: true,
+});
+
+Object.defineProperty(mockNotificationConstructor, 'requestPermission', {
+  value: vi.fn().mockResolvedValue('granted'),
+  writable: true,
+});
+
+global.Notification = mockNotificationConstructor;
+
+ 
+global.navigator = {
+  serviceWorker: {
+    ready: Promise.resolve({
+      pushManager: {
+        subscribe: vi.fn(),
+      },
+    }),
+  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 global.navigator = {
@@ -29,6 +59,7 @@ global.navigator = {
       },
     }),
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 describe('Push Notification Integration Tests', () => {
@@ -36,15 +67,12 @@ describe('Push Notification Integration Tests', () => {
     vi.clearAllMocks();
     // Clear localStorage
     localStorage.clear();
-    
-    // Mock Notification constructor (using any for browser API mocks)
-    global.Notification = vi.fn().mockImplementation((title, options) => ({
-      ...mockNotification,
-      title,
-      ...options,
-      close: vi.fn(),
-    })) as any;
+
+    // Reset notification constructor mock for each test
+    mockNotificationConstructor.mockClear();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (global.Notification as any).permission = 'granted';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (global.Notification as any).requestPermission = vi.fn().mockResolvedValue('granted');
   });
 

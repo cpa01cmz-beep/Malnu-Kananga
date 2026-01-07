@@ -1,5 +1,4 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within, act } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import Header from '../Header';
 import { UserRole } from '../../types';
@@ -90,15 +89,24 @@ describe('Header', () => {
     expect(themeButton).toBeInTheDocument();
   });
 
-  it('mobile menu closes when resize to desktop', () => {
+  it('mobile menu closes when resize to desktop', async () => {
     render(<Header {...defaultProps} />);
-    
+
     const menuButton = screen.getByRole('button', { name: 'Buka menu' });
     fireEvent.click(menuButton);
-    
-    window.innerWidth = 1024;
-    window.dispatchEvent(new Event('resize'));
-    
+
+    // Mock window.innerWidth to trigger resize handler inside act()
+    await act(async () => {
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        configurable: true,
+        value: 1024,
+      });
+      window.dispatchEvent(new Event('resize'));
+      // Small delay to allow React to process the update
+      await new Promise(resolve => setTimeout(resolve, 0));
+    });
+
     expect(screen.queryByRole('navigation', { name: 'Menu navigasi utama' })).not.toBeInTheDocument();
   });
 
@@ -144,29 +152,31 @@ describe('Header', () => {
 
   it('mobile menu displays login button when not logged in', async () => {
     render(<Header {...defaultProps} />);
-    
+
     const menuButton = screen.getByRole('button', { name: 'Buka menu' });
     fireEvent.click(menuButton);
-    
+
     await waitFor(() => {
-      expect(screen.getByText('Login')).toBeInTheDocument();
+      const mobileMenu = screen.getByRole('navigation', { name: 'Menu navigasi utama' });
+      expect(within(mobileMenu).getByText('Login')).toBeInTheDocument();
     });
   });
 
   it('mobile menu displays logout button when logged in', async () => {
     render(
-      <Header 
-        {...defaultProps} 
-        isLoggedIn={true} 
+      <Header
+        {...defaultProps}
+        isLoggedIn={true}
         userRole='student'
       />
     );
-    
+
     const menuButton = screen.getByRole('button', { name: 'Buka menu' });
     fireEvent.click(menuButton);
-    
+
     await waitFor(() => {
-      expect(screen.getByText('Logout')).toBeInTheDocument();
+      const mobileMenu = screen.getByRole('navigation', { name: 'Menu navigasi utama' });
+      expect(within(mobileMenu).getByText('Logout')).toBeInTheDocument();
     });
   });
 
@@ -184,28 +194,31 @@ describe('Header', () => {
 
   it('navigation links are present in mobile menu', async () => {
     render(<Header {...defaultProps} />);
-    
+
     const menuButton = screen.getByRole('button', { name: 'Buka menu' });
     fireEvent.click(menuButton);
-    
+
     await waitFor(() => {
-      expect(screen.getByText('Beranda')).toBeInTheDocument();
-      expect(screen.getByText('Profil')).toBeInTheDocument();
-      expect(screen.getByText('Berita')).toBeInTheDocument();
-      expect(screen.getByText('Download')).toBeInTheDocument();
+      const mobileMenu = screen.getByRole('navigation', { name: 'Menu navigasi utama' });
+      expect(within(mobileMenu).getByText('Beranda')).toBeInTheDocument();
+      expect(within(mobileMenu).getByText('Profil')).toBeInTheDocument();
+      expect(within(mobileMenu).getByText('Berita')).toBeInTheDocument();
+      expect(within(mobileMenu).getByText('Download')).toBeInTheDocument();
     });
   });
 
-  it('is keyboard accessible - menu button can be focused and activated', () => {
+  it('is keyboard accessible - menu button can be focused and activated', async () => {
     render(<Header {...defaultProps} />);
-    
+
     const menuButton = screen.getByRole('button', { name: 'Buka menu' });
-    
+
     menuButton.focus();
     expect(menuButton).toHaveFocus();
-    
+
     fireEvent.keyDown(menuButton, { key: 'Enter', code: 'Enter' });
-    
-    expect(screen.getByRole('navigation', { name: 'Menu navigasi utama' })).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByRole('navigation', { name: 'Menu navigasi utama' })).toBeInTheDocument();
+    });
   });
 });

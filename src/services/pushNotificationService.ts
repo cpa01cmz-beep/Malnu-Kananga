@@ -179,6 +179,7 @@ class PushNotificationService {
       };
 
       this.addToHistory(notification);
+      this.recordAnalytics(notification.id, 'delivered');
       logger.info('Local notification displayed:', notification.title);
     } catch (error) {
       logger.error('Failed to show local notification:', error);

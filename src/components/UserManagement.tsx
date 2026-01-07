@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PlusIcon } from './icons/PlusIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { TrashIcon } from './icons/TrashIcon';
@@ -45,11 +45,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const canUpdateUser = permissionService.hasPermission(userRole, userExtraRole, 'users.update').granted;
   const canDeleteUser = permissionService.hasPermission(userRole, userExtraRole, 'users.delete').granted;
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     clearError();
     const result = await handleApiError(
@@ -65,7 +61,11 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
       setUsers(result.data);
     }
     setIsLoading(false);
-  };
+  }, [handleApiError, clearError]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const filteredUsers = users.filter(user => 
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
