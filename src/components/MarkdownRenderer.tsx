@@ -61,9 +61,9 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className 
   const flushList = (index: number) => {
       if (currentList.length > 0) {
           if (currentListType === 'ol') {
-            elements.push(<ol key={`ol-${index}`} className="mb-3 ml-4 space-y-1 list-decimal marker:text-gray-500">{currentList}</ol>);
+            elements.push(<ol key={`ol-${index}`} className="mb-3 ml-4 space-y-1 list-decimal marker:text-neutral-500">{currentList}</ol>);
           } else {
-            elements.push(<ul key={`ul-${index}`} className="mb-3 ml-4 space-y-1 list-disc marker:text-gray-400">{currentList}</ul>);
+            elements.push(<ul key={`ul-${index}`} className="mb-3 ml-4 space-y-1 list-disc marker:text-neutral-400">{currentList}</ul>);
           }
           currentList = [];
           currentListType = null;
@@ -104,9 +104,9 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className 
         
         // Handle Headers
         if (trimmed.startsWith('### ')) {
-            elements.push(<h3 key={`h3-${index}`} className="text-lg font-bold mt-4 mb-2 text-gray-800 dark:text-gray-100">{processInline(trimmed.substring(4))}</h3>);
+            elements.push(<h3 key={`h3-${index}`} className="text-lg font-bold mt-4 mb-2 text-neutral-800 dark:text-neutral-100">{processInline(trimmed.substring(4))}</h3>);
         } else if (trimmed.startsWith('## ')) {
-             elements.push(<h2 key={`h2-${index}`} className="text-xl font-bold mt-5 mb-3 text-gray-900 dark:text-white">{processInline(trimmed.substring(3))}</h2>);
+             elements.push(<h2 key={`h2-${index}`} className="text-xl font-bold mt-5 mb-3 text-neutral-900 dark:text-white">{processInline(trimmed.substring(3))}</h2>);
         }
         // Handle standard paragraphs
         else if (trimmed === '') {

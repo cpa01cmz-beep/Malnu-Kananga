@@ -9,7 +9,7 @@ interface AccessDeniedProps {
 
 const AccessDenied: React.FC<AccessDeniedProps> = ({ onBack, message, requiredPermission }) => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-neutral-900">
+    <div className="flex items-center justify-center min-h-screen bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-md w-full bg-white dark:bg-neutral-800 rounded-lg shadow-md p-6">
         <div className="flex justify-center mb-4">
           <svg className="w-16 h-16 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -17,17 +17,17 @@ const AccessDenied: React.FC<AccessDeniedProps> = ({ onBack, message, requiredPe
           </svg>
         </div>
 
-        <h2 className="text-xl font-bold text-center text-gray-900 dark:text-white mb-2">
+        <h2 className="text-xl font-bold text-center text-neutral-900 dark:text-white mb-2">
           Access Denied
         </h2>
 
-        <p className="text-gray-600 dark:text-neutral-400 text-center mb-4">
+        <p className="text-neutral-600 dark:text-neutral-400 text-center mb-4">
           {message || 'You do not have permission to access this feature.'}
         </p>
 
         {requiredPermission && (
-          <div className="bg-gray-100 dark:bg-neutral-700 rounded p-3 mb-4">
-            <p className="text-sm text-gray-600 dark:text-neutral-400">
+          <div className="bg-neutral-100 dark:bg-neutral-700 rounded p-3 mb-4">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
               Required permission: <span className="font-mono text-xs">{requiredPermission}</span>
             </p>
           </div>

@@ -370,20 +370,20 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                   <p className="text-lg font-medium text-neutral-900 dark:text-white">{selectedChild.nisn || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">NIS</p>
-                  <p className="text-lg font-medium text-gray-900 dark:text-white">{selectedChild.nis || '-'}</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">NIS</p>
+                  <p className="text-lg font-medium text-neutral-900 dark:text-white">{selectedChild.nis || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Kelas</p>
-                  <p className="text-lg font-medium text-gray-900 dark:text-white">{selectedChild.className || '-'}</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Kelas</p>
+                  <p className="text-lg font-medium text-neutral-900 dark:text-white">{selectedChild.className || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Tahun Ajaran</p>
-                  <p className="text-lg font-medium text-gray-900 dark:text-white">{selectedChild.academicYear || '-'}</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Tahun Ajaran</p>
+                  <p className="text-lg font-medium text-neutral-900 dark:text-white">{selectedChild.academicYear || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Semester</p>
-                  <p className="text-lg font-medium text-gray-900 dark:text-white">{selectedChild.semester || '-'}</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Semester</p>
+                  <p className="text-lg font-medium text-neutral-900 dark:text-white">{selectedChild.semester || '-'}</p>
                 </div>
               </div>
             </div>

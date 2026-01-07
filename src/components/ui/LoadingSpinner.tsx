@@ -29,7 +29,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   };
 
   const containerClasses = fullScreen 
-    ? 'fixed inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-gray-900/80 z-50'
+    ? 'fixed inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-neutral-900/80 z-50'
     : 'flex flex-col items-center justify-center';
 
   if (fullScreen || text) {
@@ -44,7 +44,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
             <span className="sr-only">Loading...</span>
           </div>
           {text && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 animate-pulse">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 animate-pulse">
               {text}
             </p>
           )}

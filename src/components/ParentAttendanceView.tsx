@@ -49,7 +49,7 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
       case 'alpa':
         return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+        return 'bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200';
     }
   };
 
@@ -90,8 +90,8 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
     : 0;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+    <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+      <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">
         Kehadiran - {child.studentName}
       </h2>
 
@@ -105,19 +105,19 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
         </div>
       ) : attendance.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600 dark:text-gray-400">Belum ada data kehadiran</p>
+          <p className="text-neutral-600 dark:text-neutral-400">Belum ada data kehadiran</p>
         </div>
       ) : (
         <>
           {/* Month Filter */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               Filter Bulan
             </label>
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="w-full sm:w-64 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full sm:w-64 px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
             >
               <option value="all">Semua Bulan</option>
               {months.sort().reverse().map(month => (
@@ -130,26 +130,26 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
             <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
               <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.hadir}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Hadir</div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-400">Hadir</div>
             </div>
             <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
               <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.sakit}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Sakit</div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-400">Sakit</div>
             </div>
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
               <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.izin}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Izin</div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-400">Izin</div>
             </div>
             <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
               <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.alpa}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Alpa</div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-400">Alpa</div>
             </div>
           </div>
 
           {/* Attendance Rate */}
-          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+          <div className="mb-6 p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 Tingkat Kehadiran
               </span>
               <span className={`text-2xl font-bold ${
@@ -167,17 +167,17 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <th className="pb-3 font-semibold text-gray-900 dark:text-white">Tanggal</th>
-                  <th className="pb-3 font-semibold text-gray-900 dark:text-white">Kelas</th>
-                  <th className="pb-3 font-semibold text-gray-900 dark:text-white">Status</th>
-                  <th className="pb-3 font-semibold text-gray-900 dark:text-white">Catatan</th>
+                <tr className="border-b border-neutral-200 dark:border-neutral-700">
+                  <th className="pb-3 font-semibold text-neutral-900 dark:text-white">Tanggal</th>
+                  <th className="pb-3 font-semibold text-neutral-900 dark:text-white">Kelas</th>
+                  <th className="pb-3 font-semibold text-neutral-900 dark:text-white">Status</th>
+                  <th className="pb-3 font-semibold text-neutral-900 dark:text-white">Catatan</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredAttendance.map((record) => (
-                  <tr key={record.id} className="border-b border-gray-100 dark:border-gray-800">
-                    <td className="py-3 text-gray-900 dark:text-white">
+                  <tr key={record.id} className="border-b border-neutral-100 dark:border-neutral-800">
+                    <td className="py-3 text-neutral-900 dark:text-white">
                       {new Date(record.date).toLocaleDateString('id-ID', { 
                         weekday: 'long', 
                         year: 'numeric', 
@@ -185,13 +185,13 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
                         day: 'numeric' 
                       })}
                     </td>
-                    <td className="py-3 text-gray-600 dark:text-gray-400">{record.className}</td>
+                    <td className="py-3 text-neutral-600 dark:text-neutral-400">{record.className}</td>
                     <td className="py-3">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(record.status)}`}>
                         {getStatusLabel(record.status)}
                       </span>
                     </td>
-                    <td className="py-3 text-gray-600 dark:text-gray-400">
+                    <td className="py-3 text-neutral-600 dark:text-neutral-400">
                       {record.notes || '-'}
                     </td>
                   </tr>

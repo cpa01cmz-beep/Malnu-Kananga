@@ -118,10 +118,10 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg mb-6"></div>
-          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+          <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg mb-6"></div>
+          <div className="h-64 bg-neutral-200 dark:bg-neutral-700 rounded-xl"></div>
         </div>
       </div>
     );
@@ -129,15 +129,15 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Pesan Guru</h2>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Pesan Guru</h2>
           <div className="flex items-center gap-4">
             {children.length > 1 && (
               <select
                 value={selectedChild?.studentId || ''}
                 onChange={(e) => setSelectedChild(children.find(c => c.studentId === e.target.value) || null)}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
               >
                 {children.map((child) => (
                   <option key={child.studentId} value={child.studentId}>
@@ -152,7 +152,7 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Teachers List */}
           <div className="lg:col-span-1">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Guru Tersedia</h3>
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Guru Tersedia</h3>
             <div className="space-y-3">
               {availableTeachers.map((teacher) => (
                 <button
@@ -161,7 +161,7 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
                   className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left ${
                     selectedTeacher?.teacherId === teacher.teacherId
                       ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -169,9 +169,9 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
                       <UserIcon />
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">{teacher.teacherName}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{teacher.subject}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-500">{teacher.className}</p>
+                      <p className="font-semibold text-neutral-900 dark:text-white">{teacher.teacherName}</p>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400">{teacher.subject}</p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-500">{teacher.className}</p>
                     </div>
                   </div>
                 </button>
@@ -181,14 +181,14 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
 
           {/* Messages Area */}
           <div className="lg:col-span-2">
-            <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-6 h-96 overflow-y-auto mb-4">
+            <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl p-6 h-96 overflow-y-auto mb-4">
               {messages.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center mx-auto mb-4">
                     <SendIcon />
                   </div>
-                  <p className="text-gray-600 dark:text-gray-400">Belum ada pesan</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
+                  <p className="text-neutral-600 dark:text-neutral-400">Belum ada pesan</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-500 mt-1">
                     Mulai percakapan dengan guru anak
                   </p>
                 </div>
@@ -203,7 +203,7 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
                         className={`max-w-xs px-4 py-3 rounded-2xl ${
                           message.sender === 'parent'
                             ? 'bg-green-600 text-white'
-                            : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
+                            : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-white'
                         }`}
                       >
                         {message.sender === 'teacher' && (
@@ -215,7 +215,7 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
                         <p className="font-semibold text-sm mb-1">{message.subject}</p>
                         <p className="text-sm">{message.message}</p>
                         <p className={`text-xs mt-2 ${
-                          message.sender === 'parent' ? 'text-green-100' : 'text-gray-500 dark:text-gray-400'
+                          message.sender === 'parent' ? 'text-green-100' : 'text-neutral-500 dark:text-neutral-400'
                         }`}>
                           {formatDate(message.timestamp)}
                         </p>
@@ -236,7 +236,7 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
                   placeholder="Subjek pesan"
                   value={messageSubject}
                   onChange={(e) => setMessageSubject(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400"
                   autoComplete="off"
                 />
                 <div className="flex gap-2">
@@ -248,13 +248,13 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                    className="flex-1 px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400"
                     autoComplete="off"
                   />
                   <button
                     onClick={handleSendMessage}
                     disabled={sending || !newMessage.trim() || !messageSubject.trim()}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg transition-colors flex items-center gap-2"
+                    className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-neutral-400 text-white rounded-lg transition-colors flex items-center gap-2"
                   >
                     {sending ? (
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -270,9 +270,9 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Tips Komunikasi</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400">
+      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+        <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-6">Tips Komunikasi</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-neutral-600 dark:text-neutral-400">
           <div>• Tulis pesan yang jelas dan ringkas</div>
           <div>• Sertakan subjek yang relevan</div>
           <div>• Hormati waktu respon guru</div>

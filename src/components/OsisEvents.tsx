@@ -273,7 +273,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
       case 'registrations':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
               <h3 className="text-lg font-bold mb-4">Daftar Pendaftar</h3>
               <form onSubmit={handleAddRegistration} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <input
@@ -281,7 +281,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   placeholder="NISN Siswa"
                   value={newRegistration.studentId || ''}
                   onChange={e => setNewRegistration({ ...newRegistration, studentId: e.target.value })}
-                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                   required
                 />
                 <input
@@ -289,7 +289,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   placeholder="Nama Siswa"
                   value={newRegistration.studentName || ''}
                   onChange={e => setNewRegistration({ ...newRegistration, studentName: e.target.value })}
-                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                   required
                 />
                 <input
@@ -297,7 +297,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   placeholder="Kelas"
                   value={newRegistration.studentClass || ''}
                   onChange={e => setNewRegistration({ ...newRegistration, studentClass: e.target.value })}
-                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                   required
                 />
                 <Button type="submit" variant="warning" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left">
@@ -306,10 +306,10 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
               </form>
               <div className="space-y-2">
                 {registrations.map(reg => (
-                  <div key={reg.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <div key={reg.id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
                     <div>
                       <p className="font-semibold">{reg.studentName}</p>
-                      <p className="text-sm text-gray-500">{reg.studentClass} • {reg.registrationDate}</p>
+                      <p className="text-sm text-neutral-500">{reg.studentClass} • {reg.registrationDate}</p>
                     </div>
                     <select
                       value={reg.attendanceStatus}
@@ -334,13 +334,13 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
       case 'budget':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
               <h3 className="text-lg font-bold mb-4">Anggaran Kegiatan</h3>
               <form onSubmit={handleAddBudget} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <select
                   value={newBudget.category || 'Other'}
                   onChange={e => setNewBudget({ ...newBudget, category: e.target.value as EventBudget['category'] })}
-                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                   required
                 >
                   <option value="Food">Makanan & Minuman</option>
@@ -355,7 +355,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   placeholder="Nama Item"
                   value={newBudget.itemName || ''}
                   onChange={e => setNewBudget({ ...newBudget, itemName: e.target.value })}
-                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                   required
                 />
                 <input
@@ -363,7 +363,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   placeholder="Estimasi Biaya"
                   value={newBudget.estimatedCost || ''}
                   onChange={e => setNewBudget({ ...newBudget, estimatedCost: parseFloat(e.target.value) })}
-                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                   required
                 />
                 <input
@@ -371,7 +371,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   placeholder="Jumlah"
                   value={newBudget.quantity || ''}
                   onChange={e => setNewBudget({ ...newBudget, quantity: parseInt(e.target.value) })}
-                  className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                 />
                 <Button type="submit" variant="success" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" className="md:col-span-2">
                   Tambah Anggaran
@@ -379,10 +379,10 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
               </form>
               <div className="space-y-2">
                 {budgets.map(budget => (
-                  <div key={budget.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <div key={budget.id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
                     <div>
                       <p className="font-semibold">{budget.itemName}</p>
-                      <p className="text-sm text-gray-500">{budget.category} • {budget.quantity}x</p>
+                      <p className="text-sm text-neutral-500">{budget.category} • {budget.quantity}x</p>
                     </div>
                     <div className="flex items-center gap-4">
                       <span className="font-semibold text-green-600">Rp {budget.estimatedCost.toLocaleString()}</span>
@@ -397,7 +397,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                       <span className={`px-2 py-1 text-xs rounded ${
                         budget.status === 'approved' ? 'bg-green-100 text-green-700' :
                         budget.status === 'purchased' ? 'bg-blue-100 text-blue-700' :
-                        budget.status === 'completed' ? 'bg-gray-100 text-gray-700' :
+                        budget.status === 'completed' ? 'bg-neutral-100 text-neutral-700' :
                         'bg-yellow-100 text-yellow-700'
                       }`}>
                         {budget.status}
@@ -413,7 +413,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
       case 'photos':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
               <h3 className="text-lg font-bold mb-4">Galeri Foto</h3>
               <form onSubmit={handleUploadPhoto} className="mb-4">
                 <div className="flex gap-4 mb-2">
@@ -421,7 +421,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     type="file"
                     accept="image/*"
                     onChange={e => setSelectedFile(e.target.files?.[0] || null)}
-                    className="flex-1 px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                    className="flex-1 px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                     required
                   />
                   <Button type="submit" variant="info">
@@ -429,7 +429,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   </Button>
                 </div>
                 {uploadProgress > 0 && uploadProgress < 100 && (
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-neutral-200 rounded-full h-2">
                     <div className="bg-purple-600 h-2 rounded-full transition-all" style={{ width: `${uploadProgress}%` }}></div>
                   </div>
                 )}
@@ -438,7 +438,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   placeholder="Keterangan foto"
                   value={newPhoto.caption || ''}
                   onChange={e => setNewPhoto({ ...newPhoto, caption: e.target.value })}
-                  className="w-full mt-2 px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  className="w-full mt-2 px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                 />
               </form>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -450,7 +450,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                       className="w-full h-48 object-cover rounded-lg"
                     />
                     {photo.caption && (
-                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{photo.caption}</p>
+                      <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">{photo.caption}</p>
                     )}
                   </div>
                 ))}
@@ -462,7 +462,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
       case 'feedback':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
               <h3 className="text-lg font-bold mb-4">Umpan Balik Kegiatan</h3>
               <form onSubmit={handleAddFeedback} className="space-y-4 mb-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -471,7 +471,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     placeholder="NISN Siswa"
                     value={newFeedback.studentId || ''}
                     onChange={e => setNewFeedback({ ...newFeedback, studentId: e.target.value })}
-                    className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                    className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                     required
                   />
                   <input
@@ -479,7 +479,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     placeholder="Nama Siswa"
                     value={newFeedback.studentName || ''}
                     onChange={e => setNewFeedback({ ...newFeedback, studentName: e.target.value })}
-                    className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                    className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                     required
                   />
                 </div>
@@ -489,7 +489,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     <select
                       value={newFeedback.overallRating || 5}
                       onChange={e => setNewFeedback({ ...newFeedback, overallRating: parseInt(e.target.value) })}
-                      className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                       required
                     >
                       {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
@@ -500,7 +500,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     <select
                       value={newFeedback.organizationRating || 5}
                       onChange={e => setNewFeedback({ ...newFeedback, organizationRating: parseInt(e.target.value) })}
-                      className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                       required
                     >
                       {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
@@ -511,7 +511,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     <select
                       value={newFeedback.contentRating || 5}
                       onChange={e => setNewFeedback({ ...newFeedback, contentRating: parseInt(e.target.value) })}
-                      className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                       required
                     >
                       {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
@@ -523,7 +523,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   placeholder="Komentar atau saran..."
                   value={newFeedback.comments || ''}
                   onChange={e => setNewFeedback({ ...newFeedback, comments: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
                 />
                 <label className="flex items-center gap-2">
                   <input
@@ -540,7 +540,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
               </form>
               <div className="space-y-3">
                 {feedback.map(fb => (
-                  <div key={fb.id} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <div key={fb.id} className="p-4 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <p className="font-semibold">{fb.studentName} ({fb.studentClass})</p>
                       <div className="flex gap-1">
@@ -549,9 +549,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                         <span title="Rating Konten">📝 {fb.contentRating}</span>
                       </div>
                     </div>
-                    {fb.comments && <p className="text-sm text-gray-600 dark:text-gray-300 italic">"{fb.comments}"</p>}
+                    {fb.comments && <p className="text-sm text-neutral-600 dark:text-neutral-300 italic">"{fb.comments}"</p>}
                     {fb.wouldRecommend && <p className="text-xs text-green-600 font-semibold">✓ Merekomendasikan</p>}
-                    <p className="text-xs text-gray-500 mt-1">{fb.submittedAt}</p>
+                    <p className="text-xs text-neutral-500 mt-1">{fb.submittedAt}</p>
                   </div>
                 ))}
               </div>
@@ -561,12 +561,12 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
 
       case 'announcements':
         return (
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
             <div className="flex items-center gap-3 mb-4">
               <MegaphoneIcon className="w-6 h-6 text-orange-600" />
               <div>
                 <h3 className="text-lg font-bold">Buat Pengumuman Kegiatan</h3>
-                <p className="text-sm text-gray-500">Buat pengumuman untuk kegiatan "{selectedEvent.eventName}"</p>
+                <p className="text-sm text-neutral-500">Buat pengumuman untuk kegiatan "{selectedEvent.eventName}"</p>
               </div>
             </div>
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
@@ -589,31 +589,31 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
           <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Portal
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Kegiatan OSIS</h2>
-          <p className="text-gray-500 dark:text-gray-400">Kelola dan pantau kegiatan sekolah dengan lengkap.</p>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Manajemen Kegiatan OSIS</h2>
+          <p className="text-neutral-500 dark:text-neutral-400">Kelola dan pantau kegiatan sekolah dengan lengkap.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Buat Kegiatan Baru</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Buat Kegiatan Baru</h3>
             <form onSubmit={handleAddEvent} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Kegiatan</label>
-                <input required type="text" value={newEvent.eventName} onChange={e => setNewEvent({...newEvent, eventName: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Kegiatan</label>
+                <input required type="text" value={newEvent.eventName} onChange={e => setNewEvent({...newEvent, eventName: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Pelaksanaan</label>
-                <input required type="date" value={newEvent.date} onChange={e => setNewEvent({...newEvent, date: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tanggal Pelaksanaan</label>
+                <input required type="date" value={newEvent.date} onChange={e => setNewEvent({...newEvent, date: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lokasi</label>
-                <input required type="text" value={newEvent.location} onChange={e => setNewEvent({...newEvent, location: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Lokasi</label>
+                <input required type="text" value={newEvent.location} onChange={e => setNewEvent({...newEvent, location: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi Singkat</label>
-                <textarea required rows={3} value={newEvent.description} onChange={e => setNewEvent({...newEvent, description: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" />
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Deskripsi Singkat</label>
+                <textarea required rows={3} value={newEvent.description} onChange={e => setNewEvent({...newEvent, description: e.target.value})} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" />
               </div>
               <button type="submit" className="w-full flex items-center justify-center gap-2 py-2.5 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-colors">
                 <PlusIcon className="w-5 h-5" /> Simpan Kegiatan
@@ -622,8 +622,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
           </div>
 
           {selectedEvent && (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-              <h4 className="font-bold text-gray-900 dark:text-white mb-3">Navigasi Fitur</h4>
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-4">
+              <h4 className="font-bold text-neutral-900 dark:text-white mb-3">Navigasi Fitur</h4>
               <div className="space-y-2">
                 {[
                   { id: 'registrations' as TabType, label: 'Pendaftaran', icon: <UserGroupIcon className="w-4 h-4" /> },
@@ -638,7 +638,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                       activeTab === tab.id
                         ? 'bg-orange-600 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
                     }`}
                   >
                     {tab.icon}
@@ -653,18 +653,18 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
         <div className="lg:col-span-2 space-y-4">
           <div className="space-y-4">
             {isLoading ? (
-              <p className="text-center text-gray-500 mt-8">Memuat kegiatan...</p>
+              <p className="text-center text-neutral-500 mt-8">Memuat kegiatan...</p>
             ) : events.length === 0 ? (
-              <p className="text-center text-gray-500 mt-8">Belum ada kegiatan.</p>
+              <p className="text-center text-neutral-500 mt-8">Belum ada kegiatan.</p>
             ) : (
               events.map(event => (
                 <div
                   key={event.id}
                   onClick={() => setSelectedEvent(event)}
-                  className={`cursor-pointer bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border ${
+                  className={`cursor-pointer bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border ${
                     selectedEvent?.id === event.id
                       ? 'border-orange-500 ring-2 ring-orange-200'
-                      : 'border-gray-100 dark:border-gray-700 hover:border-orange-300'
+                      : 'border-neutral-100 dark:border-neutral-700 hover:border-orange-300'
                   } flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all`}
                 >
                   <div className="flex items-start gap-4">
@@ -672,25 +672,25 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                       <CalendarDaysIcon className="w-8 h-8" />
                     </div>
                     <div>
-                      <h4 className="text-lg font-bold text-gray-900 dark:text-white">{event.eventName}</h4>
-                      <div className="flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      <h4 className="text-lg font-bold text-neutral-900 dark:text-white">{event.eventName}</h4>
+                      <div className="flex flex-wrap gap-3 text-sm text-neutral-500 dark:text-neutral-400 mt-1">
                         <span>📅 {event.date}</span>
                         <span>📍 {event.location}</span>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{event.description}</p>
+                      <p className="text-sm text-neutral-600 dark:text-neutral-300 mt-2">{event.description}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 self-end md:self-center">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                       event.status === 'Upcoming' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
                       event.status === 'Ongoing' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                      'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                      'bg-neutral-200 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300'
                     }`}>
                       {event.status}
                     </span>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete(event.id); }}
-                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
+                      className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
                     >
                       <TrashIcon />
                     </button>
@@ -704,12 +704,12 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
             <div className="bg-gradient-to-r from-orange-50 to-green-50 dark:from-orange-900/20 dark:to-green-900/20 border border-orange-200 dark:border-orange-800 rounded-2xl p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">{selectedEvent.eventName}</h3>
-                  <p className="text-sm text-gray-500">Kelola fitur kegiatan ini</p>
+                  <h3 className="text-lg font-bold text-neutral-900 dark:text-white">{selectedEvent.eventName}</h3>
+                  <p className="text-sm text-neutral-500">Kelola fitur kegiatan ini</p>
                 </div>
                 <button
                   onClick={() => setSelectedEvent(null)}
-                  className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="px-4 py-2 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                 >
                   Tutup
                 </button>

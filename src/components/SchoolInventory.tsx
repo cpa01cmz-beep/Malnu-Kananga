@@ -287,13 +287,13 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
           <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Dashboard
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Inventaris (Sarpras)</h2>
-          <p className="text-gray-500 dark:text-gray-400">Kelola data aset dan barang milik sekolah.</p>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Manajemen Inventaris (Sarpras)</h2>
+          <p className="text-neutral-500 dark:text-neutral-400">Kelola data aset dan barang milik sekolah.</p>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-1 mb-6 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+      <div className="flex space-x-1 mb-6 bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg">
         {[
           { id: 'items', label: 'Daftar Barang', icon: ArchiveBoxIcon },
           { id: 'maintenance', label: 'Jadwal维护', icon: CalendarDaysIcon },
@@ -305,8 +305,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
             onClick={() => setActiveTab(tab.id as 'items' | 'maintenance' | 'audit' | 'reports')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
               activeTab === tab.id
-                ? 'bg-white dark:bg-gray-700 text-green-600 dark:text-green-400 shadow-sm'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-white dark:bg-neutral-700 text-green-600 dark:text-green-400 shadow-sm'
+                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
             }`}
           >
             <tab.icon className="w-4 h-4" />
@@ -319,7 +319,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
       {activeTab === 'items' && (
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Daftar Aset ({items.length})</h3>
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Daftar Aset ({items.length})</h3>
             <button
               onClick={() => setShowAddForm(true)}
               className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -330,25 +330,25 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
           </div>
 
           {showAddForm && (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Catat Barang Baru</h3>
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Catat Barang Baru</h3>
               <form onSubmit={handleAddItem} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Barang</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Barang</label>
                   <input
                     required
                     type="text"
                     value={newItem.itemName}
                     onChange={e => setNewItem({...newItem, itemName: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kategori</label>
                   <select
                     value={newItem.category}
                     onChange={e => setNewItem({...newItem, category: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                   >
                     <option>Elektronik</option>
                     <option>Furniture</option>
@@ -358,22 +358,22 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Jumlah</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Jumlah</label>
                   <input
                     required
                     type="number"
                     min="1"
                     value={newItem.quantity}
                     onChange={e => setNewItem({...newItem, quantity: Number(e.target.value)})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kondisi</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kondisi</label>
                   <select
                     value={newItem.condition}
                     onChange={e => setNewItem({...newItem, condition: e.target.value as 'Baik' | 'Rusak Ringan' | 'Rusak Berat'})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                   >
                     <option>Baik</option>
                     <option>Rusak Ringan</option>
@@ -381,50 +381,50 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lokasi</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Lokasi</label>
                   <input
                     type="text"
                     value={newItem.location}
                     onChange={e => setNewItem({...newItem, location: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Pembelian</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tanggal Pembelian</label>
                   <input
                     type="date"
                     value={newItem.purchaseDate}
                     onChange={e => setNewItem({...newItem, purchaseDate: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Harga Pembelian</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Harga Pembelian</label>
                   <input
                     type="number"
                     min="0"
                     value={newItem.purchasePrice}
                     onChange={e => setNewItem({...newItem, purchasePrice: Number(e.target.value)})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Suku Bunga Depresiasi (%)</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Suku Bunga Depresiasi (%)</label>
                   <input
                     type="number"
                     min="0"
                     max="100"
                     value={newItem.depreciationRate}
                     onChange={e => setNewItem({...newItem, depreciationRate: Number(e.target.value)})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Status</label>
                   <select
                     value={newItem.status}
                     onChange={e => setNewItem({...newItem, status: e.target.value as 'active' | 'maintenance' | 'disposed' | 'lost'})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                   >
                     <option>active</option>
                     <option>maintenance</option>
@@ -443,7 +443,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   <button
                     type="button"
                     onClick={() => setShowAddForm(false)}
-                    className="px-6 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="px-6 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
                   >
                     Batal
                   </button>
@@ -452,13 +452,13 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
             </div>
           )}
 
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
             {isLoading ? (
-              <div className="p-8 text-center text-gray-500">Memuat data inventaris...</div>
+              <div className="p-8 text-center text-neutral-500">Memuat data inventaris...</div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                  <thead className="bg-gray-50 dark:bg-gray-700 text-xs uppercase font-semibold">
+                <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
+                  <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold">
                     <tr>
                       <th className="px-6 py-3">Barang</th>
                       <th className="px-4 py-3">Jml</th>
@@ -468,12 +468,12 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                       <th className="px-4 py-3">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                  <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
                     {items.map(item => (
-                      <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                        <td className="px-6 py-3 font-medium text-gray-900 dark:text-white">
+                      <tr key={item.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                        <td className="px-6 py-3 font-medium text-neutral-900 dark:text-white">
                           {item.itemName}
-                          <div className="text-xs text-gray-500 font-normal">{item.category}</div>
+                          <div className="text-xs text-neutral-500 font-normal">{item.category}</div>
                         </td>
                         <td className="px-4 py-3">{item.quantity}</td>
                         <td className="px-4 py-3">
@@ -518,15 +518,15 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
       {/* Maintenance Tab */}
       {activeTab === 'maintenance' && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Tambah Jadwal 维护</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Tambah Jadwal 维护</h3>
             <form onSubmit={handleAddMaintenance} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pilih Barang</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Pilih Barang</label>
                 <select
                   value={newMaintenance.itemId}
                   onChange={e => setNewMaintenance({...newMaintenance, itemId: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                   required
                 >
                   <option value="">Pilih barang...</option>
@@ -536,21 +536,21 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tanggal</label>
                 <input
                   type="date"
                   value={newMaintenance.scheduledDate}
                   onChange={e => setNewMaintenance({...newMaintenance, scheduledDate: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipe</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tipe</label>
                 <select
                   value={newMaintenance.type}
                   onChange={e => setNewMaintenance({...newMaintenance, type: e.target.value as 'routine' | 'repair' | 'inspection'})}
-                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
                 >
                   <option value="routine">Routine</option>
                   <option value="repair">Repair</option>
@@ -569,13 +569,13 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
             </form>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="p-4 border-b bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700">
-              <h3 className="font-bold text-gray-800 dark:text-white">Jadwal 维护 ({maintenanceSchedules.length})</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+            <div className="p-4 border-b bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700">
+              <h3 className="font-bold text-neutral-800 dark:text-white">Jadwal 维护 ({maintenanceSchedules.length})</h3>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                <thead className="bg-gray-50 dark:bg-gray-700 text-xs uppercase font-semibold">
+              <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
+                <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold">
                   <tr>
                     <th className="px-6 py-3">Barang</th>
                     <th className="px-4 py-3">Tanggal</th>
@@ -584,10 +584,10 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                     <th className="px-6 py-3">Deskripsi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
                   {maintenanceSchedules.map(schedule => (
-                    <tr key={schedule.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                      <td className="px-6 py-3 font-medium text-gray-900 dark:text-white">{schedule.itemName}</td>
+                    <tr key={schedule.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                      <td className="px-6 py-3 font-medium text-neutral-900 dark:text-white">{schedule.itemName}</td>
                       <td className="px-4 py-3">{schedule.scheduledDate}</td>
                       <td className="px-4 py-3">
                         <span className="text-xs px-2 py-1 rounded-full font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
@@ -599,7 +599,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                           schedule.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
                           schedule.status === 'in-progress' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
                           schedule.status === 'overdue' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
-                          'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
+                          'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/30 dark:text-neutral-300'
                         }`}>
                           {schedule.status}
                         </span>
@@ -622,8 +622,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
               <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                 <DocumentTextIcon />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Audit Inventaris</h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-6">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Audit Inventaris</h3>
+              <p className="text-neutral-500 dark:text-neutral-400 mb-6">
                 Lakukan audit untuk memverifikasi kecocokan data inventaris dengan kondisi aktual.
               </p>
               <button
@@ -635,8 +635,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
               </button>
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Audit Sedang Berlangsung</h3>
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Audit Sedang Berlangsung</h3>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
@@ -661,7 +661,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   </button>
                   <button
                     onClick={() => setAuditMode(false)}
-                    className="px-6 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="px-6 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
                   >
                     Batal
                   </button>
@@ -672,13 +672,13 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
 
           {/* Audit History */}
           {audits.length > 0 && (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="p-4 border-b bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700">
-                <h3 className="font-bold text-gray-800 dark:text-white">Riwayat Audit</h3>
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+              <div className="p-4 border-b bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700">
+                <h3 className="font-bold text-neutral-800 dark:text-white">Riwayat Audit</h3>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-                  <thead className="bg-gray-50 dark:bg-gray-700 text-xs uppercase font-semibold">
+                <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
+                  <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold">
                     <tr>
                       <th className="px-6 py-3">Tanggal</th>
                       <th className="px-4 py-3">Auditor</th>
@@ -688,9 +688,9 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                       <th className="px-4 py-3">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                  <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
                     {audits.map(audit => (
-                      <tr key={audit.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <tr key={audit.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
                         <td className="px-6 py-3">{audit.auditDate}</td>
                         <td className="px-4 py-3">{audit.auditor}</td>
                         <td className="px-4 py-3">{audit.totalItems}</td>
@@ -715,7 +715,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
       {activeTab === 'reports' && (
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Laporan Inventaris</h3>
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Laporan Inventaris</h3>
             <button
               onClick={exportReport}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -727,29 +727,29 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Nilai Aset</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">Rp {report.totalValue.toLocaleString()}</p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">Total Nilai Aset</p>
+                  <p className="text-2xl font-bold text-neutral-900 dark:text-white">Rp {report.totalValue.toLocaleString()}</p>
                 </div>
                 <ChartBarIcon />
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Barang</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{report.totalItems}</p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">Total Barang</p>
+                  <p className="text-2xl font-bold text-neutral-900 dark:text-white">{report.totalItems}</p>
                 </div>
                 <ArchiveBoxIcon />
               </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Jadwal 维护 Aktif</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{maintenanceSchedules.length}</p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">Jadwal 维护 Aktif</p>
+                  <p className="text-2xl font-bold text-neutral-900 dark:text-white">{maintenanceSchedules.length}</p>
                 </div>
                 <CalendarDaysIcon />
               </div>
@@ -759,8 +759,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
           {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Category Breakdown Chart */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Distribusi Kategori</h3>
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Distribusi Kategori</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
@@ -784,8 +784,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
             </div>
 
             {/* Condition Breakdown Chart */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Status Kondisi</h3>
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Status Kondisi</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={report.conditionBreakdown}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -799,8 +799,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
           </div>
 
           {/* Depreciation Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Analisis Depresiasi</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Analisis Depresiasi</h3>
             <ResponsiveContainer width="100%" height={400}>
               <AreaChart data={report.depreciationData.slice(0, 10)}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -819,8 +819,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
       {/* QR Code Modal */}
       {showQRCode && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">QR Code Barang</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 max-w-sm w-full">
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">QR Code Barang</h3>
             <div className="bg-white p-4 rounded-lg">
               <img src={showQRCode} alt="QR Code" className="w-full" />
             </div>
@@ -839,7 +839,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
               </button>
               <button
                 onClick={() => setShowQRCode(null)}
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="flex-1 px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
               >
                 Tutup
               </button>

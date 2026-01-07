@@ -348,7 +348,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Analisis Progres Akademik</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Analisis Progres Akademik</h2>
           </div>
         </div>
         <div className="flex items-center justify-center py-12">
@@ -366,7 +366,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Analisis Progres Akademik</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Analisis Progres Akademik</h2>
           </div>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
@@ -389,8 +389,8 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
 <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
             </Button>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Analisis Progres Akademik</h2>
-          <p className="text-gray-500 dark:text-gray-400">Semester Ganjil 2024/2025</p>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Analisis Progres Akademik</h2>
+          <p className="text-neutral-500 dark:text-neutral-400">Semester Ganjil 2024/2025</p>
         </div>
         <button
           onClick={exportToPDF}
@@ -409,7 +409,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
           className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
             activeTab === 'overview'
               ? 'bg-green-600 text-white'
-              : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
           }`}
         >
           Ringkasan
@@ -419,7 +419,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
           className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
             activeTab === 'trends'
               ? 'bg-green-600 text-white'
-              : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
           }`}
         >
           Tren Nilai
@@ -429,7 +429,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
           className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
             activeTab === 'goals'
               ? 'bg-green-600 text-white'
-              : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
           }`}
         >
           Target Prestasi
@@ -439,7 +439,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
           className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
             activeTab === 'correlation'
               ? 'bg-green-600 text-white'
-              : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+              : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
           }`}
         >
           Kehadiran vs Nilai
@@ -464,11 +464,11 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
           </div>
 
           {correlation && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Insight & Saran</h3>
+            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Insight & Saran</h3>
               <ul className="space-y-2">
                 {correlation.insights.map((insight, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                  <li key={idx} className="flex items-start gap-2 text-neutral-700 dark:text-neutral-300">
                     <span className="text-green-600 dark:text-green-400 mt-1">✓</span>
                     {insight}
                   </li>
@@ -477,8 +477,8 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             </div>
           )}
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Distribusi Predikat</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Distribusi Predikat</h3>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
@@ -503,8 +503,8 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
 
       {activeTab === 'trends' && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Performa per Mata Pelajaran</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Performa per Mata Pelajaran</h3>
             <ResponsiveContainer width="100%" height={400}>
               <BarChart data={subjectPerformance}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -519,8 +519,8 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Rata-rata Nilai Akhir</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Rata-rata Nilai Akhir</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={subjectPerformance}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -540,15 +540,15 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
 
       {activeTab === 'goals' && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Tambah Target Prestasi</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Tambah Target Prestasi</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mata Pelajaran</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Mata Pelajaran</label>
                 <select
                   value={newGoal.subject}
                   onChange={(e) => setNewGoal({ ...newGoal, subject: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
                 >
                   <option value="">Pilih Mata Pelajaran</option>
                   {subjectPerformance.map((sp) => (
@@ -557,11 +557,11 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Target Predikat</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Target Predikat</label>
                 <select
                   value={newGoal.targetGrade}
                   onChange={(e) => setNewGoal({ ...newGoal, targetGrade: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
                 >
                   <option value="A">A (85-100)</option>
                   <option value="B">B (75-84)</option>
@@ -570,12 +570,12 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Deadline</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Deadline</label>
                 <input
                   type="date"
                   value={newGoal.deadline}
                   onChange={(e) => setNewGoal({ ...newGoal, deadline: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
                   min={new Date().toISOString().split('T')[0]}
                 />
               </div>
@@ -588,8 +588,8 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             </button>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Target Aktif</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Target Aktif</h3>
             {goals.length > 0 ? (
               <div className="space-y-3">
                 {goals.map((goal) => {
@@ -598,11 +598,11 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                   const status = subjectPerf ? getGradeStatus(goal.targetGrade, subjectPerf.grade) : 'in-progress';
 
                   return (
-                    <div key={goal.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                    <div key={goal.id} className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex-1">
-                          <h4 className="font-bold text-gray-900 dark:text-white">{goal.subject}</h4>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Target: {goal.targetGrade} | Deadline: {new Date(goal.deadline).toLocaleDateString('id-ID')}</p>
+                          <h4 className="font-bold text-neutral-900 dark:text-white">{goal.subject}</h4>
+                          <p className="text-sm text-neutral-500 dark:text-neutral-400">Target: {goal.targetGrade} | Deadline: {new Date(goal.deadline).toLocaleDateString('id-ID')}</p>
                         </div>
                         <button
                           onClick={() => deleteGoal(goal.id)}
@@ -616,12 +616,12 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                       <div className="flex items-center gap-4">
                         <div className="flex-1">
                           <div className="flex justify-between text-sm mb-1">
-                            <span className="text-gray-600 dark:text-gray-400">Nilai Saat Ini: {subjectPerf?.averageScore.toFixed(1) || 0}</span>
+                            <span className="text-neutral-600 dark:text-neutral-400">Nilai Saat Ini: {subjectPerf?.averageScore.toFixed(1) || 0}</span>
                             <span className={`font-bold ${status === 'achieved' ? 'text-green-600' : status === 'not-achieved' ? 'text-red-600' : 'text-yellow-600'}`}>
                               {status === 'achieved' ? 'Tercapai!' : status === 'not-achieved' ? 'Belum Terpenuhi' : 'Dalam Proses'}
                             </span>
                           </div>
-                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                          <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
                             <div
                               className={`h-2 rounded-full transition-all ${status === 'achieved' ? 'bg-green-600' : status === 'not-achieved' ? 'bg-red-600' : 'bg-yellow-600'}`}
                               style={{ width: `${Math.min(progress, 100)}%` }}
@@ -634,7 +634,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 })}
               </div>
             ) : (
-              <p className="text-center text-gray-500 dark:text-gray-400 py-8">Belum ada target prestasi yang ditetapkan.</p>
+              <p className="text-center text-neutral-500 dark:text-neutral-400 py-8">Belum ada target prestasi yang ditetapkan.</p>
             )}
           </div>
         </div>
@@ -642,30 +642,30 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
 
       {activeTab === 'correlation' && correlation && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Analisis Korelasi Kehadiran vs Nilai</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Analisis Korelasi Kehadiran vs Nilai</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
                   <span className="text-3xl font-bold text-green-600 dark:text-green-400">{correlation.attendancePercentage}%</span>
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 font-medium">Persentase Kehadiran</p>
+                <p className="text-neutral-700 dark:text-neutral-300 font-medium">Persentase Kehadiran</p>
               </div>
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-100 dark:bg-blue-900/30 mb-4">
                   <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">{correlation.averageGrade}</span>
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 font-medium">Rata-rata Nilai</p>
+                <p className="text-neutral-700 dark:text-neutral-300 font-medium">Rata-rata Nilai</p>
               </div>
             </div>
           </div>
 
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Skor Korelasi Kesehatan Akademik</h3>
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Skor Korelasi Kesehatan Akademik</h3>
             <div className="flex items-center justify-center">
               <div className="relative w-48 h-48">
                 <svg className="w-full h-full transform -rotate-90">
-                  <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-gray-200 dark:text-gray-700" />
+                  <circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-neutral-200 dark:text-neutral-700" />
                   <circle
                     cx="96"
                     cy="96"
@@ -681,13 +681,13 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
-                    <span className="text-4xl font-bold text-gray-900 dark:text-white">{correlation.correlationScore}</span>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">/100</span>
+                    <span className="text-4xl font-bold text-neutral-900 dark:text-white">{correlation.correlationScore}</span>
+                    <span className="text-sm text-neutral-600 dark:text-neutral-400">/100</span>
                   </div>
                 </div>
               </div>
             </div>
-            <p className="text-center mt-4 text-gray-700 dark:text-gray-300">
+            <p className="text-center mt-4 text-neutral-700 dark:text-neutral-300">
               Skor korelasi menggabungkan kehadiran dan performa akademik untuk memberikan gambaran kesehatan akademik Anda.
             </p>
           </div>

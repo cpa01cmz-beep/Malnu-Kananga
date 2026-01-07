@@ -326,7 +326,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Progress Akademik Siswa</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Progress Akademik Siswa</h2>
           </div>
         </div>
         <div className="flex items-center justify-center py-12">
@@ -344,7 +344,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Progress Akademik Siswa</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Progress Akademik Siswa</h2>
           </div>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
@@ -367,8 +367,8 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
           <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Portal
           </Button>
-           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Progress Akademik Siswa</h2>
-           <p className="text-gray-500 dark:text-gray-400">Semester Ganjil 2024/2025</p>
+           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Progress Akademik Siswa</h2>
+           <p className="text-neutral-500 dark:text-neutral-400">Semester Ganjil 2024/2025</p>
          </div>
         <div className="flex gap-2">
           <button
@@ -408,8 +408,8 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
 
         {gradeTrends.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Tren Nilai Akademik</h3>
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Tren Nilai Akademik</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={gradeTrends}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -422,8 +422,8 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Performa per Mata Pelajaran</h3>
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Performa per Mata Pelajaran</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={subjectPerformance}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -438,18 +438,18 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
         )}
 
         {goals.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Target Belajar</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6 mb-8">
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Target Belajar</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {goals.map(goal => (
                 <div key={goal.id} className={`p-4 rounded-lg border ${goal.achieved ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'}`}>
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">{goal.subject}</h4>
+                    <h4 className="font-semibold text-neutral-900 dark:text-white">{goal.subject}</h4>
                     <span className={`px-2 py-1 rounded text-xs font-bold ${goal.achieved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                       {goal.achieved ? '✓ Tercapai' : '🎯 Progres'}
                     </span>
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-sm text-neutral-600 dark:text-neutral-400">
                     <p>Target: {goal.targetGrade} ({goal.targetScore})</p>
                     <p>Current: {goal.currentScore.toFixed(1)}</p>
                     <p className="text-xs mt-1">{goal.endDate}</p>
@@ -460,10 +460,10 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
           </div>
         )}
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-gray-600 dark:text-gray-300">
-              <thead className="bg-gray-50 dark:bg-gray-700 text-xs uppercase font-semibold text-gray-500 dark:text-gray-400">
+            <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
+              <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
                 <tr>
                   <th className="px-6 py-4">Mata Pelajaran</th>
                   <th className="px-4 py-4 text-center">Tugas</th>
@@ -473,18 +473,18 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
                   <th className="px-6 py-4 text-center">Predikat</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
                 {grades.length > 0 ? (
                   grades.map((item, idx) => (
                     <tr
                       key={idx}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                      className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors"
                     >
-                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{item.subject}</td>
+                      <td className="px-6 py-4 font-medium text-neutral-900 dark:text-white">{item.subject}</td>
                       <td className="px-4 py-4 text-center">{item.assignment}</td>
                       <td className="px-4 py-4 text-center">{item.midExam}</td>
                       <td className="px-4 py-4 text-center">{item.finalExam}</td>
-                      <td className="px-6 py-4 text-center font-bold text-gray-900 dark:text-white">
+                      <td className="px-6 py-4 text-center font-bold text-neutral-900 dark:text-white">
                         {item.finalScore.toFixed(1)}
                       </td>
                       <td className="px-6 py-4 text-center">
@@ -506,7 +506,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                    <td colSpan={6} className="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
                       Belum ada data nilai tersedia.
                     </td>
                   </tr>
@@ -519,15 +519,15 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
 
       {showGoalModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-md">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Target Belajar Baru</h3>
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 w-full max-w-md">
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Target Belajar Baru</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mata Pelajaran</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Mata Pelajaran</label>
                 <select
                   value={newGoal.subject}
                   onChange={(e) => setNewGoal({ ...newGoal, subject: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
                   <option value="">Pilih Mata Pelajaran</option>
                   {grades.map(grade => (
@@ -536,11 +536,11 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Grade</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Target Grade</label>
                 <select
                   value={newGoal.targetGrade}
                   onChange={(e) => setNewGoal({ ...newGoal, targetGrade: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
                   <option value="A">A</option>
                   <option value="B">B</option>
@@ -548,23 +548,23 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Nilai</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Target Nilai</label>
                 <input
                   type="number"
                   value={newGoal.targetScore}
                   onChange={(e) => setNewGoal({ ...newGoal, targetScore: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   min="0"
                   max="100"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Tanggal</label>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Target Tanggal</label>
                 <input
                   type="date"
                   value={newGoal.endDate}
                   onChange={(e) => setNewGoal({ ...newGoal, endDate: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -577,7 +577,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
               </button>
               <button
                 onClick={() => setShowGoalModal(false)}
-                className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+                className="flex-1 px-4 py-2 bg-neutral-300 text-neutral-700 rounded-lg hover:bg-neutral-400 transition-colors"
               >
                 Batal
               </button>

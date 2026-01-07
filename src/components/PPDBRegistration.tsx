@@ -188,17 +188,17 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-900/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-neutral-900/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-scale-in"
+        className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-scale-in"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700">
           <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Formulir Pendaftaran PPDB</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Tahun Ajaran 2025/2026</p>
+            <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Formulir Pendaftaran PPDB</h2>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">Tahun Ajaran 2025/2026</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+          <button onClick={onClose} className="p-2 rounded-full text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-700">
             <CloseIcon />
           </button>
         </div>
@@ -240,7 +240,7 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                                 htmlFor="diploma-upload"
                                 className={`flex items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
                                     isProcessingOCR
-                                        ? 'border-gray-300 bg-gray-50 cursor-not-allowed'
+                                        ? 'border-neutral-300 bg-neutral-50 cursor-not-allowed'
                                         : 'border-green-300 bg-green-50 hover:bg-green-100 dark:border-green-700 dark:bg-green-900/20 dark:hover:bg-green-900/30'
                                 }`}
                             >
@@ -248,23 +248,23 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                                     <div className="w-8 h-8 text-green-600 dark:text-green-400">
                                         <DocumentTextIcon />
                                     </div>
-                                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                                    <span className="text-sm text-neutral-700 dark:text-neutral-300">
                                         {isProcessingOCR ? 'Memproses...' : 'Klik untuk upload ijazah (JPG/PNG)'}
                                     </span>
                                 </div>
                             </label>
                         ) : (
                             <div className="relative">
-                                <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
+                                <div className="flex items-center justify-between bg-neutral-100 dark:bg-neutral-700 rounded-lg p-3">
                                     <div className="flex items-center space-x-3">
                                     <div className="w-8 h-8 text-green-600 dark:text-green-400">
                                         <DocumentTextIcon />
                                     </div>
                                     <div>
-                                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                            <p className="text-sm font-medium text-neutral-900 dark:text-white">
                                                 {diplomaImage.name}
                                             </p>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                            <p className="text-xs text-neutral-500 dark:text-neutral-400">
                                                 {(diplomaImage.size / 1024).toFixed(2)} KB
                                             </p>
                                         </div>
@@ -281,11 +281,11 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                                 </div>
                                 {isProcessingOCR && (
                                     <div className="mt-3 space-y-2">
-                                        <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
+                                        <div className="flex items-center justify-between text-xs text-neutral-600 dark:text-neutral-400">
                                             <span>{ocrProgress.status}</span>
                                             <span>{ocrProgress.progress.toFixed(0)}%</span>
                                         </div>
-                                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
                                             <div
                                                 className="bg-green-600 h-2 rounded-full transition-all duration-300"
                                                 style={{ width: `${ocrProgress.progress}%` }}
@@ -305,9 +305,9 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                                     {Object.entries(extractedGrades).map(([subject, grade]) => (
                                         <div
                                             key={subject}
-                                            className="flex justify-between text-sm bg-white dark:bg-gray-800 rounded px-2 py-1"
+                                            className="flex justify-between text-sm bg-white dark:bg-neutral-800 rounded px-2 py-1"
                                         >
-                                            <span className="text-gray-700 dark:text-gray-300">{subject}</span>
+                                            <span className="text-neutral-700 dark:text-neutral-300">{subject}</span>
                                             <span className="font-bold text-green-600 dark:text-green-400">{grade}</span>
                                         </div>
                                     ))}
@@ -323,7 +323,7 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                                     <button
                                         type="button"
                                         onClick={clearDiplomaImage}
-                                        className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                                        className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 text-sm font-medium rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
                                     >
                                         Ulangi
                                     </button>
@@ -337,16 +337,16 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                     <h3 className="text-sm font-bold uppercase tracking-wide text-green-600 dark:text-green-400 border-b border-green-100 dark:border-green-900 pb-2">Data Calon Siswa</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="ppdb-fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Lengkap</label>
-                            <input id="ppdb-fullName" name="fullName" required type="text" value={formData.fullName} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" autoComplete="name" />
+                            <label htmlFor="ppdb-fullName" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Lengkap</label>
+                            <input id="ppdb-fullName" name="fullName" required type="text" value={formData.fullName} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="name" />
                         </div>
                         <div>
-                            <label htmlFor="ppdb-nisn" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">NISN</label>
-                            <input id="ppdb-nisn" name="nisn" required type="text" value={formData.nisn} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" autoComplete="off" />
+                            <label htmlFor="ppdb-nisn" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">NISN</label>
+                            <input id="ppdb-nisn" name="nisn" required type="text" value={formData.nisn} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="off" />
                         </div>
                         <div className="md:col-span-2">
-                            <label htmlFor="ppdb-originSchool" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Asal Sekolah</label>
-                            <input id="ppdb-originSchool" name="originSchool" required type="text" value={formData.originSchool} onChange={handleChange} placeholder="SMP/MTs..." className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" autoComplete="organization" />
+                            <label htmlFor="ppdb-originSchool" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Asal Sekolah</label>
+                            <input id="ppdb-originSchool" name="originSchool" required type="text" value={formData.originSchool} onChange={handleChange} placeholder="SMP/MTs..." className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="organization" />
                         </div>
                     </div>
                 </div>
@@ -356,20 +356,20 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                      <h3 className="text-sm font-bold uppercase tracking-wide text-green-600 dark:text-green-400 border-b border-green-100 dark:border-green-900 pb-2">Data Orang Tua & Kontak</h3>
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="ppdb-parentName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Orang Tua/Wali</label>
-                            <input id="ppdb-parentName" name="parentName" required type="text" value={formData.parentName} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" autoComplete="name" />
+                            <label htmlFor="ppdb-parentName" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Orang Tua/Wali</label>
+                            <input id="ppdb-parentName" name="parentName" required type="text" value={formData.parentName} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="name" />
                         </div>
                         <div>
-                            <label htmlFor="ppdb-phoneNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nomor WhatsApp</label>
-                            <input id="ppdb-phoneNumber" name="phoneNumber" required type="tel" value={formData.phoneNumber} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" autoComplete="tel" />
+                            <label htmlFor="ppdb-phoneNumber" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nomor WhatsApp</label>
+                            <input id="ppdb-phoneNumber" name="phoneNumber" required type="tel" value={formData.phoneNumber} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="tel" />
                         </div>
                         <div className="md:col-span-2">
-                            <label htmlFor="ppdb-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                            <input id="ppdb-email" name="email" required type="email" value={formData.email} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500" autoComplete="email" />
+                            <label htmlFor="ppdb-email" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Email</label>
+                            <input id="ppdb-email" name="email" required type="email" value={formData.email} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="email" />
                         </div>
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Alamat Lengkap</label>
-                            <textarea name="address" required value={formData.address} onChange={handleChange} rows={3} className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-green-500"></textarea>
+                            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Alamat Lengkap</label>
+                            <textarea name="address" required value={formData.address} onChange={handleChange} rows={3} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"></textarea>
                         </div>
                      </div>
                 </div>
@@ -387,7 +387,7 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                     />
                 </div>
 
-                <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+                <div className="pt-4 border-t border-neutral-100 dark:border-neutral-700">
                     <button 
                         type="submit" 
                         disabled={isSubmitting}
@@ -395,7 +395,7 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                     >
                         {isSubmitting ? 'Mengirim Data...' : 'Kirim Pendaftaran'}
                     </button>
-                    <p className="text-center text-xs text-gray-500 mt-2">Dengan mendaftar, Anda menyetujui kebijakan privasi data sekolah.</p>
+                    <p className="text-center text-xs text-neutral-500 mt-2">Dengan mendaftar, Anda menyetujui kebijakan privasi data sekolah.</p>
                 </div>
             </form>
         </div>

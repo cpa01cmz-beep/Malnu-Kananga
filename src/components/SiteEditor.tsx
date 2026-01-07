@@ -279,19 +279,19 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
 
   return (
     <div
-      className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 transition-opacity duration-300"
+      className="fixed inset-0 bg-neutral-900 bg-opacity-75 flex items-center justify-center z-50 p-4 transition-opacity duration-300"
       onClick={onClose}
       aria-modal="true"
       role="dialog"
     >
       <div
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-scale-in"
+        className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
-<header className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+<header className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700 flex-shrink-0">
           <div className="flex items-center gap-3">
             <SparklesIcon className="h-6 w-6 text-green-500" />
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">AI Website Editor <span className="text-xs font-normal text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">🛡️ Dilindungi</span></h2>
+            <h2 className="text-xl font-bold text-neutral-900 dark:text-white">AI Website Editor <span className="text-xs font-normal text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">🛡️ Dilindungi</span></h2>
             {changeHistory.length > 0 && (
               <div className="flex items-center gap-1">
                 <button 
@@ -307,13 +307,13 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
           <div className="flex items-center gap-2">
             <button 
                 onClick={onResetContent}
-                className="p-2 rounded-full text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="p-2 rounded-full text-neutral-500 hover:text-red-600 dark:text-neutral-400 dark:hover:text-red-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
                 title="Reset Konten ke Default"
                 aria-label="Reset konten"
             >
                 <ArrowPathIcon />
             </button>
-            <button onClick={onClose} className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700" aria-label="Tutup">
+            <button onClick={onClose} className="p-2 rounded-full text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700" aria-label="Tutup">
               <CloseIcon />
             </button>
           </div>
@@ -325,7 +325,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
             {messages.map((msg) => (
               <div key={msg.id} className={`flex items-start gap-3 ${msg.sender === Sender.User ? 'justify-end' : 'justify-start'}`}>
                 {msg.sender === Sender.AI && <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white flex-shrink-0"><SparklesIcon className="h-5 w-5"/></div>}
-                <div className={`max-w-lg p-3 rounded-2xl ${msg.sender === Sender.User ? 'bg-green-600 text-white rounded-br-lg' : 'bg-gray-100 dark:bg-gray-700 rounded-bl-lg'}`}>
+                <div className={`max-w-lg p-3 rounded-2xl ${msg.sender === Sender.User ? 'bg-green-600 text-white rounded-br-lg' : 'bg-neutral-100 dark:bg-neutral-700 rounded-bl-lg'}`}>
                   <MarkdownRenderer content={msg.text} />
                 </div>
               </div>
@@ -333,7 +333,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
              {isLoading && (
                  <div className="flex items-start gap-3 justify-start">
                     <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white flex-shrink-0"><SparklesIcon className="h-5 w-5"/></div>
-                    <div className="max-w-lg p-3 rounded-2xl bg-gray-100 dark:bg-gray-700 rounded-bl-lg">
+                    <div className="max-w-lg p-3 rounded-2xl bg-neutral-100 dark:bg-neutral-700 rounded-bl-lg">
                         <TypingIndicator />
                     </div>
                 </div>
@@ -343,17 +343,17 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
           
           {/* Proposed Changes Preview */}
           {proposedContent && (
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-6 animate-fade-in-up">
+            <div className="border-t border-neutral-200 dark:border-neutral-700 pt-6 animate-fade-in-up">
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Pratinjau Perubahan</h3>
+                    <h3 className="text-lg font-bold text-neutral-800 dark:text-neutral-200">Pratinjau Perubahan</h3>
                     <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">Preview Mode</span>
                 </div>
                 
-                <div className="space-y-8 bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+                <div className="space-y-8 bg-neutral-50 dark:bg-neutral-900/50 p-6 rounded-2xl border border-neutral-200 dark:border-neutral-700">
                     {/* Programs Preview */}
                     {proposedContent.featuredPrograms && proposedContent.featuredPrograms.length > 0 && (
                         <div>
-                            <h4 className="text-sm uppercase tracking-wide font-semibold text-gray-500 dark:text-gray-400 mb-4">Program Unggulan</h4>
+                            <h4 className="text-sm uppercase tracking-wide font-semibold text-neutral-500 dark:text-neutral-400 mb-4">Program Unggulan</h4>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {proposedContent.featuredPrograms.map((program: FeaturedProgram, idx: number) => (
                                     <div key={idx} className="origin-top-left transform transition-transform">
@@ -367,7 +367,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                     {/* News Preview */}
                     {proposedContent.latestNews && proposedContent.latestNews.length > 0 && (
                         <div>
-                             <h4 className="text-sm uppercase tracking-wide font-semibold text-gray-500 dark:text-gray-400 mb-4">Berita Terbaru</h4>
+                             <h4 className="text-sm uppercase tracking-wide font-semibold text-neutral-500 dark:text-neutral-400 mb-4">Berita Terbaru</h4>
                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {proposedContent.latestNews.map((news: LatestNews, idx: number) => (
                                     <div key={idx} className="origin-top-left transform transition-transform">
@@ -381,13 +381,13 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                 
                 {/* Advanced Data View */}
                 <details className="mt-4">
-                    <summary className="text-xs text-gray-500 cursor-pointer hover:text-green-600 transition-colors select-none">Tampilkan Data JSON Mentah (Debug)</summary>
-                    <div className="bg-gray-900 p-4 rounded-lg max-h-40 overflow-y-auto mt-2 custom-scrollbar">
+                    <summary className="text-xs text-neutral-500 cursor-pointer hover:text-green-600 transition-colors select-none">Tampilkan Data JSON Mentah (Debug)</summary>
+                    <div className="bg-neutral-900 p-4 rounded-lg max-h-40 overflow-y-auto mt-2 custom-scrollbar">
                         <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap">{JSON.stringify(proposedContent, null, 2)}</pre>
                     </div>
                 </details>
 
-                 <div className="mt-6 flex justify-end gap-3 sticky bottom-0 bg-white dark:bg-gray-800 py-4 border-t border-gray-100 dark:border-gray-700/50">
+                 <div className="mt-6 flex justify-end gap-3 sticky bottom-0 bg-white dark:bg-neutral-800 py-4 border-t border-neutral-100 dark:border-neutral-700/50">
                     <Button variant="secondary" onClick={handleCancel}>
                         Batalkan
                     </Button>
@@ -399,7 +399,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
           )}
         </main>
 
-        <footer className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex-shrink-0">
+        <footer className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex-shrink-0">
           <div className="space-y-2">
             <AutoResizeTextarea
                value={input}
@@ -412,7 +412,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
             {/* Character count and validation */}
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <span className={`text-xs ${characterCount > 1000 ? 'text-red-500 font-medium' : 'text-gray-400 dark:text-gray-500'}`}>
+                <span className={`text-xs ${characterCount > 1000 ? 'text-red-500 font-medium' : 'text-neutral-400 dark:text-neutral-500'}`}>
                   {characterCount}/1000 karakter
                 </span>
                 {inputError && (
@@ -438,7 +438,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
               </div>
             </div>
             
-            <p className="text-center text-xs text-gray-400 dark:text-gray-500">
+            <p className="text-center text-xs text-neutral-400 dark:text-neutral-500">
               💡 Anda dapat membatalkan hingga 5 perubahan terakhir • Perubahan tersimpan di browser
             </p>
           </div>
@@ -448,39 +448,39 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       {/* Confirmation Modal */}
       {showConfirmation && pendingContent && (
         <div
-          className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-neutral-900 bg-opacity-75 flex items-center justify-center z-50 p-4"
           aria-modal="true"
           role="dialog"
         >
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg transform transition-all duration-300 scale-95 opacity-0 animate-scale-in">
+          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl w-full max-w-lg transform transition-all duration-300 scale-95 opacity-0 animate-scale-in">
             <div className="p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
                   <span className="text-yellow-600 text-lg">⚠️</span>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
                   Konfirmasi Perubahan
                 </h3>
               </div>
               
               <div className="space-y-4">
-                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                <p className="text-neutral-600 dark:text-neutral-300 text-sm">
                   Apakah Anda yakin ingin menerapkan perubahan berikut?
                 </p>
                 
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <div className="text-xs uppercase tracking-wide font-semibold text-gray-500 dark:text-gray-400 mb-2">
+                <div className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4">
+                  <div className="text-xs uppercase tracking-wide font-semibold text-neutral-500 dark:text-neutral-400 mb-2">
                     Ringkasan Perubahan:
                   </div>
-                  <div className="text-sm text-gray-800 dark:text-gray-200">
+                  <div className="text-sm text-neutral-800 dark:text-neutral-200">
                     {generateChangeSummary(currentContent, pendingContent)}
                   </div>
                   
-                  <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
-                    <div className="text-xs uppercase tracking-wide font-semibold text-gray-500 dark:text-gray-400 mb-2">
+                  <div className="mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-600">
+                    <div className="text-xs uppercase tracking-wide font-semibold text-neutral-500 dark:text-neutral-400 mb-2">
                       Rincian:
                     </div>
-                    <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
+                    <ul className="space-y-1 text-xs text-neutral-600 dark:text-neutral-400">
                       {pendingContent.featuredPrograms.map((prog, idx) => (
                         <li key={`preview-prog-${idx}`} className="flex items-center gap-1">
                           <span className="text-green-500">•</span>
@@ -513,7 +513,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                     setShowConfirmation(false);
                     setPendingContent(null);
                   }}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-full hover:bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-200 dark:border-neutral-600 dark:hover:bg-neutral-600 transition-colors"
                 >
                   Batal
                 </button>

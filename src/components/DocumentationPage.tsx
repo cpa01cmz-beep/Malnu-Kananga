@@ -15,11 +15,11 @@ interface AccordionItemProps {
 const AccordionItem: React.FC<AccordionItemProps> = ({ title, children }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
-        <div className="border-b border-gray-200 dark:border-gray-700">
+        <div className="border-b border-neutral-200 dark:border-neutral-700">
             <h2>
                 <button
                     type="button"
-                    className="flex items-center justify-between w-full p-5 font-medium text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="flex items-center justify-between w-full p-5 font-medium text-left text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                     onClick={() => setIsOpen(!isOpen)}
                     aria-expanded={isOpen}
                 >
@@ -27,8 +27,8 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children }) => {
                     <ChevronDownIcon className={`w-6 h-6 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
             </h2>
-            <div className={`p-5 border-t-0 border-gray-200 dark:border-gray-700 ${isOpen ? 'block' : 'hidden'}`}>
-                <div className="space-y-4 text-gray-600 dark:text-gray-400">
+            <div className={`p-5 border-t-0 border-neutral-200 dark:border-neutral-700 ${isOpen ? 'block' : 'hidden'}`}>
+                <div className="space-y-4 text-neutral-600 dark:text-neutral-400">
                     {children}
                 </div>
             </div>
@@ -42,20 +42,20 @@ const DocumentationPage: React.FC<DocumentationPageProps> = ({ isOpen, onClose }
 
   return (
     <div
-      className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-neutral-900 bg-opacity-75 flex items-center justify-center z-50 p-4"
       onClick={onClose}
       aria-modal="true"
       role="dialog"
     >
       <div 
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-scale-in"
+        className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Pusat Bantuan</h2>
+        <header className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700 flex-shrink-0">
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Pusat Bantuan</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="p-2 rounded-full text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700"
             aria-label="Tutup"
           >
             <CloseIcon />

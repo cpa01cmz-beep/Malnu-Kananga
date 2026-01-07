@@ -112,13 +112,13 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+    <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
             Jadwal Pelajaran - {child.className}
           </h2>
-          <p className="text-gray-500 dark:text-gray-400">
+          <p className="text-neutral-500 dark:text-neutral-400">
             {child.studentName} • {availableTeachers.length} guru tersedia untuk pertemuan
           </p>
         </div>
@@ -129,7 +129,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
             className={`p-2 rounded-lg transition-colors flex items-center gap-2
               ${viewMode === 'list' 
                 ? 'bg-green-600 text-white' 
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'}`}
           >
             <ListBulletIcon className="w-5 h-5" />
             <span className="text-sm font-medium">Daftar</span>
@@ -140,7 +140,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
             className={`p-2 rounded-lg transition-colors flex items-center gap-2
               ${viewMode === 'month' 
                 ? 'bg-green-600 text-white' 
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'}`}
           >
             <CalendarDaysIcon className="w-5 h-5" />
             <span className="text-sm font-medium">Kalender</span>
@@ -166,7 +166,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
         </div>
       ) : schedules.length === 0 && meetings.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600 dark:text-gray-400">Tidak ada jadwal atau pertemuan tersedia untuk {child.className}</p>
+          <p className="text-neutral-600 dark:text-neutral-400">Tidak ada jadwal atau pertemuan tersedia untuk {child.className}</p>
         </div>
       ) : viewMode === 'list' ? (
         <div className="space-y-6">
@@ -175,25 +175,25 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
             if (daySchedules.length === 0) return null;
 
             return (
-              <div key={day} className="border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+              <div key={day} className="border border-neutral-200 dark:border-neutral-700 rounded-xl p-4">
                 <h3 className="text-lg font-bold text-green-600 dark:text-green-400 mb-3">{day}</h3>
                 <div className="space-y-2">
                   {daySchedules.map((schedule) => (
                     <div
                       key={schedule.id}
-                      className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg"
+                      className="flex items-start gap-3 p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg"
                     >
                       <div className="flex-shrink-0">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        <div className="text-sm font-medium text-neutral-900 dark:text-white">
                           {schedule.startTime} - {schedule.endTime}
                         </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400">{schedule.room}</div>
+                        <div className="text-xs text-neutral-600 dark:text-neutral-400">{schedule.room}</div>
                       </div>
                       <div className="flex-1">
-                        <div className="font-medium text-gray-900 dark:text-white">
+                        <div className="font-medium text-neutral-900 dark:text-white">
                           {schedule.subjectName}
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                        <div className="text-sm text-neutral-600 dark:text-neutral-400">
                           {schedule.teacherName}
                         </div>
                       </div>
@@ -217,14 +217,14 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
       {/* Meeting Request Modal */}
       {showMeetingRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h3 className="text-xl font-bold text-neutral-900 dark:text-white">
                 Ajukan Pertemuan dengan Guru
               </h3>
               <button
                 onClick={() => setShowMeetingRequest(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
+                className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 text-2xl"
               >
                 ×
               </button>
@@ -232,19 +232,19 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
 
             <div className="grid md:grid-cols-2 gap-6">
               {availableTeachers.map((teacher) => (
-                <div key={teacher.teacherId} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div key={teacher.teacherId} className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
                   <div className="mb-3">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                    <h4 className="font-semibold text-neutral-900 dark:text-white">
                       {teacher.teacherName}
                     </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">
                       {teacher.subject} • {teacher.className}
                     </p>
                   </div>
 
                   {teacher.availableSlots && teacher.availableSlots.length > 0 ? (
                     <div>
-                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                         Waktu Tersedia:
                       </p>
                       <div className="space-y-2">
@@ -275,7 +275,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
                       Tidak ada jadwal tersedia
                     </p>
                   )}
@@ -285,7 +285,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
 
             {availableTeachers.length === 0 && (
               <div className="text-center py-8">
-                <p className="text-gray-500 dark:text-gray-400">
+                <p className="text-neutral-500 dark:text-neutral-400">
                   Tidak ada guru yang tersedia untuk pertemuan saat ini
                 </p>
               </div>
@@ -301,16 +301,16 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
           onClick={() => setSelectedEvent(null)}
         >
           <div 
-            className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full"
+            className="bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
                 {'status' in selectedEvent ? 'Detail Pertemuan' : 'Detail Jadwal'}
               </h3>
               <button
                 onClick={() => setSelectedEvent(null)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-2xl"
+                className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 text-2xl"
               >
                 ×
               </button>
@@ -320,25 +320,25 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
               {'status' in selectedEvent ? (
                 <>
                   <div>
-                    <label className="text-sm text-gray-500 dark:text-gray-400">Jenis</label>
-                    <p className="font-medium text-gray-900 dark:text-white">Pertemuan Orang Tua-Guru</p>
+                    <label className="text-sm text-neutral-500 dark:text-neutral-400">Jenis</label>
+                    <p className="font-medium text-neutral-900 dark:text-white">Pertemuan Orang Tua-Guru</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500 dark:text-gray-400">Guru</label>
-                    <p className="font-medium text-gray-900 dark:text-white">{selectedEvent.teacherName}</p>
+                    <label className="text-sm text-neutral-500 dark:text-neutral-400">Guru</label>
+                    <p className="font-medium text-neutral-900 dark:text-white">{selectedEvent.teacherName}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500 dark:text-gray-400">Tanggal</label>
-                    <p className="font-medium text-gray-900 dark:text-white">{selectedEvent.date}</p>
+                    <label className="text-sm text-neutral-500 dark:text-neutral-400">Tanggal</label>
+                    <p className="font-medium text-neutral-900 dark:text-white">{selectedEvent.date}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500 dark:text-gray-400">Waktu</label>
-                    <p className="font-medium text-gray-900 dark:text-white">
+                    <label className="text-sm text-neutral-500 dark:text-neutral-400">Waktu</label>
+                    <p className="font-medium text-neutral-900 dark:text-white">
                       {selectedEvent.startTime} - {selectedEvent.endTime}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500 dark:text-gray-400">Status</label>
+                    <label className="text-sm text-neutral-500 dark:text-neutral-400">Status</label>
                     <p className={`font-medium
                       ${selectedEvent.status === 'scheduled' ? 'text-blue-600 dark:text-blue-400' : ''}
                       ${selectedEvent.status === 'completed' ? 'text-green-600 dark:text-green-400' : ''}
@@ -350,40 +350,40 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
                   </div>
                   {selectedEvent.agenda && (
                     <div>
-                      <label className="text-sm text-gray-500 dark:text-gray-400">Agenda</label>
-                      <p className="font-medium text-gray-900 dark:text-white">{selectedEvent.agenda}</p>
+                      <label className="text-sm text-neutral-500 dark:text-neutral-400">Agenda</label>
+                      <p className="font-medium text-neutral-900 dark:text-white">{selectedEvent.agenda}</p>
                     </div>
                   )}
                 </>
               ) : (
                 <>
                   <div>
-                    <label className="text-sm text-gray-500 dark:text-gray-400">Mata Pelajaran</label>
-                    <p className="font-semibold text-gray-900 dark:text-white">
+                    <label className="text-sm text-neutral-500 dark:text-neutral-400">Mata Pelajaran</label>
+                    <p className="font-semibold text-neutral-900 dark:text-white">
                       {selectedEvent.subjectName}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500 dark:text-gray-400">Guru</label>
-                    <p className="font-medium text-gray-900 dark:text-white">
+                    <label className="text-sm text-neutral-500 dark:text-neutral-400">Guru</label>
+                    <p className="font-medium text-neutral-900 dark:text-white">
                       {selectedEvent.teacherName}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500 dark:text-gray-400">Waktu</label>
-                    <p className="font-medium text-gray-900 dark:text-white">
+                    <label className="text-sm text-neutral-500 dark:text-neutral-400">Waktu</label>
+                    <p className="font-medium text-neutral-900 dark:text-white">
                       {selectedEvent.startTime} - {selectedEvent.endTime}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500 dark:text-gray-400">Hari</label>
-                    <p className="font-medium text-gray-900 dark:text-white">
+                    <label className="text-sm text-neutral-500 dark:text-neutral-400">Hari</label>
+                    <p className="font-medium text-neutral-900 dark:text-white">
                       {selectedEvent.dayOfWeek}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500 dark:text-gray-400">Ruangan</label>
-                    <p className="font-medium text-gray-900 dark:text-white">
+                    <label className="text-sm text-neutral-500 dark:text-neutral-400">Ruangan</label>
+                    <p className="font-medium text-neutral-900 dark:text-white">
                       {selectedEvent.room}
                     </p>
                   </div>

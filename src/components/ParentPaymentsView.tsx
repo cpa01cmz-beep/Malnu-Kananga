@@ -102,7 +102,7 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
       case 'paid': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
       case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
       case 'overdue': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+      default: return 'bg-neutral-100 text-neutral-800 dark:bg-neutral-900/30 dark:text-neutral-400';
     }
   };
 
@@ -128,12 +128,12 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg mb-6"></div>
+          <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg mb-6"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+              <div key={i} className="h-64 bg-neutral-200 dark:bg-neutral-700 rounded-xl"></div>
             ))}
           </div>
         </div>
@@ -147,14 +147,14 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Pembayaran</h2>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Pembayaran</h2>
           <div className="flex items-center gap-4">
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value as 'current' | 'all')}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
             >
               <option value="current">Periode Saat Ini</option>
               <option value="all">Semua Periode</option>
@@ -217,29 +217,29 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
 
       {/* Individual Payment Details */}
       {paymentData.map((data) => (
-        <div key={data.child.studentId} className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div key={data.child.studentId} className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
                 {data.child.studentName.charAt(0).toUpperCase()}
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{data.child.studentName}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{data.child.className}</p>
+                <h3 className="text-xl font-bold text-neutral-900 dark:text-white">{data.child.studentName}</h3>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">{data.child.className}</p>
               </div>
             </div>
             <button
               onClick={() => toggleDetails(data.child.studentId)}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg transition-colors text-gray-700 dark:text-gray-300"
+              className="px-4 py-2 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 rounded-lg transition-colors text-neutral-700 dark:text-neutral-300"
             >
               {showDetails[data.child.studentId] ? 'Sembunyikan' : 'Lihat'} Detail
             </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total</p>
-              <p className="text-lg font-bold text-gray-900 dark:text-white">
+            <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-xl p-4">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Total</p>
+              <p className="text-lg font-bold text-neutral-900 dark:text-white">
                 {formatCurrency(data.totalAmount)}
               </p>
             </div>
@@ -264,21 +264,21 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
           </div>
 
           {showDetails[data.child.studentId] && (
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Rincian Pembayaran</h4>
+            <div className="border-t border-neutral-200 dark:border-neutral-700 pt-6">
+              <h4 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Rincian Pembayaran</h4>
               <div className="space-y-3">
                 {data.payments.map((payment) => (
-                  <div key={payment.id} className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4">
+                  <div key={payment.id} className="bg-neutral-50 dark:bg-neutral-900/50 rounded-xl p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <p className="font-semibold text-gray-900 dark:text-white">{payment.paymentType}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{payment.description}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-500">
+                        <p className="font-semibold text-neutral-900 dark:text-white">{payment.paymentType}</p>
+                        <p className="text-sm text-neutral-600 dark:text-neutral-400">{payment.description}</p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-500">
                           Jatuh tempo: {formatDate(payment.dueDate)}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-gray-900 dark:text-white mb-2">
+                        <p className="font-bold text-neutral-900 dark:text-white mb-2">
                           {formatCurrency(payment.amount)}
                         </p>
                         <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(payment.status)}`}>

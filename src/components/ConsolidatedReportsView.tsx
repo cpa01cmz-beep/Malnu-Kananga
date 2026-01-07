@@ -97,12 +97,12 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded-lg mb-6"></div>
+          <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg mb-6"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+              <div key={i} className="h-64 bg-neutral-200 dark:bg-neutral-700 rounded-xl"></div>
             ))}
           </div>
         </div>
@@ -112,14 +112,14 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Laporan Konsolidasi Semua Anak</h2>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Laporan Konsolidasi Semua Anak</h2>
           <div className="flex items-center gap-4">
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value as 'current' | 'semester' | 'year')}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
             >
               <option value="current">Periode Saat Ini</option>
               <option value="semester">Semester Ini</option>
@@ -137,53 +137,53 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {consolidatedData.map((data) => (
-            <div key={data.child.studentId} className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+            <div key={data.child.studentId} className="bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl p-6 border border-neutral-200 dark:border-neutral-700">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
                   {data.child.studentName.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">{data.child.studentName}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{data.child.className}</p>
+                  <h3 className="font-semibold text-neutral-900 dark:text-white">{data.child.studentName}</h3>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">{data.child.className}</p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Rata-rata Nilai</span>
+                  <span className="text-sm text-neutral-600 dark:text-neutral-400">Rata-rata Nilai</span>
                   <span className={`font-bold ${getGradeColor(data.averageGrade)}`}>
                     {data.averageGrade.toFixed(1)}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Kehadiran</span>
+                  <span className="text-sm text-neutral-600 dark:text-neutral-400">Kehadiran</span>
                   <span className={`font-bold ${getAttendanceColor(data.attendanceRate)}`}>
                     {data.attendanceRate}%
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Ketidakhadiran</span>
+                  <span className="text-sm text-neutral-600 dark:text-neutral-400">Ketidakhadiran</span>
                   <span className="font-bold text-orange-600 dark:text-orange-400">
                     {data.totalAbsences} hari
                   </span>
                 </div>
 
-                <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Nilai Terkini</p>
+                <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Nilai Terkini</p>
                   <div className="space-y-1">
                     {data.latestGrades.slice(0, 3).map((grade, i) => (
                       <div key={i} className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600 dark:text-gray-400">{grade.subject}</span>
+                        <span className="text-neutral-600 dark:text-neutral-400">{grade.subject}</span>
                         <span className={getGradeColor(grade.grade)}>{grade.grade}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{data.recentActivity}</p>
+                <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">{data.recentActivity}</p>
                 </div>
               </div>
             </div>
@@ -191,14 +191,14 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-700">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Ringkasan Keseluruhan</h3>
+      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+        <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-6">Ringkasan Keseluruhan</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center">
             <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
               <ClipboardDocumentCheckIcon />
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Rata-rata Nilai Keluarga</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Rata-rata Nilai Keluarga</p>
             <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
               {consolidatedData.length > 0 
                 ? (consolidatedData.reduce((sum, d) => sum + d.averageGrade, 0) / consolidatedData.length).toFixed(1)
@@ -210,7 +210,7 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
             <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
               <UsersIcon />
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Rata-rata Kehadiran</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Rata-rata Kehadiran</p>
             <p className="text-2xl font-bold text-green-600 dark:text-green-400">
               {consolidatedData.length > 0 
                 ? Math.round(consolidatedData.reduce((sum, d) => sum + d.attendanceRate, 0) / consolidatedData.length)
@@ -222,7 +222,7 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
             <div className="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
               <UsersIcon />
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Ketidakhadiran</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Total Ketidakhadiran</p>
             <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
               {consolidatedData.reduce((sum, d) => sum + d.totalAbsences, 0)} hari
             </p>

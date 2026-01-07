@@ -137,10 +137,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
       />
       
       <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-gray-200 dark:border-neutral-700 p-4 flex justify-between items-center">
+        <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 p-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <BellIcon className="w-6 h-6 text-gray-700 dark:text-neutral-300" />
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <BellIcon className="w-6 h-6 text-neutral-700 dark:text-neutral-300" />
+            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
               Pengaturan Notifikasi
             </h2>
           </div>
@@ -155,14 +155,14 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-gray-200">
+        <div className="border-b border-neutral-200">
           <nav className="flex space-x-8 px-6" aria-label="Tabs">
             <button
               onClick={() => setActiveTab('settings')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'settings'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
               }`}
             >
               Pengaturan
@@ -172,7 +172,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               className={`py-4 px-1 border-b-2 font-medium text-sm relative ${
                 activeTab === 'batches'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
               }`}
             >
               Batch
@@ -187,7 +187,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'templates'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
               }`}
             >
               Template
@@ -197,7 +197,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'analytics'
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
               }`}
             >
               Analytics
@@ -210,8 +210,8 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
           {activeTab === 'settings' && (
             <div className="space-y-6">
           {/* Permission Status */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-900 mb-3">
+          <div className="bg-neutral-50 rounded-lg p-4">
+            <h3 className="text-sm font-medium text-neutral-900 mb-3">
               Status Izin
             </h3>
             <div className="flex items-center justify-between">
@@ -223,7 +223,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                 ) : (
                   <BellIcon className="w-5 h-5 text-yellow-600" />
                 )}
-                <span className="text-sm text-gray-700 dark:text-neutral-300">
+                <span className="text-sm text-neutral-700 dark:text-neutral-300">
                   {permissionGranted
                     ? 'Notifikasi diizinkan'
                     : permissionDenied
@@ -246,7 +246,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
           {/* Notification Toggle */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-900">
+              <h3 className="text-sm font-medium text-neutral-900">
                 Notifikasi
               </h3>
               <label className="relative inline-flex items-center cursor-pointer">
@@ -259,7 +259,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                   className="sr-only peer"
                   aria-label="Aktifkan notifikasi"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
+                <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
               </label>
             </div>
 
@@ -272,10 +272,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                     setLocalSettings({ ...localSettings, announcements: e.target.checked })
                   }
                   disabled={!localSettings.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Pengumuman sekolah"
                 />
-                <span className="text-sm text-gray-700">Pengumuman Sekolah</span>
+                <span className="text-sm text-neutral-700">Pengumuman Sekolah</span>
               </label>
 
               <label className="flex items-center gap-3 cursor-pointer">
@@ -286,10 +286,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                     setLocalSettings({ ...localSettings, grades: e.target.checked })
                   }
                   disabled={!localSettings.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Update nilai"
                 />
-                <span className="text-sm text-gray-700">Update Nilai</span>
+                <span className="text-sm text-neutral-700">Update Nilai</span>
               </label>
 
               <label className="flex items-center gap-3 cursor-pointer">
@@ -300,10 +300,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                     setLocalSettings({ ...localSettings, ppdbStatus: e.target.checked })
                   }
                   disabled={!localSettings.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Status PPDB"
                 />
-                <span className="text-sm text-gray-700">Status PPDB</span>
+                <span className="text-sm text-neutral-700">Status PPDB</span>
               </label>
 
               <label className="flex items-center gap-3 cursor-pointer">
@@ -314,10 +314,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                     setLocalSettings({ ...localSettings, events: e.target.checked })
                   }
                   disabled={!localSettings.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Kegiatan OSIS"
                 />
-                <span className="text-sm text-gray-700">Kegiatan OSIS</span>
+                <span className="text-sm text-neutral-700">Kegiatan OSIS</span>
               </label>
 
               <label className="flex items-center gap-3 cursor-pointer">
@@ -328,10 +328,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                     setLocalSettings({ ...localSettings, library: e.target.checked })
                   }
                   disabled={!localSettings.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="E-Library"
                 />
-                <span className="text-sm text-gray-700">E-Library</span>
+                <span className="text-sm text-neutral-700">E-Library</span>
               </label>
 
               <label className="flex items-center gap-3 cursor-pointer">
@@ -342,10 +342,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                     setLocalSettings({ ...localSettings, system: e.target.checked })
                   }
                   disabled={!localSettings.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Sistem"
                 />
-                <span className="text-sm text-gray-700">Sistem</span>
+                <span className="text-sm text-neutral-700">Sistem</span>
               </label>
 
               <label className="flex items-center gap-3 cursor-pointer">
@@ -356,10 +356,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                     setLocalSettings({ ...localSettings, roleBasedFiltering: e.target.checked })
                   }
                   disabled={!localSettings.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Filter berdasarkan peran"
                 />
-                <span className="text-sm text-gray-700">Filter Berdasarkan Peran</span>
+                <span className="text-sm text-neutral-700">Filter Berdasarkan Peran</span>
               </label>
 
               <label className="flex items-center gap-3 cursor-pointer">
@@ -370,10 +370,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                     setLocalSettings({ ...localSettings, batchNotifications: e.target.checked })
                   }
                   disabled={!localSettings.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Grup notifikasi"
                 />
-                <span className="text-sm text-gray-700">Grup Notifikasi</span>
+                <span className="text-sm text-neutral-700">Grup Notifikasi</span>
               </label>
             </div>
           </div>
@@ -381,7 +381,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
           {/* Quiet Hours */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-gray-900">
+              <h3 className="text-sm font-medium text-neutral-900">
                 Jam Tenang (Quiet Hours)
               </h3>
               <label className="relative inline-flex items-center cursor-pointer">
@@ -401,14 +401,14 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                   className="sr-only peer"
                   aria-label="Aktifkan jam tenang"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
+                <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600" />
               </label>
             </div>
 
             {localSettings.quietHours.enabled && (
               <div className="flex items-center gap-4 ml-4">
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-gray-600">Mulai:</label>
+                  <label className="text-sm text-neutral-600">Mulai:</label>
                   <input
                     type="time"
                     value={localSettings.quietHours.start}
@@ -421,12 +421,12 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                         },
                       })
                     }
-                    className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="border border-neutral-300 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-gray-600">Selesai:</label>
+                  <label className="text-sm text-neutral-600">Selesai:</label>
                   <input
                     type="time"
                     value={localSettings.quietHours.end}
@@ -439,7 +439,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                         },
                       })
                     }
-                    className="border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="border border-neutral-300 rounded-md px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 </div>
@@ -510,10 +510,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
         {showResetConfirmation && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
             <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 max-w-sm w-full">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
                 Reset Pengaturan Notifikasi?
               </h3>
-              <p className="text-sm text-gray-600 dark:text-neutral-400 mb-4">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
                 Pengaturan akan dikembalikan ke nilai default. Tindakan ini tidak dapat dibatalkan.
               </p>
               <div className="flex justify-end gap-3">
@@ -538,8 +538,8 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
         {showHistory && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
             <div className="bg-white dark:bg-neutral-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-              <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-gray-200 dark:border-neutral-700 p-4 flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 p-4 flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
                   Riwayat Notifikasi
                 </h3>
                 <Button
@@ -554,13 +554,13 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
 
               <div className="p-4">
                 {history.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">
+                  <p className="text-center text-neutral-500 py-8">
                     Belum ada riwayat notifikasi
                   </p>
                 ) : (
                   <>
                     <div className="flex justify-between items-center mb-4">
-                      <p className="text-sm text-gray-600 dark:text-neutral-400">
+                      <p className="text-sm text-neutral-600 dark:text-neutral-400">
                         Total: {history.length} notifikasi
                       </p>
                       <div className="flex gap-2">
@@ -587,12 +587,12 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                           key={item.id}
                           className={`p-4 rounded-lg border ${
                             item.notification.read
-                              ? 'bg-gray-50 border-gray-200'
+                              ? 'bg-neutral-50 border-neutral-200'
                               : 'bg-blue-50 border-blue-200'
                           }`}
                         >
                           <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-medium text-gray-900 dark:text-white">
+                            <h4 className="font-medium text-neutral-900 dark:text-white">
                               {item.notification.title}
                             </h4>
                             <Button
@@ -604,10 +604,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                               aria-label="Hapus notifikasi"
                             />
                           </div>
-                          <p className="text-sm text-gray-600 mb-2">
+                          <p className="text-sm text-neutral-600 mb-2">
                             {item.notification.body}
                           </p>
-                          <div className="flex justify-between items-center text-xs text-gray-500">
+                          <div className="flex justify-between items-center text-xs text-neutral-500">
                             <span>
                               {new Date(
                                 item.notification.timestamp

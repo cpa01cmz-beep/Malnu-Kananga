@@ -128,7 +128,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Jadwal Pelajaran</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Jadwal Pelajaran</h2>
           </div>
         </div>
         <div className="flex items-center justify-center py-12">
@@ -146,7 +146,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
             </Button>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Jadwal Pelajaran</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Jadwal Pelajaran</h2>
           </div>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
@@ -169,8 +169,8 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
           <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Portal
           </Button>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Jadwal Pelajaran</h2>
-          <p className="text-gray-500 dark:text-gray-400">
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Jadwal Pelajaran</h2>
+          <p className="text-neutral-500 dark:text-neutral-400">
             Kelas: <strong>{className}</strong> • Semester Ganjil
           </p>
         </div>
@@ -181,7 +181,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
             className={`p-2 rounded-lg transition-colors flex items-center gap-2
               ${viewMode === 'list' 
                 ? 'bg-green-600 text-white' 
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} border`}
+                : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'} border`}
           >
             <ListBulletIcon className="w-5 h-5" />
             <span className="text-sm font-medium">Daftar</span>
@@ -191,7 +191,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
             className={`p-2 rounded-lg transition-colors flex items-center gap-2
               ${viewMode === 'month' 
                 ? 'bg-green-600 text-white' 
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} border`}
+                : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'} border`}
           >
             <CalendarDaysIcon className="w-5 h-5" />
             <span className="text-sm font-medium">Kalender</span>
@@ -208,7 +208,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
               className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
                 activeDay === day
                   ? 'bg-green-600 text-white shadow-md shadow-green-200 dark:shadow-none'
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'
               }`}
             >
               {day}
@@ -218,43 +218,43 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
       )}
 
       {viewMode === 'list' && (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden min-h-[400px]">
-          <div className="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-            <h3 className="font-bold text-lg text-gray-800 dark:text-white">Jadwal Hari {activeDay}</h3>
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-700 overflow-hidden min-h-[400px]">
+          <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50">
+            <h3 className="font-bold text-lg text-neutral-800 dark:text-white">Jadwal Hari {activeDay}</h3>
           </div>
 
-          <div className="divide-y divide-gray-100 dark:divide-gray-700">
+          <div className="divide-y divide-neutral-100 dark:divide-neutral-700">
             {dailySchedule[activeDay].length > 0 ? (
               dailySchedule[activeDay].map((item) => (
                 <div
                   key={item.id}
-                  className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                  className="p-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-24 flex-shrink-0">
                       <span className="text-sm font-bold text-green-600 dark:text-green-400 block">
                         {item.time.split(' - ')[0]}
                       </span>
-                      <span className="text-xs text-gray-400 dark:text-gray-500">s.d. {item.time.split(' - ')[1]}</span>
+                      <span className="text-xs text-neutral-400 dark:text-neutral-500">s.d. {item.time.split(' - ')[1]}</span>
                     </div>
                     <div>
-                      <h4 className="text-base font-bold text-gray-900 dark:text-white">{item.subject}</h4>
+                      <h4 className="text-base font-bold text-neutral-900 dark:text-white">{item.subject}</h4>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                        <span className="text-xs px-2 py-0.5 rounded bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300">
                           {item.teacher}
                         </span>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 self-start sm:self-center">
-                    <span className="text-xs font-medium px-2 py-1 rounded-full border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400">
+                    <span className="text-xs font-medium px-2 py-1 rounded-full border border-neutral-200 dark:border-neutral-600 text-neutral-500 dark:text-neutral-400">
                       {item.room}
                     </span>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="p-12 text-center text-gray-500 dark:text-gray-400">
+              <div className="p-12 text-center text-neutral-500 dark:text-neutral-400">
                 Tidak ada jadwal untuk hari ini.
               </div>
             )}
@@ -278,16 +278,16 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
           onClick={() => setSelectedEvent(null)}
         >
           <div 
-            className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-md w-full"
+            className="bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
                 Detail Jadwal
               </h3>
               <button
                 onClick={() => setSelectedEvent(null)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
               >
                 ×
               </button>
@@ -295,36 +295,36 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
             
             <div className="space-y-3">
               <div>
-                <label className="text-sm text-gray-500 dark:text-gray-400">Mata Pelajaran</label>
-                <p className="font-semibold text-gray-900 dark:text-white">
+                <label className="text-sm text-neutral-500 dark:text-neutral-400">Mata Pelajaran</label>
+                <p className="font-semibold text-neutral-900 dark:text-white">
                   {getSubjectName(selectedEvent.subjectId)}
                 </p>
               </div>
               
               <div>
-                <label className="text-sm text-gray-500 dark:text-gray-400">Guru</label>
-                <p className="font-medium text-gray-900 dark:text-white">
+                <label className="text-sm text-neutral-500 dark:text-neutral-400">Guru</label>
+                <p className="font-medium text-neutral-900 dark:text-white">
                   {getTeacherName(selectedEvent.teacherId)}
                 </p>
               </div>
               
               <div>
-                <label className="text-sm text-gray-500 dark:text-gray-400">Waktu</label>
-                <p className="font-medium text-gray-900 dark:text-white">
+                <label className="text-sm text-neutral-500 dark:text-neutral-400">Waktu</label>
+                <p className="font-medium text-neutral-900 dark:text-white">
                   {formatTime(selectedEvent.startTime)} - {formatTime(selectedEvent.endTime)}
                 </p>
               </div>
               
               <div>
-                <label className="text-sm text-gray-500 dark:text-gray-400">Hari</label>
-                <p className="font-medium text-gray-900 dark:text-white">
+                <label className="text-sm text-neutral-500 dark:text-neutral-400">Hari</label>
+                <p className="font-medium text-neutral-900 dark:text-white">
                   {selectedEvent.dayOfWeek}
                 </p>
               </div>
               
               <div>
-                <label className="text-sm text-gray-500 dark:text-gray-400">Ruangan</label>
-                <p className="font-medium text-gray-900 dark:text-white">
+                <label className="text-sm text-neutral-500 dark:text-neutral-400">Ruangan</label>
+                <p className="font-medium text-neutral-900 dark:text-white">
                   {selectedEvent.room}
                 </p>
               </div>
