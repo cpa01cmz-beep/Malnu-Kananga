@@ -182,7 +182,7 @@ const Header: React.FC<HeaderProps> = ({
 <button
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                                     onKeyDown={(e) => {
-                                        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                                        if (e.key === 'Enter' || e.key === ' ') {
                                             e.preventDefault();
                                             setIsMenuOpen(!isMenuOpen);
                                         }
