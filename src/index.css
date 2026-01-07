@@ -1,0 +1,79 @@
+@theme {
+  --color-primary-50: 240 100% 97%;
+  --color-primary-100: 142 71% 88%;
+  --color-primary-200: 142 70% 82%;
+  --color-primary-300: 142 68% 73%;
+  --color-primary-400: 142 70% 58%;
+  --color-primary-500: 142 72% 42%;
+  --color-primary-600: 142 72% 30%;
+  --color-primary-700: 142 76% 27%;
+  --color-primary-800: 142 71% 25%;
+  --color-primary-900: 142 74% 20%;
+
+  --color-neutral-50: 220 20% 97%;
+  --color-neutral-100: 220 19% 93%;
+  --color-neutral-200: 220 14% 86%;
+  --color-neutral-300: 220 9% 71%;
+  --color-neutral-400: 220 9% 60%;
+  --color-neutral-500: 220 11% 42%;
+  --color-neutral-600: 215 16% 35%;
+  --color-neutral-700: 219 28% 22%;
+  --color-neutral-800: 220 26% 12%;
+  --color-neutral-900: 220 39% 8%;
+  --color-neutral-950: 220 45% 4%;
+
+  --color-indigo-50: 239 84% 98%;
+  --color-indigo-100: 234 89% 95%;
+  --color-indigo-200: 238 82% 90%;
+  --color-indigo-300: 242 83% 83%;
+  --color-indigo-400: 238 82% 75%;
+  --color-indigo-500: 239 84% 67%;
+  --color-indigo-600: 245 67% 55%;
+  --color-indigo-700: 244 68% 50%;
+  --color-indigo-800: 243 75% 45%;
+  --color-indigo-900: 240 71% 40%;
+
+  --color-blue-50: 217 91% 97%;
+  --color-blue-100: 214 95% 94%;
+  --color-blue-200: 214 100% 87%;
+  --color-blue-300: 213 96% 78%;
+  --color-blue-400: 217 91% 67%;
+  --color-blue-500: 221 83% 53%;
+  --color-blue-600: 221 83% 53%;
+  --color-blue-700: 219 77% 46%;
+  --color-blue-800: 217 79% 40%;
+  --color-blue-900: 216 79% 35%;
+
+  --color-orange-50: 24 100% 97%;
+  --color-orange-100: 24 95% 90%;
+  --color-orange-200: 24 100% 78%;
+  --color-orange-300: 24 95% 68%;
+  --color-orange-400: 24 97% 58%;
+  --color-orange-500: 25 95% 53%;
+  --color-orange-600: 24 95% 53%;
+  --color-orange-700: 20 90% 48%;
+  --color-orange-800: 24 54% 39%;
+  --color-orange-900: 20 80% 35%;
+
+  --color-red-50: 0 100% 97%;
+  --color-red-100: 0 93% 94%;
+  --color-red-200: 0 96% 89%;
+  --color-red-300: 0 93% 82%;
+  --color-red-400: 0 89% 74%;
+  --color-red-500: 0 84% 60%;
+  --color-red-600: 0 72% 51%;
+  --color-red-700: 0 74% 42%;
+  --color-red-800: 0 70% 38%;
+  --color-red-900: 0 70% 35%;
+
+  --color-green-50: 142 76% 96%;
+  --color-green-100: 142 71% 88%;
+  --color-green-200: 142 70% 82%;
+  --color-green-300: 142 68% 73%;
+  --color-green-400: 142 70% 58%;
+  --color-green-500: 142 72% 42%;
+  --color-green-600: 142 72% 30%;
+  --color-green-700: 142 76% 27%;
+  --color-green-800: 142 71% 25%;
+  --color-green-900: 142 74% 20%;
+}
