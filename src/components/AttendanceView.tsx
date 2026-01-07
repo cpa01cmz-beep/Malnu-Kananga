@@ -4,7 +4,7 @@ import { attendanceAPI } from '../services/apiService';
 import { Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
-import Button from './ui/Button';
+import PageHeader from './ui/PageHeader';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 
@@ -105,14 +105,12 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
   if (loading) {
     return (
       <div className="animate-fade-in-up">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-          <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
-              ← Kembali ke Portal
-            </Button>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Rekapitulasi Kehadiran</h2>
-          </div>
-        </div>
+        <PageHeader
+          title="Rekapitulasi Kehadiran"
+          showBackButton={true}
+          onBackButtonClick={onBack}
+          backButtonLabel="Kembali ke Portal"
+        />
         <div className="space-y-6">
           <CardSkeleton />
           <TableSkeleton rows={10} cols={4} />
@@ -124,19 +122,17 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
   if (errorState.hasError) {
     return (
       <div className="animate-fade-in-up">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-          <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
-              ← Kembali ke Portal
-            </Button>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Rekapitulasi Kehadiran</h2>
-          </div>
-        </div>
+        <PageHeader
+          title="Rekapitulasi Kehadiran"
+          showBackButton={true}
+          onBackButtonClick={onBack}
+          backButtonLabel="Kembali ke Portal"
+        />
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <ErrorMessage 
-            title="Error Loading Attendance" 
-            message={errorState.message || 'Unknown error occurred'} 
-            variant="card" 
+          <ErrorMessage
+            title="Error Loading Attendance"
+            message={errorState.message || 'Unknown error occurred'}
+            variant="card"
           />
           <button
             onClick={fetchAttendance}
@@ -158,20 +154,20 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
 
   return (
     <div className="animate-fade-in-up">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-        <div>
-          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
-            ← Kembali ke Portal
-          </Button>
-          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Rekapitulasi Kehadiran</h2>
-          <p className="text-neutral-500 dark:text-neutral-400">Semester Ganjil 2024/2025</p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">Nama Siswa</p>
-          <p className="font-bold text-neutral-900 dark:text-white text-lg">{STUDENT_NAME}</p>
-          <p className="text-xs font-mono text-neutral-400">NIS: {STUDENT_NIS}</p>
-        </div>
-      </div>
+      <PageHeader
+        title="Rekapitulasi Kehadiran"
+        subtitle="Semester Ganjil 2024/2025"
+        showBackButton={true}
+        onBackButtonClick={onBack}
+        backButtonLabel="Kembali ke Portal"
+        actions={
+          <div className="text-right">
+            <p className="text-sm text-neutral-500 dark:text-neutral-400">Nama Siswa</p>
+            <p className="font-bold text-neutral-900 dark:text-white text-lg">{STUDENT_NAME}</p>
+            <p className="text-xs font-mono text-neutral-400">NIS: {STUDENT_NIS}</p>
+          </div>
+        }
+      />
 
       <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-100 dark:border-neutral-700 mb-8 flex items-center gap-6">
         <div
