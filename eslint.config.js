@@ -40,6 +40,8 @@ export default [
         HTMLFormElement: 'readonly',
         HTMLTextAreaElement: 'readonly',
         HTMLInputElement: 'readonly',
+        HTMLLabelElement: 'readonly',
+        HTMLSelectElement: 'readonly',
         HTMLImageElement: 'readonly',
         HTMLElement: 'readonly',
         confirm: 'readonly',
