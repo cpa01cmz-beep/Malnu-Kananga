@@ -320,13 +320,14 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Daftar Aset ({items.length})</h3>
-            <button
+            <Button
               onClick={() => setShowAddForm(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              variant="green-solid"
+              size="sm"
+              icon={<PlusIcon className="w-4 h-4" />}
             >
-              <PlusIcon className="w-4 h-4" />
               Tambah Barang
-            </button>
+            </Button>
           </div>
 
           {showAddForm && (
@@ -433,20 +434,20 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   </select>
                 </div>
                 <div className="md:col-span-2 lg:col-span-3 flex gap-2">
-                  <button
+                  <Button
                     type="submit"
-                    className="flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                    variant="blue-solid"
+                    icon={<PlusIcon className="w-5 h-5" />}
                   >
-                    <PlusIcon className="w-5 h-5" />
                     Simpan Barang
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="secondary"
                     onClick={() => setShowAddForm(false)}
-                    className="px-6 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
                   >
                     Batal
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -558,13 +559,14 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                 </select>
               </div>
               <div className="flex items-end">
-                <button
+                <Button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                  variant="blue-solid"
+                  fullWidth
+                  icon={<PlusIcon className="w-5 h-5" />}
                 >
-                  <PlusIcon className="w-5 h-5" />
                   Tambah Jadwal
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -626,13 +628,15 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
               <p className="text-neutral-500 dark:text-neutral-400 mb-6">
                 Lakukan audit untuk memverifikasi kecocokan data inventaris dengan kondisi aktual.
               </p>
-              <button
+              <Button
                 onClick={startAudit}
-                className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors mx-auto"
+                variant="green-solid"
+                size="lg"
+                icon={<DocumentTextIcon />}
+                className="mx-auto"
               >
-                <DocumentTextIcon />
                 Mulai Audit Baru
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
@@ -653,18 +657,18 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     onClick={completeAudit}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
+                    variant="green-solid"
                   >
                     Selesaikan Audit
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => setAuditMode(false)}
-                    className="px-6 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
+                    variant="secondary"
                   >
                     Batal
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -716,13 +720,14 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
         <div className="space-y-6">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Laporan Inventaris</h3>
-            <button
+            <Button
               onClick={exportReport}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              variant="blue-solid"
+              size="sm"
+              icon={<ArrowDownTrayIcon />}
             >
-              <ArrowDownTrayIcon />
               Export Laporan
-            </button>
+            </Button>
           </div>
 
           {/* Summary Cards */}
@@ -825,7 +830,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
               <img src={showQRCode} alt="QR Code" className="w-full" />
             </div>
             <div className="mt-4 flex gap-2">
-              <button
+              <Button
                 onClick={() => {
                   const link = document.createElement('a');
                   link.download = 'qrcode.png';
@@ -833,16 +838,16 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   link.click();
                   onShowToast('QR Code berhasil diunduh.', 'success');
                 }}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                variant="blue-solid"
               >
                 Unduh
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setShowQRCode(null)}
-                className="flex-1 px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
+                variant="secondary"
               >
                 Tutup
-              </button>
+              </Button>
             </div>
           </div>
         </div>
