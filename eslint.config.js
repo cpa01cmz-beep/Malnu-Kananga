@@ -64,12 +64,21 @@ export default [
     },
     rules: {
       ...typescript.configs.recommended.rules,
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
-],
+      ],
+    },
   },
   {
     files: ['src/services/offlineActionQueueService.ts'],
@@ -91,7 +100,6 @@ export default [
       'no-undef': 'off',
       '@typescript-eslint/no-require-imports': 'off',
     },
-  },
   },
   {
     files: ['scripts/*.cjs', 'worker.js'],

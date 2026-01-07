@@ -2,7 +2,7 @@
 // Shows users when they're offline and how many actions are queued
 
 import React, { useEffect, useState } from 'react';
-import { useOfflineActionQueue } from '../services/offlineActionQueueService';
+import { useOfflineActionQueue, type SyncResult } from '../services/offlineActionQueueService';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
 
@@ -28,7 +28,7 @@ export function OfflineIndicator({
   } = useOfflineActionQueue();
   
   const { isOnline, isSlow } = useNetworkStatus();
-  const [syncResult, setSyncResult] = useState<any>(null);
+  const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
   const [showSyncStatus, setShowSyncStatus] = useState(false);
 
   const pendingCount = getPendingCount();
@@ -66,7 +66,10 @@ export function OfflineIndicator({
       logger.error('Manual sync failed', error);
       setSyncResult({
         success: false,
-        error: error instanceof Error ? error.message : 'Sync failed'
+        actionsProcessed: 0,
+        actionsFailed: 0,
+        conflicts: [],
+        errors: [error instanceof Error ? error.message : 'Sync failed']
       });
     }
   };
@@ -145,7 +148,7 @@ export function OfflineIndicator({
               </div>
             ) : (
               <div className="text-xs text-red-600 dark:text-red-400">
-                {syncResult.error || 'Unknown sync error'}
+                {syncResult.errors?.join(', ') || 'Unknown sync error'}
               </div>
             )}
           </div>

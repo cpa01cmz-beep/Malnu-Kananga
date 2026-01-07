@@ -2,11 +2,12 @@
 // Allows users to choose how to handle conflicts between local and server data
 
 import React, { useState } from 'react';
+import { logger } from '../utils/logger';
 import { useOfflineActionQueue, type OfflineAction, type ConflictResolution } from '../services/offlineActionQueueService';
 
 interface ConflictResolutionModalProps {
   conflict: OfflineAction;
-  serverData: any;
+  serverData: Record<string, unknown>;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -19,7 +20,7 @@ export function ConflictResolutionModal({
 }: ConflictResolutionModalProps) {
   const { resolveConflict } = useOfflineActionQueue();
   const [selectedResolution, setSelectedResolution] = useState<ConflictResolution['resolution']>('keep_local');
-  const [mergedData, setMergedData] = useState<any>(null);
+  const [mergedData, setMergedData] = useState<Record<string, unknown> | null>(null);
   const [isResolving, setIsResolving] = useState(false);
 
   if (!isOpen) return null;
@@ -39,13 +40,13 @@ export function ConflictResolutionModal({
       resolveConflict(resolution);
       onClose();
     } catch (error) {
-      console.error('Failed to resolve conflict:', error);
+      logger.error('Failed to resolve conflict:', error);
     } finally {
       setIsResolving(false);
     }
   };
 
-  const formatData = (data: any, title: string) => {
+  const formatData = (data: Record<string, unknown> | null, title: string) => {
     if (!data) return null;
     
     return (
@@ -58,9 +59,9 @@ export function ConflictResolutionModal({
     );
   };
 
-  const handleMergeDataChange = (key: string, value: any) => {
-    setMergedData((prev: any) => ({
-      ...prev,
+  const handleMergeDataChange = (key: string, value: string) => {
+    setMergedData((prev) => ({
+      ...(prev as Record<string, unknown> | null) || {},
       [key]: value
     }));
   };
@@ -81,16 +82,16 @@ export function ConflictResolutionModal({
             <div className="flex gap-2 items-center">
               <span className="text-xs text-gray-500">Local:</span>
               <span className="text-xs text-gray-700 dark:text-gray-300 flex-1">
-                {JSON.stringify((conflict.data as any)?.[key])}
+                {JSON.stringify((conflict.data as Record<string, unknown>)?.[key] as unknown)}
               </span>
               <span className="text-xs text-gray-500">Server:</span>
               <span className="text-xs text-gray-700 dark:text-gray-300 flex-1">
-                {JSON.stringify((serverData as any)?.[key])}
+                {JSON.stringify(serverData?.[key] as unknown)}
               </span>
             </div>
             <input
               type="text"
-              value={mergedData?.[key] || ''}
+              value={String(mergedData?.[key] || '')}
               onChange={(e) => handleMergeDataChange(key, e.target.value)}
               className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-800"
               placeholder="Enter merged value"
@@ -135,7 +136,7 @@ export function ConflictResolutionModal({
         {/* Data comparison */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {formatData(conflict.data, 'Your Local Changes')}
+            {formatData(conflict.data as Record<string, unknown> | null, 'Your Local Changes')}
             {formatData(serverData, 'Server Data')}
           </div>
         </div>
@@ -189,7 +190,7 @@ export function ConflictResolutionModal({
                   setSelectedResolution(e.target.value as ConflictResolution['resolution']);
                   if (!mergedData) {
                     // Initialize merged data with local changes
-                    setMergedData(conflict.data);
+                    setMergedData(conflict.data as Record<string, unknown>);
                   }
                 }}
                 className="mt-1"

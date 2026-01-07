@@ -65,7 +65,7 @@ export interface SyncResult {
 export interface ConflictResolution {
   actionId: string;
   resolution: 'keep_local' | 'use_server' | 'merge';
-  mergedData?: any;
+  mergedData?: Record<string, unknown>;
 }
 
 // ============================================
@@ -466,8 +466,6 @@ export const offlineActionQueueService = new OfflineActionQueueService();
  */
 export function useOfflineActionQueue() {
   // Use the imported hook
-   
-  // eslint-disable-next-line @typescript-eslint/no-require-imports, no-undef
   const { useNetworkStatus } = require('../utils/networkStatus');
   const networkStatus = useNetworkStatus();
 
@@ -501,7 +499,7 @@ export function createOfflineApiCall<T>(
   method: 'POST' | 'PUT' | 'DELETE' | 'PATCH',
   actionType: ActionType,
   entityType: EntityType,
-  data?: any
+  data?: Record<string, unknown>
 ) {
   return async (): Promise<ApiResponse<T>> => {
     // We can't use hooks here, so we'll check the navigator directly
@@ -513,7 +511,7 @@ export function createOfflineApiCall<T>(
       const actionId = offlineActionQueueService.addAction({
         type: actionType,
         entity: entityType,
-        entityId: data ? String((data as any).id || 'unknown') : 'unknown',
+        entityId: data ? String((data as Record<string, unknown>).id || 'unknown') : 'unknown',
         data,
         endpoint,
         method,
@@ -551,13 +549,13 @@ export function createOfflineApiCall<T>(
     } catch (error) {
       // Auto-queue on network failure
       if (isNetworkError(error) || !isOnline) {
-        const actionId = offlineActionQueueService.addAction({
-          type: actionType,
-          entity: entityType,
-          entityId: data?.id || 'unknown',
-          data,
-          endpoint,
-          method,
+          const actionId = offlineActionQueueService.addAction({
+            type: actionType,
+            entity: entityType,
+            entityId: String(data?.id || 'unknown'),
+            data,
+            endpoint,
+            method,
         });
 
 return {

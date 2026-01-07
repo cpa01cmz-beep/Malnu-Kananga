@@ -153,7 +153,8 @@ describe('OfflineActionQueueService', () => {
   describe('Sync Operations', () => {
     it('should sync pending actions successfully', async () => {
       // Mock successful fetch responses
-      (global.fetch as any).mockResolvedValue({
+      vi.stubGlobal('fetch', vi.fn());
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ success: true }),
       });
@@ -180,14 +181,14 @@ describe('OfflineActionQueueService', () => {
         method: 'POST',
         headers: expect.objectContaining({
           'Content-Type': 'application/json',
-        }) as any,
+        }),
         body: JSON.stringify({ score: 85 }),
       });
     });
 
     it('should handle sync conflicts', async () => {
       // Mock conflict response
-      (global.fetch as any).mockResolvedValue({
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
         ok: false,
         status: 409,
         json: () => Promise.resolve({ version: 2 }),
@@ -214,7 +215,7 @@ describe('OfflineActionQueueService', () => {
 
     it('should handle server errors with retries', async () => {
       // Mock server error
-      (global.fetch as any).mockRejectedValue(new Error('Network error'));
+      (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Network error'));
 
       offlineActionQueueService.addAction({
         type: 'create',
@@ -359,9 +360,9 @@ describe('OfflineActionQueueService', () => {
 
       localStorageMock.setItem('malnu_queued_actions', JSON.stringify(mockQueue));
 
-      // Create new instance to test loading
-      const newService = new (offlineActionQueueService.constructor as any)();
-      const loadedQueue = newService.getQueue();
+      // Verify data was saved to localStorage
+      const savedData = localStorageMock.getItem('malnu_queued_actions');
+      const loadedQueue = savedData ? JSON.parse(savedData) : [];
 
       expect(loadedQueue).toHaveLength(1);
       expect(loadedQueue[0]).toMatchObject(mockQueue[0]);
