@@ -427,7 +427,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               timestamp: new Date().toISOString(),
               read: false,
               priority: 'normal',
-              targetUsers: [save.studentId],
+              targetUsers: save.studentId ? [save.studentId] : [],
               data: {
                 action: 'view_grades',
                 subjectId: subjectId,

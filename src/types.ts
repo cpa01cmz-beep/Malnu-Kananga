@@ -138,6 +138,7 @@ export interface User {
 
 export interface PPDBRegistrant {
   id: string;
+  userId?: string;
   fullName: string;
   nisn: string;
   originSchool: string;

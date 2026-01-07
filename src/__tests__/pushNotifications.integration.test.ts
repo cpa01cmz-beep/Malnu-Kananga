@@ -262,6 +262,7 @@ describe('Push Notification Integration Tests', () => {
         library: true,
         system: true,
         roleBasedFiltering: false,
+        batchNotifications: false,
         quietHours: { enabled: false, start: '22:00', end: '07:00' },
       };
       
