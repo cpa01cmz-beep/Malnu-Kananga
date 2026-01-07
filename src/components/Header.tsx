@@ -9,6 +9,7 @@ import { MoonIcon } from './icons/MoonIcon';
 import { UserRole, UserExtraRole } from '../types';
 import NotificationCenter from './NotificationCenter';
 import Button from './ui/Button';
+import { ThemeManager } from '../services/themeManager';
 
 const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95";
 
@@ -32,7 +33,6 @@ interface HeaderProps {
     onLogout: () => void;
     isPublicView: boolean;
     onTogglePublicView: () => void;
-    theme: 'light' | 'dark';
     onToggleTheme: () => void;
     onShowToast?: (msg: string, type: 'success' | 'error' | 'info') => void;
 }
@@ -47,12 +47,26 @@ const Header: React.FC<HeaderProps> = ({
     onLogout,
     isPublicView,
     onTogglePublicView,
-    theme,
     onToggleTheme,
     onShowToast
 }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [currentTheme, setCurrentTheme] = useState<import('../config/themes').Theme | null>(null);
+
+    useEffect(() => {
+        const themeManager = ThemeManager.getInstance();
+        const handleThemeChange = (theme: import('../config/themes').Theme) => {
+            setCurrentTheme(theme);
+        };
+
+        setCurrentTheme(themeManager.getCurrentTheme());
+        themeManager.addListener(handleThemeChange);
+
+        return () => {
+            themeManager.removeListener(handleThemeChange);
+        };
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -116,9 +130,10 @@ const Header: React.FC<HeaderProps> = ({
                         <button
                             onClick={onToggleTheme}
                             className="p-2.5 rounded-lg text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800 hover:scale-110 active:scale-95"
-                            aria-label="Ganti Tema"
+                            aria-label="Pilih Tema"
+                        title={currentTheme ? `${currentTheme.displayName} - Klik untuk Ubah Tema` : 'Pilih Tema'}
                         >
-                            {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+                            {currentTheme?.isDark ? <SunIcon /> : <MoonIcon />}
                         </button>
 
                            {isLoggedIn ? (
@@ -163,21 +178,32 @@ const Header: React.FC<HeaderProps> = ({
                                     </Button>
                               </div>
                           )}
-                              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2.5 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95" aria-label="Buka menu">
-                                 {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
-                             </button>
+                               <button
+                                   onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                   className="md:hidden p-2.5 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.05] active:scale-95"
+                                   aria-label={isMenuOpen ? "Tutup menu" : "Buka menu"}
+                                   aria-expanded={isMenuOpen}
+                                   aria-controls="mobile-menu"
+                               >
+                                  {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
+                              </button>
                     </div>
                 </div>
             </div>
 
             {isMenuOpen && (
-                <div className="md:hidden bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700">
+                <div
+                    id="mobile-menu"
+                    className="md:hidden bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700"
+                    role="navigation"
+                    aria-label="Menu navigasi utama"
+                >
                     <nav className="flex flex-col gap-2.5 sm:gap-3 font-medium text-center">
                         <NavLinks />
                            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-2">
                                {isLoggedIn ? (
                                    <>
-                                         <button onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }} className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 w-full px-4 py-3 rounded-lg font-semibold text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-neutral-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95">
+                                          <button onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }} className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 w-full px-4 py-3 rounded-lg font-semibold text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-neutral-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95">
                                                {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                           </button>
                                           <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 w-full px-4 py-3 rounded-lg font-semibold text-sm hover:bg-red-200 dark:hover:bg-red-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95">Logout</button>
