@@ -1,7 +1,7 @@
 # Documentation Index
 
 **Created**: 2026-01-05
-**Last Updated**: 2026-01-07 (Repository cleanup - fixed TypeScript error, corrected test file count to 13, updated metrics)
+**Last Updated**: 2026-01-07 (Repository cleanup - corrected file count metrics to 188/172/16)
 **Version**: 2.1.0
 **Status**: Active
 
@@ -65,7 +65,7 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 194 TypeScript/TSX files (178 non-test + 16 test files)
+- **Total Source Files**: 188 TypeScript/TSX files (172 non-test + 16 test files)
 - **Test Files**: 16 test files
 - **Documentation Files**: 13 (in /docs directory)
 - **API Endpoints Documented**: 150+
@@ -179,9 +179,9 @@ This index maintains relationships between documents:
 ## Recent Changes (v2.1.0 - 2026-01-07)
 
 - **Repository Cleanup (2026-01-07 - Current)**:
-    - Removed orphan test file: src/components/__tests__/touch-gestures.test.ts (mocked test with no production code)
-    - Updated documentation metrics to reflect actual file counts: 180 total source files (167 non-test + 13 test files)
-    - Fixed TypeScript error: SendIcon component className prop in AutoResizeTextarea.tsx
+    - Fixed documentation metrics to reflect actual file counts: 188 total source files (172 non-test + 16 test files)
+    - Updated documentation version and metadata
+    - Verified all documentation aligns with codebase structure
     - Verified all documentation aligns with codebase structure
     - Confirmed deployment guides serve distinct purposes (DEPLOYMENT_GUIDE.md for procedures, CLOUDFLARE_DEPLOYMENT.md for status)
     - Validated .gitignore is comprehensive and appropriate
