@@ -7,6 +7,7 @@ import { CloseIcon } from './icons/CloseIcon';
 import { User, UserRole, UserExtraRole } from '../types';
 import { api } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 interface UserManagementProps {
   onBack: () => void;
@@ -23,6 +24,7 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<Partial<User>>({});
   const [isEditing, setIsEditing] = useState(false);
+  const dialogRef = useFocusTrap({ isOpen: isModalOpen, onClose: () => setIsModalOpen(false) });
 
   useEffect(() => {
     fetchUsers();
@@ -187,8 +189,8 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                                         ) : <span className="text-neutral-400">-</span>}
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <button onClick={() => handleEditUser(user)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500/50"><PencilIcon /></button>
-                                        <button onClick={() => handleDeleteUser(user.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-500/50"><TrashIcon /></button>
+                                        <button onClick={() => handleEditUser(user)} aria-label={`Edit pengguna ${user.name}`} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500/50"><PencilIcon /></button>
+                                        <button onClick={() => handleDeleteUser(user.id)} aria-label={`Hapus pengguna ${user.name}`} className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-500/50"><TrashIcon /></button>
                                     </td>
                                 </tr>
                             ))}
@@ -199,11 +201,11 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
         </div>
 
         {isModalOpen && (
-            <div className="fixed inset-0 bg-neutral-900/75 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setIsModalOpen(false)}>
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-float w-full max-w-md animate-scale-in" onClick={e => e.stopPropagation()}>
+            <div className="fixed inset-0 bg-neutral-900/75 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setIsModalOpen(false)} role="presentation">
+                <div ref={dialogRef} className="bg-white dark:bg-neutral-800 rounded-2xl shadow-float w-full max-w-md animate-scale-in" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="modal-title">
                     <div className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700">
-                        <h3 className="text-lg font-bold text-neutral-900 dark:text-white">{isEditing ? 'Edit User' : 'Tambah User'}</h3>
-                        <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-lg text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500/50"><CloseIcon /></button>
+                        <h3 id="modal-title" className="text-lg font-bold text-neutral-900 dark:text-white">{isEditing ? 'Edit User' : 'Tambah User'}</h3>
+                        <button onClick={() => setIsModalOpen(false)} aria-label="Tutup modal" className="p-2 rounded-lg text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500/50"><CloseIcon /></button>
                     </div>
                     <form onSubmit={handleSaveUser} className="p-6 space-y-4">
                         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
@@ -215,38 +217,42 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                             <label htmlFor="user-email" className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Email</label>
                             <input id="user-email" name="email" required type="email" value={currentUser.email} onChange={e => setCurrentUser({...currentUser, email: e.target.value})} className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium placeholder-neutral-400 dark:placeholder-neutral-500" autoComplete="email" />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Role Utama</label>
-                                <select
-                                    value={currentUser.role}
-                                    onChange={e => {
-                                        const r = e.target.value as UserRole;
-                                        setCurrentUser({...currentUser, role: r, extraRole: null});
-                                    }}
-                                    className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium"
-                                >
-                                    <option value="student">Siswa</option>
-                                    <option value="teacher">Guru</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Tugas Tambahan</label>
-                                <select
-                                    value={currentUser.extraRole || ''}
-                                    onChange={e => setCurrentUser({...currentUser, extraRole: (e.target.value as UserExtraRole) || undefined})}
-                                    className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium"
-                                    disabled={currentUser.role === 'admin'}
-                                >
-                                    <option value="">- Tidak Ada -</option>
-                                    {currentUser.role === 'teacher' && <option value="staff">Staff TU/Sarpras</option>}
-                                    {currentUser.role === 'teacher' && <option value="wakasek">Wakasek</option>}
-                                    {currentUser.role === 'teacher' && <option value="kepsek">Kepsek</option>}
-                                    {currentUser.role === 'student' && <option value="osis">Pengurus OSIS</option>}
-                                </select>
-                            </div>
-                        </div>
+                         <div className="grid grid-cols-2 gap-4">
+                             <div>
+                                 <label htmlFor="user-role" className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Role Utama</label>
+                                 <select
+                                     id="user-role"
+                                     name="role"
+                                     value={currentUser.role}
+                                     onChange={e => {
+                                         const r = e.target.value as UserRole;
+                                         setCurrentUser({...currentUser, role: r, extraRole: null});
+                                     }}
+                                     className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium"
+                                 >
+                                     <option value="student">Siswa</option>
+                                     <option value="teacher">Guru</option>
+                                     <option value="admin">Admin</option>
+                                 </select>
+                             </div>
+                             <div>
+                                 <label htmlFor="user-extrarole" className="block text-sm font-medium mb-1.5 text-neutral-700 dark:text-neutral-300">Tugas Tambahan</label>
+                                 <select
+                                     id="user-extrarole"
+                                     name="extraRole"
+                                     value={currentUser.extraRole || ''}
+                                     onChange={e => setCurrentUser({...currentUser, extraRole: (e.target.value as UserExtraRole) || undefined})}
+                                     className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200 font-medium"
+                                     disabled={currentUser.role === 'admin'}
+                                 >
+                                     <option value="">- Tidak Ada -</option>
+                                     {currentUser.role === 'teacher' && <option value="staff">Staff TU/Sarpras</option>}
+                                     {currentUser.role === 'teacher' && <option value="wakasek">Wakasek</option>}
+                                     {currentUser.role === 'teacher' && <option value="kepsek">Kepsek</option>}
+                                     {currentUser.role === 'student' && <option value="osis">Pengurus OSIS</option>}
+                                 </select>
+                             </div>
+                         </div>
                         <button type="submit" disabled={isSaving} className="w-full py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 font-semibold transition-all duration-200 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 disabled:opacity-70 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800">
                             {isSaving ? 'Menyimpan...' : 'Simpan'}
                         </button>
