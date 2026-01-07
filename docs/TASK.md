@@ -6,6 +6,19 @@
 
 ## Completed UI/UX Tasks
 
+### P2: Accessibility Enhancement - VoiceSettings Component Form (High) - ✅ COMPLETED 2026-01-07
+- [x] Added `id` and `name` attributes to voice language select input
+- [x] Added `id` attribute to continuous mode toggle button
+- [x] Added `id` and `name` attributes to voice rate input (already had)
+- [x] Added `id` and `name` attributes to voice pitch input (already had)
+- [x] Added `id` and `name` attributes to volume input
+- [x] Added `id` and `name` attributes to voice select dropdown
+- [x] Added `id` attribute and `aria-labelledby` to auto-read AI toggle
+- [x] Added `htmlFor` attributes to all labels for proper association with form controls
+- [x] TypeScript compilation: ✅ 0 errors
+- [x] Linting: ✅ Passes (8 warnings, below threshold of 20)
+- **Impact**: Improved WCAG 2.1 AA compliance for VoiceSettings component form, ensuring proper label-input association for screen reader users and keyboard navigation
+
 ### P4: Design System Alignment - Theme System Integration (High) - ✅ COMPLETED 2026-01-07
 - [x] Updated Tailwind config to use HSL-based CSS custom properties for all color scales
 - [x] Enhanced ThemeManager to generate dynamic color scales from hex colors

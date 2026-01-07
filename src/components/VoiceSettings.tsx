@@ -264,8 +264,10 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Input Suara</h3>
 
               <div className="space-y-2">
-                <label className="block text-sm text-gray-600 dark:text-gray-400">Bahasa</label>
+                <label htmlFor="voice-language" className="block text-sm text-gray-600 dark:text-gray-400">Bahasa</label>
                 <select
+                  id="voice-language"
+                  name="language"
                   value={language}
                   onChange={(e) => handleLanguageChange(e.target.value as VoiceLanguage)}
                   className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -276,8 +278,9 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="text-sm text-gray-600 dark:text-gray-400">Mode berkelanjutan</label>
+                <label htmlFor="continuous-mode-toggle" className="text-sm text-gray-600 dark:text-gray-400">Mode berkelanjutan</label>
                 <button
+                  id="continuous-mode-toggle"
                   onClick={() => {
                     const newValue = !continuous;
                     setContinuous(newValue);
@@ -336,8 +339,10 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm text-gray-600 dark:text-gray-400">Volume ({Math.round(volume * 100)}%)</label>
+                <label htmlFor="voice-volume" className="block text-sm text-gray-600 dark:text-gray-400">Volume ({Math.round(volume * 100)}%)</label>
                 <input
+                  id="voice-volume"
+                  name="volume"
                   type="range"
                   min="0"
                   max="1"
@@ -350,8 +355,10 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm text-gray-600 dark:text-gray-400">Suara</label>
+                <label htmlFor="voice-select" className="block text-sm text-gray-600 dark:text-gray-400">Suara</label>
                 <select
+                  id="voice-select"
+                  name="voice"
                   value={selectedVoice?.name || ''}
                   onChange={(e) => {
                     const voice = synthesis.voices.find((v) => v.name === e.target.value);
@@ -385,12 +392,14 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Baca Pesan AI</h3>
+                <h3 id="auto-read-ai-label" className="text-sm font-medium text-gray-700 dark:text-gray-300">Baca Pesan AI</h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   Secara otomatis membaca respon AI
                 </p>
               </div>
               <button
+                id="auto-read-ai"
+                aria-labelledby="auto-read-ai-label"
                 onClick={() => setAutoReadAI(!autoReadAI)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                   autoReadAI ? 'bg-green-600' : 'bg-gray-300 dark:bg-gray-600'
