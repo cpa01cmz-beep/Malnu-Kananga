@@ -221,7 +221,7 @@ setTranscriptBuffer('');
         <button
           onClick={() => setShowPermissionHandler(true)}
           className={`
-            p-3 mb-1 rounded-full transition-all duration-300 shadow-sm flex-shrink-0
+            p-3 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0
             ${getButtonStyle()}
             ${className}
           `}
@@ -255,12 +255,12 @@ setTranscriptBuffer('');
     <button
       onClick={handleClick}
       disabled={!isSupported || disabled}
-      className={`
-        p-3 mb-1 rounded-full transition-all duration-300 shadow-sm flex-shrink-0
-        ${getButtonStyle()}
-        ${pulseAnimation ? 'animate-pulse scale-110' : 'hover:scale-[1.02]'}
-        ${className}
-      `}
+       className={`
+         p-3 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0
+         ${getButtonStyle()}
+         ${pulseAnimation ? 'animate-pulse scale-110' : 'hover:scale-[1.02]'}
+         ${className}
+       `}
       aria-label={getAriaLabel()}
       aria-pressed={isListening}
       title={getTooltipText()}

@@ -1,7 +1,7 @@
 # Documentation Index
 
 **Created**: 2026-01-05
-**Last Updated**: 2026-01-07 (Removed duplicate content)
+**Last Updated**: 2026-01-07 (Repository cleanup - removed temporary files, corrected metrics)
 **Version**: 2.1.0
 **Status**: Active
 
@@ -29,6 +29,7 @@ This index provides a comprehensive overview of all documentation available for 
 
 ### 🚀 Deployment & Infrastructure
 - **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Complete deployment procedures (Cloudflare Workers, D1, R2)
+- **[CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md)** - Cloudflare Workers deployment status and guide
 
 ### 🎤 Voice & Accessibility
 - **[Voice Interaction Architecture](./VOICE_INTERACTION_ARCHITECTURE.md)** - Voice system design and WCAG compliance
@@ -59,9 +60,9 @@ This index provides a comprehensive overview of all documentation available for 
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 174 TypeScript/TSX/JS/JSX files (164 in src/, 10 test files)
+- **Total Source Files**: 164 TypeScript/TSX/JS/JSX files in src/ (including 10 test files)
 - **Test Files**: 10 test files
-- **Documentation Files**: 11 (in /docs directory)
+- **Documentation Files**: 13 (in /docs directory)
 - **API Endpoints Documented**: 30+
 - **Code Examples**: 15+
 - **Troubleshooting Scenarios**: 20+
@@ -173,10 +174,12 @@ This index maintains relationships between documents:
 ## Recent Changes (v2.1.0 - 2026-01-07)
 
 - **Repository Cleanup (2026-01-07)**:
+  - Removed STALE_BRANCHES_REPORT.md (temporary analysis report)
+  - Removed stale_branches_final.txt (generated list, no references)
+  - Corrected file count metrics to 164 total files in src/ (including 10 test files)
+- **Previous Cleanup (2026-01-07 - earlier)**:
   - Removed historical REFACTOR_SUMMARY.md (no references, outdated)
   - Removed outdated scripts/deployment/deploy-worker.sh (hardcoded URLs, replaced by DEPLOYMENT_GUIDE.md)
-- **Updated Metrics**: Corrected file counts to 174 total TypeScript/TSX/JS/JSX files (164 in src/, 10 test files)
-- **Updated Documentation Count**: Reduced to 11 files in /docs/ directory (removed redundant docs)
 - **Previous Changes (2026-01-06)**:
   - Corrected all documentation versions to match package.json (2.1.0)
   - Added test file count documentation (10 test files)
