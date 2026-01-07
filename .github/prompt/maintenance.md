@@ -171,13 +171,40 @@ THEN:
 - Replace file entirely
 - Ensure it reflects the cleaned repository state
 
-PHASE 7 — CLEANUP EXECUTION
+PHASE 7 — VULNERABILITY & DEPRECATION REMEDIATION
+1. Scan:
+   - Dependencies
+   - Tooling
+   - Config
+   - Code-level deprecations
+2. Classify findings:
+   AUTO-FIX ALLOWED IF:
+   - Non-breaking
+   - Patch/minor only
+   - No runtime behavior change
+   - No schema / auth / permission impact
+   AUTO-FIX FORBIDDEN IF:
+   - Major upgrade
+   - Runtime behavior ambiguity
+   - Security-sensitive paths
+   - Touches:
+     - authService.ts
+     - apiService.ts
+     - permissionService.ts
+     - Cloudflare Worker bindings, env, wrangler config
+     - AI SDK behavior (Gemini, speech, OCR)
+3. Execution rules:
+   - Apply fixes ONLY for allowed class
+   - Forbidden fixes → report only
+   - Every fix MUST be justified in PR
+
+PHASE 8 — CLEANUP EXECUTION
 - Delete approved files/folders
 - Merge documents
 - Update documentation
 - Adjust structure ONLY when justified
 
-PHASE 8 — FINISH
+PHASE 9 — FINISH
 - Pull from default branch to avoid merge conflict
 - Commit 
 - Push
