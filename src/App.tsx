@@ -6,6 +6,7 @@ import LoginModal from './components/LoginModal';
 import ChatWindow from './components/ChatWindow';
 import Toast, { ToastType } from './components/Toast';
 import ThemeSelector from './components/ThemeSelector';
+import SkipLink from './components/ui/SkipLink';
 import { logger } from './utils/logger';
 import { ThemeManager } from './services/themeManager';
 
@@ -241,6 +242,7 @@ const App: React.FC = () => {
   return (
     <NotificationProvider>
       <div className="bg-gradient-to-br from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-950 w-full min-h-screen font-sans text-neutral-800 dark:text-neutral-200 transition-colors duration-300 antialiased">
+      <SkipLink />
       <Header
         onLoginClick={() => setIsLoginOpen(true)}
         onChatClick={() => setIsChatOpen(true)}
@@ -254,11 +256,13 @@ const App: React.FC = () => {
         onToggleTheme={toggleTheme}
         onShowToast={showToast}
       />
-      
+
       {isLoggedIn && !isPublicView ? (
-        renderDashboard()
+        <main id="main-content" tabIndex={-1}>
+          {renderDashboard()}
+        </main>
       ) : (
-        <main>
+        <main id="main-content">
           <HeroSection />
           <RelatedLinksSection />
           <ProfileSection />
