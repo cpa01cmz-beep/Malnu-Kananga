@@ -9,6 +9,7 @@ import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
 import { STORAGE_KEYS } from '../constants';
 import { ocrService } from '../services/ocrService';
+import Button from './ui/Button';
 
 interface ELibraryProps {
   onBack: () => void;
@@ -395,12 +396,13 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
           <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
-          <button
+          <Button
             onClick={fetchMaterials}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            variant="danger"
+            size="sm"
           >
             Coba Lagi
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -604,43 +606,35 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             onChange={(e) => setSearch(e.target.value)}
             className="w-full md:w-48 px-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
-          <button
+          <Button
             onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-            className={`p-2 rounded-lg border transition-colors ${
-              showAdvancedSearch 
-                ? 'bg-green-100 border-green-300 text-green-700 dark:bg-green-900/20 dark:border-green-600 dark:text-green-300'
-                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
-            }`}
-            title="Pencarian lanjutan"
+            variant={showAdvancedSearch ? 'success' : 'secondary'}
+            size="md"
+            className="p-2"
+            aria-label="Pencarian lanjutan"
           >
             <FunnelIcon className="w-5 h-5" />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
-            className={`p-2 rounded-lg border transition-colors ${
-              showOnlyFavorites 
-                ? 'bg-yellow-100 border-yellow-300 text-yellow-700 dark:bg-yellow-900/20 dark:border-yellow-600 dark:text-yellow-300'
-                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
-            }`}
-            title="Tampilkan hanya favorit"
+            variant={showOnlyFavorites ? 'info' : 'secondary'}
+            size="md"
+            className="p-2"
+            aria-label="Tampilkan hanya favorit"
           >
             <StarIcon className="w-5 h-5" />
-          </button>
-          
-          {/* OCR Controls */}
-          <button
+          </Button>
+          <Button
             onClick={() => setShowOCROptions(!showOCROptions)}
-            className={`p-2 rounded-lg border transition-colors ${
-              showOCROptions || ocrEnabled 
-                ? 'bg-purple-100 border-purple-300 text-purple-700 dark:bg-purple-900/20 dark:border-purple-600 dark:text-purple-300'
-                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
-            }`}
-            title="Pengaturan OCR"
+            variant={showOCROptions || ocrEnabled ? 'primary' : 'secondary'}
+            size="md"
+            className="p-2"
+            aria-label="Pengaturan OCR"
           >
             <div className="w-5 h-5 flex items-center justify-center text-gray-700 dark:text-gray-300">
               <DocumentTextIcon />
             </div>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -721,17 +715,18 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
           {/* Clear Filters */}
           <div className="flex justify-end mt-4">
-            <button
+            <Button
               onClick={() => {
                 setFilterTeacher('');
                 setFilterDateRange('all');
                 setFilterRating(0);
                 setSortBy('date');
               }}
-              className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+              variant="ghost"
+              size="sm"
             >
               Hapus Filter
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -769,38 +764,46 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Kontrol</h4>
               <div className="space-y-2">
                 {ocrEnabled ? (
-                  <button
+                  <Button
                     onClick={disableOCR}
-                    className="w-full px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
+                    variant="danger"
+                    size="sm"
+                    fullWidth
                   >
                     Nonaktifkan OCR
-                  </button>
+                  </Button>
                 ) : (
-                  <button
+                  <Button
                     onClick={enableOCR}
-                    className="w-full px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
+                    variant="success"
+                    size="sm"
+                    fullWidth
                   >
                     Aktifkan OCR
-                  </button>
+                  </Button>
                 )}
                 
                 {ocrEnabled && (
                   <>
-                    <button
+                    <Button
                       onClick={() => batchProcessOCR(materials.filter(m => m.ocrStatus !== 'completed').map(m => m.id))}
                       disabled={!ocrEnabled || materials.filter(m => m.ocrStatus !== 'completed').length === 0}
-                      className="w-full px-3 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                      variant="primary"
+                      size="sm"
+                      fullWidth
                     >
                       Proses Semua ({materials.filter(m => m.ocrStatus !== 'completed').length})
-                    </button>
+                    </Button>
                     
-                    <button
+                    <Button
                       onClick={processSelectedOCR}
                       disabled={selectedForOCR.size === 0}
-                      className="w-full px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                      variant="info"
+                      size="sm"
+                      fullWidth
                     >
                       Proses Dipilih ({selectedForOCR.size})
-                    </button>
+                    </Button>
                   </>
                 )}
               </div>
@@ -843,17 +846,15 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="flex overflow-x-auto pb-2 gap-2 scrollbar-hide">
           {availableSubjects.map((subject) => (
-            <button
+            <Button
               key={subject}
               onClick={() => setFilterSubject(subject)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                filterSubject === subject
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
+              variant={filterSubject === subject ? 'primary' : 'ghost'}
+              size="sm"
+              className={`whitespace-nowrap ${filterSubject === subject ? '' : 'text-gray-600 dark:text-gray-300'}`}
             >
               {getSubjectWithCount(subject)}
-            </button>
+            </Button>
           ))}
         </div>
         
@@ -903,31 +904,25 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                   <DocumentTextIcon />
                 </div>
                 <div className="flex gap-1">
-                  {/* Bookmark Button */}
-                  <button
+                  <Button
                     onClick={() => toggleBookmark(item.id)}
-                    className={`p-1.5 rounded-lg transition-colors ${
-                      bookmarks.some(b => b.materialId === item.id)
-                        ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300'
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-500 dark:hover:bg-gray-600'
-                    }`}
-                    title="Bookmark"
+                    variant={bookmarks.some(b => b.materialId === item.id) ? 'info' : 'ghost'}
+                    size="sm"
+                    className="p-1.5"
+                    aria-label="Bookmark"
                   >
                     <BookmarkIcon className="w-4 h-4" />
-                  </button>
+                  </Button>
                   
-                  {/* Favorite Button */}
-                  <button
+                  <Button
                     onClick={() => toggleFavorite(item.id)}
-                    className={`p-1.5 rounded-lg transition-colors ${
-                      favorites.has(item.id)
-                        ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-300'
-                        : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-500 dark:hover:bg-gray-600'
-                    }`}
-                    title="Favorit"
+                    variant={favorites.has(item.id) ? 'info' : 'ghost'}
+                    size="sm"
+                    className="p-1.5"
+                    aria-label="Favorit"
                   >
                     <StarIcon className="w-4 h-4" />
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -1072,37 +1067,37 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
               )}
 
               <div className="flex gap-2">
-                <button
+                <Button
                   onClick={() => handleDownload(item)}
-                  className="flex-1 flex items-center justify-center gap-2 py-2 bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-colors font-medium text-sm"
+                  variant="primary"
+                  size="sm"
+                  className="flex-1"
                 >
                   <ArrowDownTrayIcon className="w-4 h-4" />
                   Download
-                </button>
+                </Button>
                 
-                {/* Rating Button */}
-                <button
+                <Button
                   onClick={() => openRatingModal(item)}
-                  className="p-2 rounded-lg bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-500 dark:hover:bg-gray-600 transition-colors"
-                  title="Beri rating dan review"
+                  variant="ghost"
+                  size="sm"
+                  className="p-2"
+                  aria-label="Beri rating dan review"
                 >
                   <StarIcon className="w-4 h-4" />
-                </button>
+                </Button>
                 
-                {/* Offline Download Button */}
-                <button
+                <Button
                   onClick={() => toggleOfflineDownload(item.id, item.fileUrl)}
-                  className={`p-2 rounded-lg transition-colors ${
-                    offlineDownloads.has(item.id)
-                      ? 'bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-300'
-                      : 'bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-500 dark:hover:bg-gray-600'
-                  }`}
-                  title={offlineDownloads.has(item.id) ? 'Tersedia offline' : 'Unduh untuk akses offline'}
+                  variant={offlineDownloads.has(item.id) ? 'success' : 'ghost'}
+                  size="sm"
+                  className="p-2"
+                  aria-label={offlineDownloads.has(item.id) ? 'Tersedia offline' : 'Unduh untuk akses offline'}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V2" />
                   </svg>
-                </button>
+                </Button>
               </div>
             </div>
           ))
@@ -1166,19 +1161,21 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             </div>
 
             <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
-              <button
+              <Button
                 onClick={() => setShowRatingModal(false)}
-                className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                variant="secondary"
+                size="sm"
               >
                 Batal
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={submitRating}
                 disabled={userRating === 0}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="success"
+                size="sm"
               >
                 Kirim Review
-              </button>
+              </Button>
             </div>
           </div>
         </div>

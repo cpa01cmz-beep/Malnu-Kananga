@@ -7,6 +7,7 @@ import { BellIcon } from './icons/BellIcon';
 import { BellSlashIcon } from './icons/BellSlashIcon';
 import { CheckCircleIcon, MagnifyingGlassIcon, FunnelIcon } from './icons/NotificationIcons';
 import { TrashIcon } from './icons/TrashIcon';
+import Button from './ui/Button';
 
 interface NotificationCenterProps {
   userRole: UserRole;
@@ -252,21 +253,24 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 </div>
 
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     onClick={handleMarkAllAsRead}
                     disabled={unreadCount === 0}
-                    className="flex-1 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    variant="info"
+                    size="sm"
+                    className="flex-1"
                   >
                     <CheckCircleIcon className="w-4 h-4" />
                     Tandai Semua Dibaca
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={handleSendTestNotification}
                     disabled={!permissionGranted}
-                    className="px-3 py-2 text-sm text-neutral-600 hover:bg-neutral-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    variant="secondary"
+                    size="sm"
                   >
                     Tes
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -279,13 +283,14 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   ) : (
                     <>
                       <p className="mb-4">Belum ada notifikasi</p>
-                      <button
+                      <Button
                         onClick={handleSendTestNotification}
                         disabled={!permissionGranted}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        variant="primary"
+                        size="sm"
                       >
                         Kirim Notifikasi Tes
-                      </button>
+                      </Button>
                     </>
                   )}
                 </div>
@@ -339,14 +344,16 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
             </div>
 
             <div className="sticky bottom-0 bg-white border-t border-neutral-200 p-4">
-              <button
+              <Button
                 onClick={handleClearHistory}
                 disabled={history.length === 0}
-                className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                variant="danger"
+                size="sm"
+                fullWidth
               >
                 <TrashIcon className="w-4 h-4" />
                 Hapus Semua Notifikasi
-              </button>
+              </Button>
             </div>
           </div>
         </>
