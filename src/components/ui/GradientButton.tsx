@@ -46,7 +46,7 @@ const GradientButton: React.FC<GradientButtonProps> = ({
       <a
         href={href}
         className={classes}
-        {...props as any}
+        {...(props as Record<string, unknown>)}
       >
         {children}
       </a>
