@@ -18,6 +18,7 @@ import {
 } from '../utils/teacherValidation';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { createToastHandler } from '../utils/teacherErrorHandler';
+import LoadingSpinner from './ui/LoadingSpinner';
 import Button from './ui/Button';
 import AccessDenied from './AccessDenied';
 import { User, UserRole, UserExtraRole } from '../types';
@@ -582,7 +583,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 {/* Auto-save indicator */}
                 {isAutoSaving && (
                     <div className="flex items-center gap-2 text-sm text-neutral-500">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                        <LoadingSpinner size="sm" color="secondary" />
                         Auto-saving...
                     </div>
                 )}
@@ -720,8 +721,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         {/* Loading State */}
         {loading && (
             <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-                <span className="ml-3 text-neutral-600 dark:text-neutral-400">Memuat data siswa...</span>
+                <LoadingSpinner size="lg" text="Memuat data siswa..." color="success" />
             </div>
         )}
 
