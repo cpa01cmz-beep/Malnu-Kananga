@@ -17,7 +17,7 @@ import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import Button from './ui/Button';
-import LoadingSpinner from './ui/LoadingSpinner';
+import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
 
 interface GradeItem {
   subject: string;
@@ -330,8 +330,9 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Progress Akademik Siswa</h2>
           </div>
         </div>
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Memuat data akademik..." color="success" />
+        <div className="space-y-6">
+          <CardSkeleton />
+          <TableSkeleton rows={8} cols={6} />
         </div>
       </div>
     );

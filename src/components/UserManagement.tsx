@@ -11,7 +11,7 @@ import { permissionService } from '../services/permissionService';
 import { pushNotificationService } from '../services/pushNotificationService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useFocusTrap } from '../hooks/useFocusTrap';
-import LoadingSpinner from './ui/LoadingSpinner';
+import { TableSkeleton } from './ui/Skeleton';
 import PermissionGuard from './PermissionGuard';
 
 interface UserManagementProps {
@@ -214,7 +214,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
         <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
             <div className="overflow-x-auto">
                 {isLoading ? (
-                    <LoadingSpinner size="md" text="Memuat data pengguna..." className="py-12" />
+                    <TableSkeleton rows={8} cols={4} />
                 ) : (
                     <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
                         <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">

@@ -21,7 +21,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { STORAGE_KEYS } from '../constants';
 import { getGradientClass, DARK_GRADIENT_CLASSES } from '../config/gradients';
-import LoadingSpinner from './ui/LoadingSpinner';
+import { CardSkeleton, TableSkeleton } from './ui/Skeleton';
 
 interface ProgressAnalyticsProps {
   onBack: () => void;
@@ -353,8 +353,12 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Analisis Progres Akademik</h2>
           </div>
         </div>
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Memuat analisis progres..." color="success" />
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
+          <TableSkeleton rows={8} cols={4} />
         </div>
       </div>
     );

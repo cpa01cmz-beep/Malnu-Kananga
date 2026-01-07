@@ -1710,7 +1710,7 @@ VITE_LOG_LEVEL=DEBUG
 
 ## Changelog
 
-### v3.0.0 (2026-01-07)
+### v2.1.0 (2026-01-07)
 **Major API Documentation Expansion - Added 23 new API objects**
 
 #### New API Sections Added:

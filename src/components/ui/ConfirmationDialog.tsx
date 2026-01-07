@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFocusTrap } from '../../hooks/useFocusTrap';
+import Modal from './Modal';
 
 export interface ConfirmationDialogProps {
   isOpen: boolean;
@@ -24,8 +24,6 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   onCancel,
   isLoading = false
 }) => {
-  const dialogRef = useFocusTrap({ isOpen, onClose: onCancel });
-
   if (!isOpen) return null;
 
   const typeStyles = {
@@ -67,56 +65,61 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   const styles = typeStyles[type];
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm transition-opacity duration-300" onClick={(e) => e.target === e.currentTarget && onCancel()} role="presentation">
-      <div ref={dialogRef} className="bg-white dark:bg-neutral-800 rounded-xl shadow-float border max-w-md w-full border-neutral-200 dark:border-neutral-700 animate-scale-in" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-description">
-        <div className="p-6">
-          <div className="flex items-start gap-4">
-            <div className={`p-3 rounded-xl flex-shrink-0 ${styles.bg} shadow-sm`} role="img" aria-hidden="true">
-              {styles.icon}
-            </div>
-            <div className="flex-1">
-              <h3 id="dialog-title" className="text-lg font-bold text-neutral-900 dark:text-white mb-2">
-                {title}
-              </h3>
-              <p id="dialog-description" className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed font-medium">
-                {message}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-3 justify-end mt-6">
-             <button
-              onClick={onCancel}
-              disabled={isLoading}
-              aria-label={cancelText}
-              className="px-5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-xl font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md"
-            >
-              {cancelText}
-            </button>
-             <button
-              onClick={onConfirm}
-              disabled={isLoading}
-              aria-label={confirmText}
-              className={`px-5 py-2.5 text-white rounded-xl font-semibold transition-all duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md ${
-                isLoading ? styles.confirmDisabled : styles.confirmBg
-              }`}
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4} fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  Memproses...
-                </span>
-              ) : (
-                confirmText
-              )}
-            </button>
-          </div>
+    <Modal
+      isOpen={isOpen}
+      onClose={onCancel}
+      title=""
+      size="md"
+      animation="scale-in"
+      closeOnBackdropClick={true}
+      closeOnEscape={true}
+      showCloseButton={false}
+    >
+      <div className="flex items-start gap-4">
+        <div className={`p-3 rounded-xl flex-shrink-0 ${styles.bg} shadow-sm`} role="img" aria-hidden="true">
+          {styles.icon}
+        </div>
+        <div className="flex-1">
+          <h3 id="dialog-title" className="text-lg font-bold text-neutral-900 dark:text-white mb-2">
+            {title}
+          </h3>
+          <p id="dialog-description" className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed font-medium">
+            {message}
+          </p>
         </div>
       </div>
-    </div>
+
+      <div className="flex gap-3 justify-end mt-6">
+         <button
+          onClick={onCancel}
+          disabled={isLoading}
+          aria-label={cancelText}
+          className="px-5 py-2.5 border border-neutral-300 dark:border-neutral-600 rounded-xl font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md"
+        >
+          {cancelText}
+        </button>
+         <button
+          onClick={onConfirm}
+          disabled={isLoading}
+          aria-label={confirmText}
+          className={`px-5 py-2.5 text-white rounded-xl font-semibold transition-all duration-200 ease-out disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md ${
+            isLoading ? styles.confirmDisabled : styles.confirmBg
+          }`}
+        >
+          {isLoading ? (
+            <span className="flex items-center gap-2">
+              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={4} fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              Memproses...
+            </span>
+          ) : (
+            confirmText
+          )}
+        </button>
+      </div>
+    </Modal>
   );
 };
 

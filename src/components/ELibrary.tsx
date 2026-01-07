@@ -10,7 +10,7 @@ import { CategoryValidator } from '../utils/categoryValidator';
 import { STORAGE_KEYS } from '../constants';
 import { ocrService } from '../services/ocrService';
 import Button from './ui/Button';
-import LoadingSpinner from './ui/LoadingSpinner';
+import { CardSkeleton } from './ui/Skeleton';
 
 interface ELibraryProps {
   onBack: () => void;
@@ -377,8 +377,10 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">E-Library & Materi</h2>
           </div>
         </div>
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Memuat perpustakaan..." color="success" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
         </div>
       </div>
     );

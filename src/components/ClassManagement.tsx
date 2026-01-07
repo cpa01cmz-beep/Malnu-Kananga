@@ -9,7 +9,7 @@ import {
   createToastHandler
 } from '../utils/teacherErrorHandler';
 import Button from './ui/Button';
-import LoadingSpinner from './ui/LoadingSpinner';
+import { TableSkeleton } from './ui/Skeleton';
 
 interface ClassStudent {
   id: string;
@@ -162,9 +162,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Data Kelas Perwalian</h2>
           </div>
         </div>
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Memuat data kelas..." color="success" />
-        </div>
+        <TableSkeleton rows={10} cols={5} />
       </div>
     );
   }

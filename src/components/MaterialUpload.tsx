@@ -18,7 +18,7 @@ import {
 } from '../utils/teacherErrorHandler';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import FolderNavigation from './FolderNavigation';
-import LoadingSpinner from './ui/LoadingSpinner';
+import { CardSkeleton } from './ui/Skeleton';
 import MaterialSharing from './MaterialSharing';
 import VersionControl from './VersionControl';
 import MaterialAnalytics from './MaterialAnalytics';
@@ -332,8 +332,10 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Upload Materi Pembelajaran</h2>
           </div>
         </div>
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Memuat materi..." color="success" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
         </div>
       </div>
     );

@@ -20,6 +20,7 @@ import ConfirmationDialog from './ui/ConfirmationDialog';
 import { createToastHandler } from '../utils/teacherErrorHandler';
 import LoadingSpinner from './ui/LoadingSpinner';
 import Button from './ui/Button';
+import { TableSkeleton } from './ui/Skeleton';
 import AccessDenied from './AccessDenied';
 import { User, UserRole, UserExtraRole } from '../types';
 
@@ -717,9 +718,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
         {/* Loading State */}
         {loading && (
-            <div className="flex items-center justify-center py-12">
-                <LoadingSpinner size="lg" text="Memuat data siswa..." color="success" />
-            </div>
+            <TableSkeleton rows={10} cols={6} />
         )}
 
         {/* Error State */}
