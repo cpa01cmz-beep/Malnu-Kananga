@@ -32,8 +32,8 @@
 ---
 
 **Current Status:**
-- TypeScript: ✅ 0 errors
-- Tests: ✅ 148 tests passing (10 test files)
+- TypeScript: ✅ 0 errors (when dependencies installed)
+- Tests: ✅ 10 test files
 - Build: ✅ ~9-10s build time
 - Documentation: ✅ Aligned with codebase
 
