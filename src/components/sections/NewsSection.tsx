@@ -13,7 +13,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ news }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16 animate-fade-in">
                 <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white tracking-tight mb-4">Berita & Kegiatan Terbaru</h2>
-                <p className="text-base sm:text-lg md:text-xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto leading-relaxed">Ikuti perkembangan dan prestasi terbaru dari sekolah kami.</p>
+                <p className="text-base sm:text-lg text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto leading-relaxed">Ikuti perkembangan dan prestasi terbaru dari sekolah kami.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 {news.map((newsItem) => (

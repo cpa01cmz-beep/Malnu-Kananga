@@ -65,7 +65,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm transition-opacity duration-300" onClick={(e) => e.target === e.currentTarget && onCancel()}>
-      <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-float border max-w-md w-full border-neutral-200 dark:border-neutral-700 animate-scale-in">
+      <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-float border max-w-md w-full border-neutral-200 dark:border-neutral-700 animate-scale-in">
         <div className="p-6">
           <div className="flex items-start gap-4">
             <div className={`p-3 rounded-xl flex-shrink-0 ${styles.bg} shadow-sm`}>

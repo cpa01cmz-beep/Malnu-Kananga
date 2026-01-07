@@ -9,7 +9,7 @@ import { MoonIcon } from './icons/MoonIcon';
 import { UserRole, UserExtraRole } from '../types';
 import NotificationCenter from './NotificationCenter';
 
-const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 font-bold px-4 py-2 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95";
+const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 font-semibold px-4 py-2 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-1 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95";
 
 const NavLinks = () => (
     <>
@@ -90,13 +90,13 @@ const Header: React.FC<HeaderProps> = ({
         <header className={headerClasses}>
             <div className={navContainerClasses}>
                  <div className={`${innerNavClasses} ${isScrolled ? 'max-w-7xl mx-auto px-4' : ''}`}>
-                       <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0 w-11 h-11 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                        <div className="flex items-center gap-3">
+                        <div className="flex-shrink-0 w-11 h-11 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm hover:shadow-md transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
                             M
                         </div>
                         <div>
                             <span className="font-bold text-lg text-neutral-900 dark:text-white leading-tight">Malnu Kananga</span>
-                            <span className="block text-xs text-neutral-500 dark:text-neutral-400 leading-tight tracking-wide font-medium">NPSN: 69881502</span>
+                            <span className="block text-xs text-neutral-500 dark:text-neutral-400 leading-tight tracking-wide">NPSN: 69881502</span>
                         </div>
                     </div>
 
