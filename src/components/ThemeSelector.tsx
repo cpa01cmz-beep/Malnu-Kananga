@@ -177,7 +177,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
             }}
             className="flex-1 px-3 py-2 text-sm text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
           >
-            Toggle Terang/Gelap
+            Ganti Tema
           </button>
         </div>
       </div>

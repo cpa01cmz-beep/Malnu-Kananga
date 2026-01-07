@@ -1,4 +1,4 @@
-import { Theme, themes, getThemeById, getLightThemes, getDarkThemes } from '../config/themes';
+import { Theme, themes, getThemeById } from '../config/themes';
 import { logger } from '../utils/logger';
 
 export const THEMES_STORAGE_KEY = 'malnu_advanced_theme';
@@ -120,19 +120,12 @@ export class ThemeManager {
   public toggleDarkMode(): void {
     if (!this.currentTheme) return;
 
-    const isCurrentlyDark = this.currentTheme.isDark;
+    const allThemes = themes;
+    const currentIndex = allThemes.findIndex(theme => theme.id === this.currentTheme!.id);
+    const nextIndex = (currentIndex + 1) % allThemes.length;
+    const nextTheme = allThemes[nextIndex];
     
-    if (isCurrentlyDark) {
-      // Switch to a light theme
-      const lightThemes = getLightThemes();
-      const fallbackTheme = lightThemes.find((t: Theme) => t.id.includes('emerald')) || lightThemes[0];
-      this.setTheme(fallbackTheme);
-    } else {
-      // Switch to a dark theme
-      const darkThemes = getDarkThemes();
-      const fallbackTheme = darkThemes.find((t: Theme) => t.id.includes('midnight')) || darkThemes[0];
-      this.setTheme(fallbackTheme);
-    }
+    this.setTheme(nextTheme);
   }
 
   public resetToDefault(): void {
