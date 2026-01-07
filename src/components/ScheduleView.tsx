@@ -6,6 +6,7 @@ import { logger } from '../utils/logger';
 import CalendarView from './CalendarView';
 import Button from './ui/Button';
 import { TableSkeleton } from './ui/Skeleton';
+import ErrorMessage from './ui/ErrorMessage';
 
 interface ScheduleItem {
   id: string;
@@ -149,10 +150,14 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
           </div>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
+          <ErrorMessage 
+            title="Error Loading Schedule" 
+            message={error} 
+            variant="card" 
+          />
           <button
             onClick={fetchSchedules}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             Coba Lagi
           </button>

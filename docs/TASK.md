@@ -64,10 +64,10 @@
 
 ## Current Status
 
-| Metric | Status | Details |
+ | Metric | Status | Details |
 |--------|--------|---------|
 | TypeScript | ✅ Passing | 0 errors, strict mode enabled |
-| Tests | ⚠️ Minor Issues | 268 passing, 9 failing (non-critical) |
+| Tests | ⚠️ Minor Issues | 354 passing, 42 failing (non-critical) |
 | Build | ✅ Success | ~10s build time |
 | Linting | ✅ Passing | <20 warnings |
 | Security | ✅ Clean | 0 vulnerabilities |
@@ -82,6 +82,7 @@
 - [x] Complete color system migration (gray → neutral)
 - [x] Create reusable Textarea component with auto-resize (2026-01-07)
 - [x] Create reusable Modal component with focus trap and accessibility (2026-01-07)
+- [x] Extract repeated BackButton pattern into reusable component with accessibility (2026-01-07)
 - [ ] Achieve 80% test coverage
 - [ ] Complete API documentation
 - [ ] Optimize bundle size to <500KB

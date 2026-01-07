@@ -18,6 +18,7 @@ import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import Button from './ui/Button';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
+import ErrorMessage from './ui/ErrorMessage';
 
 interface GradeItem {
   subject: string;
@@ -349,11 +350,15 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Progress Akademik Siswa</h2>
           </div>
         </div>
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <p className="text-red-700 dark:text-red-300 mb-4">{error}</p>
+        <div className="text-center">
+          <ErrorMessage 
+            title="Error Loading Grades" 
+            message={error} 
+            variant="card" 
+          />
           <button
             onClick={fetchGrades}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             Coba Lagi
           </button>
