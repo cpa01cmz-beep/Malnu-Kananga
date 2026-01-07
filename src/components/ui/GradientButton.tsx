@@ -3,10 +3,14 @@ import React from 'react';
 export type GradientButtonVariant = 'primary' | 'secondary';
 export type GradientButtonSize = 'sm' | 'md' | 'lg';
 
-interface GradientButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'href'> {
+type CommonProps = {
   variant?: GradientButtonVariant;
   size?: GradientButtonSize;
   fullWidth?: boolean;
+  className?: string;
+};
+
+interface GradientButtonProps extends CommonProps {
   href?: string;
   children: React.ReactNode;
 }
@@ -42,9 +46,14 @@ const GradientButton: React.FC<GradientButtonProps> = ({
   `.replace(/\s+/g, ' ').trim();
 
   if (href) {
+    const { id, target, rel, onClick } = props as GradientButtonProps & { id?: string; target?: string; rel?: string; onClick?: React.MouseEventHandler };
     return (
       <a
         href={href}
+        id={id}
+        target={target}
+        rel={rel}
+        onClick={onClick}
         className={classes}
         {...(props as Record<string, unknown>)}
       >
@@ -56,7 +65,7 @@ const GradientButton: React.FC<GradientButtonProps> = ({
   return (
     <button
       className={classes}
-      {...props}
+      {...(props as React.HTMLAttributes<HTMLButtonElement>)}
     >
       {children}
     </button>
