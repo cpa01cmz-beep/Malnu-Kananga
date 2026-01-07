@@ -16,6 +16,7 @@ import { Grade, Subject, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
+import Button from './ui/Button';
 
 interface GradeItem {
   subject: string;
@@ -322,9 +323,9 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
       <div className="animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
           <div>
-            <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
-            </button>
+            </Button>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Progress Akademik Siswa</h2>
           </div>
         </div>
@@ -340,9 +341,9 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
       <div className="animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
           <div>
-            <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Portal
-            </button>
+            </Button>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Progress Akademik Siswa</h2>
           </div>
         </div>
@@ -363,9 +364,9 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
     <div className="animate-fade-in-up">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Portal
-          </button>
+          </Button>
            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Progress Akademik Siswa</h2>
            <p className="text-gray-500 dark:text-gray-400">Semester Ganjil 2024/2025</p>
          </div>

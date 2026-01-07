@@ -5,6 +5,7 @@ import { PencilIcon } from './icons/PencilIcon';
 import { TrashIcon } from './icons/TrashIcon';
 import { CloseIcon } from './icons/CloseIcon';
 import { User, UserRole, UserExtraRole } from '../types';
+import Button from './ui/Button';
 import { api } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { useFocusTrap } from '../hooks/useFocusTrap';
@@ -125,12 +126,12 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
     <div className="animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
             <div>
-                <button onClick={onBack} className="text-sm text-neutral-500 hover:text-primary-600 mb-2 flex items-center gap-1 transition-colors">← Kembali</button>
+                <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">← Kembali</Button>
                 <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Manajemen Pengguna</h2>
             </div>
-            <button onClick={handleAddUser} className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95">
-                <PlusIcon className="w-5 h-5" /> <span className="hidden sm:inline">Tambah</span>
-            </button>
+            <Button onClick={handleAddUser} icon={<PlusIcon className="w-5 h-5" />}>
+                <span className="hidden sm:inline">Tambah</span>
+            </Button>
         </div>
 
         {error && (
@@ -189,8 +190,22 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack, onShowToast }) 
                                         ) : <span className="text-neutral-400">-</span>}
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <button onClick={() => handleEditUser(user)} aria-label={`Edit pengguna ${user.name}`} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500/50"><PencilIcon /></button>
-                                        <button onClick={() => handleDeleteUser(user.id)} aria-label={`Hapus pengguna ${user.name}`} className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-500/50"><TrashIcon /></button>
+                                        <Button 
+                                          variant="info" 
+                                          size="sm" 
+                                          iconOnly 
+                                          onClick={() => handleEditUser(user)} 
+                                          icon={<PencilIcon />} 
+                                          aria-label={`Edit pengguna ${user.name}`}
+                                        />
+                                        <Button 
+                                          variant="danger" 
+                                          size="sm" 
+                                          iconOnly 
+                                          onClick={() => handleDeleteUser(user.id)} 
+                                          icon={<TrashIcon />} 
+                                          aria-label={`Hapus pengguna ${user.name}`}
+                                        />
                                     </td>
                                 </tr>
                             ))}

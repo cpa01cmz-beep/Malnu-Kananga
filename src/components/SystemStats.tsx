@@ -7,6 +7,7 @@ import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import { backupVoiceSettings } from '../services/voiceSettingsBackup';
 import { logger } from '../utils/logger';
+import Button from './ui/Button';
 
 import { STORAGE_KEYS } from '../constants'; // Import constants
 
@@ -100,9 +101,9 @@ const SystemStats: React.FC<SystemStatsProps> = ({ onBack, onShowToast }) => {
       {/* Header */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Dashboard
-          </button>
+          </Button>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Laporan & Statistik Sistem</h2>
           <p className="text-gray-500 dark:text-gray-400">Ringkasan kesehatan dan penggunaan aplikasi.</p>
         </div>

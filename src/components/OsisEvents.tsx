@@ -7,6 +7,7 @@ import { PhotoIcon } from './icons/PhotoIcon';
 import { UserGroupIcon, CurrencyDollarIcon, MegaphoneIcon, StarIcon } from './icons/EventIcons';
 import { eventsAPI, eventRegistrationsAPI, eventBudgetsAPI, eventPhotosAPI, eventFeedbackAPI, fileStorageAPI } from '../services/apiService';
 import type { SchoolEvent, EventRegistration, EventBudget, EventPhoto, EventFeedback } from '../types';
+import Button from './ui/Button';
 
 interface OsisEventsProps {
   onBack: () => void;
@@ -299,9 +300,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                   required
                 />
-                <button type="submit" className="flex items-center justify-center gap-2 py-2 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700">
-                  <PlusIcon className="w-4 h-4" /> Daftar
-                </button>
+                <Button type="submit" variant="warning" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left">
+                  Daftar
+                </Button>
               </form>
               <div className="space-y-2">
                 {registrations.map(reg => (
@@ -372,9 +373,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   onChange={e => setNewBudget({ ...newBudget, quantity: parseInt(e.target.value) })}
                   className="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                 />
-                <button type="submit" className="md:col-span-2 flex items-center justify-center gap-2 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700">
-                  <PlusIcon className="w-4 h-4" /> Tambah Anggaran
-                </button>
+                <Button type="submit" variant="success" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" className="md:col-span-2">
+                  Tambah Anggaran
+                </Button>
               </form>
               <div className="space-y-2">
                 {budgets.map(budget => (
@@ -423,9 +424,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     className="flex-1 px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
                     required
                   />
-                  <button type="submit" className="px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700">
+                  <Button type="submit" variant="info">
                     Unggah
-                  </button>
+                  </Button>
                 </div>
                 {uploadProgress > 0 && uploadProgress < 100 && (
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -533,9 +534,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   />
                   <span className="text-sm font-medium">Saya merekomendasikan kegiatan ini</span>
                 </label>
-                <button type="submit" className="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">
+                <Button type="submit" variant="info" fullWidth>
                   Kirim Umpan Balik
-                </button>
+                </Button>
               </form>
               <div className="space-y-3">
                 {feedback.map(fb => (
@@ -585,9 +586,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     <div className="animate-fade-in-up">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Portal
-          </button>
+          </Button>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Kegiatan OSIS</h2>
           <p className="text-gray-500 dark:text-gray-400">Kelola dan pantau kegiatan sekolah dengan lengkap.</p>
         </div>

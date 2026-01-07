@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import { UserRole, UserExtraRole } from '../types';
+import Button from './ui/Button';
 import { api } from '../services/apiService';
 
 interface LoginModalProps {
@@ -162,9 +163,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                 </div>
                 {error && <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-700 dark:text-red-300 text-center font-semibold">{error}</div>}
                      <div>
-                      <button type="submit" disabled={formState === 'loading'} className="w-full flex justify-center py-3.5 px-5 border border-transparent rounded-xl text-base font-semibold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500/50 disabled:bg-neutral-400 dark:disabled:bg-neutral-600 transition-all duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-70 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95">
-                       {formState === 'loading' ? 'Memproses...' : 'Login'}
-                     </button>
+                      <Button type="submit" disabled={formState === 'loading'} isLoading={formState === 'loading'} fullWidth className="py-3.5">
+                       {formState === 'loading' ? '' : 'Login'}
+                     </Button>
                    </div>
               </form>
           )}

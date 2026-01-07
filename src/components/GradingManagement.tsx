@@ -15,6 +15,7 @@ import {
 } from '../utils/teacherValidation';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { createToastHandler } from '../utils/teacherErrorHandler';
+import Button from './ui/Button';
 
 
 interface StudentGrade {
@@ -431,9 +432,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         {/* Header with Enhanced Controls */}
         <div className="flex flex-col gap-4 mb-6">
             <div>
-                <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+                <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
                     ← Kembali ke Dashboard
-                </button>
+                </Button>
                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Input Nilai Siswa</h2>
                  <p className="text-gray-500 dark:text-gray-400">Mata Pelajaran: <strong>{subjectId} ({className})</strong></p>
             </div>

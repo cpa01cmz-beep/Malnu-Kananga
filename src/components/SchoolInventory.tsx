@@ -4,6 +4,7 @@ import { PlusIcon } from './icons/PlusIcon';
 import { TrashIcon } from './icons/TrashIcon';
 import { ChartBarIcon } from './icons/ChartBarIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
+import Button from './ui/Button';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { BarChart } from 'recharts/es6/chart/BarChart';
@@ -283,9 +284,9 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
     <div className="animate-fade-in-up">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <button onClick={onBack} className="text-sm text-gray-500 hover:text-green-600 mb-2 flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
             ← Kembali ke Dashboard
-          </button>
+          </Button>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Manajemen Inventaris (Sarpras)</h2>
           <p className="text-gray-500 dark:text-gray-400">Kelola data aset dan barang milik sekolah.</p>
         </div>
