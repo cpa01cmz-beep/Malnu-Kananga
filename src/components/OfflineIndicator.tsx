@@ -113,7 +113,7 @@ export function OfflineIndicator({
 
           {/* Queue count badge */}
           {showQueueCount && (pendingCount > 0 || failedCount > 0) && (
-            <Badge variant="neutral" size="sm" rounded="pill">
+            <Badge variant="neutral" size="sm" rounded>
               {pendingCount + failedCount}
             </Badge>
           )}
@@ -236,13 +236,13 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
               </span>
               
               {getPendingCount() > 0 && (
-                <Badge variant="info" size="sm" rounded="pill">
+                <Badge variant="info" size="sm" rounded>
                   {getPendingCount()} Pending
                 </Badge>
               )}
 
               {getFailedCount() > 0 && (
-                <Badge variant="error" size="sm" rounded="pill">
+                <Badge variant="error" size="sm" rounded>
                   {getFailedCount()} Failed
                 </Badge>
               )}
