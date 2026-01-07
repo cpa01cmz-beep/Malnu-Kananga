@@ -65,8 +65,8 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 187 TypeScript/TSX files (excluding tests)
-- **Test Files**: 30 test files (including test files in `__tests__/` directories)
+- **Total Source Files**: 220 TypeScript/TSX files (excluding tests)
+- **Test Files**: 31 test files (including test files in `__tests__/` directories)
 - **Documentation Files**: 16 (in /docs directory)
 - **Total Markdown Files**: 29 (including root-level docs)
 - **API Endpoints Documented**: 150+
