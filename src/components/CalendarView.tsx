@@ -193,20 +193,18 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 {events.slice(0, 3).map((event, idx) => {
                   const isMeeting = 'status' in event;
                   return (
-                    <div
+                    <button
                       key={idx}
                       onClick={(e) => handleEventClick(event, e)}
-                      onKeyDown={(e) => handleEventKeyDown(event, e)}
+                      type="button"
                       className={`text-xs p-1 rounded truncate cursor-pointer
-                        ${isMeeting 
-                          ? 'bg-purple-100 text-purple-800 hover:bg-purple-200' 
+                        ${isMeeting
+                          ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
                           : 'bg-blue-100 text-blue-800 hover:bg-blue-200'}`}
-                      role="button"
-                      tabIndex={0}
                     >
 {event.startTime && `${event.startTime} `}
 {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
-                    </div>
+                    </button>
                   );
                 })}
                 {events.length > 3 && (
@@ -292,20 +290,18 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                   {events.map((event, idx) => {
                     const isMeeting = 'status' in event;
                     return (
-                      <div
+                      <button
                         key={idx}
                         onClick={(e) => handleEventClick(event, e)}
-                        onKeyDown={(e) => handleEventKeyDown(event, e)}
+                        type="button"
                         className={`text-xs p-1 rounded truncate cursor-pointer
-                          ${isMeeting 
-                            ? 'bg-purple-100 text-purple-800 hover:bg-purple-200' 
+                          ${isMeeting
+                            ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
                             : 'bg-blue-100 text-blue-800 hover:bg-blue-200'}`}
-                        role="button"
-                        tabIndex={0}
                       >
 {event.startTime && `${event.startTime} `}
 {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
