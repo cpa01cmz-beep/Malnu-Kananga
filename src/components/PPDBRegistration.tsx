@@ -12,6 +12,10 @@ import Textarea from './ui/Textarea';
 import ProgressBar from './ui/ProgressBar';
 import Button from './ui/Button';
 import { useAutoSave } from '../hooks/useAutoSave';
+import { useOfflineActionQueue } from '../services/offlineActionQueueService';
+import { OfflineIndicator } from './OfflineIndicator';
+import { useNetworkStatus } from '../utils/networkStatus';
+import { logger } from '../utils/logger';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -50,7 +54,9 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
     }
   );
 
-const cleanup = useCallback(() => {
+const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+  const cleanup = useCallback(() => {
     autoSaveActions.reset(initialFormData);
     setUploadedDocument(null);
     setDiplomaImage(null);
@@ -59,6 +65,14 @@ const cleanup = useCallback(() => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedDocument, setUploadedDocument] = useState<FileUploadResponse | null>(null);
+
+  // Network status and offline queue
+  const { isOnline, isSlow } = useNetworkStatus();
+  const { 
+    sync,
+    addAction,
+    getPendingCount 
+  } = useOfflineActionQueue();
   const [isProcessingOCR, setIsProcessingOCR] = useState(false);
   const [ocrProgress, setOcrProgress] = useState<OCRProgress>({ status: 'Idle', progress: 0 });
   const [extractedGrades, setExtractedGrades] = useState<Record<string, number> | null>(null);
@@ -160,19 +174,40 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
     e.preventDefault();
     setIsSubmitting(true);
 
+    const ppdbData = {
+      fullName: autoSaveState.data.fullName!,
+      nisn: autoSaveState.data.nisn!,
+      originSchool: autoSaveState.data.originSchool!,
+      parentName: autoSaveState.data.parentName!,
+      phoneNumber: autoSaveState.data.phoneNumber!,
+      email: autoSaveState.data.email!,
+      address: autoSaveState.data.address!,
+      registrationDate: new Date().toISOString().split('T')[0],
+      status: 'pending',
+      documentUrl: uploadedDocument?.key,
+    };
+
     try {
-      const response = await ppdbAPI.create({
-        fullName: autoSaveState.data.fullName!,
-        nisn: autoSaveState.data.nisn!,
-        originSchool: autoSaveState.data.originSchool!,
-        parentName: autoSaveState.data.parentName!,
-        phoneNumber: autoSaveState.data.phoneNumber!,
-        email: autoSaveState.data.email!,
-        address: autoSaveState.data.address!,
-        registrationDate: new Date().toISOString().split('T')[0],
-        status: 'pending',
-        documentUrl: uploadedDocument?.key,
-      });
+      // Check if we should queue for offline sync
+      if (!isOnline || isSlow) {
+        // Queue PPDB registration using the offline action queue
+        const actionId = addAction({
+          type: 'submit',
+          entity: 'ppdb',
+          entityId: ppdbData.nisn || generateTempId(),
+          data: ppdbData,
+          endpoint: '/api/ppdb',
+          method: 'POST',
+        });
+
+        setIsSubmitting(false);
+        onShowToast('Pendaftaran akan dikirim saat koneksi tersedia.', 'info');
+        logger.info('PPDB registration queued for offline sync', { actionId, nisn: ppdbData.nisn });
+        return;
+      }
+
+      // Online submission
+      const response = await ppdbAPI.create(ppdbData);
 
       if (response.success) {
         setIsSubmitting(false);
@@ -193,14 +228,37 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
       } else {
         throw new Error(response.error || 'Gagal mendaftar');
       }
-    } catch {
+    } catch (error) {
+      // Auto-queue on network failure
+      if (!isOnline) {
+        const actionId = addAction({
+          type: 'submit',
+          entity: 'ppdb',
+          entityId: ppdbData.nisn || generateTempId(),
+          data: ppdbData,
+          endpoint: '/api/ppdb',
+          method: 'POST',
+        });
+
+        setIsSubmitting(false);
+        onShowToast('Koneksi terputus. Pendaftaran akan dikirim saat online.', 'info');
+        logger.info('PPDB registration auto-queued after network failure', { actionId, error });
+        return;
+      }
+
       setIsSubmitting(false);
       onShowToast('Gagal mendaftar. Silakan coba lagi.', 'error');
+      logger.error('PPDB submission error:', error);
     }
   };
 
   return (
     <div className="fixed inset-0 bg-neutral-900/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <OfflineIndicator 
+        showSyncButton={true}
+        showQueueCount={true}
+        position="top-left"
+      />
       <div 
         className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-scale-in"
         onClick={e => e.stopPropagation()}

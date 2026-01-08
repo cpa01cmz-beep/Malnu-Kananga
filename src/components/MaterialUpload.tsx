@@ -17,6 +17,9 @@ import {
   createToastHandler 
 } from '../utils/teacherErrorHandler';
 import { useCanAccess } from '../hooks/useCanAccess';
+import { useOfflineActionQueue } from '../services/offlineActionQueueService';
+import { OfflineIndicator } from './OfflineIndicator';
+import { useNetworkStatus } from '../utils/networkStatus';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import FolderNavigation from './FolderNavigation';
 import { CardSkeleton } from './ui/Skeleton';
@@ -73,6 +76,17 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
   
   const toast = createToastHandler(onShowToast);
   const { canAccess } = useCanAccess();
+
+  // Generate temporary ID for offline materials
+  const generateMaterialId = () => `material_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+  // Network status and offline queue
+  const { isOnline, isSlow } = useNetworkStatus();
+  const { 
+    sync,
+    addAction,
+    getPendingCount 
+  } = useOfflineActionQueue();
 
   React.useEffect(() => {
     fetchMaterials();
@@ -189,6 +203,38 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
         folderId: selectedFolder?.id,
       };
 
+      // Check if we should queue for offline sync
+      if (!isOnline || isSlow) {
+        // Queue material upload using the offline action queue
+        const actionId = addAction({
+          type: 'create',
+          entity: 'material',
+          entityId: `material_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          data: newMaterial,
+          endpoint: '/api/library',
+          method: 'POST',
+        });
+
+        setSubmitting(false);
+        // Update local state immediately for better UX
+        const tempMaterial: ELibraryType = {
+          id: actionId,
+          ...newMaterial as ELibraryType,
+          uploadedBy: 'current_user',
+          uploadedAt: new Date().toISOString(),
+          isAvailable: true,
+        };
+        setMaterials((prev) => [tempMaterial, ...prev]);
+        setNewTitle('');
+        setNewDescription('');
+        setUploadedFile(null);
+        setCategoryValidation(null);
+        
+        toast.info('Materi akan diunggah saat koneksi tersedia.');
+        logger.info('Material upload queued for offline sync', { actionId, title: newTitle });
+        return;
+      }
+
       const createOperation = async () => {
         return await eLibraryAPI.create(newMaterial);
       };
@@ -219,6 +265,36 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
         toast.error(result.error || 'Gagal menambahkan materi');
       }
     } catch (err) {
+      // Auto-queue on network failure
+      if (!isOnline) {
+        const actionId = addAction({
+          type: 'create',
+          entity: 'material',
+          entityId: `material_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          data: newMaterial,
+          endpoint: '/api/library',
+          method: 'POST',
+        });
+
+        // Update local state for better UX
+        const tempMaterial: ELibraryType = {
+          id: actionId,
+          ...newMaterial as ELibraryType,
+          uploadedBy: 'current_user',
+          uploadedAt: new Date().toISOString(),
+          isAvailable: true,
+        };
+        setMaterials((prev) => [tempMaterial, ...prev]);
+        setNewTitle('');
+        setNewDescription('');
+        setUploadedFile(null);
+        setCategoryValidation(null);
+        
+        toast.info('Koneksi terputus. Materi akan diunggah saat online.');
+        logger.info('Material upload auto-queued after network failure', { actionId, error: err });
+        return;
+      }
+
       logger.error('Error creating material:', err);
       toast.error(err);
     } finally {
@@ -391,6 +467,11 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
 
   return (
     <div className="animate-fade-in-up">
+      <OfflineIndicator 
+        showSyncButton={true}
+        showQueueCount={true}
+        position="top-right"
+      />
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
           <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
