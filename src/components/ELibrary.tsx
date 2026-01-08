@@ -3,13 +3,14 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { StarIcon, BookmarkIcon, FunnelIcon } from './icons/MaterialIcons';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { eLibraryAPI, fileStorageAPI } from '../services/apiService';
-import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress, OCRStatus, OCRProcessingState, SearchOptions } from '../types';
+import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress, OCRStatus, OCRProcessingState, SearchOptions, PlagiarismFlag } from '../types';
 import { useSemanticSearch } from '../hooks/useSemanticSearch';
 import { logger } from '../utils/logger';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
 import { STORAGE_KEYS } from '../constants';
 import { ocrService } from '../services/ocrService';
+import { generateTextSummary, compareTextsForSimilarity } from '../services/ocrEnhancementService';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
 import { CardSkeleton } from './ui/Skeleton';
@@ -385,13 +386,24 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           m.description?.toLowerCase().includes(lowerQuery) ||
           m.category.toLowerCase().includes(lowerQuery);
 
-        // Search in OCR text if enabled and available
+        // Enhanced search in OCR text and AI summary
         const inOCR = searchOptions.includeOCR && 
                        m.ocrStatus === 'completed' && 
-                       (m.isSearchable === true) &&
-                       m.ocrText?.toLowerCase().includes(lowerQuery);
+                       (m.isSearchable === true);
+        
+        let inOCRContent = false;
+        if (inOCR && m.ocrText) {
+          const queryWords = lowerQuery.split(' ').filter(w => w.length > 2);
+          const ocrTextLower = m.ocrText.toLowerCase();
+          
+          // Check if query words appear in OCR text with partial matching
+          inOCRContent = queryWords.some(word => ocrTextLower.includes(word));
+        }
+        
+        // Search in AI summary if available
+        const inAISummary = m.aiSummary?.toLowerCase().includes(lowerQuery) || false;
 
-        matchSearch = Boolean(inMetadata || inOCR);
+        matchSearch = Boolean(inMetadata || inOCRContent || inAISummary);
       } else {
         matchSearch = true; // No search query = match all
       }
@@ -557,20 +569,76 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
         }
       );
 
-      // Calculate confidence-based searchable status
-      const isSearchable = (result.confidence || 0) >= 50;
+      // Validate OCR quality before proceeding
+      if (!result.quality.hasMeaningfulContent) {
+        throw new Error('Dokumen tidak mengandung teks yang bermakna. Pastikan dokumen memiliki teks yang jelas.');
+      }
+
+      // Use quality assessment from OCR service
       const ocrText = result.text.trim();
+      const isSearchable = result.quality.isSearchable;
+      
+      if (!isSearchable) {
+        logger.warn(`Low quality OCR for material ${material.id}: confidence ${result.confidence}%`);
+      }
 
       // Update material with OCR results
-      const updatedMaterial = {
+      let updatedMaterial = {
         ...material,
         ocrStatus: 'completed' as OCRStatus,
         ocrProgress: 100,
         ocrText,
         ocrConfidence: result.confidence,
         ocrProcessedAt: new Date().toISOString(),
-        isSearchable
+        isSearchable,
+        ocrQuality: result.quality,
+        documentType: result.quality.documentType
       };
+
+      // Generate AI summary for academic documents
+      if (result.quality.isHighQuality && result.quality.documentType === 'academic') {
+        try {
+          const summary = await generateTextSummary(ocrText);
+          updatedMaterial = {
+            ...updatedMaterial,
+            aiSummary: summary
+          };
+          logger.info(`Generated AI summary for material ${material.id}`);
+        } catch (error) {
+          logger.warn(`Failed to generate AI summary for material ${material.id}:`, error);
+        }
+      }
+
+      // Check for plagiarism against other materials
+      const plagiarismFlags: PlagiarismFlag[] = [];
+      if (result.quality.isSearchable) {
+        const otherMaterials = materials.filter(m => m.id !== material.id && m.ocrText && m.ocrText.length > 50);
+        
+        for (const otherMaterial of otherMaterials.slice(0, 5)) { // Limit to 5 comparisons for performance
+          try {
+            const similarity = await compareTextsForSimilarity(ocrText, otherMaterial.ocrText!);
+            if (similarity.isPlagiarized) {
+              plagiarismFlags.push({
+                materialId: otherMaterial.id,
+                similarity: similarity.similarity,
+                matchedText: otherMaterial.title,
+                details: similarity.details,
+                flaggedAt: new Date().toISOString()
+              });
+            }
+          } catch (error) {
+            logger.warn(`Failed to compare materials for plagiarism:`, error);
+          }
+        }
+      }
+
+      if (plagiarismFlags.length > 0) {
+        updatedMaterial = {
+          ...updatedMaterial,
+          plagiarismFlags
+        };
+        logger.warn(`Plagiarism detected for material ${material.id}: ${plagiarismFlags.length} flags`);
+      }
 
       // Update material via API
       await eLibraryAPI.update(material.id, updatedMaterial);
@@ -1238,11 +1306,19 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                   </div>
                 )}
                 
-                {/* OCR Status */}
+                {/* Enhanced OCR Status */}
                 {ocrEnabled && (
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-neutral-600 dark:text-neutral-400">OCR</span>
+                      {item.ocrStatus === 'completed' && (
+                        <div className="flex items-center gap-1">
+                          <span className={`w-2 h-2 rounded-full ${item.isSearchable ? 'bg-green-500' : 'bg-yellow-500'}`}></span>
+                          <span className={item.isSearchable ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}>
+                            {Math.round(item.ocrConfidence || 0)}%
+                          </span>
+                        </div>
+                      )}
                       {ocrProcessing.has(item.id) && (
                         <span className="text-blue-600 dark:text-blue-400">
                           {ocrProcessing.get(item.id)?.progress || 0}%
@@ -1262,6 +1338,43 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                         <span className="text-xs text-blue-600 dark:text-blue-400">
                           Memproses...
                         </span>
+                      </div>
+                    ) : item.ocrStatus === 'completed' ? (
+                      <div className="space-y-1">
+                        <div className="flex flex-wrap gap-1">
+                          <Badge variant={item.isSearchable ? 'success' : 'warning'} size="sm">
+                            {item.ocrQuality?.documentType || 'Unknown'}
+                          </Badge>
+                          {item.aiSummary && (
+                            <Badge variant="info" size="sm">
+                              📝 Summary
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        {/* AI Summary Display */}
+                        {item.aiSummary && (
+                          <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
+                            <div className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-1">
+                              📝 Ringkasan AI
+                            </div>
+                            <div className="text-xs text-purple-600 dark:text-purple-400 line-clamp-3">
+                              {item.aiSummary}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Plagiarism Warning */}
+                        {item.plagiarismFlags && item.plagiarismFlags.length > 0 && (
+                          <div className="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700">
+                            <div className="text-xs font-medium text-red-700 dark:text-red-300 mb-1">
+                              ⚠️ Deteksi Plagiasi
+                            </div>
+                            <div className="text-xs text-red-600 dark:text-red-400">
+                              {item.plagiarismFlags.length} kemiripan terdeteksi
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <span className="text-xs text-neutral-400 dark:text-neutral-500">
