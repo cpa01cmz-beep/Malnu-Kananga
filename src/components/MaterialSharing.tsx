@@ -209,7 +209,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
               </div>
             </div>
 
-            <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 200px)' }}>
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
               {/* Current Sharing */}
               {sharing.length > 0 && (
                 <div className="mb-6">
