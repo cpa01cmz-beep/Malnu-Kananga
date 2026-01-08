@@ -306,9 +306,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         <button
                             onClick={onOpenEditor}
                             aria-label="Buka AI Site Editor"
-                            className={`${getGradientClass('INDIGO_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
+                             className={`${getGradientClass('INDIGO_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
                         >
-                            <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
+                            <div className="bg-white/20% w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30% group-hover:scale-110 transition-all duration-300 ease-out">
                                 <SparklesIcon className="w-6 h-6 text-white" />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Site Editor</h3>
@@ -367,9 +367,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         <button
                             onClick={() => setCurrentView('ai-cache')}
                             aria-label="Buka AI Cache Manager"
-                            className={`${getGradientClass('GREEN_TEAL')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
+                             className={`${getGradientClass('GREEN_TEAL')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
                         >
-                            <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
+                            <div className="bg-white/20% w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30% group-hover:scale-110 transition-all duration-300 ease-out">
                                 <ChartBarIcon className="w-6 h-6 text-white" />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Cache Manager</h3>
@@ -381,9 +381,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         <button
                             onClick={() => setCurrentView('permissions')}
                             aria-label="Buka Permission System"
-                            className={`${getGradientClass('PURPLE_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
+                             className={`${getGradientClass('PURPLE_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
                         >
-                            <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-300 ease-out">
+                            <div className="bg-white/20% w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30% group-hover:scale-110 transition-all duration-300 ease-out">
                                 <UsersIcon className="w-6 h-6 text-white" />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold mb-2">Permission System</h3>

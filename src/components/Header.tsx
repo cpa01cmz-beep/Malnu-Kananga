@@ -96,12 +96,12 @@ const Header: React.FC<HeaderProps> = ({
 
     const navContainerClasses = `
         w-full max-w-7xl mx-auto px-4 sm:px-6
-        ${isScrolled ? '' : 'bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl rounded-full ring-1 ring-neutral-900/10 dark:ring-white/10 shadow-card'}
+        ${isScrolled ? '' : 'bg-white/95% dark:bg-neutral-800/95% backdrop-blur-xl rounded-full ring-1 ring-neutral-900/10% dark:ring-white/10% shadow-card'}
     `;
 
     const innerNavClasses = `
         flex items-center justify-between h-16
-        ${isScrolled ? 'bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl' : ''}
+        ${isScrolled ? 'bg-white/95% dark:bg-neutral-800/95% backdrop-blur-xl' : ''}
     `;
 
     return (
@@ -203,7 +203,7 @@ const Header: React.FC<HeaderProps> = ({
 
             {isMenuOpen && (
                 <div
-                    className="md:hidden bg-white/95 dark:bg-neutral-800/95 backdrop-blur-xl shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700"
+                    className="md:hidden bg-white/95% dark:bg-neutral-800/95% backdrop-blur-xl shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700"
                 >
                     <nav
                         id="mobile-menu"

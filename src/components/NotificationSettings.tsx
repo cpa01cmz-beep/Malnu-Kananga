@@ -131,7 +131,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-black/50%"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -508,7 +508,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
 
         {/* Reset Confirmation Modal */}
         {showResetConfirmation && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50% flex items-center justify-center p-4">
             <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 max-w-sm w-full">
               <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
                 Reset Pengaturan Notifikasi?
@@ -536,7 +536,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
 
         {/* History Modal */}
         {showHistory && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50% flex items-center justify-center p-4">
             <div className="bg-white dark:bg-neutral-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
               <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 p-4 flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">

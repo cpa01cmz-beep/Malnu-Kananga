@@ -508,7 +508,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
 
         {/* Scoring Modal */}
         {showScoringModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50% flex items-center justify-center z-50">
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 w-full max-w-md">
               <h3 className="text-lg font-semibold mb-4 text-neutral-900 dark:text-white">Penilaian Calon Siswa</h3>
               <div className="space-y-4">
@@ -563,7 +563,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
 
         {/* Document Preview Modal */}
         {showDocumentPreview && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/50% flex items-center justify-center z-50">
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 w-full max-w-2xl">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Preview Dokumen</h3>
