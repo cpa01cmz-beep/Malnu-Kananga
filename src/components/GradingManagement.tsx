@@ -884,9 +884,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       action: 'ocr_grade_extraction'
     };
     
-    const existingAudit = JSON.parse(localStorage.getItem('malnu_ocr_audit') || '[]');
+    const existingAudit = JSON.parse(localStorage.getItem(STORAGE_KEYS.OCR_AUDIT) || '[]');
     existingAudit.push(auditEntry);
-    localStorage.setItem('malnu_ocr_audit', JSON.stringify(existingAudit));
+    localStorage.setItem(STORAGE_KEYS.OCR_AUDIT, JSON.stringify(existingAudit));
 
     // Close modal and reset
     setShowOCRModal(false);

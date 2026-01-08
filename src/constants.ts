@@ -72,6 +72,13 @@ export const STORAGE_KEYS = {
     // Parent Grade Notifications (new)
     PARENT_NOTIFICATION_SETTINGS: 'malnu_parent_notification_settings',
     PARENT_NOTIFICATION_QUEUE: 'malnu_parent_notification_queue',
+    
+    // OCR Audit
+    OCR_AUDIT: 'malnu_ocr_audit',
+    
+    // Student Insights (dynamic factory functions)
+    STUDENT_INSIGHTS: (studentId: string) => `malnu_student_insights_${studentId}`,
+    INSIGHTS_ENABLED: (studentId: string) => `malnu_insights_enabled_${studentId}`,
 } as const;
 
 export const APP_CONFIG = {
