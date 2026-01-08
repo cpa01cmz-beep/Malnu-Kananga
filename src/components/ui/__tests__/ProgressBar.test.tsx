@@ -99,7 +99,7 @@ describe('ProgressBar', () => {
 
       rerender(<ProgressBar value={1} max={3} />);
       fill = progressBar.firstChild as HTMLElement;
-      expect(fill.style.width).toBe('33.333333333333336%');
+      expect(parseFloat(fill.style.width)).toBeCloseTo(33.333333333333336);
     });
   });
 

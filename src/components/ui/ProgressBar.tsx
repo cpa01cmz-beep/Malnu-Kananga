@@ -75,7 +75,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   'aria-label': ariaLabel,
   'aria-valuenow': ariaValueNow,
   'aria-valuemin': ariaValueMin = 0,
-  'aria-valuemax': ariaValueMax = 100,
+  'aria-valuemax': ariaValueMax,
 }) => {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
   const widthClass = fullWidth ? 'w-full' : sizeWidthClasses[size];
@@ -87,6 +87,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     ...(variant === 'animated' ? { animation: 'progress-bar-stripes 1s linear infinite' } : {}),
   } : {};
 
+  const ariaValueMaxFinal = ariaValueMax ?? max;
+
   return (
     <div className={className}>
       <div
@@ -95,7 +97,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
         aria-label={ariaLabel || label}
         aria-valuenow={ariaValueNow ?? value}
         aria-valuemin={ariaValueMin}
-        aria-valuemax={ariaValueMax}
+        aria-valuemax={ariaValueMaxFinal}
       >
         <div
           className={`${colorClasses[color]} ${sizeClasses[size]} rounded-full transition-all duration-300 ${
