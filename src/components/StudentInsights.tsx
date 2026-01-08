@@ -11,6 +11,7 @@ import Button from './ui/Button';
 import Badge from './ui/Badge';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
+import { GRADIENT_CLASSES } from '../config/gradients';
 
 interface StudentInsightsProps {
   onBack: () => void;
@@ -212,7 +213,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
       </div>
 
       {/* Motivational Message */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white mb-6">
+      <div className={`${GRADIENT_CLASSES.BLUE_PURPLE} rounded-xl p-6 text-white mb-6`}>
         <h3 className="text-xl font-semibold mb-2">✨ Pesan Motivasi</h3>
         <p className="text-blue-50">{insights.motivationalMessage}</p>
       </div>

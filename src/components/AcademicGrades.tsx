@@ -18,6 +18,7 @@ import { STORAGE_KEYS } from '../constants';
 import { useCanAccess } from '../hooks/useCanAccess';
 import Button from './ui/Button';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
+import { GRADIENT_CLASSES } from '../config/gradients';
 import ErrorMessage from './ui/ErrorMessage';
 import AccessDenied from './AccessDenied';
 
@@ -410,19 +411,19 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
 
       <div id="academic-report">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 text-white shadow-lg">
+          <div className={`${GRADIENT_CLASSES.GREEN_MAIN} rounded-2xl p-6 text-white shadow-lg`}>
             <p className="text-green-100 text-sm mb-1">Rata-Rata Nilai</p>
             <h3 className="text-3xl font-bold">{averageScore}</h3>
           </div>
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-lg">
+          <div className={`${GRADIENT_CLASSES.BLUE_MAIN} rounded-2xl p-6 text-white shadow-lg`}>
             <p className="text-blue-100 text-sm mb-1">Total Mata Pelajaran</p>
             <h3 className="text-3xl font-bold">{grades.length}</h3>
           </div>
-          <div className="bg-gradient-to-r from-yellow-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg">
+          <div className={`${GRADIENT_CLASSES.ORANGE_YELLOW} rounded-2xl p-6 text-white shadow-lg`}>
             <p className="text-yellow-100 text-sm mb-1">Target Tercapai</p>
             <h3 className="text-3xl font-bold">{goals.filter(g => g.achieved).length}/{goals.length}</h3>
           </div>
-          <div className="bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl p-6 text-white shadow-lg">
+          <div className={`${GRADIENT_CLASSES.PURPLE_MAIN} rounded-2xl p-6 text-white shadow-lg`}>
             <p className="text-purple-100 text-sm mb-1">Korelasi Kehadiran</p>
             <h3 className="text-3xl font-bold">{getAttendanceGradeCorrelation()}%</h3>
           </div>
