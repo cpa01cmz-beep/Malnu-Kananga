@@ -1,16 +1,17 @@
 
 import React from 'react';
 import Badge from '../ui/Badge';
+import Section from '../ui/Section';
 
 const ProfileSection: React.FC = () => {
   return (
-    <section id="profil" className="py-20 sm:py-24 bg-gradient-to-b from-white via-neutral-50/60 to-neutral-100/50 dark:from-neutral-800/50 dark:via-neutral-900/40 dark:to-neutral-900/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 sm:mb-16 animate-fade-in">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white tracking-tight mb-4">Profil Madrasah</h2>
-          <p className="text-lg sm:text-xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto leading-relaxed">Mengenal Lebih Dekat MA Malnu Kananga</p>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12 items-start animate-fade-in-up">
+    <Section
+      id="profil"
+      title="Profil Madrasah"
+      subtitle="Mengenal Lebih Dekat MA Malnu Kananga"
+      className="bg-gradient-to-b from-white via-neutral-50/60 to-neutral-100/50 dark:from-neutral-800/50 dark:via-neutral-900/40 dark:to-neutral-900/60"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12 items-start animate-fade-in-up">
             <div className="lg:col-span-3 text-base sm:text-lg text-neutral-700 dark:text-neutral-300 space-y-8 text-left sm:text-justify leading-relaxed">
                 <p>
                     <strong className="text-neutral-900 dark:text-white font-semibold">Madrasah Aliyah MALNU Kananga</strong> adalah lembaga pendidikan menengah atas swasta bernaung di bawah Kementerian Agama Republik Indonesia. Berlokasi di Jalan Desa Kananga Km. 0,5, Kecamatan Menes, Kabupaten Pandeglang, Banten, madrasah ini didirikan pada tahun 2000 dengan tujuan mencetak generasi berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.
@@ -85,10 +86,9 @@ const ProfileSection: React.FC = () => {
                         </li>
                     </ul>
                 </div>
-            </div>
+          </div>
         </div>
-      </div>
-    </section>
+    </Section>
   );
 };
 
