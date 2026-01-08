@@ -4,19 +4,18 @@ import { PencilIcon } from './icons/PencilIcon';
 import { TrashIcon } from './icons/TrashIcon';
 import { CloseIcon } from './icons/CloseIcon';
 import { User, UserRole, UserExtraRole } from '../types';
-import { STORAGE_KEYS } from '../constants';
 import Button from './ui/Button';
 import IconButton from './ui/IconButton';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Badge from './ui/Badge';
 import { api } from '../services/apiService';
-import { permissionService } from '../services/permissionService';
 import { pushNotificationService } from '../services/pushNotificationService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useFocusTrap } from '../hooks/useFocusTrap';
+import { useCanAccess } from '../hooks/useCanAccess';
 import { TableSkeleton } from './ui/Skeleton';
-import PermissionGuard from './PermissionGuard';
+import AccessDenied from './AccessDenied';
 
 interface UserManagementProps {
   onBack: () => void;
@@ -24,6 +23,8 @@ interface UserManagementProps {
 }
 
 const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowToast }) => {
+  // ALL hooks first
+  const { user: _user, canAccess } = useCanAccess();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -34,20 +35,6 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const [currentUser, setCurrentUser] = useState<Partial<User>>({});
   const [isEditing, setIsEditing] = useState(false);
   const dialogRef = useFocusTrap({ isOpen: isModalOpen, onClose: () => setIsModalOpen(false) });
-
-// Get current user for permission checking
-  const getCurrentUser = (): User | null => {
-    const userJson = localStorage.getItem(STORAGE_KEYS.USER);
-    return userJson ? JSON.parse(userJson) : null;
-  };
-
-  const currentUserData = getCurrentUser();
-  const userRole = currentUserData?.role || 'student';
-  const userExtraRole = currentUserData?.extraRole || null;
-  
-  const canCreateUser = permissionService.hasPermission(userRole, userExtraRole, 'users.create').granted;
-  const canUpdateUser = permissionService.hasPermission(userRole, userExtraRole, 'users.update').granted;
-  const canDeleteUser = permissionService.hasPermission(userRole, userExtraRole, 'users.delete').granted;
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -75,6 +62,11 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Standardized permission checks - AFTER all hooks
+  const canCreateUser = canAccess('users.create').canAccess;
+  const canUpdateUser = canAccess('users.update').canAccess;
+  const canDeleteUser = canAccess('users.delete').canAccess;
 
   const handleAddUser = () => {
       setCurrentUser({ role: 'student', status: 'active', extraRole: null });
@@ -374,27 +366,27 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
 };
 
 const UserManagement: React.FC<UserManagementProps> = (props) => {
-// Get current user for permission checking
-  const getCurrentUser = (): User | null => {
-    const userJson = localStorage.getItem(STORAGE_KEYS.USER);
-    return userJson ? JSON.parse(userJson) : null;
-  };
+  const { canAccessAny, user: _user } = useCanAccess();
 
-  const authUser = getCurrentUser();
-  const userRole = authUser?.role as UserRole || 'student';
-  const userExtraRole = authUser?.extraRole as UserExtraRole;
+  // Check if user has any user management permissions
+  const userManagementAccess = canAccessAny([
+    'users.create', 
+    'users.update', 
+    'users.delete',
+    'users.read'
+  ]);
 
-  return (
-    <PermissionGuard
-      userRole={userRole}
-      userExtraRole={userExtraRole}
-      requiredPermissions={['users.create', 'users.update', 'users.delete']}
-      onBack={props.onBack}
-      message="You don't have permission to manage users"
-    >
-      <UserManagementContent {...props} />
-    </PermissionGuard>
-  );
+  if (!userManagementAccess.canAccess) {
+    return (
+      <AccessDenied 
+        onBack={props.onBack} 
+        requiredPermission={userManagementAccess.requiredPermission}
+        message="You don't have permission to manage users"
+      />
+    );
+  }
+
+  return <UserManagementContent {...props} />;
 };
 
 export default UserManagement;

@@ -13,7 +13,6 @@ import AICacheManager from './AICacheManager'; // Import AI Cache Manager
 import { ToastType } from './Toast';
 import { STORAGE_KEYS } from '../constants'; // Import constants
 import { logger } from '../utils/logger';
-import { permissionService } from '../services/permissionService';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { getGradientClass } from '../config/gradients';
@@ -25,6 +24,8 @@ import type { VoiceCommand } from '../types';
 import VoiceInputButton from './VoiceInputButton';
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import SmallActionButton from './ui/SmallActionButton';
+import { useCanAccess } from '../hooks/useCanAccess';
+import AccessDenied from './AccessDenied';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -39,6 +40,8 @@ interface PPDBRegistrant {
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToast }) => {
+  // ALL hooks first
+  const { user: _user, canAccess } = useCanAccess();
   const [currentView, setCurrentView] = useState<DashboardView>('home');
   const [pendingPPDB, setPendingPPDB] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -54,12 +57,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
   } = usePushNotifications();
 
   const { isOnline, isSlow } = useNetworkStatus();
-
-  // Check permissions for admin role
-  const checkPermission = (permission: string) => {
-    const result = permissionService.hasPermission('admin', null, permission);
-    return result.granted;
-  };
 
   // Load dashboard data with offline support
   useEffect(() => {
@@ -208,6 +205,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
     }
   }, [currentView, pendingPPDB, showNotification, createNotification]);
 
+  // Permission checks for admin dashboard - AFTER all hooks
+  const adminAccess = canAccess('system.admin');
+  const _statsAccess = canAccess('system.stats');
+  
+  if (!adminAccess.canAccess) {
+    return (
+      <AccessDenied 
+        onBack={() => {}} // Admin typically has no back button
+        requiredPermission={adminAccess.requiredPermission}
+        message="You need administrator privileges to access this dashboard."
+      />
+    );
+  }
+
   // Loading state
   if (loading) {
     return (
@@ -291,7 +302,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
-                    {checkPermission('content.update') && (
+                    {canAccess('content.update').canAccess && (
                         <button
                             onClick={onOpenEditor}
                             aria-label="Buka AI Site Editor"
@@ -305,7 +316,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         </button>
                     )}
 
-                    {checkPermission('ppdb.manage') && (
+                    {canAccess('ppdb.manage').canAccess && (
                         <div className="relative">
                             {pendingPPDB > 0 && (
                                 <span className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-semibold text-white shadow-md animate-pulse ring-2 ring-white dark:ring-neutral-800 z-10">
@@ -326,7 +337,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         </div>
                     )}
 
-                    {checkPermission('users.read') && (
+                    {canAccess('users.read').canAccess && (
                         <DashboardActionCard
                             icon={<UsersIcon />}
                             title="Manajemen User"
@@ -339,7 +350,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         />
                     )}
 
-                    {checkPermission('system.stats') && (
+                    {canAccess('system.stats').canAccess && (
                         <DashboardActionCard
                             icon={<ChartBarIcon />}
                             title="Laporan & Log"
@@ -352,7 +363,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         />
                     )}
 
-                    {checkPermission('system.admin') && (
+                    {canAccess('system.admin').canAccess && (
                         <button
                             onClick={() => setCurrentView('ai-cache')}
                             aria-label="Buka AI Cache Manager"
@@ -366,7 +377,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         </button>
                     )}
 
-                    {checkPermission('system.admin') && (
+                    {canAccess('system.admin').canAccess && (
                         <button
                             onClick={() => setCurrentView('permissions')}
                             aria-label="Buka Permission System"

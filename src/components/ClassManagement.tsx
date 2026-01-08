@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { studentsAPI, attendanceAPI } from '../services/apiService';
 import { Student, Attendance } from '../types';
-import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateAttendance } from '../utils/teacherValidation';
 import {
   executeWithRetry,
   createToastHandler
 } from '../utils/teacherErrorHandler';
+import { useCanAccess } from '../hooks/useCanAccess';
 import PageHeader from './ui/PageHeader';
 import { TableSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
+import AccessDenied from './AccessDenied';
 
 interface ClassStudent {
   id: string;
@@ -27,17 +28,16 @@ interface ClassManagementProps {
 }
 
 const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }) => {
+  // ALL hooks first
+  const { user, canAccess } = useCanAccess();
   const [students, setStudents] = useState<ClassStudent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const className = 'XII IPA 1';
+  const [className] = useState<string>('X RPL 1');
+  const [_selectedDate, _setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
   
-
-  const currentUser = authAPI.getCurrentUser();
   const toast = createToastHandler(onShowToast);
-
-  
 
   const fetchStudents = useCallback(async () => {
     setLoading(true);
@@ -91,6 +91,24 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
     }
   };
 
+  // Permission checks for class management - AFTER all hooks
+  const classAccess = canAccess('academic.classes');
+  const attendanceAccess = canAccess('academic.attendance');
+  
+  if (!classAccess.canAccess || !attendanceAccess.canAccess) {
+    const missingPermissions = [];
+    if (!classAccess.canAccess) missingPermissions.push(classAccess.requiredPermission);
+    if (!attendanceAccess.canAccess) missingPermissions.push(attendanceAccess.requiredPermission);
+    
+    return (
+      <AccessDenied 
+        onBack={onBack} 
+        requiredPermission={missingPermissions.join(', ')}
+        message="You need both class management and attendance permissions to access this feature."
+      />
+    );
+  }
+
 const handleAttendanceChange = async (id: string, status: ClassStudent['attendanceToday']) => {
     const prevStudents = [...students];
     
@@ -110,7 +128,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
         date: today,
         status: apiStatus,
         notes: '',
-        recordedBy: currentUser?.id || '',
+        recordedBy: user?.id || '',
         createdAt: new Date().toISOString(),
       };
 
