@@ -47,8 +47,7 @@ const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
         placeholder={placeholder}
         disabled={disabled}
         rows={1}
-        className="flex-1 max-h-[150px] w-full bg-transparent border-none focus:ring-0 resize-none py-2.5 px-3 text-neutral-800 dark:text-neutral-200 placeholder-neutral-500 dark:placeholder-neutral-400 leading-relaxed custom-scrollbar"
-        style={{ minHeight: '44px' }}
+        className="flex-1 max-h-[150px] w-full min-h-[44px] bg-transparent border-none focus:ring-0 resize-none py-2.5 px-3 text-neutral-800 dark:text-neutral-200 placeholder-neutral-500 dark:placeholder-neutral-400 leading-relaxed custom-scrollbar"
       />
       <Button
         variant="primary"
