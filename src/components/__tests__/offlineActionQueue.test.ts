@@ -208,7 +208,9 @@ describe('OfflineActionQueueService', () => {
       expect(result.success).toBe(true);
       expect(result.actionsProcessed).toBe(0);
       expect(result.actionsFailed).toBe(1);
-      expect(result.conflicts).toHaveLength(0);
+      expect(result.conflicts).toHaveLength(1);
+      expect(result.conflicts[0].status).toBe('conflict');
+      expect(result.conflicts[0].serverVersion).toBe(2);
     });
 
     it('should handle server errors with retries', async () => {
