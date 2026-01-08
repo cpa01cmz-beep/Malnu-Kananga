@@ -11,6 +11,7 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
+import ProgressBar from './ui/ProgressBar';
 
 interface OsisEventsProps {
   onBack: () => void;
@@ -426,9 +427,12 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   </Button>
                 </div>
                 {uploadProgress > 0 && uploadProgress < 100 && (
-                  <div className="w-full bg-neutral-200 rounded-full h-2">
-                    <div className="bg-purple-600 h-2 rounded-full transition-all" style={{ width: `${uploadProgress}%` }}></div>
-                  </div>
+                  <ProgressBar
+                    value={uploadProgress}
+                    size="md"
+                    color="purple"
+                    aria-label={`Upload progress: ${uploadProgress}%`}
+                  />
                 )}
                 <input
                   type="text"

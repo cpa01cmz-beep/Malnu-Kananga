@@ -181,3 +181,12 @@
   --theme-purple-800: 259 45% 45%;
   --theme-purple-900: 259 40% 40%;
 }
+
+@keyframes progress-bar-stripes {
+  0% {
+    background-position: 1rem 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}

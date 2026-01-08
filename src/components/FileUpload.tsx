@@ -6,6 +6,7 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { fileStorageAPI, FileUploadResponse } from '../services/apiService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
+import ProgressBar from './ui/ProgressBar';
 
 interface UploadedFile {
   id: string;
@@ -244,12 +245,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 {uploadProgress}%
               </span>
             </div>
-            <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2.5 mb-3" role="progressbar" aria-valuenow={uploadProgress} aria-valuemin={0} aria-valuemax={100}>
-              <div
-                className="bg-green-600 h-2.5 rounded-full transition-all duration-300"
-                style={{ width: `${uploadProgress}%` }}
-              ></div>
-            </div>
+            <ProgressBar
+              value={uploadProgress}
+              size="lg"
+              color="success"
+              className="mb-3"
+              aria-label="Upload progress"
+            />
             <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400 mb-3">
               <span>{formatFileSize(uploadedBytes)} / {formatFileSize(uploadedBytes / (uploadProgress / 100) || 0)}</span>
               <span>{formatSpeed(uploadSpeed)}</span>

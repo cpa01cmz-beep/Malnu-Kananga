@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Button from './ui/Button';
 import ErrorMessage from './ui/ErrorMessage';
+import ProgressBar from './ui/ProgressBar';
 import {
   BarChart,
   Bar,
@@ -632,12 +633,13 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                               {status === 'achieved' ? 'Tercapai!' : status === 'not-achieved' ? 'Belum Terpenuhi' : 'Dalam Proses'}
                             </span>
                           </div>
-                          <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
-                            <div
-                              className={`h-2 rounded-full transition-all ${status === 'achieved' ? 'bg-green-600' : status === 'not-achieved' ? 'bg-red-600' : 'bg-yellow-600'}`}
-                              style={{ width: `${Math.min(progress, 100)}%` }}
-                            />
-                          </div>
+                          <ProgressBar
+                            value={progress}
+                            max={100}
+                            size="md"
+                            color={status === 'achieved' ? 'success' : status === 'not-achieved' ? 'error' : 'warning'}
+                            aria-label={`Goal progress: ${Math.min(progress, 100)}% - ${status}`}
+                          />
                         </div>
                       </div>
                     </div>

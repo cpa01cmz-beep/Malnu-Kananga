@@ -14,6 +14,7 @@ import Button from './ui/Button';
 import Badge from './ui/Badge';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
+import ProgressBar from './ui/ProgressBar';
 
 interface ELibraryProps {
   onBack: () => void;
@@ -1228,12 +1229,12 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                         {Math.round((readingProgress.get(item.id)?.currentPosition || 0) * 100)}%
                       </span>
                     </div>
-                    <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-1.5">
-                      <div 
-                        className="bg-blue-500 h-1.5 rounded-full transition-all"
-                        style={{ width: `${(readingProgress.get(item.id)?.currentPosition || 0) * 100}%` }}
-                      ></div>
-                    </div>
+                    <ProgressBar
+                      value={(readingProgress.get(item.id)?.currentPosition || 0) * 100}
+                      size="sm"
+                      color="blue"
+                      aria-label={`Reading progress: ${Math.round((readingProgress.get(item.id)?.currentPosition || 0) * 100)}%`}
+                    />
                   </div>
                 )}
                 
@@ -1252,35 +1253,16 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                     {/* OCR Status Display */}
                     {ocrProcessing.has(item.id) ? (
                       <div className="flex items-center gap-2">
-                        <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-1.5">
-                          <div 
-                            className="bg-blue-500 h-1.5 rounded-full transition-all"
-                            style={{ width: `${ocrProcessing.get(item.id)?.progress || 0}%` }}
-                          ></div>
-                        </div>
+                        <ProgressBar
+                          value={ocrProcessing.get(item.id)?.progress || 0}
+                          size="sm"
+                          color="blue"
+                          aria-label="OCR processing progress"
+                        />
                         <span className="text-xs text-blue-600 dark:text-blue-400">
                           Memproses...
                         </span>
                       </div>
-                    ) : item.ocrStatus === 'completed' ? (
-                      <div className="flex items-center gap-2">
-                        <span className={`text-xs ${
-                          item.isSearchable 
-                            ? 'text-green-600 dark:text-green-400' 
-                            : 'text-yellow-600 dark:text-yellow-400'
-                        }`}>
-                          ✓ {item.ocrConfidence}% keyakinan
-                        </span>
-                        {item.isSearchable && (
-                          <span className="text-xs text-purple-600 dark:text-purple-400">
-                            ( dapat dicari )
-                          </span>
-                        )}
-                      </div>
-                    ) : item.ocrStatus === 'failed' ? (
-                      <span className="text-xs text-red-600 dark:text-red-400">
-                        ✗ Gagal diproses
-                      </span>
                     ) : (
                       <span className="text-xs text-neutral-400 dark:text-neutral-500">
                         Belum diproses
