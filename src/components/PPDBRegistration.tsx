@@ -9,6 +9,7 @@ import type { PPDBRegistrant } from '../types';
 import FileUpload from './FileUpload';
 import { ocrService, type OCRExtractionResult, type OCRProgress } from '../services/ocrService';
 import Textarea from './ui/Textarea';
+import ProgressBar from './ui/ProgressBar';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -286,12 +287,12 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                                             <span>{ocrProgress.status}</span>
                                             <span>{ocrProgress.progress.toFixed(0)}%</span>
                                         </div>
-                                        <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
-                                            <div
-                                                className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                                                style={{ width: `${ocrProgress.progress}%` }}
-                                            ></div>
-                                        </div>
+                                        <ProgressBar
+                                            value={ocrProgress.progress}
+                                            size="md"
+                                            color="success"
+                                            aria-label={`OCR processing: ${ocrProgress.status}`}
+                                        />
                                     </div>
                                 )}
                             </div>
