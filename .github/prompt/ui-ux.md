@@ -79,6 +79,7 @@ AVAILABLE TASKS (Select ONE, Prioritize Top-Down)
 5. **Interaction Polish**: Add loading states, transitions, feedback.
 6. **Form Improvement**: Better validation, error display, and guidance.
 7. **Color Palette Alignment**: Analyze the website’s theme, brand tone, and existing visuals, then define a cohesive, accessible color palette. Ensure WCAG contrast compliance, semantic color consistency, and minimal palette usage suitable for scaling.
+8. **Styling System Debug**: Audit CSS conflicts, hardcoded styles, and theme system integration issues. Check for duplicate/obsolete CSS definitions, identify hardcoded inline styles vs design tokens, verify ThemeManager + Tailwind v4 integration, and remove obsolete config files.
 
 ═══════════════════════════════════════════════════════════════
 PHASE 1: UX ANALYSIS
@@ -89,6 +90,7 @@ PHASE 1: UX ANALYSIS
 3. **Consistency Check**: Compare components against the design system.
 4. **Responsive Check**: Test across different viewport sizes.
 5. **Define Scope**: What specific UI improvement will you make?
+6. **Technical Audit**: Check for duplicate/obsolete CSS definitions, hardcoded styles conflicting with design tokens, ThemeManager + Tailwind v4 integration issues, and obsolete config files.
 
 ═══════════════════════════════════════════════════════════════
 PHASE 2: UI IMPLEMENTATION
