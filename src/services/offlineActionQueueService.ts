@@ -335,13 +335,18 @@ class OfflineActionQueueService {
           result.failed++;
         }
       } catch (error) {
-        action.status = 'failed';
         action.lastError = error instanceof Error ? error.message : 'Unknown error';
         action.retryCount++;
 
-        if (action.retryCount >= CONFLICT_THRESHOLD) {
-          action.status = 'conflict';
+        // Check if action was already marked as conflict in executeAction
+        if (action.status === 'conflict') {
           result.conflicts.push(action);
+        } else {
+          action.status = 'failed';
+          if (action.retryCount >= CONFLICT_THRESHOLD) {
+            action.status = 'conflict';
+            result.conflicts.push(action);
+          }
         }
 
         result.failed++;
@@ -378,6 +383,7 @@ class OfflineActionQueueService {
       // Conflict - server version changed
       const serverData = await response.json().catch(() => ({}));
       action.serverVersion = serverData.version;
+      action.status = 'conflict';
       throw new Error('Conflict detected - server data changed');
     }
 
