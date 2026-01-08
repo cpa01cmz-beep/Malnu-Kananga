@@ -42,7 +42,7 @@ const DocumentationPage: React.FC<DocumentationPageProps> = ({ isOpen, onClose }
 
   return (
     <div
-      className="fixed inset-0 bg-neutral-900 bg-opacity-75 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-neutral-900/75 flex items-center justify-center z-50 p-4"
       onClick={onClose}
       aria-modal="true"
       role="dialog"
