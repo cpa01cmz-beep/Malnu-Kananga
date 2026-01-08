@@ -1,6 +1,5 @@
 {
   "commandsFile": ".opencode/commands.json",
   "rulesFile": ".opencode/rules.json",
-  "toolsFile": ".opencode/tools.json",
   "skillsDir": ".opencode/skills"
 }
