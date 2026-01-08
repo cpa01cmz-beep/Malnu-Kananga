@@ -201,6 +201,7 @@
 - **`/utils`**: Utility functions dan helpers
 - **`/constants`**: Konstanta dan konfigurasi
 - **`/config`**: Konfigurasi aplikasi
+- **`/styles`**: Global CSS styles
 - **`/contexts`**: React Context providers
 - **`/data`**: Data statis atau konfigurasi default
 
