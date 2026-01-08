@@ -25,14 +25,12 @@ const mockNotification: MockNotification = {
 };
 
 // Type assertion needed for browser API mocking
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (global.Notification as any) = {
   requestPermission: vi.fn(),
   permission: 'granted',
 };
 
 // Type assertion needed for browser API mocking
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (global.navigator as any) = {
   serviceWorker: {
     ready: Promise.resolve({
@@ -64,11 +62,8 @@ describe('Push Notification Integration Tests', () => {
       };
     });
     // Type assertion needed for browser API mocking
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (mockNotificationConstructor as any).permission = 'granted';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (mockNotificationConstructor as any).requestPermission = vi.fn().mockResolvedValue('granted');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (global.Notification as any) = mockNotificationConstructor;
   });
 
