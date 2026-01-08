@@ -1064,13 +1064,14 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                   </button>
                   
                   {item.ocrStatus !== 'processing' && (
-                    <button
+                    <Button
+                      variant="success"
+                      size="sm"
                       onClick={() => processDocumentOCR(item)}
-                      className="px-3 py-1 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300 rounded-lg text-xs font-medium hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors"
                       disabled={ocrProcessing.has(item.id)}
                     >
                       Proses
-                    </button>
+                    </Button>
                   )}
                 </div>
               )}

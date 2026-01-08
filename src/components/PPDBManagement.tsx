@@ -252,21 +252,23 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                 <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Penerimaan Siswa Baru</h2>
                 <p className="text-neutral-500 dark:text-neutral-400">Kelola data calon siswa yang mendaftar online.</p>
             </div>
-            {selectedIds.length > 0 && canApprovePPDB && (
+             {selectedIds.length > 0 && canApprovePPDB && (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-neutral-600">{selectedIds.length} dipilih</span>
-                <button
+                <Button
+                  variant="green-solid"
+                  size="sm"
                   onClick={() => handleBulkAction('approve')}
-                  className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
                 >
                   Terima Semua
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="red-solid"
+                  size="sm"
                   onClick={() => handleBulkAction('reject')}
-                  className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
                 >
                   Tolak Semua
-                </button>
+                </Button>
               </div>
             )}
         </div>
