@@ -279,7 +279,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
 
   return (
     <div
-      className="fixed inset-0 bg-neutral-900 bg-opacity-75 flex items-center justify-center z-50 p-4 transition-opacity duration-300"
+      className="fixed inset-0 bg-neutral-900/75 flex items-center justify-center z-50 p-4 transition-opacity duration-300"
       onClick={onClose}
       aria-modal="true"
       role="dialog"
@@ -448,7 +448,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       {/* Confirmation Modal */}
       {showConfirmation && pendingContent && (
         <div
-          className="fixed inset-0 bg-neutral-900 bg-opacity-75 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-neutral-900/75 flex items-center justify-center z-50 p-4"
           aria-modal="true"
           role="dialog"
         >
