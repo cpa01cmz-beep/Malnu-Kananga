@@ -400,7 +400,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               </div>
             </li>
           ))}
-          <li ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
         </ul>
       </div>
 
