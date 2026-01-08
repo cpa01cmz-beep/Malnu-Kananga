@@ -280,10 +280,26 @@ const settings = {
         events: true,
         library: true,
         system: true,
-        ocr: false,
+        ocr: true,
         roleBasedFiltering: false,
         batchNotifications: false,
         quietHours: { enabled: false, start: '22:00', end: '07:00' },
+        voiceNotifications: {
+          enabled: false,
+          highPriorityOnly: true,
+          respectQuietHours: true,
+          voiceSettings: {
+            rate: 1.0,
+            pitch: 1.0,
+            volume: 0.8,
+          },
+          categories: {
+            grades: true,
+            attendance: true,
+            system: true,
+            meetings: true,
+          },
+        },
       };
       
       pushNotificationService.saveSettings(settings);

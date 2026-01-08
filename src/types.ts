@@ -929,6 +929,7 @@ export interface NotificationSettings {
     start: string;
     end: string;
   };
+  voiceNotifications: VoiceNotificationSettings;
 }
 
 export interface NotificationSubscription {
@@ -1018,6 +1019,36 @@ export interface NotificationHistoryItem {
   dismissed: boolean;
   deliveredAt: string;
 }
+
+export interface VoiceNotificationSettings {
+  enabled: boolean;
+  highPriorityOnly: boolean;
+  respectQuietHours: boolean;
+  voiceSettings: {
+    rate: number;
+    pitch: number;
+    volume: number;
+  };
+  categories: {
+    grades: boolean;
+    attendance: boolean;
+    system: boolean;
+    meetings: boolean;
+  };
+}
+
+export interface VoiceNotification {
+  id: string;
+  notificationId: string;
+  text: string;
+  priority: NotificationPriority;
+  category: VoiceNotificationCategory;
+  timestamp: string;
+  isSpeaking: boolean;
+  wasSpoken: boolean;
+}
+
+export type VoiceNotificationCategory = 'grade' | 'attendance' | 'system' | 'meeting';
 
 export interface Goal {
   id: string;

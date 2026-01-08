@@ -103,8 +103,9 @@
           - [x] Refactor TemplateManagement.tsx to use Button, Input, Select, Textarea, and IconButton components - Eliminated 11 inline styles, improved consistency and accessibility (2026-01-08)
           - [x] Refactor ChatWindow and SiteEditor to use reusable Textarea component with separate send buttons - Eliminated AutoResizeTextarea redundancy, improved design system consistency (2026-01-08)
            - [x] Refactor VoiceCommandsHelp to use reusable Modal component - Eliminated hardcoded modal pattern, improved accessibility with focus trap, body scroll lock, and proper ARIA compliance (2026-01-08)
-           - [x] Enhance ChatWindow accessibility with focus management, keyboard navigation, and screen reader support - Added useFocusTrap hook, Escape key handler, ARIA roles (dialog, log, list, listitem), aria-live updates, and semantic HTML structure with <ul> and <li> for messages (2026-01-08)
-           - [ ] Achieve 80% test coverage
+            - [x] Enhance ChatWindow accessibility with focus management, keyboard navigation, and screen reader support - Added useFocusTrap hook, Escape key handler, ARIA roles (dialog, log, list, listitem), aria-live updates, and semantic HTML structure with <ul> and <li> for messages (2026-01-08)
+            - [x] Refactor chart colors to use centralized design tokens - Created CHART_COLORS configuration in src/config/chartColors.ts, updated StudentInsights, SchoolInventory, ProgressAnalytics, and AcademicGrades components to use design tokens instead of hardcoded hex values (2026-01-08)
+            - [ ] Achieve 80% test coverage
   - [ ] Complete API documentation
   - [ ] Optimize bundle size to <500KB
 
