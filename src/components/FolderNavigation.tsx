@@ -6,6 +6,7 @@ import { UsersIcon } from './icons/UsersIcon';
 import { FolderIcon, FolderOpenIcon, ChevronRightIcon, ChevronDownIcon } from './icons/MaterialIcons';
 import { MaterialFolder, ELibrary } from '../types';
 import { logger } from '../utils/logger';
+import SmallActionButton from './ui/SmallActionButton';
 
 interface FolderNavigationProps {
   selectedFolderId?: string;
@@ -332,16 +333,16 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
             >
               Buat
             </button>
-            <button
-              onClick={() => {
-                setShowCreateFolder(false);
-                setNewFolderName('');
-                setNewFolderDescription('');
-              }}
-              className="px-3 py-1.5 bg-neutral-300 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300 text-sm rounded-lg hover:bg-neutral-400 dark:hover:bg-neutral-500 transition-colors"
-            >
-              Batal
-            </button>
+              <SmallActionButton
+                onClick={() => {
+                  setShowCreateFolder(false);
+                  setNewFolderName('');
+                  setNewFolderDescription('');
+                }}
+                variant="neutral"
+              >
+                Batal
+              </SmallActionButton>
           </div>
         </div>
       )}
@@ -375,18 +376,20 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
             </label>
           </div>
           <div className="flex gap-2">
-            <button
+            <SmallActionButton
               onClick={() => updateFolder(editingFolder)}
-              className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+              variant="primary"
+              fullWidth
             >
               Simpan
-            </button>
-            <button
+            </SmallActionButton>
+            <SmallActionButton
               onClick={() => setEditingFolder(null)}
-              className="px-3 py-1.5 bg-neutral-300 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300 text-sm rounded-lg hover:bg-neutral-400 dark:hover:bg-neutral-500 transition-colors"
+              variant="neutral"
+              fullWidth
             >
               Batal
-            </button>
+            </SmallActionButton>
           </div>
         </div>
       )}

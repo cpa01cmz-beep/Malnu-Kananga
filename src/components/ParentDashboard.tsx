@@ -34,6 +34,7 @@ import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import type { VoiceCommand } from '../types';
 import VoiceInputButton from './VoiceInputButton';
 import VoiceCommandsHelp from './VoiceCommandsHelp';
+import SmallActionButton from './ui/SmallActionButton';
 import ParentNotificationSettings from './ParentNotificationSettings';
 import NotificationHistory from './NotificationHistory';
 
@@ -452,12 +453,11 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                             </p>
                         </div>
                         <div className="flex items-center gap-2">
-                            <button
+                            <SmallActionButton
                                 onClick={() => setShowVoiceHelp(true)}
-                                className="px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
                             >
                                 Bantuan
-                            </button>
+                            </SmallActionButton>
                             <VoiceInputButton
                                 onTranscript={(transcript) => {
                                   onShowToast(`Transkripsi: ${transcript}`, 'info');
