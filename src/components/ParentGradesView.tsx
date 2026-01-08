@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ToastType } from './Toast';
 import type { ParentChild, Grade } from '../types';
 import { parentsAPI } from '../services/apiService';
+import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import { logger } from '../utils/logger';
 import PDFExportButton from './ui/PDFExportButton';
 import { pdfExportService } from '../services/pdfExportService';
@@ -27,6 +28,13 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
         if (response.success && response.data) {
           setGrades(response.data);
           setError(null);
+
+          // Process each grade for potential notifications
+          // This ensures parents get notified about new grades when they view the page
+          response.data.forEach(grade => {
+            parentGradeNotificationService.processGradeUpdate(child, grade);
+          });
+
         } else {
           setError(response.message || 'Gagal memuat nilai');
         }
@@ -40,6 +48,7 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
     };
 
     fetchGrades();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [child.studentId, onShowToast]);
 
   const subjects = Array.from(new Set(grades.map(g => g.subjectName)));

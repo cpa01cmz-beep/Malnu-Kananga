@@ -148,22 +148,23 @@ const Header: React.FC<HeaderProps> = ({
                                 )}
 
                                  {userRole === 'admin' && (
-                                      <button
-                                          onClick={onEditClick}
-                                          className="flex items-center gap-2 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 px-4 py-2.5 rounded-lg font-semibold text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800/50 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95"
-                                          title="Buka Editor AI"
-                                      >
-                                          <SparklesIcon />
-                                          <span className="hidden lg:inline">Editor AI</span>
-                                      </button>
-                                 )}
+                                     <Button
+                                         variant="indigo"
+                                         onClick={onEditClick}
+                                         icon={<SparklesIcon />}
+                                         iconPosition="left"
+                                         title="Buka Editor AI"
+                                     >
+                                         <span className="hidden lg:inline">Editor AI</span>
+                                     </Button>
+                                  )}
 
-                                <button
+                                 <Button
+                                     variant="secondary"
                                      onClick={onTogglePublicView}
-                                     className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 px-4 py-2.5 rounded-lg font-semibold text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-neutral-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95"
                                  >
                                      {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
-                                 </button>
+                                 </Button>
 
                                 <Button variant="danger" onClick={onLogout}>
                                     Logout
@@ -209,16 +210,32 @@ const Header: React.FC<HeaderProps> = ({
                     >
                         <NavLinks />
                            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-2">
-                               {isLoggedIn ? (
-                                   <>
-                                          <button onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }} className="bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 w-full px-4 py-3 rounded-lg font-semibold text-sm hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-neutral-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95">
+                                 {isLoggedIn ? (
+                                    <>
+                                           <Button
+                                               variant="secondary"
+                                               onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }}
+                                               fullWidth
+                                           >
                                                {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
-                                          </button>
-                                          <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 w-full px-4 py-3 rounded-lg font-semibold text-sm hover:bg-red-200 dark:hover:bg-red-800/50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 hover:scale-[1.02] active:scale-95">Logout</button>
-                                     </>
-                                 ) : (
-                                        <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="bg-primary-600 text-white w-full px-4 py-3 rounded-lg font-semibold text-sm hover:bg-primary-700 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95">Login</button>
-                                 )}
+                                           </Button>
+                                           <Button
+                                               variant="danger"
+                                               onClick={() => { onLogout(); setIsMenuOpen(false); }}
+                                               fullWidth
+                                           >
+                                               Logout
+                                           </Button>
+                                      </>
+                                  ) : (
+                                         <Button
+                                             variant="primary"
+                                             onClick={() => { onLoginClick(); setIsMenuOpen(false); }}
+                                             fullWidth
+                                         >
+                                             Login
+                                         </Button>
+                                  )}
                            </div>
                     </nav>
                 </div>

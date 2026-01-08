@@ -68,6 +68,10 @@ export const STORAGE_KEYS = {
     // Programs and News storage keys
     PROGRAMS: 'malnu_programs',
     NEWS: 'malnu_news',
+    
+    // Parent Grade Notifications (new)
+    PARENT_NOTIFICATION_SETTINGS: 'malnu_parent_notification_settings',
+    PARENT_NOTIFICATION_QUEUE: 'malnu_parent_notification_queue',
 } as const;
 
 export const APP_CONFIG = {
