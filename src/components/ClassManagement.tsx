@@ -3,6 +3,7 @@ import { studentsAPI, attendanceAPI } from '../services/apiService';
 import { Student, Attendance } from '../types';
 import { logger } from '../utils/logger';
 import { validateAttendance } from '../utils/teacherValidation';
+import { pushNotificationService } from '../services/pushNotificationService';
 import {
   executeWithRetry,
   createToastHandler
@@ -45,9 +46,8 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
   // Network status and offline queue
   const { isOnline, isSlow } = useNetworkStatus();
   const { 
-    sync,
     addAction,
-    getPendingCount 
+    getPendingCount: _getPendingCount 
   } = useOfflineActionQueue();
 
   const fetchStudents = useCallback(async () => {
@@ -123,6 +123,18 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
 const handleAttendanceChange = async (id: string, status: ClassStudent['attendanceToday']) => {
     const prevStudents = [...students];
     const today = new Date().toISOString().split('T')[0];
+    const apiStatus = status.toLowerCase() as 'hadir' | 'sakit' | 'izin' | 'alpa';
+
+    const attendanceData = {
+      id: Date.now().toString(),
+      studentId: id,
+      classId: className,
+      date: today,
+      status: apiStatus,
+      notes: '',
+      recordedBy: user?.id || '',
+      createdAt: new Date().toISOString(),
+    };
     
     // Optimistic update
     setStudents((prev) =>
@@ -130,18 +142,6 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
     );
 
     try {
-      const apiStatus = status.toLowerCase() as 'hadir' | 'sakit' | 'izin' | 'alpa';
-
-      const attendanceData = {
-        id: Date.now().toString(),
-        studentId: id,
-        classId: className,
-        date: today,
-        status: apiStatus,
-        notes: '',
-        recordedBy: user?.id || '',
-        createdAt: new Date().toISOString(),
-      };
 
       const validation = validateAttendance(attendanceData);
       if (!validation.isValid) {
@@ -186,6 +186,34 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
       
       if (result.success) {
         toast.success('Status kehadiran diperbarui');
+        
+        // Send push notification to student
+        const student = students.find(s => s.id === id);
+        if (student) {
+          const statusMap: Record<string, string> = {
+            'hadir': 'Hadir',
+            'sakit': 'Sakit', 
+            'izin': 'Izin',
+            'alpa': 'Alpa'
+          };
+          
+          await pushNotificationService.showLocalNotification({
+            id: `attendance-${id}-${today}-${Date.now()}`,
+            type: 'system',
+            title: 'Kehadiran Hari Ini',
+            body: `Status kehadiran Anda hari ini: ${statusMap[apiStatus]}`,
+            icon: '📋',
+            timestamp: new Date().toISOString(),
+            read: false,
+            priority: 'normal',
+            targetUsers: [id],
+            data: {
+              action: 'view_attendance',
+              date: today,
+              className: className
+            }
+          });
+        }
       } else {
         setStudents(prevStudents);
         toast.error(result.error || 'Gagal memperbarui kehadiran');
