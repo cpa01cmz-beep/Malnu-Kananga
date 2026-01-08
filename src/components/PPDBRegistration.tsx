@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
@@ -11,6 +11,7 @@ import { ocrService, type OCRExtractionResult, type OCRProgress } from '../servi
 import Textarea from './ui/Textarea';
 import ProgressBar from './ui/ProgressBar';
 import Button from './ui/Button';
+import { useAutoSave } from '../hooks/useAutoSave';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ interface PPDBRegistrationProps {
 }
 
 const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, onShowToast }) => {
-  const initialFormData = {
+  const initialFormData = useMemo(() => ({
     fullName: '',
     nisn: '',
     originSchool: '',
@@ -27,26 +28,34 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
     phoneNumber: '',
     email: '',
     address: '',
-  };
+  }), []);
 
-  const [formData, setFormData] = useState<Partial<PPDBRegistrant>>({
-    fullName: '',
-    nisn: '',
-    originSchool: '',
-    parentName: '',
-    phoneNumber: '',
-    email: '',
-    address: '',
-  });
+  // Use auto-save for draft data
+  const [autoSaveState, autoSaveActions] = useAutoSave<Partial<PPDBRegistrant>>(
+    initialFormData,
+    {
+      storageKey: 'malnu_ppdb_draft',
+      delay: 2000,
+      enableOffline: true,
+      onSave: async () => {
+        // Draft data is saved to localStorage by the hook automatically
+        // No API call needed for drafts
+      },
+      onSaved: () => {
+        // Silently save drafts, no toast needed
+      },
+      onError: () => {
+        // Silently handle draft save errors
+      }
+    }
+  );
 
-  const initialDataRef = useRef(initialFormData);
-
-  const cleanup = useCallback(() => {
-    setFormData(initialDataRef.current);
+const cleanup = useCallback(() => {
+    autoSaveActions.reset(initialFormData);
     setUploadedDocument(null);
     setDiplomaImage(null);
     setOcrProgress({ status: 'Idle', progress: 0 });
-  }, []);
+  }, [autoSaveActions, initialFormData]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedDocument, setUploadedDocument] = useState<FileUploadResponse | null>(null);
@@ -65,9 +74,9 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
 
   if (!isOpen) return null;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    autoSaveActions.updateData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileUploaded = (fileResponse: FileUploadResponse) => {
@@ -111,15 +120,15 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
         onShowToast(`Berhasil mengekstrak ${Object.keys(result.data.grades).length} nilai dari ijazah`, 'success');
 
         if (result.data.fullName) {
-          setFormData(prev => ({ ...prev, fullName: result.data.fullName || prev.fullName }));
+          autoSaveActions.updateData(prev => ({ ...prev, fullName: result.data.fullName || prev.fullName }));
         }
 
         if (result.data.nisn) {
-          setFormData(prev => ({ ...prev, nisn: result.data.nisn || prev.nisn }));
+          autoSaveActions.updateData(prev => ({ ...prev, nisn: result.data.nisn || prev.nisn }));
         }
 
         if (result.data.schoolName) {
-          setFormData(prev => ({ ...prev, originSchool: result.data.schoolName || prev.originSchool }));
+          autoSaveActions.updateData(prev => ({ ...prev, originSchool: result.data.schoolName || prev.originSchool }));
         }
       } else {
         onShowToast('Tidak dapat mengekstrak nilai dari gambar. Silakan input manual.', 'info');
@@ -153,13 +162,13 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
 
     try {
       const response = await ppdbAPI.create({
-        fullName: formData.fullName!,
-        nisn: formData.nisn!,
-        originSchool: formData.originSchool!,
-        parentName: formData.parentName!,
-        phoneNumber: formData.phoneNumber!,
-        email: formData.email!,
-        address: formData.address!,
+        fullName: autoSaveState.data.fullName!,
+        nisn: autoSaveState.data.nisn!,
+        originSchool: autoSaveState.data.originSchool!,
+        parentName: autoSaveState.data.parentName!,
+        phoneNumber: autoSaveState.data.phoneNumber!,
+        email: autoSaveState.data.email!,
+        address: autoSaveState.data.address!,
         registrationDate: new Date().toISOString().split('T')[0],
         status: 'pending',
         documentUrl: uploadedDocument?.key,
@@ -169,7 +178,7 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
         setIsSubmitting(false);
         onShowToast('Pendaftaran berhasil! Data Anda sedang diverifikasi.', 'success');
 
-        setFormData({
+        autoSaveActions.reset({
           fullName: '',
           nisn: '',
           originSchool: '',
@@ -341,15 +350,15 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label htmlFor="ppdb-fullName" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Lengkap</label>
-                            <input id="ppdb-fullName" name="fullName" required type="text" value={formData.fullName} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="name" />
+                            <input id="ppdb-fullName" name="fullName" required type="text" value={autoSaveState.data.fullName} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="name" />
                         </div>
                         <div>
                             <label htmlFor="ppdb-nisn" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">NISN</label>
-                            <input id="ppdb-nisn" name="nisn" required type="text" value={formData.nisn} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="off" />
+                            <input id="ppdb-nisn" name="nisn" required type="text" value={autoSaveState.data.nisn} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="off" />
                         </div>
                         <div className="md:col-span-2">
                             <label htmlFor="ppdb-originSchool" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Asal Sekolah</label>
-                            <input id="ppdb-originSchool" name="originSchool" required type="text" value={formData.originSchool} onChange={handleChange} placeholder="SMP/MTs..." className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="organization" />
+                            <input id="ppdb-originSchool" name="originSchool" required type="text" value={autoSaveState.data.originSchool} onChange={handleChange} placeholder="SMP/MTs..." className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="organization" />
                         </div>
                     </div>
                 </div>
@@ -360,22 +369,22 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label htmlFor="ppdb-parentName" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Orang Tua/Wali</label>
-                            <input id="ppdb-parentName" name="parentName" required type="text" value={formData.parentName} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="name" />
+                            <input id="ppdb-parentName" name="parentName" required type="text" value={autoSaveState.data.parentName} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="name" />
                         </div>
                         <div>
                             <label htmlFor="ppdb-phoneNumber" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nomor WhatsApp</label>
-                            <input id="ppdb-phoneNumber" name="phoneNumber" required type="tel" value={formData.phoneNumber} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="tel" />
+                            <input id="ppdb-phoneNumber" name="phoneNumber" required type="tel" value={autoSaveState.data.phoneNumber} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="tel" />
                         </div>
                         <div className="md:col-span-2">
                             <label htmlFor="ppdb-email" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Email</label>
-                            <input id="ppdb-email" name="email" required type="email" value={formData.email} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="email" />
+                            <input id="ppdb-email" name="email" required type="email" value={autoSaveState.data.email} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="email" />
                         </div>
                         <div className="md:col-span-2">
                             <Textarea
                                 name="address"
                                 label="Alamat Lengkap"
                                 required
-                                value={formData.address}
+                                value={autoSaveState.data.address}
                                 onChange={handleChange}
                                 rows={3}
                                 size="md"

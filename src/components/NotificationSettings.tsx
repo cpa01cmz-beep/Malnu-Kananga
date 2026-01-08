@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { CloseIcon } from './icons/CloseIcon';
 import { BellIcon } from './icons/BellIcon';
@@ -8,7 +8,8 @@ import BatchManagement from './BatchManagement';
 import TemplateManagement from './TemplateManagement';
 import NotificationAnalyticsComponent from './NotificationAnalytics';
 import { NotificationSettings as NotificationSettingsType } from '../types';
-import { logger } from '../utils/logger';
+
+import { useAutoSave } from '../hooks/useAutoSave';
 import Button from './ui/Button';
 
 interface NotificationSettingsProps {
@@ -25,7 +26,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
   const {
     permissionGranted,
     permissionDenied,
-    settings,
+    settings: globalSettings,
     history,
     batches,
     templates,
@@ -44,19 +45,39 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
     createNotificationFromTemplate,
   } = usePushNotifications();
 
-  const [localSettings, setLocalSettings] = useState<NotificationSettingsType>(settings);
   const [showHistory, setShowHistory] = useState(false);
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
   
   const [activeTab, setActiveTab] = useState<'settings' | 'batches' | 'templates' | 'analytics'>('settings');
 
-  const handleSaveSettings = useCallback(() => {
-    updateSettings(localSettings);
-    if (onShowToast) {
-      onShowToast('Pengaturan notifikasi berhasil disimpan', 'success');
+  // Use standardized auto-save hook for settings
+  const [autoSaveState, autoSaveActions] = useAutoSave<NotificationSettingsType>(
+    globalSettings,
+    {
+      storageKey: 'malnu_notification_settings',
+      delay: 1500,
+      enableOffline: true,
+      onSave: async (settings) => {
+        updateSettings(settings);
+      },
+      onSaved: () => {
+        onShowToast?.('Pengaturan notifikasi disimpan otomatis', 'success');
+      },
+      onError: (error) => {
+        onShowToast?.(`Gagal menyimpan pengaturan: ${error}`, 'error');
+      }
     }
-    logger.info('Notification settings saved:', localSettings);
-  }, [localSettings, updateSettings, onShowToast]);
+  );
+
+  // Sync with global settings when they change externally
+  useEffect(() => {
+    autoSaveActions.reset(globalSettings);
+  }, [globalSettings, autoSaveActions]);
+
+  const handleManualSave = useCallback(async () => {
+    await autoSaveActions.saveNow();
+    onShowToast?.('Pengaturan notifikasi berhasil disimpan', 'success');
+  }, [autoSaveActions, onShowToast]);
 
   const handleRequestPermission = useCallback(async () => {
     const granted = await requestPermission();
@@ -88,13 +109,13 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
 
   const handleResetSettings = useCallback(() => {
     resetSettings();
-    setLocalSettings(settings);
+    autoSaveActions.reset(globalSettings);
     setShowResetConfirmation(false);
     
     if (onShowToast) {
       onShowToast('Pengaturan notifikasi di-reset ke default', 'success');
     }
-  }, [resetSettings, settings, onShowToast]);
+  }, [resetSettings, globalSettings, autoSaveActions, onShowToast]);
 
   const handleClearHistory = useCallback(() => {
     clearHistory();
@@ -250,9 +271,9 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                 Notifikasi
               </h3>
               <Toggle
-                checked={localSettings.enabled}
+                checked={autoSaveState.data.enabled}
                 onChange={(e) =>
-                  setLocalSettings({ ...localSettings, enabled: e.target.checked })
+                  autoSaveActions.updateData({ ...autoSaveState.data, enabled: e.target.checked })
                 }
                 aria-label="Aktifkan notifikasi"
                 color="blue"
@@ -263,11 +284,11 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={localSettings.announcements}
+                  checked={autoSaveState.data.announcements}
                   onChange={(e) =>
-                    setLocalSettings({ ...localSettings, announcements: e.target.checked })
+                    autoSaveActions.updateData({ ...autoSaveState.data, announcements: e.target.checked })
                   }
-                  disabled={!localSettings.enabled}
+                  disabled={!autoSaveState.data.enabled}
                   className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Pengumuman sekolah"
                 />
@@ -277,11 +298,11 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={localSettings.grades}
+                  checked={autoSaveState.data.grades}
                   onChange={(e) =>
-                    setLocalSettings({ ...localSettings, grades: e.target.checked })
+                    autoSaveActions.updateData({ ...autoSaveState.data, grades: e.target.checked })
                   }
-                  disabled={!localSettings.enabled}
+                  disabled={!autoSaveState.data.enabled}
                   className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Update nilai"
                 />
@@ -291,11 +312,11 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={localSettings.ppdbStatus}
+                  checked={autoSaveState.data.ppdbStatus}
                   onChange={(e) =>
-                    setLocalSettings({ ...localSettings, ppdbStatus: e.target.checked })
+                    autoSaveActions.updateData({ ...autoSaveState.data, ppdbStatus: e.target.checked })
                   }
-                  disabled={!localSettings.enabled}
+                  disabled={!autoSaveState.data.enabled}
                   className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Status PPDB"
                 />
@@ -305,11 +326,11 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={localSettings.events}
+                  checked={autoSaveState.data.events}
                   onChange={(e) =>
-                    setLocalSettings({ ...localSettings, events: e.target.checked })
+                    autoSaveActions.updateData({ ...autoSaveState.data, events: e.target.checked })
                   }
-                  disabled={!localSettings.enabled}
+                  disabled={!autoSaveState.data.enabled}
                   className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Kegiatan OSIS"
                 />
@@ -319,11 +340,11 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={localSettings.library}
+                  checked={autoSaveState.data.library}
                   onChange={(e) =>
-                    setLocalSettings({ ...localSettings, library: e.target.checked })
+                    autoSaveActions.updateData({ ...autoSaveState.data, library: e.target.checked })
                   }
-                  disabled={!localSettings.enabled}
+                  disabled={!autoSaveState.data.enabled}
                   className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="E-Library"
                 />
@@ -333,11 +354,11 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={localSettings.system}
+                  checked={autoSaveState.data.system}
                   onChange={(e) =>
-                    setLocalSettings({ ...localSettings, system: e.target.checked })
+                    autoSaveActions.updateData({ ...autoSaveState.data, system: e.target.checked })
                   }
-                  disabled={!localSettings.enabled}
+                  disabled={!autoSaveState.data.enabled}
                   className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Sistem"
                 />
@@ -347,11 +368,11 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={localSettings.roleBasedFiltering}
+                  checked={autoSaveState.data.roleBasedFiltering}
                   onChange={(e) =>
-                    setLocalSettings({ ...localSettings, roleBasedFiltering: e.target.checked })
+                    autoSaveActions.updateData({ ...autoSaveState.data, roleBasedFiltering: e.target.checked })
                   }
-                  disabled={!localSettings.enabled}
+                  disabled={!autoSaveState.data.enabled}
                   className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Filter berdasarkan peran"
                 />
@@ -361,11 +382,11 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={localSettings.batchNotifications}
+                  checked={autoSaveState.data.batchNotifications}
                   onChange={(e) =>
-                    setLocalSettings({ ...localSettings, batchNotifications: e.target.checked })
+                    autoSaveActions.updateData({ ...autoSaveState.data, batchNotifications: e.target.checked })
                   }
-                  disabled={!localSettings.enabled}
+                  disabled={!autoSaveState.data.enabled}
                   className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
                   aria-label="Grup notifikasi"
                 />
@@ -380,34 +401,34 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                 Jam Tenang (Quiet Hours)
               </h3>
               <Toggle
-                checked={localSettings.quietHours.enabled}
+                checked={autoSaveState.data.quietHours.enabled}
                 onChange={(e) =>
-                  setLocalSettings({
-                    ...localSettings,
+                  autoSaveActions.updateData({
+                    ...autoSaveState.data,
                     quietHours: {
-                      ...localSettings.quietHours,
+                      ...autoSaveState.data.quietHours,
                       enabled: e.target.checked,
                     },
                   })
                 }
-                disabled={!localSettings.enabled}
+                disabled={!autoSaveState.data.enabled}
                 aria-label="Aktifkan jam tenang"
                 color="blue"
               />
             </div>
 
-            {localSettings.quietHours.enabled && (
+            {autoSaveState.data.quietHours.enabled && (
               <div className="flex items-center gap-4 ml-4">
                 <div className="flex items-center gap-2">
                   <label className="text-sm text-neutral-600">Mulai:</label>
                   <input
                     type="time"
-                    value={localSettings.quietHours.start}
+                    value={autoSaveState.data.quietHours.start}
                     onChange={(e) =>
-                      setLocalSettings({
-                        ...localSettings,
+                      autoSaveActions.updateData({
+                        ...autoSaveState.data,
                         quietHours: {
-                          ...localSettings.quietHours,
+                          ...autoSaveState.data.quietHours,
                           start: e.target.value,
                         },
                       })
@@ -420,12 +441,12 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                   <label className="text-sm text-neutral-600">Selesai:</label>
                   <input
                     type="time"
-                    value={localSettings.quietHours.end}
+                    value={autoSaveState.data.quietHours.end}
                     onChange={(e) =>
-                      setLocalSettings({
-                        ...localSettings,
+                      autoSaveActions.updateData({
+                        ...autoSaveState.data,
                         quietHours: {
-                          ...localSettings.quietHours,
+                          ...autoSaveState.data.quietHours,
                           end: e.target.value,
                         },
                       })
@@ -469,7 +490,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
             <div className="flex flex-col sm:flex-row gap-3">
             <Button
               variant="primary"
-              onClick={handleSaveSettings}
+              onClick={handleManualSave}
               fullWidth
             >
               Simpan Pengaturan
@@ -477,7 +498,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
             <Button
               variant="secondary"
               onClick={handleTestNotification}
-              disabled={!permissionGranted || !localSettings.enabled}
+              disabled={!permissionGranted || !autoSaveState.data.enabled}
             >
               Tes Notifikasi
             </Button>
