@@ -212,8 +212,12 @@ describe('OfflineActionQueueService', () => {
     });
 
     it('should handle server errors with retries', async () => {
-      // Mock server error
-      (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Network error'));
+      // Mock server error response (status >= 500)
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+      });
 
       offlineActionQueueService.addAction({
         type: 'create',
@@ -233,7 +237,7 @@ describe('OfflineActionQueueService', () => {
       const action = offlineActionQueueService.getQueue()[0];
       expect(action.status).toBe('failed');
       expect(action.retryCount).toBe(1);
-      expect(action.lastError).toBe('Network error');
+      expect(action.lastError).toBe('Server error: 500 Internal Server Error');
     });
 
     it('should not sync if already syncing', async () => {
