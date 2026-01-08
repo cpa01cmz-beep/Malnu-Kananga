@@ -4,6 +4,7 @@ import { BellIcon } from './icons/BellIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { ClockIcon } from './icons/MaterialIcons';
 import { ToastType } from './Toast';
+import { Toggle } from './ui/Toggle';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import type { ParentGradeNotificationSettings } from '../services/parentGradeNotificationService';
 import { logger } from '../utils/logger';
@@ -114,27 +115,13 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
         </div>
 
         <div className="space-y-6">
-          {/* Enable Notifications */}
-          <div className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <BellIcon />
-              <div>
-                <h3 className="font-medium text-neutral-900 dark:text-white">Aktifkan Notifikasi</h3>
-                <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                  Terima notifikasi saat nilai anak diperbarui
-                </p>
-              </div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={settings.enabled}
-                onChange={(e) => setSettings({ ...settings, enabled: e.target.checked })}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-            </label>
-          </div>
+          <Toggle
+            checked={settings.enabled}
+            onChange={(e) => setSettings({ ...settings, enabled: e.target.checked })}
+            label="Aktifkan Notifikasi"
+            description="Terima notifikasi saat nilai anak diperbarui"
+            className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg"
+          />
 
           {settings.enabled && (
             <>
@@ -204,71 +191,35 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
               <div className="space-y-4">
                 <h3 className="font-medium text-neutral-900 dark:text-white">Pengaturan Tambahan</h3>
                 
-                <div className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg">
-                  <div>
-                    <div className="font-medium text-neutral-900 dark:text-white">
-                      Hanya Ujian Besar
-                    </div>
-                    <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                      Notifikasi hanya untuk UTS, UAS, dan ujian penting lainnya
-                    </div>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={settings.majorExamsOnly}
-                      onChange={(e) => setSettings({ ...settings, majorExamsOnly: e.target.checked })}
-                      className="sr-only peer"
-                      disabled={!settings.enabled}
-                    />
-                    <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-                  </label>
-                </div>
+                 <Toggle
+                   checked={settings.majorExamsOnly}
+                   onChange={(e) => setSettings({ ...settings, majorExamsOnly: e.target.checked })}
+                   disabled={!settings.enabled}
+                   label="Hanya Ujian Besar"
+                   description="Notifikasi hanya untuk UTS, UAS, dan ujian penting lainnya"
+                   className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg"
+                 />
 
-                <div className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg">
-                  <div>
-                    <div className="font-medium text-neutral-900 dark:text-white">
-                      Peringatan Nilai Kosong
-                    </div>
-                    <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                      Notifikasi jika nilai tidak tercatat selama {settings.missingGradeDays} hari
-                    </div>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={settings.missingGradeAlert}
-                      onChange={(e) => setSettings({ ...settings, missingGradeAlert: e.target.checked })}
-                      className="sr-only peer"
-                      disabled={!settings.enabled}
-                    />
-                    <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-                  </label>
-                </div>
+                 <Toggle
+                   checked={settings.missingGradeAlert}
+                   onChange={(e) => setSettings({ ...settings, missingGradeAlert: e.target.checked })}
+                   disabled={!settings.enabled}
+                   label="Peringatan Nilai Kosong"
+                   description={`Notifikasi jika nilai tidak tercatat selama ${settings.missingGradeDays} hari`}
+                   className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg"
+                 />
 
-                <div className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg">
-                  <div>
-                    <div className="font-medium text-neutral-900 dark:text-white">
-                      Jam Tenang (Quiet Hours)
-                    </div>
-                    <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                      Tidak ganggu dari {settings.quietHours.start} - {settings.quietHours.end}
-                    </div>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={settings.quietHours.enabled}
-                      onChange={(e) => setSettings({ 
-                        ...settings, 
-                        quietHours: { ...settings.quietHours, enabled: e.target.checked }
-                      })}
-                      className="sr-only peer"
-                      disabled={!settings.enabled}
-                    />
-                    <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-                  </label>
-                </div>
+                 <Toggle
+                   checked={settings.quietHours.enabled}
+                   onChange={(e) => setSettings({
+                     ...settings,
+                     quietHours: { ...settings.quietHours, enabled: e.target.checked }
+                   })}
+                   disabled={!settings.enabled}
+                   label="Jam Tenang (Quiet Hours)"
+                   description={`Tidak ganggu dari ${settings.quietHours.start} - ${settings.quietHours.end}`}
+                   className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg"
+                 />
               </div>
 
               {/* Quiet Hours Configuration */}
