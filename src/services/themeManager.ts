@@ -179,6 +179,10 @@ export class ThemeManager {
     root.style.setProperty('--color-surface', theme.colors.surface);
     root.style.setProperty('--color-text', theme.colors.text);
     root.style.setProperty('--color-text-secondary', theme.colors.textSecondary);
+
+    // Apply progress bar striped overlay color based on theme brightness
+    const overlayColor = theme.isDark ? '0 0 0' : '255 255 255';
+    root.style.setProperty('--progress-bar-striped-overlay', overlayColor);
   }
 
   private saveTheme(theme: Theme): void {

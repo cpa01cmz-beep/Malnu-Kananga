@@ -237,3 +237,7 @@
   --animate-scale-in: scale-in 0.3s ease-out;
   --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+:root {
+  --progress-bar-striped-overlay: 255 255 255;
+}
