@@ -23,6 +23,7 @@ import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import type { VoiceCommand } from '../types';
 import VoiceInputButton from './VoiceInputButton';
 import VoiceCommandsHelp from './VoiceCommandsHelp';
+import Badge from './ui/Badge';
 
 interface TeacherDashboardProps {
     onShowToast?: (msg: string, type: ToastType) => void;
@@ -227,7 +228,14 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                     </h1>
                     <p className="mt-2 text-neutral-600 dark:text-neutral-300">
                         Selamat datang, Bapak/Ibu Guru.
-                        {extraRole === 'staff' && <span className="font-semibold text-primary-600 dark:text-primary-400"> (Mode Staff Aktif)</span>}
+                        {extraRole === 'staff' && (
+                          <>
+                            {' '}
+                            <Badge variant="indigo" size="sm">
+                              Mode Staff Aktif
+                            </Badge>
+                          </>
+                        )}
                         {dashboardData?.lastSync && (
                             <span className="text-xs text-neutral-500 dark:text-neutral-400 block mt-1">
                                 Terakhir diperbarui: {new Date(dashboardData.lastSync).toLocaleString('id-ID')}
