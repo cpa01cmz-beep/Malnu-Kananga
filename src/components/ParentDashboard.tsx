@@ -6,6 +6,8 @@ import { UsersIcon } from './icons/UsersIcon';
 import { UserIcon } from './icons/UserIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { SendIcon } from './icons/SendIcon';
+import { BellIcon } from './icons/BellIcon';
+import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import ParentScheduleView from './ParentScheduleView';
 import ParentGradesView from './ParentGradesView';
 import ParentAttendanceView from './ParentAttendanceView';
@@ -16,7 +18,7 @@ import ParentMessagingView from './ParentMessagingView';
 import ParentPaymentsView from './ParentPaymentsView';
 import ParentMeetingsView from './ParentMeetingsView';
 import { ToastType } from './Toast';
-import type { ParentChild } from '../types';
+import type { ParentChild, Grade } from '../types';
 import { UserRole, UserExtraRole } from '../types/permissions';
 import { parentsAPI, authAPI } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
@@ -24,12 +26,16 @@ import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { validateMultiChildDataIsolation } from '../utils/parentValidation';
 import { usePushNotifications } from '../hooks/usePushNotifications';
+import { useEventNotifications } from '../hooks/useEventNotifications';
+import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import BackButton from './ui/BackButton';
 import DashboardActionCard from './ui/DashboardActionCard';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import type { VoiceCommand } from '../types';
 import VoiceInputButton from './VoiceInputButton';
 import VoiceCommandsHelp from './VoiceCommandsHelp';
+import ParentNotificationSettings from './ParentNotificationSettings';
+import NotificationHistory from './NotificationHistory';
 
 interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -44,6 +50,8 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [children, setChildren] = useState<ParentChild[]>([]);
   const [loading, setLoading] = useState(true);
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
+  const [showNotificationSettings, setShowNotificationSettings] = useState(false);
+  const [showNotificationHistory, setShowNotificationHistory] = useState(false);
   const networkStatus = useNetworkStatus();
 
   // Initialize push notifications
@@ -52,6 +60,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     createNotification,
     requestPermission 
   } = usePushNotifications();
+
+  // Initialize event notifications for automated grade monitoring
+  const { useMonitorLocalStorage } = useEventNotifications();
 
   // Check permissions for parent role
   const checkPermission = (permission: string) => {
@@ -112,6 +123,46 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
     initializeNotifications();
   }, [requestPermission, showNotification, createNotification]);
+
+  // Initialize grade notification monitoring  
+  useMonitorLocalStorage('malnu_grades', (newValue: unknown, oldValue: unknown) => {
+    // Check if any grades belong to this parent's children
+    if (children.length > 0) {
+      const childIds = children.map(child => child.studentId);
+      if (newValue && Array.isArray(newValue)) {
+        newValue.forEach((grade: unknown) => {
+          const gradeObj = grade as { studentId: string; id: string };
+          if (childIds.includes(gradeObj.studentId)) {
+            const child = children.find(c => c.studentId === gradeObj.studentId);
+            if (child) {
+              // Find previous grade to detect changes
+              const previousGrade = oldValue && Array.isArray(oldValue) 
+                ? oldValue.find((g: unknown) => (g as { id: string }).id === gradeObj.id)
+                : null;
+
+              parentGradeNotificationService.processGradeUpdate(
+                child, 
+                gradeObj as Grade, 
+                previousGrade as Grade | undefined
+              );
+            }
+          }
+        });
+      }
+    }
+  });
+
+  // Check for missing grades periodically
+  useEffect(() => {
+    if (children.length > 0) {
+      // Check every 6 hours
+      const interval = setInterval(() => {
+        parentGradeNotificationService.checkMissingGrades(children);
+      }, 6 * 60 * 60 * 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [children, useMonitorLocalStorage]);
 
   // Initialize voice commands
   const {
@@ -188,6 +239,22 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       action: () => handleToggleConsolidatedView(),
       active: true
     }] : []),
+    {
+      title: 'Pengaturan Notifikasi',
+      description: 'Konfigurasi notifikasi nilai dan update.',
+      icon: <BellIcon />,
+      colorTheme: 'indigo' as const,
+      action: () => setShowNotificationSettings(true),
+      permission: 'parent.monitor'
+    },
+    {
+      title: 'Riwayat Notifikasi',
+      description: 'Lihat semua notifikasi yang telah diterima.',
+      icon: <CalendarDaysIcon />,
+      colorTheme: 'purple' as const,
+      action: () => setShowNotificationHistory(true),
+      permission: 'parent.monitor'
+    },
     {
       title: 'Profil Anak',
       description: 'Lihat biodata dan informasi kelas anak.',
@@ -556,6 +623,23 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
           userRole="parent"
           availableCommands={getAvailableCommands()}
         />
+
+        {/* Parent Notification Settings Modal */}
+        {showNotificationSettings && (
+          <ParentNotificationSettings
+            onShowToast={onShowToast}
+            onClose={() => setShowNotificationSettings(false)}
+          />
+        )}
+
+        {/* Notification History Modal */}
+        {showNotificationHistory && selectedChild && (
+          <NotificationHistory
+            onShowToast={onShowToast}
+            child={selectedChild}
+            onClose={() => setShowNotificationHistory(false)}
+          />
+        )}
 
       </div>
     </main>
