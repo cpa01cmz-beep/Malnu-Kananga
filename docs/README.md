@@ -65,11 +65,11 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 199 TypeScript/TSX files in src/ directory (excluding tests)
-- **Test Files**: 32 test files
+- **Total Source Files**: 231 TypeScript/TSX files in src/ directory (excluding tests)
+- **Test Files**: 388 test files (*.test.ts, *.test.tsx)
 - **Documentation Files**: 16 (in /docs directory)
-- **Total Tests**: 591 tests passing
-- **API Endpoints Documented**: 150+
+- **Total Tests**: Run `npm test` to verify current test count
+- **API Endpoints**: 14 core endpoints in worker.js
 - **Code Examples**: 20+
 - **Troubleshooting Scenarios**: 25+
 - **Architecture Diagrams**: 1+
@@ -177,16 +177,20 @@ This index maintains relationships between documents:
 
 ---
 
-## Recent Changes (v2.1.0 - 2026-01-07)
+## Recent Changes (v2.1.0 - 2026-01-08)
 
- - **Repository Cleanup (2026-01-07 - Current)**:
-     - Fixed documentation metrics to reflect actual file counts: 222 total source files, 31 test files, 16 documentation files, 29 total markdown files
-     - Fixed TypeScript configuration issue by removing unused vitest/globals type reference
+- **Repository Cleanup (2026-01-08 - Current)**:
+     - Fixed documentation metrics to reflect actual file counts: 231 source files, 388 test files, 16 documentation files
+     - Fixed TypeScript configuration by removing unused vitest/globals type reference (test files import explicitly)
+     - Cleaned up .gitignore by removing duplicate patterns (.next, .nuxt, .vuepress/dist, Thumbs.db, .node_repl_history)
      - Verified all documentation aligns with codebase structure
      - Confirmed deployment guides serve distinct purposes (DEPLOYMENT_GUIDE.md for procedures, CLOUDFLARE_DEPLOYMENT.md for status)
      - Validated .gitignore is comprehensive and appropriate
      - All documentation files serve distinct purposes - no redundancy found
-     - TASK.md verified as concise and actionable (120 lines, well-structured)
+     - TASK.md verified as concise and actionable (123 lines, well-structured)
+
+- **Repository Cleanup (2026-01-07)**:
+     - Previous cleanup with initial documentation fixes
 
 ---
 
