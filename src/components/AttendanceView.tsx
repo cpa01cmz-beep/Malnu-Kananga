@@ -29,7 +29,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
   const [todayStatus, setTodayStatus] = useState<string>('Hadir');
   const [history, setHistory] = useState<AttendanceHistory[]>([]);
   const [loading, setLoading] = useState(true);
-  const { errorState, handleApiError, clearError } = useErrorHandler();
+  const { errorState, handleAsyncError, clearError } = useErrorHandler();
 
   const fetchAttendance = useCallback(async () => {
     if (!STUDENT_NIS) {
@@ -39,7 +39,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
 
     setLoading(true);
     clearError();
-    const result = await handleApiError(
+    const result = await handleAsyncError(
       () => attendanceAPI.getByStudent(STUDENT_NIS),
       { 
         operation: 'fetchAttendance', 
@@ -52,7 +52,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
       processAttendanceData(result.data);
     }
     setLoading(false);
-  }, [STUDENT_NIS, clearError, handleApiError]);
+  }, [STUDENT_NIS, clearError, handleAsyncError]);
 
   useEffect(() => {
     fetchAttendance();

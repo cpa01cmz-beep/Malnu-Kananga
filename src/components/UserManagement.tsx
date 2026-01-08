@@ -28,7 +28,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const { errorState, handleApiError, clearError } = useErrorHandler();
+  const { errorState, handleAsyncError, handleError, clearError } = useErrorHandler();
 
   const [searchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,12 +39,12 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     clearError();
-    const result = await handleApiError(
+const result = await handleAsyncError(
       () => api.users.getAll(),
       { 
         operation: 'fetchUsers', 
         component: 'UserManagement',
-        fallbackMessage: 'Gagal memuat data pengguna'
+        fallbackMessage: 'Gagal mengambil data pengguna'
       }
     );
     
@@ -52,7 +52,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
       setUsers(result.data);
     }
     setIsLoading(false);
-  }, [clearError, handleApiError]);
+  }, [clearError, handleAsyncError]);
 
   useEffect(() => {
     fetchUsers();
@@ -82,7 +82,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
 
   const handleDeleteUser = async (id: string) => {
       if (window.confirm('Hapus pengguna ini?')) {
-          const result = await handleApiError(
+          const result = await handleAsyncError(
               () => api.users.delete(id),
               { 
                 operation: 'deleteUser', 
@@ -173,14 +173,11 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
               setIsModalOpen(false);
           }
       } catch (err) {
-          await handleApiError(
-            async () => { throw err; },
-            { 
+          handleError(err, { 
               operation: 'saveUser', 
               component: 'UserManagement',
               fallbackMessage: 'Gagal menyimpan pengguna'
-            }
-          );
+            });
       } finally {
           setIsSaving(false);
       }

@@ -1,5 +1,8 @@
 import { AppError, createOCRError, createNotificationError, createValidationError, createPermissionError, createConflictError, logError } from '../utils/errorHandler';
 
+// Re-export the error creation functions for use by services
+export { createOCRError, createNotificationError, createValidationError, createPermissionError, createConflictError };
+
 // Standardized error handling for OCR Service
 export function handleOCRError(error: unknown, operation: string): AppError {
   const appError = error instanceof AppError 
@@ -45,7 +48,7 @@ export function handleConflictError(error: unknown, operation: string): AppError
 }
 
 // Utility for service classes to wrap methods with error handling
-export function withErrorHandling<T extends any[], R>(
+export function withErrorHandling<T extends unknown[], R>(
   fn: (...args: T) => Promise<R>,
   errorMapper: (error: unknown, ...args: T) => AppError
 ) {

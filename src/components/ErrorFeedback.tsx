@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, RefreshCw, WifiOff, AlertCircle, X } from 'lucide-react';
+import { ExclamationTriangleIcon, ArrowPathIcon, ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { ErrorState } from '../hooks/useErrorHandler';
 
 interface ErrorFeedbackProps {
@@ -24,11 +24,11 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
   const getIcon = () => {
     switch (feedback.type) {
       case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
+        return <ExclamationTriangleIcon className="w-5 h-5 text-yellow-500" />;
       case 'info':
-        return <AlertCircle className="w-5 h-5 text-blue-500" />;
+        return <ExclamationCircleIcon className="w-5 h-5 text-blue-500" />;
       default:
-        return <AlertTriangle className="w-5 h-5 text-red-500" />;
+        return <ExclamationTriangleIcon className="w-5 h-5 text-red-500" />;
     }
   };
 
@@ -66,7 +66,7 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
                       : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                   }`}
                 >
-                  {action.label === 'Coba Lagi' && <RefreshCw className="w-3 h-3 mr-1" />}
+                  {action.label === 'Coba Lagi' && <ArrowPathIcon className="w-3 h-3 mr-1" />}
                   {action.label}
                 </button>
               ))}
@@ -75,7 +75,7 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
                   onClick={onRetry}
                   className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-red-100 text-red-800 hover:bg-red-200 transition-colors"
                 >
-                  <RefreshCw className="w-3 h-3 mr-1" />
+                  <ArrowPathIcon className="w-3 h-3 mr-1" />
                   Coba Lagi
                 </button>
               )}
@@ -89,7 +89,7 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
               onClick={onDismiss}
               className="inline-flex rounded-md p-1.5 hover:bg-black hover:bg-opacity-10 transition-colors"
             >
-              <X className="w-4 h-4" />
+              <XMarkIcon className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -118,6 +118,7 @@ export const NetworkError: React.FC<{ onRetry?: () => void; className?: string }
           },
         ] : undefined,
       },
+      message: 'Tidak dapat terhubung ke server. Silakan periksa koneksi internet Anda.',
     }}
     className={className}
   />
@@ -132,6 +133,7 @@ export const OfflineIndicator: React.FC<{ className?: string }> = ({ className }
         type: 'warning',
         message: 'Anda sedang offline. Data akan disimpan dan disinkronkan saat koneksi tersedia.',
       },
+      message: 'Anda sedang offline. Data akan disimpan dan disinkronkan saat koneksi tersedia.',
     }}
     className={className}
   />
@@ -158,6 +160,9 @@ export const PermissionError: React.FC<{
           },
         ] : undefined,
       },
+      message: permission 
+        ? `Anda tidak memiliki izin ${permission} untuk melakukan tindakan ini.`
+        : 'Anda tidak memiliki izin untuk melakukan tindakan ini.',
     }}
     className={className}
   />

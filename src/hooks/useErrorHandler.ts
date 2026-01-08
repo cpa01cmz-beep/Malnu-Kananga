@@ -8,10 +8,12 @@ export interface ErrorHandlingOptions {
   onError?: (error: AppError, feedback: ErrorFeedback) => void;
 }
 
-interface ErrorState {
+export interface ErrorState {
   hasError: boolean;
   appError: AppError | null;
   feedback: ErrorFeedback | null;
+  message: string;
+  retryAction?: (() => void) | null;
 }
 
 export const useErrorHandler = () => {
@@ -19,6 +21,8 @@ export const useErrorHandler = () => {
     hasError: false,
     appError: null,
     feedback: null,
+    message: '',
+    retryAction: null,
   });
 
   const handleError = useCallback(
@@ -39,6 +43,8 @@ export const useErrorHandler = () => {
         hasError: true,
         appError,
         feedback,
+        message: appError.message,
+        retryAction: null,
       });
 
       // Call custom error handler if provided
@@ -59,10 +65,10 @@ export const useErrorHandler = () => {
       try {
         const result = await asyncOperation();
         // Clear any existing error on success
-        setErrorState({ hasError: false, appError: null, feedback: null });
+        setErrorState({ hasError: false, appError: null, feedback: null, message: '', retryAction: null });
         return result;
       } catch (error) {
-        const appError = handleError(error, options);
+        handleError(error, options);
         return null;
       }
     },
@@ -70,7 +76,7 @@ export const useErrorHandler = () => {
   );
 
   const clearError = useCallback(() => {
-    setErrorState({ hasError: false, appError: null, feedback: null });
+    setErrorState({ hasError: false, appError: null, feedback: null, message: '', retryAction: null });
   }, []);
 
   const retryWithAction = useCallback((action: () => Promise<void> | void) => {
@@ -79,11 +85,26 @@ export const useErrorHandler = () => {
     action();
   }, [clearError]);
 
+  const handleApiError = useCallback(
+    (error: unknown, operation: string, retryAction?: () => void): AppError => {
+      const appError = handleError(error, { operation });
+      if (retryAction) {
+        setErrorState(prev => ({
+          ...prev,
+          retryAction,
+        }));
+      }
+      return appError;
+    },
+    [handleError]
+  );
+
   return { 
     errorState,
     handleError, 
     handleAsyncError, 
     clearError,
-    retryWithAction 
+    retryWithAction,
+    handleApiError
   };
 };
