@@ -202,12 +202,22 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
       return (
         <div key={folder.id} className="select-none">
           <div
-            className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${
+            role="button"
+            tabIndex={0}
+            className={`flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors w-full text-left ${
               isSelected
                 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
                 : 'hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
             } ${getPaddingLeftClass(level)}`}
             onClick={() => onFolderSelect(folder)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onFolderSelect(folder);
+              }
+            }}
+            aria-pressed={isSelected}
+            aria-label={`Folder ${folder.name}, ${materialCount} materi`}
           >
             {hasSubfolders && (
               <button
@@ -298,12 +308,22 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
 
       <div className="space-y-0.5 mb-3">
         <div
-          className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${
+          role="button"
+          tabIndex={0}
+          className={`flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors w-full text-left ${
             !selectedFolderId
               ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
               : 'hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
           }`}
           onClick={() => onFolderSelect(undefined)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onFolderSelect(undefined);
+            }
+          }}
+          aria-pressed={!selectedFolderId}
+          aria-label={`Semua Materi, ${materials.length} materi`}
         >
           <div className="p-1.5 bg-neutral-100 text-neutral-600 rounded-lg">
             <FolderIcon className="w-4 h-4" />
