@@ -5,6 +5,7 @@ import DocumentTextIcon from './icons/DocumentTextIcon';
 import { ShareIcon } from './icons/MaterialIcons';
 import { eLibraryAPI } from '../services/apiService';
 import { ELibrary as ELibraryType, Subject, MaterialFolder } from '../types';
+import { pushNotificationService } from '../services/pushNotificationService';
 import FileUpload from './FileUpload';
 import { FileUploadResponse } from '../services/apiService';
 import { logger } from '../utils/logger';
@@ -77,15 +78,11 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
   const toast = createToastHandler(onShowToast);
   const { canAccess } = useCanAccess();
 
-  // Generate temporary ID for offline materials
-  const generateMaterialId = () => `material_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
   // Network status and offline queue
   const { isOnline, isSlow } = useNetworkStatus();
   const { 
-    sync,
     addAction,
-    getPendingCount 
+    getPendingCount: _getPendingCount 
   } = useOfflineActionQueue();
 
   React.useEffect(() => {
@@ -189,19 +186,21 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
   const doSubmitMaterial = async () => {
     setSubmitting(true);
 
+    // Declare newMaterial outside try for access in catch
+    const selectedSubject = subjects.find(s => s.name === newCategory);
+    
+    const newMaterial: Partial<ELibraryType> = {
+      title: newTitle.trim(),
+      description: newDescription.trim(),
+      category: newCategory.trim(),
+      fileUrl: uploadedFile!.key,
+      fileType: uploadedFile!.type,
+      fileSize: uploadedFile!.size,
+      subjectId: selectedSubject?.id,
+      folderId: selectedFolder?.id,
+    };
+
     try {
-      const selectedSubject = subjects.find(s => s.name === newCategory);
-      
-      const newMaterial: Partial<ELibraryType> = {
-        title: newTitle.trim(),
-        description: newDescription.trim(),
-        category: newCategory.trim(),
-        fileUrl: uploadedFile!.key,
-        fileType: uploadedFile!.type,
-        fileSize: uploadedFile!.size,
-        subjectId: selectedSubject?.id,
-        folderId: selectedFolder?.id,
-      };
 
       // Check if we should queue for offline sync
       if (!isOnline || isSlow) {
@@ -218,11 +217,12 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
         setSubmitting(false);
         // Update local state immediately for better UX
         const tempMaterial: ELibraryType = {
-          id: actionId,
           ...newMaterial as ELibraryType,
+          id: actionId,
           uploadedBy: 'current_user',
           uploadedAt: new Date().toISOString(),
-          isAvailable: true,
+          downloadCount: 0,
+          isShared: false,
         };
         setMaterials((prev) => [tempMaterial, ...prev]);
         setNewTitle('');
@@ -258,6 +258,24 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           toast.success('Materi berhasil ditambahkan');
           
           categoryService.updateMaterialStats([...materials, uploadResult.data]);
+          
+          // Send push notification about new material
+          await pushNotificationService.showLocalNotification({
+            id: `material-${uploadResult.data.id}-${Date.now()}`,
+            type: 'library',
+            title: 'Materi Baru Tersedia',
+            body: `Materi "${uploadResult.data.title}" telah ditambahkan ke perpustakaan`,
+            icon: '📚',
+            timestamp: new Date().toISOString(),
+            read: false,
+            priority: 'normal',
+            targetRoles: ['student', 'teacher'],
+            data: {
+              action: 'view_material',
+              materialId: uploadResult.data.id,
+              category: uploadResult.data.category
+            }
+          });
         } else {
           toast.error(uploadResult.message || 'Gagal menambahkan materi');
         }
@@ -267,22 +285,25 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     } catch (err) {
       // Auto-queue on network failure
       if (!isOnline) {
+        // Prepare material data for offline queue
+        const queuedMaterial = { ...newMaterial };
         const actionId = addAction({
           type: 'create',
           entity: 'material',
           entityId: `material_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-          data: newMaterial,
+          data: queuedMaterial,
           endpoint: '/api/library',
           method: 'POST',
         });
 
         // Update local state for better UX
         const tempMaterial: ELibraryType = {
+          ...queuedMaterial as ELibraryType,
           id: actionId,
-          ...newMaterial as ELibraryType,
           uploadedBy: 'current_user',
           uploadedAt: new Date().toISOString(),
-          isAvailable: true,
+          downloadCount: 0,
+          isShared: false,
         };
         setMaterials((prev) => [tempMaterial, ...prev]);
         setNewTitle('');

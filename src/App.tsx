@@ -34,6 +34,7 @@ import useLocalStorage from './hooks/useLocalStorage';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { api } from './services/apiService';
 import { permissionService } from './services/permissionService';
+import { pushNotificationService } from './services/pushNotificationService';
 
 // Auth Session Interface
 interface AuthSession {
@@ -112,6 +113,15 @@ const App: React.FC = () => {
     
     checkAuth();
     loadDefaultContent();
+    
+    // Initialize push notification service
+    pushNotificationService.requestPermission().then(granted => {
+      if (granted) {
+        logger.info('Push notifications enabled on app initialization');
+      }
+    }).catch(error => {
+      logger.warn('Failed to enable push notifications:', error);
+    });
   }, [siteContent.featuredPrograms.length, siteContent.latestNews.length, setAuthSession, setSiteContent]);
 
   const toggleTheme = () => {
