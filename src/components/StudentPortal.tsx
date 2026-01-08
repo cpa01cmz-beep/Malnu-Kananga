@@ -5,10 +5,12 @@ import BuildingLibraryIcon from './icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { UsersIcon } from './icons/UsersIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
+import { BrainIcon } from './icons/BrainIcon';
 import ScheduleView from './ScheduleView';
 import ELibrary from './ELibrary';
 import AcademicGrades from './AcademicGrades';
 import AttendanceView from './AttendanceView';
+import StudentInsights from './StudentInsights';
 import OsisEvents from './OsisEvents';
 import { ToastType } from './Toast';
 import { UserExtraRole, Student } from '../types';
@@ -33,7 +35,7 @@ interface StudentPortalProps {
     extraRole: UserExtraRole;
 }
 
-type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'attendance' | 'osis';
+type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'attendance' | 'insights' | 'osis';
 
 const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<PortalView>('home');
@@ -126,7 +128,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
     userRole: 'student',
     extraRole,
     onNavigate: (view: string) => {
-      const validViews: PortalView[] = ['schedule', 'library', 'grades', 'attendance', 'osis'];
+      const validViews: PortalView[] = ['schedule', 'library', 'grades', 'attendance', 'insights', 'osis'];
       if (validViews.includes(view as PortalView)) {
         setCurrentView(view as PortalView);
         onShowToast(`Navigasi ke ${view}`, 'success');
@@ -143,7 +145,8 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
           onShowToast('Menampilkan absensi siswa', 'success');
           break;
         case 'view_insights':
-          onShowToast('Fitur insight akan segera tersedia', 'info');
+          setCurrentView('insights');
+          onShowToast('Menampilkan insight akademik', 'success');
           break;
         default:
           onShowToast(`Menjalankan: ${action}`, 'info');
@@ -197,15 +200,24 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       permission: 'content.read',
       active: true
     },
-    {
-      title: 'Kehadiran',
-      description: 'Cek rekapitulasi absensi semester ini.',
-      icon: <UsersIcon />,
-      colorTheme: 'orange' as const,
-      action: () => setCurrentView('attendance'),
-      permission: 'content.read',
-      active: true
-    },
+{
+       title: 'Kehadiran',
+       description: 'Cek rekapitulasi absensi semester ini.',
+       icon: <UsersIcon />,
+       colorTheme: 'orange' as const,
+       action: () => setCurrentView('attendance'),
+       permission: 'content.read',
+       active: true
+     },
+     {
+       title: 'My Insights',
+       description: 'Analisis AI performa akademik personal.',
+       icon: <BrainIcon />,
+       colorTheme: 'purple' as const,
+       action: () => setCurrentView('insights'),
+       permission: 'content.read',
+       active: true
+     },
   ];
 
   // Filter menu items based on permissions
@@ -365,6 +377,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
         {currentView === 'library' && <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />}
         {currentView === 'grades' && <AcademicGrades onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
         {currentView === 'attendance' && <AttendanceView onBack={() => setCurrentView('home')} />}
+        {currentView === 'insights' && <StudentInsights onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
         {currentView === 'osis' && <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
 
         {/* Voice Commands Help Modal */}
