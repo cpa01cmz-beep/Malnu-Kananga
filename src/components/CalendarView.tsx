@@ -121,6 +121,14 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     onEventClick?.(event);
   };
 
+  const handleEventKeyDown = (event: Schedule | ParentMeeting, e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      e.stopPropagation();
+      onEventClick?.(event);
+    }
+  };
+
   const renderMonthView = () => (
     <div className="bg-white rounded-lg shadow" role="grid" aria-label="Kalender bulanan">
       {/* Header */}
@@ -188,6 +196,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                     <div
                       key={idx}
                       onClick={(e) => handleEventClick(event, e)}
+                      onKeyDown={(e) => handleEventKeyDown(event, e)}
                       className={`text-xs p-1 rounded truncate cursor-pointer
                         ${isMeeting 
                           ? 'bg-purple-100 text-purple-800 hover:bg-purple-200' 
@@ -286,6 +295,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                       <div
                         key={idx}
                         onClick={(e) => handleEventClick(event, e)}
+                        onKeyDown={(e) => handleEventKeyDown(event, e)}
                         className={`text-xs p-1 rounded truncate cursor-pointer
                           ${isMeeting 
                             ? 'bg-purple-100 text-purple-800 hover:bg-purple-200' 
@@ -359,6 +369,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                     key={index}
                     role="listitem"
                     onClick={() => onEventClick?.(event)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onEventClick?.(event);
+                      }
+                    }}
                     className="p-4 border rounded-lg cursor-pointer transition-all
                       hover:shadow-md hover:border-neutral-300"
                     tabIndex={0}

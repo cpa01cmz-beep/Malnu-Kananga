@@ -726,7 +726,18 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                           <DocumentTextIcon />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-neutral-900 dark:text-white line-clamp-1 cursor-pointer hover:text-blue-600" onClick={() => handleShowMaterialDetails(item)}>
+                          <h4
+                            className="font-semibold text-neutral-900 dark:text-white line-clamp-1 cursor-pointer hover:text-blue-600"
+                            onClick={() => handleShowMaterialDetails(item)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleShowMaterialDetails(item);
+                              }
+                            }}
+                            role="button"
+                            tabIndex={0}
+                          >
                             {item.title}
                           </h4>
                           <div className="flex items-center gap-2 mt-1 text-xs text-neutral-500 dark:text-neutral-400">
