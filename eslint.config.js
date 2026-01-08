@@ -91,8 +91,8 @@ export default [
     files: ['**/__tests__/**/*.{ts,tsx,js,jsx}', '**/*.test.{ts,tsx,js,jsx}'],
     languageOptions: {
       globals: {
+        // Vitest globals - these are automatically available when globals: true in vitest config
         describe: 'readonly',
-        it: 'readonly',
         it: 'readonly',
         test: 'readonly',
         expect: 'readonly',
@@ -101,6 +101,7 @@ export default [
         beforeEach: 'readonly',
         afterEach: 'readonly',
         vi: 'readonly',
+        // Browser globals
         console: 'readonly',
         document: 'readonly',
         window: 'readonly',
