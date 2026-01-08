@@ -547,6 +547,10 @@ export interface ELibrary {
   ocrProcessedAt?: string;
   ocrError?: string;
   isSearchable?: boolean;
+  ocrQuality?: OCRTextQuality;
+  documentType?: 'unknown' | 'academic' | 'administrative' | 'form' | 'certificate';
+  aiSummary?: string;
+  plagiarismFlags?: PlagiarismFlag[];
 }
 
 // OCR Related Types
@@ -560,6 +564,28 @@ export interface OCRUpdate {
   ocrProcessedAt?: string;
   ocrError?: string;
   isSearchable?: boolean;
+  ocrQuality?: OCRTextQuality;
+  documentType?: 'unknown' | 'academic' | 'administrative' | 'form' | 'certificate';
+  aiSummary?: string;
+  plagiarismFlags?: PlagiarismFlag[];
+}
+
+export interface OCRTextQuality {
+  isSearchable: boolean;
+  isHighQuality: boolean;
+  estimatedAccuracy: number;
+  wordCount: number;
+  characterCount: number;
+  hasMeaningfulContent: boolean;
+  documentType: 'unknown' | 'academic' | 'administrative' | 'form' | 'certificate';
+}
+
+export interface PlagiarismFlag {
+  materialId: string;
+  similarity: number;
+  matchedText: string;
+  details: string;
+  flaggedAt: string;
 }
 
 export interface OCRProcessingState {

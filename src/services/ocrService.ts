@@ -9,6 +9,17 @@ export interface OCRExtractionResult {
     nisn?: string;
     schoolName?: string;
   };
+  quality: OCRTextQuality;
+}
+
+export interface OCRTextQuality {
+  isSearchable: boolean;
+  isHighQuality: boolean;
+  estimatedAccuracy: number;
+  wordCount: number;
+  characterCount: number;
+  hasMeaningfulContent: boolean;
+  documentType: 'unknown' | 'academic' | 'administrative' | 'form' | 'certificate';
 }
 
 export interface OCRProgress {
@@ -69,11 +80,13 @@ class OCRService {
       const result = await this.worker!.recognize(imageFile);
 
       const extractedData = this.parseExtractedText(result.data.text);
+      const quality = this.assessTextQuality(result.data.text, result.data.confidence);
 
       return {
         text: result.data.text,
         confidence: result.data.confidence,
-        data: extractedData
+        data: extractedData,
+        quality
       };
     } catch {
       throw new Error('Gagal mengekstrak teks dari gambar');
@@ -157,6 +170,50 @@ class OCRService {
   private isValidGrade(grade: string): boolean {
     const numericGrade = parseInt(grade, 10);
     return !isNaN(numericGrade) && numericGrade >= 0 && numericGrade <= 100;
+  }
+
+  private assessTextQuality(text: string, confidence: number): OCRTextQuality {
+    const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+    const wordCount = words.length;
+    const characterCount = text.length;
+    
+    // Estimate accuracy based on confidence and text characteristics
+    let estimatedAccuracy = confidence;
+    if (wordCount < 10) estimatedAccuracy *= 0.8; // Penalize very short texts
+    if (/\d{2,}/.test(text) && !/NISN|Nilai|Grade/i.test(text)) estimatedAccuracy *= 0.9; // Suspicious numbers
+    
+    estimatedAccuracy = Math.max(0, Math.min(100, estimatedAccuracy));
+    
+    const isHighQuality = confidence >= 70 && wordCount >= 20;
+    const isSearchable = confidence >= 50 && wordCount >= 5;
+    
+    // Determine document type
+    let documentType: OCRTextQuality['documentType'] = 'unknown';
+    
+    if (/nilai|grade|matematika|bahasa|ipa|ips|fisika|kimia|biologi/i.test(text)) {
+      documentType = 'academic';
+    } else if (/nisn|nama lengkap|tempat tanggal lahir|alamat/i.test(text)) {
+      documentType = 'form';
+    } else if (/surat|sertifikat|ijazah|kelulusan/i.test(text)) {
+      documentType = 'certificate';
+    } else if (/surat|kepala sekolah|tanda tangan|stempel/i.test(text)) {
+      documentType = 'administrative';
+    }
+    
+    // Check for meaningful content
+    const hasMeaningfulContent = wordCount >= 5 && 
+      !/^\s*$|^[^\w\s]*$|^.{0,3}$/i.test(text) && // Not empty or just symbols
+      /[a-zA-Z]/.test(text); // Contains letters
+    
+    return {
+      isSearchable,
+      isHighQuality,
+      estimatedAccuracy,
+      wordCount,
+      characterCount,
+      hasMeaningfulContent,
+      documentType
+    };
   }
 
   private formatStatus(status: string): string {
