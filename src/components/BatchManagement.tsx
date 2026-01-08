@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NotificationBatch, PushNotification } from '../types';
 import { CloseIcon } from './icons/CloseIcon';
+import Button from './ui/Button';
 import Textarea from './ui/Textarea';
 
 interface BatchManagementProps {
@@ -54,26 +55,16 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
     }
   };
 
-  const getStatusColor = (status: NotificationBatch['status']) => {
-    switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'processing': return 'bg-blue-100 text-blue-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      default: return 'bg-neutral-100 text-neutral-800';
-    }
-  };
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium text-neutral-900">Manajemen Batch</h3>
-        <button
+        <Button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+          size="sm"
         >
           Buat Batch
-        </button>
+        </Button>
       </div>
 
       {batches.length === 0 ? (
@@ -91,7 +82,7 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
                     {batch.notifications.length} notifikasi
                   </p>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(batch.status)}`}>
+                <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                   {batch.status}
                 </span>
               </div>
@@ -111,12 +102,13 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
 
               <div className="flex gap-2">
                 {batch.status === 'pending' && (
-                  <button
+                  <Button
                     onClick={() => handleSendBatch(batch.id)}
-                    className="px-3 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 transition-colors text-sm"
+                    size="sm"
+                    variant="success"
                   >
                     Kirim Sekarang
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -138,17 +130,19 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="p-2 hover:bg-neutral-100 rounded-full"
+                aria-label="Tutup"
               >
                 <CloseIcon className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-4">
+              <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label htmlFor="batch-name" className="block text-sm font-medium text-neutral-700 mb-1">
                   Nama Batch
                 </label>
                 <input
+                  id="batch-name"
                   type="text"
                   value={batchName}
                   onChange={(e) => setBatchName(e.target.value)}
@@ -168,19 +162,19 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
               />
 
               <div className="flex gap-3">
-                <button
+                <Button
                   onClick={handleCreateBatch}
                   disabled={!batchName.trim() || !notificationText.trim()}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1"
                 >
                   Buat Batch
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-neutral-700 border border-neutral-300 rounded-md hover:bg-neutral-50 transition-colors"
+                  variant="secondary"
                 >
                   Batal
-                </button>
+                </Button>
               </div>
             </div>
           </div>

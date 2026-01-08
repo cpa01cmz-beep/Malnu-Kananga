@@ -8,6 +8,7 @@ import { YAxis } from 'recharts/es6/cartesian/YAxis';
 import { CartesianGrid } from 'recharts/es6/cartesian/CartesianGrid';
 import { Tooltip } from 'recharts/es6/component/Tooltip';
 import { Legend } from 'recharts/es6/component/Legend';
+import Button from './ui/Button';
 import { ResponsiveContainer } from 'recharts/es6/component/ResponsiveContainer';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -16,7 +17,6 @@ import { Grade, Subject, Attendance } from '../types';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { useCanAccess } from '../hooks/useCanAccess';
-import Button from './ui/Button';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
 import { GRADIENT_CLASSES } from '../config/gradients';
 import ErrorMessage from './ui/ErrorMessage';
@@ -400,12 +400,12 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
           >
             🎯 Target Belajar
           </button>
-          <button
+          <Button
             onClick={generatePDFReport}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="flex items-center gap-2"
           >
             📊 Export PDF
-          </button>
+          </Button>
         </div>
       </div>
 

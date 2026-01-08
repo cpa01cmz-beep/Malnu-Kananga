@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NotificationTemplate, PushNotification } from '../types';
 import { CloseIcon } from './icons/CloseIcon';
+import Button from './ui/Button';
 
 interface TemplateManagementProps {
   templates: NotificationTemplate[];
@@ -97,12 +98,12 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium text-neutral-900">Template Notifikasi</h3>
-        <button
+        <Button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+          size="sm"
         >
           Buat Template
-        </button>
+        </Button>
       </div>
 
       {templates.length === 0 ? (
