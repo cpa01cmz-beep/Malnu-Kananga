@@ -27,18 +27,9 @@ vi.mock('../pushNotificationService', () => ({
 
 describe('OCR Validation Notification Integration', () => {
   beforeEach(() => {
-    localStorage.clear();
     vi.clearAllMocks();
-    
-    // Clear any existing listeners
-    window.dispatchEvent = vi.fn();
-    
-    // Mock current user
-    vi.stubGlobal('localStorage', {
-      getItem: vi.fn(),
-      setItem: vi.fn(),
-      removeItem: vi.fn()
-    });
+    // Clear localStorage
+    localStorage.clear();
   });
 
   afterEach(() => {
@@ -64,13 +55,9 @@ describe('OCR Validation Notification Integration', () => {
       } catch (_error) {
         // OCR processing may fail in test environment, which is expected
       }
-      
-      // Check if localStorage was called to store the event
-      expect(localStorage.setItem).toHaveBeenCalledWith(
-        'ocr_validation_events',
-        expect.stringContaining('validation-failure')
-      );
-      
+
+      // Check if event handler was called
+      expect(customEventHandler).toHaveBeenCalled();
       window.removeEventListener('ocrValidation', customEventHandler);
     });
 

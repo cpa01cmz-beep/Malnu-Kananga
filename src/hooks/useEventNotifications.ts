@@ -206,7 +206,8 @@ export function useEventNotifications() {
   const useOCRValidationMonitor = () => {
     useEffect(() => {
       const handleOCRValidation = (event: Event) => {
-        const ocrEvent = event.detail as OCRValidationEvent;
+        const customEvent = event as CustomEvent;
+        const ocrEvent = customEvent.detail as OCRValidationEvent;
         notifyOCRValidation(ocrEvent);
       };
 
