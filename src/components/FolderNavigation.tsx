@@ -29,6 +29,18 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
   const [newFolderDescription, setNewFolderDescription] = useState('');
   const [editingFolder, setEditingFolder] = useState<MaterialFolder | null>(null);
 
+  const getPaddingLeftClass = (level: number): string => {
+    const paddingClasses: Record<number, string> = {
+      0: 'pl-2',
+      1: 'pl-6',
+      2: 'pl-10',
+      3: 'pl-14',
+      4: 'pl-18',
+      5: 'pl-22'
+    };
+    return paddingClasses[level] || `pl-[${level * 16 + 8}px]`;
+  };
+
   const fetchFolders = useCallback(async () => {
     setLoading(true);
     try {
@@ -194,8 +206,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
               isSelected
                 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
                 : 'hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
-            }`}
-            style={{ paddingLeft: `${level * 16 + 8}px` }}
+            } ${getPaddingLeftClass(level)}`}
             onClick={() => onFolderSelect(folder)}
           >
             {hasSubfolders && (
