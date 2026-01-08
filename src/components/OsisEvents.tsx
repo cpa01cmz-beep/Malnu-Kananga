@@ -12,6 +12,7 @@ import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
 import ProgressBar from './ui/ProgressBar';
+import { GRADIENT_CLASSES, DARK_GRADIENT_CLASSES } from '../config/gradients';
 
 interface OsisEventsProps {
   onBack: () => void;
@@ -719,7 +720,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
           </div>
 
           {selectedEvent && (
-            <div className="bg-gradient-to-r from-orange-50 to-green-50 dark:from-orange-900/20 dark:to-green-900/20 border border-orange-200 dark:border-orange-800 rounded-2xl p-6">
+            <div className={`${GRADIENT_CLASSES.ORANGE_GREEN} dark:${DARK_GRADIENT_CLASSES.ORANGE_GREEN} border border-orange-200 dark:border-orange-800 rounded-2xl p-6`}>
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-neutral-900 dark:text-white">{selectedEvent.eventName}</h3>

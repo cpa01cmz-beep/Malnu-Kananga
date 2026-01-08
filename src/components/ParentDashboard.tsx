@@ -18,6 +18,7 @@ import ParentMessagingView from './ParentMessagingView';
 import ParentPaymentsView from './ParentPaymentsView';
 import ParentMeetingsView from './ParentMeetingsView';
 import { ToastType } from './Toast';
+import { GRADIENT_CLASSES } from '../config/gradients';
 import type { ParentChild, Grade } from '../types';
 import { UserRole, UserExtraRole } from '../types/permissions';
 import { parentsAPI, authAPI } from '../services/apiService';
@@ -432,7 +433,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                     </div>
                   </div>
                   <div className="ml-6 flex-shrink-0">
-                    <div className="w-20 h-20 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl flex items-center justify-center text-white text-3xl font-semibold shadow-card">
+                    <div className={`${GRADIENT_CLASSES.PRIMARY_MEDIUM} w-20 h-20 rounded-xl flex items-center justify-center text-white text-3xl font-semibold shadow-card`}>
                       {selectedChild.studentName.charAt(0).toUpperCase()}
                     </div>
                   </div>
