@@ -7,6 +7,7 @@ import { ToastType } from './Toast';
 import type { ParentChild, Grade } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { GRADIENT_CLASSES } from '../config/gradients';
 
 interface ParentReportsViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -139,9 +140,9 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
           {consolidatedData.map((data) => (
             <div key={data.child.studentId} className="bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl p-6 border border-neutral-200 dark:border-neutral-700">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
-                  {data.child.studentName.charAt(0).toUpperCase()}
-                </div>
+              <div className={`${GRADIENT_CLASSES.GREEN_MEDIUM} w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg`}>
+                {data.child.studentName.charAt(0).toUpperCase()}
+              </div>
                 <div>
                   <h3 className="font-semibold text-neutral-900 dark:text-white">{data.child.studentName}</h3>
                   <p className="text-sm text-neutral-600 dark:text-neutral-400">{data.child.className}</p>

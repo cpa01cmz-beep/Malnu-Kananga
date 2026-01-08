@@ -7,6 +7,7 @@ import type { ParentChild, ParentPayment } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateParentPayment } from '../utils/parentValidation';
+import { GRADIENT_CLASSES } from '../config/gradients';
 
 interface ParentPaymentsViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -220,7 +221,7 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
         <div key={data.child.studentId} className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+              <div className={`${GRADIENT_CLASSES.GREEN_MEDIUM} w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg`}>
                 {data.child.studentName.charAt(0).toUpperCase()}
               </div>
               <div>
