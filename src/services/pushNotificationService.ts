@@ -1,6 +1,7 @@
 import { NotificationSettings, PushNotification, NotificationHistoryItem, NotificationBatch, NotificationTemplate, NotificationAnalytics } from '../types';
 import { NOTIFICATION_CONFIG, NOTIFICATION_ERROR_MESSAGES, NOTIFICATION_ICONS, STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
+import { voiceNotificationService } from './voiceNotificationService';
 import type { UserRole } from '../types';
 
 /* eslint-disable no-undef */
@@ -179,9 +180,24 @@ class PushNotificationService {
 
       this.addToHistory(notification);
       this.recordAnalytics(notification.id, 'delivered');
+      
+      // Trigger voice notification if enabled
+      this.triggerVoiceNotification(notification);
+      
       logger.info('Local notification displayed:', notification.title);
     } catch (error) {
       logger.error('Failed to show local notification:', error);
+    }
+  }
+
+  private triggerVoiceNotification(notification: PushNotification): void {
+    try {
+      const voiceSuccess = voiceNotificationService.announceNotification(notification);
+      if (voiceSuccess) {
+        logger.info('Voice notification triggered for:', notification.id);
+      }
+    } catch (error) {
+      logger.error('Failed to trigger voice notification:', error);
     }
   }
 

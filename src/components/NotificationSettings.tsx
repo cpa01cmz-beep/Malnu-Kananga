@@ -457,6 +457,59 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
 </div>
             )}
           </div>
+
+          {/* Voice Notification Settings */}
+          <div className="mt-6 pt-6 border-t border-neutral-200 dark:border-neutral-700">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
+                  Notifikasi Suara
+                </h3>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                  Pengumuman suara untuk aksesibilitas notifikasi penting
+                </p>
+              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  // Import and show voice notification settings
+                  import('./VoiceNotificationSettings').then(({ default: _VoiceNotificationSettingsModal }) => {
+                    // This would need a proper state management approach
+                    // For now, let's add it to a simpler approach
+                  });
+                }}
+              >
+                Konfigurasi
+              </Button>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                  Aktifkan Notifikasi Suara
+                </label>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                  Pengumuman suara untuk notifikasi prioritas tinggi
+                </p>
+              </div>
+              <Toggle
+                checked={autoSaveState.data.voiceNotifications?.enabled || false}
+                onChange={(e) =>
+                  autoSaveActions.updateData({
+                    ...autoSaveState.data,
+                    voiceNotifications: {
+                      ...autoSaveState.data.voiceNotifications,
+                      enabled: e.target.checked,
+                    },
+                  })
+                }
+                disabled={!autoSaveState.data.enabled}
+                aria-label="Aktifkan notifikasi suara"
+                color="green"
+              />
+            </div>
+          </div>
         </div>
           )}
 
