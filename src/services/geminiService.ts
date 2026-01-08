@@ -324,4 +324,77 @@ Please provide the updated JSON content following the safety and content rules a
     }
 }
 
+// Function to analyze individual student performance (Uses Gemini 3 Pro)
+export async function analyzeStudentPerformance(studentData: {
+  grades: Array<{ subject: string; score: number; grade: string; trend: string }>;
+  attendance: { percentage: number; totalDays: number; present: number; absent: number };
+  trends: Array<{ month: string; averageScore: number; attendanceRate: number }>;
+}): Promise<string> {
+    // Check cache for existing analysis
+    const cacheKey = {
+      operation: 'studentAnalysis',
+      input: JSON.stringify(studentData),
+      model: PRO_THINKING_MODEL
+    };
+    
+    const cachedAnalysis = analysisCache.get<string>(cacheKey);
+    if (cachedAnalysis) {
+      logger.debug('Returning cached student performance analysis');
+      return cachedAnalysis;
+    }
+
+    const prompt = `
+    Analisis data performa akademik siswa berikut ini dalam Bahasa Indonesia. 
+    Sajikan analisis yang mendalam dan praktis dengan format:
+
+    📊 **ANALISIS KINERJA AKADEMIK**
+    1. Performa Umum: Evaluasi keseluruhan nilai dan tren
+    2. Kekuatan Utama: Mata pelajaran dengan hasil terbaik
+    3. Area yang Perlu Perhatian: Mata pelajaran yang butuh improvement
+    4. Dampak Kehadiran: Hubungan antara kehadiran dan prestasi
+    5. Rekomendasi Strategis: 3-4 saran praktis untuk peningkatan
+
+    Data Siswa:
+    - Nilai per mata pelajaran: ${JSON.stringify(studentData.grades)}
+    - Kehadiran: ${studentData.attendance.percentage}% (${studentData.attendance.present}/${studentData.attendance.totalDays} hari)
+    - Tren bulanan: ${JSON.stringify(studentData.trends)}
+
+    Fokus pada:
+    - Pola pembelajaran yang efektif
+    - Strategi meningkatkan mata pelajaran bermasalah
+    - Pengaruh disiplin kehadiran terhadap hasil
+    - Motivasi positif dan pembangunan kepercayaan diri
+
+    Gunakan bahasa yang mendidik, memotivasi, dan memberikan solusi konkret.
+    `;
+
+    try {
+        const response = await withCircuitBreaker(async () => {
+            return await ai.models.generateContent({
+                model: PRO_THINKING_MODEL,
+                contents: prompt,
+                config: {
+                    thinkingConfig: { thinkingBudget: 32768 }
+                }
+            });
+        });
+        const analysis = response.text || "Gagal melakukan analisis.";
+        
+        // Cache the analysis result
+        analysisCache.set(cacheKey, analysis);
+        
+        return analysis;
+    } catch (error) {
+        const classifiedError = classifyError(error, {
+            operation: 'analyzeStudentPerformance',
+            timestamp: Date.now()
+        });
+        logError(classifiedError);
+        const message = getUserFriendlyMessage(classifiedError);
+        return message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.' 
+          ? "Maaf, gagal menganalisis data performa saat ini." 
+          : message;
+    }
+}
+
 export const initialGreeting = "Assalamualaikum! Saya Asisten AI MA Malnu Kananga. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?";
