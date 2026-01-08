@@ -16,6 +16,7 @@ import {
   executeWithRetry, 
   createToastHandler 
 } from '../utils/teacherErrorHandler';
+import { useCanAccess } from '../hooks/useCanAccess';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import FolderNavigation from './FolderNavigation';
 import { CardSkeleton } from './ui/Skeleton';
@@ -25,6 +26,7 @@ import VersionControl from './VersionControl';
 import MaterialAnalytics from './MaterialAnalytics';
 import MaterialTemplatesLibrary from './MaterialTemplatesLibrary';
 import Button from './ui/Button';
+import AccessDenied from './AccessDenied';
 
 interface MaterialUploadProps {
   onBack: () => void;
@@ -32,6 +34,7 @@ interface MaterialUploadProps {
 }
 
 const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) => {
+  // ALL hooks first
   const [materials, setMaterials] = useState<ELibraryType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,6 +72,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
   });
   
   const toast = createToastHandler(onShowToast);
+  const { canAccess } = useCanAccess();
 
   React.useEffect(() => {
     fetchMaterials();
@@ -321,6 +325,21 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     if (fileType.toLowerCase().includes('video') || fileType.toLowerCase().includes('mp4')) return 'VIDEO';
     return 'PDF';
   };
+
+  // Permission checks for content management - AFTER all hooks
+  const createAccess = canAccess('content.create');
+  const _updateAccess = canAccess('content.update');
+  const _deleteAccess = canAccess('content.delete');
+  
+  if (!createAccess.canAccess) {
+    return (
+      <AccessDenied 
+        onBack={onBack} 
+        requiredPermission={createAccess.requiredPermission}
+        message="You need content creation permissions to upload materials."
+      />
+    );
+  }
 
   if (loading) {
     return (

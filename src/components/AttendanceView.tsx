@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { UsersIcon } from './icons/UsersIcon';
 import { attendanceAPI } from '../services/apiService';
 import { Attendance } from '../types';
-import { authAPI } from '../services/apiService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
+import { useCanAccess } from '../hooks/useCanAccess';
 import PageHeader from './ui/PageHeader';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
+import AccessDenied from './AccessDenied';
 
 interface AttendanceViewProps {
   onBack: () => void;
@@ -20,9 +21,10 @@ interface AttendanceHistory {
 }
 
 const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
-  const currentUser = authAPI.getCurrentUser();
-  const STUDENT_NIS = currentUser?.id || '';
-  const STUDENT_NAME = currentUser?.name || 'Siswa';
+  // ALL hooks first
+  const { user, canAccess } = useCanAccess();
+  const STUDENT_NIS = user?.id || '';
+  const STUDENT_NAME = user?.name || 'Siswa';
 
   const [todayStatus, setTodayStatus] = useState<string>('Hadir');
   const [history, setHistory] = useState<AttendanceHistory[]>([]);
@@ -101,6 +103,21 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
   const getAttendanceCount = (status: string): number => {
     return history.filter((h) => h.status === status).length;
   };
+
+  // Check permissions - different requirements based on role - AFTER all hooks
+  const attendanceAccess = user?.role === 'student' 
+    ? canAccess('content.read') // Students can view their own attendance
+    : canAccess('academic.attendance'); // Staff can manage attendance
+
+  if (!attendanceAccess.canAccess) {
+    return (
+      <AccessDenied 
+        onBack={onBack} 
+        requiredPermission={attendanceAccess.requiredPermission}
+        message={attendanceAccess.reason}
+      />
+    );
+  }
 
   if (loading) {
     return (
