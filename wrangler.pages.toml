@@ -1,0 +1,12 @@
+# Cloudflare Pages Configuration
+# This is a separate config for Pages deployment
+# Use: wrangler pages deploy dist --project-name=malnu-kananga
+
+# Build output directory
+pages_build_output_dir = "dist"
+
+# Environment variables for Pages
+[env.production.vars]
+VITE_API_BASE_URL = "https://malnu-kananga-worker.cpa01cmz.workers.dev"
+VITE_ENABLE_PWA = "true"
+VITE_ENABLE_AI_CHAT = "true"
