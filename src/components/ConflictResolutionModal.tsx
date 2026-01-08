@@ -51,8 +51,8 @@ export function ConflictResolutionModal({
     
     return (
       <div className="space-y-2">
-        <h4 className="font-medium text-gray-900 dark:text-gray-100">{title}</h4>
-        <pre className="bg-gray-100 dark:bg-gray-800 p-3 rounded text-xs overflow-auto max-h-40">
+        <h4 className="font-medium text-neutral-900 dark:text-neutral-100">{title}</h4>
+        <pre className="bg-neutral-100 dark:bg-neutral-800 p-3 rounded text-xs overflow-auto max-h-40">
           {JSON.stringify(data, null, 2)}
         </pre>
       </div>
@@ -73,19 +73,19 @@ export function ConflictResolutionModal({
 
     return (
       <div className="space-y-3">
-        <h4 className="font-medium text-gray-900 dark:text-gray-100">Merge Data</h4>
+        <h4 className="font-medium text-neutral-900 dark:text-neutral-100">Merge Data</h4>
         {allKeys.map(key => (
           <div key={key} className="space-y-1">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
               {key}
             </label>
             <div className="flex gap-2 items-center">
-              <span className="text-xs text-gray-500">Local:</span>
-              <span className="text-xs text-gray-700 dark:text-gray-300 flex-1">
+              <span className="text-xs text-neutral-500">Local:</span>
+              <span className="text-xs text-neutral-700 dark:text-neutral-300 flex-1">
                 {JSON.stringify((conflict.data as Record<string, unknown>)?.[key] as unknown)}
               </span>
-              <span className="text-xs text-gray-500">Server:</span>
-              <span className="text-xs text-gray-700 dark:text-gray-300 flex-1">
+              <span className="text-xs text-neutral-500">Server:</span>
+              <span className="text-xs text-neutral-700 dark:text-neutral-300 flex-1">
                 {JSON.stringify(serverData?.[key] as unknown)}
               </span>
             </div>
@@ -93,7 +93,7 @@ export function ConflictResolutionModal({
               type="text"
               value={String(mergedData?.[key] || '')}
               onChange={(e) => handleMergeDataChange(key, e.target.value)}
-              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-800"
+              className="w-full p-2 border border-neutral-300 dark:border-neutral-600 rounded text-sm bg-white dark:bg-neutral-800"
               placeholder="Enter merged value"
             />
           </div>
@@ -104,19 +104,19 @@ export function ConflictResolutionModal({
 
   return (
     <div className="fixed inset-0 bg-black/50% z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
           <h2 className="text-lg font-semibold text-red-600 dark:text-red-400">
             ⚠️ Sync Conflict Detected
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            A conflict occurred when syncing your offline changes with the server. Please choose how to resolve this.
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+            A conflict occurred when syncing your offline changes with server. Please choose how to resolve this.
           </p>
         </div>
 
         {/* Conflict details */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
             <div className="text-sm">
               <strong>Action:</strong> {conflict.type} {conflict.entity}
@@ -134,7 +134,7 @@ export function ConflictResolutionModal({
         </div>
 
         {/* Data comparison */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {formatData(conflict.data as Record<string, unknown> | null, 'Your Local Changes')}
             {formatData(serverData, 'Server Data')}
@@ -142,11 +142,11 @@ export function ConflictResolutionModal({
         </div>
 
         {/* Resolution options */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Resolution Options</h3>
+        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
+          <h3 className="font-medium text-neutral-900 dark:text-neutral-100 mb-3">Resolution Options</h3>
           
           <div className="space-y-3">
-            <label className="flex items-start gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+            <label className="flex items-start gap-3 p-3 border border-neutral-200 dark:border-neutral-600 rounded-lg cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700">
               <input
                 type="radio"
                 name="resolution"
@@ -156,14 +156,14 @@ export function ConflictResolutionModal({
                 className="mt-1"
               />
               <div>
-                <div className="font-medium text-gray-900 dark:text-gray-100">Keep My Version</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="font-medium text-neutral-900 dark:text-neutral-100">Keep My Version</div>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400">
                   Overwrite server changes with your local changes. This may discard changes made by others.
                 </div>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+            <label className="flex items-start gap-3 p-3 border border-neutral-200 dark:border-neutral-600 rounded-lg cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700">
               <input
                 type="radio"
                 name="resolution"
@@ -173,14 +173,14 @@ export function ConflictResolutionModal({
                 className="mt-1"
               />
               <div>
-                <div className="font-medium text-gray-900 dark:text-gray-100">Use Server Version</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
-                  Discard your local changes and keep the server version. Your changes will be lost.
+                <div className="font-medium text-neutral-900 dark:text-neutral-100">Use Server Version</div>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                  Discard your local changes and keep server version. Your changes will be lost.
                 </div>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 p-3 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
+            <label className="flex items-start gap-3 p-3 border border-neutral-200 dark:border-neutral-600 rounded-lg cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-700">
               <input
                 type="radio"
                 name="resolution"
@@ -196,8 +196,8 @@ export function ConflictResolutionModal({
                 className="mt-1"
               />
               <div>
-                <div className="font-medium text-gray-900 dark:text-gray-100">Merge Changes</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="font-medium text-neutral-900 dark:text-neutral-100">Merge Changes</div>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400">
                   Combine your changes with server changes manually.
                 </div>
               </div>
@@ -206,7 +206,7 @@ export function ConflictResolutionModal({
 
           {/* Merge editor */}
           {selectedResolution === 'merge' && (
-            <div className="mt-4 p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700">
+            <div className="mt-4 p-4 border border-neutral-200 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700">
               {renderMergeEditor()}
             </div>
           )}
@@ -216,7 +216,7 @@ export function ConflictResolutionModal({
         <div className="p-4 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+            className="px-4 py-2 text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors"
           >
             Cancel
           </button>
@@ -224,7 +224,7 @@ export function ConflictResolutionModal({
           <button
             onClick={handleResolve}
             disabled={isResolving || (selectedResolution === 'merge' && !mergedData)}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white rounded-lg transition-colors"
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-neutral-400 text-white rounded-lg transition-colors"
           >
             {isResolving ? 'Resolving...' : 'Resolve Conflict'}
           </button>
@@ -251,13 +251,13 @@ export function ConflictListModal({
 
   return (
     <div className="fixed inset-0 bg-black/50% z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
           <h2 className="text-lg font-semibold text-red-600 dark:text-red-400">
             ⚠️ {conflicts.length} Sync Conflict{conflicts.length > 1 ? 's' : ''}
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
             Please resolve each conflict to complete synchronization.
           </p>
         </div>
@@ -273,13 +273,13 @@ export function ConflictListModal({
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium text-gray-900 dark:text-gray-100">
+                    <div className="font-medium text-neutral-900 dark:text-neutral-100">
                       {index + 1}. {conflict.type} {conflict.entity}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <div className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
                       {conflict.endpoint}
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                       Created: {new Date(conflict.timestamp).toLocaleString('id-ID')}
                     </div>
                     {conflict.lastError && (
@@ -300,11 +300,11 @@ export function ConflictListModal({
         </div>
 
         {/* Actions */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-t border-neutral-200 dark:border-neutral-700">
           <div className="flex justify-end">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+              className="px-4 py-2 text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors"
             >
               Close
             </button>
