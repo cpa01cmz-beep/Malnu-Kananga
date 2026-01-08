@@ -253,7 +253,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
   };
 
   return (
-    <div className="fixed inset-0 bg-neutral-900/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-neutral-900/80 flex items-center justify-center z-50 p-4" onClick={onClose} role="presentation">
       <OfflineIndicator 
         showSyncButton={true}
         showQueueCount={true}

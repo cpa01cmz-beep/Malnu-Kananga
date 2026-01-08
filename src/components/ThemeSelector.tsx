@@ -30,7 +30,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50% backdrop-blur-sm z-50" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/50% backdrop-blur-sm z-50" onClick={onClose} role="presentation" />
       <div className="fixed top-20 right-4 w-96 max-w-[90vw] bg-white dark:bg-neutral-900 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 z-50 animate-fade-in-up">
         {/* Header */}
         <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
