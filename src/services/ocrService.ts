@@ -1,7 +1,7 @@
 import { createWorker, PSM, Worker } from 'tesseract.js';
 import { OCRValidationEvent, UserRole } from '../types';
 import { logger } from '../utils/logger';
-import { createOCRError, handleOCRError } from '../utils/serviceErrorHandlers';
+import { handleOCRError } from '../utils/serviceErrorHandlers';
 
 export interface OCRExtractionResult {
   text: string;

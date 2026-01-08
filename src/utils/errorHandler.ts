@@ -99,7 +99,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   const errorMessage = (err.message || String(error)).toLowerCase();
 
-  if (errorMessage.includes('timeout') || errorMessage.includes('time out')) {
+  if (errorMessage.includes('timeout') || errorMessage.includes('time out') || errorMessage.includes('timed')) {
     return new AppError(
       ERROR_MESSAGES[ErrorType.TIMEOUT_ERROR],
       ErrorType.TIMEOUT_ERROR,

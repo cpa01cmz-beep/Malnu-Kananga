@@ -1,6 +1,14 @@
 import React from 'react';
-import { AlertTriangle, RefreshCw, WifiOff, AlertCircle, X } from 'lucide-react';
+import { ArrowPathIcon } from './icons/ArrowPathIcon';
+import InformationCircleIcon from './icons/InformationCircleIcon';
+import { CloseIcon } from './icons/CloseIcon';
 import { ErrorState } from '../hooks/useErrorHandler';
+
+const AlertTriangleIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+  </svg>
+);
 
 interface ErrorFeedbackProps {
   errorState: ErrorState;
@@ -24,11 +32,11 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
   const getIcon = () => {
     switch (feedback.type) {
       case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
+        return <AlertTriangleIcon className="w-5 h-5 text-yellow-500" />;
       case 'info':
-        return <AlertCircle className="w-5 h-5 text-blue-500" />;
+        return <InformationCircleIcon />;
       default:
-        return <AlertTriangle className="w-5 h-5 text-red-500" />;
+        return <AlertTriangleIcon className="w-5 h-5 text-red-500" />;
     }
   };
 
@@ -56,7 +64,7 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
           
           {feedback.actions && feedback.actions.length > 0 && (
             <div className="mt-3 flex gap-2">
-              {feedback.actions.map((action, index) => (
+              {feedback.actions.map((action: { label: string; action: () => void; variant?: string }, index: number) => (
                 <button
                   key={index}
                   onClick={action.action}
@@ -66,30 +74,30 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
                       : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                   }`}
                 >
-                  {action.label === 'Coba Lagi' && <RefreshCw className="w-3 h-3 mr-1" />}
+                  {action.label === 'Coba Lagi' && <ArrowPathIcon className="w-3 h-3 mr-1" />}
                   {action.label}
                 </button>
               ))}
-              {onRetry && !feedback.actions.some(a => a.label === 'Coba Lagi') && (
+              {onRetry && !feedback.actions.some((a: { label: string; action: () => void; variant?: string }) => a.label === 'Coba Lagi') && (
                 <button
                   onClick={onRetry}
                   className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-red-100 text-red-800 hover:bg-red-200 transition-colors"
                 >
-                  <RefreshCw className="w-3 h-3 mr-1" />
+                  <ArrowPathIcon className="w-3 h-3 mr-1" />
                   Coba Lagi
                 </button>
               )}
             </div>
           )}
         </div>
-        
+
         {onDismiss && (
           <div className="ml-auto pl-3">
             <button
               onClick={onDismiss}
               className="inline-flex rounded-md p-1.5 hover:bg-black hover:bg-opacity-10 transition-colors"
             >
-              <X className="w-4 h-4" />
+              <CloseIcon className="w-4 h-4" />
             </button>
           </div>
         )}

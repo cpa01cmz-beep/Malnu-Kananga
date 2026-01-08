@@ -8,7 +8,7 @@ export interface ErrorHandlingOptions {
   onError?: (error: AppError, feedback: ErrorFeedback) => void;
 }
 
-interface ErrorState {
+export interface ErrorState {
   hasError: boolean;
   appError: AppError | null;
   feedback: ErrorFeedback | null;
@@ -62,7 +62,7 @@ export const useErrorHandler = () => {
         setErrorState({ hasError: false, appError: null, feedback: null });
         return result;
       } catch (error) {
-        const appError = handleError(error, options);
+        handleError(error, options);
         return null;
       }
     },

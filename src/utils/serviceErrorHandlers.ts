@@ -45,7 +45,7 @@ export function handleConflictError(error: unknown, operation: string): AppError
 }
 
 // Utility for service classes to wrap methods with error handling
-export function withErrorHandling<T extends any[], R>(
+export function withErrorHandling<T extends unknown[], R>(
   fn: (...args: T) => Promise<R>,
   errorMapper: (error: unknown, ...args: T) => AppError
 ) {
