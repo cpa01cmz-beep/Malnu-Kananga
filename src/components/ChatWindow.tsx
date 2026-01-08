@@ -6,8 +6,9 @@ import { getAIResponseStream, initialGreeting } from '../services/geminiService'
 import { CloseIcon } from './icons/CloseIcon';
 import { BrainIcon } from './icons/BrainIcon';
 import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';
+import { SendIcon } from './icons/SendIcon';
 import MarkdownRenderer from './MarkdownRenderer';
-import AutoResizeTextarea from './AutoResizeTextarea';
+import Textarea from './ui/Textarea';
 import TypingIndicator from './TypingIndicator';
 import VoiceInputButton from './VoiceInputButton';
 import VoiceSettings from './VoiceSettings';
@@ -375,12 +376,31 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
 
       <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white/95% dark:bg-neutral-800/95% backdrop-blur-sm flex-shrink-0 rounded-b-xl shadow-sm">
         <div className="flex items-end gap-2.5">
-          <AutoResizeTextarea
+          <Textarea
               value={input}
-              onChange={setInput}
-              onSend={handleSend}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
+              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
               disabled={isLoading}
               placeholder={isThinkingMode ? "Ketik pertanyaan kompleks..." : "Ketik pertanyaan Anda..."}
+              fullWidth={true}
+              className="min-h-[44px]"
+              autoResize={true}
+              minRows={1}
+              maxRows={5}
+          />
+          <IconButton
+            onClick={handleSend}
+            disabled={isLoading || !input.trim()}
+            ariaLabel="Kirim pesan"
+            size="md"
+            variant="primary"
+            className="p-2.5 mb-0.5"
+            icon={<SendIcon />}
           />
           <VoiceInputButton
             onTranscript={(transcript) => {
