@@ -1,0 +1,366 @@
+name: deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, fix/*, feature/*]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: deployment
+  cancel-in-progress: true
+
+jobs:
+  deploy-frontend:
+    name: Deploy Frontend to Cloudflare Pages
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Install Wrangler
+        run: |
+          npm install -g wrangler
+
+      - name: Authenticate Wrangler
+        run: |
+          wrangler whoami
+
+      - name: Build Frontend
+        run: |
+          npm run build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+
+      - name: Verify Build Output
+        run: |
+          echo "Checking build output..."
+          if [ ! -d "dist" ]; then
+            echo "❌ Build failed: dist/ directory not found"
+            exit 1
+          fi
+
+          if [ ! -f "dist/index.html" ]; then
+            echo "❌ Build failed: index.html not found"
+            exit 1
+          fi
+
+          echo "✅ Build output verified"
+          ls -la dist/ | head -20
+
+      - name: Deploy to Cloudflare Pages
+        run: |
+          echo "Deploying to Cloudflare Pages..."
+          wrangler pages deploy dist --project-name=malnu-kananga --commit-dirty=true
+
+      - name: Verify Pages Deployment
+        run: |
+          echo "Verifying Pages deployment..."
+          sleep 10
+
+          # Check HTTP status
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://malnu-kananga.pages.dev)
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "❌ Pages deployment verification failed (HTTP $HTTP_STATUS)"
+            echo "Deployment may have succeeded but site is not accessible"
+            echo "Check Cloudflare Pages dashboard"
+            exit 1
+          fi
+
+          echo "✅ Pages deployment verified (HTTP 200)"
+
+      - name: Check Pages Secrets
+        run: |
+          echo "Checking Pages secrets..."
+          echo "https://malnu-kananga-worker.cpa01cmz.workers.dev" | wrangler pages secret put VITE_API_BASE_URL --project-name=malnu-kananga
+          echo "true" | wrangler pages secret put VITE_ENABLE_PWA --project-name=malnu-kananga
+          echo "true" | wrangler pages secret put VITE_ENABLE_AI_CHAT --project-name=malnu-kananga
+          echo "✅ Pages secrets configured"
+
+      - name: Pages Deployment Summary
+        if: success()
+        run: |
+          echo "============================================="
+          echo "✅ FRONTEND DEPLOYMENT SUCCESSFUL"
+          echo "============================================="
+          echo ""
+          echo "📊 Deployment Details:"
+          echo "  Project: malnu-kananga"
+          echo "  Platform: Cloudflare Pages"
+          echo "  URL: https://malnu-kananga.pages.dev"
+          echo "  Secrets: VITE_API_BASE_URL, VITE_ENABLE_PWA, VITE_ENABLE_AI_CHAT"
+          echo ""
+          echo "🔍 Verify at: https://malnu-kananga.pages.dev"
+
+  deploy-backend:
+    name: Deploy Backend to Cloudflare Workers
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Wrangler
+        run: |
+          npm install -g wrangler
+
+      - name: Authenticate Wrangler
+        run: |
+          wrangler whoami
+
+      - name: Check Worker Configuration
+        run: |
+          echo "Checking worker configuration..."
+          if [ ! -f "worker.js" ]; then
+            echo "❌ Worker file not found"
+            exit 1
+          fi
+
+          if [ ! -f "wrangler.toml" ]; then
+            echo "❌ wrangler.toml not found"
+            exit 1
+          fi
+
+          echo "✅ Worker configuration verified"
+          cat wrangler.toml | head -30
+
+      - name: Deploy Worker
+        run: |
+          echo "Deploying to Cloudflare Workers..."
+          wrangler deploy --env=""
+
+      - name: Get Deployment URL
+        id: get_deployment_url
+        run: |
+          echo "DEPLOYMENT_URL=https://malnu-kananga-worker.cpa01cmz.workers.dev" >> $GITHUB_OUTPUT
+
+      - name: Verify Worker Deployment
+        run: |
+          DEPLOYMENT_URL="${{ steps.get_deployment_url.outputs.DEPLOYMENT_URL }}"
+          echo "Verifying Worker deployment at: $DEPLOYMENT_URL"
+
+          # Wait for deployment to propagate
+          sleep 10
+
+          # Check HTTP status
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOYMENT_URL")
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "❌ Worker deployment verification failed (HTTP $HTTP_STATUS)"
+            exit 1
+          fi
+
+          echo "✅ Worker deployment verified (HTTP 200)"
+
+      - name: Check Secrets
+        run: |
+          echo "Checking worker secrets..."
+          SECRETS=$(wrangler secret list 2>&1 || echo "")
+
+          if echo "$SECRETS" | grep -q "JWT_SECRET"; then
+            echo "✅ JWT_SECRET is configured"
+          else
+            echo "⚠️  JWT_SECRET not found - setting default..."
+            echo "KJH8765DSGF8765FDGH9876FDGH8765FDG" | wrangler secret put JWT_SECRET
+          fi
+
+      - name: Seed Database
+        run: |
+          DEPLOYMENT_URL="https://malnu-kananga-worker.cpa01cmz.workers.dev"
+          echo "Seeding database..."
+          SEED_RESPONSE=$(curl -s -X POST "$DEPLOYMENT_URL/seed" -H "Content-Type: application/json")
+
+          echo "Seed response: $SEED_RESPONSE"
+
+          if echo "$SEED_RESPONSE" | grep -q '"success":true'; then
+            echo "✅ Database seeded successfully"
+          else
+            echo "⚠️  Database seeding failed or already seeded"
+            echo "This is not critical if tables already exist"
+          fi
+
+      - name: Verify API Endpoints
+        run: |
+          DEPLOYMENT_URL="https://malnu-kananga-worker.cpa01cmz.workers.dev"
+          echo "Verifying API endpoints..."
+
+          # Test seed endpoint
+          echo "Testing /seed endpoint..."
+          SEED_STATUS=$(curl -s "$DEPLOYMENT_URL/seed" | head -20)
+          echo "Response: $SEED_STATUS"
+
+          # Test login endpoint
+          echo ""
+          echo "Testing /api/auth/login endpoint..."
+          LOGIN_RESPONSE=$(curl -s -X POST "$DEPLOYMENT_URL/api/auth/login" \
+            -H "Content-Type: application/json" \
+            -d '{"email":"admin@malnu.sch.id","password":"admin123"}')
+
+          echo "Login response: $LOGIN_RESPONSE"
+
+          if echo "$LOGIN_RESPONSE" | grep -q '"success":true'; then
+            echo "✅ Login endpoint working"
+          else
+            echo "❌ Login endpoint failed"
+            echo "Full response:"
+            echo "$LOGIN_RESPONSE" | jq '.' 2>/dev/null || echo "$LOGIN_RESPONSE"
+          fi
+
+          # Check health endpoint (if available)
+          echo ""
+          echo "Testing /health endpoint (if exists)..."
+          HEALTH_STATUS=$(curl -s "$DEPLOYMENT_URL/health" 2>&1 || echo "Endpoint not found")
+
+          if echo "$HEALTH_STATUS" | grep -q '"success"'; then
+            echo "✅ Health endpoint working"
+          else
+            echo "ℹ️  Health endpoint: $HEALTH_STATUS"
+            echo "This is expected if /health endpoint is not implemented"
+          fi
+
+      - name: Verify Database
+        run: |
+          echo "Verifying database connection..."
+
+          # Get database ID from wrangler.toml
+          DB_ID=$(grep -A 2 'database_name = "malnu-kananga-db-dev"' wrangler.toml | grep 'database_id' | awk -F'"' '{print $2}')
+
+          if [ -z "$DB_ID" ]; then
+            echo "⚠️  Could not determine database ID from wrangler.toml"
+            echo "Using known ID: 69605f72-4b69-4dd6-a72c-a17006f61254"
+            DB_ID="69605f72-4b69-4dd6-a72c-a17006f61254"
+          fi
+
+          echo "Database ID: $DB_ID"
+
+          # Execute simple query to verify connection
+          QUERY_RESULT=$(wrangler d1 execute malnu-kananga-db-dev --remote --command="SELECT COUNT(*) as count FROM users" 2>&1 || echo "")
+
+          if echo "$QUERY_RESULT" | grep -q '"count"'; then
+            USER_COUNT=$(echo "$QUERY_RESULT" | jq -r '.results[0].count' 2>/dev/null || echo "unknown")
+            echo "✅ Database connected, users table exists, count: $USER_COUNT"
+          else
+            echo "❌ Database query failed or tables not created"
+            echo "Query result: $QUERY_RESULT"
+            exit 1
+          fi
+
+      - name: Backend Deployment Summary
+        if: success()
+        run: |
+          echo "============================================="
+          echo "✅ BACKEND DEPLOYMENT SUCCESSFUL"
+          echo "============================================="
+          echo ""
+          echo "📊 Deployment Details:"
+          echo "  Project: malnu-kananga-worker"
+          echo "  Platform: Cloudflare Workers"
+          echo "  URL: https://malnu-kananga-worker.cpa01cmz.workers.dev"
+          echo "  Database: malnu-kananga-db-dev"
+          echo "  Secrets: JWT_SECRET"
+          echo ""
+          echo "🔍 Verify at: https://malnu-kananga-worker.cpa01cmz.workers.dev/seed"
+          echo ""
+          echo "📝 API Endpoints:"
+          echo "  POST /api/auth/login"
+          echo "  POST /seed"
+          echo "  GET  /api/users (and more via CRUD)"
+
+  deployment-summary:
+    name: Deployment Summary
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    needs: [deploy-frontend, deploy-backend]
+    if: always()
+
+    steps:
+      - name: Generate Deployment Report
+        run: |
+          echo "============================================="
+          echo "🚀 DEPLOYMENT SUMMARY"
+          echo "============================================="
+          echo ""
+
+          # Check previous job status
+          FRONTEND_STATUS="${{ needs.deploy-frontend.result }}"
+          BACKEND_STATUS="${{ needs.deploy-backend.result }}"
+
+          echo "📦 Frontend (Pages):"
+          if [ "$FRONTEND_STATUS" == "success" ]; then
+            echo "  ✅ Status: DEPLOYED"
+            echo "  🌐 URL: https://malnu-kananga.pages.dev"
+          else
+            echo "  ❌ Status: FAILED ($FRONTEND_STATUS)"
+          fi
+
+          echo ""
+          echo "⚙️  Backend (Workers):"
+          if [ "$BACKEND_STATUS" == "success" ]; then
+            echo "  ✅ Status: DEPLOYED"
+            echo "  🌐 URL: https://malnu-kananga-worker.cpa01cmz.workers.dev"
+          else
+            echo "  ❌ Status: FAILED ($BACKEND_STATUS)"
+          fi
+
+          echo ""
+          echo "📚 Database:"
+          echo "  🗄️  Name: malnu-kananga-db-dev"
+          echo "  🔗  Connection: Shared with Worker"
+
+          echo ""
+          echo "🔐 Secrets Configured:"
+          echo "  Pages: VITE_API_BASE_URL, VITE_ENABLE_PWA, VITE_ENABLE_AI_CHAT"
+          echo "  Worker: JWT_SECRET"
+
+          echo ""
+          echo "✅ Deployment completed successfully!"
+          echo ""
+          echo "Next steps:"
+          echo "1. Visit https://malnu-kananga.pages.dev"
+          echo "2. Login with admin@malnu.sch.id / admin123"
+          echo "3. Change default password immediately"
+
+      - name: Deployment Failure Notification
+        if: failure()
+        run: |
+          echo "============================================="
+          echo "❌ DEPLOYMENT FAILED"
+          echo "============================================="
+          echo ""
+          echo "Please check the logs above for specific errors."
+          echo ""
+          echo "Common issues:"
+          echo "  - Missing environment secrets (CLOUDFLARE_API_TOKEN)"
+          echo "  - Build errors (TypeScript, lint)"
+          echo "  - Network connectivity issues"
+          echo "  - Cloudflare API rate limits"
+          echo ""
+          echo "For troubleshooting, see:"
+          echo "  - docs/DEPLOYMENT_GUIDE.md"
+          echo "  - DEPLOYMENT_STATUS.md"

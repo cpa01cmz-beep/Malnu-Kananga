@@ -121,55 +121,19 @@ jobs:
             fi
           done
           
-      - name: Maintenance
+      - name: Deployment (Deprecated)
         run: |
-          max_retries=2
-          retry_count=0
-
-          while [ $retry_count -lt $max_retries ]; do
-            echo "Attempt $((retry_count + 1)) of $max_retries"
-
-            if opencode run "$(cat .github/prompt/maintenance.md)" \
-              --model opencode/glm-4.7-free \
-              --share false; then
-              echo "OpenCode execution succeeded"
-              break
-            else
-              retry_count=$((retry_count + 1))
-              echo "OpenCode execution failed, retrying in 30 seconds..."
-              sleep 30
-              if [ $retry_count -eq $max_retries ]; then
-                echo "All retry attempts failed"
-                exit 1
-              fi
-            fi
-          done
-
-
-      - name: Deployment
-        run: |
-          max_retries=2
-          retry_count=0
-
-          while [ $retry_count -lt $max_retries ]; do
-            echo "Attempt $((retry_count + 1)) of $max_retries"
-
-            if opencode run "$(cat .github/prompt/deployment.md)" \
-              --model opencode/glm-4.7-free \
-              --share false; then
-              echo "OpenCode execution succeeded"
-              break
-            else
-              retry_count=$((retry_count + 1))
-              echo "OpenCode execution failed, retrying in 30 seconds..."
-              sleep 30
-              if [ $retry_count -eq $max_retries ]; then
-                echo "All retry attempts failed"
-                exit 1
-              fi
-            fi
-          done
-
+          echo "⚠️  This deployment step is DEPRECATED"
+          echo "Use the new dedicated deployment workflow instead:"
+          echo "  → GitHub Actions → Actions → deployment (manual trigger)"
+          echo ""
+          echo "The new workflow provides:"
+          echo "  ✅ Better deployment verification"
+          echo "  ✅ API endpoint testing"
+          echo "  ✅ Database connection checks"
+          echo "  ✅ Comprehensive error reporting"
+          echo ""
+          echo "Skipping automated deployment in on-push workflow..."
 
       - name: on-push
         run: |
