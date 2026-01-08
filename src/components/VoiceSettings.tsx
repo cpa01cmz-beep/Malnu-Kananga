@@ -15,6 +15,7 @@ import {
 } from '../services/voiceSettingsBackup';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
+import SmallActionButton from './ui/SmallActionButton';
 
 interface VoiceSettingsProps {
   isOpen: boolean;
@@ -424,18 +425,20 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                     Backup tersimpan: {backupDate}
                   </p>
                   <div className="flex gap-2">
-                    <button
+                    <SmallActionButton
                       onClick={() => setShowRestoreConfirmation(true)}
-                      className="flex-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+                      variant="primary"
+                      fullWidth
                     >
                       Pulihkan
-                    </button>
-                    <button
+                    </SmallActionButton>
+                    <SmallActionButton
                       onClick={handleDeleteBackup}
-                      className="px-3 py-1.5 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 text-sm rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
+                      variant="neutral"
+                      fullWidth
                     >
                       Hapus
-                    </button>
+                    </SmallActionButton>
                   </div>
                 </div>
               ) : (
