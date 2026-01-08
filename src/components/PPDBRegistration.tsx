@@ -68,10 +68,10 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
 
   // Network status and offline queue
   const { isOnline, isSlow } = useNetworkStatus();
-  const { 
-    sync,
+  const {
+    sync: _sync,
     addAction,
-    getPendingCount 
+    getPendingCount: _getPendingCount,
   } = useOfflineActionQueue();
   const [isProcessingOCR, setIsProcessingOCR] = useState(false);
   const [ocrProgress, setOcrProgress] = useState<OCRProgress>({ status: 'Idle', progress: 0 });
@@ -174,7 +174,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
     e.preventDefault();
     setIsSubmitting(true);
 
-    const ppdbData = {
+    const ppdbData: Partial<PPDBRegistrant> = {
       fullName: autoSaveState.data.fullName!,
       nisn: autoSaveState.data.nisn!,
       originSchool: autoSaveState.data.originSchool!,
@@ -253,7 +253,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
   };
 
   return (
-    <div className="fixed inset-0 bg-neutral-900/80 flex items-center justify-center z-50 p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-neutral-900/80 flex items-center justify-center z-50 p-4" onClick={onClose} role="presentation">
       <OfflineIndicator 
         showSyncButton={true}
         showQueueCount={true}

@@ -175,7 +175,7 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
               <IconButton
                 onClick={() => setShowCreateModal(false)}
                 icon={<CloseIcon className="w-4 h-4" />}
-                aria-label="Tutup"
+                ariaLabel="Tutup"
               />
             </div>
 
@@ -265,7 +265,7 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
               <IconButton
                 onClick={() => setShowTestModal(false)}
                 icon={<CloseIcon className="w-4 h-4" />}
-                aria-label="Tutup"
+                ariaLabel="Tutup"
               />
             </div>
 
