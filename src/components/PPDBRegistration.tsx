@@ -10,6 +10,7 @@ import FileUpload from './FileUpload';
 import { ocrService, type OCRExtractionResult, type OCRProgress } from '../services/ocrService';
 import Textarea from './ui/Textarea';
 import ProgressBar from './ui/ProgressBar';
+import Button from './ui/Button';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -397,13 +398,16 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
                 </div>
 
                 <div className="pt-4 border-t border-neutral-100 dark:border-neutral-700">
-                    <button 
-                        type="submit" 
-                        disabled={isSubmitting}
-                        className="w-full py-3 bg-green-600 text-white font-bold rounded-full hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    <Button
+                        type="submit"
+                        variant="green-solid"
+                        size="lg"
+                        fullWidth
+                        isLoading={isSubmitting}
+                        className="rounded-full font-bold shadow-lg"
                     >
                         {isSubmitting ? 'Mengirim Data...' : 'Kirim Pendaftaran'}
-                    </button>
+                    </Button>
                     <p className="text-center text-xs text-neutral-500 mt-2">Dengan mendaftar, Anda menyetujui kebijakan privasi data sekolah.</p>
                 </div>
             </form>

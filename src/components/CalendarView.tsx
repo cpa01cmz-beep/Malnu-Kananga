@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 import type { Schedule, ParentMeeting } from '../types';
+import IconButton from './ui/IconButton';
+import Button from './ui/Button';
 
 interface CalendarViewProps {
   schedules: Schedule[];
@@ -123,23 +125,23 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     <div className="bg-white rounded-lg shadow" role="grid" aria-label="Kalender bulanan">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
-        <button
+        <IconButton
           onClick={previousMonth}
-          className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-          aria-label="Bulan sebelumnya"
-        >
-          <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
-        </button>
+          ariaLabel="Bulan sebelumnya"
+          size="md"
+          variant="default"
+          icon={<ChevronLeftIcon />}
+        />
         <h3 className="text-lg font-semibold text-neutral-900" id="month-calendar-heading">
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
         </h3>
-        <button
+        <IconButton
           onClick={nextMonth}
-          className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-          aria-label="Bulan berikutnya"
-        >
-          <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
-        </button>
+          ariaLabel="Bulan berikutnya"
+          size="md"
+          variant="default"
+          icon={<ChevronRightIcon />}
+        />
       </div>
 
       {/* Day headers */}
@@ -213,24 +215,24 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     <div className="bg-white rounded-lg shadow" role="grid" aria-label="Kalender mingguan">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
-        <button
+        <IconButton
           onClick={previousWeek}
-          className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-          aria-label="Minggu sebelumnya"
-        >
-          <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
-        </button>
+          ariaLabel="Minggu sebelumnya"
+          size="md"
+          variant="default"
+          icon={<ChevronLeftIcon />}
+        />
         <h3 className="text-lg font-semibold text-neutral-900" id="week-calendar-heading">
           {weekDays[0].toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })} - {' '}
           {weekDays[6].toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
         </h3>
-        <button
+        <IconButton
           onClick={nextWeek}
-          className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-          aria-label="Minggu berikutnya"
-        >
-          <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
-        </button>
+          ariaLabel="Minggu berikutnya"
+          size="md"
+          variant="default"
+          icon={<ChevronRightIcon />}
+        />
       </div>
 
       {/* Week grid */}
@@ -317,13 +319,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       <div className="bg-white rounded-lg shadow" aria-label="Kalender harian">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <button
+          <IconButton
             onClick={previousDay}
-            className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-            aria-label="Hari sebelumnya"
-          >
-            <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
-          </button>
+            ariaLabel="Hari sebelumnya"
+            size="md"
+            variant="default"
+            icon={<ChevronLeftIcon />}
+          />
           <h3 className="text-lg font-semibold text-neutral-900" id="day-calendar-heading">
             {currentDate.toLocaleDateString('id-ID', { 
               weekday: 'long', 
@@ -332,13 +334,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               year: 'numeric' 
             })}
           </h3>
-          <button
+          <IconButton
             onClick={nextDay}
-            className="p-2 hover:bg-neutral-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-            aria-label="Hari berikutnya"
-          >
-            <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
-          </button>
+            ariaLabel="Hari berikutnya"
+            size="md"
+            variant="default"
+            icon={<ChevronRightIcon />}
+          />
         </div>
 
         {/* Events list */}
@@ -421,27 +423,27 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     <div className={className} role="region" aria-label="Kalender jadwal">
       {/* View mode selector */}
       <div className="mb-4 flex gap-2" role="toolbar" aria-label="Mode tampilan kalender">
-        <button
+        <Button
           onClick={() => setCurrentDate(new Date())}
-          className="px-3 py-2 text-sm font-medium text-neutral-700 bg-white border rounded-lg hover:bg-neutral-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          variant="secondary"
+          size="sm"
           aria-label="Kembali ke hari ini"
         >
           Hari Ini
-        </button>
+        </Button>
         <div className="flex bg-white border rounded-lg" role="group" aria-label="Pilihan tampilan">
           {(['month', 'week', 'day'] as const).map(mode => (
-            <button
+            <Button
               key={mode}
               onClick={() => {/* View mode change handled by parent */}}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors
-                ${viewMode === mode 
-                  ? 'bg-blue-600 text-white' 
-                  : 'text-neutral-700 hover:bg-neutral-50'}`}
+              variant={viewMode === mode ? 'primary' : 'ghost'}
+              size="sm"
+              className={`rounded-none first:rounded-l-lg last:rounded-r-lg ${viewMode !== mode ? 'rounded-none' : ''}`}
               aria-label={`Tampilan ${mode === 'month' ? 'bulanan' : mode === 'week' ? 'mingguan' : 'harian'}`}
               aria-pressed={viewMode === mode}
             >
               {mode === 'month' ? 'Bulan' : mode === 'week' ? 'Minggu' : 'Hari'}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

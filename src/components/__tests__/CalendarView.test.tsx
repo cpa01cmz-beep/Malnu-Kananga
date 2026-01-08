@@ -233,13 +233,13 @@ describe('CalendarView', () => {
         />
       );
       
-      // The mock components are just divs with data-testid, so check parent buttons instead
-      const chevronLeft = screen.getByTestId('chevron-left').parentElement;
-      const chevronRight = screen.getByTestId('chevron-right').parentElement;
+      // IconButton component wraps icon in span, so check for buttons by aria-label
+      const chevronLeft = screen.getByLabelText('Bulan sebelumnya');
+      const chevronRight = screen.getByLabelText('Bulan berikutnya');
       
-      // Check that the parent elements are buttons with proper roles
-      expect(chevronLeft?.tagName).toBe('BUTTON');
-      expect(chevronRight?.tagName).toBe('BUTTON');
+      // Check that elements are buttons with proper roles
+      expect(chevronLeft.tagName).toBe('BUTTON');
+      expect(chevronRight.tagName).toBe('BUTTON');
       expect(chevronLeft).toHaveAttribute('aria-label');
       expect(chevronRight).toHaveAttribute('aria-label');
     });
