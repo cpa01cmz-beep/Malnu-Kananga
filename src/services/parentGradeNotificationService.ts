@@ -3,6 +3,7 @@
 
 import { pushNotificationService } from './pushNotificationService';
 import { logger } from '../utils/logger';
+import { STORAGE_KEYS } from '../constants';
 import type { PushNotification } from '../types';
 import type { Grade, ParentChild } from '../types';
 
@@ -69,7 +70,7 @@ class ParentGradeNotificationService {
   // Get parent-specific notification settings
   getSettings(): ParentGradeNotificationSettings {
     try {
-      const stored = localStorage.getItem('malnu_parent_notification_settings');
+      const stored = localStorage.getItem(STORAGE_KEYS.PARENT_NOTIFICATION_SETTINGS);
       if (stored) {
         return JSON.parse(stored);
       }
@@ -98,7 +99,7 @@ class ParentGradeNotificationService {
   saveSettings(settings: ParentGradeNotificationSettings): void {
     try {
       localStorage.setItem(
-        'malnu_parent_notification_settings',
+        STORAGE_KEYS.PARENT_NOTIFICATION_SETTINGS,
         JSON.stringify(settings)
       );
       logger.info('Parent notification settings saved');
@@ -115,7 +116,7 @@ class ParentGradeNotificationService {
   // Load queued notifications from storage
   private loadNotificationQueue(): void {
     try {
-      const stored = localStorage.getItem('malnu_parent_notification_queue');
+      const stored = localStorage.getItem(STORAGE_KEYS.PARENT_NOTIFICATION_QUEUE);
       if (stored) {
         this.notificationQueue = JSON.parse(stored);
       }
@@ -128,7 +129,7 @@ class ParentGradeNotificationService {
   private saveNotificationQueue(): void {
     try {
       localStorage.setItem(
-        'malnu_parent_notification_queue',
+        STORAGE_KEYS.PARENT_NOTIFICATION_QUEUE,
         JSON.stringify(this.notificationQueue)
       );
     } catch (error) {
