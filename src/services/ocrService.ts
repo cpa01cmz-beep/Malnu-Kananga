@@ -292,9 +292,10 @@ class OCRService {
       
       // Emit custom event for immediate handling
       if (typeof window !== 'undefined' && 'CustomEvent' in window) {
-        window.dispatchEvent(new CustomEvent('ocrValidation', { 
+        const event2 = new window.CustomEvent('ocrValidation', { 
           detail: event 
-        }));
+        });
+        window.dispatchEvent(event2);
       }
       
       logger.info('OCR validation event emitted:', { type, documentId, confidence, issuesCount: issues.length });

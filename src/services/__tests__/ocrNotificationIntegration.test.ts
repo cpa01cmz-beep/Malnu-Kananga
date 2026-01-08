@@ -76,7 +76,7 @@ describe('OCR Validation Notification Integration', () => {
 
     it('should detect validation issues correctly', async () => {
       // Test the issue detection logic
-      const quality = {
+      const _quality = {
         isSearchable: false,
         isHighQuality: false,
         estimatedAccuracy: 30,
@@ -124,7 +124,8 @@ describe('OCR Validation Notification Integration', () => {
 
       // Simulate the event that would be emitted by OCR service
       if (typeof window !== 'undefined' && 'CustomEvent' in window) {
-        window.dispatchEvent(new CustomEvent('ocrValidation', { detail: mockEvent }));
+        const event = new window.CustomEvent('ocrValidation', { detail: mockEvent });
+        window.dispatchEvent(event);
       }
 
       // Verify the event structure is correct
@@ -148,7 +149,8 @@ describe('OCR Validation Notification Integration', () => {
         actionUrl: '/review/doc-456'
       };
       
-      window.dispatchEvent(new CustomEvent('ocrValidation', { detail: mockEvent }));
+      const event = new window.CustomEvent('ocrValidation', { detail: mockEvent });
+      window.dispatchEvent(event);
       
       expect(mockEvent.type).toBe('validation-warning');
       expect(mockEvent.confidence).toBeGreaterThan(50);

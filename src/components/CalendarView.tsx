@@ -121,7 +121,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     onEventClick?.(event);
   };
 
-  const handleEventKeyDown = (event: Schedule | ParentMeeting, e: React.KeyboardEvent) => {
+  const _handleEventKeyDown = (event: Schedule | ParentMeeting, e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       e.stopPropagation();
