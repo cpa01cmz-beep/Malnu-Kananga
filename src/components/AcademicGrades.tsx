@@ -19,6 +19,7 @@ import { STORAGE_KEYS } from '../constants';
 import { useCanAccess } from '../hooks/useCanAccess';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
 import { GRADIENT_CLASSES } from '../config/gradients';
+import { CHART_COLORS } from '../config/chartColors';
 import ErrorMessage from './ui/ErrorMessage';
 import AccessDenied from './AccessDenied';
 
@@ -440,7 +441,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="averageScore" stroke="#10b981" name="Rata-rata Nilai" strokeWidth={2} />
+                  <Line type="monotone" dataKey="averageScore" stroke={CHART_COLORS.emerald} name="Rata-rata Nilai" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -453,7 +454,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
                   <XAxis dataKey="subject" />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="score" fill="#3b82f6" />
+                  <Bar dataKey="score" fill={CHART_COLORS.sky} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

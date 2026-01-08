@@ -12,6 +12,7 @@ import Badge from './ui/Badge';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import { GRADIENT_CLASSES } from '../config/gradients';
+import { CHART_COLORS } from '../config/chartColors';
 
 interface StudentInsightsProps {
   onBack: () => void;
@@ -305,17 +306,17 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
-              <Line 
-                type="monotone" 
-                dataKey="averageScore" 
-                stroke="#3B82F6" 
+              <Line
+                type="monotone"
+                dataKey="averageScore"
+                stroke={CHART_COLORS.sky}
                 strokeWidth={2}
                 name="Rata-rata Nilai"
               />
-              <Line 
-                type="monotone" 
-                dataKey="attendanceRate" 
-                stroke="#10B981" 
+              <Line
+                type="monotone"
+                dataKey="attendanceRate"
+                stroke={CHART_COLORS.emerald}
                 strokeWidth={2}
                 name="Kehadiran (%)"
               />
