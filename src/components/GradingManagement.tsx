@@ -6,6 +6,7 @@ import { studentsAPI, gradesAPI } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
 import { pushNotificationService } from '../services/pushNotificationService';
 import { ocrService, OCRExtractionResult, OCRProgress } from '../services/ocrService';
+import { useEventNotifications } from '../hooks/useEventNotifications';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
@@ -46,6 +47,9 @@ interface GradingManagementProps {
 }
 
 const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToast }) => {
+  // Event notifications hook
+  const { notifyGradeUpdate, useMonitorLocalStorage } = useEventNotifications();
+  
   // Get current user for permission checking
   const getCurrentUser = (): User | null => {
     const userJson = localStorage.getItem(STORAGE_KEYS.USER);
@@ -254,6 +258,29 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       });
     }
   }, [onSyncComplete, onShowToast]);
+
+  // Monitor grades localStorage for changes and trigger notifications
+  useMonitorLocalStorage(STORAGE_KEYS.GRADES, (newValue, oldValue) => {
+    // Trigger notifications when grades are updated by another component/tab
+    if (oldValue && typeof oldValue === 'object' && newValue && typeof newValue === 'object') {
+      // Compare and find updated grades
+      const oldGrades = Array.isArray(oldValue) ? oldValue : [];
+      const newGrades = Array.isArray(newValue) ? newValue : [];
+      
+      newGrades.forEach(newGrade => {
+        const oldGrade = oldGrades.find((g: StudentGrade) => g.id === newGrade.id);
+        if (oldGrade) {
+          const oldFinal = calculateFinalGrade(oldGrade.assignment, oldGrade.midExam, oldGrade.finalExam);
+          const newFinal = calculateFinalGrade(newGrade.assignment, newGrade.midExam, newGrade.finalExam);
+          
+          if (oldFinal !== newFinal) {
+            // Grade was updated, trigger notification
+            notifyGradeUpdate(newGrade.name, subjectId, oldFinal, newFinal);
+          }
+        }
+      });
+    }
+  });
 
   // If user cannot manage grades, show access denied
   if (!canManageGrades) {
@@ -638,7 +665,15 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             const finalScore = calculateFinalGrade(grade.assignment, grade.midExam, grade.finalExam);
             const gradeLetter = calculateGradeLetter(finalScore);
             
-            // Notify student
+            // Use event notifications hook for standardized notifications
+            await notifyGradeUpdate(
+              grade.name,
+              subjectId,
+              undefined, // previousGrade not tracked in this flow
+              finalScore
+            );
+            
+            // Legacy notification for detailed student notification
             await pushNotificationService.showLocalNotification({
               id: `grade-${save.studentId}-${subjectId}-${Date.now()}`,
               type: 'grade',

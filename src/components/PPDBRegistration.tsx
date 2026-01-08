@@ -6,6 +6,7 @@ import { SparklesIcon } from './icons/SparklesIcon';
 import { ppdbAPI } from '../services/apiService';
 import { FileUploadResponse } from '../services/apiService';
 import type { PPDBRegistrant } from '../types';
+import { useEventNotifications } from '../hooks/useEventNotifications';
 import FileUpload from './FileUpload';
 import { ocrService, type OCRExtractionResult, type OCRProgress } from '../services/ocrService';
 import Textarea from './ui/Textarea';
@@ -24,6 +25,9 @@ interface PPDBRegistrationProps {
 }
 
 const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, onShowToast }) => {
+  // Event notifications hook
+  const { notifyPPDBStatus, useMonitorLocalStorage } = useEventNotifications();
+  
   const initialFormData = useMemo(() => ({
     fullName: '',
     nisn: '',
@@ -85,6 +89,26 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
       cleanup();
     }
   }, [isOpen, cleanup]);
+
+  // Monitor PPDB localStorage for new registrations and notify admins
+  useMonitorLocalStorage('malnu_ppdb_registrants', (newValue, oldValue) => {
+    // Check for new PPDB registrations
+    if (oldValue && typeof oldValue === 'object' && newValue && typeof newValue === 'object') {
+      const oldRegistrants = Array.isArray(oldValue) ? oldValue : [];
+      const newRegistrants = Array.isArray(newValue) ? newValue : [];
+      
+      if (newRegistrants.length > oldRegistrants.length) {
+        const newCount = newRegistrants.length - oldRegistrants.length;
+        notifyPPDBStatus(newCount);
+      }
+    } else if (newValue && Array.isArray(newValue)) {
+      // First time loading or admin view
+      const pendingCount = newValue.filter((r: PPDBRegistrant) => r.status === 'pending').length;
+      if (pendingCount > 0) {
+        notifyPPDBStatus(pendingCount);
+      }
+    }
+  });
 
   if (!isOpen) return null;
 
@@ -212,6 +236,9 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
       if (response.success) {
         setIsSubmitting(false);
         onShowToast('Pendaftaran berhasil! Data Anda sedang diverifikasi.', 'success');
+
+        // Notify admins about new PPDB registration using event notifications hook
+        await notifyPPDBStatus(1);
 
         autoSaveActions.reset({
           fullName: '',

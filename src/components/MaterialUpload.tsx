@@ -6,6 +6,7 @@ import { ShareIcon } from './icons/MaterialIcons';
 import { eLibraryAPI } from '../services/apiService';
 import { ELibrary as ELibraryType, Subject, MaterialFolder } from '../types';
 import { pushNotificationService } from '../services/pushNotificationService';
+import { useEventNotifications } from '../hooks/useEventNotifications';
 import FileUpload from './FileUpload';
 import { FileUploadResponse } from '../services/apiService';
 import { logger } from '../utils/logger';
@@ -38,6 +39,9 @@ interface MaterialUploadProps {
 }
 
 const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) => {
+  // Event notifications hook
+  const { notifyLibraryUpdate } = useEventNotifications();
+  
   // ALL hooks first
   const [materials, setMaterials] = useState<ELibraryType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -259,7 +263,10 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           
           categoryService.updateMaterialStats([...materials, uploadResult.data]);
           
-          // Send push notification about new material
+          // Use event notifications hook for standardized notifications
+          await notifyLibraryUpdate(uploadResult.data.title, uploadResult.data.category);
+          
+          // Legacy notification for detailed material notification
           await pushNotificationService.showLocalNotification({
             id: `material-${uploadResult.data.id}-${Date.now()}`,
             type: 'library',
