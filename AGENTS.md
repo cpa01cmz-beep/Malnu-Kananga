@@ -1,6 +1,6 @@
 # OpenCode Configuration for MA Malnu Kananga
 
-**Last Updated**: 2026-01-06 (Updated user roles documentation)
+**Last Updated**: 2026-01-08 (Updated deployment documentation)
 
 ## Project Overview
 
@@ -94,6 +94,7 @@ Extra roles: `staff`, `osis`, `wakasek`, `kepsek`
 5. **API**: RESTful API endpoints on Cloudflare Workers
 6. **Error Handling**: Centralized error handling in `errorHandler.ts`
 7. **Logging**: Use `logger.ts` for consistent logging
+8. **Deployment**: Separate frontend (Pages) and backend (Worker) deployment
 
 ### Common Tasks
 
@@ -106,6 +107,10 @@ When working on this codebase:
 5. **Voice features**: Check `speechRecognitionService.ts` and `speechSynthesisService.ts`
 6. **AI features**: Use `geminiService.ts`
 7. **Testing**: Write tests alongside the code in `__tests__/` folders
+8. **Deploying to production**:
+   - Backend: `wrangler deploy --env=""` (for dev DB) or `wrangler deploy --env production`
+   - Frontend: `npm run build` && `wrangler pages deploy dist --project-name=malnu-kananga`
+   - See [DEPLOYMENT_GUIDE.md](./docs/DEPLOYMENT_GUIDE.md) for complete guide
 
 ### Git Workflow
 
