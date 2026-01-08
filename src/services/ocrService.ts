@@ -1,4 +1,6 @@
 import { createWorker, PSM, Worker } from 'tesseract.js';
+import { OCRValidationEvent, UserRole } from '../types';
+import { logger } from '../utils/logger';
 
 export interface OCRExtractionResult {
   text: string;
@@ -70,7 +72,14 @@ class OCRService {
 
   async extractTextFromImage(
     imageFile: File,
-    progressCallback?: ProgressCallback
+    progressCallback?: ProgressCallback,
+    documentMetadata?: {
+      documentId?: string;
+      userId?: string;
+      userRole?: UserRole;
+      documentType?: string;
+      actionUrl?: string;
+    }
   ): Promise<OCRExtractionResult> {
     if (!this.worker || !this.isInitialized) {
       await this.initialize(progressCallback);
@@ -81,6 +90,23 @@ class OCRService {
 
       const extractedData = this.parseExtractedText(result.data.text);
       const quality = this.assessTextQuality(result.data.text, result.data.confidence);
+
+      // Detect validation issues and emit event
+      const { issues, severity } = this.detectValidationIssues(quality, result.data.confidence);
+      
+      if (issues.length > 0) {
+        this.emitOCRValidationEvent(
+          severity === 'failure' ? 'validation-failure' : 
+          severity === 'warning' ? 'validation-warning' : 'validation-success',
+          documentMetadata?.documentId || `doc-${Date.now()}`,
+          documentMetadata?.documentType || quality.documentType,
+          result.data.confidence,
+          issues,
+          documentMetadata?.userId,
+          documentMetadata?.userRole,
+          documentMetadata?.actionUrl
+        );
+      }
 
       return {
         text: result.data.text,
@@ -122,14 +148,14 @@ class OCRService {
     const gradePattern = /([A-Za-z\s]+)[\s:]*([0-9]+(?:,[0-9]{3})?|[0-9]{1,3}(?:,[0-9]{3})?)/g;
     const matches = text.matchAll(gradePattern);
 
-    for (const match of matches) {
+    Array.from(matches).forEach(match => {
       const subjectName = match[1].trim();
       const gradeValue = match[2].replace(',', '');
 
       if (this.isValidSubject(subjectName) && this.isValidGrade(gradeValue)) {
         grades[subjectName] = parseInt(gradeValue, 10);
       }
-    }
+    });
 
     return grades;
   }
@@ -227,6 +253,96 @@ class OCRService {
     };
 
     return statusMap[status] || status;
+  }
+
+  private emitOCRValidationEvent(
+    type: 'validation-failure' | 'validation-warning' | 'validation-success',
+    documentId: string,
+    documentType: string,
+    confidence: number,
+    issues: string[],
+    userId?: string,
+    userRole?: UserRole,
+    actionUrl?: string
+  ): void {
+    try {
+      const event: OCRValidationEvent = {
+        id: `ocr-validation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        type,
+        documentId,
+        documentType,
+        confidence,
+        issues,
+        timestamp: new Date().toISOString(),
+        userId: userId || 'unknown',
+        userRole: userRole || 'teacher',
+        actionUrl
+      };
+
+      // Store event in localStorage for event monitoring system
+      const events = JSON.parse(localStorage.getItem('ocr_validation_events') || '[]');
+      events.push(event);
+      
+      // Keep only last 100 events
+      if (events.length > 100) {
+        events.splice(0, events.length - 100);
+      }
+      
+      localStorage.setItem('ocr_validation_events', JSON.stringify(events));
+      
+      // Emit custom event for immediate handling
+      if (typeof window !== 'undefined' && 'CustomEvent' in window) {
+        window.dispatchEvent(new CustomEvent('ocrValidation', { 
+          detail: event 
+        }));
+      }
+      
+      logger.info('OCR validation event emitted:', { type, documentId, confidence, issuesCount: issues.length });
+    } catch (error) {
+      logger.error('Failed to emit OCR validation event:', error);
+    }
+  }
+
+  private detectValidationIssues(quality: OCRTextQuality, confidence: number): { issues: string[]; severity: 'failure' | 'warning' | 'success' } {
+    const issues: string[] = [];
+    
+    if (confidence < 50) {
+      issues.push('Confidence terlalu rendah (< 50%)');
+    } else if (confidence < 70) {
+      issues.push('Confidence rendah (< 70%)');
+    }
+    
+    if (!quality.isHighQuality) {
+      issues.push('Kualitas teks tidak memenuhi standar tinggi');
+    }
+    
+    if (!quality.isSearchable) {
+      issues.push('Teks tidak dapat dicari dengan baik');
+    }
+    
+    if (!quality.hasMeaningfulContent) {
+      issues.push('Teks tidak memiliki konten yang berarti');
+    }
+    
+    if (quality.wordCount < 20) {
+      issues.push('Jumlah kata terlalu sedikit (< 20)');
+    }
+    
+    if (quality.documentType === 'unknown') {
+      issues.push('Tipe dokumen tidak dapat diidentifikasi');
+    }
+    
+    // Determine severity
+    const hasCriticalIssue = confidence < 50 || !quality.isSearchable || !quality.hasMeaningfulContent;
+    const hasWarningIssue = confidence < 70 || !quality.isHighQuality || quality.wordCount < 20;
+    
+    if (hasCriticalIssue) {
+      return { issues, severity: 'failure' };
+    } else if (hasWarningIssue) {
+      return { issues, severity: 'warning' };
+    } else {
+      return { issues, severity: 'success' };
+    }
   }
 
   async terminate(): Promise<void> {

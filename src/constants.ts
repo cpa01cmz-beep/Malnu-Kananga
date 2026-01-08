@@ -167,6 +167,7 @@ export const NOTIFICATION_CONFIG = {
         events: true,
         library: true,
         system: true,
+        ocr: true,
         roleBasedFiltering: false,
         batchNotifications: false,
         quietHours: {
@@ -199,4 +200,5 @@ export const NOTIFICATION_ICONS = {
     EVENT: '/pwa-192x192.png',
     LIBRARY: '/pwa-192x192.png',
     SYSTEM: '/pwa-192x192.png',
+    OCR: '/pwa-192x192.png',
 } as const;

@@ -272,14 +272,15 @@ describe('Push Notification Integration Tests', () => {
   describe('Notification Filtering', () => {
     it('should respect user notification preferences', () => {
       // Mock disabled notifications
-      const settings = {
-        enabled: false,
+const settings = {
+        enabled: true,
         announcements: true,
-        grades: true,
+        grades: false,
         ppdbStatus: true,
         events: true,
         library: true,
         system: true,
+        ocr: false,
         roleBasedFiltering: false,
         batchNotifications: false,
         quietHours: { enabled: false, start: '22:00', end: '07:00' },
