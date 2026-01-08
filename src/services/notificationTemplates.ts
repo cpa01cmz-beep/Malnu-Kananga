@@ -63,6 +63,14 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationType, NotificationTempla
     priority: 'high',
     data: { category: 'system' },
   },
+  ocr: {
+    type: 'ocr',
+    titleTemplate: '📄 OCR Validation {severity}',
+    bodyTemplate: 'Document "{documentType}" validation {result}. Confidence: {confidence}%. Issues: {issues}',
+    targetRoles: ['admin', 'teacher'],
+    priority: 'normal',
+    data: { category: 'ocr' },
+  },
 };
 
 export class NotificationTemplateService {

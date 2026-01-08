@@ -167,7 +167,6 @@ class PushNotificationService {
         icon: notification.icon || NOTIFICATION_ICONS.DEFAULT,
         badge: NOTIFICATION_ICONS.DEFAULT,
         tag: notification.id,
-        timestamp: new Date(notification.timestamp).getTime(),
         requireInteraction: notification.priority === 'high',
         vibrate: [...NOTIFICATION_CONFIG.VIBRATION_PATTERN],
         data: notification.data as Record<string, unknown>,
@@ -314,6 +313,8 @@ class PushNotificationService {
         return settings.library;
       case 'system':
         return settings.system;
+      case 'ocr':
+        return settings.ocr;
       default:
         return true;
     }

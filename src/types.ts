@@ -890,7 +890,7 @@ export interface SpeechWindow {
   };
 }
 
-export type NotificationType = 'announcement' | 'grade' | 'ppdb' | 'event' | 'library' | 'system';
+export type NotificationType = 'announcement' | 'grade' | 'ppdb' | 'event' | 'library' | 'system' | 'ocr';
 
 export type NotificationPriority = 'low' | 'normal' | 'high';
 
@@ -921,6 +921,7 @@ export interface NotificationSettings {
   events: boolean;
   library: boolean;
   system: boolean;
+  ocr: boolean;
   roleBasedFiltering: boolean;
   batchNotifications: boolean;
   quietHours: {
@@ -1052,4 +1053,23 @@ export interface AttendanceGradeCorrelation {
   averageGrade: number;
   correlationScore: number;
   insights: string[];
+}
+
+export interface OCRValidationEvent {
+  id: string;
+  type: 'validation-failure' | 'validation-warning' | 'validation-success';
+  documentId: string;
+  documentType: string;
+  confidence: number;
+  issues: string[];
+  timestamp: string;
+  userId: string;
+  userRole: UserRole;
+  actionUrl?: string;
+}
+
+export interface OCRValidationNotificationData extends OCRValidationEvent {
+  requiresReview: boolean;
+  automatedRetryCount?: number;
+  nextAction?: 'review' | 'reprocess' | 'manual-entry';
 }

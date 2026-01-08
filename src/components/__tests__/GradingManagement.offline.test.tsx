@@ -61,6 +61,14 @@ vi.mock('../../services/permissionService', () => ({
 vi.mock('../../services/pushNotificationService', () => ({
   pushNotificationService: {
     sendNotification: () => Promise.resolve(),
+    getSettings: () => ({
+      enabled: false,
+      quietHours: { enabled: false, start: '22:00', end: '07:00' },
+      batchNotifications: true,
+      soundEnabled: true,
+      vibrationEnabled: true,
+      desktopEnabled: false,
+    }),
   },
 }));
 
