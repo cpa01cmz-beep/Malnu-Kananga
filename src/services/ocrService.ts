@@ -1,6 +1,7 @@
 import { createWorker, PSM, Worker } from 'tesseract.js';
 import { OCRValidationEvent, UserRole } from '../types';
 import { logger } from '../utils/logger';
+import { createOCRError, handleOCRError } from '../utils/serviceErrorHandlers';
 
 export interface OCRExtractionResult {
   text: string;
@@ -65,8 +66,8 @@ class OCRService {
       });
 
       this.isInitialized = true;
-    } catch {
-      throw new Error('Gagal menginisialisasi OCR service');
+    } catch (error) {
+      throw handleOCRError(error, 'initialize');
     }
   }
 
@@ -114,8 +115,8 @@ class OCRService {
         data: extractedData,
         quality
       };
-    } catch {
-      throw new Error('Gagal mengekstrak teks dari gambar');
+    } catch (error) {
+      throw handleOCRError(error, 'extractTextFromImage');
     }
   }
 
