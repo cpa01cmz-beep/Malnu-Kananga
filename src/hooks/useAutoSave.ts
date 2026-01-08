@@ -93,6 +93,52 @@ export function useAutoSave<T extends object>(
     sync
   } = useOfflineActionQueue();
 
+  // Update queued count helper
+  const updateQueuedCount = useCallback(() => {
+    const queue = getQueue();
+    setQueuedCount(queue.filter(action => action.status === 'pending').length);
+  }, [getQueue]);
+
+  // Sync offline queue helper
+  const syncOfflineQueue = useCallback(async () => {
+    try {
+      await sync();
+      updateQueuedCount();
+    } catch (err) {
+      logger.error('Failed to sync offline queue:', err);
+    }
+  }, [sync, updateQueuedCount]);
+
+  // Queue data for offline save helper
+  const queueForOfflineSave = useCallback(async (dataToSave: unknown, originalData: T) => {
+    if (!endpoint) {
+      throw new Error('Endpoint required for offline queuing');
+    }
+
+    const safeData = dataToSave as Record<string, unknown>;
+    const entityId = (safeData.id as string) || 'unknown';
+    
+    addAction({
+      type: actionType,
+      entity: (entityType || storageKey.replace('malnu_', '').replace('_data', '')) as never,
+      entityId,
+      data: safeData,
+      endpoint,
+      method
+    });
+
+    setQueuedCount(prev => prev + 1);
+    
+    // Cache locally for UI consistency
+    localStorage.setItem(storageKey, JSON.stringify(originalData));
+    
+    setLastSaved(new Date());
+    originalDataRef.current = { ...originalData } as T;
+    setIsDirty(false);
+    
+    onSaved?.(originalData);
+  }, [endpoint, actionType, entityType, storageKey, method, addAction, onSaved]);
+
   // Load cached data on mount
   useEffect(() => {
     try {
@@ -165,53 +211,7 @@ export function useAutoSave<T extends object>(
     } finally {
       setIsAutoSaving(false);
     }
-  }, [onSave, enableOffline, isOnline, isSlow, transform, onSaved, onError, validate]);
-
-  // Queue data for offline save
-  const queueForOfflineSave = async (dataToSave: unknown, originalData: T) => {
-    if (!endpoint) {
-      throw new Error('Endpoint required for offline queuing');
-    }
-
-    const safeData = dataToSave as Record<string, unknown>;
-    const entityId = (safeData.id as string) || 'unknown';
-    
-    addAction({
-      type: actionType,
-      entity: (entityType || storageKey.replace('malnu_', '').replace('_data', '')) as never,
-      entityId,
-      data: safeData,
-      endpoint,
-      method
-    });
-
-    setQueuedCount(prev => prev + 1);
-    
-    // Cache locally for UI consistency
-    localStorage.setItem(storageKey, JSON.stringify(originalData));
-    
-    setLastSaved(new Date());
-    originalDataRef.current = { ...originalData } as T;
-    setIsDirty(false);
-    
-    onSaved?.(originalData);
-  };
-
-  // Sync offline queue
-  const syncOfflineQueue = async () => {
-    try {
-      await sync();
-      updateQueuedCount();
-    } catch (err) {
-      logger.error('Failed to sync offline queue:', err);
-    }
-  };
-
-  // Update queued count
-  const updateQueuedCount = useCallback(() => {
-    const queue = getQueue();
-    setQueuedCount(queue.filter(action => action.status === 'pending').length);
-  }, [getQueue]);
+  }, [onSave, enableOffline, isOnline, isSlow, transform, onSaved, onError, validate, queueForOfflineSave, syncOfflineQueue]);
 
   // Update queued count periodically
   useEffect(() => {
