@@ -10,6 +10,7 @@ import { UserRole, UserExtraRole } from '../types';
 import NotificationCenter from './NotificationCenter';
 import Button from './ui/Button';
 import IconButton from './ui/IconButton';
+import Badge from './ui/Badge';
 import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
 
@@ -138,14 +139,16 @@ const Header: React.FC<HeaderProps> = ({
                         />
 
                            {isLoggedIn ? (
-                               <div className="hidden sm:flex items-center gap-2">
-                                {userExtraRole && (
-                                    <span className={`text-xs font-bold px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 ${
-                                        userExtraRole === 'staff' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 focus:ring-indigo-500' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 focus:ring-orange-500'
-                                    }`}>
-                                        {userExtraRole}
-                                    </span>
-                                )}
+                                <div className="hidden sm:flex items-center gap-2">
+                                 {userExtraRole && (
+                                     <Badge
+                                         variant={userExtraRole === 'staff' ? 'indigo' : 'orange'}
+                                         size="sm"
+                                         rounded={false}
+                                     >
+                                         {userExtraRole}
+                                     </Badge>
+                                 )}
 
                                  {userRole === 'admin' && (
                                      <Button

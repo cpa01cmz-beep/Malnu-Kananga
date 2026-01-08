@@ -9,6 +9,7 @@ import Button from './ui/Button';
 import IconButton from './ui/IconButton';
 import Input from './ui/Input';
 import Select from './ui/Select';
+import Badge from './ui/Badge';
 import { api } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
 import { pushNotificationService } from '../services/pushNotificationService';
@@ -245,19 +246,22 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                                     </td>
                                     <td className="px-6 py-4">
                                         {user.extraRole ? (
-                                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                                                user.extraRole === 'staff' ? 'bg-indigo-100 text-indigo-700' : 
-                                                user.extraRole === 'osis' ? 'bg-orange-100 text-orange-700' :
-                                                user.extraRole === 'wakasek' ? 'bg-purple-100 text-purple-700' :
-                                                user.extraRole === 'kepsek' ? 'bg-red-100 text-red-700' :
-                                                'bg-neutral-100 text-neutral-700'
-                                            }`}>
+                                            <Badge
+                                                variant={
+                                                    user.extraRole === 'staff' ? 'indigo' : 
+                                                    user.extraRole === 'osis' ? 'orange' :
+                                                    user.extraRole === 'wakasek' ? 'purple' :
+                                                    user.extraRole === 'kepsek' ? 'red' :
+                                                    'neutral'
+                                                }
+                                                size="sm"
+                                            >
                                                 {user.extraRole === 'staff' ? 'Staff' : 
                                                  user.extraRole === 'osis' ? 'OSIS' :
                                                  user.extraRole === 'wakasek' ? 'Wakasek' :
                                                  user.extraRole === 'kepsek' ? 'Kepsek' :
                                                  user.extraRole}
-                                            </span>
+                                            </Badge>
                                         ) : <span className="text-neutral-400">-</span>}
                                     </td>
                                     <td className="px-6 py-4 text-right">

@@ -21,6 +21,7 @@ import { usePushNotifications } from '../hooks/usePushNotifications';
 import { getGradientClass } from '../config/gradients';
 import ErrorMessage from './ui/ErrorMessage';
 import DashboardActionCard from './ui/DashboardActionCard';
+import Badge from './ui/Badge';
 import { CardSkeleton } from './ui/Skeleton';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import type { VoiceCommand } from '../types';
@@ -270,7 +271,11 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                       <h1 className="text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">Portal Siswa</h1>
                       <p className="mt-2 text-neutral-600 dark:text-neutral-300 text-lg">
                         Selamat datang kembali, <strong>{loading ? 'Loading...' : studentData?.className || 'Siswa'}</strong>!
-                        {extraRole === 'osis' && <span className="block mt-1 font-semibold text-primary-600">⭐ Pengurus OSIS</span>}
+                        {extraRole === 'osis' && (
+                          <Badge variant="orange" size="sm" className="block mt-1">
+                            ⭐ Pengurus OSIS
+                          </Badge>
+                        )}
                       </p>
                       <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
                         {!loading && studentData && `NIS: ${studentData.nis} • Kelas ${studentData.className}`}
