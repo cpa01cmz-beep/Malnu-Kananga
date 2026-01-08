@@ -237,7 +237,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         </div>
         <div className="flex items-center gap-2">
              {voiceQueue.isPlaying && (
-              <div className="flex items-center gap-2 bg-white/10 rounded-lg px-2.5 py-1.5">
+              <div className="flex items-center gap-2 bg-white/10% rounded-lg px-2.5 py-1.5">
                 <span className="text-xs font-medium text-white mr-1.5">
                   {voiceQueue.currentIndex + 1}/{voiceQueue.queueSize}
                 </span>
@@ -249,7 +249,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                     }}
                     ariaLabel="Lanjutkan baca"
                     size="sm"
-                    className="p-1.5 bg-white/10 hover:bg-white/20 text-white focus:ring-white/50"
+                    className="p-1.5 bg-white/10% hover:bg-white/20% text-white focus:ring-white/50%"
                     icon={
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
@@ -264,7 +264,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                     }}
                     ariaLabel="Jeda baca"
                     size="sm"
-                    className="p-1.5 bg-white/10 hover:bg-white/20 text-white focus:ring-white/50"
+                    className="p-1.5 bg-white/10% hover:bg-white/20% text-white focus:ring-white/50%"
                     icon={
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -278,7 +278,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                   }}
                   ariaLabel="Lewati pesan"
                   size="sm"
-                  className="p-1.5 bg-white/10 hover:bg-white/20 text-white focus:ring-white/50"
+                  className="p-1.5 bg-white/10% hover:bg-white/20% text-white focus:ring-white/50%"
                   icon={
                     <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z" />
@@ -293,7 +293,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                   }}
                   ariaLabel="Hentikan baca"
                   size="sm"
-                  className="p-1.5 bg-white/10 hover:bg-white/20 text-white focus:ring-white/50"
+                  className="p-1.5 bg-white/10% hover:bg-white/20% text-white focus:ring-white/50%"
                   icon={
                     <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clipRule="evenodd" />
@@ -332,7 +332,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                   ariaLabel="Tutup obrolan"
                   size="md"
                   variant="ghost"
-                  className="p-2 bg-white/10 hover:bg-white/20 text-white focus:ring-white/50"
+                  className="p-2 bg-white/10% hover:bg-white/20% text-white focus:ring-white/50%"
                   icon={<CloseIcon />}
                 />
         </div>
@@ -373,7 +373,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         </div>
       </div>
 
-      <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white/95 dark:bg-neutral-800/95 backdrop-blur-sm flex-shrink-0 rounded-b-xl shadow-sm">
+      <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white/95% dark:bg-neutral-800/95% backdrop-blur-sm flex-shrink-0 rounded-b-xl shadow-sm">
         <div className="flex items-end gap-2.5">
           <AutoResizeTextarea
               value={input}

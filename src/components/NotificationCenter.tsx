@@ -204,7 +204,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/50"
+            className="fixed inset-0 z-40 bg-black/50%"
             onClick={handleToggleOpen}
             aria-hidden="true"
           />

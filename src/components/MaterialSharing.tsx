@@ -188,7 +188,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
 
       {/* Share Modal */}
       {showShareModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50% flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
             <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
               <div className="flex items-center justify-between">
@@ -209,7 +209,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
               </div>
             </div>
 
-            <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 200px)' }}>
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
               {/* Current Sharing */}
               {sharing.length > 0 && (
                 <div className="mb-6">

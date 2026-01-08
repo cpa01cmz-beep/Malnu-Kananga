@@ -18,8 +18,8 @@ interface GradientButtonProps extends CommonProps {
 const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95";
 
 const variantClasses: Record<GradientButtonVariant, string> = {
-  primary: "bg-gradient-to-r from-primary-600 to-primary-700 text-white hover:from-primary-700 hover:to-primary-800 focus:ring-primary-500/50 hover:scale-[1.01]",
-  secondary: "bg-white/95 dark:bg-neutral-800/95 backdrop-blur-sm text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:border-primary-500 dark:hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:ring-primary-500/50 hover:scale-[1.01]",
+  primary: "bg-gradient-to-r from-primary-600 to-primary-700 text-white hover:from-primary-700 hover:to-primary-800 focus:ring-primary-500/50% hover:scale-[1.01]",
+  secondary: "bg-white/95% dark:bg-neutral-800/95% backdrop-blur-sm text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:border-primary-500 dark:hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/40% focus:ring-primary-500/50% hover:scale-[1.01]",
 };
 
 const sizeClasses: Record<GradientButtonSize, string> = {

@@ -211,6 +211,7 @@ export const authAPI = {
       email: payload.email,
       role: payload.role as 'admin' | 'teacher' | 'student',
       status: 'active',
+      extraRole: payload.extra_role as UserExtraRole || null,
     };
   },
 

@@ -420,7 +420,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
               <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Backup & Restore</h3>
 
               {hasSettingsBackup && backupDate ? (
-                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20% rounded-lg border border-blue-200 dark:border-blue-800">
                   <p className="text-xs text-blue-700 dark:text-blue-300 mb-2">
                     Backup tersimpan: {backupDate}
                   </p>

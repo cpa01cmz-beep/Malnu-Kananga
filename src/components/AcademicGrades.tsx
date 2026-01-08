@@ -13,12 +13,13 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { gradesAPI, subjectsAPI, attendanceAPI } from '../services/apiService';
 import { Grade, Subject, Attendance } from '../types';
-import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
+import { useCanAccess } from '../hooks/useCanAccess';
 import Button from './ui/Button';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
+import AccessDenied from './AccessDenied';
 
 interface GradeItem {
   subject: string;
@@ -58,9 +59,10 @@ interface AcademicGradesProps {
 }
 
 const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
-  const currentUser = authAPI.getCurrentUser();
-  const STUDENT_NIS = currentUser?.id || '';
-  const STUDENT_NAME = currentUser?.name || 'Siswa';
+  // ALL hooks first
+  const { user, canAccess } = useCanAccess();
+  const STUDENT_NIS = user?.id || '';
+  const STUDENT_NAME = user?.name || 'Siswa';
 
   const [grades, setGrades] = useState<GradeItem[]>([]);
   const [gradeTrends, setGradeTrends] = useState<GradeTrend[]>([]);
@@ -314,11 +316,24 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
     return Math.round((avgAttendance / 100) * avgGrade);
   };
 
-  
-
   const averageScore = grades.length > 0 
     ? (grades.reduce((acc, curr) => acc + curr.finalScore, 0) / grades.length).toFixed(1) 
     : '0';
+
+  // Permission checks - Students can view their own grades, staff need permissions - AFTER all hooks
+  const gradesAccess = user?.role === 'student' 
+    ? canAccess('content.read') // Students can view their own grades
+    : canAccess('academic.grades'); // Staff need grade management permissions
+
+  if (!gradesAccess.canAccess) {
+    return (
+      <AccessDenied 
+        onBack={onBack} 
+        requiredPermission={gradesAccess.requiredPermission}
+        message={gradesAccess.reason}
+      />
+    );
+  }
 
   if (loading) {
     return (
@@ -525,7 +540,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
       </div>
 
       {showGoalModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50% flex items-center justify-center z-50">
           <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 w-full max-w-md">
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Target Belajar Baru</h3>
             <div className="space-y-4">

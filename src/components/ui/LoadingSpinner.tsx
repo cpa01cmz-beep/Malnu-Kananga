@@ -28,8 +28,8 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     error: 'border-red-600'
   };
 
-  const containerClasses = fullScreen 
-    ? 'fixed inset-0 flex flex-col items-center justify-center bg-white/80 dark:bg-neutral-900/80 z-50'
+  const containerClasses = fullScreen
+    ? 'fixed inset-0 flex flex-col items-center justify-center bg-white/80% dark:bg-neutral-900/80% z-50'
     : 'flex flex-col items-center justify-center';
 
   if (fullScreen || text) {

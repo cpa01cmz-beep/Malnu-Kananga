@@ -22,6 +22,8 @@ import { Area } from 'recharts/es6/cartesian/Area';
 import { AreaChart } from 'recharts/es6/chart/AreaChart';
 import QRCode from 'qrcode';
 import { inventoryAPI } from '../services/apiService';
+import { useCanAccess } from '../hooks/useCanAccess';
+import AccessDenied from './AccessDenied';
 import type { 
   InventoryItem, 
   MaintenanceSchedule, 
@@ -40,6 +42,7 @@ interface SchoolInventoryProps {
 const COLORS = ['#16a34a', '#2563eb', '#eab308', '#dc2626', '#7c3aed', '#db2777'];
 
 const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }) => {
+  // ALL hooks first
   const [activeTab, setActiveTab] = useState<'items' | 'maintenance' | 'audit' | 'reports'>('items');
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [maintenanceSchedules, setMaintenanceSchedules] = useState<MaintenanceSchedule[]>([]);
@@ -100,6 +103,20 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
     const currentValue = item.purchasePrice * Math.pow(1 - rate, yearsDiff);
     return Math.max(0, Math.round(currentValue * 100) / 100);
   };
+
+  // Permission check for inventory management - AFTER all hooks
+  const { canAccess } = useCanAccess();
+  const inventoryAccess = canAccess('inventory.manage');
+  
+  if (!inventoryAccess.canAccess) {
+    return (
+      <AccessDenied 
+        onBack={onBack} 
+        requiredPermission={inventoryAccess.requiredPermission}
+        message={inventoryAccess.reason}
+      />
+    );
+  }
 
   const generateQRCode = async (item: InventoryItem) => {
     try {
@@ -823,7 +840,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
 
       {/* QR Code Modal */}
       {showQRCode && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50% flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 max-w-sm w-full">
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">QR Code Barang</h3>
             <div className="bg-white p-4 rounded-lg">
