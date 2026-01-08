@@ -8,7 +8,7 @@ import Toast, { ToastType } from './components/Toast';
 import ThemeSelector from './components/ThemeSelector';
 import SkipLink, { SkipTarget } from './components/ui/SkipLink';
 import { logger } from './utils/logger';
-import { ThemeManager } from './services/themeManager';
+import { useTheme } from './hooks/useTheme';
 
 // Lazy load modal/dialog components
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
@@ -66,11 +66,15 @@ const App: React.FC = () => {
 
   const { loggedIn: isLoggedIn, role: userRole, extraRole: userExtraRole } = authSession;
 
-  // Initialize Advanced Theme System
+  // Initialize Advanced Theme System using useTheme hook for proper sync
+  const { isReady: themeReady } = useTheme();
+  
   useEffect(() => {
-    ThemeManager.getInstance();
-    // Theme system handles its own initialization
-  }, []);
+    // Ensure ThemeManager is available throughout app
+    if (themeReady) {
+      logger.info('Theme system initialized and ready');
+    }
+  }, [themeReady]);
 
   // Content State via Hook - lazy load defaults to reduce initial bundle
   const [siteContent, setSiteContent] = useLocalStorage<SiteContent>(STORAGE_KEYS.SITE_CONTENT, {

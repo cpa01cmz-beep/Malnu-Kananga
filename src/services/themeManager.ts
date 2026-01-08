@@ -9,6 +9,7 @@ export class ThemeManager {
 
   private constructor() {
     this.loadCurrentTheme();
+    this.setupStorageListener();
   }
 
   public static getInstance(): ThemeManager {
@@ -235,5 +236,24 @@ export class ThemeManager {
     if (defaultTheme) {
       this.setTheme(defaultTheme);
     }
+  }
+
+  private setupStorageListener(): void {
+    // Listen for changes to theme in localStorage from other tabs
+    window.addEventListener('storage', (event) => {
+      if (event.key === STORAGE_KEYS.THEME && event.newValue) {
+        try {
+          const data = JSON.parse(event.newValue);
+          const theme = getThemeById(data.id);
+          if (theme && theme.id !== this.currentTheme?.id) {
+            this.currentTheme = theme;
+            this.applyTheme(theme);
+            this.notifyListeners(theme);
+          }
+        } catch (error) {
+          logger.error('Failed to sync theme from storage event:', error);
+        }
+      }
+    });
   }
 }

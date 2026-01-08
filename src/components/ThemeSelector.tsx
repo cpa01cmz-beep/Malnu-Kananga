@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Theme, getLightThemes, getDarkThemes } from '../config/themes';
-import { ThemeManager } from '../services/themeManager';
+import { useTheme } from '../hooks/useTheme';
 import { SunIcon } from './icons/SunIcon';
 import { MoonIcon } from './icons/MoonIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
@@ -13,37 +13,18 @@ interface ThemeSelectorProps {
 }
 
 const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
-  const [themeManager, setThemeManager] = useState<ThemeManager | null>(null);
-  const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
-  const [lightThemes, setLightThemes] = useState<Theme[]>([]);
-  const [darkThemes, setDarkThemes] = useState<Theme[]>([]);
   const [activeTab, setActiveTab] = useState<'light' | 'dark'>('light');
+  const { currentTheme, setTheme, toggleDarkMode, resetToDefault, isReady } = useTheme();
 
-  useEffect(() => {
-    const manager = ThemeManager.getInstance();
-    setThemeManager(manager);
-    setCurrentTheme(manager.getCurrentTheme());
-    setLightThemes(getLightThemes());
-    setDarkThemes(getDarkThemes());
-
-    const handleThemeChange = (theme: Theme) => {
-      setCurrentTheme(theme);
-    };
-
-    manager.addListener(handleThemeChange);
-    return () => {
-      manager.removeListener(handleThemeChange);
-    };
-  }, []);
+  const lightThemes = getLightThemes();
+  const darkThemes = getDarkThemes();
 
   const applyTheme = (theme: Theme) => {
-    if (themeManager) {
-      themeManager.setTheme(theme);
-      onClose();
-    }
+    setTheme(theme);
+    onClose();
   };
 
-  if (!isOpen || !themeManager || !currentTheme) {
+  if (!isOpen || !isReady || !currentTheme) {
     return null;
   }
 
@@ -166,14 +147,14 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
         {/* Footer Actions */}
         <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 flex gap-2">
           <button
-            onClick={() => themeManager.resetToDefault()}
+            onClick={resetToDefault}
             className="flex-1 px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
           >
             Reset ke Default
           </button>
           <button
             onClick={() => {
-              themeManager.toggleDarkMode();
+              toggleDarkMode();
               onClose();
             }}
             className="flex-1 px-3 py-2 text-sm text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
