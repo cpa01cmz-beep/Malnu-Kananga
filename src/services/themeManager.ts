@@ -110,13 +110,13 @@ export class ThemeManager {
 
   private applyTheme(theme: Theme): void {
     const root = document.documentElement;
-    
+
     // Remove all theme classes
     root.className = root.className.replace(/theme-\S+/g, '').trim();
-    
+
     // Add theme class
     root.classList.add(`theme-${theme.id}`);
-    
+
     // Apply dark mode class for dark themes
     if (theme.isDark) {
       root.classList.add('dark');
@@ -128,19 +128,17 @@ export class ThemeManager {
     const primaryScale = this.generateColorScale(theme.colors.primary, 10);
     Object.entries(primaryScale).forEach(([key, value]) => {
       if (key !== 'DEFAULT') {
-        root.style.setProperty(`--color-primary-${key}`, value);
+        root.style.setProperty(`--theme-primary-${key}`, value);
       }
     });
-    root.style.setProperty('--color-primary', this.hexToHsl(theme.colors.primary));
 
     // Generate and apply color scales for neutral (using base neutral color)
     const neutralScale = this.generateColorScale(theme.colors.border, 10);
     Object.entries(neutralScale).forEach(([key, value]) => {
       if (key !== 'DEFAULT') {
-        root.style.setProperty(`--color-neutral-${key}`, value);
+        root.style.setProperty(`--theme-neutral-${key}`, value);
       }
     });
-    root.style.setProperty('--color-neutral', this.hexToHsl(theme.colors.border));
 
     // Generate and apply semantic color scales
     const semanticColors = [
@@ -154,20 +152,26 @@ export class ThemeManager {
       const scale = this.generateColorScale(color, 10);
       Object.entries(scale).forEach(([key, value]) => {
         if (key !== 'DEFAULT') {
-          root.style.setProperty(`--color-${name}-${key}`, value);
+          root.style.setProperty(`--theme-${name}-${key}`, value);
         }
       });
-      root.style.setProperty(`--color-${name}`, this.hexToHsl(color));
     });
 
     // Generate and apply indigo scale (using secondary color as base)
     const indigoScale = this.generateColorScale(theme.colors.secondary, 10);
     Object.entries(indigoScale).forEach(([key, value]) => {
       if (key !== 'DEFAULT') {
-        root.style.setProperty(`--color-indigo-${key}`, value);
+        root.style.setProperty(`--theme-indigo-${key}`, value);
       }
     });
-    root.style.setProperty('--color-indigo', this.hexToHsl(theme.colors.secondary));
+
+    // Generate and apply purple scale (using accent color as base)
+    const purpleScale = this.generateColorScale(theme.colors.accent, 10);
+    Object.entries(purpleScale).forEach(([key, value]) => {
+      if (key !== 'DEFAULT') {
+        root.style.setProperty(`--theme-purple-${key}`, value);
+      }
+    });
 
     // Apply background, surface, text, and text-secondary colors
     root.style.setProperty('--color-background', theme.colors.background);
