@@ -15,6 +15,7 @@ import VoiceSettings from './VoiceSettings';
 import IconButton from './ui/IconButton';
 import { useVoiceSynthesis } from '../hooks/useVoiceSynthesis';
 import { useVoiceQueue } from '../hooks/useVoiceQueue';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 
@@ -45,6 +46,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const historyRef = useRef<{role: 'user' | 'model', parts: string}[]>([]);
   const lastAIResponseRef = useRef<string>('');
+  const chatRef = useFocusTrap({ isOpen, onClose: closeChat });
 
   const synthesis = useVoiceSynthesis();
 
@@ -100,6 +102,20 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         logger.error('Failed to load voice settings:', error);
       }
     }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = originalOverflow;
+    }
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
   }, [isOpen]);
 
   const handleSend = useCallback(async () => {
@@ -230,7 +246,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
   }, [messages, autoReadAI, synthesis, voiceQueue, handleSend]);
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-xl shadow-card-hover border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+    <div
+      ref={chatRef}
+      className="flex flex-col h-full bg-white dark:bg-neutral-800 rounded-xl shadow-card-hover border border-neutral-200 dark:border-neutral-700 overflow-hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Asisten AI - Obrolan dengan asisten kecerdasan buatan"
+    >
       <header className="flex items-center justify-between px-4 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white flex-shrink-0">
         <div className="flex items-center gap-2.5">
             <div className="w-2.5 h-2.5 bg-white rounded-full mr-1 animate-pulse shadow-sm"></div>
@@ -339,14 +361,22 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         </div>
       </header>
 
-      <div className="flex-1 px-4 py-4 overflow-y-auto bg-neutral-50/80 dark:bg-neutral-900/80 custom-scrollbar">
-        <div className="flex flex-col gap-3.5">
+      <div
+        className="flex-1 px-4 py-4 overflow-y-auto bg-neutral-50/80 dark:bg-neutral-900/80 custom-scrollbar"
+        role="log"
+        aria-live="polite"
+        aria-atomic="true"
+        aria-label="Pesan obrolan"
+      >
+        <ul className="flex flex-col gap-3.5" role="list">
           {messages.map((message) => (
-            <div
+            <li
               key={message.id}
               className={`flex items-end max-w-[85%] sm:max-w-[80%] gap-2 ${
                 message.sender === Sender.User ? 'self-end flex-row-reverse' : 'self-start'
               }`}
+              role="listitem"
+              aria-label={`${message.sender === Sender.User ? 'Anda' : 'Asisten'}: ${message.text}`}
             >
               <div
                   className={`rounded-xl px-4 py-3 text-sm md:text-base leading-relaxed shadow-sm ${
@@ -368,10 +398,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                      </div>
                   )}
               </div>
-            </div>
+            </li>
           ))}
-          <div ref={messagesEndRef} />
-        </div>
+          <li ref={messagesEndRef} />
+        </ul>
       </div>
 
       <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white/95% dark:bg-neutral-800/95% backdrop-blur-sm flex-shrink-0 rounded-b-xl shadow-sm">
