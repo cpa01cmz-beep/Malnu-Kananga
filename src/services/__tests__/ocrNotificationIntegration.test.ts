@@ -121,13 +121,12 @@ describe('OCR Validation Notification Integration', () => {
         userRole: 'teacher',
         actionUrl: '/review/doc-123'
       };
-      
-// Simulate the event that would be emitted by OCR service
+
+      // Simulate the event that would be emitted by OCR service
       if (typeof window !== 'undefined' && 'CustomEvent' in window) {
         window.dispatchEvent(new CustomEvent('ocrValidation', { detail: mockEvent }));
       }
-      }
-      
+
       // Verify the event structure is correct
       expect(mockEvent.type).toBe('validation-failure');
       expect(mockEvent.confidence).toBeLessThan(50);
