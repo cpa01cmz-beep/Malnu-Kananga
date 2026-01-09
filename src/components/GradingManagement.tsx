@@ -1151,19 +1151,21 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
                 />
                 
-                <button 
-                    className="px-3 py-1 bg-blue-600 text-white rounded-full hover:bg-blue-700 text-sm"
+                <Button
+                    variant="blue-solid"
+                    size="sm"
                     onClick={() => setSelectedStudents(new Set(grades.map(g => g.id)))}
                 >
                     Select All
-                </button>
+                </Button>
                 
-                <button 
-                    className="px-3 py-1 bg-neutral-600 text-white rounded-full hover:bg-neutral-700 text-sm"
+                <Button
+                    variant="secondary"
+                    size="sm"
                     onClick={() => setSelectedStudents(new Set())}
                 >
                     Clear Selection
-                </button>
+                </Button>
             </div>
         )}
 
@@ -1381,13 +1383,14 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         {/* Save Button */}
         {!loading && !error && (
 <div className="flex justify-end mt-6">
-            <button
+            <Button
+                variant="green-solid"
+                size="md"
                 onClick={handleSave}
                 disabled={loading || isSaving}
-                className="px-6 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors shadow-md disabled:bg-neutral-400 disabled:cursor-not-allowed"
             >
                 {loading || isSaving ? "Menyimpan..." : "Simpan Semua Nilai"}
-            </button>
+            </Button>
         </div>
         )}
 
@@ -1530,13 +1533,14 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                 >
                                     Cancel
                                 </button>
-                                <button
+                                <Button
+                                    variant="purple-solid"
+                                    size="md"
                                     onClick={confirmOCRGrades}
                                     disabled={!ocrReviewData.studentId || !ocrReviewData.assignment}
-                                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:bg-neutral-400 disabled:cursor-not-allowed"
                                 >
                                     Apply Grades
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     )}

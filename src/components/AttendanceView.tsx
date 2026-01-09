@@ -8,6 +8,7 @@ import PageHeader from './ui/PageHeader';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import AccessDenied from './AccessDenied';
+import Button from './ui/Button';
 
 interface AttendanceViewProps {
   onBack: () => void;
@@ -151,12 +152,13 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
             message={errorState.feedback?.message || 'Unknown error occurred'}
             variant="card"
           />
-          <button
+          <Button
+            variant="red-solid"
+            size="md"
             onClick={fetchAttendance}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             Coba Lagi
-          </button>
+          </Button>
         </div>
       </div>
     );

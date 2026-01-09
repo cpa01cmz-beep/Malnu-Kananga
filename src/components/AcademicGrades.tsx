@@ -374,12 +374,13 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
             message={error} 
             variant="card" 
           />
-          <button
+          <Button
+            variant="red-solid"
+            size="md"
             onClick={fetchGrades}
-            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             Coba Lagi
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -396,12 +397,13 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
            <p className="text-neutral-500 dark:text-neutral-400">Semester Ganjil 2024/2025</p>
          </div>
         <div className="flex gap-2">
-          <button
+          <Button
+            variant="green-solid"
+            size="md"
             onClick={() => setShowGoalModal(true)}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
           >
             🎯 Target Belajar
-          </button>
+          </Button>
           <Button
             onClick={generatePDFReport}
             className="flex items-center gap-2"
@@ -594,18 +596,22 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
               </div>
             </div>
             <div className="flex gap-2 mt-6">
-              <button
+              <Button
+                variant="green-solid"
+                size="md"
                 onClick={addGoal}
-                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                fullWidth
               >
                 Simpan Target
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
+                size="md"
                 onClick={() => setShowGoalModal(false)}
-                className="flex-1 px-4 py-2 bg-neutral-300 text-neutral-700 rounded-lg hover:bg-neutral-400 transition-colors"
+                fullWidth
               >
                 Batal
-              </button>
+              </Button>
             </div>
           </div>
         </div>

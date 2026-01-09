@@ -6,6 +6,7 @@ import { UsersIcon } from './icons/UsersIcon';
 import { FolderIcon, FolderOpenIcon, ChevronRightIcon, ChevronDownIcon } from './icons/MaterialIcons';
 import { MaterialFolder, ELibrary } from '../types';
 import { logger } from '../utils/logger';
+import Button from './ui/Button';
 import SmallActionButton from './ui/SmallActionButton';
 
 interface FolderNavigationProps {
@@ -358,12 +359,13 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
             className="w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
           />
           <div className="flex gap-2">
-            <button
+            <Button
+              variant="blue-solid"
+              size="sm"
               onClick={createFolder}
-              className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
             >
               Buat
-            </button>
+            </Button>
               <SmallActionButton
                 onClick={() => {
                   setShowCreateFolder(false);

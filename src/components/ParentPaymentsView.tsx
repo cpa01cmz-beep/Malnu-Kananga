@@ -4,6 +4,7 @@ import DocumentTextIcon from './icons/DocumentTextIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { ToastType } from './Toast';
 import Badge from './ui/Badge';
+import Button from './ui/Button';
 import type { ParentChild, ParentPayment } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
@@ -161,13 +162,14 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
               <option value="current">Periode Saat Ini</option>
               <option value="all">Semua Periode</option>
             </select>
-            <button
+            <Button
+              variant="green-solid"
+              size="md"
               onClick={exportPaymentReport}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+              icon={<DocumentTextIcon />}
             >
-              <DocumentTextIcon />
               Unduh Laporan
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -230,12 +232,13 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
                 <p className="text-sm text-neutral-600 dark:text-neutral-400">{data.child.className}</p>
               </div>
             </div>
-            <button
+            <Button
+              variant="secondary"
+              size="md"
               onClick={() => toggleDetails(data.child.studentId)}
-              className="px-4 py-2 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 rounded-lg transition-colors text-neutral-700 dark:text-neutral-300"
             >
               {showDetails[data.child.studentId] ? 'Sembunyikan' : 'Lihat'} Detail
-            </button>
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
