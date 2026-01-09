@@ -6,6 +6,7 @@ import IconButton from './ui/IconButton';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
+import Badge from './ui/Badge';
 
 interface TemplateManagementProps {
   templates: NotificationTemplate[];
@@ -86,15 +87,15 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
     }
   };
 
-  const getTypeColor = (type: PushNotification['type']) => {
+  const getTypeVariant = (type: PushNotification['type']): 'info' | 'success' | 'purple' | 'warning' | 'indigo' | 'error' | 'neutral' => {
     switch (type) {
-      case 'announcement': return 'bg-blue-100 text-blue-800';
-      case 'grade': return 'bg-green-100 text-green-800';
-      case 'ppdb': return 'bg-purple-100 text-purple-800';
-      case 'event': return 'bg-yellow-100 text-yellow-800';
-      case 'library': return 'bg-indigo-100 text-indigo-800';
-      case 'system': return 'bg-red-100 text-red-800';
-      default: return 'bg-neutral-100 text-neutral-800';
+      case 'announcement': return 'info';
+      case 'grade': return 'success';
+      case 'ppdb': return 'purple';
+      case 'event': return 'warning';
+      case 'library': return 'indigo';
+      case 'system': return 'error';
+      default: return 'neutral';
     }
   };
 
@@ -126,18 +127,18 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(template.type)}`}>
+                  <Badge variant={getTypeVariant(template.type)} size="sm">
                     {template.type}
-                  </span>
+                  </Badge>
                 </div>
               </div>
 
               {template.variables.length > 0 && (
                 <div className="flex flex-wrap gap-1 mb-2">
                   {template.variables.map(variable => (
-                    <span key={variable} className="px-2 py-1 bg-neutral-100 text-neutral-600 rounded text-xs">
+                    <Badge key={variable} variant="neutral" size="sm">
                       {`{{${variable}}}`}
-                    </span>
+                    </Badge>
                   ))}
                 </div>
               )}

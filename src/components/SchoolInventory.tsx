@@ -500,13 +500,12 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                         </td>
                         <td className="px-4 py-3">{item.quantity}</td>
                         <td className="px-4 py-3">
-                          <span className={`text-xs px-2 py-1 rounded-full font-bold ${
-                            item.condition === 'Baik' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                            item.condition === 'Rusak Ringan' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
-                            'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-                          }`}>
+                          <Badge
+                            variant={item.condition === 'Baik' ? 'success' : item.condition === 'Rusak Ringan' ? 'warning' : 'error'}
+                            size="sm"
+                          >
                             {item.condition}
-                          </span>
+                          </Badge>
                         </td>
                         <td className="px-6 py-3">{item.location}</td>
                         <td className="px-4 py-3">Rp {item.currentValue?.toLocaleString() || 0}</td>

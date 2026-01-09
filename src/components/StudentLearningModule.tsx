@@ -4,6 +4,7 @@ import { GoogleGenAI } from '@google/genai';
 import { withCircuitBreaker, classifyError, logError, getUserFriendlyMessage } from '../utils/errorHandler';
 import LoadingSpinner from './ui/LoadingSpinner';
 import Button from './ui/Button';
+import Badge from './ui/Badge';
 
 interface StudentLearningModuleProps {
     onShowToast: (msg: string, type: 'success' | 'error' | 'info' | 'warning') => void;
@@ -306,13 +307,12 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                                             <span className="font-medium">
                                                                 {qIndex + 1}. {question.question}
                                                             </span>
-                                                            <span className={`text-xs px-2 py-1 rounded ${
-                                                                question.difficulty === 'easy' ? 'bg-green-100 text-green-800' :
-                                                                question.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                                                'bg-red-100 text-red-800'
-                                                            }`}>
+                                                            <Badge
+                                                                variant={question.difficulty === 'easy' ? 'success' : question.difficulty === 'medium' ? 'warning' : 'error'}
+                                                                size="sm"
+                                                            >
                                                                 {question.difficulty}
-                                                            </span>
+                                                            </Badge>
                                                         </div>
                                                         <div className="space-y-2">
                                                             {question.options.map((option, oIndex) => (

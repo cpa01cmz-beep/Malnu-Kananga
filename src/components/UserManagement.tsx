@@ -229,12 +229,12 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                                         <div className="text-xs text-neutral-500 font-normal">{user.email}</div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${
-                                            user.role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                                            user.role === 'teacher' ? 'bg-blue-100 text-blue-700' : 'bg-neutral-100 text-neutral-700'
-                                        }`}>
+                                        <Badge
+                                            variant={user.role === 'admin' ? 'purple' : user.role === 'teacher' ? 'info' : 'neutral'}
+                                            size="sm"
+                                        >
                                             {user.role}
-                                        </span>
+                                        </Badge>
                                     </td>
                                     <td className="px-6 py-4">
                                         {user.extraRole ? (

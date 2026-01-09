@@ -4,6 +4,7 @@ import type { ParentChild, Attendance } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { TableSkeleton } from './ui/Skeleton';
+import Badge from './ui/Badge';
 
 interface ParentAttendanceViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -39,18 +40,18 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
     fetchAttendance();
   }, [child.studentId, onShowToast]);
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string): 'success' | 'warning' | 'info' | 'error' | 'neutral' => {
     switch (status) {
       case 'hadir':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+        return 'success';
       case 'sakit':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+        return 'warning';
       case 'izin':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+        return 'info';
       case 'alpa':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+        return 'error';
       default:
-        return 'bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200';
+        return 'neutral';
     }
   };
 
@@ -186,9 +187,9 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
                     </td>
                     <td className="py-3 text-neutral-600 dark:text-neutral-400">{record.className}</td>
                     <td className="py-3">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(record.status)}`}>
+                      <Badge variant={getStatusVariant(record.status)} size="sm">
                         {getStatusLabel(record.status)}
-                      </span>
+                      </Badge>
                     </td>
                     <td className="py-3 text-neutral-600 dark:text-neutral-400">
                       {record.notes || '-'}
