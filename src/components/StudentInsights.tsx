@@ -164,14 +164,36 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
   };
 
   const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case 'improving':
-        return <span className="text-green-600 dark:text-green-400">↗</span>;
-      case 'declining':
-        return <span className="text-red-600 dark:text-red-400">↘</span>;
-      default:
-        return <span className="text-blue-600 dark:text-blue-400">→</span>;
-    }
+    const trendLabels: Record<string, { label: string; icon: string; colorClass: string }> = {
+      improving: {
+        label: 'Meningkat',
+        icon: '↗',
+        colorClass: 'text-green-600 dark:text-green-400'
+      },
+      declining: {
+        label: 'Menurun',
+        icon: '↘',
+        colorClass: 'text-red-600 dark:text-red-400'
+      },
+      stable: {
+        label: 'Stabil',
+        icon: '→',
+        colorClass: 'text-blue-600 dark:text-blue-400'
+      }
+    };
+
+    const trendInfo = trendLabels[trend] || trendLabels.stable;
+    
+    return (
+      <span 
+        className={trendInfo.colorClass} 
+        aria-label={`Tren ${trendInfo.label}`}
+        role="img"
+      >
+        {trendInfo.icon}
+        <span className="sr-only">{trendInfo.label}</span>
+      </span>
+    );
   };
 
   const getPriorityBadge = (priority: string) => {
