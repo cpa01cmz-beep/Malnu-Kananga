@@ -4,29 +4,31 @@ import ClipboardDocumentCheckIcon from '../icons/ClipboardDocumentCheckIcon';
 import DocumentTextIcon from '../icons/DocumentTextIcon';
 import { UsersIcon } from '../icons/UsersIcon';
 import Card from '../ui/Card';
+import Section from '../ui/Section';
 
 interface PPDBSectionProps {
   onRegisterClick: () => void;
 }
 
 const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
-  return (
-    <section id="ppdb" className="py-20 sm:py-24 bg-gradient-to-br from-primary-50/80 via-white to-neutral-50/60 dark:from-primary-900/30 dark:via-neutral-900 dark:to-neutral-900/40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 sm:mb-16 animate-fade-in">
-          <span className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 mb-6 rounded-full bg-primary-100 dark:bg-primary-900/50 border border-primary-200/70 dark:border-primary-700/70 text-primary-700 dark:text-primary-300 text-xs sm:text-sm font-semibold tracking-wider uppercase animate-scale-in shadow-subtle">
-            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Penerimaan Peserta Didik Baru
-          </span>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white tracking-tight mb-4 animate-fade-in-up">Bergabunglah Bersama Kami</h2>
-          <p className="text-base sm:text-lg text-neutral-600 dark:text-neutral-300 max-w-3xl mx-auto leading-relaxed">
-            Jadilah bagian dari generasi unggul MA Malnu Kananga. Pendaftaran Tahun Ajaran 2025/2026 telah dibuka.
-          </p>
-        </div>
+  const badge = (
+    <span className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full bg-primary-100 dark:bg-primary-900/50 border border-primary-200/70 dark:border-primary-700/70 text-primary-700 dark:text-primary-300 text-xs sm:text-sm font-semibold tracking-wider uppercase animate-scale-in shadow-subtle">
+      <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      Penerimaan Peserta Didik Baru
+    </span>
+  );
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 mb-12 sm:mb-14">
+  return (
+    <Section
+      id="ppdb"
+      title="Bergabunglah Bersama Kami"
+      subtitle="Jadilah bagian dari generasi unggul MA Malnu Kananga. Pendaftaran Tahun Ajaran 2025/2026 telah dibuka."
+      className="bg-gradient-to-br from-primary-50/80 via-white to-neutral-50/60 dark:from-primary-900/30 dark:via-neutral-900 dark:to-neutral-900/40"
+      badge={badge}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 mb-12 sm:mb-14">
             <Card
                 variant="hover"
                 className="text-center relative overflow-hidden group"
@@ -68,21 +70,20 @@ const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
         </div>
 
         <div className="text-center">
-            <button
-                onClick={onRegisterClick}
-                className="inline-flex items-center justify-center px-8 sm:px-10 lg:px-12 py-3.5 sm:py-4 text-base sm:text-lg font-semibold text-white transition-all duration-300 bg-primary-600 rounded-xl hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95"
-            >
-                Daftar Sekarang
-                <svg className="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-            </button>
-            <p className="mt-5 sm:mt-6 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
-                Pendaftaran Gelombang 1 ditutup pada <strong className="text-neutral-900 dark:text-white font-semibold">30 April 2025</strong>.
-            </p>
+          <button
+            onClick={onRegisterClick}
+            className="inline-flex items-center justify-center px-8 sm:px-10 lg:px-12 py-3.5 sm:py-4 text-base sm:text-lg font-semibold text-white transition-all duration-300 bg-primary-600 rounded-xl hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95"
+          >
+            Daftar Sekarang
+            <svg className="w-5 h-5 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+          <p className="mt-5 sm:mt-6 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
+            Pendaftaran Gelombang 1 ditutup pada <strong className="text-neutral-900 dark:text-white font-semibold">30 April 2025</strong>.
+          </p>
         </div>
-      </div>
-    </section>
+    </Section>
   );
 };
 
