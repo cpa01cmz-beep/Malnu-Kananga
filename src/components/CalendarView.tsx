@@ -129,6 +129,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     }
   };
 
+  const _handleDateKeyDown = (date: Date, e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleDateClick(date);
+    }
+  };
+
   const renderMonthView = () => (
     <div className="bg-white rounded-lg shadow" role="grid" aria-label="Kalender bulanan">
       {/* Header */}
@@ -175,6 +182,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               key={index}
               role="gridcell"
               onClick={() => handleDateClick(date)}
+              onKeyDown={(e) => _handleDateKeyDown(date, e)}
               className={`min-h-[100px] p-2 border-r border-b cursor-pointer transition-colors
                 ${!isCurrentMonth ? 'bg-neutral-50 text-neutral-400' : 'bg-white'}
                 ${isToday ? 'bg-blue-50' : ''}
@@ -280,11 +288,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               <div
                 key={`${date.toISOString()}-${hour}`}
                 onClick={() => handleDateClick(date)}
+                onKeyDown={(e) => _handleDateKeyDown(date, e)}
                 className={`min-h-[60px] p-1 border-r border-b cursor-pointer
                   ${date.toDateString() === new Date().toDateString() ? 'bg-blue-50' : 'bg-white'}
                   hover:bg-neutral-50`}
                 role="gridcell"
                 aria-label={`${fullDayNames[date.getDay()]} ${date.getDate()}, ${hour}:00`}
+                tabIndex={0}
               >
                 <div className="space-y-1">
                   {events.map((event, idx) => {
