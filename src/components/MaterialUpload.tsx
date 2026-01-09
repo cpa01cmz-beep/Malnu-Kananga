@@ -671,7 +671,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                           </Button>
                           <Button
                             type="button"
-                            onClick={handleCloseCategoryModal}
+                            onClick={() => setShowSuggestionForm(false)}
                             variant="ghost"
                             size="sm"
                           >

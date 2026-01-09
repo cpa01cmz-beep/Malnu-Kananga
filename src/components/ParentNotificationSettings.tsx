@@ -4,6 +4,7 @@ import { BellIcon } from './icons/BellIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { ClockIcon } from './icons/MaterialIcons';
 import { ToastType } from './Toast';
+import Button from './ui/Button';
 import { Toggle } from './ui/Toggle';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import type { ParentGradeNotificationSettings } from '../services/parentGradeNotificationService';

@@ -4,6 +4,7 @@ import DocumentTextIcon from './icons/DocumentTextIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { UsersIcon } from './icons/UsersIcon';
 import { ToastType } from './Toast';
+import Button from './ui/Button';
 import type { ParentChild, Grade } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
