@@ -13,6 +13,12 @@ export const GRADIENTS = {
       direction: 'to-br',
       text: 'light' as const,
     },
+    medium: {
+      from: 'from-primary-400',
+      to: 'to-primary-600',
+      direction: 'to-br',
+      text: 'light' as const,
+    },
     light: {
       from: 'from-primary-100',
       to: 'to-primary-200',
@@ -64,6 +70,12 @@ export const GRADIENTS = {
     main: {
       from: 'from-green-500',
       to: 'to-emerald-600',
+      direction: 'to-br',
+      text: 'light' as const,
+    },
+    medium: {
+      from: 'from-green-400',
+      to: 'to-green-600',
       direction: 'to-br',
       text: 'light' as const,
     },
@@ -119,6 +131,12 @@ export const GRADIENTS = {
       direction: 'to-br',
       text: 'dark' as const,
     },
+    yellow: {
+      from: 'from-yellow-500',
+      to: 'to-orange-600',
+      direction: 'to-br',
+      text: 'light' as const,
+    },
   },
   INDIGO: {
     main: {
@@ -131,6 +149,22 @@ export const GRADIENTS = {
       from: 'from-indigo-100',
       to: 'to-indigo-200',
       direction: 'to-br',
+      text: 'dark' as const,
+    },
+  },
+  BLUE_PURPLE: {
+    main: {
+      from: 'from-blue-500',
+      to: 'to-purple-600',
+      direction: 'to-br',
+      text: 'light' as const,
+    },
+  },
+  ORANGE_GREEN: {
+    soft: {
+      from: 'from-orange-50',
+      to: 'to-green-50',
+      direction: 'to-r',
       text: 'dark' as const,
     },
   },
@@ -155,6 +189,7 @@ export const GRADIENTS = {
 
 export const GRADIENT_CLASSES = {
   PRIMARY: 'bg-gradient-to-br from-primary-500 to-primary-600',
+  PRIMARY_MEDIUM: 'bg-gradient-to-br from-primary-400 to-primary-600',
   PRIMARY_LIGHT: 'bg-gradient-to-br from-primary-100 to-primary-200',
   PRIMARY_SUBTLE: 'bg-gradient-to-br from-primary-50 to-primary-100/50',
   NEUTRAL: 'bg-gradient-to-br from-neutral-50 to-neutral-100/80',
@@ -162,7 +197,9 @@ export const GRADIENT_CLASSES = {
   BLUE_MAIN: 'bg-gradient-to-br from-blue-500 to-indigo-600',
   BLUE_LIGHT: 'bg-gradient-to-br from-blue-100 to-blue-200',
   BLUE_SOFT: 'bg-gradient-to-br from-blue-100 to-blue-200/50',
+  BLUE_PURPLE: 'bg-gradient-to-br from-blue-500 to-purple-600',
   GREEN_MAIN: 'bg-gradient-to-br from-green-500 to-emerald-600',
+  GREEN_MEDIUM: 'bg-gradient-to-br from-green-400 to-green-600',
   GREEN_LIGHT: 'bg-gradient-to-br from-green-100 to-green-200',
   GREEN_SOFT: 'bg-gradient-to-br from-green-50 to-emerald-50',
   GREEN_TEAL: 'bg-gradient-to-br from-green-500 to-teal-600',
@@ -172,6 +209,8 @@ export const GRADIENT_CLASSES = {
   ORANGE_MAIN: 'bg-gradient-to-br from-orange-500 to-red-600',
   ORANGE_LIGHT: 'bg-gradient-to-br from-orange-100 to-orange-200',
   ORANGE_SOFT: 'bg-gradient-to-br from-orange-50 to-red-50',
+  ORANGE_YELLOW: 'bg-gradient-to-br from-yellow-500 to-orange-600',
+  ORANGE_GREEN: 'bg-gradient-to-r from-orange-50 to-green-50',
   INDIGO_MAIN: 'bg-gradient-to-br from-indigo-500 to-purple-600',
   INDIGO_LIGHT: 'bg-gradient-to-br from-indigo-100 to-indigo-200',
   HERO: 'bg-gradient-to-br from-primary-50/90 via-white/80 to-primary-100/70',
@@ -189,6 +228,7 @@ export const DARK_GRADIENT_CLASSES = {
   GREEN_SOFT: 'dark:from-green-900/20 dark:to-emerald-900/20',
   PURPLE_SOFT: 'dark:from-purple-900/20 dark:to-pink-900/20',
   ORANGE_SOFT: 'dark:from-orange-900/20 dark:to-red-900/20',
+  ORANGE_GREEN: 'dark:from-orange-900/20 dark:to-green-900/20',
 } as const;
 
 export const getGradientClass = (key: keyof typeof GRADIENT_CLASSES): string => {

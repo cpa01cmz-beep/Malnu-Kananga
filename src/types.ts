@@ -547,6 +547,10 @@ export interface ELibrary {
   ocrProcessedAt?: string;
   ocrError?: string;
   isSearchable?: boolean;
+  ocrQuality?: OCRTextQuality;
+  documentType?: 'unknown' | 'academic' | 'administrative' | 'form' | 'certificate';
+  aiSummary?: string;
+  plagiarismFlags?: PlagiarismFlag[];
 }
 
 // OCR Related Types
@@ -560,6 +564,28 @@ export interface OCRUpdate {
   ocrProcessedAt?: string;
   ocrError?: string;
   isSearchable?: boolean;
+  ocrQuality?: OCRTextQuality;
+  documentType?: 'unknown' | 'academic' | 'administrative' | 'form' | 'certificate';
+  aiSummary?: string;
+  plagiarismFlags?: PlagiarismFlag[];
+}
+
+export interface OCRTextQuality {
+  isSearchable: boolean;
+  isHighQuality: boolean;
+  estimatedAccuracy: number;
+  wordCount: number;
+  characterCount: number;
+  hasMeaningfulContent: boolean;
+  documentType: 'unknown' | 'academic' | 'administrative' | 'form' | 'certificate';
+}
+
+export interface PlagiarismFlag {
+  materialId: string;
+  similarity: number;
+  matchedText: string;
+  details: string;
+  flaggedAt: string;
 }
 
 export interface OCRProcessingState {
@@ -864,7 +890,7 @@ export interface SpeechWindow {
   };
 }
 
-export type NotificationType = 'announcement' | 'grade' | 'ppdb' | 'event' | 'library' | 'system';
+export type NotificationType = 'announcement' | 'grade' | 'ppdb' | 'event' | 'library' | 'system' | 'ocr';
 
 export type NotificationPriority = 'low' | 'normal' | 'high';
 
@@ -895,6 +921,7 @@ export interface NotificationSettings {
   events: boolean;
   library: boolean;
   system: boolean;
+  ocr: boolean;
   roleBasedFiltering: boolean;
   batchNotifications: boolean;
   quietHours: {
@@ -902,6 +929,7 @@ export interface NotificationSettings {
     start: string;
     end: string;
   };
+  voiceNotifications: VoiceNotificationSettings;
 }
 
 export interface NotificationSubscription {
@@ -992,6 +1020,36 @@ export interface NotificationHistoryItem {
   deliveredAt: string;
 }
 
+export interface VoiceNotificationSettings {
+  enabled: boolean;
+  highPriorityOnly: boolean;
+  respectQuietHours: boolean;
+  voiceSettings: {
+    rate: number;
+    pitch: number;
+    volume: number;
+  };
+  categories: {
+    grades: boolean;
+    attendance: boolean;
+    system: boolean;
+    meetings: boolean;
+  };
+}
+
+export interface VoiceNotification {
+  id: string;
+  notificationId: string;
+  text: string;
+  priority: NotificationPriority;
+  category: VoiceNotificationCategory;
+  timestamp: string;
+  isSpeaking: boolean;
+  wasSpoken: boolean;
+}
+
+export type VoiceNotificationCategory = 'grade' | 'attendance' | 'system' | 'meeting';
+
 export interface Goal {
   id: string;
   studentId: string;
@@ -1026,4 +1084,23 @@ export interface AttendanceGradeCorrelation {
   averageGrade: number;
   correlationScore: number;
   insights: string[];
+}
+
+export interface OCRValidationEvent {
+  id: string;
+  type: 'validation-failure' | 'validation-warning' | 'validation-success';
+  documentId: string;
+  documentType: string;
+  confidence: number;
+  issues: string[];
+  timestamp: string;
+  userId: string;
+  userRole: UserRole;
+  actionUrl?: string;
+}
+
+export interface OCRValidationNotificationData extends OCRValidationEvent {
+  requiresReview: boolean;
+  automatedRetryCount?: number;
+  nextAction?: 'review' | 'reprocess' | 'manual-entry';
 }

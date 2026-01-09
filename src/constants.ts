@@ -72,6 +72,17 @@ export const STORAGE_KEYS = {
     // Parent Grade Notifications (new)
     PARENT_NOTIFICATION_SETTINGS: 'malnu_parent_notification_settings',
     PARENT_NOTIFICATION_QUEUE: 'malnu_parent_notification_queue',
+    
+    // OCR Audit
+    OCR_AUDIT: 'malnu_ocr_audit',
+    
+    // Student Insights (dynamic factory functions)
+    STUDENT_INSIGHTS: (studentId: string) => `malnu_student_insights_${studentId}`,
+    INSIGHTS_ENABLED: (studentId: string) => `malnu_insights_enabled_${studentId}`,
+    
+    // Voice Notifications
+    VOICE_NOTIFICATIONS_QUEUE: 'malnu_voice_notifications_queue',
+    VOICE_NOTIFICATIONS_HISTORY: 'malnu_voice_notifications_history',
 } as const;
 
 export const APP_CONFIG = {
@@ -160,12 +171,29 @@ export const NOTIFICATION_CONFIG = {
         events: true,
         library: true,
         system: true,
+        ocr: true,
         roleBasedFiltering: false,
         batchNotifications: false,
         quietHours: {
             enabled: false,
             start: '22:00',
             end: '07:00',
+        },
+        voiceNotifications: {
+            enabled: false,
+            highPriorityOnly: true,
+            respectQuietHours: true,
+            voiceSettings: {
+                rate: 1.0,
+                pitch: 1.0,
+                volume: 0.8,
+            },
+            categories: {
+                grades: true,
+                attendance: true,
+                system: true,
+                meetings: true,
+            },
         },
     },
     MAX_HISTORY_SIZE: 100,
@@ -192,4 +220,30 @@ export const NOTIFICATION_ICONS = {
     EVENT: '/pwa-192x192.png',
     LIBRARY: '/pwa-192x192.png',
     SYSTEM: '/pwa-192x192.png',
+    OCR: '/pwa-192x192.png',
+} as const;
+
+export const VOICE_NOTIFICATION_CONFIG = {
+    DEFAULT_VOICE_SETTINGS: {
+        enabled: true,
+        highPriorityOnly: true,
+        respectQuietHours: true,
+        voiceSettings: {
+            rate: 1.0,
+            pitch: 1.0,
+            volume: 0.8,
+        },
+        categories: {
+            grades: true,
+            attendance: true,
+            system: true,
+            meetings: true,
+        },
+    },
+    MAX_QUEUE_SIZE: 10,
+    MAX_HISTORY_SIZE: 50,
+    SPEECH_TIMEOUT: 30000, // 30 seconds
+    RETRY_ATTEMPTS: 2,
+    RETRY_DELAY: 2000, // 2 seconds
+    HIGH_PRIORITY_TYPES: ['grade', 'attendance', 'system'],
 } as const;

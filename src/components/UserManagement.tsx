@@ -28,7 +28,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const { errorState, handleApiError, clearError } = useErrorHandler();
+  const { errorState, handleAsyncError, clearError } = useErrorHandler();
 
   const [searchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,20 +39,20 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     clearError();
-    const result = await handleApiError(
+    const result = await handleAsyncError(
       () => api.users.getAll(),
-      { 
-        operation: 'fetchUsers', 
+      {
+        operation: 'fetchUsers',
         component: 'UserManagement',
         fallbackMessage: 'Gagal memuat data pengguna'
       }
     );
-    
+
     if (result && result.success && result.data) {
       setUsers(result.data);
     }
     setIsLoading(false);
-  }, [clearError, handleApiError]);
+  }, [clearError, handleAsyncError]);
 
   useEffect(() => {
     fetchUsers();
@@ -82,15 +82,15 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
 
   const handleDeleteUser = async (id: string) => {
       if (window.confirm('Hapus pengguna ini?')) {
-          const result = await handleApiError(
+          const result = await handleAsyncError(
               () => api.users.delete(id),
-              { 
-                operation: 'deleteUser', 
+              {
+                operation: 'deleteUser',
                 component: 'UserManagement',
                 fallbackMessage: 'Gagal menghapus pengguna'
               }
           );
-          
+
           if (result && result.success) {
               setUsers(prev => prev.filter(u => u.id !== id));
               onShowToast('Pengguna dihapus', 'success');
@@ -173,10 +173,10 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
               setIsModalOpen(false);
           }
       } catch (err) {
-          await handleApiError(
+          await handleAsyncError(
             async () => { throw err; },
-            { 
-              operation: 'saveUser', 
+            {
+              operation: 'saveUser',
               component: 'UserManagement',
               fallbackMessage: 'Gagal menyimpan pengguna'
             }
@@ -202,7 +202,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
 
         {errorState.hasError && (
             <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg text-red-700 dark:text-red-300">
-                {errorState.message}
+                {errorState.feedback?.message}
                 <button onClick={fetchUsers} className="ml-4 underline hover:text-red-800">Coba lagi</button>
             </div>
         )}
@@ -294,7 +294,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                         <IconButton icon={<CloseIcon />} ariaLabel="Tutup modal" onClick={() => setIsModalOpen(false)} />
                     </div>
                     <form onSubmit={handleSaveUser} className="p-6 space-y-4">
-                        {errorState.hasError && <p className="text-sm text-red-600 dark:text-red-400">{errorState.message}</p>}
+                        {errorState.hasError && <p className="text-sm text-red-600 dark:text-red-400">{errorState.feedback?.message}</p>}
                         <Input
                             id="user-name"
                             label="Nama"

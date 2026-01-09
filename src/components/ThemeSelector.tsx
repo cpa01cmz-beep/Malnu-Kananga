@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Theme, getLightThemes, getDarkThemes } from '../config/themes';
-import { ThemeManager } from '../services/themeManager';
+import { useTheme } from '../hooks/useTheme';
 import { SunIcon } from './icons/SunIcon';
 import { MoonIcon } from './icons/MoonIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
@@ -13,43 +13,24 @@ interface ThemeSelectorProps {
 }
 
 const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
-  const [themeManager, setThemeManager] = useState<ThemeManager | null>(null);
-  const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
-  const [lightThemes, setLightThemes] = useState<Theme[]>([]);
-  const [darkThemes, setDarkThemes] = useState<Theme[]>([]);
   const [activeTab, setActiveTab] = useState<'light' | 'dark'>('light');
+  const { currentTheme, setTheme, toggleDarkMode, resetToDefault, isReady } = useTheme();
 
-  useEffect(() => {
-    const manager = ThemeManager.getInstance();
-    setThemeManager(manager);
-    setCurrentTheme(manager.getCurrentTheme());
-    setLightThemes(getLightThemes());
-    setDarkThemes(getDarkThemes());
-
-    const handleThemeChange = (theme: Theme) => {
-      setCurrentTheme(theme);
-    };
-
-    manager.addListener(handleThemeChange);
-    return () => {
-      manager.removeListener(handleThemeChange);
-    };
-  }, []);
+  const lightThemes = getLightThemes();
+  const darkThemes = getDarkThemes();
 
   const applyTheme = (theme: Theme) => {
-    if (themeManager) {
-      themeManager.setTheme(theme);
-      onClose();
-    }
+    setTheme(theme);
+    onClose();
   };
 
-  if (!isOpen || !themeManager || !currentTheme) {
+  if (!isOpen || !isReady || !currentTheme) {
     return null;
   }
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50% backdrop-blur-sm z-50" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/50% backdrop-blur-sm z-50" onClick={onClose} role="presentation" />
       <div className="fixed top-20 right-4 w-96 max-w-[90vw] bg-white dark:bg-neutral-900 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 z-50 animate-fade-in-up">
         {/* Header */}
         <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
@@ -86,8 +67,12 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-neutral-200 dark:border-neutral-700">
+        <div className="flex border-b border-neutral-200 dark:border-neutral-700" role="tablist" aria-label="Pilih kategori tema">
           <button
+            role="tab"
+            aria-selected={activeTab === 'light'}
+            aria-controls="theme-light-panel"
+            id="tab-light"
             onClick={() => setActiveTab('light')}
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
               activeTab === 'light'
@@ -95,10 +80,14 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
                 : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
             }`}
           >
-            <SunIcon className="w-4 h-4" />
+            <SunIcon className="w-4 h-4" aria-hidden="true" />
             Terang
           </button>
           <button
+            role="tab"
+            aria-selected={activeTab === 'dark'}
+            aria-controls="theme-dark-panel"
+            id="tab-dark"
             onClick={() => setActiveTab('dark')}
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
               activeTab === 'dark'
@@ -106,18 +95,25 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
                 : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
             }`}
           >
-            <MoonIcon className="w-4 h-4" />
+            <MoonIcon className="w-4 h-4" aria-hidden="true" />
             Gelap
           </button>
         </div>
 
         {/* Theme Grid */}
-        <div className="p-4 max-h-96 overflow-y-auto">
+        <div
+          id={activeTab === 'light' ? 'theme-light-panel' : 'theme-dark-panel'}
+          role="tabpanel"
+          aria-labelledby={activeTab === 'light' ? 'tab-light' : 'tab-dark'}
+          className="p-4 max-h-96 overflow-y-auto"
+        >
           <div className="grid grid-cols-1 gap-3">
             {(activeTab === 'light' ? lightThemes : darkThemes).map((theme) => (
               <button
                 key={theme.id}
                 onClick={() => applyTheme(theme)}
+                aria-label={`Pilih tema ${theme.displayName}`}
+                aria-pressed={currentTheme.id === theme.id}
                 className={`group flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] ${
                   currentTheme.id === theme.id
                     ? 'border-primary-600 dark:border-primary-400 bg-primary-50 dark:bg-primary-900/20'
@@ -166,16 +162,18 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
         {/* Footer Actions */}
         <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 flex gap-2">
           <button
-            onClick={() => themeManager.resetToDefault()}
+            onClick={resetToDefault}
+            aria-label="Reset tema ke pengaturan default"
             className="flex-1 px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
           >
             Reset ke Default
           </button>
           <button
             onClick={() => {
-              themeManager.toggleDarkMode();
+              toggleDarkMode();
               onClose();
             }}
+            aria-label="Ganti antara mode terang dan gelap"
             className="flex-1 px-3 py-2 text-sm text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
           >
             Ganti Tema

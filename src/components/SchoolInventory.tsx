@@ -24,6 +24,7 @@ import QRCode from 'qrcode';
 import { inventoryAPI } from '../services/apiService';
 import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
+import { CHART_COLORS } from '../config/chartColors';
 import type { 
   InventoryItem, 
   MaintenanceSchedule, 
@@ -39,7 +40,14 @@ interface SchoolInventoryProps {
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
-const COLORS = ['#16a34a', '#2563eb', '#eab308', '#dc2626', '#7c3aed', '#db2777'];
+const COLORS = [
+  CHART_COLORS.green,
+  CHART_COLORS.blue,
+  CHART_COLORS.yellow,
+  CHART_COLORS.red,
+  CHART_COLORS.purple,
+  CHART_COLORS.pink,
+];
 
 const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }) => {
   // ALL hooks first
@@ -792,7 +800,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
-                    fill="#8884d8"
+                    fill={CHART_COLORS.indigo}
                     label
                   >
                     {report.categoryBreakdown.map((_, index) => (
@@ -814,7 +822,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   <XAxis dataKey="condition" />
                   <YAxis />
                   <Tooltip formatter={(value: number) => [`${value} barang`, 'Jumlah']} />
-                  <Bar dataKey="count" fill="#16a34a" />
+                  <Bar dataKey="count" fill={CHART_COLORS.green} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -830,8 +838,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                 <YAxis />
                 <Tooltip formatter={(value: number) => [`Rp ${value.toLocaleString()}`, '']} />
                 <Legend />
-                <Area type="monotone" dataKey="purchaseValue" stackId="1" stroke="#8b5cf6" fill="#8b5cf6" name="Nilai Pembelian" />
-                <Area type="monotone" dataKey="currentValue" stackId="2" stroke="#10b981" fill="#10b981" name="Nilai Saat Ini" />
+                <Area type="monotone" dataKey="purchaseValue" stackId="1" stroke={CHART_COLORS.purple} fill={CHART_COLORS.purple} name="Nilai Pembelian" />
+                <Area type="monotone" dataKey="currentValue" stackId="2" stroke={CHART_COLORS.emerald} fill={CHART_COLORS.emerald} name="Nilai Saat Ini" />
               </AreaChart>
             </ResponsiveContainer>
           </div>

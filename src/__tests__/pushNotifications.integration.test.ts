@@ -25,14 +25,12 @@ const mockNotification: MockNotification = {
 };
 
 // Type assertion needed for browser API mocking
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (global.Notification as any) = {
   requestPermission: vi.fn(),
   permission: 'granted',
 };
 
 // Type assertion needed for browser API mocking
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 (global.navigator as any) = {
   serviceWorker: {
     ready: Promise.resolve({
@@ -64,11 +62,8 @@ describe('Push Notification Integration Tests', () => {
       };
     });
     // Type assertion needed for browser API mocking
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (mockNotificationConstructor as any).permission = 'granted';
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (mockNotificationConstructor as any).requestPermission = vi.fn().mockResolvedValue('granted');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (global.Notification as any) = mockNotificationConstructor;
   });
 
@@ -277,17 +272,34 @@ describe('Push Notification Integration Tests', () => {
   describe('Notification Filtering', () => {
     it('should respect user notification preferences', () => {
       // Mock disabled notifications
-      const settings = {
-        enabled: false,
+const settings = {
+        enabled: true,
         announcements: true,
-        grades: true,
+        grades: false,
         ppdbStatus: true,
         events: true,
         library: true,
         system: true,
+        ocr: true,
         roleBasedFiltering: false,
         batchNotifications: false,
         quietHours: { enabled: false, start: '22:00', end: '07:00' },
+        voiceNotifications: {
+          enabled: false,
+          highPriorityOnly: true,
+          respectQuietHours: true,
+          voiceSettings: {
+            rate: 1.0,
+            pitch: 1.0,
+            volume: 0.8,
+          },
+          categories: {
+            grades: true,
+            attendance: true,
+            system: true,
+            meetings: true,
+          },
+        },
       };
       
       pushNotificationService.saveSettings(settings);

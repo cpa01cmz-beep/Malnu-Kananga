@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Button from './ui/Button';
 import ErrorMessage from './ui/ErrorMessage';
+import ProgressBar from './ui/ProgressBar';
 import {
   BarChart,
   Bar,
@@ -22,6 +23,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { STORAGE_KEYS } from '../constants';
 import { getGradientClass, DARK_GRADIENT_CLASSES } from '../config/gradients';
+import { CHART_COLORS } from '../config/chartColors';
 import { CardSkeleton, TableSkeleton } from './ui/Skeleton';
 
 interface ProgressAnalyticsProps {
@@ -29,7 +31,14 @@ interface ProgressAnalyticsProps {
   onShowToast?: (msg: string, type: 'success' | 'error' | 'warning' | 'info') => void;
 }
 
-const COLORS = ['#16a34a', '#2563eb', '#eab308', '#dc2626', '#7c3aed', '#db2777'];
+const COLORS = [
+  CHART_COLORS.green,
+  CHART_COLORS.blue,
+  CHART_COLORS.yellow,
+  CHART_COLORS.red,
+  CHART_COLORS.purple,
+  CHART_COLORS.pink,
+];
 
 const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToast = () => {} }) => {
   const currentUser = authAPI.getCurrentUser();
@@ -499,7 +508,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                   labelLine={false}
                   label={({ name, percent }) => `${name}: ${((percent || 0) * 100).toFixed(0)}%`}
                   outerRadius={80}
-                  fill="#8884d8"
+                  fill={CHART_COLORS.indigo}
                 >
                   {gradeDistributionData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -523,9 +532,9 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 <YAxis domain={[0, 100]} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="assignment" fill="#16a34a" name="Tugas" />
-                <Bar dataKey="midExam" fill="#2563eb" name="UTS" />
-                <Bar dataKey="finalExam" fill="#eab308" name="UAS" />
+                <Bar dataKey="assignment" fill={CHART_COLORS.green} name="Tugas" />
+                <Bar dataKey="midExam" fill={CHART_COLORS.blue} name="UTS" />
+                <Bar dataKey="finalExam" fill={CHART_COLORS.yellow} name="UAS" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -538,7 +547,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 <XAxis dataKey="subject" angle={-45} textAnchor="end" height={100} interval={0} />
                 <YAxis domain={[0, 100]} />
                 <Tooltip />
-                <Bar dataKey="averageScore" fill="#16a34a" name="Nilai Akhir">
+                <Bar dataKey="averageScore" fill={CHART_COLORS.green} name="Nilai Akhir">
                   {subjectPerformance.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
@@ -632,12 +641,13 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                               {status === 'achieved' ? 'Tercapai!' : status === 'not-achieved' ? 'Belum Terpenuhi' : 'Dalam Proses'}
                             </span>
                           </div>
-                          <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
-                            <div
-                              className={`h-2 rounded-full transition-all ${status === 'achieved' ? 'bg-green-600' : status === 'not-achieved' ? 'bg-red-600' : 'bg-yellow-600'}`}
-                              style={{ width: `${Math.min(progress, 100)}%` }}
-                            />
-                          </div>
+                          <ProgressBar
+                            value={progress}
+                            max={100}
+                            size="md"
+                            color={status === 'achieved' ? 'success' : status === 'not-achieved' ? 'error' : 'warning'}
+                            aria-label={`Goal progress: ${Math.min(progress, 100)}% - ${status}`}
+                          />
                         </div>
                       </div>
                     </div>

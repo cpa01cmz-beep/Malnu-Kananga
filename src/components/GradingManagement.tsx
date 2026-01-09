@@ -6,12 +6,14 @@ import { studentsAPI, gradesAPI } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
 import { pushNotificationService } from '../services/pushNotificationService';
 import { ocrService, OCRExtractionResult, OCRProgress } from '../services/ocrService';
+import { useEventNotifications } from '../hooks/useEventNotifications';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { useOfflineActionQueue, type SyncResult } from '../services/offlineActionQueueService';
 import { STORAGE_KEYS } from '../constants';
+import ProgressBar from './ui/ProgressBar';
 import { 
   validateGradeInput, 
   sanitizeGradeInput, 
@@ -45,6 +47,9 @@ interface GradingManagementProps {
 }
 
 const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToast }) => {
+  // Event notifications hook
+  const { notifyGradeUpdate, useMonitorLocalStorage } = useEventNotifications();
+  
   // Get current user for permission checking
   const getCurrentUser = (): User | null => {
     const userJson = localStorage.getItem(STORAGE_KEYS.USER);
@@ -253,6 +258,29 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       });
     }
   }, [onSyncComplete, onShowToast]);
+
+  // Monitor grades localStorage for changes and trigger notifications
+  useMonitorLocalStorage(STORAGE_KEYS.GRADES, (newValue, oldValue) => {
+    // Trigger notifications when grades are updated by another component/tab
+    if (oldValue && typeof oldValue === 'object' && newValue && typeof newValue === 'object') {
+      // Compare and find updated grades
+      const oldGrades = Array.isArray(oldValue) ? oldValue : [];
+      const newGrades = Array.isArray(newValue) ? newValue : [];
+      
+      newGrades.forEach(newGrade => {
+        const oldGrade = oldGrades.find((g: StudentGrade) => g.id === newGrade.id);
+        if (oldGrade) {
+          const oldFinal = calculateFinalGrade(oldGrade.assignment, oldGrade.midExam, oldGrade.finalExam);
+          const newFinal = calculateFinalGrade(newGrade.assignment, newGrade.midExam, newGrade.finalExam);
+          
+          if (oldFinal !== newFinal) {
+            // Grade was updated, trigger notification
+            notifyGradeUpdate(newGrade.name, subjectId, oldFinal, newFinal);
+          }
+        }
+      });
+    }
+  });
 
   // If user cannot manage grades, show access denied
   if (!canManageGrades) {
@@ -637,7 +665,15 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             const finalScore = calculateFinalGrade(grade.assignment, grade.midExam, grade.finalExam);
             const gradeLetter = calculateGradeLetter(finalScore);
             
-            // Notify student
+            // Use event notifications hook for standardized notifications
+            await notifyGradeUpdate(
+              grade.name,
+              subjectId,
+              undefined, // previousGrade not tracked in this flow
+              finalScore
+            );
+            
+            // Legacy notification for detailed student notification
             await pushNotificationService.showLocalNotification({
               id: `grade-${save.studentId}-${subjectId}-${Date.now()}`,
               type: 'grade',
@@ -884,9 +920,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       action: 'ocr_grade_extraction'
     };
     
-    const existingAudit = JSON.parse(localStorage.getItem('malnu_ocr_audit') || '[]');
+    const existingAudit = JSON.parse(localStorage.getItem(STORAGE_KEYS.OCR_AUDIT) || '[]');
     existingAudit.push(auditEntry);
-    localStorage.setItem('malnu_ocr_audit', JSON.stringify(existingAudit));
+    localStorage.setItem(STORAGE_KEYS.OCR_AUDIT, JSON.stringify(existingAudit));
 
     // Close modal and reset
     setShowOCRModal(false);
@@ -1054,25 +1090,25 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     <div className="space-y-2">
                         {Object.entries(stats.gradeDistribution).map(([grade, count]) => {
                             const percentage = (count / filteredData.length) * 100;
-                            const colors = {
-                                A: 'bg-green-500',
-                                B: 'bg-blue-500',
-                                C: 'bg-yellow-500',
-                                D: 'bg-red-500'
+                            const colorMap: Record<string, 'green' | 'blue' | 'warning' | 'error'> = {
+                                A: 'green',
+                                B: 'blue',
+                                C: 'warning',
+                                D: 'error'
                             };
-                            
+
                             return (
                                 <div key={grade} className="flex items-center gap-3">
                                     <div className="w-8 text-center font-bold text-neutral-700 dark:text-neutral-300">{grade}</div>
-                                    <div className="flex-1 bg-neutral-200 dark:bg-neutral-700 rounded-full h-6 relative overflow-hidden">
-                                        <div 
-                                            className={`${colors[grade as keyof typeof colors]} h-full rounded-full transition-all duration-500`}
-                                            style={{ width: `${percentage}%` }}
-                                        />
-                                        <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-neutral-800 dark:text-neutral-100">
-                                            {count} students ({percentage.toFixed(1)}%)
-                                        </span>
-                                    </div>
+                                    <ProgressBar
+                                        value={percentage}
+                                        max={100}
+                                        size="xl"
+                                        color={colorMap[grade] || 'primary'}
+                                        showLabel={true}
+                                        label={`${count} students (${percentage.toFixed(1)}%)`}
+                                        aria-label={`Grade ${grade}: ${count} students (${percentage.toFixed(1)}%)`}
+                                    />
                                 </div>
                             );
                         })}
@@ -1366,10 +1402,12 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     {isOCRProcessing && (
                         <div className="text-center py-8">
                             <LoadingSpinner size="lg" text={ocrProgress.status} />
-                            <div className="w-full bg-neutral-200 rounded-full h-2 mt-4">
-                                <div 
-                                    className="bg-purple-600 h-2 rounded-full transition-all duration-300"
-                                    style={{ width: `${ocrProgress.progress}%` }}
+                            <div className="mt-4">
+                                <ProgressBar
+                                    value={ocrProgress.progress}
+                                    size="md"
+                                    color="purple"
+                                    aria-label={`OCR processing: ${ocrProgress.progress.toFixed(0)}%`}
                                 />
                             </div>
                             <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-2">

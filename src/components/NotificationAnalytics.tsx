@@ -1,5 +1,6 @@
 import React from 'react';
 import { NotificationAnalytics } from '../types';
+import ProgressBar from './ui/ProgressBar';
 
 interface NotificationAnalyticsProps {
   analytics: NotificationAnalytics[];
@@ -62,17 +63,19 @@ const NotificationAnalyticsComponent: React.FC<NotificationAnalyticsProps> = ({ 
               <h4 className="font-medium text-neutral-900 mb-3">Distribusi Peran</h4>
               <div className="space-y-2">
                 {Object.entries(roleBreakdown).map(([role, count]) => {
-                  const percentage = totalDelivered > 0 ? ((count / totalDelivered) * 100).toFixed(1) : '0';
+                  const percentageValue = totalDelivered > 0 ? (count / totalDelivered) * 100 : 0;
+                  const percentage = percentageValue.toFixed(1);
                   return (
                     <div key={role} className="flex justify-between items-center">
                       <span className="text-sm text-neutral-600 capitalize">{role}</span>
                       <div className="flex items-center gap-2">
-                        <div className="w-24 bg-neutral-200 rounded-full h-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full" 
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </div>
+                        <ProgressBar
+                          value={percentageValue}
+                          size="md"
+                          color="blue"
+                          fullWidth={false}
+                          aria-label={`${role} breakdown: ${count} (${percentage}%)`}
+                        />
                         <span className="text-sm text-neutral-900 font-medium">{count} ({percentage}%)</span>
                       </div>
                     </div>

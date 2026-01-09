@@ -6,6 +6,7 @@ import { StarIcon } from './icons/MaterialIcons';
 import { ClockIcon, TrendingUpIcon, TrendingDownIcon } from './icons/MaterialIcons';
 import { ELibrary } from '../types';
 import { logger } from '../utils/logger';
+import ProgressBar from './ui/ProgressBar';
 
 interface MaterialAnalyticsProps {
   material: ELibrary;
@@ -250,12 +251,14 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
                       <div className="flex items-center gap-4 text-xs text-neutral-500 dark:text-neutral-400">
                         <span>{stat.downloads} unduhan</span>
                         <span>{stat.uniqueUsers} pengguna</span>
-                        <div className="w-20 bg-neutral-200 dark:bg-neutral-600 rounded-full h-2 overflow-hidden">
-                          <div 
-                            className="bg-blue-500 h-full rounded-full transition-all duration-300"
-                            style={{ width: `${(stat.downloads / Math.max(...analytics.dailyStats.map(d => d.downloads))) * 100}%` }}
-                          ></div>
-                        </div>
+                        <ProgressBar
+                          value={stat.downloads}
+                          max={Math.max(...analytics.dailyStats.map(d => d.downloads))}
+                          size="md"
+                          color="blue"
+                          fullWidth={false}
+                          aria-label={`Daily downloads: ${stat.downloads}`}
+                        />
                       </div>
                     </div>
                   );
@@ -276,12 +279,14 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
                       <div key={stat.month} className="flex items-center justify-between text-xs">
                         <span className="text-neutral-600 dark:text-neutral-400">{stat.month}</span>
                         <span className="font-medium text-neutral-900 dark:text-white">{stat.downloads}</span>
-                        <div className="w-16 bg-neutral-200 dark:bg-neutral-600 rounded-full h-1.5 overflow-hidden">
-                          <div 
-                            className="bg-blue-500 h-full rounded-full transition-all duration-300"
-                            style={{ width: `${(stat.downloads / Math.max(...analytics.monthlyStats.map(s => s.downloads))) * 100}%` }}
-                          ></div>
-                        </div>
+                        <ProgressBar
+                          value={stat.downloads}
+                          max={Math.max(...analytics.monthlyStats.map(s => s.downloads))}
+                          size="sm"
+                          color="blue"
+                          fullWidth={false}
+                          aria-label={`Monthly downloads for ${stat.month}: ${stat.downloads}`}
+                        />
                       </div>
                     ))}
                   </div>
@@ -293,12 +298,14 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
                       <div key={stat.month} className="flex items-center justify-between text-xs">
                         <span className="text-neutral-600 dark:text-neutral-400">{stat.month}</span>
                         <span className="font-medium text-neutral-900 dark:text-white">{stat.uniqueUsers}</span>
-                        <div className="w-16 bg-neutral-200 dark:bg-neutral-600 rounded-full h-1.5 overflow-hidden">
-                          <div 
-                            className="bg-green-500 h-full rounded-full transition-all duration-300"
-                            style={{ width: `${(stat.uniqueUsers / Math.max(...analytics.monthlyStats.map(s => s.uniqueUsers))) * 100}%` }}
-                          ></div>
-                        </div>
+                        <ProgressBar
+                          value={stat.uniqueUsers}
+                          max={Math.max(...analytics.monthlyStats.map(s => s.uniqueUsers))}
+                          size="sm"
+                          color="green"
+                          fullWidth={false}
+                          aria-label={`Monthly unique users for ${stat.month}: ${stat.uniqueUsers}`}
+                        />
                       </div>
                     ))}
                   </div>

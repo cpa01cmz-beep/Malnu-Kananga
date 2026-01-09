@@ -3,11 +3,15 @@ import { studentsAPI, attendanceAPI } from '../services/apiService';
 import { Student, Attendance } from '../types';
 import { logger } from '../utils/logger';
 import { validateAttendance } from '../utils/teacherValidation';
+import { pushNotificationService } from '../services/pushNotificationService';
 import {
   executeWithRetry,
   createToastHandler
 } from '../utils/teacherErrorHandler';
 import { useCanAccess } from '../hooks/useCanAccess';
+import { useOfflineActionQueue } from '../services/offlineActionQueueService';
+import { OfflineIndicator } from './OfflineIndicator';
+import { useNetworkStatus } from '../utils/networkStatus';
 import PageHeader from './ui/PageHeader';
 import { TableSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
@@ -38,6 +42,13 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
   const [searchTerm, setSearchTerm] = useState<string>('');
   
   const toast = createToastHandler(onShowToast);
+
+  // Network status and offline queue
+  const { isOnline, isSlow } = useNetworkStatus();
+  const { 
+    addAction,
+    getPendingCount: _getPendingCount 
+  } = useOfflineActionQueue();
 
   const fetchStudents = useCallback(async () => {
     setLoading(true);
@@ -111,6 +122,19 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
 
 const handleAttendanceChange = async (id: string, status: ClassStudent['attendanceToday']) => {
     const prevStudents = [...students];
+    const today = new Date().toISOString().split('T')[0];
+    const apiStatus = status.toLowerCase() as 'hadir' | 'sakit' | 'izin' | 'alpa';
+
+    const attendanceData = {
+      id: Date.now().toString(),
+      studentId: id,
+      classId: className,
+      date: today,
+      status: apiStatus,
+      notes: '',
+      recordedBy: user?.id || '',
+      createdAt: new Date().toISOString(),
+    };
     
     // Optimistic update
     setStudents((prev) =>
@@ -118,24 +142,33 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
     );
 
     try {
-      const today = new Date().toISOString().split('T')[0];
-      const apiStatus = status.toLowerCase() as 'hadir' | 'sakit' | 'izin' | 'alpa';
-
-      const attendanceData = {
-        id: Date.now().toString(),
-        studentId: id,
-        classId: className,
-        date: today,
-        status: apiStatus,
-        notes: '',
-        recordedBy: user?.id || '',
-        createdAt: new Date().toISOString(),
-      };
 
       const validation = validateAttendance(attendanceData);
       if (!validation.isValid) {
         setStudents(prevStudents);
         toast.error(validation.errors.join(', '));
+        return;
+      }
+
+      // Check if we should queue for offline sync
+      if (!isOnline || isSlow) {
+        // Queue attendance update using the offline action queue
+        const actionId = addAction({
+          type: 'update',
+          entity: 'attendance',
+          entityId: `${id}_${today}`,
+          data: attendanceData,
+          endpoint: '/api/attendance',
+          method: 'POST',
+        });
+
+        toast.info('Status kehadiran akan diperbarui saat koneksi tersedia.');
+        logger.info('Attendance update queued for offline sync', { 
+          actionId, 
+          studentId: id, 
+          status,
+          date: today 
+        });
         return;
       }
 
@@ -153,11 +186,60 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
       
       if (result.success) {
         toast.success('Status kehadiran diperbarui');
+        
+        // Send push notification to student
+        const student = students.find(s => s.id === id);
+        if (student) {
+          const statusMap: Record<string, string> = {
+            'hadir': 'Hadir',
+            'sakit': 'Sakit', 
+            'izin': 'Izin',
+            'alpa': 'Alpa'
+          };
+          
+          await pushNotificationService.showLocalNotification({
+            id: `attendance-${id}-${today}-${Date.now()}`,
+            type: 'system',
+            title: 'Kehadiran Hari Ini',
+            body: `Status kehadiran Anda hari ini: ${statusMap[apiStatus]}`,
+            icon: '📋',
+            timestamp: new Date().toISOString(),
+            read: false,
+            priority: 'normal',
+            targetUsers: [id],
+            data: {
+              action: 'view_attendance',
+              date: today,
+              className: className
+            }
+          });
+        }
       } else {
         setStudents(prevStudents);
         toast.error(result.error || 'Gagal memperbarui kehadiran');
       }
     } catch (err) {
+      // Auto-queue on network failure
+      if (!isOnline) {
+        const actionId = addAction({
+          type: 'update',
+          entity: 'attendance',
+          entityId: `${id}_${today}`,
+          data: attendanceData,
+          endpoint: '/api/attendance',
+          method: 'POST',
+        });
+
+        toast.info('Koneksi terputus. Status kehadiran akan diperbarui saat online.');
+        logger.info('Attendance update auto-queued after network failure', { 
+          actionId, 
+          studentId: id, 
+          status,
+          error: err 
+        });
+        return;
+      }
+
       // Revert optimistic update
       setStudents(prevStudents);
       logger.error('Error updating attendance:', err);
@@ -212,6 +294,11 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
 
   return (
     <div className="animate-fade-in-up">
+      <OfflineIndicator 
+        showSyncButton={true}
+        showQueueCount={true}
+        position="top-right"
+      />
       <PageHeader
         title="Data Kelas Perwalian"
         subtitle={`Kelas: ${className} • Total Siswa: ${students.length}`}

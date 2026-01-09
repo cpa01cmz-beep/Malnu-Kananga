@@ -3,6 +3,7 @@ import { Permission, UserRole, UserExtraRole, AuditLog } from '../../types/permi
 import { permissionService } from '../../services/permissionService';
 import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../../config/permissions';
 import Badge from '../ui/Badge';
+import Button from '../ui/Button';
 
 interface PermissionManagerProps {
   onShowToast: (message: string, type: 'success' | 'error' | 'info') => void;
@@ -142,18 +143,19 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
               </div>
 
               <div className="flex items-end space-x-2">
-                <button
+                <Button
                   onClick={validateRoleCombination}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  size="sm"
                 >
                   Validate
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={exportPermissionMatrix}
-                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                  size="sm"
+                  variant="success"
                 >
                   Export
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -292,12 +294,12 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
               <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-200">
                 Recent Audit Logs (Last 24 hours)
               </h3>
-              <button
+              <Button
                 onClick={loadAuditLogs}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                size="sm"
               >
                 Refresh
-              </button>
+              </Button>
             </div>
             
             <div className="overflow-x-auto">

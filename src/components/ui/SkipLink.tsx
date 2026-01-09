@@ -48,7 +48,6 @@ const SkipLink: React.FC<SkipLinkProps> = ({
           key={target.id}
           href={`#${target.id}`}
           className={`${baseClasses} ${linkClasses} ${className}`.replace(/\s+/g, ' ').trim()}
-          role="link"
           aria-label={target.label}
           tabIndex={0}
         >

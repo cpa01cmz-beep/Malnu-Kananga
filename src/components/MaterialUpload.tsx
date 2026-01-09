@@ -5,6 +5,8 @@ import DocumentTextIcon from './icons/DocumentTextIcon';
 import { ShareIcon } from './icons/MaterialIcons';
 import { eLibraryAPI } from '../services/apiService';
 import { ELibrary as ELibraryType, Subject, MaterialFolder } from '../types';
+import { pushNotificationService } from '../services/pushNotificationService';
+import { useEventNotifications } from '../hooks/useEventNotifications';
 import FileUpload from './FileUpload';
 import { FileUploadResponse } from '../services/apiService';
 import { logger } from '../utils/logger';
@@ -17,6 +19,9 @@ import {
   createToastHandler 
 } from '../utils/teacherErrorHandler';
 import { useCanAccess } from '../hooks/useCanAccess';
+import { useOfflineActionQueue } from '../services/offlineActionQueueService';
+import { OfflineIndicator } from './OfflineIndicator';
+import { useNetworkStatus } from '../utils/networkStatus';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import FolderNavigation from './FolderNavigation';
 import { CardSkeleton } from './ui/Skeleton';
@@ -34,6 +39,9 @@ interface MaterialUploadProps {
 }
 
 const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) => {
+  // Event notifications hook
+  const { notifyLibraryUpdate } = useEventNotifications();
+  
   // ALL hooks first
   const [materials, setMaterials] = useState<ELibraryType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,6 +81,13 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
   
   const toast = createToastHandler(onShowToast);
   const { canAccess } = useCanAccess();
+
+  // Network status and offline queue
+  const { isOnline, isSlow } = useNetworkStatus();
+  const { 
+    addAction,
+    getPendingCount: _getPendingCount 
+  } = useOfflineActionQueue();
 
   React.useEffect(() => {
     fetchMaterials();
@@ -175,19 +190,54 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
   const doSubmitMaterial = async () => {
     setSubmitting(true);
 
+    // Declare newMaterial outside try for access in catch
+    const selectedSubject = subjects.find(s => s.name === newCategory);
+    
+    const newMaterial: Partial<ELibraryType> = {
+      title: newTitle.trim(),
+      description: newDescription.trim(),
+      category: newCategory.trim(),
+      fileUrl: uploadedFile!.key,
+      fileType: uploadedFile!.type,
+      fileSize: uploadedFile!.size,
+      subjectId: selectedSubject?.id,
+      folderId: selectedFolder?.id,
+    };
+
     try {
-      const selectedSubject = subjects.find(s => s.name === newCategory);
-      
-      const newMaterial: Partial<ELibraryType> = {
-        title: newTitle.trim(),
-        description: newDescription.trim(),
-        category: newCategory.trim(),
-        fileUrl: uploadedFile!.key,
-        fileType: uploadedFile!.type,
-        fileSize: uploadedFile!.size,
-        subjectId: selectedSubject?.id,
-        folderId: selectedFolder?.id,
-      };
+
+      // Check if we should queue for offline sync
+      if (!isOnline || isSlow) {
+        // Queue material upload using the offline action queue
+        const actionId = addAction({
+          type: 'create',
+          entity: 'material',
+          entityId: `material_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          data: newMaterial,
+          endpoint: '/api/library',
+          method: 'POST',
+        });
+
+        setSubmitting(false);
+        // Update local state immediately for better UX
+        const tempMaterial: ELibraryType = {
+          ...newMaterial as ELibraryType,
+          id: actionId,
+          uploadedBy: 'current_user',
+          uploadedAt: new Date().toISOString(),
+          downloadCount: 0,
+          isShared: false,
+        };
+        setMaterials((prev) => [tempMaterial, ...prev]);
+        setNewTitle('');
+        setNewDescription('');
+        setUploadedFile(null);
+        setCategoryValidation(null);
+        
+        toast.info('Materi akan diunggah saat koneksi tersedia.');
+        logger.info('Material upload queued for offline sync', { actionId, title: newTitle });
+        return;
+      }
 
       const createOperation = async () => {
         return await eLibraryAPI.create(newMaterial);
@@ -212,6 +262,27 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           toast.success('Materi berhasil ditambahkan');
           
           categoryService.updateMaterialStats([...materials, uploadResult.data]);
+          
+          // Use event notifications hook for standardized notifications
+          await notifyLibraryUpdate(uploadResult.data.title, uploadResult.data.category);
+          
+          // Legacy notification for detailed material notification
+          await pushNotificationService.showLocalNotification({
+            id: `material-${uploadResult.data.id}-${Date.now()}`,
+            type: 'library',
+            title: 'Materi Baru Tersedia',
+            body: `Materi "${uploadResult.data.title}" telah ditambahkan ke perpustakaan`,
+            icon: '📚',
+            timestamp: new Date().toISOString(),
+            read: false,
+            priority: 'normal',
+            targetRoles: ['student', 'teacher'],
+            data: {
+              action: 'view_material',
+              materialId: uploadResult.data.id,
+              category: uploadResult.data.category
+            }
+          });
         } else {
           toast.error(uploadResult.message || 'Gagal menambahkan materi');
         }
@@ -219,6 +290,39 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
         toast.error(result.error || 'Gagal menambahkan materi');
       }
     } catch (err) {
+      // Auto-queue on network failure
+      if (!isOnline) {
+        // Prepare material data for offline queue
+        const queuedMaterial = { ...newMaterial };
+        const actionId = addAction({
+          type: 'create',
+          entity: 'material',
+          entityId: `material_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          data: queuedMaterial,
+          endpoint: '/api/library',
+          method: 'POST',
+        });
+
+        // Update local state for better UX
+        const tempMaterial: ELibraryType = {
+          ...queuedMaterial as ELibraryType,
+          id: actionId,
+          uploadedBy: 'current_user',
+          uploadedAt: new Date().toISOString(),
+          downloadCount: 0,
+          isShared: false,
+        };
+        setMaterials((prev) => [tempMaterial, ...prev]);
+        setNewTitle('');
+        setNewDescription('');
+        setUploadedFile(null);
+        setCategoryValidation(null);
+        
+        toast.info('Koneksi terputus. Materi akan diunggah saat online.');
+        logger.info('Material upload auto-queued after network failure', { actionId, error: err });
+        return;
+      }
+
       logger.error('Error creating material:', err);
       toast.error(err);
     } finally {
@@ -391,6 +495,11 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
 
   return (
     <div className="animate-fade-in-up">
+      <OfflineIndicator 
+        showSyncButton={true}
+        showQueueCount={true}
+        position="top-right"
+      />
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
           <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
@@ -624,8 +733,14 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                           <DocumentTextIcon />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-neutral-900 dark:text-white line-clamp-1 cursor-pointer hover:text-blue-600" onClick={() => handleShowMaterialDetails(item)}>
-                            {item.title}
+                          <h4 className="font-semibold text-lg text-neutral-900 dark:text-white mb-1">
+                            <button
+                              onClick={() => handleShowMaterialDetails(item)}
+                              className="font-semibold text-left w-full text-neutral-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 line-clamp-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
+                              title={`Lihat detail ${item.title}`}
+                            >
+                              {item.title}
+                            </button>
                           </h4>
                           <div className="flex items-center gap-2 mt-1 text-xs text-neutral-500 dark:text-neutral-400">
                             <span className="bg-neutral-100 dark:bg-neutral-700 px-2 py-0.5 rounded">{item.category}</span>

@@ -11,6 +11,8 @@ import Button from './ui/Button';
 import Badge from './ui/Badge';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
+import { GRADIENT_CLASSES } from '../config/gradients';
+import { CHART_COLORS } from '../config/chartColors';
 
 interface StudentInsightsProps {
   onBack: () => void;
@@ -162,14 +164,36 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
   };
 
   const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case 'improving':
-        return <span className="text-green-600 dark:text-green-400">↗</span>;
-      case 'declining':
-        return <span className="text-red-600 dark:text-red-400">↘</span>;
-      default:
-        return <span className="text-blue-600 dark:text-blue-400">→</span>;
-    }
+    const trendLabels: Record<string, { label: string; icon: string; colorClass: string }> = {
+      improving: {
+        label: 'Meningkat',
+        icon: '↗',
+        colorClass: 'text-green-600 dark:text-green-400'
+      },
+      declining: {
+        label: 'Menurun',
+        icon: '↘',
+        colorClass: 'text-red-600 dark:text-red-400'
+      },
+      stable: {
+        label: 'Stabil',
+        icon: '→',
+        colorClass: 'text-blue-600 dark:text-blue-400'
+      }
+    };
+
+    const trendInfo = trendLabels[trend] || trendLabels.stable;
+    
+    return (
+      <span 
+        className={trendInfo.colorClass} 
+        aria-label={`Tren ${trendInfo.label}`}
+        role="img"
+      >
+        {trendInfo.icon}
+        <span className="sr-only">{trendInfo.label}</span>
+      </span>
+    );
   };
 
   const getPriorityBadge = (priority: string) => {
@@ -212,7 +236,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
       </div>
 
       {/* Motivational Message */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white mb-6">
+      <div className={`${GRADIENT_CLASSES.BLUE_PURPLE} rounded-xl p-6 text-white mb-6`}>
         <h3 className="text-xl font-semibold mb-2">✨ Pesan Motivasi</h3>
         <p className="text-blue-50">{insights.motivationalMessage}</p>
       </div>
@@ -304,17 +328,17 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip />
-              <Line 
-                type="monotone" 
-                dataKey="averageScore" 
-                stroke="#3B82F6" 
+              <Line
+                type="monotone"
+                dataKey="averageScore"
+                stroke={CHART_COLORS.sky}
                 strokeWidth={2}
                 name="Rata-rata Nilai"
               />
-              <Line 
-                type="monotone" 
-                dataKey="attendanceRate" 
-                stroke="#10B981" 
+              <Line
+                type="monotone"
+                dataKey="attendanceRate"
+                stroke={CHART_COLORS.emerald}
                 strokeWidth={2}
                 name="Kehadiran (%)"
               />
