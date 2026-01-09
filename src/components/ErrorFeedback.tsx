@@ -71,7 +71,7 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
                   className={`inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                     action.variant === 'primary'
                       ? 'bg-red-100 text-red-800 hover:bg-red-200'
-                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                      : 'bg-neutral-100 text-neutral-800 hover:bg-neutral-200'
                   }`}
                 >
                   {action.label === 'Coba Lagi' && <ArrowPathIcon className="w-3 h-3 mr-1" />}
