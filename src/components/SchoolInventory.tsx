@@ -5,6 +5,7 @@ import { TrashIcon } from './icons/TrashIcon';
 import { ChartBarIcon } from './icons/ChartBarIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import Button from './ui/Button';
+import Badge from './ui/Badge';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { BarChart } from 'recharts/es6/chart/BarChart';
@@ -617,19 +618,22 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                       <td className="px-6 py-3 font-medium text-neutral-900 dark:text-white">{schedule.itemName}</td>
                       <td className="px-4 py-3">{schedule.scheduledDate}</td>
                       <td className="px-4 py-3">
-                        <span className="text-xs px-2 py-1 rounded-full font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                        <Badge variant="info" size="sm">
                           {schedule.type}
-                        </span>
+                        </Badge>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                          schedule.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                          schedule.status === 'in-progress' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
-                          schedule.status === 'overdue' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
-                          'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/30 dark:text-neutral-300'
-                        }`}>
+                        <Badge
+                          variant={
+                            schedule.status === 'completed' ? 'success' :
+                            schedule.status === 'in-progress' ? 'warning' :
+                            schedule.status === 'overdue' ? 'error' :
+                            'neutral'
+                          }
+                          size="sm"
+                        >
                           {schedule.status}
-                        </span>
+                        </Badge>
                       </td>
                       <td className="px-6 py-3">{schedule.description}</td>
                     </tr>
@@ -726,9 +730,9 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                         <td className="px-4 py-3">{audit.matchedItems}</td>
                         <td className="px-4 py-3">{audit.mismatchedItems}</td>
                         <td className="px-4 py-3">
-                          <span className="text-xs px-2 py-1 rounded-full font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                          <Badge variant="success" size="sm">
                             {audit.status}
-                          </span>
+                          </Badge>
                         </td>
                       </tr>
                     ))}

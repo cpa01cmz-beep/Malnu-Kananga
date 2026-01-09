@@ -299,9 +299,9 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                       </p>
                     </div>
                     <div className="hidden md:block text-right">
-                       <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300 mb-2">
-                          Semester Ganjil 2024/2025
-                       </span>
+                       <Badge variant="primary" size="lg" className="mb-2">
+                           Semester Ganjil 2024/2025
+                       </Badge>
                     </div>
                   </div>
                   <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-primary-500/10 rounded-full blur-2xl"></div>

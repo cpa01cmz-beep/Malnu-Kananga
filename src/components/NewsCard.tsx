@@ -3,6 +3,7 @@ import React from 'react';
 import { LatestNews } from '../types';
 import ImageWithFallback from './ImageWithFallback';
 import Card from './ui/Card';
+import Badge from './ui/Badge';
 
 interface NewsCardProps {
   newsItem: LatestNews;
@@ -23,9 +24,9 @@ const NewsCard: React.FC<NewsCardProps> = ({ newsItem }) => {
           fallbackText="Gambar Berita Tidak Tersedia"
         />
         <div className="absolute top-3 left-3">
-          <span className="text-xs font-semibold inline-block py-1.5 px-3 uppercase tracking-wider rounded-full text-primary-700 dark:text-primary-300 bg-primary-100/95 dark:bg-primary-900/95 backdrop-blur-md shadow-sm border border-primary-200/50 dark:border-primary-700/50">
+          <Badge variant="primary" size="md" className="uppercase tracking-wider backdrop-blur-md shadow-sm">
             {newsItem.category}
-          </span>
+          </Badge>
         </div>
       </div>
       <div className="p-6 sm:p-7 flex flex-col flex-grow">

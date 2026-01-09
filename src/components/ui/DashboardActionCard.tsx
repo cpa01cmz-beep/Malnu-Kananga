@@ -1,5 +1,6 @@
 import React from 'react';
 import Card, { CardVariant, CardGradient } from './Card';
+import Badge from './Badge';
 
 export type ColorTheme = 
   | 'primary' 
@@ -178,14 +179,14 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
       
       <div className="flex flex-wrap gap-2 mb-2">
         {isExtraRole && extraRoleBadge && (
-          <span className="text-[10px] bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300 px-2 py-0.5 rounded-full font-semibold">
+          <Badge variant="orange" size="sm">
             {extraRoleBadge}
-          </span>
+          </Badge>
         )}
-        
-        <span className={`text-xs font-semibold px-2 py-1 rounded-full ${!isOnline ? theme.badgeOffline : (statusBadge ? theme.badge : theme.badge)}`}>
+
+        <Badge variant="primary" size="md">
           {!isOnline ? (offlineBadge || 'Offline') : (statusBadge || 'Aktif')}
-        </span>
+        </Badge>
       </div>
       
       {!isOnline && (

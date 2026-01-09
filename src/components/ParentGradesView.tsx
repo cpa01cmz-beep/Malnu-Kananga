@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ToastType } from './Toast';
+import Badge from './ui/Badge';
 import type { ParentChild, Grade } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
@@ -151,9 +152,9 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
                   <tr key={grade.id} className="border-b border-neutral-100 dark:border-neutral-800">
                     <td className="py-3 text-neutral-900 dark:text-white">{grade.subjectName}</td>
                     <td className="py-3">
-                      <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                      <Badge variant="info" size="sm">
                         {grade.assignmentType}
-                      </span>
+                      </Badge>
                     </td>
                     <td className="py-3 text-neutral-600 dark:text-neutral-400">{grade.assignmentName}</td>
                     <td className="py-3">

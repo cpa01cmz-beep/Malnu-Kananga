@@ -9,6 +9,7 @@ import { CartesianGrid } from 'recharts/es6/cartesian/CartesianGrid';
 import { Tooltip } from 'recharts/es6/component/Tooltip';
 import { Legend } from 'recharts/es6/component/Legend';
 import Button from './ui/Button';
+import Badge from './ui/Badge';
 import { ResponsiveContainer } from 'recharts/es6/component/ResponsiveContainer';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -469,9 +470,9 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
                 <div key={goal.id} className={`p-4 rounded-lg border ${goal.achieved ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'}`}>
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-semibold text-neutral-900 dark:text-white">{goal.subject}</h4>
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${goal.achieved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                    <Badge variant={goal.achieved ? 'success' : 'warning'} size="sm">
                       {goal.achieved ? '✓ Tercapai' : '🎯 Progres'}
-                    </span>
+                    </Badge>
                   </div>
                   <div className="text-sm text-neutral-600 dark:text-neutral-400">
                     <p>Target: {goal.targetGrade} ({goal.targetScore})</p>

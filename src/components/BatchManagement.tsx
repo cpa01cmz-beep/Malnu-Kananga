@@ -3,6 +3,7 @@ import { NotificationBatch, PushNotification } from '../types';
 import { CloseIcon } from './icons/CloseIcon';
 import Button from './ui/Button';
 import Textarea from './ui/Textarea';
+import Badge from './ui/Badge';
 
 interface BatchManagementProps {
   batches: NotificationBatch[];
@@ -82,9 +83,9 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
                     {batch.notifications.length} notifikasi
                   </p>
                 </div>
-                <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                <Badge variant="info" size="sm">
                   {batch.status}
-                </span>
+                </Badge>
               </div>
               
               <div className="flex justify-between items-center text-sm text-neutral-500 mb-3">

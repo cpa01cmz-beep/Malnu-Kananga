@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { ToastType } from './Toast';
+import Badge from './ui/Badge';
 import type { ParentChild, ParentTeacher, ParentMeeting } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
@@ -128,12 +129,12 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
     });
   };
 
-  const getStatusColor = (status: ParentMeeting['status']) => {
+  const getStatusVariant = (status: ParentMeeting['status']) => {
     switch (status) {
-      case 'scheduled': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
-      case 'completed': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
-      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
-      default: return 'bg-neutral-100 text-neutral-800 dark:bg-neutral-900/30 dark:text-neutral-400';
+      case 'scheduled': return 'info';
+      case 'completed': return 'success';
+      case 'cancelled': return 'error';
+      default: return 'neutral';
     }
   };
 
@@ -344,9 +345,9 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
                     )}
                   </div>
                   <div className="ml-6">
-                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(meeting.status)}`}>
+                    <Badge variant={getStatusVariant(meeting.status)} size="md">
                       {getStatusText(meeting.status)}
-                    </span>
+                    </Badge>
                   </div>
                 </div>
               </div>
