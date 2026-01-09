@@ -107,8 +107,9 @@
              - [x] Refactor chart colors to use centralized design tokens - Created CHART_COLORS configuration in src/config/chartColors.ts, updated StudentInsights, SchoolInventory, ProgressAnalytics, and AcademicGrades components to use design tokens instead of hardcoded hex values (2026-01-08)
               - [x] Fix FolderNavigation accessibility - Added role="button", tabIndex={0}, and onKeyDown handlers for keyboard navigation to folder selection areas (2026-01-08)
                - [x] Fix ProgressBar striped pattern to use theme-aware CSS variables - Replaced hardcoded rgba(255, 255, 255, 0.15) with CSS variable --progress-bar-striped-overlay that adapts to light/dark themes (2026-01-08)
-               - [x] Fix StudentInsights trend icon accessibility - Replaced color-only trend indicators (↗, ↘, →) with accessible version including aria-label, role="img", and sr-only text labels for screen readers (WCAG 2.1 SC 1.4.1 compliance) (2026-01-09)
-               - [ ] Achieve 80% test coverage
+  - [x] Fix StudentInsights trend icon accessibility - Replaced color-only trend indicators (↗, ↘, →) with accessible version including aria-label, role="img", and sr-only text labels for screen readers (WCAG 2.1 SC 1.4.1 compliance) (2026-01-09)
+  - [x] Fix OsisEvents keyboard accessibility - Add role="button", tabIndex={0}, and onKeyDown handler to event card div; add aria-label to budget approval, delete, and close buttons; improve focus indicators (WCAG 2.1 SC 2.1.1 compliance) (2026-01-09)
+  - [ ] Achieve 80% test coverage
   - [ ] Complete API documentation
   - [ ] Optimize bundle size to <500KB
 
