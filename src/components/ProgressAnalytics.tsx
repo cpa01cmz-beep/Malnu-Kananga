@@ -391,12 +391,12 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             message={error} 
             variant="card" 
           />
-          <button
+          <Button
             onClick={fetchData}
-            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            variant="red-solid"
           >
             Coba Lagi
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -412,15 +412,18 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Analisis Progres Akademik</h2>
           <p className="text-neutral-500 dark:text-neutral-400">Semester Ganjil 2024/2025</p>
         </div>
-        <button
+        <Button
           onClick={exportToPDF}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+          variant="green-solid"
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          }
+          iconPosition="left"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
           Export PDF
-        </button>
+        </Button>
       </div>
 
       <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
@@ -600,12 +603,12 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 />
               </div>
             </div>
-            <button
+            <Button
               onClick={addGoal}
-              className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              variant="green-solid"
             >
               Tambah Target
-            </button>
+            </Button>
           </div>
 
           <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">

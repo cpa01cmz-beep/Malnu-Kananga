@@ -386,13 +386,14 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     <div className="flex items-center gap-4">
                       <span className="font-semibold text-green-600">Rp {budget.estimatedCost.toLocaleString()}</span>
                       {budget.status === 'planned' && (
-                        <button
+                        <Button
                           onClick={() => handleBudgetApproval(budget.id)}
-                          aria-label={`Setujui anggaran ${budget.itemName}`}
-                          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                          ariaLabel={`Setujui anggaran ${budget.itemName}`}
+                          variant="blue-solid"
+                          size="sm"
                         >
                           Setujui
-                        </button>
+                        </Button>
                       )}
                       <span className={`px-2 py-1 text-xs rounded ${
                         budget.status === 'approved' ? 'bg-green-100 text-green-700' :

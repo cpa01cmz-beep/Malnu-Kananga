@@ -307,12 +307,12 @@ case 'announcement':
             <div className="text-sm text-neutral-600 dark:text-neutral-400">
               {notifications.filter(n => !n.read).length} tidak dibaca • {notifications.length} total
             </div>
-            <button
+            <Button
               onClick={onClose}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+              variant="primary"
             >
               Tutup
-            </button>
+            </Button>
           </div>
         </div>
       </div>

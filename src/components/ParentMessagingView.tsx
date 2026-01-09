@@ -7,6 +7,7 @@ import type { ParentChild, ParentTeacher, ParentMessage } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateAndSanitizeMessage, validateParentMessage } from '../utils/parentValidation';
+import Button from './ui/Button';
 
 interface ParentMessagingViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -251,18 +252,16 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
                     className="flex-1 px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400"
                     autoComplete="off"
                   />
-                  <button
+                  <Button
                     onClick={handleSendMessage}
                     disabled={sending || !newMessage.trim() || !messageSubject.trim()}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-neutral-400 text-white rounded-lg transition-colors flex items-center gap-2"
+                    variant="green-solid"
+                    isLoading={sending}
+                    icon={!sending ? <SendIcon /> : undefined}
+                    iconPosition="left"
                   >
-                    {sending ? (
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <SendIcon />
-                    )}
-                    Kirim
-                  </button>
+                    {sending ? 'Mengirim...' : 'Kirim'}
+                  </Button>
                 </div>
               </div>
             )}

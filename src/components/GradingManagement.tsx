@@ -989,46 +989,42 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                         {isBatchMode ? `Selected: ${selectedStudents.size}` : 'Batch Mode'}
                     </button>
                     
-                    <button 
+                    <Button
                         onClick={() => setShowStats(!showStats)}
-                        className={`px-4 py-2 rounded-full transition-colors shadow-md ${
-                            showStats 
-                                ? 'bg-green-600 text-white hover:bg-green-700' 
-                                : 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300'
-                        }`}
+                        variant={showStats ? 'green-solid' : 'ghost'}
                     >
                         Statistics
-                    </button>
-                    
+                    </Button>
+
                     <label className="px-4 py-2 bg-orange-600 text-white rounded-full hover:bg-orange-700 transition-colors shadow-md cursor-pointer">
                         Import CSV
-                        <input 
-                            type="file" 
-                            accept=".csv" 
+                        <input
+                            type="file"
+                            accept=".csv"
                             onChange={handleCSVImport}
                             className="hidden"
                         />
                     </label>
-                    
+
                     {canUseOCRGrading && (
                         <label className="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-md cursor-pointer flex items-center gap-2">
                             📷 Scan Exam
-                            <input 
-                                type="file" 
-                                accept=".pdf,.jpg,.jpeg,.png,.heic" 
+                            <input
+                                type="file"
+                                accept=".pdf,.jpg,.jpeg,.png,.heic"
                                 onChange={handleOCRExamUpload}
                                 className="hidden"
                                 disabled={isOCRProcessing}
                             />
                         </label>
                     )}
-                    
-                    <button 
+
+                    <Button
                         onClick={handleCSVExport}
-                        className="px-4 py-2 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition-colors shadow-md"
+                        variant="teal-solid"
                     >
                         Export CSV
-                    </button>
+                    </Button>
                     
                     {canCreateContent && (
                     <button 

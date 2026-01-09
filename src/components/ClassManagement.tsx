@@ -281,12 +281,12 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
             message={error}
             variant="card"
           />
-          <button
+          <Button
             onClick={fetchStudents}
-            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            variant="red-solid"
           >
             Coba Lagi
-          </button>
+          </Button>
         </div>
       </div>
     );

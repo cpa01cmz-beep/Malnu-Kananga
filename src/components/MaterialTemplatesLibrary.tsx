@@ -245,13 +245,14 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Template Materi</h2>
           <p className="text-neutral-500 dark:text-neutral-400">Gunakan template untuk mempercepat pembuatan materi</p>
         </div>
-        <button
+        <Button
           onClick={() => setShowCreateTemplate(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          variant="blue-solid"
+          icon={<PlusIcon className="w-4 h-4" />}
+          iconPosition="left"
         >
-          <PlusIcon className="w-4 h-4" />
           Template Baru
-        </button>
+        </Button>
       </div>
 
       {/* Filters and Search */}
@@ -348,13 +349,16 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
               </div>
 
               <div className="flex gap-2">
-                <button
+                <Button
                   onClick={() => downloadTemplate(template)}
-                  className="flex-1 flex items-center justify-center gap-2 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                  variant="blue-solid"
+                  className="flex-1"
+                  size="sm"
+                  icon={<DownloadIcon className="w-4 h-4" />}
+                  iconPosition="left"
                 >
-                  <DownloadIcon className="w-4 h-4" />
                   Unduh
-                </button>
+                </Button>
                 {onSelectTemplate && (
                   <button
                     onClick={() => onSelectTemplate(template)}

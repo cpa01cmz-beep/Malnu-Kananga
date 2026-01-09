@@ -328,19 +328,19 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
             )}
           </div>
           <div className="flex items-center gap-3">
-            <button
+            <Button
               onClick={handleReset}
-              className="px-4 py-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200"
+              variant="ghost"
             >
               Reset
-            </button>
+            </Button>
             {isDirty && (
-              <button
+              <Button
                 onClick={handleManualSave}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                variant="primary"
               >
                 Simpan Sekarang
-              </button>
+              </Button>
             )}
             <button
               onClick={onClose}

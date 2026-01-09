@@ -4,6 +4,7 @@ import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { ToastType } from './Toast';
 import Badge from './ui/Badge';
+import Button from './ui/Button';
 import type { ParentChild, ParentTeacher, ParentMeeting } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
@@ -177,13 +178,14 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
                 ))}
               </select>
             )}
-            <button
+            <Button
               onClick={() => setShowScheduleForm(!showScheduleForm)}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+              variant="green-solid"
+              icon={<CalendarDaysIcon />}
+              iconPosition="left"
             >
-              <CalendarDaysIcon />
               Jadwalkan Pertemuan
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -268,10 +270,10 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
                   className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400"
                 />
               </div>
-            </div>
+              </div>
 
             <div className="flex justify-end gap-3 mt-4">
-              <button
+              <Button
                 onClick={() => {
                   setShowScheduleForm(false);
                   setSelectedTeacher(null);
@@ -279,22 +281,20 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
                   setSelectedSlot(null);
                   setAgenda('');
                 }}
-                className="px-4 py-2 bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-300 rounded-lg transition-colors"
+                variant="ghost"
               >
                 Batal
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleScheduleMeeting}
                 disabled={scheduling || !selectedTeacher || !selectedDate || !selectedSlot || !agenda.trim()}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-neutral-400 text-white rounded-lg transition-colors flex items-center gap-2"
+                variant="green-solid"
+                isLoading={scheduling}
+                icon={!scheduling ? <CalendarDaysIcon /> : undefined}
+                iconPosition="left"
               >
-                {scheduling ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <CalendarDaysIcon />
-                )}
-                Jadwalkan
-              </button>
+                {scheduling ? 'Menjadwalkan...' : 'Jadwalkan'}
+              </Button>
             </div>
           </div>
         )}

@@ -126,13 +126,14 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
               <option value="semester">Semester Ini</option>
               <option value="year">Tahun Ajaran</option>
             </select>
-            <button
+            <Button
               onClick={exportReport}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-2"
+              variant="green-solid"
+              icon={<DocumentTextIcon />}
+              iconPosition="left"
             >
-              <DocumentTextIcon />
               Unduh Laporan
-            </button>
+            </Button>
           </div>
         </div>
 

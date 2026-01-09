@@ -411,20 +411,22 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                                     ))}
                                 </div>
                                 <div className="flex space-x-2">
-                                    <button
+                                    <Button
                                         type="button"
                                         onClick={applyGradesToForm}
-                                        className="flex-1 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                                        variant="green-solid"
+                                        size="sm"
                                     >
                                         Gunakan Nilai Ini
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
                                         type="button"
                                         onClick={clearDiplomaImage}
-                                        className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 text-sm font-medium rounded-lg hover:bg-neutral-300 dark:hover:bg-neutral-600 transition-colors"
+                                        variant="ghost"
+                                        size="sm"
                                     >
-                                        Ulangi
-                                    </button>
+                                        Hapus
+                                    </Button>
                                 </div>
                             </div>
                         )}

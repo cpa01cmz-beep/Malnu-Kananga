@@ -284,12 +284,13 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                         {selectedTopic ? (
                                             <div>
                                                 <p>Belum ada kuis untuk topik "{selectedTopic.title}"</p>
-                                                <button
+                                                <Button
                                                     onClick={() => selectedTopic && generateAIQuiz(selectedTopic)}
-                                                    className="mt-4 px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+                                                    variant="purple-solid"
+                                                    size="sm"
                                                 >
                                                     Buat Kuis Baru
-                                                </button>
+                                                </Button>
                                             </div>
                                         ) : (
                                             <p>Silakan pilih topik terlebih dahulu</p>
@@ -336,13 +337,13 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                                     <span className="text-sm text-neutral-600">
                                                         {aiQuizState.userAnswers.filter(answer => answer !== -1).length} dari {aiQuizState.questions.length} soal dijawab
                                                     </span>
-                                                    <button
+                                                    <Button
                                                         onClick={submitAIQuiz}
                                                         disabled={aiQuizState.userAnswers.some(answer => answer === -1)}
-                                                        className="px-6 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:bg-neutral-300 disabled:cursor-not-allowed"
+                                                        variant="purple-solid"
                                                     >
                                                         Submit Kuis
-                                                    </button>
+                                                    </Button>
                                                 </div>
                                             </div>
                                         ) : (
@@ -397,12 +398,12 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                                 </div>
 
                                                 <div className="text-center">
-                                                    <button
+                                                    <Button
                                                         onClick={resetAIQuiz}
-                                                        className="px-6 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+                                                        variant="purple-solid"
                                                     >
                                                         Buat Kuis Baru
-                                                    </button>
+                                                    </Button>
                                                 </div>
                                             </div>
                                         )}

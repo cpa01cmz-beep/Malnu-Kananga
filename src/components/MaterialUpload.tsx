@@ -477,17 +477,17 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           </div>
         </div>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <ErrorMessage 
-            title="Error Loading Materials" 
-            message={error} 
-            variant="card" 
+          <ErrorMessage
+            title="Error Loading Materials"
+            message={error}
+            variant="card"
           />
-          <button
+          <Button
             onClick={fetchMaterials}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            variant="red-solid"
           >
             Coba Lagi
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -661,23 +661,22 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                           className="w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none text-sm"
                         />
                         <div className="flex gap-2">
-                          <button
+                          <Button
                             type="button"
                             onClick={handleSuggestCategory}
-                            className="px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
+                            variant="green-solid"
+                            size="sm"
                           >
                             Ajukan
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
-                            onClick={() => {
-                              setShowSuggestionForm(false);
-                              setSuggestionDescription('');
-                            }}
-                            className="px-3 py-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-700 dark:text-neutral-300 text-sm rounded-lg hover:bg-neutral-400 dark:hover:bg-neutral-500 transition-colors"
+                            onClick={handleCloseCategoryModal}
+                            variant="ghost"
+                            size="sm"
                           >
                             Batal
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     )}
@@ -694,14 +693,17 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                 maxFiles={1}
               />
 
-              <button
+              <Button
                 type="submit"
                 disabled={submitting || !uploadedFile}
-                className="w-full flex items-center justify-center gap-2 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-lg shadow-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="green-solid"
+                fullWidth
+                isLoading={submitting}
+                icon={!submitting ? <CloudArrowUpIcon className="w-5 h-5" /> : undefined}
+                iconPosition="left"
               >
-                <CloudArrowUpIcon className="w-5 h-5" />
                 {submitting ? 'Menyimpan...' : 'Upload Materi'}
-              </button>
+              </Button>
             </form>
           </div>
           </div>
