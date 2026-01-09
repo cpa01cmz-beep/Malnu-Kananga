@@ -19,13 +19,18 @@ The configuration is automatically loaded by OpenCode when you run `/init` in th
 
 Use these commands from the OpenCode TUI:
 
+### Quality Checks
 ```
 /test                    - Run tests and verify everything passes
-/typecheck              - Run TypeScript type checking
-/lint                   - Run linting and fix issues
-/full-check             - Run all quality checks
-/build-verify           - Build and verify production readiness
-/security-check         - Run security audit
+/typecheck / tc          - Run TypeScript type checking
+/lint / lf               - Run linting and fix issues
+/full-check / fc          - Run all quality checks
+/build-verify / bd        - Build and verify production readiness
+/security-check           - Run security audit
+```
+
+### Code Generation
+```
 /add-service            - Add a new service following conventions
 /add-component          - Add a new React component with tests
 /add-hook               - Add a new custom React hook
@@ -34,12 +39,39 @@ Use these commands from the OpenCode TUI:
 /ai-feature             - Add AI feature using Gemini
 /pwa-feature            - Add PWA functionality
 /migrate-storage        - Migrate localStorage to API
+/test-generate          - Generate tests for existing code
+/migration              - Create database or feature migration
+```
+
+### Code Quality
+```
 /review-code            - Review code for best practices
 /refactor               - Refactor code following patterns
 /debug-test             - Debug failing test
+/optimize-performance   - Optimize component/service performance
+/check-permissions      - Validate permission implementation
+```
+
+### Deployment
+```
+/deploy                 - Deploy to production (frontend + backend)
+/deploy-checklist       - Generate deployment checklist
+```
+
+### Environment Setup
+```
 /env-setup              - Set up environment variables
 /check-auth             - Review authentication implementation
-/optimize-performance   - Optimize component/service performance
+```
+
+### Code Analysis
+```
+/find-missing-tests     - Find files without tests
+/find-urls              - Find hardcoded URLs
+/check-storage          - Check localStorage key usage
+/check-logs             - Check console.log usage
+/check-errors           - Check missing error handling
+/check-types            - Find 'any' type usage
 ```
 
 ## Skills
@@ -83,35 +115,82 @@ Implement voice features:
 - Error handling
 - Testing and accessibility
 
+### test-generator.md (NEW)
+Generate tests for existing code:
+- Component tests with React Testing Library
+- Service tests with mocking
+- Hook tests with renderHook
+- Best practices and anti-patterns
+- Coverage guidelines
+
+### migration-generator.md (NEW)
+Create database and feature migrations:
+- Database schema migrations
+- Data transformation migrations
+- Feature migrations (localStorage to API)
+- Rollback procedures
+- Cloudflare D1 patterns
+
+### permission-validator.md (NEW)
+Validate and implement permissions:
+- Permission configuration in permissions.ts
+- Permission service patterns
+- Component permission checks
+- Backend permission validation
+- Role-based access control
+
+### pwa-generator.md (NEW)
+Add PWA functionality:
+- Offline data storage
+- Network status detection
+- Push notifications
+- Data sync mechanisms
+- Service worker configuration
+- Testing PWA features
+
 ## Tools
 
 Code analysis and generation tools:
 
-- **generate-types** - Generate TypeScript types from API
+### Available Tools
 - **check-storage-keys** - Verify localStorage usage
-- **generate-permission-doc** - Document permissions and roles
-- **find-untyped** - Find 'any' type usage
 - **check-missing-tests** - Find files without tests
-- **generate-service-structure** - Template for new services
-- **find-hardcoded-urls** - Find hardcoded API URLs
-- **check-env-vars** - Find environment variable usage
-- **analyze-imports** - Analyze import patterns
-- **find-unused-imports** - Find potentially unused imports
-- **generate-component-doc** - Document React components
-- **check-voice-commands** - Verify voice command registration
-- **generate-api-client-code** - Generate API client code
-- **find-missing-error-handling** - Find async functions without error handling
+- **check-missing-error-handling** - Find async functions without error handling
 - **check-console-logs** - Find console.log usage (should use logger)
-- **generate-test-mocks** - Generate test mocks
-- **check-type-exports** - Find types that should be exported
-- **find-large-files** - Find files needing refactoring
+- **find-untyped** - Find 'any' type usage
+- **find-hardcoded-urls** - Find hardcoded API URLs
 - **generate-deployment-checklist** - Generate deployment checklist
-- **analyze-voice-features** - Analyze voice implementation
-- **check-pwa-compatibility** - Check PWA implementation
-- **generate-role-matrix** - Generate role permission matrix
-- **find-security-issues** - Find potential security issues
-- **check-naming-conventions** - Check naming violations
-- **generate-changelog** - Generate changelog from git
+- **generate-types** - Generate TypeScript types from API (reference tool)
+
+### Tools Status
+✅ Implemented and ready to use
+- check-storage-keys
+- check-missing-tests
+- check-missing-error-handling
+- check-console-logs
+- find-untyped
+- find-hardcoded-urls
+- generate-deployment-checklist
+- generate-types
+
+📋 Planned (not yet implemented)
+- generate-permission-doc
+- generate-service-structure
+- check-env-vars
+- analyze-imports
+- find-unused-imports
+- generate-component-doc
+- check-voice-commands
+- generate-api-client-code
+- generate-test-mocks
+- check-type-exports
+- find-large-files
+- analyze-voice-features
+- check-pwa-compatibility
+- generate-role-matrix
+- find-security-issues
+- check-naming-conventions
+- generate-changelog
 
 ## Rules
 
@@ -205,9 +284,12 @@ src/
 1. Plan the feature (use Tab to switch to Plan mode)
 2. Review similar existing features
 3. Use `/add-service`, `/add-component`, or `/add-hook` as needed
-4. Implement following project patterns
-5. Run `/full-check` to verify quality
-6. Add tests
+4. If adding permissions, use `/check-permissions` to validate
+5. If PWA features needed, use `/pwa-feature`
+6. Implement following project patterns
+7. Run `/fc` or `/full-check` to verify quality
+8. Use `/test-generate` if tests are missing
+9. Run `/find-missing-tests` to check coverage
 
 ### API Development
 
@@ -231,10 +313,13 @@ src/
 ### Testing
 
 1. Always add tests for new code
-2. Use React Testing Library for components
-3. Use vitest for services and hooks
-4. Mock external dependencies
-5. Run `/test` frequently
+2. Use `/test-generate` to create tests for existing code
+3. Run `/find-missing-tests` to check test coverage
+4. Use React Testing Library for components
+5. Use vitest for services and hooks
+6. Mock external dependencies
+7. Run `/test` frequently
+8. Check for test issues with `/debug-test`
 
 ## Notes
 
@@ -243,6 +328,67 @@ src/
 - Always run typecheck and lint before committing
 - Use AGENTS.md as reference for project context
 - Commit `.opencode/` directory to share configuration with team
+
+## New Features (Latest Update)
+
+### New Tools
+- **check-missing-tests** - Automatically finds files without corresponding test files
+- **find-hardcoded-urls** - Detects hardcoded URLs that should be in constants
+- **generate-deployment-checklist** - Creates comprehensive deployment checklist
+- **generate-types** - Reference tool for generating TypeScript types from JSON
+
+### New Skills
+- **test-generator.md** - Comprehensive test generation guidelines
+- **migration-generator.md** - Database and feature migration patterns
+- **permission-validator.md** - Permission validation and implementation
+- **pwa-generator.md** - PWA feature development guidelines
+
+### New Commands
+- **/deploy** - Complete deployment workflow (frontend + backend)
+- **/test-generate** - Generate tests for existing code
+- **/migration** - Create database/feature migrations
+- **/check-permissions** - Validate permission implementation
+- **/pwa-feature** - Add/optimize PWA functionality
+- **/deploy-checklist** - Generate deployment checklist
+- **/find-missing-tests** - Find files without tests
+- **/find-urls** - Find hardcoded URLs
+- **/check-storage** - Verify localStorage key usage
+- **/check-logs** - Check console.log usage
+- **/check-errors** - Check missing error handling
+- **/check-types** - Find 'any' type usage
+
+### Command Aliases (for faster workflow)
+- **/tc** - Shortcut for /typecheck
+- **/lf** - Shortcut for /lint and fix
+- **/fc** - Shortcut for /full-check
+- **/bd** - Shortcut for /build-verify
+
+## Usage Examples
+
+### Quick Quality Check
+```
+/fc  # Runs typecheck, lint, and tests
+```
+
+### Find Issues
+```
+/find-missing-tests  # Check test coverage
+/find-urls          # Find hardcoded URLs
+/check-storage      # Check localStorage usage
+```
+
+### Generate Code
+```
+/test-generate      # Generate tests for existing code
+/migration          # Create migration script
+/pwa-feature        # Add PWA functionality
+```
+
+### Deploy
+```
+/deploy-checklist   # Review before deploying
+/deploy            # Deploy to production
+```
 
 ## Updating Configuration
 
