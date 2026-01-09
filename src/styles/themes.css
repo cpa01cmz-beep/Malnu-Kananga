@@ -5,29 +5,29 @@
   transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Custom scrollbar colors based on theme */
+/* Custom scrollbar colors - using Tailwind v4 CSS variables with theme fallback */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-surface);
+  background: hsl(var(--color-neutral-100));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-text-secondary);
+  background: hsl(var(--color-neutral-400) / 0.5);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
+  background: hsl(var(--color-primary-500));
 }
 
 /* Firefox scrollbar styling */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-text-secondary) var(--color-surface);
+  scrollbar-color: hsl(var(--color-neutral-400) / 0.5) hsl(var(--color-neutral-100));
 }
 
 /* Custom scrollbar utility class for consistent styled scrollbars */
@@ -75,6 +75,7 @@
   }
 }
 
+/* Dark class-based scrollbar (for manual dark mode) */
 .dark .custom-scrollbar {
   scrollbar-color: hsl(var(--color-neutral-500) / 0.6) hsl(var(--color-neutral-800));
 }
@@ -197,10 +198,14 @@
     --color-text: #000000;
     --color-background: #ffffff;
   }
-  
+
   .theme-obsidian-dark {
     --color-border: #ffffff;
     --color-text: #ffffff;
     --color-background: #000000;
   }
 }
+
+/* Note: All scrollbar styles use Tailwind v4 CSS variables (hsl(var(--color-*)))
+   which integrate with the ThemeManager for dynamic theming.
+   Primary colors adapt to theme changes via --theme-primary-* variables set in index.css */

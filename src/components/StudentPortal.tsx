@@ -30,6 +30,7 @@ import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import type { VoiceCommand } from '../types';
 import VoiceInputButton from './VoiceInputButton';
 import VoiceCommandsHelp from './VoiceCommandsHelp';
+import Button from './ui/Button';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -261,17 +262,19 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
           </div>
         ) : error ? (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-            <ErrorMessage 
-              title="Error Loading Portal" 
-              message={error} 
-              variant="card" 
+            <ErrorMessage
+              title="Error Loading Portal"
+              message={error}
+              variant="card"
             />
-            <button
+            <Button
               onClick={() => window.location.reload()}
-              className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+              variant="red-solid"
+              size="md"
+              className="mt-4"
             >
               Coba Lagi
-            </button>
+            </Button>
           </div>
         ) : (
           <>

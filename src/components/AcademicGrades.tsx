@@ -8,6 +8,7 @@ import { YAxis } from 'recharts/es6/cartesian/YAxis';
 import { CartesianGrid } from 'recharts/es6/cartesian/CartesianGrid';
 import { Tooltip } from 'recharts/es6/component/Tooltip';
 import { Legend } from 'recharts/es6/component/Legend';
+import Button from './ui/Button';
 import { ResponsiveContainer } from 'recharts/es6/component/ResponsiveContainer';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -16,8 +17,9 @@ import { Grade, Subject, Attendance } from '../types';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { useCanAccess } from '../hooks/useCanAccess';
-import Button from './ui/Button';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
+import { GRADIENT_CLASSES } from '../config/gradients';
+import { CHART_COLORS } from '../config/chartColors';
 import ErrorMessage from './ui/ErrorMessage';
 import AccessDenied from './AccessDenied';
 
@@ -399,30 +401,30 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
           >
             🎯 Target Belajar
           </button>
-          <button
+          <Button
             onClick={generatePDFReport}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="flex items-center gap-2"
           >
             📊 Export PDF
-          </button>
+          </Button>
         </div>
       </div>
 
       <div id="academic-report">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 text-white shadow-lg">
+          <div className={`${GRADIENT_CLASSES.GREEN_MAIN} rounded-2xl p-6 text-white shadow-lg`}>
             <p className="text-green-100 text-sm mb-1">Rata-Rata Nilai</p>
             <h3 className="text-3xl font-bold">{averageScore}</h3>
           </div>
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-lg">
+          <div className={`${GRADIENT_CLASSES.BLUE_MAIN} rounded-2xl p-6 text-white shadow-lg`}>
             <p className="text-blue-100 text-sm mb-1">Total Mata Pelajaran</p>
             <h3 className="text-3xl font-bold">{grades.length}</h3>
           </div>
-          <div className="bg-gradient-to-r from-yellow-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg">
+          <div className={`${GRADIENT_CLASSES.ORANGE_YELLOW} rounded-2xl p-6 text-white shadow-lg`}>
             <p className="text-yellow-100 text-sm mb-1">Target Tercapai</p>
             <h3 className="text-3xl font-bold">{goals.filter(g => g.achieved).length}/{goals.length}</h3>
           </div>
-          <div className="bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl p-6 text-white shadow-lg">
+          <div className={`${GRADIENT_CLASSES.PURPLE_MAIN} rounded-2xl p-6 text-white shadow-lg`}>
             <p className="text-purple-100 text-sm mb-1">Korelasi Kehadiran</p>
             <h3 className="text-3xl font-bold">{getAttendanceGradeCorrelation()}%</h3>
           </div>
@@ -439,7 +441,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="averageScore" stroke="#10b981" name="Rata-rata Nilai" strokeWidth={2} />
+                  <Line type="monotone" dataKey="averageScore" stroke={CHART_COLORS.emerald} name="Rata-rata Nilai" strokeWidth={2} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -452,7 +454,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
                   <XAxis dataKey="subject" />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="score" fill="#3b82f6" />
+                  <Bar dataKey="score" fill={CHART_COLORS.sky} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

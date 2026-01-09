@@ -1,6 +1,8 @@
 import { NotificationSettings, PushNotification, NotificationHistoryItem, NotificationBatch, NotificationTemplate, NotificationAnalytics } from '../types';
 import { NOTIFICATION_CONFIG, NOTIFICATION_ERROR_MESSAGES, NOTIFICATION_ICONS, STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
+import { voiceNotificationService } from './voiceNotificationService';
+import { handleNotificationError } from '../utils/serviceErrorHandlers';
 import type { UserRole } from '../types';
 
 /* eslint-disable no-undef */
@@ -70,7 +72,7 @@ class PushNotificationService {
   async requestPermission(): Promise<boolean> {
     try {
       if (!('Notification' in window)) {
-        throw new Error(NOTIFICATION_ERROR_MESSAGES.NOT_SUPPORTED);
+        throw handleNotificationError(new Error(NOTIFICATION_ERROR_MESSAGES.NOT_SUPPORTED), 'requestPermission');
       }
 
       if (Notification.permission === 'granted') {
@@ -99,13 +101,13 @@ class PushNotificationService {
       await this.requestPermission();
 
       if (!('serviceWorker' in navigator)) {
-        throw new Error(NOTIFICATION_ERROR_MESSAGES.SERVICE_WORKER_FAILED);
+        throw handleNotificationError(new Error(NOTIFICATION_ERROR_MESSAGES.SERVICE_WORKER_FAILED), 'subscribe');
       }
 
       this.swRegistration = await navigator.serviceWorker.ready;
 
       if (!this.swRegistration.pushManager) {
-        throw new Error('PushManager not available');
+        throw handleNotificationError(new Error('PushManager not available'), 'subscribe');
       }
 
       this.subscription = await this.swRegistration.pushManager.subscribe({
@@ -151,7 +153,7 @@ class PushNotificationService {
       if (Notification.permission !== 'granted') {
         await this.requestPermission();
         if ((Notification.permission as string) !== 'granted') {
-          throw new Error(NOTIFICATION_ERROR_MESSAGES.PERMISSION_DENIED);
+          throw handleNotificationError(new Error(NOTIFICATION_ERROR_MESSAGES.PERMISSION_DENIED), 'showLocalNotification');
         }
       }
 
@@ -167,7 +169,6 @@ class PushNotificationService {
         icon: notification.icon || NOTIFICATION_ICONS.DEFAULT,
         badge: NOTIFICATION_ICONS.DEFAULT,
         tag: notification.id,
-        timestamp: new Date(notification.timestamp).getTime(),
         requireInteraction: notification.priority === 'high',
         vibrate: [...NOTIFICATION_CONFIG.VIBRATION_PATTERN],
         data: notification.data as Record<string, unknown>,
@@ -180,9 +181,24 @@ class PushNotificationService {
 
       this.addToHistory(notification);
       this.recordAnalytics(notification.id, 'delivered');
+      
+      // Trigger voice notification if enabled
+      this.triggerVoiceNotification(notification);
+      
       logger.info('Local notification displayed:', notification.title);
     } catch (error) {
       logger.error('Failed to show local notification:', error);
+    }
+  }
+
+  private triggerVoiceNotification(notification: PushNotification): void {
+    try {
+      const voiceSuccess = voiceNotificationService.announceNotification(notification);
+      if (voiceSuccess) {
+        logger.info('Voice notification triggered for:', notification.id);
+      }
+    } catch (error) {
+      logger.error('Failed to trigger voice notification:', error);
     }
   }
 
@@ -314,6 +330,8 @@ class PushNotificationService {
         return settings.library;
       case 'system':
         return settings.system;
+      case 'ocr':
+        return settings.ocr;
       default:
         return true;
     }

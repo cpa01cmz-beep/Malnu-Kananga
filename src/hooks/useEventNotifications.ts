@@ -1,6 +1,7 @@
 import { usePushNotifications } from './usePushNotifications';
 import { useEffect, useRef } from 'react';
 import { logger } from '../utils/logger';
+import { OCRValidationEvent } from '../types';
 
 /**
  * Hook to automatically trigger notifications for common app events
@@ -127,6 +128,33 @@ export function useEventNotifications() {
     }
   };
 
+  const notifyOCRValidation = async (event: OCRValidationEvent) => {
+    try {
+      const severity = event.type === 'validation-failure' ? 'Gagal' : 
+                      event.type === 'validation-warning' ? 'Peringatan' : 'Berhasil';
+      
+      const title = `Validasi OCR ${severity}`;
+      const body = `Dokumen ${event.documentType} - Confidence: ${event.confidence}%. ${event.issues.length > 0 ? `Issues: ${event.issues.join(', ')}` : 'Validasi berhasil'}`;
+
+      await showNotification(
+        createNotification('ocr', title, body, {
+          type: 'ocr_validation',
+          documentId: event.documentId,
+          documentType: event.documentType,
+          confidence: event.confidence,
+          severity: event.type,
+          issues: event.issues,
+          userId: event.userId,
+          userRole: event.userRole,
+          actionUrl: event.actionUrl,
+          requiresReview: event.type === 'validation-failure',
+        })
+      );
+    } catch (error) {
+      logger.error('Failed to send OCR validation notification:', error);
+    }
+  };
+
   // Monitor for changes in localStorage data and trigger notifications
   const useMonitorLocalStorage = (key: string, onChange: (newValue: unknown, oldValue: unknown) => void) => {
     useEffect(() => {
@@ -174,6 +202,22 @@ export function useEventNotifications() {
     }, [key, onChange]);
   };
 
+  // Listen for OCR validation events
+  const useOCRValidationMonitor = () => {
+    useEffect(() => {
+      const handleOCRValidation = (event: Event) => {
+        const customEvent = event as CustomEvent;
+        const ocrEvent = customEvent.detail as OCRValidationEvent;
+        notifyOCRValidation(ocrEvent);
+      };
+
+      window.addEventListener('ocrValidation', handleOCRValidation);
+      return () => {
+        window.removeEventListener('ocrValidation', handleOCRValidation);
+      };
+    }, []); // notifyOCRValidation is stable from useCallback
+  };
+
   return {
     notifyGradeUpdate,
     notifyPPDBStatus,
@@ -181,6 +225,8 @@ export function useEventNotifications() {
     notifyMeetingRequest,
     notifyScheduleChange,
     notifyAttendanceAlert,
+    notifyOCRValidation,
     useMonitorLocalStorage,
+    useOCRValidationMonitor,
   };
 }

@@ -5,6 +5,7 @@ import { Grade, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError, ErrorType } from '../utils/errorHandler';
+import { STORAGE_KEYS } from '../constants';
 
 interface GradePerformance {
   subject: string;
@@ -282,7 +283,7 @@ export const useStudentInsights = ({
       
       // Cache insights locally
       try {
-        localStorage.setItem(`malnu_student_insights_${studentId}`, JSON.stringify(newInsights));
+        localStorage.setItem(STORAGE_KEYS.STUDENT_INSIGHTS(studentId), JSON.stringify(newInsights));
       } catch (e) {
         logger.warn('Failed to cache insights:', e);
       }
@@ -310,7 +311,7 @@ export const useStudentInsights = ({
     if (!studentId) return;
 
     try {
-      const cached = localStorage.getItem(`malnu_student_insights_${studentId}`);
+      const cached = localStorage.getItem(STORAGE_KEYS.STUDENT_INSIGHTS(studentId));
       if (cached) {
         const parsedInsights = JSON.parse(cached);
         const cachedTime = new Date(parsedInsights.lastUpdated).getTime();
@@ -346,7 +347,7 @@ export const useStudentInsights = ({
     
     // Store preference
     if (studentId) {
-      localStorage.setItem(`malnu_insights_enabled_${studentId}`, newEnabled.toString());
+      localStorage.setItem(STORAGE_KEYS.INSIGHTS_ENABLED(studentId), newEnabled.toString());
     }
     
     if (newEnabled && !insights) {
@@ -358,7 +359,7 @@ export const useStudentInsights = ({
   useEffect(() => {
     if (studentId) {
       try {
-        const saved = localStorage.getItem(`malnu_insights_enabled_${studentId}`);
+        const saved = localStorage.getItem(STORAGE_KEYS.INSIGHTS_ENABLED(studentId));
         if (saved !== null) {
           setIsEnabled(saved === 'true');
         }

@@ -11,8 +11,10 @@ import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import ProgramCard from './ProgramCard';
 import NewsCard from './NewsCard';
 import MarkdownRenderer from './MarkdownRenderer';
-import AutoResizeTextarea from './AutoResizeTextarea';
+import Textarea from './ui/Textarea';
 import TypingIndicator from './TypingIndicator';
+import IconButton from './ui/IconButton';
+import { SendIcon } from './icons/SendIcon';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 
@@ -400,14 +402,35 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
         </main>
 
         <footer className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex-shrink-0">
-          <div className="space-y-2">
-            <AutoResizeTextarea
-               value={input}
-               onChange={setInput}
-               onSend={handleSend}
-               disabled={isLoading}
-               placeholder={isLoading ? "AI sedang berpikir..." : "Ketik permintaan Anda..."}
-            />
+          <div className="space-y-3">
+            <div className="flex items-end gap-2.5">
+              <Textarea
+                 value={input}
+                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInput(e.target.value)}
+                 onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+                   if (e.key === 'Enter' && !e.shiftKey) {
+                     e.preventDefault();
+                     handleSend();
+                   }
+                 }}
+                 disabled={isLoading}
+                 placeholder={isLoading ? "AI sedang berpikir..." : "Ketik permintaan Anda..."}
+                 fullWidth={true}
+                 className="min-h-[44px]"
+                 autoResize={true}
+                 minRows={1}
+                 maxRows={5}
+              />
+              <IconButton
+                onClick={handleSend}
+                disabled={isLoading || !input.trim() || !!inputError}
+                ariaLabel="Kirim permintaan"
+                size="md"
+                variant="primary"
+                className="p-2.5 mb-0.5"
+                icon={<SendIcon />}
+              />
+            </div>
             
             {/* Character count and validation */}
             <div className="flex justify-between items-center">

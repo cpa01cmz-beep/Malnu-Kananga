@@ -354,3 +354,8 @@ export const editorCache = new AIResponseCache({
   ttl: 15 * 60 * 1000 // 15 minutes for editor responses
 });
 
+export const ocrCache = new AIResponseCache({
+  maxSize: 40,
+  ttl: 45 * 60 * 1000 // 45 minutes for OCR processing results
+});
+

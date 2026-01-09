@@ -102,12 +102,12 @@ export function OfflineIndicator({
     <>
       {/* Main indicator */}
       <div className={`fixed ${positionClasses[position]} z-50 flex flex-col items-end gap-2 ${className}`}>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 flex items-center gap-2 min-w-[120px]">
+        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-3 flex items-center gap-2 min-w-[120px]">
           {/* Status dot */}
           <div className={`w-3 h-3 rounded-full ${getStatusColor()} animate-pulse`} />
           
           {/* Status text */}
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
             {getStatusText()}
           </span>
 
@@ -135,13 +135,13 @@ export function OfflineIndicator({
 
         {/* Sync status popup */}
         {showSyncStatus && syncResult && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-3 min-w-[200px] animate-in slide-in-from-top-2">
+          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-3 min-w-[200px] animate-in slide-in-from-top-2">
             <div className="text-sm font-medium mb-1">
               {syncResult.success ? 'Sync Complete' : 'Sync Failed'}
             </div>
             
             {syncResult.success ? (
-              <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+              <div className="text-xs text-neutral-600 dark:text-neutral-400 space-y-1">
                 <div>✅ {syncResult.actionsProcessed} actions completed</div>
                 {syncResult.actionsFailed > 0 && (
                   <div>❌ {syncResult.actionsFailed} actions failed</div>
@@ -211,20 +211,20 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50% z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700 flex items-center justify-between">
           <h2 className="text-lg font-semibold">Offline Action Queue</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
           >
             ✕
           </button>
         </div>
 
         {/* Status and actions */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-4">
               <span className={`px-2 py-1 rounded-full text-sm font-medium ${
@@ -287,24 +287,24 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
           {/* Pending actions */}
           {pendingActions.length > 0 && (
             <div>
-              <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="font-medium text-neutral-900 dark:text-neutral-100 mb-2">
                 Pending Actions ({pendingActions.length})
               </h3>
               <div className="space-y-2">
                 {pendingActions.map(action => (
-                  <div key={action.id} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3">
+                  <div key={action.id} className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-3">
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="font-medium capitalize">{action.type}</span>
-                        <span className="text-gray-500 dark:text-gray-400 ml-2">•</span>
-                        <span className="text-gray-700 dark:text-gray-300 ml-2">{action.entity}</span>
+                        <span className="text-neutral-500 dark:text-neutral-400 ml-2">•</span>
+                        <span className="text-neutral-700 dark:text-neutral-300 ml-2">{action.entity}</span>
                       </div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-xs text-neutral-500 dark:text-neutral-400">
                         {formatTimestamp(action.timestamp)}
                       </span>
                     </div>
                     {action.endpoint && (
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                         {action.endpoint}
                       </div>
                     )}
@@ -317,7 +317,7 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
           {/* Failed actions */}
           {failedActions.length > 0 && (
             <div>
-              <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="font-medium text-neutral-900 dark:text-neutral-100 mb-2">
                 Failed Actions ({failedActions.length})
               </h3>
               <div className="space-y-2">
@@ -326,11 +326,11 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="font-medium capitalize">{action.type}</span>
-                        <span className="text-gray-500 dark:text-gray-400 ml-2">•</span>
-                        <span className="text-gray-700 dark:text-gray-300 ml-2">{action.entity}</span>
+                        <span className="text-neutral-500 dark:text-neutral-400 ml-2">•</span>
+                        <span className="text-neutral-700 dark:text-neutral-300 ml-2">{action.entity}</span>
                         <span className="text-red-600 dark:text-red-400 ml-2">({action.status})</span>
                       </div>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-xs text-neutral-500 dark:text-neutral-400">
                         {formatTimestamp(action.timestamp)}
                       </span>
                     </div>
@@ -339,7 +339,7 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
                         Error: {action.lastError}
                       </div>
                     )}
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
                       Retries: {action.retryCount}
                     </div>
                   </div>
@@ -350,7 +350,7 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
 
           {/* Empty state */}
           {queue.length === 0 && (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <div className="text-center py-8 text-neutral-500 dark:text-neutral-400">
               <div className="text-lg mb-2">📋</div>
               <div>No queued actions</div>
               <div className="text-sm mt-1">All actions are synced!</div>

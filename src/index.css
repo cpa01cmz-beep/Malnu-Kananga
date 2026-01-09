@@ -1,80 +1,243 @@
 @import "tailwindcss";
+
 @theme {
-  --color-primary-50: 240 100% 97%;
-  --color-primary-100: 142 71% 88%;
-  --color-primary-200: 142 70% 82%;
-  --color-primary-300: 142 68% 73%;
-  --color-primary-400: 142 70% 58%;
-  --color-primary-500: 142 72% 42%;
-  --color-primary-600: 142 72% 30%;
-  --color-primary-700: 142 76% 27%;
-  --color-primary-800: 142 71% 25%;
-  --color-primary-900: 142 74% 20%;
+  --color-primary-50: var(--theme-primary-50, 142 71% 88%);
+  --color-primary-100: var(--theme-primary-100, 142 70% 82%);
+  --color-primary-200: var(--theme-primary-200, 142 68% 73%);
+  --color-primary-300: var(--theme-primary-300, 142 70% 58%);
+  --color-primary-400: var(--theme-primary-400, 142 72% 42%);
+  --color-primary-500: var(--theme-primary-500, 142 72% 30%);
+  --color-primary-600: var(--theme-primary-600, 142 72% 42%);
+  --color-primary-700: var(--theme-primary-700, 142 76% 27%);
+  --color-primary-800: var(--theme-primary-800, 142 71% 25%);
+  --color-primary-900: var(--theme-primary-900, 142 74% 20%);
 
-  --color-neutral-50: 220 20% 97%;
-  --color-neutral-100: 220 19% 93%;
-  --color-neutral-200: 220 14% 86%;
-  --color-neutral-300: 220 9% 71%;
-  --color-neutral-400: 220 9% 60%;
-  --color-neutral-500: 220 11% 42%;
-  --color-neutral-600: 215 16% 35%;
-  --color-neutral-700: 219 28% 22%;
-  --color-neutral-800: 220 26% 12%;
-  --color-neutral-900: 220 39% 8%;
-  --color-neutral-950: 220 45% 4%;
+  --color-neutral-50: var(--theme-neutral-50, 220 20% 97%);
+  --color-neutral-100: var(--theme-neutral-100, 220 19% 93%);
+  --color-neutral-200: var(--theme-neutral-200, 220 14% 86%);
+  --color-neutral-300: var(--theme-neutral-300, 220 9% 71%);
+  --color-neutral-400: var(--theme-neutral-400, 220 9% 60%);
+  --color-neutral-500: var(--theme-neutral-500, 220 11% 42%);
+  --color-neutral-600: var(--theme-neutral-600, 215 16% 35%);
+  --color-neutral-700: var(--theme-neutral-700, 219 28% 22%);
+  --color-neutral-800: var(--theme-neutral-800, 220 26% 12%);
+  --color-neutral-900: var(--theme-neutral-900, 220 39% 8%);
+  --color-neutral-950: var(--theme-neutral-950, 220 45% 4%);
 
-  --color-indigo-50: 239 84% 98%;
-  --color-indigo-100: 234 89% 95%;
-  --color-indigo-200: 238 82% 90%;
-  --color-indigo-300: 242 83% 83%;
-  --color-indigo-400: 238 82% 75%;
-  --color-indigo-500: 239 84% 67%;
-  --color-indigo-600: 245 67% 55%;
-  --color-indigo-700: 244 68% 50%;
-  --color-indigo-800: 243 75% 45%;
-  --color-indigo-900: 240 71% 40%;
+  --color-indigo-50: var(--theme-indigo-50, 239 84% 98%);
+  --color-indigo-100: var(--theme-indigo-100, 234 89% 95%);
+  --color-indigo-200: var(--theme-indigo-200, 238 82% 90%);
+  --color-indigo-300: var(--theme-indigo-300, 242 83% 83%);
+  --color-indigo-400: var(--theme-indigo-400, 238 82% 75%);
+  --color-indigo-500: var(--theme-indigo-500, 239 84% 67%);
+  --color-indigo-600: var(--theme-indigo-600, 245 67% 55%);
+  --color-indigo-700: var(--theme-indigo-700, 244 68% 50%);
+  --color-indigo-800: var(--theme-indigo-800, 243 75% 45%);
+  --color-indigo-900: var(--theme-indigo-900, 240 71% 40%);
 
-  --color-blue-50: 217 91% 97%;
-  --color-blue-100: 214 95% 94%;
-  --color-blue-200: 214 100% 87%;
-  --color-blue-300: 213 96% 78%;
-  --color-blue-400: 217 91% 67%;
-  --color-blue-500: 221 83% 53%;
-  --color-blue-600: 221 83% 53%;
-  --color-blue-700: 219 77% 46%;
-  --color-blue-800: 217 79% 40%;
-  --color-blue-900: 216 79% 35%;
+  --color-blue-50: var(--theme-blue-50, 217 91% 97%);
+  --color-blue-100: var(--theme-blue-100, 214 95% 94%);
+  --color-blue-200: var(--theme-blue-200, 214 100% 87%);
+  --color-blue-300: var(--theme-blue-300, 213 96% 78%);
+  --color-blue-400: var(--theme-blue-400, 217 91% 67%);
+  --color-blue-500: var(--theme-blue-500, 221 83% 53%);
+  --color-blue-600: var(--theme-blue-600, 221 83% 53%);
+  --color-blue-700: var(--theme-blue-700, 219 77% 46%);
+  --color-blue-800: var(--theme-blue-800, 217 79% 40%);
+  --color-blue-900: var(--theme-blue-900, 216 79% 35%);
 
-  --color-orange-50: 24 100% 97%;
-  --color-orange-100: 24 95% 90%;
-  --color-orange-200: 24 100% 78%;
-  --color-orange-300: 24 95% 68%;
-  --color-orange-400: 24 97% 58%;
-  --color-orange-500: 25 95% 53%;
-  --color-orange-600: 24 95% 53%;
-  --color-orange-700: 20 90% 48%;
-  --color-orange-800: 24 54% 39%;
-  --color-orange-900: 20 80% 35%;
+  --color-orange-50: var(--theme-orange-50, 24 100% 97%);
+  --color-orange-100: var(--theme-orange-100, 24 95% 90%);
+  --color-orange-200: var(--theme-orange-200, 24 100% 78%);
+  --color-orange-300: var(--theme-orange-300, 24 95% 68%);
+  --color-orange-400: var(--theme-orange-400, 24 97% 58%);
+  --color-orange-500: var(--theme-orange-500, 25 95% 53%);
+  --color-orange-600: var(--theme-orange-600, 24 95% 53%);
+  --color-orange-700: var(--theme-orange-700, 20 90% 48%);
+  --color-orange-800: var(--theme-orange-800, 24 54% 39%);
+  --color-orange-900: var(--theme-orange-900, 20 80% 35%);
 
-  --color-red-50: 0 100% 97%;
-  --color-red-100: 0 93% 94%;
-  --color-red-200: 0 96% 89%;
-  --color-red-300: 0 93% 82%;
-  --color-red-400: 0 89% 74%;
-  --color-red-500: 0 84% 60%;
-  --color-red-600: 0 72% 51%;
-  --color-red-700: 0 74% 42%;
-  --color-red-800: 0 70% 38%;
-  --color-red-900: 0 70% 35%;
+  --color-red-50: var(--theme-red-50, 0 100% 97%);
+  --color-red-100: var(--theme-red-100, 0 93% 94%);
+  --color-red-200: var(--theme-red-200, 0 96% 89%);
+  --color-red-300: var(--theme-red-300, 0 93% 82%);
+  --color-red-400: var(--theme-red-400, 0 89% 74%);
+  --color-red-500: var(--theme-red-500, 0 84% 60%);
+  --color-red-600: var(--theme-red-600, 0 72% 51%);
+  --color-red-700: var(--theme-red-700, 0 74% 42%);
+  --color-red-800: var(--theme-red-800, 0 70% 38%);
+  --color-red-900: var(--theme-red-900, 0 70% 35%);
 
-  --color-green-50: 142 76% 96%;
-  --color-green-100: 142 71% 88%;
-  --color-green-200: 142 70% 82%;
-  --color-green-300: 142 68% 73%;
-  --color-green-400: 142 70% 58%;
-  --color-green-500: 142 72% 42%;
-  --color-green-600: 142 72% 30%;
-  --color-green-700: 142 76% 27%;
-  --color-green-800: 142 71% 25%;
-  --color-green-900: 142 74% 20%;
+  --color-green-50: var(--theme-green-50, 142 76% 96%);
+  --color-green-100: var(--theme-green-100, 142 71% 88%);
+  --color-green-200: var(--theme-green-200, 142 70% 82%);
+  --color-green-300: var(--theme-green-300, 142 68% 73%);
+  --color-green-400: var(--theme-green-400, 142 70% 58%);
+  --color-green-500: var(--theme-green-500, 142 72% 42%);
+  --color-green-600: var(--theme-green-600, 142 72% 30%);
+  --color-green-700: var(--theme-green-700, 142 76% 27%);
+  --color-green-800: var(--theme-green-800, 142 71% 25%);
+  --color-green-900: var(--theme-green-900, 142 74% 20%);
+
+  --color-purple-50: var(--theme-purple-50, 259 84% 98%);
+  --color-purple-100: var(--theme-purple-100, 259 90% 95%);
+  --color-purple-200: var(--theme-purple-200, 259 80% 91%);
+  --color-purple-300: var(--theme-purple-300, 259 75% 84%);
+  --color-purple-400: var(--theme-purple-400, 259 70% 74%);
+  --color-purple-500: var(--theme-purple-500, 259 60% 66%);
+  --color-purple-600: var(--theme-purple-600, 259 55% 55%);
+  --color-purple-700: var(--theme-purple-700, 259 50% 50%);
+  --color-purple-800: var(--theme-purple-800, 259 45% 45%);
+  --color-purple-900: var(--theme-purple-900, 259 40% 40%);
+}
+
+:root {
+  --theme-primary-50: 240 100% 97%;
+  --theme-primary-100: 142 71% 88%;
+  --theme-primary-200: 142 70% 82%;
+  --theme-primary-300: 142 68% 73%;
+  --theme-primary-400: 142 70% 58%;
+  --theme-primary-500: 142 72% 42%;
+  --theme-primary-600: 142 72% 42%;
+  --theme-primary-700: 142 76% 27%;
+  --theme-primary-800: 142 71% 25%;
+  --theme-primary-900: 142 74% 20%;
+
+  --theme-neutral-50: 220 20% 97%;
+  --theme-neutral-100: 220 19% 93%;
+  --theme-neutral-200: 220 14% 86%;
+  --theme-neutral-300: 220 9% 71%;
+  --theme-neutral-400: 220 9% 60%;
+  --theme-neutral-500: 220 11% 42%;
+  --theme-neutral-600: 215 16% 35%;
+  --theme-neutral-700: 219 28% 22%;
+  --theme-neutral-800: 220 26% 12%;
+  --theme-neutral-900: 220 39% 8%;
+  --theme-neutral-950: 220 45% 4%;
+
+  --theme-indigo-50: 239 84% 98%;
+  --theme-indigo-100: 234 89% 95%;
+  --theme-indigo-200: 238 82% 90%;
+  --theme-indigo-300: 242 83% 83%;
+  --theme-indigo-400: 238 82% 75%;
+  --theme-indigo-500: 239 84% 67%;
+  --theme-indigo-600: 245 67% 55%;
+  --theme-indigo-700: 244 68% 50%;
+  --theme-indigo-800: 243 75% 45%;
+  --theme-indigo-900: 240 71% 40%;
+
+  --theme-blue-50: 217 91% 97%;
+  --theme-blue-100: 214 95% 94%;
+  --theme-blue-200: 214 100% 87%;
+  --theme-blue-300: 213 96% 78%;
+  --theme-blue-400: 217 91% 67%;
+  --theme-blue-500: 221 83% 53%;
+  --theme-blue-600: 221 83% 53%;
+  --theme-blue-700: 219 77% 46%;
+  --theme-blue-800: 217 79% 40%;
+  --theme-blue-900: 216 79% 35%;
+
+  --theme-orange-50: 24 100% 97%;
+  --theme-orange-100: 24 95% 90%;
+  --theme-orange-200: 24 100% 78%;
+  --theme-orange-300: 24 95% 68%;
+  --theme-orange-400: 24 97% 58%;
+  --theme-orange-500: 25 95% 53%;
+  --theme-orange-600: 24 95% 53%;
+  --theme-orange-700: 20 90% 48%;
+  --theme-orange-800: 24 54% 39%;
+  --theme-orange-900: 20 80% 35%;
+
+  --theme-red-50: 0 100% 97%;
+  --theme-red-100: 0 93% 94%;
+  --theme-red-200: 0 96% 89%;
+  --theme-red-300: 0 93% 82%;
+  --theme-red-400: 0 89% 74%;
+  --theme-red-500: 0 84% 60%;
+  --theme-red-600: 0 72% 51%;
+  --theme-red-700: 0 74% 42%;
+  --theme-red-800: 0 70% 38%;
+  --theme-red-900: 0 70% 35%;
+
+  --theme-green-50: 142 76% 96%;
+  --theme-green-100: 142 71% 88%;
+  --theme-green-200: 142 70% 82%;
+  --theme-green-300: 142 68% 73%;
+  --theme-green-400: 142 70% 58%;
+  --theme-green-500: 142 72% 42%;
+  --theme-green-600: 142 72% 30%;
+  --theme-green-700: 142 76% 27%;
+  --theme-green-800: 142 71% 25%;
+  --theme-green-900: 142 74% 20%;
+
+  --theme-purple-50: 259 84% 98%;
+  --theme-purple-100: 259 90% 95%;
+  --theme-purple-200: 259 80% 91%;
+  --theme-purple-300: 259 75% 84%;
+  --theme-purple-400: 259 70% 74%;
+  --theme-purple-500: 259 60% 66%;
+  --theme-purple-600: 259 55% 55%;
+  --theme-purple-700: 259 50% 50%;
+  --theme-purple-800: 259 45% 45%;
+  --theme-purple-900: 259 40% 40%;
+}
+
+@keyframes progress-bar-stripes {
+  0% {
+    background-position: 1rem 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@theme {
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-fade-in-up: fade-in-up 0.5s ease-out;
+  --animate-scale-in: scale-in 0.3s ease-out;
+  --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+:root {
+  --progress-bar-striped-overlay: 255 255 255;
 }

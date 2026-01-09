@@ -3,6 +3,7 @@ import { UsersIcon } from './icons/UsersIcon';
 import { ShareIcon, ShieldIcon, XMarkIcon } from './icons/MaterialIcons';
 import { MaterialSharing, ELibrary } from '../types';
 import { logger } from '../utils/logger';
+import Button from './ui/Button';
 
 interface MaterialSharingProps {
   material: ELibrary;
@@ -360,13 +361,13 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
               >
                 Batal
               </button>
-              <button
+              <Button
                 onClick={handleShare}
                 disabled={selectedTeachers.length === 0 || loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                isLoading={loading}
               >
                 {loading ? 'Membagikan...' : `Bagikan ke ${selectedTeachers.length} Guru`}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

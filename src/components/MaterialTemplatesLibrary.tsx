@@ -5,6 +5,7 @@ import { StarIcon } from './icons/MaterialIcons';
 import { DownloadIcon, MagnifyingGlassIcon } from './icons/MaterialIcons';
 import { MaterialTemplate, Subject } from '../types';
 import { logger } from '../utils/logger';
+import Button from './ui/Button';
 
 interface MaterialTemplatesProps {
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
@@ -465,13 +466,12 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
               >
                 Batal
               </button>
-              <button
+              <Button
                 onClick={createTemplate}
                 disabled={!newTemplate.title.trim() || !newTemplate.description.trim() || !newTemplate.category.trim()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Buat Template
-              </button>
+              </Button>
             </div>
           </div>
         </div>
