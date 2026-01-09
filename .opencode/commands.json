@@ -109,6 +109,86 @@
       "name": "optimize-performance",
       "description": "Optimize component or service performance",
       "prompt": "Analyze and optimize the performance of the specified component or service: 1) Check for unnecessary re-renders in React components, 2) Look for inefficient algorithms or data structures, 3) Check for proper memoization (useMemo, useCallback), 4) Review API calls for batching or caching opportunities, 5) Identify memory leaks or resource cleanup issues."
+    },
+    {
+      "name": "deploy",
+      "description": "Deploy to production (frontend + backend)",
+      "prompt": "Deploy both frontend and backend to production: 1) Run full quality checks (test, typecheck, lint), 2) Build production bundle with npm run build, 3) Deploy backend to Cloudflare Workers with wrangler deploy --env production, 4) Deploy frontend to Cloudflare Pages with wrangler pages deploy dist --project-name=malnu-kananga, 5) Verify deployment by testing critical features, 6) Check for any deployment errors or warnings"
+    },
+    {
+      "name": "test-generate",
+      "description": "Generate tests for existing code",
+      "prompt": "Generate comprehensive tests for the specified component, service, hook, or utility. Follow the test-generator skill patterns: 1) Check existing code structure, 2) Create appropriate test file in __tests__ folder, 3) Write tests for all code paths (success, error, loading), 4) Mock external dependencies, 5) Test user interactions for components, 6) Test async operations with waitFor, 7) Run tests to verify they pass"
+    },
+    {
+      "name": "migration",
+      "description": "Create database or feature migration",
+      "prompt": "Create a migration for database schema changes or feature updates: 1) Analyze the changes needed, 2) Create migration file in src/migrations/ or migrations/ with timestamp prefix, 3) Write up() migration function, 4) Write down() rollback function, 5) Add description, 6) Test migration on development database, 7) Test rollback procedure, 8) Document the changes. Follow migration-generator skill patterns."
+    },
+    {
+      "name": "check-permissions",
+      "description": "Validate permission implementation",
+      "prompt": "Validate permission implementation for a feature: 1) Check if permission is defined in src/config/permissions.ts, 2) Verify permission is added to ROLE_PERMISSIONS for appropriate roles, 3) Check if frontend component validates permission, 4) Verify backend endpoint validates permission, 5) Test with different user roles, 6) Add or update permission checks if missing, 7) Write tests for permission validation"
+    },
+    {
+      "name": "pwa-feature",
+      "description": "Add or optimize PWA functionality",
+      "prompt": "Add or optimize PWA functionality: 1) Check existing PWA services (pushNotificationService, useNetworkStatus), 2) Implement offline data storage using localStorage keys from STORAGE_KEYS, 3) Add network status detection and user feedback, 4) Implement data sync mechanism for offline changes, 5) Test push notifications if applicable, 6) Test offline functionality thoroughly, 7) Verify service worker configuration, 8) Test on mobile devices. Follow pwa-generator skill patterns."
+    },
+    {
+      "name": "tc",
+      "description": "Alias for typecheck",
+      "prompt": "Run TypeScript type checking using 'npm run typecheck'. If there are any type errors, analyze them and fix all issues. Ensure all fixes maintain type safety."
+    },
+    {
+      "name": "lf",
+      "description": "Alias for lint and fix",
+      "prompt": "Run linting and auto-fix using 'npm run lint:fix'. Review any linting issues that weren't auto-fixed and address them. Ensure the code follows the project's linting rules and best practices."
+    },
+    {
+      "name": "fc",
+      "description": "Alias for full-check",
+      "prompt": "Run all quality checks in sequence: typecheck, lint:fix, and test:run. If any check fails, analyze and fix the issues. Then rerun all checks until everything passes."
+    },
+    {
+      "name": "bd",
+      "description": "Alias for build-verify",
+      "prompt": "Build the production bundle using 'npm run build'. Verify there are no build errors or warnings. Check the dist folder is created correctly with all necessary assets."
+    },
+    {
+      "name": "deploy-checklist",
+      "description": "Generate deployment checklist",
+      "prompt": "Generate a comprehensive production deployment checklist using the generate-deployment-checklist tool. Review all items and ensure each one is completed before deploying."
+    },
+    {
+      "name": "find-missing-tests",
+      "description": "Find files without tests",
+      "prompt": "Use the check-missing-tests tool to find TypeScript/JavaScript files without corresponding test files. Review the results and prioritize creating tests for critical files first."
+    },
+    {
+      "name": "find-urls",
+      "description": "Find hardcoded URLs",
+      "prompt": "Use the find-hardcoded-urls tool to find hardcoded URLs in the codebase. Review the results and move URLs to appropriate constants (STORAGE_KEYS, VITE_API_BASE_URL) or environment variables."
+    },
+    {
+      "name": "check-storage",
+      "description": "Check localStorage key usage",
+      "prompt": "Use the check-storage-keys tool to verify all localStorage keys are using STORAGE_KEYS constants from src/constants.ts. Fix any hardcoded localStorage keys found."
+    },
+    {
+      "name": "check-logs",
+      "description": "Check console.log usage",
+      "prompt": "Use the check-console-logs tool to find console.log usage in the codebase. Replace console.log/logger.error/logger.warn calls with the proper logger utility from src/utils/logger.ts."
+    },
+    {
+      "name": "check-errors",
+      "description": "Check missing error handling",
+      "prompt": "Use the check-missing-error-handling tool to find async functions without proper error handling. Add try-catch blocks or use the centralized errorHandler from src/utils/errorHandler.ts."
+    },
+    {
+      "name": "check-types",
+      "description": "Find 'any' type usage",
+      "prompt": "Use the find-untyped tool to find files with TypeScript 'any' type usage. Replace 'any' types with proper TypeScript types or interfaces."
     }
   ]
 }
