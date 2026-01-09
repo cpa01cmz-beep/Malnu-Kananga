@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MenuIcon } from './icons/MenuIcon';
 import { CloseIcon } from './icons/CloseIcon';
 import { ChatIcon } from './icons/ChatIcon';
@@ -56,6 +56,8 @@ const Header: React.FC<HeaderProps> = ({
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [currentTheme, setCurrentTheme] = useState<import('../config/themes').Theme | null>(null);
+    const mobileMenuRef = useRef<HTMLDivElement>(null);
+    const menuButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         const themeManager = ThemeManager.getInstance();
@@ -88,6 +90,49 @@ const Header: React.FC<HeaderProps> = ({
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && isMenuOpen) {
+                setIsMenuOpen(false);
+                menuButtonRef.current?.focus();
+            }
+        };
+
+        const handleTab = (e: KeyboardEvent) => {
+            if (!isMenuOpen || !mobileMenuRef.current) return;
+
+            const focusableElements = mobileMenuRef.current.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstElement = focusableElements[0] as HTMLElement;
+            const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+            if (e.key === 'Tab') {
+                if (e.shiftKey && document.activeElement === firstElement) {
+                    e.preventDefault();
+                    lastElement.focus();
+                } else if (!e.shiftKey && document.activeElement === lastElement) {
+                    e.preventDefault();
+                    firstElement.focus();
+                }
+            }
+        };
+
+        if (isMenuOpen) {
+            document.addEventListener('keydown', handleEscape);
+            document.addEventListener('keydown', handleTab);
+            const firstFocusable = mobileMenuRef.current?.querySelector(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            ) as HTMLElement;
+            firstFocusable?.focus();
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleEscape);
+            document.removeEventListener('keydown', handleTab);
+        };
+    }, [isMenuOpen]);
 
     const headerClasses = `
         fixed top-0 left-0 right-0 z-40 transition-all duration-300 ease-out
@@ -182,11 +227,12 @@ const Header: React.FC<HeaderProps> = ({
                                         Login
                                     </Button>
                               </div>
-                          )}
-<IconButton
+                              )}
+ <IconButton
                                     icon={isMenuOpen ? <CloseIcon /> : <MenuIcon />}
                                     ariaLabel={isMenuOpen ? "Tutup menu" : "Buka menu"}
                                     size="lg"
+                                    ref={menuButtonRef}
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter' || e.key === ' ') {
@@ -203,6 +249,7 @@ const Header: React.FC<HeaderProps> = ({
 
             {isMenuOpen && (
                 <div
+                    ref={mobileMenuRef}
                     className="md:hidden bg-white/95% dark:bg-neutral-800/95% backdrop-blur-xl shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700"
                 >
                     <nav
@@ -212,9 +259,9 @@ const Header: React.FC<HeaderProps> = ({
                         aria-label="Menu navigasi utama"
                     >
                         <NavLinks />
-                           <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-2">
-                                 {isLoggedIn ? (
-                                    <>
+                            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-2">
+                                  {isLoggedIn ? (
+                                     <>
                                            <Button
                                                variant="secondary"
                                                onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }}
@@ -231,16 +278,16 @@ const Header: React.FC<HeaderProps> = ({
                                            </Button>
                                       </>
                                   ) : (
-                                         <Button
-                                             variant="primary"
-                                             onClick={() => { onLoginClick(); setIsMenuOpen(false); }}
-                                             fullWidth
-                                         >
-                                             Login
-                                         </Button>
-                                  )}
-                           </div>
-                    </nav>
+                                          <Button
+                                              variant="primary"
+                                              onClick={() => { onLoginClick(); setIsMenuOpen(false); }}
+                                              fullWidth
+                                          >
+                                              Login
+                                          </Button>
+                                   )}
+                            </div>
+                     </nav>
                 </div>
             )}
         </header>

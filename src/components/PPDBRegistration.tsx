@@ -12,12 +12,13 @@ import { ocrService, type OCRExtractionResult, type OCRProgress } from '../servi
 import Textarea from './ui/Textarea';
 import ProgressBar from './ui/ProgressBar';
 import Button from './ui/Button';
+import Input from './ui/Input';
+import Modal from './ui/Modal';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
-import Input from './ui/Input';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -281,27 +282,24 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
   };
 
   return (
-    <div className="fixed inset-0 bg-neutral-900/80 flex items-center justify-center z-50 p-4" onClick={onClose} role="presentation">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Formulir Pendaftaran PPDB"
+      description="Tahun Ajaran 2025/2026"
+      size="lg"
+      animation="scale-in"
+      closeOnBackdropClick={true}
+      closeOnEscape={true}
+      showCloseButton={true}
+      className="max-h-[90vh]"
+    >
       <OfflineIndicator 
         showSyncButton={true}
         showQueueCount={true}
         position="top-left"
       />
-      <div 
-        className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-scale-in"
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700">
-          <div>
-            <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Formulir Pendaftaran PPDB</h2>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">Tahun Ajaran 2025/2026</p>
-          </div>
-          <button onClick={onClose} className="p-2 rounded-full text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-700">
-            <CloseIcon />
-          </button>
-        </div>
-
-        <div className="overflow-y-auto p-6 custom-scrollbar">
+      <div className="overflow-y-auto p-6 custom-scrollbar max-h-[70vh]">
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* OCR Section */}
                 <div className="space-y-4">
@@ -562,8 +560,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                 </div>
             </form>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 };
 
