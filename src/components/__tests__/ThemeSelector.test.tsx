@@ -3,7 +3,9 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ThemeSelector, { ThemeSelectorTrigger } from '../ThemeSelector';
 import { useTheme } from '../../hooks/useTheme';
+import type { Theme } from '../../config/themes';
 
+const mockUseTheme = useTheme as ReturnType<typeof vi.fn>;
 vi.mock('../../hooks/useTheme');
 
 describe('ThemeSelector', () => {
@@ -13,20 +15,33 @@ describe('ThemeSelector', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useTheme as ReturnType<typeof vi.mock>).mockReturnValue({
+    mockUseTheme.mockReturnValue({
       currentTheme: {
         id: 'default',
+        name: 'Default Theme',
         displayName: 'Default',
         description: 'Tema default',
         icon: '🌈',
-        colors: { primary: '#3B82F6', accent: '#8B5CF6' },
+        colors: {
+          primary: '#3B82F6',
+          secondary: '#6B7280',
+          accent: '#8B5CF6',
+          background: '#ffffff',
+          surface: '#f9fafb',
+          text: '#111827',
+          textSecondary: '#6b7280',
+          border: '#e5e7eb',
+          error: '#ef4444',
+          warning: '#f59e0b',
+          success: '#10b981'
+        },
         isDark: false
-      },
+      } as Theme,
       setTheme: mockSetTheme,
       toggleDarkMode: mockToggleDarkMode,
       resetToDefault: mockResetToDefault,
       isReady: true
-    });
+    } as any);
   });
 
   it('renders when open and ready', () => {
@@ -177,10 +192,23 @@ describe('ThemeSelectorTrigger', () => {
   it('renders with current theme icon', () => {
     const mockTheme = {
       id: 'default',
+      name: 'Default Theme',
       displayName: 'Default',
       description: 'Tema default',
       icon: '🌈',
-      colors: { primary: '#3B82F6', accent: '#8B5CF6' },
+      colors: {
+        primary: '#3B82F6',
+        secondary: '#6B7280',
+        accent: '#8B5CF6',
+        background: '#ffffff',
+        surface: '#f9fafb',
+        text: '#111827',
+        textSecondary: '#6b7280',
+        border: '#e5e7eb',
+        error: '#ef4444',
+        warning: '#f59e0b',
+        success: '#10b981'
+      },
       isDark: false
     };
 
@@ -224,10 +252,23 @@ describe('ThemeSelectorTrigger', () => {
   it('has correct tooltip for theme', () => {
     const mockTheme = {
       id: 'default',
+      name: 'Default Theme',
       displayName: 'Default',
       description: 'Tema default',
       icon: '🌈',
-      colors: { primary: '#3B82F6', accent: '#8B5CF6' },
+      colors: {
+        primary: '#3B82F6',
+        secondary: '#6B7280',
+        accent: '#8B5CF6',
+        background: '#ffffff',
+        surface: '#f9fafb',
+        text: '#111827',
+        textSecondary: '#6b7280',
+        border: '#e5e7eb',
+        error: '#ef4444',
+        warning: '#f59e0b',
+        success: '#10b981'
+      },
       isDark: false
     };
 
@@ -251,6 +292,6 @@ describe('ThemeSelectorTrigger', () => {
     );
 
     const button = screen.getByLabelText('Pilih Tema');
-    expect(button).not.toHaveAttribute('title');
+    expect(button).toHaveAttribute('title', 'Pilih Tema');
   });
 });
