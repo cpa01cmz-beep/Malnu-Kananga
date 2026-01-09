@@ -8,6 +8,7 @@ import type { ParentChild, Grade } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { GRADIENT_CLASSES } from '../config/gradients';
+import Button from './ui/Button';
 
 interface ParentReportsViewProps {
   onShowToast: (msg: string, type: ToastType) => void;

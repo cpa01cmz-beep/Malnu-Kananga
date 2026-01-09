@@ -7,6 +7,7 @@ import CalendarView from './CalendarView';
 import PageHeader from './ui/PageHeader';
 import { TableSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
+import Button from './ui/Button';
 
 interface ScheduleItem {
   id: string;

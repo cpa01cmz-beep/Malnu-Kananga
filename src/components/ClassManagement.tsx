@@ -16,6 +16,7 @@ import PageHeader from './ui/PageHeader';
 import { TableSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import AccessDenied from './AccessDenied';
+import Button from './ui/Button';
 
 interface ClassStudent {
   id: string;

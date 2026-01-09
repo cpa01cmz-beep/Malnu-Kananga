@@ -9,6 +9,7 @@ import { parentGradeNotificationService } from '../services/parentGradeNotificat
 import type { ParentGradeNotificationSettings } from '../services/parentGradeNotificationService';
 import { logger } from '../utils/logger';
 import { useAutoSave } from '../hooks/useAutoSave';
+import Button from './ui/Button';
 
 interface ParentNotificationSettingsProps {
   onShowToast: (msg: string, type: ToastType) => void;
