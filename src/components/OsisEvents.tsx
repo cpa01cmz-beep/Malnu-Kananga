@@ -388,7 +388,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                       {budget.status === 'planned' && (
                         <button
                           onClick={() => handleBudgetApproval(budget.id)}
-                          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                          aria-label={`Setujui anggaran ${budget.itemName}`}
+                          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                         >
                           Setujui
                         </button>
@@ -680,11 +681,20 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 <div
                   key={event.id}
                   onClick={() => setSelectedEvent(event)}
-                  className={`cursor-pointer bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border ${
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedEvent(event);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Lihat detail kegiatan: ${event.eventName}`}
+                  className={`bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border ${
                     selectedEvent?.id === event.id
                       ? 'border-orange-500 ring-2 ring-orange-200'
                       : 'border-neutral-100 dark:border-neutral-700 hover:border-orange-300'
-                  } flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all`}
+                  } flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
                 >
                   <div className="flex items-start gap-4">
                     <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-2xl text-orange-600 dark:text-orange-400">
@@ -709,7 +719,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     </span>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete(event.id); }}
-                      className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
+                      aria-label={`Hapus kegiatan ${event.eventName}`}
+                      className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                     >
                       <TrashIcon />
                     </button>
@@ -728,7 +739,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 </div>
                 <button
                   onClick={() => setSelectedEvent(null)}
-                  className="px-4 py-2 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                  aria-label="Tutup detail kegiatan"
+                  className="px-4 py-2 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                 >
                   Tutup
                 </button>
