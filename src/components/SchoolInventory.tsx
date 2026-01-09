@@ -26,6 +26,8 @@ import { inventoryAPI } from '../services/apiService';
 import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
 import { CHART_COLORS } from '../config/chartColors';
+import Input from './ui/Input';
+import Select from './ui/Select';
 import type { 
   InventoryItem, 
   MaintenanceSchedule, 
@@ -360,105 +362,99 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
             <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Catat Barang Baru</h3>
               <form onSubmit={handleAddItem} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Barang</label>
-                  <input
-                    required
-                    type="text"
-                    value={newItem.itemName}
-                    onChange={e => setNewItem({...newItem, itemName: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kategori</label>
-                  <select
-                    value={newItem.category}
-                    onChange={e => setNewItem({...newItem, category: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                  >
-                    <option>Elektronik</option>
-                    <option>Furniture</option>
-                    <option>Alat Lab</option>
-                    <option>Buku</option>
-                    <option>Umum</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Jumlah</label>
-                  <input
-                    required
-                    type="number"
-                    min="1"
-                    value={newItem.quantity}
-                    onChange={e => setNewItem({...newItem, quantity: Number(e.target.value)})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kondisi</label>
-                  <select
-                    value={newItem.condition}
-                    onChange={e => setNewItem({...newItem, condition: e.target.value as 'Baik' | 'Rusak Ringan' | 'Rusak Berat'})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                  >
-                    <option>Baik</option>
-                    <option>Rusak Ringan</option>
-                    <option>Rusak Berat</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Lokasi</label>
-                  <input
-                    type="text"
-                    value={newItem.location}
-                    onChange={e => setNewItem({...newItem, location: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tanggal Pembelian</label>
-                  <input
-                    type="date"
-                    value={newItem.purchaseDate}
-                    onChange={e => setNewItem({...newItem, purchaseDate: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Harga Pembelian</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={newItem.purchasePrice}
-                    onChange={e => setNewItem({...newItem, purchasePrice: Number(e.target.value)})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Suku Bunga Depresiasi (%)</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={newItem.depreciationRate}
-                    onChange={e => setNewItem({...newItem, depreciationRate: Number(e.target.value)})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Status</label>
-                  <select
-                    value={newItem.status}
-                    onChange={e => setNewItem({...newItem, status: e.target.value as 'active' | 'maintenance' | 'disposed' | 'lost'})}
-                    className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                  >
-                    <option>active</option>
-                    <option>maintenance</option>
-                    <option>disposed</option>
-                    <option>lost</option>
-                  </select>
-                </div>
+                <Input
+                  label="Nama Barang"
+                  required
+                  type="text"
+                  value={newItem.itemName}
+                  onChange={e => setNewItem({...newItem, itemName: e.target.value})}
+                  size="sm"
+                  fullWidth
+                />
+                <Select
+                  label="Kategori"
+                  value={newItem.category}
+                  onChange={e => setNewItem({...newItem, category: e.target.value as string})}
+                  options={[
+                    { value: 'Elektronik', label: 'Elektronik' },
+                    { value: 'Furniture', label: 'Furniture' },
+                    { value: 'Alat Lab', label: 'Alat Lab' },
+                    { value: 'Buku', label: 'Buku' },
+                    { value: 'Umum', label: 'Umum' }
+                  ]}
+                  size="sm"
+                  fullWidth
+                />
+                <Input
+                  label="Jumlah"
+                  required
+                  type="number"
+                  min="1"
+                  value={newItem.quantity}
+                  onChange={e => setNewItem({...newItem, quantity: Number(e.target.value)})}
+                  size="sm"
+                  fullWidth
+                />
+                <Select
+                  label="Kondisi"
+                  value={newItem.condition}
+                  onChange={e => setNewItem({...newItem, condition: e.target.value as 'Baik' | 'Rusak Ringan' | 'Rusak Berat'})}
+                  options={[
+                    { value: 'Baik', label: 'Baik' },
+                    { value: 'Rusak Ringan', label: 'Rusak Ringan' },
+                    { value: 'Rusak Berat', label: 'Rusak Berat' }
+                  ]}
+                  size="sm"
+                  fullWidth
+                />
+                <Input
+                  label="Lokasi"
+                  type="text"
+                  value={newItem.location}
+                  onChange={e => setNewItem({...newItem, location: e.target.value})}
+                  size="sm"
+                  fullWidth
+                />
+                <Input
+                  label="Tanggal Pembelian"
+                  type="date"
+                  value={newItem.purchaseDate}
+                  onChange={e => setNewItem({...newItem, purchaseDate: e.target.value})}
+                  size="sm"
+                  fullWidth
+                />
+                <Input
+                  label="Harga Pembelian"
+                  type="number"
+                  min="0"
+                  value={newItem.purchasePrice}
+                  onChange={e => setNewItem({...newItem, purchasePrice: Number(e.target.value)})}
+                  size="sm"
+                  fullWidth
+                />
+                <Input
+                  label="Suku Bunga Depresiasi (%)"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={newItem.depreciationRate}
+                  onChange={e => setNewItem({...newItem, depreciationRate: Number(e.target.value)})}
+                  size="sm"
+                  fullWidth
+                />
+                <Select
+                  label="Status"
+                  value={newItem.status}
+                  onChange={e => setNewItem({...newItem, status: e.target.value as 'active' | 'maintenance' | 'disposed' | 'lost'})}
+                  options={[
+                    { value: 'active', label: 'Active' },
+                    { value: 'maintenance', label: 'Maintenance' },
+                    { value: 'disposed', label: 'Disposed' },
+                    { value: 'lost', label: 'Lost' }
+                  ]}
+                  size="sm"
+                  fullWidth
+                />
                 <div className="md:col-span-2 lg:col-span-3 flex gap-2">
                   <Button
                     type="submit"
@@ -548,42 +544,39 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
           <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Tambah Jadwal 维护</h3>
             <form onSubmit={handleAddMaintenance} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Pilih Barang</label>
-                <select
-                  value={newMaintenance.itemId}
-                  onChange={e => setNewMaintenance({...newMaintenance, itemId: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                  required
-                >
-                  <option value="">Pilih barang...</option>
-                  {items.map(item => (
-                    <option key={item.id} value={item.id}>{item.itemName}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tanggal</label>
-                <input
-                  type="date"
-                  value={newMaintenance.scheduledDate}
-                  onChange={e => setNewMaintenance({...newMaintenance, scheduledDate: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Tipe</label>
-                <select
-                  value={newMaintenance.type}
-                  onChange={e => setNewMaintenance({...newMaintenance, type: e.target.value as 'routine' | 'repair' | 'inspection'})}
-                  className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500"
-                >
-                  <option value="routine">Routine</option>
-                  <option value="repair">Repair</option>
-                  <option value="inspection">Inspection</option>
-                </select>
-              </div>
+              <Select
+                label="Pilih Barang"
+                value={newMaintenance.itemId}
+                onChange={e => setNewMaintenance({...newMaintenance, itemId: e.target.value as string})}
+                options={[
+                  { value: '', label: 'Pilih barang...', disabled: true },
+                  ...items.map(item => ({ value: item.id, label: item.itemName }))
+                ]}
+                size="sm"
+                fullWidth
+                required
+              />
+              <Input
+                label="Tanggal"
+                type="date"
+                value={newMaintenance.scheduledDate}
+                onChange={e => setNewMaintenance({...newMaintenance, scheduledDate: e.target.value})}
+                size="sm"
+                fullWidth
+                required
+              />
+              <Select
+                label="Tipe"
+                value={newMaintenance.type}
+                onChange={e => setNewMaintenance({...newMaintenance, type: e.target.value as 'routine' | 'repair' | 'inspection'})}
+                options={[
+                  { value: 'routine', label: 'Routine' },
+                  { value: 'repair', label: 'Repair' },
+                  { value: 'inspection', label: 'Inspection' }
+                ]}
+                size="sm"
+                fullWidth
+              />
               <div className="flex items-end">
                 <Button
                   type="submit"

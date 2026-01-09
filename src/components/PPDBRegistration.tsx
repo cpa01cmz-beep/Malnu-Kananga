@@ -17,6 +17,7 @@ import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
+import Input from './ui/Input';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -433,17 +434,44 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                 <div className="space-y-4">
                     <h3 className="text-sm font-bold uppercase tracking-wide text-green-600 dark:text-green-400 border-b border-green-100 dark:border-green-900 pb-2">Data Calon Siswa</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="ppdb-fullName" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Lengkap</label>
-                            <input id="ppdb-fullName" name="fullName" required type="text" value={autoSaveState.data.fullName} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="name" />
-                        </div>
-                        <div>
-                            <label htmlFor="ppdb-nisn" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">NISN</label>
-                            <input id="ppdb-nisn" name="nisn" required type="text" value={autoSaveState.data.nisn} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="off" />
-                        </div>
+                        <Input
+                            id="ppdb-fullName"
+                            name="fullName"
+                            label="Nama Lengkap"
+                            required
+                            type="text"
+                            value={autoSaveState.data.fullName}
+                            onChange={handleChange}
+                            autoComplete="name"
+                            size="md"
+                            fullWidth
+                        />
+                        <Input
+                            id="ppdb-nisn"
+                            name="nisn"
+                            label="NISN"
+                            required
+                            type="text"
+                            value={autoSaveState.data.nisn}
+                            onChange={handleChange}
+                            autoComplete="off"
+                            size="md"
+                            fullWidth
+                        />
                         <div className="md:col-span-2">
-                            <label htmlFor="ppdb-originSchool" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Asal Sekolah</label>
-                            <input id="ppdb-originSchool" name="originSchool" required type="text" value={autoSaveState.data.originSchool} onChange={handleChange} placeholder="SMP/MTs..." className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="organization" />
+                            <Input
+                                id="ppdb-originSchool"
+                                name="originSchool"
+                                label="Asal Sekolah"
+                                required
+                                type="text"
+                                value={autoSaveState.data.originSchool}
+                                onChange={handleChange}
+                                placeholder="SMP/MTs..."
+                                autoComplete="organization"
+                                size="md"
+                                fullWidth
+                            />
                         </div>
                     </div>
                 </div>
@@ -452,17 +480,43 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                 <div className="space-y-4">
                      <h3 className="text-sm font-bold uppercase tracking-wide text-green-600 dark:text-green-400 border-b border-green-100 dark:border-green-900 pb-2">Data Orang Tua & Kontak</h3>
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="ppdb-parentName" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nama Orang Tua/Wali</label>
-                            <input id="ppdb-parentName" name="parentName" required type="text" value={autoSaveState.data.parentName} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="name" />
-                        </div>
-                        <div>
-                            <label htmlFor="ppdb-phoneNumber" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Nomor WhatsApp</label>
-                            <input id="ppdb-phoneNumber" name="phoneNumber" required type="tel" value={autoSaveState.data.phoneNumber} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="tel" />
-                        </div>
+                        <Input
+                            id="ppdb-parentName"
+                            name="parentName"
+                            label="Nama Orang Tua/Wali"
+                            required
+                            type="text"
+                            value={autoSaveState.data.parentName}
+                            onChange={handleChange}
+                            autoComplete="name"
+                            size="md"
+                            fullWidth
+                        />
+                        <Input
+                            id="ppdb-phoneNumber"
+                            name="phoneNumber"
+                            label="Nomor WhatsApp"
+                            required
+                            type="tel"
+                            value={autoSaveState.data.phoneNumber}
+                            onChange={handleChange}
+                            autoComplete="tel"
+                            size="md"
+                            fullWidth
+                        />
                         <div className="md:col-span-2">
-                            <label htmlFor="ppdb-email" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Email</label>
-                            <input id="ppdb-email" name="email" required type="email" value={autoSaveState.data.email} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600 focus:ring-green-500" autoComplete="email" />
+                            <Input
+                                id="ppdb-email"
+                                name="email"
+                                label="Email"
+                                required
+                                type="email"
+                                value={autoSaveState.data.email}
+                                onChange={handleChange}
+                                autoComplete="email"
+                                size="md"
+                                fullWidth
+                            />
                         </div>
                         <div className="md:col-span-2">
                             <Textarea
