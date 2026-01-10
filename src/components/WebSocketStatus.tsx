@@ -141,14 +141,14 @@ export function WebSocketStatusPanel({ className = '' }: { className?: string })
   return (
     <div className={`p-4 bg-white rounded-lg border shadow-sm ${className}`}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-900">Real-Time Sync Status</h3>
+        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Real-Time Sync Status</h3>
         <WebSocketIndicator />
       </div>
-      
+
       <div className="space-y-3">
         {/* Connection Status */}
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">Status:</span>
+          <span className="text-neutral-600 dark:text-neutral-400">Status:</span>
           <span className={`font-medium ${isConnected ? 'text-green-600' : 'text-red-600'}`}>
 {isReconnecting ? `Reconnecting (${connectionState.reconnectAttempts}/${5})...` : 
            isConnecting ? 'Connecting...' : 
@@ -158,14 +158,14 @@ export function WebSocketStatusPanel({ className = '' }: { className?: string })
 
         {/* Last Connected */}
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">Last Connected:</span>
-          <span className="text-gray-900">{formatTime(connectionState.lastConnected)}</span>
+          <span className="text-neutral-600 dark:text-neutral-400">Last Connected:</span>
+          <span className="text-neutral-900 dark:text-neutral-100">{formatTime(connectionState.lastConnected)}</span>
         </div>
 
         {/* Reconnection Attempts */}
         {connectionState.reconnectAttempts > 0 && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Reconnect Attempts:</span>
+            <span className="text-neutral-600 dark:text-neutral-400">Reconnect Attempts:</span>
             <span className="text-orange-600 font-medium">
               {connectionState.reconnectAttempts} / 5
             </span>
@@ -175,8 +175,8 @@ export function WebSocketStatusPanel({ className = '' }: { className?: string })
         {/* Active Subscriptions */}
         {connectionState.subscriptions.size > 0 && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600">Active Subscriptions:</span>
-            <span className="text-gray-900 font-medium">
+            <span className="text-neutral-600 dark:text-neutral-400">Active Subscriptions:</span>
+            <span className="text-neutral-900 dark:text-neutral-100 font-medium">
               {connectionState.subscriptions.size} events
             </span>
           </div>

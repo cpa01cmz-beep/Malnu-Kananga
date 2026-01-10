@@ -84,7 +84,7 @@ export function RealTimeExample() {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl font-bold text-neutral-900 mb-4">
           Real-Time WebSocket Demo
         </h1>
         
@@ -102,8 +102,8 @@ export function RealTimeExample() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-gray-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-gray-500 mb-1">Connection</h3>
+          <div className="bg-neutral-50 dark:bg-neutral-800 p-4 rounded-md">
+            <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-1">Connection</h3>
             <p className={`text-lg font-semibold ${
               isConnected ? 'text-green-600' : 
               isConnecting ? 'text-blue-600' : 'text-red-600'
@@ -112,14 +112,14 @@ export function RealTimeExample() {
             </p>
           </div>
           
-          <div className="bg-gray-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-gray-500 mb-1">Real-time Grades</h3>
-            <p className="text-lg font-semibold text-gray-900">{grades.length}</p>
+          <div className="bg-neutral-50 dark:bg-neutral-800 p-4 rounded-md">
+            <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-1">Real-time Grades</h3>
+            <p className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{grades.length}</p>
           </div>
-          
-          <div className="bg-gray-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-gray-500 mb-1">Announcements</h3>
-            <p className="text-lg font-semibold text-gray-900">{announcements.length}</p>
+
+          <div className="bg-neutral-50 dark:bg-neutral-800 p-4 rounded-md">
+            <h3 className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-1">Announcements</h3>
+            <p className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{announcements.length}</p>
           </div>
         </div>
 
@@ -144,38 +144,38 @@ export function RealTimeExample() {
 
       {/* Real-time Grades Section */}
       <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Real-Time Grades</h2>
+        <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Real-Time Grades</h2>
         {grades.length === 0 ? (
-          <p className="text-gray-500">No grades available. Create a test grade to see real-time updates.</p>
+          <p className="text-neutral-500 dark:text-neutral-400">No grades available. Create a test grade to see real-time updates.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
+              <thead className="bg-neutral-50 dark:bg-neutral-800">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                     Student ID
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                     Subject
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                     Score
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                     Last Updated
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
                 {grades.map((grade: Grade) => (
-                  <tr key={grade.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <tr key={grade.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
                       {grade.studentId}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
                       {grade.subject || `Subject ${grade.subjectId}`}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         grade.score >= 90 ? 'bg-green-100 text-green-800' :
                         grade.score >= 80 ? 'bg-blue-100 text-blue-800' :
@@ -185,7 +185,7 @@ export function RealTimeExample() {
                         {grade.score}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
                       {new Date().toLocaleTimeString()}
                     </td>
                   </tr>
@@ -198,20 +198,20 @@ export function RealTimeExample() {
 
       {/* Real-time Announcements Section */}
       <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Real-Time Announcements</h2>
+        <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Real-Time Announcements</h2>
         {announcements.length === 0 ? (
-          <p className="text-gray-500">No announcements available. Create a test announcement to see real-time updates.</p>
+          <p className="text-neutral-500 dark:text-neutral-400">No announcements available. Create a test announcement to see real-time updates.</p>
         ) : (
           <div className="space-y-4">
             {announcements.map((announcement: Announcement) => (
-              <div key={announcement.id} className="border-l-4 border-blue-500 pl-4 py-2">
-                <h3 className="text-lg font-medium text-gray-900">{announcement.title}</h3>
-                <p className="text-gray-600">{announcement.content}</p>
+              <div key={announcement.id} className="border-l-4 border-blue-500 dark:border-blue-400 pl-4 py-2">
+                <h3 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">{announcement.title}</h3>
+                <p className="text-neutral-600 dark:text-neutral-400">{announcement.content}</p>
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-neutral-500 dark:text-neutral-400">
                     By {announcement.author || 'System'} • {announcement.priority}
                   </span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-neutral-400 dark:text-neutral-500">
                     Just now
                   </span>
                 </div>
@@ -222,9 +222,9 @@ export function RealTimeExample() {
       </div>
 
       {/* Debug Information */}
-      <div className="bg-gray-100 rounded-lg p-4">
-        <h3 className="text-sm font-medium text-gray-700 mb-2">Debug Information</h3>
-        <div className="text-xs text-gray-600 space-y-1">
+      <div className="bg-neutral-100 dark:bg-neutral-800 rounded-lg p-4">
+        <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">Debug Information</h3>
+        <div className="text-xs text-neutral-600 dark:text-neutral-400 space-y-1">
           <p>WebSocket Status: {isConnected ? 'Connected' : 'Disconnected'}</p>
           <p>Test this component by:</p>
           <ul className="list-disc list-inside ml-4 space-y-1">

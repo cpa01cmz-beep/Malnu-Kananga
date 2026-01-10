@@ -141,10 +141,14 @@
       - Replaced custom modal implementation (lines 193-377) with Modal component
       - Improved accessibility with built-in focus trap and ARIA compliance
       - Maintained all functionality and styling
-    - [x] Review NotificationCenter.tsx - N/A (dropdown pattern, not modal) (2026-01-10)
-      - Confirmed NotificationCenter uses dropdown pattern, not modal pattern
-      - Modal component not appropriate for this use case
-      - No changes needed
+   - [x] Review NotificationCenter.tsx - N/A (dropdown pattern, not modal) (2026-01-10)
+       - Confirmed NotificationCenter uses dropdown pattern, not modal pattern
+       - Modal component not appropriate for this use case
+       - No changes needed
+     - [x] Complete remaining gray → neutral color migration (2026-01-10)
+       - Refactored RealTimeExample.tsx - Replaced 27 gray- color classes with neutral- classes with dark mode support
+       - Refactored WebSocketStatus.tsx - Replaced 6 gray- color classes with neutral- classes with dark mode support
+       - All color classes now follow design system standard (neutral palette)
     - [x] Create reusable Textarea component with auto-resize (2026-01-07)
     - [x] Refactor NotificationHistory to use Badge and IconButton components (2026-01-10)
     - [x] Refactor MaterialSharing to use Button and IconButton components (2026-01-10)
