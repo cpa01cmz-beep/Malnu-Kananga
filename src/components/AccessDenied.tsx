@@ -10,11 +10,14 @@ interface AccessDeniedProps {
 }
 
 const AccessDenied: React.FC<AccessDeniedProps> = ({ onBack, message, requiredPermission }) => {
-  const backButtonRef = useRef<HTMLButtonElement>(null);
+  const backButtonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (onBack && backButtonRef.current) {
-      backButtonRef.current.focus();
+      const buttonElement = backButtonRef.current.querySelector('button');
+      if (buttonElement) {
+        buttonElement.focus();
+      }
     }
   }, [onBack]);
 
@@ -68,14 +71,15 @@ const AccessDenied: React.FC<AccessDeniedProps> = ({ onBack, message, requiredPe
         )}
 
         {onBack && (
-          <Button
-            ref={backButtonRef}
-            variant="info"
-            onClick={onBack}
-            fullWidth
-          >
-            Go Back
-          </Button>
+          <div ref={backButtonRef}>
+            <Button
+              variant="info"
+              onClick={onBack}
+              fullWidth
+            >
+              Go Back
+            </Button>
+          </div>
         )}
       </Card>
     </main>
