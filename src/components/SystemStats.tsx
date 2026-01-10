@@ -6,6 +6,10 @@ import { logger } from '../utils/logger';
 import PermissionGuard from './PermissionGuard';
 import { STORAGE_KEYS } from '../constants';
 import { User, UserRole, UserExtraRole } from '../types';
+import Card from './ui/Card';
+import Button from './ui/Button';
+import Alert from './ui/Alert';
+import BackButton from './ui/BackButton';
 
 interface SystemStatsProps {
   onBack: () => void;
@@ -116,54 +120,49 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 p-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <button onClick={onBack} className="mb-4 text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors">
-            <svg className="w-6 h-6 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Kembali
-          </button>
+          <BackButton onClick={onBack} />
           <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">Statistik Sistem</h1>
           <p className="text-neutral-600 dark:text-neutral-300">Monitor kinerja dan statistik penggunaan sistem</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+            <Card padding="sm">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Pendaftar</p>
-                <p className="text-xl font-bold text-green-600">{stats.totalPPDB}</p>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xl font-bold text-green-600 dark:text-green-400">{stats.totalPPDB}</p>
+            </Card>
+            <Card padding="sm">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Total User</p>
-                <p className="text-xl font-bold text-blue-600">{stats.totalUsers}</p>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{stats.totalUsers}</p>
+            </Card>
+            <Card padding="sm">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Program</p>
-                <p className="text-xl font-bold text-purple-600">{stats.totalPrograms}</p>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xl font-bold text-purple-600 dark:text-purple-400">{stats.totalPrograms}</p>
+            </Card>
+            <Card padding="sm">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Berita</p>
-                <p className="text-xl font-bold text-orange-600">{stats.totalNews}</p>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xl font-bold text-orange-600 dark:text-orange-400">{stats.totalNews}</p>
+            </Card>
+            <Card padding="sm">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Inventaris</p>
-                <p className="text-xl font-bold text-teal-600">{stats.totalInventory}</p>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xl font-bold text-teal-600 dark:text-teal-400">{stats.totalInventory}</p>
+            </Card>
+            <Card padding="sm">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Events</p>
-                <p className="text-xl font-bold text-pink-600">{stats.totalEvents}</p>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xl font-bold text-pink-600 dark:text-pink-400">{stats.totalEvents}</p>
+            </Card>
+            <Card padding="sm">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Pengguna Aktif</p>
-                <p className="text-xl font-bold text-indigo-600">{stats.activeUsers}</p>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+                <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">{stats.activeUsers}</p>
+            </Card>
+            <Card padding="sm">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Penyimpanan</p>
-                <p className="text-xl font-bold text-neutral-600">{stats.storageUsed}</p>
-            </div>
+                <p className="text-xl font-bold text-neutral-600 dark:text-neutral-400">{stats.storageUsed}</p>
+            </Card>
         </div>
 
         {/* Factory Reset Section */}
-        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700 p-6">
+        <Card padding="lg">
             <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-4">
                 <span className="flex items-center gap-2">
                     <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,33 +171,37 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
                     Sistem Maintenance
                 </span>
             </h2>
-            
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4 mb-6">
-                <p className="text-sm text-red-700 dark:text-red-300 mb-2">
-                    <strong>⚠️ PERINGATAN KRITIS:</strong> Menu ini digunakan untuk pemeliharaan sistem. "Factory Reset" akan menghapus seluruh data simulasi (User, PPDB, Konten, Nilai, Inventaris) dan mengembalikan aplikasi ke kondisi awal.
-                </p>
-                <p className="text-xs text-red-600 dark:text-red-400">
+
+            <Alert
+                variant="error"
+                size="md"
+                border="left"
+            >
+                <strong>⚠️ PERINGATAN KRITIS:</strong> Menu ini digunakan untuk pemeliharaan sistem. "Factory Reset" akan menghapus seluruh data simulasi (User, PPDB, Konten, Nilai, Inventaris) dan mengembalikan aplikasi ke kondisi awal.
+                <br />
+                <span className="text-sm">
                     Pastikan Anda telah melakukan backup data penting sebelum melanjutkan. Tindakan ini tidak dapat dibatalkan.
-                </p>
-            </div>
-            
-            <div className="flex justify-center">
+                </span>
+            </Alert>
+
+            <div className="flex justify-center mt-6">
                 {canFactoryReset ? (
-                    <button 
+                    <Button
+                        variant="red-solid"
                         onClick={handleFactoryReset}
-                        className="flex items-center gap-2 px-6 py-3 bg-white border border-red-200 text-red-600 font-bold rounded-full hover:bg-red-600 hover:text-white transition-all shadow-sm hover:shadow-red-500/20"
+                        className="flex items-center gap-2"
                     >
                         <ArrowPathIcon className="w-5 h-5" />
                         Lakukan Factory Reset
-                    </button>
+                    </Button>
                 ) : (
-                    <div className="flex items-center gap-2 px-6 py-3 bg-neutral-100 text-neutral-400 font-bold rounded-full cursor-not-allowed">
+                    <div className="flex items-center gap-2 px-6 py-3 bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 font-bold rounded-full cursor-not-allowed">
                         <ArrowPathIcon className="w-5 h-5" />
                         Factory Reset (Permission Required)
                     </div>
                 )}
             </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

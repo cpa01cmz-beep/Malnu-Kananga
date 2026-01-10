@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'info' | 'warning' | 'indigo' | 'green-solid' | 'blue-solid' | 'purple-solid' | 'red-solid' | 'orange-solid' | 'teal-solid';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'info' | 'warning' | 'indigo' | 'green-solid' | 'blue-solid' | 'purple-solid' | 'red-solid' | 'orange-solid' | 'teal-solid' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -32,6 +32,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   'red-solid': "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02]",
   'orange-solid': "bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02]",
   'teal-solid': "bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02]",
+  outline: "bg-transparent text-neutral-600 dark:text-neutral-400 border-2 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02]",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

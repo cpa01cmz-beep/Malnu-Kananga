@@ -3,7 +3,6 @@ import { ChevronLeftIcon, ChevronRightIcon, CalendarDaysIcon } from '@heroicons/
 import type { Schedule, ParentMeeting } from '../types';
 import IconButton from './ui/IconButton';
 import Button from './ui/Button';
-import Card from './ui/Card';
 
 interface CalendarViewProps {
   schedules: Schedule[];
@@ -122,7 +121,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     onEventClick?.(event);
   };
 
-  const _handleEventKeyDown = (event: Schedule | ParentMeeting, e: React.KeyboardEvent) => {
+  const handleEventKeyDown = (event: Schedule | ParentMeeting, e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       e.stopPropagation();
@@ -130,15 +129,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     }
   };
 
-  const _handleDateKeyDown = (date: Date, e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleDateClick(date);
-    }
-  };
-
   const renderMonthView = () => (
-    <Card padding="none" className="grid" role="grid" aria-label="Kalender bulanan">
+    <div className="bg-white rounded-lg shadow" role="grid" aria-label="Kalender bulanan">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <IconButton
@@ -183,7 +175,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               key={index}
               role="gridcell"
               onClick={() => handleDateClick(date)}
-              onKeyDown={(e) => _handleDateKeyDown(date, e)}
               className={`min-h-[100px] p-2 border-r border-b cursor-pointer transition-colors
                 ${!isCurrentMonth ? 'bg-neutral-50 text-neutral-400' : 'bg-white'}
                 ${isToday ? 'bg-blue-50' : ''}
@@ -202,18 +193,20 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 {events.slice(0, 3).map((event, idx) => {
                   const isMeeting = 'status' in event;
                   return (
-                    <button
+                    <div
                       key={idx}
                       onClick={(e) => handleEventClick(event, e)}
-                      type="button"
+                      onKeyDown={(e) => handleEventKeyDown(event, e)}
                       className={`text-xs p-1 rounded truncate cursor-pointer
-                        ${isMeeting
-                          ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
+                        ${isMeeting 
+                          ? 'bg-purple-100 text-purple-800 hover:bg-purple-200' 
                           : 'bg-blue-100 text-blue-800 hover:bg-blue-200'}`}
+                      role="button"
+                      tabIndex={0}
                     >
 {event.startTime && `${event.startTime} `}
 {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
-                    </button>
+                    </div>
                   );
                 })}
                 {events.length > 3 && (
@@ -224,11 +217,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           );
         })}
       </div>
-    </Card>
+    </div>
   );
 
   const renderWeekView = () => (
-    <Card padding="none" className="grid" role="grid" aria-label="Kalender mingguan">
+    <div className="bg-white rounded-lg shadow" role="grid" aria-label="Kalender mingguan">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <IconButton
@@ -289,40 +282,39 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               <div
                 key={`${date.toISOString()}-${hour}`}
                 onClick={() => handleDateClick(date)}
-                onKeyDown={(e) => _handleDateKeyDown(date, e)}
                 className={`min-h-[60px] p-1 border-r border-b cursor-pointer
                   ${date.toDateString() === new Date().toDateString() ? 'bg-blue-50' : 'bg-white'}
                   hover:bg-neutral-50`}
                 role="gridcell"
                 aria-label={`${fullDayNames[date.getDay()]} ${date.getDate()}, ${hour}:00`}
-                tabIndex={0}
               >
                 <div className="space-y-1">
                   {events.map((event, idx) => {
                     const isMeeting = 'status' in event;
                     return (
-                      <button
+                      <div
                         key={idx}
                         onClick={(e) => handleEventClick(event, e)}
-                        type="button"
+                        onKeyDown={(e) => handleEventKeyDown(event, e)}
                         className={`text-xs p-1 rounded truncate cursor-pointer
-                          ${isMeeting
-                            ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
+                          ${isMeeting 
+                            ? 'bg-purple-100 text-purple-800 hover:bg-purple-200' 
                             : 'bg-blue-100 text-blue-800 hover:bg-blue-200'}`}
+                        role="button"
+                        tabIndex={0}
                       >
 {event.startTime && `${event.startTime} `}
 {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
               </div>
             );
           })}
-         </div>
-       ))}
-      </div>
-    </Card>
+        </div>
+      ))}
+    </div>
   );
 
   const renderDayView = () => {
@@ -334,7 +326,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     });
 
     return (
-      <Card aria-label="Kalender harian">
+      <div className="bg-white rounded-lg shadow" aria-label="Kalender harian">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <IconButton
@@ -431,9 +423,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                             )}
                           </div>
                         )}
-         </div>
-       </div>
-      </Card>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
     );
   };
 
@@ -449,7 +447,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         >
           Hari Ini
         </Button>
-        <Card padding="none" className="flex" role="group" aria-label="Pilihan tampilan">
+        <div className="flex bg-white border rounded-lg" role="group" aria-label="Pilihan tampilan">
           {(['month', 'week', 'day'] as const).map(mode => (
             <Button
               key={mode}
@@ -463,7 +461,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               {mode === 'month' ? 'Bulan' : mode === 'week' ? 'Minggu' : 'Hari'}
             </Button>
           ))}
-        </Card>
+        </div>
       </div>
 
       {/* Calendar views */}
