@@ -33,7 +33,7 @@ const RelatedLinksSection: React.FC = () => {
                 <p className="text-lg sm:text-xl text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto leading-relaxed">Akses cepat ke portal dan layanan terkait.</p>
             </div>
             <nav aria-label="Tautan terkait eksternal">
-                <ul className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 lg:gap-6" role="list">
+                <ul className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
                     {links.map((link) => (
                         <LinkCard
                             key={link.name}

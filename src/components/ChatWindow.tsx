@@ -369,14 +369,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         aria-atomic="true"
         aria-label="Pesan obrolan"
       >
-        <ul className="flex flex-col gap-3.5" role="list">
+        <ul className="flex flex-col gap-3.5">
           {messages.map((message) => (
             <li
               key={message.id}
               className={`flex items-end max-w-[85%] sm:max-w-[80%] gap-2 ${
                 message.sender === Sender.User ? 'self-end flex-row-reverse' : 'self-start'
               }`}
-              role="listitem"
               aria-label={`${message.sender === Sender.User ? 'Anda' : 'Asisten'}: ${message.text}`}
             >
               <div

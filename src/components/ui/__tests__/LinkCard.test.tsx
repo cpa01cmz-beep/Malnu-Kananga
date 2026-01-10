@@ -48,10 +48,10 @@ describe('LinkCard', () => {
     expect(screen.getByText('Test Link')).toBeInTheDocument();
   });
 
-  it('has role="listitem" on li element', () => {
+  it('has implicit listitem role on li element', () => {
     render(<ul><LinkCard {...defaultProps} /></ul>);
     const listItem = screen.getByRole('listitem');
-    expect(listItem).toHaveAttribute('role', 'listitem');
+    expect(listItem).toBeInTheDocument();
   });
 
   it('applies color class to icon container', () => {

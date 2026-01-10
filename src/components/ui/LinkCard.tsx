@@ -17,7 +17,7 @@ const LinkCard: React.FC<LinkCardProps> = ({
   ariaLabel,
 }) => {
   return (
-    <li role="listitem">
+    <li>
       <a
         href={href}
         target="_blank"
