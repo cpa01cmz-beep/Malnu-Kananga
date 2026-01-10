@@ -57,26 +57,7 @@ body,
   background: hsl(var(--color-primary-500));
 }
 
-/* Dark mode custom scrollbar */
-@media (prefers-color-scheme: dark) {
-  .custom-scrollbar {
-    scrollbar-color: hsl(var(--color-neutral-500) / 0.6) hsl(var(--color-neutral-800));
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: hsl(var(--color-neutral-800));
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: hsl(var(--color-neutral-500) / 0.6);
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--color-primary-400));
-  }
-}
-
-/* Dark class-based scrollbar (for manual dark mode) */
+/* Dark mode custom scrollbar - handled by ThemeManager .dark class */
 .dark .custom-scrollbar {
   scrollbar-color: hsl(var(--color-neutral-500) / 0.6) hsl(var(--color-neutral-800));
 }
@@ -119,24 +100,7 @@ body,
   background: hsl(var(--color-primary-500));
 }
 
-@media (prefers-color-scheme: dark) {
-  .custom-scrollbar-compact {
-    scrollbar-color: hsl(var(--color-neutral-500) / 0.6) hsl(var(--color-neutral-800));
-  }
-
-  .custom-scrollbar-compact::-webkit-scrollbar-track {
-    background: hsl(var(--color-neutral-800));
-  }
-
-  .custom-scrollbar-compact::-webkit-scrollbar-thumb {
-    background: hsl(var(--color-neutral-500) / 0.6);
-  }
-
-  .custom-scrollbar-compact::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--color-primary-400));
-  }
-}
-
+/* Dark mode compact scrollbar - handled by ThemeManager .dark class */
 .dark .custom-scrollbar-compact {
   scrollbar-color: hsl(var(--color-neutral-500) / 0.6) hsl(var(--color-neutral-800));
 }
