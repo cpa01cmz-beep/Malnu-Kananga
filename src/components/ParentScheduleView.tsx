@@ -217,7 +217,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
 
       {/* Meeting Request Modal */}
       {showMeetingRequest && (
-        <div className="fixed inset-0 bg-black/50% flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-neutral-900 dark:text-white">
@@ -298,7 +298,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
       {/* Event Detail Modal */}
       {selectedEvent && (
         <div
-          className="fixed inset-0 bg-black/50% flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
           onClick={() => setSelectedEvent(null)}
         >
           <div 
