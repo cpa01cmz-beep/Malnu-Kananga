@@ -20,21 +20,21 @@ describe('SearchInput Component', () => {
     });
 
     it('renders magnifying glass icon by default', () => {
-      const { container } = render(<SearchInput placeholder="Search..." />);
-      const icon = container.querySelector('svg');
+      const { container: _container } = render(<SearchInput placeholder="Search..." />);
+      const icon = screen.container.querySelector('svg');
       expect(icon).toBeInTheDocument();
     });
 
     it('renders with custom icon', () => {
       const customIcon = <MagnifyingGlassIcon className="w-6 h-6" />;
-      const { container } = render(<SearchInput placeholder="Search..." icon={customIcon} />);
-      const icon = container.querySelector('svg');
+      const { container: _container } = render(<SearchInput placeholder="Search..." icon={customIcon} />);
+      const icon = screen.container.querySelector('svg');
       expect(icon).toBeInTheDocument();
     });
 
     it('does not render icon when showIcon is false', () => {
-      const { container } = render(<SearchInput placeholder="Search..." showIcon={false} />);
-      const icon = container.querySelector('svg');
+      const { container: _container } = render(<SearchInput placeholder="Search..." showIcon={false} />);
+      const icon = screen.container.querySelector('svg');
       expect(icon).not.toBeInTheDocument();
     });
 
@@ -59,19 +59,19 @@ describe('SearchInput Component', () => {
 
   describe('Size Variants', () => {
     it('renders sm size variant', () => {
-      render(<SearchInput placeholder="Search..." size="sm" />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." size="sm" />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('px-3', 'py-2', 'text-sm');
     });
 
     it('renders md size variant', () => {
-      render(<SearchInput placeholder="Search..." size="md" />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." size="md" />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('px-4', 'py-3', 'text-sm');
     });
 
     it('renders lg size variant', () => {
-      render(<SearchInput placeholder="Search..." size="lg" />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." size="lg" />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('px-5', 'py-4', 'text-base');
     });
@@ -79,20 +79,20 @@ describe('SearchInput Component', () => {
 
   describe('State Variants', () => {
     it('renders with error state', () => {
-      render(<SearchInput placeholder="Search..." state="error" />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." state="error" />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('border-red-300');
       expect(input).toHaveAttribute('aria-invalid', 'true');
     });
 
     it('renders with success state', () => {
-      render(<SearchInput placeholder="Search..." state="success" />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." state="success" />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('border-green-300');
     });
 
     it('renders with default state', () => {
-      render(<SearchInput placeholder="Search..." state="default" />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." state="default" />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('border-neutral-300');
       expect(input).toHaveAttribute('aria-invalid', 'false');
@@ -119,26 +119,26 @@ describe('SearchInput Component', () => {
 
   describe('Icon Position', () => {
     it('positions icon on the left by default', () => {
-      render(<SearchInput placeholder="Search..." />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('pl-11');
     });
 
     it('positions icon on the left when iconPosition is left', () => {
-      render(<SearchInput placeholder="Search..." iconPosition="left" />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." iconPosition="left" />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('pl-11');
     });
 
     it('positions icon on the right when iconPosition is right', () => {
-      render(<SearchInput placeholder="Search..." iconPosition="right" />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." iconPosition="right" />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('pr-11');
       expect(input).not.toHaveClass('pl-11');
     });
 
     it('does not apply icon padding when showIcon is false', () => {
-      render(<SearchInput placeholder="Search..." showIcon={false} />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." showIcon={false} />);
       const input = screen.getByRole('search');
       expect(input).not.toHaveClass('pl-11');
       expect(input).not.toHaveClass('pr-11');
@@ -203,7 +203,8 @@ describe('SearchInput Component', () => {
 
     it('associates label with input using htmlFor', () => {
       render(<SearchInput label="Search Items" placeholder="Search..." id="search-input" />);
-      const label = screen.getByText('Search Items');
+      const label = screen.getByLabelText('Search Items');
+      const _input = screen.getByRole('search');
       expect(label).toHaveAttribute('for', 'search-input');
     });
 
@@ -239,8 +240,8 @@ describe('SearchInput Component', () => {
     });
 
     it('marks icon as aria-hidden', () => {
-      const { container } = render(<SearchInput placeholder="Search..." />);
-      const icon = container.querySelector('svg');
+      const { container: _container } = render(<SearchInput placeholder="Search..." />);
+      const icon = screen.container.querySelector('svg');
       expect(icon).toHaveAttribute('aria-hidden', 'true');
     });
   });
@@ -265,7 +266,7 @@ describe('SearchInput Component', () => {
 
     it('clears value when Escape key is pressed', async () => {
       const user = userEvent.setup();
-      render(<SearchInput placeholder="Search..." />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." />);
       
       const input = screen.getByRole('search');
       await user.type(input, 'test');
@@ -277,7 +278,7 @@ describe('SearchInput Component', () => {
 
   describe('Custom Props', () => {
     it('applies custom className', () => {
-      render(<SearchInput placeholder="Search..." className="custom-class" />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." className="custom-class" />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('custom-class');
     });
@@ -300,7 +301,7 @@ describe('SearchInput Component', () => {
 
   describe('Dark Mode', () => {
     it('applies dark mode classes', () => {
-      render(<SearchInput placeholder="Search..." />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('dark:bg-neutral-700');
       expect(input).toHaveClass('dark:text-white');
@@ -308,14 +309,14 @@ describe('SearchInput Component', () => {
     });
 
     it('applies dark mode error state classes', () => {
-      render(<SearchInput placeholder="Search..." state="error" />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." state="error" />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('dark:bg-red-900/20');
       expect(input).toHaveClass('dark:border-red-700');
     });
 
     it('applies dark mode success state classes', () => {
-      render(<SearchInput placeholder="Search..." state="success" />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." state="success" />);
       const input = screen.getByRole('search');
       expect(input).toHaveClass('dark:bg-green-900/20');
       expect(input).toHaveClass('dark:border-green-700');
