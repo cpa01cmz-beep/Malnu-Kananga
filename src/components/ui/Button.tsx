@@ -47,7 +47,7 @@ const iconOnlySizes: Record<ButtonSize, string> = {
   lg: "p-2.5",
 };
 
-const Button: React.FC<ButtonProps> = ({
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   variant = 'primary',
   size = 'md',
   isLoading = false,
@@ -60,7 +60,7 @@ const Button: React.FC<ButtonProps> = ({
   className = '',
   disabled,
   ...props
-}) => {
+}, ref) => {
   const classes = `
     ${baseClasses}
     ${variantClasses[variant]}
@@ -82,6 +82,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      ref={ref}
       className={classes}
       disabled={disabled || isLoading}
       {...ariaProps}
@@ -115,6 +116,8 @@ const Button: React.FC<ButtonProps> = ({
       )}
     </button>
   );
-};
+});
+
+Button.displayName = 'Button';
 
 export default Button;

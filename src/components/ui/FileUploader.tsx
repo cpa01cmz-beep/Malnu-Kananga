@@ -333,8 +333,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           Click to upload or drag and drop
         </p>
         <p className="text-xs text-neutral-500 dark:text-neutral-400">
-          {acceptedFileTypes} (Max {maxSizeMB}MB)
-          {allowMultiple && ` • Up to ${maxFiles} files`}
+          {`${acceptedFileTypes} (Max ${maxSizeMB}MB)${allowMultiple ? ` • Up to ${maxFiles} files` : ''}`}
         </p>
       </>
     );

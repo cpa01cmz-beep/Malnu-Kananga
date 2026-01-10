@@ -53,7 +53,7 @@ describe('FileUploader', () => {
     
     expect(screen.getByText('Click to upload or drag and drop')).toBeInTheDocument();
     expect(screen.getByText(/\.pdf,\.doc,\.docx,\.ppt,\.pptx,\.jpg,\.jpeg,\.png,\.mp4/)).toBeInTheDocument();
-    expect(screen.getByText('(Max 50MB)')).toBeInTheDocument();
+    expect(screen.getByText(/\(Max 50MB\)/)).toBeInTheDocument();
   });
 
   it('shows files list when files are provided', () => {
