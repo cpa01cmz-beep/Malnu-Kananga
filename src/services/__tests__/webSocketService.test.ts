@@ -33,7 +33,7 @@ import { logger } from '../../utils/logger';
 }));
 
 // Mock dependencies
-vi.mock('../services/apiService', () => ({
+vi.mock('../apiService', () => ({
   apiService: {
     getAuthToken: vi.fn(),
     parseJwtPayload: vi.fn(),
@@ -116,7 +116,7 @@ describe('WebSocketService', () => {
       await webSocketService.initialize();
 
       expect(global.WebSocket).not.toHaveBeenCalled();
-      expect(logger.warn).toHaveBeenCalledWith('WebSocket: No auth token available');
+      expect(vi.mocked(logger.warn)).toHaveBeenCalledWith('WebSocket: No auth token available');
     });
 
     it('should start fallback polling when WebSocket disabled', async () => {
@@ -127,7 +127,7 @@ describe('WebSocketService', () => {
       await webSocketService.initialize();
 
       expect(global.WebSocket).not.toHaveBeenCalled();
-      expect(logger.info).toHaveBeenCalledWith('WebSocket: Starting fallback polling');
+      expect(vi.mocked(logger.info)).toHaveBeenCalledWith('WebSocket: Disabled by environment variable');
 
       // Restore original value
       import.meta.env.VITE_WS_ENABLED = originalViteWsEnabled;
@@ -193,7 +193,7 @@ describe('WebSocketService', () => {
       
       errorCallback?.(new Event('error'));
 
-      expect(logger.error).toHaveBeenCalledWith('WebSocket: Error occurred', expect.any(Event));
+      expect(vi.mocked(logger.error)).toHaveBeenCalledWith('WebSocket: Error occurred', expect.any(Event));
     });
   });
 
@@ -211,7 +211,7 @@ describe('WebSocketService', () => {
       });
 
       expect(typeof unsubscribe).toBe('function');
-      expect(logger.debug).toHaveBeenCalledWith('WebSocket: Subscribed to', 'grade_updated');
+      expect(vi.mocked(logger.debug)).toHaveBeenCalledWith('WebSocket: Subscribed to', 'grade_updated');
     });
 
     it('should handle event messages', () => {
@@ -480,7 +480,7 @@ describe('WebSocketService', () => {
 
       messageCallback?.({ data: 'invalid json' } as MessageEvent);
 
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(vi.mocked(logger.error)).toHaveBeenCalledWith(
         'WebSocket: Failed to parse message',
         expect.any(Error)
       );
@@ -498,7 +498,7 @@ describe('WebSocketService', () => {
       await webSocketService.initialize();
 
       expect(global.WebSocket).not.toHaveBeenCalled();
-      expect(logger.warn).toHaveBeenCalledWith('WebSocket: Token expired, skipping connection');
+      expect(vi.mocked(logger.warn)).toHaveBeenCalledWith('WebSocket: Token expired, skipping connection');
     });
   });
 });

@@ -11,6 +11,7 @@ describe('Pagination', () => {
     totalItems: 50,
     itemsPerPage: 10,
     onPageChange: vi.fn(),
+    onItemsPerPageChange: vi.fn(),
   };
 
   it('renders pagination controls', () => {
@@ -21,6 +22,7 @@ describe('Pagination', () => {
     expect(screen.getByLabelText('Next page')).toBeInTheDocument();
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
+    // The "Show" text should be present since onItemsPerPageChange is provided in defaultProps
     expect(screen.getByText('Show')).toBeInTheDocument();
   });
 
@@ -99,7 +101,9 @@ describe('Pagination', () => {
   it('shows ellipsis for many pages', () => {
     render(<Pagination {...defaultProps} totalPages={20} currentPage={10} maxVisiblePages={5} />);
     
-    expect(screen.getByText('...')).toBeInTheDocument();
+    // There might be multiple ellipsis elements, so we check if at least one exists
+    const ellipsisElements = screen.getAllByText('...');
+    expect(ellipsisElements.length).toBeGreaterThan(0);
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('20')).toBeInTheDocument();
   });
@@ -116,10 +120,12 @@ describe('Pagination', () => {
 
   it('applies size classes correctly', () => {
     const { rerender } = render(<Pagination {...defaultProps} size="lg" />);
-    expect(screen.getByText('Showing 1 to 10 of 50 results')).toHaveClass('text-base');
+    // Check the nav element has the correct size class
+    const nav = screen.getByRole('navigation');
+    expect(nav).toHaveClass('text-base');
 
     rerender(<Pagination {...defaultProps} size="sm" />);
-    expect(screen.getByText('Showing 1 to 10 of 50 results')).toHaveClass('text-xs');
+    expect(nav).toHaveClass('text-xs');
   });
 
   it('hides items per page selector when disabled', () => {

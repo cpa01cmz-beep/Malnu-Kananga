@@ -92,10 +92,10 @@ const Tab: React.FC<TabProps> = ({
   };
 
   return (
-    <div className={className} role="tablist">
+    <div className={className}>
       {variant === 'border' && (
         <div className="border-b border-neutral-200 dark:border-neutral-700">
-          <nav className="flex space-x-8 px-6" aria-label="Tabs">
+          <nav className="flex space-x-8 px-6" role="tablist" aria-label="Tabs">
             {options.map((option) => (
               <button
                 key={option.id}
