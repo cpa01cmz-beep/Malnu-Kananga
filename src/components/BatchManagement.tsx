@@ -5,6 +5,7 @@ import Input from './ui/Input';
 import Textarea from './ui/Textarea';
 import Badge from './ui/Badge';
 import Modal from './ui/Modal';
+import { EmptyState } from './ui/LoadingState';
 
 interface BatchManagementProps {
   batches: NotificationBatch[];
@@ -70,9 +71,7 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
       </div>
 
       {batches.length === 0 ? (
-        <div className="text-center py-8 text-neutral-500">
-          <p>Belum ada batch notifikasi</p>
-        </div>
+        <EmptyState message="Belum ada batch notifikasi" size="md" />
       ) : (
         <div className="space-y-3">
           {batches.map((batch) => (

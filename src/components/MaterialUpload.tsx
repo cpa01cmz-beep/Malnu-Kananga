@@ -14,6 +14,7 @@ import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
 import { CategoryValidationResult } from '../services/categoryService';
 import { validateMaterialData } from '../utils/teacherValidation';
+import { EmptyState } from './ui/LoadingState';
 import { 
   executeWithRetry, 
   createToastHandler 
@@ -802,8 +803,11 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                   </div>
                 ))
               ) : (
-                <div className="p-8 text-center text-neutral-500 dark:text-neutral-400">
-                  {selectedFolder ? `Belum ada materi di folder "${selectedFolder.name}".` : 'Belum ada materi yang diunggah.'}
+                <div className="p-8">
+                  <EmptyState
+                    message={selectedFolder ? `Belum ada materi di folder "${selectedFolder.name}".` : 'Belum ada materi yang diunggah.'}
+                    size="md"
+                  />
                 </div>
               )}
             </div>

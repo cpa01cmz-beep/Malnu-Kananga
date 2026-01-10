@@ -4,6 +4,7 @@ import type { ParentChild, Attendance } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { TableSkeleton } from './ui/Skeleton';
+import { EmptyState } from './ui/LoadingState';
 import Badge from './ui/Badge';
 
 interface ParentAttendanceViewProps {
@@ -104,9 +105,7 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
           <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
         </div>
       ) : attendance.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-neutral-600 dark:text-neutral-400">Belum ada data kehadiran</p>
-        </div>
+        <EmptyState message="Belum ada data kehadiran" size="md" />
       ) : (
         <>
           {/* Month Filter */}

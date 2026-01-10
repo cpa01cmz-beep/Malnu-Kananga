@@ -6,6 +6,7 @@ import { Toggle } from './ui/Toggle';
 import Button from './ui/Button';
 import Tab from './ui/Tab';
 import type { SpeechSynthesisVoice } from '../types';
+import { EmptyState } from './ui/LoadingState';
 
 interface VoiceNotificationSettingsProps {
   isOpen: boolean;
@@ -493,10 +494,7 @@ const VoiceNotificationSettings: React.FC<VoiceNotificationSettingsProps> = ({
               </div>
 
               {history.length === 0 ? (
-                <div className="text-center py-8 text-neutral-500 dark:text-neutral-400">
-                  <SpeakerXMarkIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                  <p>Belum ada riwayat notifikasi suara</p>
-                </div>
+                <EmptyState message="Belum ada riwayat notifikasi suara" size="md" variant="illustrated" />
               ) : (
                 <div className="space-y-2">
                   {history.slice().reverse().map((voiceNotif) => (

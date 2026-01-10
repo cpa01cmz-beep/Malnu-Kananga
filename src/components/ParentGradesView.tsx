@@ -8,6 +8,7 @@ import { logger } from '../utils/logger';
 import PDFExportButton from './ui/PDFExportButton';
 import { pdfExportService } from '../services/pdfExportService';
 import { TableSkeleton } from './ui/Skeleton';
+import { EmptyState } from './ui/LoadingState';
 
 interface ParentGradesViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -101,9 +102,7 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
           <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
         </div>
       ) : grades.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-neutral-600 dark:text-neutral-400">Belum ada nilai tersedia</p>
-        </div>
+        <EmptyState message="Belum ada nilai tersedia" size="md" />
       ) : (
         <>
           {/* Header with Export */}

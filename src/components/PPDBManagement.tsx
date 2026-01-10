@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole } from '../types';
+import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole } from '../types'; 
 
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
@@ -10,6 +10,7 @@ import Button from './ui/Button';
 import AccessDenied from './AccessDenied';
 import Badge from './ui/Badge';
 import SearchInput from './ui/SearchInput';
+import { EmptyState } from './ui/LoadingState';
 
 interface PPDBManagementProps {
   onBack: () => void;
@@ -495,13 +496,13 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                     </td>
                                 </tr>
                             ))
-                        ) : (
-                            <tr>
-                                <td colSpan={7} className="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
-                                    Belum ada data pendaftar.
-                                </td>
-                            </tr>
-                        )}
+                            ) : (
+                                <tr>
+                                    <td colSpan={7}>
+                                        <EmptyState message="Belum ada data pendaftar" size="md" variant="minimal" />
+                                    </td>
+                                </tr>
+                            )}
                     </tbody>
                 </table>
             </div>

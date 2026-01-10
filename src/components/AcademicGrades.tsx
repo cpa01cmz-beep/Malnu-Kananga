@@ -18,6 +18,7 @@ import { Grade, Subject, Attendance } from '../types';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { useCanAccess } from '../hooks/useCanAccess';
+import { EmptyState } from './ui/LoadingState';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
 import { GRADIENT_CLASSES } from '../config/gradients';
 import { CHART_COLORS } from '../config/chartColors';
@@ -533,8 +534,8 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
-                      Belum ada data nilai tersedia.
+                    <td colSpan={6}>
+                      <EmptyState message="Belum ada data nilai tersedia" size="md" variant="minimal" />
                     </td>
                   </tr>
                 )}

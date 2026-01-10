@@ -5,6 +5,7 @@ import { withCircuitBreaker, classifyError, logError, getUserFriendlyMessage } f
 import LoadingSpinner from './ui/LoadingSpinner';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
+import { EmptyState } from './ui/LoadingState';
 
 interface StudentLearningModuleProps {
     onShowToast: (msg: string, type: 'success' | 'error' | 'info' | 'warning') => void;
@@ -281,22 +282,11 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                         <LoadingSpinner size="md" color="primary" text="Sedang membuat kuis..." />
                                     </div>
                                 ) : aiQuizState.questions.length === 0 ? (
-                                    <div className="text-center py-8 text-neutral-600">
-                                        {selectedTopic ? (
-                                            <div>
-                                                <p>Belum ada kuis untuk topik "{selectedTopic.title}"</p>
-                                                <Button
-                                                    onClick={() => selectedTopic && generateAIQuiz(selectedTopic)}
-                                                    variant="purple-solid"
-                                                    size="sm"
-                                                >
-                                                    Buat Kuis Baru
-                                                </Button>
-                                            </div>
-                                        ) : (
-                                            <p>Silakan pilih topik terlebih dahulu</p>
-                                        )}
-                                    </div>
+                                    <EmptyState
+                                      message={selectedTopic ? `Belum ada kuis untuk topik "${selectedTopic.title}"` : 'Silakan pilih topik terlebih dahulu'}
+                                      action={selectedTopic ? { label: 'Buat Kuis Baru', onClick: () => selectedTopic && generateAIQuiz(selectedTopic) } : undefined}
+                                      size="md"
+                                    />
                                 ) : (
                                     <div>
                                         {!aiQuizState.isSubmitted ? (

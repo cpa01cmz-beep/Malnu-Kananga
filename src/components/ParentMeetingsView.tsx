@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { ToastType } from './Toast';
@@ -9,6 +8,7 @@ import type { ParentChild, ParentTeacher, ParentMeeting } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateAndSanitizeMeeting, validateParentMeeting } from '../utils/parentValidation';
+import { EmptyState } from './ui/LoadingState';
 
 interface ParentMeetingsViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -302,15 +302,11 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
         {/* Meetings List */}
         <div className="space-y-4">
           {meetings.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CalendarDaysIcon />
-              </div>
-              <p className="text-neutral-600 dark:text-neutral-400">Belum ada pertemuan terjadwal</p>
-              <p className="text-sm text-neutral-500 dark:text-neutral-500 mt-1">
-                Klik tombol di atas untuk menjadwalkan pertemuan
-              </p>
-            </div>
+            <EmptyState
+              message="Belum ada pertemuan terjadwal"
+              size="md"
+              variant="illustrated"
+            />
           ) : (
             meetings.map((meeting) => (
               <div key={meeting.id} className="bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl p-6 border border-neutral-200 dark:border-neutral-700">

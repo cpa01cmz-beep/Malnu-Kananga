@@ -1,6 +1,7 @@
 import React from 'react';
 import { NotificationAnalytics } from '../types';
 import ProgressBar from './ui/ProgressBar';
+import { EmptyState } from './ui/LoadingState';
 
 interface NotificationAnalyticsProps {
   analytics: NotificationAnalytics[];
@@ -32,9 +33,7 @@ const NotificationAnalyticsComponent: React.FC<NotificationAnalyticsProps> = ({ 
       <h3 className="text-lg font-medium text-neutral-900">Analytics Notifikasi</h3>
 
       {analytics.length === 0 ? (
-        <div className="text-center py-8 text-neutral-500">
-          <p>Belum ada data analytics</p>
-        </div>
+        <EmptyState message="Belum ada data analytics" size="md" />
       ) : (
         <>
           {/* Summary Cards */}

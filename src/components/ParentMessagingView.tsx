@@ -10,6 +10,7 @@ import { validateAndSanitizeMessage, validateParentMessage } from '../utils/pare
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
+import { EmptyState } from './ui/LoadingState';
 
 interface ParentMessagingViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -184,15 +185,11 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
           <div className="lg:col-span-2">
             <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl p-6 h-96 overflow-y-auto mb-4">
               {messages.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <SendIcon />
-                  </div>
-                  <p className="text-neutral-600 dark:text-neutral-400">Belum ada pesan</p>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-500 mt-1">
-                    Mulai percakapan dengan guru anak
-                  </p>
-                </div>
+                <EmptyState
+                  message="Belum ada pesan"
+                  size="md"
+                  variant="illustrated"
+                />
               ) : (
                 <div className="space-y-4">
                   {messages.map((message) => (

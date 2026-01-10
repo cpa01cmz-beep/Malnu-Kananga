@@ -9,6 +9,7 @@ import { CheckCircleIcon, FunnelIcon } from './icons/NotificationIcons';
 import { TrashIcon } from './icons/TrashIcon';
 import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
+import { EmptyState } from './ui/LoadingState';
 
 interface NotificationCenterProps {
   userRole: UserRole;
@@ -303,22 +304,20 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
             <div className="overflow-y-auto max-h-[60vh]">
               {filteredHistory().length === 0 ? (
-                <div className="p-8 text-center text-neutral-500 dark:text-neutral-400" role="status">
-                  {searchQuery || selectedType !== 'all' || selectedStatus !== 'all' ? (
-                    <p>Tidak ada notifikasi yang cocok dengan filter</p>
-                  ) : (
-                    <>
-                      <p className="mb-4">Belum ada notifikasi</p>
-                      <Button
-                        onClick={handleSendTestNotification}
-                        disabled={!permissionGranted}
-                        variant="primary"
-                        size="sm"
-                      >
-                        Kirim Notifikasi Tes
-                      </Button>
-                    </>
-                  )}
+                <div className="p-8">
+                  <EmptyState
+                    message={searchQuery || selectedType !== 'all' || selectedStatus !== 'all' ? 'Tidak ada notifikasi yang cocok dengan filter' : 'Belum ada notifikasi'}
+                    action={
+                      searchQuery || selectedType !== 'all' || selectedStatus !== 'all'
+                        ? undefined
+                        : {
+                            label: 'Kirim Notifikasi Tes',
+                            onClick: handleSendTestNotification,
+                            onClickDisabled: !permissionGranted
+                          }
+                    }
+                    size="md"
+                  />
                 </div>
               ) : (
                  <div className="divide-y divide-neutral-100 dark:divide-neutral-800" role="list" aria-label="Daftar notifikasi">

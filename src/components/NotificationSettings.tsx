@@ -11,6 +11,7 @@ import { NotificationSettings as NotificationSettingsType } from '../types';
 import { useAutoSave } from '../hooks/useAutoSave';
 import Button from './ui/Button';
 import Tab from './ui/Tab';
+import { EmptyState } from './ui/LoadingState';
 
 interface NotificationSettingsProps {
   isOpen: boolean;
@@ -585,9 +586,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
 
               <div className="p-4">
                 {history.length === 0 ? (
-                  <p className="text-center text-neutral-500 py-8">
-                    Belum ada riwayat notifikasi
-                  </p>
+                  <EmptyState message="Belum ada riwayat notifikasi" size="md" />
                 ) : (
                   <>
                     <div className="flex justify-between items-center mb-4">

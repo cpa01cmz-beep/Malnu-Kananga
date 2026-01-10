@@ -4,6 +4,7 @@ import ErrorMessage from './ui/ErrorMessage';
 import ProgressBar from './ui/ProgressBar';
 import Tab from './ui/Tab';
 import Card from './ui/Card';
+import { EmptyState } from './ui/LoadingState';
 import {
   BarChart,
   Bar,
@@ -631,7 +632,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 })}
               </div>
             ) : (
-              <p className="text-center text-neutral-500 dark:text-neutral-400 py-8">Belum ada target prestasi yang ditetapkan.</p>
+              <EmptyState message="Belum ada target prestasi yang ditetapkan" size="md" />
             )}
           </Card>
         </div>

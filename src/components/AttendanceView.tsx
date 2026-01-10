@@ -12,6 +12,7 @@ import AccessDenied from './AccessDenied';
 import Button from './ui/Button';
 import { pdfExportService } from '../services/pdfExportService';
 import { logger } from '../utils/logger';
+import { EmptyState } from './ui/LoadingState';
 
 interface AttendanceViewProps {
   onBack: () => void;
@@ -313,8 +314,8 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
               ))
             ) : (
               <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-neutral-500 dark:text-neutral-400">
-                  Belum ada riwayat kehadiran.
+                <td colSpan={4}>
+                  <EmptyState message="Belum ada riwayat kehadiran" size="md" variant="minimal" />
                 </td>
               </tr>
             )}
