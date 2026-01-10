@@ -5,6 +5,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { useNetworkStatus } from '../utils/networkStatus';
+import { logger } from '../utils/logger';
 import type { ActionType } from '../services/offlineActionQueueService';
 
 export interface AutoSaveConfig<T> {
@@ -102,7 +103,7 @@ export function useAutoSave<T extends object>(
         originalDataRef.current = parsedData;
       }
     } catch (err) {
-      console.warn(`Failed to load cached data for ${storageKey}:`, err);
+      logger.warn(`Failed to load cached data for ${storageKey}:`, err);
     }
   }, [storageKey]);
 
@@ -118,7 +119,7 @@ export function useAutoSave<T extends object>(
       await sync();
       updateQueuedCount();
     } catch (err) {
-      console.error('Failed to sync offline queue:', err);
+      logger.error('Failed to sync offline queue:', err);
     }
   }, [sync, updateQueuedCount]);
 
@@ -204,7 +205,7 @@ export function useAutoSave<T extends object>(
         try {
           await queueForOfflineSave(transform?.(currentData) || currentData, currentData);
         } catch (queueError) {
-          console.error('Failed to queue for offline save:', queueError);
+          logger.error('Failed to queue for offline save:', queueError);
         }
       }
     } finally {
