@@ -178,22 +178,6 @@ const VersionControl: React.FC<VersionControlProps> = ({
     }
   };
 
-  const deleteVersion = async (versionId: string) => {
-    if (!window.confirm('Hapus versi ini? Tindakan tidak dapat dibatalkan.')) {
-      return;
-    }
-
-    try {
-      // Mock delete - replace with actual implementation
-      const updatedVersions = versions.filter(v => v.id !== versionId);
-      setVersions(updatedVersions);
-      onShowToast('Versi berhasil dihapus', 'success');
-    } catch (err) {
-      logger.error('Error deleting version:', err);
-      onShowToast('Gagal menghapus versi', 'error');
-    }
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('id-ID', {
       day: 'numeric',
