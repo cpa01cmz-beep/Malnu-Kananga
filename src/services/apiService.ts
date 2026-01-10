@@ -5,6 +5,8 @@ import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, 
 import { logger } from '../utils/logger';
 import { permissionService } from './permissionService';
 import { STORAGE_KEYS } from '../constants';
+import { offlineActionQueueService } from './offlineActionQueueService';
+import { isNetworkError } from '../utils/networkStatus';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
 
@@ -36,6 +38,10 @@ export interface AuthPayload {
   extra_role?: string | null;
   session_id: string;
   exp: number;
+}
+
+export interface RequestOptions extends RequestInit {
+  skipQueue?: boolean; // Opt-out for real-time requirements
 }
 
 // ============================================
@@ -133,7 +139,6 @@ export const authAPI = {
   async login(email: string, password: string): Promise<LoginResponse> {
     const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: 'POST',
-
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
@@ -156,7 +161,6 @@ export const authAPI = {
     try {
       await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: 'POST',
-
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -278,12 +282,137 @@ async function validateRequestPermissions(
 }
 
 // ============================================
+// OFFLINE QUEUE HELPER FUNCTIONS
+// ============================================
+
+/**
+ * Queue a request for offline execution
+ */
+async function queueOfflineRequest<T>(
+  endpoint: string,
+  options: RequestOptions,
+  token: string | null
+): Promise<ApiResponse<T>> {
+  const method = options.method?.toUpperCase() || 'GET';
+  const isWriteOperation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
+  
+  if (!isWriteOperation) {
+    // Don't queue read operations - fail fast
+    return {
+      success: false,
+      message: 'Network error: Unable to complete request offline',
+      error: 'Network error: Unable to complete request offline'
+    };
+  }
+
+  // Extract entity and action type from endpoint
+  const pathParts = endpoint.split('/').filter(Boolean);
+  const entity = mapEndpointToEntityType(endpoint, method);
+  const actionType = mapMethodToActionType(method);
+
+  try {
+    // Parse body for the data
+    let data: unknown = null;
+    if (options.body && typeof options.body === 'string') {
+      try {
+        data = JSON.parse(options.body);
+      } catch {
+        data = options.body;
+      }
+    }
+
+    // Add to offline queue
+    const actionId = offlineActionQueueService.addAction({
+      type: actionType,
+      entity,
+      entityId: extractEntityId(data as Record<string, unknown>, endpoint),
+      data,
+      endpoint: `${API_BASE_URL}${endpoint}`,
+      method: method as 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+    });
+
+    logger.info('Request queued for offline sync', {
+      actionId,
+      endpoint,
+      method,
+      entity,
+      actionType
+    });
+
+    return {
+      success: true,
+      message: 'Action queued for offline sync',
+      data: { actionId, queued: true } as T,
+    };
+  } catch (error) {
+    logger.error('Failed to queue offline request', { error, endpoint, method });
+    return {
+      success: false,
+      message: 'Failed to queue action for offline sync',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+}
+
+/**
+ * Map API endpoint to entity type for the offline queue
+ */
+function mapEndpointToEntityType(endpoint: string, method: string): 'grade' | 'attendance' | 'assignment' | 'material' | 'announcement' | 'event' | 'ppdb' | 'inventory' | 'schedule' | 'meeting' | 'user' {
+  const pathParts = endpoint.split('/').filter(Boolean);
+  
+  // Map endpoints to entity types
+  if (endpoint.includes('/grades') || endpoint.includes('/grade')) return 'grade';
+  if (endpoint.includes('/attendance') || endpoint.includes('/attendances')) return 'attendance';
+  if (endpoint.includes('/e_library') || endpoint.includes('/material')) return 'material';
+  if (endpoint.includes('/announcements') || endpoint.includes('/announcement')) return 'announcement';
+  if (endpoint.includes('/school_events') || endpoint.includes('/event')) return 'event';
+  if (endpoint.includes('/ppdb_registrants') || endpoint.includes('/ppdb')) return 'ppdb';
+  if (endpoint.includes('/inventory') || endpoint.includes('/item')) return 'inventory';
+  if (endpoint.includes('/schedules') || endpoint.includes('/schedule')) return 'schedule';
+  if (endpoint.includes('/meetings') || endpoint.includes('/meeting')) return 'meeting';
+  if (endpoint.includes('/users') || endpoint.includes('/students') || endpoint.includes('/teachers') || endpoint.includes('/parents')) return 'user';
+  
+  // Default fallback based on method
+  return 'material';
+}
+
+/**
+ * Map HTTP method to action type for the offline queue
+ */
+function mapMethodToActionType(method: string): 'create' | 'update' | 'delete' | 'publish' | 'submit' | 'approve' | 'reject' {
+  switch (method) {
+    case 'POST': return 'create';
+    case 'PUT': 
+    case 'PATCH': return 'update';
+    case 'DELETE': return 'delete';
+    default: return 'create';
+  }
+}
+
+/**
+ * Extract entity ID from data or endpoint
+ */
+function extractEntityId(data: Record<string, unknown> | null, endpoint: string): string {
+  if (data?.id) {
+    return String(data.id);
+  }
+  
+  // Try to extract from endpoint (e.g., /api/users/123)
+  const matches = endpoint.match(/\/(\d+)[\/]?$/);
+  if (matches) {
+    return matches[1];
+  }
+  
+  return 'unknown';
+}
+
+// ============================================
 // GENERIC API FUNCTIONS
 // ============================================
 
 async function request<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestOptions = {}
 ): Promise<ApiResponse<T>> {
   let token = getAuthToken();
 
@@ -301,6 +430,21 @@ async function request<T>(
         subscribeTokenRefresh((newToken: string) => resolve(newToken));
       });
     }
+  }
+
+  // Check if we should skip offline queue (for real-time requirements)
+  const skipQueue = options.skipQueue || false;
+  
+  // Check if we're online
+  const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
+  
+  // For write operations (POST, PUT, DELETE, PATCH), use offline queue unless explicitly skipped
+  const method = options.method?.toUpperCase() || 'GET';
+  const isWriteOperation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
+  
+  if (isWriteOperation && !skipQueue && !isOnline) {
+    // Queue for offline execution
+    return queueOfflineRequest<T>(endpoint, options, token);
   }
 
   // Server-side permission validation
@@ -329,32 +473,45 @@ async function request<T>(
     }
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { 'Authorization': `Bearer ${token}` }),
-      ...options.headers,
-    } as HeadersInit,
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+        ...options.headers,
+      } as HeadersInit,
+    });
 
-  const json = await response.json();
+    const json = await response.json();
 
-  if (response.status === 401 && !isRefreshing && getRefreshToken()) {
-    if (!isRefreshing) {
-      isRefreshing = true;
-      try {
-        const refreshSuccess = await authAPI.refreshToken();
-        if (refreshSuccess) {
-          return request(endpoint, options);
+    if (response.status === 401 && !isRefreshing && getRefreshToken()) {
+      if (!isRefreshing) {
+        isRefreshing = true;
+        try {
+          const refreshSuccess = await authAPI.refreshToken();
+          if (refreshSuccess) {
+            return request(endpoint, options);
+          }
+        } finally {
+          isRefreshing = false;
         }
-      } finally {
-        isRefreshing = false;
       }
     }
-  }
 
-  return json;
+    return json;
+  } catch (error) {
+    // Auto-queue on network failure for write operations
+    if (isWriteOperation && !skipQueue && isNetworkError(error)) {
+      logger.warn('Network error detected, queuing request for offline sync', {
+        endpoint,
+        method,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      return queueOfflineRequest<T>(endpoint, options, token);
+    }
+    throw error;
+  }
 }
 
 // Type declarations for Web API
@@ -768,7 +925,6 @@ export const chatAPI = {
   async getContext(message: string): Promise<{ context: string }> {
     const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: 'POST',
-
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message }),
     });
@@ -1268,6 +1424,9 @@ export const apiService = {
   getAuthToken,
   parseJwtPayload,
 };
+
+// Export request function for testing
+export { request };
 
 // Export for backward compatibility
 export const api = apiService;
