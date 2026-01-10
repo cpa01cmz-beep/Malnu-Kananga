@@ -4,7 +4,7 @@ import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, 
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
-import { pushNotificationService } from '../services/pushNotificationService';
+import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import AccessDenied from './AccessDenied';
@@ -94,7 +94,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
           logger.info('Sending email:', template.subject, template.body.replace('{fullName}', r.fullName));
           
           // Send push notification to applicant
-          pushNotificationService.showLocalNotification({
+          unifiedNotificationManager.showNotification({
             id: `ppdb-status-${id}-${Date.now()}`,
             type: 'ppdb',
             title: newStatus === 'approved' ? 'Selamat! Anda Diterima' : 'Hasil Seleksi PPDB',

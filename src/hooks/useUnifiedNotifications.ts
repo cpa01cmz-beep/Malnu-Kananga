@@ -164,11 +164,11 @@ export function useUnifiedNotifications() {
 
   // History Management
   const getHistory = useCallback((limit?: number): NotificationHistoryItem[] => {
-    return unifiedNotificationManager.getHistory(limit);
+    return unifiedNotificationManager.getUnifiedHistory(limit);
   }, []);
 
   const clearHistory = useCallback((): void => {
-    unifiedNotificationManager.clearHistory();
+    unifiedNotificationManager.clearUnifiedHistory();
   }, []);
 
   const markAsRead = useCallback((notificationId: string): void => {

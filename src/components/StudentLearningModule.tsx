@@ -5,6 +5,7 @@ import { withCircuitBreaker, classifyError, logError, getUserFriendlyMessage } f
 import LoadingSpinner from './ui/LoadingSpinner';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
+import Card from './ui/Card';
 import { EmptyState } from './ui/LoadingState';
 
 interface StudentLearningModuleProps {
@@ -205,20 +206,21 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {topics.map(topic => (
-                        <button
+                        <Card
                             key={topic.id}
+                            variant="interactive"
                             onClick={() => setSelectedTopic(topic)}
-                            className="bg-white dark:bg-neutral-800 p-6 rounded-lg shadow hover:shadow-md cursor-pointer text-left focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 transition-all duration-200 ease-out hover:-translate-y-0.5 active:scale-95"
+                            aria-label={`Topik ${topic.title}: ${topic.description}`}
                             aria-pressed={selectedTopic?.id === topic.id}
                         >
                             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">{topic.title}</h3>
                             <p className="text-sm text-neutral-500 dark:text-neutral-400">{topic.description}</p>
-                        </button>
+                        </Card>
                     ))}
                 </div>
 
                 {selectedTopic && (
-                    <div className="mt-8 bg-white dark:bg-neutral-800 p-6 rounded-lg shadow">
+                    <Card variant="default" padding="lg" className="mt-8">
                         <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">{selectedTopic.title}</h2>
                         
                         <div className="space-y-4">
@@ -407,15 +409,15 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                 <h3 className="text-lg font-semibold mb-4">Flashcards</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {flashcards.map(card => (
-                                        <div key={card.id} className="p-4 border rounded-lg">
+                                        <Card key={card.id} variant="default" padding="md" className="border">
                                             <div className="font-medium">Front: {card.front}</div>
                                             <div className="text-neutral-600">Back: {card.back}</div>
-                                        </div>
+                                        </Card>
                                     ))}
                                 </div>
                             </div>
                         )}
-                    </div>
+                    </Card>
                 )}
             </div>
         </main>

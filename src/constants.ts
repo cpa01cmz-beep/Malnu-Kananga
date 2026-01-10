@@ -30,6 +30,7 @@ export const STORAGE_KEYS = {
     
     // User and push notification data (refactored from hardcoded)
     USER: 'malnu_user',
+    CHILDREN: 'malnu_children',
     NOTIFICATION_BATCHES: 'malnu_notification_batches',
     NOTIFICATION_TEMPLATES: 'malnu_notification_templates',
     NOTIFICATION_ANALYTICS: 'malnu_notification_analytics',
@@ -75,6 +76,8 @@ export const STORAGE_KEYS = {
     
     // OCR Audit
     OCR_AUDIT: 'malnu_ocr_audit',
+    OCR_VALIDATION_QUEUE: 'malnu_queued_ocr_validations',
+    OCR_VALIDATION_EVENTS: 'ocr_validation_events',
     
     // Student Insights (dynamic factory functions)
     STUDENT_INSIGHTS: (studentId: string) => `malnu_student_insights_${studentId}`,

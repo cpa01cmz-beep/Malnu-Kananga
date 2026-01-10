@@ -1,7 +1,7 @@
 // NotificationHistory.tsx - Component for viewing notification history
 import React, { useState, useEffect } from 'react';
 import { ToastType } from './Toast';
-import { pushNotificationService } from '../services/pushNotificationService';
+import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import { logger } from '../utils/logger';
 import type { PushNotification, ParentChild } from '../types';
@@ -37,7 +37,7 @@ const NotificationHistory: React.FC<NotificationHistoryProps> = ({
       setLoading(true);
 
       // Get general notification history from push notification service
-      let historyItems = pushNotificationService.getHistory(100).map(item => item.notification);
+      let historyItems = unifiedNotificationManager.getUnifiedHistory(100).map((item) => item.notification);
 
       // Get grade notification history (specialized service)
       if (filter === 'grade' || filter === 'all') {
@@ -96,7 +96,7 @@ const NotificationHistory: React.FC<NotificationHistoryProps> = ({
         .map(n => n.id);
 
       for (const id of unreadIds) {
-        pushNotificationService.markAsRead(id);
+        unifiedNotificationManager.markAsRead(id);
       }
 
       // Refresh the list
@@ -288,7 +288,7 @@ case 'announcement':
                         {!notification.read && (
                           <IconButton
                             onClick={() => {
-                              pushNotificationService.markAsRead(notification.id);
+                              unifiedNotificationManager.markAsRead(notification.id);
                               loadNotificationHistory();
                             }}
                             icon={<CheckCircleIcon className="w-4 h-4" />}

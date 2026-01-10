@@ -10,7 +10,7 @@ import Badge from './ui/Badge';
 import Modal from './ui/Modal';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { api } from '../services/apiService';
-import { pushNotificationService } from '../services/pushNotificationService';
+import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useCanAccess } from '../hooks/useCanAccess';
 import { TableSkeleton } from './ui/Skeleton';
@@ -131,7 +131,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
               
               if (response.success && roleChanged) {
                 // Send notification about role change
-                await pushNotificationService.showLocalNotification({
+                await unifiedNotificationManager.showLocalNotification({
                   id: `role-change-${userData.id}-${Date.now()}`,
                   type: 'system',
                   title: 'Perubahan Hak Akses',
@@ -155,7 +155,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
               
               if (response.success) {
                 // Send welcome notification to new user
-                await pushNotificationService.showLocalNotification({
+                await unifiedNotificationManager.showLocalNotification({
                   id: `welcome-${userData.id}-${Date.now()}`,
                   type: 'system',
                   title: 'Selamat Datang!',

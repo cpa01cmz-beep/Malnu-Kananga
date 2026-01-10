@@ -35,7 +35,7 @@ import useLocalStorage from './hooks/useLocalStorage';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { api } from './services/apiService';
 import { permissionService } from './services/permissionService';
-import { pushNotificationService } from './services/pushNotificationService';
+import { unifiedNotificationManager } from './services/unifiedNotificationManager';
 import { GRADIENT_CLASSES } from './config/gradients';
 
 // Auth Session Interface
@@ -117,7 +117,7 @@ const App: React.FC = () => {
     loadDefaultContent();
     
     // Initialize push notification service
-    pushNotificationService.requestPermission().then(granted => {
+    unifiedNotificationManager.requestPermission().then((granted: boolean) => {
       if (granted) {
         logger.info('Push notifications enabled on app initialization');
       }
