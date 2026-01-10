@@ -7,6 +7,7 @@ import { useCanAccess } from '../hooks/useCanAccess';
 import PageHeader from './ui/PageHeader';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
+import Alert from './ui/Alert';
 import AccessDenied from './AccessDenied';
 import Button from './ui/Button';
 
@@ -222,22 +223,22 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-xl border border-green-100 dark:border-green-800 text-center">
-          <span className="block text-2xl font-bold text-green-700 dark:text-green-400">{presentPercentage}%</span>
-          <span className="text-xs text-green-600 dark:text-green-300">Persentase Hadir</span>
-        </div>
-        <div className="bg-yellow-50 dark:bg-yellow-900/10 p-4 rounded-xl border border-yellow-100 dark:border-yellow-800 text-center">
-          <span className="block text-2xl font-bold text-yellow-700 dark:text-yellow-400">{sickCount}</span>
-          <span className="text-xs text-yellow-600 dark:text-yellow-300">Sakit</span>
-        </div>
-        <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-800 text-center">
-          <span className="block text-2xl font-bold text-blue-700 dark:text-blue-400">{permissionCount}</span>
-          <span className="text-xs text-blue-600 dark:text-blue-300">Izin</span>
-        </div>
-        <div className="bg-red-50 dark:bg-red-900/10 p-4 rounded-xl border border-red-100 dark:border-red-800 text-center">
-          <span className="block text-2xl font-bold text-red-700 dark:text-red-400">{absentCount}</span>
-          <span className="text-xs text-red-600 dark:text-red-300">Alpa</span>
-        </div>
+        <Alert variant="success" size="md" centered fullWidth>
+          <span className="block text-2xl font-bold">{presentPercentage}%</span>
+          <span className="text-xs">Persentase Hadir</span>
+        </Alert>
+        <Alert variant="warning" size="md" centered fullWidth>
+          <span className="block text-2xl font-bold">{sickCount}</span>
+          <span className="text-xs">Sakit</span>
+        </Alert>
+        <Alert variant="info" size="md" centered fullWidth>
+          <span className="block text-2xl font-bold">{permissionCount}</span>
+          <span className="text-xs">Izin</span>
+        </Alert>
+        <Alert variant="error" size="md" centered fullWidth>
+          <span className="block text-2xl font-bold">{absentCount}</span>
+          <span className="text-xs">Alpa</span>
+        </Alert>
       </div>
 
       <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">

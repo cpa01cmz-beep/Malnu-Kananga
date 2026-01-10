@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { useVoiceNotifications } from '../hooks/useVoiceNotifications';
 import Button from './ui/Button';
+import Alert from './ui/Alert';
 import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';
 import { BellIcon } from './icons/BellIcon';
 
@@ -91,36 +92,42 @@ const VoiceNotificationDemo: React.FC = () => {
       </div>
 
       {/* Voice Settings Status */}
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-blue-900 dark:text-blue-100">
-              Status Notifikasi Suara
-            </h3>
-            <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-              {isVoiceEnabled ? '✅ Aktif' : '❌ Non-aktif'} | 
-              {isSpeaking ? ' 🗣️ Sedang Berbicara' : ''} |
-              Antrian: {queue.length} notifikasi
-            </p>
+      <div className="space-y-4 mb-8">
+        <Alert
+          variant="info"
+          size="md"
+          fullWidth
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold mb-1">
+                Status Notifikasi Suara
+              </h3>
+              <p className="text-sm mt-1">
+                {isVoiceEnabled ? '✅ Aktif' : '❌ Non-aktif'} |
+                {isSpeaking ? ' 🗣️ Sedang Berbicara' : ''} |
+                Antrian: {queue.length} notifikasi
+              </p>
+            </div>
           </div>
-          <div className="flex gap-2">
+        </Alert>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleToggleVoiceNotification}
+            variant={isVoiceEnabled ? 'success' : 'danger'}
+            size="sm"
+          >
+            {isVoiceEnabled ? 'Matikan Suara' : 'Aktifkan Suara'}
+          </Button>
+          {isSpeaking && (
             <Button
-              onClick={handleToggleVoiceNotification}
-              variant={isVoiceEnabled ? 'success' : 'danger'}
+              onClick={handleStopSpeaking}
+              variant="secondary"
               size="sm"
             >
-              {isVoiceEnabled ? 'Matikan Suara' : 'Aktifkan Suara'}
+              Stop
             </Button>
-            {isSpeaking && (
-              <Button
-                onClick={handleStopSpeaking}
-                variant="secondary"
-                size="sm"
-              >
-                Stop
-              </Button>
-            )}
-          </div>
+          )}
         </div>
       </div>
 

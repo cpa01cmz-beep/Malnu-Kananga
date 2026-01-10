@@ -5,6 +5,7 @@ import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { ToastType } from './Toast';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
+import Alert from './ui/Alert';
 import type { ParentChild, ParentPayment } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
@@ -175,47 +176,53 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl p-6 border border-yellow-200 dark:border-yellow-800">
+          <Alert
+            variant="warning"
+            size="lg"
+            icon={<CalendarDaysIcon />}
+            fullWidth
+          >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-yellow-600 dark:text-yellow-400 mb-1">Menunggu Pembayaran</p>
-                <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">
+                <p className="text-sm mb-1">Menunggu Pembayaran</p>
+                <p className="text-2xl font-bold">
                   {formatCurrency(totalPending)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/50 rounded-xl flex items-center justify-center">
-                <CalendarDaysIcon />
-              </div>
             </div>
-          </div>
+          </Alert>
 
-          <div className="bg-red-50 dark:bg-red-900/20 rounded-2xl p-6 border border-red-200 dark:border-red-800">
+          <Alert
+            variant="error"
+            size="lg"
+            icon={<CalendarDaysIcon />}
+            fullWidth
+          >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-red-600 dark:text-red-400 mb-1">Terlambat</p>
-                <p className="text-2xl font-bold text-red-700 dark:text-red-300">
+                <p className="text-sm mb-1">Terlambat</p>
+                <p className="text-2xl font-bold">
                   {formatCurrency(totalOverdue)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-red-100 dark:bg-red-900/50 rounded-xl flex items-center justify-center">
-                <CalendarDaysIcon />
-              </div>
             </div>
-          </div>
+          </Alert>
 
-          <div className="bg-green-50 dark:bg-green-900/20 rounded-2xl p-6 border border-green-200 dark:border-green-800">
+          <Alert
+            variant="success"
+            size="lg"
+            icon={<UserIcon />}
+            fullWidth
+          >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-600 dark:text-green-400 mb-1">Sudah Dibayar</p>
-                <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                <p className="text-sm mb-1">Sudah Dibayar</p>
+                <p className="text-2xl font-bold">
                   {formatCurrency(totalPaid)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/50 rounded-xl flex items-center justify-center">
-                <UserIcon />
-              </div>
             </div>
-          </div>
+          </Alert>
         </div>
       </div>
 
@@ -242,30 +249,30 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-xl p-4">
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Total</p>
-              <p className="text-lg font-bold text-neutral-900 dark:text-white">
+            <Alert variant="neutral" size="md" fullWidth>
+              <p className="text-sm mb-1">Total</p>
+              <p className="text-lg font-bold">
                 {formatCurrency(data.totalAmount)}
               </p>
-            </div>
-            <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4">
-              <p className="text-sm text-green-600 dark:text-green-400 mb-1">Lunas</p>
-              <p className="text-lg font-bold text-green-700 dark:text-green-300">
+            </Alert>
+            <Alert variant="success" size="md" fullWidth>
+              <p className="text-sm mb-1">Lunas</p>
+              <p className="text-lg font-bold">
                 {formatCurrency(data.paidAmount)}
               </p>
-            </div>
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4">
-              <p className="text-sm text-yellow-600 dark:text-yellow-400 mb-1">Menunggu</p>
-              <p className="text-lg font-bold text-yellow-700 dark:text-yellow-300">
+            </Alert>
+            <Alert variant="warning" size="md" fullWidth>
+              <p className="text-sm mb-1">Menunggu</p>
+              <p className="text-lg font-bold">
                 {formatCurrency(data.pendingAmount)}
               </p>
-            </div>
-            <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4">
-              <p className="text-sm text-red-600 dark:text-red-400 mb-1">Terlambat</p>
-              <p className="text-lg font-bold text-red-700 dark:text-red-300">
+            </Alert>
+            <Alert variant="error" size="md" fullWidth>
+              <p className="text-sm mb-1">Terlambat</p>
+              <p className="text-lg font-bold">
                 {formatCurrency(data.overdueAmount)}
               </p>
-            </div>
+            </Alert>
           </div>
 
           {showDetails[data.child.studentId] && (
