@@ -2,7 +2,505 @@
 
 ## Overview
 
-This document provides usage examples and guidelines for reusable UI components in the MA Malnu Kananga application.
+This document provides usage examples and guidelines for reusable UI components in MA Malnu Kananga application.
+## FileInput Component
+
+**Location**: `src/components/ui/FileInput.tsx`
+
+A reusable file input component with consistent styling, accessibility support, and state management.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg`
+- **3 States**: `default`, `error`, `success`
+- **Accessibility**: Full ARIA support, keyboard navigation, focus management
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Label Support**: Optional label with required indicator
+- **Helper Text**: Contextual guidance for users
+- **Error Handling**: Built-in error state with role="alert"
+- **File Button**: Stylized file button with proper focus states and hover effects
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text displayed above the input |
+| `helperText` | `string` | `undefined` | Helper text displayed below the input |
+| `errorText` | `string` | `undefined` | Error message displayed below the input (sets state to error) |
+| `size` | `FileInputSize` | `'md'` | Input size (affects padding, text size, and file button size) |
+| `state` | `FileInputState` | `'default'` | Visual state variant (defaults to 'error' if errorText provided) |
+| `fullWidth` | `boolean` | `false` | Whether the input should take full width |
+| `accept` | `string` | `undefined` | File types to accept (e.g., ".pdf,.docx") |
+| `multiple` | `boolean` | `false` | Whether multiple files can be selected |
+| `disabled` | `boolean` | `false` | Whether the input is disabled |
+| `required` | `boolean` | `false` | Whether the input is required (shows * indicator) |
+| `onChange` | `(e: ChangeEvent) => void` | `undefined` | Change handler function |
+| `id` | `string` | Auto-generated | Unique identifier for the input |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard input attributes | - | - | Passes through all standard HTML input props |
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for dense interfaces.
+
+```tsx
+import FileInput from './ui/FileInput';
+
+<FileInput
+  label="Upload File"
+  size="sm"
+  accept=".pdf"
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-3 py-2`
+- Input text: `text-sm`
+- File button: `file:py-1.5 file:px-4 file:text-xs`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<FileInput
+  label="Upload File"
+  size="md"
+  accept=".pdf"
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-4 py-3`
+- Input text: `text-sm sm:text-base`
+- File button: `file:py-2 file:px-4 file:text-sm`
+
+#### Large (lg)
+
+Larger size for better accessibility and touch targets.
+
+```tsx
+<FileInput
+  label="Upload File"
+  size="lg"
+  accept=".pdf"
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-5 py-4`
+- Input text: `text-base sm:text-lg`
+- File button: `file:py-2.5 file:px-5 file:text-base`
+
+### States
+
+#### Default State
+
+Standard styling for normal file input.
+
+```tsx
+<FileInput
+  label="Upload Document"
+  accept=".pdf,.docx"
+/>
+```
+
+**Styling**:
+- Border: `border-neutral-300` / `dark:border-neutral-600`
+- File button: `file:bg-blue-50 file:text-blue-700` / `dark:file:bg-blue-900/50 dark:file:text-blue-300`
+- Focus: `focus:ring-primary-500/50 focus:border-primary-500`
+
+#### Error State
+
+Red styling when validation fails.
+
+```tsx
+<FileInput
+  label="Upload Document"
+  errorText="File size exceeds 10MB limit"
+  accept=".pdf,.docx"
+/>
+```
+
+**Styling**:
+- Border: `border-red-300` / `dark:border-red-700`
+- File button: `file:bg-red-50 file:text-red-700` / `dark:file:bg-red-900/50 dark:file:text-red-300`
+- Focus: `focus:ring-red-500/50 focus:border-red-500`
+- Error text: `text-red-600 dark:text-red-400` with `role="alert"`
+- `aria-invalid`: `true`
+
+#### Success State
+
+Green styling for successful validation.
+
+```tsx
+<FileInput
+  label="Upload Document"
+  state="success"
+  helperText="Document ready for upload"
+  accept=".pdf,.docx"
+/>
+```
+
+**Styling**:
+- Border: `border-green-300` / `dark:border-green-700`
+- File button: `file:bg-green-50 file:text-green-700` / `dark:file:bg-green-900/50 dark:file:text-green-300`
+- Focus: `focus:ring-green-500/50 focus:border-green-500`
+
+### Full Width
+
+Make input take full width of container.
+
+```tsx
+<FileInput
+  label="Upload File"
+  fullWidth
+  accept=".pdf"
+/>
+```
+
+### Required Field
+
+Show required indicator (*).
+
+```tsx
+<FileInput
+  label="Required Document"
+  required
+  accept=".pdf"
+/>
+```
+
+**Display**:
+- Label shows `*` indicator with `aria-label="required"` for screen readers
+
+### Helper Text
+
+Provide contextual guidance below the input.
+
+```tsx
+<FileInput
+  label="Upload Document"
+  helperText="Accepted formats: PDF, DOCX (Max 10MB)"
+  accept=".pdf,.docx"
+/>
+```
+
+### Error Text
+
+Display validation error below the input.
+
+```tsx
+<FileInput
+  label="Upload Document"
+  errorText="File size exceeds the maximum limit of 10MB"
+  accept=".pdf,.docx"
+/>
+```
+
+**Automatic State**: When `errorText` is provided, `state` automatically defaults to `'error'`.
+
+### File Types
+
+Control accepted file types.
+
+```tsx
+<FileInput
+  label="Upload Document"
+  accept=".pdf,.doc,.docx,.ppt,.pptx"
+/>
+```
+
+### Multiple Files
+
+Allow multiple file selection.
+
+```tsx
+<FileInput
+  label="Upload Documents"
+  multiple
+  accept=".pdf"
+  onChange={(e) => {
+    const files = Array.from(e.target.files || []);
+    handleMultipleFiles(files);
+  }}
+/>
+```
+
+### Accessibility Features
+
+The FileInput component includes comprehensive accessibility support:
+
+1. **ARIA Labels**: Generated unique IDs for label association
+2. **ARIA DescribedBy**: Associates helper text and error text with input
+3. **ARIA Invalid**: Automatically set when `state === 'error'`
+4. **Error Role**: Error text has `role="alert"` for screen readers
+5. **Focus Management**: `focus:ring-2` with `focus:ring-offset-2` for clear focus indication
+6. **Required Indicator**: Visual `*` with `aria-label="required"` for screen readers
+7. **File Button Focus**: File button has proper focus ring with offset in dark mode
+8. **Keyboard Navigation**: Full keyboard support with visible focus states
+
+```tsx
+<FileInput
+  label="Upload Document"
+  helperText="PDF or DOCX files only, max 10MB"
+  errorText="File too large"
+  accept=".pdf,.docx"
+  required
+  aria-label="Upload your document file"
+/>
+```
+
+### Dark Mode
+
+All FileInput states automatically support dark mode:
+
+- **Background**: `bg-white` → `dark:bg-neutral-700`
+- **Borders**: `border-neutral-300` → `dark:border-neutral-600`
+- **Text**: `text-neutral-900` → `dark:text-white`
+- **File button**: `file:bg-blue-50` → `dark:file:bg-blue-900/50`
+- **Focus ring offset**: `focus:ring-offset-2` → `dark:focus:ring-offset-neutral-800`
+
+### Real-World Examples
+
+#### Version File Upload
+
+```tsx
+function VersionControl() {
+  const [newFile, setNewFile] = useState<File | null>(null);
+  
+  return (
+    <FileInput
+      label="File Baru"
+      onChange={(e) => setNewFile(e.target.files?.[0] || null)}
+      accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4,.jpg,.jpeg,.png"
+      helperText={newFile ? `${newFile.name} • ${formatFileSize(newFile.size)}` : undefined}
+    />
+  );
+}
+```
+
+#### Template File Upload
+
+```tsx
+function MaterialTemplatesLibrary() {
+  return (
+    <FileInput
+      label="File Template"
+      accept=".doc,.docx,.ppt,.pptx,.pdf"
+      helperText="Supported formats: DOC, DOCX, PPT, PPTX, PDF"
+    />
+  );
+}
+```
+
+#### With Validation
+
+```tsx
+function DocumentUploadForm() {
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null;
+    
+    if (selectedFile) {
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        setError('File size exceeds 10MB limit');
+        return;
+      }
+      
+      setError(null);
+      setFile(selectedFile);
+    }
+  };
+  
+  return (
+    <FileInput
+      label="Upload Document"
+      onChange={handleFileChange}
+      errorText={error || undefined}
+      accept=".pdf,.docx"
+      helperText="Max file size: 10MB"
+      required
+    />
+  );
+}
+```
+
+#### Disabled State
+
+```tsx
+<FileInput
+  label="Upload Document"
+  disabled={isUploading}
+  accept=".pdf"
+  helperText={isUploading ? "Please wait..." : "Upload PDF document"}
+/>
+```
+
+### Styling Customization
+
+Add custom classes while preserving default input styling:
+
+```tsx
+<FileInput
+  label="Custom File Input"
+  className="custom-class"
+  accept=".pdf"
+/>
+```
+
+### File Button Styling
+
+The file input uses Tailwind's file modifier classes to style the file button:
+
+- **Spacing**: `file:mr-4` - Margin between button and file name
+- **Rounded**: `file:rounded-full` - Fully rounded corners
+- **Border**: `file:border-0` - No border on button
+- **Font**: `file:text-sm file:font-semibold` - Medium bold text
+- **Background**: `file:bg-blue-50` / `dark:file:bg-blue-900/50` - Theme-aware
+- **Hover**: `hover:file:bg-blue-100` / `dark:hover:file:bg-blue-900/70` - Hover effect
+- **Scale**: `file:hover:scale-[1.02] file:active:scale-95` - Interactive feedback
+- **Transition**: `file:transition-all file:duration-200 file:ease-out` - Smooth animations
+- **Focus**: `file:focus:outline-none file:focus:ring-2 file:focus:ring-offset-2` - Focus ring
+- **Focus Ring**: `focus:file:ring-blue-500/50` / `dark:focus:file:ring-blue-500/50 dark:focus:file:ring-offset-neutral-800`
+
+### Performance Considerations
+
+The FileInput component is optimized using:
+- `forwardRef` for ref forwarding
+- Proper TypeScript typing
+- No unnecessary re-renders
+- CSS-only transitions and transforms
+- Efficient class string concatenation with whitespace normalization
+
+### Migration Guide
+
+To migrate existing file input implementations:
+
+**Before:**
+```tsx
+<div className="mb-4">
+  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+    File Template
+  </label>
+  <input
+    type="file"
+    accept=".doc,.docx,.ppt,.pptx,.pdf"
+    className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+  />
+</div>
+```
+
+**After:**
+```tsx
+import FileInput from './ui/FileInput';
+
+<FileInput
+  label="File Template"
+  accept=".doc,.docx,.ppt,.pptx,.pdf"
+/>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Built-in error and success states
+- ✅ Helper text support
+- ✅ Size variants for flexible layouts
+- ✅ Dark mode support
+- ✅ Focus management
+- ✅ Reduced code duplication
+- ✅ Type-safe props
+
+### Test Coverage
+
+The FileInput component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/FileInput.test.tsx
+```
+
+Test scenarios include:
+- Rendering with default props
+- Rendering with label
+- Rendering with helper text
+- Rendering with error text
+- Automatic error state when errorText provided
+- All size variants (sm, md, lg)
+- All state variants (default, error, success)
+- Full width variant
+- Disabled state behavior
+- Required field indicator
+- File selection handling
+- ARIA attributes (aria-label, aria-describedby, aria-invalid)
+- Unique ID generation
+- Custom className application
+- Custom file types (accept)
+- Multiple file selection
+- Dark mode styling
+- Focus ring visibility
+- File button styling
+- File button hover effects
+- File button scale interactions
+- Ref forwarding
+
+### Usage in Application
+
+Currently integrated in:
+- `src/components/VersionControl.tsx` - Version file upload
+- `src/components/MaterialTemplatesLibrary.tsx` - Template file upload
+
+**Common Patterns:**
+
+```tsx
+// Document upload with validation
+<FileInput
+  label="Upload Document"
+  errorText={validationError || undefined}
+  accept=".pdf,.docx"
+  onChange={validateAndHandleFile}
+/>
+
+// Media file upload
+<FileInput
+  label="Upload Media"
+  helperText="Images and videos only (Max 50MB)"
+  accept=".jpg,.jpeg,.png,.mp4"
+/>
+
+// Simple file upload
+<FileInput
+  label="Select File"
+  accept=".pdf"
+/>
+
+// Full width file input
+<FileInput
+  label="Upload File"
+  fullWidth
+  accept=".pdf,.docx"
+  helperText="Drag and drop or click to browse"
+/>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Drag and drop support
+- File preview for images
+- Multiple file upload with file list display
+- Progress bar for upload status
+- File size indicator in helper text
+- Custom file icon in file button
+- Clear file button
+- File type icons in selected file display
+
+---
 
 ## Card Component
 

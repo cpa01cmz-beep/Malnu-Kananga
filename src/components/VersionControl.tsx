@@ -4,6 +4,7 @@ import { ClockIcon, TrashIcon, XMarkIcon, EyeIcon } from './icons/MaterialIcons'
 import { MaterialVersion, ELibrary } from '../types';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
+import FileInput from './ui/FileInput';
 
 interface VersionControlProps {
   material: ELibrary;
@@ -344,22 +345,12 @@ const VersionControl: React.FC<VersionControlProps> = ({
                 />
               </div>
 
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                  File Baru
-                </label>
-                <input
-                  type="file"
-                  onChange={(e) => setNewFile(e.target.files?.[0] || null)}
-                  accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4,.jpg,.jpeg,.png"
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                />
-                {newFile && (
-                  <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-                    {newFile.name} • {formatFileSize(newFile.size)}
-                  </p>
-                )}
-              </div>
+              <FileInput
+                label="File Baru"
+                onChange={(e) => setNewFile(e.target.files?.[0] || null)}
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4,.jpg,.jpeg,.png"
+                helperText={newFile ? `${newFile.name} • ${formatFileSize(newFile.size)}` : undefined}
+              />
             </div>
 
             <div className="p-6 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-2">
