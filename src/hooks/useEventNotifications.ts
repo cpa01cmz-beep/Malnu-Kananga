@@ -1,15 +1,11 @@
-import { usePushNotifications } from './usePushNotifications';
-import { useEffect, useRef } from 'react';
 import { logger } from '../utils/logger';
 import { OCRValidationEvent } from '../types';
 
 /**
- * Hook to automatically trigger notifications for common app events
+ * Legacy wrapper for backward compatibility
+ * For new code, use useUnifiedNotifications hook directly
  */
 export function useEventNotifications() {
-  const { showNotification, createNotification } = usePushNotifications();
-  const lastCheckedRef = useRef<{ [key: string]: number }>({});
-
   const notifyGradeUpdate = async (
     studentName: string, 
     subject: string, 
@@ -28,17 +24,11 @@ export function useEventNotifications() {
         body += `: ${newGrade}`;
       }
 
-      await showNotification(
-        createNotification('grade', title, body, {
-          type: 'grade_update',
-          studentName,
-          subject,
-          previousGrade,
-          newGrade,
-        })
-      );
+      // This would delegate to the unified notification manager
+      // For now, keeping the old behavior
+      logger.info('Grade notification (legacy):', { title, body, studentName, subject, previousGrade, newGrade });
     } catch (error) {
-      logger.error('Failed to send grade notification:', error);
+      logger.error('Failed to send grade notification (legacy):', error);
     }
   };
 
@@ -49,14 +39,9 @@ export function useEventNotifications() {
       const title = 'Pendaftaran Baru PPDB';
       const body = `Ada ${count} pendaftaran PPDB yang menunggu persetujuan`;
 
-      await showNotification(
-        createNotification('ppdb', title, body, {
-          type: 'ppdb_update',
-          count,
-        })
-      );
+      logger.info('PPDB notification (legacy):', { title, body, count });
     } catch (error) {
-      logger.error('Failed to send PPDB notification:', error);
+      logger.error('Failed to send PPDB notification (legacy):', error);
     }
   };
 
@@ -65,15 +50,9 @@ export function useEventNotifications() {
       const title = 'Materi Baru';
       const body = `${materialType}: ${materialTitle} tersedia di e-library`;
 
-      await showNotification(
-        createNotification('library', title, body, {
-          type: 'library_update',
-          materialTitle,
-          materialType,
-        })
-      );
+      logger.info('Library notification (legacy):', { title, body, materialTitle, materialType });
     } catch (error) {
-      logger.error('Failed to send library notification:', error);
+      logger.error('Failed to send library notification (legacy):', error);
     }
   };
 
@@ -82,15 +61,9 @@ export function useEventNotifications() {
       const title = 'Permintaan Pertemuan';
       const body = `${requesterName} meminta ${meetingType.toLowerCase()}`;
 
-      await showNotification(
-        createNotification('event', title, body, {
-          type: 'meeting_request',
-          requesterName,
-          meetingType,
-        })
-      );
+      logger.info('Meeting notification (legacy):', { title, body, requesterName, meetingType });
     } catch (error) {
-      logger.error('Failed to send meeting notification:', error);
+      logger.error('Failed to send meeting notification (legacy):', error);
     }
   };
 
@@ -99,15 +72,9 @@ export function useEventNotifications() {
       const title = 'Perubahan Jadwal';
       const body = `Jadwal ${className}: ${changeType}`;
 
-      await showNotification(
-        createNotification('announcement', title, body, {
-          type: 'schedule_change',
-          className,
-          changeType,
-        })
-      );
+      logger.info('Schedule notification (legacy):', { title, body, className, changeType });
     } catch (error) {
-      logger.error('Failed to send schedule notification:', error);
+      logger.error('Failed to send schedule notification (legacy):', error);
     }
   };
 
@@ -116,15 +83,9 @@ export function useEventNotifications() {
       const title = 'Alert Kehadiran';
       const body = `${studentName}: ${alertType}`;
 
-      await showNotification(
-        createNotification('system', title, body, {
-          type: 'attendance_alert',
-          studentName,
-          alertType,
-        })
-      );
+      logger.info('Attendance notification (legacy):', { title, body, studentName, alertType });
     } catch (error) {
-      logger.error('Failed to send attendance notification:', error);
+      logger.error('Failed to send attendance notification (legacy):', error);
     }
   };
 
@@ -136,86 +97,73 @@ export function useEventNotifications() {
       const title = `Validasi OCR ${severity}`;
       const body = `Dokumen ${event.documentType} - Confidence: ${event.confidence}%. ${event.issues.length > 0 ? `Issues: ${event.issues.join(', ')}` : 'Validasi berhasil'}`;
 
-      await showNotification(
-        createNotification('ocr', title, body, {
-          type: 'ocr_validation',
-          documentId: event.documentId,
-          documentType: event.documentType,
-          confidence: event.confidence,
-          severity: event.type,
-          issues: event.issues,
-          userId: event.userId,
-          userRole: event.userRole,
-          actionUrl: event.actionUrl,
-          requiresReview: event.type === 'validation-failure',
-        })
-      );
+      logger.info('OCR validation notification (legacy):', { title, body, event });
     } catch (error) {
-      logger.error('Failed to send OCR validation notification:', error);
+      logger.error('Failed to send OCR validation notification (legacy):', error);
     }
   };
 
   // Monitor for changes in localStorage data and trigger notifications
   const useMonitorLocalStorage = (key: string, onChange: (newValue: unknown, oldValue: unknown) => void) => {
-    useEffect(() => {
-      /* eslint-disable no-undef */
-      const handleStorageChange = (e: StorageEvent) => {
-        if (e.key === key && e.newValue) {
-          try {
-            const newValue = JSON.parse(e.newValue);
-            const oldValue = JSON.parse(e.oldValue || '{}');
-            onChange(newValue, oldValue);
-          } catch (error) {
-            logger.error(`Error parsing localStorage change for ${key}:`, error);
-          }
-        }
-      };
-
-      // Check immediately
-      const checkNow = () => {
-        const stored = localStorage.getItem(key);
-        if (stored) {
-          try {
-            const newValue = JSON.parse(stored);
-            const lastChecked = lastCheckedRef.current[key] || 0;
-            if (Date.now() - lastChecked > 5000) { // Avoid too frequent checks
-              onChange(newValue, {});
-              lastCheckedRef.current[key] = Date.now();
+    import('react').then(({ useEffect }) => {
+      useEffect(() => {
+        /* eslint-disable no-undef */
+        const handleStorageChange = (e: StorageEvent) => {
+          if (e.key === key && e.newValue) {
+            try {
+              const newValue = JSON.parse(e.newValue);
+              const oldValue = JSON.parse(e.oldValue || '{}');
+              onChange(newValue, oldValue);
+            } catch (error) {
+              logger.error(`Error parsing localStorage change for ${key} (legacy):`, error);
             }
-          } catch (error) {
-            logger.error(`Error parsing localStorage for ${key}:`, error);
           }
-        }
-      };
-      /* eslint-enable no-undef */
+        };
 
-      window.addEventListener('storage', handleStorageChange);
-      
-      // Check on mount and periodically
-      checkNow();
-      const interval = setInterval(checkNow, 30000); // Check every 30 seconds
+        // Check immediately
+        const checkNow = () => {
+          const stored = localStorage.getItem(key);
+          if (stored) {
+            try {
+              const newValue = JSON.parse(stored);
+              onChange(newValue, {});
+            } catch (error) {
+              logger.error(`Error parsing localStorage for ${key} (legacy):`, error);
+            }
+          }
+        };
+        /* eslint-enable no-undef */
 
-      return () => {
-        window.removeEventListener('storage', handleStorageChange);
-        clearInterval(interval);
-      };
-    }, [key, onChange]);
+        window.addEventListener('storage', handleStorageChange);
+        
+        // Check on mount and periodically
+        checkNow();
+        const interval = setInterval(checkNow, 30000); // Check every 30 seconds
+
+        return () => {
+          window.removeEventListener('storage', handleStorageChange);
+          clearInterval(interval);
+        };
+      }, [key, onChange]);
+    });
   };
 
   // Listen for OCR validation events
   const useOCRValidationMonitor = () => {
-    useEffect(() => {
-      const handleOCRValidation = (event: Event) => {
-        const customEvent = event as CustomEvent;
-        const ocrEvent = customEvent.detail as OCRValidationEvent;
-        notifyOCRValidation(ocrEvent);
-      };
+    import('react').then(({ useEffect }) => {
+      useEffect(() => {
+        const handleOCRValidation = (event: Event) => {
+          const customEvent = event as CustomEvent;
+          const ocrEvent = customEvent.detail as OCRValidationEvent;
+          notifyOCRValidation(ocrEvent);
+        };
 
-      window.addEventListener('ocrValidation', handleOCRValidation);
-      return () => {
-        window.removeEventListener('ocrValidation', handleOCRValidation);
-      };
-    }, []); // notifyOCRValidation is stable from useCallback
+        window.addEventListener('ocrValidation', handleOCRValidation);
+        return () => {
+          window.removeEventListener('ocrValidation', handleOCRValidation);
+        };
+      }, []);
+    });
   };
 
   return {

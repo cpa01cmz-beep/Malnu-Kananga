@@ -2,8 +2,15 @@ import { useState, useEffect, useCallback } from 'react';
 import { NotificationSettings, PushNotification, NotificationHistoryItem, NotificationBatch, NotificationTemplate, NotificationAnalytics } from '../types';
 import { NOTIFICATION_CONFIG } from '../constants';
 import { pushNotificationService } from '../services/pushNotificationService';
+import { logger } from '../utils/logger';
 
+/**
+ * Legacy wrapper for backward compatibility
+ * For new code, use useUnifiedNotifications hook directly
+ */
 export function usePushNotifications() {
+  logger.info('usePushNotifications is a legacy wrapper - consider migrating to useUnifiedNotifications');
+  
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [permissionDenied, setPermissionDenied] = useState(false);
   const [settings, setSettingsState] = useState<NotificationSettings>(NOTIFICATION_CONFIG.DEFAULT_SETTINGS);
