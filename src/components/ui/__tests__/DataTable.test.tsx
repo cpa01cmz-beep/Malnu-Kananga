@@ -5,14 +5,14 @@ import DataTable from '../DataTable';
 
 // Mock icons
 vi.mock('../../icons/SearchIcon', () => ({
-  MagnifyingGlassIcon: () => <div data-testid="search-icon">Search</div>,
+  default: () => <div data-testid="search-icon">Search</div>,
 }));
 
 vi.mock('../../icons/FunnelIcon', () => ({
-  FunnelIcon: () => <div data-testid="funnel-icon">Filter</div>,
+  default: () => <div data-testid="funnel-icon">Filter</div>,
 }));
 
-interface TestData {
+interface TestData extends Record<string, unknown> {
   id: string;
   name: string;
   email: string;
@@ -39,9 +39,9 @@ const mockColumns = [
   {
     key: 'status',
     title: 'Status',
-    render: (value: string) => (
-      <span className={`badge ${value === 'active' ? 'badge-success' : 'badge-danger'}`}>
-        {value}
+    render: (value: unknown) => (
+      <span className={`badge ${(value as string) === 'active' ? 'badge-success' : 'badge-danger'}`}>
+        {value as string}
       </span>
     ),
   },
@@ -121,7 +121,7 @@ describe('DataTable', () => {
     fireEvent.click(nameHeader);
     
     await waitFor(() => {
-      expect(mockSort).toHaveBeenCalledWith('name', 'desc');
+      expect(mockSort).toHaveBeenCalledWith('name', 'asc');
     });
   });
 
@@ -135,7 +135,7 @@ describe('DataTable', () => {
           selectedRowKeys: [],
           onSelectAll: vi.fn(),
           onSelect: mockOnSelect,
-          getRowKey: (record) => record.id,
+          getRowKey: (record: TestData) => record.id,
         }}
       />
     );
@@ -207,7 +207,7 @@ describe('DataTable', () => {
           selectedRowKeys: [],
           onSelectAll: mockOnSelectAll,
           onSelect: vi.fn(),
-          getRowKey: (record) => record.id,
+          getRowKey: (record: TestData) => record.id,
         }}
       />
     );

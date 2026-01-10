@@ -111,9 +111,9 @@ const DataTable = <T extends Record<string, unknown>>({
 
   const getCellValue = (column: Column<T>, record: T, index: number) => {
     if (column.render) {
-      return column.render(record[column.key], record, index);
+      return column.render(record[column.key] as unknown, record, index);
     }
-    return record[column.key];
+    return record[column.key] as React.ReactNode;
   };
 
   const getAlignmentClass = (align?: string) => {
