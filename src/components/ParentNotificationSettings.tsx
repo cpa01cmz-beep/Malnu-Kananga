@@ -156,9 +156,10 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
             <span className="text-sm text-red-800 dark:text-red-200">
               {error}
             </span>
-            <button 
+            <button
               onClick={autoSaveActions.clearError}
               className="text-red-600 hover:text-red-800 dark:hover:text-red-400"
+              aria-label="Tutup pesan error"
             >
               ×
             </button>

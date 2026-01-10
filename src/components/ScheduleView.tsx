@@ -286,6 +286,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
               <button
                 onClick={() => setSelectedEvent(null)}
                 className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                aria-label="Tutup detail jadwal"
               >
                 ×
               </button>

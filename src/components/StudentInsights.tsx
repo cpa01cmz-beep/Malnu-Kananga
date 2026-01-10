@@ -373,7 +373,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
           <div className="bg-white dark:bg-neutral-800 rounded-xl max-w-4xl max-h-[80vh] overflow-auto p-6 w-full">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-neutral-900 dark:text-white">🤖 Analisis Lengkap AI</h3>
-              <Button variant="ghost" onClick={() => setShowAIModal(false)}>
+              <Button variant="ghost" onClick={() => setShowAIModal(false)} aria-label="Tutup analisis AI">
                 ✕
               </Button>
             </div>

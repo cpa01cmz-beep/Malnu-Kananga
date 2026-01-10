@@ -226,6 +226,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
               <button
                 onClick={() => setShowMeetingRequest(false)}
                 className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 text-2xl"
+                aria-label="Tutup formulir pertemuan"
               >
                 ×
               </button>

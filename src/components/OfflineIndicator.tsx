@@ -222,6 +222,7 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
           <button
             onClick={onClose}
             className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+            aria-label="Tutup detail antrian offline"
           >
             ✕
           </button>
