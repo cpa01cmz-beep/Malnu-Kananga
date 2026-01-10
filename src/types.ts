@@ -890,7 +890,7 @@ export interface SpeechWindow {
   };
 }
 
-export type NotificationType = 'announcement' | 'grade' | 'ppdb' | 'event' | 'library' | 'system' | 'ocr';
+export type NotificationType = 'announcement' | 'grade' | 'ppdb' | 'event' | 'library' | 'system' | 'ocr' | 'missing_grades';
 
 export type NotificationPriority = 'low' | 'normal' | 'high';
 

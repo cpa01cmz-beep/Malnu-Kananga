@@ -4,6 +4,7 @@
 import { pushNotificationService } from './pushNotificationService';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
+import { gradesAPI } from './apiService';
 import type { PushNotification } from '../types';
 import type { Grade, ParentChild } from '../types';
 
@@ -523,18 +524,171 @@ class ParentGradeNotificationService {
       cutoffDate.setDate(cutoffDate.getDate() - settings.missingGradeDays);
 
       for (const child of children) {
-        // In a real implementation, this would check with the API
-        // For now, we'll log the intended behavior
-        logger.info(`Checking for missing grades for ${child.studentName} since ${cutoffDate.toISOString()}`);
-        
-        // TODO: Implement actual missing grade check
-        // This would involve:
-        // 1. Fetching expected assignments for the period
-        // 2. Checking which ones don't have grades
-        // 3. Sending appropriate notifications
+        await this.checkMissingGradesForChild(child, cutoffDate, settings);
       }
     } catch (error) {
       logger.error('Failed to check missing grades:', error);
+    }
+  }
+
+  // Check missing grades for a specific child
+  private async checkMissingGradesForChild(
+    child: ParentChild,
+    cutoffDate: Date,
+    settings: ParentGradeNotificationSettings
+  ): Promise<void> {
+    try {
+      // 1. Fetch all grades for the student in the relevant period
+      const gradesResponse = await gradesAPI.getByStudent(child.studentId);
+      
+      if (!gradesResponse.success || !gradesResponse.data) {
+        logger.warn(`Failed to fetch grades for ${child.studentName}`);
+        return;
+      }
+
+      // 2. Filter grades by cutoff date and subject filter
+      const relevantGrades = gradesResponse.data.filter(grade => {
+        const gradeDate = new Date(grade.createdAt);
+        const isAfterCutoff = gradeDate >= cutoffDate;
+        const matchesSubjectFilter = settings.subjects.length === 0 || 
+          settings.subjects.includes(grade.subjectId);
+        
+        return isAfterCutoff && matchesSubjectFilter;
+      });
+
+      // 3. Group grades by subject to identify patterns
+      const gradesBySubject = new Map<string, Grade[]>();
+      relevantGrades.forEach(grade => {
+        if (!gradesBySubject.has(grade.subjectId)) {
+          gradesBySubject.set(grade.subjectId, []);
+        }
+        gradesBySubject.get(grade.subjectId)!.push(grade);
+      });
+
+      // 4. Identify potential missing grades
+      const missingGrades = this.identifyMissingGrades(gradesBySubject, cutoffDate, settings);
+
+      // 5. Send notifications if missing grades found
+      if (missingGrades.length > 0) {
+        await this.sendMissingGradesNotification(child, missingGrades, cutoffDate);
+      }
+
+      logger.info(`Missing grade check completed for ${child.studentName}. Found ${missingGrades.length} potential missing grades`);
+      
+    } catch (error) {
+      logger.error(`Failed to check missing grades for ${child.studentName}:`, error);
+    }
+  }
+
+  // Identify subjects with potentially missing grades
+  private identifyMissingGrades(
+    gradesBySubject: Map<string, Grade[]>,
+    cutoffDate: Date,
+    settings: ParentGradeNotificationSettings
+  ): { subjectId: string; subjectName: string; lastGradeDate: Date; daysSinceLastGrade: number }[] {
+    const missingGrades: { subjectId: string; subjectName: string; lastGradeDate: Date; daysSinceLastGrade: number }[] = [];
+    const now = new Date();
+
+    for (const [subjectId, subjectGrades] of gradesBySubject) {
+      // Sort grades by creation date (newest first)
+      subjectGrades.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      
+      const mostRecentGrade = subjectGrades[0];
+      const lastGradeDate = new Date(mostRecentGrade.createdAt);
+      const daysSinceLastGrade = Math.floor((now.getTime() - lastGradeDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      // Check if enough time has passed since the last grade to expect a new one
+      // Consider different assignment types and their typical frequency
+      const expectedFrequency = this.getExpectedGradeFrequency(mostRecentGrade.assignmentType);
+      const thresholdDays = Math.max(settings.missingGradeDays, expectedFrequency);
+
+      if (daysSinceLastGrade >= thresholdDays) {
+        missingGrades.push({
+          subjectId,
+          subjectName: mostRecentGrade.subjectName || subjectId,
+          lastGradeDate,
+          daysSinceLastGrade
+        });
+      }
+    }
+
+    // Also check for subjects completely missing from recent grades if student has an active schedule
+    this.checkForCompletelyMissingSubjects(gradesBySubject, cutoffDate, settings, missingGrades);
+
+    return missingGrades;
+  }
+
+  // Get expected frequency for different assignment types (in days)
+  private getExpectedGradeFrequency(assignmentType: string): number {
+    const majorExamTypes = ['mid_exam', 'final_exam', 'uts', 'uas', 'final_test'];
+    const quizTypes = ['quiz', 'kuis', 'test'];
+    const homeworkTypes = ['homework', 'pr', 'tugas'];
+    const assignmentTypes = ['assignment', 'tugas'];
+
+    if (majorExamTypes.some(type => assignmentType.toLowerCase().includes(type))) {
+      return 30; // Major exams are less frequent
+    } else if (quizTypes.some(type => assignmentType.toLowerCase().includes(type))) {
+      return 14; // Quizzes happen roughly bi-weekly
+    } else if (homeworkTypes.some(type => assignmentType.toLowerCase().includes(type)) ||
+               assignmentTypes.some(type => assignmentType.toLowerCase().includes(type))) {
+      return 7; // Weekly homework/assignments
+    }
+    
+    return 10; // Default frequency
+  }
+
+  // Check for subjects that should have grades but don't appear in recent data
+  private checkForCompletelyMissingSubjects(
+    _gradesBySubject: Map<string, Grade[]>,
+    _cutoffDate: Date,
+    _settings: ParentGradeNotificationSettings,
+    _missingGrades: { subjectId: string; subjectName: string; lastGradeDate: Date; daysSinceLastGrade: number }[]
+  ): void {
+    // This would require access to the student's schedule to determine which subjects are active
+    // For now, we'll focus on subjects that have recent activity but gaps
+    // Future enhancement: integrate with schedule API to identify completely missing subjects
+  }
+
+  // Send missing grades notification
+  private async sendMissingGradesNotification(
+    child: ParentChild,
+    missingGrades: { subjectId: string; subjectName: string; lastGradeDate: Date; daysSinceLastGrade: number }[],
+    cutoffDate: Date
+  ): Promise<void> {
+    try {
+      const subjectNames = missingGrades.map(mg => mg.subjectName).join(', ');
+      const maxDays = Math.max(...missingGrades.map(mg => mg.daysSinceLastGrade));
+      
+      const notification: PushNotification = {
+        id: `missing-grades-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        type: 'missing_grades',
+        title: '⚠️ Missing Grades Alert',
+        body: `${child.studentName} has potentially missing grades in ${missingGrades.length} subject(s): ${subjectNames}. Some grades are up to ${maxDays} days overdue.`,
+        timestamp: new Date().toISOString(),
+        read: false,
+        priority: 'high',
+        targetRoles: ['parent'],
+        data: {
+          type: 'missing_grades',
+          studentName: child.studentName,
+          studentId: child.studentId,
+          missingCount: missingGrades.length,
+          subjects: missingGrades.map(mg => ({
+            subjectId: mg.subjectId,
+            subjectName: mg.subjectName,
+            daysSinceLastGrade: mg.daysSinceLastGrade,
+            lastGradeDate: mg.lastGradeDate.toISOString()
+          })),
+          cutoffDate: cutoffDate.toISOString(),
+          url: `/parent/grades?student=${child.studentId}`
+        }
+      };
+
+      await pushNotificationService.showLocalNotification(notification);
+      logger.info(`Missing grade notification sent for ${child.studentName} - ${missingGrades.length} subjects affected`);
+
+    } catch (error) {
+      logger.error('Failed to send missing grades notification:', error);
     }
   }
 

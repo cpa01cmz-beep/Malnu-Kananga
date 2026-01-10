@@ -186,6 +186,20 @@ class UnifiedNotificationManager {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
+      missing_grades: {
+        id: 'default-missing-grades',
+        name: 'Default Missing Grades Alert',
+        type: 'missing_grades',
+        title: '⚠️ Missing Grades Alert',
+        body: '{{studentName}} has potentially missing grades in {{missingCount}} subject(s): {{subjects}}',
+        variables: ['studentName', 'missingCount', 'subjects'],
+        priority: 'high',
+        isActive: true,
+        targetRoles: ['parent'],
+        createdBy: 'system',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
     };
 
     Object.values(defaults).forEach(template => {

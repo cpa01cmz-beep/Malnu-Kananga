@@ -58,7 +58,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   const [uploadSpeed, setUploadSpeed] = useState<number>(0);
   const [estimatedTimeRemaining, setEstimatedTimeRemaining] = useState<number>(0);
   const [uploadedBytes, setUploadedBytes] = useState<number>(0);
-  const [uploadStartTime, setUploadStartTime] = useState<number>(0);
+  const uploadStartTimeRef = useRef<number>(0);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null); // eslint-disable-line no-undef
@@ -90,7 +90,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
   };
 
-  const validateFile = (file: File): { valid: boolean; error?: string } => {
+  const validateFile = useCallback((file: File): { valid: boolean; error?: string } => {
     if (file.size > maxSizeMB * 1024 * 1024) {
       return {
         valid: false,
@@ -108,9 +108,9 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     }
 
     return { valid: true };
-  };
+  }, [maxSizeMB, acceptedFileTypes]);
 
-  const createPreview = (file: File): Promise<string | undefined> => {
+  const createPreview = useCallback((file: File): Promise<string | undefined> => {
     return new Promise((resolve) => {
       if (!file.type.startsWith('image/')) {
         resolve(undefined);
@@ -123,9 +123,9 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       reader.onerror = () => resolve(undefined);
       reader.readAsDataURL(file);
     });
-  };
+  }, []);
 
-  const handleFileSelect = async (selectedFiles: FileList | null) => { // eslint-disable-line no-undef
+  const handleFileSelect = useCallback(async (selectedFiles: FileList | null) => { // eslint-disable-line no-undef
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     const filesArray = Array.from(selectedFiles);
@@ -152,7 +152,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       setUploadSpeed(0);
       setEstimatedTimeRemaining(0);
       setUploadedBytes(0);
-      setUploadStartTime(Date.now());
+      uploadStartTimeRef.current = Date.now();
 
       const abortController = new AbortController(); // eslint-disable-line no-undef
       abortControllerRef.current = abortController;
@@ -165,7 +165,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
             setUploadProgress(progress.percentage);
             setUploadedBytes(progress.loaded);
 
-            const elapsedTime = (Date.now() - uploadStartTime) / 1000;
+            const elapsedTime = (Date.now() - uploadStartTimeRef.current) / 1000;
             if (elapsedTime > 0) {
               const speed = progress.loaded / elapsedTime;
               setUploadSpeed(speed);
@@ -214,7 +214,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         abortControllerRef.current = null;
       }
     }
-  };
+  }, [files, maxFiles, allowMultiple, uploadPath, onFileUploaded, validateFile, createPreview]);
 
   const handleCancelUpload = () => {
     if (abortControllerRef.current) {
