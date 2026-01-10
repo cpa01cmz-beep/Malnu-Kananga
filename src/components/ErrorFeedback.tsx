@@ -34,11 +34,11 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
   const getIcon = () => {
     switch (feedback.type) {
       case 'warning':
-        return <AlertTriangleIcon className="w-5 h-5 text-yellow-500" />;
+        return <AlertTriangleIcon className="w-5 h-5 text-yellow-500" aria-hidden="true" />;
       case 'info':
-        return <InformationCircleIcon />;
+        return <InformationCircleIcon aria-hidden="true" />;
       default:
-        return <AlertTriangleIcon className="w-5 h-5 text-red-500" />;
+        return <AlertTriangleIcon className="w-5 h-5 text-red-500" aria-hidden="true" />;
     }
   };
 
@@ -54,7 +54,12 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
   };
 
   return (
-    <div className={`rounded-md border p-4 ${getAlertClass()} ${className}`}>
+    <div
+      className={`rounded-md border p-4 ${getAlertClass()} ${className}`}
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
       <div className="flex">
         <div className="flex-shrink-0">
           {getIcon()}
@@ -63,7 +68,7 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
           <p className="text-sm font-medium">
             {feedback.message}
           </p>
-          
+
           {feedback.actions && feedback.actions.length > 0 && (
             <div className="mt-3 flex gap-2">
               {feedback.actions.map((action: { label: string; action: () => void; variant?: string }, index: number) => (
@@ -72,7 +77,7 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
                   onClick={action.action}
                   size="sm"
                   variant={action.variant === 'primary' ? 'danger' : 'secondary'}
-                  icon={action.label === 'Coba Lagi' ? <ArrowPathIcon className="w-3 h-3" /> : undefined}
+                  icon={action.label === 'Coba Lagi' ? <ArrowPathIcon className="w-3 h-3" aria-hidden="true" /> : undefined}
                 >
                   {action.label}
                 </Button>
@@ -82,7 +87,7 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
                   onClick={onRetry}
                   size="sm"
                   variant="danger"
-                  icon={<ArrowPathIcon className="w-3 h-3" />}
+                  icon={<ArrowPathIcon className="w-3 h-3" aria-hidden="true" />}
                 >
                   Coba Lagi
                 </Button>
@@ -94,7 +99,7 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
         {onDismiss && (
           <div className="ml-auto pl-3">
             <IconButton
-              icon={<CloseIcon className="w-4 h-4" />}
+              icon={<CloseIcon className="w-4 h-4" aria-hidden="true" />}
               ariaLabel="Tutup pesan"
               onClick={onDismiss}
               size="sm"
