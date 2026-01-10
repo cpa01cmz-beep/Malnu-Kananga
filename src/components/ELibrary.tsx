@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { StarIcon, BookmarkIcon, FunnelIcon } from './icons/MaterialIcons';
 import DocumentTextIcon from './icons/DocumentTextIcon';
+import EmptyState from './ui/LoadingState';
 import { eLibraryAPI, fileStorageAPI } from '../services/apiService';
 import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress, OCRStatus, OCRProcessingState, SearchOptions, PlagiarismFlag } from '../types';
 import { useSemanticSearch } from '../hooks/useSemanticSearch';
@@ -1456,11 +1457,17 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             </div>
           ))
         ) : (
-          <div className="col-span-full py-12 text-center">
-            <div className="mx-auto w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center text-neutral-400 mb-4">
-              <DocumentTextIcon />
-            </div>
-            <p className="text-neutral-500 dark:text-neutral-400">Tidak ada materi ditemukan untuk filter ini.</p>
+          <div className="col-span-full">
+            <EmptyState 
+              message="Tidak ada materi ditemukan untuk filter ini"
+              icon={
+                <div className="mx-auto w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center text-neutral-400">
+                  <DocumentTextIcon />
+                </div>
+              }
+              size="lg"
+              ariaLabel="Tidak ada materi ditemukan"
+            />
           </div>
         )}
       </div>

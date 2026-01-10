@@ -379,5 +379,45 @@ describe('LoadingState Component', () => {
 
       expect(container.firstChild).toHaveClass('p-12', 'text-lg');
     });
+
+    it('should render with default variant', () => {
+      const { container } = render(<EmptyState message="No data" variant="default" />);
+
+      expect(container.firstChild).toHaveClass('text-center');
+    });
+
+    it('should render with minimal variant', () => {
+      const { container } = render(<EmptyState message="No data" variant="minimal" />);
+
+      expect(container.firstChild).toHaveClass('text-left');
+    });
+
+    it('should render with illustrated variant', () => {
+      const { container } = render(<EmptyState message="No data" variant="illustrated" />);
+
+      expect(container.firstChild).toHaveClass('text-center', 'py-16');
+    });
+
+    it('should have proper ARIA attributes', () => {
+      const { container } = render(
+        <EmptyState 
+          message="Tidak ada data" 
+          ariaLabel="Tidak ada data tersedia"
+        />
+      );
+
+      const statusElement = container.querySelector('[role="status"]');
+      expect(statusElement).toBeInTheDocument();
+      expect(statusElement).toHaveAttribute('aria-live', 'polite');
+      expect(statusElement).toHaveAttribute('aria-label', 'Tidak ada data tersedia');
+    });
+
+    it('should have animation classes', () => {
+      const TestIcon = () => <span data-testid="test-icon">ICON</span>;
+      render(<EmptyState message="No data" icon={<TestIcon />} />);
+
+      const icon = screen.getByTestId('test-icon');
+      expect(icon.parentElement).toHaveClass('animate-fade-in');
+    });
   });
 });

@@ -12,6 +12,7 @@ import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
 import ProgressBar from './ui/ProgressBar';
+import EmptyState from './ui/LoadingState';
 import { GRADIENT_CLASSES, DARK_GRADIENT_CLASSES } from '../config/gradients';
 
 interface OsisEventsProps {
@@ -676,7 +677,11 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
             {isLoading ? (
               <p className="text-center text-neutral-500 mt-8">Memuat kegiatan...</p>
             ) : events.length === 0 ? (
-              <p className="text-center text-neutral-500 mt-8">Belum ada kegiatan.</p>
+              <EmptyState 
+                message="Belum ada kegiatan"
+                size="md"
+                ariaLabel="Belum ada kegiatan OSIS"
+              />
             ) : (
               events.map(event => (
                 <div

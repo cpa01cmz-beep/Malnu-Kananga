@@ -24,7 +24,7 @@ interface LoadingStateProps {
   className?: string;
 }
 
-interface EmptyStateProps {
+export interface EmptyStateProps {
   message: string;
   icon?: ReactNode;
   action?: {
@@ -32,6 +32,8 @@ interface EmptyStateProps {
     onClick: () => void;
   };
   size?: LoadingStateSize;
+  variant?: 'default' | 'minimal' | 'illustrated';
+  ariaLabel?: string;
 }
 
 interface ErrorStateProps {
@@ -56,30 +58,50 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   message,
   icon,
   action,
-  size = 'md'
-}) => (
-  <div className={`${sizeClasses[size]} text-center`}>
-    <div className="flex flex-col items-center justify-center space-y-4">
-      {icon && (
-        <div className={`${iconSizeClasses[size]} text-neutral-400 dark:text-neutral-500`}>
-          {icon}
-        </div>
-      )}
-      <p className="text-neutral-600 dark:text-neutral-400 font-medium">
-        {message}
-      </p>
-      {action && (
-        <Button
-          variant="primary"
-          onClick={action.onClick}
-          size={size === 'lg' ? 'lg' : 'md'}
-        >
-          {action.label}
-        </Button>
-      )}
+  size = 'md',
+  variant = 'default',
+  ariaLabel
+}) => {
+  const variantClasses = {
+    default: 'text-center',
+    minimal: 'text-left',
+    illustrated: 'text-center py-16'
+  };
+
+  const ariaProps: Record<string, string> = {};
+  if (ariaLabel) {
+    ariaProps['aria-label'] = ariaLabel;
+  }
+
+  return (
+    <div 
+      className={`${sizeClasses[size]} ${variantClasses[variant]}`}
+      role="status"
+      aria-live="polite"
+      {...ariaProps}
+    >
+      <div className="flex flex-col items-center justify-center space-y-4">
+        {icon && (
+          <div className={`${iconSizeClasses[size]} text-neutral-400 dark:text-neutral-500 animate-fade-in`}>
+            {icon}
+          </div>
+        )}
+        <p className="text-neutral-600 dark:text-neutral-400 font-medium animate-fade-in">
+          {message}
+        </p>
+        {action && (
+          <Button
+            variant="primary"
+            onClick={action.onClick}
+            size={size === 'lg' ? 'lg' : 'md'}
+          >
+            {action.label}
+          </Button>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const ErrorState: React.FC<ErrorStateProps> = ({
   message,
@@ -269,4 +291,5 @@ const InlineLoadingState: React.FC<{ size: LoadingStateSize }> = ({ size }) => {
 };
 
 export { LoadingState, EmptyState, ErrorState };
-export default LoadingState;
+
+export { EmptyState as default };

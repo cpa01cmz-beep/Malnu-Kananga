@@ -6,6 +6,7 @@ import { parentGradeNotificationService } from '../services/parentGradeNotificat
 import { logger } from '../utils/logger';
 import type { PushNotification, ParentChild } from '../types';
 import Button from './ui/Button';
+import EmptyState from './ui/LoadingState';
 
 interface NotificationHistoryProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -238,12 +239,12 @@ case 'announcement':
         {/* Notifications List */}
         <div className="flex-1 overflow-y-auto">
           {notifications.length === 0 ? (
-            <div className="p-8 text-center">
-              <CalendarIcon />
-              <p className="mt-4 text-neutral-600 dark:text-neutral-400">
-                Tidak ada notifikasi untuk filter ini
-              </p>
-            </div>
+            <EmptyState 
+              message="Tidak ada notifikasi untuk filter ini"
+              icon={<CalendarIcon />}
+              size="md"
+              ariaLabel="Tidak ada notifikasi"
+            />
           ) : (
             <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
               {notifications.map((notification) => (
