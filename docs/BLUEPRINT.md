@@ -305,6 +305,14 @@ src/
   - All gradients now properly support light/dark mode switching
   - See `src/config/gradients.ts` for complete gradient configuration
 
+  ### 3.25 GradientButton Component Refactoring (Fase 5 - COMPLETED 2026-01-10)
+  - Refactored GradientButton component to use centralized GRADIENT_CLASSES configuration
+  - Updated primary variant to use GRADIENT_CLASSES.CHAT_HEADER instead of hardcoded `bg-gradient-to-r from-primary-600 to-primary-700`
+  - Maintained hover states using Tailwind utilities for enhanced user feedback
+  - Improved design system consistency with centralized gradient management
+  - Simplified gradient updates - changing CHAT_HEADER gradient now updates all GradientButton instances
+  - See `src/components/ui/GradientButton.tsx` for implementation details
+
 ## 4. User Roles & Access Control
 
 | Role | Akses | Tanggung Jawab |
