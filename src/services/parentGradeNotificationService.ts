@@ -196,7 +196,7 @@ class ParentGradeNotificationService {
           // Don't send notifications for successful validation of regular academic documents
           return {
             id: `ocr-validation-${event.id}`,
-type: 'ocr' as 'ocr' | 'grade' | 'announcement' | 'message',
+            type: 'ocr' as const,
             title: '',
             body: '',
             timestamp: new Date().toISOString(),
@@ -216,7 +216,7 @@ type: 'ocr' as 'ocr' | 'grade' | 'announcement' | 'message',
 
     return {
       id: `ocr-validation-${event.id}`,
-      type: 'ocr_validation',
+      type: 'ocr' as const,
       title,
       body,
       timestamp: new Date().toISOString(),
@@ -224,7 +224,7 @@ type: 'ocr' as 'ocr' | 'grade' | 'announcement' | 'message',
       priority,
       targetRoles: ['parent'],
       data: {
-type: 'ocr' as 'ocr' | 'grade' | 'announcement' | 'message', // TODO: Add 'ocr' to NotificationType enum
+        type: 'ocr' as const,
         validationType: type,
         documentId,
         documentType,

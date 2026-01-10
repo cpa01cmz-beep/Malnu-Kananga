@@ -2,7 +2,7 @@
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { ocrService } from '../ocrService';
-import { parentGradeNotificationService } from '../parentGradeNotificationService';
+// parentGradeNotificationService is imported via OCR events in the test setup
 
 // Mock localStorage
 const localStorageMock = {
