@@ -997,7 +997,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                         Statistics
                     </Button>
 
-                    <label className="px-4 py-2 bg-orange-600 text-white rounded-full hover:bg-orange-700 transition-colors shadow-md cursor-pointer">
+                    <label className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 active:scale-95 px-4 py-2.5 text-sm bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02] cursor-pointer">
                         Import CSV
                         <input
                             type="file"
@@ -1008,7 +1008,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     </label>
 
                     {canUseOCRGrading && (
-                        <label className="px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-md cursor-pointer flex items-center gap-2">
+                        <label className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 active:scale-95 px-4 py-2.5 text-sm bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02] cursor-pointer flex items-center gap-2">
                             📷 Scan Exam
                             <input
                                 type="file"
