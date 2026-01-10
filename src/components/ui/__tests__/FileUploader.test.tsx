@@ -20,6 +20,9 @@ vi.mock('../../services/apiService', () => ({
   },
 }));
 
+// @ts-expect-error - Module is mocked by vi.mock
+import { fileStorageAPI } from '../../services/apiService';
+
 // Mock logger
 vi.mock('../../utils/logger', () => ({
   logger: {
@@ -128,11 +131,8 @@ describe('FileUploader', () => {
   });
 
   it('shows loading state during upload', async () => {
-    vi.mock('../../services/apiService');
-    const { fileStorageAPI } = await import('../../services/apiService');
-    
     // Mock slow upload
-    fileStorageAPI.upload.mockImplementation(() => 
+    (fileStorageAPI as any).upload.mockImplementation(() =>
       new Promise(resolve => setTimeout(() => resolve({
         success: true,
         data: {

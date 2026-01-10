@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, type ReactNode } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td } from './Table';
 import Pagination from './Pagination';
 import LoadingOverlay from './LoadingOverlay';
@@ -109,11 +109,11 @@ const DataTable = <T extends Record<string, unknown>>({
     data.some(record => selection.selectedRowKeys.includes(selection.getRowKey(record))) &&
     !isAllSelected;
 
-  const getCellValue = (column: Column<T>, record: T, index: number) => {
+  const getCellValue = (column: Column<T>, record: T, index: number): ReactNode => {
     if (column.render) {
       return column.render(record[column.key], record, index);
     }
-    return record[column.key];
+    return record[column.key] as ReactNode;
   };
 
   const getAlignmentClass = (align?: string) => {

@@ -90,7 +90,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     return `${Math.floor(seconds / 3600)}h ${Math.floor((seconds % 3600) / 60)}m`;
   };
 
-  const validateFile = (file: File): { valid: boolean; error?: string } => {
+  const validateFile = useCallback((file: File): { valid: boolean; error?: string } => {
     if (file.size > maxSizeMB * 1024 * 1024) {
       return {
         valid: false,
@@ -108,24 +108,24 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     }
 
     return { valid: true };
-  };
+  }, [maxSizeMB, acceptedFileTypes]);
 
-  const createPreview = (file: File): Promise<string | undefined> => {
+  const createPreview = useCallback((file: File): Promise<string | undefined> => {
     return new Promise((resolve) => {
       if (!file.type.startsWith('image/')) {
         resolve(undefined);
         return;
       }
-      
+
       // eslint-disable-next-line no-undef
       const reader = new FileReader();
       reader.onload = (e) => resolve(e.target?.result as string);
       reader.onerror = () => resolve(undefined);
       reader.readAsDataURL(file);
     });
-  };
+  }, []);
 
-  const handleFileSelect = async (selectedFiles: FileList | null) => { // eslint-disable-line no-undef
+  const handleFileSelect = useCallback(async (selectedFiles: FileList | null) => { // eslint-disable-line no-undef
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     const filesArray = Array.from(selectedFiles);
@@ -159,7 +159,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
       try {
         const preview = await createPreview(file);
-        
+
         const response = await fileStorageAPI.upload(file, uploadPath, {
           onProgress: (progress) => {
             setUploadProgress(progress.percentage);
@@ -214,7 +214,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         abortControllerRef.current = null;
       }
     }
-  };
+  }, [setError, setUploading, setUploadProgress, setUploadSpeed, setEstimatedTimeRemaining, setUploadedBytes, setUploadStartTime, uploadStartTime, uploadPath, maxFiles, allowMultiple, files, validateFile, createPreview, onFileUploaded]);
 
   const handleCancelUpload = () => {
     if (abortControllerRef.current) {
