@@ -6,7 +6,7 @@ import {
 import { apiService } from './apiService';
 import type { AuthPayload } from './apiService';
 import { logger } from '../utils/logger';
-import type { Grade, Attendance, Announcement, LibraryMaterial, Event, Notification, User } from '../types';
+import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification } from '../types';
 
 // Note: WebSocket types are available in the global scope in browser environments
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -353,10 +353,10 @@ class WebSocketService {
 
   private updateLibraryData(event: RealTimeEvent): void {
     const materialsJSON = localStorage.getItem(STORAGE_KEYS.MATERIALS);
-    const materials: LibraryMaterial[] = materialsJSON ? JSON.parse(materialsJSON) : [];
-    const materialData = event.data as LibraryMaterial;
+    const materials: ELibrary[] = materialsJSON ? JSON.parse(materialsJSON) : [];
+    const materialData = event.data as ELibrary;
     
-    const index = materials.findIndex((m: LibraryMaterial) => m.id === materialData.id);
+    const index = materials.findIndex((m: ELibrary) => m.id === materialData.id);
     if (index !== -1) {
       materials[index] = materialData;
     } else if (event.type === 'library_material_added') {
@@ -368,10 +368,10 @@ class WebSocketService {
 
 private updateEventsData(event: RealTimeEvent): void {
     const eventsJSON = localStorage.getItem(STORAGE_KEYS.EVENTS);
-    const eventDataList: Event[] = eventsJSON ? JSON.parse(eventsJSON) : [];
-    const eventData = event.data as Event;
+    const eventDataList: SchoolEvent[] = eventsJSON ? JSON.parse(eventsJSON) : [];
+    const eventData = event.data as SchoolEvent;
     
-    const index = eventDataList.findIndex((e: Event) => e.id === eventData.id);
+    const index = eventDataList.findIndex((e: SchoolEvent) => e.id === eventData.id);
     if (event.type === 'event_deleted') {
       if (index !== -1) eventDataList.splice(index, 1);
     } else {
@@ -400,10 +400,10 @@ private updateEventsData(event: RealTimeEvent): void {
 
   private updateNotificationsData(event: RealTimeEvent): void {
     const notificationsJSON = localStorage.getItem('malnu_notifications');
-    const notifications: Notification[] = notificationsJSON ? JSON.parse(notificationsJSON) : [];
-    const notificationData = event.data as Notification;
+    const notifications: PushNotification[] = notificationsJSON ? JSON.parse(notificationsJSON) : [];
+    const notificationData = event.data as PushNotification;
     
-    const index = notifications.findIndex((n: Notification) => n.id === notificationData.id);
+    const index = notifications.findIndex((n: PushNotification) => n.id === notificationData.id);
     if (index !== -1) {
       notifications[index] = notificationData;
     } else if (event.type === 'notification_created') {
