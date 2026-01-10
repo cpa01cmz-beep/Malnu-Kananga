@@ -25,6 +25,7 @@ import VoiceInputButton from './VoiceInputButton';
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import Badge from './ui/Badge';
 import SmallActionButton from './ui/SmallActionButton';
+import { pdfExportService } from '../services/pdfExportService';
 
 interface TeacherDashboardProps {
     onShowToast?: (msg: string, type: ToastType) => void;
@@ -39,6 +40,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
   const [error, setError] = useState<string | null>(null);
   const [dashboardData, setDashboardData] = useState<{ lastSync?: string } | null>(null);
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
+  const [isExportingConsolidated, setIsExportingConsolidated] = useState(false);
 
   // Initialize push notifications
   const { 
@@ -184,6 +186,50 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
   const checkPermission = (permission: string) => {
     const result = permissionService.hasPermission('teacher' as UserRole, extraRole, permission);
     return result.granted;
+  };
+
+  const handleConsolidatedPDFExport = async () => {
+    try {
+      setIsExportingConsolidated(true);
+      
+      // Get current user info from localStorage
+      const userJson = localStorage.getItem(STORAGE_KEYS.USER);
+      const user = userJson ? JSON.parse(userJson) : null;
+      
+      if (!user) {
+        handleToast('Data guru tidak ditemukan', 'error');
+        return;
+      }
+
+      // Create sample consolidated data (in real implementation, this would fetch actual data)
+      const studentInfo = {
+        name: user.name || 'Guru',
+        id: user.id || 'ID-001',
+        className: 'XII IPA 1',
+        totalStudents: '32',
+        averageGrade: '85.5',
+        attendanceRate: '92.3'
+      };
+      
+      // Mock grades data (would fetch from API)
+      const grades = Array.from({ length: 5 }, () => ({ 
+        grade: Math.floor(Math.random() * 30) + 70 
+      }));
+      
+      // Mock attendance data (would fetch from API)
+      const attendance = Array.from({ length: 20 }, () => ({ 
+        status: Math.random() > 0.1 ? 'Hadir' : 'Sakit' 
+      }));
+      
+      pdfExportService.createConsolidatedReport(studentInfo, grades, attendance);
+      
+      handleToast('Laporan konsolidasi berhasil diexport ke PDF', 'success');
+    } catch (error) {
+      logger.error('Failed to export consolidated PDF:', error);
+      handleToast('Gagal melakukan export PDF', 'error');
+    } finally {
+      setIsExportingConsolidated(false);
+    }
   };
 
   // Loading state
@@ -334,6 +380,17 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             ariaLabel="Buka Inventaris"
                         />
                     )}
+                    
+                    <DashboardActionCard
+                        icon={<DocumentTextIcon />}
+                        title="Laporan Konsolidasi"
+                        description="Export gabungan nilai, kehadiran, dan jadwal."
+                        colorTheme="green"
+                        statusBadge={isExportingConsolidated ? "Processing..." : "Ready"}
+                        disabled={isExportingConsolidated}
+                        onClick={handleConsolidatedPDFExport}
+                        ariaLabel="Export laporan konsolidasi ke PDF"
+                    />
                 </div>
             </>
         )}

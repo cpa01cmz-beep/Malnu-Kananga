@@ -13,6 +13,7 @@ import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { useOfflineActionQueue, type SyncResult } from '../services/offlineActionQueueService';
 import { STORAGE_KEYS } from '../constants';
+import { pdfExportService } from '../services/pdfExportService';
 import ProgressBar from './ui/ProgressBar';
 import { 
   validateGradeInput, 
@@ -114,6 +115,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const [showStats, setShowStats] = useState(false);
   const [autoSaveTimeout, setAutoSaveTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
 // Configuration
   const className = 'XII IPA 1';
   const subjectId = 'Matematika Wajib';
@@ -937,6 +939,34 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     setOcrResult(null);
   };
 
+  const handlePDFExport = async () => {
+    if (filteredData.length === 0) {
+      onShowToast('Tidak ada data untuk diexport', 'error');
+      return;
+    }
+
+    try {
+      setIsExportingPDF(true);
+      
+      const gradesData = filteredData.map(student => ({
+        subjectName: subjectId,
+        grade: calculateFinalGrade(student.assignment, student.midExam, student.finalExam),
+        className: className,
+        semester: 'Semester 1',
+        remarks: `Assignment: ${student.assignment}, Mid: ${student.midExam}, Final: ${student.finalExam}`
+      }));
+      
+      pdfExportService.createGradesReport(gradesData, { name: '', id: '' });
+      
+      onShowToast('Laporan nilai berhasil diexport ke PDF', 'success');
+    } catch (error) {
+      logger.error('Failed to export grades PDF:', error);
+      onShowToast('Gagal melakukan export PDF', 'error');
+    } finally {
+      setIsExportingPDF(false);
+    }
+  };
+
   return (
     <div className="animate-fade-in-up">
         {/* Offline Status Indicator */}
@@ -1019,6 +1049,14 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                             />
                         </label>
                     )}
+                    
+                    <button 
+                        onClick={handlePDFExport}
+                        disabled={isExportingPDF || filteredData.length === 0}
+                        className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 active:scale-95 px-4 py-2.5 text-sm bg-green-600 text-white hover:bg-green-700 focus:ring-green-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02] disabled:bg-neutral-400 disabled:cursor-not-allowed"
+                    >
+                        {isExportingPDF ? 'Exporting...' : '📄 Export PDF'}
+                    </button>
 
                     <Button
                         onClick={handleCSVExport}

@@ -10,6 +10,8 @@ import ErrorMessage from './ui/ErrorMessage';
 import Alert from './ui/Alert';
 import AccessDenied from './AccessDenied';
 import Button from './ui/Button';
+import { pdfExportService } from '../services/pdfExportService';
+import { logger } from '../utils/logger';
 
 interface AttendanceViewProps {
   onBack: () => void;
@@ -31,6 +33,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
   const [todayStatus, setTodayStatus] = useState<string>('Hadir');
   const [history, setHistory] = useState<AttendanceHistory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
   const { errorState, handleAsyncError, clearError } = useErrorHandler();
 
   const fetchAttendance = useCallback(async () => {
@@ -104,6 +107,35 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
 
   const getAttendanceCount = (status: string): number => {
     return history.filter((h) => h.status === status).length;
+  };
+
+  const handlePDFExport = async () => {
+    if (history.length === 0) {
+      logger.warn('No attendance data to export');
+      return;
+    }
+
+    try {
+      setIsExportingPDF(true);
+
+      const attendanceData = history.map(record => ({
+        date: record.date,
+        status: record.status,
+        subject: 'All Subjects',
+        notes: record.time === '-' ? 'Absent' : `Present at ${record.time}`
+      }));
+
+      pdfExportService.createAttendanceReport(attendanceData, {
+        name: STUDENT_NAME,
+        id: STUDENT_NIS
+      });
+
+      logger.info('Laporan kehadiran berhasil diexport ke PDF');
+    } catch (error) {
+      logger.error('Gagal melakukan export PDF:', error);
+    } finally {
+      setIsExportingPDF(false);
+    }
   };
 
   // Check permissions - different requirements based on role - AFTER all hooks
@@ -185,6 +217,13 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
             <p className="text-sm text-neutral-500 dark:text-neutral-400">Nama Siswa</p>
             <p className="font-bold text-neutral-900 dark:text-white text-lg">{STUDENT_NAME}</p>
             <p className="text-xs font-mono text-neutral-400">NIS: {STUDENT_NIS}</p>
+            <button
+              onClick={handlePDFExport}
+              disabled={isExportingPDF || history.length === 0}
+              className="mt-3 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm disabled:bg-neutral-400 disabled:cursor-not-allowed"
+            >
+              {isExportingPDF ? 'Exporting...' : '📄 Export PDF'}
+            </button>
           </div>
         }
       />
