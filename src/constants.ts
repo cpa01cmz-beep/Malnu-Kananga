@@ -83,7 +83,35 @@ export const STORAGE_KEYS = {
     // Voice Notifications
     VOICE_NOTIFICATIONS_QUEUE: 'malnu_voice_notifications_queue',
     VOICE_NOTIFICATIONS_HISTORY: 'malnu_voice_notifications_history',
+    
+    // WebSocket real-time sync
+    WS_CONNECTION: 'malnu_ws_connection',
+    ANNOUNCEMENTS: 'malnu_announcements',
+    NOTIFICATIONS: 'malnu_notifications',
+    ATTENDANCE: 'malnu_attendance',
 } as const;
+
+export const USER_ROLES = {
+    ADMIN: 'admin',
+    TEACHER: 'teacher',
+    STUDENT: 'student',
+    PARENT: 'parent',
+    STAFF: 'staff',
+    OSIS: 'osis',
+    WAKASEK: 'wakasek',
+    KEPSEK: 'kepsek',
+} as const;
+
+export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
+
+export const USER_EXTRA_ROLES = {
+    STAFF: 'staff',
+    OSIS: 'osis',
+    WAKASEK: 'wakasek',
+    KEPSEK: 'kepsek',
+} as const;
+
+export type UserExtraRole = typeof USER_EXTRA_ROLES[keyof typeof USER_EXTRA_ROLES];
 
 export const APP_CONFIG = {
     SCHOOL_NAME: 'MA Malnu Kananga',

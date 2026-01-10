@@ -5,6 +5,7 @@ import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { isNetworkError } from '../utils/networkStatus';
 import type { ApiResponse } from './apiService';
+import { webSocketService, type RealTimeEvent } from './webSocketService';
 
 // ============================================
 // TYPES
@@ -451,6 +452,151 @@ class OfflineActionQueueService {
   // ============================================
   // EVENT LISTENERS
   // ============================================
+
+  // ============================================
+  // WEBSOCKET INTEGRATION
+  // ============================================
+
+  /**
+   * Setup WebSocket event listeners for real-time conflict resolution
+   */
+  public setupWebSocketIntegration(): void {
+    // Listen for real-time updates that might affect queued actions
+    const unsubscribeGrades = webSocketService.subscribe({
+      eventType: 'grade_updated',
+      callback: (event: RealTimeEvent) => {
+        this.handleWebSocketUpdate(event);
+      },
+      filter: (event: RealTimeEvent) => {
+        // Filter updates for entities we have in queue
+        return this.queue.some(action => 
+          action.entity === 'grade' && action.entityId === event.entityId
+        );
+      },
+    });
+
+    const unsubscribeAttendance = webSocketService.subscribe({
+      eventType: 'attendance_updated',
+      callback: (event: RealTimeEvent) => {
+        this.handleWebSocketUpdate(event);
+      },
+      filter: (event: RealTimeEvent) => {
+        return this.queue.some(action => 
+          action.entity === 'attendance' && action.entityId === event.entityId
+        );
+      },
+    });
+
+    const unsubscribeAnnouncements = webSocketService.subscribe({
+      eventType: 'announcement_updated', // We'll handle both types in the callback
+      callback: (event: RealTimeEvent) => {
+        this.handleWebSocketUpdate(event);
+      },
+      filter: (event: RealTimeEvent) => {
+        return (event.type === 'announcement_updated' || event.type === 'announcement_deleted') &&
+          this.queue.some(action => 
+            action.entity === 'announcement' && action.entityId === event.entityId
+          );
+      },
+    });
+
+    // Store unsubscribe functions for cleanup
+    (this as any).websocketUnsubscribers = [
+      unsubscribeGrades,
+      unsubscribeAttendance,
+      unsubscribeAnnouncements,
+    ];
+
+    logger.info('WebSocket integration setup complete');
+  }
+
+  /**
+   * Handle real-time WebSocket updates
+   */
+  private handleWebSocketUpdate(event: RealTimeEvent): void {
+    logger.debug('Processing WebSocket update', event);
+
+    // Find matching actions in queue
+    const matchingActions = this.queue.filter(action => 
+      action.entity === event.entity && action.entityId === event.entityId
+    );
+
+    matchingActions.forEach(action => {
+      switch (event.type) {
+        case 'grade_updated':
+        case 'attendance_updated':
+        case 'announcement_updated':
+          // If server has newer version, mark as conflict
+          if (this.isServerVersionNewer(action, event)) {
+            action.status = 'conflict';
+            action.serverVersion = this.extractServerVersion(event);
+            logger.warn('Conflict detected via WebSocket', { 
+              actionId: action.id, 
+              eventType: event.type 
+            });
+          }
+          break;
+
+        case 'announcement_deleted':
+          // If entity was deleted, cancel queued updates
+          if (action.type === 'update' || action.type === 'delete') {
+            action.status = 'completed';
+            logger.info('Action auto-completed - entity deleted', { 
+              actionId: action.id 
+            });
+          }
+          break;
+      }
+    });
+
+    this.saveQueue();
+
+    // Notify listeners about potential conflicts
+    if (matchingActions.some(action => action.status === 'conflict')) {
+      this.notifySyncComplete({
+        success: false,
+        actionsProcessed: 0,
+        actionsFailed: 0,
+        conflicts: matchingActions.filter(action => action.status === 'conflict'),
+        errors: ['Real-time conflicts detected'],
+      });
+    }
+  }
+
+  /**
+   * Check if server version is newer than queued action
+   */
+  private isServerVersionNewer(action: OfflineAction, event: RealTimeEvent): boolean {
+    const actionTime = action.timestamp;
+    const eventTime = new Date(event.timestamp).getTime();
+
+    // If server event is newer than our action, there might be a conflict
+    return eventTime > actionTime;
+  }
+
+  /**
+   * Extract server version from WebSocket event data
+   */
+  private extractServerVersion(event: RealTimeEvent): number {
+    const data = event.data as any;
+    return data.version || data.updatedAt || Date.now();
+  }
+
+  /**
+   * Cleanup WebSocket listeners
+   */
+  public cleanupWebSocketIntegration(): void {
+    const unsubscribers = (this as any).websocketUnsubscribers || [];
+    unsubscribers.forEach((unsubscribe: () => void) => {
+      try {
+        unsubscribe();
+      } catch (error) {
+        logger.error('Error unsubscribing from WebSocket events', error);
+      }
+    });
+    (this as any).websocketUnsubscribers = [];
+    logger.debug('WebSocket integration cleaned up');
+  }
 
   /**
    * Register callback for sync completion

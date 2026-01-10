@@ -1242,7 +1242,7 @@ export const parentsAPI = {
 // EXPORT ALL APIs
 // ============================================
 
-export const api = {
+export const apiService = {
   auth: authAPI,
   users: usersAPI,
   students: studentsAPI,
@@ -1264,4 +1264,10 @@ export const api = {
   eLibrary: eLibraryAPI,
   announcements: announcementsAPI,
   fileStorage: fileStorageAPI,
+  // Utility methods
+  getAuthToken,
+  parseJwtPayload,
 };
+
+// Export for backward compatibility
+export const api = apiService;
