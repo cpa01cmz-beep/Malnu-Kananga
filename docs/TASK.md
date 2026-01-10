@@ -93,8 +93,16 @@
       - Modal component not appropriate for this use case
       - No changes needed
     - [x] Create reusable Textarea component with auto-resize (2026-01-07)
-    - [x] Refactor NotificationHistory to use Badge and IconButton components (2026-01-10)
-    - [x] Refactor MaterialSharing to use Button and IconButton components (2026-01-10)
+   - [x] Refactor NotificationHistory to use Badge and IconButton components (2026-01-10)
+   - [x] Refactor MaterialSharing to use Button and IconButton components (2026-01-10)
+   - [x] Refactor inline skeleton loading to use reusable Skeleton components (2026-01-10)
+     - Refactored 7 components: MaterialTemplatesLibrary, TeacherDashboard, ParentPaymentsView, MaterialUpload, ParentMessagingView, FolderNavigation, MaterialAnalytics
+     - Replaced inline animate-pulse divs with Skeleton component for consistency
+     - Added Select component for inline select elements in MaterialTemplatesLibrary and ParentPaymentsView
+     - Improved accessibility with aria-hidden="true" attribute in Skeleton
+     - Enhanced dark mode support via CSS variables
+     - Reduced code duplication by ~60 lines
+     - Centralized skeleton styling maintenance
     - [x] Create reusable Modal component with focus trap and accessibility (2026-01-07)
     - [x] Extract repeated BackButton pattern into reusable component with accessibility (2026-01-07)
     - [x] Create reusable Badge component for status indicators (2026-01-07)
