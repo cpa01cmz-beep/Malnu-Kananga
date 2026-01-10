@@ -71,6 +71,14 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationType, NotificationTempla
     priority: 'normal',
     data: { category: 'ocr' },
   },
+  ocr_validation: {
+    type: 'ocr_validation',
+    titleTemplate: '🔍 OCR Validation Complete',
+    bodyTemplate: 'Document "{documentType}" validation {status}. {message}',
+    targetRoles: ['parent', 'admin', 'teacher'],
+    priority: 'normal',
+    data: { category: 'ocr_validation' },
+  },
   missing_grades: {
     type: 'missing_grades',
     titleTemplate: '⚠️ Missing Grades Alert',
