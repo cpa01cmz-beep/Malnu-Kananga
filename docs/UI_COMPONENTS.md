@@ -1949,5 +1949,327 @@ Potential improvements to consider:
 
 ---
 
-**Last Updated**: 2026-01-07
+## SuspenseLoading Component
+
+**Location**: `src/components/ui/SuspenseLoading.tsx`
+
+A reusable loading component designed specifically for React Suspense fallbacks with consistent styling and accessibility support.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg` for flexible layouts
+- **Customizable Messages**: Supports custom loading text for different contexts
+- **Accessibility**: Full ARIA support with proper live regions and busy states
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Skeleton Loading**: Integrated skeleton screens for perceived performance
+- **Pulse Animation**: Smooth animate-pulse effect for visual feedback
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `message` | `string` | `'Memuat...'` | Loading message text to display |
+| `size` | `SuspenseLoadingSize` | `'md'` | Component size (affects height, skeleton size, text size) |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for small loading areas.
+
+```tsx
+import SuspenseLoading from './ui/SuspenseLoading';
+
+<SuspenseLoading
+  size="sm"
+  message="Loading..."
+/>
+```
+
+**Dimensions**:
+- Container height: `h-48`
+- Skeleton: `w-12 h-12 rounded-xl`
+- Text: `text-sm`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<SuspenseLoading
+  size="md"
+  message="Memuat dashboard..."
+/>
+```
+
+**Dimensions**:
+- Container height: `h-64`
+- Skeleton: `w-16 h-16 rounded-2xl`
+- Text: `text-base`
+
+#### Large (lg)
+
+Larger size for important loading areas.
+
+```tsx
+<SuspenseLoading
+  size="lg"
+  message="Loading resources..."
+/>
+```
+
+**Dimensions**:
+- Container height: `h-80`
+- Skeleton: `w-20 h-20 rounded-2xl`
+- Text: `text-lg`
+
+### Custom Messages
+
+Provide context-specific loading messages:
+
+```tsx
+<SuspenseLoading message="Memuat dashboard admin..." />
+<SuspenseLoading message="Memuat formulir pendaftaran..." />
+<SuspenseLoading message="Memuat dokumentasi..." />
+<SuspenseLoading message="Loading data..." />
+```
+
+### Integration with Suspense
+
+Primary use case: React Suspense fallback for lazy-loaded components.
+
+```tsx
+import { lazy, Suspense } from 'react';
+import SuspenseLoading from './ui/SuspenseLoading';
+
+const AdminDashboard = lazy(() => import('./AdminDashboard'));
+
+function App() {
+  return (
+    <Suspense fallback={<SuspenseLoading message="Memuat dashboard admin..." />}>
+      <AdminDashboard />
+    </Suspense>
+  );
+}
+```
+
+### Custom Styling
+
+Add custom classes while preserving default loading state styling:
+
+```tsx
+<SuspenseLoading
+  message="Loading..."
+  className="absolute top-0 left-0 w-full h-full"
+/>
+```
+
+### Accessibility Features
+
+The SuspenseLoading component includes comprehensive accessibility support:
+
+1. **ARIA Role**: `role="status"` indicates loading state
+2. **ARIA Live Region**: `aria-live="polite"` announces loading changes
+3. **ARIA Busy**: `aria-busy="true"` indicates content is being loaded
+4. **Skeleton Hiding**: Skeleton element has `aria-hidden="true"` for screen readers
+5. **Keyboard Support**: No keyboard interaction needed (passive loading state)
+6. **Focus Management**: Not applicable (loading states are non-interactive)
+
+```tsx
+<SuspenseLoading
+  message="Memuat data..."
+  size="md"
+  aria-label="Memuat data aplikasi"
+/>
+```
+
+### Dark Mode
+
+All SuspenseLoading sizes automatically support dark mode:
+
+- **Container**: Inherits parent background colors
+- **Skeleton**: `bg-neutral-200` → `dark:bg-neutral-700`
+- **Text**: `text-neutral-500` → `dark:text-neutral-400`
+
+### Real-World Examples
+
+#### Dashboard Loading
+
+```tsx
+<Suspense fallback={<SuspenseLoading message="Memuat dashboard admin..." />}>
+  <AdminDashboard onShowToast={showToast} />
+</Suspense>
+```
+
+#### Form Loading
+
+```tsx
+<Suspense fallback={<SuspenseLoading message="Memuat formulir pendaftaran..." />}>
+  <PPDBRegistration isOpen={isOpen} onClose={handleClose} />
+</Suspense>
+```
+
+#### Page Loading
+
+```tsx
+<Suspense fallback={<SuspenseLoading message="Memuat dokumentasi..." />}>
+  <DocumentationPage isOpen={isOpen} onClose={handleClose} />
+</Suspense>
+```
+
+#### Component Loading
+
+```tsx
+<Suspense fallback={<SuspenseLoading message="Memuat editor..." />}>
+  <SiteEditor
+    isOpen={isOpen}
+    onClose={handleClose}
+    onUpdateContent={handleUpdate}
+  />
+</Suspense>
+```
+
+#### Custom Context Loading
+
+```tsx
+<Suspense fallback={<SuspenseLoading message="Memuat pengaturan..." />}>
+  <SettingsPanel />
+</Suspense>
+```
+
+#### Full-Screen Loading
+
+```tsx
+<Suspense fallback={
+  <SuspenseLoading
+    message="Memuat aplikasi..."
+    size="lg"
+    className="absolute top-0 left-0 w-full h-screen"
+  />
+}>
+  <MainApp />
+</Suspense>
+```
+
+### Styling Details
+
+The component uses these Tailwind CSS classes:
+
+**Container**:
+- Flex layout: `flex flex-col justify-center items-center`
+- Animation: `animate-pulse`
+- Spacing: `space-y-3`
+
+**Skeleton**:
+- Responsive sizes: `w-12 h-12` (sm) / `w-16 h-16` (md) / `w-20 h-20` (lg)
+- Border radius: `rounded-xl` (sm) / `rounded-2xl` (md, lg)
+- Dark mode: `bg-neutral-200 dark:bg-neutral-700`
+
+**Text**:
+- Responsive sizes: `text-sm` (sm) / `text-base` (md) / `text-lg` (lg)
+- Dark mode: `text-neutral-500 dark:text-neutral-400`
+- Weight: `font-medium`
+
+### Performance Considerations
+
+The SuspenseLoading component is optimized using:
+- Functional component with hooks (no unnecessary re-renders)
+- CSS-only animations (animate-pulse)
+- Minimal DOM structure (single container, skeleton + text)
+- No JavaScript dependencies
+- Proper TypeScript typing
+
+### Migration Guide
+
+To migrate existing inline Suspense fallbacks:
+
+**Before:**
+```tsx
+<Suspense fallback={
+  <div className="flex flex-col justify-center items-center h-64 space-y-3 animate-pulse">
+    <div className="w-16 h-16 rounded-2xl bg-neutral-200 dark:bg-neutral-700"></div>
+    <p className="text-neutral-500 dark:text-neutral-400 font-medium">
+      Memuat dashboard admin...
+    </p>
+  </div>
+}>
+  <AdminDashboard />
+</Suspense>
+```
+
+**After:**
+```tsx
+import SuspenseLoading from './ui/SuspenseLoading';
+
+<Suspense fallback={<SuspenseLoading message="Memuat dashboard admin..." />}>
+  <AdminDashboard />
+</Suspense>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Reduced code duplication (eliminates 7+ inline patterns)
+- ✅ Built-in size variants
+- ✅ Customizable messages
+- ✅ Dark mode support
+- ✅ Type-safe props
+
+### Test Coverage
+
+The SuspenseLoading component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/SuspenseLoading.test.tsx
+```
+
+Test scenarios include:
+- Rendering with default props
+- Rendering with custom messages
+- Rendering with all size variants (sm, md, lg)
+- Accessibility tests (ARIA role, aria-live, aria-busy)
+- Skeleton element rendering with aria-hidden
+- Dark mode styling
+- Layout structure (flex, justify-center, items-center)
+- Spacing classes (space-y-3)
+- Animation class (animate-pulse)
+- Custom className application
+- Props integration (message, size, className)
+- TypeScript type exports
+- Integration with React Suspense
+
+### Usage in Application
+
+Currently integrated in:
+- `src/App.tsx` - All 7 Suspense fallbacks replaced
+
+**Replaced Patterns:**
+
+1. Admin Dashboard: `Memuat dashboard admin...`
+2. Teacher Dashboard: `Memuat dashboard guru...`
+3. Parent Dashboard: `Memuat dashboard wali murid...`
+4. Student Portal: `Memuat portal siswa...`
+5. PPDB Registration: `Memuat formulir pendaftaran...`
+6. Documentation Page: `Memuat dokumentasi...`
+7. Site Editor: `Memuat editor...`
+
+**Total Code Reduction:**
+- Eliminated 7 duplicate inline fallback implementations (~210 lines)
+- Replaced with 7 simple component usages (~7 lines)
+- **Net reduction: ~200 lines of duplicate code**
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Progress bar integration for long-loading resources
+- Skeleton variants for different content types (list, card, table)
+- Animated icons instead of simple skeleton blocks
+- Loading percentage display
+- Multiple skeleton elements (e.g., title + subtitle + content)
+
+---
+
+**Last Updated**: 2026-01-10
 **Component Version**: 1.0.0
