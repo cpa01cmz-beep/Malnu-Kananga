@@ -61,6 +61,7 @@ src/config/
 
 ### BACKGROUND Gradients
 - `HERO` - Hero section background with via colors
+- `HERO_DECORATIVE` - Hero section radial gradient overlay (decorative)
 - `SECTION` - Standard section background (white to neutral)
 - `SECTION_ALT` - Alternate section background
 
@@ -154,6 +155,7 @@ import { getGradientClass, DARK_GRADIENT_CLASSES } from '../config/gradients';
   INDIGO_MAIN: string,
   INDIGO_LIGHT: string,
   HERO: string,
+  HERO_DECORATIVE: string,
   SECTION: string,
   SECTION_ALT: string
 }
@@ -163,6 +165,7 @@ import { getGradientClass, DARK_GRADIENT_CLASSES } from '../config/gradients';
 ```typescript
 {
   HERO: string,
+  HERO_DECORATIVE: string,
   SECTION: string,
   SECTION_ALT: string,
   PRIMARY_LIGHT: string,
@@ -316,6 +319,7 @@ getGradientClass('PURPLE_MAIN')
 - ✅ **ProgressAnalytics** - Stats cards (GREEN_MAIN, BLUE_MAIN, PURPLE_MAIN, PURPLE_SOFT)
 - ✅ **StudentPortal** - OSIS button gradient (ORANGE_SOFT)
 - ✅ **AdminDashboard** - Action cards (INDIGO_MAIN, GREEN_TEAL, PURPLE_MAIN)
+- ✅ **HeroSection** - Hero background (HERO) and decorative radial overlay (HERO_DECORATIVE)
 
 ## Future Enhancements
 
@@ -354,6 +358,6 @@ When adding new gradients:
 
 ---
 
-**Last Updated**: 2026-01-07
-**Version**: 1.0.0
+**Last Updated**: 2026-01-10
+**Version**: 1.1.0
 **Status**: Active

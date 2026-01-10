@@ -266,6 +266,7 @@ export const GRADIENT_CLASSES = {
   INDIGO_LIGHT: 'bg-gradient-to-br from-indigo-100 to-indigo-200',
   APP_BACKGROUND: 'bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-background)]',
   HERO: 'bg-gradient-to-br from-primary-50/90 via-white/80 to-primary-100/70',
+  HERO_DECORATIVE: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary-200/40 via-transparent to-transparent',
   SECTION: 'bg-gradient-to-b from-white via-neutral-50/60 to-neutral-100/50',
   SECTION_ALT: 'bg-gradient-to-b from-white via-neutral-50/70 to-neutral-100/50',
   FOOTER: 'bg-gradient-to-t from-primary-50/90 via-primary-50/50 to-transparent',
@@ -282,6 +283,7 @@ export const GRADIENT_CLASSES = {
 
 export const DARK_GRADIENT_CLASSES = {
   HERO: 'bg-gradient-to-br from-primary-900/40 dark:via-neutral-900/80 dark:to-primary-900/30',
+  HERO_DECORATIVE: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary-800/40 via-transparent to-transparent',
   SECTION: 'bg-gradient-to-b from-neutral-800/50 dark:via-neutral-900/40 dark:to-neutral-900/60',
   SECTION_ALT: 'bg-gradient-to-b from-neutral-800/60 dark:via-neutral-900/50 dark:to-neutral-900/70',
   FOOTER: 'bg-gradient-to-t from-primary-900/50 dark:via-primary-900/20 dark:to-transparent',
