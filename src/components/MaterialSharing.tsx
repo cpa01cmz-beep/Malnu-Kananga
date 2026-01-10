@@ -127,7 +127,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
 
   const handleRevoke = (sharingId: string, teacherIds: string[]) => {
     const sharingItem = sharing.find(s => s.id === sharingId);
-    const teachersToRevokeList = teachers.filter(t => teacherIds.includes(t.id));
+const teachersToRevokeList = teachers.filter(t => teacherIds.includes(t.id));
     setSharingToDelete(sharingItem || null);
     setTeachersToRevoke(teachersToRevokeList);
     setIsDeleteDialogOpen(true);

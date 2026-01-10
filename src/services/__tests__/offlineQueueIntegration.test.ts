@@ -88,7 +88,7 @@ describe('Offline Queue Integration', () => {
     // Mock fetch to throw network error
     global.fetch = vi.fn().mockRejectedValue(new Error('network error'));
 
-    const { isNetworkError } = await import('../utils/networkStatus');
+    const { isNetworkError } = await import('../../utils/networkStatus');
     vi.mocked(isNetworkError).mockReturnValue(true);
 
     const options: RequestOptions = {

@@ -40,7 +40,7 @@ vi.mock('../services/apiService', () => ({
   },
 }));
 
-vi.mock('../utils/logger', () => ({
+vi.mock('../../utils/logger', () => ({
   logger: {
     info: vi.fn(),
     warn: vi.fn(),
@@ -154,7 +154,7 @@ describe('WebSocketService', () => {
       expect(openCallback).toBeDefined();
       
       // Set WebSocket state to open before triggering callback
-      mockWebSocket.readyState = WebSocket.OPEN;
+      (mockWebSocket as any).readyState = WebSocket.OPEN;
       openCallback?.(new Event('open'));
 
       const connectionState = webSocketService.getConnectionState();
@@ -200,7 +200,7 @@ describe('WebSocketService', () => {
   describe('Event Subscription', () => {
     beforeEach(async () => {
       await webSocketService.initialize();
-      mockWebSocket.readyState = WebSocket.OPEN;
+      (mockWebSocket as any).readyState = WebSocket.OPEN;
     });
 
     it('should subscribe to real-time events', () => {
@@ -300,7 +300,7 @@ describe('WebSocketService', () => {
   describe('Local Storage Updates', () => {
     beforeEach(async () => {
       await webSocketService.initialize();
-      mockWebSocket.readyState = WebSocket.OPEN;
+      (mockWebSocket as any).readyState = WebSocket.OPEN;
     });
 
     it('should update grades in local storage', () => {
@@ -392,7 +392,7 @@ describe('WebSocketService', () => {
   describe('Connection State Management', () => {
     it('should persist connection state to localStorage', async () => {
       await webSocketService.initialize();
-      mockWebSocket.readyState = WebSocket.OPEN;
+      (mockWebSocket as any).readyState = WebSocket.OPEN;
 
       // Trigger open event
       const openCallback = mockWebSocket.addEventListener.mock.calls.find(
@@ -428,7 +428,7 @@ describe('WebSocketService', () => {
   describe('Global Events', () => {
     beforeEach(async () => {
       await webSocketService.initialize();
-      mockWebSocket.readyState = WebSocket.OPEN;
+      (mockWebSocket as any).readyState = WebSocket.OPEN;
     });
 
     it('should emit global custom events for real-time updates', () => {
@@ -472,7 +472,7 @@ describe('WebSocketService', () => {
   describe('Error Handling', () => {
     it('should handle malformed JSON messages', async () => {
       await webSocketService.initialize();
-      mockWebSocket.readyState = WebSocket.OPEN;
+      (mockWebSocket as any).readyState = WebSocket.OPEN;
 
       const messageCallback = mockWebSocket.addEventListener.mock.calls.find(
         call => call[0] === 'message'

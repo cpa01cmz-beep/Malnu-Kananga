@@ -134,7 +134,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
     setIsRestoreDialogOpen(true);
   };
 
-  const deleteVersion = (versionId: string) => {
+const deleteVersion = (versionId: string) => {
     const version = versions.find(v => v.id === versionId);
     setVersionToDelete(version || null);
     setIsDeleteDialogOpen(true);
@@ -163,6 +163,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
 
   const confirmDeleteVersion = async () => {
     if (!versionToDelete) return;
+
 
     try {
       const updatedVersions = versions.filter(v => v.id !== versionToDelete.id);

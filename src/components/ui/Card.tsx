@@ -16,6 +16,7 @@ export interface CardProps {
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
+  role?: string;
   'aria-label'?: string;
   'aria-describedby'?: string;
 }
@@ -41,6 +42,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
   className = '',
   onClick,
   disabled,
+  role,
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedby,
   ...rest
@@ -82,6 +84,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
         type="button"
         onClick={onClick}
         disabled={disabled}
+        role={role}
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedby}
         className={getCardClasses()}
@@ -95,6 +98,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
   return (
     <div
       ref={ref as React.RefObject<HTMLDivElement>}
+      role={role}
       aria-label={ariaLabel}
       aria-describedby={ariaDescribedby}
       className={getCardClasses()}
