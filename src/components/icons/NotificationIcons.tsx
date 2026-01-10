@@ -38,8 +38,9 @@ export const XCircleIcon: React.FC<{ className?: string }> = ({
   </svg>
 );
 
-export const MagnifyingGlassIcon: React.FC<{ className?: string }> = ({
+export const MagnifyingGlassIcon: React.FC<{ className?: string; 'aria-hidden'?: boolean | string }> = ({
   className = 'w-6 h-6',
+  'aria-hidden': ariaHidden,
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -48,6 +49,7 @@ export const MagnifyingGlassIcon: React.FC<{ className?: string }> = ({
     strokeWidth={1.5}
     stroke="currentColor"
     className={className}
+    aria-hidden={ariaHidden}
   >
     <path
       strokeLinecap="round"
