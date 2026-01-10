@@ -154,4 +154,26 @@ describe('Section', () => {
     const header = container.querySelector('.text-center.mb-12.sm\\:mb-16');
     expect(header).toHaveClass('animate-fade-in');
   });
+
+  it('has aria-labelledby attribute linking to heading', () => {
+    const { container } = render(
+      <Section id="test-section" title="Test Title">
+        <p>Test content</p>
+      </Section>
+    );
+
+    const section = container.querySelector('section');
+    expect(section).toHaveAttribute('aria-labelledby', 'test-section-heading');
+  });
+
+  it('has correct heading ID attribute', () => {
+    const { container } = render(
+      <Section id="test-section" title="Test Title">
+        <p>Test content</p>
+      </Section>
+    );
+
+    const heading = container.querySelector('h2');
+    expect(heading).toHaveAttribute('id', 'test-section-heading');
+  });
 });

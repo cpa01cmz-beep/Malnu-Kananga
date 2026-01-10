@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 interface SectionProps {
   id: string;
@@ -17,12 +17,14 @@ const Section: React.FC<SectionProps> = ({
   className = '',
   badge,
 }) => {
+  const headingId = useRef(`${id}-heading`).current;
+
   return (
-    <section id={id} className={`py-20 sm:py-24 ${className}`}>
+    <section id={id} aria-labelledby={headingId} className={`py-20 sm:py-24 ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 sm:mb-16 animate-fade-in">
           {badge && <div className="mb-6">{badge}</div>}
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white tracking-tight mb-4">
+          <h2 id={headingId} className="text-4xl sm:text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white tracking-tight mb-4">
             {title}
           </h2>
           {subtitle && (
