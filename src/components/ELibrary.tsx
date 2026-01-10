@@ -8,6 +8,7 @@ import { useSemanticSearch } from '../hooks/useSemanticSearch';
 import { logger } from '../utils/logger';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
+import { GRADIENT_CLASSES } from '../config/gradients';
 import { STORAGE_KEYS } from '../constants';
 import { ocrService } from '../services/ocrService';
 import { generateTextSummary, compareTextsForSimilarity } from '../services/ocrEnhancementService';
@@ -1033,7 +1034,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
       {/* Semantic Search Options Panel */}
       {showSemanticOptions && (
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-4 mb-6 border border-purple-200 dark:border-purple-700">
+        <div className={`${GRADIENT_CLASSES.AI_SEMANTIC} rounded-xl p-4 mb-6 border border-purple-200 dark:border-purple-700`}>
           <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">🧠 Pencarian Semantik AI</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1229,7 +1230,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                 const semanticResult = semanticSearchHook.searchResults.find(r => r.material.id === item.id);
                 if (semanticResult) {
                   return (
-                    <div className="mb-3 p-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
+                    <div className={`mb-3 p-2 ${GRADIENT_CLASSES.AI_SEMANTIC} rounded-lg border border-purple-200 dark:border-purple-700`}>
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
                           🧠 Relevansi AI

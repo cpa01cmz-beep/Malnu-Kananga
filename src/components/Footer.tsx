@@ -1,4 +1,5 @@
 import React from 'react';
+import { getResponsiveGradient } from '../config/gradients';
 
 const InstagramIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-instagram"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
@@ -18,7 +19,7 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
     return (
-        <footer id="kontak" className="bg-gradient-to-t from-primary-50/90 via-primary-50/50 to-transparent dark:from-primary-900/50 dark:via-primary-900/20 dark:to-transparent border-t border-neutral-200 dark:border-neutral-700">
+        <footer id="kontak" className={`${getResponsiveGradient('FOOTER')} border-t border-neutral-200 dark:border-neutral-700`}>
             <div className="max-w-7xl mx-auto py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16 text-center sm:text-left">
                     <div>

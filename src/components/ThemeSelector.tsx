@@ -24,6 +24,14 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const newTab = activeTab === 'light' ? 'dark' : 'light';
+      setActiveTab(newTab);
+    }
+  };
+
   if (!isOpen || !isReady || !currentTheme) {
     return null;
   }
@@ -67,7 +75,12 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-neutral-200 dark:border-neutral-700" role="tablist" aria-label="Pilih kategori tema">
+        <div 
+          className="flex border-b border-neutral-200 dark:border-neutral-700" 
+          role="tablist" 
+          aria-label="Pilih kategori tema"
+          onKeyDown={handleKeyDown}
+        >
           <button
             role="tab"
             aria-selected={activeTab === 'light'}

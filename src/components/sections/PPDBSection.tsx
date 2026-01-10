@@ -5,6 +5,7 @@ import DocumentTextIcon from '../icons/DocumentTextIcon';
 import { UsersIcon } from '../icons/UsersIcon';
 import Card from '../ui/Card';
 import Section from '../ui/Section';
+import { getResponsiveGradient } from '../../config/gradients';
 
 interface PPDBSectionProps {
   onRegisterClick: () => void;
@@ -25,7 +26,7 @@ const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
       id="ppdb"
       title="Bergabunglah Bersama Kami"
       subtitle="Jadilah bagian dari generasi unggul MA Malnu Kananga. Pendaftaran Tahun Ajaran 2025/2026 telah dibuka."
-      className="bg-gradient-to-br from-primary-50/80 via-white to-neutral-50/60 dark:from-primary-900/30 dark:via-neutral-900 dark:to-neutral-900/40"
+      className={getResponsiveGradient('PPDB')}
       badge={badge}
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 mb-12 sm:mb-14">

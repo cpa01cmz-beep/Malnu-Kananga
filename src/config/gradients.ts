@@ -164,9 +164,25 @@ export const GRADIENTS = {
     soft: {
       from: 'from-orange-50',
       to: 'to-green-50',
-      direction: 'to-r',
-      text: 'dark' as const,
+      direction: 'to-r' as const,
     },
+  },
+  PRIMARY_DECORATIVE: {
+    main: {
+      from: 'from-primary-400',
+      to: 'to-primary-600',
+      direction: 'to-br' as const,
+    },
+    soft: {
+      from: 'from-primary-100',
+      to: 'to-transparent',
+      direction: 'to-br' as const,
+    },
+  },
+  CHAT_HEADER: {
+    from: 'from-primary-600',
+    to: 'to-primary-700',
+    direction: 'to-r' as const,
   },
   BACKGROUND: {
     hero: {
@@ -180,6 +196,36 @@ export const GRADIENTS = {
       direction: 'to-b' as const,
     },
     sectionAlt: {
+      from: 'from-neutral-50/70',
+      to: 'to-neutral-100/50',
+      direction: 'to-b' as const,
+    },
+    footer: {
+      from: 'from-primary-50/90',
+      to: 'to-transparent',
+      direction: 'to-t' as const,
+    },
+    profile: {
+      from: 'from-white',
+      to: 'to-neutral-100/50',
+      direction: 'to-b' as const,
+    },
+    ppdb: {
+      from: 'from-primary-50/80',
+      to: 'to-neutral-50/60',
+      direction: 'to-br' as const,
+    },
+    relatedLinks: {
+      from: 'from-white',
+      to: 'to-neutral-100/50',
+      direction: 'to-b' as const,
+    },
+    programs: {
+      from: 'from-white',
+      to: 'to-neutral-50',
+      direction: 'to-b' as const,
+    },
+    news: {
       from: 'from-neutral-50/70',
       to: 'to-neutral-100/50',
       direction: 'to-b' as const,
@@ -216,12 +262,32 @@ export const GRADIENT_CLASSES = {
   HERO: 'bg-gradient-to-br from-primary-50/90 via-white/80 to-primary-100/70',
   SECTION: 'bg-gradient-to-b from-white via-neutral-50/60 to-neutral-100/50',
   SECTION_ALT: 'bg-gradient-to-b from-white via-neutral-50/70 to-neutral-100/50',
+  FOOTER: 'bg-gradient-to-t from-primary-50/90 via-primary-50/50 to-transparent',
+  PROFILE: 'bg-gradient-to-b from-white via-neutral-50/60 to-neutral-100/50',
+  PPDB: 'bg-gradient-to-br from-primary-50/80 via-white to-neutral-50/60',
+  RELATED_LINKS: 'bg-gradient-to-b from-white via-neutral-50/70 to-neutral-100/50',
+  PROGRAMS: 'bg-gradient-to-b from-white to-neutral-50',
+  NEWS: 'bg-gradient-to-b from-neutral-50/70 via-white to-neutral-100/50',
+  PRIMARY_DECORATIVE: 'bg-gradient-to-br from-primary-400 to-primary-600',
+  PRIMARY_DECORATIVE_SOFT: 'bg-gradient-to-br from-primary-100 to-transparent',
+  CHAT_HEADER: 'bg-gradient-to-r from-primary-600 to-primary-700',
+  AI_SEMANTIC: 'bg-gradient-to-r from-purple-50 to-pink-50',
 } as const;
 
 export const DARK_GRADIENT_CLASSES = {
   HERO: 'bg-gradient-to-br from-primary-900/40 dark:via-neutral-900/80 dark:to-primary-900/30',
-  SECTION: 'bg-gradient-to-b from-neutral-800/60 dark:via-neutral-900/40 dark:to-neutral-900/60',
-  SECTION_ALT: 'bg-gradient-to-b from-neutral-900/50 dark:via-neutral-800/60 dark:to-neutral-900/40',
+  SECTION: 'bg-gradient-to-b from-neutral-800/50 dark:via-neutral-900/40 dark:to-neutral-900/60',
+  SECTION_ALT: 'bg-gradient-to-b from-neutral-800/60 dark:via-neutral-900/50 dark:to-neutral-900/70',
+  FOOTER: 'bg-gradient-to-t from-primary-900/50 dark:via-primary-900/20 dark:to-transparent',
+  PROFILE: 'bg-gradient-to-b from-neutral-800/50 dark:via-neutral-900/40 dark:to-neutral-900/60',
+  PPDB: 'bg-gradient-to-br from-primary-900/30 dark:via-neutral-900 dark:to-neutral-900/40',
+  RELATED_LINKS: 'bg-gradient-to-b from-neutral-800/60 dark:via-neutral-900/50 dark:to-neutral-900/70',
+  PROGRAMS: 'bg-gradient-to-b from-neutral-800/60 dark:to-neutral-900/40',
+  NEWS: 'bg-gradient-to-b from-neutral-900/50 dark:via-neutral-800/60 dark:to-neutral-900/40',
+  PRIMARY_DECORATIVE: 'bg-gradient-to-br from-primary-400 to-primary-600',
+  PRIMARY_DECORATIVE_SOFT: 'bg-gradient-to-br from-primary-100 to-transparent dark:from-primary-900/20',
+  CHAT_HEADER: 'bg-gradient-to-r from-primary-600 to-primary-700',
+  AI_SEMANTIC: 'bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20',
   PRIMARY_LIGHT: 'dark:from-primary-900/60 dark:to-primary-900/80',
   NEUTRAL: 'dark:from-neutral-900/60 dark:to-neutral-800/60',
   BLUE_SOFT: 'dark:from-blue-900/30 dark:to-blue-800/30',
@@ -238,4 +304,11 @@ export const getGradientClass = (key: keyof typeof GRADIENT_CLASSES): string => 
 export const getGradientConfig = (config: GradientConfig): string => {
   const direction = config.direction || 'to-br';
   return `bg-gradient-to-${direction} ${config.from} ${config.to}`;
+};
+
+export const getResponsiveGradient = (lightKey: keyof typeof GRADIENT_CLASSES, darkKey?: keyof typeof DARK_GRADIENT_CLASSES): string => {
+  const lightGradient = GRADIENT_CLASSES[lightKey];
+  const darkGradient = darkKey ? DARK_GRADIENT_CLASSES[darkKey] : DARK_GRADIENT_CLASSES[lightKey.toUpperCase() as keyof typeof DARK_GRADIENT_CLASSES];
+  
+  return `${lightGradient} ${darkGradient}`;
 };

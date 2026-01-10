@@ -8,6 +8,7 @@ import { BrainIcon } from './icons/BrainIcon';
 import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';
 import { SendIcon } from './icons/SendIcon';
 import MarkdownRenderer from './MarkdownRenderer';
+import { GRADIENT_CLASSES } from '../config/gradients';
 import Textarea from './ui/Textarea';
 import TypingIndicator from './TypingIndicator';
 import VoiceInputButton from './VoiceInputButton';
@@ -253,7 +254,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
       aria-modal="true"
       aria-label="Asisten AI - Obrolan dengan asisten kecerdasan buatan"
     >
-      <header className="flex items-center justify-between px-4 py-3.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white flex-shrink-0">
+      <header className={`flex items-center justify-between px-4 py-3.5 ${GRADIENT_CLASSES.CHAT_HEADER} text-white flex-shrink-0`}>
         <div className="flex items-center gap-2.5">
             <div className="w-2.5 h-2.5 bg-white rounded-full mr-1 animate-pulse shadow-sm"></div>
             <h2 className="font-semibold text-sm">Asisten AI</h2>

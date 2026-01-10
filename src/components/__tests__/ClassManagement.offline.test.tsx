@@ -50,7 +50,7 @@ vi.mock('../../services/offlineActionQueueService', () => ({
 
 vi.mock('../../utils/networkStatus', () => ({
   useNetworkStatus: () => ({
-    isOnline: true,
+    isOnline: false, // Force offline to show indicator
     isSlow: false,
   }),
 }));

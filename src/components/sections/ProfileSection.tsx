@@ -2,6 +2,7 @@
 import React from 'react';
 import Badge from '../ui/Badge';
 import Section from '../ui/Section';
+import { getResponsiveGradient } from '../../config/gradients';
 
 const ProfileSection: React.FC = () => {
   return (
@@ -9,7 +10,7 @@ const ProfileSection: React.FC = () => {
       id="profil"
       title="Profil Madrasah"
       subtitle="Mengenal Lebih Dekat MA Malnu Kananga"
-      className="bg-gradient-to-b from-white via-neutral-50/60 to-neutral-100/50 dark:from-neutral-800/50 dark:via-neutral-900/40 dark:to-neutral-900/60"
+      className={getResponsiveGradient('PROFILE')}
     >
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12 items-start animate-fade-in-up">
             <div className="lg:col-span-3 text-base sm:text-lg text-neutral-700 dark:text-neutral-300 space-y-8 text-left sm:text-justify leading-relaxed">

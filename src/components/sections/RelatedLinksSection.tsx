@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { logger } from '../../utils/logger';
+import { getResponsiveGradient } from '../../config/gradients';
 
 const RelatedLinksSection: React.FC = () => {
   const [links, setLinks] = useState<{name: string; href: string; icon: React.ReactNode; color: string}[]>([]);
@@ -18,7 +19,7 @@ const RelatedLinksSection: React.FC = () => {
   }, []);
 
   return (
-    <section id="tautan" className="py-20 sm:py-24 bg-gradient-to-b from-white via-neutral-50/70 to-neutral-100/50 dark:from-neutral-800/60 dark:via-neutral-900/50 dark:to-neutral-900/70">
+    <section id="tautan" className={`py-20 sm:py-24 ${getResponsiveGradient('RELATED_LINKS')}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12 sm:mb-16 animate-fade-in">
                 <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white tracking-tight mb-4">Tautan Terkait</h2>
