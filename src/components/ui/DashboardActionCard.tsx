@@ -45,62 +45,62 @@ const colorThemeClasses: Record<ColorTheme, { icon: string; badge: string; badge
   },
   blue: {
     icon: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   },
   green: {
     icon: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   },
   purple: {
     icon: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   },
   orange: {
     icon: 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   },
   teal: {
     icon: 'bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   },
   indigo: {
     icon: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   },
   red: {
     icon: 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   },
   pink: {
     icon: 'bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-pink-100 dark:bg-pink-900 text-pink-700 dark:text-pink-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   },
   emerald: {
     icon: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   },
   cyan: {
     icon: 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-cyan-100 dark:bg-cyan-900 text-cyan-700 dark:text-cyan-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   },
   yellow: {
     icon: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   },
   rose: {
     icon: 'bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400',
-    badge: 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300',
+    badge: 'bg-rose-100 dark:bg-rose-900 text-rose-700 dark:text-rose-300',
     badgeOffline: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
   }
 };
@@ -184,7 +184,7 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
           </Badge>
         )}
 
-        <Badge variant="primary" size="md">
+        <Badge variant="neutral" size="md" className={isOnline ? theme.badge : theme.badgeOffline}>
           {!isOnline ? (offlineBadge || 'Offline') : (statusBadge || 'Aktif')}
         </Badge>
       </div>
