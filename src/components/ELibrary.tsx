@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { StarIcon, BookmarkIcon, FunnelIcon } from './icons/MaterialIcons';
 import DocumentTextIcon from './icons/DocumentTextIcon';
-import EmptyState from './ui/LoadingState';
+import { EmptyState } from './ui/LoadingState';
 import { eLibraryAPI, fileStorageAPI } from '../services/apiService';
 import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress, OCRStatus, OCRProcessingState, SearchOptions, PlagiarismFlag } from '../types';
 import { useSemanticSearch } from '../hooks/useSemanticSearch';

@@ -6,7 +6,7 @@ import { parentGradeNotificationService } from '../services/parentGradeNotificat
 import { logger } from '../utils/logger';
 import type { PushNotification, ParentChild } from '../types';
 import Button from './ui/Button';
-import EmptyState from './ui/LoadingState';
+import { EmptyState } from './ui/LoadingState';
 
 interface NotificationHistoryProps {
   onShowToast: (msg: string, type: ToastType) => void;
