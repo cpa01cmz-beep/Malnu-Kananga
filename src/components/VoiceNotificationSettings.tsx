@@ -134,7 +134,7 @@ const VoiceNotificationSettings: React.FC<VoiceNotificationSettingsProps> = ({
               { id: 'history', label: 'Riwayat' },
             ]}
             activeTab={activeTab}
-            onTabChange={setActiveTab}
+            onTabChange={(tabId: string) => setActiveTab(tabId as 'settings' | 'history' | 'queue')}
             className="mt-4"
           />
         </div>

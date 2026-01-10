@@ -1,3 +1,4 @@
+ 
 import { render, screen, cleanup } from '@testing-library/react';
 import { describe, it, expect, afterEach, beforeEach } from 'vitest';
 import SkipLink, { SkipTarget } from '../SkipLink';

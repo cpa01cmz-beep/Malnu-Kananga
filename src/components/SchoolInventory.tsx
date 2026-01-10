@@ -332,7 +332,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
           { id: 'reports', label: 'Laporan', icon: ChartBarIcon },
         ]}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={(tabId: string) => setActiveTab(tabId as 'maintenance' | 'reports' | 'audit' | 'items')}
         className="mb-6"
       />
 

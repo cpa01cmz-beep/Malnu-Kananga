@@ -1,7 +1,73 @@
+ 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { webSocketService, type RealTimeEvent, type RealTimeEventType, type WebSocketConnectionState } from '../services/webSocketService';
 import { logger } from '../utils/logger';
-import { Grade, Attendance, Announcement, LibraryMaterial, Notification, ChatMessage } from '../types';
+import { ChatMessage, NotificationType } from '../types';
+
+// Missing types - add temporary definitions
+interface Grade {
+  id: string;
+  studentId: string;
+  subjectId: string;
+  classId: string;
+  score: number;
+  type: string;
+  date: string;
+  semester: string;
+  academicYear: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Attendance {
+  id: string;
+  studentId: string;
+  classId: string;
+  date: string;
+  status: 'present' | 'absent' | 'late' | 'excused';
+  checkInTime?: string;
+  notes?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  priority: 'low' | 'medium' | 'high';
+  classId?: string;
+  schoolId: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+}
+
+interface LibraryMaterial {
+  id: string;
+  title: string;
+  description?: string;
+  type: string;
+  url?: string;
+  classId?: string;
+  subjectId?: string;
+  uploadedBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Notification {
+  id: string;
+  userId: string;
+  title: string;
+  message: string;
+  type: NotificationType;
+  read: boolean;
+  createdAt: string;
+  readAt?: string;
+}
 
 /**
  * React hook for WebSocket real-time functionality

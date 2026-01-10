@@ -190,7 +190,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
             { id: 'analytics', label: 'Analytics' },
           ]}
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={(tabId: string) => setActiveTab(tabId as 'templates' | 'settings' | 'batches' | 'analytics')}
         />
 
         {/* Tab Content */}

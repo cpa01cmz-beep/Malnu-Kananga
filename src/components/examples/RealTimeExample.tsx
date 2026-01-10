@@ -1,8 +1,50 @@
 import React, { useState } from 'react';
-import { useWebSocket, useRealtimeGrades, useRealtimeAnnouncements } from '../hooks/useWebSocket';
-import { WebSocketStatus } from '../components/WebSocketStatus';
-import { logger } from '../utils/logger';
-import { Notification, Grade, Announcement } from '../../types';
+import { useWebSocket, useRealtimeGrades, useRealtimeAnnouncements } from '../../hooks/useWebSocket';
+import { WebSocketStatus } from '../WebSocketStatus';
+import { logger } from '../../utils/logger';
+import { NotificationType } from '../../types';
+
+// Missing types - add temporary definitions
+interface Grade {
+  id: string;
+  studentId: string;
+  subjectId: string;
+  classId: string;
+  subject?: string;
+  score: number;
+  type: string;
+  date: string;
+  semester: string;
+  academicYear: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  priority: 'low' | 'medium' | 'high';
+  category?: string;
+  author?: string;
+  classId?: string;
+  schoolId: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+}
+
+interface Notification {
+  id: string;
+  userId: string;
+  title: string;
+  message: string;
+  type: NotificationType;
+  read: boolean;
+  createdAt: string;
+  readAt?: string;
+}
 
 /**
  * Example component demonstrating WebSocket real-time features
@@ -18,7 +60,8 @@ export function RealTimeExample() {
   React.useEffect(() => {
     const unsubscribe = subscribe(
       'notification_created',
-      (event) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (event: any) => {
         const notificationData = event.data as Notification;
         setNotification(`New notification: ${notificationData.title}`);
         // Auto-clear notification after 5 seconds
@@ -130,7 +173,7 @@ export function RealTimeExample() {
                       {grade.studentId}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {grade.subject}
+                      {grade.subject || `Subject ${grade.subjectId}`}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -166,7 +209,7 @@ export function RealTimeExample() {
                 <p className="text-gray-600">{announcement.content}</p>
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-sm text-gray-500">
-                    By {announcement.author} • {announcement.category}
+                    By {announcement.author || 'System'} • {announcement.priority}
                   </span>
                   <span className="text-xs text-gray-400">
                     Just now

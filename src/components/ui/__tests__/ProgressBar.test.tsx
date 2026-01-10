@@ -1,3 +1,4 @@
+ 
 import { render, screen } from '@testing-library/react';
 import ProgressBar from '../ProgressBar';
 

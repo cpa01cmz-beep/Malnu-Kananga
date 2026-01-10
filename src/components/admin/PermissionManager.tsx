@@ -81,7 +81,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
             { id: 'audit', label: 'Audit Logs' },
           ]}
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={(tabId: string) => setActiveTab(tabId as 'permissions' | 'audit' | 'matrix')}
           className="mb-6"
         />
 

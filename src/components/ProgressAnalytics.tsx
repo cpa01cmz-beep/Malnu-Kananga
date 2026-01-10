@@ -437,7 +437,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
           { id: 'correlation', label: 'Kehadiran vs Nilai' },
         ]}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={(tabId: string) => setActiveTab(tabId as 'goals' | 'correlation' | 'overview' | 'trends')}
         className="mb-6"
       />
 
