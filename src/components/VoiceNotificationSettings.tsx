@@ -4,6 +4,7 @@ import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';
 import { SpeakerXMarkIcon } from './icons/SpeakerXMarkIcon';
 import { Toggle } from './ui/Toggle';
 import Button from './ui/Button';
+import Tab from './ui/Tab';
 import type { SpeechSynthesisVoice } from '../types';
 
 interface VoiceNotificationSettingsProps {
@@ -124,24 +125,18 @@ const VoiceNotificationSettings: React.FC<VoiceNotificationSettingsProps> = ({
             </button>
           </div>
 
-          {/* Tabs */}
-          <div className="flex gap-2 mt-4">
-            {(['settings', 'queue', 'history'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeTab === tab
-                    ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                    : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
-                }`}
-              >
-                {tab === 'settings' && 'Pengaturan'}
-                {tab === 'queue' && 'Antrian'}
-                {tab === 'history' && 'Riwayat'}
-              </button>
-            ))}
-          </div>
+          <Tab
+            variant="pill"
+            color="green"
+            options={[
+              { id: 'settings', label: 'Pengaturan' },
+              { id: 'queue', label: 'Antrian' },
+              { id: 'history', label: 'Riwayat' },
+            ]}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            className="mt-4"
+          />
         </div>
 
         {/* Content */}

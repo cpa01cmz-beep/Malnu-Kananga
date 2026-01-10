@@ -4,6 +4,7 @@ import { permissionService } from '../../services/permissionService';
 import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../../config/permissions';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
+import Tab from '../ui/Tab';
 
 interface PermissionManagerProps {
   onShowToast: (message: string, type: 'success' | 'error' | 'info') => void;
@@ -71,41 +72,18 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
           Permission Management System
         </h2>
 
-        {/* Tab Navigation */}
-        <div className="border-b border-neutral-200 dark:border-neutral-700 mb-6">
-          <nav className="-mb-px flex space-x-8">
-            <button
-              onClick={() => setActiveTab('permissions')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'permissions'
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
-              }`}
-            >
-              User Permissions
-            </button>
-            <button
-              onClick={() => setActiveTab('matrix')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'matrix'
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
-              }`}
-            >
-              Role Matrix
-            </button>
-            <button
-              onClick={() => setActiveTab('audit')}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'audit'
-                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300'
-              }`}
-            >
-              Audit Logs
-            </button>
-          </nav>
-        </div>
+        <Tab
+          variant="border"
+          color="blue"
+          options={[
+            { id: 'permissions', label: 'User Permissions' },
+            { id: 'matrix', label: 'Role Matrix' },
+            { id: 'audit', label: 'Audit Logs' },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          className="mb-6"
+        />
 
         {activeTab === 'permissions' && (
           <div className="space-y-4">

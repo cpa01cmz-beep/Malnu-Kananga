@@ -8,9 +8,9 @@ import BatchManagement from './BatchManagement';
 import TemplateManagement from './TemplateManagement';
 import NotificationAnalyticsComponent from './NotificationAnalytics';
 import { NotificationSettings as NotificationSettingsType } from '../types';
-
 import { useAutoSave } from '../hooks/useAutoSave';
 import Button from './ui/Button';
+import Tab from './ui/Tab';
 
 interface NotificationSettingsProps {
   isOpen: boolean;
@@ -176,56 +176,22 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
           />
         </div>
 
-        {/* Tabs */}
-        <div className="border-b border-neutral-200">
-          <nav className="flex space-x-8 px-6" aria-label="Tabs">
-            <button
-              onClick={() => setActiveTab('settings')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'settings'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
-              }`}
-            >
-              Pengaturan
-            </button>
-            <button
-              onClick={() => setActiveTab('batches')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm relative ${
-                activeTab === 'batches'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
-              }`}
-            >
-              Batch
-              {batches.filter(b => b.status === 'pending').length > 0 && (
-                <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {batches.filter(b => b.status === 'pending').length}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => setActiveTab('templates')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'templates'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
-              }`}
-            >
-              Template
-            </button>
-            <button
-              onClick={() => setActiveTab('analytics')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'analytics'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
-              }`}
-            >
-              Analytics
-            </button>
-          </nav>
-        </div>
+        <Tab
+          variant="border"
+          color="blue"
+          options={[
+            { id: 'settings', label: 'Pengaturan' },
+            {
+              id: 'batches',
+              label: 'Batch',
+              badge: batches.filter(b => b.status === 'pending').length,
+            },
+            { id: 'templates', label: 'Template' },
+            { id: 'analytics', label: 'Analytics' },
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
 
         {/* Tab Content */}
         <div className="p-6">

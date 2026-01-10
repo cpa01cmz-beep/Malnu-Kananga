@@ -7,6 +7,7 @@ import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
 import DocumentTextIcon from './icons/DocumentTextIcon';
+import Tab from './ui/Tab';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { BarChart } from 'recharts/es6/chart/BarChart';
 import { Bar } from 'recharts/es6/cartesian/Bar';
@@ -321,28 +322,19 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
         </div>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex space-x-1 mb-6 bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg">
-        {[
+      <Tab
+        variant="icon"
+        color="green"
+        options={[
           { id: 'items', label: 'Daftar Barang', icon: ArchiveBoxIcon },
           { id: 'maintenance', label: 'Jadwal维护', icon: CalendarDaysIcon },
           { id: 'audit', label: 'Audit', icon: DocumentTextIcon },
-          { id: 'reports', label: 'Laporan', icon: ChartBarIcon }
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as 'items' | 'maintenance' | 'audit' | 'reports')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeTab === tab.id
-                ? 'bg-white dark:bg-neutral-700 text-green-600 dark:text-green-400 shadow-sm'
-                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
-            }`}
-          >
-            <tab.icon className="w-4 h-4" />
-            {tab.label}
-          </button>
-        ))}
-      </div>
+          { id: 'reports', label: 'Laporan', icon: ChartBarIcon },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        className="mb-6"
+      />
 
       {/* Items Tab */}
       {activeTab === 'items' && (

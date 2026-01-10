@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Button from './ui/Button';
 import ErrorMessage from './ui/ErrorMessage';
 import ProgressBar from './ui/ProgressBar';
+import Tab from './ui/Tab';
 import {
   BarChart,
   Bar,
@@ -426,48 +427,19 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
         </Button>
       </div>
 
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-        <button
-          onClick={() => setActiveTab('overview')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-            activeTab === 'overview'
-              ? 'bg-green-600 text-white'
-              : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
-          }`}
-        >
-          Ringkasan
-        </button>
-        <button
-          onClick={() => setActiveTab('trends')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-            activeTab === 'trends'
-              ? 'bg-green-600 text-white'
-              : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
-          }`}
-        >
-          Tren Nilai
-        </button>
-        <button
-          onClick={() => setActiveTab('goals')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-            activeTab === 'goals'
-              ? 'bg-green-600 text-white'
-              : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
-          }`}
-        >
-          Target Prestasi
-        </button>
-        <button
-          onClick={() => setActiveTab('correlation')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-            activeTab === 'correlation'
-              ? 'bg-green-600 text-white'
-              : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
-          }`}
-        >
-          Kehadiran vs Nilai
-        </button>
-      </div>
+      <Tab
+        variant="pill"
+        color="green"
+        options={[
+          { id: 'overview', label: 'Ringkasan' },
+          { id: 'trends', label: 'Tren Nilai' },
+          { id: 'goals', label: 'Target Prestasi' },
+          { id: 'correlation', label: 'Kehadiran vs Nilai' },
+        ]}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        className="mb-6"
+      />
 
       {activeTab === 'overview' && (
         <div className="space-y-6">
