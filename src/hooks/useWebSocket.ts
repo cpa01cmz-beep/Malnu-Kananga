@@ -167,23 +167,28 @@ export function useWebSocket() {
  * Provides typed event handling
  */
 export function useRealtimeEvent<T = unknown>(
-  eventType: RealTimeEventType,
+  eventType: RealTimeEventType | RealTimeEventType[],
   callback: (event: RealTimeEvent & { data: T }) => void,
   filter?: (event: RealTimeEvent) => boolean
 ) {
   const { subscribe } = useWebSocket();
 
   useEffect(() => {
-    const unsubscribe = subscribe(
-      eventType,
-      (event: RealTimeEvent) => {
-        const typedEvent = event as RealTimeEvent & { data: T };
-        callback(typedEvent);
-      },
-      filter
+    const eventTypes = Array.isArray(eventType) ? eventType : [eventType];
+    const unsubscribes = eventTypes.map((et) =>
+      subscribe(
+        et,
+        (event: RealTimeEvent) => {
+          const typedEvent = event as RealTimeEvent & { data: T };
+          callback(typedEvent);
+        },
+        filter
+      )
     );
 
-    return unsubscribe;
+    return () => {
+      unsubscribes.forEach((unsub) => unsub());
+    };
   }, [eventType, callback, filter, subscribe]);
 }
 
@@ -193,17 +198,17 @@ export function useRealtimeEvent<T = unknown>(
 export function useRealtimeGrades(studentId?: string) {
   const [grades, setGrades] = useState<Grade[]>([]);
 
-  useRealtimeEvent(
+  useRealtimeEvent<Grade>(
     ['grade_created', 'grade_updated', 'grade_deleted'] as RealTimeEventType[],
     (event) => {
-      if (studentId && !('data' in event.data && (event.data as Grade).studentId === studentId)) {
+      if (studentId && event.data.studentId !== studentId) {
         return;
       }
 
-      const gradeData = event.data as Grade;
+      const gradeData = event.data;
       setGrades(prevGrades => {
         const index = prevGrades.findIndex(g => g.id === gradeData.id);
-        
+
         if (event.type === 'grade_deleted') {
           return index !== -1 ? prevGrades.filter((_, i) => i !== index) : prevGrades;
         } else if (gradeData.id) {
@@ -229,18 +234,18 @@ export function useRealtimeGrades(studentId?: string) {
 export function useRealtimeAttendance(studentId?: string, classId?: string) {
   const [attendance, setAttendance] = useState<Attendance[]>([]);
 
-  useRealtimeEvent(
+  useRealtimeEvent<Attendance>(
     ['attendance_marked', 'attendance_updated'] as RealTimeEventType[],
     (event) => {
-      if (studentId && !('data' in event.data && (event.data as Attendance).studentId === studentId)) {
+      if (studentId && event.data.studentId !== studentId) {
         return;
       }
-      if (classId && !('data' in event.data && (event.data as Attendance).classId === classId)) {
+      if (classId && event.data.classId !== classId) {
         return;
       }
 
+      const attendanceData = event.data;
       setAttendance(prevAttendance => {
-        const attendanceData = event.data as Attendance;
         const index = prevAttendance.findIndex(a => a.id === attendanceData.id);
         if (index !== -1) {
           return prevAttendance.map((a, i) => i === index ? attendanceData : a);
@@ -285,18 +290,14 @@ const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 /**
  * Hook for real-time library materials updates
  */
-export function useRealtimeLibrary(category?: string) {
-const [materials, setMaterials] = useState<LibraryMaterial[]>([]);
-  
-  useRealtimeEvent(
-    ['material_created', 'material_updated', 'material_deleted'] as RealTimeEventType[],
+export function useRealtimeLibrary(_category?: string) {
+ const [materials, setMaterials] = useState<LibraryMaterial[]>([]);
+
+  useRealtimeEvent<LibraryMaterial>(
+    ['library_material_added', 'library_material_updated'] as RealTimeEventType[],
     (event) => {
-      if (category && !('data' in event.data && (event.data as LibraryMaterial).category === category)) {
-        return;
-      }
-      
       setMaterials(prevMaterials => {
-        const materialData = event.data as LibraryMaterial;
+        const materialData = event.data;
         const index = prevMaterials.findIndex(m => m.id === materialData.id);
         if (index !== -1) {
           return prevMaterials.map((m, i) => i === index ? materialData : m);
@@ -313,18 +314,14 @@ const [materials, setMaterials] = useState<LibraryMaterial[]>([]);
 /**
  * Hook for real-time messaging (for future chat features)
  */
-export function useRealtimeMessages(conversationId?: string) {
-const [messages, setMessages] = useState<ChatMessage[]>([]);
-  
-  useRealtimeEvent(
-    ['message_sent', 'message_updated', 'message_deleted'] as RealTimeEventType[],
+export function useRealtimeMessages(_conversationId?: string) {
+ const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+  useRealtimeEvent<ChatMessage>(
+    ['message_created', 'message_updated'] as RealTimeEventType[],
     (event) => {
-      if (conversationId && !('data' in event.data && (event.data as ChatMessage).id === conversationId)) {
-        return;
-      }
-      
       setMessages(prevMessages => {
-        const messageData = event.data as ChatMessage;
+        const messageData = event.data;
         switch (event.type) {
           case 'message_created':
             return [...prevMessages, messageData];

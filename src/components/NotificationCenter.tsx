@@ -312,8 +312,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         ? undefined
                         : {
                             label: 'Kirim Notifikasi Tes',
-                            onClick: handleSendTestNotification,
-                            onClickDisabled: !permissionGranted
+                            onClick: handleSendTestNotification
                           }
                     }
                     size="md"

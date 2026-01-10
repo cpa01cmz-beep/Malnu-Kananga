@@ -8,15 +8,9 @@ import type { AuthPayload } from './apiService';
 import { logger } from '../utils/logger';
 import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification } from '../types';
 
-// Note: WebSocket types are available in the global scope in browser environments
-/* eslint-disable @typescript-eslint/no-explicit-any */
-declare global {
-  var WebSocket: {
-    new(url: string, protocols?: string | string[]): any;
-  };
-  var MessageEvent: any;
-  var CloseEvent: any;
-}
+/* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
+
+
 
 /**
  * Real-time event types for WebSocket communication
@@ -76,7 +70,7 @@ export const WS_CONFIG = {
  */
 class WebSocketService {
   private static instance: WebSocketService;
-  private ws: any | null = null;
+  private ws: WebSocket | null = null;
   private pingInterval: number | null = null;
   private connectionTimeout: number | null = null;
   private subscriptions: Map<RealTimeEventType, Set<RealTimeSubscription>> = new Map();
@@ -148,10 +142,9 @@ class WebSocketService {
     const wsUrl = `${WS_CONFIG.WS_BASE_URL}?token=${token}`;
     logger.info(`WebSocket: Connecting to ${WS_CONFIG.WS_BASE_URL}`);
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       try {
-         
-    this.ws = new (globalThis as any).WebSocket(wsUrl);
+        this.ws = new WebSocket(wsUrl);
 
         // Connection timeout
         this.connectionTimeout = window.setTimeout(() => {
@@ -176,11 +169,11 @@ class WebSocketService {
           resolve();
         };
 
-        this.ws.onmessage = (event) => {
+        this.ws.onmessage = (event: MessageEvent) => {
           this.handleMessage(event);
         };
 
-        this.ws.onclose = (event) => {
+        this.ws.onclose = (event: CloseEvent) => {
           this.clearTimeouts();
           this.connectionState.connected = false;
           this.connectionState.connecting = false;
@@ -194,7 +187,7 @@ class WebSocketService {
           }
         };
 
-        this.ws.onerror = (error) => {
+        this.ws.onerror = (error: Event) => {
           this.clearTimeouts();
           logger.error('WebSocket: Error occurred', error);
           reject(error);
@@ -210,8 +203,8 @@ class WebSocketService {
   /**
    * Handle incoming WebSocket messages
    */
-   
-  private handleMessage(event: any): void {
+
+  private handleMessage(event: MessageEvent): void {
     try {
       const data = JSON.parse(event.data);
       
