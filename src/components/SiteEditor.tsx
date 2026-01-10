@@ -149,19 +149,24 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
     }
   };
 
-  const generateChangeSummary = (before: SiteContent, after: SiteContent): string => {
+  const generateChangeSummary = (before: SiteContent | null, after: SiteContent | null): string => {
     const changes: string[] = [];
     
+    // Handle null cases
+    if (!before || !after) {
+      return 'Loading initial content...';
+    }
+    
     // Compare featured programs
-    const beforePrograms = before.featuredPrograms.length;
-    const afterPrograms = after.featuredPrograms.length;
+    const beforePrograms = before.featuredPrograms?.length || 0;
+    const afterPrograms = after.featuredPrograms?.length || 0;
     if (beforePrograms !== afterPrograms) {
       changes.push(`${afterPrograms > beforePrograms ? 'Menambah' : 'Menghapus'} ${Math.abs(afterPrograms - beforePrograms)} program unggulan`);
     }
     
     // Compare news
-    const beforeNews = before.latestNews.length;
-    const afterNews = after.latestNews.length;
+    const beforeNews = before.latestNews?.length || 0;
+    const afterNews = after.latestNews?.length || 0;
     if (beforeNews !== afterNews) {
       changes.push(`${afterNews > beforeNews ? 'Menambah' : 'Menghapus'} ${Math.abs(afterNews - beforeNews)} berita`);
     }
@@ -504,13 +509,13 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                   Rincian:
                 </div>
                 <ul className="space-y-1 text-xs text-neutral-600 dark:text-neutral-400">
-                  {pendingContent!.featuredPrograms.map((prog, idx) => (
+                  {pendingContent?.featuredPrograms?.map((prog, idx) => (
                     <li key={`preview-prog-${idx}`} className="flex items-center gap-1">
                       <span className="text-green-500">•</span>
                       <span>Program: {prog.title}</span>
                     </li>
-                  ))}
-                  {pendingContent!.latestNews.map((news, idx) => (
+                  )) || []}
+                  {pendingContent?.latestNews?.map((news, idx) => (
                     <li key={`preview-news-${idx}`} className="flex items-center gap-1">
                       <span className="text-blue-500">•</span>
                       <span>Berita: {news.title}</span>

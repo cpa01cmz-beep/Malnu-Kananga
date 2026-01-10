@@ -219,8 +219,11 @@ describe('SuspenseLoading Component', () => {
   });
 
   describe('Integration with Suspense', () => {
-    it('can be used as Suspense fallback', () => {
-      const TestComponent = () => <div>Loaded</div>;
+    it('can be used as Suspense fallback', async () => {
+      const TestComponent = () => {
+        // Simulate async loading that will trigger suspense
+        throw new Promise(() => {}); // Never resolves, so it keeps suspending
+      };
       
       render(
         <Suspense fallback={<SuspenseLoading message="Loading component..." />}>

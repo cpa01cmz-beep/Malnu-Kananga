@@ -298,8 +298,8 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
                 </div>
               </div>
             ))}
-          </Card>
-        </div>
+          </div>
+        </Card>
 
         {/* Study Recommendations */}
         <Card>
@@ -315,8 +315,8 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
                 <p className="text-xs text-blue-600 dark:text-blue-400">⏰ {rec.timeAllocation}</p>
               </div>
             ))}
-          </Card>
-        </div>
+          </div>
+        </Card>
       </div>
 
       {/* Performance Trends Chart */}
@@ -365,12 +365,12 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
             className="text-neutral-700 dark:text-neutral-300 whitespace-pre-line"
             dangerouslySetInnerHTML={{ __html: insights.aiAnalysis.replace(/\n/g, '<br />') }}
           />
-        </Card>
-      </div>
+        </div>
+      </Card>
 
       {/* AI Analysis Modal */}
       {showAIModal && (
-        <div className="fixed inset-0 bg-black/50% flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white dark:bg-neutral-800 rounded-xl max-w-4xl max-h-[80vh] overflow-auto p-6 w-full">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-neutral-900 dark:text-white">🤖 Analisis Lengkap AI</h3>
@@ -379,7 +379,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
               </Button>
             </div>
             <div className="prose dark:prose-invert max-w-none">
-              <div 
+              <div
                 className="text-neutral-700 dark:text-neutral-300 whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: insights.aiAnalysis.replace(/\n/g, '<br />') }}
               />

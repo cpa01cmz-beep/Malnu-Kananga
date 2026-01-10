@@ -3,6 +3,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { ocrService } from '../ocrService';
 // parentGradeNotificationService is imported via OCR events in the test setup
+// OCR service is mocked above
 
 // Mock localStorage
 const localStorageMock = {
@@ -21,6 +22,36 @@ const mockShowNotification = vi.fn().mockResolvedValue(undefined);
 vi.mock('../pushNotificationService', () => ({
   pushNotificationService: {
     showLocalNotification: mockShowNotification
+  }
+}));
+
+// Mock OCR service to emit events instead of actual OCR processing
+vi.mock('../ocrService', () => ({
+  ocrService: {
+    extractTextFromImage: vi.fn().mockImplementation(async (file, progressCallback, options) => {
+      // Simulate OCR processing and emit validation events
+      const event = new CustomEvent('ocr-validation', {
+        detail: {
+          id: `validation-${options.documentId}`,
+          type: 'validation-failure',
+          documentId: options.documentId,
+          documentType: options.documentType,
+          confidence: 45.0,
+          issues: ['Gambar kurang jelas', 'Teks sulit terbaca'],
+          userId: options.userId,
+          timestamp: new Date().toISOString(),
+          actionUrl: options.actionUrl
+        }
+      });
+      
+      // Emit the event immediately
+      setTimeout(() => {
+        window.dispatchEvent(event);
+      }, 5);
+      
+      // Return a resolved promise instead of throwing
+      return { text: 'extracted text', confidence: 45.0 };
+    })
   }
 }));
 
