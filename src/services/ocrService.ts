@@ -2,6 +2,7 @@ import { createWorker, PSM, Worker } from 'tesseract.js';
 import { OCRValidationEvent, UserRole } from '../types';
 import { logger } from '../utils/logger';
 import { handleOCRError } from '../utils/serviceErrorHandlers';
+import { ocrCache } from './aiCacheService';
 
 export interface OCRExtractionResult {
   text: string;
@@ -31,6 +32,11 @@ export interface OCRProgress {
 }
 
 type ProgressCallback = (progress: OCRProgress) => void;
+
+interface CacheKeyInfo {
+  fileHash: string;
+  metadata: string;
+}
 
 
 
@@ -82,6 +88,37 @@ class OCRService {
       actionUrl?: string;
     }
   ): Promise<OCRExtractionResult> {
+    // Check cache first using file hash and metadata
+    const cacheKey = await this.generateCacheKey(imageFile, documentMetadata);
+    
+    const cachedResult = ocrCache.get<OCRExtractionResult>({
+      operation: 'extractTextFromImage',
+      input: cacheKey.fileHash,
+      context: cacheKey.metadata
+    });
+    
+    if (cachedResult) {
+      logger.debug('Returning cached OCR result for file:', imageFile.name);
+      
+      // Emit validation event for cached result if needed
+      const { issues, severity } = this.detectValidationIssues(cachedResult.quality, cachedResult.confidence);
+      if (issues.length > 0 && documentMetadata) {
+        this.emitOCRValidationEvent(
+          severity === 'failure' ? 'validation-failure' : 
+          severity === 'warning' ? 'validation-warning' : 'validation-success',
+          documentMetadata.documentId || `doc-${Date.now()}`,
+          documentMetadata.documentType || cachedResult.quality.documentType,
+          cachedResult.confidence,
+          issues,
+          documentMetadata.userId,
+          documentMetadata.userRole,
+          documentMetadata.actionUrl
+        );
+      }
+      
+      return cachedResult;
+    }
+
     if (!this.worker || !this.isInitialized) {
       await this.initialize(progressCallback);
     }
@@ -91,6 +128,20 @@ class OCRService {
 
       const extractedData = this.parseExtractedText(result.data.text);
       const quality = this.assessTextQuality(result.data.text, result.data.confidence);
+
+      const ocrResult: OCRExtractionResult = {
+        text: result.data.text,
+        confidence: result.data.confidence,
+        data: extractedData,
+        quality
+      };
+
+      // Cache the result
+      ocrCache.set({
+        operation: 'extractTextFromImage',
+        input: cacheKey.fileHash,
+        context: cacheKey.metadata
+      }, ocrResult);
 
       // Detect validation issues and emit event
       const { issues, severity } = this.detectValidationIssues(quality, result.data.confidence);
@@ -109,12 +160,7 @@ class OCRService {
         );
       }
 
-      return {
-        text: result.data.text,
-        confidence: result.data.confidence,
-        data: extractedData,
-        quality
-      };
+      return ocrResult;
     } catch (error) {
       throw handleOCRError(error, 'extractTextFromImage');
     }
@@ -353,6 +399,69 @@ class OCRService {
       this.worker = null;
       this.isInitialized = false;
     }
+  }
+
+  /**
+   * Generate cache key based on file content and metadata
+   */
+  private async generateCacheKey(
+    imageFile: File,
+    documentMetadata?: {
+      documentId?: string;
+      userId?: string;
+      userRole?: UserRole;
+      documentType?: string;
+      actionUrl?: string;
+    }
+  ): Promise<CacheKeyInfo> {
+    // Generate hash from file content
+    const fileHash = await this.hashFile(imageFile);
+    
+    // Create metadata string for context
+    const metadata = JSON.stringify({
+      size: imageFile.size,
+      type: imageFile.type,
+      lastModified: imageFile.lastModified,
+      documentId: documentMetadata?.documentId,
+      userId: documentMetadata?.userId,
+      userRole: documentMetadata?.userRole,
+      documentType: documentMetadata?.documentType
+    });
+    
+    return { fileHash, metadata };
+  }
+
+  /**
+   * Generate hash from file content for caching
+   */
+  private async hashFile(imageFile: File): Promise<string> {
+    const buffer = await imageFile.arrayBuffer();
+    const uint8Array = new Uint8Array(buffer);
+    
+    // Simple hash function (similar to aiCacheService)
+    let hash = 0;
+    for (let i = 0; i < uint8Array.length; i++) {
+      const byte = uint8Array[i];
+      hash = ((hash << 5) - hash) + byte;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    
+    return Math.abs(hash).toString(36) + `_${imageFile.size}_${imageFile.type}`;
+  }
+
+  /**
+   * Clear OCR cache manually
+   */
+  clearCache(): void {
+    ocrCache.clearOperation('extractTextFromImage');
+    logger.info('OCR cache cleared');
+  }
+
+  /**
+   * Get OCR cache statistics
+   */
+  getCacheStats() {
+    return ocrCache.getStats();
   }
 }
 
