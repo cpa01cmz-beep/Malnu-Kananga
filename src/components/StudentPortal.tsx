@@ -353,23 +353,22 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                      />
                    ))}
 
-                   {extraRole === 'osis' && checkPermission('osis.events') && (
-                     <DashboardActionCard
-                        icon={<CalendarDaysIcon />}
-                        title="Kegiatan OSIS"
-                        description="Kelola event dan proker sekolah."
-                        colorTheme="orange"
-                        variant="gradient"
-                        gradient={getGradientClass('ORANGE_SOFT').includes('ORANGE_SOFT') ? undefined : { from: 'from-orange-50', to: 'to-red-50' }}
-                        statusBadge="Aktif"
-                        isExtraRole={true}
-                        extraRoleBadge="Extra"
-                        isOnline={isOnline}
-                        onClick={() => setCurrentView('osis')}
-                        ariaLabel="Buka Kegiatan OSIS"
-                        className={getGradientClass('ORANGE_SOFT')}
-                     />
-                   )}
+                    {extraRole === 'osis' && checkPermission('osis.events') && (
+                      <DashboardActionCard
+                         icon={<CalendarDaysIcon />}
+                         title="Kegiatan OSIS"
+                         description="Kelola event dan proker sekolah."
+                         colorTheme="orange"
+                         variant="gradient"
+                         gradient={{ from: 'from-orange-50', to: 'to-red-50' }}
+                         statusBadge="Aktif"
+                         isExtraRole={true}
+                         extraRoleBadge="Extra"
+                         isOnline={isOnline}
+                         onClick={() => setCurrentView('osis')}
+                         ariaLabel="Buka Kegiatan OSIS"
+                      />
+                    )}
                    </div>
             </>
         )}
