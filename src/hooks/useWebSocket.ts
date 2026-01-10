@@ -30,7 +30,8 @@ export function useWebSocket() {
 
     return () => {
       // Cleanup on unmount if no active subscriptions
-      if (subscriptionsRef.current.size === 0) {
+      const subscriptions = subscriptionsRef.current;
+      if (subscriptions.size === 0) {
         webSocketService.disconnect();
       }
     };
@@ -99,23 +100,28 @@ export function useWebSocket() {
  * Provides typed event handling
  */
 export function useRealtimeEvent<T = unknown>(
-  eventType: RealTimeEventType,
+  eventType: RealTimeEventType | RealTimeEventType[],
   callback: (event: RealTimeEvent & { data: T }) => void,
   filter?: (event: RealTimeEvent) => boolean
 ) {
   const { subscribe } = useWebSocket();
 
   useEffect(() => {
-    const unsubscribe = subscribe(
-      eventType,
-      (event: RealTimeEvent) => {
-        const typedEvent = event as RealTimeEvent & { data: T };
-        callback(typedEvent);
-      },
-      filter
+    const eventTypes = Array.isArray(eventType) ? eventType : [eventType];
+    const unsubscribers = eventTypes.map(et =>
+      subscribe(
+        et,
+        (event: RealTimeEvent) => {
+          const typedEvent = event as RealTimeEvent & { data: T };
+          callback(typedEvent);
+        },
+        filter
+      )
     );
 
-    return unsubscribe;
+    return () => {
+      unsubscribers.forEach(unsub => unsub());
+    };
   }, [eventType, callback, filter, subscribe]);
 }
 
@@ -128,11 +134,10 @@ export function useRealtimeGrades(studentId?: string) {
   useRealtimeEvent(
     ['grade_created', 'grade_updated', 'grade_deleted'] as RealTimeEventType[],
     (event) => {
-      if (studentId && !('data' in event.data && (event.data as Grade).studentId === studentId)) {
+      const gradeData = event.data as unknown as Grade;
+      if (studentId && gradeData.studentId !== studentId) {
         return;
       }
-
-      const gradeData = event.data as Grade;
       setGrades(prevGrades => {
         const index = prevGrades.findIndex(g => g.id === gradeData.id);
         
@@ -164,15 +169,15 @@ export function useRealtimeAttendance(studentId?: string, classId?: string) {
   useRealtimeEvent(
     ['attendance_marked', 'attendance_updated'] as RealTimeEventType[],
     (event) => {
-      if (studentId && !('data' in event.data && (event.data as Attendance).studentId === studentId)) {
+      const attendanceData = event.data as unknown as Attendance;
+      if (studentId && attendanceData.studentId !== studentId) {
         return;
       }
-      if (classId && !('data' in event.data && (event.data as Attendance).classId === classId)) {
+      if (classId && attendanceData.classId !== classId) {
         return;
       }
 
       setAttendance(prevAttendance => {
-        const attendanceData = event.data as Attendance;
         const index = prevAttendance.findIndex(a => a.id === attendanceData.id);
         if (index !== -1) {
           return prevAttendance.map((a, i) => i === index ? attendanceData : a);
@@ -218,17 +223,17 @@ const [announcements, setAnnouncements] = useState<Announcement[]>([]);
  * Hook for real-time library materials updates
  */
 export function useRealtimeLibrary(category?: string) {
-const [materials, setMaterials] = useState<LibraryMaterial[]>([]);
-  
+ const [materials, setMaterials] = useState<LibraryMaterial[]>([]);
+
   useRealtimeEvent(
-    ['material_created', 'material_updated', 'material_deleted'] as RealTimeEventType[],
+    ['library_material_added', 'library_material_updated'] as RealTimeEventType[],
     (event) => {
-      if (category && !('data' in event.data && (event.data as LibraryMaterial).category === category)) {
+      const materialData = event.data as unknown as LibraryMaterial;
+      if (category && materialData.category !== category) {
         return;
       }
-      
+
       setMaterials(prevMaterials => {
-        const materialData = event.data as LibraryMaterial;
         const index = prevMaterials.findIndex(m => m.id === materialData.id);
         if (index !== -1) {
           return prevMaterials.map((m, i) => i === index ? materialData : m);
@@ -246,22 +251,23 @@ const [materials, setMaterials] = useState<LibraryMaterial[]>([]);
  * Hook for real-time messaging (for future chat features)
  */
 export function useRealtimeMessages(conversationId?: string) {
-const [messages, setMessages] = useState<ChatMessage[]>([]);
-  
+ const [messages, setMessages] = useState<ChatMessage[]>([]);
+
   useRealtimeEvent(
-    ['message_sent', 'message_updated', 'message_deleted'] as RealTimeEventType[],
+    ['message_created', 'message_updated', 'message_deleted'] as RealTimeEventType[],
     (event) => {
-      if (conversationId && !('data' in event.data && (event.data as ChatMessage).id === conversationId)) {
+      const messageData = event.data as unknown as ChatMessage;
+      if (conversationId && messageData.id !== conversationId) {
         return;
       }
-      
       setMessages(prevMessages => {
-        const messageData = event.data as ChatMessage;
         switch (event.type) {
           case 'message_created':
             return [...prevMessages, messageData];
           case 'message_updated':
             return prevMessages.map(m => m.id === messageData.id ? messageData : m);
+          case 'message_deleted':
+            return prevMessages.filter(m => m.id !== messageData.id);
           default:
             return prevMessages;
         }
@@ -276,20 +282,22 @@ const [messages, setMessages] = useState<ChatMessage[]>([]);
  * Hook for real-time notifications
  */
 export function useRealtimeNotifications() {
-const [notifications, setNotifications] = useState<Notification[]>([]);
-  
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
   useRealtimeEvent(
     ['notification_created', 'notification_updated', 'notification_deleted'] as RealTimeEventType[],
     (event) => {
       setNotifications(prevNotifications => {
-        const notificationData = event.data as Notification;
+        const notificationData = event.data as unknown as Notification;
         switch (event.type) {
           case 'notification_created':
             return [notificationData, ...prevNotifications];
-          case 'notification_read':
-            return prevNotifications.map(n => 
+          case 'notification_updated':
+            return prevNotifications.map(n =>
               n.id === notificationData.id ? { ...n, read: true } : n
             );
+          case 'notification_deleted':
+            return prevNotifications.filter(n => n.id !== notificationData.id);
           default:
             return prevNotifications;
         }

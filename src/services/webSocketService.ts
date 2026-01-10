@@ -1,21 +1,11 @@
-import { 
-  STORAGE_KEYS, 
-  type UserRole 
+import {
+  STORAGE_KEYS,
+  type UserRole
 } from '../constants';
 import { apiService } from './apiService';
 import type { AuthPayload } from './apiService';
 import { logger } from '../utils/logger';
-import type { Grade, Attendance, Announcement, LibraryMaterial, Event, Notification, User } from '../types';
-
-// Note: WebSocket types are available in the global scope in browser environments
-/* eslint-disable @typescript-eslint/no-explicit-any */
-declare global {
-  var WebSocket: {
-    new(url: string, protocols?: string | string[]): any;
-  };
-  var MessageEvent: any;
-  var CloseEvent: any;
-}
+import type { Grade, Attendance, Announcement, LibraryMaterial, SchoolEvent, Notification, User } from '../types';
 
 /**
  * Real-time event types for WebSocket communication
@@ -30,15 +20,15 @@ export interface RealTimeEvent {
   userId: string;
 }
 
-export type RealTimeEventType = 
+export type RealTimeEventType =
   | 'grade_created' | 'grade_updated' | 'grade_deleted'
   | 'attendance_marked' | 'attendance_updated'
   | 'announcement_created' | 'announcement_updated' | 'announcement_deleted'
   | 'library_material_added' | 'library_material_updated'
   | 'event_created' | 'event_updated' | 'event_deleted'
   | 'user_role_changed' | 'user_status_changed'
-  | 'message_created' | 'message_updated'
-  | 'notification_created' | 'notification_read';
+  | 'message_created' | 'message_updated' | 'message_deleted'
+  | 'notification_created' | 'notification_updated' | 'notification_deleted';
 
 export interface WebSocketConnectionState {
   connected: boolean;
@@ -75,7 +65,7 @@ export const WS_CONFIG = {
  */
 class WebSocketService {
   private static instance: WebSocketService;
-  private ws: any | null = null;
+  private ws: WebSocket | null = null;
   private pingInterval: number | null = null;
   private connectionTimeout: number | null = null;
   private subscriptions: Map<RealTimeEventType, Set<RealTimeSubscription>> = new Map();
@@ -149,8 +139,8 @@ class WebSocketService {
 
     return new Promise((resolve, reject) => {
       try {
-         
-    this.ws = new (globalThis as any).WebSocket(wsUrl);
+
+    this.ws = new WebSocket(wsUrl);
 
         // Connection timeout
         this.connectionTimeout = window.setTimeout(() => {
@@ -175,11 +165,11 @@ class WebSocketService {
           resolve();
         };
 
-        this.ws.onmessage = (event) => {
+        this.ws.onmessage = (event: MessageEvent) => {
           this.handleMessage(event);
         };
 
-        this.ws.onclose = (event) => {
+        this.ws.onclose = (event: CloseEvent) => {
           this.clearTimeouts();
           this.connectionState.connected = false;
           this.connectionState.connecting = false;
@@ -193,7 +183,7 @@ class WebSocketService {
           }
         };
 
-        this.ws.onerror = (error) => {
+        this.ws.onerror = (error: Event) => {
           this.clearTimeouts();
           logger.error('WebSocket: Error occurred', error);
           reject(error);
@@ -210,7 +200,7 @@ class WebSocketService {
    * Handle incoming WebSocket messages
    */
    
-  private handleMessage(event: any): void {
+   private handleMessage(event: MessageEvent): void {
     try {
       const data = JSON.parse(event.data);
       
@@ -365,12 +355,12 @@ class WebSocketService {
     localStorage.setItem(STORAGE_KEYS.MATERIALS, JSON.stringify(materials));
   }
 
-private updateEventsData(event: RealTimeEvent): void {
+  private updateEventsData(event: RealTimeEvent): void {
     const eventsJSON = localStorage.getItem(STORAGE_KEYS.EVENTS);
-    const eventDataList: Event[] = eventsJSON ? JSON.parse(eventsJSON) : [];
-    const eventData = event.data as Event;
-    
-    const index = eventDataList.findIndex((e: Event) => e.id === eventData.id);
+    const eventDataList: SchoolEvent[] = eventsJSON ? JSON.parse(eventsJSON) : [];
+    const eventData = event.data as SchoolEvent;
+
+    const index = eventDataList.findIndex((e: SchoolEvent) => e.id === eventData.id);
     if (event.type === 'event_deleted') {
       if (index !== -1) eventDataList.splice(index, 1);
     } else {
@@ -380,7 +370,7 @@ private updateEventsData(event: RealTimeEvent): void {
         eventDataList.push(eventData);
       }
     }
-    
+
     localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(eventDataList));
   }
 

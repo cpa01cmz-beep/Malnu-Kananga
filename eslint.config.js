@@ -57,6 +57,9 @@ export default [
         HTMLSpanElement: 'readonly',
         CustomEvent: 'readonly',
         CustomEventInit: 'readonly',
+        WebSocket: 'readonly',
+        MessageEvent: 'readonly',
+        CloseEvent: 'readonly',
       },
     },
     plugins: {

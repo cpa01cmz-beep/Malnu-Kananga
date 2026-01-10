@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useWebSocket, useRealtimeGrades, useRealtimeAnnouncements } from '../hooks/useWebSocket';
-import { WebSocketStatus } from '../components/WebSocketStatus';
-import { logger } from '../utils/logger';
+import { useWebSocket, useRealtimeGrades, useRealtimeAnnouncements } from '../../hooks/useWebSocket';
+import { WebSocketStatus } from '../WebSocketStatus';
+import { logger } from '../../utils/logger';
 import { Notification, Grade, Announcement } from '../../types';
 
 /**
@@ -16,9 +16,9 @@ export function RealTimeExample() {
 
   // Subscribe to custom events
   React.useEffect(() => {
-    const unsubscribe = subscribe(
-      'notification_created',
-      (event) => {
+      const unsubscribe = subscribe(
+        'notification_created',
+        (event: { data: unknown }) => {
         const notificationData = event.data as Notification;
         setNotification(`New notification: ${notificationData.title}`);
         // Auto-clear notification after 5 seconds
@@ -130,7 +130,7 @@ export function RealTimeExample() {
                       {grade.studentId}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {grade.subject}
+                      {grade.subjectId}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -166,7 +166,7 @@ export function RealTimeExample() {
                 <p className="text-gray-600">{announcement.content}</p>
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-sm text-gray-500">
-                    By {announcement.author} • {announcement.category}
+                    By {announcement.createdBy} • {announcement.category}
                   </span>
                   <span className="text-xs text-gray-400">
                     Just now

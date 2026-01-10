@@ -12,17 +12,17 @@ export interface TabOption {
   disabled?: boolean;
 }
 
-export interface TabProps {
+export interface TabProps<T extends string = string> {
   options: TabOption[];
   activeTab: string;
-  onTabChange: (tabId: string) => void;
+  onTabChange: React.Dispatch<React.SetStateAction<T>>;
   variant?: TabVariant;
   color?: TabColor;
   className?: string;
   orientation?: 'horizontal' | 'vertical';
 }
 
-const Tab: React.FC<TabProps> = ({
+const Tab = <T extends string>({
   options,
   activeTab,
   onTabChange,
@@ -30,7 +30,7 @@ const Tab: React.FC<TabProps> = ({
   color = 'green',
   className = '',
   orientation = 'horizontal',
-}) => {
+}: TabProps<T>) => {
   const containerClasses = orientation === 'horizontal'
     ? 'flex gap-2 overflow-x-auto pb-2'
     : 'flex flex-col gap-1';
@@ -87,7 +87,7 @@ const Tab: React.FC<TabProps> = ({
   const handleKeyDown = (e: React.KeyboardEvent, tabId: string) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      onTabChange(tabId);
+      onTabChange(tabId as T);
     }
   };
 
@@ -99,7 +99,7 @@ const Tab: React.FC<TabProps> = ({
             {options.map((option) => (
               <button
                 key={option.id}
-                onClick={() => !option.disabled && onTabChange(option.id)}
+              onClick={() => !option.disabled && onTabChange(option.id as T)}
                 onKeyDown={(e) => !option.disabled && handleKeyDown(e, option.id)}
                 disabled={option.disabled}
                 role="tab"
@@ -129,7 +129,7 @@ const Tab: React.FC<TabProps> = ({
           {options.map((option) => (
             <button
               key={option.id}
-              onClick={() => !option.disabled && onTabChange(option.id)}
+              onClick={() => !option.disabled && onTabChange(option.id as T)}
               onKeyDown={(e) => !option.disabled && handleKeyDown(e, option.id)}
               disabled={option.disabled}
               role="tab"

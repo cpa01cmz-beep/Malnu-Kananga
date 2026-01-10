@@ -913,6 +913,10 @@ export interface PushNotification {
   batchId?: string;
 }
 
+export type Notification = PushNotification;
+
+export type LibraryMaterial = ELibrary;
+
 export interface NotificationSettings {
   enabled: boolean;
   announcements: boolean;
