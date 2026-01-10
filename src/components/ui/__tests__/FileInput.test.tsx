@@ -98,7 +98,7 @@ describe('FileInput Component', () => {
   it('associates label with input using htmlFor', () => {
     render(<FileInput label="Upload" id="test-input" />);
     const label = screen.getByText('Upload');
-    const input = screen.getByRole('textbox');
+    const _input = screen.getByRole('textbox');
     expect(label.getAttribute('for')).toBe('test-input');
   });
 
