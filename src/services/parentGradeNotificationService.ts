@@ -196,7 +196,7 @@ class ParentGradeNotificationService {
           // Don't send notifications for successful validation of regular academic documents
           return {
             id: `ocr-validation-${event.id}`,
-            type: 'ocr' as const,
+            type: 'ocr_validation' as const,
             title: '',
             body: '',
             timestamp: new Date().toISOString(),
@@ -216,7 +216,7 @@ class ParentGradeNotificationService {
 
     return {
       id: `ocr-validation-${event.id}`,
-      type: 'ocr' as const,
+      type: 'ocr_validation' as const,
       title,
       body,
       timestamp: new Date().toISOString(),
@@ -224,7 +224,7 @@ class ParentGradeNotificationService {
       priority,
       targetRoles: ['parent'],
       data: {
-        type: 'ocr' as const,
+        type: 'ocr_validation' as const,
         validationType: type,
         documentId,
         documentType,

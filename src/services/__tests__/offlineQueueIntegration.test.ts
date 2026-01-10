@@ -144,7 +144,7 @@ describe('Offline Queue Integration', () => {
     // Mock fetch to return error response
     global.fetch = vi.fn().mockRejectedValue(new Error('No network'));
 
-    const result = await request('/api/test', options);
+    await request('/api/test', options);
 
     expect(offlineActionQueueService.addAction).not.toHaveBeenCalled();
   });

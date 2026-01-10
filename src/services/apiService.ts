@@ -291,7 +291,7 @@ async function validateRequestPermissions(
 async function queueOfflineRequest<T>(
   endpoint: string,
   options: RequestOptions,
-  token: string | null
+  _token: string | null
 ): Promise<ApiResponse<T>> {
   const method = options.method?.toUpperCase() || 'GET';
   const isWriteOperation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
@@ -306,7 +306,6 @@ async function queueOfflineRequest<T>(
   }
 
   // Extract entity and action type from endpoint
-  const pathParts = endpoint.split('/').filter(Boolean);
   const entity = mapEndpointToEntityType(endpoint, method);
   const actionType = mapMethodToActionType(method);
 
@@ -357,8 +356,7 @@ async function queueOfflineRequest<T>(
 /**
  * Map API endpoint to entity type for the offline queue
  */
-function mapEndpointToEntityType(endpoint: string, method: string): 'grade' | 'attendance' | 'assignment' | 'material' | 'announcement' | 'event' | 'ppdb' | 'inventory' | 'schedule' | 'meeting' | 'user' {
-  const pathParts = endpoint.split('/').filter(Boolean);
+function mapEndpointToEntityType(endpoint: string, _method: string): 'grade' | 'attendance' | 'assignment' | 'material' | 'announcement' | 'event' | 'ppdb' | 'inventory' | 'schedule' | 'meeting' | 'user' {
   
   // Map endpoints to entity types
   if (endpoint.includes('/grades') || endpoint.includes('/grade')) return 'grade';
@@ -398,7 +396,7 @@ function extractEntityId(data: Record<string, unknown> | null, endpoint: string)
   }
   
   // Try to extract from endpoint (e.g., /api/users/123)
-  const matches = endpoint.match(/\/(\d+)[\/]?$/);
+  const matches = endpoint.match(/\/(\d+)[/]?"?$/);
   if (matches) {
     return matches[1];
   }

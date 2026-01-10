@@ -1,13 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import DocumentTextIcon from './icons/DocumentTextIcon';
-import BuildingLibraryIcon from './icons/BuildingLibraryIcon';
-import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
-import { UsersIcon } from './icons/UsersIcon';
+import React, { useState, useEffect } from 'react';
 import { UserIcon } from './icons/UserIcon';
-import AcademicCapIcon from './icons/AcademicCapIcon';
-import { SendIcon } from './icons/SendIcon';
-import { BellIcon } from './icons/BellIcon';
-import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import ParentScheduleView from './ParentScheduleView';
 import ParentGradesView from './ParentGradesView';
 import ParentAttendanceView from './ParentAttendanceView';
@@ -20,9 +12,7 @@ import ParentPaymentsView from './ParentPaymentsView';
 import ParentMeetingsView from './ParentMeetingsView';
 import { ToastType } from './Toast';
 import type { ParentChild, Grade } from '../types';
-import { UserRole, UserExtraRole } from '../types/permissions';
 import { parentsAPI, authAPI } from '../services/apiService';
-import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { validateMultiChildDataIsolation } from '../utils/parentValidation';
@@ -32,7 +22,7 @@ import { parentGradeNotificationService } from '../services/parentGradeNotificat
 import BackButton from './ui/BackButton';
 import Card from './ui/Card';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
-import type { VoiceCommand } from '../types';
+
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import ParentNotificationSettings from './ParentNotificationSettings';
 import NotificationHistory from './NotificationHistory';
@@ -46,7 +36,7 @@ type PortalView = 'home' | 'profile' | 'schedule' | 'library' | 'grades' | 'atte
 const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [currentView, setCurrentView] = useState<PortalView>('home');
   const [selectedChild, setSelectedChild] = useState<ParentChild | null>(null);
-  const [showConsolidatedView, setShowConsolidatedView] = useState(false);
+  
   const [children, setChildren] = useState<ParentChild[]>([]);
   const [loading, setLoading] = useState(true);
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
@@ -64,11 +54,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   // Initialize event notifications for automated grade monitoring
   const { useMonitorLocalStorage } = useEventNotifications();
 
-  // Check permissions for parent role
-  const checkPermission = (permission: string) => {
-    const result = permissionService.hasPermission('parent' as UserRole, null as UserExtraRole, permission);
-    return result.granted;
-  };
+  
 
   useEffect(() => {
     const fetchChildren = async () => {
@@ -166,7 +152,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
   // Initialize voice commands
   const {
-    handleVoiceCommand,
     getAvailableCommands,
   } = useDashboardVoiceCommands({
     userRole: 'parent',
@@ -211,132 +196,10 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
   const handleSelectChild = (child: ParentChild) => {
     setSelectedChild(child);
-    setShowConsolidatedView(false);
     setCurrentView('home');
   };
 
-  const handleToggleConsolidatedView = () => {
-    setShowConsolidatedView(!showConsolidatedView);
-    setCurrentView('home');
-  };
-
-  const allMenuItems = [
-    ...(children.length > 1 ? [{
-      title: showConsolidatedView ? 'Tinjau Per Anak' : 'Tinjau Konsolidasi',
-      description: showConsolidatedView ? 'Lihat per anak' : 'Lihat semua anak dalam satu tampilan',
-      icon: <UsersIcon />,
-      colorTheme: 'teal' as const,
-      action: () => handleToggleConsolidatedView(),
-      active: true
-    }] : []),
-    ...(children.length > 1 ? [{
-      title: showConsolidatedView ? 'Tinjau Per Anak' : 'Tinjau Konsolidasi',
-      description: showConsolidatedView ? 'Lihat per anak' : 'Lihat semua anak dalam satu tampilan',
-      icon: <UsersIcon />,
-      colorTheme: 'teal' as const,
-      action: () => handleToggleConsolidatedView(),
-      active: true
-    }] : []),
-    {
-      title: 'Pengaturan Notifikasi',
-      description: 'Konfigurasi notifikasi nilai dan update.',
-      icon: <BellIcon />,
-      colorTheme: 'indigo' as const,
-      action: () => setShowNotificationSettings(true),
-      permission: 'parent.monitor'
-    },
-    {
-      title: 'Riwayat Notifikasi',
-      description: 'Lihat semua notifikasi yang telah diterima.',
-      icon: <CalendarDaysIcon />,
-      colorTheme: 'purple' as const,
-      action: () => setShowNotificationHistory(true),
-      permission: 'parent.monitor'
-    },
-    {
-      title: 'Profil Anak',
-      description: 'Lihat biodata dan informasi kelas anak.',
-      icon: <UserIcon />,
-      colorTheme: 'indigo' as const,
-      action: () => setCurrentView('profile'),
-      permission: 'parent.monitor'
-    },
-    {
-      title: 'Jadwal Pelajaran',
-      description: 'Lihat jadwal kelas mingguan anak.',
-      icon: <DocumentTextIcon />,
-      colorTheme: 'blue' as const,
-      action: () => setCurrentView('schedule'),
-      permission: 'academic.schedule'
-    },
-    {
-      title: 'E-Library',
-      description: 'Akses buku digital dan materi pelajaran.',
-      icon: <BuildingLibraryIcon />,
-      colorTheme: 'purple' as const,
-      action: () => setCurrentView('library'),
-      permission: 'content.read'
-    },
-    {
-      title: 'Nilai Akademik',
-      description: 'Pantau hasil belajar dan transkrip nilai.',
-      icon: <ClipboardDocumentCheckIcon />,
-      colorTheme: 'green' as const,
-      action: () => setCurrentView('grades'),
-      permission: 'parent.monitor'
-    },
-    {
-      title: 'Kehadiran',
-      description: 'Cek rekapitulasi absensi semester ini.',
-      icon: <UsersIcon />,
-      colorTheme: 'orange' as const,
-      action: () => setCurrentView('attendance'),
-      permission: 'parent.monitor'
-    },
-    {
-      title: 'Kegiatan Sekolah',
-      description: 'Lihat agenda dan kegiatan OSIS.',
-      icon: <AcademicCapIcon />,
-      colorTheme: 'pink' as const,
-      action: () => setCurrentView('events'),
-      permission: 'content.read'
-    },
-    {
-      title: 'Laporan Konsolidasi',
-      description: 'Pantau semua anak dalam laporan menyeluruh.',
-      icon: <DocumentTextIcon />,
-      colorTheme: 'emerald' as const,
-      action: () => setCurrentView('reports'),
-      permission: 'parent.reports'
-    },
-    {
-      title: 'Pesan Guru',
-      description: 'Komunikasi dengan guru anak.',
-      icon: <SendIcon />,
-      colorTheme: 'cyan' as const,
-      action: () => setCurrentView('messaging'),
-      permission: 'parent.communication'
-    },
-    {
-      title: 'Pembayaran',
-      description: 'Pantau status pembayaran SPP dan biaya.',
-      icon: <UsersIcon />,
-      colorTheme: 'yellow' as const,
-      action: () => setCurrentView('payments'),
-      permission: 'parent.monitor'
-    },
-    {
-      title: 'Jadwal Pertemuan',
-      description: 'Atur jadwal temu guru.',
-      icon: <AcademicCapIcon />,
-      colorTheme: 'rose' as const,
-      action: () => setCurrentView('meetings'),
-      permission: 'parent.communication'
-    },
-  ];
-
-  // Filter menu items based on permissions
-  const menuItems = allMenuItems.filter(item => !item.permission || checkPermission(item.permission));
+  
 
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
