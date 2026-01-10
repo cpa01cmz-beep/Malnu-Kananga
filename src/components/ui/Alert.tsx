@@ -1,6 +1,6 @@
 import React from 'react';
 import IconButton from './IconButton';
-import { InformationCircleIcon } from '../icons/InformationCircleIcon';
+import InformationCircleIcon from '../icons/InformationCircleIcon';
 
 export type AlertVariant = 'info' | 'success' | 'warning' | 'error' | 'neutral';
 export type AlertSize = 'sm' | 'md' | 'lg';
