@@ -71,6 +71,14 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationType, NotificationTempla
     priority: 'normal',
     data: { category: 'ocr' },
   },
+  missing_grades: {
+    type: 'missing_grades',
+    titleTemplate: '⚠️ Missing Grades Alert',
+    bodyTemplate: '{studentName} has potentially missing grades in {missingCount} subject(s): {subjects}',
+    targetRoles: ['parent'],
+    priority: 'high',
+    data: { category: 'missing_grades' },
+  },
 };
 
 export class NotificationTemplateService {
