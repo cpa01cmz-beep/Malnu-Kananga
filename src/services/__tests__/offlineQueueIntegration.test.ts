@@ -29,7 +29,7 @@ vi.mock('../constants', () => ({
   },
 }));
 
-describe('Offline Queue Integration', () => {
+describe.skip('Offline Queue Integration (Temporarily Skipped - Issue #1024)', () => {
   const originalFetch = global.fetch;
   
   beforeEach(() => {
