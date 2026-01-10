@@ -134,7 +134,7 @@ const BaseModal: React.FC<ModalBaseProps> = ({
   const defaultFooter = (
     <div className="flex justify-end space-x-3">
       <Button
-        variant="outline"
+        variant="secondary"
         onClick={onClose}
         disabled={loading}
       >
@@ -144,9 +144,9 @@ const BaseModal: React.FC<ModalBaseProps> = ({
         <Button
           variant="primary"
           onClick={handleConfirm}
-          loading={loading}
+          isLoading={loading}
           disabled={disabled}
-          ref={confirmButtonRef}
+          
           className={variantClasses.confirmButton}
         >
           {loading ? 'Please wait...' : confirmText}

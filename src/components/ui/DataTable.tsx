@@ -4,20 +4,20 @@ import Pagination from './Pagination';
 import LoadingOverlay from './LoadingOverlay';
 import { EmptyState } from './LoadingState';
 import Button from './Button';
-import { MagnifyingGlassIcon } from '../icons/SearchIcon';
-import { FunnelIcon } from '../icons/FunnelIcon';
+import SearchIcon from '../icons/SearchIcon';
+import FunnelIcon from '../icons/FunnelIcon';
 
-export interface Column<T = any> {
+export interface Column<T = Record<string, unknown>> {
   key: string;
   title: string;
   sortable?: boolean;
   width?: string;
-  render?: (value: any, record: T, index: number) => React.ReactNode;
+  render?: (value: unknown, record: T, index: number) => React.ReactNode;
   align?: 'left' | 'center' | 'right';
   fixed?: 'left' | 'right';
 }
 
-export interface DataTableProps<T = any> {
+export interface DataTableProps<T = Record<string, unknown>> {
   data: T[];
   columns: Column<T>[];
   loading?: boolean;
@@ -59,7 +59,7 @@ export interface DataTableProps<T = any> {
   scrollY?: number;
 }
 
-const DataTable = <T extends Record<string, any>>({
+const DataTable = <T extends Record<string, unknown>>({
   data,
   columns,
   loading = false,
@@ -160,7 +160,7 @@ const DataTable = <T extends Record<string, any>>({
           <div className="flex items-center gap-4">
             {filter?.searchable && (
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
                 <input
                   type="text"
                   value={localSearch}
@@ -172,7 +172,7 @@ const DataTable = <T extends Record<string, any>>({
             )}
             {sort && (
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 icon={<FunnelIcon />}
                 onClick={() => {
@@ -192,7 +192,7 @@ const DataTable = <T extends Record<string, any>>({
               </span>
               {selection.selectedRowKeys.length > 0 && (
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={() => selection?.onSelectAll(false)}
                 >
@@ -220,7 +220,7 @@ const DataTable = <T extends Record<string, any>>({
                     checked={isAllSelected}
                     ref={(input) => {
                       if (input) {
-                        input.indeterminate = isIndeterminate;
+                        input.indeterminate = isIndeterminate || false;
                       }
                     }}
                     onChange={(e) => handleSelectAll(e.target.checked)}

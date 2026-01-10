@@ -1,5 +1,5 @@
 import React from 'react';
-import { LoadingSpinner } from './LoadingSpinner';
+import LoadingSpinner from './LoadingSpinner';
 
 export type LoadingOverlaySize = 'sm' | 'md' | 'lg' | 'full';
 export type LoadingOverlayVariant = 'default' | 'minimal' | 'centered';
@@ -38,7 +38,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
     full: 'p-16',
   };
 
-  const spinnerSizes = {
+  const _spinnerSizes = {
     sm: 'w-6 h-6',
     md: 'w-8 h-8',
     lg: 'w-12 h-12',
@@ -66,7 +66,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 
   const content = (
     <div className={`flex flex-col items-center justify-center space-y-4 ${sizeClasses[size]}`}>
-      <LoadingSpinner size={size as any} className="text-primary-600" />
+      <LoadingSpinner size={size as 'sm' | 'md' | 'lg'} className="text-primary-600" />
       
       {message && (
         <p className={`${textSizes[size]} text-neutral-600 dark:text-neutral-400 font-medium animate-pulse`}>

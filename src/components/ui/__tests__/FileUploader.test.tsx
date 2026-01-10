@@ -128,7 +128,8 @@ describe('FileUploader', () => {
   });
 
   it('shows loading state during upload', async () => {
-    const { fileStorageAPI } = require('../../services/apiService');
+    vi.mock('../../services/apiService');
+    const { fileStorageAPI } = await import('../../services/apiService');
     
     // Mock slow upload
     fileStorageAPI.upload.mockImplementation(() => 
@@ -202,7 +203,7 @@ describe('FileUploader', () => {
 
     render(<FileUploader existingFiles={existingFiles} showPreview={true} />);
     
-    const image = screen.getByAlt('test.jpg');
+    const image = screen.getByRole('img', { name: /test\.jpg/i });
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute('src', 'data:image/jpeg;base64,test');
   });
