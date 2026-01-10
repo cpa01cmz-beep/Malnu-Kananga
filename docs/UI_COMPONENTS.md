@@ -2273,3 +2273,326 @@ Potential improvements to consider:
 
 **Last Updated**: 2026-01-10
 **Component Version**: 1.0.0
+## LinkCard Component
+
+**Location**: `src/components/ui/LinkCard.tsx`
+
+A reusable link card component for displaying external links with icons, colors, and consistent styling.
+
+### Features
+
+- **Custom Color Support**: Accepts color class strings for flexible theming
+- **Accessibility**: Full ARIA support, keyboard navigation, focus management
+- **Dark Mode**: Consistent styling across light and dark themes
+- **External Link**: Automatically includes `target="_blank"` and `rel="noopener noreferrer"`
+- **Responsive Design**: Adaptive padding and icon sizes for different screen sizes
+- **Interactive Effects**: Hover lift, scale, and shadow transitions
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | Required | Link name/description text |
+| `href` | `string` | Required | Link URL |
+| `icon` | `ReactNode` | Required | Icon component to display |
+| `colorClass` | `string` | Required | CSS class string for icon container color |
+| `ariaLabel` | `string` | `name` | Accessibility label for screen readers |
+
+### Basic Usage
+
+```tsx
+import LinkCard from './ui/LinkCard';
+
+<ul role="list">
+  <LinkCard
+    name="Portal RDM"
+    href="https://rdm.ma-malnukananga.sch.id"
+    icon={<DocumentTextIcon />}
+    colorClass="bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400"
+    ariaLabel="Buka Portal RDM di tab baru"
+  />
+</ul>
+```
+
+### Custom Color Classes
+
+The component accepts any color class string for maximum flexibility:
+
+```tsx
+// Using COLOR_ICONS helper
+import { getColorIconClass } from '../config/colorIcons';
+
+<LinkCard
+  name="Kemenag RI"
+  colorClass={getColorIconClass('emerald')}
+  href="https://kemenag.go.id"
+  icon={<BuildingLibraryIcon />}
+/>
+
+// Custom color class
+<LinkCard
+  name="Custom Link"
+  colorClass="bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400"
+  href="https://example.com"
+  icon={<CustomIcon />}
+/>
+```
+
+### Accessibility Features
+
+1. **ARIA Labels**: Supports custom `ariaLabel` for screen reader descriptions
+2. **External Link Safety**: Automatically adds `target="_blank"` and `rel="noopener noreferrer"`
+3. **Focus Management**: Clear focus ring with `focus:ring-2 focus:ring-primary-500/50`
+4. **Focus Offset**: Proper offset for dark mode (`dark:focus:ring-offset-neutral-800`)
+5. **Icon ARIA**: Icon container has `aria-hidden="true"` to prevent duplication
+6. **List Role**: Component is wrapped in `<li role="listitem">` for proper list semantics
+
+### Responsive Design
+
+The component automatically adapts to different screen sizes:
+
+- **Padding**: `p-7` → `sm:p-8` → `lg:p-10`
+- **Icon Container**: `h-14 w-14` → `sm:h-16 sm:w-16` → `lg:h-20 lg:w-20`
+- **Text Size**: `text-sm` → `sm:text-base`
+
+### Hover Effects
+
+The component includes smooth interactive effects:
+
+- **Card Lift**: `hover:-translate-y-1` for depth perception
+- **Scale**: `hover:scale-[1.02]` for interactive feedback
+- **Shadow**: `hover:shadow-card-hover` for elevation change
+- **Background**: Maintains light/dark theme on hover
+- **Icon Scale**: Icon container scales to `group-hover:scale-110` for emphasis
+
+### Dark Mode
+
+All styling automatically supports dark mode:
+
+- **Card Background**: `bg-white` → `dark:bg-neutral-800`
+- **Card Border**: `border-neutral-200` → `dark:border-neutral-700`
+- **Text Color**: `text-neutral-700` → `dark:text-neutral-200`
+- **Hover Background**: `hover:bg-white` → `dark:hover:bg-neutral-700`
+- **Focus Offset**: `focus:ring-offset-2` → `dark:focus:ring-offset-neutral-800`
+
+### Performance Considerations
+
+The LinkCard component is optimized using:
+
+- Functional component with proper TypeScript typing
+- CSS-only transitions and transforms (no JavaScript animations)
+- Efficient class string concatenation
+- No unnecessary re-renders
+- Semantic HTML with `<ul>` and `<li>` structure
+
+### Real-World Examples
+
+#### Related Links Section
+
+```tsx
+import { getRelatedLinks } from '../data/defaults';
+import { getColorIconClass } from '../config/colorIcons';
+
+const RelatedLinksSection = () => {
+  const [links, setLinks] = useState([]);
+
+  useEffect(() => {
+    getRelatedLinks().then(setLinks);
+  }, []);
+
+  return (
+    <section>
+      <nav aria-label="Tautan terkait eksternal">
+        <ul className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 lg:gap-6" role="list">
+          {links.map((link) => (
+            <LinkCard
+              key={link.name}
+              name={link.name}
+              href={link.href}
+              icon={link.icon}
+              colorClass={link.colorClass}
+              ariaLabel={`${link.name} (membuka di tab baru)`}
+            />
+          ))}
+        </ul>
+      </nav>
+    </section>
+  );
+};
+```
+
+#### Quick Access Links
+
+```tsx
+const QuickLinks = () => {
+  const quickLinks = [
+    {
+      name: 'LMS',
+      href: '/lms',
+      icon: <AcademicCapIcon />,
+      colorClass: getColorIconClass('blue'),
+    },
+    {
+      name: 'E-Library',
+      href: '/library',
+      icon: <BookOpenIcon />,
+      colorClass: getColorIconClass('purple'),
+    },
+    {
+      name: 'Schedule',
+      href: '/schedule',
+      icon: <CalendarIcon />,
+      colorClass: getColorIconClass('green'),
+    },
+  ];
+
+  return (
+    <ul className="grid grid-cols-3 gap-4" role="list">
+      {quickLinks.map(link => (
+        <LinkCard
+          key={link.name}
+          {...link}
+          ariaLabel={`Buka ${link.name}`}
+        />
+      ))}
+    </ul>
+  );
+};
+```
+
+### Integration with COLOR_ICONS
+
+The component works seamlessly with the existing `COLOR_ICONS` configuration:
+
+```tsx
+import { COLOR_ICONS, getColorIconClass } from '../config/colorIcons';
+
+// Available colors: sky, emerald, amber, indigo, blue, red, green, purple, orange, pink, teal, cyan
+
+<LinkCard
+  name="Portal Pendidikan"
+  href="https://dikbud.kemdikbud.go.id"
+  icon={<GraduationCapIcon />}
+  colorClass={getColorIconClass('indigo')}
+/>
+```
+
+### Migration Guide
+
+To migrate existing link card implementations:
+
+**Before:**
+```tsx
+<a
+  href="https://example.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Open Example in new tab"
+  className="group flex flex-col items-center p-7 sm:p-8 lg:p-10 bg-white dark:bg-neutral-800 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 ease-out transform hover:-translate-y-1 hover:bg-white dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 hover:scale-[1.02]"
+>
+  <div 
+    className="flex items-center justify-center h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 transition-transform duration-300 group-hover:scale-110 shadow-sm hover:shadow-md"
+    aria-hidden="true"
+  >
+    <DocumentTextIcon />
+  </div>
+  <span className="mt-4 sm:mt-5 lg:mt-6 font-semibold text-center text-sm sm:text-base text-neutral-700 dark:text-neutral-200">
+    Portal Pendidikan
+  </span>
+</a>
+```
+
+**After:**
+```tsx
+import LinkCard from './ui/LinkCard';
+
+<LinkCard
+  name="Portal Pendidikan"
+  href="https://example.com"
+  icon={<DocumentTextIcon />}
+  colorClass="bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400"
+  ariaLabel="Open Example in new tab"
+/>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Reduced code duplication
+- ✅ Built-in responsive design
+- ✅ Dark mode support
+- ✅ Interactive hover effects
+- ✅ External link safety attributes
+- ✅ Type-safe props
+- ✅ Semantic HTML structure
+
+### Test Coverage
+
+The LinkCard component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/LinkCard.test.tsx
+```
+
+Test scenarios include:
+- Rendering with default props
+- Correct href attribute
+- External link attributes (target, rel)
+- Custom aria-label support
+- Name text rendering
+- Role="listitem" on li element
+- Color class application to icon container
+- Focus styles for accessibility
+- Hover effects
+- Keyboard navigation support
+- Responsive padding classes
+- Responsive icon sizes
+- Icon aria-hidden attribute
+- Dark mode support
+- Transition effects
+- Scale animation on icon hover
+- Ring offset for dark mode focus
+
+### Usage in Application
+
+Currently integrated in:
+- `src/components/sections/RelatedLinksSection.tsx` - External links section with 4 links
+
+**Common Patterns:**
+
+```tsx
+// External service links
+<LinkCard
+  name="Service Name"
+  href="https://service.example.com"
+  icon={<ServiceIcon />}
+  colorClass={getColorIconClass('blue')}
+/>
+
+// Social media links
+<LinkCard
+  name="Instagram"
+  href="https://instagram.com/account"
+  icon={<InstagramIcon />}
+  colorClass="bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400"
+/>
+
+// Documentation links
+<LinkCard
+  name="Documentation"
+  href="/docs"
+  icon={<DocumentIcon />}
+  colorClass="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+/>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Loading state variant for slow links
+- Badge overlay for link counts
+- Tooltip integration for additional context
+- Skeleton loading variant
+- Disabled state for unavailable links
+- Keyboard shortcut hints

@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { logger } from '../../utils/logger';
 import { getResponsiveGradient } from '../../config/gradients';
 import { getColorIconLabel } from '../../config/colorIcons';
+import LinkCard from '../ui/LinkCard';
 
 const RelatedLinksSection: React.FC = () => {
-  const [links, setLinks] = useState<{name: string; href: string; icon: React.ReactNode; color: string}[]>([]);
+  const [links, setLinks] = useState<{name: string; href: string; icon: React.ReactNode; colorClass: string}[]>([]);
 
   useEffect(() => {
     const loadLinks = async () => {
@@ -34,23 +35,14 @@ const RelatedLinksSection: React.FC = () => {
             <nav aria-label="Tautan terkait eksternal">
                 <ul className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 lg:gap-6" role="list">
                     {links.map((link) => (
-                        <li key={link.name} role="listitem">
-                            <a
-                                href={link.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={getAriaLabel(link.name, link.color)}
-                                className="group flex flex-col items-center p-7 sm:p-8 lg:p-10 bg-white dark:bg-neutral-800 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 ease-out transform hover:-translate-y-1 hover:bg-white dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 active:scale-95 hover:scale-[1.02]"
-                            >
-                                <div 
-                                    className={`flex items-center justify-center h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-full ${link.color} transition-transform duration-300 group-hover:scale-110 shadow-sm hover:shadow-md`}
-                                    aria-hidden="true"
-                                >
-                                    {link.icon}
-                                </div>
-                                <span className="mt-4 sm:mt-5 lg:mt-6 font-semibold text-center text-sm sm:text-base text-neutral-700 dark:text-neutral-200">{link.name}</span>
-                            </a>
-                        </li>
+                        <LinkCard
+                            key={link.name}
+                            name={link.name}
+                            href={link.href}
+                            icon={link.icon}
+                            colorClass={link.colorClass}
+                            ariaLabel={getAriaLabel(link.name, link.colorClass)}
+                        />
                     ))}
                 </ul>
             </nav>
