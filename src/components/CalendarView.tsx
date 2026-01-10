@@ -3,6 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon, CalendarDaysIcon } from '@heroicons/
 import type { Schedule, ParentMeeting } from '../types';
 import IconButton from './ui/IconButton';
 import Button from './ui/Button';
+import Card from './ui/Card';
 
 interface CalendarViewProps {
   schedules: Schedule[];
@@ -32,7 +33,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
   const fullDayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
-  // Get events for a specific date
   const getEventsForDate = (date: Date) => {
     const dayOfWeek = fullDayNames[date.getDay()];
     const dateStr = date.toISOString().split('T')[0];
@@ -43,7 +43,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     return [...daySchedules, ...dayMeetings];
   };
 
-  // Navigation functions
   const previousMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
   };
@@ -76,7 +75,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     setCurrentDate(newDate);
   };
 
-  // Generate calendar days for month view
   const monthDays = useMemo(() => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -95,7 +93,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     return days;
   }, [currentDate]);
 
-  // Generate week days for week view
   const weekDays = useMemo(() => {
     const startOfWeek = new Date(currentDate);
     const day = startOfWeek.getDay();
@@ -130,8 +127,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   };
 
   const renderMonthView = () => (
-    <div className="bg-white rounded-lg shadow" role="grid" aria-label="Kalender bulanan">
-      {/* Header */}
+    <Card padding="none" role="grid" aria-label="Kalender bulanan">
       <div className="flex items-center justify-between p-4 border-b">
         <IconButton
           onClick={previousMonth}
@@ -152,7 +148,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         />
       </div>
 
-      {/* Day headers */}
       <div className="grid grid-cols-7 border-b" role="row">
         {dayNames.map(day => (
           <div key={day} className="p-2 text-center text-sm font-medium text-neutral-700" role="columnheader" aria-label={fullDayNames[dayNames.indexOf(day)]}>
@@ -161,7 +156,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         ))}
       </div>
 
-      {/* Calendar grid */}
       <div className="grid grid-cols-7" role="rowgroup">
         {monthDays.map((date, index) => {
           const isCurrentMonth = date.getMonth() === currentDate.getMonth();
@@ -198,14 +192,14 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                       onClick={(e) => handleEventClick(event, e)}
                       onKeyDown={(e) => handleEventKeyDown(event, e)}
                       className={`text-xs p-1 rounded truncate cursor-pointer
-                        ${isMeeting 
-                          ? 'bg-purple-100 text-purple-800 hover:bg-purple-200' 
+                        ${isMeeting
+                          ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
                           : 'bg-blue-100 text-blue-800 hover:bg-blue-200'}`}
                       role="button"
                       tabIndex={0}
                     >
-{event.startTime && `${event.startTime} `}
-{'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
+                      {event.startTime && `${event.startTime} `}
+                      {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
                     </div>
                   );
                 })}
@@ -217,12 +211,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 
   const renderWeekView = () => (
-    <div className="bg-white rounded-lg shadow" role="grid" aria-label="Kalender mingguan">
-      {/* Header */}
+    <Card padding="none" role="grid" aria-label="Kalender mingguan">
       <div className="flex items-center justify-between p-4 border-b">
         <IconButton
           onClick={previousWeek}
@@ -244,13 +237,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         />
       </div>
 
-      {/* Week grid */}
       <div className="grid grid-cols-8" role="row">
-        {/* Time column header */}
         <div className="p-2 border-r border-b bg-neutral-50 text-sm font-medium text-neutral-700" role="columnheader">
           Waktu
         </div>
-        {/* Day headers */}
         {weekDays.map(date => (
           <div key={date.toISOString()} className="p-2 border-r border-b text-center" role="columnheader" aria-label={fullDayNames[date.getDay()]}>
             <div className="text-xs font-medium text-neutral-500">{dayNames[date.getDay()]}</div>
@@ -263,14 +253,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         ))}
       </div>
 
-      {/* Time slots */}
       {Array.from({ length: 14 }, (_, i) => i + 6).map(hour => (
         <div key={hour} className="grid grid-cols-8" role="row">
-          {/* Time label */}
           <div className="p-2 border-r border-b text-sm text-neutral-600 text-right" role="gridcell">
             {hour.toString().padStart(2, '0')}:00
           </div>
-          {/* Day columns */}
           {weekDays.map(date => {
             const events = getEventsForDate(date).filter(event => {
               if (!event.startTime) return false;
@@ -297,14 +284,14 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                         onClick={(e) => handleEventClick(event, e)}
                         onKeyDown={(e) => handleEventKeyDown(event, e)}
                         className={`text-xs p-1 rounded truncate cursor-pointer
-                          ${isMeeting 
-                            ? 'bg-purple-100 text-purple-800 hover:bg-purple-200' 
+                          ${isMeeting
+                            ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
                             : 'bg-blue-100 text-blue-800 hover:bg-blue-200'}`}
                         role="button"
                         tabIndex={0}
                       >
-{event.startTime && `${event.startTime} `}
-{'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
+                        {event.startTime && `${event.startTime} `}
+                        {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
                       </div>
                     );
                   })}
@@ -314,7 +301,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           })}
         </div>
       ))}
-    </div>
+    </Card>
   );
 
   const renderDayView = () => {
@@ -326,8 +313,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     });
 
     return (
-      <div className="bg-white rounded-lg shadow" aria-label="Kalender harian">
-        {/* Header */}
+      <Card padding="none" aria-label="Kalender harian">
         <div className="flex items-center justify-between p-4 border-b">
           <IconButton
             onClick={previousDay}
@@ -337,11 +323,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             icon={<ChevronLeftIcon />}
           />
           <h3 className="text-lg font-semibold text-neutral-900" id="day-calendar-heading">
-            {currentDate.toLocaleDateString('id-ID', { 
-              weekday: 'long', 
-              day: 'numeric', 
-              month: 'long', 
-              year: 'numeric' 
+            {currentDate.toLocaleDateString('id-ID', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
             })}
           </h3>
           <IconButton
@@ -353,7 +339,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           />
         </div>
 
-        {/* Events list */}
         <div className="p-4" role="list" aria-label="Daftar jadwal dan pertemuan">
           {events.length === 0 ? (
             <div className="text-center py-8 text-neutral-500" role="status" aria-live="polite">
@@ -383,8 +368,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium
-                            ${isMeeting 
-                              ? 'bg-purple-100 text-purple-800' 
+                            ${isMeeting
+                              ? 'bg-purple-100 text-purple-800'
                               : 'bg-blue-100 text-blue-800'}`}
                           >
                             {isMeeting ? 'Pertemuan' : 'Jadwal'}
@@ -413,8 +398,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                               ${event.status === 'completed' ? 'text-green-600' : ''}
                               ${event.status === 'cancelled' ? 'text-red-600' : ''}`}
                             >
-                              Status: {event.status === 'scheduled' ? 'Terjadwal' : 
-                                      event.status === 'completed' ? 'Selesai' : 'Dibatalkan'}
+                              Status: {event.status === 'scheduled' ? 'Terjadwal' :
+                                event.status === 'completed' ? 'Selesai' : 'Dibatalkan'}
                             </p>
                             {event.agenda && (
                               <p className="text-neutral-600 mt-1">
@@ -431,13 +416,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             </div>
           )}
         </div>
-      </div>
+      </Card>
     );
   };
 
   return (
     <div className={className} role="region" aria-label="Kalender jadwal">
-      {/* View mode selector */}
       <div className="mb-4 flex gap-2" role="toolbar" aria-label="Mode tampilan kalender">
         <Button
           onClick={() => setCurrentDate(new Date())}
@@ -447,11 +431,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         >
           Hari Ini
         </Button>
-        <div className="flex bg-white border rounded-lg" role="group" aria-label="Pilihan tampilan">
+        <Card padding="none" role="group" aria-label="Pilihan tampilan" className="flex">
           {(['month', 'week', 'day'] as const).map(mode => (
             <Button
               key={mode}
-              onClick={() => {/* View mode change handled by parent */}}
+              onClick={() => { }}
               variant={viewMode === mode ? 'primary' : 'ghost'}
               size="sm"
               className={`rounded-none first:rounded-l-lg last:rounded-r-lg ${viewMode !== mode ? 'rounded-none' : ''}`}
@@ -461,10 +445,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               {mode === 'month' ? 'Bulan' : mode === 'week' ? 'Minggu' : 'Hari'}
             </Button>
           ))}
-        </div>
+        </Card>
       </div>
 
-      {/* Calendar views */}
       {viewMode === 'month' && renderMonthView()}
       {viewMode === 'week' && renderWeekView()}
       {viewMode === 'day' && renderDayView()}
