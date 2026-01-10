@@ -1007,18 +1007,14 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             
             {/* Enhanced Toolbar */}
             <div className="flex flex-col md:flex-row gap-3">
-                {/* Left Controls */}
                 <div className="flex gap-2 flex-wrap">
-                    <button 
+                    <Button
                         onClick={toggleBatchMode}
-                        className={`px-4 py-2 rounded-full transition-colors shadow-md ${
-                            isBatchMode 
-                                ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                                : 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300 dark:bg-neutral-700 dark:text-neutral-300'
-                        }`}
+                        variant={isBatchMode ? 'blue-solid' : 'secondary'}
+                        className="rounded-full shadow-md"
                     >
                         {isBatchMode ? `Selected: ${selectedStudents.size}` : 'Batch Mode'}
-                    </button>
+                    </Button>
                     
                     <Button
                         onClick={() => setShowStats(!showStats)}
@@ -1050,13 +1046,14 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                         </label>
                     )}
                     
-                    <button 
+                    <Button
                         onClick={handlePDFExport}
                         disabled={isExportingPDF || filteredData.length === 0}
-                        className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 active:scale-95 px-4 py-2.5 text-sm bg-green-600 text-white hover:bg-green-700 focus:ring-green-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02] disabled:bg-neutral-400 disabled:cursor-not-allowed"
+                        variant="green-solid"
+                        isLoading={isExportingPDF}
                     >
                         {isExportingPDF ? 'Exporting...' : '📄 Export PDF'}
-                    </button>
+                    </Button>
 
                     <Button
                         onClick={handleCSVExport}
@@ -1066,14 +1063,16 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     </Button>
                     
                     {canCreateContent && (
-                    <button 
+                    <Button
                         onClick={handleAIAnalysis}
                         disabled={isAnalyzing}
-                        className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-md disabled:bg-neutral-400"
+                        variant="purple-solid"
+                        icon={<LightBulbIcon className="w-5 h-5" />}
+                        isLoading={isAnalyzing}
+                        className="rounded-full shadow-md"
                     >
-                        <LightBulbIcon className="w-5 h-5" />
                         {isAnalyzing ? "Menganalisis..." : "Analisis AI"}
-                    </button>
+                    </Button>
                 )}
                 </div>
                 
