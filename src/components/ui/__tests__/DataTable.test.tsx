@@ -6,6 +6,7 @@ import DataTable from '../DataTable';
 // Mock icons
 vi.mock('../../icons/SearchIcon', () => ({
   MagnifyingGlassIcon: () => <div data-testid="search-icon">Search</div>,
+  default: () => <div data-testid="search-icon">Search</div>,
 }));
 
 vi.mock('../../icons/FunnelIcon', () => ({
