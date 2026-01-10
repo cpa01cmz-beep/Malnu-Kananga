@@ -8,6 +8,7 @@ import Input from './ui/Input';
 import Select from './ui/Select';
 import Badge from './ui/Badge';
 import Modal from './ui/Modal';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 import { api } from '../services/apiService';
 import { pushNotificationService } from '../services/pushNotificationService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
@@ -32,6 +33,8 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<Partial<User>>({});
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -78,21 +81,28 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   };
 
   const handleDeleteUser = async (id: string) => {
-      if (window.confirm('Hapus pengguna ini?')) {
-          const result = await handleAsyncError(
-              () => api.users.delete(id),
-              {
-                operation: 'deleteUser',
-                component: 'UserManagement',
-                fallbackMessage: 'Gagal menghapus pengguna'
-              }
-          );
+    setUserToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
 
-          if (result && result.success) {
-              setUsers(prev => prev.filter(u => u.id !== id));
-              onShowToast('Pengguna dihapus', 'success');
-          }
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
+
+    const result = await handleAsyncError(
+      () => api.users.delete(userToDelete),
+      {
+        operation: 'deleteUser',
+        component: 'UserManagement',
+        fallbackMessage: 'Gagal menghapus pengguna'
       }
+    );
+
+    if (result && result.success) {
+      setUsers(prev => prev.filter(u => u.id !== userToDelete));
+      onShowToast('Pengguna dihapus', 'success');
+    }
+    setIsDeleteDialogOpen(false);
+    setUserToDelete(null);
   };
 
   const handleSaveUser = async (e: React.FormEvent) => {
@@ -265,12 +275,12 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                                             />
                                         )}
                                         {canDeleteUser && (
-                                            <Button 
-                                              variant="danger" 
-                                              size="sm" 
-                                              iconOnly 
-                                              onClick={() => handleDeleteUser(user.id)} 
-                                              icon={<TrashIcon />} 
+                                            <Button
+                                              variant="danger"
+                                              size="sm"
+                                              iconOnly
+                                              onClick={() => handleDeleteUser(user.id)}
+                                              icon={<TrashIcon />}
                                               aria-label={`Hapus pengguna ${user.name}`}
                                             />
                                         )}
@@ -355,6 +365,20 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
             </Button>
           </form>
         </Modal>
+
+        <ConfirmationDialog
+          isOpen={isDeleteDialogOpen}
+          title="Hapus Pengguna"
+          message="Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan."
+          type="danger"
+          confirmText="Hapus"
+          cancelText="Batal"
+          onConfirm={confirmDeleteUser}
+          onCancel={() => {
+            setIsDeleteDialogOpen(false);
+            setUserToDelete(null);
+          }}
+        />
     </div>
   );
 };

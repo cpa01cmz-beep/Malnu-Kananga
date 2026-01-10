@@ -62,7 +62,7 @@ interface AcademicGradesProps {
   onShowToast?: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
-const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
+const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) => {
   // ALL hooks first
   const { user, canAccess } = useCanAccess();
   const STUDENT_NIS = user?.id || '';
@@ -307,7 +307,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack }) => {
       pdf.save(`laporan-akademik-${STUDENT_NAME}-${new Date().toISOString().split('T')[0]}.pdf`);
     } catch (error) {
       logger.error('Error generating PDF:', error);
-      window.alert('Gagal menghasilkan PDF. Silakan coba lagi.');
+      onShowToast?.('Gagal menghasilkan PDF. Silakan coba lagi.', 'error');
     }
   };
 
