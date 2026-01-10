@@ -1,7 +1,8 @@
 /* Theme-specific styles - Theme Manager handles CSS variables dynamically */
 
-/* Enable smooth transitions for theme changes */
-* {
+/* Enable smooth transitions for theme changes on semantic elements */
+body,
+.transition-theme {
   transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
 

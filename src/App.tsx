@@ -257,7 +257,7 @@ const App: React.FC = () => {
 
   return (
     <NotificationProvider>
-      <div className={`${GRADIENT_CLASSES.APP_BACKGROUND} w-full min-h-screen font-sans transition-colors duration-300 antialiased`} style={{ color: 'var(--color-text)' }}>
+      <div className={`${GRADIENT_CLASSES.APP_BACKGROUND} w-full min-h-screen font-sans antialiased text-[color:var(--color-text)] transition-colors duration-300`}>
       <SkipLink 
         targets={[
           { id: 'main-nav', label: 'Langsung ke navigasi utama' },
