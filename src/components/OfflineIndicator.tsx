@@ -102,7 +102,11 @@ export function OfflineIndicator({
     <>
       {/* Main indicator */}
       <div className={`fixed ${positionClasses[position]} z-50 flex flex-col items-end gap-2 ${className}`}>
-        <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-3 flex items-center gap-2 min-w-[120px]">
+        <div 
+          role="status"
+          aria-live="polite"
+          className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-3 flex items-center gap-2 min-w-[120px]"
+        >
           {/* Status dot */}
           <div className={`w-3 h-3 rounded-full ${getStatusColor()} animate-pulse`} />
           

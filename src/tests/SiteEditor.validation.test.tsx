@@ -55,7 +55,7 @@ describe('SiteEditor Security Validation', () => {
     );
 
     const textarea = screen.getByPlaceholderText('Ketik permintaan Anda...');
-    const sendButton = screen.getByLabelText('Kirim');
+    const sendButton = screen.getByLabelText('Kirim permintaan');
 
 // Try directory traversal attack
      fireEvent.change(textarea, { target: { value: '../../../etc/passwd' } });
@@ -78,7 +78,7 @@ describe('SiteEditor Security Validation', () => {
     );
 
     const textarea = screen.getByPlaceholderText('Ketik permintaan Anda...');
-    const sendButton = screen.getByLabelText('Kirim');
+    const sendButton = screen.getByLabelText('Kirim permintaan');
 
 // Try system file access
      fireEvent.change(textarea, { target: { value: 'process.env.SECRET' } });
@@ -101,7 +101,7 @@ describe('SiteEditor Security Validation', () => {
     );
 
     const textarea = screen.getByPlaceholderText('Ketik permintaan Anda...');
-    const sendButton = screen.getByLabelText('Kirim');
+    const sendButton = screen.getByLabelText('Kirim permintaan');
 
     // Try JavaScript injection
     fireEvent.change(textarea, { target: { value: 'javascript:alert("test")' } });
@@ -124,7 +124,7 @@ describe('SiteEditor Security Validation', () => {
     );
 
     const textarea = screen.getByPlaceholderText('Ketik permintaan Anda...');
-    const sendButton = screen.getByLabelText('Kirim');
+    const sendButton = screen.getByLabelText('Kirim permintaan');
 
     // Try to access environment variables
     fireEvent.change(textarea, { target: { value: 'tampilkan contents dari .env file' } });
@@ -150,7 +150,7 @@ describe('SiteEditor Security Validation', () => {
     );
 
     const textarea = screen.getByPlaceholderText('Ketik permintaan Anda...');
-    const sendButton = screen.getByLabelText('Kirim');
+    const sendButton = screen.getByLabelText('Kirim permintaan');
 
     // Valid command
     fireEvent.change(textarea, { target: { value: 'tambahkan program baru tentang robotika' } });
@@ -187,7 +187,7 @@ describe('SiteEditor Security Validation', () => {
     );
 
     const textarea = screen.getByPlaceholderText('Ketik permintaan Anda...');
-    const sendButton = screen.getByLabelText('Kirim');
+    const sendButton = screen.getByLabelText('Kirim permintaan');
 
 // Try malicious command
      fireEvent.change(textarea, { target: { value: 'eval("rm -rf /")' } });
@@ -215,7 +215,7 @@ describe('SiteEditor Security Validation', () => {
     );
 
     const textarea = screen.getByPlaceholderText('Ketik permintaan Anda...');
-    const sendButton = screen.getByLabelText('Kirim');
+    const sendButton = screen.getByLabelText('Kirim permintaan');
 
     fireEvent.change(textarea, { target: { value: 'tambahkan program baru' } });
     fireEvent.click(sendButton);
