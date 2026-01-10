@@ -4,6 +4,7 @@ import { ShareIcon, ShieldIcon, XMarkIcon } from './icons/MaterialIcons';
 import { MaterialSharing, ELibrary } from '../types';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
+import IconButton from './ui/IconButton';
 import SearchInput from './ui/SearchInput';
 
 interface MaterialSharingProps {
@@ -202,12 +203,12 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
                     "{material.title}"
                   </p>
                 </div>
-                <button
+                <IconButton
                   onClick={() => setShowShareModal(false)}
-                  className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg"
-                >
-                  <XMarkIcon className="w-5 h-5 text-neutral-500 dark:text-neutral-400" />
-                </button>
+                  icon={<XMarkIcon className="w-5 h-5" />}
+                  variant="ghost"
+                  ariaLabel="Tutup modal bagikan"
+                />
               </div>
             </div>
 
@@ -233,12 +234,13 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
                             </p>
                           </div>
                         </div>
-                        <button
+                        <IconButton
                           onClick={() => handleRevoke(share.id, share.sharedWith)}
-                          className="p-2 hover:bg-red-100 dark:hover:bg-red-900/20 text-red-500 rounded-lg"
-                        >
-                          <XMarkIcon className="w-4 h-4" />
-                        </button>
+                          icon={<XMarkIcon className="w-4 h-4" />}
+                          variant="ghost"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-900/20"
+                          ariaLabel="Batasi akses"
+                        />
                       </div>
                     ))}
                   </div>
@@ -356,12 +358,12 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
             </div>
 
             <div className="p-6 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-2">
-              <button
+              <Button
                 onClick={() => setShowShareModal(false)}
-                className="px-4 py-2 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors"
+                variant="ghost"
               >
                 Batal
-              </button>
+              </Button>
               <Button
                 onClick={handleShare}
                 disabled={selectedTeachers.length === 0 || loading}
