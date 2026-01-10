@@ -136,29 +136,37 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                    </Button>
              </div>
                ) : (
-               <form onSubmit={handleSubmit} className="space-y-5">
-                 <Input
-                   id="email"
-                   type="email"
-                   label="Alamat Email Terdaftar"
-                   placeholder="anda@email.com"
-                   value={email}
-                   onChange={(e) => setEmail(e.target.value)}
-                   required
-                   errorText={error && !password ? error : undefined}
-                   fullWidth
-                 />
-                 <Input
-                   id="password"
-                   type="password"
-                   label="Password"
-                   placeholder="Masukkan password"
-                   value={password}
-                   onChange={(e) => setPassword(e.target.value)}
-                   required
-                   errorText={error && email ? error : undefined}
-                   fullWidth
-                 />
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  {error && (
+                    <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg" role="alert">
+                      <p className="text-sm text-red-700 dark:text-red-300 flex items-center gap-2">
+                        <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {error}
+                      </p>
+                    </div>
+                  )}
+                  <Input
+                    id="email"
+                    type="email"
+                    label="Alamat Email Terdaftar"
+                    placeholder="anda@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    fullWidth
+                  />
+                  <Input
+                    id="password"
+                    type="password"
+                    label="Password"
+                    placeholder="Masukkan password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    fullWidth
+                  />
                  <Button type="submit" disabled={formState === 'loading'} isLoading={formState === 'loading'} fullWidth className="py-3.5">
                    {formState === 'loading' ? '' : 'Login'}
                  </Button>

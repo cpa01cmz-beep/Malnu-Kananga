@@ -150,24 +150,25 @@
                 - [x] Refactor MaterialSharing to use Button and IconButton components - Replaced inline button styles (close modal button, revoke access button, cancel button) with Button and IconButton components; improved consistency, accessibility with proper aria-labels, and maintainability; eliminated ~30 lines of inline styles (2026-01-10)
                   - [x] Refactor inline form input styles to use reusable UI components - Replaced inline search input (ELibrary), form inputs/selects/textareas (MaterialUpload), and message inputs/selects (ParentMessagingView) with SearchInput, Input, Select, and Textarea components; improved consistency with design system, enhanced accessibility (proper ARIA attributes), better dark mode support, and maintainability; eliminated ~60 lines of inline styles (2026-01-10)
                  - [x] Fix redundant gradient usage in StudentPortal.tsx - Removed conflicting className={getGradientClass('ORANGE_SOFT')} that was applied alongside gradient prop in DashboardActionCard; eliminated redundant gradient backgrounds, improved design system consistency, and clarified component API usage (2026-01-10)
-                 - [x] Complete EmptyState component refactoring - Refactored 15 remaining components to use centralized EmptyState component:
-                    - ParentAttendanceView - "Belum ada data kehadiran"
-                    - ParentGradesView - "Belum ada nilai tersedia"
-                    - ParentMessagingView - "Belum ada pesan"
-                    - ParentMeetingsView - "Belum ada pertemuan terjadwal"
-                    - NotificationAnalytics - "Belum ada data analytics"
-                    - NotificationSettings - "Belum ada riwayat notifikasi"
-                    - NotificationCenter - "Belum ada notifikasi" + action button support
-                    - VoiceNotificationSettings - "Belum ada riwayat notifikasi suara"
-                    - BatchManagement - "Belum ada batch notifikasi"
-                    - MaterialUpload - "Belum ada materi yang diunggah" / "Belum ada materi di folder X"
-                    - ProgressAnalytics - "Belum ada target prestasi yang ditetapkan"
-                    - AcademicGrades - "Belum ada data nilai tersedia"
-                    - AttendanceView - "Belum ada riwayat kehadiran"
-                    - PPDBManagement - "Belum ada data pendaftar"
-                    - StudentLearningModule - "Belum ada kuis untuk topik X" + action button
+                  - [x] Complete EmptyState component refactoring - Refactored 15 remaining components to use centralized EmptyState component:
+                     - ParentAttendanceView - "Belum ada data kehadiran"
+                     - ParentGradesView - "Belum ada nilai tersedia"
+                     - ParentMessagingView - "Belum ada pesan"
+                     - ParentMeetingsView - "Belum ada pertemuan terjadwal"
+                     - NotificationAnalytics - "Belum ada data analytics"
+                     - NotificationSettings - "Belum ada riwayat notifikasi"
+                     - NotificationCenter - "Belum ada notifikasi" + action button support
+                     - VoiceNotificationSettings - "Belum ada riwayat notifikasi suara"
+                     - BatchManagement - "Belum ada batch notifikasi"
+                     - MaterialUpload - "Belum ada materi yang diunggah" / "Belum ada materi di folder X"
+                     - ProgressAnalytics - "Belum ada target prestasi yang ditetapkan"
+                     - AcademicGrades - "Belum ada data nilai tersedia"
+                     - AttendanceView - "Belum ada riwayat kehadiran"
+                     - PPDBManagement - "Belum ada data pendaftar"
+                     - StudentLearningModule - "Belum ada kuis untuk topik X" + action button
 
-                  Benefits: Consistency across entire application, automatic ARIA support (role="status", aria-live="polite", aria-label), centralized maintainability, ~17 net lines of duplicate code eliminated, support for 3 sizes (sm, md, lg) and 3 variants (default, minimal, illustrated), action button support for CTAs, custom icon support (2026-01-10)
+                   Benefits: Consistency across entire application, automatic ARIA support (role="status", aria-live="polite", aria-label), centralized maintainability, ~17 net lines of duplicate code eliminated, support for 3 sizes (sm, md, lg) and 3 variants (default, minimal, illustrated), action button support for CTAs, custom icon support (2026-01-10)
+                 - [x] Improve LoginModal form error display - Replaced confusing conditional error handling (error only showed on specific fields when other fields were filled) with dedicated error alert box above form fields; improved UX by making errors consistently visible; added role="alert" for screen readers; added error icon for better visual prominence; used consistent red color scheme matching design system (2026-01-10)
          - [ ] Achieve 80% test coverage
   - [ ] Complete API documentation
   - [ ] Optimize bundle size to <500KB
