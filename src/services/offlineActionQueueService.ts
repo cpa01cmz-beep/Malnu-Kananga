@@ -405,15 +405,19 @@ class OfflineActionQueueService {
     throw new Error(`Server error: ${response.status} ${response.statusText}`);
   }
 
-  private async executeAIAnalysis(action: OfflineAction, headers: Record<string, string>): Promise<boolean> {
+  private async executeAIAnalysis(action: OfflineAction, _headers: Record<string, string>): Promise<boolean> {
     try {
       // Import geminiService dynamically to avoid circular dependencies
       const { analyzeStudentPerformance } = await import('./geminiService');
-      
-      const data = action.data as { 
-        operation: string; 
-        studentData: any; 
-        model: string; 
+
+      const data = action.data as {
+        operation: string;
+        studentData: {
+          grades: Array<{ subject: string; score: number; grade: string; trend: string }>;
+          attendance: { percentage: number; totalDays: number; present: number; absent: number };
+          trends: Array<{ month: string; averageScore: number; attendanceRate: number }>;
+        };
+        model: string;
         timestamp: number;
       };
 

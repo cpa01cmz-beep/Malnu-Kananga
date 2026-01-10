@@ -216,14 +216,21 @@ export const useStudentInsights = ({
     setIsGenerating(true);
 
     // Helper function to get AI analysis with offline support
-    const getAIAnalysis = async (aiData: any): Promise<string> => {
+    const getAIAnalysis = async (aiData: {
+      grades: Array<{ subject: string; score: number; grade: string; trend: string }>;
+      attendance: { percentage: number; totalDays: number; present: number; absent: number };
+      trends: Array<{ month: string; averageScore: number; attendanceRate: number }>;
+    }): Promise<string> => {
       try {
         // Check if any cached AI analysis exists for this data
         const cachedAnalyses = JSON.parse(localStorage.getItem(STORAGE_KEYS.CACHED_AI_ANALYSES) || '[]');
-        const dataKey = JSON.stringify(aiData);
-        
+
         // Find matching cached analysis (within 30 minutes)
-        const matchingAnalysis = cachedAnalyses.find((analysis: any) => {
+        const matchingAnalysis = cachedAnalyses.find((analysis: {
+          operation: string;
+          timestamp: number;
+          result: string;
+        }) => {
           if (analysis.operation === 'studentAnalysis') {
             const analysisTime = new Date(analysis.timestamp);
             const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);

@@ -12,8 +12,6 @@ import { logger } from '../utils/logger';
 import { validateAICommand, validateAIResponse } from '../utils/aiEditorValidator';
 import { chatCache, analysisCache, editorCache } from './aiCacheService';
 import { offlineActionQueueService } from './offlineActionQueueService';
-import { isNetworkError } from '../utils/networkStatus';
-import { STORAGE_KEYS } from '../constants';
 
 // Initialize the Google AI client
 const ai = new GoogleGenAI({ apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' });
