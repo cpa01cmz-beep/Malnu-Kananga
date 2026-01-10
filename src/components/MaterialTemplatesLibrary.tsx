@@ -9,7 +9,7 @@ import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
 import FileInput from './ui/FileInput';
 import Select from './ui/Select';
-import Skeleton, { CardSkeleton } from './ui/Skeleton';
+import { CardSkeleton } from './ui/Skeleton';
 
 interface MaterialTemplatesProps {
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;

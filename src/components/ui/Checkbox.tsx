@@ -55,7 +55,18 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
     const content = (
       <input
-        ref={ref}
+        ref={(input) => {
+          if (ref) {
+            if (typeof ref === 'function') {
+              ref(input)
+            } else {
+              ref.current = input
+            }
+          }
+          if (input && indeterminate !== undefined) {
+            input.indeterminate = indeterminate
+          }
+        }}
         id={checkboxId}
         type="checkbox"
         checked={checked}
@@ -84,18 +95,6 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         aria-labelledby={ariaLabelledby}
         aria-describedby={ariaDescribedby}
         aria-checked={indeterminate ? 'mixed' : checked}
-        ref={(input) => {
-          if (ref) {
-            if (typeof ref === 'function') {
-              ref(input)
-            } else {
-              ref.current = input
-            }
-          }
-          if (input && indeterminate !== undefined) {
-            input.indeterminate = indeterminate
-          }
-        }}
         {...props}
       />
     )
