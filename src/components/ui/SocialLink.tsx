@@ -1,6 +1,4 @@
 import React from 'react';
-import type { IconButtonProps } from './IconButton';
-import type { ButtonHTMLAttributes, AnchorHTMLAttributes } from 'react';
 
 export type SocialLinkVariant = 'default' | 'primary' | 'secondary';
 export type SocialLinkSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -15,6 +13,7 @@ interface BaseSocialLinkProps {
   className?: string;
   target?: string;
   rel?: string;
+  disabled?: boolean;
 }
 
 const baseClasses = "inline-flex items-center justify-center transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded-xl shadow-sm hover:shadow-md hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
@@ -64,8 +63,10 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
   className = '',
   target,
   rel = 'noopener noreferrer',
+  disabled = false,
 }) => {
   const variantStyle = variantClasses[variant];
+  const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : '';
   const classes = `
     ${baseClasses}
     ${sizeClasses[size]}
@@ -73,6 +74,7 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
     ${variantStyle.hover}
     ${variantStyle.hoverBg}
     ${variantStyle.hoverBgDark}
+    ${disabledClasses}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -90,6 +92,10 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
         aria-label={label}
         target={target}
         rel={rel}
+        role={disabled ? "link" : undefined}
+        aria-disabled={disabled}
+        tabIndex={disabled ? -1 : undefined}
+        onClick={disabled ? (e) => e.preventDefault() : undefined}
       >
         {content}
       </a>
@@ -101,7 +107,8 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
       type="button"
       className={classes}
       aria-label={label}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
     >
       {content}
     </button>
