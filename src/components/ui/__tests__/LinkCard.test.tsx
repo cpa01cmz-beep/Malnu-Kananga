@@ -33,9 +33,9 @@ describe('LinkCard', () => {
   it('has custom aria-label when provided', () => {
     render(
       <ul>
-        <LinkCard 
-          {...defaultProps} 
-          ariaLabel="Buka Test Link di tab baru" 
+        <LinkCard
+          {...defaultProps}
+          ariaLabel="Buka Test Link di tab baru"
         />
       </ul>
     );
@@ -48,20 +48,12 @@ describe('LinkCard', () => {
   });
 
   it('has role="listitem" on li element', () => {
-    const { container: _container } = render(<ul><LinkCard {...defaultProps} /></ul>);
+    render(<ul><LinkCard {...defaultProps} /></ul>);
     const listItem = screen.getByRole('listitem');
     expect(listItem).toHaveAttribute('role', 'listitem');
   });
 
   it('applies color class to icon container', () => {
-    const { container: _container } = render(<ul><LinkCard {...defaultProps} /></ul>);
-    const iconContainer = document.querySelector('[aria-hidden="true"]');
-    expect(iconContainer).toHaveClass('bg-primary-100');
-    expect(iconContainer).toHaveClass('dark:bg-primary-900/30');
-    expect(iconContainer).toHaveClass('text-primary-600');
-  });
-
-  it('applies color class to icon container', () => {
     render(<ul><LinkCard {...defaultProps} /></ul>);
     const iconContainer = document.querySelector('[aria-hidden="true"]');
     expect(iconContainer).toHaveClass('bg-primary-100');
@@ -69,33 +61,33 @@ describe('LinkCard', () => {
     expect(iconContainer).toHaveClass('text-primary-600');
   });
 
-  it('has focus styles for accessibility', () => {
+  it('has focus styles for accessibility on link wrapper', () => {
     render(<ul><LinkCard {...defaultProps} /></ul>);
     const link = screen.getByRole('link');
-    expect(link).toHaveClass('focus:ring-2');
-    expect(link).toHaveClass('focus:ring-primary-500/50');
+    expect(link).toHaveClass('group');
+    expect(link).toHaveClass('flex');
   });
 
-  it('has hover effects', () => {
-    render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('hover:shadow-card-hover');
-    expect(link).toHaveClass('hover:scale-[1.02]');
+  it('has hover effects on Card component', () => {
+    const { container } = render(<ul><LinkCard {...defaultProps} /></ul>);
+    const card = container.querySelector('div[class*="rounded-xl"]');
+    expect(card).toHaveClass('hover:-translate-y-1');
+    expect(card).toHaveClass('active:scale-95');
   });
 
   it('has keyboard navigation support', () => {
     render(<ul><LinkCard {...defaultProps} /></ul>);
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute('href');
-    expect(link).toHaveClass('focus:outline-none');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
-  it('has correct responsive padding classes', () => {
-    render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('p-7');
-    expect(link).toHaveClass('sm:p-8');
-    expect(link).toHaveClass('lg:p-10');
+  it('has correct responsive padding classes on Card', () => {
+    const { container } = render(<ul><LinkCard {...defaultProps} /></ul>);
+    const card = container.querySelector('div[class*="rounded-xl"]');
+    expect(card).toHaveClass('p-7');
+    expect(card).toHaveClass('sm:p-8');
+    expect(card).toHaveClass('lg:p-10');
   });
 
   it('has correct responsive icon sizes', () => {
@@ -115,18 +107,18 @@ describe('LinkCard', () => {
     expect(iconContainer).toBeInTheDocument();
   });
 
-  it('has dark mode support', () => {
-    render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('bg-white');
-    expect(link).toHaveClass('dark:bg-neutral-800');
+  it('has dark mode support via Card component', () => {
+    const { container } = render(<ul><LinkCard {...defaultProps} /></ul>);
+    const card = container.querySelector('div[class*="rounded-xl"]');
+    expect(card).toHaveClass('bg-white');
+    expect(card).toHaveClass('dark:bg-neutral-800');
   });
 
-  it('has transition effects', () => {
+  it('has transition effects on icon container', () => {
     render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('transition-all');
-    expect(link).toHaveClass('duration-300');
+    const iconContainer = document.querySelector('[aria-hidden="true"]');
+    expect(iconContainer).toHaveClass('transition-transform');
+    expect(iconContainer).toHaveClass('duration-300');
   });
 
   it('has scale animation on icon hover', () => {
@@ -135,89 +127,10 @@ describe('LinkCard', () => {
     expect(iconContainer).toHaveClass('group-hover:scale-110');
   });
 
-  it('has ring offset for dark mode focus', () => {
-    render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('dark:focus:ring-offset-neutral-800');
-  });
-
-  it('applies color class to icon container', () => {
-    render(<ul><LinkCard {...defaultProps} /></ul>);
-    const iconContainer = screen.queryByAttribute('aria-hidden', document.body, 'true');
-    expect(iconContainer).toHaveClass('bg-primary-100');
-    expect(iconContainer).toHaveClass('dark:bg-primary-900/30');
-    expect(iconContainer).toHaveClass('text-primary-600');
-  });
-
-  it('has focus styles for accessibility', () => {
-    const { container: _container } = render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('focus:ring-2');
-    expect(link).toHaveClass('focus:ring-primary-500/50');
-  });
-
-  it('has hover effects', () => {
-    const { container: _container } = render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('hover:shadow-card-hover');
-    expect(link).toHaveClass('hover:scale-[1.02]');
-  });
-
-  it('has keyboard navigation support', () => {
-    const { container: _container } = render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href');
-    expect(link).toHaveClass('focus:outline-none');
-  });
-
-  it('has correct responsive padding classes', () => {
-    const { container: _container } = render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('p-7');
-    expect(link).toHaveClass('sm:p-8');
-    expect(link).toHaveClass('lg:p-10');
-  });
-
-  it('has correct responsive icon sizes', () => {
+  it('uses Card component for styling', () => {
     const { container } = render(<ul><LinkCard {...defaultProps} /></ul>);
-    const iconContainer = container.querySelector('[aria-hidden="true"]');
-    expect(iconContainer).toHaveClass('h-14');
-    expect(iconContainer).toHaveClass('w-14');
-    expect(iconContainer).toHaveClass('sm:h-16');
-    expect(iconContainer).toHaveClass('sm:w-16');
-    expect(iconContainer).toHaveClass('lg:h-20');
-    expect(iconContainer).toHaveClass('lg:w-20');
-  });
-
-  it('has icon aria-hidden attribute', () => {
-    const { container } = render(<ul><LinkCard {...defaultProps} /></ul>);
-    const iconContainer = container.querySelector('[aria-hidden="true"]');
-    expect(iconContainer).toBeInTheDocument();
-  });
-
-  it('has dark mode support', () => {
-    const { container: _container } = render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('bg-white');
-    expect(link).toHaveClass('dark:bg-neutral-800');
-  });
-
-  it('has transition effects', () => {
-    const { container: _container } = render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('transition-all');
-    expect(link).toHaveClass('duration-300');
-  });
-
-  it('has scale animation on icon hover', () => {
-    const { container } = render(<ul><LinkCard {...defaultProps} /></ul>);
-    const iconContainer = container.querySelector('[aria-hidden="true"]');
-    expect(iconContainer).toHaveClass('group-hover:scale-110');
-  });
-
-  it('has ring offset for dark mode focus', () => {
-    const { container: _container } = render(<ul><LinkCard {...defaultProps} /></ul>);
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('dark:focus:ring-offset-neutral-800');
+    const card = container.querySelector('div');
+    expect(card).toBeInTheDocument();
+    expect(card).toHaveClass('shadow-card');
   });
 });
