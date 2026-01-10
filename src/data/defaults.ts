@@ -45,12 +45,14 @@ export const getRelatedLinks = async () => {
         DocumentTextIconModule,
         BuildingLibraryIconModule,
         ClipboardDocumentCheckIconModule,
-        UsersIconModule
+        UsersIconModule,
+        { getColorIconClass }
     ] = await Promise.all([
         import('../components/icons/DocumentTextIcon'),
         import('../components/icons/BuildingLibraryIcon'),
         import('../components/icons/ClipboardDocumentCheckIcon'),
-        import('../components/icons/UsersIcon')
+        import('../components/icons/UsersIcon'),
+        import('../config/colorIcons')
     ]);
 
     const DocumentTextIcon = DocumentTextIconModule.default;
@@ -63,25 +65,25 @@ export const getRelatedLinks = async () => {
             name: 'RDM Malnu Kananga',
             href: 'https://rdm.ma-malnukananga.sch.id',
             icon: DocumentTextIcon,
-            color: 'bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400'
+            color: getColorIconClass('sky')
         },
         {
             name: 'Kemenag RI',
             href: 'https://kemenag.go.id',
             icon: BuildingLibraryIcon,
-            color: 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400'
+            color: getColorIconClass('emerald')
         },
         {
             name: 'EMIS Pendis',
             href: 'https://emis.kemenag.go.id',
             icon: ClipboardDocumentCheckIcon,
-            color: 'bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400'
+            color: getColorIconClass('amber')
         },
         {
             name: 'Simpatika',
             href: 'https://simpatika.kemenag.go.id',
             icon: UsersIcon,
-            color: 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400'
+            color: getColorIconClass('indigo')
         }
     ];
 };
