@@ -1157,34 +1157,40 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 <span className="font-medium text-yellow-800 dark:text-yellow-300">
                     Batch Operations ({selectedStudents.size} selected):
                 </span>
-                
-                <input 
-                    type="number" 
-                    placeholder="Assignment" 
-                    min="0" 
+
+                <input
+                    type="number"
+                    id="batch-assignment-input"
+                    placeholder="Assignment"
+                    min="0"
                     max="100"
+                    aria-label="Nilai Assignment untuk batch"
                     onChange={(e) => handleBatchGradeInput('assignment', e.target.value)}
                     className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
                 />
-                
-                <input 
-                    type="number" 
-                    placeholder="UTS" 
-                    min="0" 
+
+                <input
+                    type="number"
+                    id="batch-uts-input"
+                    placeholder="UTS"
+                    min="0"
                     max="100"
+                    aria-label="Nilai UTS untuk batch"
                     onChange={(e) => handleBatchGradeInput('midExam', e.target.value)}
                     className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
                 />
-                
-                <input 
-                    type="number" 
-                    placeholder="UAS" 
-                    min="0" 
+
+                <input
+                    type="number"
+                    id="batch-uas-input"
+                    placeholder="UAS"
+                    min="0"
                     max="100"
+                    aria-label="Nilai UAS untuk batch"
                     onChange={(e) => handleBatchGradeInput('finalExam', e.target.value)}
                     className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
                 />
-                
+
                 <Button
                     variant="blue-solid"
                     size="sm"
@@ -1192,7 +1198,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 >
                     Select All
                 </Button>
-                
+
                 <Button
                     variant="secondary"
                     size="sm"

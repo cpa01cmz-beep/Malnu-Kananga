@@ -263,8 +263,13 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                             <p className="font-medium">{quiz.question}</p>
                                             <div className="mt-2 space-y-2">
                                                 {quiz.options.map((option, idx) => (
-                                                    <label key={idx} className="flex items-center space-x-2">
-                                                        <input type="radio" name={`quiz-${quiz.id}`} />
+                                                    <label key={idx} className="flex items-center space-x-2 cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            id={`quiz-${quiz.id}-option-${idx}`}
+                                                            name={`quiz-${quiz.id}`}
+                                                            aria-label={`Opsi ${idx + 1} untuk ${quiz.question}`}
+                                                        />
                                                         <span>{option}</span>
                                                     </label>
                                                 ))}
@@ -311,10 +316,12 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                                                                 <label key={oIndex} className="flex items-center space-x-2 cursor-pointer">
                                                                     <input
                                                                         type="radio"
+                                                                        id={`ai-quiz-${qIndex}-option-${oIndex}`}
                                                                         name={`ai-quiz-${qIndex}`}
                                                                         checked={aiQuizState.userAnswers[qIndex] === oIndex}
                                                                         onChange={() => handleAIQuizAnswer(qIndex, oIndex)}
                                                                         className="text-purple-500"
+                                                                        aria-label={`Opsi ${oIndex + 1}: ${option}`}
                                                                     />
                                                                     <span className={`${aiQuizState.userAnswers[qIndex] === oIndex ? 'font-medium text-purple-600' : ''}`}>
                                                                         {option}
