@@ -18,6 +18,9 @@ import Badge from './ui/Badge';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import ProgressBar from './ui/ProgressBar';
+import SearchInput from './ui/SearchInput';
+import Input from './ui/Input';
+import Select from './ui/Select';
 
 interface ELibraryProps {
   onBack: () => void;
@@ -763,16 +766,14 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           <p className="text-neutral-500 dark:text-neutral-400">Akses modul pembelajaran dan tugas digital.</p>
         </div>
         <div className="flex gap-2 w-full md:w-auto">
-          <input
-            type="text"
+          <SearchInput
             placeholder={isSemanticMode ? "Cari dengan AI..." : "Cari materi..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className={`w-full md:w-48 px-4 py-2 rounded-full border ${
-              isSemanticMode 
-                ? 'border-purple-300 dark:border-purple-600 bg-purple-50 dark:bg-purple-900/20 focus:ring-purple-500' 
-                : 'border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 focus:ring-green-500'
-            } text-neutral-900 dark:text-white focus:ring-2 focus:outline-none`}
+            fullWidth
+            showIcon={false}
+            size="md"
+            className="w-full md:w-48"
           />
           <Button
             onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
@@ -833,35 +834,29 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
         <div className="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4 mb-6 border border-neutral-200 dark:border-neutral-700">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Teacher Filter */}
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                Guru Pengupload
-              </label>
-              <input
-                type="text"
-                placeholder="Nama guru..."
-                value={filterTeacher}
-                onChange={(e) => setFilterTeacher(e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
-              />
-            </div>
+            <Input
+              label="Guru Pengupload"
+              placeholder="Nama guru..."
+              value={filterTeacher}
+              onChange={(e) => setFilterTeacher(e.target.value)}
+              fullWidth
+              size="sm"
+            />
 
             {/* Date Range Filter */}
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                Rentang Waktu
-              </label>
-              <select
-                value={filterDateRange}
-                onChange={(e) => setFilterDateRange(e.target.value as 'all' | 'week' | 'month' | 'semester')}
-                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
-              >
-                <option value="all">Semua Waktu</option>
-                <option value="week">7 Hari Terakhir</option>
-                <option value="month">30 Hari Terakhir</option>
-                <option value="semester">Semester Ini</option>
-              </select>
-            </div>
+            <Select
+              label="Rentang Waktu"
+              value={filterDateRange}
+              onChange={(e) => setFilterDateRange(e.target.value as 'all' | 'week' | 'month' | 'semester')}
+              fullWidth
+              size="sm"
+              options={[
+                { value: 'all', label: 'Semua Waktu' },
+                { value: 'week', label: '7 Hari Terakhir' },
+                { value: 'month', label: '30 Hari Terakhir' },
+                { value: 'semester', label: 'Semester Ini' }
+              ]}
+            />
 
             {/* Rating Filter */}
             <div>
@@ -886,21 +881,19 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             </div>
 
             {/* Sort Options */}
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                Urutkan
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'title' | 'date' | 'rating' | 'downloads')}
-                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
-              >
-                <option value="date">Terbaru</option>
-                <option value="title">Judul</option>
-                <option value="rating">Rating</option>
-                <option value="downloads">Terpopuler</option>
-              </select>
-            </div>
+            <Select
+              label="Urutkan"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'title' | 'date' | 'rating' | 'downloads')}
+              fullWidth
+              size="sm"
+              options={[
+                { value: 'date', label: 'Terbaru' },
+                { value: 'title', label: 'Judul' },
+                { value: 'rating', label: 'Rating' },
+                { value: 'downloads', label: 'Terpopuler' }
+              ]}
+            />
           </div>
 
           {/* Clear Filters */}

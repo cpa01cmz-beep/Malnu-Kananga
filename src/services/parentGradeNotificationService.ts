@@ -5,8 +5,8 @@ import { pushNotificationService } from './pushNotificationService';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { gradesAPI } from './apiService';
-import type { PushNotification } from '../types';
-import type { Grade, ParentChild } from '../types';
+import type { PushNotification, OCRValidationEvent, ParentChild } from '../types';
+import type { Grade } from '../types';
 
 export interface ParentGradeNotificationSettings {
   enabled: boolean;
@@ -60,11 +60,301 @@ class ParentGradeNotificationService {
       this.loadSettings();
       this.loadNotificationQueue();
       this.setupDigestTimers();
+      this.setupOCRValidationListener(); // Add OCR validation event listener
       this.processScheduledNotifications(); // Process any existing deferred notifications
       this.setupScheduledNotificationCheck(); // Process scheduled notifications periodically
       logger.info('Parent grade notification service initialized');
     } catch (error) {
       logger.error('Failed to initialize parent grade notification service:', error);
+    }
+  }
+
+  // Setup OCR validation event listener
+  private setupOCRValidationListener(): void {
+    try {
+      if (typeof window !== 'undefined' && 'addEventListener' in window) {
+        window.addEventListener('ocrValidation', (event: Event) => {
+          const customEvent = event as CustomEvent<OCRValidationEvent>;
+          this.handleOCRValidationEvent(customEvent.detail);
+        });
+        logger.info('OCR validation event listener setup complete');
+      }
+    } catch (error) {
+      logger.error('Failed to setup OCR validation listener:', error);
+    }
+  }
+
+  // Handle OCR validation events
+  private async handleOCRValidationEvent(event: OCRValidationEvent): Promise<void> {
+    try {
+      // Only process events for students whose parents are the current user
+      if (event.userRole !== 'parent' && !this.isChildDocument(event.userId)) {
+        logger.info('OCR validation event not relevant to current parent user');
+        return;
+      }
+
+      const settings = this.getSettings();
+      if (!settings.enabled) {
+        logger.info('Parent notifications disabled');
+        return;
+      }
+
+      // Check quiet hours
+      if (this.isQuietHours(settings.quietHours)) {
+        logger.info('Quiet hours active, deferring OCR validation notification');
+        this.queueOCRValidationNotification(event);
+        return;
+      }
+
+      await this.sendOCRValidationNotification(event);
+    } catch (error) {
+      logger.error('Failed to handle OCR validation event:', error);
+    }
+  }
+
+  // Check if the document belongs to a child of the current parent
+  private isChildDocument(userId: string): boolean {
+    try {
+      // Get current user info
+      const currentUser = JSON.parse(
+        localStorage.getItem('malnu_auth_session') || '{}'
+      );
+      
+      // Check if current user is a parent
+      if (currentUser.role !== 'parent') {
+        return false;
+      }
+
+      // Get children info
+      const childrenData = localStorage.getItem('malnu_children');
+      if (!childrenData) {
+        return false;
+      }
+
+      const children: ParentChild[] = JSON.parse(childrenData);
+      return children.some(child => child.studentId === userId);
+    } catch (error) {
+      logger.error('Failed to check child document:', error);
+      return false;
+    }
+  }
+
+  // Send OCR validation notification to parent
+  private async sendOCRValidationNotification(event: OCRValidationEvent): Promise<void> {
+    try {
+      const notification = this.createOCRValidationNotification(event);
+      
+      // Skip if notification was marked as skipped (for successful validations of non-important docs)
+      if (notification.data?.skipped) {
+        return;
+      }
+      
+      await pushNotificationService.showLocalNotification(notification);
+      
+      logger.info('OCR validation notification sent:', { 
+        type: event.type, 
+        documentId: event.documentId, 
+        confidence: event.confidence,
+        issuesCount: event.issues.length 
+      });
+    } catch (error) {
+      logger.error('Failed to send OCR validation notification:', error);
+    }
+  }
+
+  // Create OCR validation push notification
+  private createOCRValidationNotification(event: OCRValidationEvent): PushNotification {
+    const { type, documentId, documentType, confidence, issues, userId } = event;
+    
+    let title = '';
+    let body = '';
+    let priority: 'low' | 'normal' | 'high' = 'normal';
+
+    // Get student name
+    const studentName = this.getStudentName(userId);
+
+    switch (type) {
+      case 'validation-failure':
+        title = `❌ Validasi Dokumen Gagal - ${studentName}`;
+        body = `Dokumen ${this.getDocumentTypeName(documentType)} gagal divalidasi. ${issues.join('. ')}. Silakan upload ulang dengan kualitas lebih baik.`;
+        priority = 'high';
+        break;
+      
+      case 'validation-warning':
+        title = `⚠️ Validasi Dokumen Perhatian - ${studentName}`;
+        body = `Dokumen ${this.getDocumentTypeName(documentType)} memiliki masalah: ${issues.join('. ')}. Accuracy: ${confidence.toFixed(1)}%`;
+        priority = 'normal';
+        break;
+      
+      case 'validation-success':
+        // Only send success notifications for important documents
+        if (documentType === 'certificate' || documentType === 'administrative') {
+          title = `✅ Validasi Dokumen Berhasil - ${studentName}`;
+          body = `Dokumen ${this.getDocumentTypeName(documentType)} berhasil divalidasi dengan akurasi ${confidence.toFixed(1)}%`;
+          priority = 'low';
+        } else {
+          // Don't send notifications for successful validation of regular academic documents
+          return {
+            id: `ocr-validation-${event.id}`,
+type: 'ocr' as 'ocr' | 'grade' | 'announcement' | 'message',
+            title: '',
+            body: '',
+            timestamp: new Date().toISOString(),
+            read: false,
+            priority: 'low' as const,
+            targetRoles: ['parent'],
+            data: { type: 'ocr_validation', skipped: true }
+          };
+        }
+        break;
+      
+      default:
+        title = `📄 Validasi Dokumen - ${studentName}`;
+        body = `Status validasi dokumen ${this.getDocumentTypeName(documentType)} telah diperbarui`;
+        priority = 'normal';
+    }
+
+    return {
+      id: `ocr-validation-${event.id}`,
+      type: 'ocr_validation',
+      title,
+      body,
+      timestamp: new Date().toISOString(),
+      read: false,
+      priority,
+      targetRoles: ['parent'],
+      data: {
+type: 'ocr' as 'ocr' | 'grade' | 'announcement' | 'message', // TODO: Add 'ocr' to NotificationType enum
+        validationType: type,
+        documentId,
+        documentType,
+        confidence,
+        issues,
+        studentName,
+        userId,
+        actionUrl: event.actionUrl || `/parent/documents?student=${userId}&document=${documentId}`,
+        reuploadRequired: type === 'validation-failure',
+        guidance: this.getReuploadGuidance(type, issues)
+      }
+    };
+  }
+
+  // Get student name from stored data
+  private getStudentName(studentId: string): string {
+    try {
+      const childrenData = localStorage.getItem('malnu_children');
+      if (!childrenData) {
+        return `Siswa ${studentId}`;
+      }
+
+      const children: ParentChild[] = JSON.parse(childrenData);
+      const child = children.find(c => c.studentId === studentId);
+      return child?.studentName || `Siswa ${studentId}`;
+    } catch (error) {
+      logger.error('Failed to get student name:', error);
+      return `Siswa ${studentId}`;
+    }
+  }
+
+  // Get localized document type name
+  private getDocumentTypeName(documentType: string): string {
+    const typeMap: Record<string, string> = {
+      'academic': 'Akademik',
+      'administrative': 'Administratif',
+      'form': 'Formulir',
+      'certificate': 'Sertifikat',
+      'unknown': 'Dokumen'
+    };
+
+    return typeMap[documentType] || 'Dokumen';
+  }
+
+  // Get reupload guidance based on validation issues
+  private getReuploadGuidance(type: string, issues: string[]): string {
+    if (type !== 'validation-failure') {
+      return '';
+    }
+
+    const guidance: string[] = [];
+    
+    if (issues.some(issue => issue.includes('Confidence') || issue.includes('akurasi'))) {
+      guidance.push('• Pastikan dokumen memiliki kualitas gambar yang jelas dan tajam');
+    }
+    
+    if (issues.some(issue => issue.includes('kata') || issue.includes('word'))) {
+      guidance.push('• Pastikan semua teks terbaca dengan jelas');
+    }
+    
+    if (issues.some(issue => issue.includes('dokumen') || issue.includes('identifikasi'))) {
+      guidance.push('• Pastikan dokumen dalam format yang sesuai (ijazah, raport, dll)');
+    }
+
+    if (guidance.length === 0) {
+      guidance.push('• Upload ulang dokumen dengan kualitas lebih baik');
+      guidance.push('• Pastikan pencahayaan cukup dan tidak ada bayangan');
+      guidance.push('• Usahakan dokumen tidak rusak atau kusut');
+    }
+
+    return 'Panduan upload ulang:\n' + guidance.join('\n');
+  }
+
+  // Queue OCR validation notification for later (quiet hours)
+  private queueOCRValidationNotification(event: OCRValidationEvent): void {
+    try {
+      const settings = this.getSettings();
+      const now = new Date();
+      
+      // Schedule for after quiet hours end
+      const quietEnd = new Date();
+      const [endHour, endMin] = settings.quietHours.end.split(':').map(Number);
+      quietEnd.setHours(endHour, endMin, 0, 0);
+      if (quietEnd <= now) {
+        quietEnd.setDate(quietEnd.getDate() + 1);
+      }
+
+      // Store in localStorage for later processing
+      const queuedEvents = JSON.parse(
+        localStorage.getItem('malnu_queued_ocr_validations') || '[]'
+      );
+      
+      queuedEvents.push({
+        ...event,
+        queuedAt: now.toISOString(),
+        scheduledFor: quietEnd.toISOString()
+      });
+      
+      localStorage.setItem('malnu_queued_ocr_validations', JSON.stringify(queuedEvents));
+      logger.info('OCR validation notification queued for after quiet hours');
+    } catch (error) {
+      logger.error('Failed to queue OCR validation notification:', error);
+    }
+  }
+
+  // Process queued OCR validation notifications
+  public async processQueuedOCRValidations(): Promise<void> {
+    try {
+      const now = new Date().toISOString();
+      const queuedEvents = JSON.parse(
+        localStorage.getItem('malnu_queued_ocr_validations') || '[]'
+      ) as (OCRValidationEvent & { queuedAt: string; scheduledFor: string })[];
+
+      const readyEvents = queuedEvents.filter(event => event.scheduledFor <= now);
+      
+      if (readyEvents.length === 0) {
+        return;
+      }
+
+      for (const event of readyEvents) {
+        await this.sendOCRValidationNotification(event);
+      }
+
+      // Remove processed events
+      const remaining = queuedEvents.filter(event => event.scheduledFor > now);
+      localStorage.setItem('malnu_queued_ocr_validations', JSON.stringify(remaining));
+      
+      logger.info(`Processed ${readyEvents.length} queued OCR validation notifications`);
+    } catch (error) {
+      logger.error('Failed to process queued OCR validation notifications:', error);
     }
   }
 
@@ -397,6 +687,7 @@ class ParentGradeNotificationService {
     // Check every minute for scheduled notifications that are ready
     setInterval(() => {
       this.processScheduledNotifications();
+      this.processQueuedOCRValidations(); // Also process OCR validation queue
     }, 60 * 1000); // Every minute
   }
 
