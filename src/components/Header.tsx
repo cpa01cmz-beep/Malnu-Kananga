@@ -232,7 +232,7 @@ const Header: React.FC<HeaderProps> = ({
                                     icon={isMenuOpen ? <CloseIcon /> : <MenuIcon />}
                                     ariaLabel={isMenuOpen ? "Tutup menu" : "Buka menu"}
                                     size="lg"
-                                    ref={menuButtonRef}
+                                    
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter' || e.key === ' ') {

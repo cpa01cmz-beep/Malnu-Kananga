@@ -1,7 +1,7 @@
 # Feature Matrix
 
 **Created**: 2025-01-01
-**Last Updated**: 2026-01-06
+**Last Updated**: 2026-01-10
 **Version**: 2.1.0
 **Status**: Active
 
@@ -52,6 +52,20 @@ The system now supports **Extra Roles** for Teachers and Students with special r
     - Can create and update school policies
     - Can evaluate teachers and approve PPDB applications
     - Full access to school reports and oversight
+
+## Reusable Components
+
+### Section Component
+- **File**: `src/components/ui/Section.tsx`
+- **Purpose**: Extracted to eliminate code duplication across landing page sections
+- **Features**:
+  - Consistent section layout with title, subtitle, and badge support
+  - Responsive design with proper spacing
+  - Semantic HTML structure with proper accessibility
+  - Reusable styling with customizable className
+- **Usage**: Used by NewsSection, ProgramsSection, PPDBSection, ProfileSection
+- **Tests**: `src/components/ui/__tests__/Section.test.tsx` (11/11 passing)
+- **Added**: PR #919 (merged 2026-01-08)
 
 ## Feature Descriptions
 
