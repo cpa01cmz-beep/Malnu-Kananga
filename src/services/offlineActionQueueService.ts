@@ -494,23 +494,6 @@ class OfflineActionQueueService {
         setTimeout(() => this.sync(), 1000);
       }
     });
-
-    // Listen for AI analysis completion events
-    window.addEventListener('aiAnalysisCompleted', ((event: CustomEvent) => {
-      logger.info('AI analysis completed event received', { 
-        analysisId: event.detail.analysisId,
-        result: event.detail.result.substring(0, 100) + '...' // Log partial result
-      });
-      
-      // Trigger sync result notification to update UI
-      this.notifySyncComplete({
-        success: true,
-        actionsProcessed: 1,
-        actionsFailed: 0,
-        conflicts: [],
-        errors: [],
-      });
-    }) as EventListener);
   }
 
   private loadQueue(): void {
