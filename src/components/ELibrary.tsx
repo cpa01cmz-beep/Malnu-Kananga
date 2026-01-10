@@ -1467,7 +1467,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
       {/* Rating Modal */}
       {showRatingModal && selectedMaterialForRating && (
-        <div className="fixed inset-0 bg-black/50% flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl max-w-md w-full">
             <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
               <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
