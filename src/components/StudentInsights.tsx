@@ -9,6 +9,7 @@ import { ResponsiveContainer } from 'recharts/es6/component/ResponsiveContainer'
 import { useStudentInsights } from '../hooks/useStudentInsights';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
+import Card from './ui/Card';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import { GRADIENT_CLASSES } from '../config/gradients';
@@ -243,42 +244,42 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
 
       {/* Overall Performance */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+        <Card>
           <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">IPK</div>
           <div className="text-3xl font-bold text-neutral-900 dark:text-white">
             {insights.overallPerformance.gpa.toFixed(2)}
           </div>
-        </div>
-        
-        <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+        </Card>
+
+        <Card>
           <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Total Mata Pelajaran</div>
           <div className="text-3xl font-bold text-neutral-900 dark:text-white">
             {insights.overallPerformance.totalSubjects}
           </div>
-        </div>
-        
-        <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+        </Card>
+
+        <Card>
           <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Tingkat Perbaikan</div>
           <div className={`text-3xl font-bold ${
             insights.overallPerformance.improvementRate >= 0 ? 'text-green-600' : 'text-red-600'
           } dark:text-white`}>
             {insights.overallPerformance.improvementRate >= 0 ? '+' : ''}{insights.overallPerformance.improvementRate.toFixed(1)}%
           </div>
-        </div>
-        
-        <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+        </Card>
+
+        <Card>
           <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Kehadiran</div>
           <div className={`text-3xl font-bold ${
             insights.attendanceInsight.percentage >= 90 ? 'text-green-600' : 'text-yellow-600'
           } dark:text-white`}>
             {insights.attendanceInsight.percentage.toFixed(1)}%
           </div>
-        </div>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Grade Performance */}
-        <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+        <Card>
           <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Performa Mata Pelajaran</h3>
           <div className="space-y-3">
             {insights.gradePerformance.map((subject, index) => (
@@ -297,11 +298,11 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
                 </div>
               </div>
             ))}
-          </div>
+          </Card>
         </div>
 
         {/* Study Recommendations */}
-        <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+        <Card>
           <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Rekomendasi Belajar</h3>
           <div className="space-y-4">
             {insights.studyRecommendations.map((rec, index) => (
@@ -314,13 +315,13 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
                 <p className="text-xs text-blue-600 dark:text-blue-400">⏰ {rec.timeAllocation}</p>
               </div>
             ))}
-          </div>
+          </Card>
         </div>
       </div>
 
       {/* Performance Trends Chart */}
       {insights.performanceTrends.length > 0 && (
-        <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700 mb-6">
+        <Card className="mb-6">
           <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Tren Performa</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={insights.performanceTrends}>
@@ -344,11 +345,11 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
               />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+        </Card>
       )}
 
       {/* AI Analysis */}
-      <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+      <Card>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">🤖 Analisis AI</h3>
           <Button 
@@ -364,7 +365,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
             className="text-neutral-700 dark:text-neutral-300 whitespace-pre-line"
             dangerouslySetInnerHTML={{ __html: insights.aiAnalysis.replace(/\n/g, '<br />') }}
           />
-        </div>
+        </Card>
       </div>
 
       {/* AI Analysis Modal */}

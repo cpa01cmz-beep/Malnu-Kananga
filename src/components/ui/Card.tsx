@@ -31,7 +31,7 @@ const paddingClasses = {
   lg: 'p-6 sm:p-8'
 };
 
-const baseCardClasses = "rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 transition-all duration-300";
+const baseCardClasses = "bg-white dark:bg-neutral-800 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 transition-all duration-300";
 
 const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | InteractiveCardProps>(({
   children,

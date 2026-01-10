@@ -3,6 +3,7 @@ import Button from './ui/Button';
 import ErrorMessage from './ui/ErrorMessage';
 import ProgressBar from './ui/ProgressBar';
 import Tab from './ui/Tab';
+import Card from './ui/Card';
 import {
   BarChart,
   Bar,
@@ -459,7 +460,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
           </div>
 
           {correlation && (
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <Card>
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Insight & Saran</h3>
               <ul className="space-y-2">
                 {correlation.insights.map((insight, idx) => (
@@ -469,10 +470,10 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                   </li>
                 ))}
               </ul>
-            </div>
+            </Card>
           )}
 
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+          <Card>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Distribusi Predikat</h3>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
@@ -492,13 +493,13 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
-          </div>
+          </Card>
         </div>
       )}
 
       {activeTab === 'trends' && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+          <Card>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Performa per Mata Pelajaran</h3>
             <ResponsiveContainer width="100%" height={400}>
               <BarChart data={subjectPerformance}>
@@ -512,9 +513,9 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 <Bar dataKey="finalExam" fill={CHART_COLORS.yellow} name="UAS" />
               </BarChart>
             </ResponsiveContainer>
-          </div>
-
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+          </Card>
+ 
+          <Card>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Rata-rata Nilai Akhir</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={subjectPerformance}>
@@ -529,13 +530,13 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </Card>
         </div>
       )}
 
       {activeTab === 'goals' && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+          <Card>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Tambah Target Prestasi</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
@@ -581,9 +582,9 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             >
               Tambah Target
             </Button>
-          </div>
+          </Card>
 
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+          <Card>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Target Aktif</h3>
             {goals.length > 0 ? (
               <div className="space-y-3">
@@ -632,13 +633,13 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             ) : (
               <p className="text-center text-neutral-500 dark:text-neutral-400 py-8">Belum ada target prestasi yang ditetapkan.</p>
             )}
-          </div>
+          </Card>
         </div>
       )}
 
       {activeTab === 'correlation' && correlation && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+          <Card>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Analisis Korelasi Kehadiran vs Nilai</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="text-center">
@@ -654,7 +655,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 <p className="text-neutral-700 dark:text-neutral-300 font-medium">Rata-rata Nilai</p>
               </div>
             </div>
-          </div>
+          </Card>
 
           <div className={`${getGradientClass('PURPLE_SOFT')} ${DARK_GRADIENT_CLASSES.PURPLE_SOFT} rounded-xl p-6 border border-purple-200 dark:border-purple-800`}>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Skor Korelasi Kesehatan Akademik</h3>

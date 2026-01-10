@@ -30,6 +30,7 @@ import { usePushNotifications } from '../hooks/usePushNotifications';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import BackButton from './ui/BackButton';
+import Card from './ui/Card';
 import DashboardActionCard from './ui/DashboardActionCard';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import type { VoiceCommand } from '../types';
@@ -364,7 +365,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'home' && (
           <>
             {/* Welcome Banner */}
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up relative overflow-hidden">
+            <Card className="p-6 sm:p-8 mb-8 animate-fade-in-up relative overflow-hidden">
               <div className={`absolute top-0 right-0 w-64 h-64 ${GRADIENT_CLASSES.PRIMARY_DECORATIVE_SOFT} rounded-full -translate-y-1/2 translate-x-1/2 opacity-50`}></div>
               <div className="relative z-10">
                 <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Portal Wali Murid</h1>
@@ -375,11 +376,11 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                   Pantau perkembangan pendidikan anak Anda dengan mudah.
                 </p>
               </div>
-            </div>
+            </Card>
 
             {/* Child Selection */}
             {children.length > 1 && (
-              <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8">
+              <Card className="mb-8">
                 <h2 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">Pilih Anak</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {children.map((child) => (
@@ -401,141 +402,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                       </div>
                     </button>
                   ))}
-                </div>
               </div>
-            )}
-
-            {/* Selected Child Info */}
-            {selectedChild && (
-              <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-                      {selectedChild.studentName}
-                    </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-neutral-500 dark:text-neutral-400">NISN</p>
-                        <p className="font-medium text-neutral-900 dark:text-white">{selectedChild.nisn || '-'}</p>
-                      </div>
-                      <div>
-                        <p className="text-neutral-500 dark:text-neutral-400">NIS</p>
-                        <p className="font-medium text-neutral-900 dark:text-white">{selectedChild.nis || '-'}</p>
-                      </div>
-                      <div>
-                        <p className="text-neutral-500 dark:text-neutral-400">Kelas</p>
-                        <p className="font-medium text-neutral-900 dark:text-white">{selectedChild.className || '-'}</p>
-                      </div>
-                      <div>
-                        <p className="text-neutral-500 dark:text-neutral-400">Tahun Ajaran</p>
-                        <p className="font-medium text-neutral-900 dark:text-white">{selectedChild.academicYear || '-'}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="ml-6 flex-shrink-0">
-                    <div className={`${GRADIENT_CLASSES.PRIMARY_MEDIUM} w-20 h-20 rounded-xl flex items-center justify-center text-white text-3xl font-semibold shadow-card`}>
-                      {selectedChild.studentName.charAt(0).toUpperCase()}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Voice Commands Section */}
-            {voiceSupported && (
-                <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                                Perintah Suara
-                            </h2>
-                            <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-                                Gunakan suara untuk navigasi cepat portal
-                            </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <SmallActionButton
-                                onClick={() => setShowVoiceHelp(true)}
-                            >
-                                Bantuan
-                            </SmallActionButton>
-                            <VoiceInputButton
-                                onTranscript={(transcript) => {
-                                  onShowToast(`Transkripsi: ${transcript}`, 'info');
-                                }}
-                                onCommand={handleVoiceCommandCallback}
-                                onError={(errorMsg) => onShowToast(errorMsg, 'error')}
-                                className="flex-shrink-0"
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Menu Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {menuItems.map((item, index) => (
-                <DashboardActionCard
-                  key={index}
-                  icon={item.icon}
-                  title={item.title}
-                  description={item.description}
-                  colorTheme={item.colorTheme}
-                  layout="horizontal"
-                  disabled={loading || !selectedChild}
-                  onClick={item.action}
-                  ariaLabel={item.title}
-                  className={`[animation-delay:${index * 0.1}s]`}
-                />
-              ))}
-            </div>
-          </>
-        )}
-
-        {currentView === 'profile' && selectedChild && (
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 animate-fade-in-up">
-            <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} />
-            </div>
-            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-white mb-6">Profil Anak</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <div className={`w-20 h-20 ${GRADIENT_CLASSES.PRIMARY_DECORATIVE} rounded-xl flex items-center justify-center text-white text-3xl font-semibold shadow-card`}>
-                    {selectedChild.studentName.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-neutral-900 dark:text-white">{selectedChild.studentName}</h3>
-                    <p className="text-neutral-600 dark:text-neutral-400">{selectedChild.className || 'Tanpa Kelas'}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">NISN</p>
-                  <p className="text-lg font-medium text-neutral-900 dark:text-white">{selectedChild.nisn || '-'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">NIS</p>
-                  <p className="text-lg font-medium text-neutral-900 dark:text-white">{selectedChild.nis || '-'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Kelas</p>
-                  <p className="text-lg font-medium text-neutral-900 dark:text-white">{selectedChild.className || '-'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Tahun Ajaran</p>
-                  <p className="text-lg font-medium text-neutral-900 dark:text-white">{selectedChild.academicYear || '-'}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Semester</p>
-                  <p className="text-lg font-medium text-neutral-900 dark:text-white">{selectedChild.semester || '-'}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
+            </Card>
+          )}
         {currentView === 'schedule' && selectedChild && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
@@ -616,6 +485,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             <ParentMeetingsView onShowToast={onShowToast} children={children} />
           </div>
         )}
+      </>
 
         {/* Voice Commands Help Modal */}
         <VoiceCommandsHelp
