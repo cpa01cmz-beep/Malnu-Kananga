@@ -8,6 +8,7 @@ import { MaterialFolder, ELibrary } from '../types';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import SmallActionButton from './ui/SmallActionButton';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 
 interface FolderNavigationProps {
   selectedFolderId?: string;
@@ -29,6 +30,9 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
   const [newFolderName, setNewFolderName] = useState('');
   const [newFolderDescription, setNewFolderDescription] = useState('');
   const [editingFolder, setEditingFolder] = useState<MaterialFolder | null>(null);
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [folderToDelete, setFolderToDelete] = useState<MaterialFolder | null>(null);
 
   const getPaddingLeftClass = (level: number): string => {
     const paddingClasses: Record<number, string> = {
@@ -154,21 +158,27 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
     }
   };
 
-  const deleteFolder = async (folderId: string) => {
-    if (!window.confirm('Hapus folder ini? Semua materi di dalamnya akan dipindahkan ke root.')) {
-      return;
-    }
+  const deleteFolder = (folderId: string) => {
+    const folder = folders.find(f => f.id === folderId);
+    setFolderToDelete(folder || null);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteFolder = async () => {
+    if (!folderToDelete) return;
 
     try {
-      // Mock API call - replace with actual implementation
-      setFolders(folders.filter(f => f.id !== folderId));
-      if (selectedFolderId === folderId) {
+      setFolders(folders.filter(f => f.id !== folderToDelete.id));
+      if (selectedFolderId === folderToDelete.id) {
         onFolderSelect(undefined);
       }
       onShowToast('Folder berhasil dihapus', 'success');
     } catch (err) {
       logger.error('Error deleting folder:', err);
       onShowToast('Gagal menghapus folder', 'error');
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setFolderToDelete(null);
     }
   };
 
@@ -426,6 +436,20 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
           </div>
         </div>
       )}
+
+      <ConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        title="Hapus Folder"
+        message="Hapus folder ini? Semua materi di dalamnya akan dipindahkan ke root."
+        type="warning"
+        confirmText="Hapus"
+        cancelText="Batal"
+        onConfirm={confirmDeleteFolder}
+        onCancel={() => {
+          setIsDeleteDialogOpen(false);
+          setFolderToDelete(null);
+        }}
+      />
     </div>
   );
 };

@@ -30,6 +30,7 @@ import { CHART_COLORS } from '../config/chartColors';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Modal from './ui/Modal';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 import type { 
   InventoryItem, 
   MaintenanceSchedule, 
@@ -84,6 +85,9 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
     scheduledDate: '',
     description: ''
   });
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
   const loadInventory = useCallback(async () => {
     setIsLoading(true);
@@ -180,17 +184,25 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
     }
   };
 
-  const handleDeleteItem = async (id: string) => {
-    if(!window.confirm('Hapus barang ini dari daftar?')) return;
+  const handleDeleteItem = (id: string) => {
+    setItemToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteItem = async () => {
+    if (!itemToDelete) return;
 
     try {
-      const response = await inventoryAPI.delete(id);
+      const response = await inventoryAPI.delete(itemToDelete);
       if (response.success) {
-        setItems(items.filter(i => i.id !== id));
+        setItems(items.filter(i => i.id !== itemToDelete));
         onShowToast('Barang dihapus.', 'info');
       }
     } catch {
       onShowToast('Gagal menghapus barang. Silakan coba lagi.', 'error');
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setItemToDelete(null);
     }
   };
 
@@ -878,6 +890,20 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
           </div>
         </div>
       </Modal>
+
+      <ConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        title="Hapus Barang"
+        message="Apakah Anda yakin ingin menghapus barang ini dari daftar?"
+        type="danger"
+        confirmText="Hapus"
+        cancelText="Batal"
+        onConfirm={confirmDeleteItem}
+        onCancel={() => {
+          setIsDeleteDialogOpen(false);
+          setItemToDelete(null);
+        }}
+      />
     </div>
   );
 };

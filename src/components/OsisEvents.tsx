@@ -13,6 +13,7 @@ import Select from './ui/Select';
 import Textarea from './ui/Textarea';
 import ProgressBar from './ui/ProgressBar';
 import { EmptyState } from './ui/LoadingState';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 import { GRADIENT_CLASSES, DARK_GRADIENT_CLASSES } from '../config/gradients';
 
 interface OsisEventsProps {
@@ -45,6 +46,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
 
   const [feedback, setFeedback] = useState<EventFeedback[]>([]);
   const [newFeedback, setNewFeedback] = useState<Partial<EventFeedback>>({});
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState<string | null>(null);
 
   const loadEvents = useCallback(async () => {
     setIsLoading(true);
@@ -133,14 +137,19 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Batalkan kegiatan ini?')) return;
+  const handleDelete = (id: string) => {
+    setEventToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteEvent = async () => {
+    if (!eventToDelete) return;
 
     try {
-      const response = await eventsAPI.delete(id);
+      const response = await eventsAPI.delete(eventToDelete);
       if (response.success) {
-        setEvents(events.filter(e => e.id !== id));
-        if (selectedEvent?.id === id) {
+        setEvents(events.filter(e => e.id !== eventToDelete));
+        if (selectedEvent?.id === eventToDelete) {
           setSelectedEvent(null);
         }
         onShowToast('Kegiatan dihapus.', 'info');
@@ -149,6 +158,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
       }
     } catch {
       onShowToast('Gagal menghapus kegiatan. Silakan coba lagi.', 'error');
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setEventToDelete(null);
     }
   };
 
@@ -756,6 +768,20 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
           )}
         </div>
       </div>
+
+      <ConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        title="Batalkan Kegiatan"
+        message="Apakah Anda yakin ingin membatalkan kegiatan ini?"
+        type="warning"
+        confirmText="Batalkan"
+        cancelText="Batal"
+        onConfirm={confirmDeleteEvent}
+        onCancel={() => {
+          setIsDeleteDialogOpen(false);
+          setEventToDelete(null);
+        }}
+      />
     </div>
   );
 };

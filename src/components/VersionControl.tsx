@@ -5,6 +5,7 @@ import { MaterialVersion, ELibrary } from '../types';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import FileInput from './ui/FileInput';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 
 interface VersionControlProps {
   material: ELibrary;
@@ -24,6 +25,11 @@ const VersionControl: React.FC<VersionControlProps> = ({
   const [newFile, setNewFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [showVersionHistory, setShowVersionHistory] = useState(false);
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isRestoreDialogOpen, setIsRestoreDialogOpen] = useState(false);
+  const [versionToDelete, setVersionToDelete] = useState<MaterialVersion | null>(null);
+  const [versionToRestore, setVersionToRestore] = useState<MaterialVersion | null>(null);
 
   const fetchVersions = useCallback(async () => {
     try {
@@ -123,24 +129,52 @@ const VersionControl: React.FC<VersionControlProps> = ({
     }
   };
 
-  const restoreVersion = async (version: MaterialVersion) => {
-    if (!window.confirm(`Aktifkan kembali versi ${version.version}? Versi aktif saat ini akan dinonaktifkan.`)) {
-      return;
-    }
+  const restoreVersion = (version: MaterialVersion) => {
+    setVersionToRestore(version);
+    setIsRestoreDialogOpen(true);
+  };
+
+  const deleteVersion = (versionId: string) => {
+    const version = versions.find(v => v.id === versionId);
+    setVersionToDelete(version || null);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmRestoreVersion = async () => {
+    if (!versionToRestore) return;
 
     try {
-      // Mock restore - replace with actual implementation
       const updatedVersions = versions.map(v => ({
         ...v,
-        isActive: v.id === version.id
+        isActive: v.id === versionToRestore.id
       }));
-      
+
       setVersions(updatedVersions);
-      onShowToast(`Versi ${version.version} berhasil diaktifkan kembali`, 'success');
+      onShowToast(`Versi ${versionToRestore.version} berhasil diaktifkan kembali`, 'success');
       onVersionUpdate?.();
     } catch (err) {
       logger.error('Error restoring version:', err);
       onShowToast('Gagal mengaktifkan kembali versi', 'error');
+    } finally {
+      setIsRestoreDialogOpen(false);
+      setVersionToRestore(null);
+    }
+  };
+
+  const confirmDeleteVersion = async () => {
+    if (!versionToDelete) return;
+
+    try {
+      const updatedVersions = versions.filter(v => v.id !== versionToDelete.id);
+      setVersions(updatedVersions);
+      onShowToast('Versi berhasil dihapus', 'success');
+      onVersionUpdate?.();
+    } catch (err) {
+      logger.error('Error deleting version:', err);
+      onShowToast('Gagal menghapus versi', 'error');
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setVersionToDelete(null);
     }
   };
 
@@ -372,6 +406,34 @@ const VersionControl: React.FC<VersionControlProps> = ({
           </div>
         </div>
       )}
+
+      <ConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        title="Hapus Versi"
+        message="Hapus versi ini? Tindakan tidak dapat dibatalkan."
+        type="danger"
+        confirmText="Hapus"
+        cancelText="Batal"
+        onConfirm={confirmDeleteVersion}
+        onCancel={() => {
+          setIsDeleteDialogOpen(false);
+          setVersionToDelete(null);
+        }}
+      />
+
+      <ConfirmationDialog
+        isOpen={isRestoreDialogOpen}
+        title="Aktifkan Kembali Versi"
+        message={`Aktifkan kembali versi ${versionToRestore?.version}? Versi aktif saat ini akan dinonaktifkan.`}
+        type="warning"
+        confirmText="Aktifkan"
+        cancelText="Batal"
+        onConfirm={confirmRestoreVersion}
+        onCancel={() => {
+          setIsRestoreDialogOpen(false);
+          setVersionToRestore(null);
+        }}
+      />
     </div>
   );
 };
