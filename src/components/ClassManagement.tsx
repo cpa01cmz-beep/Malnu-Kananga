@@ -3,7 +3,7 @@ import { studentsAPI, attendanceAPI } from '../services/apiService';
 import { Student, Attendance } from '../types';
 import { logger } from '../utils/logger';
 import { validateAttendance } from '../utils/teacherValidation';
-import { pushNotificationService } from '../services/pushNotificationService';
+import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import {
   executeWithRetry,
   createToastHandler
@@ -199,7 +199,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
             'alpa': 'Alpa'
           };
           
-          await pushNotificationService.showLocalNotification({
+          await unifiedNotificationManager.showNotification({
             id: `attendance-${id}-${today}-${Date.now()}`,
             type: 'system',
             title: 'Kehadiran Hari Ini',

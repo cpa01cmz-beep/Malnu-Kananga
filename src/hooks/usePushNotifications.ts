@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { NotificationSettings, PushNotification, NotificationHistoryItem, NotificationBatch, NotificationTemplate, NotificationAnalytics } from '../types';
 import { NOTIFICATION_CONFIG } from '../constants';
-import { pushNotificationService } from '../services/pushNotificationService';
+import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { logger } from '../utils/logger';
 
 /**
@@ -21,66 +21,66 @@ export function usePushNotifications() {
   const [analytics, setAnalytics] = useState<NotificationAnalytics[]>([]);
 
   const loadSettings = useCallback(() => {
-    const loadedSettings = pushNotificationService.getSettings();
+    const loadedSettings = unifiedNotificationManager.getSettings();
     setSettingsState(loadedSettings);
   }, []);
 
   const loadHistory = useCallback(() => {
-    const loadedHistory = pushNotificationService.getHistory();
+    const loadedHistory = unifiedNotificationManager.getUnifiedHistory();
     setHistory(loadedHistory);
   }, []);
 
   const checkPermission = useCallback(() => {
-    setPermissionGranted(pushNotificationService.isPermissionGranted());
-    setPermissionDenied(pushNotificationService.isPermissionDenied());
+    setPermissionGranted(unifiedNotificationManager.isPermissionGranted());
+    setPermissionDenied(unifiedNotificationManager.isPermissionDenied());
   }, []);
 
   const requestPermission = useCallback(async (): Promise<boolean> => {
-    const granted = await pushNotificationService.requestPermission();
+    const granted = await unifiedNotificationManager.requestPermission();
     checkPermission();
     return granted;
   }, [checkPermission]);
 
   const subscribeToPush = useCallback(async (applicationServerKey: string): Promise<boolean> => {
-    const subscription = await pushNotificationService.subscribeToPush(applicationServerKey);
+    const subscription = await unifiedNotificationManager.subscribeToPush(applicationServerKey);
     const isSubscribed = subscription !== null;
     setSubscribed(isSubscribed);
     return isSubscribed;
   }, []);
 
   const unsubscribeFromPush = useCallback(async (): Promise<boolean> => {
-    const unsubscribed = await pushNotificationService.unsubscribeFromPush();
+    const unsubscribed = await unifiedNotificationManager.unsubscribeFromPush();
     setSubscribed(false);
     return unsubscribed;
   }, []);
 
   const showNotification = useCallback(async (notification: PushNotification): Promise<void> => {
-    await pushNotificationService.showLocalNotification(notification);
+    await unifiedNotificationManager.showLocalNotification(notification);
     loadHistory();
   }, [loadHistory]);
 
   const updateSettings = useCallback((newSettings: NotificationSettings) => {
-    pushNotificationService.saveSettings(newSettings);
+    unifiedNotificationManager.saveSettings(newSettings);
     setSettingsState(newSettings);
   }, []);
 
   const resetSettings = useCallback(() => {
-    pushNotificationService.resetSettings();
+    unifiedNotificationManager.resetSettings();
     loadSettings();
   }, [loadSettings]);
 
   const clearHistory = useCallback(() => {
-    pushNotificationService.clearHistory();
+    unifiedNotificationManager.clearUnifiedHistory();
     setHistory([]);
   }, []);
 
   const markAsRead = useCallback((notificationId: string) => {
-    pushNotificationService.markAsRead(notificationId);
+    unifiedNotificationManager.markAsRead(notificationId);
     loadHistory();
   }, [loadHistory]);
 
   const deleteNotification = useCallback((notificationId: string) => {
-    pushNotificationService.deleteFromHistory(notificationId);
+    unifiedNotificationManager.deleteFromHistory(notificationId);
     loadHistory();
   }, [loadHistory]);
 
@@ -103,28 +103,28 @@ export function usePushNotifications() {
   }, []);
 
   const loadBatches = useCallback(() => {
-    const loadedBatches = pushNotificationService.getBatches();
+    const loadedBatches = unifiedNotificationManager.getBatches();
     setBatches(loadedBatches);
   }, []);
 
   const loadTemplates = useCallback(() => {
-    const loadedTemplates = pushNotificationService.getTemplates();
+    const loadedTemplates = unifiedNotificationManager.getTemplates();
     setTemplates(loadedTemplates);
   }, []);
 
   const loadAnalytics = useCallback(() => {
-    const loadedAnalytics = pushNotificationService.getAnalytics();
+    const loadedAnalytics = unifiedNotificationManager.getAnalytics();
     setAnalytics(loadedAnalytics);
   }, []);
 
   const createBatch = useCallback((name: string, notifications: PushNotification[]) => {
-    const batch = pushNotificationService.createBatch(name, notifications);
+    const batch = unifiedNotificationManager.createBatch(name, notifications);
     loadBatches();
     return batch;
   }, [loadBatches]);
 
   const sendBatch = useCallback(async (batchId: string): Promise<boolean> => {
-    const success = await pushNotificationService.sendBatch(batchId);
+    const success = await unifiedNotificationManager.sendBatch(batchId);
     loadBatches();
     return success;
   }, [loadBatches]);
@@ -136,7 +136,7 @@ export function usePushNotifications() {
     body: string,
     variables: string[] = []
   ) => {
-    const template = pushNotificationService.createTemplate(name, type, title, body, variables);
+    const template = unifiedNotificationManager.createTemplate(name, type, title, body, variables);
     loadTemplates();
     return template;
   }, [loadTemplates]);
@@ -145,11 +145,11 @@ export function usePushNotifications() {
     templateId: string,
     variables: Record<string, string | number> = {}
   ) => {
-    return pushNotificationService.createNotificationFromTemplate(templateId, variables);
+    return unifiedNotificationManager.createNotificationFromTemplate(templateId, variables);
   }, []);
 
   const recordAnalytics = useCallback((notificationId: string, action: 'delivered' | 'read' | 'clicked' | 'dismissed') => {
-    pushNotificationService.recordAnalytics(notificationId, action);
+    unifiedNotificationManager.recordAnalytics(notificationId, action);
     loadAnalytics();
   }, [loadAnalytics]);
 

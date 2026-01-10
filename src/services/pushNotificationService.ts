@@ -20,8 +20,18 @@ declare global {
 }
 
 /**
- * Legacy wrapper for backward compatibility
- * For new code, use unifiedNotificationManager directly
+ * @deprecated This service is deprecated and will be removed in a future version.
+ * Use unifiedNotificationManager directly instead.
+ * This wrapper exists only for backward compatibility during migration.
+ * 
+ * Migration guide:
+ * - Replace `import { pushNotificationService }` with `import { unifiedNotificationManager }`
+ * - Replace `pushNotificationService.showLocalNotification()` with `unifiedNotificationManager.showNotification()`
+ * - Replace `pushNotificationService.getHistory()` with `unifiedNotificationManager.getUnifiedHistory()`
+ * - Replace `pushNotificationService.clearHistory()` with `unifiedNotificationManager.clearUnifiedHistory()`
+ * - All other method names remain the same
+ * 
+ * See issue #990 for complete migration details.
  */
 class PushNotificationService {
   private unified = unifiedNotificationManager;

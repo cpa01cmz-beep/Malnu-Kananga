@@ -5,7 +5,7 @@ import DocumentTextIcon from './icons/DocumentTextIcon';
 import { ShareIcon } from './icons/MaterialIcons';
 import { eLibraryAPI } from '../services/apiService';
 import { ELibrary as ELibraryType, Subject, MaterialFolder } from '../types';
-import { pushNotificationService } from '../services/pushNotificationService';
+import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import FileUpload from './FileUpload';
 import { FileUploadResponse } from '../services/apiService';
@@ -271,7 +271,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           await notifyLibraryUpdate(uploadResult.data.title, uploadResult.data.category);
           
           // Legacy notification for detailed material notification
-          await pushNotificationService.showLocalNotification({
+          await unifiedNotificationManager.showNotification({
             id: `material-${uploadResult.data.id}-${Date.now()}`,
             type: 'library',
             title: 'Materi Baru Tersedia',

@@ -1,11 +1,11 @@
 // parentGradeNotificationService.ts - Service for parent grade notifications
 // Integrates with push notification service and event notifications hook
 
-import { pushNotificationService } from './pushNotificationService';
+import { unifiedNotificationManager } from './unifiedNotificationManager';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { gradesAPI } from './apiService';
-import type { PushNotification, OCRValidationEvent, ParentChild } from '../types';
+import type { PushNotification, OCRValidationEvent, ParentChild, NotificationHistoryItem } from '../types';
 import type { Grade } from '../types';
 
 export interface ParentGradeNotificationSettings {
@@ -117,7 +117,7 @@ class ParentGradeNotificationService {
     try {
       // Get current user info
       const currentUser = JSON.parse(
-        localStorage.getItem('malnu_auth_session') || '{}'
+        localStorage.getItem(STORAGE_KEYS.AUTH_SESSION) || '{}'
       );
       
       // Check if current user is a parent
@@ -126,7 +126,7 @@ class ParentGradeNotificationService {
       }
 
       // Get children info
-      const childrenData = localStorage.getItem('malnu_children');
+      const childrenData = localStorage.getItem(STORAGE_KEYS.CHILDREN);
       if (!childrenData) {
         return false;
       }
@@ -149,7 +149,7 @@ class ParentGradeNotificationService {
         return;
       }
       
-      await pushNotificationService.showLocalNotification(notification);
+      await unifiedNotificationManager.showNotification(notification);
       
       logger.info('OCR validation notification sent:', { 
         type: event.type, 
@@ -242,7 +242,7 @@ class ParentGradeNotificationService {
   // Get student name from stored data
   private getStudentName(studentId: string): string {
     try {
-      const childrenData = localStorage.getItem('malnu_children');
+      const childrenData = localStorage.getItem(STORAGE_KEYS.CHILDREN);
       if (!childrenData) {
         return `Siswa ${studentId}`;
       }
@@ -314,7 +314,7 @@ class ParentGradeNotificationService {
 
       // Store in localStorage for later processing
       const queuedEvents = JSON.parse(
-        localStorage.getItem('malnu_queued_ocr_validations') || '[]'
+        localStorage.getItem(STORAGE_KEYS.OCR_VALIDATION_QUEUE) || '[]'
       );
       
       queuedEvents.push({
@@ -323,7 +323,7 @@ class ParentGradeNotificationService {
         scheduledFor: quietEnd.toISOString()
       });
       
-      localStorage.setItem('malnu_queued_ocr_validations', JSON.stringify(queuedEvents));
+      localStorage.setItem(STORAGE_KEYS.OCR_VALIDATION_QUEUE, JSON.stringify(queuedEvents));
       logger.info('OCR validation notification queued for after quiet hours');
     } catch (error) {
       logger.error('Failed to queue OCR validation notification:', error);
@@ -335,7 +335,7 @@ class ParentGradeNotificationService {
     try {
       const now = new Date().toISOString();
       const queuedEvents = JSON.parse(
-        localStorage.getItem('malnu_queued_ocr_validations') || '[]'
+        localStorage.getItem(STORAGE_KEYS.OCR_VALIDATION_QUEUE) || '[]'
       ) as (OCRValidationEvent & { queuedAt: string; scheduledFor: string })[];
 
       const readyEvents = queuedEvents.filter(event => event.scheduledFor <= now);
@@ -350,7 +350,7 @@ class ParentGradeNotificationService {
 
       // Remove processed events
       const remaining = queuedEvents.filter(event => event.scheduledFor > now);
-      localStorage.setItem('malnu_queued_ocr_validations', JSON.stringify(remaining));
+      localStorage.setItem(STORAGE_KEYS.OCR_VALIDATION_QUEUE, JSON.stringify(remaining));
       
       logger.info(`Processed ${readyEvents.length} queued OCR validation notifications`);
     } catch (error) {
@@ -561,7 +561,7 @@ class ParentGradeNotificationService {
   private async sendImmediateNotification(gradeData: GradeNotificationData): Promise<void> {
     try {
       const notification = this.createGradeNotification(gradeData);
-      await pushNotificationService.showLocalNotification(notification);
+      await unifiedNotificationManager.showNotification(notification);
       
       logger.info('Grade notification sent:', gradeData.studentName, gradeData.subject);
     } catch (error) {
@@ -795,7 +795,7 @@ class ParentGradeNotificationService {
         }
       };
 
-      await pushNotificationService.showLocalNotification(notification);
+      await unifiedNotificationManager.showNotification(notification);
       logger.info(`${frequency} digest sent for ${studentName}`);
 
     } catch (error) {
@@ -975,7 +975,7 @@ class ParentGradeNotificationService {
         }
       };
 
-      await pushNotificationService.showLocalNotification(notification);
+      await unifiedNotificationManager.showNotification(notification);
       logger.info(`Missing grade notification sent for ${child.studentName} - ${missingGrades.length} subjects affected`);
 
     } catch (error) {
@@ -986,12 +986,12 @@ class ParentGradeNotificationService {
   // Get notification history for a specific student
   getNotificationHistory(_studentId: string): PushNotification[] {
     try {
-      const history = pushNotificationService.getHistory();
-      return history.filter(item => 
+      const history = unifiedNotificationManager.getUnifiedHistory();
+      return history.filter((item: NotificationHistoryItem) => 
         item.notification.type === 'grade' &&
         item.notification.data?.studentName &&
         item.notification.data?.type === 'grade_notification'
-      ).map(item => item.notification);
+      ).map((item: NotificationHistoryItem) => item.notification);
     } catch (error) {
       logger.error('Failed to get notification history:', error);
       return [];

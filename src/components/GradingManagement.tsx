@@ -4,7 +4,7 @@ import Papa from 'papaparse';
 import { analyzeClassPerformance } from '../services/geminiService';
 import { studentsAPI, gradesAPI } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
-import { pushNotificationService } from '../services/pushNotificationService';
+import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { ocrService, OCRExtractionResult, OCRProgress } from '../services/ocrService';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { LightBulbIcon } from './icons/LightBulbIcon';
@@ -677,7 +677,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             );
             
             // Legacy notification for detailed student notification
-            await pushNotificationService.showLocalNotification({
+            await unifiedNotificationManager.showNotification({
               id: `grade-${save.studentId}-${subjectId}-${Date.now()}`,
               type: 'grade',
               title: 'Nilai Baru Tersedia',
@@ -697,7 +697,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             // TODO: Also notify parents when parent API is available
             // const parents = await parentsAPI.getByStudentId(save.studentId);
             // for (const parent of parents) {
-            //   await pushNotificationService.showLocalNotification({
+            //   await unifiedNotificationManager.showNotification({
             //     id: `parent-grade-${save.studentId}-${subjectId}-${Date.now()}`,
             //     type: 'grade',
             //     title: `Nilai ${grade.name}`,
