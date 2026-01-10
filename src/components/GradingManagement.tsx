@@ -950,13 +950,13 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       
       const gradesData = filteredData.map(student => ({
         subjectName: subjectId,
-        grade: calculateFinalGrade(student),
+        grade: calculateFinalGrade(student.assignment, student.midExam, student.finalExam),
         className: className,
-        semester: 'Semester 1', // This could be made dynamic
+        semester: 'Semester 1',
         remarks: `Assignment: ${student.assignment}, Mid: ${student.midExam}, Final: ${student.finalExam}`
       }));
       
-      pdfExportService.createGradesReport(gradesData);
+      pdfExportService.createGradesReport(gradesData, { name: '', id: '' });
       
       onShowToast('Laporan nilai berhasil diexport ke PDF', 'success');
     } catch (error) {

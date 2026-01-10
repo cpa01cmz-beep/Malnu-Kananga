@@ -111,32 +111,28 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
 
   const handlePDFExport = async () => {
     if (history.length === 0) {
-      // Show toast or alert - need to accept onShowToast prop
-      console.warn('No attendance data to export');
+      logger.warn('No attendance data to export');
       return;
     }
 
     try {
       setIsExportingPDF(true);
-      
+
       const attendanceData = history.map(record => ({
         date: record.date,
         status: record.status,
-        subject: 'All Subjects', // Could be made dynamic
+        subject: 'All Subjects',
         notes: record.time === '-' ? 'Absent' : `Present at ${record.time}`
       }));
-      
+
       pdfExportService.createAttendanceReport(attendanceData, {
         name: STUDENT_NAME,
         id: STUDENT_NIS
       });
-      
-      // Show success message - need to accept onShowToast prop
-      console.log('Laporan kehadiran berhasil diexport ke PDF');
+
+      logger.info('Laporan kehadiran berhasil diexport ke PDF');
     } catch (error) {
-      logger.error('Failed to export attendance PDF:', error);
-      // Show error message - need to accept onShowToast prop
-      console.error('Gagal melakukan export PDF');
+      logger.error('Gagal melakukan export PDF:', error);
     } finally {
       setIsExportingPDF(false);
     }

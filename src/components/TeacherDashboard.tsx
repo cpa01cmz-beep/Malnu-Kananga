@@ -193,7 +193,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
       setIsExportingConsolidated(true);
       
       // Get current user info from localStorage
-      const userJson = localStorage.getItem(STORAGE_KEYS.USER_SESSION);
+      const userJson = localStorage.getItem(STORAGE_KEYS.USER);
       const user = userJson ? JSON.parse(userJson) : null;
       
       if (!user) {
@@ -206,9 +206,9 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         name: user.name || 'Guru',
         id: user.id || 'ID-001',
         className: 'XII IPA 1',
-        totalStudents: 32,
-        averageGrade: 85.5,
-        attendanceRate: 92.3
+        totalStudents: '32',
+        averageGrade: '85.5',
+        attendanceRate: '92.3'
       };
       
       // Mock grades data (would fetch from API)
@@ -387,7 +387,6 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         description="Export gabungan nilai, kehadiran, dan jadwal."
                         colorTheme="green"
                         statusBadge={isExportingConsolidated ? "Processing..." : "Ready"}
-                        badgeVariant="primary"
                         disabled={isExportingConsolidated}
                         onClick={handleConsolidatedPDFExport}
                         ariaLabel="Export laporan konsolidasi ke PDF"
