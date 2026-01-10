@@ -7,6 +7,7 @@ import Button from './ui/Button';
 import IconButton from './ui/IconButton';
 import Modal from './ui/Modal';
 import SearchInput from './ui/SearchInput';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 
 interface MaterialSharingProps {
   material: ELibrary;
@@ -35,6 +36,10 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
   const [expirationDate, setExpirationDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [sharingToDelete, setSharingToDelete] = useState<MaterialSharing | null>(null);
+  const [teachersToRevoke, setTeachersToRevoke] = useState<Teacher[]>([]);
 
   const fetchSharing = useCallback(async () => {
     try {
@@ -120,19 +125,28 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
     }
   };
 
-  const handleRevoke = async (sharingId: string, teacherIds: string[]) => {
-    if (!window.confirm(`Batasi akses ${teacherIds.length} guru?`)) {
-      return;
-    }
+  const handleRevoke = (sharingId: string, teacherIds: string[]) => {
+    const sharing = sharing.find(s => s.id === sharingId);
+    const teachers = teachers.filter(t => teacherIds.includes(t.id));
+    setSharingToDelete(sharing || null);
+    setTeachersToRevoke(teachers);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmRevoke = async () => {
+    if (!sharingToDelete) return;
 
     try {
-      // Mock API call - replace with actual implementation
-      setSharing(sharing.filter(s => s.id !== sharingId));
+      setSharing(sharing.filter(s => s.id !== sharingToDelete!.id));
       onShowToast('Akses materi berhasil dicabut', 'success');
       onSharingUpdate?.();
     } catch (err) {
       logger.error('Error revoking sharing:', err);
       onShowToast('Gagal mencabut akses', 'error');
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setSharingToDelete(null);
+      setTeachersToRevoke([]);
     }
   };
 
@@ -378,6 +392,21 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
           </Button>
         </div>
       </Modal>
+
+      <ConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        title="Batasi Akses Guru"
+        message={`Batasi akses ${teachersToRevoke.length} guru?`}
+        type="warning"
+        confirmText="Batasi"
+        cancelText="Batal"
+        onConfirm={confirmRevoke}
+        onCancel={() => {
+          setIsDeleteDialogOpen(false);
+          setSharingToDelete(null);
+          setTeachersToRevoke([]);
+        }}
+      />
     </div>
   );
 };
