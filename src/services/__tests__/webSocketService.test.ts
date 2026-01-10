@@ -1,7 +1,35 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { webSocketService, type RealTimeEvent, type RealTimeEventType } from '../services/webSocketService';
-import { apiService } from '../services/apiService';
+import { webSocketService, type RealTimeEvent } from '../webSocketService';
+import { apiService } from '../apiService';
 import { logger } from '../utils/logger';
+
+/* eslint-disable no-undef */
+// Mock WebSocket for tests
+(global as any).WebSocket = vi.fn().mockImplementation(() => ({
+  readyState: 1,
+  CONNECTING: 0,
+  OPEN: 1,
+  CLOSING: 2,
+  CLOSED: 3,
+  send: vi.fn(),
+  close: vi.fn(),
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
+}));
+
+// Mock MessageEvent
+(global as any).MessageEvent = vi.fn().mockImplementation((type, eventInit) => ({
+  type,
+  data: eventInit?.data,
+}));
+
+// Mock CloseEvent  
+(global as any).CloseEvent = vi.fn().mockImplementation((type, eventInit) => ({
+  type,
+  code: eventInit?.code || 1000,
+  reason: eventInit?.reason || '',
+  wasClean: eventInit?.wasClean || true,
+}));
 
 // Mock dependencies
 vi.mock('../services/apiService', () => ({

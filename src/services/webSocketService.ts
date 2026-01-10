@@ -1,12 +1,21 @@
 import { 
   STORAGE_KEYS, 
-  USER_ROLES, 
   type UserRole 
 } from '../constants';
 import { apiService } from './apiService';
 import type { AuthPayload } from './apiService';
-import { offlineActionQueueService } from './offlineActionQueueService';
 import { logger } from '../utils/logger';
+import type { Grade, Attendance, Announcement, LibraryMaterial, Event, Notification, User } from '../types';
+
+// Note: WebSocket types are available in the global scope in browser environments
+/* eslint-disable @typescript-eslint/no-explicit-any */
+declare global {
+  var WebSocket: {
+    new(url: string, protocols?: string | string[]): any;
+  };
+  var MessageEvent: any;
+  var CloseEvent: any;
+}
 
 /**
  * Real-time event types for WebSocket communication
@@ -66,7 +75,7 @@ export const WS_CONFIG = {
  */
 class WebSocketService {
   private static instance: WebSocketService;
-  private ws: WebSocket | null = null;
+  private ws: any | null = null;
   private pingInterval: number | null = null;
   private connectionTimeout: number | null = null;
   private subscriptions: Map<RealTimeEventType, Set<RealTimeSubscription>> = new Map();
@@ -127,7 +136,7 @@ class WebSocketService {
    * Establish WebSocket connection
    */
   private async connect(token: string): Promise<void> {
-    if (this.ws?.readyState === WebSocket.OPEN) {
+    if (this.ws?.readyState === 1) {
       return;
     }
 
@@ -140,11 +149,12 @@ class WebSocketService {
 
     return new Promise((resolve, reject) => {
       try {
-        this.ws = new WebSocket(wsUrl);
+         
+    this.ws = new (globalThis as any).WebSocket(wsUrl);
 
         // Connection timeout
         this.connectionTimeout = window.setTimeout(() => {
-          if (this.ws?.readyState !== WebSocket.OPEN) {
+          if (this.ws?.readyState !== 1) {
             this.ws?.close();
             reject(new Error('WebSocket connection timeout'));
           }
@@ -199,7 +209,8 @@ class WebSocketService {
   /**
    * Handle incoming WebSocket messages
    */
-  private handleMessage(event: MessageEvent): void {
+   
+  private handleMessage(event: any): void {
     try {
       const data = JSON.parse(event.data);
       
@@ -288,10 +299,10 @@ class WebSocketService {
 
   private updateGradesData(event: RealTimeEvent): void {
     const gradesJSON = localStorage.getItem(STORAGE_KEYS.GRADES);
-    const grades = gradesJSON ? JSON.parse(gradesJSON) : [];
-    const gradeData = event.data as any;
+    const grades: Grade[] = gradesJSON ? JSON.parse(gradesJSON) : [];
+    const gradeData = event.data as Grade;
     
-    const index = grades.findIndex((g: any) => g.id === gradeData.id);
+    const index = grades.findIndex((g: Grade) => g.id === gradeData.id);
     if (event.type === 'grade_deleted') {
       if (index !== -1) grades.splice(index, 1);
     } else {
@@ -307,10 +318,10 @@ class WebSocketService {
 
   private updateAttendanceData(event: RealTimeEvent): void {
     const attendanceJSON = localStorage.getItem(STORAGE_KEYS.ATTENDANCE);
-    const attendance = attendanceJSON ? JSON.parse(attendanceJSON) : [];
-    const attendanceData = event.data as any;
+    const attendance: Attendance[] = attendanceJSON ? JSON.parse(attendanceJSON) : [];
+    const attendanceData = event.data as Attendance;
     
-    const index = attendance.findIndex((a: any) => a.id === attendanceData.id);
+    const index = attendance.findIndex((a: Attendance) => a.id === attendanceData.id);
     if (index !== -1) {
       attendance[index] = attendanceData;
     } else if (event.type === 'attendance_marked') {
@@ -322,10 +333,10 @@ class WebSocketService {
 
   private updateAnnouncementsData(event: RealTimeEvent): void {
     const announcementsJSON = localStorage.getItem(STORAGE_KEYS.ANNOUNCEMENTS);
-    const announcements = announcementsJSON ? JSON.parse(announcementsJSON) : [];
-    const announcementData = event.data as any;
+    const announcements: Announcement[] = announcementsJSON ? JSON.parse(announcementsJSON) : [];
+    const announcementData = event.data as Announcement;
     
-    const index = announcements.findIndex((a: any) => a.id === announcementData.id);
+    const index = announcements.findIndex((a: Announcement) => a.id === announcementData.id);
     if (event.type === 'announcement_deleted') {
       if (index !== -1) announcements.splice(index, 1);
     } else {
@@ -341,10 +352,10 @@ class WebSocketService {
 
   private updateLibraryData(event: RealTimeEvent): void {
     const materialsJSON = localStorage.getItem(STORAGE_KEYS.MATERIALS);
-    const materials = materialsJSON ? JSON.parse(materialsJSON) : [];
-    const materialData = event.data as any;
+    const materials: LibraryMaterial[] = materialsJSON ? JSON.parse(materialsJSON) : [];
+    const materialData = event.data as LibraryMaterial;
     
-    const index = materials.findIndex((m: any) => m.id === materialData.id);
+    const index = materials.findIndex((m: LibraryMaterial) => m.id === materialData.id);
     if (index !== -1) {
       materials[index] = materialData;
     } else if (event.type === 'library_material_added') {
@@ -356,10 +367,10 @@ class WebSocketService {
 
 private updateEventsData(event: RealTimeEvent): void {
     const eventsJSON = localStorage.getItem(STORAGE_KEYS.EVENTS);
-    const eventDataList = eventsJSON ? JSON.parse(eventsJSON) : [];
-    const eventData = event.data as any;
+    const eventDataList: Event[] = eventsJSON ? JSON.parse(eventsJSON) : [];
+    const eventData = event.data as Event;
     
-    const index = eventDataList.findIndex((e: any) => e.id === eventData.id);
+    const index = eventDataList.findIndex((e: Event) => e.id === eventData.id);
     if (event.type === 'event_deleted') {
       if (index !== -1) eventDataList.splice(index, 1);
     } else {
@@ -372,17 +383,13 @@ private updateEventsData(event: RealTimeEvent): void {
     
     localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(eventDataList));
   }
-    }
-    
-    localStorage.setItem(STORAGE_KEYS.EVENTS, JSON.stringify(events));
-  }
 
   private updateUsersData(event: RealTimeEvent): void {
     const usersJSON = localStorage.getItem(STORAGE_KEYS.USERS);
-    const users = usersJSON ? JSON.parse(usersJSON) : [];
-    const userData = event.data as any;
+    const users: User[] = usersJSON ? JSON.parse(usersJSON) : [];
+    const userData = event.data as User;
     
-    const index = users.findIndex((u: any) => u.id === userData.id);
+    const index = users.findIndex((u: User) => u.id === userData.id);
     if (index !== -1) {
       users[index] = userData;
     }
@@ -392,10 +399,10 @@ private updateEventsData(event: RealTimeEvent): void {
 
   private updateNotificationsData(event: RealTimeEvent): void {
     const notificationsJSON = localStorage.getItem('malnu_notifications');
-    const notifications = notificationsJSON ? JSON.parse(notificationsJSON) : [];
-    const notificationData = event.data as any;
+    const notifications: Notification[] = notificationsJSON ? JSON.parse(notificationsJSON) : [];
+    const notificationData = event.data as Notification;
     
-    const index = notifications.findIndex((n: any) => n.id === notificationData.id);
+    const index = notifications.findIndex((n: Notification) => n.id === notificationData.id);
     if (index !== -1) {
       notifications[index] = notificationData;
     } else if (event.type === 'notification_created') {
@@ -437,7 +444,7 @@ private updateEventsData(event: RealTimeEvent): void {
     this.saveConnectionState();
 
     // Send subscription to server if connected
-    if (this.ws?.readyState === WebSocket.OPEN) {
+    if (this.ws?.readyState === 1) {
       this.sendSubscription(subscription.eventType);
     }
 
@@ -452,7 +459,7 @@ private updateEventsData(event: RealTimeEvent): void {
       }
       this.saveConnectionState();
 
-      if (this.ws?.readyState === WebSocket.OPEN) {
+      if (this.ws?.readyState === 1) {
         this.sendUnsubscription(subscription.eventType);
       }
 
@@ -464,7 +471,7 @@ private updateEventsData(event: RealTimeEvent): void {
    * Send subscription message to server
    */
   private sendSubscription(eventType: RealTimeEventType): void {
-    if (this.ws?.readyState === WebSocket.OPEN) {
+    if (this.ws?.readyState === 1) {
       this.ws.send(JSON.stringify({
         type: 'subscribe',
         eventType,
@@ -477,7 +484,7 @@ private updateEventsData(event: RealTimeEvent): void {
    * Send unsubscription message to server
    */
   private sendUnsubscription(eventType: RealTimeEventType): void {
-    if (this.ws?.readyState === WebSocket.OPEN) {
+    if (this.ws?.readyState === 1) {
       this.ws.send(JSON.stringify({
         type: 'unsubscribe',
         eventType,
@@ -560,11 +567,12 @@ private updateEventsData(event: RealTimeEvent): void {
       if (response.ok) {
         const data = await response.json();
         if (data.data && Array.isArray(data.data.updates)) {
-          data.data.updates.forEach((update: any) => {
+          data.data.updates.forEach((update: RealTimeEvent) => {
             this.handleRealTimeUpdate(update);
           });
         
-        localStorage.setItem('malnu_last_sync_time', new Date().toISOString());
+          localStorage.setItem('malnu_last_sync_time', new Date().toISOString());
+        }
       }
     } catch (error) {
       logger.debug('WebSocket: No updates available or polling failed', error);
@@ -577,7 +585,7 @@ private updateEventsData(event: RealTimeEvent): void {
   private startPingInterval(): void {
     this.clearPingInterval();
     this.pingInterval = window.setInterval(() => {
-      if (this.ws?.readyState === WebSocket.OPEN) {
+      if (this.ws?.readyState === 1) {
         this.ws.send(JSON.stringify({
           type: 'ping',
           timestamp: new Date().toISOString(),
@@ -681,7 +689,7 @@ private updateEventsData(event: RealTimeEvent): void {
       this.fallbackPollingInterval = null;
     }
 
-    if (this.ws?.readyState === WebSocket.OPEN) {
+    if (this.ws?.readyState === 1) {
       this.ws.send(JSON.stringify({
         type: 'disconnect',
         timestamp: new Date().toISOString(),
@@ -710,7 +718,7 @@ private updateEventsData(event: RealTimeEvent): void {
    * Check if WebSocket is connected
    */
   isConnected(): boolean {
-    return this.connectionState.connected && this.ws?.readyState === WebSocket.OPEN;
+    return this.connectionState.connected && this.ws?.readyState === 1;
   }
 
   /**

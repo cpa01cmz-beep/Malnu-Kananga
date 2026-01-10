@@ -448,7 +448,7 @@ describe('WebSocket Integration Edge Cases', () => {
     // Mock interval
     vi.useFakeTimers();
 
-    const { rerender } = renderHook(() => useWebSocket());
+    const { _rerender } = renderHook(() => useWebSocket());
 
     expect(webSocketService.getConnectionState).toHaveBeenCalledTimes(1);
 

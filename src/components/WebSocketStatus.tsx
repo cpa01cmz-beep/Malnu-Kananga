@@ -150,7 +150,9 @@ export function WebSocketStatusPanel({ className = '' }: { className?: string })
         <div className="flex items-center justify-between text-sm">
           <span className="text-gray-600">Status:</span>
           <span className={`font-medium ${isConnected ? 'text-green-600' : 'text-red-600'}`}>
-            {getStatusText()}
+{isReconnecting ? `Reconnecting (${connectionState.reconnectAttempts}/${5})...` : 
+           isConnecting ? 'Connecting...' : 
+           isConnected ? 'Connected' : 'Disconnected'}
           </span>
         </div>
 
@@ -207,18 +209,3 @@ export function WebSocketStatusPanel({ className = '' }: { className?: string })
   );
 }
 
-function getStatusText() {
-  // Import here to avoid circular dependency
-  const { connectionState, isConnected, isConnecting, isReconnecting } = useWebSocket();
-  
-  if (isReconnecting) {
-    return `Reconnecting (${connectionState.reconnectAttempts}/${5})...`;
-  }
-  if (isConnecting) {
-    return 'Connecting...';
-  }
-  if (isConnected) {
-    return 'Connected';
-  }
-  return 'Disconnected';
-}

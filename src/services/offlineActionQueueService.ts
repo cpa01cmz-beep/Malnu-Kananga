@@ -84,6 +84,7 @@ class OfflineActionQueueService {
   private queue: OfflineAction[] = [];
   private isSyncing = false;
   private syncCallbacks: Set<(result: SyncResult) => void> = new Set();
+  private websocketUnsubscribers: (() => void)[] = [];
 
   constructor() {
     this.loadQueue();
@@ -501,7 +502,7 @@ class OfflineActionQueueService {
     });
 
     // Store unsubscribe functions for cleanup
-    (this as any).websocketUnsubscribers = [
+    this.websocketUnsubscribers = [
       unsubscribeGrades,
       unsubscribeAttendance,
       unsubscribeAnnouncements,
@@ -578,15 +579,15 @@ class OfflineActionQueueService {
    * Extract server version from WebSocket event data
    */
   private extractServerVersion(event: RealTimeEvent): number {
-    const data = event.data as any;
-    return data.version || data.updatedAt || Date.now();
+    const data = event.data as Record<string, unknown>;
+    return (data.version as number) || (data.updatedAt as number) || Date.now();
   }
 
   /**
    * Cleanup WebSocket listeners
    */
   public cleanupWebSocketIntegration(): void {
-    const unsubscribers = (this as any).websocketUnsubscribers || [];
+    const unsubscribers = this.websocketUnsubscribers || [];
     unsubscribers.forEach((unsubscribe: () => void) => {
       try {
         unsubscribe();
@@ -594,7 +595,7 @@ class OfflineActionQueueService {
         logger.error('Error unsubscribing from WebSocket events', error);
       }
     });
-    (this as any).websocketUnsubscribers = [];
+    this.websocketUnsubscribers = [];
     logger.debug('WebSocket integration cleaned up');
   }
 

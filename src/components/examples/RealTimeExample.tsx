@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useWebSocket, useRealtimeGrades, useRealtimeAnnouncements } from '../hooks/useWebSocket';
 import { WebSocketStatus } from '../components/WebSocketStatus';
 import { logger } from '../utils/logger';
+import { Notification, Grade, Announcement } from '../../types';
 
 /**
  * Example component demonstrating WebSocket real-time features
@@ -18,7 +19,7 @@ export function RealTimeExample() {
     const unsubscribe = subscribe(
       'notification_created',
       (event) => {
-        const notificationData = event.data as any;
+        const notificationData = event.data as Notification;
         setNotification(`New notification: ${notificationData.title}`);
         // Auto-clear notification after 5 seconds
         setTimeout(() => setNotification(''), 5000);
@@ -123,7 +124,7 @@ export function RealTimeExample() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {grades.map((grade: any) => (
+                {grades.map((grade: Grade) => (
                   <tr key={grade.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {grade.studentId}
@@ -159,7 +160,7 @@ export function RealTimeExample() {
           <p className="text-gray-500">No announcements available. Create a test announcement to see real-time updates.</p>
         ) : (
           <div className="space-y-4">
-            {announcements.map((announcement: any) => (
+            {announcements.map((announcement: Announcement) => (
               <div key={announcement.id} className="border-l-4 border-blue-500 pl-4 py-2">
                 <h3 className="text-lg font-medium text-gray-900">{announcement.title}</h3>
                 <p className="text-gray-600">{announcement.content}</p>

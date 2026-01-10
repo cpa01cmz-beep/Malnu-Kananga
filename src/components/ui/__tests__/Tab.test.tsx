@@ -31,7 +31,7 @@ describe('Tab', () => {
     });
 
     it('renders active tab with active styling', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -46,7 +46,7 @@ describe('Tab', () => {
     });
 
     it('renders inactive tabs with inactive styling', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -116,7 +116,7 @@ describe('Tab', () => {
 
   describe('Variants', () => {
     it('renders pill variant correctly', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -131,7 +131,7 @@ describe('Tab', () => {
     });
 
     it('renders border variant correctly', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -167,7 +167,7 @@ describe('Tab', () => {
 
   describe('Colors', () => {
     it('applies green color variant correctly', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -182,7 +182,7 @@ describe('Tab', () => {
     });
 
     it('applies blue color variant correctly', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -197,7 +197,7 @@ describe('Tab', () => {
     });
 
     it('applies purple color variant correctly', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -212,7 +212,7 @@ describe('Tab', () => {
     });
 
     it('applies red color variant correctly', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -227,7 +227,7 @@ describe('Tab', () => {
     });
 
     it('applies yellow color variant correctly', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -242,7 +242,7 @@ describe('Tab', () => {
     });
 
     it('applies neutral color variant correctly', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -316,7 +316,7 @@ describe('Tab', () => {
 
   describe('Accessibility', () => {
     it('has role="tablist" on container', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -324,7 +324,7 @@ describe('Tab', () => {
         />
       );
 
-      expect(container.querySelector('[role="tablist"]')).toBeInTheDocument();
+      expect(_container.querySelector('[role="tablist"]')).toBeInTheDocument();
     });
 
     it('sets role="tab" on each tab button', () => {
@@ -444,7 +444,7 @@ describe('Tab', () => {
 
   describe('Orientation', () => {
     it('renders horizontal orientation by default', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -453,12 +453,12 @@ describe('Tab', () => {
         />
       );
 
-      const tablist = container.querySelector('[role="tablist"]');
+      const tablist = screen.getByRole('tablist');
       expect(tablist).toHaveClass('flex');
     });
 
     it('renders vertical orientation when specified', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -467,14 +467,14 @@ describe('Tab', () => {
         />
       );
 
-      const tablist = container.querySelector('[role="tablist"]');
+      const tablist = screen.getByRole('tablist');
       expect(tablist).toHaveClass('flex', 'flex-col');
     });
   });
 
   describe('Custom className', () => {
     it('applies custom className to container', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -483,14 +483,14 @@ describe('Tab', () => {
         />
       );
 
-      const tablist = container.querySelector('[role="tablist"]');
+      const tablist = screen.getByRole('tablist');
       expect(tablist?.parentElement).toHaveClass('custom-class');
     });
   });
 
   describe('Dark mode', () => {
     it('applies dark mode classes for inactive tabs', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -505,7 +505,7 @@ describe('Tab', () => {
     });
 
     it('applies dark mode classes for active tabs in border variant', () => {
-      const { container } = render(
+      const { _container } = render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
