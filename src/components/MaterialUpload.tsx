@@ -606,11 +606,23 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                       ]}
                     />
 
-                    {categoryValidation && !categoryValidation.valid && categoryValidation.suggestions && categoryValidation.suggestions.length > 0 && (
+                        {categoryValidation && !categoryValidation.valid && categoryValidation.suggestions && categoryValidation.suggestions.length > 0 && (
                         <ul className="mt-1 ml-4 list-disc">
                           {categoryValidation.suggestions.map((suggestion, index) => (
-                            <li key={index} className="cursor-pointer hover:text-green-600"
-                                onClick={() => handleCategoryChange(suggestion)}>
+                            <li
+                              key={index}
+                              className="cursor-pointer hover:text-green-600"
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => handleCategoryChange(suggestion)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  handleCategoryChange(suggestion);
+                                }
+                              }}
+                              aria-label={`Pilih kategori: ${suggestion}`}
+                            >
                               {suggestion}
                             </li>
                           ))}

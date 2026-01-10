@@ -31,12 +31,9 @@ import { useEventNotifications } from '../hooks/useEventNotifications';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import BackButton from './ui/BackButton';
 import Card from './ui/Card';
-import DashboardActionCard from './ui/DashboardActionCard';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import type { VoiceCommand } from '../types';
-import VoiceInputButton from './VoiceInputButton';
 import VoiceCommandsHelp from './VoiceCommandsHelp';
-import SmallActionButton from './ui/SmallActionButton';
 import ParentNotificationSettings from './ParentNotificationSettings';
 import NotificationHistory from './NotificationHistory';
 
@@ -169,7 +166,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
   // Initialize voice commands
   const {
-    isSupported: voiceSupported,
     handleVoiceCommand,
     getAvailableCommands,
   } = useDashboardVoiceCommands({
@@ -213,15 +209,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     },
   });
 
-  const handleVoiceCommandCallback = useCallback((command: VoiceCommand) => {
-    const success = handleVoiceCommand(command);
-    if (success) {
-      logger.info('Voice command executed:', command.action);
-    } else {
-      onShowToast('Perintah tidak dikenali atau tidak tersedia', 'error');
-    }
-  }, [handleVoiceCommand, onShowToast]);
-
   const handleSelectChild = (child: ParentChild) => {
     setSelectedChild(child);
     setShowConsolidatedView(false);
@@ -234,6 +221,14 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   };
 
   const allMenuItems = [
+    ...(children.length > 1 ? [{
+      title: showConsolidatedView ? 'Tinjau Per Anak' : 'Tinjau Konsolidasi',
+      description: showConsolidatedView ? 'Lihat per anak' : 'Lihat semua anak dalam satu tampilan',
+      icon: <UsersIcon />,
+      colorTheme: 'teal' as const,
+      action: () => handleToggleConsolidatedView(),
+      active: true
+    }] : []),
     ...(children.length > 1 ? [{
       title: showConsolidatedView ? 'Tinjau Per Anak' : 'Tinjau Konsolidasi',
       description: showConsolidatedView ? 'Lihat per anak' : 'Lihat semua anak dalam satu tampilan',
@@ -362,6 +357,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             </p>
           </div>
         )}
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {currentView === 'home' && (
           <>
             {/* Welcome Banner */}
@@ -402,9 +400,11 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                       </div>
                     </button>
                   ))}
-              </div>
-            </Card>
-          )}
+                </div>
+              </Card>
+            )}
+          </>
+        )}
         {currentView === 'schedule' && selectedChild && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
@@ -485,7 +485,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             <ParentMeetingsView onShowToast={onShowToast} children={children} />
           </div>
         )}
-      </>
 
         {/* Voice Commands Help Modal */}
         <VoiceCommandsHelp
@@ -511,7 +510,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             onClose={() => setShowNotificationHistory(false)}
           />
         )}
-
       </div>
     </main>
   );
