@@ -382,7 +382,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               <div
                   className={`rounded-xl px-4 py-3 text-sm md:text-base leading-relaxed shadow-sm ${
                     message.sender === Sender.User
-                      ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white'
+                      ? `${GRADIENT_CLASSES.PRIMARY} text-white`
                       : 'bg-neutral-200/95 dark:bg-neutral-700/95 backdrop-blur-sm text-neutral-800 dark:text-neutral-200'
                   }`}
                >
