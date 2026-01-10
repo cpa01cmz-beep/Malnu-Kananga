@@ -3,20 +3,26 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import FileUploader from '../FileUploader';
 
-// Mock the fileStorageAPI
+// Mock the apiService
+const mockUpload = vi.fn().mockResolvedValue({
+  success: true,
+  data: {
+    key: 'test-file-key',
+    name: 'test-file.pdf',
+    size: 1024,
+    type: 'application/pdf',
+  },
+});
+
+const mockDelete = vi.fn().mockResolvedValue({ success: true });
+
+const mockGetDownloadUrl = vi.fn().mockReturnValue('http://example.com/download');
+
 vi.mock('../../services/apiService', () => ({
   fileStorageAPI: {
-    upload: vi.fn().mockResolvedValue({
-      success: true,
-      data: {
-        key: 'test-file-key',
-        name: 'test-file.pdf',
-        size: 1024,
-        type: 'application/pdf',
-      },
-    }),
-    delete: vi.fn().mockResolvedValue({ success: true }),
-    getDownloadUrl: vi.fn().mockReturnValue('http://example.com/download'),
+    upload: mockUpload,
+    delete: mockDelete,
+    getDownloadUrl: mockGetDownloadUrl,
   },
 }));
 
@@ -128,10 +134,8 @@ describe('FileUploader', () => {
   });
 
   it('shows loading state during upload', async () => {
-    const { fileStorageAPI } = require('../../services/apiService');
-    
     // Mock slow upload
-    fileStorageAPI.upload.mockImplementation(() => 
+    mockUpload.mockImplementation(() =>
       new Promise(resolve => setTimeout(() => resolve({
         success: true,
         data: {
@@ -201,8 +205,8 @@ describe('FileUploader', () => {
     ];
 
     render(<FileUploader existingFiles={existingFiles} showPreview={true} />);
-    
-    const image = screen.getByAlt('test.jpg');
+
+    const image = screen.getByAltText('test.jpg');
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute('src', 'data:image/jpeg;base64,test');
   });

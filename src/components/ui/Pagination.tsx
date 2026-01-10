@@ -166,7 +166,7 @@ const Pagination: React.FC<PaginationProps> = ({
         {variant !== 'minimal' && (
           <div className="flex items-center space-x-2">
             <Button
-              variant="outline"
+              variant="secondary"
               disabled={currentPage === 1}
               onClick={() => onPageChange(currentPage - 1)}
               iconOnly
@@ -183,7 +183,7 @@ const Pagination: React.FC<PaginationProps> = ({
             />
             
             <Button
-              variant="outline"
+              variant="secondary"
               disabled={currentPage === totalPages}
               onClick={() => onPageChange(currentPage + 1)}
               iconOnly
@@ -197,7 +197,7 @@ const Pagination: React.FC<PaginationProps> = ({
         {variant === 'minimal' && (
           <div className="flex items-center space-x-2">
             <Button
-              variant="outline"
+              variant="secondary"
               size={buttonSizes[size]}
               disabled={currentPage === 1}
               onClick={() => onPageChange(currentPage - 1)}
@@ -211,7 +211,7 @@ const Pagination: React.FC<PaginationProps> = ({
             </span>
             
             <Button
-              variant="outline"
+              variant="secondary"
               size={buttonSizes[size]}
               disabled={currentPage === totalPages}
               onClick={() => onPageChange(currentPage + 1)}

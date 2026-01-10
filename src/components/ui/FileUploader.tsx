@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { CloudArrowUpIcon } from '../icons/CloudArrowUpIcon';
 import { TrashIcon } from '../icons/TrashIcon';
 import { CloseIcon } from '../icons/CloseIcon';
@@ -62,9 +62,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null); // eslint-disable-line no-undef
-  
-  // Hook import
-  const { useRef, useEffect } = React;
 
   useEffect(() => {
     return () => {
@@ -119,15 +116,15 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         resolve(undefined);
         return;
       }
-      
-      const reader = new FileReader();
+
+      const reader = new FileReader(); // eslint-disable-line no-undef
       reader.onload = (e) => resolve(e.target?.result as string);
       reader.onerror = () => resolve(undefined);
       reader.readAsDataURL(file);
     });
   };
 
-  const handleFileSelect = async (selectedFiles: FileList | null) => {
+  const handleFileSelect = useCallback(async (selectedFiles: FileList | null) => { // eslint-disable-line no-undef
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     const filesArray = Array.from(selectedFiles);
@@ -157,7 +154,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       setUploadStartTime(Date.now());
 
       const abortController = new AbortController(); // eslint-disable-line no-undef
-      abortControllerRef.current = abortController;
+      abortControllerRef.current = abortController; // eslint-disable-line no-undef
 
       try {
         const preview = await createPreview(file);
@@ -261,7 +258,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     if (dragAndDrop && !disabled && !uploading) {
       handleFileSelect(e.dataTransfer.files);
     }
-  }, [dragAndDrop, disabled, uploading]);
+  }, [dragAndDrop, disabled, uploading, handleFileSelect]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -377,7 +374,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
       {variant === 'minimal' && (
         <Button
-          variant="outline"
+          variant="secondary"
           onClick={() => !disabled && !uploading && fileInputRef.current?.click()}
           disabled={disabled || uploading}
           icon={<CloudArrowUpIcon />}

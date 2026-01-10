@@ -4,20 +4,19 @@ import Pagination from './Pagination';
 import LoadingOverlay from './LoadingOverlay';
 import { EmptyState } from './LoadingState';
 import Button from './Button';
-import { MagnifyingGlassIcon } from '../icons/SearchIcon';
-import { FunnelIcon } from '../icons/FunnelIcon';
+import { MagnifyingGlassIcon, FunnelIcon } from '../icons/NotificationIcons';
 
-export interface Column<T = any> {
+export interface Column<T = unknown> {
   key: string;
   title: string;
   sortable?: boolean;
   width?: string;
-  render?: (value: any, record: T, index: number) => React.ReactNode;
+  render?: (value: unknown, record: T, index: number) => React.ReactNode;
   align?: 'left' | 'center' | 'right';
   fixed?: 'left' | 'right';
 }
 
-export interface DataTableProps<T = any> {
+export interface DataTableProps<T = unknown> {
   data: T[];
   columns: Column<T>[];
   loading?: boolean;
@@ -59,7 +58,7 @@ export interface DataTableProps<T = any> {
   scrollY?: number;
 }
 
-const DataTable = <T extends Record<string, any>>({
+const DataTable = <T extends Record<string, unknown>>({
   data,
   columns,
   loading = false,
@@ -102,18 +101,19 @@ const DataTable = <T extends Record<string, any>>({
     selection?.onSelect(key, checked);
   };
 
-  const isAllSelected = selection && data.length > 0 && 
-    data.every(record => selection.selectedRowKeys.includes(selection.getRowKey(record)));
+  const isAllSelected = (selection && data.length > 0 &&
+    data.every(record => selection.selectedRowKeys.includes(selection.getRowKey(record)))) ?? false;
 
   const isIndeterminate = selection && data.length > 0 &&
     data.some(record => selection.selectedRowKeys.includes(selection.getRowKey(record))) &&
     !isAllSelected;
 
-  const getCellValue = (column: Column<T>, record: T, index: number) => {
+  const getCellValue = (column: Column<T>, record: T, index: number): React.ReactNode => {
     if (column.render) {
-      return column.render(record[column.key], record, index);
+      const value = record[column.key];
+      return column.render(value, record, index);
     }
-    return record[column.key];
+    return String(record[column.key] ?? '');
   };
 
   const getAlignmentClass = (align?: string) => {
@@ -172,7 +172,7 @@ const DataTable = <T extends Record<string, any>>({
             )}
             {sort && (
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 icon={<FunnelIcon />}
                 onClick={() => {
@@ -192,7 +192,7 @@ const DataTable = <T extends Record<string, any>>({
               </span>
               {selection.selectedRowKeys.length > 0 && (
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={() => selection?.onSelectAll(false)}
                 >
@@ -214,19 +214,19 @@ const DataTable = <T extends Record<string, any>>({
           <Thead className={stickyHeader ? 'sticky top-0 bg-white dark:bg-neutral-900 z-10' : ''}>
             <Tr>
               {selection && (
-                <Th className="w-12">
-                  <input
-                    type="checkbox"
-                    checked={isAllSelected}
-                    ref={(input) => {
-                      if (input) {
-                        input.indeterminate = isIndeterminate;
-                      }
-                    }}
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50%"
-                    aria-label="Select all rows"
-                  />
+                  <Th className="w-12">
+                    <input
+                      type="checkbox"
+                      checked={isAllSelected ?? false}
+                      ref={(input) => {
+                        if (input) {
+                          input.indeterminate = isIndeterminate ?? false;
+                        }
+                      }}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50%"
+                      aria-label="Select all rows"
+                    />
                 </Th>
               )}
               {columns.map((column) => (

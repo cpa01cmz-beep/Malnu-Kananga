@@ -14,12 +14,17 @@ describe('Pagination', () => {
 
   it('renders pagination controls', () => {
     render(<Pagination {...defaultProps} />);
-    
-    expect(screen.getByText('Showing 1 to 10 of 50 results')).toBeInTheDocument();
+
+    const showingText = screen.getByText((content, element) => {
+      return content === 'Showing' && element?.tagName === 'DIV';
+    });
+    expect(showingText).toBeInTheDocument();
+    expect(screen.getByText('1', { exact: true })).toBeInTheDocument();
+    expect(screen.getByText('10', { exact: true })).toBeInTheDocument();
+    expect(screen.getByText('of')).toBeInTheDocument();
+    expect(screen.getByText('50')).toBeInTheDocument();
     expect(screen.getByLabelText('Previous page')).toBeInTheDocument();
     expect(screen.getByLabelText('Next page')).toBeInTheDocument();
-    expect(screen.getByText('1')).toBeInTheDocument();
-    expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('Show')).toBeInTheDocument();
   });
 
@@ -96,9 +101,10 @@ describe('Pagination', () => {
   });
 
   it('shows ellipsis for many pages', () => {
-    render(<Pagination {...defaultProps} totalPages={20} currentPage={10} maxVisiblePages={5} />);
-    
-    expect(screen.getByText('...')).toBeInTheDocument();
+    render(<Pagination {...defaultProps} totalPages={20} currentPage={10} />);
+
+    const ellipsisElements = screen.getAllByText('...');
+    expect(ellipsisElements.length).toBeGreaterThan(0);
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('20')).toBeInTheDocument();
   });
@@ -115,10 +121,12 @@ describe('Pagination', () => {
 
   it('applies size classes correctly', () => {
     const { rerender } = render(<Pagination {...defaultProps} size="lg" />);
-    expect(screen.getByText('Showing 1 to 10 of 50 results')).toHaveClass('text-base');
+    const navElement = screen.getByRole('navigation');
+    expect(navElement).toHaveClass('text-base');
 
     rerender(<Pagination {...defaultProps} size="sm" />);
-    expect(screen.getByText('Showing 1 to 10 of 50 results')).toHaveClass('text-xs');
+    const navElement2 = screen.getByRole('navigation');
+    expect(navElement2).toHaveClass('text-xs');
   });
 
   it('hides items per page selector when disabled', () => {

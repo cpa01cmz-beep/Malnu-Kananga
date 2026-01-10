@@ -47,24 +47,13 @@ const BaseModal: React.FC<ModalBaseProps> = ({
   overlayClassName = '',
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const confirmButtonRef = useRef<HTMLButtonElement>(null);
+
 
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
-    
+
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      // Focus the confirm button or first focusable element when modal opens
-      setTimeout(() => {
-        if (confirmButtonRef.current) {
-          confirmButtonRef.current.focus();
-        } else {
-          const firstFocusable = modalRef.current?.querySelector(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-          ) as HTMLElement;
-          firstFocusable?.focus();
-        }
-      }, 100);
     } else {
       document.body.style.overflow = originalOverflow;
     }
@@ -134,7 +123,7 @@ const BaseModal: React.FC<ModalBaseProps> = ({
   const defaultFooter = (
     <div className="flex justify-end space-x-3">
       <Button
-        variant="outline"
+        variant="secondary"
         onClick={onClose}
         disabled={loading}
       >
@@ -144,9 +133,8 @@ const BaseModal: React.FC<ModalBaseProps> = ({
         <Button
           variant="primary"
           onClick={handleConfirm}
-          loading={loading}
+          isLoading={loading}
           disabled={disabled}
-          ref={confirmButtonRef}
           className={variantClasses.confirmButton}
         >
           {loading ? 'Please wait...' : confirmText}
