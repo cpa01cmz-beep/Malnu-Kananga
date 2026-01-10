@@ -13,6 +13,7 @@ import ParentGradesView from './ParentGradesView';
 import ParentAttendanceView from './ParentAttendanceView';
 import ELibrary from './ELibrary';
 import OsisEvents from './OsisEvents';
+import { GRADIENT_CLASSES } from './config/gradients';
 import ConsolidatedReportsView from './ConsolidatedReportsView';
 import ParentMessagingView from './ParentMessagingView';
 import ParentPaymentsView from './ParentPaymentsView';
@@ -365,7 +366,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
           <>
             {/* Welcome Banner */}
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-100 to-transparent dark:from-primary-900/20 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+              <div className={`absolute top-0 right-0 w-64 h-64 ${GRADIENT_CLASSES.PRIMARY_DECORATIVE_SOFT} rounded-full -translate-y-1/2 translate-x-1/2 opacity-50`}></div>
               <div className="relative z-10">
                 <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Portal Wali Murid</h1>
                 <p className="mt-2 text-neutral-600 dark:text-neutral-300 text-lg">
@@ -501,7 +502,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-20 h-20 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl flex items-center justify-center text-white text-3xl font-semibold shadow-card">
+                  <div className={`w-20 h-20 ${GRADIENT_CLASSES.PRIMARY_DECORATIVE} rounded-xl flex items-center justify-center text-white text-3xl font-semibold shadow-card`}>
                     {selectedChild.studentName.charAt(0).toUpperCase()}
                   </div>
                   <div>

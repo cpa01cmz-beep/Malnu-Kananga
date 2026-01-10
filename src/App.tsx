@@ -255,7 +255,7 @@ const App: React.FC = () => {
 
   return (
     <NotificationProvider>
-      <div className="bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-background)] w-full min-h-screen font-sans text-[var(--color-text)] transition-colors duration-300 antialiased">
+      <div className="w-full min-h-screen font-sans transition-colors duration-300 antialiased" style={{ background: 'linear-gradient(to bottom right, var(--color-surface), var(--color-background))', color: 'var(--color-text)' }}>
       <SkipLink 
         targets={[
           { id: 'main-nav', label: 'Langsung ke navigasi utama' },
