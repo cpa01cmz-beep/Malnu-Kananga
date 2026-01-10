@@ -23,7 +23,7 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toHaveClass('bg-white', 'dark:bg-neutral-800');
 
     rerender(<Button variant="danger">Danger</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-red-100', 'text-red-700');
+    expect(screen.getByRole('button')).toHaveClass('bg-red-700', 'text-white', 'dark:bg-red-600', 'dark:text-white');
   });
 
   it('should render with different sizes', () => {
