@@ -1,8 +1,8 @@
  
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import Tab from './Tab';
-import type { TabOption } from './Tab';
+import Tab from '../Tab';
+import type { TabOption } from '../Tab';
 
 describe('Tab', () => {
   const mockOnTabChange = vi.fn();
@@ -32,7 +32,7 @@ describe('Tab', () => {
     });
 
     it('renders active tab with active styling', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -47,7 +47,7 @@ describe('Tab', () => {
     });
 
     it('renders inactive tabs with inactive styling', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -117,7 +117,7 @@ describe('Tab', () => {
 
   describe('Variants', () => {
     it('renders pill variant correctly', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -132,7 +132,7 @@ describe('Tab', () => {
     });
 
     it('renders border variant correctly', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -168,7 +168,7 @@ describe('Tab', () => {
 
   describe('Colors', () => {
     it('applies green color variant correctly', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -183,7 +183,7 @@ describe('Tab', () => {
     });
 
     it('applies blue color variant correctly', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -198,7 +198,7 @@ describe('Tab', () => {
     });
 
     it('applies purple color variant correctly', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -213,7 +213,7 @@ describe('Tab', () => {
     });
 
     it('applies red color variant correctly', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -228,7 +228,7 @@ describe('Tab', () => {
     });
 
     it('applies yellow color variant correctly', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -243,7 +243,7 @@ describe('Tab', () => {
     });
 
     it('applies neutral color variant correctly', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -317,7 +317,7 @@ describe('Tab', () => {
 
   describe('Accessibility', () => {
     it('has role="tablist" on container', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -325,7 +325,7 @@ describe('Tab', () => {
         />
       );
 
-      expect(_container.querySelector('[role="tablist"]')).toBeInTheDocument();
+      expect(screen.getByRole('tablist')).toBeInTheDocument();
     });
 
     it('sets role="tab" on each tab button', () => {
@@ -445,7 +445,7 @@ describe('Tab', () => {
 
   describe('Orientation', () => {
     it('renders horizontal orientation by default', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -459,7 +459,7 @@ describe('Tab', () => {
     });
 
     it('renders vertical orientation when specified', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -475,7 +475,7 @@ describe('Tab', () => {
 
   describe('Custom className', () => {
     it('applies custom className to container', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -491,7 +491,7 @@ describe('Tab', () => {
 
   describe('Dark mode', () => {
     it('applies dark mode classes for inactive tabs', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"
@@ -506,7 +506,7 @@ describe('Tab', () => {
     });
 
     it('applies dark mode classes for active tabs in border variant', () => {
-      const { _container } = render(
+      render(
         <Tab
           options={defaultOptions}
           activeTab="overview"

@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { webSocketService, type RealTimeEvent } from '../webSocketService';
 import { apiService } from '../apiService';
-import { logger } from '../utils/logger';
+import { logger } from '../../utils/logger';
 
 /* eslint-disable no-undef */
 // Mock WebSocket for tests

@@ -5,12 +5,14 @@ import '@testing-library/jest-dom';
 import FileUploader from '../FileUploader';
 
 // Mock the fileStorageAPI
-vi.mock('../../services/apiService', () => ({
+vi.mock('../../../services/apiService', () => ({
   fileStorageAPI: {
     upload: vi.fn().mockResolvedValue({
       success: true,
+      message: 'Upload successful',
       data: {
         key: 'test-file-key',
+        url: 'http://example.com/files/test-file-key',
         name: 'test-file.pdf',
         size: 1024,
         type: 'application/pdf',
@@ -128,20 +130,21 @@ describe('FileUploader', () => {
     });
   });
 
-  it('shows loading state during upload', async () => {
-    vi.mock('../../services/apiService');
-    const { fileStorageAPI } = await import('../../services/apiService');
+it('shows loading state during upload', async () => {
+    const { fileStorageAPI } = await import('../../../services/apiService');
     
     // Mock slow upload
-    fileStorageAPI.upload.mockImplementation(() => 
+    vi.mocked(fileStorageAPI.upload).mockImplementation(() => 
       new Promise(resolve => setTimeout(() => resolve({
-        success: true,
-        data: {
-          key: 'test-file-key',
-          name: 'test-file.pdf',
-          size: 1024,
-          type: 'application/pdf',
-        },
+success: true,
+      message: 'Upload successful',
+      data: {
+        key: 'test-file-key',
+        url: 'http://example.com/files/test-file-key',
+        name: 'test.pdf',
+        size: 1024,
+        type: 'application/pdf',
+      },
       }), 100))
     );
 
