@@ -38,7 +38,7 @@ export const XCircleIcon: React.FC<{ className?: string }> = ({
   </svg>
 );
 
-export const MagnifyingGlassIcon: React.FC<{ className?: string; 'aria-hidden'?: boolean | string }> = ({
+export const MagnifyingGlassIcon: React.FC<{ className?: string; 'aria-hidden'?: boolean }> = ({
   className = 'w-6 h-6',
   'aria-hidden': ariaHidden,
 }) => (
