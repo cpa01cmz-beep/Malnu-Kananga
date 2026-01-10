@@ -14,6 +14,7 @@ import MarkdownRenderer from './MarkdownRenderer';
 import Textarea from './ui/Textarea';
 import TypingIndicator from './TypingIndicator';
 import IconButton from './ui/IconButton';
+import Modal from './ui/Modal';
 import { SendIcon } from './icons/SendIcon';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
@@ -280,48 +281,46 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-neutral-900/75 flex items-center justify-center z-50 p-4 transition-opacity duration-300"
-      onClick={onClose}
-      aria-modal="true"
-      role="dialog"
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      closeOnEscape={true}
+      closeOnBackdropClick={true}
+      showCloseButton={false}
+      className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col"
     >
-      <div
-        className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0 animate-scale-in"
-        onClick={(e) => e.stopPropagation()}
-      >
-<header className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <SparklesIcon className="h-6 w-6 text-green-500" />
-            <h2 className="text-xl font-bold text-neutral-900 dark:text-white">AI Website Editor <span className="text-xs font-normal text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">🛡️ Dilindungi</span></h2>
-            {changeHistory.length > 0 && (
-              <div className="flex items-center gap-1">
-                <button 
-                  onClick={undoLastChange}
-                  className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
-                  title={`Undo ${changeHistory.length} perubahan terakhir`}
-                >
-                  ↶ Undo ({changeHistory.length})
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <button 
-                onClick={onResetContent}
-                className="p-2 rounded-full text-neutral-500 hover:text-red-600 dark:text-neutral-400 dark:hover:text-red-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
-                title="Reset Konten ke Default"
-                aria-label="Reset konten"
-            >
-                <ArrowPathIcon />
-            </button>
-            <button onClick={onClose} className="p-2 rounded-full text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700" aria-label="Tutup">
-              <CloseIcon />
-            </button>
-          </div>
-        </header>
+      <header className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <SparklesIcon className="h-6 w-6 text-green-500" />
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">AI Website Editor <span className="text-xs font-normal text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">🛡️ Dilindungi</span></h2>
+          {changeHistory.length > 0 && (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={undoLastChange}
+                className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
+                title={`Undo ${changeHistory.length} perubahan terakhir`}
+              >
+                ↶ Undo ({changeHistory.length})
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onResetContent}
+            className="p-2 rounded-full text-neutral-500 hover:text-red-600 dark:text-neutral-400 dark:hover:text-red-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+            title="Reset Konten ke Default"
+            aria-label="Reset konten"
+          >
+            <ArrowPathIcon />
+          </button>
+          <button onClick={onClose} className="p-2 rounded-full text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700" aria-label="Tutup">
+            <CloseIcon />
+          </button>
+        </div>
+      </header>
 
-        <main className="flex-grow overflow-y-auto p-6 space-y-6 custom-scrollbar">
+      <main className="flex-grow overflow-y-auto p-6 space-y-6 custom-scrollbar">
           {/* Chat History */}
           <div className="space-y-4">
             {messages.map((msg) => (
@@ -399,9 +398,9 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                 </div>
             </div>
           )}
-        </main>
+      </main>
 
-        <footer className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex-shrink-0">
+      <footer className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex-shrink-0">
           <div className="space-y-3">
             <div className="flex items-end gap-2.5">
               <Textarea
@@ -465,93 +464,92 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
               💡 Anda dapat membatalkan hingga 5 perubahan terakhir • Perubahan tersimpan di browser
             </p>
           </div>
-        </footer>
-      </div>
+      </footer>
 
       {/* Confirmation Modal */}
-      {showConfirmation && pendingContent && (
-        <div
-          className="fixed inset-0 bg-neutral-900/75 flex items-center justify-center z-50 p-4"
-          aria-modal="true"
-          role="dialog"
-        >
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl w-full max-w-lg transform transition-all duration-300 scale-95 opacity-0 animate-scale-in">
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
-                  <span className="text-yellow-600 text-lg">⚠️</span>
-                </div>
-                <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
-                  Konfirmasi Perubahan
-                </h3>
+      <Modal
+        isOpen={showConfirmation}
+        onClose={() => {
+          setShowConfirmation(false);
+          setPendingContent(null);
+        }}
+        size="md"
+        showCloseButton={false}
+      >
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+              <span className="text-yellow-600 text-lg">⚠️</span>
+            </div>
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
+              Konfirmasi Perubahan
+            </h3>
+          </div>
+
+          <div className="space-y-4">
+            <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+              Apakah Anda yakin ingin menerapkan perubahan berikut?
+            </p>
+
+            <div className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4">
+              <div className="text-xs uppercase tracking-wide font-semibold text-neutral-500 dark:text-neutral-400 mb-2">
+                Ringkasan Perubahan:
               </div>
-              
-              <div className="space-y-4">
-                <p className="text-neutral-600 dark:text-neutral-300 text-sm">
-                  Apakah Anda yakin ingin menerapkan perubahan berikut?
+              <div className="text-sm text-neutral-800 dark:text-neutral-200">
+                {generateChangeSummary(currentContent, pendingContent!)}
+              </div>
+
+              <div className="mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-600">
+                <div className="text-xs uppercase tracking-wide font-semibold text-neutral-500 dark:text-neutral-400 mb-2">
+                  Rincian:
+                </div>
+                <ul className="space-y-1 text-xs text-neutral-600 dark:text-neutral-400">
+                  {pendingContent!.featuredPrograms.map((prog, idx) => (
+                    <li key={`preview-prog-${idx}`} className="flex items-center gap-1">
+                      <span className="text-green-500">•</span>
+                      <span>Program: {prog.title}</span>
+                    </li>
+                  ))}
+                  {pendingContent!.latestNews.map((news, idx) => (
+                    <li key={`preview-news-${idx}`} className="flex items-center gap-1">
+                      <span className="text-blue-500">•</span>
+                      <span>Berita: {news.title}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+              <div className="flex items-start gap-2">
+                <span className="text-yellow-600 text-sm">ℹ️</span>
+                <p className="text-xs text-yellow-800 dark:text-yellow-200">
+                  Perubahan akan disimpan di riwayat dan dapat dibatalkan dengan tombol Undo.
                 </p>
-                
-                <div className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4">
-                  <div className="text-xs uppercase tracking-wide font-semibold text-neutral-500 dark:text-neutral-400 mb-2">
-                    Ringkasan Perubahan:
-                  </div>
-                  <div className="text-sm text-neutral-800 dark:text-neutral-200">
-                    {generateChangeSummary(currentContent, pendingContent)}
-                  </div>
-                  
-                  <div className="mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-600">
-                    <div className="text-xs uppercase tracking-wide font-semibold text-neutral-500 dark:text-neutral-400 mb-2">
-                      Rincian:
-                    </div>
-                    <ul className="space-y-1 text-xs text-neutral-600 dark:text-neutral-400">
-                      {pendingContent.featuredPrograms.map((prog, idx) => (
-                        <li key={`preview-prog-${idx}`} className="flex items-center gap-1">
-                          <span className="text-green-500">•</span>
-                          <span>Program: {prog.title}</span>
-                        </li>
-                      ))}
-                      {pendingContent.latestNews.map((news, idx) => (
-                        <li key={`preview-news-${idx}`} className="flex items-center gap-1">
-                          <span className="text-blue-500">•</span>
-                          <span>Berita: {news.title}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-                
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
-                  <div className="flex items-start gap-2">
-                    <span className="text-yellow-600 text-sm">ℹ️</span>
-                    <p className="text-xs text-yellow-800 dark:text-yellow-200">
-                      Perubahan akan disimpan di riwayat dan dapat dibatalkan dengan tombol Undo.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex justify-end gap-3 mt-6">
-                <button
-                  onClick={() => {
-                    setShowConfirmation(false);
-                    setPendingContent(null);
-                  }}
-                  className="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-full hover:bg-neutral-50 dark:bg-neutral-700 dark:text-neutral-200 dark:border-neutral-600 dark:hover:bg-neutral-600 transition-colors"
-                >
-                  Batal
-                </button>
-                <button
-                  onClick={handleConfirmApply}
-                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-full hover:bg-green-700 shadow-lg hover:shadow-green-500/30 transition-all transform hover:-translate-y-0.5"
-                >
-                  Ya, Terapkan Perubahan
-                </button>
               </div>
             </div>
           </div>
+
+          <div className="flex justify-end gap-3 mt-6">
+            <Button
+              onClick={() => {
+                setShowConfirmation(false);
+                setPendingContent(null);
+              }}
+              variant="secondary"
+            >
+              Batal
+            </Button>
+            <Button
+              onClick={handleConfirmApply}
+              variant="success"
+            >
+              Ya, Terapkan Perubahan
+            </Button>
+          </div>
         </div>
-      )}
-    </div>
+      </Modal>
+    </Modal>
   );
 };
 

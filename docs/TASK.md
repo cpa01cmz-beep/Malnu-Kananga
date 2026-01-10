@@ -79,6 +79,19 @@
 
 ### Q1 2026 (January - March)
   - [x] Complete color system migration (gray → neutral)
+    - [x] Refactor SiteEditor.tsx to use reusable Modal component (2026-01-10)
+      - Replaced custom modal implementation (lines 283-469) with Modal component
+      - Replaced confirmation modal (lines 472-553) with Modal component
+      - Improved accessibility with built-in focus trap and ARIA compliance
+      - Maintained all functionality and styling
+    - [x] Refactor MaterialSharing.tsx to use reusable Modal component (2026-01-10)
+      - Replaced custom modal implementation (lines 193-377) with Modal component
+      - Improved accessibility with built-in focus trap and ARIA compliance
+      - Maintained all functionality and styling
+    - [x] Review NotificationCenter.tsx - N/A (dropdown pattern, not modal) (2026-01-10)
+      - Confirmed NotificationCenter uses dropdown pattern, not modal pattern
+      - Modal component not appropriate for this use case
+      - No changes needed
     - [x] Create reusable Textarea component with auto-resize (2026-01-07)
     - [x] Refactor NotificationHistory to use Badge and IconButton components (2026-01-10)
     - [x] Refactor MaterialSharing to use Button and IconButton components (2026-01-10)
