@@ -2,10 +2,10 @@
 
 @theme {
   --color-primary-50: var(--theme-primary-50, 142 71% 88%);
-  --color-primary-100: var(--theme-primary-100, 142 70% 82%);
-  --color-primary-200: var(--theme-primary-200, 142 68% 73%);
-  --color-primary-300: var(--theme-primary-300, 142 70% 58%);
-  --color-primary-400: var(--theme-primary-400, 142 72% 42%);
+  --color-primary-100: var(--theme-primary-100, 142 71% 88%);
+  --color-primary-200: var(--theme-primary-200, 142 70% 82%);
+  --color-primary-300: var(--theme-primary-300, 142 68% 73%);
+  --color-primary-400: var(--theme-primary-400, 142 70% 58%);
   --color-primary-500: var(--theme-primary-500, 142 72% 30%);
   --color-primary-600: var(--theme-primary-600, 142 72% 42%);
   --color-primary-700: var(--theme-primary-700, 142 76% 27%);
@@ -92,12 +92,12 @@
 }
 
 :root {
-  --theme-primary-50: 240 100% 97%;
+  --theme-primary-50: 142 71% 88%;
   --theme-primary-100: 142 71% 88%;
   --theme-primary-200: 142 70% 82%;
   --theme-primary-300: 142 68% 73%;
   --theme-primary-400: 142 70% 58%;
-  --theme-primary-500: 142 72% 42%;
+  --theme-primary-500: 142 72% 30%;
   --theme-primary-600: 142 72% 42%;
   --theme-primary-700: 142 76% 27%;
   --theme-primary-800: 142 71% 25%;
