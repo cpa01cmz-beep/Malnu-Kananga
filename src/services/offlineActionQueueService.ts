@@ -445,7 +445,8 @@ class OfflineActionQueueService {
         result,
         timestamp: Date.now(),
         entityId: action.entityId,
-        operation: data.operation
+        operation: data.operation,
+        inputData: data.studentData
       };
 
       try {
