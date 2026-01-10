@@ -24,13 +24,15 @@ export function useWebSocket() {
 
   // Initialize WebSocket connection on mount
   useEffect(() => {
+    const subscriptions = subscriptionsRef.current;
+    
     webSocketService.initialize().catch(error => {
       logger.error('useWebSocket: Failed to initialize WebSocket', error);
     });
 
     return () => {
       // Cleanup on unmount if no active subscriptions
-      if (subscriptionsRef.current.size === 0) {
+      if (subscriptions.size === 0) {
         webSocketService.disconnect();
       }
     };
