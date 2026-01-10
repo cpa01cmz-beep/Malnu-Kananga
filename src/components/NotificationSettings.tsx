@@ -4,6 +4,7 @@ import { CloseIcon } from './icons/CloseIcon';
 import { BellIcon } from './icons/BellIcon';
 import { BellSlashIcon } from './icons/BellSlashIcon';
 import { Toggle } from './ui/Toggle';
+import { Checkbox } from './ui/Checkbox';
 import BatchManagement from './BatchManagement';
 import TemplateManagement from './TemplateManagement';
 import NotificationAnalyticsComponent from './NotificationAnalytics';
@@ -247,117 +248,101 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
             </div>
 
             <div className="space-y-3 ml-4">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={autoSaveState.data.announcements}
-                  onChange={(e) =>
-                    autoSaveActions.updateData({ ...autoSaveState.data, announcements: e.target.checked })
-                  }
-                  disabled={!autoSaveState.data.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
-                  aria-label="Pengumuman sekolah"
-                />
-                <span className="text-sm text-neutral-700">Pengumuman Sekolah</span>
-              </label>
+              <Checkbox
+                label="Pengumuman Sekolah"
+                checked={autoSaveState.data.announcements}
+                onChange={(e) =>
+                  autoSaveActions.updateData({ ...autoSaveState.data, announcements: e.target.checked })
+                }
+                disabled={!autoSaveState.data.enabled}
+                color="blue"
+                checkboxSize="sm"
+                aria-label="Pengumuman sekolah"
+              />
 
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={autoSaveState.data.grades}
-                  onChange={(e) =>
-                    autoSaveActions.updateData({ ...autoSaveState.data, grades: e.target.checked })
-                  }
-                  disabled={!autoSaveState.data.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
-                  aria-label="Update nilai"
-                />
-                <span className="text-sm text-neutral-700">Update Nilai</span>
-              </label>
+              <Checkbox
+                label="Update Nilai"
+                checked={autoSaveState.data.grades}
+                onChange={(e) =>
+                  autoSaveActions.updateData({ ...autoSaveState.data, grades: e.target.checked })
+                }
+                disabled={!autoSaveState.data.enabled}
+                color="blue"
+                checkboxSize="sm"
+                aria-label="Update nilai"
+              />
 
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={autoSaveState.data.ppdbStatus}
-                  onChange={(e) =>
-                    autoSaveActions.updateData({ ...autoSaveState.data, ppdbStatus: e.target.checked })
-                  }
-                  disabled={!autoSaveState.data.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
-                  aria-label="Status PPDB"
-                />
-                <span className="text-sm text-neutral-700">Status PPDB</span>
-              </label>
+              <Checkbox
+                label="Status PPDB"
+                checked={autoSaveState.data.ppdbStatus}
+                onChange={(e) =>
+                  autoSaveActions.updateData({ ...autoSaveState.data, ppdbStatus: e.target.checked })
+                }
+                disabled={!autoSaveState.data.enabled}
+                color="blue"
+                checkboxSize="sm"
+                aria-label="Status PPDB"
+              />
 
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={autoSaveState.data.events}
-                  onChange={(e) =>
-                    autoSaveActions.updateData({ ...autoSaveState.data, events: e.target.checked })
-                  }
-                  disabled={!autoSaveState.data.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
-                  aria-label="Kegiatan OSIS"
-                />
-                <span className="text-sm text-neutral-700">Kegiatan OSIS</span>
-              </label>
+              <Checkbox
+                label="Kegiatan OSIS"
+                checked={autoSaveState.data.events}
+                onChange={(e) =>
+                  autoSaveActions.updateData({ ...autoSaveState.data, events: e.target.checked })
+                }
+                disabled={!autoSaveState.data.enabled}
+                color="blue"
+                checkboxSize="sm"
+                aria-label="Kegiatan OSIS"
+              />
 
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={autoSaveState.data.library}
-                  onChange={(e) =>
-                    autoSaveActions.updateData({ ...autoSaveState.data, library: e.target.checked })
-                  }
-                  disabled={!autoSaveState.data.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
-                  aria-label="E-Library"
-                />
-                <span className="text-sm text-neutral-700">E-Library</span>
-              </label>
+              <Checkbox
+                label="E-Library"
+                checked={autoSaveState.data.library}
+                onChange={(e) =>
+                  autoSaveActions.updateData({ ...autoSaveState.data, library: e.target.checked })
+                }
+                disabled={!autoSaveState.data.enabled}
+                color="blue"
+                checkboxSize="sm"
+                aria-label="E-Library"
+              />
 
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={autoSaveState.data.system}
-                  onChange={(e) =>
-                    autoSaveActions.updateData({ ...autoSaveState.data, system: e.target.checked })
-                  }
-                  disabled={!autoSaveState.data.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
-                  aria-label="Sistem"
-                />
-                <span className="text-sm text-neutral-700">Sistem</span>
-              </label>
+              <Checkbox
+                label="Sistem"
+                checked={autoSaveState.data.system}
+                onChange={(e) =>
+                  autoSaveActions.updateData({ ...autoSaveState.data, system: e.target.checked })
+                }
+                disabled={!autoSaveState.data.enabled}
+                color="blue"
+                checkboxSize="sm"
+                aria-label="Sistem"
+              />
 
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={autoSaveState.data.roleBasedFiltering}
-                  onChange={(e) =>
-                    autoSaveActions.updateData({ ...autoSaveState.data, roleBasedFiltering: e.target.checked })
-                  }
-                  disabled={!autoSaveState.data.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
-                  aria-label="Filter berdasarkan peran"
-                />
-                <span className="text-sm text-neutral-700">Filter Berdasarkan Peran</span>
-              </label>
+              <Checkbox
+                label="Filter Berdasarkan Peran"
+                checked={autoSaveState.data.roleBasedFiltering}
+                onChange={(e) =>
+                  autoSaveActions.updateData({ ...autoSaveState.data, roleBasedFiltering: e.target.checked })
+                }
+                disabled={!autoSaveState.data.enabled}
+                color="blue"
+                checkboxSize="sm"
+                aria-label="Filter berdasarkan peran"
+              />
 
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={autoSaveState.data.batchNotifications}
-                  onChange={(e) =>
-                    autoSaveActions.updateData({ ...autoSaveState.data, batchNotifications: e.target.checked })
-                  }
-                  disabled={!autoSaveState.data.enabled}
-                  className="w-4 h-4 text-blue-600 rounded border-neutral-300 focus:ring-blue-500"
-                  aria-label="Grup notifikasi"
-                />
-                <span className="text-sm text-neutral-700">Grup Notifikasi</span>
-              </label>
+              <Checkbox
+                label="Grup Notifikasi"
+                checked={autoSaveState.data.batchNotifications}
+                onChange={(e) =>
+                  autoSaveActions.updateData({ ...autoSaveState.data, batchNotifications: e.target.checked })
+                }
+                disabled={!autoSaveState.data.enabled}
+                color="blue"
+                checkboxSize="sm"
+                aria-label="Grup notifikasi"
+              />
             </div>
           </div>
 

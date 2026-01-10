@@ -7,6 +7,7 @@ import { permissionService } from '../services/permissionService';
 import { pushNotificationService } from '../services/pushNotificationService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
+import { Checkbox } from './ui/Checkbox';
 import AccessDenied from './AccessDenied';
 import Badge from './ui/Badge';
 import SearchInput from './ui/SearchInput';
@@ -381,11 +382,12 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                     <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
                         <tr>
                             <th className="px-6 py-4">
-                              <input
-                                type="checkbox"
+                              <Checkbox
                                 checked={selectedIds.length === filteredRegistrants.length && filteredRegistrants.length > 0}
+                                indeterminate={selectedIds.length > 0 && selectedIds.length < filteredRegistrants.length}
                                 onChange={(e) => setSelectedIds(e.target.checked ? filteredRegistrants.map(r => r.id) : [])}
-                                className="rounded border-neutral-300 dark:border-neutral-600"
+                                aria-label="Pilih semua"
+                                checkboxSize="sm"
                               />
                             </th>
                             <th className="px-6 py-4">Tanggal</th>
@@ -401,8 +403,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                             filteredRegistrants.map((reg) => (
                                 <tr key={reg.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
                                     <td className="px-6 py-4">
-                                      <input
-                                        type="checkbox"
+                                      <Checkbox
                                         checked={selectedIds.includes(reg.id)}
                                         onChange={(e) => {
                                           if (e.target.checked) {
@@ -411,7 +412,8 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                             setSelectedIds(selectedIds.filter(id => id !== reg.id));
                                           }
                                         }}
-                                        className="rounded border-neutral-300 dark:border-neutral-600"
+                                        aria-label={`Pilih ${reg.fullName}`}
+                                        checkboxSize="sm"
                                       />
                                     </td>
                                     <td className="px-6 py-4 text-xs font-mono">{reg.registrationDate}</td>

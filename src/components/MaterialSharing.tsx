@@ -4,6 +4,7 @@ import { ShareIcon, ShieldIcon, XMarkIcon } from './icons/MaterialIcons';
 import { MaterialSharing, ELibrary } from '../types';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
+import { Checkbox } from './ui/Checkbox';
 import IconButton from './ui/IconButton';
 import Modal from './ui/Modal';
 import SearchInput from './ui/SearchInput';
@@ -275,8 +276,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
                     key={teacher.id}
                     className="flex items-center gap-3 p-3 hover:bg-neutral-50 dark:hover:bg-neutral-700 cursor-pointer border-b border-neutral-100 dark:border-neutral-600 last:border-b-0"
                   >
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={selectedTeachers.includes(teacher.id)}
                       onChange={(e) => {
                         if (e.target.checked) {
@@ -285,7 +285,8 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
                           setSelectedTeachers(selectedTeachers.filter(id => id !== teacher.id));
                         }
                       }}
-                      className="rounded border-neutral-300 dark:border-neutral-600"
+                      aria-label={`Pilih ${teacher.name}`}
+                      checkboxSize="sm"
                     />
                     <div className="flex-1">
                       <p className="font-medium text-neutral-900 dark:text-white">{teacher.name}</p>
@@ -337,17 +338,12 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
 
             {/* Expiration */}
             <div className="mb-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={expirationEnabled}
-                  onChange={(e) => setExpirationEnabled(e.target.checked)}
-                  className="rounded border-neutral-300 dark:border-neutral-600"
-                />
-                <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                  Batasi waktu akses
-                </span>
-              </label>
+              <Checkbox
+                label="Batasi waktu akses"
+                checked={expirationEnabled}
+                onChange={(e) => setExpirationEnabled(e.target.checked)}
+                checkboxSize="sm"
+              />
 
               {expirationEnabled && (
                 <input
