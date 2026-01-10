@@ -215,6 +215,59 @@ export const useStudentInsights = ({
     setError(null);
     setIsGenerating(true);
 
+    // Helper function to get AI analysis with offline support
+    const getAIAnalysis = async (aiData: any): Promise<string> => {
+      try {
+        // Check if any cached AI analysis exists for this data
+        const cachedAnalyses = JSON.parse(localStorage.getItem(STORAGE_KEYS.CACHED_AI_ANALYSES) || '[]');
+        const dataKey = JSON.stringify(aiData);
+        
+        // Find matching cached analysis (within 30 minutes)
+        const matchingAnalysis = cachedAnalyses.find((analysis: any) => {
+          if (analysis.operation === 'studentAnalysis') {
+            const analysisTime = new Date(analysis.timestamp);
+            const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+            return analysisTime > thirtyMinutesAgo;
+          }
+          return false;
+        });
+
+        if (matchingAnalysis) {
+          logger.info('Using cached AI analysis');
+          return matchingAnalysis.result;
+        }
+      } catch (e) {
+        logger.warn('Failed to check cached AI analyses:', e);
+      }
+
+      // Generate new analysis
+      return await analyzeStudentPerformance(aiData);
+    };
+
+    // Check for cached insights first
+    try {
+      const cached = localStorage.getItem(STORAGE_KEYS.STUDENT_INSIGHTS(studentId));
+      if (cached) {
+        const cachedInsights = JSON.parse(cached);
+        
+        // Check if cached insights are fresh (less than 30 minutes old)
+        const lastUpdated = new Date(cachedInsights.lastUpdated);
+        const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+        
+        if (lastUpdated > thirtyMinutesAgo) {
+          setInsights(cachedInsights);
+          setIsGenerating(false);
+          setLoading(false);
+          return;
+        }
+        
+        // Otherwise, keep old insights but fetch fresh ones
+        setInsights(cachedInsights);
+      }
+    } catch (e) {
+      logger.warn('Failed to load cached insights:', e);
+    }
+
     try {
       const [gradesRes, attendanceRes] = await Promise.all([
         gradesAPI.getByStudent(studentId),
@@ -255,7 +308,7 @@ export const useStudentInsights = ({
         trends: performanceTrends
       };
 
-      const aiAnalysis = await analyzeStudentPerformance(aiData);
+      const aiAnalysis = await getAIAnalysis(aiData);
 
       // Generate study recommendations based on data
       const studyRecommendations = generateStudyRecommendations(gradePerformance, attendanceInsight);

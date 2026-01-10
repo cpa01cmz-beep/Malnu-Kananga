@@ -18,7 +18,8 @@ export type ActionType =
   | 'publish'
   | 'submit'
   | 'approve'
-  | 'reject';
+  | 'reject'
+  | 'analyze';
 
 export type EntityType = 
   | 'grade'
@@ -31,7 +32,8 @@ export type EntityType =
   | 'inventory'
   | 'schedule'
   | 'meeting'
-  | 'user';
+  | 'user'
+  | 'ai_analysis';
 
 export type ActionStatus = 
   | 'pending'
@@ -370,6 +372,11 @@ class OfflineActionQueueService {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
+    // Special handling for AI analysis
+    if (action.entity === 'ai_analysis') {
+      return await this.executeAIAnalysis(action, headers);
+    }
+
     const response = await fetch(action.endpoint, {
       method: action.method,
       headers,
@@ -398,6 +405,71 @@ class OfflineActionQueueService {
     throw new Error(`Server error: ${response.status} ${response.statusText}`);
   }
 
+  private async executeAIAnalysis(action: OfflineAction, headers: Record<string, string>): Promise<boolean> {
+    try {
+      // Import geminiService dynamically to avoid circular dependencies
+      const { analyzeStudentPerformance } = await import('./geminiService');
+      
+      const data = action.data as { 
+        operation: string; 
+        studentData: any; 
+        model: string; 
+        timestamp: number;
+      };
+
+      let result: string;
+      
+      if (data.operation === 'studentAnalysis') {
+        result = await analyzeStudentPerformance(data.studentData, false);
+      } else {
+        throw new Error(`Unknown AI operation: ${data.operation}`);
+      }
+
+      // Store the analysis result in cache
+      const cacheKey = {
+        operation: data.operation,
+        input: JSON.stringify(data.studentData),
+        model: data.model
+      };
+
+      // Import analysisCache dynamically
+      const { analysisCache } = await import('./aiCacheService');
+      analysisCache.set(cacheKey, result);
+
+      // Store result in localStorage for immediate access
+      const analysisResult = {
+        result,
+        timestamp: Date.now(),
+        entityId: action.entityId,
+        operation: data.operation
+      };
+
+      try {
+        const existingResults = JSON.parse(localStorage.getItem(STORAGE_KEYS.CACHED_AI_ANALYSES) || '[]');
+        existingResults.push(analysisResult);
+        
+        // Keep only last 50 analyses
+        if (existingResults.length > 50) {
+          existingResults.splice(0, existingResults.length - 50);
+        }
+        
+        localStorage.setItem(STORAGE_KEYS.CACHED_AI_ANALYSES, JSON.stringify(existingResults));
+      } catch (e) {
+        logger.warn('Failed to cache AI analysis result:', e);
+      }
+
+      logger.info('AI analysis completed and cached', { 
+        operation: data.operation,
+        entityId: action.entityId 
+      });
+
+      return true;
+    } catch (error) {
+      logger.error('AI analysis execution failed:', error);
+      throw error;
+    }
+  }
+
   private createBatches<T>(items: T[], batchSize: number): T[][] {
     const batches: T[][] = [];
     for (let i = 0; i < items.length; i += batchSize) {
@@ -417,6 +489,23 @@ class OfflineActionQueueService {
         setTimeout(() => this.sync(), 1000);
       }
     });
+
+    // Listen for AI analysis completion events
+    window.addEventListener('aiAnalysisCompleted', ((event: CustomEvent) => {
+      logger.info('AI analysis completed event received', { 
+        analysisId: event.detail.analysisId,
+        result: event.detail.result.substring(0, 100) + '...' // Log partial result
+      });
+      
+      // Trigger sync result notification to update UI
+      this.notifySyncComplete({
+        success: true,
+        actionsProcessed: 1,
+        actionsFailed: 0,
+        conflicts: [],
+        errors: [],
+      });
+    }) as EventListener);
   }
 
   private loadQueue(): void {

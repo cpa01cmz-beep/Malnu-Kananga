@@ -89,6 +89,9 @@ export const STORAGE_KEYS = {
     ANNOUNCEMENTS: 'malnu_announcements',
     NOTIFICATIONS: 'malnu_notifications',
     ATTENDANCE: 'malnu_attendance',
+    
+    // AI Analysis cache for offline support
+    CACHED_AI_ANALYSES: 'malnu_cached_ai_analyses',
 } as const;
 
 export const USER_ROLES = {

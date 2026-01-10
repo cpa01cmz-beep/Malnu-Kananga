@@ -11,6 +11,9 @@ import {
 import { logger } from '../utils/logger';
 import { validateAICommand, validateAIResponse } from '../utils/aiEditorValidator';
 import { chatCache, analysisCache, editorCache } from './aiCacheService';
+import { offlineActionQueueService } from './offlineActionQueueService';
+import { isNetworkError } from '../utils/networkStatus';
+import { STORAGE_KEYS } from '../constants';
 
 // Initialize the Google AI client
 const ai = new GoogleGenAI({ apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' });
@@ -329,7 +332,7 @@ export async function analyzeStudentPerformance(studentData: {
   grades: Array<{ subject: string; score: number; grade: string; trend: string }>;
   attendance: { percentage: number; totalDays: number; present: number; absent: number };
   trends: Array<{ month: string; averageScore: number; attendanceRate: number }>;
-}): Promise<string> {
+}, queueIfOffline: boolean = true): Promise<string> {
     // Check cache for existing analysis
     const cacheKey = {
       operation: 'studentAnalysis',
@@ -341,6 +344,33 @@ export async function analyzeStudentPerformance(studentData: {
     if (cachedAnalysis) {
       logger.debug('Returning cached student performance analysis');
       return cachedAnalysis;
+    }
+
+    // Check if offline and should queue
+    const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
+    if (!isOnline && queueIfOffline) {
+      logger.info('Queueing AI analysis for offline execution');
+      
+      // Generate a unique ID for this analysis
+      const analysisId = `student_analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Queue the analysis
+      offlineActionQueueService.addAction({
+        type: 'create',
+        entity: 'ai_analysis',
+        entityId: analysisId,
+        endpoint: '/api/ai/student-analysis',
+        method: 'POST',
+        data: {
+          operation: 'studentAnalysis',
+          studentData,
+          model: PRO_THINKING_MODEL,
+          timestamp: Date.now()
+        }
+      });
+
+      // Return a placeholder message
+      return "Analisis AI sedang diproses dan akan tersedia saat koneksi internet kembali.";
     }
 
     const prompt = `
