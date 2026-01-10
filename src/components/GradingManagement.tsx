@@ -1088,7 +1088,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 
                 {/* Auto-save indicator */}
                 {isAutoSaving && (
-                    <LoadingSpinner size="sm" color="secondary" text="Auto-saving..." />
+                    <LoadingSpinner size="sm" color="neutral" text="Auto-saving..." />
                 )}
             </div>
         </div>

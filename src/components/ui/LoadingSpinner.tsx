@@ -2,7 +2,7 @@ import React from 'react';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
-  color?: 'primary' | 'secondary' | 'success' | 'error';
+  color?: 'primary' | 'neutral' | 'success' | 'error';
   text?: string;
   fullScreen?: boolean;
   className?: string;
@@ -23,7 +23,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
   const colorClasses = {
     primary: 'border-primary-600',
-    secondary: 'border-secondary-600',
+    neutral: 'border-neutral-600',
     success: 'border-green-600',
     error: 'border-red-600'
   };
