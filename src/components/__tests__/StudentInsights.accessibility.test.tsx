@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import StudentInsights from '../StudentInsights';
-import { _useStudentInsights } from '../../hooks/useStudentInsights';
 
 // Mock the useStudentInsights hook
 vi.mock('../../hooks/useStudentInsights', () => ({

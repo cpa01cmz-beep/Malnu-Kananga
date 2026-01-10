@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import ThemeSelector, { ThemeSelectorTrigger } from '../ThemeSelector';
 import { useTheme } from '../../hooks/useTheme';
-import { _getLightThemes, _getDarkThemes } from '../../config/themes';
 import type { Theme } from '../../config/themes';
 
 const mockUseTheme = useTheme as ReturnType<typeof vi.fn>;
