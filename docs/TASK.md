@@ -80,6 +80,8 @@
 ### Q1 2026 (January - March)
   - [x] Complete color system migration (gray → neutral)
     - [x] Create reusable Textarea component with auto-resize (2026-01-07)
+    - [x] Refactor NotificationHistory to use Badge and IconButton components (2026-01-10)
+    - [x] Refactor MaterialSharing to use Button and IconButton components (2026-01-10)
     - [x] Create reusable Modal component with focus trap and accessibility (2026-01-07)
     - [x] Extract repeated BackButton pattern into reusable component with accessibility (2026-01-07)
     - [x] Create reusable Badge component for status indicators (2026-01-07)
@@ -128,8 +130,10 @@
                - [x] Refactor VoiceNotificationSettings to use Tab component - Replaced hardcoded tab button styles with reusable Tab component; improved consistency and accessibility (2026-01-10)
                - [x] Refactor NotificationSettings to use Tab component with badge support - Replaced hardcoded tab button styles with reusable Tab component including badge notification for pending batches; improved consistency and accessibility (2026-01-10)
                - [x] Refactor SchoolInventory to use Tab component with icons - Replaced hardcoded tab button styles with reusable Tab component including icon support; improved consistency and accessibility (2026-01-10)
-               - [x] Refactor PermissionManager to use Tab component - Replaced hardcoded tab button styles with reusable Tab component; improved consistency and accessibility (2026-01-10)
-     - [ ] Achieve 80% test coverage
+                - [x] Refactor PermissionManager to use Tab component - Replaced hardcoded tab button styles with reusable Tab component; improved consistency and accessibility (2026-01-10)
+                - [x] Refactor NotificationHistory to use Badge and IconButton components - Replaced inline badge styles (priority "Penting" and status "Baru") and inline button/IconButton styles (close button, filter buttons, mark-as-read button, check-circle button) with Badge and IconButton components; improved consistency, accessibility with built-in ARIA attributes, and maintainability; eliminated ~40 lines of inline styles (2026-01-10)
+                - [x] Refactor MaterialSharing to use Button and IconButton components - Replaced inline button styles (close modal button, revoke access button, cancel button) with Button and IconButton components; improved consistency, accessibility with proper aria-labels, and maintainability; eliminated ~30 lines of inline styles (2026-01-10)
+      - [ ] Achieve 80% test coverage
   - [ ] Complete API documentation
   - [ ] Optimize bundle size to <500KB
 

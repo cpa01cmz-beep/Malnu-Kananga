@@ -6,6 +6,8 @@ import { parentGradeNotificationService } from '../services/parentGradeNotificat
 import { logger } from '../utils/logger';
 import type { PushNotification, ParentChild } from '../types';
 import Button from './ui/Button';
+import IconButton from './ui/IconButton';
+import Badge from './ui/Badge';
 import { EmptyState } from './ui/LoadingState';
 import LoadingSpinner from './ui/LoadingSpinner';
 
@@ -191,14 +193,16 @@ case 'announcement':
                 {child.studentName} - {notifications.length} notifikasi
               </p>
             </div>
-            <button
+            <IconButton
               onClick={onClose}
-              className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+              icon={
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              }
+              variant="ghost"
+              ariaLabel="Tutup riwayat notifikasi"
+            />
           </div>
 
           {/* Filters */}
@@ -210,27 +214,27 @@ case 'announcement':
                 { value: 'system', label: 'Sistem' },
                 { value: 'announcement', label: 'Pengumuman' }
               ].map(option => (
-                <button
+                <Button
                   key={option.value}
                   onClick={() => setFilter(option.value as 'all' | 'grade' | 'system' | 'announcement')}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                    filter === option.value
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
-                  }`}
+                  variant={filter === option.value ? 'primary' : 'ghost'}
+                  size="sm"
                 >
                   {option.label}
-                </button>
+                </Button>
               ))}
             </div>
 
-            <button
+            <Button
               onClick={markAllAsRead}
               disabled={markingAsRead || notifications.filter(n => !n.read).length === 0}
-              className="ml-auto px-3 py-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              variant="ghost"
+              size="sm"
+              isLoading={markingAsRead}
+              className="ml-auto"
             >
               {markingAsRead ? 'Menandai...' : 'Tandai Semua Dibaca'}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -270,27 +274,27 @@ case 'announcement':
                               {formatNotificationTime(notification.timestamp)}
                             </span>
                             {notification.priority === 'high' && (
-                              <span className="px-2 py-1 text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-full">
+                              <Badge variant="error" size="sm">
                                 Penting
-                              </span>
+                              </Badge>
                             )}
                             {!notification.read && (
-                              <span className="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full">
+                              <Badge variant="info" size="sm">
                                 Baru
-                              </span>
+                              </Badge>
                             )}
                           </div>
                         </div>
                         {!notification.read && (
-                          <button
+                          <IconButton
                             onClick={() => {
                               pushNotificationService.markAsRead(notification.id);
                               loadNotificationHistory();
                             }}
-                            className="flex-shrink-0 p-2 text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400"
-                          >
-                            <CheckCircleIcon className="w-4 h-4" />
-                          </button>
+                            icon={<CheckCircleIcon className="w-4 h-4" />}
+                            variant="ghost"
+                            ariaLabel="Tandai notifikasi sebagai dibaca"
+                          />
                         )}
                       </div>
                     </div>
