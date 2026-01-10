@@ -12,7 +12,7 @@ import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
 import ProgressBar from './ui/ProgressBar';
-import EmptyState from './ui/LoadingState';
+import { EmptyState } from './ui/LoadingState';
 import { GRADIENT_CLASSES, DARK_GRADIENT_CLASSES } from '../config/gradients';
 
 interface OsisEventsProps {

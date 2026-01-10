@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import FileInput from '../FileInput';
 
@@ -166,7 +166,7 @@ describe('FileInput Component', () => {
   it('has focus ring for file button', () => {
     const { container } = render(<FileInput />);
     const input = container.querySelector('input[type="file"]');
-    expect(input).toHaveClass('file:focus:ring-2', 'file:focus:ring-blue-500/50');
+    expect(input).toHaveClass('file:focus:ring-2', 'focus:file:ring-blue-500/50');
   });
 
   it('has hover effects for file button', () => {
