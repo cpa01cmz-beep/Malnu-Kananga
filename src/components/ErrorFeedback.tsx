@@ -3,6 +3,8 @@ import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import InformationCircleIcon from './icons/InformationCircleIcon';
 import { CloseIcon } from './icons/CloseIcon';
 import { ErrorState } from '../hooks/useErrorHandler';
+import Button from './ui/Button';
+import IconButton from './ui/IconButton';
 
 const AlertTriangleIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -65,27 +67,25 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
           {feedback.actions && feedback.actions.length > 0 && (
             <div className="mt-3 flex gap-2">
               {feedback.actions.map((action: { label: string; action: () => void; variant?: string }, index: number) => (
-                <button
+                <Button
                   key={index}
                   onClick={action.action}
-                  className={`inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                    action.variant === 'primary'
-                      ? 'bg-red-100 text-red-800 hover:bg-red-200'
-                      : 'bg-neutral-100 text-neutral-800 hover:bg-neutral-200'
-                  }`}
+                  size="sm"
+                  variant={action.variant === 'primary' ? 'danger' : 'secondary'}
+                  icon={action.label === 'Coba Lagi' ? <ArrowPathIcon className="w-3 h-3" /> : undefined}
                 >
-                  {action.label === 'Coba Lagi' && <ArrowPathIcon className="w-3 h-3 mr-1" />}
                   {action.label}
-                </button>
+                </Button>
               ))}
               {onRetry && !feedback.actions.some((a: { label: string; action: () => void; variant?: string }) => a.label === 'Coba Lagi') && (
-                <button
+                <Button
                   onClick={onRetry}
-                  className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium bg-red-100 text-red-800 hover:bg-red-200 transition-colors"
+                  size="sm"
+                  variant="danger"
+                  icon={<ArrowPathIcon className="w-3 h-3" />}
                 >
-                  <ArrowPathIcon className="w-3 h-3 mr-1" />
                   Coba Lagi
-                </button>
+                </Button>
               )}
             </div>
           )}
@@ -93,12 +93,12 @@ export const ErrorFeedback: React.FC<ErrorFeedbackProps> = ({
 
         {onDismiss && (
           <div className="ml-auto pl-3">
-            <button
+            <IconButton
+              icon={<CloseIcon className="w-4 h-4" />}
+              ariaLabel="Tutup pesan"
               onClick={onDismiss}
-              className="inline-flex rounded-md p-1.5 hover:bg-black hover:bg-opacity-10 transition-colors"
-            >
-              <CloseIcon className="w-4 h-4" />
-            </button>
+              size="sm"
+            />
           </div>
         )}
       </div>
