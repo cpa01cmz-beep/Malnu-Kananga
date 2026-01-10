@@ -94,7 +94,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
 
       <div className="relative">
         {showIcon && iconPosition === 'left' && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 pointer-events-none">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 pointer-events-none" aria-hidden="true">
             {iconContent}
           </div>
         )}
@@ -112,7 +112,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
         />
 
         {showIcon && iconPosition === 'right' && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 pointer-events-none">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 pointer-events-none" aria-hidden="true">
             {iconContent}
           </div>
         )}

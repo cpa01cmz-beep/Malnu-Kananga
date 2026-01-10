@@ -109,7 +109,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           }}
         >
           {size === 'xl' && showLabel && (
-            <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-neutral-800 dark:text-neutral-100">
+            <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-neutral-800 dark:text-neutral-100" aria-hidden="true">
               {label || `${Math.round(percentage)}%`}
             </span>
           )}

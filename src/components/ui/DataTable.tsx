@@ -160,7 +160,7 @@ const DataTable = <T extends Record<string, unknown>>({
           <div className="flex items-center gap-4">
             {filter?.searchable && (
               <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" aria-hidden="true" />
                 <input
                   type="text"
                   value={localSearch}
