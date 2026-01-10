@@ -10,6 +10,7 @@ import type { ParentGradeNotificationSettings } from '../services/parentGradeNot
 import { logger } from '../utils/logger';
 import { useAutoSave } from '../hooks/useAutoSave';
 import Button from './ui/Button';
+import LoadingSpinner from './ui/LoadingSpinner';
 
 interface ParentNotificationSettingsProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -98,10 +99,7 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
     return (
       <div className="fixed inset-0 bg-black/50% flex items-center justify-center z-50">
         <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-md w-full mx-4">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-neutral-600 dark:text-neutral-400">Memuat pengaturan...</p>
-          </div>
+          <LoadingSpinner text="Memuat pengaturan..." />
         </div>
       </div>
     );
@@ -140,11 +138,14 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
         {/* Auto-save status */}
         {isDirty && (
           <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg flex items-center justify-between">
-            <span className="text-sm text-amber-800 dark:text-amber-200">
-              {isAutoSaving ? 'Menyimpan...' : 'Perubahan belum disimpan'}
-            </span>
-            {isAutoSaving && (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-amber-600"></div>
+            {isAutoSaving ? (
+              <div className="flex items-center gap-2 flex-1">
+                <LoadingSpinner size="sm" color="primary" text="Menyimpan..." />
+              </div>
+            ) : (
+              <span className="text-sm text-amber-800 dark:text-amber-200">
+                Perubahan belum disimpan
+              </span>
             )}
           </div>
         )}
