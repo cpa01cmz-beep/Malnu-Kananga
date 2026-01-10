@@ -69,7 +69,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
   const errorTextId = errorText ? `${searchId}-error` : undefined;
   const describedBy = [helperTextId, errorTextId].filter(Boolean).join(' ') || undefined;
 
-  const iconContent = icon || <MagnifyingGlassIcon className={sizeIconClasses[size]} aria-hidden="true" />;
+  const iconContent = icon || <MagnifyingGlassIcon className={sizeIconClasses[size]} aria-hidden />;
 
   const inputClasses = `
     ${baseClasses}

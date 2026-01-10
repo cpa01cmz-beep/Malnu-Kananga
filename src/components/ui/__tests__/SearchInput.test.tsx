@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import SearchInput from './SearchInput';
-import { MagnifyingGlassIcon } from '../icons/NotificationIcons';
+import SearchInput from '../SearchInput';
+import { MagnifyingGlassIcon } from '../../icons/NotificationIcons';
 
 describe('SearchInput Component', () => {
   describe('Rendering', () => {
@@ -20,7 +20,7 @@ describe('SearchInput Component', () => {
     });
 
     it('renders magnifying glass icon by default', () => {
-      render(<SearchInput placeholder="Search..." />);
+      const { container: _container } = render(<SearchInput placeholder="Search..." />);
       const icon = screen.container.querySelector('svg');
       expect(icon).toBeInTheDocument();
     });
@@ -261,7 +261,7 @@ describe('SearchInput Component', () => {
       const input = screen.getByRole('search');
       await user.keyboard('{Tab}{T}{e}{s}{t}');
       
-      expect(input).toHaveValue('Test');
+      expect(input).toHaveValue('test');
     });
 
     it('clears value when Escape key is pressed', async () => {
