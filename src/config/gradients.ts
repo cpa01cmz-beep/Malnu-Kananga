@@ -185,6 +185,11 @@ export const GRADIENTS = {
     direction: 'to-r' as const,
   },
   BACKGROUND: {
+    app: {
+      from: 'from-[var(--color-surface)]',
+      to: 'to-[var(--color-background)]',
+      direction: 'to-br' as const,
+    },
     hero: {
       from: 'from-primary-50/90',
       to: 'to-primary-100/70',
@@ -259,6 +264,7 @@ export const GRADIENT_CLASSES = {
   ORANGE_GREEN: 'bg-gradient-to-r from-orange-50 to-green-50',
   INDIGO_MAIN: 'bg-gradient-to-br from-indigo-500 to-purple-600',
   INDIGO_LIGHT: 'bg-gradient-to-br from-indigo-100 to-indigo-200',
+  APP_BACKGROUND: 'bg-gradient-to-br from-[var(--color-surface)] to-[var(--color-background)]',
   HERO: 'bg-gradient-to-br from-primary-50/90 via-white/80 to-primary-100/70',
   SECTION: 'bg-gradient-to-b from-white via-neutral-50/60 to-neutral-100/50',
   SECTION_ALT: 'bg-gradient-to-b from-white via-neutral-50/70 to-neutral-100/50',
