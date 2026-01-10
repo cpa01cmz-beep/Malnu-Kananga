@@ -1,7 +1,9 @@
 import React from 'react';
 
-export const CheckCircleIcon: React.FC<{ className?: string }> = ({
+// eslint-disable-next-line no-undef
+export const CheckCircleIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({
   className = 'w-6 h-6',
+  ...props
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -10,6 +12,7 @@ export const CheckCircleIcon: React.FC<{ className?: string }> = ({
     strokeWidth={1.5}
     stroke="currentColor"
     className={className}
+    {...props}
   >
     <path
       strokeLinecap="round"
@@ -19,8 +22,10 @@ export const CheckCircleIcon: React.FC<{ className?: string }> = ({
   </svg>
 );
 
-export const XCircleIcon: React.FC<{ className?: string }> = ({
+// eslint-disable-next-line no-undef
+export const XCircleIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({
   className = 'w-6 h-6',
+  ...props
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -29,6 +34,7 @@ export const XCircleIcon: React.FC<{ className?: string }> = ({
     strokeWidth={1.5}
     stroke="currentColor"
     className={className}
+    {...props}
   >
     <path
       strokeLinecap="round"
@@ -38,8 +44,10 @@ export const XCircleIcon: React.FC<{ className?: string }> = ({
   </svg>
 );
 
-export const MagnifyingGlassIcon: React.FC<{ className?: string }> = ({
+// eslint-disable-next-line no-undef
+export const MagnifyingGlassIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({
   className = 'w-6 h-6',
+  ...props
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -48,6 +56,7 @@ export const MagnifyingGlassIcon: React.FC<{ className?: string }> = ({
     strokeWidth={1.5}
     stroke="currentColor"
     className={className}
+    {...props}
   >
     <path
       strokeLinecap="round"
@@ -57,8 +66,10 @@ export const MagnifyingGlassIcon: React.FC<{ className?: string }> = ({
   </svg>
 );
 
-export const FunnelIcon: React.FC<{ className?: string }> = ({
+// eslint-disable-next-line no-undef
+export const FunnelIcon: React.FC<React.SVGProps<SVGSVGElement>> = ({
   className = 'w-6 h-6',
+  ...props
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -67,6 +78,7 @@ export const FunnelIcon: React.FC<{ className?: string }> = ({
     strokeWidth={1.5}
     stroke="currentColor"
     className={className}
+    {...props}
   >
     <path
       strokeLinecap="round"
