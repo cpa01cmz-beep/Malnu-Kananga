@@ -3,6 +3,7 @@ import { ChevronLeftIcon, ChevronRightIcon, CalendarDaysIcon } from '@heroicons/
 import type { Schedule, ParentMeeting } from '../types';
 import IconButton from './ui/IconButton';
 import Button from './ui/Button';
+import Card from './ui/Card';
 
 interface CalendarViewProps {
   schedules: Schedule[];
@@ -137,7 +138,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   };
 
   const renderMonthView = () => (
-    <div className="bg-white rounded-lg shadow" role="grid" aria-label="Kalender bulanan">
+    <Card padding="none" className="grid" role="grid" aria-label="Kalender bulanan">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <IconButton
@@ -223,11 +224,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           );
         })}
       </div>
-    </div>
+    </Card>
   );
 
   const renderWeekView = () => (
-    <div className="bg-white rounded-lg shadow" role="grid" aria-label="Kalender mingguan">
+    <Card padding="none" className="grid" role="grid" aria-label="Kalender mingguan">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <IconButton
@@ -318,9 +319,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               </div>
             );
           })}
-        </div>
-      ))}
-    </div>
+         </div>
+       ))}
+      </div>
+    </Card>
   );
 
   const renderDayView = () => {
@@ -332,7 +334,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     });
 
     return (
-      <div className="bg-white rounded-lg shadow" aria-label="Kalender harian">
+      <Card aria-label="Kalender harian">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <IconButton
@@ -429,15 +431,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                             )}
                           </div>
                         )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </div>
+         </div>
+       </div>
+      </Card>
     );
   };
 
@@ -453,7 +449,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         >
           Hari Ini
         </Button>
-        <div className="flex bg-white border rounded-lg" role="group" aria-label="Pilihan tampilan">
+        <Card padding="none" className="flex" role="group" aria-label="Pilihan tampilan">
           {(['month', 'week', 'day'] as const).map(mode => (
             <Button
               key={mode}
@@ -467,7 +463,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               {mode === 'month' ? 'Bulan' : mode === 'week' ? 'Minggu' : 'Hari'}
             </Button>
           ))}
-        </div>
+        </Card>
       </div>
 
       {/* Calendar views */}
