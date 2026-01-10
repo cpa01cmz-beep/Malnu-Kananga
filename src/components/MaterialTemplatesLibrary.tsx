@@ -2,10 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { PlusIcon } from './icons/PlusIcon';
 import { StarIcon } from './icons/MaterialIcons';
-import { DownloadIcon, MagnifyingGlassIcon } from './icons/MaterialIcons';
+import { DownloadIcon } from './icons/MaterialIcons';
 import { MaterialTemplate, Subject } from '../types';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
+import SearchInput from './ui/SearchInput';
 
 interface MaterialTemplatesProps {
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
@@ -259,16 +260,13 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
       <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
-            <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Cari template..."
-                className="w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-            </div>
+            <SearchInput
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Cari template..."
+              size="sm"
+              fullWidth
+            />
           </div>
           
           <select
