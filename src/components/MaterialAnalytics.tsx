@@ -7,6 +7,7 @@ import { ClockIcon, TrendingUpIcon, TrendingDownIcon } from './icons/MaterialIco
 import { ELibrary } from '../types';
 import { logger } from '../utils/logger';
 import ProgressBar from './ui/ProgressBar';
+import Skeleton from './ui/Skeleton';
 
 interface MaterialAnalyticsProps {
   material: ELibrary;
@@ -110,12 +111,10 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
 
   if (loading) {
     return (
-      <div className="animate-pulse">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-neutral-200 dark:bg-neutral-700 rounded-lg p-4 h-20"></div>
-          ))}
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} variant="rectangular" height={80} />
+        ))}
       </div>
     );
   }

@@ -8,6 +8,7 @@ import { MaterialFolder, ELibrary } from '../types';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import SmallActionButton from './ui/SmallActionButton';
+import Skeleton from './ui/Skeleton';
 
 interface FolderNavigationProps {
   selectedFolderId?: string;
@@ -287,10 +288,10 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
 
   if (loading) {
     return (
-      <div className="animate-pulse">
-        <div className="h-6 bg-neutral-200 dark:bg-neutral-700 rounded mb-2"></div>
-        <div className="h-6 bg-neutral-200 dark:bg-neutral-700 rounded mb-2"></div>
-        <div className="h-6 bg-neutral-200 dark:bg-neutral-700 rounded"></div>
+      <div className="space-y-2">
+        <Skeleton variant="text" height={24} />
+        <Skeleton variant="text" height={24} />
+        <Skeleton variant="text" height={24} />
       </div>
     );
   }

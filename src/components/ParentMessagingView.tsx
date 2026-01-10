@@ -10,6 +10,7 @@ import { validateAndSanitizeMessage, validateParentMessage } from '../utils/pare
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
+import Skeleton from './ui/Skeleton';
 
 interface ParentMessagingViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -122,9 +123,9 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
   if (loading) {
     return (
       <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
-        <div className="animate-pulse">
-          <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg mb-6"></div>
-          <div className="h-64 bg-neutral-200 dark:bg-neutral-700 rounded-xl"></div>
+        <div className="space-y-6">
+          <Skeleton variant="text" height={32} className="w-1/3" />
+          <Skeleton variant="rectangular" height={256} className="w-full" />
         </div>
       </div>
     );

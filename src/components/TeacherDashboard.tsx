@@ -19,6 +19,7 @@ import Card from './ui/Card';
 import DashboardActionCard from './ui/DashboardActionCard';
 import ErrorMessage from './ui/ErrorMessage';
 import { CardSkeleton } from './ui/Skeleton';
+import Skeleton from './ui/Skeleton';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import type { VoiceCommand } from '../types';
 import VoiceInputButton from './VoiceInputButton';
@@ -238,9 +239,9 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
       <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="space-y-6">
-            <div className="animate-pulse">
-              <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded w-1/3 mb-4"></div>
-              <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2"></div>
+            <div className="space-y-4">
+              <Skeleton variant="text" height={32} className="w-1/3" />
+              <Skeleton variant="text" height={16} className="w-1/2" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map(i => (

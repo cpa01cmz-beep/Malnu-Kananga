@@ -25,6 +25,7 @@ import { useNetworkStatus } from '../utils/networkStatus';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import FolderNavigation from './FolderNavigation';
 import { CardSkeleton } from './ui/Skeleton';
+import Skeleton from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import MaterialSharing from './MaterialSharing';
 import VersionControl from './VersionControl';
@@ -585,9 +586,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kategori</label>
                 {subjectsLoading ? (
-                  <div className="animate-pulse">
-                    <div className="w-full h-10 bg-neutral-200 dark:bg-neutral-700 rounded-lg"></div>
-                  </div>
+                  <Skeleton variant="rectangular" height={40} className="w-full" />
                 ) : (
                   <>
                     <Select

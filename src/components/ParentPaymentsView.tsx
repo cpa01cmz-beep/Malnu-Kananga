@@ -6,6 +6,9 @@ import { ToastType } from './Toast';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import Alert from './ui/Alert';
+import Select from './ui/Select';
+import { CardSkeleton } from './ui/Skeleton';
+import Skeleton from './ui/Skeleton';
 import type { ParentChild, ParentPayment } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
@@ -133,11 +136,11 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
   if (loading) {
     return (
       <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
-        <div className="animate-pulse">
-          <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg mb-6"></div>
+        <div className="space-y-6">
+          <Skeleton variant="text" height={32} className="w-1/4" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-64 bg-neutral-200 dark:bg-neutral-700 rounded-xl"></div>
+              <CardSkeleton key={i} />
             ))}
           </div>
         </div>
@@ -155,14 +158,15 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Pembayaran</h2>
           <div className="flex items-center gap-4">
-            <select
+            <Select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value as 'current' | 'all')}
-              className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
-            >
-              <option value="current">Periode Saat Ini</option>
-              <option value="all">Semua Periode</option>
-            </select>
+              size="md"
+              options={[
+                { value: 'current', label: 'Periode Saat Ini' },
+                { value: 'all', label: 'Semua Periode' }
+              ]}
+            />
             <Button
               variant="green-solid"
               size="md"

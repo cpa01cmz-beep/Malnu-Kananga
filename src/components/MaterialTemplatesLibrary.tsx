@@ -8,6 +8,8 @@ import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
 import FileInput from './ui/FileInput';
+import Select from './ui/Select';
+import Skeleton, { CardSkeleton } from './ui/Skeleton';
 
 interface MaterialTemplatesProps {
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
@@ -230,12 +232,10 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
 
   if (loading) {
     return (
-      <div className="animate-pulse">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-neutral-200 dark:bg-neutral-700 rounded-xl h-64"></div>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[1, 2, 3].map((i) => (
+          <CardSkeleton key={i} />
+        ))}
       </div>
     );
   }
@@ -270,37 +270,42 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
             />
           </div>
           
-          <select
+          <Select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          >
-            <option value="">Semua Kategori</option>
-            {categories.map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
+            size="sm"
+            options={[
+              { value: '', label: 'Semua Kategori' },
+              ...categories.map(category => ({
+                value: category,
+                label: category
+              }))
+            ]}
+          />
 
-          <select
+          <Select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          >
-            <option value="">Semua Mata Pelajaran</option>
-            {subjects.map(subject => (
-              <option key={subject.id} value={subject.id}>{subject.name}</option>
-            ))}
-          </select>
+            size="sm"
+            options={[
+              { value: '', label: 'Semua Mata Pelajaran' },
+              ...subjects.map(subject => ({
+                value: subject.id,
+                label: subject.name
+              }))
+            ]}
+          />
 
-          <select
+          <Select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'name' | 'usage' | 'created')}
-            className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          >
-            <option value="usage">Paling Populer</option>
-            <option value="name">Nama (A-Z)</option>
-            <option value="created">Terbaru</option>
-          </select>
+            size="sm"
+            options={[
+              { value: 'usage', label: 'Paling Populer' },
+              { value: 'name', label: 'Nama (A-Z)' },
+              { value: 'created', label: 'Terbaru' }
+            ]}
+          />
         </div>
       </div>
 
@@ -435,19 +440,19 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                  Mata Pelajaran (opsional)
-                </label>
-                <select
+                <Select
+                  label="Mata Pelajaran (opsional)"
                   value={newTemplate.subjectId}
                   onChange={(e) => setNewTemplate({...newTemplate, subjectId: e.target.value})}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                >
-                  <option value="">Umum (semua mata pelajaran)</option>
-                  {subjects.map(subject => (
-                    <option key={subject.id} value={subject.id}>{subject.name}</option>
-                  ))}
-                </select>
+                  fullWidth
+                  options={[
+                    { value: '', label: 'Umum (semua mata pelajaran)' },
+                    ...subjects.map(subject => ({
+                      value: subject.id,
+                      label: subject.name
+                    }))
+                  ]}
+                />
               </div>
 
               <FileInput
