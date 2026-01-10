@@ -134,7 +134,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
     setIsRestoreDialogOpen(true);
   };
 
-  const deleteVersion = (versionId: string) => {
+  const _deleteVersion = (versionId: string) => {
     const version = versions.find(v => v.id === versionId);
     setVersionToDelete(version || null);
     setIsDeleteDialogOpen(true);
@@ -178,7 +178,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
     }
   };
 
-  const deleteVersion = async (versionId: string) => {
+  const deleteVersionConfirmed = async (versionId: string) => {
     if (!window.confirm('Hapus versi ini? Tindakan tidak dapat dibatalkan.')) {
       return;
     }
@@ -301,7 +301,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
                       <Button
                         variant="danger"
                         size="sm"
-                        onClick={() => deleteVersion(version.id)}
+                        onClick={() => deleteVersionConfirmed(version.id)}
                         iconOnly
                         icon={<TrashIcon className="w-4 h-4" />}
                         aria-label="Hapus versi ini"

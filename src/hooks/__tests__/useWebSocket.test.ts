@@ -1,12 +1,12 @@
  
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useWebSocket, useRealtimeEvent, useRealtimeGrades } from '../hooks/useWebSocket';
-import { webSocketService } from '../services/webSocketService';
-import { logger } from '../utils/logger';
+import { useWebSocket, useRealtimeEvent, useRealtimeGrades } from '../useWebSocket';
+import { webSocketService } from '../../services/webSocketService';
+import { logger } from '../../utils/logger';
 
 // Mock dependencies
-vi.mock('../services/webSocketService', () => ({
+vi.mock('../../services/webSocketService', () => ({
   webSocketService: {
     initialize: vi.fn(),
     getConnectionState: vi.fn(),
@@ -449,7 +449,7 @@ describe('WebSocket Integration Edge Cases', () => {
     // Mock interval
     vi.useFakeTimers();
 
-    const { _rerender } = renderHook(() => useWebSocket());
+    const { rerender: _rerender } = renderHook(() => useWebSocket());
 
     expect(webSocketService.getConnectionState).toHaveBeenCalledTimes(1);
 

@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import LinkCard from './LinkCard';
-import { DocumentTextIcon } from '../icons/DocumentTextIcon';
+import DocumentTextIcon from '../../icons/DocumentTextIcon';
 
 describe('LinkCard', () => {
   const defaultProps = {
