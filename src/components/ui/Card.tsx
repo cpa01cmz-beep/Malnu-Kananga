@@ -21,8 +21,9 @@ export interface CardProps {
   'aria-describedby'?: string;
 }
 
-interface InteractiveCardProps extends Omit<CardProps, 'onClick'>, Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'variant' | 'children'> {
+interface InteractiveCardProps extends Omit<CardProps, 'onClick' | 'role'>, Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'variant' | 'children'> {
   variant: 'interactive';
+  role?: string;
 }
 
 const paddingClasses = {

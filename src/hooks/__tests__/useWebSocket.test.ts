@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useWebSocket, useRealtimeEvent, useRealtimeGrades } from '../useWebSocket';
-import { webSocketService } from '../../services/webSocketService';
+import { webSocketService, type RealTimeEventType } from '../../services/webSocketService';
 import { logger } from '../../utils/logger';
 
 // Mock dependencies
@@ -48,7 +48,7 @@ describe('useWebSocket Hook', () => {
       connecting: false,
       reconnecting: false,
       reconnectAttempts: 0,
-      subscriptions: new Set(['grade_updated']),
+      subscriptions: new Set<RealTimeEventType>(['grade_updated']),
     });
 
     const { result } = renderHook(() => useWebSocket());
