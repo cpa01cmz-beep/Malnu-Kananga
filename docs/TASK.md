@@ -221,7 +221,8 @@
                      - StudentLearningModule - "Belum ada kuis untuk topik X" + action button
 
                    Benefits: Consistency across entire application, automatic ARIA support (role="status", aria-live="polite", aria-label), centralized maintainability, ~17 net lines of duplicate code eliminated, support for 3 sizes (sm, md, lg) and 3 variants (default, minimal, illustrated), action button support for CTAs, custom icon support (2026-01-10)
-                 - [x] Improve LoginModal form error display - Replaced confusing conditional error handling (error only showed on specific fields when other fields were filled) with dedicated error alert box above form fields; improved UX by making errors consistently visible; added role="alert" for screen readers; added error icon for better visual prominence; used consistent red color scheme matching design system (2026-01-10)
+                  - [x] Improve LoginModal form error display - Replaced confusing conditional error handling (error only showed on specific fields when other fields were filled) with dedicated error alert box above form fields; improved UX by making errors consistently visible; added role="alert" for screen readers; added error icon for better visual prominence; used consistent red color scheme matching design system (2026-01-10)
+                  - [x] Refactor StudentLearningModule to use Card component - Replaced hardcoded topic cards (button with interactive styles), topic details card (bg-white with shadow), and flashcards (border rounded divs) with centralized Card component using interactive, default, and default variants; improved consistency with design system, enhanced accessibility via Card's built-in ARIA support (proper roles, focus management), and maintainability; eliminated ~30 lines of inline styles (2026-01-10)
          - [ ] Achieve 80% test coverage
   - [ ] Complete API documentation
   - [ ] Optimize bundle size to <500KB
