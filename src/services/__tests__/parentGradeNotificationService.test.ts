@@ -303,7 +303,7 @@ describe('ParentGradeNotificationService - OCR Validation', () => {
       expect(notification.body).toContain('Dokumen Akademik gagal divalidasi');
       expect(notification.body).toContain('Silakan upload ulang dengan kualitas lebih baik');
       expect(notification.priority).toBe('high');
-      expect(notification.type).toBe('ocr_validation');
+      expect(notification.type).toBe('ocr');
       expect(notification.data.validationType).toBe('validation-failure');
       expect(notification.data.reuploadRequired).toBe(true);
       expect(notification.data.guidance).toContain('Panduan upload ulang');
@@ -328,7 +328,7 @@ describe('ParentGradeNotificationService - OCR Validation', () => {
       expect(notification.body).toContain('Dokumen Sertifikat memiliki masalah');
       expect(notification.body).toContain('Accuracy: 65.0%');
       expect(notification.priority).toBe('normal');
-      expect(notification.type).toBe('ocr_validation');
+      expect(notification.type).toBe('ocr');
       expect(notification.data.validationType).toBe('validation-warning');
       expect(notification.data.reuploadRequired).toBe(false);
     });
@@ -352,7 +352,7 @@ describe('ParentGradeNotificationService - OCR Validation', () => {
       expect(notification.body).toContain('Dokumen Sertifikat berhasil divalidasi');
       expect(notification.body).toContain('akurasi 85.0%');
       expect(notification.priority).toBe('low');
-      expect(notification.type).toBe('ocr_validation');
+      expect(notification.type).toBe('ocr');
       expect(notification.data.validationType).toBe('validation-success');
     });
 

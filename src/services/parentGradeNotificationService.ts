@@ -87,8 +87,8 @@ class ParentGradeNotificationService {
   // Handle OCR validation events
   private async handleOCRValidationEvent(event: OCRValidationEvent): Promise<void> {
     try {
-      // Only process events for students whose parents are the current user
-      if (event.userRole !== 'parent' && !this.isChildDocument(event.userId)) {
+      // Only process events for students whose parents are current user
+      if (event.userRole !== 'parent' || !this.isChildDocument(event.userId)) {
         logger.info('OCR validation event not relevant to current parent user');
         return;
       }
@@ -196,7 +196,7 @@ class ParentGradeNotificationService {
           // Don't send notifications for successful validation of regular academic documents
           return {
             id: `ocr-validation-${event.id}`,
-type: 'ocr' as 'ocr' | 'grade' | 'announcement' | 'message',
+            type: 'ocr',
             title: '',
             body: '',
             timestamp: new Date().toISOString(),
@@ -216,7 +216,7 @@ type: 'ocr' as 'ocr' | 'grade' | 'announcement' | 'message',
 
     return {
       id: `ocr-validation-${event.id}`,
-      type: 'ocr_validation',
+      type: 'ocr',
       title,
       body,
       timestamp: new Date().toISOString(),
@@ -224,7 +224,7 @@ type: 'ocr' as 'ocr' | 'grade' | 'announcement' | 'message',
       priority,
       targetRoles: ['parent'],
       data: {
-type: 'ocr' as 'ocr' | 'grade' | 'announcement' | 'message', // TODO: Add 'ocr' to NotificationType enum
+        type: 'ocr_validation',
         validationType: type,
         documentId,
         documentType,
