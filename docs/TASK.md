@@ -133,7 +133,8 @@
                 - [x] Refactor PermissionManager to use Tab component - Replaced hardcoded tab button styles with reusable Tab component; improved consistency and accessibility (2026-01-10)
                 - [x] Refactor NotificationHistory to use Badge and IconButton components - Replaced inline badge styles (priority "Penting" and status "Baru") and inline button/IconButton styles (close button, filter buttons, mark-as-read button, check-circle button) with Badge and IconButton components; improved consistency, accessibility with built-in ARIA attributes, and maintainability; eliminated ~40 lines of inline styles (2026-01-10)
                 - [x] Refactor MaterialSharing to use Button and IconButton components - Replaced inline button styles (close modal button, revoke access button, cancel button) with Button and IconButton components; improved consistency, accessibility with proper aria-labels, and maintainability; eliminated ~30 lines of inline styles (2026-01-10)
-      - [ ] Achieve 80% test coverage
+                - [x] Refactor inline form input styles to use reusable UI components - Replaced inline search input (ELibrary), form inputs/selects/textareas (MaterialUpload), and message inputs/selects (ParentMessagingView) with SearchInput, Input, Select, and Textarea components; improved consistency with design system, enhanced accessibility (proper ARIA attributes), better dark mode support, and maintainability; eliminated ~60 lines of inline styles (2026-01-10)
+       - [ ] Achieve 80% test coverage
   - [ ] Complete API documentation
   - [ ] Optimize bundle size to <500KB
 

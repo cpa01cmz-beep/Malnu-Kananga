@@ -32,6 +32,9 @@ import MaterialAnalytics from './MaterialAnalytics';
 import MaterialTemplatesLibrary from './MaterialTemplatesLibrary';
 import Button from './ui/Button';
 import AccessDenied from './AccessDenied';
+import Input from './ui/Input';
+import Select from './ui/Select';
+import Textarea from './ui/Textarea';
 
 interface MaterialUploadProps {
   onBack: () => void;
@@ -557,31 +560,27 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Formulir Upload</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="material-title" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Judul Materi</label>
-                <input
-                  id="material-title"
-                  name="title"
-                  type="text"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="Contoh: Modul Bab 3..."
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
-                  required
-                  autoComplete="off"
-                />
-              </div>
+              <Input
+                id="material-title"
+                name="title"
+                label="Judul Materi"
+                placeholder="Contoh: Modul Bab 3..."
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                fullWidth
+                required
+                autoComplete="off"
+              />
 
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Deskripsi</label>
-                <textarea
-                  value={newDescription}
-                  onChange={(e) => setNewDescription(e.target.value)}
-                  placeholder="Deskripsi singkat materi..."
-                  rows={3}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none"
-                />
-              </div>
+              <Textarea
+                label="Deskripsi"
+                placeholder="Deskripsi singkat materi..."
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
+                fullWidth
+                minRows={3}
+                maxRows={6}
+              />
 
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kategori</label>
@@ -591,43 +590,33 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                   </div>
                 ) : (
                   <>
-                    <select
+                    <Select
                       value={newCategory}
                       onChange={(e) => handleCategoryChange(e.target.value)}
-                      className={`w-full px-3 py-2 border rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none ${
-                        categoryValidation && !categoryValidation.valid
-                          ? 'border-red-300 dark:border-red-600'
-                          : 'border-neutral-300 dark:border-neutral-600'
-                      }`}
-                    >
-                      <option value="">Pilih Kategori</option>
-                      {subjects.map((subject) => (
-                        <option key={subject.id} value={subject.name}>
-                          {subject.name} ({subject.code})
-                        </option>
-                      ))}
-                    </select>
-                    
-                    {categoryValidation && !categoryValidation.valid && (
-                      <div>
-                      <ErrorMessage 
-                        title="Validation Error" 
-                        message={categoryValidation.error || 'Invalid category'} 
-                        variant="inline" 
-                      />
-                      {categoryValidation.suggestions && categoryValidation.suggestions.length > 0 && (
-                          <ul className="mt-1 ml-4 list-disc">
-                            {categoryValidation.suggestions.map((suggestion, index) => (
-                              <li key={index} className="cursor-pointer hover:text-green-600" 
-                                  onClick={() => handleCategoryChange(suggestion)}>
-                                {suggestion}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    )}
-                    
+                      state={categoryValidation && !categoryValidation.valid ? 'error' : 'default'}
+                      errorText={categoryValidation && !categoryValidation.valid ? categoryValidation.error || 'Invalid category' : undefined}
+                      fullWidth
+                      placeholder="Pilih Kategori"
+                      options={[
+                        { value: '', label: 'Pilih Kategori' },
+                        ...subjects.map((subject) => ({
+                          value: subject.name,
+                          label: `${subject.name} (${subject.code})`
+                        }))
+                      ]}
+                    />
+
+                    {categoryValidation && !categoryValidation.valid && categoryValidation.suggestions && categoryValidation.suggestions.length > 0 && (
+                        <ul className="mt-1 ml-4 list-disc">
+                          {categoryValidation.suggestions.map((suggestion, index) => (
+                            <li key={index} className="cursor-pointer hover:text-green-600"
+                                onClick={() => handleCategoryChange(suggestion)}>
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+
                     <div className="mt-2 flex items-center justify-between">
                       <span className="text-xs text-neutral-500 dark:text-neutral-400">
                         {subjects.length} mata pelajaran tersedia
@@ -646,19 +635,23 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                         <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                           Usul Kategori Baru
                         </h4>
-                        <input
-                          type="text"
+                        <Input
                           value={newCategory}
                           onChange={(e) => setNewCategory(e.target.value)}
                           placeholder="Nama kategori baru"
-                          className="w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none text-sm"
+                          fullWidth
+                          size="sm"
+                          className="mb-2"
                         />
-                        <textarea
+                        <Textarea
                           value={suggestionDescription}
                           onChange={(e) => setSuggestionDescription(e.target.value)}
                           placeholder="Jelaskan mengapa kategori ini diperlukan..."
-                          rows={2}
-                          className="w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none text-sm"
+                          fullWidth
+                          size="sm"
+                          minRows={2}
+                          maxRows={4}
+                          className="mb-2"
                         />
                         <div className="flex gap-2">
                           <Button

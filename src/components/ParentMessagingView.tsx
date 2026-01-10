@@ -8,6 +8,8 @@ import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateAndSanitizeMessage, validateParentMessage } from '../utils/parentValidation';
 import Button from './ui/Button';
+import Input from './ui/Input';
+import Select from './ui/Select';
 
 interface ParentMessagingViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -135,17 +137,15 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Pesan Guru</h2>
           <div className="flex items-center gap-4">
             {children.length > 1 && (
-              <select
+              <Select
                 value={selectedChild?.studentId || ''}
                 onChange={(e) => setSelectedChild(children.find(c => c.studentId === e.target.value) || null)}
-                className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
-              >
-                {children.map((child) => (
-                  <option key={child.studentId} value={child.studentId}>
-                    {child.studentName}
-                  </option>
-                ))}
-              </select>
+                size="sm"
+                options={children.map((child) => ({
+                  value: child.studentId,
+                  label: child.studentName
+                }))}
+              />
             )}
           </div>
         </div>
@@ -230,26 +230,26 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
             {/* Message Input */}
             {selectedTeacher && (
               <div className="space-y-3">
-                <input
+                <Input
                   id="message-subject"
                   name="subject"
                   type="text"
                   placeholder="Subjek pesan"
                   value={messageSubject}
                   onChange={(e) => setMessageSubject(e.target.value)}
-                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400"
+                  fullWidth
                   autoComplete="off"
                 />
                 <div className="flex gap-2">
-                  <input
+                  <Input
                     id="message-body"
                     name="message"
                     type="text"
                     placeholder="Ketik pesan..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    className="flex-1 px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400"
+                    onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                    fullWidth
                     autoComplete="off"
                   />
                   <Button
