@@ -14,15 +14,17 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 
 const baseClasses = "inline-flex items-center justify-center font-semibold transition-colors duration-200";
 
+const redVariantStyles: Record<BadgeStyle, string> = {
+  solid: "bg-red-700 text-white dark:bg-red-600 dark:text-white",
+  outline: "border-2 border-red-600 text-red-700 dark:border-red-400 dark:text-red-300",
+};
+
 const variantClasses: Record<BadgeVariant, Record<BadgeStyle, string>> = {
   success: {
     solid: "bg-green-700 text-white dark:bg-green-600 dark:text-white",
     outline: "border-2 border-green-600 text-green-700 dark:border-green-400 dark:text-green-300",
   },
-  error: {
-    solid: "bg-red-700 text-white dark:bg-red-600 dark:text-white",
-    outline: "border-2 border-red-600 text-red-700 dark:border-red-400 dark:text-red-300",
-  },
+  error: redVariantStyles,
   warning: {
     solid: "bg-yellow-600 text-white dark:bg-yellow-500 dark:text-white",
     outline: "border-2 border-yellow-600 text-yellow-700 dark:border-yellow-400 dark:text-yellow-300",
@@ -51,10 +53,7 @@ const variantClasses: Record<BadgeVariant, Record<BadgeStyle, string>> = {
     solid: "bg-orange-700 text-white dark:bg-orange-600 dark:text-white",
     outline: "border-2 border-orange-600 text-orange-700 dark:border-orange-400 dark:text-orange-300",
   },
-  red: {
-    solid: "bg-red-700 text-white dark:bg-red-600 dark:text-white",
-    outline: "border-2 border-red-600 text-red-700 dark:border-red-400 dark:text-red-300",
-  },
+  red: redVariantStyles,
 };
 
 const sizeClasses: Record<BadgeSize, string> = {

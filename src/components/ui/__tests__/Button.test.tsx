@@ -24,6 +24,18 @@ describe('Button', () => {
 
     rerender(<Button variant="danger">Danger</Button>);
     expect(screen.getByRole('button')).toHaveClass('bg-red-700', 'text-white', 'dark:bg-red-600', 'dark:text-white');
+
+    rerender(<Button variant="success">Success</Button>);
+    expect(screen.getByRole('button')).toHaveClass('bg-green-700', 'text-white', 'dark:bg-green-600', 'dark:text-white');
+
+    rerender(<Button variant="info">Info</Button>);
+    expect(screen.getByRole('button')).toHaveClass('bg-blue-700', 'text-white', 'dark:bg-blue-600', 'dark:text-white');
+
+    rerender(<Button variant="warning">Warning</Button>);
+    expect(screen.getByRole('button')).toHaveClass('bg-orange-600', 'text-white', 'dark:bg-orange-500', 'dark:text-white');
+
+    rerender(<Button variant="indigo">Indigo</Button>);
+    expect(screen.getByRole('button')).toHaveClass('bg-indigo-700', 'text-white', 'dark:bg-indigo-600', 'dark:text-white');
   });
 
   it('should render with different sizes', () => {
