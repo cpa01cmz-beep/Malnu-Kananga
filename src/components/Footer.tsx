@@ -1,5 +1,6 @@
 import React from 'react';
 import { getResponsiveGradient } from '../config/gradients';
+import SocialLink from './ui/SocialLink';
 
 const InstagramIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-instagram"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
@@ -52,19 +53,28 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                 <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Beasiswa</a></li>
                           </ul>
                            <div className="flex justify-center sm:justify-start gap-3 mt-6">
-                               <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-300 ease-out p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-110 active:scale-95 shadow-sm hover:shadow-md" aria-label="Facebook">
-                                  <span className="sr-only">Facebook</span>
-                                  <FacebookIcon />
-                              </a>
-                               <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-300 ease-out p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-110 active:scale-95 shadow-sm hover:shadow-md" aria-label="Instagram">
-                                  <span className="sr-only">Instagram</span>
-                                  <InstagramIcon />
-                              </a>
-                               <a href="#" className="text-neutral-400 hover:text-primary-600 transition-all duration-300 ease-out p-3 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-110 active:scale-95 shadow-sm hover:shadow-md" aria-label="YouTube">
-                                  <span className="sr-only">YouTube</span>
-                                  <YoutubeIcon />
-                              </a>
-                          </div>
+                               <SocialLink
+                                   href="#"
+                                   icon={<FacebookIcon />}
+                                   label="Facebook"
+                                   variant="default"
+                                   size="lg"
+                               />
+                               <SocialLink
+                                   href="#"
+                                   icon={<InstagramIcon />}
+                                   label="Instagram"
+                                   variant="default"
+                                   size="lg"
+                               />
+                               <SocialLink
+                                   href="#"
+                                   icon={<YoutubeIcon />}
+                                   label="YouTube"
+                                   variant="default"
+                                   size="lg"
+                               />
+                           </div>
                     </div>
                 </div>
                 <div className="mt-12 border-t border-neutral-200 dark:border-neutral-700 pt-8">
