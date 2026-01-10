@@ -119,7 +119,7 @@ describe('BaseModal', () => {
       />
     );
     
-    const confirmButton = screen.getByRole('button', { name: /please wait/i });
+    const confirmButton = screen.getByRole('button', { name: /Please wait/i });
     expect(confirmButton).toBeInTheDocument();
     expect(confirmButton).toBeDisabled();
   });

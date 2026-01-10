@@ -1,4 +1,3 @@
- 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useWebSocket, useRealtimeEvent, useRealtimeGrades } from '../useWebSocket';
@@ -8,7 +7,7 @@ import { logger } from '../../utils/logger';
 // Mock dependencies
 vi.mock('../../services/webSocketService', () => ({
   webSocketService: {
-    initialize: vi.fn(),
+    initialize: vi.fn().mockResolvedValue(undefined),
     getConnectionState: vi.fn(),
     subscribe: vi.fn(),
     disconnect: vi.fn(),
@@ -17,11 +16,27 @@ vi.mock('../../services/webSocketService', () => ({
   },
 }));
 
-vi.mock('../utils/logger', () => ({
+vi.mock('../../utils/logger', () => ({
   logger: {
     error: vi.fn(),
   },
 }));
+
+// Missing types - add temporary definitions
+interface _Grade {
+  id: string;
+  studentId: string;
+  subjectId: string;
+  classId: string;
+  score: number;
+  type: string;
+  date: string;
+  semester: string;
+  academicYear: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 describe('useWebSocket Hook', () => {
   beforeEach(() => {
