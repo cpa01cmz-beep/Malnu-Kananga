@@ -311,17 +311,26 @@ const FileUploader: React.FC<FileUploaderProps> = ({
               </span>
             </div>
           )}
-          <Button
-            variant="danger"
-            size="sm"
+          <div
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleCancelUpload();
+              }
+            }}
             onClick={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               handleCancelUpload();
             }}
-            icon={<CloseIcon />}
+            className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 text-sm cursor-pointer focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Cancel upload"
           >
+            <CloseIcon className="w-4 h-4 mr-2" />
             Cancel Upload
-          </Button>
+          </div>
         </div>
       );
     }

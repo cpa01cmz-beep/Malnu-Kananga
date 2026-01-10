@@ -92,10 +92,10 @@ const Tab: React.FC<TabProps> = ({
   };
 
   return (
-    <div className={className} role="tablist">
+    <div className={`${className} ${orientation === 'horizontal' ? '' : 'flex flex-col gap-1'}`} role="tablist" aria-orientation={orientation}>
       {variant === 'border' && (
         <div className="border-b border-neutral-200 dark:border-neutral-700">
-          <nav className="flex space-x-8 px-6" aria-label="Tabs">
+          <nav className={`${orientation === 'horizontal' ? 'flex space-x-8 px-6' : 'flex flex-col space-y-1 px-6'}`} aria-label="Tabs">
             {options.map((option) => (
               <button
                 key={option.id}
@@ -125,7 +125,7 @@ const Tab: React.FC<TabProps> = ({
       )}
 
       {variant !== 'border' && (
-        <div className={containerClasses} role="tablist">
+        <div className={`${containerClasses} ${className}`} role="tablist" aria-orientation={orientation}>
           {options.map((option) => (
             <button
               key={option.id}

@@ -55,7 +55,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   const variantClasses = {
     default: 'flex items-center justify-center min-h-[200px]',
     minimal: 'flex items-center justify-center',
-    centered: 'flex items-center justify-center fixed inset-0',
+    centered: 'fixed inset-0 z-50',
   };
 
   const backdropClasses = showBackdrop
@@ -66,7 +66,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 
   const content = (
     <div className={`flex flex-col items-center justify-center space-y-4 ${sizeClasses[size]}`}>
-      <LoadingSpinner size={size as 'sm' | 'md' | 'lg'} className="text-primary-600" />
+      <LoadingSpinner size={(size as 'sm' | 'md' | 'lg')} className="text-primary-600" />
       
       {message && (
         <p className={`${textSizes[size]} text-neutral-600 dark:text-neutral-400 font-medium animate-pulse`}>
@@ -100,7 +100,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   if (variant === 'centered') {
     return (
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center ${backdropClasses}`}
+        className={`${variantClasses[variant]} ${backdropClasses} ${className}`}
         role="status"
         aria-live="polite"
         aria-busy={isLoading}
