@@ -292,4 +292,4 @@ const InlineLoadingState: React.FC<{ size: LoadingStateSize }> = ({ size }) => {
 
 export { LoadingState, EmptyState, ErrorState };
 
-export { EmptyState as default };
+export { LoadingState as default };
