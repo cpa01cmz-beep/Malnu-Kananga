@@ -28,6 +28,7 @@ import AccessDenied from './AccessDenied';
 import { CHART_COLORS } from '../config/chartColors';
 import Input from './ui/Input';
 import Select from './ui/Select';
+import Modal from './ui/Modal';
 import type { 
   InventoryItem, 
   MaintenanceSchedule, 
@@ -843,36 +844,48 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
       )}
 
       {/* QR Code Modal */}
-      {showQRCode && (
-        <div className="fixed inset-0 bg-black/50% flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 max-w-sm w-full">
-            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">QR Code Barang</h3>
-            <div className="bg-white p-4 rounded-lg">
-              <img src={showQRCode} alt="QR Code" className="w-full" />
-            </div>
-            <div className="mt-4 flex gap-2">
-              <Button
-                onClick={() => {
+      <Modal
+        isOpen={showQRCode !== null}
+        onClose={() => setShowQRCode(null)}
+        title="QR Code Barang"
+        size="sm"
+        animation="scale-in"
+        closeOnBackdropClick={true}
+        closeOnEscape={true}
+        showCloseButton={true}
+      >
+        <div className="space-y-4">
+          <div className="bg-neutral-50 dark:bg-neutral-700 p-4 rounded-lg">
+            {showQRCode && (
+              <img src={showQRCode} alt="QR Code barang" className="w-full" />
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {
+                if (showQRCode) {
                   const link = document.createElement('a');
                   link.download = 'qrcode.png';
                   link.href = showQRCode;
                   link.click();
                   onShowToast('QR Code berhasil diunduh.', 'success');
-                }}
-                variant="blue-solid"
-              >
-                Unduh
-              </Button>
-              <Button
-                onClick={() => setShowQRCode(null)}
-                variant="secondary"
-              >
-                Tutup
-              </Button>
-            </div>
+                }
+              }}
+              variant="blue-solid"
+              fullWidth
+            >
+              Unduh
+            </Button>
+            <Button
+              onClick={() => setShowQRCode(null)}
+              variant="secondary"
+              fullWidth
+            >
+              Tutup
+            </Button>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 };
