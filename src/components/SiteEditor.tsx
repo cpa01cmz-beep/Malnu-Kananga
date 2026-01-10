@@ -299,29 +299,35 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
           <SparklesIcon className="h-6 w-6 text-green-500" />
           <h2 className="text-xl font-bold text-neutral-900 dark:text-white">AI Website Editor <span className="text-xs font-normal text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">🛡️ Dilindungi</span></h2>
           {changeHistory.length > 0 && (
-            <div className="flex items-center gap-1">
-              <button
-                onClick={undoLastChange}
-                className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
-                title={`Undo ${changeHistory.length} perubahan terakhir`}
-              >
-                ↶ Undo ({changeHistory.length})
-              </button>
-            </div>
+            <Button
+              onClick={undoLastChange}
+              variant="info"
+              size="sm"
+              className="px-2 py-1 text-xs rounded-full"
+              title={`Undo ${changeHistory.length} perubahan terakhir`}
+            >
+              ↶ Undo ({changeHistory.length})
+            </Button>
           )}
         </div>
         <div className="flex items-center gap-2">
-          <button
+          <IconButton
             onClick={onResetContent}
-            className="p-2 rounded-full text-neutral-500 hover:text-red-600 dark:text-neutral-400 dark:hover:text-red-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
-            title="Reset Konten ke Default"
-            aria-label="Reset konten"
-          >
-            <ArrowPathIcon />
-          </button>
-          <button onClick={onClose} className="p-2 rounded-full text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700" aria-label="Tutup">
-            <CloseIcon />
-          </button>
+            icon={<ArrowPathIcon />}
+            ariaLabel="Reset konten"
+            tooltip="Reset Konten ke Default"
+            variant="ghost"
+            size="md"
+            className="rounded-full hover:text-red-600 dark:hover:text-red-400"
+          />
+          <IconButton
+            onClick={onClose}
+            icon={<CloseIcon />}
+            ariaLabel="Tutup"
+            variant="ghost"
+            size="md"
+            className="rounded-full"
+          />
         </div>
       </header>
 
