@@ -9,6 +9,7 @@ import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import AccessDenied from './AccessDenied';
 import Badge from './ui/Badge';
+import SearchInput from './ui/SearchInput';
 
 interface PPDBManagementProps {
   onBack: () => void;
@@ -340,12 +341,12 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
             
             <div>
               <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300 block mb-1">Asal Sekolah</label>
-              <input
-                type="text"
+              <SearchInput
                 value={filters.schoolFilter}
                 onChange={(e) => setFilters({...filters, schoolFilter: e.target.value})}
                 placeholder="Cari sekolah..."
-                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-sm"
+                size="sm"
+                fullWidth
               />
             </div>
           </div>

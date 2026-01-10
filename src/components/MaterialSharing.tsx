@@ -4,6 +4,7 @@ import { ShareIcon, ShieldIcon, XMarkIcon } from './icons/MaterialIcons';
 import { MaterialSharing, ELibrary } from '../types';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
+import SearchInput from './ui/SearchInput';
 
 interface MaterialSharingProps {
   material: ELibrary;
@@ -250,12 +251,12 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
                 
                 {/* Search */}
                 <div className="mb-4">
-                  <input
-                    type="text"
+                  <SearchInput
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Cari guru berdasarkan nama, email, atau mata pelajaran..."
-                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    size="sm"
+                    fullWidth
                   />
                 </div>
 

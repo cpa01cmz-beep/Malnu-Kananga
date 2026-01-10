@@ -5,9 +5,10 @@ import { NotificationTemplateService } from '../services/notificationTemplates';
 import { logger } from '../utils/logger';
 import { BellIcon } from './icons/BellIcon';
 import { BellSlashIcon } from './icons/BellSlashIcon';
-import { CheckCircleIcon, MagnifyingGlassIcon, FunnelIcon } from './icons/NotificationIcons';
+import { CheckCircleIcon, FunnelIcon } from './icons/NotificationIcons';
 import { TrashIcon } from './icons/TrashIcon';
 import Button from './ui/Button';
+import SearchInput from './ui/SearchInput';
 
 interface NotificationCenterProps {
   userRole: UserRole;
@@ -229,19 +230,13 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
               </div>
 
               <div className="space-y-3">
-                <div className="relative">
-                  <label htmlFor="notification-search" className="sr-only">Cari notifikasi</label>
-                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400 dark:text-neutral-500" aria-hidden="true" />
-                  <input
-                    id="notification-search"
-                    type="search"
-                    placeholder="Cari notifikasi..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors"
-                    aria-label="Cari notifikasi"
-                  />
-                </div>
+                <SearchInput
+                  placeholder="Cari notifikasi..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  size="sm"
+                  fullWidth
+                />
 
                 <div className="flex gap-2">
                   <div className="relative flex-1">
