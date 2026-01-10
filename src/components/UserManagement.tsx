@@ -2,17 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { PlusIcon } from './icons/PlusIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { TrashIcon } from './icons/TrashIcon';
-import { CloseIcon } from './icons/CloseIcon';
 import { User, UserRole, UserExtraRole } from '../types';
 import Button from './ui/Button';
-import IconButton from './ui/IconButton';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Badge from './ui/Badge';
+import Modal from './ui/Modal';
 import { api } from '../services/apiService';
 import { pushNotificationService } from '../services/pushNotificationService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
-import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useCanAccess } from '../hooks/useCanAccess';
 import { TableSkeleton } from './ui/Skeleton';
 import AccessDenied from './AccessDenied';
@@ -34,7 +32,6 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<Partial<User>>({});
   const [isEditing, setIsEditing] = useState(false);
-  const dialogRef = useFocusTrap({ isOpen: isModalOpen, onClose: () => setIsModalOpen(false) });
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -286,81 +283,78 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
             </div>
         </div>
 
-        {isModalOpen && (
-            <div className="fixed inset-0 bg-neutral-900/75 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setIsModalOpen(false)} role="presentation">
-                <div ref={dialogRef} className="bg-white dark:bg-neutral-800 rounded-2xl shadow-float w-full max-w-md animate-scale-in" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="modal-title">
-                    <div className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700">
-                        <h3 id="modal-title" className="text-lg font-bold text-neutral-900 dark:text-white">{isEditing ? 'Edit User' : 'Tambah User'}</h3>
-                        <IconButton icon={<CloseIcon />} ariaLabel="Tutup modal" onClick={() => setIsModalOpen(false)} />
-                    </div>
-                    <form onSubmit={handleSaveUser} className="p-6 space-y-4">
-                        {errorState.hasError && <p className="text-sm text-red-600 dark:text-red-400">{errorState.feedback?.message}</p>}
-                        <Input
-                            id="user-name"
-                            label="Nama"
-                            name="name"
-                            required
-                            value={currentUser.name || ''}
-                            onChange={e => setCurrentUser({...currentUser, name: e.target.value})}
-                            autoComplete="name"
-                            fullWidth
-                        />
-                        <Input
-                            id="user-email"
-                            label="Email"
-                            name="email"
-                            required
-                            type="email"
-                            value={currentUser.email || ''}
-                            onChange={e => setCurrentUser({...currentUser, email: e.target.value})}
-                            autoComplete="email"
-                            fullWidth
-                        />
-                         <div className="grid grid-cols-2 gap-4">
-                             <Select
-                                 id="user-role"
-                                 label="Role Utama"
-                                 name="role"
-                                 value={currentUser.role}
-                                 onChange={e => {
-                                     const r = e.target.value as UserRole;
-                                     setCurrentUser({...currentUser, role: r, extraRole: null});
-                                 }}
-                                 options={[
-                                     { value: 'student', label: 'Siswa' },
-                                     { value: 'teacher', label: 'Guru' },
-                                     { value: 'admin', label: 'Admin' },
-                                 ]}
-                                 fullWidth
-                             />
-                             <Select
-                                 id="user-extrarole"
-                                 label="Tugas Tambahan"
-                                 name="extraRole"
-                                 value={currentUser.extraRole || ''}
-                                 onChange={e => setCurrentUser({...currentUser, extraRole: (e.target.value as UserExtraRole) || undefined})}
-                                 options={[
-                                     { value: '', label: '- Tidak Ada -' },
-                                     ...(currentUser.role === 'teacher' ? [
-                                         { value: 'staff', label: 'Staff TU/Sarpras' },
-                                         { value: 'wakasek', label: 'Wakasek' },
-                                         { value: 'kepsek', label: 'Kepsek' },
-                                     ] : []),
-                                     ...(currentUser.role === 'student' ? [
-                                         { value: 'osis', label: 'Pengurus OSIS' },
-                                     ] : []),
-                                 ]}
-                                 disabled={currentUser.role === 'admin'}
-                                 fullWidth
-                             />
-                         </div>
-                        <Button type="submit" fullWidth isLoading={isSaving}>
-                             {isSaving ? 'Menyimpan...' : 'Simpan'}
-                        </Button>
-                    </form>
-                </div>
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title={isEditing ? 'Edit User' : 'Tambah User'}
+          size="md"
+        >
+          <form onSubmit={handleSaveUser} className="space-y-4">
+            {errorState.hasError && <p className="text-sm text-red-600 dark:text-red-400">{errorState.feedback?.message}</p>}
+            <Input
+              id="user-name"
+              label="Nama"
+              name="name"
+              required
+              value={currentUser.name || ''}
+              onChange={e => setCurrentUser({...currentUser, name: e.target.value})}
+              autoComplete="name"
+              fullWidth
+            />
+            <Input
+              id="user-email"
+              label="Email"
+              name="email"
+              required
+              type="email"
+              value={currentUser.email || ''}
+              onChange={e => setCurrentUser({...currentUser, email: e.target.value})}
+              autoComplete="email"
+              fullWidth
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <Select
+                id="user-role"
+                label="Role Utama"
+                name="role"
+                value={currentUser.role}
+                onChange={e => {
+                  const r = e.target.value as UserRole;
+                  setCurrentUser({...currentUser, role: r, extraRole: null});
+                }}
+                options={[
+                  { value: 'student', label: 'Siswa' },
+                  { value: 'teacher', label: 'Guru' },
+                  { value: 'admin', label: 'Admin' },
+                ]}
+                fullWidth
+              />
+              <Select
+                id="user-extrarole"
+                label="Tugas Tambahan"
+                name="extraRole"
+                value={currentUser.extraRole || ''}
+                onChange={e => setCurrentUser({...currentUser, extraRole: (e.target.value as UserExtraRole) || undefined})}
+                options={[
+                  { value: '', label: '- Tidak Ada -' },
+                  ...(currentUser.role === 'teacher' ? [
+                    { value: 'staff', label: 'Staff TU/Sarpras' },
+                    { value: 'wakasek', label: 'Wakasek' },
+                    { value: 'kepsek', label: 'Kepsek' },
+                  ] : []),
+                  ...(currentUser.role === 'student' ? [
+                    { value: 'osis', label: 'Pengurus OSIS' },
+                  ] : []),
+                ]}
+                disabled={currentUser.role === 'admin'}
+                fullWidth
+              />
             </div>
-        )}
+            <Button type="submit" fullWidth isLoading={isSaving}>
+              {isSaving ? 'Menyimpan...' : 'Simpan'}
+            </Button>
+          </form>
+        </Modal>
     </div>
   );
 };

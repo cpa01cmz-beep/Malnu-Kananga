@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { NotificationTemplate, PushNotification } from '../types';
-import { CloseIcon } from './icons/CloseIcon';
 import Button from './ui/Button';
-import IconButton from './ui/IconButton';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
 import Badge from './ui/Badge';
+import Modal from './ui/Modal';
 
 interface TemplateManagementProps {
   templates: NotificationTemplate[];
@@ -162,160 +161,132 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
         </div>
       )}
 
-      {/* Create Template Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/50%"
-            onClick={() => setShowCreateModal(false)}
-            aria-hidden="true"
+      <Modal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        title="Buat Template Baru"
+        size="md"
+      >
+        <div className="space-y-4">
+          <Input
+            label="Nama Template"
+            type="text"
+            value={newTemplate.name}
+            onChange={(e) => setNewTemplate({ ...newTemplate, name: e.target.value })}
+            placeholder="Contoh: Pengumuman Libur"
+            size="sm"
           />
-          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-neutral-900">Buat Template Baru</h3>
-              <IconButton
-                onClick={() => setShowCreateModal(false)}
-                icon={<CloseIcon className="w-4 h-4" />}
-                ariaLabel="Tutup"
-              />
-            </div>
 
-            <div className="space-y-4">
-              <Input
-                label="Nama Template"
-                type="text"
-                value={newTemplate.name}
-                onChange={(e) => setNewTemplate({ ...newTemplate, name: e.target.value })}
-                placeholder="Contoh: Pengumuman Libur"
-                size="sm"
-              />
+          <Select
+            label="Tipe Notifikasi"
+            value={newTemplate.type}
+            onChange={(e) => setNewTemplate({ ...newTemplate, type: e.target.value as PushNotification['type'] })}
+            options={[
+              { value: 'announcement', label: 'Pengumuman' },
+              { value: 'grade', label: 'Nilai' },
+              { value: 'ppdb', label: 'PPDB' },
+              { value: 'event', label: 'Event' },
+              { value: 'library', label: 'Library' },
+              { value: 'system', label: 'Sistem' },
+            ]}
+            size="sm"
+          />
 
-              <Select
-                label="Tipe Notifikasi"
-                value={newTemplate.type}
-                onChange={(e) => setNewTemplate({ ...newTemplate, type: e.target.value as PushNotification['type'] })}
-                options={[
-                  { value: 'announcement', label: 'Pengumuman' },
-                  { value: 'grade', label: 'Nilai' },
-                  { value: 'ppdb', label: 'PPDB' },
-                  { value: 'event', label: 'Event' },
-                  { value: 'library', label: 'Library' },
-                  { value: 'system', label: 'Sistem' },
-                ]}
-                size="sm"
-              />
+          <Input
+            label="Judul"
+            type="text"
+            value={newTemplate.title}
+            onChange={(e) => setNewTemplate({ ...newTemplate, title: e.target.value })}
+            placeholder="Contoh: {{eventType}} akan segera dimulai"
+            size="sm"
+          />
 
-              <Input
-                label="Judul"
-                type="text"
-                value={newTemplate.title}
-                onChange={(e) => setNewTemplate({ ...newTemplate, title: e.target.value })}
-                placeholder="Contoh: {{eventType}} akan segera dimulai"
-                size="sm"
-              />
+          <Textarea
+            label="Isi Pesan"
+            value={newTemplate.body}
+            onChange={(e) => setNewTemplate({ ...newTemplate, body: e.target.value })}
+            rows={3}
+            placeholder="Contoh: {{eventTitle}} akan dimulai pada {{eventTime}} di {{location}}"
+            size="sm"
+          />
 
-              <Textarea
-                label="Isi Pesan"
-                value={newTemplate.body}
-                onChange={(e) => setNewTemplate({ ...newTemplate, body: e.target.value })}
-                rows={3}
-                placeholder="Contoh: {{eventTitle}} akan dimulai pada {{eventTime}} di {{location}}"
-                size="sm"
-              />
+          <Input
+            label="Variabel (pisahkan dengan koma)"
+            type="text"
+            value={newTemplate.variables}
+            onChange={(e) => setNewTemplate({ ...newTemplate, variables: e.target.value })}
+            placeholder="Contoh: eventType, eventTitle, eventTime, location"
+            size="sm"
+          />
 
-              <Input
-                label="Variabel (pisahkan dengan koma)"
-                type="text"
-                value={newTemplate.variables}
-                onChange={(e) => setNewTemplate({ ...newTemplate, variables: e.target.value })}
-                placeholder="Contoh: eventType, eventTitle, eventTime, location"
-                size="sm"
-              />
-
-              <div className="flex gap-3">
-                <Button
-                  onClick={handleCreateTemplate}
-                  disabled={!newTemplate.name.trim() || !newTemplate.title.trim() || !newTemplate.body.trim()}
-                  fullWidth
-                >
-                  Buat Template
-                </Button>
-                <Button
-                  onClick={() => setShowCreateModal(false)}
-                  variant="secondary"
-                >
-                  Batal
-                </Button>
-              </div>
-            </div>
+          <div className="flex gap-3">
+            <Button
+              onClick={handleCreateTemplate}
+              disabled={!newTemplate.name.trim() || !newTemplate.title.trim() || !newTemplate.body.trim()}
+              fullWidth
+            >
+              Buat Template
+            </Button>
+            <Button
+              onClick={() => setShowCreateModal(false)}
+              variant="secondary"
+            >
+              Batal
+            </Button>
           </div>
         </div>
-      )}
+      </Modal>
 
-      {/* Test Template Modal */}
-      {showTestModal && selectedTemplate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/50%"
-            onClick={() => setShowTestModal(false)}
-            aria-hidden="true"
-          />
-          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-neutral-900">Tes Template</h3>
-              <IconButton
-                onClick={() => setShowTestModal(false)}
-                icon={<CloseIcon className="w-4 h-4" />}
-                ariaLabel="Tutup"
-              />
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm font-medium text-neutral-700 mb-2">
-                  Template: {selectedTemplate.name}
-                </p>
-                <div className="p-3 bg-blue-50 rounded-lg text-sm">
-                  <p className="font-medium text-blue-900">
-                    {selectedTemplate.title.replace(/\{\{(\w+)\}\}/g, '[$1]')}
-                  </p>
-                  <p className="text-blue-700">
-                    {selectedTemplate.body.replace(/\{\{(\w+)\}\}/g, '[$1]')}
-                  </p>
-                </div>
-              </div>
-
-              {selectedTemplate.variables.map(variable => (
-                <Input
-                  key={variable}
-                  label={variable}
-                  type="text"
-                  value={testVariables[variable] || ''}
-                  onChange={(e) => setTestVariables({ ...testVariables, [variable]: e.target.value })}
-                  placeholder={`Nilai untuk {{${variable}}}`}
-                  size="sm"
-                />
-              ))}
-
-              <div className="flex gap-3">
-                <Button
-                  onClick={handleTestNotification}
-                  variant="success"
-                  fullWidth
-                >
-                  Kirim Notifikasi Tes
-                </Button>
-                <Button
-                  onClick={() => setShowTestModal(false)}
-                  variant="secondary"
-                >
-                  Batal
-                </Button>
-              </div>
+      <Modal
+        isOpen={showTestModal}
+        onClose={() => setShowTestModal(false)}
+        title="Tes Template"
+        size="md"
+      >
+        <div className="space-y-4">
+          <div>
+            <p className="text-sm font-medium text-neutral-700 mb-2">
+              Template: {selectedTemplate?.name}
+            </p>
+            <div className="p-3 bg-blue-50 rounded-lg text-sm">
+              <p className="font-medium text-blue-900">
+                {selectedTemplate?.title.replace(/\{\{(\w+)\}\}/g, '[$1]')}
+              </p>
+              <p className="text-blue-700">
+                {selectedTemplate?.body.replace(/\{\{(\w+)\}\}/g, '[$1]')}
+              </p>
             </div>
           </div>
+
+          {selectedTemplate?.variables.map(variable => (
+            <Input
+              key={variable}
+              label={variable}
+              type="text"
+              value={testVariables[variable] || ''}
+              onChange={(e) => setTestVariables({ ...testVariables, [variable]: e.target.value })}
+              placeholder={`Nilai untuk {{${variable}}}`}
+              size="sm"
+            />
+          ))}
+
+          <div className="flex gap-3">
+            <Button
+              onClick={handleTestNotification}
+              variant="success"
+              fullWidth
+            >
+              Kirim Notifikasi Tes
+            </Button>
+            <Button
+              onClick={() => setShowTestModal(false)}
+              variant="secondary"
+            >
+              Batal
+            </Button>
+          </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 };

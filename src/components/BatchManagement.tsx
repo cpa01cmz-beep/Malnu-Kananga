@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { NotificationBatch, PushNotification } from '../types';
-import { CloseIcon } from './icons/CloseIcon';
 import Button from './ui/Button';
+import Input from './ui/Input';
 import Textarea from './ui/Textarea';
 import Badge from './ui/Badge';
+import Modal from './ui/Modal';
 
 interface BatchManagementProps {
   batches: NotificationBatch[];
@@ -117,70 +118,49 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
         </div>
       )}
 
-      {/* Create Batch Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/50%"
-            onClick={() => setShowCreateModal(false)}
-            aria-hidden="true"
+      <Modal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        title="Buat Batch Baru"
+        size="md"
+      >
+        <div className="space-y-4">
+          <Input
+            label="Nama Batch"
+            type="text"
+            value={batchName}
+            onChange={(e) => setBatchName(e.target.value)}
+            placeholder="Contoh: Pengumuman Libur"
+            size="sm"
           />
-          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-neutral-900">Buat Batch Baru</h3>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="p-2 hover:bg-neutral-100 rounded-full"
-                aria-label="Tutup"
-              >
-                <CloseIcon className="w-4 h-4" />
-              </button>
-            </div>
 
-              <div className="space-y-4">
-              <div>
-                <label htmlFor="batch-name" className="block text-sm font-medium text-neutral-700 mb-1">
-                  Nama Batch
-                </label>
-                <input
-                  id="batch-name"
-                  type="text"
-                  value={batchName}
-                  onChange={(e) => setBatchName(e.target.value)}
-                  className="w-full border border-neutral-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Contoh: Pengumuman Libur"
-                />
-              </div>
+          <Textarea
+            label="Konten Notifikasi (contoh)"
+            value={notificationText}
+            onChange={(e) => setNotificationText(e.target.value)}
+            size="md"
+            placeholder="Isi pesan notifikasi..."
+            minRows={3}
+            maxRows={5}
+          />
 
-              <Textarea
-                label="Konten Notifikasi (contoh)"
-                value={notificationText}
-                onChange={(e) => setNotificationText(e.target.value)}
-                size="md"
-                placeholder="Isi pesan notifikasi..."
-                minRows={3}
-                maxRows={5}
-              />
-
-              <div className="flex gap-3">
-                <Button
-                  onClick={handleCreateBatch}
-                  disabled={!batchName.trim() || !notificationText.trim()}
-                  className="flex-1"
-                >
-                  Buat Batch
-                </Button>
-                <Button
-                  onClick={() => setShowCreateModal(false)}
-                  variant="secondary"
-                >
-                  Batal
-                </Button>
-              </div>
-            </div>
+          <div className="flex gap-3">
+            <Button
+              onClick={handleCreateBatch}
+              disabled={!batchName.trim() || !notificationText.trim()}
+              fullWidth
+            >
+              Buat Batch
+            </Button>
+            <Button
+              onClick={() => setShowCreateModal(false)}
+              variant="secondary"
+            >
+              Batal
+            </Button>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 };
