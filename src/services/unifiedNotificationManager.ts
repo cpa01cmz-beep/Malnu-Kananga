@@ -3,7 +3,6 @@ import {
   PushNotification, 
   NotificationHistoryItem, 
   NotificationBatch, 
-  NotificationTemplate, 
   NotificationAnalytics,
   UserRole,
   UserExtraRole,
@@ -418,9 +417,9 @@ class UnifiedNotificationManager {
     previousGrade?: number, 
     newGrade?: number
   ): Promise<void> {
-    const template = this.defaultTemplates.get('grade')!;
+    this.defaultTemplates.get('grade')!;
     let body = `Nilai ${studentName} untuk ${subject}`;
-    
+
     if (previousGrade && newGrade) {
       const difference = newGrade - previousGrade;
       const trend = difference > 0 ? 'naik' : difference < 0 ? 'turun' : 'tetap';
@@ -453,8 +452,8 @@ class UnifiedNotificationManager {
 
   async notifyPPDBStatus(count: number): Promise<void> {
     if (count <= 0) return;
-    
-    const template = this.defaultTemplates.get('ppdb')!;
+
+    this.defaultTemplates.get('ppdb')!;
     const notification: PushNotification = {
       id: `notif-ppdb-${Date.now()}`,
       type: 'ppdb',
@@ -475,7 +474,7 @@ class UnifiedNotificationManager {
   }
 
   async notifyLibraryUpdate(materialTitle: string, materialType: string): Promise<void> {
-    const template = this.defaultTemplates.get('library')!;
+    this.defaultTemplates.get('library')!;
     const notification: PushNotification = {
       id: `notif-library-${Date.now()}`,
       type: 'library',
@@ -497,7 +496,7 @@ class UnifiedNotificationManager {
   }
 
   async notifyMeetingRequest(requesterName: string, meetingType: string): Promise<void> {
-    const template = this.defaultTemplates.get('event')!;
+    this.defaultTemplates.get('event')!;
     const notification: PushNotification = {
       id: `notif-meeting-${Date.now()}`,
       type: 'event',
@@ -519,7 +518,7 @@ class UnifiedNotificationManager {
   }
 
   async notifyScheduleChange(className: string, changeType: string): Promise<void> {
-    const template = this.defaultTemplates.get('announcement')!;
+    this.defaultTemplates.get('announcement')!;
     const notification: PushNotification = {
       id: `notif-schedule-${Date.now()}`,
       type: 'announcement',
@@ -541,7 +540,7 @@ class UnifiedNotificationManager {
   }
 
   async notifyAttendanceAlert(studentName: string, alertType: string): Promise<void> {
-    const template = this.defaultTemplates.get('system')!;
+    this.defaultTemplates.get('system')!;
     const notification: PushNotification = {
       id: `notif-attendance-${Date.now()}`,
       type: 'system',
@@ -563,10 +562,10 @@ class UnifiedNotificationManager {
   }
 
   async notifyOCRValidation(event: OCRValidationEvent): Promise<void> {
-    const severity = event.type === 'validation-failure' ? 'Gagal' : 
+    const severity = event.type === 'validation-failure' ? 'Gagal' :
                     event.type === 'validation-warning' ? 'Peringatan' : 'Berhasil';
-    
-    const template = this.defaultTemplates.get('ocr')!;
+
+    this.defaultTemplates.get('ocr')!;
     const notification: PushNotification = {
       id: `notif-ocr-${Date.now()}`,
       type: 'ocr',
@@ -666,8 +665,7 @@ class UnifiedNotificationManager {
     try {
       // Separate voice settings for compatibility
       if (settings.voice) {
-        const voiceKey = 'malnu_voice_settings';
-        localStorage.setItem(voiceKey, JSON.stringify(settings.voice));
+        localStorage.setItem(STORAGE_KEYS.VOICE_STORAGE_KEY, JSON.stringify(settings.voice));
       }
       
       const settingsWithoutVoice = { ...settings };
@@ -1099,7 +1097,7 @@ class UnifiedNotificationManager {
   // Legacy compatibility methods
   getSettings(): NotificationSettings {
     const unified = this.getUnifiedSettings();
-    const { voice, ...legacy } = unified;
+    const { voice: _voice, ...legacy } = unified;
     return legacy;
   }
 

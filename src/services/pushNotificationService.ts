@@ -1,9 +1,7 @@
 import { NotificationSettings, PushNotification, NotificationHistoryItem, NotificationBatch, NotificationTemplate, NotificationAnalytics, UserExtraRole } from '../types';
-import { NOTIFICATION_CONFIG, NOTIFICATION_ERROR_MESSAGES, NOTIFICATION_ICONS, STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 import { unifiedNotificationManager } from './unifiedNotificationManager';
-import { handleNotificationError } from '../utils/serviceErrorHandlers';
-import type { UserRole } from '../types';
 
 /* eslint-disable no-undef */
 declare global {
@@ -165,12 +163,12 @@ class PushNotificationService {
   }
 
   // Private methods for backward compatibility - delegate to unified
-  private shouldShowNotification(notification: PushNotification, settings: NotificationSettings): boolean {
+  private shouldShowNotification(_notification: PushNotification, _settings: NotificationSettings): boolean {
     // This is handled internally by the unified manager
     return true;
   }
 
-  private isNotificationForCurrentUser(notification: PushNotification): boolean {
+  private isNotificationForCurrentUser(_notification: PushNotification): boolean {
     // This is handled internally by the unified manager
     return true;
   }
@@ -185,15 +183,15 @@ class PushNotificationService {
     }
   }
 
-  private addToHistory(notification: PushNotification): void {
+  private addToHistory(_notification: PushNotification): void {
     // This is handled internally by the unified manager
   }
 
-  private handleNotificationClick(notification: PushNotification): void {
+  private handleNotificationClick(_notification: PushNotification): void {
     // This is handled internally by the unified manager
   }
 
-  private saveSubscription(subscription: PushSubscription): void {
+  private saveSubscription(_subscription: PushSubscription): void {
     // This is handled internally by the unified manager
   }
 

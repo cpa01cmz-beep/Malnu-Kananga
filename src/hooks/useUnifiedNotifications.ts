@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { 
-  PushNotification, 
-  NotificationHistoryItem, 
-  NotificationBatch, 
+import {
+  PushNotification,
+  NotificationHistoryItem,
+  NotificationBatch,
   NotificationAnalytics
 } from '../types';
-import { 
+import {
   UnifiedNotificationTemplate,
   UnifiedNotificationSettings
 } from '../services/unifiedNotificationManager';
@@ -13,19 +13,25 @@ import { unifiedNotificationManager } from '../services/unifiedNotificationManag
 import { logger } from '../utils/logger';
 import { OCRValidationEvent } from '../types';
 
-declare global {
-  interface PushSubscription {
-    readonly endpoint: string;
-    readonly expirationTime: number | null;
-    readonly options: PushSubscriptionOptions;
-    getKey(name: 'p256dh' | 'auth'): ArrayBuffer | null;
-    unsubscribe(): Promise<boolean>;
-  }
+interface PushSubscription {
+  readonly endpoint: string;
+  readonly expirationTime: number | null;
+  readonly options: PushSubscriptionOptions;
+  getKey(name: 'p256dh' | 'auth'): ArrayBuffer | null;
+  unsubscribe(): Promise<boolean>;
+}
 
-  interface PushSubscriptionOptions {
-    readonly userVisibleOnly: boolean;
-    readonly applicationServerKey: ArrayBuffer | null;
-  }
+interface PushSubscriptionOptions {
+  readonly userVisibleOnly: boolean;
+  readonly applicationServerKey: ArrayBuffer | null;
+}
+
+interface StorageEvent extends Event {
+  readonly key: string | null;
+  readonly oldValue: string | null;
+  readonly newValue: string | null;
+  readonly url: string;
+  storageArea: unknown;
 }
 
 /**
@@ -207,11 +213,12 @@ export function useUnifiedNotifications() {
   // Local Storage Monitoring (from useEventNotifications)
   const useMonitorLocalStorage = (key: string, onChange: (newValue: unknown, oldValue: unknown) => void) => {
     useEffect(() => {
-      const handleStorageChange = (e: StorageEvent) => {
-        if (e.key === key && e.newValue) {
+      const handleStorageChange = (e: Event) => {
+        const storageEvent = e as StorageEvent;
+        if (storageEvent.key === key && storageEvent.newValue) {
           try {
-            const newValue = JSON.parse(e.newValue);
-            const oldValue = JSON.parse(e.oldValue || '{}');
+            const newValue = JSON.parse(storageEvent.newValue);
+            const oldValue = JSON.parse(storageEvent.oldValue || '{}');
             onChange(newValue, oldValue);
           } catch (error) {
             logger.error(`Error parsing localStorage change for ${key}:`, error);
@@ -259,7 +266,7 @@ export function useUnifiedNotifications() {
       return () => {
         window.removeEventListener('ocrValidation', handleOCRValidation);
       };
-    }, [notifyOCRValidation]);
+    });
   };
 
   // Template Getters
