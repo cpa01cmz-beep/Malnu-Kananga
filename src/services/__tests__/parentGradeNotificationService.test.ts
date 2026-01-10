@@ -107,16 +107,13 @@ describe('ParentGradeNotificationService - Missing Grades', () => {
         end: '07:00'
       };
 
-      // Create a mock Date constructor
-      const mockDateClass = vi.fn();
-      mockDateClass.prototype.getHours = vi.fn(() => 23); // 23:00 during quiet hours
-      mockDateClass.prototype.getMinutes = vi.fn(() => 0);
-
-      vi.spyOn(global, 'Date').mockImplementation(mockDateClass);
+      // Use vi.setSystemTime to mock current time
+      const mockDate = new Date('2024-01-01T23:00:00');
+      vi.setSystemTime(mockDate);
 
       expect(service.isQuietHours(quietHours)).toBe(true);
 
-      vi.restoreAllMocks();
+      vi.useRealTimers();
     });
 
     it('should return false when quiet hours are disabled', () => {
@@ -160,7 +157,7 @@ describe('ParentGradeNotificationService - Missing Grades', () => {
     it('should not notify for non-major exams when majorExamsOnly is true', () => {
       const service = parentGradeNotificationService as any;
       const settings = { majorExamsOnly: true };
-      const gradeData = { isBelowThreshold: false, isMajorExam: false };
+      const gradeData = { grade: 85, isBelowThreshold: false, isMajorExam: false };
       const previousGrade = { score: 85 };
 
       const result = service.shouldNotify(settings, gradeData, previousGrade);
