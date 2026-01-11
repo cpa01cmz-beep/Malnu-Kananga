@@ -392,7 +392,7 @@ private updateEventsData(event: RealTimeEvent): void {
   }
 
   private updateNotificationsData(event: RealTimeEvent): void {
-    const notificationsJSON = localStorage.getItem('malnu_notifications');
+    const notificationsJSON = localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS);
     const notifications: PushNotification[] = notificationsJSON ? JSON.parse(notificationsJSON) : [];
     const notificationData = event.data as PushNotification;
     
@@ -403,7 +403,7 @@ private updateEventsData(event: RealTimeEvent): void {
       notifications.push(notificationData);
     }
     
-    localStorage.setItem('malnu_notifications', JSON.stringify(notifications));
+    localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
   }
 
   /**
@@ -546,7 +546,7 @@ private updateEventsData(event: RealTimeEvent): void {
     const token = apiService.getAuthToken();
     if (!token) return;
 
-    const lastSync = localStorage.getItem('malnu_last_sync_time') || new Date(0).toISOString();
+    const lastSync = localStorage.getItem(STORAGE_KEYS.LAST_SYNC_TIME) || new Date(0).toISOString();
     
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev'}/api/updates`, {
@@ -565,7 +565,7 @@ private updateEventsData(event: RealTimeEvent): void {
             this.handleRealTimeUpdate(update);
           });
         
-          localStorage.setItem('malnu_last_sync_time', new Date().toISOString());
+          localStorage.setItem(STORAGE_KEYS.LAST_SYNC_TIME, new Date().toISOString());
         }
       }
     } catch (error) {
