@@ -22,6 +22,7 @@ import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '.
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { useOfflineDataService, useOfflineData, type CachedStudentData } from '../services/offlineDataService';
 
+import Alert from './ui/Alert';
 import ErrorMessage from './ui/ErrorMessage';
 import DashboardActionCard from './ui/DashboardActionCard';
 import Badge from './ui/Badge';
@@ -315,32 +316,18 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
 
         {/* Network Status Bar */}
         {!isOnline && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-card p-4 mb-6 flex items-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <ErrorMessage 
-              title="Offline Mode" 
-              message={getOfflineMessage()} 
-              variant="inline" 
-            />
+          <Alert variant="error" size="md" border="full" className="mb-6">
+            {getOfflineMessage()}
             {isCached && (
-              <div className="ml-auto flex items-center gap-2">
-                <span className="text-sm text-green-600 dark:text-green-400 font-medium">
-                  📦 Data Offline Tersedia
-                </span>
-              </div>
+              <p className="text-xs mt-1">📦 Data Offline Tersedia</p>
             )}
-          </div>
+          </Alert>
         )}
 
         {isSlow && isOnline && (
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-card p-4 mb-6 flex items-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-600 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="text-yellow-700 dark:text-yellow-300 text-sm font-medium">{getSlowConnectionMessage()}</p>
-          </div>
+          <Alert variant="warning" size="md" border="full" className="mb-6">
+            {getSlowConnectionMessage()}
+          </Alert>
         )}
 
         {/* Sync Status Bar */}

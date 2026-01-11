@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useOfflineActionQueue, type SyncResult } from '../services/offlineActionQueueService';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
+import Alert from './ui/Alert';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
 
@@ -164,12 +165,9 @@ export function OfflineIndicator({
 
         {/* Failed actions alert */}
         {failedCount > 0 && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-2">
-            <div className="text-xs text-red-700 dark:text-red-300 flex items-center gap-2">
-              <span>⚠️</span>
-              <span>{failedCount} action{failedCount > 1 ? 's' : ''} failed to sync</span>
-            </div>
-          </div>
+          <Alert variant="error" size="sm" border="full" className="mb-3">
+            {failedCount} action{failedCount > 1 ? 's' : ''} failed to sync
+          </Alert>
         )}
       </div>
     </>
