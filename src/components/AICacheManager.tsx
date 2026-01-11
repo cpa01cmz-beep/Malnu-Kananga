@@ -179,7 +179,7 @@ const AICacheManager: React.FC<AICacheManagerProps> = ({ className = '' }) => {
           return (
             <div
               key={section.id}
-              className={`border rounded-lg ${colors.bg} ${colors.border} transition-all`}
+              className={`border rounded-lg ${colors.bg} ${colors.border} transition-all duration-200 ease-out`}
             >
               <div className="p-4">
                 <div className="flex items-center justify-between">

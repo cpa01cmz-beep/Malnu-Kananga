@@ -205,9 +205,12 @@ export function validateParentPayment(payment: ParentPayment): ValidationResult 
 export function validateMultiChildDataIsolation(children: ParentChild[], childId: string): ValidationResult {
   const errors: string[] = [];
 
-  const targetChild = children.find(child => child.studentId === childId);
-  if (!targetChild) {
-    errors.push(`Child with ID ${childId} not found in parent's children list`);
+  // Only validate target child if a childId is provided
+  if (childId) {
+    const targetChild = children.find(child => child.studentId === childId);
+    if (!targetChild) {
+      errors.push(`Child with ID ${childId} not found in parent's children list`);
+    }
   }
 
   const duplicateIds = children
@@ -216,6 +219,23 @@ export function validateMultiChildDataIsolation(children: ParentChild[], childId
 
   if (duplicateIds.length > 0) {
     errors.push(`Duplicate child IDs detected: ${duplicateIds.join(', ')}`);
+  }
+
+  // Use Set for O(n) duplicate detection instead of O(n²)
+  const seenNisns = new Set<string>();
+  const duplicateNISNs = new Set<string>();
+  for (const child of children) {
+    if (child.nisn) {
+      if (seenNisns.has(child.nisn)) {
+        duplicateNISNs.add(child.nisn);
+      } else {
+        seenNisns.add(child.nisn);
+      }
+    }
+  }
+
+  if (duplicateNISNs.size > 0) {
+    errors.push(`Duplicate NISN detected: ${Array.from(duplicateNISNs).join(', ')}`);
   }
 
   children.forEach((child, index) => {
@@ -297,5 +317,148 @@ export function validateAndSanitizeMessage(message: Omit<ParentMessage, 'id' | '
     isValid: validation.isValid,
     errors: validation.errors,
     sanitized: validation.isValid ? sanitized : undefined
+  };
+}
+
+export interface DataAccessValidation {
+  isValid: boolean;
+  errors: string[];
+  warnings: string[];
+}
+
+export function validateParentChildDataAccess(childId: string, children: ParentChild[], dataType: 'grades' | 'attendance' | 'schedule' | 'messages' | 'payments' | 'meetings' = 'grades'): DataAccessValidation {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  const targetChild = children.find(child => child.studentId === childId);
+  if (!targetChild) {
+    errors.push(`Access denied: Child with ID ${childId} not found in parent's children list`);
+    return { isValid: false, errors, warnings };
+  }
+
+  switch (dataType) {
+    case 'grades':
+    case 'attendance':
+    case 'payments':
+    case 'meetings':
+      // No specific validation needed here as child existence is already checked.
+      break;
+    case 'schedule':
+      if (!targetChild.className) {
+        warnings.push('Schedule may be incomplete: No class information available');
+      }
+      break;
+    case 'messages':
+      if (!targetChild.studentName) {
+        warnings.push('Message context may be incomplete: No student name available');
+      }
+      break;
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings
+  };
+}
+
+export function validateChildDataIsolation(childId: string, data: Array<{studentId?: string}>, dataType: string = 'grades'): DataAccessValidation {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  if (!Array.isArray(data)) {
+    errors.push(`Invalid ${dataType} data: Expected array`);
+    return { isValid: false, errors, warnings };
+  }
+
+  const childSpecificData = data.filter(item => item.studentId === childId);
+  
+  if (childSpecificData.length === 0 && data.length > 0) {
+    warnings.push(`No ${dataType} data found for child ${childId}`);
+  }
+
+  const otherChildData = data.filter(item => item.studentId && item.studentId !== childId);
+  if (otherChildData.length > 0) {
+    errors.push(`Data isolation breach: Found ${otherChildData.length} ${dataType} records belonging to other children`);
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings
+  };
+}
+
+export function validateOfflineDataIntegrity(cachedData: { children?: ParentChild[]; lastUpdated?: number }, currentChildren: ParentChild[]): DataAccessValidation {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  if (!cachedData) {
+    errors.push('No cached data available');
+    return { isValid: false, errors, warnings };
+  }
+
+  if (!cachedData.children || !Array.isArray(cachedData.children)) {
+    errors.push('Invalid cached children data structure');
+    return { isValid: false, errors, warnings };
+  }
+
+  const cachedChildIds = cachedData.children.map((child: ParentChild) => child.studentId);
+  const currentChildIds = currentChildren.map(child => child.studentId);
+
+  const missingChildren = currentChildIds.filter(id => !cachedChildIds.includes(id));
+  if (missingChildren.length > 0) {
+    warnings.push(`Missing cached data for children: ${missingChildren.join(', ')}`);
+  }
+
+  const extraChildren = cachedChildIds.filter((id: string) => !currentChildIds.includes(id));
+  if (extraChildren.length > 0) {
+    warnings.push(`Cached data contains children no longer assigned: ${extraChildren.join(', ')}`);
+  }
+
+  const now = Date.now();
+  const cacheAge = cachedData.lastUpdated ? now - cachedData.lastUpdated : Infinity;
+  const MAX_CACHE_AGE = 24 * 60 * 60 * 1000; // 24 hours
+
+  if (cacheAge > MAX_CACHE_AGE) {
+    warnings.push(`Cached data is stale: ${Math.floor(cacheAge / (60 * 60 * 1000))} hours old`);
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings
+  };
+}
+
+export function validateGradeVisibilityRestriction(grades: Array<{studentId?: string; id?: string; isPublished?: boolean; publishDate?: string; subject?: string; academicPeriod?: string}>, childId: string, parentRole: string = 'parent'): DataAccessValidation {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  const childGrades = grades.filter(grade => grade.studentId === childId);
+  
+  if (childGrades.length === 0) {
+    warnings.push('No grades found for this child');
+    return { isValid: true, errors, warnings };
+  }
+
+  childGrades.forEach((grade, index) => {
+    if (!grade.isPublished && parentRole !== 'admin') {
+      errors.push(`Grade ${grade.id || index} is not yet published and cannot be viewed`);
+    }
+
+    if (grade.publishDate && new Date(grade.publishDate) > new Date()) {
+      errors.push(`Grade ${grade.id || index} has a future publish date`);
+    }
+
+    if (!grade.subject || !grade.academicPeriod) {
+      warnings.push(`Grade ${grade.id || index} has incomplete metadata`);
+    }
+  });
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+    warnings
   };
 }

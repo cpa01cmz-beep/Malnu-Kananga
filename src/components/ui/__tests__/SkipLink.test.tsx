@@ -1,9 +1,22 @@
- 
+
 import { render, screen, cleanup } from '@testing-library/react';
-import { describe, it, expect, afterEach, beforeEach } from 'vitest';
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import SkipLink, { SkipTarget } from '../SkipLink';
 
+// Mock Element.scrollIntoView for all tests
+const mockScrollIntoView = () => {};
+
 describe('SkipLink', () => {
+  beforeEach(() => {
+    if (typeof window !== 'undefined' && window.Element) {
+      Object.defineProperty(window.Element.prototype, 'scrollIntoView', {
+        value: mockScrollIntoView,
+        writable: true,
+        configurable: true,
+      });
+    }
+  });
+
   afterEach(() => {
     cleanup();
     while (document.body.firstChild) {
@@ -11,10 +24,11 @@ describe('SkipLink', () => {
     }
   });
 
-  describe('Single Target (Backward Compatibility)', () => {
+   describe('Single Target (Backward Compatibility)', () => {
     beforeEach(() => {
       const mainElement = document.createElement('div');
       mainElement.id = 'main-content';
+      mainElement.setAttribute('tabindex', '-1');
       document.body.appendChild(mainElement);
     });
 
@@ -24,6 +38,32 @@ describe('SkipLink', () => {
       const skipLink = screen.getByRole('navigation', { name: 'Langsung ke konten utama' });
       expect(skipLink).toBeInTheDocument();
       expect(skipLink).toHaveAttribute('href', '#main-content');
+    });
+
+    it('should focus on target element when clicked', () => {
+      render(<SkipLink />);
+
+      const skipLink = screen.getByRole('navigation', { name: 'Langsung ke konten utama' });
+      const targetElement = document.getElementById('main-content') as HTMLElement;
+
+      const focusSpy = vi.spyOn(targetElement, 'focus');
+      skipLink.click();
+
+      expect(focusSpy).toHaveBeenCalled();
+      focusSpy.mockRestore();
+    });
+
+    it('should prevent default anchor behavior and use smooth scroll', () => {
+      render(<SkipLink />);
+
+      const skipLink = screen.getByRole('navigation', { name: 'Langsung ke konten utama' });
+      const targetElement = document.getElementById('main-content') as HTMLElement;
+
+      const scrollIntoViewSpy = vi.spyOn(targetElement, 'scrollIntoView');
+      skipLink.click();
+
+      expect(scrollIntoViewSpy).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+      scrollIntoViewSpy.mockRestore();
     });
 
     it('should render with custom target id', () => {
@@ -85,18 +125,21 @@ describe('SkipLink', () => {
     });
   });
 
-  describe('Multiple Targets', () => {
+   describe('Multiple Targets', () => {
     beforeEach(() => {
       const navElement = document.createElement('nav');
       navElement.id = 'main-nav';
+      navElement.setAttribute('tabindex', '-1');
       document.body.appendChild(navElement);
 
       const mainElement = document.createElement('div');
       mainElement.id = 'main-content';
+      mainElement.setAttribute('tabindex', '-1');
       document.body.appendChild(mainElement);
 
       const footerElement = document.createElement('footer');
       footerElement.id = 'main-footer';
+      footerElement.setAttribute('tabindex', '-1');
       document.body.appendChild(footerElement);
     });
 
@@ -114,6 +157,43 @@ describe('SkipLink', () => {
 
       const links = screen.getAllByRole('link');
       expect(links).toHaveLength(3);
+    });
+
+    it('should focus on first target when first skip link is clicked', () => {
+      const targets: SkipTarget[] = [
+        { id: 'main-nav', label: 'Langsung ke navigasi' },
+        { id: 'main-content', label: 'Langsung ke konten utama' },
+        { id: 'main-footer', label: 'Langsung ke footer' },
+      ];
+
+      render(<SkipLink targets={targets} />);
+
+      const firstLink = screen.getByRole('link', { name: 'Langsung ke navigasi' });
+      const targetElement = document.getElementById('main-nav') as HTMLElement;
+
+      const focusSpy = vi.spyOn(targetElement, 'focus');
+      firstLink.click();
+
+      expect(focusSpy).toHaveBeenCalled();
+      focusSpy.mockRestore();
+    });
+
+    it('should focus on second target when second skip link is clicked', () => {
+      const targets: SkipTarget[] = [
+        { id: 'main-nav', label: 'Langsung ke navigasi' },
+        { id: 'main-content', label: 'Langsung ke konten utama' },
+      ];
+
+      render(<SkipLink targets={targets} />);
+
+      const secondLink = screen.getByRole('link', { name: 'Langsung ke konten utama' });
+      const targetElement = document.getElementById('main-content') as HTMLElement;
+
+      const focusSpy = vi.spyOn(targetElement, 'focus');
+      secondLink.click();
+
+      expect(focusSpy).toHaveBeenCalled();
+      focusSpy.mockRestore();
     });
 
     it('should render each link with correct href', () => {

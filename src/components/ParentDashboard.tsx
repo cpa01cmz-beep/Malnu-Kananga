@@ -15,7 +15,7 @@ import type { ParentChild, Grade } from '../types';
 import { parentsAPI, authAPI, gradesAPI, attendanceAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
-import { validateMultiChildDataIsolation } from '../utils/parentValidation';
+import { validateParentChildDataAccess, validateChildDataIsolation, validateGradeVisibilityRestriction, validateOfflineDataIntegrity } from '../utils/parentValidation';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
@@ -73,6 +73,14 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       if (!networkStatus.isOnline) {
         const cachedData = offlineDataService.getCachedParentData();
         if (cachedData) {
+          const integrityValidation = validateOfflineDataIntegrity(cachedData, cachedData.children || []);
+          if (!integrityValidation.isValid) {
+            logger.warn('Offline data integrity issues:', integrityValidation.errors);
+            onShowToast('Peringatan integritas data: ' + integrityValidation.errors.join(', '), 'error');
+          } else if (integrityValidation.warnings.length > 0) {
+            logger.info('Offline data warnings:', integrityValidation.warnings);
+          }
+
           setChildren(cachedData.children);
           setOfflineData(cachedData);
           if (cachedData.children.length > 0) {
@@ -84,17 +92,11 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         }
       }
 
-      // Online: fetch fresh data
-      try {
-        const response = await parentsAPI.getChildren();
-        if (response.success && response.data) {
-          const validation = validateMultiChildDataIsolation(response.data, '');
-          if (!validation.isValid) {
-            logger.error('Parent child data validation failed:', validation.errors);
-            onShowToast('Validasi data anak gagal: ' + validation.errors.join(', '), 'error');
-          }
-
-          setChildren(response.data);
+        // Online: fetch fresh data
+        try {
+          const response = await parentsAPI.getChildren();
+          if (response.success && response.data) {
+            setChildren(response.data);
           if (response.data.length > 0) {
             setSelectedChild(response.data[0]);
           }
@@ -113,6 +115,23 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 ]);
 
                 if (gradesResponse.success && attendanceResponse.success) {
+                  // Validate data isolation for each child
+                  const gradesIsolation = validateChildDataIsolation(child.studentId, gradesResponse.data || [], 'grades');
+                  const attendanceIsolation = validateChildDataIsolation(child.studentId, attendanceResponse.data || [], 'attendance');
+                  
+                  if (!gradesIsolation.isValid) {
+                    logger.error('Grades data isolation breach:', gradesIsolation.errors);
+                  }
+                  if (!attendanceIsolation.isValid) {
+                    logger.error('Attendance data isolation breach:', attendanceIsolation.errors);
+                  }
+
+                  // Validate grade visibility restrictions
+                  const gradesVisibility = validateGradeVisibilityRestriction(gradesResponse.data || [], child.studentId, 'parent');
+                  if (!gradesVisibility.isValid) {
+                    logger.warn('Grade visibility restrictions:', gradesVisibility.errors);
+                  }
+
                   childrenData[child.studentId] = {
                     student: {
                       id: child.studentId,
@@ -296,6 +315,17 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   });
 
   const handleSelectChild = (child: ParentChild) => {
+    // Validate parent access to this child before selection
+    const accessValidation = validateParentChildDataAccess(child.studentId, children);
+    if (!accessValidation.isValid) {
+      onShowToast('Akses ditolak: ' + accessValidation.errors.join(', '), 'error');
+      return;
+    }
+
+    if (accessValidation.warnings.length > 0) {
+      logger.warn('Child selection warnings:', accessValidation.warnings);
+    }
+
     setSelectedChild(child);
     setCurrentView('home');
   };
@@ -436,6 +466,23 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                       </div>
                     </button>
                   ))}
+                </div>
+              </Card>
+            )}
+
+            {/* Current Child Indicator */}
+            {selectedChild && (
+              <Card className="mb-8 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                    <UserIcon />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">Data Saat Ini</h3>
+                    <p className="text-sm text-green-600 dark:text-green-400">
+                      Menampilkan data untuk <strong>{selectedChild.studentName}</strong> - {selectedChild.className || 'Tanpa Kelas'}
+                    </p>
+                  </div>
                 </div>
               </Card>
             )}
