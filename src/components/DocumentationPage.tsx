@@ -14,20 +14,37 @@ interface AccordionItemProps {
 
 const AccordionItem: React.FC<AccordionItemProps> = ({ title, children }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const buttonId = `accordion-button-${Math.random().toString(36).substr(2, 9)}`;
+    const contentId = `accordion-content-${Math.random().toString(36).substr(2, 9)}`;
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsOpen(!isOpen);
+        }
+    };
     return (
         <div className="border-b border-neutral-200 dark:border-neutral-700">
             <h2>
                 <button
+                    id={buttonId}
                     type="button"
-                    className="flex items-center justify-between w-full p-5 font-medium text-left text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                    className="flex items-center justify-between w-full p-5 font-medium text-left text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
                     onClick={() => setIsOpen(!isOpen)}
+                    onKeyDown={handleKeyDown}
                     aria-expanded={isOpen}
+                    aria-controls={contentId}
                 >
                     <span>{title}</span>
-                    <ChevronDownIcon className={`w-6 h-6 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDownIcon className={`w-6 h-6 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
                 </button>
             </h2>
-            <div className={`p-5 border-t-0 border-neutral-200 dark:border-neutral-700 ${isOpen ? 'block' : 'hidden'}`}>
+            <div
+                id={contentId}
+                role="region"
+                aria-labelledby={buttonId}
+                className={`p-5 border-t-0 border-neutral-200 dark:border-neutral-700 transition-all duration-200 ease-in-out ${isOpen ? 'block' : 'hidden'}`}
+                aria-hidden={!isOpen}
+            >
                 <div className="space-y-4 text-neutral-600 dark:text-neutral-400">
                     {children}
                 </div>
