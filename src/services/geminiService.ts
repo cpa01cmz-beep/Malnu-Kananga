@@ -210,7 +210,9 @@ export async function getAIEditorResponse(
 // Note: Command validation is now handled in the component for better error handling
     // This service focuses on response validation
 
-    const sanitizedPrompt = commandValidation.sanitizedPrompt || prompt;
+    // Command validation is now handled in the component
+    // We use the prompt directly since it's already validated and sanitized
+    const sanitizedPrompt = prompt;
 
     // Check cache for similar editor requests
     const cacheKey = {
