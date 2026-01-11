@@ -215,7 +215,7 @@ describe('useRealtimeEvent Hook', () => {
     expect(mockUnsubscribe).toHaveBeenCalled();
   });
 
-  it.skip('should handle array of event types', () => {
+  it('should handle array of event types', () => {
     const callback = vi.fn();
 
     renderHook(() => 
@@ -460,7 +460,7 @@ describe('WebSocket Integration Edge Cases', () => {
     expect(logger.error).toHaveBeenCalledWith('useWebSocket: Reconnection failed', expect.any(Error));
   });
 
-  it.skip('should update connection state periodically', async () => {
+  it('should update connection state periodically', async () => {
     // Mock interval
     vi.useFakeTimers();
 

@@ -25,7 +25,7 @@ vi.mock('../pushNotificationService', () => ({
   }
 }));
 
-describe.skip('OCR Validation Notification Integration (Temporarily Skipped - Issue #1024)', () => {
+describe('OCR Validation Notification Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Clear localStorage
