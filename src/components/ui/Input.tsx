@@ -1,7 +1,11 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
+import { useFieldValidation } from '../../hooks/useFieldValidation';
+import { MaskOptions } from '../../utils/inputMasks';
+import { createFormatter } from '../../utils/inputMasks';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 export type InputState = 'default' | 'error' | 'success';
+export type InputType = 'text' | 'email' | 'password' | 'tel' | 'number' | 'nisn' | 'phone' | 'date' | 'year' | 'class' | 'grade';
 
 interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
@@ -12,6 +16,15 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   fullWidth?: boolean;
+  validationRules?: Array<{ validate: (value: string) => boolean; message: string }>;
+  validateOnChange?: boolean;
+  validateOnBlur?: boolean;
+  accessibility?: {
+    announceErrors?: boolean;
+    describedBy?: string;
+  };
+  inputMask?: 'nisn' | 'phone' | 'date' | 'year' | 'class' | 'grade';
+  customType?: InputType;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed";
@@ -56,22 +69,103 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   leftIcon,
   rightIcon,
   fullWidth = false,
+  validationRules = [],
+  validateOnChange = true,
+  validateOnBlur = true,
+  accessibility = { announceErrors: true },
+  inputMask,
+  customType = 'text',
+  value,
+  onChange,
+  onBlur,
   className = '',
   ...props
 }, ref) => {
+  const internalRef = useRef<HTMLInputElement>(null);
+  const inputRef = (ref as React.RefObject<HTMLInputElement>) || internalRef;
+  
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
   const helperTextId = helperText ? `${inputId}-helper` : undefined;
   const errorTextId = errorText ? `${inputId}-error` : undefined;
-  const describedBy = [helperTextId, errorTextId].filter(Boolean).join(' ') || undefined;
+  const accessibilityDescribedBy = accessibility?.describedBy;
+  const describedBy = [helperTextId, errorTextId, accessibilityDescribedBy].filter(Boolean).join(' ') || undefined;
+
+  // Initialize input mask if provided
+  const maskFormatter = inputMask ? createFormatter(inputMask) : null;
+
+  // Enhanced validation state management
+  const validation = useFieldValidation({
+    value: String(value || ''),
+    rules: validationRules,
+    triggers: {
+      onBlur: validateOnBlur,
+      onChange: validateOnChange,
+      onSubmit: true
+    },
+    accessibility: {
+      announceErrors: accessibility.announceErrors,
+      errorRole: 'alert'
+    }
+  });
+
+  // Handle input mask formatting
+  const handleMaskedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (maskFormatter) {
+      const formattedValue = maskFormatter.format(e.target.value);
+      e.target.value = formattedValue;
+    }
+    
+    if (onChange) {
+      onChange(e);
+    }
+    
+    validation.changeHandler(e.target.value);
+  };
+
+  // Enhanced blur handler
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    validation.blurHandler();
+    
+    if (onBlur) {
+      onBlur(e);
+    }
+  };
+
+  // Auto-focus management for validation errors
+  useEffect(() => {
+    if (validation.state.errors.length > 0 && validation.state.isTouched && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [validation.state.errors, validation.state.isTouched, inputRef]);
+
+  // Determine final state based on validation
+  const finalState = validation.state.errors.length > 0 && validation.state.isTouched ? 'error' : 
+                    (validation.state.isValid ? state : 'error');
+  const finalErrorText = validation.state.errors.length > 0 && validation.state.isTouched ? 
+                        validation.state.errors[0] : errorText;
+
+  // Icon spacing adjustments
+  const leftIconSpacing = leftIcon || inputMask === 'phone' || inputMask === 'nisn' ? 'pl-11' : '';
+  const rightIconSpacing = rightIcon ? 'pr-11' : '';
 
   const inputClasses = `
     ${baseClasses}
     ${sizeClasses[size]}
-    ${stateClasses[state]}
+    ${stateClasses[finalState]}
     ${fullWidth ? 'w-full' : ''}
-    ${leftIcon || rightIcon ? 'pl-11 pr-11' : ''}
+    ${leftIconSpacing} ${rightIconSpacing}
     ${className}
   `.replace(/\s+/g, ' ').trim();
+
+  // Enhanced accessibility attributes
+  const accessibilityProps = {
+    'aria-describedby': describedBy,
+    'aria-invalid': finalState === 'error',
+    'aria-required': props.required,
+    'aria-errormessage': finalErrorText ? errorTextId : undefined,
+    ...(validation.state.isValidating && { 'aria-live': 'polite' as const }),
+    ...(validation.state.isValidating && { 'aria-busy': true })
+  };
 
   return (
     <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`}>
@@ -81,42 +175,90 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           className={`${labelSizeClasses[size]} font-semibold text-neutral-700 dark:text-neutral-300 block`}
         >
           {label}
-          {props.required && <span className="text-red-500 ml-1" aria-label="required">*</span>}
+          {props.required && (
+            <span className="text-red-500 ml-1" aria-label="wajib diisi">
+              *
+            </span>
+          )}
         </label>
       )}
 
       <div className="relative">
         {leftIcon && (
-          <div className={`absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]}`} aria-hidden="true">
+          <div 
+            className={`absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]}`} 
+            aria-hidden="true"
+          >
             {leftIcon}
           </div>
         )}
 
+        {inputMask === 'phone' && !leftIcon && (
+          <div 
+            className={`absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]}`} 
+            aria-hidden="true"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+          </div>
+        )}
+
         <input
-          ref={ref}
+          ref={inputRef}
           id={inputId}
+          type={customType === 'nisn' || customType === 'phone' ? 'tel' : customType}
+          inputMode={
+            customType === 'nisn' || customType === 'phone' || customType === 'year' || customType === 'grade' ? 'numeric' :
+            customType === 'date' ? 'numeric' : 'text'
+          }
+          pattern={
+            customType === 'nisn' ? '[0-9]{10}' :
+            customType === 'phone' ? '[0-9]{10,13}' :
+            customType === 'year' ? '[0-9]{4}' :
+            customType === 'grade' ? '[0-9]{1,3}' : undefined
+          }
+          maxLength={customType === 'nisn' ? 10 : customType === 'year' ? 4 : customType === 'grade' ? 3 : undefined}
           className={inputClasses}
-          aria-describedby={describedBy}
-          aria-invalid={state === 'error'}
+          value={value}
+          onChange={handleMaskedChange}
+          onBlur={handleBlur}
+          {...accessibilityProps}
           {...props}
         />
 
         {rightIcon && (
-          <div className={`absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]}`} aria-hidden="true">
+          <div 
+            className={`absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]}`} 
+            aria-hidden="true"
+          >
             {rightIcon}
+          </div>
+        )}
+
+        {validation.state.isValidating && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-neutral-300 border-t-primary-500" aria-hidden="true" />
           </div>
         )}
       </div>
 
-      {helperText && (
+      {helperText && !finalErrorText && (
         <p id={helperTextId} className={`${helperTextSizeClasses[size]} text-neutral-500 dark:text-neutral-400`}>
           {helperText}
         </p>
       )}
 
-      {errorText && (
-        <p id={errorTextId} className={`${helperTextSizeClasses[size]} text-red-600 dark:text-red-400`} role="alert">
-          {errorText}
+      {finalErrorText && (
+        <p id={errorTextId} className={`${helperTextSizeClasses[size]} text-red-600 dark:text-red-400`} role="alert" aria-live="polite">
+          {finalErrorText}
+        </p>
+      )}
+
+      {/* Helper text for masked inputs */}
+      {inputMask && !finalErrorText && (
+        <p className={`${helperTextSizeClasses[size]} text-neutral-400 dark:text-neutral-500 italic`}>
+          {maskFormatter && (maskFormatter as unknown as { options: MaskOptions }).options?.placeholder}
         </p>
       )}
     </div>

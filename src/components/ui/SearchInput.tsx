@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MagnifyingGlassIcon } from '../icons/NotificationIcons';
 
 export type SearchInputSize = 'sm' | 'md' | 'lg';
@@ -15,6 +16,13 @@ interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
   placeholder?: string;
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
+  validationRules?: Array<{ validate: (value: string) => boolean; message: string }>;
+  validateOnChange?: boolean;
+  validateOnBlur?: boolean;
+  accessibility?: {
+    announceErrors?: boolean;
+    describedBy?: string;
+  };
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed";
@@ -61,13 +69,36 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
   placeholder,
   icon,
   iconPosition = 'left',
+  validationRules = [],
+  validateOnChange = true,
+  validateOnBlur = true,
+  accessibility = { announceErrors: true },
   className = '',
+  value,
+  onChange,
+  onBlur,
   ...props
 }, ref) => {
   const searchId = id || `search-${Math.random().toString(36).substr(2, 9)}`;
   const helperTextId = helperText ? `${searchId}-helper` : undefined;
   const errorTextId = errorText ? `${searchId}-error` : undefined;
-  const describedBy = [helperTextId, errorTextId].filter(Boolean).join(' ') || undefined;
+  const accessibilityDescribedBy = accessibility?.describedBy;
+  const describedBy = [helperTextId, errorTextId, accessibilityDescribedBy].filter(Boolean).join(' ') || undefined;
+
+  // Enhanced validation state management
+  const validation = useFieldValidation({
+    value: String(value || ''),
+    rules: validationRules,
+    triggers: {
+      onBlur: validateOnBlur,
+      onChange: validateOnChange,
+      onSubmit: true
+    },
+    accessibility: {
+      announceErrors: accessibility.announceErrors,
+      errorRole: 'alert'
+    }
+  });
 
   const iconContent = icon || <MagnifyingGlassIcon className={sizeIconClasses[size]} aria-hidden />;
 
@@ -81,14 +112,49 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
+  // Enhanced change handler
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) {
+      onChange(e);
+    }
+    validation.changeHandler(e.target.value);
+  };
+
+  // Enhanced blur handler
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    validation.blurHandler();
+    if (onBlur) {
+      onBlur(e);
+    }
+  };
+
+  // Determine final state based on validation
+  const finalState = validation.state.errors.length > 0 && validation.state.isTouched ? 'error' : 
+                    (validation.state.isValid ? state : 'error');
+  const finalErrorText = validation.state.errors.length > 0 && validation.state.isTouched ? 
+                        validation.state.errors[0] : errorText;
+
+  // Enhanced accessibility attributes
+  const accessibilityProps = {
+    'aria-required': props.required,
+    'aria-errormessage': finalErrorText ? errorTextId : undefined,
+    ...(validation.state.isValidating && { 'aria-live': 'polite' as const }),
+    ...(validation.state.isValidating && { 'aria-busy': true })
+  };
+
   return (
-    <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`}>
+    <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`} role="search">
       {label && (
         <label
           htmlFor={searchId}
           className={`${labelSizeClasses[size]} font-semibold text-neutral-700 dark:text-neutral-300 block`}
         >
           {label}
+          {props.required && (
+            <span className="text-red-500 ml-1" aria-label="wajib diisi">
+              *
+            </span>
+          )}
         </label>
       )}
 
@@ -106,8 +172,11 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
           placeholder={placeholder}
           className={inputClasses}
           aria-describedby={describedBy}
-          aria-invalid={state === 'error'}
-          role="search"
+          aria-invalid={finalState === 'error'}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={value}
+          {...accessibilityProps}
           {...props}
         />
 
@@ -116,17 +185,23 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
             {iconContent}
           </div>
         )}
+
+        {validation.state.isValidating && (
+          <div className="absolute right-(showIcon && iconPosition === 'right' ? 12 : 3) top-1/2 -translate-y-1/2">
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-neutral-300 border-t-primary-500" aria-hidden="true" />
+          </div>
+        )}
       </div>
 
-      {helperText && (
+      {helperText && !finalErrorText && (
         <p id={helperTextId} className={`${helperTextSizeClasses[size]} text-neutral-500 dark:text-neutral-400`}>
           {helperText}
         </p>
       )}
 
-      {errorText && (
-        <p id={errorTextId} className={`${helperTextSizeClasses[size]} text-red-600 dark:text-red-400`} role="alert">
-          {errorText}
+      {finalErrorText && (
+        <p id={errorTextId} className={`${helperTextSizeClasses[size]} text-red-600 dark:text-red-400`} role="alert" aria-live="polite">
+          {finalErrorText}
         </p>
       )}
     </div>
