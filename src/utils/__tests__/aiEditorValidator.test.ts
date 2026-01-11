@@ -1,6 +1,25 @@
-import { describe, it, expect } from 'vitest';
-import { validateAICommand, validateAIResponse } from '../aiEditorValidator';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { validateAICommand, validateAIResponse, type AuditLogEntry } from '../aiEditorValidator';
 import type { FeaturedProgram, LatestNews } from '../../types';
+
+// Mock localStorage for audit logging tests
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string, value: string) => { store[key] = value; },
+    removeItem: (key: string) => { delete store[key]; },
+    clear: () => { store = {}; }
+  };
+})();
+
+beforeEach(() => {
+  global.localStorage = localStorageMock as any;
+});
+
+afterEach(() => {
+  localStorageMock.clear();
+});
 
 describe('AI Editor Validator', () => {
   describe('validateAICommand', () => {
@@ -71,6 +90,75 @@ describe('AI Editor Validator', () => {
       const result = validateAICommand('Click here data:text/html,safe content');
       expect(result.isValid).toBe(true);
       expect(result.sanitizedPrompt).not.toContain('data:');
+    });
+
+    it('should reject prompt with system file patterns', () => {
+      const result = validateAICommand('access /proc/version');
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('tidak diizinkan');
+    });
+
+    it('should reject prompt with shell commands', () => {
+      const result = validateAICommand('execute bash command');
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('tidak diizinkan');
+    });
+
+    it('should reject prompt with encoding patterns', () => {
+      const result = validateAICommand('use 0x48656c6c6f for hex encoding');
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('tidak diizinkan');
+    });
+
+    it('should log audit entries for blocked commands', () => {
+      validateAICommand('eval("malicious")', 'test-user');
+      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]');
+      expect(logs).toHaveLength(1);
+      expect(logs[0]).toMatchObject({
+        action: 'command_blocked',
+        userId: 'test-user',
+        reason: expect.stringContaining('Pola berbahaya terdeteksi')
+      });
+    });
+
+    it('should log audit entries for valid commands', () => {
+      validateAICommand('tambahkan program baru', 'test-user');
+      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]');
+      expect(logs).toHaveLength(1);
+      expect(logs[0]).toMatchObject({
+        action: 'command_validated',
+        userId: 'test-user',
+        reason: expect.stringContaining('Validasi berhasil')
+      });
+    });
+
+    it('should implement rate limiting', () => {
+      const userId = 'rate-limit-test-user';
+      
+      // Allow first few requests
+      for (let i = 0; i < 10; i++) {
+        const result = validateAICommand(`request ${i}`, userId);
+        expect(result.isValid).toBe(true);
+      }
+      
+      // Should block the 11th request
+      const blockedResult = validateAICommand('request 10', userId);
+      expect(blockedResult.isValid).toBe(false);
+      expect(blockedResult.error).toContain('menunggu');
+    });
+
+    it('should assess risk levels correctly', () => {
+      validateAICommand('tambahkan program robotika', 'user');
+      let logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]');
+      expect(logs[0].reason).toContain('risiko: low');
+
+      validateAICommand('fetch data dari api external', 'user');
+      logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]');
+      expect(logs[1].reason).toContain('risiko: medium');
+
+      validateAICommand('delete system files', 'user');
+      logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]');
+      expect(logs[logs.length - 1].reason).toContain('risiko: high');
     });
   });
 
@@ -183,6 +271,92 @@ Let me know if you need anything else.`;
       const result = validateAIResponse(jsonWithValidDate, mockCurrentContent);
       expect(result.isValid).toBe(true);
       expect(result.sanitizedContent?.latestNews[0].date).toBe('2026-01-15');
+    });
+
+    it('should log audit entries for blocked responses', () => {
+      const maliciousJson = JSON.stringify({
+        featuredPrograms: [{ title: '<script>alert(1)</script>', description: 'Desc', imageUrl: 'https://example.com/img.jpg' }],
+        latestNews: []
+      });
+      validateAIResponse(maliciousJson, mockCurrentContent, 'test-user');
+      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]');
+      expect(logs).toHaveLength(1);
+      expect(logs[0]).toMatchObject({
+        action: 'response_blocked',
+        userId: 'test-user'
+      });
+    });
+
+    it('should log audit entries for valid responses', () => {
+      const validJson = JSON.stringify({
+        featuredPrograms: [{ title: 'Valid Program', description: 'Desc', imageUrl: 'https://example.com/img.jpg' }],
+        latestNews: []
+      });
+      validateAIResponse(validJson, mockCurrentContent, 'test-user');
+      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]');
+      expect(logs).toHaveLength(1);
+      expect(logs[0]).toMatchObject({
+        action: 'response_validated',
+        userId: 'test-user'
+      });
+    });
+
+    it('should reject response with too many programs', () => {
+      const manyPrograms = Array(25).fill({ title: 'Program', description: 'Desc', imageUrl: 'https://example.com/img.jpg' });
+      const json = JSON.stringify({ featuredPrograms: manyPrograms, latestNews: [] });
+      const result = validateAIResponse(json, mockCurrentContent);
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('melebihi batas maksimal');
+    });
+
+    it('should reject response with too many news items', () => {
+      const manyNews = Array(55).fill({ title: 'News', date: '2026-01-01', category: 'Umum', imageUrl: 'https://example.com/img.jpg' });
+      const json = JSON.stringify({ featuredPrograms: [], latestNews: manyNews });
+      const result = validateAIResponse(json, mockCurrentContent);
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('melebihi batas maksimal');
+    });
+
+    it('should reject response that adds too many items at once', () => {
+      const currentWithMany = {
+        featuredPrograms: Array(5).fill({ title: 'Program', description: 'Desc', imageUrl: 'https://example.com/img.jpg' }),
+        latestNews: Array(10).fill({ title: 'News', date: '2026-01-01', category: 'Umum', imageUrl: 'https://example.com/img.jpg' })
+      };
+      const manyNewPrograms = Array(16).fill({ title: 'New Program', description: 'Desc', imageUrl: 'https://example.com/img.jpg' });
+      const json = JSON.stringify({ featuredPrograms: manyNewPrograms, latestNews: currentWithMany.latestNews });
+      const result = validateAIResponse(json, currentWithMany);
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('terlalu banyak program yang ditambahkan');
+    });
+
+    it('should validate program structure thoroughly', () => {
+      const invalidProgramJson = JSON.stringify({
+        featuredPrograms: [{ title: '', description: 'Desc', imageUrl: 'https://example.com/img.jpg' }], // empty title
+        latestNews: []
+      });
+      const result = validateAIResponse(invalidProgramJson, mockCurrentContent);
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('Struktur data program tidak valid');
+    });
+
+    it('should validate news structure thoroughly', () => {
+      const invalidNewsJson = JSON.stringify({
+        featuredPrograms: [],
+        latestNews: [{ title: 'News', date: 'invalid-date', category: 'Umum', imageUrl: 'https://example.com/img.jpg' }]
+      });
+      const result = validateAIResponse(invalidNewsJson, mockCurrentContent);
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('Struktur data berita tidak valid');
+    });
+
+    it('should prevent complete content deletion', () => {
+      const deletionJson = JSON.stringify({
+        featuredPrograms: [],
+        latestNews: []
+      });
+      const result = validateAIResponse(deletionJson, mockCurrentContent);
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('menghapus semua');
     });
   });
 });
