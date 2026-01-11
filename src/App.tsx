@@ -260,14 +260,15 @@ const App: React.FC = () => {
     <NotificationProvider>
       <ErrorBoundary>
         <div className={`${GRADIENT_CLASSES.APP_BACKGROUND} w-full min-h-screen font-sans antialiased text-[color:var(--color-text)] transition-colors duration-300`}>
-      <SkipLink 
+      <SkipLink
         targets={[
           { id: 'main-nav', label: 'Langsung ke navigasi utama' },
           { id: 'main-content', label: 'Langsung ke konten utama' },
           { id: 'kontak', label: 'Langsung ke footer' },
-        ] as SkipTarget[]} 
+        ] as SkipTarget[]}
       />
-      <Header
+      <div id="main-nav" tabIndex={-1}>
+        <Header
         onLoginClick={() => setIsLoginOpen(true)}
         onChatClick={() => setIsChatOpen(true)}
         onEditClick={() => setIsEditorOpen(true)}
@@ -280,13 +281,14 @@ const App: React.FC = () => {
         onToggleTheme={toggleTheme}
         onShowToast={showToast}
       />
+      </div>
 
       {isLoggedIn && !isPublicView ? (
         <main id="main-content" tabIndex={-1}>
           {renderDashboard()}
         </main>
       ) : (
-        <main id="main-content">
+        <main id="main-content" tabIndex={-1}>
           <HeroSection />
           <RelatedLinksSection />
           <ProfileSection />
@@ -297,7 +299,7 @@ const App: React.FC = () => {
         </main>
       )}
 
-      <Footer onDocsClick={() => setIsDocsOpen(true)} />
+      <Footer onDocsClick={() => setIsDocsOpen(true)} tabIndex={-1} />
 
       <div
         className={`fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2.5rem)] max-w-sm h-[70vh] max-h-[600px] transition-all duration-300 ease-in-out ${
