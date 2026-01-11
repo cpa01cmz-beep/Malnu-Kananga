@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { UserRole, UserExtraRole } from '../types';
 import Button from './ui/Button';
 import Input from './ui/Input';
+import Alert from './ui/Alert';
 import { api } from '../services/apiService';
 import { getGradientClass } from '../config/gradients';
 import Modal from './ui/Modal';
@@ -135,18 +136,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                       Selesai
                    </Button>
              </div>
-               ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  {error && (
-                    <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg" role="alert">
-                      <p className="text-sm text-red-700 dark:text-red-300 flex items-center gap-2">
-                        <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        {error}
-                      </p>
-                    </div>
-                  )}
+                ) : (
+                 <form onSubmit={handleSubmit} className="space-y-5">
+                   {error && (
+                     <Alert variant="error" size="md" border="left">
+                       {error}
+                     </Alert>
+                   )}
                   <Input
                     id="email"
                     type="email"
