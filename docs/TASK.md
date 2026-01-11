@@ -84,8 +84,16 @@
      - Improved accessibility with proper ARIA attributes
      - Enhanced consistency with design system
      - Maintained error retry functionality
-     - PR #1032: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1032
-
+      - PR #1032: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1032
+   - [x] Enhance Toast component accessibility and UX (2026-01-11)
+     - Added Escape key handler for keyboard dismissal
+     - Implemented pause-on-hover to prevent auto-dismiss while user is reading
+     - Enhanced ARIA attributes (role, aria-live, aria-atomic) for screen readers
+     - Error toasts use role="alert" and aria-live="assertive"
+     - Success/info toasts use role="status" and aria-live="polite"
+     - Improved user control over toast notifications
+     - See src/components/Toast.tsx for implementation
+ 
 ### P2: Medium
 - [ ] Optimize bundle size to <500KB initial load
   - Implement code splitting for heavy modules

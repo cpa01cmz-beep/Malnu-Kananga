@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import IconButton from './ui/IconButton';
 
@@ -13,14 +13,39 @@ interface ToastProps {
 }
 
 const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onClose, duration = 3000 }) => {
+  const [isPaused, setIsPaused] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(duration);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      onClose();
+    }
+  }, [onClose]);
+
+  const handleMouseEnter = useCallback(() => {
+    setIsPaused(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsPaused(false);
+  }, []);
+
   useEffect(() => {
-    if (isVisible) {
+    if (isVisible && !isPaused) {
       const timer = setTimeout(() => {
         onClose();
-      }, duration);
+      }, remainingTime);
       return () => clearTimeout(timer);
     }
-  }, [isVisible, duration, onClose]);
+  }, [isVisible, remainingTime, isPaused, onClose]);
+
+  useEffect(() => {
+    if (isVisible) {
+      setRemainingTime(duration);
+      setIsPaused(false);
+    }
+  }, [isVisible, duration]);
 
   const baseClasses = "fixed top-20 right-4 sm:top-6 sm:right-6 z-50 px-5 py-4 rounded-xl shadow-float flex items-center gap-3 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] transform max-w-md border backdrop-blur-xl";
   const typeClasses = {
@@ -28,6 +53,9 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     info: "bg-white/95% dark:bg-neutral-800/95% border-l-4 border-l-blue-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white",
     error: "bg-white/95% dark:bg-neutral-800/95% border-l-4 border-l-red-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white",
   };
+
+  const ariaRole = type === 'error' ? 'alert' : 'status';
+  const ariaLive = type === 'error' ? 'assertive' : 'polite';
 
   const visibilityClasses = isVisible
     ? "translate-x-0 opacity-100"
@@ -52,7 +80,15 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
   }
 
   return (
-    <div className={`${baseClasses} ${typeClasses[type]} ${visibilityClasses}`} role="alert" aria-live="polite">
+    <div
+      className={`${baseClasses} ${typeClasses[type]} ${visibilityClasses}`}
+      role={ariaRole}
+      aria-live={ariaLive}
+      aria-atomic="true"
+      onKeyDown={handleKeyDown}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="flex-shrink-0">
         {icons[type]}
       </div>
