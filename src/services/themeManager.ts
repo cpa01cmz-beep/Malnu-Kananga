@@ -174,6 +174,38 @@ export class ThemeManager {
       }
     });
 
+    // Generate and apply pink scale
+    const pinkScale = this.generateColorScale('#db2777', 10);
+    Object.entries(pinkScale).forEach(([key, value]) => {
+      if (key !== 'DEFAULT') {
+        root.style.setProperty(`--theme-pink-${key}`, value);
+      }
+    });
+
+    // Generate and apply cyan scale
+    const cyanScale = this.generateColorScale('#06b6d4', 10);
+    Object.entries(cyanScale).forEach(([key, value]) => {
+      if (key !== 'DEFAULT') {
+        root.style.setProperty(`--theme-cyan-${key}`, value);
+      }
+    });
+
+    // Generate and apply emerald scale
+    const emeraldScale = this.generateColorScale('#10b981', 10);
+    Object.entries(emeraldScale).forEach(([key, value]) => {
+      if (key !== 'DEFAULT') {
+        root.style.setProperty(`--theme-emerald-${key}`, value);
+      }
+    });
+
+    // Generate and apply sky scale
+    const skyScale = this.generateColorScale('#0ea5e9', 10);
+    Object.entries(skyScale).forEach(([key, value]) => {
+      if (key !== 'DEFAULT') {
+        root.style.setProperty(`--theme-sky-${key}`, value);
+      }
+    });
+
     // Apply background, surface, text, and text-secondary colors
     root.style.setProperty('--color-background', theme.colors.background);
     root.style.setProperty('--color-surface', theme.colors.surface);
