@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { BellIcon } from './icons/BellIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
-import { ClockIcon, XMarkIcon } from './icons/MaterialIcons';
+import { ClockIcon } from './icons/MaterialIcons';
 import { ToastType } from './Toast';
 import { Toggle } from './ui/Toggle';
 import IconButton from './ui/IconButton';
