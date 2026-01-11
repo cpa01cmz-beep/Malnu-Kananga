@@ -4,9 +4,12 @@ import { StarIcon, BookmarkIcon, FunnelIcon } from './icons/MaterialIcons';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { EmptyState } from './ui/LoadingState';
 import { eLibraryAPI, fileStorageAPI } from '../services/apiService';
-import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress, OCRStatus, OCRProcessingState, SearchOptions, PlagiarismFlag } from '../types';
+import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress, OCRStatus, OCRProcessingState, SearchOptions, PlagiarismFlag, VoiceCommand } from '../types';
 import { useSemanticSearch } from '../hooks/useSemanticSearch';
+import { useVoiceCommands } from '../hooks/useVoiceCommands';
+import VoiceInputButton from './VoiceInputButton';
 import { logger } from '../utils/logger';
+import { VoiceLanguage } from '../types';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
 import { GRADIENT_CLASSES } from '../config/gradients';
@@ -21,6 +24,7 @@ import ProgressBar from './ui/ProgressBar';
 import SearchInput from './ui/SearchInput';
 import Input from './ui/Input';
 import Select from './ui/Select';
+import Modal from './ui/Modal';
 
 interface ELibraryProps {
   onBack: () => void;
@@ -62,6 +66,9 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
   const [userReview, setUserReview] = useState('');
   const [reviews, setReviews] = useState<Review[]>([]);
 
+  // Voice commands help
+  const [showVoiceHelp, setShowVoiceHelp] = useState(false);
+
   // OCR Integration State
   const [ocrProcessing, setOcrProcessing] = useState<Map<string, OCRProcessingState>>(new Map());
   const [selectedForOCR, setSelectedForOCR] = useState<Set<string>>(new Set());
@@ -82,6 +89,54 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
     enableQueryExpansion: true,
     includeRelated: true
   });
+
+  // Voice Commands for E-Library
+  const { isCommand } = useVoiceCommands({
+    language: VoiceLanguage.Indonesian
+  });
+
+  const handleVoiceCommand = useCallback((command: VoiceCommand): boolean => {
+    logger.info('Voice command received:', command);
+
+    try {
+      switch (command.action) {
+        case 'SEARCH_LIBRARY':
+          if (command.data?.query) {
+            setIsSemanticMode(true);
+            setSearch(command.data.query);
+            setDebouncedSearch(command.data.query);
+            onShowToast(`Mencari materi: "${command.data.query}"`, 'info');
+            
+            // Announce search initiation to user
+            if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const utterance = new (window as any).SpeechSynthesisUtterance(
+                `Sedang mencari materi "${command.data.query}"`
+              );
+              utterance.lang = 'id-ID';
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (window as any).speechSynthesis.speak(utterance);
+            }
+          }
+          break;
+        
+        case 'OPEN_LIBRARY':
+          // Already in library - show help
+          onShowToast('Anda sudah berada di perpustakaan', 'info');
+          break;
+        
+        default:
+          onShowToast('Perintah tidak dikenali di perpustakaan', 'error');
+          return false;
+      }
+      
+      return true;
+    } catch (error) {
+      logger.error('Voice command error:', error);
+      onShowToast('Gagal menjalankan perintah suara', 'error');
+      return false;
+    }
+  }, [onShowToast]);
 
   const loadStudentData = useCallback(() => {
     // Load bookmarks from localStorage
@@ -826,6 +881,31 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
               <DocumentTextIcon />
             </div>
           </Button>
+          <VoiceInputButton
+            onTranscript={(transcript) => {
+              // If it's not a command, use it as a search query
+              if (!isCommand(transcript)) {
+                setIsSemanticMode(true);
+                setSearch(transcript);
+                setDebouncedSearch(transcript);
+                onShowToast(`Mencari: "${transcript}"`, 'info');
+              }
+            }}
+            onCommand={handleVoiceCommand}
+            className="p-2"
+            aria-label="Cari dengan suara"
+          />
+          <Button
+            onClick={() => setShowVoiceHelp(true)}
+            variant="secondary"
+            size="md"
+            className="p-2"
+            aria-label="Bantuan perintah suara"
+          >
+            <div className="w-5 h-5 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
+              ❓
+            </div>
+          </Button>
         </div>
       </div>
 
@@ -1533,6 +1613,46 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Voice Commands Help Modal */}
+      {showVoiceHelp && (
+        <Modal
+          isOpen={showVoiceHelp}
+          onClose={() => setShowVoiceHelp(false)}
+          title="Perintah Suara Perpustakaan"
+          size="md"
+        >
+          <div className="space-y-4">
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-700">
+              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">🎤 Perintah Pencarian</h4>
+              <ul className="space-y-2 text-sm text-blue-800 dark:text-blue-200">
+                <li><strong>"cari materi [query]"</strong> - Cari materi dengan topik tertentu</li>
+                <li><strong>"search materials [query]"</strong> - Search materials with specific topic</li>
+                <li><strong>"cari di perpustakaan [query]"</strong> - Cari di seluruh perpustakaan</li>
+                <li><strong>"search library [query]"</strong> - Search entire library</li>
+              </ul>
+            </div>
+            
+            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-700">
+              <h4 className="font-semibold text-green-900 dark:text-green-100 mb-2">📚 Perintah Navigasi</h4>
+              <ul className="space-y-2 text-sm text-green-800 dark:text-green-200">
+                <li><strong>"buka perpustakaan"</strong> - Buka halaman perpustakaan</li>
+                <li><strong>"perpustakaan"</strong> - Pergi ke perpustakaan</li>
+              </ul>
+            </div>
+
+            <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4 border border-orange-200 dark:border-orange-700">
+              <h4 className="font-semibold text-orange-900 dark:text-orange-100 mb-2">💡 Tips</h4>
+              <ul className="space-y-1 text-sm text-orange-800 dark:text-orange-200">
+                <li>• Ucapkan dengan jelas dan pelan-pelan</li>
+                <li>• Gunakan kata kunci spesifik untuk hasil terbaik</li>
+                <li>• Pencarian AI akan otomatis diaktifkan</li>
+                <li>• Has akan diumumkan dengan suara</li>
+              </ul>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   );

@@ -128,6 +128,13 @@ class VoiceCommandParser {
       language: VoiceLanguage.Indonesian,
     });
 
+    this.commands.set('search_library', {
+      id: 'search_library',
+      patterns: [...VOICE_COMMANDS.SEARCH_LIBRARY],
+      action: 'SEARCH_LIBRARY',
+      language: VoiceLanguage.Indonesian,
+    });
+
     this.commands.set('go_to_calendar', {
       id: 'go_to_calendar',
       patterns: [...VOICE_COMMANDS.GO_TO_CALENDAR],
@@ -273,11 +280,16 @@ class VoiceCommandParser {
 
         if (similarity > highestScore && similarity >= 0.7) {
           highestScore = similarity;
+          
+          // Extract query for search commands
+          const extractedQuery = this.extractSearchQuery(normalizedTranscript, pattern);
+          
           bestMatch = {
             id: command.id,
             action: command.action,
             transcript: transcript,
             confidence: similarity,
+            data: extractedQuery ? { query: extractedQuery } : undefined,
           };
 
           logger.debug(`Found match: ${command.action} (confidence: ${similarity})`);
@@ -292,6 +304,49 @@ class VoiceCommandParser {
     }
 
     return bestMatch;
+  }
+
+  private extractSearchQuery(transcript: string, _pattern: string): string | null {
+    if (transcript.includes('materi') || transcript.includes('materials') || 
+        transcript.includes('perpustakaan') || transcript.includes('library')) {
+      
+      // Remove command words and extract the actual query
+      const removalPatterns = [
+        'cari materi', 'cari materi ', 'search materials', 'search materials ',
+        'cari di perpustakaan', 'cari di perpustakaan ', 'search library', 'search library ',
+        'materi ', 'materials ', 'perpustakaan ', 'library '
+      ];
+
+      let query = transcript;
+      for (const patternToRemove of removalPatterns) {
+        query = query.replace(patternToRemove, '');
+      }
+
+      query = query.trim();
+      
+      // Return query only if it contains meaningful content
+      if (query.length > 2) {
+        return this.restoreOriginalCase(query, transcript);
+      }
+    }
+    
+    return null;
+  }
+
+  private restoreOriginalCase(extracted: string, original: string): string {
+    const words = extracted.split(' ');
+    const originalWords = original.split(' ');
+    
+    return words.map((word) => {
+      for (let i = 0; i < originalWords.length; i++) {
+        if (this.normalizeText(originalWords[i]) === this.normalizeText(word)) {
+          return originalWords[i];
+        }
+      }
+      return word;
+    })
+    .join(' ')
+    .trim();
   }
 
   public setLanguage(language: VoiceLanguage): void {
