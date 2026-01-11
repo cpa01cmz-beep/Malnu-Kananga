@@ -86,7 +86,7 @@ describe('AICacheManager', () => {
     expandButtons.forEach(button => {
       expect(button).toHaveAttribute('aria-expanded');
       const ariaExpanded = button.getAttribute('aria-expanded');
-      expect(ariaExpanded).toBe('true' || ariaExpanded === 'false');
+      expect(ariaExpanded === 'true' || ariaExpanded === 'false').toBe(true);
     });
   });
 
