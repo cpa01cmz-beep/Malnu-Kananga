@@ -4,8 +4,10 @@ import GradientButton from '../ui/GradientButton';
 import { getResponsiveGradient } from '../../config/gradients';
 
 const HeroSection: React.FC = () => {
+  const headingId = 'home-heading';
+
   return (
-    <section id="home" className="relative min-h-[90vh] flex items-center justify-center text-center px-4 sm:px-6 lg:px-8 pt-24 pb-16 sm:pt-28 overflow-hidden">
+    <section id="home" aria-labelledby={headingId} className="relative min-h-[90vh] flex items-center justify-center text-center px-4 sm:px-6 lg:px-8 pt-24 pb-16 sm:pt-28 overflow-hidden">
       <div className={`absolute inset-0 ${getResponsiveGradient('HERO')}`}></div>
       <div className={`absolute inset-0 ${getResponsiveGradient('HERO_DECORATIVE', 'HERO_DECORATIVE')}`}></div>
       <div className="relative z-10 w-full max-w-6xl mx-auto">
@@ -13,7 +15,7 @@ const HeroSection: React.FC = () => {
           <span className="flex h-2.5 w-2.5 rounded-full bg-primary-500 animate-pulse-slow ring-2 ring-primary-300 dark:ring-primary-700"></span>
           <span className="text-sm font-semibold tracking-wide text-primary-700 dark:text-primary-300">Penerimaan Siswa Baru 2025</span>
         </div>
-        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-neutral-900 dark:text-white mb-6 sm:mb-8 tracking-tight leading-[1.1] animate-scale-in">
+        <h1 id={headingId} className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-neutral-900 dark:text-white mb-6 sm:mb-8 tracking-tight leading-[1.1] animate-scale-in">
           MA Malnu Kananga
         </h1>
         <p className="max-w-2xl mx-auto text-lg sm:text-xl md:text-2xl lg:text-3xl text-neutral-600 dark:text-neutral-300 mb-8 sm:mb-10 lg:mb-12 leading-relaxed animate-fade-in font-medium">
