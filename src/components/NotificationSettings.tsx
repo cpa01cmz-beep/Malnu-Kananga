@@ -543,13 +543,13 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
         {showResetConfirmation && (
           <ConfirmationDialog
             isOpen={showResetConfirmation}
-            onClose={() => setShowResetConfirmation(false)}
+            onCancel={() => setShowResetConfirmation(false)}
             onConfirm={handleResetSettings}
             title="Reset Pengaturan Notifikasi?"
             message="Pengaturan akan dikembalikan ke nilai default. Tindakan ini tidak dapat dibatalkan."
             confirmText="Reset"
             cancelText="Batal"
-            variant="danger"
+            type="danger"
           />
         )}
 

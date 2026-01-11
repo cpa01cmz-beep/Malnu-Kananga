@@ -100,6 +100,50 @@
   --color-yellow-700: var(--theme-yellow-700, 40 96% 42%);
   --color-yellow-800: var(--theme-yellow-800, 35 96% 36%);
   --color-yellow-900: var(--theme-yellow-900, 30 96% 30%);
+
+  --color-pink-50: var(--theme-pink-50, 330 81% 98%);
+  --color-pink-100: var(--theme-pink-100, 330 81% 94%);
+  --color-pink-200: var(--theme-pink-200, 330 78% 89%);
+  --color-pink-300: var(--theme-pink-300, 330 72% 81%);
+  --color-pink-400: var(--theme-pink-400, 330 68% 70%);
+  --color-pink-500: var(--theme-pink-500, 330 69% 56%);
+  --color-pink-600: var(--theme-pink-600, 335 74% 51%);
+  --color-pink-700: var(--theme-pink-700, 338 76% 44%);
+  --color-pink-800: var(--theme-pink-800, 339 77% 39%);
+  --color-pink-900: var(--theme-pink-900, 339 78% 35%);
+
+  --color-cyan-50: var(--theme-cyan-50, 180 100% 97%);
+  --color-cyan-100: var(--theme-cyan-100, 180 100% 91%);
+  --color-cyan-200: var(--theme-cyan-200, 180 100% 82%);
+  --color-cyan-300: var(--theme-cyan-300, 181 85% 68%);
+  --color-cyan-400: var(--theme-cyan-400, 182 73% 52%);
+  --color-cyan-500: var(--theme-cyan-500, 183 78% 41%);
+  --color-cyan-600: var(--theme-cyan-600, 185 72% 35%);
+  --color-cyan-700: var(--theme-cyan-700, 186 71% 31%);
+  --color-cyan-800: var(--theme-cyan-800, 188 71% 27%);
+  --color-cyan-900: var(--theme-cyan-900, 189 72% 24%);
+
+  --color-emerald-50: var(--theme-emerald-50, 160 84% 96%);
+  --color-emerald-100: var(--theme-emerald-100, 160 84% 92%);
+  --color-emerald-200: var(--theme-emerald-200, 161 78% 84%);
+  --color-emerald-300: var(--theme-emerald-300, 162 75% 73%);
+  --color-emerald-400: var(--theme-emerald-400, 163 68% 59%);
+  --color-emerald-500: var(--theme-emerald-500, 164 71% 48%);
+  --color-emerald-600: var(--theme-emerald-600, 167 68% 42%);
+  --color-emerald-700: var(--theme-emerald-700, 170 71% 36%);
+  --color-emerald-800: var(--theme-emerald-800, 172 74% 31%);
+  --color-emerald-900: var(--theme-emerald-900, 175 75% 26%);
+
+  --color-sky-50: var(--theme-sky-50, 199 89% 96%);
+  --color-sky-100: var(--theme-sky-100, 199 89% 92%);
+  --color-sky-200: var(--theme-sky-200, 200 83% 85%);
+  --color-sky-300: var(--theme-sky-300, 201 78% 73%);
+  --color-sky-400: var(--theme-sky-400, 201 76% 58%);
+  --color-sky-500: var(--theme-sky-500, 201 80% 46%);
+  --color-sky-600: var(--theme-sky-600, 203 83% 40%);
+  --color-sky-700: var(--theme-sky-700, 205 80% 35%);
+  --color-sky-800: var(--theme-sky-800, 207 77% 31%);
+  --color-sky-900: var(--theme-sky-900, 209 75% 27%);
 }
 
 :root {
@@ -202,6 +246,50 @@
   --theme-yellow-700: 40 96% 42%;
   --theme-yellow-800: 35 96% 36%;
   --theme-yellow-900: 30 96% 30%;
+
+  --theme-pink-50: 330 81% 98%;
+  --theme-pink-100: 330 81% 94%;
+  --theme-pink-200: 330 78% 89%;
+  --theme-pink-300: 330 72% 81%;
+  --theme-pink-400: 330 68% 70%;
+  --theme-pink-500: 330 69% 56%;
+  --theme-pink-600: 335 74% 51%;
+  --theme-pink-700: 338 76% 44%;
+  --theme-pink-800: 339 77% 39%;
+  --theme-pink-900: 339 78% 35%;
+
+  --theme-cyan-50: 180 100% 97%;
+  --theme-cyan-100: 180 100% 91%;
+  --theme-cyan-200: 180 100% 82%;
+  --theme-cyan-300: 181 85% 68%;
+  --theme-cyan-400: 182 73% 52%;
+  --theme-cyan-500: 183 78% 41%;
+  --theme-cyan-600: 185 72% 35%;
+  --theme-cyan-700: 186 71% 31%;
+  --theme-cyan-800: 188 71% 27%;
+  --theme-cyan-900: 189 72% 24%;
+
+  --theme-emerald-50: 160 84% 96%;
+  --theme-emerald-100: 160 84% 92%;
+  --theme-emerald-200: 161 78% 84%;
+  --theme-emerald-300: 162 75% 73%;
+  --theme-emerald-400: 163 68% 59%;
+  --theme-emerald-500: 164 71% 48%;
+  --theme-emerald-600: 167 68% 42%;
+  --theme-emerald-700: 170 71% 36%;
+  --theme-emerald-800: 172 74% 31%;
+  --theme-emerald-900: 175 75% 26%;
+
+  --theme-sky-50: 199 89% 96%;
+  --theme-sky-100: 199 89% 92%;
+  --theme-sky-200: 200 83% 85%;
+  --theme-sky-300: 201 78% 73%;
+  --theme-sky-400: 201 76% 58%;
+  --theme-sky-500: 201 80% 46%;
+  --theme-sky-600: 203 83% 40%;
+  --theme-sky-700: 205 80% 35%;
+  --theme-sky-800: 207 77% 31%;
+  --theme-sky-900: 209 75% 27%;
 }
 
 @keyframes progress-bar-stripes {
