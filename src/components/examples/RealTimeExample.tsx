@@ -3,6 +3,7 @@ import { useWebSocket, useRealtimeGrades, useRealtimeAnnouncements } from '../..
 import { WebSocketStatus } from '../WebSocketStatus';
 import { logger } from '../../utils/logger';
 import { NotificationType } from '../../types';
+import type { RealTimeEvent } from '../../services/webSocketService';
 
 // Missing types - add temporary definitions
 interface Grade {
@@ -60,8 +61,7 @@ export function RealTimeExample() {
   React.useEffect(() => {
     const unsubscribe = subscribe(
       'notification_created',
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (event: any) => {
+      (event: RealTimeEvent) => {
         const notificationData = event.data as Notification;
         setNotification(`New notification: ${notificationData.title}`);
         // Auto-clear notification after 5 seconds

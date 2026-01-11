@@ -109,13 +109,12 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             
             // Announce search initiation to user
             if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const utterance = new (window as any).SpeechSynthesisUtterance(
+              // eslint-disable-next-line no-undef
+              const utterance = new SpeechSynthesisUtterance(
                 `Sedang mencari materi "${command.data.query}"`
               );
               utterance.lang = 'id-ID';
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (window as any).speechSynthesis.speak(utterance);
+              window.speechSynthesis.speak(utterance);
             }
           }
           break;
