@@ -22,14 +22,14 @@ class Logger {
 
   info(message: string, ...args: unknown[]): void {
     const logLevel = import.meta.env.VITE_LOG_LEVEL as string || 'INFO';
-    if (isDevelopment && ['DEBUG', 'INFO'].includes(logLevel)) {
+    if (isDevelopment && ['DEBUG', 'INFO'].indexOf(logLevel) !== -1) {
       console.log(this.formatMessage(LogLevel.INFO, message, ...args))
     }
   }
 
   warn(message: string, ...args: unknown[]): void {
     const logLevel = import.meta.env.VITE_LOG_LEVEL as string || 'WARN';
-    if (isDevelopment && ['DEBUG', 'INFO', 'WARN'].includes(logLevel)) {
+    if (isDevelopment && ['DEBUG', 'INFO', 'WARN'].indexOf(logLevel) !== -1) {
       console.warn(this.formatMessage(LogLevel.WARN, message, ...args))
     }
   }
