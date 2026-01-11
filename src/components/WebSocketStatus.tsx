@@ -60,7 +60,8 @@ export function WebSocketStatus({
         {!isConnected && showReconnectButton && (
           <button
             onClick={() => reconnect()}
-            className="ml-1 p-0.5 hover:bg-black/10 rounded transition-colors"
+            aria-label="Reconnect WebSocket"
+            className="ml-1 p-0.5 hover:bg-black/10 dark:hover:bg-white/10 rounded transition-colors"
             title="Reconnect"
           >
             <RefreshCw className="w-3 h-3" />
@@ -89,7 +90,8 @@ export function WebSocketStatus({
         <button
           onClick={() => reconnect()}
           disabled={isConnecting || isReconnecting}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white/50 hover:bg-white transition-colors rounded-md border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Reconnect WebSocket connection"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white/50 dark:bg-neutral-700/50 hover:bg-white dark:hover:bg-neutral-600/70 text-neutral-900 dark:text-neutral-100 rounded-md border border-white/30 dark:border-neutral-600/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <RefreshCw className="w-3 h-3" />
           Reconnect
@@ -122,6 +124,8 @@ export function WebSocketIndicator({ className = '' }: { className?: string }) {
     <div
       className={`w-2 h-2 rounded-full ${getStatusColor()} ${className}`}
       title={getTooltip()}
+      role="status"
+      aria-label={getTooltip()}
     />
   );
 }
@@ -139,7 +143,7 @@ export function WebSocketStatusPanel({ className = '' }: { className?: string })
   };
 
   return (
-    <div className={`p-4 bg-white rounded-lg border shadow-sm ${className}`}>
+    <div className={`p-4 bg-white dark:bg-neutral-800 rounded-lg border shadow-sm ${className}`}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Real-Time Sync Status</h3>
         <WebSocketIndicator />
