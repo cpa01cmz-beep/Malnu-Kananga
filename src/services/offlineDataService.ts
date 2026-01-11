@@ -3,7 +3,7 @@
 
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
-import type { Student, Grade, AttendanceRecord, ScheduleItem, ParentChild } from '../types';
+import type { Student, Grade, Attendance, Schedule, ParentChild } from '../types';
 import React from 'react';
 
 // ============================================
@@ -13,8 +13,8 @@ import React from 'react';
 export interface CachedStudentData {
   student: Student;
   grades: Grade[];
-  attendance: AttendanceRecord[];
-  schedule: ScheduleItem[];
+  attendance: Attendance[];
+  schedule: Schedule[];
   lastUpdated: number;
   expiresAt: number;
 }
@@ -48,7 +48,7 @@ const CACHE_VERSION = '1.0';
 
 class OfflineDataService {
   private syncCallbacks: Set<(status: SyncStatus) => void> = new Set();
-  private syncInterval: number | null = null;
+  private syncInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     this.setupPeriodicSync();
@@ -428,10 +428,6 @@ export const offlineDataService = new OfflineDataService();
  * Hook for using offline data service
  */
 export function useOfflineDataService() {
-  // Import the hook dynamically for this service context
-  const { useNetworkStatus } = (0, eval('require')('../utils/networkStatus'));
-  const networkStatus = useNetworkStatus();
-
   return {
     // Student operations
     cacheStudentData: offlineDataService.cacheStudentData.bind(offlineDataService),
@@ -450,10 +446,6 @@ export function useOfflineDataService() {
     forceSync: offlineDataService.forceSync.bind(offlineDataService),
     clearOfflineData: offlineDataService.clearOfflineData.bind(offlineDataService),
     onSyncStatusChange: offlineDataService.onSyncStatusChange.bind(offlineDataService),
-
-    // Network status
-    isOnline: networkStatus.isOnline,
-    isSlow: networkStatus.isSlow,
   };
 }
 

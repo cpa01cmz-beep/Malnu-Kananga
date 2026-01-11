@@ -22,7 +22,7 @@ import { parentGradeNotificationService } from '../services/parentGradeNotificat
 import BackButton from './ui/BackButton';
 import Card from './ui/Card';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
-import { useOfflineDataService, useOfflineData, type CachedParentData } from '../services/offlineDataService';
+import { useOfflineDataService, useOfflineData, type CachedParentData, type CachedStudentData } from '../services/offlineDataService';
 
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import ParentNotificationSettings from './ParentNotificationSettings';
@@ -100,18 +100,10 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
           // Cache children data for offline access
           try {
-            const childrenData: Record<string, {
-      student: {
-        id: string;
-        name: string;
-        className: string | undefined;
-        nis: string;
-      };
-      grades: Grade[];
-      attendance: unknown[];
-      schedule: unknown[];
-    }> = {};
-            
+            const childrenData: Record<string, CachedStudentData> = {};
+            const now = Date.now();
+            const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
             // Fetch data for each child
             await Promise.all(response.data.map(async (child: ParentChild) => {
               try {
@@ -124,13 +116,23 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                   childrenData[child.studentId] = {
                     student: {
                       id: child.studentId,
-                      name: child.studentName,
-                      className: child.className,
-                      nis: child.studentId, // Use studentId as NIS for now
+                      userId: child.studentId,
+                      nisn: '',
+                      nis: child.studentId,
+                      class: child.className || '',
+                      className: child.className || '',
+                      address: '',
+                      phoneNumber: '',
+                      parentName: '',
+                      parentPhone: '',
+                      dateOfBirth: '',
+                      enrollmentDate: '',
                     },
                     grades: gradesResponse.data || [],
                     attendance: attendanceResponse.data || [],
                     schedule: [], // TODO: Fetch schedule when API is available
+                    lastUpdated: now,
+                    expiresAt: now + CACHE_DURATION,
                   };
                 }
               } catch (error) {
