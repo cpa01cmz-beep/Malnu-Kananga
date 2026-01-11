@@ -5,10 +5,6 @@ import '@testing-library/jest-dom';
 import DataTable from '../DataTable';
 
 // Mock icons
-vi.mock('../../icons/SearchIcon', () => ({
-  default: () => <div data-testid="search-icon">Search</div>,
-}));
-
 vi.mock('../../icons/FunnelIcon', () => ({
   default: () => <div data-testid="funnel-icon">Filter</div>,
 }));

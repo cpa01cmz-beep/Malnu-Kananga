@@ -4,7 +4,7 @@ import Pagination from './Pagination';
 import LoadingOverlay from './LoadingOverlay';
 import { EmptyState } from './LoadingState';
 import Button from './Button';
-import SearchIcon from '../icons/SearchIcon';
+import SearchInput from './SearchInput';
 import FunnelIcon from '../icons/FunnelIcon';
 
 export interface Column<T = Record<string, unknown>> {
@@ -159,16 +159,14 @@ const DataTable = <T extends Record<string, unknown>>({
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             {filter?.searchable && (
-              <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" aria-hidden="true" />
-                <input
-                  type="text"
-                  value={localSearch}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  placeholder={filter?.placeholder || 'Search...'}
-                  className="pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50%"
-                />
-              </div>
+              <SearchInput
+                value={localSearch}
+                onChange={(e) => handleSearch(e.target.value)}
+                placeholder={filter?.placeholder || 'Search...'}
+                size="sm"
+                fullWidth={false}
+                showIcon={true}
+              />
             )}
             {sort && (
               <Button
