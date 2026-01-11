@@ -117,13 +117,11 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       };
     });
 
-    const fieldValue = formState.fields[name];
-    const isTouched = formState.touchedFields[name];
-    const shouldValidate = validateOnChangeRef.current && isTouched;
-
-    if (shouldValidate) {
+// Trigger field validation if change validation is enabled
+    if (validateOnChangeRef.current && formState.touchedFields[name]) {
       const rules = validationSchema[name];
       if (rules && Array.isArray(rules)) {
+        const fieldValue = formState.fields[name];
         const errors: string[] = [];
         const stringValue = String(fieldValue || '');
 
@@ -183,7 +181,7 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       }
     }));
 
-    if (validateOnBlurRef.current && touched) {
+if (validateOnBlurRef.current && touched) {
       const rules = validationSchema[name];
       if (rules && Array.isArray(rules)) {
         const fieldValue = formState.fields[name];
@@ -221,7 +219,7 @@ export function useForm(options: UseFormOptions): UseFormReturn {
     const stringValue = String(value || '');
 
     for (const rule of rules) {
-      if (!rule.validate(stringValue)) {
+if (!rule.validate(stringValue)) {
         errors.push(rule.message);
       }
     }
@@ -252,8 +250,8 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       const errors: string[] = [];
       const stringValue = String(value || '');
 
-      for (const rule of rules) {
-        if (!rule.validate(stringValue)) {
+for (const rule of rules) {
+      if (!rule.validate(stringValue)) {
           errors.push(rule.message);
         }
       }
