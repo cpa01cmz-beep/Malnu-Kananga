@@ -428,6 +428,10 @@ export const offlineDataService = new OfflineDataService();
  * Hook for using offline data service
  */
 export function useOfflineDataService() {
+  // Import hooks dynamically for this service context
+  const { useNetworkStatus } = (0, eval('require')('../utils/networkStatus'));
+  const networkStatus = useNetworkStatus();
+ 
   return {
     // Student operations
     cacheStudentData: offlineDataService.cacheStudentData.bind(offlineDataService),
@@ -446,6 +450,10 @@ export function useOfflineDataService() {
     forceSync: offlineDataService.forceSync.bind(offlineDataService),
     clearOfflineData: offlineDataService.clearOfflineData.bind(offlineDataService),
     onSyncStatusChange: offlineDataService.onSyncStatusChange.bind(offlineDataService),
+ 
+    // Network status
+    isOnline: networkStatus.isOnline,
+    isSlow: networkStatus.isSlow,
   };
 }
 
