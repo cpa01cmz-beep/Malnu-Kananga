@@ -1,6 +1,10 @@
 import { authAPI } from './apiService';
-import { logger } from '../utils/logger';
 import { UserRole, UserExtraRole } from '../types/permissions';
+import { 
+  classifyError, 
+  logError, 
+  createValidationError
+} from '../utils/errorHandler';
 
 export interface User {
   id?: string;
@@ -15,14 +19,20 @@ export class AuthService {
   async login(email: string, password: string): Promise<boolean> {
     try {
       if (!email || !password) {
-        return false;
+        const error = createValidationError('login', 'Email dan password harus diisi');
+        logError(error);
+        throw error;
       }
 
       const response = await authAPI.login(email, password);
       return response.success;
     } catch (error) {
-      logger.error('Login error:', error);
-      return false;
+      const classifiedError = classifyError(error, {
+        operation: 'login',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
     }
   }
 
@@ -30,7 +40,12 @@ export class AuthService {
     try {
       await authAPI.logout();
     } catch (error) {
-      logger.error('Logout error:', error);
+      const classifiedError = classifyError(error, {
+        operation: 'logout',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      // Logout errors are non-critical, so we don't throw
     }
   }
 

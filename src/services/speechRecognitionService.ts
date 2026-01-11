@@ -16,6 +16,10 @@ import type {
 } from '../types';
 import { VOICE_CONFIG, ERROR_MESSAGES } from '../constants';
 import { logger } from '../utils/logger';
+import { 
+  classifyError, 
+  logError
+} from '../utils/errorHandler';
 
 class SpeechRecognitionService {
   private recognition: SpeechRecognition | null;
@@ -70,7 +74,11 @@ class SpeechRecognitionService {
       };
       permission.addEventListener('change', this.permissionChangeListener);
     } catch (error) {
-      logger.warn('Could not check microphone permission:', error);
+      const classifiedError = classifyError(error, {
+        operation: 'checkMicrophonePermission',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
       this.permissionState = 'unknown';
     }
   }
@@ -83,7 +91,11 @@ class SpeechRecognitionService {
       this.configureRecognition();
       this.setupEventListeners();
     } catch (error) {
-      logger.error('Failed to initialize SpeechRecognition:', error);
+      const classifiedError = classifyError(error, {
+        operation: 'initializeSpeechRecognition',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
       this.isSupported = false;
     }
   }

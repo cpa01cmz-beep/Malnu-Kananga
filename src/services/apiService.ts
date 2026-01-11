@@ -7,6 +7,10 @@ import { permissionService } from './permissionService';
 import { STORAGE_KEYS } from '../constants';
 import { offlineActionQueueService } from './offlineActionQueueService';
 import { isNetworkError } from '../utils/networkStatus';
+import { 
+  classifyError, 
+  logError
+} from '../utils/errorHandler';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
 
@@ -508,7 +512,14 @@ async function request<T>(
       });
       return queueOfflineRequest<T>(endpoint, options, token);
     }
-    throw error;
+    
+    // Use standardized error handling
+    const classifiedError = classifyError(error, {
+      operation: `API ${method} ${endpoint}`,
+      timestamp: Date.now()
+    });
+    logError(classifiedError);
+    throw classifiedError;
   }
 }
 

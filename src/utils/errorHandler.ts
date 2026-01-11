@@ -85,6 +85,17 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
     return error;
   }
 
+  // Handle null/undefined errors
+  if (error === null || error === undefined) {
+    return new AppError(
+      ERROR_MESSAGES[ErrorType.UNKNOWN_ERROR],
+      ErrorType.UNKNOWN_ERROR,
+      context,
+      true,
+      error
+    );
+  }
+
   const err = error as Error;
 
   if (!navigator.onLine) {
