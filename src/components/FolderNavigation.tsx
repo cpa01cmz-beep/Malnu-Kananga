@@ -236,7 +236,17 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
                   e.stopPropagation();
                   toggleFolderExpansion(folder.id);
                 }}
-                className="p-0.5 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleFolderExpansion(folder.id);
+                  }
+                }}
+                aria-label={isExpanded ? `Tutup folder ${folder.name}` : `Buka folder ${folder.name}`}
+                aria-expanded={isExpanded}
+                aria-controls={`folder-${folder.id}-subfolders`}
+                className="p-0.5 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded focus:outline-none focus:ring-2 focus:ring-primary-500/50"
               >
                 {isExpanded ? (
                   <ChevronDownIcon className="w-4 h-4" />
@@ -267,7 +277,15 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
                   e.stopPropagation();
                   setEditingFolder(folder);
                 }}
-                className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setEditingFolder(folder);
+                  }
+                }}
+                aria-label={`Edit folder ${folder.name}`}
+                className="p-1 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded focus:outline-none focus:ring-2 focus:ring-primary-500/50"
               >
                 <PencilIcon className="w-3 h-3" />
               </button>
@@ -277,7 +295,15 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
                     e.stopPropagation();
                     deleteFolder(folder.id);
                   }}
-                  className="p-1 hover:bg-red-100 dark:hover:bg-red-900/20 text-red-500 rounded"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      deleteFolder(folder.id);
+                    }
+                  }}
+                  aria-label={`Hapus folder ${folder.name}`}
+                  className="p-1 hover:bg-red-100 dark:hover:bg-red-900/20 text-red-500 rounded focus:outline-none focus:ring-2 focus:ring-red-500/50"
                 >
                   <TrashIcon className="w-3 h-3" />
                 </button>
@@ -286,7 +312,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
           </div>
           
           {hasSubfolders && isExpanded && (
-            <div className="mt-0.5">
+            <div id={`folder-${folder.id}-subfolders`} className="mt-0.5" role="group">
               {renderFolderTree(folder.subfolders, level + 1)}
             </div>
           )}
@@ -311,7 +337,14 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
         <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">Folder</h3>
         <button
           onClick={() => setShowCreateFolder(true)}
-          className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setShowCreateFolder(true);
+            }
+          }}
+          aria-label="Buat folder baru"
+          className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500/50"
         >
           <PlusIcon className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
         </button>
