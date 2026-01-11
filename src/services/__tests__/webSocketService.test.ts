@@ -1,4 +1,5 @@
  
+/* eslint-disable @typescript-eslint/prefer-as-const */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { webSocketService, type RealTimeEvent } from '../webSocketService';
 import { apiService } from '../apiService';
@@ -76,11 +77,11 @@ class MockMessageEvent implements Event {
   initEvent(_type: string, _bubbles?: boolean, _cancelable?: boolean): void {}
   preventDefault(): void {}
   stopImmediatePropagation(): void {}
-  stopPropagation(): void {}
-  readonly AT_TARGET: number = 2;
-  readonly BUBBLING_PHASE: number = 3;
-  readonly CAPTURING_PHASE: number = 1;
-  readonly NONE: number = 0;
+stopPropagation(): void {}
+  readonly AT_TARGET: 2 = 2;
+  readonly BUBBLING_PHASE: 3 = 3;
+  readonly CAPTURING_PHASE: 1 = 1;
+  readonly NONE: 0 = 0;
 }
 
 // Mock CloseEvent - use proper class constructor  
@@ -114,11 +115,11 @@ class MockCloseEvent implements Event {
   initEvent(_type: string, _bubbles?: boolean, _cancelable?: boolean): void {}
   preventDefault(): void {}
   stopImmediatePropagation(): void {}
-  stopPropagation(): void {}
-  readonly AT_TARGET: number = 2;
-  readonly BUBBLING_PHASE: number = 3;
-  readonly CAPTURING_PHASE: number = 1;
-  readonly NONE: number = 0;
+stopPropagation(): void {}
+  readonly AT_TARGET = 2 as const;
+  readonly BUBBLING_PHASE = 3 as const;
+  readonly CAPTURING_PHASE = 1 as const;
+  readonly NONE = 0 as const;
 }
 
 (global as any).MessageEvent = MockMessageEvent;
