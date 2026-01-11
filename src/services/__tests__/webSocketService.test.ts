@@ -1,4 +1,5 @@
  
+/* eslint-disable @typescript-eslint/prefer-as-const */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { webSocketService, type RealTimeEvent } from '../webSocketService';
 import { apiService } from '../apiService';
@@ -52,7 +53,9 @@ const mockWebSocketInstance = new MockWebSocket('ws://test');
 // Mock MessageEvent - use proper class constructor
 class MockMessageEvent implements Event {
   readonly type: string;
+<<<<<<< HEAD
   readonly data: unknown;
+>>>>>>> origin/main
   readonly bubbles: boolean = false;
   readonly cancelBubble: boolean = false;
   readonly cancelable: boolean = false;
@@ -67,7 +70,9 @@ class MockMessageEvent implements Event {
   readonly timeStamp: number = 0;
   readonly scoped: boolean = false;
 
+<<<<<<< HEAD
   constructor(type: string, eventInit?: { data?: unknown }) {
+>>>>>>> origin/main
     this.type = type;
     this.data = eventInit?.data;
   }
@@ -76,7 +81,8 @@ class MockMessageEvent implements Event {
   initEvent(_type: string, _bubbles?: boolean, _cancelable?: boolean): void {}
   preventDefault(): void {}
   stopImmediatePropagation(): void {}
-  stopPropagation(): void {}
+<<<<<<< HEAD
+stopPropagation(): void {}
   readonly AT_TARGET = 2;
   readonly BUBBLING_PHASE = 3;
   readonly CAPTURING_PHASE = 1;
@@ -114,7 +120,8 @@ class MockCloseEvent implements Event {
   initEvent(_type: string, _bubbles?: boolean, _cancelable?: boolean): void {}
   preventDefault(): void {}
   stopImmediatePropagation(): void {}
-  stopPropagation(): void {}
+<<<<<<< HEAD
+stopPropagation(): void {}
   readonly AT_TARGET = 2;
   readonly BUBBLING_PHASE = 3;
   readonly CAPTURING_PHASE = 1;

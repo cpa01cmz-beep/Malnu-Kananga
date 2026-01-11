@@ -229,6 +229,158 @@ describe('Card', () => {
     });
   });
 
+  describe('Rounded Variants', () => {
+    it('renders with none rounded', () => {
+      render(<Card rounded="none">No Rounded</Card>);
+      const card = screen.getByText('No Rounded');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.rounded-none')).toBeInTheDocument();
+    });
+
+    it('renders with sm rounded', () => {
+      render(<Card rounded="sm">Small Rounded</Card>);
+      const card = screen.getByText('Small Rounded');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.rounded-sm')).toBeInTheDocument();
+    });
+
+    it('renders with md rounded', () => {
+      render(<Card rounded="md">Medium Rounded</Card>);
+      const card = screen.getByText('Medium Rounded');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.rounded-md')).toBeInTheDocument();
+    });
+
+    it('renders with lg rounded', () => {
+      render(<Card rounded="lg">Large Rounded</Card>);
+      const card = screen.getByText('Large Rounded');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.rounded-lg')).toBeInTheDocument();
+    });
+
+    it('renders with xl rounded (default)', () => {
+      render(<Card>Extra Large Rounded</Card>);
+      const card = screen.getByText('Extra Large Rounded');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.rounded-xl')).toBeInTheDocument();
+    });
+
+    it('renders with 2xl rounded', () => {
+      render(<Card rounded="2xl">2XL Rounded</Card>);
+      const card = screen.getByText('2XL Rounded');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.rounded-2xl')).toBeInTheDocument();
+    });
+
+    it('renders with 3xl rounded', () => {
+      render(<Card rounded="3xl">3XL Rounded</Card>);
+      const card = screen.getByText('3XL Rounded');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.rounded-3xl')).toBeInTheDocument();
+    });
+
+    it('renders with full rounded', () => {
+      render(<Card rounded="full">Full Rounded</Card>);
+      const card = screen.getByText('Full Rounded');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.rounded-full')).toBeInTheDocument();
+    });
+  });
+
+  describe('Shadow Variants', () => {
+    it('renders with none shadow', () => {
+      render(<Card shadow="none">No Shadow</Card>);
+      const card = screen.getByText('No Shadow');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.shadow-none')).toBeInTheDocument();
+    });
+
+    it('renders with sm shadow', () => {
+      render(<Card shadow="sm">Small Shadow</Card>);
+      const card = screen.getByText('Small Shadow');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.shadow-sm')).toBeInTheDocument();
+    });
+
+    it('renders with md shadow', () => {
+      render(<Card shadow="md">Medium Shadow</Card>);
+      const card = screen.getByText('Medium Shadow');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.shadow-md')).toBeInTheDocument();
+    });
+
+    it('renders with lg shadow', () => {
+      render(<Card shadow="lg">Large Shadow</Card>);
+      const card = screen.getByText('Large Shadow');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.shadow-lg')).toBeInTheDocument();
+    });
+
+    it('renders with xl shadow', () => {
+      render(<Card shadow="xl">XL Shadow</Card>);
+      const card = screen.getByText('XL Shadow');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.shadow-xl')).toBeInTheDocument();
+    });
+
+    it('renders with card shadow (default)', () => {
+      render(<Card>Card Shadow</Card>);
+      const card = screen.getByText('Card Shadow');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.shadow-card')).toBeInTheDocument();
+    });
+
+    it('renders with float shadow', () => {
+      render(<Card shadow="float">Float Shadow</Card>);
+      const card = screen.getByText('Float Shadow');
+      expect(card).toBeInTheDocument();
+      expect(card.closest('.shadow-float')).toBeInTheDocument();
+    });
+  });
+
+  describe('Border Variants', () => {
+    it('renders with none border', () => {
+      render(<Card border="none">No Border</Card>);
+      const card = screen.getByText('No Border').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
+      expect(card).not.toHaveClass('border');
+    });
+
+    it('renders with neutral-200 border (default)', () => {
+      render(<Card>Default Border</Card>);
+      const card = screen.getByText('Default Border').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
+      expect(card).toHaveClass('border-neutral-200', 'dark:border-neutral-700');
+    });
+
+    it('renders with neutral-100 border', () => {
+      render(<Card border="neutral-100">Light Border</Card>);
+      const card = screen.getByText('Light Border').closest('.rounded-xl');
+      expect(card).toBeInTheDocument();
+      expect(card).toHaveClass('border-neutral-100', 'dark:border-neutral-700');
+    });
+  });
+
+  describe('Prop Combinations', () => {
+    it('renders with 2xl rounded, sm shadow, and neutral-100 border', () => {
+      render(<Card rounded="2xl" shadow="sm" border="neutral-100">Combined Props</Card>);
+      const card = screen.getByText('Combined Props');
+      expect(card).toBeInTheDocument();
+      const cardElement = card.closest('.rounded-2xl');
+      expect(cardElement).toBeInTheDocument();
+      expect(cardElement).toHaveClass('rounded-2xl', 'shadow-sm', 'border-neutral-100');
+    });
+
+    it('renders with 3xl rounded, xl shadow, and lg padding', () => {
+      render(<Card rounded="3xl" shadow="xl" padding="lg">Large Props</Card>);
+      const card = screen.getByText('Large Props');
+      expect(card).toBeInTheDocument();
+      const cardElement = card.closest('.rounded-3xl');
+      expect(cardElement).toBeInTheDocument();
+      expect(cardElement).toHaveClass('rounded-3xl', 'shadow-xl', 'p-6', 'sm:p-8');
+    });
+  });
+
   describe('Edge Cases', () => {
     it('handles empty children', () => {
       render(<Card>{null}</Card>);
