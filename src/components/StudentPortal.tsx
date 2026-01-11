@@ -15,11 +15,12 @@ import OsisEvents from './OsisEvents';
 import { ToastType } from './Toast';
 import { UserExtraRole, Student } from '../types';
 import { UserRole, UserExtraRole as PermUserExtraRole } from '../types/permissions';
-import { authAPI, studentsAPI } from '../services/apiService';
+import { authAPI, studentsAPI, gradesAPI, attendanceAPI } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { usePushNotifications } from '../hooks/usePushNotifications';
+import { useOfflineDataService, useOfflineData, type CachedStudentData } from '../services/offlineDataService';
 
 import ErrorMessage from './ui/ErrorMessage';
 import DashboardActionCard from './ui/DashboardActionCard';
@@ -43,13 +44,19 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
   const [currentView, setCurrentView] = useState<PortalView>('home');
   const [studentData, setStudentData] = useState<Student | null>(null);
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
+  const [offlineData, setOfflineData] = useState<CachedStudentData | null>(null);
+  const [syncInProgress, setSyncInProgress] = useState(false);
 
-  // Initialize push notifications
+  // Initialize push notifications and offline services
   const { 
     showNotification, 
     createNotification,
     requestPermission 
   } = usePushNotifications();
+  
+  const offlineDataService = useOfflineDataService();
+  const { syncStatus, isCached } = useOfflineData('student', studentData?.id);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { isOnline, isSlow } = useNetworkStatus();
@@ -62,35 +69,86 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
 
   useEffect(() => {
     const fetchStudentData = async () => {
-      if (!isOnline) {
-        setError(getOfflineMessage());
+      setLoading(true);
+      setError(null);
+
+      const currentUser = authAPI.getCurrentUser();
+      if (!currentUser) {
+        setError('Pengguna tidak ditemukan');
         setLoading(false);
         return;
       }
 
-      setLoading(true);
-      setError(null);
+      // Try offline cache first
+      if (!isOnline) {
+        const cachedData = offlineDataService.getCachedStudentData(currentUser.id);
+        if (cachedData) {
+          setStudentData(cachedData.student);
+          setOfflineData(cachedData);
+          onShowToast('Menggunakan data offline', 'info');
+          setLoading(false);
+          return;
+        } else {
+          setError(getOfflineMessage());
+          setLoading(false);
+          return;
+        }
+      }
 
+      // Online: fetch fresh data
       try {
-        const currentUser = authAPI.getCurrentUser();
-        if (currentUser) {
-          const studentResponse = await studentsAPI.getByUserId(currentUser.id);
-          if (studentResponse.success && studentResponse.data) {
-            setStudentData(studentResponse.data);
+        const studentResponse = await studentsAPI.getByUserId(currentUser.id);
+        if (studentResponse.success && studentResponse.data) {
+          setStudentData(studentResponse.data);
+          
+          // Fetch additional data for offline caching
+          try {
+            const [gradesResponse, attendanceResponse] = await Promise.all([
+              gradesAPI.getByStudent(studentResponse.data.id),
+              attendanceAPI.getByStudent(studentResponse.data.id)
+            ]);
+
+            if (gradesResponse.success && attendanceResponse.success) {
+              offlineDataService.cacheStudentData({
+                student: studentResponse.data,
+                grades: gradesResponse.data || [],
+                attendance: attendanceResponse.data || [],
+                schedule: [], // TODO: Fetch schedule when API is available
+              });
+            }
+          } catch (error) {
+            logger.warn('Failed to fetch data for offline caching:', error);
+          }
+        } else {
+          // Fallback to cache if available
+          const cachedData = offlineDataService.getCachedStudentData(currentUser.id);
+          if (cachedData) {
+            setStudentData(cachedData.student);
+            setOfflineData(cachedData);
+            onShowToast('Server tidak tersedia, menggunakan data offline', 'info');
           } else {
             setError('Data siswa tidak ditemukan');
           }
         }
       } catch (err) {
         logger.error('Failed to fetch student data:', err);
-        setError('Gagal memuat data siswa. Silakan coba lagi.');
+        
+        // Fallback to cache on error
+        const cachedData = offlineDataService.getCachedStudentData(currentUser.id);
+        if (cachedData) {
+          setStudentData(cachedData.student);
+          setOfflineData(cachedData);
+          onShowToast('Gagal memuat data, menggunakan data offline', 'info');
+        } else {
+          setError('Gagal memuat data siswa. Silakan coba lagi.');
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchStudentData();
-  }, [isOnline]);
+  }, [isOnline, offlineDataService, onShowToast]);
 
   useEffect(() => {
     if (isSlow && isOnline) {
@@ -174,6 +232,32 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
     }
   }, [handleVoiceCommand, onShowToast]);
 
+  // Handle manual sync
+  const handleSync = async () => {
+    if (!isOnline) {
+      onShowToast('Memerlukan koneksi internet untuk sinkronisasi', 'error');
+      return;
+    }
+
+    setSyncInProgress(true);
+    onShowToast('Menyinkronkan data...', 'info');
+
+    try {
+      await offlineDataService.forceSync();
+      
+      // Re-fetch data
+      const currentUser = authAPI.getCurrentUser();
+      if (currentUser) {
+        window.location.reload(); // Simple refresh to get fresh data
+      }
+    } catch (error) {
+      logger.error('Failed to sync:', error);
+      onShowToast('Sinkronisasi gagal, silakan coba lagi', 'error');
+    } finally {
+      setSyncInProgress(false);
+    }
+  };
+
   const allMenuItems = [
     {
       title: 'Jadwal Pelajaran',
@@ -229,6 +313,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        {/* Network Status Bar */}
         {!isOnline && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-card p-4 mb-6 flex items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -239,6 +324,13 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
               message={getOfflineMessage()} 
               variant="inline" 
             />
+            {isCached && (
+              <div className="ml-auto flex items-center gap-2">
+                <span className="text-sm text-green-600 dark:text-green-400 font-medium">
+                  📦 Data Offline Tersedia
+                </span>
+              </div>
+            )}
           </div>
         )}
 
@@ -248,6 +340,33 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <p className="text-yellow-700 dark:text-yellow-300 text-sm font-medium">{getSlowConnectionMessage()}</p>
+          </div>
+        )}
+
+        {/* Sync Status Bar */}
+        {isOnline && (syncStatus.needsSync || syncStatus.pendingActions > 0) && (
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-card p-4 mb-6 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <div className="flex-1">
+              <p className="text-blue-700 dark:text-blue-300 text-sm font-medium">
+                {syncStatus.pendingActions > 0 
+                  ? `${syncStatus.pendingActions} aksi pending perlu disinkronkan` 
+                  : 'Data perlu diperbarui'
+                }
+              </p>
+              <p className="text-blue-600 dark:text-blue-400 text-xs">
+                Terakhir diperbarui: {syncStatus.lastSync ? new Date(syncStatus.lastSync).toLocaleTimeString('id-ID') : 'Belum pernah'}
+              </p>
+            </div>
+            <button
+              onClick={handleSync}
+              disabled={syncInProgress}
+              className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {syncInProgress ? 'Menyinkronkan...' : 'Sinkronkan'}
+            </button>
           </div>
         )}
 
@@ -391,6 +510,36 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
           userRole="student"
           availableCommands={getAvailableCommands()}
         />
+
+        {/* Offline Status Indicator */}
+        {!isOnline && (
+          <div className="fixed bottom-4 right-4 bg-white dark:bg-neutral-800 border border-red-200 dark:border-red-800 rounded-lg p-3 shadow-lg max-w-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-red-700 dark:text-red-300 font-medium">Offline Mode</span>
+            </div>
+            {offlineData && (
+              <div className="mt-1 text-xs text-red-600 dark:text-red-400">
+                Data tersimpan hingga {new Date(offlineData.lastUpdated).toLocaleDateString('id-ID')}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Sync Complete Toast */}
+        {syncStatus.lastSync > 0 && !syncStatus.needsSync && (
+          <div className="fixed bottom-4 right-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 shadow-lg max-w-xs animate-fade-in-up">
+            <div className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="text-sm text-green-700 dark:text-green-300 font-medium">Data Terkini</span>
+            </div>
+            <div className="mt-1 text-xs text-green-600 dark:text-green-400">
+              Terakhir sinkron: {new Date(syncStatus.lastSync).toLocaleTimeString('id-ID')}
+            </div>
+          </div>
+        )}
 
       </div>
     </main>
