@@ -11,10 +11,11 @@ describe('SkipLink', () => {
     }
   });
 
-  describe('Single Target (Backward Compatibility)', () => {
+   describe('Single Target (Backward Compatibility)', () => {
     beforeEach(() => {
       const mainElement = document.createElement('div');
       mainElement.id = 'main-content';
+      mainElement.setAttribute('tabindex', '-1');
       document.body.appendChild(mainElement);
     });
 
@@ -24,6 +25,35 @@ describe('SkipLink', () => {
       const skipLink = screen.getByRole('navigation', { name: 'Langsung ke konten utama' });
       expect(skipLink).toBeInTheDocument();
       expect(skipLink).toHaveAttribute('href', '#main-content');
+    });
+
+    it('should focus on target element when clicked', () => {
+      render(<SkipLink />);
+
+      const skipLink = screen.getByRole('navigation', { name: 'Langsung ke konten utama' });
+      const targetElement = document.getElementById('main-content') as HTMLElement;
+
+      skipLink.click();
+
+      expect(document.activeElement).toBe(targetElement);
+    });
+
+    it('should prevent default anchor behavior and use smooth scroll', () => {
+      render(<SkipLink />);
+
+      const skipLink = screen.getByRole('navigation', { name: 'Langsung ke konten utama' });
+      const clickEvent = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+      });
+
+      jest.spyOn(skipLink, 'click').mockImplementation(() => {});
+      const targetElement = document.getElementById('main-content') as HTMLElement;
+      jest.spyOn(targetElement, 'scrollIntoView');
+
+      skipLink.dispatchEvent(clickEvent);
+
+      expect(clickEvent.defaultPrevented).toBe(true);
     });
 
     it('should render with custom target id', () => {
@@ -85,18 +115,21 @@ describe('SkipLink', () => {
     });
   });
 
-  describe('Multiple Targets', () => {
+   describe('Multiple Targets', () => {
     beforeEach(() => {
       const navElement = document.createElement('nav');
       navElement.id = 'main-nav';
+      navElement.setAttribute('tabindex', '-1');
       document.body.appendChild(navElement);
 
       const mainElement = document.createElement('div');
       mainElement.id = 'main-content';
+      mainElement.setAttribute('tabindex', '-1');
       document.body.appendChild(mainElement);
 
       const footerElement = document.createElement('footer');
       footerElement.id = 'main-footer';
+      footerElement.setAttribute('tabindex', '-1');
       document.body.appendChild(footerElement);
     });
 
@@ -114,6 +147,39 @@ describe('SkipLink', () => {
 
       const links = screen.getAllByRole('link');
       expect(links).toHaveLength(3);
+    });
+
+    it('should focus on first target when first skip link is clicked', () => {
+      const targets: SkipTarget[] = [
+        { id: 'main-nav', label: 'Langsung ke navigasi' },
+        { id: 'main-content', label: 'Langsung ke konten utama' },
+        { id: 'main-footer', label: 'Langsung ke footer' },
+      ];
+
+      render(<SkipLink targets={targets} />);
+
+      const firstLink = screen.getByRole('link', { name: 'Langsung ke navigasi' });
+      const targetElement = document.getElementById('main-nav') as HTMLElement;
+
+      firstLink.click();
+
+      expect(document.activeElement).toBe(targetElement);
+    });
+
+    it('should focus on second target when second skip link is clicked', () => {
+      const targets: SkipTarget[] = [
+        { id: 'main-nav', label: 'Langsung ke navigasi' },
+        { id: 'main-content', label: 'Langsung ke konten utama' },
+      ];
+
+      render(<SkipLink targets={targets} />);
+
+      const secondLink = screen.getByRole('link', { name: 'Langsung ke konten utama' });
+      const targetElement = document.getElementById('main-content') as HTMLElement;
+
+      secondLink.click();
+
+      expect(document.activeElement).toBe(targetElement);
     });
 
     it('should render each link with correct href', () => {

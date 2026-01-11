@@ -26,6 +26,15 @@ const SkipLink: React.FC<SkipLinkProps> = ({
 }) => {
   const skipTargets = targets || [{ id: targetId, label }];
 
+  const handleSkip = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault();
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      targetElement.focus();
+    }
+  };
+
   if (skipTargets.length === 1) {
     const target = skipTargets[0];
     return (
@@ -35,6 +44,7 @@ const SkipLink: React.FC<SkipLinkProps> = ({
         role="navigation"
         aria-label={target.label}
         tabIndex={0}
+        onClick={(e) => handleSkip(e, target.id)}
       >
         {target.label}
       </a>
@@ -50,6 +60,7 @@ const SkipLink: React.FC<SkipLinkProps> = ({
           className={`${baseClasses} ${linkClasses} ${className}`.replace(/\s+/g, ' ').trim()}
           aria-label={target.label}
           tabIndex={0}
+          onClick={(e) => handleSkip(e, target.id)}
         >
           {target.label}
         </a>
