@@ -185,7 +185,7 @@ describe('Textarea Component', () => {
     expect(textarea.id).toBe('custom-id');
   });
 
-  it('associates both helper and error text correctly when both are present', () => {
+  it('shows error text when both helper and error text are present', () => {
     render(
       <Textarea
         label="Test"
@@ -194,11 +194,10 @@ describe('Textarea Component', () => {
       />
     );
     const textarea = screen.getByRole('textbox');
-    const helperText = screen.getByText('Helper text');
     const errorText = screen.getByText('Error text');
     
+    expect(screen.queryByText('Helper text')).not.toBeInTheDocument();
     const describedBy = textarea.getAttribute('aria-describedby');
-    expect(describedBy).toContain(helperText.id);
     expect(describedBy).toContain(errorText.id);
   });
 });

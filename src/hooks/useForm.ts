@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useFieldValidation, UseFieldValidationOptions } from './useFieldValidation';
+import { logger } from '../utils/logger';
 
 export interface FormFieldConfig {
   value: unknown;
@@ -73,6 +74,11 @@ export function useForm(options: UseFormOptions): UseFormReturn {
   });
 
   const _fieldValidatorsRef = useRef<Record<string, ReturnType<typeof useFieldValidation>>>({});
+  const validateOnBlurRef = useRef(validateOnBlur);
+  const validateOnChangeRef = useRef(validateOnChange);
+
+  validateOnBlurRef.current = validateOnBlur;
+  validateOnChangeRef.current = validateOnChange;
 
   /**
    * Get field value
@@ -103,7 +109,7 @@ export function useForm(options: UseFormOptions): UseFormReturn {
     setFormState(prev => {
       const newFields = { ...prev.fields, [name]: value };
       const isDirty = JSON.stringify(newFields) !== JSON.stringify(initialValues);
-      
+
       return {
         ...prev,
         fields: newFields,
@@ -111,11 +117,32 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       };
     });
 
-    // Trigger field validation if change validation is enabled
-    if (validateOnChange && formState.touchedFields[name]) {
-      validateField(name);
+    const fieldValue = formState.fields[name];
+    const isTouched = formState.touchedFields[name];
+    const shouldValidate = validateOnChangeRef.current && isTouched;
+
+    if (shouldValidate) {
+      const rules = validationSchema[name];
+      if (rules && Array.isArray(rules)) {
+        const errors: string[] = [];
+        const stringValue = String(fieldValue || '');
+
+        for (const rule of rules) {
+          if (!rule.validate(stringValue)) {
+            errors.push(rule.message);
+          }
+        }
+
+        setFormState(prev => ({
+          ...prev,
+          errors: {
+            ...prev.errors,
+            [name]: errors
+          }
+        }));
+      }
     }
-  }, [initialValues, validateOnChange, formState.touchedFields, validateField]);
+  }, [initialValues, formState.fields, formState.touchedFields, validationSchema]);
 
   /**
    * Set field error
@@ -156,11 +183,29 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       }
     }));
 
-    // Trigger field validation if blur validation is enabled
-    if (validateOnBlur && touched) {
-      validateField(name);
+    if (validateOnBlurRef.current && touched) {
+      const rules = validationSchema[name];
+      if (rules && Array.isArray(rules)) {
+        const fieldValue = formState.fields[name];
+        const errors: string[] = [];
+        const stringValue = String(fieldValue || '');
+
+        for (const rule of rules) {
+          if (!rule.validate(stringValue)) {
+            errors.push(rule.message);
+          }
+        }
+
+        setFormState(prev => ({
+          ...prev,
+          errors: {
+            ...prev.errors,
+            [name]: errors
+          }
+        }));
+      }
     }
-  }, [validateOnBlur, validateField]);
+  }, [formState.fields, validationSchema]);
 
   /**
    * Validate single field
@@ -173,9 +218,10 @@ export function useForm(options: UseFormOptions): UseFormReturn {
 
     const value = getFieldValue(name);
     const errors: string[] = [];
+    const stringValue = String(value || '');
 
     for (const rule of rules) {
-      if (!rule.validate(value)) {
+      if (!rule.validate(stringValue)) {
         errors.push(rule.message);
       }
     }
@@ -198,16 +244,16 @@ export function useForm(options: UseFormOptions): UseFormReturn {
     let isValid = true;
     const allErrors: Record<string, string[]> = {};
 
-    // Validate all fields with rules
     Object.keys(validationSchema).forEach(fieldName => {
       const rules = validationSchema[fieldName];
       if (!rules || !Array.isArray(rules)) return;
 
       const value = getFieldValue(fieldName);
       const errors: string[] = [];
+      const stringValue = String(value || '');
 
       for (const rule of rules) {
-        if (!rule.validate(value)) {
+        if (!rule.validate(stringValue)) {
           errors.push(rule.message);
         }
       }
@@ -249,7 +295,6 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       e.preventDefault();
     }
 
-    // Mark all fields as touched
     const allFieldNames = Object.keys(validationSchema);
     setFormState(prev => {
       const newTouchedFields = { ...prev.touchedFields };
@@ -262,7 +307,6 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       };
     });
 
-    // Validate entire form
     const isValid = validateForm();
     if (!isValid) {
       return;
@@ -275,7 +319,7 @@ export function useForm(options: UseFormOptions): UseFormReturn {
         await onSubmit(formState.fields);
       }
     } catch (error) {
-      console.error('Form submission error:', error);
+      logger.error('Form submission error:', error);
     } finally {
       setFormState(prev => ({ ...prev, isSubmitting: false }));
     }
