@@ -195,9 +195,11 @@ describe('Textarea Component', () => {
     );
     const textarea = screen.getByRole('textbox');
     const errorText = screen.getByText('Error text');
+    const helperText = screen.getByText('Helper text');
     
-    expect(screen.queryByText('Helper text')).not.toBeInTheDocument();
+    expect(helperText).toBeInTheDocument();
     const describedBy = textarea.getAttribute('aria-describedby');
     expect(describedBy).toContain(errorText.id);
+    expect(describedBy).toContain(helperText.id);
   });
 });
