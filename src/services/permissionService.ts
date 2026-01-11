@@ -132,7 +132,7 @@ class PermissionService {
 
     const rolePermissionIds = ROLE_PERMISSION_MATRIX[userRole] || [];
     const extraPermissionIds = userExtraRole ? EXTRA_ROLE_PERMISSIONS[userExtraRole] || [] : [];
-    const allPermissionIds = [...new Set([...rolePermissionIds, ...extraPermissionIds])];
+    const allPermissionIds = rolePermissionIds.concat(extraPermissionIds).filter((id, index, arr) => arr.indexOf(id) === index);
 
     return allPermissionIds
       .filter(id => id && typeof id === 'string') // Filter out invalid permission IDs
@@ -239,7 +239,13 @@ class PermissionService {
    * Get all available permissions
    */
   getAllPermissions(): Permission[] {
-    return Object.values(PERMISSIONS);
+    const permissions: Permission[] = [];
+    for (const key in PERMISSIONS) {
+      if (PERMISSIONS.hasOwnProperty(key)) {
+        permissions.push(PERMISSIONS[key]);
+      }
+    }
+    return permissions;
   }
 
   /**
@@ -252,7 +258,7 @@ class PermissionService {
     }
 
     // Prevent prototype pollution
-    if (permissionId.includes('__proto__') || permissionId.includes('constructor') || permissionId.includes('prototype')) {
+    if (permissionId.indexOf('__proto__') !== -1 || permissionId.indexOf('constructor') !== -1 || permissionId.indexOf('prototype') !== -1) {
       logger.warn('Potential prototype pollution attempt in getPermission', { permissionId });
       return null;
     }
@@ -270,12 +276,12 @@ class PermissionService {
     }
 
     const validRoles: UserRole[] = ['admin', 'teacher', 'student', 'parent'];
-    if (!validRoles.includes(userRole)) {
+    if (validRoles.indexOf(userRole) === -1) {
       return false;
     }
 
     const validExtraRoles: UserExtraRole[] = ['staff', 'osis', 'wakasek', 'kepsek', null];
-    if (!validExtraRoles.includes(userExtraRole)) {
+    if (validExtraRoles.indexOf(userExtraRole) === -1) {
       return false;
     }
 
