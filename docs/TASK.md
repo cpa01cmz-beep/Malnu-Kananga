@@ -119,6 +119,14 @@
       - Improved user control over toast notifications
       - See src/components/Toast.tsx for implementation
      - [x] Replace blocking confirm() dialogs with accessible ConfirmationDialog (2026-01-11)
+   - [x] Refactor GradingManagement file input buttons to use Button component (2026-01-11)
+     - Replaced inline styled `<label>` elements with Button component using `orange-solid` and `purple-solid` variants
+     - Added refs (csvInputRef, ocrInputRef) for programmatic file input triggering
+     - Moved hidden file inputs outside of buttons with proper ref associations
+     - Improved accessibility with built-in ARIA attributes from Button component
+     - Improved consistency with design system (eliminated ~40 lines of inline styles)
+     - Maintained all functionality (Import CSV, Scan Exam) with proper disabled states
+     - PR #1033: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1033
        - Replaced native confirm() in SystemStats.tsx for factory reset confirmation
        - Replaced native confirm() in GradingManagement.tsx for grade reset confirmation
        - Native confirm() dialogs are blocking, not accessible to screen readers, and cannot be styled

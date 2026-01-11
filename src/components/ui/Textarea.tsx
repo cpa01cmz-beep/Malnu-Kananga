@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
+import { useFieldValidation } from '../../hooks/useFieldValidation';
 
 export type TextareaSize = 'sm' | 'md' | 'lg';
 export type TextareaState = 'default' | 'error' | 'success';
@@ -13,6 +14,13 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
   autoResize?: boolean;
   maxRows?: number;
   minRows?: number;
+  validationRules?: Array<{ validate: (value: string) => boolean; message: string }>;
+  validateOnChange?: boolean;
+  validateOnBlur?: boolean;
+  accessibility?: {
+    announceErrors?: boolean;
+    describedBy?: string;
+  };
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed resize-none";
@@ -52,8 +60,14 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   autoResize = true,
   maxRows = 8,
   minRows = 1,
+  validationRules = [],
+  validateOnChange = true,
+  validateOnBlur = true,
+  accessibility = { announceErrors: true },
   className = '',
   value,
+  onChange,
+  onBlur,
   ...props
 }, ref) => {
   const internalRef = useRef<HTMLTextAreaElement>(null);
@@ -62,7 +76,23 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   const textareaId = id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
   const helperTextId = helperText ? `${textareaId}-helper` : undefined;
   const errorTextId = errorText ? `${textareaId}-error` : undefined;
-  const describedBy = [helperTextId, errorTextId].filter(Boolean).join(' ') || undefined;
+  const accessibilityDescribedBy = accessibility?.describedBy;
+  const describedBy = [helperTextId, errorTextId, accessibilityDescribedBy].filter(Boolean).join(' ') || undefined;
+
+  // Enhanced validation state management
+  const validation = useFieldValidation({
+    value: String(value || ''),
+    rules: validationRules,
+    triggers: {
+      onBlur: validateOnBlur,
+      onChange: validateOnChange,
+      onSubmit: true
+    },
+    accessibility: {
+      announceErrors: accessibility.announceErrors,
+      errorRole: 'alert'
+    }
+  });
 
   const textareaClasses = `
     ${baseClasses}
@@ -72,6 +102,29 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     ${autoResize ? '' : `min-h-[${minRows * 1.5}rem]`}
     ${className}
   `.replace(/\s+/g, ' ').trim();
+
+  // Enhanced change handler
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (onChange) {
+      onChange(e);
+    }
+    validation.changeHandler(e.target.value);
+  };
+
+  // Enhanced blur handler
+  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    validation.blurHandler();
+    if (onBlur) {
+      onBlur(e);
+    }
+  };
+
+  // Auto-focus management for validation errors
+  useEffect(() => {
+    if (validation.state.errors.length > 0 && validation.state.isTouched && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [validation.state.errors, validation.state.isTouched, textareaRef]);
 
   useEffect(() => {
     if (autoResize && textareaRef.current) {
@@ -87,6 +140,20 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     }
   }, [value, autoResize, minRows, maxRows, textareaRef]);
 
+  // Determine final state based on validation
+  const finalState = validation.state.errors.length > 0 && validation.state.isTouched ? 'error' : 
+                    (validation.state.isValid ? state : 'error');
+  const finalErrorText = validation.state.errors.length > 0 && validation.state.isTouched ? 
+                        validation.state.errors[0] : errorText;
+
+  // Enhanced accessibility attributes
+  const accessibilityProps = {
+    'aria-required': props.required,
+    'aria-errormessage': finalErrorText ? errorTextId : undefined,
+    ...(validation.state.isValidating && { 'aria-live': 'polite' as const }),
+    ...(validation.state.isValidating && { 'aria-busy': true })
+  };
+
   return (
     <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`}>
       {label && (
@@ -95,29 +162,51 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
           className={`${labelSizeClasses[size]} font-semibold text-neutral-700 dark:text-neutral-300 block`}
         >
           {label}
-          {props.required && <span className="text-red-500 ml-1" aria-label="required">*</span>}
+          {props.required && (
+            <span className="text-red-500 ml-1" aria-label="wajib diisi">
+              *
+            </span>
+          )}
         </label>
       )}
 
-      <textarea
+      <div className="relative">
+<textarea
         ref={textareaRef}
         id={textareaId}
         className={textareaClasses}
         aria-describedby={describedBy}
-        aria-invalid={state === 'error'}
+        aria-invalid={finalState === 'error'}
         value={value}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        {...accessibilityProps}
         {...props}
       />
 
-      {helperText && (
+        {validation.state.isValidating && (
+          <div className="absolute right-3 top-3">
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-neutral-300 border-t-primary-500" aria-hidden="true" />
+          </div>
+        )}
+      </div>
+
+      {helperText && !finalErrorText && (
         <p id={helperTextId} className={`${helperTextSizeClasses[size]} text-neutral-500 dark:text-neutral-400`}>
           {helperText}
         </p>
       )}
 
-      {errorText && (
-        <p id={errorTextId} className={`${helperTextSizeClasses[size]} text-red-600 dark:text-red-400`} role="alert">
-          {errorText}
+      {finalErrorText && (
+        <p id={errorTextId} className={`${helperTextSizeClasses[size]} text-red-600 dark:text-red-400`} role="alert" aria-live="polite">
+          {finalErrorText}
+        </p>
+      )}
+
+      {/* Character count for accessibility */}
+      {props.maxLength && (
+        <p className={`${helperTextSizeClasses[size]} text-neutral-400 dark:text-neutral-500 text-right`} aria-live="polite">
+          {String(value || '').length}/{props.maxLength}
         </p>
       )}
     </div>
