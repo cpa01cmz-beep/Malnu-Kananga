@@ -38,9 +38,19 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     const dateStr = date.toISOString().split('T')[0];
 
     const daySchedules = schedules.filter(schedule => schedule.dayOfWeek === dayOfWeek);
-    const dayMeetings = meetings.filter(meeting => meeting.date === dateStr);
+    const dayMeetings = meetings.filter(meeting => meeting.dateStr === dateStr);
 
     return [...daySchedules, ...dayMeetings];
+  };
+
+  const getEventAriaLabel = (event: Schedule | ParentMeeting) => {
+    const isMeeting = 'status' in event;
+    if (isMeeting) {
+      const meeting = event as ParentMeeting;
+      return `Pertemuan: ${meeting.teacherName || meeting.subject}, ${meeting.startTime || ''} - ${meeting.agenda || ''}`;
+    }
+    const schedule = event as Schedule;
+    return `Jadwal: ${schedule.subjectName}, ${schedule.startTime || ''} dengan ${schedule.teacherName || 'guru'}`;
   };
 
   const previousMonth = () => {
@@ -205,6 +215,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                             : 'bg-blue-100 text-blue-800 hover:bg-blue-200'} focus:outline-none focus:ring-2 focus:ring-primary-500/50`}
                         role="button"
                         tabIndex={0}
+                        aria-label={getEventAriaLabel(event)}
                       >
                       {event.startTime && `${event.startTime} `}
                       {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
@@ -299,6 +310,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                             : 'bg-blue-100 text-blue-800 hover:bg-blue-200'} focus:outline-none focus:ring-2 focus:ring-primary-500/50`}
                         role="button"
                         tabIndex={0}
+                        aria-label={getEventAriaLabel(event)}
                       >
                         {event.startTime && `${event.startTime} `}
                         {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
@@ -371,6 +383,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                         onEventClick?.(event);
                       }
                     }}
+                    aria-label={getEventAriaLabel(event)}
                     className="p-4 border rounded-lg cursor-pointer transition-all
                       hover:shadow-md hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
