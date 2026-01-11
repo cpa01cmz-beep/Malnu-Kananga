@@ -361,10 +361,9 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
           </Button>
         </div>
         <div className="prose dark:prose-invert max-w-none">
-          <div 
-            className="text-neutral-700 dark:text-neutral-300 whitespace-pre-line"
-            dangerouslySetInnerHTML={{ __html: insights.aiAnalysis.replace(/\n/g, '<br />') }}
-          />
+          <div className="text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">
+            {insights.aiAnalysis}
+          </div>
         </div>
       </Card>
 
@@ -379,10 +378,9 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
               </Button>
             </div>
             <div className="prose dark:prose-invert max-w-none">
-              <div
-                className="text-neutral-700 dark:text-neutral-300 whitespace-pre-line"
-                dangerouslySetInnerHTML={{ __html: insights.aiAnalysis.replace(/\n/g, '<br />') }}
-              />
+              <div className="text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">
+                {insights.aiAnalysis}
+              </div>
             </div>
           </div>
         </div>
