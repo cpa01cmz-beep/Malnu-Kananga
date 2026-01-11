@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import ImageWithFallback from './ImageWithFallback';
+import { render, screen, fireEvent } from '@testing-library/react';
+import ImageWithFallback from '../ImageWithFallback';
 
 describe('ImageWithFallback', () => {
   describe('with valid image', () => {
@@ -65,10 +65,11 @@ describe('ImageWithFallback', () => {
       expect(fallbackText).toHaveAttribute('aria-hidden', 'true');
     });
 
-    it('does not display fallbackText when not provided', () => {
+    it('does not display a text span when fallbackText is not provided', () => {
       render(<ImageWithFallback src="" alt="Test image" />);
-      const fallbackText = screen.queryByText(/tidak tersedia/i);
-      expect(fallbackText).toBeInTheDocument();
+      const fallback = screen.getByRole('img');
+      const fallbackTextElement = fallback.querySelector('.text-xs');
+      expect(fallbackTextElement).not.toBeInTheDocument();
     });
 
     it('applies custom className to fallback div', () => {
@@ -81,11 +82,15 @@ describe('ImageWithFallback', () => {
   describe('fallback state (error loading)', () => {
     it('renders fallback div when image fails to load', () => {
       render(<ImageWithFallback src="/invalid.jpg" alt="Test image" />);
-      const img = screen.queryByAltText('Test image');
-      expect(img).not.toBeInTheDocument();
 
+      const img = screen.getByAltText('Test image');
+
+      fireEvent.error(img);
+
+      expect(screen.queryByAltText('Test image')).not.toBeInTheDocument();
       const fallback = screen.getByRole('img');
       expect(fallback).toBeInTheDocument();
+      expect(fallback.tagName).toBe('DIV');
     });
 
     it('provides default aria-label when alt and fallbackText not provided', () => {
