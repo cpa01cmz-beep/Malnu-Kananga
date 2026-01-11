@@ -78,7 +78,13 @@
   - [x] Refactored 3 inline alert styles to use Alert component
   - [x] Refactored 4 inline status alert boxes to use Alert component
   - [x] Refactored 15 components to use centralized EmptyState component
-  - [x] Refactored form inputs to use SearchInput, Input, Select, Textarea
+   - [x] Refactored form inputs to use SearchInput, Input, Select, Textarea
+   - [x] Refactored UserManagement 'Coba lagi' button to use Button component (2026-01-11)
+     - Replaced inline styled button with Button component using ghost variant
+     - Improved accessibility with proper ARIA attributes
+     - Enhanced consistency with design system
+     - Maintained error retry functionality
+     - PR #1032: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1032
 
 ### P2: Medium
 - [ ] Optimize bundle size to <500KB initial load
