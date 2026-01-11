@@ -83,8 +83,8 @@ export function RealTimeExample() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <h1 className="text-2xl font-bold text-neutral-900 mb-4">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">
           Real-Time WebSocket Demo
         </h1>
         
@@ -128,14 +128,14 @@ export function RealTimeExample() {
           <button
             onClick={handleCreateTestGrade}
             disabled={!isConnected}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Create Test Grade
           </button>
           <button
             onClick={handleCreateTestAnnouncement}
             disabled={!isConnected}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Create Test Announcement
           </button>
@@ -143,7 +143,7 @@ export function RealTimeExample() {
       </div>
 
       {/* Real-time Grades Section */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
         <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Real-Time Grades</h2>
         {grades.length === 0 ? (
           <p className="text-neutral-500 dark:text-neutral-400">No grades available. Create a test grade to see real-time updates.</p>
@@ -197,7 +197,7 @@ export function RealTimeExample() {
       </div>
 
       {/* Real-time Announcements Section */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
         <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Real-Time Announcements</h2>
         {announcements.length === 0 ? (
           <p className="text-neutral-500 dark:text-neutral-400">No announcements available. Create a test announcement to see real-time updates.</p>

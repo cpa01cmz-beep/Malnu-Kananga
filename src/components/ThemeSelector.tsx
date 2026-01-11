@@ -5,6 +5,7 @@ import { SunIcon } from './icons/SunIcon';
 import { MoonIcon } from './icons/MoonIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
 import IconButton from './ui/IconButton';
+import Modal from './ui/Modal';
 
 interface ThemeSelectorProps {
   isOpen: boolean;
@@ -37,31 +38,23 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
   }
 
   return (
-    <>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" onClick={onClose} role="presentation" />
-      <div className="fixed top-20 right-4 w-96 max-w-[90vw] bg-white dark:bg-neutral-900 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 z-50 animate-fade-in-up">
-        {/* Header */}
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Pilih Tema"
+      description="Pilih tema untuk antarmuka aplikasi"
+      size="lg"
+      animation="fade-in-up"
+      closeOnBackdropClick={true}
+      closeOnEscape={true}
+      showCloseButton={true}
+      className="fixed top-20 right-4 m-0 p-0"
+    >
+      <div className="bg-white dark:bg-neutral-900 rounded-xl">
+        {/* Current Theme Display */}
         <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <SparklesIcon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-                Pilih Tema
-              </h3>
-            </div>
-            <IconButton
-              icon={
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              }
-              ariaLabel="Tutup"
-              onClick={onClose}
-            />
-          </div>
-          
-          {/* Current Theme Display */}
-          <div className="mt-3 flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+          <div className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+            <SparklesIcon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
             <span className="text-2xl">{currentTheme.icon}</span>
             <div className="flex-1">
               <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
@@ -75,9 +68,9 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Tabs */}
-        <div 
-          className="flex border-b border-neutral-200 dark:border-neutral-700" 
-          role="tablist" 
+        <div
+          className="flex border-b border-neutral-200 dark:border-neutral-700"
+          role="tablist"
           aria-label="Pilih kategori tema"
           onKeyDown={handleKeyDown}
         >
@@ -127,7 +120,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
                 onClick={() => applyTheme(theme)}
                 aria-label={`Pilih tema ${theme.displayName}`}
                 aria-pressed={currentTheme.id === theme.id}
-                className={`group flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] ${
+                className={`group flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 ${
                   currentTheme.id === theme.id
                     ? 'border-primary-600 dark:border-primary-400 bg-primary-50 dark:bg-primary-900/20'
                     : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800'
@@ -149,11 +142,11 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
                 <div className="flex items-center gap-2">
                   {/* Color Preview */}
                   <div className="flex gap-1">
-                    <div 
+                    <div
                       className="w-4 h-4 rounded-full border-2 border-white dark:border-neutral-800 shadow-sm"
                       style={{ backgroundColor: theme.colors.primary }}
                     />
-                    <div 
+                    <div
                       className="w-4 h-4 rounded-full border-2 border-white dark:border-neutral-800 shadow-sm"
                       style={{ backgroundColor: theme.colors.accent }}
                     />
@@ -177,7 +170,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
           <button
             onClick={resetToDefault}
             aria-label="Reset tema ke pengaturan default"
-            className="flex-1 px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+            className="flex-1 px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
           >
             Reset ke Default
           </button>
@@ -187,13 +180,13 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
               onClose();
             }}
             aria-label="Ganti antara mode terang dan gelap"
-            className="flex-1 px-3 py-2 text-sm text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
+            className="flex-1 px-3 py-2 text-sm text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
           >
             Ganti Tema
           </button>
         </div>
       </div>
-    </>
+    </Modal>
   );
 };
 
