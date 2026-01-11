@@ -1,4 +1,4 @@
-import { themes, type Theme } from './themes';
+import { themes } from './themes';
 
 export interface SemanticColorConfig {
   success: string;

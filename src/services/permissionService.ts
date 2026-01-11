@@ -170,8 +170,9 @@ class PermissionService {
     }
 
     // Sanitize inputs to prevent injection
-    const sanitizedResource = resource.replace(/[^a-zA-Z0-9_]/g, '');
-    const sanitizedAction = action.replace(/[^a-zA-Z0-9_]/g, '');
+    // Remove HTML tags, then split on special characters and take the first meaningful part
+    const sanitizedResource = resource.replace(/<[^>]*>/g, '').split(/[^a-zA-Z0-9_]/)[0] || '';
+    const sanitizedAction = action.replace(/<[^>]*>/g, '').split(/[^a-zA-Z0-9_]/)[0] || '';
     
     const permissionId = `${sanitizedResource}.${sanitizedAction}`;
     return this.hasPermission(userRole, userExtraRole, permissionId, context);
@@ -233,6 +234,13 @@ class PermissionService {
     }
 
     return logs.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+  }
+
+  /**
+   * Clear all audit logs (for testing purposes)
+   */
+  clearAuditLogs(): void {
+    this.auditLogs = [];
   }
 
   /**

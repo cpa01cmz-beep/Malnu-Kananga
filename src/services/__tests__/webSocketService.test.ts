@@ -37,18 +37,34 @@ class MockWebSocket {
   constructor(url: string) {
     this.url = url;
     logger.debug('Mock WebSocket constructor called with:', url);
+    
+    // Automatically trigger onopen after construction to resolve the init promise
+    setTimeout(() => {
+      this.readyState = WS_OPEN;
+      if (this.onopen) {
+        this.onopen(new Event('open'));
+      }
+    }, 10);
   }
 }
 
 // Create singleton mock instance
 const mockWebSocketInstance = new MockWebSocket('ws://test');
 
-// Set up global WebSocket with proper constructor
-(global as any).WebSocket = MockWebSocket;
-(global as any).WebSocket.CONNECTING = WS_CONNECTING;
-(global as any).WebSocket.OPEN = WS_OPEN;
-(global as any).WebSocket.CLOSING = WS_CLOSING;
-(global as any).WebSocket.CLOSED = WS_CLOSED;
+// Create spy for WebSocket constructor
+const webSocketSpy = vi.spyOn(global, 'WebSocket').mockImplementation(MockWebSocket);
+
+// Add constants to the mock
+Object.defineProperty(MockWebSocket, 'CONNECTING', { value: WS_CONNECTING });
+Object.defineProperty(MockWebSocket, 'OPEN', { value: WS_OPEN });
+Object.defineProperty(MockWebSocket, 'CLOSING', { value: WS_CLOSING });
+Object.defineProperty(MockWebSocket, 'CLOSED', { value: WS_CLOSED });
+
+// Also set them on the global mock
+Object.defineProperty(global.WebSocket, 'CONNECTING', { value: WS_CONNECTING });
+Object.defineProperty(global.WebSocket, 'OPEN', { value: WS_OPEN });
+Object.defineProperty(global.WebSocket, 'CLOSING', { value: WS_CLOSING });
+Object.defineProperty(global.WebSocket, 'CLOSED', { value: WS_CLOSED });
 
 // Mock MessageEvent - use proper class constructor
 class MockMessageEvent implements Event {
@@ -158,6 +174,7 @@ vi.mock('../services/webSocketService', async () => {
 describe('WebSocketService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    webSocketSpy.mockClear();
     localStorage.clear();
     mockWebSocket.readyState = WebSocket.CONNECTING;
     mockWebSocket.send.mockClear();
@@ -177,6 +194,10 @@ describe('WebSocketService', () => {
 
   afterEach(() => {
     webSocketService.disconnect();
+  });
+
+  afterAll(() => {
+    webSocketSpy.mockRestore();
   });
 
   describe('Initialization', () => {

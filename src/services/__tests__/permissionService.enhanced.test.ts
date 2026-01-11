@@ -5,7 +5,7 @@ import { UserRole } from '../../types/permissions';
 describe('PermissionService - Enhanced Validation', () => {
   beforeEach(() => {
     // Clear audit logs before each test
-    permissionService.getAuditLogs = () => [];
+    permissionService.clearAuditLogs();
   });
 
   describe('Input Validation', () => {

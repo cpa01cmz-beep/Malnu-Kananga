@@ -222,8 +222,15 @@ describe('useRealtimeEvent Hook', () => {
       useRealtimeEvent(['grade_updated', 'grade_created'] as any, callback)
     );
 
+    // Should call subscribe for each event type individually
+    expect(webSocketService.subscribe).toHaveBeenCalledTimes(2);
     expect(webSocketService.subscribe).toHaveBeenCalledWith({
-      eventType: ['grade_updated', 'grade_created'],
+      eventType: 'grade_updated',
+      callback: expect.any(Function),
+      filter: undefined,
+    });
+    expect(webSocketService.subscribe).toHaveBeenCalledWith({
+      eventType: 'grade_created',
       callback: expect.any(Function),
       filter: undefined,
     });
@@ -464,16 +471,18 @@ describe('WebSocket Integration Edge Cases', () => {
     // Mock interval
     vi.useFakeTimers();
 
-    const { rerender: _rerender } = renderHook(() => useWebSocket());
+    const { unmount } = renderHook(() => useWebSocket());
 
     expect(webSocketService.getConnectionState).toHaveBeenCalledTimes(1);
 
+    // Advance timers by 1 second to trigger the interval
     vi.advanceTimersByTime(1000);
 
-    await waitFor(() => {
-      expect(webSocketService.getConnectionState).toHaveBeenCalledTimes(2);
-    });
+    // Check that getConnectionState was called again
+    expect(webSocketService.getConnectionState).toHaveBeenCalledTimes(2);
 
+    // Clean up
+    unmount();
     vi.useRealTimers();
   });
 });
