@@ -16,6 +16,7 @@ import {
 import Modal from './ui/Modal';
 import Button from './ui/Button';
 import SmallActionButton from './ui/SmallActionButton';
+import Toggle from './ui/Toggle';
 
 interface VoiceSettingsProps {
   isOpen: boolean;
@@ -276,27 +277,18 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                 </select>
               </div>
 
-              <div className="flex items-center justify-between">
-                <label htmlFor="continuous-mode-toggle" className="text-sm text-neutral-600 dark:text-neutral-400">Mode berkelanjutan</label>
-                <button
-                  id="continuous-mode-toggle"
-                  onClick={() => {
-                    const newValue = !continuous;
-                    setContinuous(newValue);
-                    recognition.setContinuous(newValue);
+              <div>
+                <Toggle
+                  id="continuous-mode"
+                  label="Mode berkelanjutan"
+                  checked={continuous}
+                  onChange={(e) => {
+                    setContinuous(e.target.checked);
+                    recognition.setContinuous(e.target.checked);
                   }}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    continuous ? 'bg-green-600' : 'bg-neutral-300 dark:bg-neutral-600'
-                  }`}
-                  role="switch"
-                  aria-checked={continuous}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      continuous ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
+                  color="green"
+                  toggleSize="md"
+                />
               </div>
             </div>
           )}
@@ -391,30 +383,15 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
           )}
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 id="auto-read-ai-label" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Baca Pesan AI</h3>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                  Secara otomatis membaca respon AI
-                </p>
-              </div>
-              <button
-                id="auto-read-ai"
-                aria-labelledby="auto-read-ai-label"
-                onClick={() => setAutoReadAI(!autoReadAI)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  autoReadAI ? 'bg-green-600' : 'bg-neutral-300 dark:bg-neutral-600'
-                }`}
-                role="switch"
-                aria-checked={autoReadAI}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    autoReadAI ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </div>
+            <Toggle
+              id="auto-read-ai"
+              label="Baca Pesan AI"
+              description="Secara otomatis membaca respon AI"
+              checked={autoReadAI}
+              onChange={(e) => setAutoReadAI(e.target.checked)}
+              color="green"
+              toggleSize="md"
+            />
           </div>
 
           <div className="space-y-4">
