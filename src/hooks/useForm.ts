@@ -141,29 +141,6 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       }
     }
   }, [initialValues, formState.fields, formState.touchedFields, validationSchema]);
-        setFormState(prev => ({
-          ...prev,
-          errors: {
-            ...prev.errors,
-<<<<<<< HEAD
-            [name]: errors
-          }
-        }));
-      }
-    }
-  }, [initialValues, formState.fields, formState.touchedFields, validationSchema]);
-=======
-            [fieldName]: errors
-          }
-        }));
-    
-        return errors.length === 0;
-      };
-      
-      internalValidateField(name);
-    }
-  }, [initialValues, validateOnChange, formState.touchedFields, formState.fields, validationSchema]);
->>>>>>> 186edbf (Fix test failures and TypeScript errors)
 
   /**
    * Set field error
@@ -227,29 +204,6 @@ if (validateOnBlurRef.current && touched) {
       }
     }
   }, [formState.fields, validationSchema]);
-        setFormState(prev => ({
-          ...prev,
-          errors: {
-            ...prev.errors,
-<<<<<<< HEAD
-            [name]: errors
-          }
-        }));
-      }
-    }
-  }, [formState.fields, validationSchema]);
-=======
-            [fieldName]: errors
-          }
-        }));
-    
-        return errors.length === 0;
-      };
-      
-      internalValidateField(name);
-    }
-  }, [validateOnBlur, formState.fields, validationSchema]);
->>>>>>> 186edbf (Fix test failures and TypeScript errors)
 
   /**
    * Validate single field
@@ -296,8 +250,8 @@ if (!rule.validate(stringValue)) {
       const errors: string[] = [];
       const stringValue = String(value || '');
 
-      for (const rule of rules) {
-if (!rule.validate(stringValue)) {
+for (const rule of rules) {
+      if (!rule.validate(stringValue)) {
           errors.push(rule.message);
         }
       }

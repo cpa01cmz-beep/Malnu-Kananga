@@ -141,7 +141,6 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
       props.onKeyDown(e);
     }
   };
-
   // Determine final state based on validation
   const finalState = validation.state.errors.length > 0 && validation.state.isTouched ? 'error' : 
                     (validation.state.isValid ? state : 'error');
@@ -157,7 +156,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
   };
 
   return (
-    <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`}>
+    <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`} role="search">
       {label && (
         <label
           htmlFor={searchId}

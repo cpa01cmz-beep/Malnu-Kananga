@@ -191,7 +191,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
         )}
       </div>
 
-      {helperText && (
+{helperText && (
         <p id={helperTextId} className={`${helperTextSizeClasses[size]} text-neutral-500 dark:text-neutral-400`}>
           {helperText}
         </p>
