@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole } from '../types'; 
+import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole } from '../types';
 
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
@@ -7,10 +7,12 @@ import { permissionService } from '../services/permissionService';
 import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
+import IconButton from './ui/IconButton';
 import AccessDenied from './AccessDenied';
 import Badge from './ui/Badge';
 import SearchInput from './ui/SearchInput';
 import { EmptyState } from './ui/LoadingState';
+import { DocumentTextIcon, CheckIcon, XMarkIcon } from './icons/MaterialIcons';
 
 interface PPDBManagementProps {
   onBack: () => void;
@@ -365,12 +367,13 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                 <option value="score">Skor</option>
                 <option value="status">Status</option>
               </select>
-              <button
+              <IconButton
+                icon={sort.direction === 'asc' ? '↑' : '↓'}
+                ariaLabel={`Urutkan berdasarkan ${sort.field} dalam urutan ${sort.direction === 'asc' ? 'naik' : 'turun'}`}
+                variant="ghost"
+                size="sm"
                 onClick={() => setSort({...sort, direction: sort.direction === 'asc' ? 'desc' : 'asc'})}
-                className="p-1 text-neutral-600 hover:text-neutral-900 dark:hover:text-white"
-              >
-                {sort.direction === 'asc' ? '↑' : '↓'}
-              </button>
+              />
             </div>
           </div>
         </div>
@@ -460,36 +463,39 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex justify-end gap-2">
                                             {reg.documentUrl && (
-                                              <button 
+                                              <IconButton
+                                                icon={<DocumentTextIcon className="w-5 h-5" />}
+                                                ariaLabel="Lihat dokumen untuk pendaftar ini"
+                                                tooltip="Lihat dokumen"
+                                                variant="default"
+                                                size="sm"
                                                 onClick={() => setShowDocumentPreview(reg.id)}
-                                                className="p-1.5 bg-neutral-100 text-neutral-600 rounded hover:bg-neutral-200 transition-colors"
-                                                title="Lihat dokumen"
-                                              >
-                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                              </button>
+                                              />
                                             )}
                                             {reg.status === 'pending' && canApprovePPDB && (
                                               <>
-                                                <button 
+                                                <IconButton
+                                                  icon={<CheckIcon className="w-5 h-5" />}
+                                                  ariaLabel="Terima pendaftaran ini"
+                                                  tooltip="Terima"
+                                                  variant="success"
+                                                  size="sm"
                                                   onClick={() => {
                                                     updateStatus(reg.id, 'approved', 'approval-default');
                                                     generatePDFLetter(reg, 'approval');
                                                   }}
-                                                  className="p-1.5 bg-green-50 text-green-600 rounded hover:bg-green-100 transition-colors"
-                                                  title="Terima"
-                                                >
-                                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
-                                                </button>
-                                                <button 
+                                                />
+                                                <IconButton
+                                                  icon={<XMarkIcon className="w-5 h-5" />}
+                                                  ariaLabel="Tolak pendaftaran ini"
+                                                  tooltip="Tolak"
+                                                  variant="danger"
+                                                  size="sm"
                                                   onClick={() => {
                                                     updateStatus(reg.id, 'rejected', 'rejection-default');
                                                     generatePDFLetter(reg, 'rejection');
                                                   }}
-                                                  className="p-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
-                                                  title="Tolak"
-                                                >
-                                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                                                </button>
+                                                />
                                               </>
                                             )}
                                         </div>
@@ -552,12 +558,12 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                 })}
               </div>
               <div className="flex justify-end gap-2 mt-6">
-                <button
+                <Button
                   onClick={() => setShowScoringModal(null)}
-                  className="px-4 py-2 text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600"
+                  variant="secondary"
                 >
                   Tutup
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -569,12 +575,13 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 w-full max-w-2xl">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Preview Dokumen</h3>
-                <button
+                <IconButton
+                  icon={<XMarkIcon className="w-5 h-5" />}
+                  ariaLabel="Tutup preview dokumen"
+                  variant="ghost"
+                  size="md"
                   onClick={() => setShowDocumentPreview(null)}
-                  className="p-2 text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
+                />
               </div>
               <div className="bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4 min-h-[400px] flex items-center justify-center">
                 <p className="text-neutral-500 dark:text-neutral-400">Preview dokumen akan ditampilkan di sini</p>

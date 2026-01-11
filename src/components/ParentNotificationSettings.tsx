@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { BellIcon } from './icons/BellIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
-import { ClockIcon } from './icons/MaterialIcons';
+import { ClockIcon, XMarkIcon } from './icons/MaterialIcons';
 import { ToastType } from './Toast';
 import { Toggle } from './ui/Toggle';
+import IconButton from './ui/IconButton';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import type { ParentGradeNotificationSettings } from '../services/parentGradeNotificationService';
 import { logger } from '../utils/logger';
@@ -156,12 +157,13 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
             <span className="text-sm text-red-800 dark:text-red-200">
               {error}
             </span>
-            <button 
+            <IconButton
+              icon="×"
+              ariaLabel="Tutup pesan error"
+              variant="ghost"
+              size="sm"
               onClick={autoSaveActions.clearError}
-              className="text-red-600 hover:text-red-800 dark:hover:text-red-400"
-            >
-              ×
-            </button>
+            />
           </div>
         )}
 

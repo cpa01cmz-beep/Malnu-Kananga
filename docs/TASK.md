@@ -211,8 +211,29 @@
         - Full type safety with TypeScript interfaces and exported types
         - Migration guide for replacing direct color references
         - Contrast testing guidelines for WCAG compliance verification
-        - Color blindness testing guidelines for accessibility
-        - Enhanced design system consistency through semantic color tokens
+         - Color blindness testing guidelines for accessibility
+         - Enhanced design system consistency through semantic color tokens
+      - [x] Raw Button Component Refactoring (Phase 5 - COMPLETED 2026-01-12)
+         - Refactored raw button elements in PPDBManagement.tsx to use IconButton component (3 instances)
+         - Replaced document view, approve, and reject buttons with IconButton component
+         - Added proper ARIA labels for all icon buttons (e.g., "Lihat dokumen untuk pendaftar ini", "Terima pendaftaran ini", "Tolak pendaftaran ini")
+         - Added tooltip attributes for better UX (e.g., "Lihat dokumen", "Terima", "Tolak")
+         - Refactored sort direction toggle to use IconButton component with proper ARIA labels
+         - Replaced "Tutup" button in scoring modal with Button component (secondary variant)
+         - Replaced close button in document preview modal with IconButton component
+         - Refactored raw button elements in GradingManagement.tsx to use centralized UI components (2 instances)
+         - Replaced "Tutup Analisis" button with Button component (ghost variant, sm size)
+         - Replaced "Coba Lagi" button in error banner with Button component (ghost variant, sm size)
+         - Refactored error dismiss button in ParentNotificationSettings.tsx to use IconButton component
+         - Replaced "×" dismiss button with IconButton component using XMarkIcon
+         - Added proper ARIA label ("Tutup pesan error")
+         - Improved accessibility through built-in ARIA support from IconButton and Button components
+         - Enhanced design system consistency by using centralized UI components
+         - Improved keyboard navigation and focus management through IconButton's built-in support
+         - Eliminated ~20 lines of duplicate button styling code
+         - Better hover animations and transitions through IconButton and Button components
+         - Dark mode support automatically inherited from centralized components
+
 
 ### P2: Medium
 - [ ] Optimize bundle size to <500KB initial load

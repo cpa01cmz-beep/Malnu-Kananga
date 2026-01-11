@@ -32,6 +32,7 @@ import { User, UserRole, UserExtraRole } from '../types';
 import ErrorMessage from './ui/ErrorMessage';
 import { OfflineIndicator } from './OfflineIndicator';
 import SearchInput from './ui/SearchInput';
+import { XMarkIcon, ArrowPathIcon } from './icons/MaterialIcons';
 
 
 interface StudentGrade {
@@ -1245,12 +1246,15 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 <div className="text-neutral-700 dark:text-neutral-300 text-sm">
                     <MarkdownRenderer content={analysisResult} />
                 </div>
-                <button 
+                <div className="mt-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setAnalysisResult(null)}
-                    className="mt-4 text-xs text-purple-600 dark:text-purple-400 hover:underline"
-                >
+                  >
                     Tutup Analisis
-                </button>
+                  </Button>
+                </div>
             </div>
         )}
 
@@ -1265,12 +1269,15 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 <p className="text-sm text-red-700 dark:text-red-300">
                     <strong>Error:</strong> {error}
                 </p>
-                <button 
+                <div className="mt-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={fetchStudentsAndGrades}
-                    className="mt-2 text-sm text-red-600 dark:text-red-400 hover:underline"
-                >
+                  >
                     Coba Lagi
-                </button>
+                  </Button>
+                </div>
             </div>
         )}
 
