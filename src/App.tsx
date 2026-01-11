@@ -8,6 +8,7 @@ import Toast, { ToastType } from './components/Toast';
 import ThemeSelector from './components/ThemeSelector';
 import SkipLink, { SkipTarget } from './components/ui/SkipLink';
 import SuspenseLoading from './components/ui/SuspenseLoading';
+import ErrorBoundary from './components/ui/ErrorBoundary';
 import { logger } from './utils/logger';
 import { useTheme } from './hooks/useTheme';
 
@@ -257,7 +258,8 @@ const App: React.FC = () => {
 
   return (
     <NotificationProvider>
-      <div className={`${GRADIENT_CLASSES.APP_BACKGROUND} w-full min-h-screen font-sans antialiased text-[color:var(--color-text)] transition-colors duration-300`}>
+      <ErrorBoundary>
+        <div className={`${GRADIENT_CLASSES.APP_BACKGROUND} w-full min-h-screen font-sans antialiased text-[color:var(--color-text)] transition-colors duration-300`}>
       <SkipLink 
         targets={[
           { id: 'main-nav', label: 'Langsung ke navigasi utama' },
@@ -351,8 +353,9 @@ const App: React.FC = () => {
       <ThemeSelector
         isOpen={isThemeSelectorOpen}
         onClose={() => setIsThemeSelectorOpen(false)}
-      />
-    </div>
+        />
+      </div>
+      </ErrorBoundary>
     </NotificationProvider>
   );
 };
