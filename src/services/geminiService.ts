@@ -2,6 +2,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { FeaturedProgram, LatestNews } from '../types';
 import { WORKER_CHAT_ENDPOINT } from '../config';
+import { STORAGE_KEYS } from '../constants';
 import {
   classifyError,
   logError,
@@ -305,7 +306,7 @@ Please provide the updated JSON content following the safety and content rules a
         const userId = typeof window !== 'undefined' ? 
             (() => {
                 try {
-                    const authSession = localStorage.getItem('malnu_auth_session');
+                    const authSession = localStorage.getItem(STORAGE_KEYS.AUTH_SESSION);
                     if (authSession) {
                         const session = JSON.parse(authSession);
                         return session.user?.id || session.userId || 'anonymous';

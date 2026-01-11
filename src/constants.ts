@@ -93,6 +93,9 @@ export const STORAGE_KEYS = {
     NOTIFICATIONS: 'malnu_notifications',
     ATTENDANCE: 'malnu_attendance',
     
+    // WebSocket sync timestamps
+    LAST_SYNC_TIME: 'malnu_last_sync_time',
+    
     // AI Analysis cache for offline support
     CACHED_AI_ANALYSES: 'malnu_cached_ai_analyses',
     

@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { webSocketService, type RealTimeEvent } from '../webSocketService';
 import { apiService } from '../apiService';
 import { logger } from '../../utils/logger';
+import { STORAGE_KEYS } from '../../constants';
 
 /* eslint-disable no-undef */
 // Define WebSocket constants first
@@ -370,7 +371,7 @@ describe('WebSocketService', () => {
         lastConnected: new Date().toISOString(),
         reconnectAttempts: 0,
       };
-      localStorage.setItem('malnu_ws_connection', JSON.stringify(mockState));
+      localStorage.setItem(STORAGE_KEYS.WS_CONNECTION, JSON.stringify(mockState));
 
       const state = webSocketService.getConnectionState();
       expect(state.subscriptions.size).toBe(1);
