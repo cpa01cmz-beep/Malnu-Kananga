@@ -6,7 +6,7 @@ import type { SpeechRecognitionEvent, SpeechRecognitionErrorEvent } from '../../
 type PermissionState = 'granted' | 'denied' | 'prompt';
 
 // Mock the Web Speech API
-const mockSpeechRecognition = {
+const _mockSpeechRecognition = {
   continuous: true,
   interimResults: true,
   lang: 'id-ID',
@@ -32,10 +32,33 @@ const mockPermissions = {
   query: vi.fn().mockResolvedValue(mockPermission),
 };
 
+// Create proper constructor classes for Speech Recognition API
+class MockSpeechRecognition {
+  continuous: boolean = true;
+  interimResults: boolean = true;
+  lang: string = 'id-ID';
+  maxAlternatives: number = 1;
+  start: ReturnType<typeof vi.fn>;
+  stop: ReturnType<typeof vi.fn>;
+  abort: ReturnType<typeof vi.fn>;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null = null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null = null;
+  onstart: (() => void) | null = null;
+  onend: (() => void) | null = null;
+  onspeechstart: (() => void) | null = null;
+  onspeechend: (() => void) | null = null;
+
+  constructor() {
+    this.start = vi.fn();
+    this.stop = vi.fn();
+    this.abort = vi.fn();
+  }
+}
+
 Object.defineProperty(global, 'window', {
   value: {
-    SpeechRecognition: vi.fn(() => mockSpeechRecognition),
-    webkitSpeechRecognition: vi.fn(() => mockSpeechRecognition),
+    SpeechRecognition: MockSpeechRecognition,
+    webkitSpeechRecognition: MockSpeechRecognition,
   },
   writable: true,
 });

@@ -42,32 +42,87 @@ class MockWebSocket {
 // Create singleton mock instance
 const mockWebSocketInstance = new MockWebSocket('ws://test');
 
-(global as any).WebSocket = vi.fn().mockImplementation((url: string) => {
-  logger.debug('Mock WebSocket constructor called with:', url);
-  return mockWebSocketInstance;
-});
+// Set up global WebSocket with proper constructor
+(global as any).WebSocket = MockWebSocket;
 (global as any).WebSocket.CONNECTING = WS_CONNECTING;
 (global as any).WebSocket.OPEN = WS_OPEN;
 (global as any).WebSocket.CLOSING = WS_CLOSING;
 (global as any).WebSocket.CLOSED = WS_CLOSED;
 
-// Mock MessageEvent
-(global as any).MessageEvent = vi.fn(function MockMessageEvent(type, eventInit) {
-  return {
-    type,
-    data: eventInit?.data,
-  };
-});
+// Mock MessageEvent - use proper class constructor
+class MockMessageEvent implements Event {
+  readonly type: string;
+  readonly data: any;
+  readonly bubbles: boolean = false;
+  readonly cancelBubble: boolean = false;
+  readonly cancelable: boolean = false;
+  readonly composed: boolean = false;
+  readonly currentTarget: EventTarget | null = null;
+  readonly defaultPrevented: boolean = false;
+  readonly eventPhase: number = 0;
+  readonly isTrusted: boolean = false;
+  readonly returnValue: boolean = false;
+  readonly srcElement: EventTarget | null = null;
+  readonly target: EventTarget | null = null;
+  readonly timeStamp: number = 0;
+  readonly scoped: boolean = false;
 
-// Mock CloseEvent  
-(global as any).CloseEvent = vi.fn(function MockCloseEvent(type, eventInit) {
-  return {
-    type,
-    code: eventInit?.code || 1000,
-    reason: eventInit?.reason || '',
-    wasClean: eventInit?.wasClean || true,
-  };
-});
+  constructor(type: string, eventInit?: { data?: any }) {
+    this.type = type;
+    this.data = eventInit?.data;
+  }
+
+  composedPath(): EventTarget[] { return []; }
+  initEvent(_type: string, _bubbles?: boolean, _cancelable?: boolean): void {}
+  preventDefault(): void {}
+  stopImmediatePropagation(): void {}
+  stopPropagation(): void {}
+  readonly AT_TARGET: number = 2;
+  readonly BUBBLING_PHASE: number = 3;
+  readonly CAPTURING_PHASE: number = 1;
+  readonly NONE: number = 0;
+}
+
+// Mock CloseEvent - use proper class constructor  
+class MockCloseEvent implements Event {
+  readonly type: string;
+  readonly code: number;
+  readonly reason: string;
+  readonly wasClean: boolean;
+  readonly bubbles: boolean = false;
+  readonly cancelBubble: boolean = false;
+  readonly cancelable: boolean = false;
+  readonly composed: boolean = false;
+  readonly currentTarget: EventTarget | null = null;
+  readonly defaultPrevented: boolean = false;
+  readonly eventPhase: number = 0;
+  readonly isTrusted: boolean = false;
+  readonly returnValue: boolean = false;
+  readonly srcElement: EventTarget | null = null;
+  readonly target: EventTarget | null = null;
+  readonly timeStamp: number = 0;
+  readonly scoped: boolean = false;
+
+  constructor(type: string, eventInit?: { code?: number; reason?: string; wasClean?: boolean }) {
+    this.type = type;
+    this.code = eventInit?.code || 1000;
+    this.reason = eventInit?.reason || '';
+    this.wasClean = eventInit?.wasClean || true;
+  }
+
+  composedPath(): EventTarget[] { return []; }
+  initEvent(_type: string, _bubbles?: boolean, _cancelable?: boolean): void {}
+  preventDefault(): void {}
+  stopImmediatePropagation(): void {}
+  stopPropagation(): void {}
+  readonly AT_TARGET: number = 2;
+  readonly BUBBLING_PHASE: number = 3;
+  readonly CAPTURING_PHASE: number = 1;
+  readonly NONE: number = 0;
+}
+
+(global as any).MessageEvent = MockMessageEvent;
+(global as any).CloseEvent = MockCloseEvent;
 
 // Mock dependencies
 vi.mock('../apiService', () => ({
@@ -97,13 +152,9 @@ vi.mock('../services/webSocketService', async () => {
   };
 });
 
-// Mock WebSocket constructor - fix for "not a constructor" error
-global.WebSocket = vi.fn().mockImplementation((url: string) => {
-  logger.debug('WebSocket mock constructor called with:', url);
-  return mockWebSocket;
-}) as any;
 
-describe('WebSocketService (Temporarily Skipped - Issue #1024)', () => {
+
+describe('WebSocketService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
