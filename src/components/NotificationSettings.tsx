@@ -11,6 +11,8 @@ import { NotificationSettings as NotificationSettingsType } from '../types';
 import { useAutoSave } from '../hooks/useAutoSave';
 import Button from './ui/Button';
 import Tab from './ui/Tab';
+import Modal from './ui/Modal';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 import { EmptyState } from './ui/LoadingState';
 
 interface NotificationSettingsProps {
@@ -152,18 +154,17 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-      
-      <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        size="lg"
+        aria-labelledby="notification-settings-title"
+      >
         <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 p-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <BellIcon className="w-6 h-6 text-neutral-700 dark:text-neutral-300" />
-            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
+            <h2 id="notification-settings-title" className="text-xl font-semibold text-neutral-900 dark:text-white">
               Pengaturan Notifikasi
             </h2>
           </div>
@@ -540,49 +541,39 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
 
         {/* Reset Confirmation Modal */}
         {showResetConfirmation && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 max-w-sm w-full">
-              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
-                Reset Pengaturan Notifikasi?
-              </h3>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
-                Pengaturan akan dikembalikan ke nilai default. Tindakan ini tidak dapat dibatalkan.
-              </p>
-              <div className="flex justify-end gap-3">
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowResetConfirmation(false)}
-                >
-                  Batal
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={handleResetSettings}
-                >
-                  Reset
-                </Button>
-              </div>
-            </div>
-          </div>
+          <ConfirmationDialog
+            isOpen={showResetConfirmation}
+            onClose={() => setShowResetConfirmation(false)}
+            onConfirm={handleResetSettings}
+            title="Reset Pengaturan Notifikasi?"
+            message="Pengaturan akan dikembalikan ke nilai default. Tindakan ini tidak dapat dibatalkan."
+            confirmText="Reset"
+            cancelText="Batal"
+            variant="danger"
+          />
         )}
 
         {/* History Modal */}
         {showHistory && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-              <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 p-4 flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                  Riwayat Notifikasi
-                </h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowHistory(false)}
-                  iconOnly
-                  icon={<CloseIcon className="w-5 h-5" />}
-                  aria-label="Tutup"
-                />
-              </div>
+          <Modal
+            isOpen={showHistory}
+            onClose={() => setShowHistory(false)}
+            size="lg"
+            aria-labelledby="history-title"
+          >
+            <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 p-4 flex justify-between items-center">
+              <h3 id="history-title" className="text-lg font-semibold text-neutral-900 dark:text-white">
+                Riwayat Notifikasi
+              </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowHistory(false)}
+                iconOnly
+                icon={<CloseIcon className="w-5 h-5" />}
+                aria-label="Tutup"
+              />
+            </div>
 
               <div className="p-4">
                 {history.length === 0 ? (
@@ -653,11 +644,10 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                   </>
                 )}
               </div>
-            </div>
-          </div>
+          </Modal>
         )}
-      </div>
-    </div>
+      </Modal>
+    </>
   );
 };
 

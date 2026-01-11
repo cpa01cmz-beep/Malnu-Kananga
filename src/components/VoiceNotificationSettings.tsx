@@ -5,6 +5,7 @@ import { SpeakerXMarkIcon } from './icons/SpeakerXMarkIcon';
 import { Toggle } from './ui/Toggle';
 import Button from './ui/Button';
 import Tab from './ui/Tab';
+import Modal from './ui/Modal';
 import type { SpeechSynthesisVoice } from '../types';
 import { EmptyState } from './ui/LoadingState';
 
@@ -106,25 +107,28 @@ const VoiceNotificationSettings: React.FC<VoiceNotificationSettingsProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl max-w-3xl w-full max-h-[80vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <SpeakerWaveIcon className="w-6 h-6 text-green-600 dark:text-green-400" />
-              <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-                Pengaturan Notifikasi Suara
-              </h2>
-            </div>
-            <button
-              onClick={onClose}
-              className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
-              aria-label="Tutup"
-            >
-              ✕
-            </button>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="xl"
+      aria-labelledby="voice-settings-title"
+    >
+      <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <SpeakerWaveIcon className="w-6 h-6 text-green-600 dark:text-green-400" />
+            <h2 id="voice-settings-title" className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+              Pengaturan Notifikasi Suara
+            </h2>
           </div>
+          <button
+            onClick={onClose}
+            className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+            aria-label="Tutup"
+          >
+            ✕
+          </button>
+        </div>
 
           <Tab
             variant="pill"
@@ -530,18 +534,17 @@ const VoiceNotificationSettings: React.FC<VoiceNotificationSettingsProps> = ({
               )}
             </div>
           )}
-        </div>
 
-        {/* Footer */}
-        <div className="p-6 border-t border-neutral-200 dark:border-neutral-700">
-          <div className="flex justify-end">
-            <Button onClick={onClose} variant="primary">
-              Selesai
-            </Button>
+          {/* Footer */}
+          <div className="p-6 border-t border-neutral-200 dark:border-neutral-700">
+            <div className="flex justify-end">
+              <Button onClick={onClose} variant="primary">
+                Selesai
+              </Button>
+            </div>
           </div>
-        </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 
