@@ -235,7 +235,6 @@ const DataTable = <T extends Record<string, unknown>>({
                   onClick={() => column.sortable && handleSort(column)}
                   className={`
                     ${getAlignmentClass(column.align)}
-                    ${column.width ? `w-[${column.width}]` : ''}
                     ${column.fixed === 'left' ? 'sticky left-0 bg-white dark:bg-neutral-900' : ''}
                     ${column.sortable && sort ? 'cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700' : ''}
                   `}
