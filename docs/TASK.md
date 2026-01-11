@@ -87,7 +87,17 @@
   - [x] Refactored GradientButton component to use GRADIENT_CLASSES
 
 - [x] Styling System Integration (Phase 5 - COMPLETED 2026-01-08)
-  - [x] Fixed Tailwind v4 + ThemeManager integration conflicts
+   - [x] Fixed Tailwind v4 + ThemeManager integration conflicts
+- [x] Replace Blocking Confirm Dialogs (Phase 5 - COMPLETED 2026-01-11)
+   - Replaced window.confirm() in src/App.tsx for reset content confirmation
+   - Replaced window.confirm() in src/index.tsx for PWA update confirmation
+   - Added custom event system for SW update notifications from PWA layer to React layer
+   - Implemented two ConfirmationDialog instances (reset content, PWA update)
+   - Native confirm() dialogs are blocking, not accessible to screen readers, and cannot be styled
+   - ConfirmationDialog provides: proper ARIA attributes, focus trap, dark mode support, consistent styling
+   - Improved WCAG 2.1 AA compliance (no blocking alerts)
+   - Enhanced UX with non-blocking, keyboard-accessible, styled confirmations
+   - See src/App.tsx and src/index.tsx for implementation
   - [x] Implemented CSS custom properties system (--theme-*)
   - [x] Updated index.css to use var(--theme-*) with fallback values
   - [x] Added missing --color-purple-* color scale definitions
@@ -118,6 +128,16 @@
       - Success/info toasts use role="status" and aria-live="polite"
       - Improved user control over toast notifications
       - See src/components/Toast.tsx for implementation
+- [x] Replace blocking confirm() dialogs with accessible ConfirmationDialog (2026-01-11)
+      - Replaced window.confirm() in src/App.tsx for reset content confirmation
+      - Replaced window.confirm() in src/index.tsx for PWA update confirmation
+      - Added custom event system for SW update notifications from PWA layer to React layer
+      - Implemented two ConfirmationDialog instances (reset content, PWA update)
+      - Native confirm() dialogs are blocking, not accessible to screen readers, and cannot be styled
+      - ConfirmationDialog provides: proper ARIA attributes, focus trap, dark mode support, consistent styling
+      - Improved WCAG 2.1 AA compliance (no blocking alerts)
+      - Enhanced UX with non-blocking, keyboard-accessible, styled confirmations
+      - See src/App.tsx and src/index.tsx for implementation
      - [x] Replace blocking confirm() dialogs with accessible ConfirmationDialog (2026-01-11)
    - [x] Refactor GradingManagement file input buttons to use Button component (2026-01-11)
      - Replaced inline styled `<label>` elements with Button component using `orange-solid` and `purple-solid` variants

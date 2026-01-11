@@ -16,14 +16,14 @@ runStorageMigration();
 // Register PWA Service Worker
 const updateSW = registerSW({
   onNeedRefresh() {
-    if (confirm('Konten baru tersedia. Refresh sekarang?')) {
-      updateSW(true);
-    }
+    window.dispatchEvent(new CustomEvent('sw-update-available'));
   },
   onOfflineReady() {
     logger.info('Aplikasi siap untuk penggunaan offline.');
   },
 });
+
+(window as typeof window & { updatePWA?: () => void }).updatePWA = () => updateSW(true);
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

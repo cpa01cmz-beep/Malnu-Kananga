@@ -9,6 +9,7 @@ import ThemeSelector from './components/ThemeSelector';
 import SkipLink, { SkipTarget } from './components/ui/SkipLink';
 import SuspenseLoading from './components/ui/SuspenseLoading';
 import ErrorBoundary from './components/ui/ErrorBoundary';
+import ConfirmationDialog from './components/ui/ConfirmationDialog';
 import { logger } from './utils/logger';
 import { useTheme } from './hooks/useTheme';
 
@@ -60,6 +61,8 @@ const App: React.FC = () => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isPublicView, setIsPublicView] = useState(false);
   const [isThemeSelectorOpen, setIsThemeSelectorOpen] = useState(false);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+  const [isSWUpdateConfirmOpen, setIsSWUpdateConfirmOpen] = useState(false);
 
   // Auth State with Persistence via Hook
   const [authSession, setAuthSession] = useLocalStorage<AuthSession>(STORAGE_KEYS.AUTH_SESSION, {
@@ -127,6 +130,12 @@ const App: React.FC = () => {
     });
   }, [siteContent.featuredPrograms.length, siteContent.latestNews.length, setAuthSession, setSiteContent]);
 
+  useEffect(() => {
+    const handleSWUpdate = () => setIsSWUpdateConfirmOpen(true);
+    window.addEventListener('sw-update-available', handleSWUpdate);
+    return () => window.removeEventListener('sw-update-available', handleSWUpdate);
+  }, []);
+
   const toggleTheme = () => {
     setIsThemeSelectorOpen(true);
   };
@@ -189,14 +198,22 @@ const App: React.FC = () => {
   };
 
   const handleResetContent = async () => {
-    if (window.confirm('Apakah Anda yakin ingin mengembalikan konten website ke pengaturan awal? Semua perubahan akan dihapus.')) {
-      const { INITIAL_PROGRAMS, INITIAL_NEWS } = await import('./data/defaults');
-      setSiteContent({
-        featuredPrograms: INITIAL_PROGRAMS,
-        latestNews: INITIAL_NEWS
-      });
-      showToast('Konten dikembalikan ke pengaturan awal.', 'info');
-    }
+    setIsResetConfirmOpen(true);
+  };
+
+  const confirmResetContent = async () => {
+    const { INITIAL_PROGRAMS, INITIAL_NEWS } = await import('./data/defaults');
+    setSiteContent({
+      featuredPrograms: INITIAL_PROGRAMS,
+      latestNews: INITIAL_NEWS
+    });
+    setIsResetConfirmOpen(false);
+    showToast('Konten dikembalikan ke pengaturan awal.', 'info');
+  };
+
+  const handleSWUpdate = () => {
+    (window as typeof window & { updatePWA?: () => void }).updatePWA?.();
+    setIsSWUpdateConfirmOpen(false);
   };
 
   // Helper to render the correct dashboard based on role with permission checks
@@ -356,6 +373,28 @@ const App: React.FC = () => {
         isOpen={isThemeSelectorOpen}
         onClose={() => setIsThemeSelectorOpen(false)}
         />
+
+      <ConfirmationDialog
+        isOpen={isResetConfirmOpen}
+        title="Reset Konten Website"
+        message="Apakah Anda yakin ingin mengembalikan konten website ke pengaturan awal? Semua perubahan akan dihapus secara permanen."
+        confirmText="Ya, Reset"
+        cancelText="Batal"
+        type="danger"
+        onConfirm={confirmResetContent}
+        onCancel={() => setIsResetConfirmOpen(false)}
+      />
+
+      <ConfirmationDialog
+        isOpen={isSWUpdateConfirmOpen}
+        title="Update Tersedia"
+        message="Konten baru tersedia untuk aplikasi. Apakah Anda ingin memperbarui sekarang?"
+        confirmText="Ya, Update"
+        cancelText="Nanti Saja"
+        type="info"
+        onConfirm={handleSWUpdate}
+        onCancel={() => setIsSWUpdateConfirmOpen(false)}
+      />
       </div>
       </ErrorBoundary>
     </NotificationProvider>
