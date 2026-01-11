@@ -76,14 +76,26 @@
     - [x] Used green color variant to match original styling
     - [x] Improved maintainability through centralized component usage
      - PR #1075: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1075
-- [x] ImageWithFallback Accessibility Improvement (Phase 5 - COMPLETED 2026-01-11)
-   - Added role="img" to fallback div for semantic meaning
-   - Added aria-label to fallback div using fallbackText or alt text with default fallback
-   - Added aria-hidden="true" to PhotoIcon (decorative element)
-   - Added aria-hidden="true" to fallbackText span (avoid duplication with aria-label)
-   - Created comprehensive test coverage with 17 accessibility-focused test cases
-   - Improved WCAG 2.1 AA compliance (Image Pattern)
-   - PR #1080: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1080
+ - [x] ImageWithFallback Accessibility Improvement (Phase 5 - COMPLETED 2026-01-11)
+    - Added role="img" to fallback div for semantic meaning
+    - Added aria-label to fallback div using fallbackText or alt text with default fallback
+    - Added aria-hidden="true" to PhotoIcon (decorative element)
+    - Added aria-hidden="true" to fallbackText span (avoid duplication with aria-label)
+    - Created comprehensive test coverage with 17 accessibility-focused test cases
+    - Improved WCAG 2.1 AA compliance (Image Pattern)
+    - PR #1080: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1080
+  - [x] FolderNavigation Accessibility Improvement (COMPLETED 2026-01-12)
+    - Added aria-label to expand/collapse buttons with dynamic text ("Buka folder X" / "Tutup folder X")
+    - Added aria-expanded attribute to indicate folder expansion state
+    - Added aria-controls attribute linking expand/collapse button to subfolder container
+    - Added aria-label to edit buttons with folder name ("Edit folder X")
+    - Added aria-label to delete buttons with folder name ("Hapus folder X")
+    - Added aria-label to add folder button ("Buat folder baru")
+    - Added onKeyDown handlers for Enter and Space key keyboard navigation on all icon buttons
+    - Added focus:ring styles for better keyboard navigation visibility
+    - Added role="group" to subfolder containers for semantic structure
+    - Improved WCAG 2.1 AA compliance (SC 2.1.1 Keyboard, SC 4.1.2 Name, Role, Value)
+    - PR #1081: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1081
 
   - [x] Component Extraction (Phase 5 - COMPLETED 2026-01-07)
   - [x] Card component with 4 variants (default, hover, interactive, gradient)
