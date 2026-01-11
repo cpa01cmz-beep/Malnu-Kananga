@@ -4,7 +4,7 @@ import type { ChatMessage, FeaturedProgram, LatestNews } from '../types';
 import { Sender } from '../types';
 import Button from './ui/Button';
 import { getAIEditorResponse } from '../services/geminiService';
-import { validateAICommand } from '../utils/aiEditorValidator';
+import { validateAICommand, type AuditLogEntry } from '../utils/aiEditorValidator';
 import { CloseIcon } from './icons/CloseIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
@@ -57,6 +57,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   const [characterCount, setCharacterCount] = useState(0);
   const [inputError, setInputError] = useState('');
   const [validationError, setValidationError] = useState('');
+  const [rateLimitInfo, setRateLimitInfo] = useState<{ remaining: number; resetTime: number } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -117,6 +118,67 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       }
     }
   }, [isOpen]);
+
+  // Get current user ID for rate limiting and audit logging
+  const getUserId = useCallback(() => {
+    try {
+      const authSession = localStorage.getItem(STORAGE_KEYS.AUTH_SESSION);
+      if (authSession) {
+        const session = JSON.parse(authSession);
+        return session.user?.id || session.userId || 'anonymous';
+      }
+    } catch (e) {
+      logger.warn('Failed to get user ID for rate limiting:', e);
+    }
+    return 'anonymous';
+  }, []);
+
+  // Rate limit countdown timer
+  useEffect(() => {
+    if (rateLimitInfo) {
+      const interval = setInterval(() => {
+        const now = Date.now();
+        if (now >= rateLimitInfo.resetTime) {
+          setRateLimitInfo(null);
+        } else {
+          setRateLimitInfo(prev => prev ? { ...prev, remaining: Math.max(0, prev.resetTime - now) } : null);
+        }
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [rateLimitInfo?.resetTime]);
+
+  // Enhanced error recovery with rollback
+  const handleValidationError = useCallback((error: string) => {
+    setValidationError(error);
+    setInputError('');
+    
+    const errorMessage: ChatMessage = {
+      id: Date.now().toString(),
+      text: `🛡️ **Keamanan**: ${error}`,
+      sender: Sender.AI
+    };
+    setMessages(prev => [...prev, errorMessage]);
+  }, []);
+
+  // Audit log helper
+  const logUserAction = useCallback((action: string, details: string) => {
+    const userId = getUserId();
+    try {
+      const logs: AuditLogEntry[] = JSON.parse(localStorage.getItem('malnu_ai_editor_audit_log') || '[]');
+      logs.unshift({
+        timestamp: Date.now(),
+        action: 'command_validated' as any,
+        userId,
+        commandHash: action,
+        reason: details
+      });
+      const trimmedLogs = logs.slice(0, 100);
+      localStorage.setItem('malnu_ai_editor_audit_log', JSON.stringify(trimmedLogs));
+    } catch (e) {
+      logger.warn('Failed to log user action:', e);
+    }
+  }, [getUserId]);
 
   const saveToHistory = (changes: string, appliedContent: SiteContent, previousContent: SiteContent) => {
     const newEntry: ChangeHistoryEntry = {
@@ -183,16 +245,23 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   const handleSend = async () => {
     if (!input.trim() || isLoading || inputError) return;
 
-    // Validate command using centralized validator
-    const validation = validateAICommand(input);
+    const userId = getUserId();
+    
+    // Validate command using enhanced centralized validator
+    const validation = validateAICommand(input, userId);
     if (!validation.isValid) {
-      setValidationError(validation.error || 'Perintah tidak valid');
-      const errorMessage: ChatMessage = {
-        id: Date.now().toString(),
-        text: `🛡️ **Permintaan mengandung pola yang tidak diizinkan**: ${validation.error || 'Perintah tidak valid'}. Silakan periksa kembali input Anda.`,
-        sender: Sender.AI
-      };
-      setMessages(prev => [...prev, errorMessage]);
+      handleValidationError(validation.error || 'Perintah tidak valid');
+      
+      // Set rate limit info if provided
+      if (validation.error?.includes('menunggu')) {
+        const waitTime = parseInt(validation.error.match(/\d+/)?.[0] || '60');
+        setRateLimitInfo({
+          remaining: waitTime * 1000,
+          resetTime: Date.now() + (waitTime * 1000)
+        });
+      }
+      
+      logUserAction('command_blocked', validation.error || 'Unknown validation error');
       return;
     }
     
@@ -200,7 +269,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
 
     const userMessage: ChatMessage = { id: Date.now().toString(), text: input, sender: Sender.User };
     setMessages(prev => [...prev, userMessage]);
-    const requestText = input;
+    const requestText = validation.sanitizedPrompt || input;
     setInput('');
     setIsLoading(true);
     setProposedContent(null);
@@ -208,15 +277,22 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
     try {
       const newContent = await getAIEditorResponse(requestText, currentContent);
       
-      // The service now handles all validation, so we just need basic checks
+      // Enhanced content validation
       if (!newContent || typeof newContent !== 'object') {
         throw new Error('Respon AI mengembalikan format yang tidak valid');
       }
       
+      // Structure validation with rollback support
+      if (!newContent.featuredPrograms && !newContent.latestNews) {
+        throw new Error('Respon AI tidak mengandung struktur data yang diharapkan');
+      }
+      
       setProposedContent(newContent);
+      logUserAction('request_success', `Generated ${newContent.featuredPrograms?.length || 0} programs, ${newContent.latestNews?.length || 0} news items`);
+      
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        text: "✨ Saya sudah menyiapkan perubahannya. Silakan tinjau **pratinjau visual** di bawah ini dan klik 'Terapkan Perubahan' jika sudah sesuai.",
+        text: "✨ Saya sudah menyiapkan perubahannya dengan validasi keamanan. Silakan tinjau **pratinjau visual** di bawah ini dan klik 'Terapkan Perubahan' jika sudah sesuai.\n\n🛡️ **Keamanan**: Semua perubahan telah melalui proses validasi.",
         sender: Sender.AI
       };
       setMessages(prev => [...prev, aiMessage]);
@@ -228,16 +304,26 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
           errorMessage = '❌ **Koneksi gagal**: Tidak dapat terhubung ke server AI. Silakan periksa koneksi internet Anda dan coba lagi.';
         } else if (error.message.includes('timeout')) {
           errorMessage = '⏱️ **Timeout**: Permintaan terlalu lama. Silakan coba lagi dengan permintaan yang lebih sederhana.';
-        } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
+        } else if (error.message.includes('rate limit') || error.message.includes('quota') || error.message.includes('menunggu')) {
           errorMessage = '🚫 **Batas terlampaui**: Terlalu banyak permintaan. Silakan tunggu beberapa saat sebelum mencoba lagi.';
+          // Extract wait time and set rate limit info
+          const waitTime = parseInt(error.message.match(/\d+/)?.[0] || '60');
+          setRateLimitInfo({
+            remaining: waitTime * 1000,
+            resetTime: Date.now() + (waitTime * 1000)
+          });
         } else if (error.message.includes('invalid') || error.message.includes('parse') || error.message.includes('format')) {
           errorMessage = '🔧 **Format tidak valid**: AI mengembalikan data yang tidak benar. Silakan coba instruksi yang lebih spesifik atau sederhana.';
         } else if (error.message.includes('struktur') || error.message.includes('valid') || error.message.includes('keamanan')) {
-          errorMessage = '🛡️ Validasi gagal: Respon AI tidak memenuhi format keamanan. Silakan coba lagi dengan instruksi yang berbeda.';
+          errorMessage = '🛡️ **Validasi keamanan gagal**: Respon AI tidak memenuhi standar keamanan. Silakan coba lagi dengan instruksi yang berbeda.';
+        } else if (error.message.includes('melebihi batas')) {
+          errorMessage = '📊 **Batas konten terlampaui**: Terlalu banyak perubahan dalam satu permintaan. Silakan lakukan perubahan secara bertahap.';
         } else {
           errorMessage = `❌ **Error**: ${error.message}`;
         }
       }
+      
+      logUserAction('request_failed', errorMessage);
       
       const errorChatMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -431,15 +517,15 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                  minRows={1}
                  maxRows={5}
               />
-              <IconButton
-                onClick={handleSend}
-                disabled={isLoading || !input.trim() || !!inputError}
-                ariaLabel="Kirim permintaan"
-                size="md"
-                variant="primary"
-                className="p-2.5 mb-0.5"
-                icon={<SendIcon />}
-              />
+<IconButton
+                 onClick={handleSend}
+                 disabled={isLoading || !input.trim() || !!inputError || !!validationError || !!rateLimitInfo}
+                 ariaLabel={rateLimitInfo ? "Dibatasi rate limit" : "Kirim permintaan"}
+                 size="md"
+                 variant={rateLimitInfo ? "secondary" : "primary"}
+                 className="p-2.5 mb-0.5"
+                 icon={<SendIcon />}
+               />
             </div>
             
             {/* Character count and validation */}
@@ -458,12 +544,20 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                     🛡️ {validationError}
                   </span>
                 )}
+                {rateLimitInfo && (
+                  <span className="text-xs text-yellow-500 animate-pulse flex items-center gap-1">
+                    ⏱️ Rate limit: {Math.ceil(rateLimitInfo.remaining / 1000)}s
+                  </span>
+                )}
               </div>
               
               {/* Status indicators */}
               <div className="flex items-center gap-2">
-                {input.length > 0 && !inputError && (
+                {input.length > 0 && !inputError && !validationError && !rateLimitInfo && (
                   <span className="text-xs text-green-500">✓ Siap dikirim</span>
+                )}
+                {rateLimitInfo && (
+                  <span className="text-xs text-yellow-500">🚫 Rate limited</span>
                 )}
                 {isLoading && (
                   <span className="text-xs text-blue-500">🔄 Memproses...</span>
@@ -537,6 +631,21 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                 <p className="text-xs text-yellow-800 dark:text-yellow-200">
                   Perubahan akan disimpan di riwayat dan dapat dibatalkan dengan tombol Undo.
                 </p>
+              </div>
+            </div>
+
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+              <div className="flex items-start gap-2">
+                <span className="text-green-600 text-sm">🛡️</span>
+                <div className="text-xs text-green-800 dark:text-green-200">
+                  <p className="font-semibold mb-1">Keamanan Terverifikasi:</p>
+                  <ul className="space-y-0.5 ml-4">
+                    <li>• Input divalidasi terhadap pola berbahaya</li>
+                    <li>• Struktur data telah diperiksa</li>
+                    <li>• Rate limit diterapkan untuk mencegah abuse</li>
+                    <li>• Semua perubahan diaudit untuk keamanan</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

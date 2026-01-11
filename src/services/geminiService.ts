@@ -207,10 +207,8 @@ export async function getAIEditorResponse(
     currentContent: { featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }
 ): Promise<{ featuredPrograms: FeaturedProgram[]; latestNews: LatestNews[] }> {
     
-const commandValidation = validateAICommand(prompt);
-    if (!commandValidation.isValid) {
-        throw new Error(commandValidation.error);
-    }
+// Note: Command validation is now handled in the component for better error handling
+    // This service focuses on response validation
 
     const sanitizedPrompt = commandValidation.sanitizedPrompt || prompt;
 
@@ -301,7 +299,22 @@ Please provide the updated JSON content following the safety and content rules a
 
         const jsonText = (response.text || '').trim();
 
-        const responseValidation = validateAIResponse(jsonText, currentContent);
+        // Enhanced response validation with user context
+        const userId = typeof window !== 'undefined' ? 
+            (() => {
+                try {
+                    const authSession = localStorage.getItem('malnu_auth_session');
+                    if (authSession) {
+                        const session = JSON.parse(authSession);
+                        return session.user?.id || session.userId || 'anonymous';
+                    }
+                } catch (e) {
+                    console.warn('Failed to get user ID for validation:', e);
+                }
+                return 'anonymous';
+            })() : 'anonymous';
+
+        const responseValidation = validateAIResponse(jsonText, currentContent, userId);
         if (!responseValidation.isValid) {
             throw new Error(responseValidation.error);
         }
