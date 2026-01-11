@@ -53,10 +53,20 @@
    - [x] Integrated ErrorBoundary into App.tsx to wrap entire application
    - [x] Comprehensive test coverage with 12 test cases
    - [x] Follows project design system (Card, Button components, Tailwind CSS)
-   - [x] Prevents entire app from crashing with proper error isolation
-   - See src/components/ui/ErrorBoundary.tsx for implementation
-
-- [x] Component Extraction (Phase 5 - COMPLETED 2026-01-07)
+    - [x] Prevents entire app from crashing with proper error isolation
+    - See src/components/ui/ErrorBoundary.tsx for implementation
+ - [x] VoiceSettings Toggle Component Refactoring (Phase 5 - COMPLETED 2026-01-11)
+    - [x] Refactored "Mode berkelanjutan" toggle (continuous mode) to use centralized Toggle component
+    - [x] Refactored "Baca Pesan AI" toggle (auto-read AI) to use centralized Toggle component
+    - [x] Eliminated 28 lines of duplicate toggle implementation code
+    - [x] Improved design system consistency by using reusable Toggle component
+    - [x] Enhanced accessibility with Toggle's built-in ARIA attributes and keyboard navigation
+    - [x] Changed onClick handler to onChange for Toggle compatibility with checkbox input
+    - [x] Used green color variant to match original styling
+    - [x] Improved maintainability through centralized component usage
+    - PR #1075: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1075
+ 
+ - [x] Component Extraction (Phase 5 - COMPLETED 2026-01-07)
   - [x] Card component with 4 variants (default, hover, interactive, gradient)
   - [x] Textarea component with auto-resize functionality
   - [x] Modal component with focus trap and accessibility
