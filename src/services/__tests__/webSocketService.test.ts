@@ -53,9 +53,7 @@ const mockWebSocketInstance = new MockWebSocket('ws://test');
 // Mock MessageEvent - use proper class constructor
 class MockMessageEvent implements Event {
   readonly type: string;
-<<<<<<< HEAD
   readonly data: unknown;
->>>>>>> origin/main
   readonly bubbles: boolean = false;
   readonly cancelBubble: boolean = false;
   readonly cancelable: boolean = false;
@@ -69,10 +67,12 @@ class MockMessageEvent implements Event {
   readonly target: EventTarget | null = null;
   readonly timeStamp: number = 0;
   readonly scoped: boolean = false;
+  readonly AT_TARGET = 2;
+  readonly BUBBLING_PHASE = 3;
+  readonly CAPTURING_PHASE = 1;
+  readonly NONE = 0;
 
-<<<<<<< HEAD
   constructor(type: string, eventInit?: { data?: unknown }) {
->>>>>>> origin/main
     this.type = type;
     this.data = eventInit?.data;
   }
@@ -81,15 +81,10 @@ class MockMessageEvent implements Event {
   initEvent(_type: string, _bubbles?: boolean, _cancelable?: boolean): void {}
   preventDefault(): void {}
   stopImmediatePropagation(): void {}
-<<<<<<< HEAD
-stopPropagation(): void {}
-  readonly AT_TARGET = 2;
-  readonly BUBBLING_PHASE = 3;
-  readonly CAPTURING_PHASE = 1;
-  readonly NONE = 0;
+  stopPropagation(): void {}
 }
 
-// Mock CloseEvent - use proper class constructor  
+// Mock CloseEvent - use proper class constructor
 class MockCloseEvent implements Event {
   readonly type: string;
   readonly code: number;
@@ -120,8 +115,7 @@ class MockCloseEvent implements Event {
   initEvent(_type: string, _bubbles?: boolean, _cancelable?: boolean): void {}
   preventDefault(): void {}
   stopImmediatePropagation(): void {}
-<<<<<<< HEAD
-stopPropagation(): void {}
+  stopPropagation(): void {}
   readonly AT_TARGET = 2;
   readonly BUBBLING_PHASE = 3;
   readonly CAPTURING_PHASE = 1;
