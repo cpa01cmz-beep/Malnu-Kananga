@@ -52,7 +52,7 @@ class MockWebSocket {
 const mockWebSocketInstance = new MockWebSocket('ws://test');
 
 // Create spy for WebSocket constructor
-const webSocketSpy = vi.spyOn(global, 'WebSocket').mockImplementation(MockWebSocket);
+const webSocketSpy = vi.spyOn(global, 'WebSocket').mockImplementation((url: string | URL) => new MockWebSocket(url.toString()));
 
 // Add constants to the mock
 Object.defineProperty(MockWebSocket, 'CONNECTING', { value: WS_CONNECTING });
