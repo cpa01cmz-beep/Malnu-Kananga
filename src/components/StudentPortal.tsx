@@ -257,26 +257,28 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {Array.from({ length: 4 }).map((_, i) => (
                 <CardSkeleton key={i} />
-              ))}
-            </div>
-          </div>
-        ) : error ? (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-            <ErrorMessage
-              title="Error Loading Portal"
-              message={error}
-              variant="card"
-            />
-            <Button
-              onClick={() => window.location.reload()}
-              variant="red-solid"
-              size="md"
-              className="mt-4"
-            >
-              Coba Lagi
-            </Button>
-          </div>
-        ) : (
+               ))}
+             </div>
+           </div>
+         ) : error ? (
+           <>
+             <ErrorMessage
+               title="Error Loading Portal"
+               message={error}
+               variant="card"
+             />
+             <div className="text-center">
+               <Button
+                 onClick={() => window.location.reload()}
+                 variant="red-solid"
+                 size="md"
+                 className="mt-4"
+               >
+                 Coba Lagi
+               </Button>
+             </div>
+           </>
+         ) : (
           <>
          {currentView === 'home' && (
             <>

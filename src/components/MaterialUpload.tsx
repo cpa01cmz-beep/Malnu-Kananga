@@ -480,12 +480,12 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Upload Materi Pembelajaran</h2>
           </div>
         </div>
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <ErrorMessage
-            title="Error Loading Materials"
-            message={error}
-            variant="card"
-          />
+        <ErrorMessage
+          title="Error Loading Materials"
+          message={error}
+          variant="card"
+        />
+        <div className="text-center">
           <Button
             onClick={fetchMaterials}
             variant="red-solid"

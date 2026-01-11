@@ -180,12 +180,12 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
           onBackButtonClick={onBack}
           backButtonLabel="Kembali ke Portal"
         />
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <ErrorMessage
-            title="Error Loading Attendance"
-            message={errorState.feedback?.message || 'Unknown error occurred'}
-            variant="card"
-          />
+        <ErrorMessage
+          title="Error Loading Attendance"
+          message={errorState.feedback?.message || 'Unknown error occurred'}
+          variant="card"
+        />
+        <div className="text-center">
           <Button
             variant="red-solid"
             size="md"

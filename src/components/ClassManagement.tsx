@@ -13,7 +13,6 @@ import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
 import { useNetworkStatus } from '../utils/networkStatus';
 import PageHeader from './ui/PageHeader';
-import { TableSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import AccessDenied from './AccessDenied';
 import Button from './ui/Button';
@@ -263,7 +262,19 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
           onBackButtonClick={onBack}
           backButtonLabel="Kembali ke Dashboard"
         />
-        <TableSkeleton rows={10} cols={5} />
+        <ErrorMessage
+          title="Error Loading Class Data"
+          message={error || "Terjadi kesalahan saat memuat data kelas"}
+          variant="card"
+        />
+        <div className="text-center">
+          <Button
+            onClick={fetchStudents}
+            variant="red-solid"
+          >
+            Coba Lagi
+          </Button>
+        </div>
       </div>
     );
   }
@@ -277,12 +288,12 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
           onBackButtonClick={onBack}
           backButtonLabel="Kembali ke Dashboard"
         />
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <ErrorMessage
-            title="Error Loading Class Data"
-            message={error}
-            variant="card"
-          />
+        <ErrorMessage
+          title="Error Loading Class Data"
+          message={error}
+          variant="card"
+        />
+        <div className="text-center">
           <Button
             onClick={fetchStudents}
             variant="red-solid"

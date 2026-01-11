@@ -388,12 +388,12 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Analisis Progres Akademik</h2>
           </div>
         </div>
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <ErrorMessage 
-            title="Error Loading Analytics Data" 
-            message={error} 
-            variant="card" 
-          />
+        <ErrorMessage
+          title="Error Loading Analytics Data"
+          message={error}
+          variant="card"
+        />
+        <div className="text-center">
           <Button
             onClick={fetchData}
             variant="red-solid"

@@ -146,12 +146,12 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
           onBackButtonClick={onBack}
           backButtonLabel="Kembali ke Portal"
         />
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 text-center">
-          <ErrorMessage
-            title="Error Loading Schedule"
-            message={error}
-            variant="card"
-          />
+        <ErrorMessage
+          title="Error Loading Schedule"
+          message={error}
+          variant="card"
+        />
+        <div className="text-center">
           <Button
             onClick={fetchSchedules}
             variant="red-solid"
