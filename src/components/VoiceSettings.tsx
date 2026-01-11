@@ -16,7 +16,7 @@ import {
 import Modal from './ui/Modal';
 import Button from './ui/Button';
 import SmallActionButton from './ui/SmallActionButton';
-import Toggle from './ui/Toggle';
+import { Toggle } from './ui/Toggle';
 
 interface VoiceSettingsProps {
   isOpen: boolean;
@@ -282,7 +282,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                   id="continuous-mode"
                   label="Mode berkelanjutan"
                   checked={continuous}
-                  onChange={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setContinuous(e.target.checked);
                     recognition.setContinuous(e.target.checked);
                   }}
@@ -388,7 +388,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
               label="Baca Pesan AI"
               description="Secara otomatis membaca respon AI"
               checked={autoReadAI}
-              onChange={(e) => setAutoReadAI(e.target.checked)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAutoReadAI(e.target.checked)}
               color="green"
               toggleSize="md"
             />
