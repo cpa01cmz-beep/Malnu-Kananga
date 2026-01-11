@@ -755,6 +755,10 @@ export interface VoiceCommand {
   action: string;
   transcript: string;
   confidence: number;
+  data?: {
+    query?: string;
+    [key: string]: unknown;
+  };
 }
 
 export interface VoiceMessage {

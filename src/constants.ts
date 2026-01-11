@@ -178,6 +178,7 @@ export const VOICE_COMMANDS = {
     SHOW_PPDB: ['tampilkan ppdb', 'lihat pendaftaran', 'show ppdb', 'buka ppdb'],
     VIEW_GRADES_OVERVIEW: ['lihat nilai', 'tampilkan nilai', 'view grades', 'grades overview'],
     OPEN_LIBRARY: ['buka perpustakaan', 'perpustakaan', 'open library'],
+    SEARCH_LIBRARY: ['cari materi', 'cari di perpustakaan', 'search materials', 'search library', 'cari materi {query}', 'search materials {query}', 'cari di perpustakaan {query}', 'search library {query}'],
     GO_TO_CALENDAR: ['kalender', 'buka kalender', 'calendar', 'go to calendar'],
     SHOW_STATISTICS: [' statistik', 'tampilkan statistik', 'show statistics', 'stats'],
     
