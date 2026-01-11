@@ -26,12 +26,12 @@ const variantClasses: Record<ButtonVariant, string> = {
   info: "bg-blue-700 text-white dark:bg-blue-600 dark:text-white hover:bg-blue-800 dark:hover:bg-blue-700 focus:ring-blue-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
   warning: "bg-orange-600 text-white dark:bg-orange-500 dark:text-white hover:bg-orange-700 dark:hover:bg-orange-600 focus:ring-orange-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
   indigo: "bg-indigo-700 text-white dark:bg-indigo-600 dark:text-white hover:bg-indigo-800 dark:hover:bg-indigo-700 focus:ring-indigo-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'green-solid': "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'blue-solid': "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'purple-solid': "bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'red-solid': "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'orange-solid': "bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'teal-solid': "bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500/50 transition-colors shadow-sm hover:shadow-md hover:scale-[1.02]",
+  'green-solid': "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
+  'blue-solid': "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
+  'purple-solid': "bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
+  'red-solid': "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
+  'orange-solid': "bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
+  'teal-solid': "bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
   outline: "bg-transparent text-neutral-600 dark:text-neutral-400 border-2 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02]",
 };
 
