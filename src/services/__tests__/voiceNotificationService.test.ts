@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import type { NotificationType } from '../../../src/types';
 import type { PushNotification, VoiceNotificationSettings } from '../../../src/types';
 import { VOICE_NOTIFICATION_CONFIG } from '../../../src/constants';
 
@@ -63,7 +64,7 @@ describe('PushNotification Voice Integration', () => {
     highPriorityTypes.forEach(type => {
       const notification: PushNotification = {
         id: `test-${type}`,
-        type: type as any,
+        type: type as NotificationType,
         title: `Test ${type}`,
         body: `Test body for ${type}`,
         timestamp: new Date().toISOString(),
