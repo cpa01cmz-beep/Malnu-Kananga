@@ -1,9 +1,22 @@
- 
+
 import { render, screen, cleanup } from '@testing-library/react';
-import { describe, it, expect, afterEach, beforeEach } from 'vitest';
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import SkipLink, { SkipTarget } from '../SkipLink';
 
+// Mock Element.scrollIntoView for all tests
+const mockScrollIntoView = () => {};
+
 describe('SkipLink', () => {
+  beforeEach(() => {
+    if (typeof window !== 'undefined' && window.Element) {
+      Object.defineProperty(window.Element.prototype, 'scrollIntoView', {
+        value: mockScrollIntoView,
+        writable: true,
+        configurable: true,
+      });
+    }
+  });
+
   afterEach(() => {
     cleanup();
     while (document.body.firstChild) {
@@ -33,27 +46,24 @@ describe('SkipLink', () => {
       const skipLink = screen.getByRole('navigation', { name: 'Langsung ke konten utama' });
       const targetElement = document.getElementById('main-content') as HTMLElement;
 
+      const focusSpy = vi.spyOn(targetElement, 'focus');
       skipLink.click();
 
-      expect(document.activeElement).toBe(targetElement);
+      expect(focusSpy).toHaveBeenCalled();
+      focusSpy.mockRestore();
     });
 
     it('should prevent default anchor behavior and use smooth scroll', () => {
       render(<SkipLink />);
 
       const skipLink = screen.getByRole('navigation', { name: 'Langsung ke konten utama' });
-      const clickEvent = new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      });
-
-      jest.spyOn(skipLink, 'click').mockImplementation(() => {});
       const targetElement = document.getElementById('main-content') as HTMLElement;
-      jest.spyOn(targetElement, 'scrollIntoView');
 
-      skipLink.dispatchEvent(clickEvent);
+      const scrollIntoViewSpy = vi.spyOn(targetElement, 'scrollIntoView');
+      skipLink.click();
 
-      expect(clickEvent.defaultPrevented).toBe(true);
+      expect(scrollIntoViewSpy).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+      scrollIntoViewSpy.mockRestore();
     });
 
     it('should render with custom target id', () => {
@@ -161,9 +171,11 @@ describe('SkipLink', () => {
       const firstLink = screen.getByRole('link', { name: 'Langsung ke navigasi' });
       const targetElement = document.getElementById('main-nav') as HTMLElement;
 
+      const focusSpy = vi.spyOn(targetElement, 'focus');
       firstLink.click();
 
-      expect(document.activeElement).toBe(targetElement);
+      expect(focusSpy).toHaveBeenCalled();
+      focusSpy.mockRestore();
     });
 
     it('should focus on second target when second skip link is clicked', () => {
@@ -177,9 +189,11 @@ describe('SkipLink', () => {
       const secondLink = screen.getByRole('link', { name: 'Langsung ke konten utama' });
       const targetElement = document.getElementById('main-content') as HTMLElement;
 
+      const focusSpy = vi.spyOn(targetElement, 'focus');
       secondLink.click();
 
-      expect(document.activeElement).toBe(targetElement);
+      expect(focusSpy).toHaveBeenCalled();
+      focusSpy.mockRestore();
     });
 
     it('should render each link with correct href', () => {

@@ -205,9 +205,12 @@ export function validateParentPayment(payment: ParentPayment): ValidationResult 
 export function validateMultiChildDataIsolation(children: ParentChild[], childId: string): ValidationResult {
   const errors: string[] = [];
 
-  const targetChild = children.find(child => child.studentId === childId);
-  if (!targetChild) {
-    errors.push(`Child with ID ${childId} not found in parent's children list`);
+  // Only validate target child if a childId is provided
+  if (childId) {
+    const targetChild = children.find(child => child.studentId === childId);
+    if (!targetChild) {
+      errors.push(`Child with ID ${childId} not found in parent's children list`);
+    }
   }
 
   const duplicateIds = children
@@ -218,12 +221,21 @@ export function validateMultiChildDataIsolation(children: ParentChild[], childId
     errors.push(`Duplicate child IDs detected: ${duplicateIds.join(', ')}`);
   }
 
-  const duplicateNISNs = children
-    .map(child => child.nisn)
-    .filter((id: string, index: number, self: string[]) => self.indexOf(id) !== index);
+  // Use Set for O(n) duplicate detection instead of O(n²)
+  const seenNisns = new Set<string>();
+  const duplicateNISNs = new Set<string>();
+  for (const child of children) {
+    if (child.nisn) {
+      if (seenNisns.has(child.nisn)) {
+        duplicateNISNs.add(child.nisn);
+      } else {
+        seenNisns.add(child.nisn);
+      }
+    }
+  }
 
-  if (duplicateNISNs.length > 0) {
-    errors.push(`Duplicate NISN detected: ${duplicateNISNs.join(', ')}`);
+  if (duplicateNISNs.size > 0) {
+    errors.push(`Duplicate NISN detected: ${Array.from(duplicateNISNs).join(', ')}`);
   }
 
   children.forEach((child, index) => {
@@ -326,14 +338,10 @@ export function validateParentChildDataAccess(childId: string, children: ParentC
 
   switch (dataType) {
     case 'grades':
-      if (!targetChild.studentId) {
-        errors.push('Cannot access grades: Student ID is required');
-      }
-      break;
     case 'attendance':
-      if (!targetChild.studentId) {
-        errors.push('Cannot access attendance: Student ID is required');
-      }
+    case 'payments':
+    case 'meetings':
+      // No specific validation needed here as child existence is already checked.
       break;
     case 'schedule':
       if (!targetChild.className) {
@@ -343,16 +351,6 @@ export function validateParentChildDataAccess(childId: string, children: ParentC
     case 'messages':
       if (!targetChild.studentName) {
         warnings.push('Message context may be incomplete: No student name available');
-      }
-      break;
-    case 'payments':
-      if (!targetChild.studentId) {
-        errors.push('Cannot access payments: Student ID is required');
-      }
-      break;
-    case 'meetings':
-      if (!targetChild.studentId) {
-        errors.push('Cannot access meetings: Student ID is required');
       }
       break;
   }

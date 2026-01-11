@@ -15,7 +15,7 @@ import type { ParentChild, Grade } from '../types';
 import { parentsAPI, authAPI, gradesAPI, attendanceAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
-import { validateMultiChildDataIsolation, validateParentChildDataAccess, validateChildDataIsolation, validateGradeVisibilityRestriction, validateOfflineDataIntegrity } from '../utils/parentValidation';
+import { validateParentChildDataAccess, validateChildDataIsolation, validateGradeVisibilityRestriction, validateOfflineDataIntegrity } from '../utils/parentValidation';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
@@ -92,18 +92,11 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         }
       }
 
-      // Online: fetch fresh data
-      try {
-        const response = await parentsAPI.getChildren();
-        if (response.success && response.data) {
-          // Enhanced validation for parent-child relationship
-          const validation = validateMultiChildDataIsolation(response.data, '');
-          if (!validation.isValid) {
-            logger.error('Parent child data validation failed:', validation.errors);
-            onShowToast('Validasi data anak gagal: ' + validation.errors.join(', '), 'error');
-          }
-
-          setChildren(response.data);
+        // Online: fetch fresh data
+        try {
+          const response = await parentsAPI.getChildren();
+          if (response.success && response.data) {
+            setChildren(response.data);
           if (response.data.length > 0) {
             setSelectedChild(response.data[0]);
           }

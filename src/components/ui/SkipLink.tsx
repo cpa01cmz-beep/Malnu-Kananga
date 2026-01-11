@@ -26,7 +26,7 @@ const SkipLink: React.FC<SkipLinkProps> = ({
 }) => {
   const skipTargets = targets || [{ id: targetId, label }];
 
-  const handleSkip = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+  const handleSkip = (e: React.MouseEvent, targetId: string) => {
     e.preventDefault();
     const targetElement = document.getElementById(targetId);
     if (targetElement) {

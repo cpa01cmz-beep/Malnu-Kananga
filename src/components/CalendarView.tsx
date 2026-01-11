@@ -38,7 +38,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     const dateStr = date.toISOString().split('T')[0];
 
     const daySchedules = schedules.filter(schedule => schedule.dayOfWeek === dayOfWeek);
-    const dayMeetings = meetings.filter(meeting => meeting.dateStr === dateStr);
+    const dayMeetings = meetings.filter(meeting => meeting.date === dateStr);
 
     return [...daySchedules, ...dayMeetings];
   };
