@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { analyzeStudentPerformance } from '../services/geminiService';
 import { gradesAPI, attendanceAPI } from '../services/apiService';
 import { Grade, Attendance } from '../types';
@@ -6,6 +6,8 @@ import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError, ErrorType } from '../utils/errorHandler';
 import { STORAGE_KEYS } from '../constants';
+import { useRealtimeEvent } from './useWebSocket';
+import type { RealTimeEvent } from '../services/webSocketService';
 
 interface GradePerformance {
   subject: string;
@@ -85,6 +87,9 @@ export const useStudentInsights = ({
 
   const currentUser = authAPI.getCurrentUser();
   const studentId = currentUser?.id;
+  
+  // Ref for debouncing rapid updates
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const processGradeData = useCallback((grades: Grade[]): GradePerformance[] => {
     const subjectMap = new Map<string, GradePerformance>();
@@ -373,6 +378,35 @@ export const useStudentInsights = ({
     }
   }, [studentId, isEnabled, processGradeData, processAttendanceData, generateTrends]);
 
+  // Debounced refresh function to prevent excessive API calls
+  const debouncedRefresh = useCallback(() => {
+    if (refreshTimeoutRef.current) {
+      clearTimeout(refreshTimeoutRef.current);
+    }
+    
+    refreshTimeoutRef.current = setTimeout(() => {
+      logger.info('StudentInsights: Refreshing insights due to grade update');
+      fetchInsights();
+    }, 2000); // 2 second debounce
+  }, [fetchInsights]);
+  
+  // Subscribe to real-time grade updates for current student
+  useRealtimeEvent(
+    ['grade_created', 'grade_updated', 'grade_deleted'],
+    useCallback((event: RealTimeEvent & { data: { studentId: string; id: string } }) => {
+      if (!studentId || !isEnabled) return;
+      
+      logger.info('StudentInsights: Grade update detected for current student', {
+        eventType: event.type,
+        studentId: event.data?.studentId,
+        gradeId: event.data?.id
+      });
+      debouncedRefresh();
+    }, [studentId, isEnabled, debouncedRefresh]),
+    useCallback((event: RealTimeEvent) => 
+      (event.data as { studentId?: string })?.studentId === studentId, [studentId])
+  );
+
   // Load cached insights on mount
   useEffect(() => {
     if (!studentId) return;
@@ -435,6 +469,15 @@ export const useStudentInsights = ({
       }
     }
   }, [studentId]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return {
     insights,
