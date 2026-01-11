@@ -32,7 +32,6 @@ import { User, UserRole, UserExtraRole } from '../types';
 import ErrorMessage from './ui/ErrorMessage';
 import { OfflineIndicator } from './OfflineIndicator';
 import SearchInput from './ui/SearchInput';
-import { XMarkIcon, ArrowPathIcon } from './icons/MaterialIcons';
 
 
 interface StudentGrade {

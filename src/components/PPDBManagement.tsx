@@ -12,7 +12,8 @@ import AccessDenied from './AccessDenied';
 import Badge from './ui/Badge';
 import SearchInput from './ui/SearchInput';
 import { EmptyState } from './ui/LoadingState';
-import { DocumentTextIcon, CheckIcon, XMarkIcon } from './icons/MaterialIcons';
+import DocumentTextIcon from './icons/DocumentTextIcon';
+import { CheckIcon, XMarkIcon } from './icons/MaterialIcons';
 
 interface PPDBManagementProps {
   onBack: () => void;
