@@ -309,7 +309,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                              className={`${getGradientClass('INDIGO_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
                         >
                             <div className="bg-white/20% w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30% group-hover:scale-110 transition-all duration-300 ease-out">
-                                <SparklesIcon className="w-6 h-6 text-white" />
+                                <SparklesIcon className="w-6 h-6 text-white" aria-hidden="true" />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Site Editor</h3>
                             <p className="text-indigo-100 text-sm leading-relaxed">Edit konten Program Unggulan dan Berita menggunakan bantuan AI.</p>

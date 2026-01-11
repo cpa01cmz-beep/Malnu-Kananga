@@ -255,7 +255,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
         className="max-h-[70vh]"
       >
         <div className="flex items-center gap-2 mb-4">
-          <SpeakerWaveIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
+          <SpeakerWaveIcon className="w-5 h-5 text-green-600 dark:text-green-400" aria-hidden="true" />
         </div>
         <div className="space-y-6 overflow-y-auto pr-2">
           {recognition.isSupported && (
@@ -382,7 +382,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                 onClick={testVoice}
                 variant="green-solid"
                 fullWidth
-                icon={<SpeakerWaveIcon className="w-4 h-4" />}
+                icon={<SpeakerWaveIcon className="w-4 h-4" aria-hidden="true" />}
                 aria-label="Tes suara"
               >
                 Tes Suara

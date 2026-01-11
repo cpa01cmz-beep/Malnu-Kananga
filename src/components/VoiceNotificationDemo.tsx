@@ -80,8 +80,8 @@ const VoiceNotificationDemo: React.FC = () => {
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex justify-center items-center gap-3 mb-4">
-          <BellIcon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-          <SpeakerWaveIcon className="w-8 h-8 text-green-600 dark:text-green-400" />
+          <BellIcon className="w-8 h-8 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+          <SpeakerWaveIcon className="w-8 h-8 text-green-600 dark:text-green-400" aria-hidden="true" />
         </div>
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
           Voice Notifications Demo
@@ -159,7 +159,7 @@ const VoiceNotificationDemo: React.FC = () => {
                 className="w-full"
                 disabled={!isVoiceEnabled}
               >
-                <BellIcon className="w-4 h-4 mr-2" />
+                <BellIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                 Kirim Nilai
               </Button>
             </div>
@@ -181,7 +181,7 @@ const VoiceNotificationDemo: React.FC = () => {
                 className="w-full"
                 disabled={!isVoiceEnabled}
               >
-                <BellIcon className="w-4 h-4 mr-2" />
+                <BellIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                 Kirim Absen
               </Button>
             </div>
@@ -203,7 +203,7 @@ const VoiceNotificationDemo: React.FC = () => {
                 className="w-full"
                 disabled={!isVoiceEnabled}
               >
-                <BellIcon className="w-4 h-4 mr-2" />
+                <BellIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                 Kirim Rapat
               </Button>
             </div>
@@ -224,7 +224,7 @@ const VoiceNotificationDemo: React.FC = () => {
               variant="secondary"
               disabled={!isVoiceEnabled}
             >
-              <SpeakerWaveIcon className="w-5 h-5 mr-2" />
+              <SpeakerWaveIcon className="w-5 h-5 mr-2" aria-hidden="true" />
               Tes Notifikasi Suara
             </Button>
           </div>

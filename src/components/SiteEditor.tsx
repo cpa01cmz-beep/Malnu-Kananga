@@ -296,7 +296,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
     >
       <header className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700 flex-shrink-0">
         <div className="flex items-center gap-3">
-          <SparklesIcon className="h-6 w-6 text-green-500" />
+          <SparklesIcon className="h-6 w-6 text-green-500" aria-hidden="true" />
           <h2 className="text-xl font-bold text-neutral-900 dark:text-white">AI Website Editor <span className="text-xs font-normal text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-full">🛡️ Dilindungi</span></h2>
           {changeHistory.length > 0 && (
             <Button
@@ -336,16 +336,16 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
           <div className="space-y-4">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex items-start gap-3 ${msg.sender === Sender.User ? 'justify-end' : 'justify-start'}`}>
-                {msg.sender === Sender.AI && <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white flex-shrink-0"><SparklesIcon className="h-5 w-5"/></div>}
+                {msg.sender === Sender.AI && <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white flex-shrink-0"><SparklesIcon className="h-5 w-5" aria-hidden="true"/></div>}
                 <div className={`max-w-lg p-3 rounded-2xl ${msg.sender === Sender.User ? 'bg-green-600 text-white rounded-br-lg' : 'bg-neutral-100 dark:bg-neutral-700 rounded-bl-lg'}`}>
                   <MarkdownRenderer content={msg.text} />
                 </div>
               </div>
             ))}
              {isLoading && (
-                 <div className="flex items-start gap-3 justify-start">
-                    <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white flex-shrink-0"><SparklesIcon className="h-5 w-5"/></div>
-                    <div className="max-w-lg p-3 rounded-2xl bg-neutral-100 dark:bg-neutral-700 rounded-bl-lg">
+                  <div className="flex items-start gap-3 justify-start">
+                     <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white flex-shrink-0"><SparklesIcon className="h-5 w-5" aria-hidden="true"/></div>
+                     <div className="max-w-lg p-3 rounded-2xl bg-neutral-100 dark:bg-neutral-700 rounded-bl-lg">
                         <TypingIndicator />
                     </div>
                 </div>

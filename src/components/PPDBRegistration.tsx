@@ -308,7 +308,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                     </h3>
                     <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                         <div className="flex items-start space-x-3">
-                            <SparklesIcon className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                            <SparklesIcon className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" aria-hidden="true" />
                             <div>
                                 <p className="text-sm text-blue-900 dark:text-blue-100 font-medium">
                                     Upload scan ijazah Anda untuk ekstrak nilai otomatis menggunakan AI

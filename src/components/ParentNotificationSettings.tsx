@@ -114,7 +114,7 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
-              <BellIcon />
+              <BellIcon aria-hidden="true" />
             </div>
             <div>
               <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
