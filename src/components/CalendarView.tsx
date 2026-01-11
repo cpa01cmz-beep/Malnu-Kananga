@@ -384,7 +384,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                       }
                     }}
                     aria-label={getEventAriaLabel(event)}
-                    className="p-4 border rounded-lg cursor-pointer transition-all
+                    className="p-4 border rounded-lg cursor-pointer transition-all duration-200 ease-out
                       hover:shadow-md hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <div className="flex items-start justify-between">
