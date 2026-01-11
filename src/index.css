@@ -89,6 +89,17 @@
   --color-purple-700: var(--theme-purple-700, 259 50% 50%);
   --color-purple-800: var(--theme-purple-800, 259 45% 45%);
   --color-purple-900: var(--theme-purple-900, 259 40% 40%);
+
+  --color-yellow-50: var(--theme-yellow-50, 48 96% 96%);
+  --color-yellow-100: var(--theme-yellow-100, 48 96% 91%);
+  --color-yellow-200: var(--theme-yellow-200, 48 96% 82%);
+  --color-yellow-300: var(--theme-yellow-300, 48 96% 72%);
+  --color-yellow-400: var(--theme-yellow-400, 48 96% 61%);
+  --color-yellow-500: var(--theme-yellow-500, 48 96% 53%);
+  --color-yellow-600: var(--theme-yellow-600, 45 93% 47%);
+  --color-yellow-700: var(--theme-yellow-700, 40 96% 42%);
+  --color-yellow-800: var(--theme-yellow-800, 35 96% 36%);
+  --color-yellow-900: var(--theme-yellow-900, 30 96% 30%);
 }
 
 :root {
@@ -180,6 +191,17 @@
   --theme-purple-700: 259 50% 50%;
   --theme-purple-800: 259 45% 45%;
   --theme-purple-900: 259 40% 40%;
+
+  --theme-yellow-50: 48 96% 96%;
+  --theme-yellow-100: 48 96% 91%;
+  --theme-yellow-200: 48 96% 82%;
+  --theme-yellow-300: 48 96% 72%;
+  --theme-yellow-400: 48 96% 61%;
+  --theme-yellow-500: 48 96% 53%;
+  --theme-yellow-600: 45 93% 47%;
+  --theme-yellow-700: 40 96% 42%;
+  --theme-yellow-800: 35 96% 36%;
+  --theme-yellow-900: 30 96% 30%;
 }
 
 @keyframes progress-bar-stripes {

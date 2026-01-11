@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
-import { ClockIcon, TrashIcon, XMarkIcon, EyeIcon } from './icons/MaterialIcons';
+import { ClockIcon, TrashIcon, EyeIcon } from './icons/MaterialIcons';
 import { MaterialVersion, ELibrary } from '../types';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
