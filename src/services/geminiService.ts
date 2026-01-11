@@ -9,7 +9,7 @@ import {
   withCircuitBreaker
 } from '../utils/errorHandler';
 import { logger } from '../utils/logger';
-import { validateAICommand, validateAIResponse } from '../utils/aiEditorValidator';
+import { validateAIResponse } from '../utils/aiEditorValidator';
 import { chatCache, analysisCache, editorCache } from './aiCacheService';
 import { offlineActionQueueService } from './offlineActionQueueService';
 

@@ -241,7 +241,7 @@ class PermissionService {
   getAllPermissions(): Permission[] {
     const permissions: Permission[] = [];
     for (const key in PERMISSIONS) {
-      if (PERMISSIONS.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(PERMISSIONS, key)) {
         permissions.push(PERMISSIONS[key]);
       }
     }

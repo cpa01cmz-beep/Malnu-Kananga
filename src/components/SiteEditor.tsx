@@ -146,7 +146,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [rateLimitInfo?.resetTime]);
+  }, [rateLimitInfo]);
 
   // Enhanced error recovery with rollback
   const handleValidationError = useCallback((error: string) => {
@@ -168,7 +168,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       const logs: AuditLogEntry[] = JSON.parse(localStorage.getItem('malnu_ai_editor_audit_log') || '[]');
       logs.unshift({
         timestamp: Date.now(),
-        action: 'command_validated' as any,
+        action: 'command_validated',
         userId,
         commandHash: action,
         reason: details

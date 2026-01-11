@@ -49,8 +49,8 @@ const DANGEROUS_PATTERNS = [
   /request\s*\(/gi,
   /fetch\s*\(\s*['"`]\s*https?:/gi,
   /websocket/gi,
-  /ws\:/gi,
-  /wss\:/gi,
+  /ws:/gi,
+  /wss:/gi,
   
   // Database operations
   /delete\s+from\s+\w+/gi,

@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from 'vitest';
 import { permissionService } from '../permissionService';
-import { UserRole, UserExtraRole } from '../../types/permissions';
+import { UserRole } from '../../types/permissions';
 
 describe('PermissionService - Enhanced Validation', () => {
   beforeEach(() => {
