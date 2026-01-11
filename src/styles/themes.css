@@ -1,5 +1,13 @@
 /* Theme-specific styles - Theme Manager handles CSS variables dynamically */
 
+/* Respect user's motion preference for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .transition-theme {
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Enable smooth transitions for theme changes on semantic elements */
 body,
 .transition-theme {

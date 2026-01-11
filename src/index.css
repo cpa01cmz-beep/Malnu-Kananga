@@ -341,6 +341,17 @@
   }
 }
 
+/* Respect user's motion preference for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @theme {
   --animate-fade-in: fade-in 0.3s ease-out;
   --animate-fade-in-up: fade-in-up 0.5s ease-out;
