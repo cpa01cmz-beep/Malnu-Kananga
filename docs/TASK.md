@@ -30,7 +30,15 @@
   - Document all reusable UI components with props and usage examples
   - Include accessibility guidelines
 
-### UI/UX Enhancements
+ ### UI/UX Enhancements
+- [x] HeroSection and RelatedLinksSection Accessibility Improvement (COMPLETED 2026-01-12)
+   - Added aria-labelledby attribute to HeroSection section to associate with h1 heading
+   - Added headingId constant ('home-heading') and id attribute to h1
+   - Added aria-labelledby attribute to RelatedLinksSection section to associate with h2 heading
+   - Added headingId constant ('tautan-heading') and id attribute to h2
+   - Ensures proper ARIA relationships for screen reader users
+   - Improves WCAG 2.1 AA compliance (SC 2.4.1 Bypass Blocks)
+   - PR #1082: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1082
 - [x] DocumentationPage Accordion Accessibility Improvement (COMPLETED 2026-01-11)
    - Added aria-controls attribute to accordion buttons for proper content association
    - Added aria-labelledby attribute to content panels linking to their button labels
