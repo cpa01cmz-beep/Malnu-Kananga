@@ -27,6 +27,7 @@ import { useOfflineDataService, useOfflineData, type CachedParentData, type Cach
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import ParentNotificationSettings from './ParentNotificationSettings';
 import NotificationHistory from './NotificationHistory';
+import SuspenseLoading from './ui/SuspenseLoading';
 
 interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -324,6 +325,16 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
   
 
+  if (loading) {
+    return (
+      <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <SuspenseLoading message="Memuat data portal wali murid..." size="lg" />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -393,7 +404,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
               <div className="relative z-10">
                 <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Portal Wali Murid</h1>
                 <p className="mt-2 text-neutral-600 dark:text-neutral-300 text-lg">
-                  Selamat datang, <strong>{loading ? 'Loading...' : 'Orang Tua'}</strong>!
+                  Selamat datang, <strong>Orang Tua</strong>!
                 </p>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
                   Pantau perkembangan pendidikan anak Anda dengan mudah.

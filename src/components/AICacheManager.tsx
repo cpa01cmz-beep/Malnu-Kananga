@@ -128,13 +128,14 @@ const AICacheManager: React.FC<AICacheManagerProps> = ({ className = '' }) => {
           <div className="flex items-center gap-2">
             <button
               onClick={refresh}
+              aria-label="Refresh cache statistics"
               className="p-2 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors"
-              title="Refresh statistics"
             >
               <ArrowPathIcon className="w-4 h-4" />
             </button>
             <button
               onClick={clearAll}
+              aria-label="Clear all AI cache entries"
               className="flex items-center gap-2 px-3 py-2 text-sm bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg transition-colors"
             >
               <TrashIcon className="w-4 h-4" />
@@ -206,6 +207,8 @@ const AICacheManager: React.FC<AICacheManagerProps> = ({ className = '' }) => {
                     
                     <button
                       onClick={() => setExpandedSection(isExpanded ? null : section.id)}
+                      aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${section.title}`}
+                      aria-expanded={isExpanded}
                       className={`p-1.5 rounded-lg ${colors.bg} ${colors.text} hover:opacity-80 transition-opacity`}
                     >
                       <svg
@@ -263,6 +266,7 @@ const AICacheManager: React.FC<AICacheManagerProps> = ({ className = '' }) => {
                     <div className="flex justify-end">
                       <button
                         onClick={section.clear}
+                        aria-label={`Clear ${section.title} cache`}
                         className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 border border-neutral-300 dark:border-neutral-600 rounded-lg transition-colors"
                       >
                         <TrashIcon className="w-3 h-3" />
