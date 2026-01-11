@@ -203,7 +203,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
         )}
 
         {validation.state.isValidating && (
-          <div className="absolute right-(showIcon && iconPosition === 'right' ? 12 : 3) top-1/2 -translate-y-1/2">
+          <div className={`absolute top-1/2 -translate-y-1/2 ${showIcon && iconPosition === 'right' ? 'right-12' : 'right-3'}`}>
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-neutral-300 border-t-primary-500" aria-hidden="true" />
           </div>
         )}
