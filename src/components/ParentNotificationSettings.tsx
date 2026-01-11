@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { BellIcon } from './icons/BellIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { ClockIcon } from './icons/MaterialIcons';
+// Enhanced validation imports for parent notification settings
+// import type { ParentMeeting, ParentMessage } from '../types';
 import { ToastType } from './Toast';
 import { Toggle } from './ui/Toggle';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
