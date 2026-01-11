@@ -138,6 +138,17 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
   // Confirmation Dialog State (removed unused variables)
 
+  // Grade Reset Confirmation State
+  const [resetDialog, setResetDialog] = useState<{
+    isOpen: boolean;
+    studentId: string;
+    studentName: string;
+  }>({
+    isOpen: false,
+    studentId: '',
+    studentName: ''
+  });
+
   const toast = createToastHandler(onShowToast);
   const fetchStudentsAndGrades = useCallback(async () => {
     setLoading(true);
@@ -1395,15 +1406,11 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                             ) : null}
                                             <button
                                                 onClick={() => {
-                                                    if (confirm('Reset nilai siswa ini ke 0?')) {
-                                                        setGrades(prev => prev.map(g => g.id === student.id ? {
-                                                            ...g,
-                                                            assignment: 0,
-                                                            midExam: 0,
-                                                            finalExam: 0
-                                                        } : g));
-                                                        toast.info('Nilai direset');
-                                                    }
+                                                    setResetDialog({
+                                                        isOpen: true,
+                                                        studentId: student.id,
+                                                        studentName: student.name
+                                                    });
                                                 }}
                                                 className="text-xs font-medium text-red-600 dark:text-red-400 hover:underline"
                                             >
@@ -1598,6 +1605,26 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
           onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
           onConfirm={confirmDialog.onConfirm}
          />
+
+        <ConfirmationDialog
+          isOpen={resetDialog.isOpen}
+          title="Konfirmasi Reset Nilai"
+          message={`Reset nilai ${resetDialog.studentName} ke 0?\n\nSemua nilai (tugas, UTS, UAS) akan direset.`}
+          type="warning"
+          confirmText="Ya, Reset"
+          cancelText="Batal"
+          onConfirm={() => {
+            setGrades(prev => prev.map(g => g.id === resetDialog.studentId ? {
+              ...g,
+              assignment: 0,
+              midExam: 0,
+              finalExam: 0
+            } : g));
+            toast.info('Nilai direset');
+            setResetDialog({ isOpen: false, studentId: '', studentName: '' });
+          }}
+          onCancel={() => setResetDialog({ isOpen: false, studentId: '', studentName: '' })}
+        />
     </div>
   );
 };

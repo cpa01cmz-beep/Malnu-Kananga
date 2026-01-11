@@ -85,15 +85,22 @@
      - Enhanced consistency with design system
      - Maintained error retry functionality
       - PR #1032: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1032
-   - [x] Enhance Toast component accessibility and UX (2026-01-11)
-     - Added Escape key handler for keyboard dismissal
-     - Implemented pause-on-hover to prevent auto-dismiss while user is reading
-     - Enhanced ARIA attributes (role, aria-live, aria-atomic) for screen readers
-     - Error toasts use role="alert" and aria-live="assertive"
-     - Success/info toasts use role="status" and aria-live="polite"
-     - Improved user control over toast notifications
-     - See src/components/Toast.tsx for implementation
- 
+    - [x] Enhance Toast component accessibility and UX (2026-01-11)
+      - Added Escape key handler for keyboard dismissal
+      - Implemented pause-on-hover to prevent auto-dismiss while user is reading
+      - Enhanced ARIA attributes (role, aria-live, aria-atomic) for screen readers
+      - Error toasts use role="alert" and aria-live="assertive"
+      - Success/info toasts use role="status" and aria-live="polite"
+      - Improved user control over toast notifications
+      - See src/components/Toast.tsx for implementation
+   - [x] Replace blocking confirm() dialogs with accessible ConfirmationDialog (2026-01-11)
+      - Replaced native confirm() in SystemStats.tsx for factory reset confirmation
+      - Replaced native confirm() in GradingManagement.tsx for grade reset confirmation
+      - Native confirm() dialogs are blocking, not accessible to screen readers, and cannot be styled
+      - ConfirmationDialog provides: proper ARIA attributes, focus trap, dark mode support, consistent styling
+      - Improved WCAG 2.1 AA compliance (no blocking alerts)
+      - Enhanced UX with non-blocking, keyboard-accessible, styled confirmations
+
 ### P2: Medium
 - [ ] Optimize bundle size to <500KB initial load
   - Implement code splitting for heavy modules

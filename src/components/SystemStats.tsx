@@ -10,6 +10,7 @@ import Card from './ui/Card';
 import Button from './ui/Button';
 import Alert from './ui/Alert';
 import BackButton from './ui/BackButton';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 
 interface SystemStatsProps {
   onBack: () => void;
@@ -23,11 +24,14 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
     totalPrograms: 0,
     totalNews: 0,
     totalPPDB: 0,
-    totalInventory: 0, // New Stat
-    totalEvents: 0, // New Stat
+    totalInventory: 0,
+    totalEvents: 0,
     storageUsed: '0 KB',
     lastUpdate: '-',
   });
+
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   // Get current user for permission checking
   const getCurrentUser = (): User | null => {
@@ -81,38 +85,28 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
   };
 
   const handleFactoryReset = async () => {
-    if (!confirm(
-        '⚠️ PERINGATAN: Ini akan menghapus SEMUA data aplikasi!\n\n' +
-        'Data yang akan dihapus:\n' +
-        '• User Management\n' +
-        '• PPDB Registrations\n' +
-        '• All Materials\n' +
-        '• Grades\n' +
-        '• Inventory\n' +
-        '• Events\n' +
-        '• dan semua data lainnya\n\n' +
-        'Tindakan ini TIDAK DAPAT dibatalkan!\n\n' +
-        'Lanjutkan?'
-    )) return;
+    setShowResetDialog(true);
+  };
+
+  const performFactoryReset = async () => {
+    setIsResetting(true);
 
     try {
-        // Backup voice settings before reset
         await backupVoiceSettings();
         logger.info('Voice settings backed up before factory reset');
 
-        // Clear all app-related localStorage keys
         Object.keys(localStorage).forEach(key => {
             if (key.startsWith('malnu_')) {
                 localStorage.removeItem(key);
             }
         });
 
-        // Show success and reload
         onShowToast('Sistem berhasil di-reset. Halaman akan dimuat ulang.', 'success');
         setTimeout(() => window.location.reload(), 1500);
     } catch (error) {
         logger.error('Factory reset failed:', error);
         onShowToast('Gagal melakukan reset sistem. Silakan coba lagi.', 'error');
+        setIsResetting(false);
     }
   };
 
@@ -202,6 +196,18 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
                 )}
             </div>
         </Card>
+
+        <ConfirmationDialog
+          isOpen={showResetDialog}
+          title="Konfirmasi Factory Reset"
+          message="⚠️ PERINGATAN: Ini akan menghapus SEMUA data aplikasi!\n\nData yang akan dihapus:\n• User Management\n• PPDB Registrations\n• All Materials\n• Grades\n• Inventory\n• Events\n• dan semua data lainnya\n\nTindakan ini TIDAK DAPAT dibatalkan!"
+          confirmText="Ya, Lakukan Reset"
+          cancelText="Batal"
+          type="danger"
+          onConfirm={performFactoryReset}
+          onCancel={() => setShowResetDialog(false)}
+          isLoading={isResetting}
+        />
       </div>
     </div>
   );
