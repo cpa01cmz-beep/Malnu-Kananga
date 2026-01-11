@@ -1,7 +1,7 @@
 # Task List
 
 **Created**: 2025-01-01
-**Last Updated**: 2026-01-11
+**Last Updated**: 2026-01-12
 **Version**: 2.1.0
 
 ---
@@ -75,9 +75,17 @@
     - [x] Changed onClick handler to onChange for Toggle compatibility with checkbox input
     - [x] Used green color variant to match original styling
     - [x] Improved maintainability through centralized component usage
-    - PR #1075: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1075
- 
- - [x] Component Extraction (Phase 5 - COMPLETED 2026-01-07)
+     - PR #1075: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1075
+- [x] ImageWithFallback Accessibility Improvement (Phase 5 - COMPLETED 2026-01-11)
+   - Added role="img" to fallback div for semantic meaning
+   - Added aria-label to fallback div using fallbackText or alt text with default fallback
+   - Added aria-hidden="true" to PhotoIcon (decorative element)
+   - Added aria-hidden="true" to fallbackText span (avoid duplication with aria-label)
+   - Created comprehensive test coverage with 17 accessibility-focused test cases
+   - Improved WCAG 2.1 AA compliance (Image Pattern)
+   - PR #1080: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1080
+
+  - [x] Component Extraction (Phase 5 - COMPLETED 2026-01-07)
   - [x] Card component with 4 variants (default, hover, interactive, gradient)
   - [x] Textarea component with auto-resize functionality
   - [x] Modal component with focus trap and accessibility

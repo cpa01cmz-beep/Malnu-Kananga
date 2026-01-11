@@ -18,9 +18,13 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   // Jika src kosong atau terjadi error loading, tampilkan fallback
   if (!src || hasError) {
     return (
-      <div className={`flex flex-col items-center justify-center bg-neutral-200 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 ${className}`}>
-        <PhotoIcon className="w-12 h-12 mb-2" />
-        {fallbackText && <span className="text-xs text-center px-2">{fallbackText}</span>}
+      <div 
+        className={`flex flex-col items-center justify-center bg-neutral-200 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 ${className}`}
+        role="img"
+        aria-label={fallbackText || alt || 'Gambar tidak tersedia'}
+      >
+        <PhotoIcon className="w-12 h-12 mb-2" aria-hidden="true" />
+        {fallbackText && <span className="text-xs text-center px-2" aria-hidden="true">{fallbackText}</span>}
       </div>
     );
   }
