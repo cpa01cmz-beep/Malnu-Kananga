@@ -54,7 +54,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
         {/* Current Theme Display */}
         <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
           <div className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
-            <SparklesIcon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <SparklesIcon className="w-5 h-5 text-primary-600 dark:text-primary-400" aria-hidden="true" />
             <span className="text-2xl">{currentTheme.icon}</span>
             <div className="flex-1">
               <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
@@ -199,7 +199,7 @@ export const ThemeSelectorTrigger: React.FC<{ onClick: () => void; currentTheme:
       icon={currentTheme ? (
         <span className="text-xl">{currentTheme.icon}</span>
       ) : (
-        <SparklesIcon />
+        <SparklesIcon aria-hidden="true" />
       )}
       ariaLabel="Pilih Tema"
       tooltip={currentTheme ? `${currentTheme.displayName} - ${currentTheme.description}` : undefined}

@@ -116,7 +116,7 @@ const VoiceNotificationSettings: React.FC<VoiceNotificationSettingsProps> = ({
       <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <SpeakerWaveIcon className="w-6 h-6 text-green-600 dark:text-green-400" />
+            <SpeakerWaveIcon className="w-6 h-6 text-green-600 dark:text-green-400" aria-hidden="true" />
             <h2 id="voice-settings-title" className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">
               Pengaturan Notifikasi Suara
             </h2>
@@ -390,7 +390,7 @@ const VoiceNotificationSettings: React.FC<VoiceNotificationSettingsProps> = ({
                       variant="secondary"
                       className="w-full"
                     >
-                      <SpeakerWaveIcon className="w-4 h-4 mr-2" />
+                      <SpeakerWaveIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                       Tes Notifikasi Suara
                     </Button>
                   </div>
@@ -439,7 +439,7 @@ const VoiceNotificationSettings: React.FC<VoiceNotificationSettingsProps> = ({
 
               {queue.length === 0 ? (
                 <div className="text-center py-8 text-neutral-500 dark:text-neutral-400">
-                  <SpeakerWaveIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                  <SpeakerWaveIcon className="w-12 h-12 mx-auto mb-3 opacity-50" aria-hidden="true" />
                   <p>Tidak ada notifikasi suara dalam antrian</p>
                 </div>
               ) : (

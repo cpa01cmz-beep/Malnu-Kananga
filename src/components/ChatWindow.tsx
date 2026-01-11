@@ -335,7 +335,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                     size="md"
                     variant={showVoiceSettings ? 'primary' : 'ghost'}
                     className={`p-2 ${showVoiceSettings ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
-                    icon={<SpeakerWaveIcon className="w-4 h-4" />}
+                    icon={<SpeakerWaveIcon className="w-4 h-4" aria-hidden="true" />}
                   />
                )}
 

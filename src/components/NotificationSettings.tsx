@@ -163,7 +163,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
       >
         <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 p-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <BellIcon className="w-6 h-6 text-neutral-700 dark:text-neutral-300" />
+            <BellIcon className="w-6 h-6 text-neutral-700 dark:text-neutral-300" aria-hidden="true" />
             <h2 id="notification-settings-title" className="text-xl font-semibold text-neutral-900 dark:text-white">
               Pengaturan Notifikasi
             </h2>
@@ -207,11 +207,11 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {permissionGranted ? (
-                  <BellIcon className="w-5 h-5 text-green-600" />
+                  <BellIcon className="w-5 h-5 text-green-600" aria-hidden="true" />
                 ) : permissionDenied ? (
-                  <BellSlashIcon className="w-5 h-5 text-red-600" />
+                  <BellSlashIcon className="w-5 h-5 text-red-600" aria-hidden="true" />
                 ) : (
-                  <BellIcon className="w-5 h-5 text-yellow-600" />
+                  <BellIcon className="w-5 h-5 text-yellow-600" aria-hidden="true" />
                 )}
                 <span className="text-sm text-neutral-700 dark:text-neutral-300">
                   {permissionGranted

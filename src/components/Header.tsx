@@ -199,7 +199,7 @@ const Header: React.FC<HeaderProps> = ({
                                      <Button
                                          variant="indigo"
                                          onClick={onEditClick}
-                                         icon={<SparklesIcon />}
+                                          icon={<SparklesIcon aria-hidden="true" />}
                                          iconPosition="left"
                                          title="Buka Editor AI"
                                      >

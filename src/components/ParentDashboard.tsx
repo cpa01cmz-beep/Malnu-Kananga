@@ -103,7 +103,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             const childrenData: Record<string, CachedStudentData> = {};
             const now = Date.now();
             const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
-
             // Fetch data for each child
             await Promise.all(response.data.map(async (child: ParentChild) => {
               try {
