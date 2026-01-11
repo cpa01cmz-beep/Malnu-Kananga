@@ -48,7 +48,17 @@ vi.mock('../parentGradeNotificationService', () => ({
 }));
 
 // Global storage for OCR events during tests
-const ocrEvents: any[] = [];
+const ocrEvents: Array<{
+  id: string;
+  type: string;
+  documentId: string;
+  documentType: string;
+  confidence: number;
+  issues: string[];
+  userId?: string;
+  timestamp: string;
+  actionUrl?: string;
+}> = [];
 
 // Mock OCR service to emit events instead of actual OCR processing
 vi.mock('../ocrService', () => ({
