@@ -429,7 +429,8 @@ export const offlineDataService = new OfflineDataService();
  */
 export function useOfflineDataService() {
   // Import hooks dynamically for this service context
-  const { useNetworkStatus } = (0, eval('require')('../utils/networkStatus'));
+  const networkStatusModule = eval('require("../utils/networkStatus")');
+  const { useNetworkStatus } = networkStatusModule;
   const networkStatus = useNetworkStatus();
  
   return {

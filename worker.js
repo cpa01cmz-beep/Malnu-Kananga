@@ -123,13 +123,34 @@ const response = {
 // MIDDLEWARE
 // ============================================
 
-function corsHeaders(allowedOrigin) {
+function corsHeaders(allowedOrigin, requestOrigin) {
+  // Security: Prevent CSRF by validating origins
+  const validOrigins = allowedOrigin ? allowedOrigin.split(',').map(o => o.trim()) : [];
+  
+  // If no specific origins configured, deny all requests
+  if (validOrigins.length === 0) {
+    return {
+      'Access-Control-Allow-Origin': 'null',
+      'Access-Control-Allow-Methods': '',
+      'Access-Control-Allow-Headers': '',
+      'Access-Control-Max-Age': '0',
+    };
+  }
+  
+  // Check if request origin is in allowed list
+  const isOriginAllowed = validOrigins.includes(requestOrigin) || 
+                          validOrigins.includes('*');
+  
+  // Only return credentials for specific origins, never with wildcard
+  const origin = isOriginAllowed ? (validOrigins.includes('*') ? requestOrigin : requestOrigin) : 'null';
+  
   return {
-    'Access-Control-Allow-Origin': allowedOrigin || '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Credentials': 'true',
-    'Access-Control-Max-Age': '86400',
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': isOriginAllowed ? 'GET, POST, PUT, DELETE, OPTIONS' : '',
+    'Access-Control-Allow-Headers': isOriginAllowed ? 'Content-Type, Authorization' : '',
+    'Access-Control-Allow-Credentials': isOriginAllowed && validOrigins.includes(requestOrigin) ? 'true' : 'false',
+    'Access-Control-Max-Age': isOriginAllowed ? '86400' : '0',
+    'Vary': 'Origin'
   };
 }
 
@@ -1378,7 +1399,8 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
 
 export default {
   async fetch(request, env, _ctx) {
-    const cors = corsHeaders(env.ALLOWED_ORIGIN);
+    const requestOrigin = request.headers.get('Origin') || 'null';
+    const cors = corsHeaders(env.ALLOWED_ORIGIN, requestOrigin);
     
     // Handle preflight
     if (request.method === 'OPTIONS') {
