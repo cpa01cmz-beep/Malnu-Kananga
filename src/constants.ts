@@ -95,6 +95,10 @@ export const STORAGE_KEYS = {
     
     // AI Analysis cache for offline support
     CACHED_AI_ANALYSES: 'malnu_cached_ai_analyses',
+    
+    // Offline data service for student/parent portals
+    OFFLINE_STUDENT_DATA: 'malnu_offline_student_data',
+    OFFLINE_PARENT_DATA: 'malnu_offline_parent_data',
 } as const;
 
 export const USER_ROLES = {

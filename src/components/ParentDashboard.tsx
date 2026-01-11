@@ -12,7 +12,7 @@ import ParentPaymentsView from './ParentPaymentsView';
 import ParentMeetingsView from './ParentMeetingsView';
 import { ToastType } from './Toast';
 import type { ParentChild, Grade } from '../types';
-import { parentsAPI, authAPI } from '../services/apiService';
+import { parentsAPI, authAPI, gradesAPI, attendanceAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { validateMultiChildDataIsolation } from '../utils/parentValidation';
@@ -22,6 +22,7 @@ import { parentGradeNotificationService } from '../services/parentGradeNotificat
 import BackButton from './ui/BackButton';
 import Card from './ui/Card';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
+import { useOfflineDataService, useOfflineData, type CachedParentData } from '../services/offlineDataService';
 
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import ParentNotificationSettings from './ParentNotificationSettings';
@@ -42,7 +43,14 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [showNotificationHistory, setShowNotificationHistory] = useState(false);
+  const [offlineData, setOfflineData] = useState<CachedParentData | null>(null);
+  const [syncInProgress, setSyncInProgress] = useState(false);
+  
   const networkStatus = useNetworkStatus();
+
+  // Initialize offline services
+  const offlineDataService = useOfflineDataService();
+  const { syncStatus, isCached } = useOfflineData('parent');
 
   // Initialize push notifications
   const { 
@@ -58,6 +66,24 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
   useEffect(() => {
     const fetchChildren = async () => {
+      setLoading(true);
+
+      // Try offline cache first
+      if (!networkStatus.isOnline) {
+        const cachedData = offlineDataService.getCachedParentData();
+        if (cachedData) {
+          setChildren(cachedData.children);
+          setOfflineData(cachedData);
+          if (cachedData.children.length > 0) {
+            setSelectedChild(cachedData.children[0]);
+          }
+          onShowToast('Menggunakan data offline', 'info');
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Online: fetch fresh data
       try {
         const response = await parentsAPI.getChildren();
         if (response.success && response.data) {
@@ -71,13 +97,86 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
           if (response.data.length > 0) {
             setSelectedChild(response.data[0]);
           }
+
+          // Cache children data for offline access
+          try {
+            const childrenData: Record<string, {
+      student: {
+        id: string;
+        name: string;
+        className: string | undefined;
+        nis: string;
+      };
+      grades: Grade[];
+      attendance: unknown[];
+      schedule: unknown[];
+    }> = {};
+            
+            // Fetch data for each child
+            await Promise.all(response.data.map(async (child: ParentChild) => {
+              try {
+                const [gradesResponse, attendanceResponse] = await Promise.all([
+                  gradesAPI.getByStudent(child.studentId),
+                  attendanceAPI.getByStudent(child.studentId)
+                ]);
+
+                if (gradesResponse.success && attendanceResponse.success) {
+                  childrenData[child.studentId] = {
+                    student: {
+                      id: child.studentId,
+                      name: child.studentName,
+                      className: child.className,
+                      nis: child.studentId, // Use studentId as NIS for now
+                    },
+                    grades: gradesResponse.data || [],
+                    attendance: attendanceResponse.data || [],
+                    schedule: [], // TODO: Fetch schedule when API is available
+                  };
+                }
+              } catch (error) {
+                logger.warn(`Failed to fetch data for child ${child.studentId}:`, error);
+              }
+            }));
+
+            offlineDataService.cacheParentData({
+              children: response.data,
+              childrenData,
+            });
+          } catch (error) {
+            logger.warn('Failed to cache parent data:', error);
+          }
+        } else {
+          // Fallback to cache if available
+          const cachedData = offlineDataService.getCachedParentData();
+          if (cachedData) {
+            setChildren(cachedData.children);
+            setOfflineData(cachedData);
+            if (cachedData.children.length > 0) {
+              setSelectedChild(cachedData.children[0]);
+            }
+            onShowToast('Server tidak tersedia, menggunakan data offline', 'info');
+          } else {
+            onShowToast('Data anak tidak ditemukan', 'error');
+          }
         }
       } catch (error) {
         logger.error('Failed to fetch children:', error);
-        if (!networkStatus.isOnline) {
-          onShowToast(getOfflineMessage(), 'error');
+        
+        // Fallback to cache on error
+        const cachedData = offlineDataService.getCachedParentData();
+        if (cachedData) {
+          setChildren(cachedData.children);
+          setOfflineData(cachedData);
+          if (cachedData.children.length > 0) {
+            setSelectedChild(cachedData.children[0]);
+          }
+          onShowToast('Gagal memuat data, menggunakan data offline', 'info');
         } else {
-          onShowToast('Gagal memuat data anak', 'error');
+          if (!networkStatus.isOnline) {
+            onShowToast(getOfflineMessage(), 'error');
+          } else {
+            onShowToast('Gagal memuat data anak', 'error');
+          }
         }
       } finally {
         setLoading(false);
@@ -85,7 +184,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     };
 
     fetchChildren();
-  }, [onShowToast, networkStatus.isOnline]);
+  }, [onShowToast, networkStatus.isOnline, offlineDataService]);
 
   // Request notification permission on first load
   useEffect(() => {
@@ -199,25 +298,87 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     setCurrentView('home');
   };
 
+  // Handle manual sync
+  const handleSync = async () => {
+    if (!networkStatus.isOnline) {
+      onShowToast('Memerlukan koneksi internet untuk sinkronisasi', 'error');
+      return;
+    }
+
+    setSyncInProgress(true);
+    onShowToast('Menyinkronkan data...', 'info');
+
+    try {
+      await offlineDataService.forceSync();
+      
+      // Re-fetch data
+      window.location.reload(); // Simple refresh to get fresh data
+    } catch (error) {
+      logger.error('Failed to sync:', error);
+      onShowToast('Sinkronisasi gagal, silakan coba lagi', 'error');
+    } finally {
+      setSyncInProgress(false);
+    }
+  };
+
   
 
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {(!networkStatus.isOnline || networkStatus.isSlow) && (
-          <div className={`rounded-card p-4 mb-6 border-2 ${
-            !networkStatus.isOnline
-              ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
-              : 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800'
-          }`}>
-            <p className={`text-sm font-medium ${
-              !networkStatus.isOnline
-                ? 'text-red-700 dark:text-red-300'
-                : 'text-yellow-700 dark:text-yellow-300'
-            }`}>
-              {!networkStatus.isOnline ? '⚠️ ' : '⚡ '}
-              {!networkStatus.isOnline ? getOfflineMessage() : getSlowConnectionMessage()}
-            </p>
+        
+        {/* Network Status Bar */}
+        {!networkStatus.isOnline && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-card p-4 mb-6 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div className="flex-1">
+              <p className="text-red-700 dark:text-red-300 text-sm font-medium">
+                {getOfflineMessage()}
+              </p>
+              {isCached && offlineData && (
+                <p className="text-red-600 dark:text-red-400 text-xs">
+                  📦 Data offline tersedia untuk {offlineData.children.length} anak
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {networkStatus.isSlow && networkStatus.isOnline && (
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-card p-4 mb-6 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-600 dark:text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-yellow-700 dark:text-yellow-300 text-sm font-medium">{getSlowConnectionMessage()}</p>
+          </div>
+        )}
+
+        {/* Sync Status Bar */}
+        {networkStatus.isOnline && (syncStatus.needsSync || syncStatus.pendingActions > 0) && (
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-card p-4 mb-6 flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <div className="flex-1">
+              <p className="text-blue-700 dark:text-blue-300 text-sm font-medium">
+                {syncStatus.pendingActions > 0 
+                  ? `${syncStatus.pendingActions} aksi pending perlu disinkronkan` 
+                  : 'Data perlu diperbarui'
+                }
+              </p>
+              <p className="text-blue-600 dark:text-blue-400 text-xs">
+                Terakhir diperbarui: {syncStatus.lastSync ? new Date(syncStatus.lastSync).toLocaleTimeString('id-ID') : 'Belum pernah'}
+              </p>
+            </div>
+            <button
+              onClick={handleSync}
+              disabled={syncInProgress}
+              className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {syncInProgress ? 'Menyinkronkan...' : 'Sinkronkan'}
+            </button>
           </div>
         )}
       </div>
@@ -372,6 +533,36 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             child={selectedChild}
             onClose={() => setShowNotificationHistory(false)}
           />
+        )}
+
+        {/* Offline Status Indicator */}
+        {!networkStatus.isOnline && (
+          <div className="fixed bottom-4 right-4 bg-white dark:bg-neutral-800 border border-red-200 dark:border-red-800 rounded-lg p-3 shadow-lg max-w-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-red-700 dark:text-red-300 font-medium">Offline Mode</span>
+            </div>
+            {offlineData && (
+              <div className="mt-1 text-xs text-red-600 dark:text-red-400">
+                Data {offlineData.children.length} anak tersimpan hingga {new Date(offlineData.lastUpdated).toLocaleDateString('id-ID')}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Sync Complete Toast */}
+        {syncStatus.lastSync > 0 && !syncStatus.needsSync && (
+          <div className="fixed bottom-4 right-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 shadow-lg max-w-xs animate-fade-in-up">
+            <div className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="text-sm text-green-700 dark:text-green-300 font-medium">Data Terkini</span>
+            </div>
+            <div className="mt-1 text-xs text-green-600 dark:text-green-400">
+              Terakhir sinkron: {new Date(syncStatus.lastSync).toLocaleTimeString('id-ID')}
+            </div>
+          </div>
         )}
       </div>
     </main>

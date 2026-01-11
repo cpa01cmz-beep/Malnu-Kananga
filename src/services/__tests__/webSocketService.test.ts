@@ -1,5 +1,5 @@
  
-/* eslint-disable @typescript-eslint/prefer-as-const */
+ 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { webSocketService, type RealTimeEvent } from '../webSocketService';
 import { apiService } from '../apiService';
