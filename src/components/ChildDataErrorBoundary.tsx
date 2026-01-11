@@ -45,12 +45,14 @@ const ChildDataStatusIndicator: React.FC<ChildDataStatusIndicatorProps> = ({
                 <button
                   onClick={onRetry}
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  aria-label="Coba memuat ulang data anak"
                 >
                   Coba Lagi
                 </button>
                 <button
                   onClick={() => onShowToast('Menggunakan mode offline', 'info')}
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                  className="px-4 py-2 bg-neutral-600 text-white rounded-lg hover:bg-neutral-700 transition-colors"
+                  aria-label="Aktifkan mode offline"
                 >
                   Mode Offline
                 </button>
