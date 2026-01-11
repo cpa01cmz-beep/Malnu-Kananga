@@ -128,6 +128,20 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
     }
   };
 
+  // Enhanced key down handler
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') {
+      // Clear value on Escape key
+      const syntheticEvent = {
+        target: { value: '' }
+      } as React.ChangeEvent<HTMLInputElement>;
+      handleChange(syntheticEvent);
+    }
+    if (props.onKeyDown) {
+      props.onKeyDown(e);
+    }
+  };
+
   // Determine final state based on validation
   const finalState = validation.state.errors.length > 0 && validation.state.isTouched ? 'error' : 
                     (validation.state.isValid ? state : 'error');
@@ -143,7 +157,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
   };
 
   return (
-    <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`} role="search">
+    <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`}>
       {label && (
         <label
           htmlFor={searchId}
@@ -169,12 +183,15 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
           ref={ref}
           id={searchId}
           type="search"
+          role="search"
           placeholder={placeholder}
           className={inputClasses}
           aria-describedby={describedBy}
-          aria-invalid={finalState === 'error'}
+          aria-invalid={finalState === 'error' ? 'true' : 'false'}
           onChange={handleChange}
           onBlur={handleBlur}
+          onFocus={props.onFocus}
+          onKeyDown={handleKeyDown}
           value={value}
           {...accessibilityProps}
           {...props}

@@ -117,13 +117,11 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       };
     });
 
-    const fieldValue = formState.fields[name];
-    const isTouched = formState.touchedFields[name];
-    const shouldValidate = validateOnChangeRef.current && isTouched;
-
-    if (shouldValidate) {
+// Trigger field validation if change validation is enabled
+    if (validateOnChangeRef.current && formState.touchedFields[name]) {
       const rules = validationSchema[name];
       if (rules && Array.isArray(rules)) {
+        const fieldValue = formState.fields[name];
         const errors: string[] = [];
         const stringValue = String(fieldValue || '');
 
@@ -143,6 +141,29 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       }
     }
   }, [initialValues, formState.fields, formState.touchedFields, validationSchema]);
+        setFormState(prev => ({
+          ...prev,
+          errors: {
+            ...prev.errors,
+<<<<<<< HEAD
+            [name]: errors
+          }
+        }));
+      }
+    }
+  }, [initialValues, formState.fields, formState.touchedFields, validationSchema]);
+=======
+            [fieldName]: errors
+          }
+        }));
+    
+        return errors.length === 0;
+      };
+      
+      internalValidateField(name);
+    }
+  }, [initialValues, validateOnChange, formState.touchedFields, formState.fields, validationSchema]);
+>>>>>>> 186edbf (Fix test failures and TypeScript errors)
 
   /**
    * Set field error
@@ -183,7 +204,7 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       }
     }));
 
-    if (validateOnBlurRef.current && touched) {
+if (validateOnBlurRef.current && touched) {
       const rules = validationSchema[name];
       if (rules && Array.isArray(rules)) {
         const fieldValue = formState.fields[name];
@@ -206,6 +227,29 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       }
     }
   }, [formState.fields, validationSchema]);
+        setFormState(prev => ({
+          ...prev,
+          errors: {
+            ...prev.errors,
+<<<<<<< HEAD
+            [name]: errors
+          }
+        }));
+      }
+    }
+  }, [formState.fields, validationSchema]);
+=======
+            [fieldName]: errors
+          }
+        }));
+    
+        return errors.length === 0;
+      };
+      
+      internalValidateField(name);
+    }
+  }, [validateOnBlur, formState.fields, validationSchema]);
+>>>>>>> 186edbf (Fix test failures and TypeScript errors)
 
   /**
    * Validate single field
@@ -221,7 +265,7 @@ export function useForm(options: UseFormOptions): UseFormReturn {
     const stringValue = String(value || '');
 
     for (const rule of rules) {
-      if (!rule.validate(stringValue)) {
+if (!rule.validate(stringValue)) {
         errors.push(rule.message);
       }
     }
@@ -253,7 +297,7 @@ export function useForm(options: UseFormOptions): UseFormReturn {
       const stringValue = String(value || '');
 
       for (const rule of rules) {
-        if (!rule.validate(stringValue)) {
+if (!rule.validate(stringValue)) {
           errors.push(rule.message);
         }
       }
