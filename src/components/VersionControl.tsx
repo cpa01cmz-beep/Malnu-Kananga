@@ -6,6 +6,7 @@ import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import FileInput from './ui/FileInput';
 import ConfirmationDialog from './ui/ConfirmationDialog';
+import Modal from './ui/Modal';
 
 interface VersionControlProps {
   material: ELibrary;
@@ -254,7 +255,7 @@ const deleteVersion = (versionId: string) => {
                     </p>
                     
                     <div className="text-xs text-neutral-500 dark:text-neutral-400 space-y-1">
-                      <p>📝 {changeLog}</p>
+                      <p>📝 {version.changeLog}</p>
                       <p>👤 {version.createdBy}</p>
                       <p>📅 {formatDate(version.createdAt)}</p>
                       <p>📁 {formatFileSize(version.fileSize)} • {version.fileType}</p>
@@ -301,96 +302,81 @@ const deleteVersion = (versionId: string) => {
       )}
 
       {/* Create Version Modal */}
-      {showCreateVersion && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl max-w-lg w-full">
-            <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                    Buat Versi Baru
-                  </h3>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-                    "{material.title}"
-                  </p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowCreateVersion(false)}
-                  iconOnly
-                  icon={<XMarkIcon className="w-5 h-5" />}
-                  aria-label="Tutup modal"
-                />
-              </div>
-            </div>
-
-            <div className="p-6">
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                  Versi
-                </label>
-                <input
-                  type="text"
-                  value={generateNextVersion()}
-                  disabled
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                  Judul Versi
-                </label>
-                <input
-                  type="text"
-                  value={versionTitle}
-                  onChange={(e) => setVersionTitle(e.target.value)}
-                  placeholder="Mis: Update materi bab 3"
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                  Catatan Perubahan
-                </label>
-                <textarea
-                  value={changeLog}
-                  onChange={(e) => setChangeLog(e.target.value)}
-                  placeholder="Jelaskan perubahan yang dilakukan pada versi ini..."
-                  rows={3}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
-              </div>
-
-              <FileInput
-                label="File Baru"
-                onChange={(e) => setNewFile(e.target.files?.[0] || null)}
-                accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4,.jpg,.jpeg,.png"
-                helperText={newFile ? `${newFile.name} • ${formatFileSize(newFile.size)}` : undefined}
-              />
-            </div>
-
-            <div className="p-6 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => setShowCreateVersion(false)}
-              >
-                Batal
-              </Button>
-              <Button
-                variant="primary"
-                onClick={createVersion}
-                disabled={!newFile || !versionTitle.trim() || !changeLog.trim()}
-                isLoading={loading}
-              >
-                {loading ? 'Membuat...' : 'Buat Versi'}
-              </Button>
-            </div>
+      <Modal
+        isOpen={showCreateVersion}
+        onClose={() => setShowCreateVersion(false)}
+        title="Buat Versi Baru"
+        description={`Buat versi baru untuk "${material.title}"`}
+        size="lg"
+        showCloseButton
+      >
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="version-input" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+              Versi
+            </label>
+            <input
+              id="version-input"
+              type="text"
+              value={generateNextVersion()}
+              disabled
+              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400"
+            />
           </div>
+
+          <div>
+            <label htmlFor="version-title" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+              Judul Versi
+            </label>
+            <input
+              id="version-title"
+              type="text"
+              value={versionTitle}
+              onChange={(e) => setVersionTitle(e.target.value)}
+              placeholder="Mis: Update materi bab 3"
+              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="version-changelog" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+              Catatan Perubahan
+            </label>
+            <textarea
+              id="version-changelog"
+              value={changeLog}
+              onChange={(e) => setChangeLog(e.target.value)}
+              placeholder="Jelaskan perubahan yang dilakukan pada versi ini..."
+              rows={3}
+              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:outline-none"
+            />
+          </div>
+
+          <FileInput
+            label="File Baru"
+            onChange={(e) => setNewFile(e.target.files?.[0] || null)}
+            accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4,.jpg,.jpeg,.png"
+            helperText={newFile ? `${newFile.name} • ${formatFileSize(newFile.size)}` : undefined}
+          />
         </div>
-      )}
+
+        <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-neutral-200 dark:border-neutral-700">
+          <Button
+            variant="secondary"
+            onClick={() => setShowCreateVersion(false)}
+          >
+            Batal
+          </Button>
+          <Button
+            variant="primary"
+            onClick={createVersion}
+            disabled={!newFile || !versionTitle.trim() || !changeLog.trim()}
+            isLoading={loading}
+          >
+            {loading ? 'Membuat...' : 'Buat Versi'}
+          </Button>
+        </div>
+      </Modal>
 
       <ConfirmationDialog
         isOpen={isDeleteDialogOpen}
