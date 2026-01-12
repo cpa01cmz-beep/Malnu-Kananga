@@ -260,19 +260,29 @@
       - Eliminated ~20 lines of duplicate button styling code
       - Better hover animations and transitions through IconButton and Button components
       - Dark mode support automatically inherited from centralized components
-   - [x] ELibrary OCR Selection Button Accessibility Improvement (Phase 5 - COMPLETED 2026-01-12)
-      - Added proper aria-label with dynamic text based on selection state ("Pilih untuk diproses OCR: [title]" / "Hapus pemilihan OCR untuk [title]")
-      - Added aria-pressed attribute to indicate toggle state to screen readers (true/false)
-      - Replaced decorative read-only checkbox with proper SVG chevron icon that rotates on selection
-      - Added aria-hidden="true" to decorative chevron icon for screen reader optimization
-      - Added focus-visible styles (focus:outline-none, focus-visible:ring-2) for keyboard navigation
-      - Added dark mode support with focus-visible:ring-offset-neutral-900
-      - Improved WCAG 2.1 AA compliance (SC 4.1.2 Name, Role, Value)
-      - Enhanced visual feedback with chevron rotation (rotate-90) when selected
-      - Screen readers now receive clear, contextual information about button state and purpose
-      - Keyboard users benefit from visible focus indicators
-      - Eliminated confusing read-only checkbox pattern that provided no semantic value
-      - See src/components/ELibrary.tsx:1464-1485 for implementation
+  - [x] ELibrary OCR Selection Button Accessibility Improvement (Phase 5 - COMPLETED 2026-01-12)
+       - Added proper aria-label with dynamic text based on selection state ("Pilih untuk diproses OCR: [title]" / "Hapus pemilihan OCR untuk [title]")
+       - Added aria-pressed attribute to indicate toggle state to screen readers (true/false)
+       - Replaced decorative read-only checkbox with proper SVG chevron icon that rotates on selection
+       - Added aria-hidden="true" to decorative chevron icon for screen reader optimization
+       - Added focus-visible styles (focus:outline-none, focus-visible:ring-2) for keyboard navigation
+       - Added dark mode support with focus-visible:ring-offset-neutral-900
+       - Improved WCAG 2.1 AA compliance (SC 4.1.2 Name, Role, Value)
+       - Enhanced visual feedback with chevron rotation (rotate-90) when selected
+       - Screen readers now receive clear, contextual information about button state and purpose
+       - Keyboard users benefit from visible focus indicators
+       - Eliminated confusing read-only checkbox pattern that provided no semantic value
+       - See src/components/ELibrary.tsx:1464-1485 for implementation
+  - [x] Footer SkipLink Semantic Consistency Improvement (Phase 5 - COMPLETED 2026-01-12)
+       - Changed Footer ID from "kontak" (Indonesian for "contact") to "footer" for semantic clarity
+       - Updated SkipLink target in App.tsx from "kontak" to "footer" to match Footer ID
+       - Updated SkipLink test file to use "footer" instead of "main-footer"
+       - Eliminated semantic mismatch where skip link said "Langsung ke footer" but targeted "kontak" element
+       - Improved WCAG 2.1 AA compliance (SC 2.4.1 Bypass Blocks - semantic consistency)
+       - Screen readers now announce consistent relationship between skip link label and target
+       - Enhanced accessibility for keyboard users by improving semantic clarity
+       - Follows semantic HTML best practices with descriptive IDs
+       - See src/components/Footer.tsx:13, src/App.tsx:284, src/components/ui/__tests__/SkipLink.test.tsx:141,147,164
 
 
 ### P2: Medium

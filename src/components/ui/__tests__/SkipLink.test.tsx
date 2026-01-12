@@ -25,14 +25,14 @@ describe('SkipLink', () => {
   });
 
    describe('Single Target (Backward Compatibility)', () => {
-    beforeEach(() => {
-      const mainElement = document.createElement('div');
-      mainElement.id = 'main-content';
-      mainElement.setAttribute('tabindex', '-1');
-      document.body.appendChild(mainElement);
-    });
+     beforeEach(() => {
+       const mainElement = document.createElement('div');
+       mainElement.id = 'main-content';
+       mainElement.setAttribute('tabindex', '-1');
+       document.body.appendChild(mainElement);
+     });
 
-    it('should render skip link with default props', () => {
+     it('should render skip link with default props', () => {
       render(<SkipLink />);
 
       const skipLink = screen.getByRole('navigation', { name: 'Langsung ke konten utama' });
@@ -138,7 +138,7 @@ describe('SkipLink', () => {
       document.body.appendChild(mainElement);
 
       const footerElement = document.createElement('footer');
-      footerElement.id = 'main-footer';
+      footerElement.id = 'footer';
       footerElement.setAttribute('tabindex', '-1');
       document.body.appendChild(footerElement);
     });
@@ -147,7 +147,7 @@ describe('SkipLink', () => {
       const targets: SkipTarget[] = [
         { id: 'main-nav', label: 'Langsung ke navigasi' },
         { id: 'main-content', label: 'Langsung ke konten utama' },
-        { id: 'main-footer', label: 'Langsung ke footer' },
+        { id: 'footer', label: 'Langsung ke footer' },
       ];
 
       render(<SkipLink targets={targets} />);
@@ -163,7 +163,7 @@ describe('SkipLink', () => {
       const targets: SkipTarget[] = [
         { id: 'main-nav', label: 'Langsung ke navigasi' },
         { id: 'main-content', label: 'Langsung ke konten utama' },
-        { id: 'main-footer', label: 'Langsung ke footer' },
+        { id: 'footer', label: 'Langsung ke footer' },
       ];
 
       render(<SkipLink targets={targets} />);

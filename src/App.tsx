@@ -281,7 +281,7 @@ const App: React.FC = () => {
         targets={[
           { id: 'main-nav', label: 'Langsung ke navigasi utama' },
           { id: 'main-content', label: 'Langsung ke konten utama' },
-          { id: 'kontak', label: 'Langsung ke footer' },
+          { id: 'footer', label: 'Langsung ke footer' },
         ] as SkipTarget[]}
       />
       <div id="main-nav" tabIndex={-1}>
