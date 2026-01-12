@@ -6,6 +6,7 @@ import { MoonIcon } from './icons/MoonIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
 import IconButton from './ui/IconButton';
 import Modal from './ui/Modal';
+import Button from './ui/Button';
 
 interface ThemeSelectorProps {
   isOpen: boolean;
@@ -167,13 +168,15 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
 
         {/* Footer Actions */}
         <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 flex gap-2">
-          <button
+          <Button
             onClick={resetToDefault}
-            aria-label="Reset tema ke pengaturan default"
-            className="flex-1 px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+            ariaLabel="Reset tema ke pengaturan default"
+            variant="ghost"
+            size="sm"
+            className="flex-1"
           >
             Reset ke Default
-          </button>
+          </Button>
           <button
             onClick={() => {
               toggleDarkMode();
