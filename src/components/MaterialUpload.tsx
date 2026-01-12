@@ -599,26 +599,19 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                     />
 
                         {categoryValidation && !categoryValidation.valid && categoryValidation.suggestions && categoryValidation.suggestions.length > 0 && (
-                        <ul className="mt-1 ml-4 list-disc">
+                        <div className="mt-1 ml-4 space-y-1" role="list" aria-label="Saran kategori">
                           {categoryValidation.suggestions.map((suggestion, index) => (
-                            <li
+                            <button
                               key={index}
-                              className="cursor-pointer hover:text-green-600"
-                              role="button"
-                              tabIndex={0}
+                              type="button"
                               onClick={() => handleCategoryChange(suggestion)}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                  e.preventDefault();
-                                  handleCategoryChange(suggestion);
-                                }
-                              }}
+                              className="text-left text-sm hover:text-green-600 focus:outline-none focus:ring-2 focus:ring-green-500/50 rounded px-1"
                               aria-label={`Pilih kategori: ${suggestion}`}
                             >
-                              {suggestion}
-                            </li>
+                              • {suggestion}
+                            </button>
                           ))}
-                        </ul>
+                        </div>
                       )}
 
                     <div className="mt-2 flex items-center justify-between">

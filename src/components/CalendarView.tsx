@@ -128,14 +128,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     onEventClick?.(event);
   };
 
-  const handleEventKeyDown = (event: Schedule | ParentMeeting, e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      e.stopPropagation();
-      onEventClick?.(event);
-    }
-  };
-
   const handleDateKeyDown = (date: Date, e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -205,33 +197,31 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 {events.slice(0, 3).map((event, idx) => {
                   const isMeeting = 'status' in event;
                   return (
-                      <div
+                      <button
                         key={idx}
+                        type="button"
                         onClick={(e) => handleEventClick(event, e)}
-                        onKeyDown={(e) => handleEventKeyDown(event, e)}
-                        className={`text-xs p-1 rounded truncate cursor-pointer
+                        className={`text-xs p-1 rounded truncate
                           ${isMeeting
                             ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
                             : 'bg-blue-100 text-blue-800 hover:bg-blue-200'} focus:outline-none focus:ring-2 focus:ring-primary-500/50`}
-                        role="button"
-                        tabIndex={0}
                         aria-label={getEventAriaLabel(event)}
                       >
                       {event.startTime && `${event.startTime} `}
                       {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
-                    </div>
+                    </button>
                   );
                 })}
                 {events.length > 3 && (
                   <div className="text-xs text-neutral-500">+{events.length - 3} lagi</div>
                 )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
-    </Card>
-  );
+            );
+          })}
+        </div>
+      </Card>
+    );
 
   const renderWeekView = () => (
     <Card padding="none" role="grid" aria-label="Kalender mingguan">
@@ -300,21 +290,19 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                   {events.map((event, idx) => {
                     const isMeeting = 'status' in event;
                     return (
-                      <div
+                      <button
                         key={idx}
+                        type="button"
                         onClick={(e) => handleEventClick(event, e)}
-                        onKeyDown={(e) => handleEventKeyDown(event, e)}
-                        className={`text-xs p-1 rounded truncate cursor-pointer
+                        className={`text-xs p-1 rounded truncate
                           ${isMeeting
                             ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
                             : 'bg-blue-100 text-blue-800 hover:bg-blue-200'} focus:outline-none focus:ring-2 focus:ring-primary-500/50`}
-                        role="button"
-                        tabIndex={0}
                         aria-label={getEventAriaLabel(event)}
                       >
                         {event.startTime && `${event.startTime} `}
                         {'subjectName' in event ? event.subjectName : ('status' in event ? event.subject : 'Agenda')}
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
@@ -372,20 +360,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               {sortedEvents.map((event, index) => {
                 const isMeeting = 'status' in event;
                 return (
-                  <div
+                  <button
                     key={index}
-                    role="button"
-                    tabIndex={0}
+                    type="button"
                     onClick={() => onEventClick?.(event)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        onEventClick?.(event);
-                      }
-                    }}
                     aria-label={getEventAriaLabel(event)}
-                    className="p-4 border rounded-lg cursor-pointer transition-all duration-200 ease-out
-                      hover:shadow-md hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="p-4 border rounded-lg transition-all duration-200 ease-out text-left
+                      hover:shadow-md hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -431,17 +412,17 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                             )}
                           </div>
                         )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </Card>
-    );
-  };
+                       </div>
+                     </div>
+                   </button>
+                 );
+               })}
+             </div>
+           )}
+         </div>
+       </Card>
+     );
+   };
 
   return (
     <div className={className} role="region" aria-label="Kalender jadwal">
