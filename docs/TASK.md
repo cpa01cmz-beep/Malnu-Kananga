@@ -336,18 +336,35 @@
           - Improved consistency with design system and other modals in application
           - Maintained all existing functionality (filters, notifications list, footer actions)
           - See src/components/NotificationHistory.tsx:13,173-190,193-317 for implementation
-  - [x] Footer Non-Functional Links Accessibility Improvement (Phase 5 - COMPLETED 2026-01-12)
-     - Converted 4 placeholder anchor links (Download, Kebijakan Privasi, Karir, Beasiswa) to disabled buttons
-     - Converted 3 social media links (Facebook, Instagram, YouTube) to disabled buttons
-     - Removed href="#" attributes from non-functional links to prevent screen reader confusion
-     - Added disabled prop with visual feedback (opacity-60, cursor-not-allowed for footer links)
-     - SocialLink component already provides opacity-50 and cursor-not-allowed for disabled state
-     - Improved WCAG 2.1 AA compliance (SC 2.4.4 Link Purpose, SC 4.1.2 Name, Role, Value)
-     - Screen readers no longer announce non-functional links as navigable elements
-     - Users receive clear visual feedback that these features are not yet available
-     - Created comprehensive test coverage with 50+ accessibility-focused test cases
-     - See src/components/Footer.tsx:40-70 for implementation
-     - See src/components/__tests__/Footer.test.tsx for test coverage
+   - [x] Footer Non-Functional Links Accessibility Improvement (Phase 5 - COMPLETED 2026-01-12)
+      - Converted 4 placeholder anchor links (Download, Kebijakan Privasi, Karir, Beasiswa) to disabled buttons
+      - Converted 3 social media links (Facebook, Instagram, YouTube) to disabled buttons
+      - Removed href="#" attributes from non-functional links to prevent screen reader confusion
+      - Added disabled prop with visual feedback (opacity-60, cursor-not-allowed for footer links)
+      - SocialLink component already provides opacity-50 and cursor-not-allowed for disabled state
+      - Improved WCAG 2.1 AA compliance (SC 2.4.4 Link Purpose, SC 4.1.2 Name, Role, Value)
+      - Screen readers no longer announce non-functional links as navigable elements
+      - Users receive clear visual feedback that these features are not yet available
+      - Created comprehensive test coverage with 50+ accessibility-focused test cases
+      - See src/components/Footer.tsx:40-70 for implementation
+      - See src/components/__tests__/Footer.test.tsx for test coverage
+   - [x] ProfileSection Interactive Cards Accessibility Improvement (Phase 5 - COMPLETED 2026-01-12)
+      - Converted Visi and Misi cards from <div> elements to <button> elements for semantic structure
+      - Added type="button" attribute to ensure proper form behavior
+      - Added aria-labelledby attributes linking buttons to their heading IDs (visi-heading, misi-heading)
+      - Added id attributes to headings for proper ARIA association (visi-heading, misi-heading)
+      - Replaced focus-within:ring with focus-visible:ring for better keyboard navigation feedback
+      - Added focus-visible:ring-offset-2 for better focus ring visibility
+      - Added dark:focus-visible:ring-offset-neutral-800 for dark mode support
+      - Added active:translate-y-0 for button press feedback
+      - Added w-full text-left classes to maintain layout alignment
+      - Improved WCAG 2.1 AA compliance (SC 1.3.1 Info and Relationships, SC 2.1.1 Keyboard)
+      - Buttons are now focusable and keyboard accessible without additional attributes
+      - Screen readers properly announce card content with semantic structure
+      - Enhanced user experience with better hover, focus, and active state feedback
+      - Created comprehensive test coverage with 14 accessibility-focused test cases
+      - See src/components/sections/ProfileSection.tsx:36-72 for implementation
+      - See src/components/__tests__/ProfileSection.test.tsx for test coverage
 
 
 
