@@ -75,39 +75,38 @@ describe('FolderNavigation Accessibility', () => {
   });
 
   describe('Keyboard Navigation', () => {
-    it('has keyboard event handlers for folder selection', async () => {
+    it('native buttons support keyboard navigation for folder selection', async () => {
       const onFolderSelect = vi.fn();
       render(<FolderNavigation {...mockProps} onFolderSelect={onFolderSelect} />);
-      
-      const mathFolder = screen.getByText('Matematika');
-      mathFolder.focus();
-      
-      fireEvent.keyDown(mathFolder, { key: 'Enter', code: 'Enter' });
-      
+
+      const mathFolderButton = screen.getByRole('button', { name: /Matematika.*materi/i });
+      mathFolderButton.focus();
+
+      fireEvent.keyDown(mathFolderButton, { key: 'Enter', code: 'Enter' });
+
       expect(onFolderSelect).toHaveBeenCalled();
     });
 
-    it('responds to Space key for folder selection', async () => {
+    it('native buttons respond to Space key for folder selection', async () => {
       const onFolderSelect = vi.fn();
       render(<FolderNavigation {...mockProps} onFolderSelect={onFolderSelect} />);
-      
-      const mathFolder = screen.getByText('Matematika');
-      mathFolder.focus();
-      
-      fireEvent.keyDown(mathFolder, { key: ' ', code: 'Space' });
-      
+
+      const mathFolderButton = screen.getByRole('button', { name: /Matematika.*materi/i });
+      mathFolderButton.focus();
+
+      fireEvent.keyDown(mathFolderButton, { key: ' ', code: 'Space' });
+
       expect(onFolderSelect).toHaveBeenCalled();
     });
 
-    it('responds to Enter key for "Semua Materi" selection', async () => {
+    it('native button responds to Enter key for "Semua Materi" selection', async () => {
       const onFolderSelect = vi.fn();
       render(<FolderNavigation {...mockProps} onFolderSelect={onFolderSelect} />);
-      
-      const allMaterialsElements = screen.getAllByText('Semua Materi');
-      const standaloneButton = allMaterialsElements[0];
-      
-      fireEvent.keyDown(standaloneButton, { key: 'Enter', code: 'Enter' });
-      
+
+      const allMaterialsButton = screen.getByRole('button', { name: /Semua Materi.*materi/i });
+
+      fireEvent.keyDown(allMaterialsButton, { key: 'Enter', code: 'Enter' });
+
       expect(onFolderSelect).toHaveBeenCalledWith(undefined);
     });
   });
@@ -115,60 +114,63 @@ describe('FolderNavigation Accessibility', () => {
   describe('ARIA Attributes', () => {
     it('has proper ARIA labels for folder selection', async () => {
       render(<FolderNavigation {...mockProps} />);
-      
-      const folderContainers = screen.getAllByText('Matematika');
-      expect(folderContainers.length).toBeGreaterThan(0);
+
+      const folderButtons = screen.getAllByRole('button', { name: /Matematika/i });
+      expect(folderButtons.length).toBeGreaterThan(0);
     });
 
     it('has aria-pressed for folder selection state', async () => {
       const props = { ...mockProps, selectedFolderId: 'math' };
       render(<FolderNavigation {...props} />);
-      
-      const mathFolder = screen.getByText('Matematika');
-      expect(mathFolder).toBeInTheDocument();
+
+      const mathFolderButton = screen.getByRole('button', { name: /Matematika.*materi/i });
+      expect(mathFolderButton).toBeInTheDocument();
+      expect(mathFolderButton).toHaveAttribute('aria-pressed', 'true');
     });
 
-    it('has aria-pressed="true" for "Semua Materi" when no folder selected', () => {
+    it('has aria-pressed="true" for "Semua Materi" button when no folder selected', () => {
       render(<FolderNavigation {...mockProps} />);
-      
-      const allMaterialsElements = screen.getAllByText('Semua Materi');
-      const standaloneButton = allMaterialsElements[0];
-      
-      expect(standaloneButton).toBeInTheDocument();
+
+      const allMaterialsButton = screen.getByRole('button', { name: /Semua Materi.*materi/i });
+
+      expect(allMaterialsButton).toBeInTheDocument();
+      expect(allMaterialsButton).toHaveAttribute('aria-pressed', 'true');
     });
   });
 
   describe('Interaction', () => {
-    it('calls onFolderSelect when clicking a folder', async () => {
+    it('calls onFolderSelect when clicking a folder button', async () => {
       const onFolderSelect = vi.fn();
       render(<FolderNavigation {...mockProps} onFolderSelect={onFolderSelect} />);
-      
+
       const user = userEvent.setup();
-      const mathFolder = screen.getByText('Matematika');
-      await user.click(mathFolder);
-      
+      const mathFolderButton = screen.getByRole('button', { name: /Matematika.*materi/i });
+      await user.click(mathFolderButton);
+
       expect(onFolderSelect).toHaveBeenCalled();
     });
 
-    it('calls onFolderSelect when clicking "Semua Materi"', async () => {
+    it('calls onFolderSelect when clicking "Semua Materi" button', async () => {
       const onFolderSelect = vi.fn();
       render(<FolderNavigation {...mockProps} onFolderSelect={onFolderSelect} />);
-      
+
       const user = userEvent.setup();
-      const allMaterialsElements = screen.getAllByText('Semua Materi');
-      const standaloneButton = allMaterialsElements[0];
-      await user.click(standaloneButton);
-      
+      const allMaterialsButton = screen.getByRole('button', { name: /Semua Materi.*materi/i });
+      await user.click(allMaterialsButton);
+
       expect(onFolderSelect).toHaveBeenCalledWith(undefined);
     });
 
-    it('expands folder when clicking expand button', async () => {
+    it('expands folder when clicking expand chevron button', async () => {
       render(<FolderNavigation {...mockProps} />);
-      
+
       const user = userEvent.setup();
       const expandButtons = screen.getAllByRole('button');
-      const expandButton = expandButtons.find(btn => btn.querySelector('svg'));
-      
+      const expandButton = expandButtons.find(btn =>
+        btn.getAttribute('aria-label')?.includes('Buka folder') ||
+        btn.getAttribute('aria-label')?.includes('Tutup folder')
+      );
+
       if (expandButton) {
         await user.click(expandButton);
         expect(expandButton).toBeInTheDocument();
@@ -177,16 +179,12 @@ describe('FolderNavigation Accessibility', () => {
 
     it('shows create folder form when clicking add button', async () => {
       render(<FolderNavigation {...mockProps} />);
-      
+
       const user = userEvent.setup();
-      const addButton = screen.getAllByRole('button').find(btn => 
-        btn.querySelector('svg')?.querySelector('path')?.getAttribute('d')?.includes('M12 4.5v15m7.5-7.5h-15')
-      );
-      
-      if (addButton) {
-        await user.click(addButton);
-        expect(screen.getByText('Buat Folder Baru')).toBeInTheDocument();
-      }
+      const addButton = screen.getByRole('button', { name: 'Buat folder baru' });
+
+      await user.click(addButton);
+      expect(screen.getByText('Buat Folder Baru')).toBeInTheDocument();
     });
   });
 
@@ -194,65 +192,55 @@ describe('FolderNavigation Accessibility', () => {
     it('shows selected state when folder is selected', async () => {
       const props = { ...mockProps, selectedFolderId: 'math' };
       render(<FolderNavigation {...props} />);
-      
-      const mathFolder = screen.getByText('Matematika');
-      const mathContainer = mathFolder.closest('[role="button"]');
-      
-      if (mathContainer) {
-        expect(mathContainer).toHaveClass('bg-blue-100');
-      }
+
+      const mathFolderButton = screen.getByRole('button', { name: /Matematika.*materi/i });
+
+      expect(mathFolderButton).toBeInTheDocument();
+      expect(mathFolderButton).toHaveClass('bg-blue-100');
     });
 
     it('shows selected state for "Semua Materi" when no folder selected', () => {
       render(<FolderNavigation {...mockProps} />);
-      
-      const allMaterialsElements = screen.getAllByText('Semua Materi');
-      const standaloneButton = allMaterialsElements[0];
-      const buttonContainer = standaloneButton.closest('[role="button"]');
-      
-      if (buttonContainer) {
-        expect(buttonContainer).toHaveClass('bg-blue-100');
-      }
+
+      const allMaterialsButton = screen.getByRole('button', { name: /Semua Materi.*materi/i });
+
+      expect(allMaterialsButton).toBeInTheDocument();
+      expect(allMaterialsButton).toHaveClass('bg-blue-100');
     });
   });
 
   describe('Accessibility Features', () => {
-    it('removes cursor-pointer class from clickable containers', async () => {
+    it('uses native button elements for folder selection', async () => {
       render(<FolderNavigation {...mockProps} />);
-      
-      const mathFolder = screen.getByText('Matematika');
-      const mathContainer = mathFolder.closest('[role="button"]');
-      
-      if (mathContainer) {
-        expect(mathContainer.className).not.toContain('cursor-pointer');
-      }
-    });
 
-    it('has clickable containers with role="button"', async () => {
-      render(<FolderNavigation {...mockProps} />);
-      
-      const folderContainers = screen.getAllByText('Matematika');
-      folderContainers.forEach(folder => {
-        const container = folder.closest('[role="button"]');
-        if (container) {
-          expect(container).toHaveAttribute('role', 'button');
-          expect(container).toHaveAttribute('tabIndex');
-        }
+      const folderButtons = screen.getAllByRole('button', { name: /Matematika/i });
+      expect(folderButtons.length).toBeGreaterThan(0);
+
+      folderButtons.forEach(button => {
+        expect(button.tagName.toLowerCase()).toBe('button');
+        expect(button).not.toHaveClass('cursor-pointer');
       });
     });
 
-    it('has descriptive ARIA labels including material count', async () => {
+    it('has proper button elements with native keyboard support', async () => {
       render(<FolderNavigation {...mockProps} />);
-      
-      const allMaterialsElements = screen.getAllByText('Semua Materi');
-      const standaloneButton = allMaterialsElements[0];
-      const buttonContainer = standaloneButton.closest('[role="button"]');
-      
-      if (buttonContainer) {
-        expect(buttonContainer).toHaveAttribute('aria-label');
-        const ariaLabel = buttonContainer.getAttribute('aria-label');
-        expect(ariaLabel).toContain('materi');
-      }
+
+      const allMaterialsButton = screen.getByRole('button', { name: /Semua Materi.*materi/i });
+
+      expect(allMaterialsButton.tagName.toLowerCase()).toBe('button');
+      expect(allMaterialsButton).not.toHaveAttribute('tabIndex');
+      expect(allMaterialsButton).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    it('has descriptive ARIA labels including material count on group container', async () => {
+      render(<FolderNavigation {...mockProps} />);
+
+      const folderGroups = screen.getAllByRole('group');
+      const mathGroup = folderGroups.find(group => group.getAttribute('aria-label')?.includes('Matematika'));
+
+      expect(mathGroup).toHaveAttribute('aria-label');
+      const ariaLabel = mathGroup?.getAttribute('aria-label');
+      expect(ariaLabel).toContain('materi');
     });
   });
 
