@@ -13,7 +13,7 @@ import AICacheManager from './AICacheManager'; // Import AI Cache Manager
 import { ToastType } from './Toast';
 import { STORAGE_KEYS } from '../constants'; // Import constants
 import { logger } from '../utils/logger';
-import { usePushNotifications } from '../hooks/usePushNotifications';
+import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { getGradientClass } from '../config/gradients';
 import ErrorMessage from './ui/ErrorMessage';

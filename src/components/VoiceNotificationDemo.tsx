@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { usePushNotifications } from '../hooks/usePushNotifications';
+import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useVoiceNotifications } from '../hooks/useVoiceNotifications';
 import Button from './ui/Button';
 import Alert from './ui/Alert';

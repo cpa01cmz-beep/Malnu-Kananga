@@ -42,7 +42,16 @@ export function useUnifiedNotifications() {
   const [isInitialized, setIsInitialized] = useState(false);
   const lastCheckedRef = useRef<{ [key: string]: number }>({});
 
-  // Initialize the notification system
+  // State for legacy compatibility
+  const [permissionGranted, setPermissionGranted] = useState(false);
+  const [permissionDenied, setPermissionDenied] = useState(false);
+  const [settings, setSettingsState] = useState(unifiedNotificationManager.getUnifiedSettings());
+  const [history, setHistory] = useState<NotificationHistoryItem[]>([]);
+  const [batches, setBatches] = useState<NotificationBatch[]>([]);
+  const [templates, setTemplates] = useState<UnifiedNotificationTemplate[]>([]);
+  const [analytics, setAnalytics] = useState<NotificationAnalytics[]>([]);
+
+  // Initialize notification system
   useEffect(() => {
     const initialize = async () => {
       try {
@@ -57,6 +66,17 @@ export function useUnifiedNotifications() {
 
     initialize();
   }, []);
+
+  // Load state on mount
+  useEffect(() => {
+    setHistory(unifiedNotificationManager.getUnifiedHistory());
+    setBatches(unifiedNotificationManager.getBatches());
+    setTemplates(unifiedNotificationManager.getTemplates());
+    setAnalytics(unifiedNotificationManager.getAnalytics());
+    setPermissionGranted(unifiedNotificationManager.isPermissionGranted());
+    setPermissionDenied(unifiedNotificationManager.isPermissionDenied());
+    setSettingsState(unifiedNotificationManager.getUnifiedSettings());
+  }, [isInitialized]);
 
   // Permission Management
   const requestPermission = useCallback(async (): Promise<boolean> => {
@@ -74,6 +94,7 @@ export function useUnifiedNotifications() {
   // Core Notification Methods
   const showNotification = useCallback(async (notification: PushNotification): Promise<void> => {
     await unifiedNotificationManager.showNotification(notification);
+    setHistory(unifiedNotificationManager.getUnifiedHistory());
   }, []);
 
   const createNotification = useCallback((
@@ -109,7 +130,9 @@ export function useUnifiedNotifications() {
     targetRoles?: PushNotification['targetRoles'],
     targetExtraRoles?: PushNotification['targetExtraRoles']
   ): UnifiedNotificationTemplate => {
-    return unifiedNotificationManager.createTemplate(name, type, title, body, variables, targetRoles, targetExtraRoles);
+    const template = unifiedNotificationManager.createTemplate(name, type, title, body, variables, targetRoles, targetExtraRoles);
+    setTemplates(unifiedNotificationManager.getTemplates());
+    return template;
   }, []);
 
   const createNotificationFromTemplate = useCallback((
@@ -155,11 +178,15 @@ export function useUnifiedNotifications() {
 
   // Batch Management
   const createBatch = useCallback((name: string, notifications: PushNotification[]): NotificationBatch => {
-    return unifiedNotificationManager.createBatch(name, notifications);
+    const batch = unifiedNotificationManager.createBatch(name, notifications);
+    setBatches(unifiedNotificationManager.getBatches());
+    return batch;
   }, []);
 
   const sendBatch = useCallback(async (batchId: string): Promise<boolean> => {
-    return await unifiedNotificationManager.sendBatch(batchId);
+    const success = await unifiedNotificationManager.sendBatch(batchId);
+    setBatches(unifiedNotificationManager.getBatches());
+    return success;
   }, []);
 
   // History Management
@@ -169,14 +196,17 @@ export function useUnifiedNotifications() {
 
   const clearHistory = useCallback((): void => {
     unifiedNotificationManager.clearUnifiedHistory();
+    setHistory([]);
   }, []);
 
   const markAsRead = useCallback((notificationId: string): void => {
     unifiedNotificationManager.markAsRead(notificationId);
+    setHistory(unifiedNotificationManager.getUnifiedHistory());
   }, []);
 
   const deleteFromHistory = useCallback((notificationId: string): void => {
     unifiedNotificationManager.deleteFromHistory(notificationId);
+    setHistory(unifiedNotificationManager.getUnifiedHistory());
   }, []);
 
   // Settings Management
@@ -184,12 +214,24 @@ export function useUnifiedNotifications() {
     return unifiedNotificationManager.getUnifiedSettings();
   }, []);
 
-  const saveSettings = useCallback((settings: UnifiedNotificationSettings): void => {
-    unifiedNotificationManager.saveUnifiedSettings(settings);
+  const saveSettings = useCallback((newSettings: UnifiedNotificationSettings): void => {
+    unifiedNotificationManager.saveUnifiedSettings(newSettings);
+    setSettingsState(newSettings);
   }, []);
 
   const resetSettings = useCallback((): void => {
     unifiedNotificationManager.resetSettings();
+    setSettingsState(unifiedNotificationManager.getUnifiedSettings());
+  }, []);
+
+  const updateSettings = useCallback((newSettings: UnifiedNotificationSettings): void => {
+    unifiedNotificationManager.saveUnifiedSettings(newSettings);
+    setSettingsState(newSettings);
+  }, []);
+
+  const deleteNotification = useCallback((notificationId: string): void => {
+    unifiedNotificationManager.deleteFromHistory(notificationId);
+    setHistory(unifiedNotificationManager.getUnifiedHistory());
   }, []);
 
   // Analytics
@@ -199,6 +241,7 @@ export function useUnifiedNotifications() {
 
   const clearAnalytics = useCallback((): void => {
     unifiedNotificationManager.clearAnalytics();
+    setAnalytics([]);
   }, []);
 
   // Event System
@@ -294,6 +337,13 @@ export function useUnifiedNotifications() {
   return {
     // State
     isInitialized,
+    permissionGranted,
+    permissionDenied,
+    settings,
+    history,
+    batches,
+    templates,
+    analytics,
 
     // Core methods
     showNotification,
@@ -336,10 +386,12 @@ export function useUnifiedNotifications() {
     getSettings,
     saveSettings,
     resetSettings,
+    updateSettings,
 
     // Analytics
     getAnalytics,
     clearAnalytics,
+    deleteNotification,
 
     // Event system
     addEventListener,
