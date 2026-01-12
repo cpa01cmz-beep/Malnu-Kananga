@@ -1,23 +1,26 @@
-import { 
-  NotificationSettings, 
-  PushNotification, 
-  NotificationHistoryItem, 
-  NotificationBatch, 
+import {
+  NotificationSettings,
+  PushNotification,
+  NotificationHistoryItem,
+  NotificationBatch,
   NotificationAnalytics,
   UserRole,
   UserExtraRole,
   NotificationType,
-  OCRValidationEvent
+  OCRValidationEvent,
+  VoiceNotification,
+  VoiceNotificationCategory
 } from '../types';
-import { 
-  NOTIFICATION_CONFIG, 
-  NOTIFICATION_ERROR_MESSAGES, 
-  NOTIFICATION_ICONS, 
-  STORAGE_KEYS 
+import {
+  NOTIFICATION_CONFIG,
+  NOTIFICATION_ERROR_MESSAGES,
+  NOTIFICATION_ICONS,
+  STORAGE_KEYS,
+  VOICE_NOTIFICATION_CONFIG
 } from '../constants';
 import { logger } from '../utils/logger';
-import { voiceNotificationService } from './voiceNotificationService';
 import { handleNotificationError } from '../utils/serviceErrorHandlers';
+import SpeechSynthesisService from './speechSynthesisService';
 
 /* eslint-disable no-undef */
 declare global {
@@ -77,9 +80,15 @@ class UnifiedNotificationManager {
   private analytics: Map<string, NotificationAnalytics> = new Map();
   private eventListeners: Map<string, Set<(event: NotificationEvent) => void>> = new Map();
   private defaultTemplates: Map<NotificationType, UnifiedNotificationTemplate> = new Map();
+  private voiceQueue: VoiceNotification[] = [];
+  private voiceHistory: VoiceNotification[] = [];
+  private isProcessingVoice: boolean = false;
+  private synthesisService: SpeechSynthesisService;
 
   constructor() {
+    this.synthesisService = new SpeechSynthesisService();
     this.initializeDefaultTemplates();
+    this.setupVoiceHandlers();
     setTimeout(() => {
       this.initialize();
     }, 0);
@@ -246,6 +255,279 @@ class UnifiedNotificationManager {
     } catch (error) {
       logger.error('Failed to load analytics during initialization:', error);
     }
+  }
+
+  // Voice Notification Queue Management
+  private setupVoiceHandlers(): void {
+    this.synthesisService.onStart(() => {
+      logger.debug('Voice notification started');
+    });
+
+    this.synthesisService.onEnd(() => {
+      this.isProcessingVoice = false;
+      this.processVoiceQueue();
+      logger.debug('Voice notification ended, processing next in queue');
+    });
+
+    this.synthesisService.onError((error) => {
+      logger.error('Voice notification error:', error);
+      this.isProcessingVoice = false;
+      this.retryFailedVoiceNotification();
+    });
+  }
+
+  private loadVoiceQueue(): void {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.VOICE_NOTIFICATIONS_QUEUE);
+      if (stored) {
+        this.voiceQueue = JSON.parse(stored);
+        if (this.voiceQueue.length > VOICE_NOTIFICATION_CONFIG.MAX_QUEUE_SIZE) {
+          this.voiceQueue = this.voiceQueue.slice(-VOICE_NOTIFICATION_CONFIG.MAX_QUEUE_SIZE);
+        }
+      }
+    } catch (error) {
+      logger.error('Failed to load voice notification queue:', error);
+    }
+  }
+
+  private saveVoiceQueue(): void {
+    try {
+      localStorage.setItem(
+        STORAGE_KEYS.VOICE_NOTIFICATIONS_QUEUE,
+        JSON.stringify(this.voiceQueue)
+      );
+    } catch (error) {
+      logger.error('Failed to save voice notification queue:', error);
+    }
+  }
+
+  private loadVoiceHistory(): void {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.VOICE_NOTIFICATIONS_HISTORY);
+      if (stored) {
+        this.voiceHistory = JSON.parse(stored);
+        if (this.voiceHistory.length > VOICE_NOTIFICATION_CONFIG.MAX_HISTORY_SIZE) {
+          this.voiceHistory = this.voiceHistory.slice(-VOICE_NOTIFICATION_CONFIG.MAX_HISTORY_SIZE);
+        }
+      }
+    } catch (error) {
+      logger.error('Failed to load voice notification history:', error);
+    }
+  }
+
+  private saveVoiceHistory(): void {
+    try {
+      localStorage.setItem(
+        STORAGE_KEYS.VOICE_NOTIFICATIONS_HISTORY,
+        JSON.stringify(this.voiceHistory)
+      );
+    } catch (error) {
+      logger.error('Failed to save voice notification history:', error);
+    }
+  }
+
+  private isQuietHours(): boolean {
+    const settings = this.getUnifiedSettings();
+    const quietHours = settings.quietHours;
+    if (!settings.quietHours || !quietHours.enabled) {
+      return false;
+    }
+
+    const now = new Date();
+    const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+    if (quietHours.start > quietHours.end) {
+      return currentTime >= quietHours.start || currentTime <= quietHours.end;
+    } else {
+      return currentTime >= quietHours.start && currentTime <= quietHours.end;
+    }
+  }
+
+  private shouldVoiceAnnounce(notification: PushNotification): boolean {
+    const settings = this.getUnifiedSettings();
+    if (!settings.voice?.enabled) {
+      return false;
+    }
+
+    if (this.isQuietHours()) {
+      logger.debug('Voice notification suppressed during quiet hours');
+      return false;
+    }
+
+    const type = notification.type as string;
+    if (settings[type as keyof NotificationSettings] === false) {
+      logger.debug(`Voice notification suppressed: ${type} type disabled`);
+      return false;
+    }
+
+    return true;
+  }
+
+  private getVoiceNotificationCategory(notification: PushNotification): VoiceNotificationCategory {
+    switch (notification.type) {
+      case 'grade':
+        return 'grade';
+      case 'system':
+        if (notification.body.toLowerCase().includes('kehadiran') ||
+            notification.body.toLowerCase().includes('absen')) {
+          return 'attendance';
+        }
+        if (notification.body.toLowerCase().includes('rapat') ||
+            notification.body.toLowerCase().includes('meeting')) {
+          return 'meeting';
+        }
+        return 'system';
+      default:
+        return 'system';
+    }
+  }
+
+  private generateVoiceText(notification: PushNotification): string {
+    const category = this.getVoiceNotificationCategory(notification);
+    switch (category) {
+      case 'grade':
+        return `Perhatian. ${notification.title}. ${notification.body}. Nilai baru telah dipublikasikan.`;
+      case 'attendance':
+        return `Perhatian. ${notification.title}. ${notification.body}. Status kehadiran diperbarui.`;
+      case 'meeting':
+        return `Perhatian. ${notification.title}. ${notification.body}. Pengingat rapat.`;
+      case 'system':
+        return `Perhatian. ${notification.title}. ${notification.body}. Pesan sistem penting.`;
+      default:
+        return `${notification.title}. ${notification.body}.`;
+    }
+  }
+
+  private createVoiceNotification(pushNotification: PushNotification): VoiceNotification {
+    return {
+      id: `voice-${pushNotification.id}-${Date.now()}`,
+      notificationId: pushNotification.id,
+      text: this.generateVoiceText(pushNotification),
+      priority: pushNotification.priority,
+      category: this.getVoiceNotificationCategory(pushNotification),
+      timestamp: new Date().toISOString(),
+      isSpeaking: false,
+      wasSpoken: false,
+    };
+  }
+
+  private retryFailedVoiceNotification(): void {
+    if (this.voiceQueue.length > 0) {
+      setTimeout(() => {
+        this.processVoiceQueue();
+      }, 1000);
+    }
+  }
+
+  private processVoiceQueue(): void {
+    if (this.isProcessingVoice || this.voiceQueue.length === 0) {
+      return;
+    }
+
+    const voiceNotification = this.voiceQueue[0];
+
+    if (voiceNotification.wasSpoken) {
+      this.voiceQueue.shift();
+      this.saveVoiceQueue();
+      this.processVoiceQueue();
+      return;
+    }
+
+    this.isProcessingVoice = true;
+    voiceNotification.isSpeaking = true;
+    voiceNotification.wasSpoken = true;
+    this.saveVoiceQueue();
+
+    const settings = this.getUnifiedSettings();
+    if (settings.voice?.rate !== undefined) {
+      this.synthesisService.setRate(settings.voice.rate);
+    }
+    if (settings.voice?.pitch !== undefined) {
+      this.synthesisService.setPitch(settings.voice.pitch);
+    }
+    if (settings.voice?.volume !== undefined) {
+      this.synthesisService.setVolume(settings.voice.volume);
+    }
+
+    this.synthesisService.speak(voiceNotification.text);
+    logger.info('Speaking voice notification:', voiceNotification.text.substring(0, 50));
+  }
+
+  public announceNotification(notification: PushNotification): boolean {
+    if (!this.shouldVoiceAnnounce(notification)) {
+      return false;
+    }
+
+    const voiceNotification = this.createVoiceNotification(notification);
+
+    if (this.voiceQueue.length >= VOICE_NOTIFICATION_CONFIG.MAX_QUEUE_SIZE) {
+      logger.warn('Voice notification queue is full, dropping oldest notification');
+      this.voiceQueue.shift();
+    }
+
+    this.voiceQueue.push(voiceNotification);
+    this.saveVoiceQueue();
+
+    if (!this.isProcessingVoice) {
+      this.processVoiceQueue();
+    }
+
+    this.voiceHistory.push(voiceNotification);
+    if (this.voiceHistory.length > VOICE_NOTIFICATION_CONFIG.MAX_HISTORY_SIZE) {
+      this.voiceHistory.shift();
+    }
+    this.saveVoiceHistory();
+
+    logger.info('Voice notification queued:', voiceNotification.id);
+    return true;
+  }
+
+  public stopCurrentVoiceNotification(): void {
+    this.synthesisService.stop();
+    this.isProcessingVoice = false;
+    if (this.voiceQueue.length > 0) {
+      this.voiceQueue[0].isSpeaking = false;
+      this.voiceQueue[0].wasSpoken = false;
+      this.saveVoiceQueue();
+    }
+    logger.info('Voice notification stopped');
+  }
+
+  public skipCurrentVoiceNotification(): void {
+    this.synthesisService.stop();
+    this.isProcessingVoice = false;
+    if (this.voiceQueue.length > 0) {
+      const skipped = this.voiceQueue.shift();
+      logger.info('Voice notification skipped:', skipped?.id);
+      this.saveVoiceQueue();
+    }
+    this.processVoiceQueue();
+  }
+
+  public clearVoiceQueue(): void {
+    this.synthesisService.stop();
+    this.voiceQueue = [];
+    this.isProcessingVoice = false;
+    this.saveVoiceQueue();
+    logger.info('Voice notification queue cleared');
+  }
+
+  public getVoiceQueue(): VoiceNotification[] {
+    return [...this.voiceQueue];
+  }
+
+  public getVoiceHistory(): VoiceNotification[] {
+    return [...this.voiceHistory];
+  }
+
+  public clearVoiceHistory(): void {
+    this.voiceHistory = [];
+    this.saveVoiceHistory();
+    logger.info('Voice notification history cleared');
+  }
+
+  public isCurrentlySpeaking(): boolean {
+    return this.isProcessingVoice && this.synthesisService.isSpeaking();
   }
 
   // Permission Management
@@ -931,12 +1213,9 @@ class UnifiedNotificationManager {
 
   private triggerVoiceNotification(notification: PushNotification): void {
     try {
-      const settings = this.getUnifiedSettings();
-      if (settings.voice?.enabled) {
-        const voiceSuccess = voiceNotificationService.announceNotification(notification);
-        if (voiceSuccess) {
-          logger.info('Voice notification triggered for:', notification.id);
-        }
+      const voiceSuccess = this.announceNotification(notification);
+      if (voiceSuccess) {
+        logger.info('Voice notification triggered for:', notification.id);
       }
     } catch (error) {
       logger.error('Failed to trigger voice notification:', error);

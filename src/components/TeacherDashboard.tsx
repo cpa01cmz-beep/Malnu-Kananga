@@ -11,7 +11,7 @@ import SchoolInventory from './SchoolInventory';
 import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
-import { usePushNotifications } from '../hooks/usePushNotifications';
+import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { STORAGE_KEYS } from '../constants';

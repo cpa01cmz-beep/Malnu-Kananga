@@ -19,7 +19,7 @@ import { authAPI, studentsAPI, gradesAPI, attendanceAPI } from '../services/apiS
 import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
-import { usePushNotifications } from '../hooks/usePushNotifications';
+import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useOfflineDataService, useOfflineData, type CachedStudentData } from '../services/offlineDataService';
 
 import Alert from './ui/Alert';
