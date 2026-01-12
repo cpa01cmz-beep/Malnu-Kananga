@@ -2596,3 +2596,758 @@ Potential improvements to consider:
 - Skeleton loading variant
 - Disabled state for unavailable links
 - Keyboard shortcut hints
+
+---
+
+## Button Component
+
+**Location**: `src/components/ui/Button.tsx`
+
+A comprehensive button component with 14 variants, 3 sizes, loading states, and full accessibility support.
+
+### Features
+
+- **14 Variants**: `primary`, `secondary`, `ghost`, `danger`, `success`, `info`, `warning`, `indigo`, `green-solid`, `blue-solid`, `purple-solid`, `red-solid`, `orange-solid`, `teal-solid`, `outline`
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Loading State**: Built-in spinner with `aria-busy` support
+- **Icon Support**: Left/right icon positioning and icon-only variant
+- **Accessibility**: Full ARIA support, keyboard navigation, focus management
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Animations**: Smooth hover, active, and focus transitions
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `ButtonVariant` | `'primary'` | Visual style variant |
+| `size` | `ButtonSize` | `'md'` | Button size |
+| `isLoading` | `boolean` | `false` | Show loading state (disables button, shows spinner) |
+| `fullWidth` | `boolean` | `false` | Button takes full width of container |
+| `icon` | `ReactNode` | `undefined` | Icon element to display |
+| `iconPosition` | `'left' \| 'right'` | `'left'` | Icon position relative to text |
+| `iconOnly` | `boolean` | `false` | Render icon-only button (requires `ariaLabel`) |
+| `ariaLabel` | `string` | `undefined` | Accessibility label (required for icon-only) |
+| `children` | `ReactNode` | `undefined` | Button text/content |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard button attributes | - | - | Passes through all standard HTML button props |
+
+### Variants
+
+#### 1. Primary Variant
+
+Default primary action button with primary color scheme.
+
+```tsx
+import Button from './ui/Button';
+
+<Button>Submit Form</Button>
+```
+
+**Styling**:
+- Background: `bg-primary-600`
+- Text: `text-white`
+- Hover: `hover:bg-primary-700`
+- Focus ring: `focus:ring-primary-500/50`
+- Shadow: `shadow-sm hover:shadow-md`
+
+**Use case**: Main actions like "Submit", "Save", "Create"
+
+#### 2. Secondary Variant
+
+Secondary action button with neutral styling.
+
+```tsx
+<Button variant="secondary">Cancel</Button>
+```
+
+**Styling**:
+- Background: `bg-white dark:bg-neutral-800`
+- Text: `text-neutral-700 dark:text-neutral-200`
+- Border: `border-2 border-neutral-200 dark:border-neutral-600`
+- Hover: `hover:bg-neutral-50 dark:hover:bg-neutral-700`
+
+**Use case**: Secondary actions like "Cancel", "Back", "Close"
+
+#### 3. Ghost Variant
+
+Minimal button with transparent background.
+
+```tsx
+<Button variant="ghost">Dismiss</Button>
+```
+
+**Styling**:
+- Background: `bg-transparent`
+- Text: `text-neutral-600 dark:text-neutral-400`
+- Hover: `hover:bg-neutral-100 dark:hover:bg-neutral-700`
+- Scale: `hover:scale-[1.05]`
+
+**Use case**: Low-importance actions like "Dismiss", "Clear", "Reset"
+
+#### 4. Danger Variant
+
+Red button for destructive actions.
+
+```tsx
+<Button variant="danger">Delete</Button>
+```
+
+**Styling**:
+- Background: `bg-red-700 dark:bg-red-600`
+- Text: `text-white`
+- Hover: `hover:bg-red-800 dark:hover:bg-red-700`
+- Focus ring: `focus:ring-red-500/50`
+
+**Use case**: Destructive actions like "Delete", "Remove", "Archive"
+
+#### 5. Success Variant
+
+Green button for successful operations.
+
+```tsx
+<Button variant="success">Confirm</Button>
+```
+
+**Styling**:
+- Background: `bg-green-700 dark:bg-green-600`
+- Text: `text-white`
+- Hover: `hover:bg-green-800 dark:hover:bg-green-700`
+- Focus ring: `focus:ring-green-500/50`
+
+**Use case**: Confirmation actions like "Confirm", "Approve", "Accept"
+
+#### 6. Info Variant
+
+Blue button for informational actions.
+
+```tsx
+<Button variant="info">Learn More</Button>
+```
+
+**Styling**:
+- Background: `bg-blue-700 dark:bg-blue-600`
+- Text: `text-white`
+- Hover: `hover:bg-blue-800 dark:hover:bg-blue-700`
+- Focus ring: `focus:ring-blue-500/50`
+
+**Use case**: Informational actions like "Learn More", "View Details", "Info"
+
+#### 7. Warning Variant
+
+Orange button for cautionary actions.
+
+```tsx
+<Button variant="warning">Proceed</Button>
+```
+
+**Styling**:
+- Background: `bg-orange-600 dark:bg-orange-500`
+- Text: `text-white`
+- Hover: `hover:bg-orange-700 dark:hover:bg-orange-600`
+- Focus ring: `focus:ring-orange-500/50`
+
+**Use case**: Cautionary actions like "Proceed", "Continue", "Retry"
+
+#### 8. Indigo Variant
+
+Indigo button for alternative primary actions.
+
+```tsx
+<Button variant="indigo">Connect</Button>
+```
+
+**Styling**:
+- Background: `bg-indigo-700 dark:bg-indigo-600`
+- Text: `text-white`
+- Hover: `hover:bg-indigo-800 dark:hover:bg-indigo-700`
+- Focus ring: `focus:ring-indigo-500/50`
+
+**Use case**: Alternative primary actions with distinct visual identity
+
+#### 9. Solid Color Variants
+
+Predefined solid color variants for consistent theming:
+
+- **green-solid**: `bg-green-600` with green hover states
+- **blue-solid**: `bg-blue-600` with blue hover states
+- **purple-solid**: `bg-purple-600` with purple hover states
+- **red-solid**: `bg-red-600` with red hover states
+- **orange-solid**: `bg-orange-600` with orange hover states
+- **teal-solid**: `bg-teal-600` with teal hover states
+
+```tsx
+<Button variant="green-solid">Save</Button>
+<Button variant="blue-solid">Send</Button>
+<Button variant="purple-solid">Upload</Button>
+```
+
+**Use case**: Themed actions requiring specific colors
+
+#### 10. Outline Variant
+
+Button with outline styling.
+
+```tsx
+<Button variant="outline">Action</Button>
+```
+
+**Styling**:
+- Background: `bg-transparent`
+- Border: `border-2 border-neutral-300 dark:border-neutral-600`
+- Text: `text-neutral-600 dark:text-neutral-400`
+- Hover: `hover:bg-neutral-50 dark:hover:bg-neutral-700`
+
+**Use case**: Outline-styled buttons for visual hierarchy
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for dense interfaces.
+
+```tsx
+<Button size="sm">Small Button</Button>
+```
+
+**Dimensions**:
+- Padding: `px-3 py-2`
+- Text: `text-sm`
+- Icon-only: `p-1.5`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<Button size="md">Medium Button</Button>
+```
+
+**Dimensions**:
+- Padding: `px-4 py-2.5`
+- Text: `text-sm sm:text-base`
+- Icon-only: `p-2`
+
+#### Large (lg)
+
+Larger size for important actions or mobile-friendly touch targets.
+
+```tsx
+<Button size="lg">Large Button</Button>
+```
+
+**Dimensions**:
+- Padding: `px-6 py-3`
+- Text: `text-base sm:text-lg`
+- Icon-only: `p-2.5`
+
+### Loading State
+
+Display loading spinner and disable button during async operations.
+
+```tsx
+const [isSubmitting, setIsSubmitting] = useState(false);
+
+const handleSubmit = async () => {
+  setIsSubmitting(true);
+  await submitForm();
+  setIsSubmitting(false);
+};
+
+<Button onClick={handleSubmit} isLoading={isSubmitting}>
+  Submit Form
+</Button>
+```
+
+**Features**:
+- Spinner appears before text (or alone for icon-only)
+- Button is disabled (`disabled={disabled || isLoading}`)
+- Cursor changes to `cursor-wait`
+- `aria-busy="true"` for screen readers
+- Spinner has `role="status"` and `aria-hidden="true"`
+
+**Icon-only Loading**:
+
+```tsx
+<Button iconOnly isLoading ariaLabel="Loading">
+  <SaveIcon />
+</Button>
+```
+
+Displays spinner instead of icon when loading.
+
+### Icon Support
+
+Add icons to buttons with configurable positioning.
+
+#### Left Icon
+
+```tsx
+<Button icon={<UploadIcon />} iconPosition="left">
+  Upload File
+</Button>
+```
+
+Icon appears to the left of text with `mr-2` spacing.
+
+#### Right Icon
+
+```tsx
+<Button icon={<ArrowRightIcon />} iconPosition="right">
+  Continue
+</Button>
+```
+
+Icon appears to the right of text with `ml-2` spacing.
+
+#### Icon-Only Button
+
+```tsx
+<Button iconOnly icon={<CloseIcon />} ariaLabel="Close modal" />
+```
+
+**Requirements**:
+- Must provide `iconOnly={true}`
+- Must provide `ariaLabel` for accessibility
+- Icon is centered in button
+
+**Dimensions**: Uses icon-only sizes (p-1.5 / p-2 / p-2.5)
+
+### Full Width
+
+Make button take full width of container.
+
+```tsx
+<Button fullWidth>Full Width Button</Button>
+```
+
+**Classes**: Adds `w-full` to button
+
+**Use case**: Mobile layouts, forms, or card actions
+
+### Disabled State
+
+Disable button interaction.
+
+```tsx
+<Button disabled>Disabled Button</Button>
+```
+
+**Styling**:
+- `disabled:opacity-50`
+- `disabled:cursor-not-allowed`
+- Prevents click handlers from firing
+- Maintains focus styles for visibility
+
+### Accessibility Features
+
+The Button component includes comprehensive accessibility support:
+
+1. **ARIA Labels**:
+   - Required for `iconOnly` variant
+   - Automatically set to empty string when not provided for icon-only
+   - Screen reader announces descriptive text
+
+2. **ARIA Busy**:
+   - Automatically set to `true` when `isLoading={true}`
+   - Indicates to screen readers that operation is in progress
+   - Reset to false when loading completes
+
+3. **Keyboard Navigation**:
+   - Full keyboard support with Enter and Space keys
+   - Visible focus ring with `focus:ring-2`
+   - Focus offset for dark mode (`dark:focus:ring-offset-neutral-900`)
+   - Prevents outline with `focus:outline-none`
+
+4. **Loading Spinner ARIA**:
+   - Spinner has `role="status"`
+   - Spinner is `aria-hidden="true"` (button text provides context)
+   - Proper semantic markup for assistive technologies
+
+5. **Focus Management**:
+   - Focus ring color matches variant color
+   - Example: `focus:ring-primary-500/50` for primary variant
+   - Clear visual indication for keyboard users
+
+```tsx
+<Button
+  onClick={handleClick}
+  ariaLabel="Save changes to database"
+  variant="primary"
+  size="md"
+>
+  Save
+</Button>
+
+<Button
+  iconOnly
+  icon={<CloseIcon />}
+  ariaLabel="Close dialog and return to home"
+  isLoading={isClosing}
+/>
+```
+
+### Real-World Examples
+
+#### Form Submit Button
+
+```tsx
+function ContactForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await submitContactForm(formData);
+      showSuccessToast('Message sent successfully!');
+    } catch (error) {
+      showErrorToast('Failed to send message');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <Button type="submit" isLoading={isSubmitting} fullWidth size="lg">
+        Send Message
+      </Button>
+    </form>
+  );
+}
+```
+
+#### Action Group
+
+```tsx
+function ActionButtons() {
+  return (
+    <div className="flex gap-3">
+      <Button variant="secondary" onClick={handleCancel}>
+        Cancel
+      </Button>
+      <Button variant="primary" onClick={handleSave}>
+        Save Changes
+      </Button>
+    </div>
+  );
+}
+```
+
+#### Destructive Action
+
+```tsx
+function DeleteConfirmation() {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteItem(item.id);
+      showSuccessToast('Item deleted');
+      onClose();
+    } catch (error) {
+      showErrorToast('Failed to delete item');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <Button variant="danger" onClick={handleDelete} isLoading={isDeleting}>
+      Delete Permanently
+    </Button>
+  );
+}
+```
+
+#### Icon Buttons
+
+```tsx
+function Toolbar() {
+  return (
+    <div className="flex gap-2">
+      <Button
+        iconOnly
+        icon={<RefreshIcon />}
+        ariaLabel="Refresh data"
+        onClick={handleRefresh}
+      />
+      <Button
+        iconOnly
+        icon={<EditIcon />}
+        ariaLabel="Edit selection"
+        onClick={handleEdit}
+      />
+      <Button
+        iconOnly
+        icon={<TrashIcon />}
+        ariaLabel="Delete selection"
+        variant="danger"
+        onClick={handleDelete}
+      />
+    </div>
+  );
+}
+```
+
+#### Button with Icon
+
+```tsx
+function FileUpload() {
+  return (
+    <Button
+      icon={<UploadIcon />}
+      iconPosition="left"
+      variant="primary"
+      onClick={handleUpload}
+    >
+      Upload File
+    </Button>
+  );
+}
+```
+
+#### Loading Variants
+
+```tsx
+function AsyncActions() {
+  const [loadingStates, setLoadingStates] = useState({
+    saving: false,
+    sending: false,
+    uploading: false,
+  });
+
+  return (
+    <div className="space-y-4">
+      <Button
+        variant="success"
+        isLoading={loadingStates.saving}
+        onClick={() => handleSave(setLoadingStates)}
+      >
+        Save Changes
+      </Button>
+
+      <Button
+        variant="info"
+        isLoading={loadingStates.sending}
+        onClick={() => handleSend(setLoadingStates)}
+      >
+        Send Message
+      </Button>
+
+      <Button
+        iconOnly
+        isLoading={loadingStates.uploading}
+        icon={<UploadIcon />}
+        ariaLabel="Uploading file"
+        onClick={() => handleUpload(setLoadingStates)}
+      />
+    </div>
+  );
+}
+```
+
+### Dark Mode
+
+All Button variants automatically support dark mode:
+
+- **Primary**: Maintains `bg-primary-600` in both themes
+- **Secondary**: `bg-white` → `dark:bg-neutral-800`, `text-neutral-700` → `dark:text-neutral-200`
+- **Ghost**: `text-neutral-600` → `dark:text-neutral-400`, hover adapts to dark theme
+- **Solid variants**: Maintain their colors in both themes
+- **Focus offset**: `focus:ring-offset-2` → `dark:focus:ring-offset-neutral-900`
+
+### Animations
+
+Button includes smooth interactive transitions:
+
+- **Hover Scale**: `hover:scale-[1.02]` (most variants) or `hover:scale-[1.05]` (ghost)
+- **Active Scale**: `active:scale-95` for press feedback
+- **Shadow Transition**: `shadow-sm hover:shadow-md` for elevation change
+- **Duration**: `duration-200` for responsive feel
+- **Easing**: `ease-out` for natural motion
+
+### Performance Considerations
+
+The Button component is optimized using:
+- Functional component with hooks
+- Proper TypeScript typing with generics
+- CSS-only animations and transitions
+- No unnecessary re-renders
+- Efficient class string concatenation
+- `forwardRef` for ref forwarding
+- Semantic HTML with proper ARIA attributes
+
+### Migration Guide
+
+To migrate existing button implementations:
+
+**Before:**
+```tsx
+<button
+  onClick={handleClick}
+  className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-sm hover:shadow-md hover:scale-[1.02] px-4 py-2.5 text-sm sm:text-base"
+>
+  Click Me
+</button>
+```
+
+**After:**
+```tsx
+import Button from './ui/Button';
+
+<Button onClick={handleClick}>
+  Click Me
+</Button>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Reduced code duplication
+- ✅ Built-in loading states
+- ✅ Icon support (left, right, icon-only)
+- ✅ Multiple variants for different contexts
+- ✅ Dark mode support
+- ✅ Keyboard navigation
+- ✅ Type-safe props
+- ✅ Ref forwarding
+
+### Test Coverage
+
+The Button component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Button.test.tsx
+```
+
+Test scenarios include:
+- Rendering with default props
+- Rendering with all 14 variants
+- Rendering with all 3 sizes
+- Icon rendering (left, right, icon-only)
+- Loading state behavior (with and without text)
+- Disabled state behavior
+- Full width variant
+- Click handler invocation
+- Click prevention when disabled
+- Click prevention when loading
+- ARIA label for icon-only buttons
+- Empty aria-label for icon-only when not provided
+- aria-busy attribute when loading
+- No aria-busy when not loading
+- No aria-label for regular buttons with icon
+- Proper focus visible states
+- Focus ring color matching variant
+- Loading spinner with proper ARIA attributes
+- Keyboard accessibility
+
+### Usage in Application
+
+Currently integrated in 45+ locations across the codebase:
+
+**Common Patterns:**
+
+```tsx
+// Primary actions
+<Button variant="primary" onClick={handleSubmit}>Submit</Button>
+<Button variant="success" onClick={handleConfirm}>Confirm</Button>
+
+// Secondary actions
+<Button variant="secondary" onClick={handleCancel}>Cancel</Button>
+<Button variant="ghost" onClick={handleDismiss}>Dismiss</Button>
+
+// Destructive actions
+<Button variant="danger" onClick={handleDelete}>Delete</Button>
+
+// Icon buttons
+<Button iconOnly icon={<CloseIcon />} ariaLabel="Close" />
+<Button icon={<SaveIcon />} iconPosition="left">Save</Button>
+
+// Loading states
+<Button isLoading={isSubmitting}>Submitting...</Button>
+<Button iconOnly isLoading icon={<UploadIcon />} ariaLabel="Uploading" />
+```
+
+**Key Integration Points:**
+- Form submissions (primary, success, danger variants)
+- Modal actions (primary, secondary, ghost variants)
+- Navigation buttons (secondary, ghost variants)
+- Toolbar icons (icon-only, various variants)
+- Data operations (loading states with all variants)
+
+### Best Practices
+
+1. **Choose Appropriate Variant**:
+   - `primary`: Main actions, primary CTAs
+   - `secondary`: Alternative actions, secondary CTAs
+   - `ghost`: Low-importance actions, dismissals
+   - `danger`: Destructive actions, delete/remove
+   - `success`: Confirmation actions, approval
+   - `info`: Informational actions, learn more
+   - `warning`: Cautionary actions, proceed with caution
+
+2. **Use Loading States**:
+   ```tsx
+   ✅ Good: Show loading spinner during async operations
+   <Button isLoading={isSubmitting}>Submit</Button>
+
+   ❌ Bad: No loading feedback
+   <Button onClick={submit}>Submit</Button>
+   ```
+
+3. **Provide ARIA Labels for Icon-Only Buttons**:
+   ```tsx
+   ✅ Good: Descriptive aria-label
+   <Button iconOnly icon={<CloseIcon />} ariaLabel="Close dialog and return to home" />
+
+   ❌ Bad: No aria-label or unclear aria-label
+   <Button iconOnly icon={<CloseIcon />} />
+   ```
+
+4. **Use Full Width Appropriately**:
+   ```tsx
+   ✅ Good: Full width in forms/cards
+   <Button fullWidth>Submit</Button>
+
+   ❌ Bad: Full width in toolbars/groups
+   <div className="flex">
+     <Button fullWidth>Action 1</Button>
+     <Button fullWidth>Action 2</Button>
+   </div>
+   ```
+
+5. **Group Related Actions**:
+   ```tsx
+   ✅ Good: Action group with spacing
+   <div className="flex gap-3">
+     <Button variant="secondary">Cancel</Button>
+     <Button variant="primary">Submit</Button>
+   </div>
+   ```
+
+6. **Match Button Purpose to Variant**:
+   ```tsx
+   ✅ Good: Destructive action uses danger variant
+   <Button variant="danger" onClick={delete}>Delete</Button>
+
+   ❌ Bad: Destructive action uses primary variant
+   <Button variant="primary" onClick={delete}>Delete</Button>
+   ```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Ripple effect for enhanced feedback
+- Button group component for aligned buttons
+- Split button variant (button + dropdown)
+- Loading progress bar variant
+- Disabled state with custom message
+- Custom icon sizing for icon-only buttons
+- Badge overlay for notification counts
+- Keyboard shortcut support (e.g., Cmd+S)
+- Tooltip integration for additional context
+
+---
