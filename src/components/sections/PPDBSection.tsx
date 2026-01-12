@@ -3,6 +3,7 @@ import React from 'react';
 import ClipboardDocumentCheckIcon from '../icons/ClipboardDocumentCheckIcon';
 import DocumentTextIcon from '../icons/DocumentTextIcon';
 import { UsersIcon } from '../icons/UsersIcon';
+import { ArrowRightIcon } from '../icons/ArrowRightIcon';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
@@ -73,11 +74,7 @@ const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
             onClick={onRegisterClick}
             variant="primary"
             size="lg"
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            }
+            icon={<ArrowRightIcon />}
             iconPosition="right"
           >
             Daftar Sekarang
