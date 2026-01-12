@@ -10,6 +10,7 @@ import IconButton from './ui/IconButton';
 import Badge from './ui/Badge';
 import { EmptyState } from './ui/LoadingState';
 import LoadingSpinner from './ui/LoadingSpinner';
+import Modal from './ui/Modal';
 
 interface NotificationHistoryProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -171,156 +172,149 @@ case 'announcement':
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-md w-full mx-4">
+      <Modal
+        isOpen={true}
+        onClose={onClose}
+        title="Memuat Notifikasi"
+        description="Memuat riwayat notifikasi"
+        size="md"
+        animation="fade-in"
+        closeOnBackdropClick={false}
+        closeOnEscape={true}
+        showCloseButton={true}
+      >
+        <div className="flex flex-col items-center justify-center py-8">
           <LoadingSpinner text="Memuat riwayat notifikasi..." />
         </div>
-      </div>
+      </Modal>
     );
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-neutral-800 rounded-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
-                Riwayat Notifikasi
-              </h2>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-                {child.studentName} - {notifications.length} notifikasi
-              </p>
-            </div>
-            <IconButton
-              onClick={onClose}
-              icon={
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              }
-              variant="ghost"
-              ariaLabel="Tutup riwayat notifikasi"
-            />
-          </div>
-
-          {/* Filters */}
-          <div className="flex items-center gap-4 mt-4">
-            <div className="flex gap-2">
-              {[
-                { value: 'all', label: 'Semua' },
-                { value: 'grade', label: 'Nilai' },
-                { value: 'system', label: 'Sistem' },
-                { value: 'announcement', label: 'Pengumuman' }
-              ].map(option => (
-                <Button
-                  key={option.value}
-                  onClick={() => setFilter(option.value as 'all' | 'grade' | 'system' | 'announcement')}
-                  variant={filter === option.value ? 'primary' : 'ghost'}
-                  size="sm"
-                >
-                  {option.label}
-                </Button>
-              ))}
-            </div>
-
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      title="Riwayat Notifikasi"
+      description={`Menampilkan riwayat notifikasi untuk ${child.studentName}`}
+      size="xl"
+      animation="fade-in-up"
+      closeOnBackdropClick={true}
+      closeOnEscape={true}
+      showCloseButton={true}
+      className="max-h-[90vh]"
+    >
+      {/* Filters */}
+      <div className="flex items-center gap-4 mb-4">
+        <div className="flex gap-2">
+          {[
+            { value: 'all', label: 'Semua' },
+            { value: 'grade', label: 'Nilai' },
+            { value: 'system', label: 'Sistem' },
+            { value: 'announcement', label: 'Pengumuman' }
+          ].map(option => (
             <Button
-              onClick={markAllAsRead}
-              disabled={markingAsRead || notifications.filter(n => !n.read).length === 0}
-              variant="ghost"
+              key={option.value}
+              onClick={() => setFilter(option.value as 'all' | 'grade' | 'system' | 'announcement')}
+              variant={filter === option.value ? 'primary' : 'ghost'}
               size="sm"
-              isLoading={markingAsRead}
-              className="ml-auto"
             >
-              {markingAsRead ? 'Menandai...' : 'Tandai Semua Dibaca'}
+              {option.label}
             </Button>
-          </div>
+          ))}
         </div>
 
-        {/* Notifications List */}
-        <div className="flex-1 overflow-y-auto">
-          {notifications.length === 0 ? (
-            <EmptyState 
-              message="Tidak ada notifikasi untuk filter ini"
-              icon={<CalendarIcon />}
-              size="md"
-              ariaLabel="Tidak ada notifikasi"
-            />
-          ) : (
-            <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
-              {notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className={`p-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors ${
-                    !notification.read ? 'bg-primary-50 dark:bg-primary-900/10' : ''
-                  }`}
-                >
-                  <div className="flex items-start gap-4">
-                    {getNotificationIcon(notification)}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className={`font-medium text-neutral-900 dark:text-white ${
-                            !notification.read ? 'font-semibold' : ''
-                          }`}>
-                            {notification.title}
-                          </h3>
-                          <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-                            {notification.body}
-                          </p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <span className="text-xs text-neutral-500 dark:text-neutral-500">
-                              {formatNotificationTime(notification.timestamp)}
-                            </span>
-                            {notification.priority === 'high' && (
-                              <Badge variant="error" size="sm">
-                                Penting
-                              </Badge>
-                            )}
-                            {!notification.read && (
-                              <Badge variant="info" size="sm">
-                                Baru
-                              </Badge>
-                            )}
-                          </div>
+        <Button
+          onClick={markAllAsRead}
+          disabled={markingAsRead || notifications.filter(n => !n.read).length === 0}
+          variant="ghost"
+          size="sm"
+          isLoading={markingAsRead}
+          className="ml-auto"
+        >
+          {markingAsRead ? 'Menandai...' : 'Tandai Semua Dibaca'}
+        </Button>
+      </div>
+
+      {/* Notifications List */}
+      <div className="flex-1 overflow-y-auto">
+        {notifications.length === 0 ? (
+          <EmptyState
+            message="Tidak ada notifikasi untuk filter ini"
+            icon={<CalendarIcon />}
+            size="md"
+            ariaLabel="Tidak ada notifikasi"
+          />
+        ) : (
+          <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
+            {notifications.map((notification) => (
+              <div
+                key={notification.id}
+                className={`p-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors ${
+                  !notification.read ? 'bg-primary-50 dark:bg-primary-900/10' : ''
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  {getNotificationIcon(notification)}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className={`font-medium text-neutral-900 dark:text-white ${
+                          !notification.read ? 'font-semibold' : ''
+                        }`}>
+                          {notification.title}
+                        </h3>
+                        <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                          {notification.body}
+                        </p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-xs text-neutral-500 dark:text-neutral-500">
+                            {formatNotificationTime(notification.timestamp)}
+                          </span>
+                          {notification.priority === 'high' && (
+                            <Badge variant="error" size="sm">
+                              Penting
+                            </Badge>
+                          )}
+                          {!notification.read && (
+                            <Badge variant="info" size="sm">
+                              Baru
+                            </Badge>
+                          )}
                         </div>
-                        {!notification.read && (
-                          <IconButton
-                            onClick={() => {
-                              unifiedNotificationManager.markAsRead(notification.id);
-                              loadNotificationHistory();
-                            }}
-                            icon={<CheckCircleIcon className="w-4 h-4" />}
-                            variant="ghost"
-                            ariaLabel="Tandai notifikasi sebagai dibaca"
-                          />
-                        )}
                       </div>
+                      {!notification.read && (
+                        <IconButton
+                          onClick={() => {
+                            unifiedNotificationManager.markAsRead(notification.id);
+                            loadNotificationHistory();
+                          }}
+                          icon={<CheckCircleIcon className="w-4 h-4" />}
+                          variant="ghost"
+                          ariaLabel="Tandai notifikasi sebagai dibaca"
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-neutral-200 dark:border-neutral-700">
-          <div className="flex justify-between items-center">
-            <div className="text-sm text-neutral-600 dark:text-neutral-400">
-              {notifications.filter(n => !n.read).length} tidak dibaca • {notifications.length} total
-            </div>
-            <Button
-              onClick={onClose}
-              variant="primary"
-            >
-              Tutup
-            </Button>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </div>
-    </div>
+
+      {/* Footer */}
+      <div className="flex justify-between items-center mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
+        <div className="text-sm text-neutral-600 dark:text-neutral-400">
+          {notifications.filter(n => !n.read).length} tidak dibaca • {notifications.length} total
+        </div>
+        <Button
+          onClick={onClose}
+          variant="primary"
+        >
+          Tutup
+        </Button>
+      </div>
+    </Modal>
   );
 };
 

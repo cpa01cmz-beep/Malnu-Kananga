@@ -302,17 +302,31 @@
         - Enhanced accessibility for keyboard users by improving semantic clarity
         - Follows semantic HTML best practices with descriptive IDs
         - See src/components/Footer.tsx:13, src/App.tsx:284, src/components/ui/__tests__/SkipLink.test.tsx:141,147,164
-   - [x] ConflictResolutionModal Accessibility Improvement (Phase 5 - COMPLETED 2026-01-12)
-        - Added unique `id` attributes to each merge editor input using pattern `merge-{key}`
-        - Added `htmlFor` attribute to labels to properly associate them with their inputs
-        - Added descriptive `aria-label` attributes for screen readers on each merge input
-        - Added keyboard navigation support with focus ring styles (focus:ring-2, focus:ring-primary-500/50)
-        - Improved WCAG 2.1 AA compliance (SC 1.3.1 Info and Relationships, SC 2.4.6 Headings and Labels)
-        - Screen readers now properly announce each merge field with clear labels
-        - Keyboard users benefit from visible focus indicators
-        - Input labels are semantically associated with their respective inputs
-        - Created comprehensive test coverage with 20+ accessibility-focused test cases
-        - See src/components/ConflictResolutionModal.tsx:79-107 for implementation
+    - [x] ConflictResolutionModal Accessibility Improvement (Phase 5 - COMPLETED 2026-01-12)
+         - Added unique `id` attributes to each merge editor input using pattern `merge-{key}`
+         - Added `htmlFor` attribute to labels to properly associate them with their inputs
+         - Added descriptive `aria-label` attributes for screen readers on each merge input
+         - Added keyboard navigation support with focus ring styles (focus:ring-2, focus:ring-primary-500/50)
+         - Improved WCAG 2.1 AA compliance (SC 1.3.1 Info and Relationships, SC 2.4.6 Headings and Labels)
+         - Screen readers now properly announce each merge field with clear labels
+         - Keyboard users benefit from visible focus indicators
+         - Input labels are semantically associated with their respective inputs
+         - Created comprehensive test coverage with 20+ accessibility-focused test cases
+         - See src/components/ConflictResolutionModal.tsx:79-107 for implementation
+    - [x] NotificationHistory Modal Refactoring (Phase 5 - COMPLETED 2026-01-12)
+         - Replaced custom inline modal implementation with centralized Modal component
+         - Refactored loading state modal (fixed inset-0 bg-black/50) to use Modal component
+         - Refactored main modal to use Modal component with proper accessibility features
+         - Improved WCAG 2.1 AA compliance (SC 1.2.1 Time-based Media, SC 2.1.1 Keyboard)
+         - Added proper focus trap via useFocusTrap hook for keyboard navigation
+         - Added body scroll lock to prevent background scrolling when modal is open
+         - Added Escape key handler for keyboard users
+         - Added backdrop click handler for mouse users
+         - Added proper ARIA attributes (title, description, role="dialog", aria-modal="true")
+         - Eliminated ~150 lines of duplicate modal code
+         - Improved consistency with design system and other modals in application
+         - Maintained all existing functionality (filters, notifications list, footer actions)
+         - See src/components/NotificationHistory.tsx:13,173-190,193-317 for implementation
 
 
 
