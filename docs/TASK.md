@@ -31,7 +31,14 @@
   - Include accessibility guidelines
 
  ### UI/UX Enhancements
-- [x] HeroSection and RelatedLinksSection Accessibility Improvement (COMPLETED 2026-01-12)
+- [x] ChatWindow Screen Reader Accessibility Improvement (COMPLETED 2026-01-12)
+   - Added aria-hidden={!isChatOpen} to ChatWindow wrapper in App.tsx
+   - Ensures ChatWindow is hidden from screen readers when closed
+   - Previously, ChatWindow was only visually hidden (opacity-0, pointer-events-none) but still accessible to screen readers
+   - Improved WCAG 2.1 AA compliance (SC 1.3.2 - Meaningful Sequence)
+   - Screen readers no longer announce invisible ChatWindow as part of the page when closed
+   - See src/App.tsx:325 for implementation
+ - [x] HeroSection and RelatedLinksSection Accessibility Improvement (COMPLETED 2026-01-12)
    - Added aria-labelledby attribute to HeroSection section to associate with h1 heading
    - Added headingId constant ('home-heading') and id attribute to h1
    - Added aria-labelledby attribute to RelatedLinksSection section to associate with h2 heading
