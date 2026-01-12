@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ProfileSection from '../ProfileSection';
+import ProfileSection from '../sections/ProfileSection';
 
 describe('ProfileSection', () => {
   it('renders the profile section with title and subtitle', () => {
@@ -78,11 +78,12 @@ describe('ProfileSection', () => {
     const { container } = render(<ProfileSection />);
     const section = container.querySelector('#profil');
     expect(section).toBeInTheDocument();
-    expect(section?.className).toContain('lg:grid-cols-5');
+    const gridContainer = container.querySelector('.grid');
+    expect(gridContainer?.className).toContain('lg:grid-cols-5');
   });
 
   it('decorative SVG elements have aria-hidden', () => {
-    render(<ProfileSection />);
+    const { container } = render(<ProfileSection />);
     const svgs = container.querySelectorAll('svg[aria-hidden="true"]');
     expect(svgs.length).toBeGreaterThan(0);
   });
