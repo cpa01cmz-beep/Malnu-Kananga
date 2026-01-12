@@ -218,13 +218,16 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
             <p className="text-sm text-neutral-500 dark:text-neutral-400">Nama Siswa</p>
             <p className="font-bold text-neutral-900 dark:text-white text-lg">{STUDENT_NAME}</p>
             <p className="text-xs font-mono text-neutral-400">NIS: {STUDENT_NIS}</p>
-            <button
+            <Button
               onClick={handlePDFExport}
-              disabled={isExportingPDF || history.length === 0}
-              className="mt-3 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm disabled:bg-neutral-400 disabled:cursor-not-allowed"
+              disabled={history.length === 0}
+              isLoading={isExportingPDF}
+              variant="success"
+              size="sm"
+              className="mt-3"
             >
-              {isExportingPDF ? 'Exporting...' : '📄 Export PDF'}
-            </button>
+              📄 Export PDF
+            </Button>
           </div>
         }
       />

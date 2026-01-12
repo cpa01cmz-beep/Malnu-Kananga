@@ -347,13 +347,14 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                 Terakhir diperbarui: {syncStatus.lastSync ? new Date(syncStatus.lastSync).toLocaleTimeString('id-ID') : 'Belum pernah'}
               </p>
             </div>
-            <button
+            <Button
               onClick={handleSync}
-              disabled={syncInProgress}
-              className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              isLoading={syncInProgress}
+              variant="blue-solid"
+              size="sm"
             >
-              {syncInProgress ? 'Menyinkronkan...' : 'Sinkronkan'}
-            </button>
+              Sinkronkan
+            </Button>
           </div>
         )}
 

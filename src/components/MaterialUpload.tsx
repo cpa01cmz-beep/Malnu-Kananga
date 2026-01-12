@@ -513,36 +513,27 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           <p className="text-neutral-500 dark:text-neutral-400">Kelola materi pembelajaran dengan folder, berbagi, dan kontrol versi.</p>
         </div>
         <div className="flex gap-2">
-          <button
+          <Button
             onClick={() => setSelectedView('upload')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              selectedView === 'upload' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-white dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600'
-            }`}
+            variant={selectedView === 'upload' ? 'blue-solid' : 'ghost'}
+            size="sm"
           >
             Upload
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setSelectedView('templates')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              selectedView === 'templates' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-white dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600'
-            }`}
+            variant={selectedView === 'templates' ? 'blue-solid' : 'ghost'}
+            size="sm"
           >
             Template
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setSelectedView('management')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              selectedView === 'management' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-white dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600'
-            }`}
+            variant={selectedView === 'management' ? 'blue-solid' : 'ghost'}
+            size="sm"
           >
             Kelola
-          </button>
+          </Button>
         </div>
       </div>
 

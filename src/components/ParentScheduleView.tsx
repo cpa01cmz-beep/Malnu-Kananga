@@ -126,27 +126,25 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
         </div>
         
         <div className="flex gap-2">
-          <button
+          <Button
             onClick={() => setViewMode('list')}
-            className={`p-2 rounded-lg transition-colors flex items-center gap-2
-              ${viewMode === 'list' 
-                ? 'bg-green-600 text-white' 
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'}`}
+            variant={viewMode === 'list' ? 'success' : 'ghost'}
+            icon={<ListBulletIcon className="w-5 h-5" />}
+            iconPosition="left"
+            size="sm"
           >
-            <ListBulletIcon className="w-5 h-5" />
-            <span className="text-sm font-medium">Daftar</span>
-          </button>
-          
-          <button
+            Daftar
+          </Button>
+
+          <Button
             onClick={() => setViewMode('month')}
-            className={`p-2 rounded-lg transition-colors flex items-center gap-2
-              ${viewMode === 'month' 
-                ? 'bg-green-600 text-white' 
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'}`}
+            variant={viewMode === 'month' ? 'success' : 'ghost'}
+            icon={<CalendarDaysIcon className="w-5 h-5" />}
+            iconPosition="left"
+            size="sm"
           >
-            <CalendarDaysIcon className="w-5 h-5" />
-            <span className="text-sm font-medium">Kalender</span>
-          </button>
+            Kalender
+          </Button>
 
           <Button
             onClick={() => setShowMeetingRequest(true)}
