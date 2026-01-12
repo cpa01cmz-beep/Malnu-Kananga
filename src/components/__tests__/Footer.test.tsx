@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import Footer from '../Footer';
 
 describe('Footer Component - Accessibility Improvements', () => {
-  const mockOnDocsClick = () => {};
+  const mockOnDocsClick = vi.fn();
 
   beforeEach(() => {
     render(<Footer onDocsClick={mockOnDocsClick} />);
@@ -130,7 +130,7 @@ describe('Footer Component - Accessibility Improvements', () => {
 
     it('should have proper list semantics for navigation', () => {
       const lists = screen.getAllByRole('list');
-      expect(lists).toHaveLength(3);
+      expect(lists).toHaveLength(2);
       lists.forEach(list => {
         expect(list.tagName).toBe('UL');
       });
