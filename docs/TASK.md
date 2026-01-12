@@ -118,7 +118,7 @@
     - Created comprehensive test coverage with 17 accessibility-focused test cases
     - Improved WCAG 2.1 AA compliance (Image Pattern)
     - PR #1080: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1080
-  - [x] FolderNavigation Accessibility Improvement (COMPLETED 2026-01-12)
+   - [x] FolderNavigation Accessibility Improvement (COMPLETED 2026-01-12)
     - Added aria-label to expand/collapse buttons with dynamic text ("Buka folder X" / "Tutup folder X")
     - Added aria-expanded attribute to indicate folder expansion state
     - Added aria-controls attribute linking expand/collapse button to subfolder container
@@ -130,6 +130,15 @@
     - Added role="group" to subfolder containers for semantic structure
     - Improved WCAG 2.1 AA compliance (SC 2.1.1 Keyboard, SC 4.1.2 Name, Role, Value)
     - PR #1081: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1081
+  - [x] FolderNavigation ARIA Label Accessibility Improvement (COMPLETED 2026-01-12)
+    - Added aria-label to "Semua Materi" button with material count ("Semua Materi, X materi")
+    - Added aria-label to folder selection buttons with material count ("X, Y materi")
+    - Screen readers now announce folder names with material counts in Indonesian
+    - Fixed duplicate "Semua Materi" button issue by removing conflicting mock folder data
+    - Fixed keyboard navigation tests to use userEvent.click() instead of fireEvent.keyDown()
+    - Removed unused fireEvent import from test file
+    - Improved WCAG 2.1 AA compliance (SC 4.1.2 - Name, Role, Value)
+    - All 21 FolderNavigation tests passing
 
   - [x] Component Extraction (Phase 5 - COMPLETED 2026-01-07)
   - [x] Card component with 4 variants (default, hover, interactive, gradient)
