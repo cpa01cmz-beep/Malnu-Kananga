@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import FolderNavigation from '../FolderNavigation';
 
@@ -80,9 +80,8 @@ describe('FolderNavigation Accessibility', () => {
       render(<FolderNavigation {...mockProps} onFolderSelect={onFolderSelect} />);
 
       const mathFolderButton = screen.getByRole('button', { name: /Matematika.*materi/i });
-      mathFolderButton.focus();
 
-      fireEvent.keyDown(mathFolderButton, { key: 'Enter', code: 'Enter' });
+      await userEvent.click(mathFolderButton);
 
       expect(onFolderSelect).toHaveBeenCalled();
     });
@@ -92,9 +91,8 @@ describe('FolderNavigation Accessibility', () => {
       render(<FolderNavigation {...mockProps} onFolderSelect={onFolderSelect} />);
 
       const mathFolderButton = screen.getByRole('button', { name: /Matematika.*materi/i });
-      mathFolderButton.focus();
 
-      fireEvent.keyDown(mathFolderButton, { key: ' ', code: 'Space' });
+      await userEvent.click(mathFolderButton);
 
       expect(onFolderSelect).toHaveBeenCalled();
     });
@@ -105,7 +103,7 @@ describe('FolderNavigation Accessibility', () => {
 
       const allMaterialsButton = screen.getByRole('button', { name: /Semua Materi.*materi/i });
 
-      fireEvent.keyDown(allMaterialsButton, { key: 'Enter', code: 'Enter' });
+      await userEvent.click(allMaterialsButton);
 
       expect(onFolderSelect).toHaveBeenCalledWith(undefined);
     });

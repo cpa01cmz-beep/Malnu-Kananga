@@ -46,22 +46,10 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
     return paddingClasses[level] || `pl-[${level * 16 + 8}px]`;
   };
 
-  const fetchFolders = useCallback(async () => {
+   const fetchFolders = useCallback(async () => {
     setLoading(true);
     try {
       const mockFolders: MaterialFolder[] = [
-        {
-          id: 'root',
-          name: 'Semua Materi',
-          path: '/',
-          color: 'blue',
-          icon: 'folder',
-          isPublic: true,
-          createdBy: 'system',
-          createdAt: new Date().toISOString(),
-          materialCount: materials.length,
-          subfolders: []
-        },
         {
           id: 'math',
           name: 'Matematika',
@@ -246,6 +234,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
                   : 'hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
               }`}
               aria-pressed={isSelected}
+              aria-label={`${folder.name}, ${materialCount} materi`}
             >
               <div className={`p-1.5 rounded-lg ${folder.isPublic ? 'bg-blue-50 text-blue-600' : 'bg-neutral-50 text-neutral-600'}`}>
                 {isExpanded ? <FolderOpenIcon className="w-4 h-4" /> : <FolderIcon className="w-4 h-4" />}
@@ -327,6 +316,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
         <button
           onClick={() => onFolderSelect(undefined)}
           aria-pressed={!selectedFolderId}
+          aria-label={`Semua Materi, ${materials.length} materi`}
           className={`flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors w-full text-left ${
             !selectedFolderId
               ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
