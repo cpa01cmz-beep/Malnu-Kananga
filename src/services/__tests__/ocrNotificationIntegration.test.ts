@@ -25,9 +25,13 @@ vi.mock('tesseract.js', () => ({
 if (!File.prototype.arrayBuffer) {
   File.prototype.arrayBuffer = function(this: File): Promise<ArrayBuffer> {
     return new Promise<ArrayBuffer>((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as ArrayBuffer);
-      reader.readAsArrayBuffer(this);
+      const reader = (globalThis as any).FileReader ? new (globalThis as any).FileReader() : null;
+      if (reader) {
+        reader.onload = () => resolve(reader.result as ArrayBuffer);
+        reader.readAsArrayBuffer(this);
+      } else {
+        resolve(new ArrayBuffer(0));
+      }
     });
   };
 }
@@ -95,7 +99,7 @@ describe('OCR Validation Notification Integration', () => {
         })
       );
       
-      window.removeEventListener('ocrValidation', customEventHandler as EventListener);
+      window.removeEventListener('ocrValidation', customEventHandler as any);
     });
 
     it('should detect validation issues correctly', async () => {
