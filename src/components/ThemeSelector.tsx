@@ -177,16 +177,18 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
           >
             Reset ke Default
           </Button>
-          <button
+          <Button
             onClick={() => {
               toggleDarkMode();
               onClose();
             }}
-            aria-label="Ganti antara mode terang dan gelap"
-            className="flex-1 px-3 py-2 text-sm text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+            ariaLabel="Ganti antara mode terang dan gelap"
+            variant="ghost"
+            size="sm"
+            className="flex-1"
           >
             Ganti Tema
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>
