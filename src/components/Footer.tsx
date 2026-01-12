@@ -21,7 +21,7 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ onDocsClick, tabIndex }) => {
     return (
-        <footer id="kontak" tabIndex={tabIndex} className={`${getResponsiveGradient('FOOTER')} border-t border-neutral-200 dark:border-neutral-700`}>
+        <footer id="kontak" tabIndex={tabIndex} role="contentinfo" className={`${getResponsiveGradient('FOOTER')} border-t border-neutral-200 dark:border-neutral-700`}>
             <div className="max-w-7xl mx-auto py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16 text-center sm:text-left">
                     <div>
