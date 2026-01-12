@@ -5,9 +5,15 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 
+interface ELibraryProps {
+  onBack: () => void;
+  onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
+  userId?: string;
+}
+
 // Mock ELibrary component to return simplified version with OCR selection button
 vi.mock('../ELibrary', () => {
-  const MockELibrary = ({ onBack: _onBack, onShowToast: _onShowToast }: any) => {
+  const MockELibrary = ({ onBack: _onBack, onShowToast: _onShowToast }: ELibraryProps) => {
     const [selected, setSelected] = useState(false);
 
     const mockMaterial = {
