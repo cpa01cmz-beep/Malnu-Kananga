@@ -49,6 +49,10 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isAddingRegistration, setIsAddingRegistration] = useState(false);
+  const [isAddingBudget, setIsAddingBudget] = useState(false);
 
   const loadEvents = useCallback(async () => {
     setIsLoading(true);
@@ -117,6 +121,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     if (!newEvent.eventName) return;
 
     try {
+      setIsCreating(true);
       const response = await eventsAPI.create({
         eventName: newEvent.eventName!,
         date: newEvent.date!,
@@ -134,6 +139,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
       }
     } catch {
       onShowToast('Gagal menambahkan kegiatan. Silakan coba lagi.', 'error');
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -146,6 +153,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     if (!eventToDelete) return;
 
     try {
+      setIsDeleting(true);
       const response = await eventsAPI.delete(eventToDelete);
       if (response.success) {
         setEvents(events.filter(e => e.id !== eventToDelete));
@@ -161,6 +169,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     } finally {
       setIsDeleteDialogOpen(false);
       setEventToDelete(null);
+      setIsDeleting(false);
     }
   };
 
@@ -169,6 +178,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     if (!selectedEvent || !newRegistration.studentId) return;
 
     try {
+      setIsAddingRegistration(true);
       const response = await eventRegistrationsAPI.create({
         eventId: selectedEvent.id,
         studentId: newRegistration.studentId,
@@ -184,6 +194,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
       }
     } catch {
       onShowToast('Gagal mendaftarkan siswa.', 'error');
+    } finally {
+      setIsAddingRegistration(false);
     }
   };
 
@@ -192,6 +204,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
     if (!selectedEvent || !newBudget.itemName) return;
 
     try {
+      setIsAddingBudget(true);
       const response = await eventBudgetsAPI.create({
         eventId: selectedEvent.id,
         category: newBudget.category || 'Other',
@@ -208,6 +221,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
       }
     } catch {
       onShowToast('Gagal menambahkan anggaran.', 'error');
+    } finally {
+      setIsAddingBudget(false);
     }
   };
 
@@ -315,8 +330,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   onChange={e => setNewRegistration({ ...newRegistration, studentClass: e.target.value })}
                   required
                 />
-                <Button type="submit" variant="warning" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left">
-                  Daftar
+                <Button type="submit" variant="warning" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" isLoading={isAddingRegistration}>
+                  {isAddingRegistration ? 'Mendaftarkan...' : 'Daftar'}
                 </Button>
               </form>
               <div className="space-y-2">
@@ -385,8 +400,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   value={newBudget.quantity || ''}
                   onChange={e => setNewBudget({ ...newBudget, quantity: parseInt(e.target.value) })}
                 />
-                <Button type="submit" variant="success" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" className="md:col-span-2">
-                  Tambah Anggaran
+                <Button type="submit" variant="success" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" className="md:col-span-2" isLoading={isAddingBudget}>
+                  {isAddingBudget ? 'Menambahkan...' : 'Tambah Anggaran'}
                 </Button>
               </form>
               <div className="space-y-2">
@@ -649,8 +664,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 minRows={3}
                 fullWidth
               />
-              <Button type="submit" fullWidth icon={<PlusIcon className="w-5 h-5" />}>
-                Simpan Kegiatan
+              <Button type="submit" fullWidth icon={<PlusIcon className="w-5 h-5" />} isLoading={isCreating}>
+                {isCreating ? 'Menyimpan...' : 'Simpan Kegiatan'}
               </Button>
             </form>
           </div>
@@ -774,13 +789,14 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
         title="Batalkan Kegiatan"
         message="Apakah Anda yakin ingin membatalkan kegiatan ini?"
         type="warning"
-        confirmText="Batalkan"
+        confirmText={isDeleting ? 'Menghapus...' : 'Batalkan'}
         cancelText="Batal"
         onConfirm={confirmDeleteEvent}
         onCancel={() => {
           setIsDeleteDialogOpen(false);
           setEventToDelete(null);
         }}
+        disabled={isDeleting}
       />
     </div>
   );
