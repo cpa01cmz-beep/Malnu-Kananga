@@ -301,16 +301,24 @@
        - Keyboard users benefit from visible focus indicators
        - Eliminated confusing read-only checkbox pattern that provided no semantic value
        - See src/components/ELibrary.tsx:1464-1485 for implementation
-   - [x] Footer SkipLink Semantic Consistency Improvement (Phase 5 - COMPLETED 2026-01-12)
-        - Changed Footer ID from "kontak" (Indonesian for "contact") to "footer" for semantic clarity
-        - Updated SkipLink target in App.tsx from "kontak" to "footer" to match Footer ID
-        - Updated SkipLink test file to use "footer" instead of "main-footer"
-        - Eliminated semantic mismatch where skip link said "Langsung ke footer" but targeted "kontak" element
-        - Improved WCAG 2.1 AA compliance (SC 2.4.1 Bypass Blocks - semantic consistency)
-        - Screen readers now announce consistent relationship between skip link label and target
-        - Enhanced accessibility for keyboard users by improving semantic clarity
-        - Follows semantic HTML best practices with descriptive IDs
-        - See src/components/Footer.tsx:13, src/App.tsx:284, src/components/ui/__tests__/SkipLink.test.tsx:141,147,164
+- [x] Footer SkipLink Semantic Consistency Improvement (Phase 5 - COMPLETED 2026-01-12)
+         - Changed Footer ID from "kontak" (Indonesian for "contact") to "footer" for semantic clarity
+         - Updated SkipLink target in App.tsx from "kontak" to "footer" to match Footer ID
+         - Updated SkipLink test file to use "footer" instead of "main-footer"
+         - Eliminated semantic mismatch where skip link said "Langsung ke footer" but targeted "kontak" element
+         - Improved WCAG 2.1 AA compliance (SC 2.4.1 Bypass Blocks - semantic consistency)
+         - Screen readers now announce consistent relationship between skip link label and target
+         - Enhanced accessibility for keyboard users by improving semantic clarity
+         - Follows semantic HTML best practices with descriptive IDs
+         - See src/components/Footer.tsx:13, src/App.tsx:284, src/components/ui/__tests__/SkipLink.test.tsx:141,147,164
+  - [x] Input Component Escape Key Clear Functionality (Phase 5 - COMPLETED 2026-01-12)
+         - Added clearOnEscape prop to Input component (default: false for backward compatibility)
+         - Implemented handleKeyDown function that clears input value on Escape key when clearOnEscape is true
+         - Preserves existing onKeyDown handler by calling props.onKeyDown after Escape key logic
+         - Follows same pattern as SearchInput component for consistency
+         - Improves keyboard user experience by providing quick reset functionality
+         - Optional feature ensures backward compatibility with existing Input usage
+         - See src/components/ui/Input.tsx:28,79,137-147,241 for implementation
     - [x] ConflictResolutionModal Accessibility Improvement (Phase 5 - COMPLETED 2026-01-12)
          - Added unique `id` attributes to each merge editor input using pattern `merge-{key}`
          - Added `htmlFor` attribute to labels to properly associate them with their inputs
