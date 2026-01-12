@@ -3,15 +3,17 @@ import { ocrService } from '../ocrService';
 import { OCRValidationEvent, UserRole } from '../../types';
 
 // Mock dependencies
+const mockRecognize = vi.fn().mockResolvedValue({
+  data: {
+    text: 'John Doe\nNISN: 1234567890\nMatematika: 85',
+    confidence: 45 // Low confidence to trigger validation failure
+  }
+});
+
 vi.mock('tesseract.js', () => ({
   createWorker: vi.fn(() => ({
     setParameters: vi.fn(),
-    recognize: vi.fn().mockResolvedValue({
-      data: {
-        text: 'John Doe\nNISN: 1234567890\nMatematika: 85',
-        confidence: 45 // Low confidence to trigger validation failure
-      }
-    }),
+    recognize: mockRecognize,
     terminate: vi.fn()
   })),
   PSM: {
@@ -38,23 +40,31 @@ describe('OCR Validation Notification Integration', () => {
 
   describe('OCR Service Event Emission', () => {
     it('should emit validation failure event for low confidence OCR', async () => {
-      const mockFile = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
+      // Create a mock File object with arrayBuffer method
+      const mockFile = {
+        name: 'test.jpg',
+        type: 'image/jpeg',
+        size: 1024,
+        lastModified: Date.now(),
+        arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(1024))
+      } as unknown as File;
+      
       const customEventHandler = vi.fn();
       
       // Listen for custom events
       window.addEventListener('ocrValidation', customEventHandler);
       
-      try {
-        await ocrService.extractTextFromImage(mockFile, undefined, {
-          documentId: 'test-doc-123',
-          userId: 'teacher-1',
-          userRole: 'teacher' as UserRole,
-          documentType: 'academic',
-          actionUrl: '/review/test-doc-123'
-        });
-      } catch (_error) {
-        // OCR processing may fail in test environment, which is expected
-      }
+      // Call the OCR service - it should emit the event
+      const result = await ocrService.extractTextFromImage(mockFile, undefined, {
+        documentId: 'test-doc-123',
+        userId: 'teacher-1',
+        userRole: 'teacher' as UserRole,
+        documentType: 'academic',
+        actionUrl: '/review/test-doc-123'
+      });
+
+      // Verify OCR result has low confidence
+      expect(result.confidence).toBe(45);
 
       // Check if event handler was called
       expect(customEventHandler).toHaveBeenCalled();
