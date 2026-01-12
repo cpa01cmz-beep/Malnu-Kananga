@@ -441,7 +441,4 @@ npm test -- Table.test.tsx
 
 ## Related Components
 
-- [Card](./Card.md) - Use Card to wrap Table with consistent styling
-- [Button](./Button.md) - For action buttons in tables
-- [Input](./Input.md) - For inline editing in tables
-- [Modal](./Modal.md) - For detailed views from table rows
+Related components that are commonly used with DataTable: Card, Button, Input, Modal. See `src/components/ui/` for component implementations.
