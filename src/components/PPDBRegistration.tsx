@@ -19,6 +19,8 @@ import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
+import { STORAGE_KEYS } from '../constants';
+import { standardValidationRules } from '../hooks/useFieldValidation';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -40,22 +42,103 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
     address: '',
   }), []);
 
+  // Educational domain validation for email
+  const validateEducationalEmail = (email: string): boolean => {
+    if (!email || email.trim() === '') return true;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) return false;
+    
+    // Check for educational domain (optional, not strict)
+    const domain = email.split('@')[1]?.toLowerCase();
+    const educationalPatterns = [
+      /\.edu$/,
+      /\.sch\.id$/,
+      /\.ac\.id$/,
+      /\.sekolah\.id$/,
+      /school/i,
+      /sekolah/i
+    ];
+    
+    return educationalPatterns.some(pattern => pattern.test(domain)) || true;
+  };
+
+  // Validation rules for each field
+  const validationRules = {
+    fullName: [
+      standardValidationRules.required('Nama lengkap wajib diisi'),
+      {
+        validate: (value: string) => value.trim().length >= 3,
+        message: 'Nama lengkap minimal 3 karakter'
+      },
+      {
+        validate: (value: string) => /^[a-zA-Z\s\-']+$/.test(value.trim()),
+        message: 'Nama hanya boleh berisi huruf, spasi, tanda hubung, dan tanda kutip'
+      }
+    ],
+    nisn: [
+      standardValidationRules.required('NISN wajib diisi'),
+      standardValidationRules.nisn()
+    ],
+    originSchool: [
+      standardValidationRules.required('Asal sekolah wajib diisi'),
+      {
+        validate: (value: string) => value.trim().length >= 5,
+        message: 'Nama sekolah minimal 5 karakter'
+      }
+    ],
+    parentName: [
+      standardValidationRules.required('Nama orang tua/wali wajib diisi'),
+      {
+        validate: (value: string) => value.trim().length >= 3,
+        message: 'Nama orang tua/wali minimal 3 karakter'
+      }
+    ],
+    phoneNumber: [
+      standardValidationRules.required('Nomor WhatsApp wajib diisi'),
+      standardValidationRules.phone(),
+      {
+        validate: (value: string) => {
+          const cleanPhone = value.replace(/\D/g, '');
+          return cleanPhone.startsWith('08') || cleanPhone.startsWith('628');
+        },
+        message: 'Nomor WhatsApp harus diawali dengan 08 atau 628'
+      }
+    ],
+    email: [
+      standardValidationRules.required('Email wajib diisi'),
+      {
+        validate: validateEducationalEmail,
+        message: 'Format email tidak valid. Contoh: nama@sekolah.sch.id'
+      }
+    ],
+    address: [
+      standardValidationRules.required('Alamat lengkap wajib diisi'),
+      {
+        validate: (value: string) => value.trim().length >= 20,
+        message: 'Alamat lengkap minimal 20 karakter'
+      }
+    ]
+  };
+
   // Use auto-save for draft data
   const [autoSaveState, autoSaveActions] = useAutoSave<Partial<PPDBRegistrant>>(
     initialFormData,
     {
-      storageKey: 'malnu_ppdb_draft',
+      storageKey: STORAGE_KEYS.PPDB_DRAFT,
       delay: 2000,
       enableOffline: true,
       onSave: async () => {
-        // Draft data is saved to localStorage by the hook automatically
+        // Draft data is saved to localStorage by hook automatically
         // No API call needed for drafts
       },
       onSaved: () => {
-        // Silently save drafts, no toast needed
+        // Show draft saved notification
+        if (Object.values(autoSaveState.data).some(val => val && typeof val === 'string' && val.length > 0)) {
+          onShowToast('Draft tersimpan otomatis', 'info');
+        }
       },
       onError: () => {
-        // Silently handle draft save errors
+        onShowToast('Gagal menyimpan draft. Pastikan koneksi aktif.', 'error');
       }
     }
   );
@@ -69,7 +152,6 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
     setOcrProgress({ status: 'Idle', progress: 0 });
   }, [autoSaveActions, initialFormData]);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedDocument, setUploadedDocument] = useState<FileUploadResponse | null>(null);
 
   // Network status and offline queue
@@ -85,12 +167,36 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
   const [showGradesPreview, setShowGradesPreview] = useState(false);
   const [diplomaImage, setDiplomaImage] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [hasDraftRecovered, setHasDraftRecovered] = useState(false);
+  const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
       cleanup();
+      setHasDraftRecovered(false);
     }
   }, [isOpen, cleanup]);
+
+  // Check for and recover draft on component mount
+  useEffect(() => {
+    if (isOpen && !hasDraftRecovered) {
+      const savedDraft = localStorage.getItem(STORAGE_KEYS.PPDB_DRAFT);
+      if (savedDraft) {
+        try {
+          const draftData = JSON.parse(savedDraft);
+          const hasData = Object.values(draftData).some((val) => val && typeof val === 'string' && val.length > 0);
+          
+          if (hasData) {
+            autoSaveActions.updateData(() => draftData);
+            setHasDraftRecovered(true);
+            onShowToast('Draft sebelumnya ditemukan. Data telah dimuat ulang.', 'info');
+          }
+        } catch (error) {
+          logger.error('Failed to recover draft:', error);
+        }
+      }
+    }
+  }, [isOpen, hasDraftRecovered, autoSaveActions, onShowToast]);
 
   // Monitor PPDB localStorage for new registrations and notify admins
   useMonitorLocalStorage('malnu_ppdb_registrants', (newValue, oldValue) => {
@@ -111,6 +217,25 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
       }
     }
   });
+
+  // OCR timeout handler
+  useEffect(() => {
+    let timeoutId: number;
+    
+    if (isProcessingOCR) {
+      timeoutId = window.setTimeout(() => {
+        if (isProcessingOCR) {
+          onShowToast('Waktu pemrosesan habis. Silakan coba lagi.', 'error');
+          setIsProcessingOCR(false);
+          setOcrProgress({ status: 'Idle', progress: 0 });
+        }
+      }, 60000); // 60 second timeout
+    }
+    
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, [isProcessingOCR, onShowToast]);
 
   if (!isOpen) return null;
 
@@ -173,7 +298,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
       } else {
         onShowToast('Tidak dapat mengekstrak nilai dari gambar. Silakan input manual.', 'info');
       }
-    } catch {
+    } catch (error) {
+      logger.error('OCR processing error:', error);
       onShowToast('Gagal memproses gambar. Silakan coba lagi atau input manual.', 'error');
     } finally {
       setIsProcessingOCR(false);
@@ -196,9 +322,54 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setIsSubmittingFinal(true);
+
+    // Validate all required fields
+    const validationErrors: string[] = [];
+    
+    if (!autoSaveState.data.fullName || autoSaveState.data.fullName.trim().length < 3) {
+      validationErrors.push('Nama lengkap wajib diisi dan minimal 3 karakter');
+    }
+    
+    if (!autoSaveState.data.nisn || !/^\d{10}$/.test(autoSaveState.data.nisn.replace(/\D/g, ''))) {
+      validationErrors.push('NISN wajib diisi dan harus 10 digit angka');
+    }
+    
+    if (!autoSaveState.data.originSchool || autoSaveState.data.originSchool.trim().length < 5) {
+      validationErrors.push('Asal sekolah wajib diisi dan minimal 5 karakter');
+    }
+    
+    if (!autoSaveState.data.parentName || autoSaveState.data.parentName.trim().length < 3) {
+      validationErrors.push('Nama orang tua/wali wajib diisi dan minimal 3 karakter');
+    }
+    
+    if (!autoSaveState.data.phoneNumber) {
+      validationErrors.push('Nomor WhatsApp wajib diisi');
+    } else {
+      const cleanPhone = autoSaveState.data.phoneNumber.replace(/\D/g, '');
+      if (cleanPhone.length < 10 || cleanPhone.length > 13) {
+        validationErrors.push('Nomor WhatsApp harus 10-13 digit');
+      } else if (!cleanPhone.startsWith('08') && !cleanPhone.startsWith('628')) {
+        validationErrors.push('Nomor WhatsApp harus diawali dengan 08 atau 628');
+      }
+    }
+    
+    if (!autoSaveState.data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(autoSaveState.data.email.trim())) {
+      validationErrors.push('Format email tidak valid');
+    }
+    
+    if (!autoSaveState.data.address || autoSaveState.data.address.trim().length < 20) {
+      validationErrors.push('Alamat lengkap wajib diisi dan minimal 20 karakter');
+    }
+    
+    if (validationErrors.length > 0) {
+      onShowToast('Mohon lengkapi data dengan benar sebelum mengirim.', 'error');
+      logger.info('PPDB validation errors:', validationErrors);
+      setIsSubmittingFinal(false);
+      return;
+    }
 
     const ppdbData: Partial<PPDBRegistrant> = {
       fullName: autoSaveState.data.fullName!,
@@ -216,7 +387,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
     try {
       // Check if we should queue for offline sync
       if (!isOnline || isSlow) {
-        // Queue PPDB registration using the offline action queue
+        // Queue PPDB registration using offline action queue
         const actionId = addAction({
           type: 'submit',
           entity: 'ppdb',
@@ -226,7 +397,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
           method: 'POST',
         });
 
-        setIsSubmitting(false);
+        setIsSubmittingFinal(false);
         onShowToast('Pendaftaran akan dikirim saat koneksi tersedia.', 'info');
         logger.info('PPDB registration queued for offline sync', { actionId, nisn: ppdbData.nisn });
         return;
@@ -236,7 +407,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
       const response = await ppdbAPI.create(ppdbData);
 
       if (response.success) {
-        setIsSubmitting(false);
+        setIsSubmittingFinal(false);
         onShowToast('Pendaftaran berhasil! Data Anda sedang diverifikasi.', 'success');
 
         // Notify admins about new PPDB registration using event notifications hook
@@ -269,13 +440,13 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
           method: 'POST',
         });
 
-        setIsSubmitting(false);
+        setIsSubmittingFinal(false);
         onShowToast('Koneksi terputus. Pendaftaran akan dikirim saat online.', 'info');
         logger.info('PPDB registration auto-queued after network failure', { actionId, error });
         return;
       }
 
-      setIsSubmitting(false);
+      setIsSubmittingFinal(false);
       onShowToast('Gagal mendaftar. Silakan coba lagi.', 'error');
       logger.error('PPDB submission error:', error);
     }
@@ -318,6 +489,14 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                                 </p>
                             </div>
                         </div>
+                        {!isOnline && (
+                            <p className="text-xs text-amber-700 dark:text-amber-300 mt-2 flex items-center">
+                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-2-4.232-2H6.064c-1.538 0-2.462.667-3.232 2L.576 16c-.77 1.333 1.694 2 3.232 2h13.856c1.54 0 2.502-1.667 1.732-3L18.732 9c-.77-1.333-2.694-2-4.232-2z" />
+                                </svg>
+                                Fitur OCR membutuhkan koneksi internet aktif
+                            </p>
+                        )}
                     </div>
 
                     <div className="space-y-3">
@@ -445,6 +624,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                             autoComplete="name"
                             size="md"
                             fullWidth
+                            validationRules={validationRules.fullName}
+                            helperText={hasDraftRecovered && autoSaveState.data.fullName ? 'Data dari draft' : undefined}
                         />
                         <Input
                             id="ppdb-nisn"
@@ -457,6 +638,9 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                             autoComplete="off"
                             size="md"
                             fullWidth
+                            validationRules={validationRules.nisn}
+                            customType="nisn"
+                            helperText={hasDraftRecovered && autoSaveState.data.nisn ? 'Data dari draft' : undefined}
                         />
                         <div className="md:col-span-2">
                             <Input
@@ -471,6 +655,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                                 autoComplete="organization"
                                 size="md"
                                 fullWidth
+                                validationRules={validationRules.originSchool}
+                                helperText={hasDraftRecovered && autoSaveState.data.originSchool ? 'Data dari draft' : undefined}
                             />
                         </div>
                     </div>
@@ -491,6 +677,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                             autoComplete="name"
                             size="md"
                             fullWidth
+                            validationRules={validationRules.parentName}
+                            helperText={hasDraftRecovered && autoSaveState.data.parentName ? 'Data dari draft' : undefined}
                         />
                         <Input
                             id="ppdb-phoneNumber"
@@ -503,6 +691,9 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                             autoComplete="tel"
                             size="md"
                             fullWidth
+                            validationRules={validationRules.phoneNumber}
+                            customType="phone"
+                            helperText={hasDraftRecovered && autoSaveState.data.phoneNumber ? 'Data dari draft' : undefined}
                         />
                         <div className="md:col-span-2">
                             <Input
@@ -516,6 +707,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                                 autoComplete="email"
                                 size="md"
                                 fullWidth
+                                validationRules={validationRules.email}
+                                helperText={hasDraftRecovered && autoSaveState.data.email ? 'Data dari draft' : undefined}
                             />
                         </div>
                         <div className="md:col-span-2">
@@ -527,6 +720,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                                 onChange={handleChange}
                                 rows={3}
                                 size="md"
+                                validationRules={validationRules.address}
+                                helperText={hasDraftRecovered && autoSaveState.data.address ? 'Data dari draft' : undefined}
                             />
                         </div>
                      </div>
@@ -551,12 +746,31 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                         variant="green-solid"
                         size="lg"
                         fullWidth
-                        isLoading={isSubmitting}
+                        isLoading={isSubmittingFinal || isProcessingOCR}
+                        disabled={isProcessingOCR || (!isOnline && !autoSaveState.data)}
                         className="rounded-full font-bold shadow-lg"
                     >
-                        {isSubmitting ? 'Mengirim Data...' : 'Kirim Pendaftaran'}
+                        {isProcessingOCR ? 'Memproses OCR...' : 
+                         isSubmittingFinal ? 'Mengirim Data...' : 
+                         !isOnline ? 'Kirim Saat Online' : 'Kirim Pendaftaran'}
                     </Button>
-                    <p className="text-center text-xs text-neutral-500 mt-2">Dengan mendaftar, Anda menyetujui kebijakan privasi data sekolah.</p>
+                    <div className="flex items-center justify-between mt-2">
+                        <p className="text-xs text-neutral-500">Dengan mendaftar, Anda menyetujui kebijakan privasi data sekolah.</p>
+                        {hasDraftRecovered && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    localStorage.removeItem(STORAGE_KEYS.PPDB_DRAFT);
+                                    autoSaveActions.reset(initialFormData);
+                                    setHasDraftRecovered(false);
+                                    onShowToast('Draft telah dihapus', 'info');
+                                }}
+                                className="text-xs text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                            >
+                                Hapus Draft
+                            </button>
+                        )}
+                    </div>
                 </div>
             </form>
         </div>
