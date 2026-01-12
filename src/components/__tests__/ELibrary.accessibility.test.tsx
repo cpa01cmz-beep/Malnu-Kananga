@@ -1,7 +1,7 @@
 // ELibrary.accessibility.test.tsx - Accessibility tests for ELibrary component
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 // Mock all services
@@ -80,7 +80,7 @@ vi.mock('../utils/networkStatus', () => ({
 }));
 
 // Create a mock component wrapper for ELibrary
-const mockELibraryComponent = (props = {}) => {
+const mockELibraryComponent = (_props = {}) => {
   return (
     <div>
       <div>ELibrary Component Placeholder</div>

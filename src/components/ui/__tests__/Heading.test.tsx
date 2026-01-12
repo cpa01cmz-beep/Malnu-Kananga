@@ -1,6 +1,7 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import Heading from './Heading';
+import { describe, it, expect } from 'vitest';
+import Heading from '../Heading';
 
 describe('Heading Component', () => {
   describe('Rendering', () => {
@@ -243,7 +244,7 @@ describe('Heading Component', () => {
 
   describe('Forward Ref', () => {
     it('forwards ref to heading element', () => {
-      const ref = { current: null };
+      const ref = React.createRef<HTMLHeadingElement>();
       render(<Heading ref={ref}>Test</Heading>);
       expect(ref.current).toBeInTheDocument();
       expect(ref.current?.tagName.toLowerCase()).toBe('h2');
