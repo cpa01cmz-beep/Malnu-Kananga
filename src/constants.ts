@@ -102,6 +102,13 @@ export const STORAGE_KEYS = {
     // Offline data service for student/parent portals
     OFFLINE_STUDENT_DATA: 'malnu_offline_student_data',
     OFFLINE_PARENT_DATA: 'malnu_offline_parent_data',
+    
+    // Email Service (new)
+    EMAIL_TEMPLATES: 'malnu_email_templates',
+    EMAIL_QUEUE: 'malnu_email_queue',
+    EMAIL_NOTIFICATION_SETTINGS: 'malnu_email_notification_settings',
+    EMAIL_ANALYTICS: 'malnu_email_analytics',
+    EMAIL_DELIVERY_HISTORY: 'malnu_email_delivery_history',
 } as const;
 
 export const USER_ROLES = {

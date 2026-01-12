@@ -522,6 +522,20 @@ async function initDatabase(env) {
       );
     `);
 
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS email_delivery_log (
+        id TEXT PRIMARY KEY,
+        message_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        to_email TEXT NOT NULL,
+        subject TEXT NOT NULL,
+        status TEXT NOT NULL CHECK(status IN ('queued', 'sent', 'delivered', 'bounced', 'complained', 'opened', 'clicked')),
+        provider TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
     // Seed initial admin user if not exists
     const adminExists = await env.DB.prepare('SELECT id FROM users WHERE email = ?')
       .bind('admin@malnu.sch.id')
@@ -1123,6 +1137,234 @@ async function handleFileList(request, env, corsHeaders) {
 }
 
 // ============================================
+// EMAIL SERVICE HANDLERS
+// ============================================
+
+async function handleSendEmail(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const { to, cc, bcc, subject, html, text, attachments, trackDelivery, priority } = await request.json();
+
+    if (!to || !subject || !html) {
+      return new Response(JSON.stringify(response.error('Missing required fields: to, subject, html')), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (!env.EMAIL_PROVIDER) {
+      return new Response(JSON.stringify(response.error('Email provider not configured')), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const messageId = generateId();
+    
+    let sendResult;
+    switch (env.EMAIL_PROVIDER.toLowerCase()) {
+      case 'sendgrid':
+        sendResult = await sendViaSendGrid(env, { to, cc, bcc, subject, html, text, attachments });
+        break;
+      case 'mailgun':
+        sendResult = await sendViaMailgun(env, { to, cc, bcc, subject, html, text, attachments });
+        break;
+      case 'cloudflare-email':
+        sendResult = await sendViaCloudflareEmail(env, { to, cc, bcc, subject, html, text, attachments });
+        break;
+      default:
+        return new Response(JSON.stringify(response.error('Unsupported email provider')), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+
+    if (sendResult.success) {
+      if (trackDelivery) {
+        await env.DB.prepare(`
+          INSERT INTO email_delivery_log (id, message_id, user_id, to_email, subject, status, created_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).bind(generateId(), messageId, payload.user_id, Array.isArray(to) ? to[0].email : to.email, subject, 'sent', new Date().toISOString()).run();
+      }
+
+      return new Response(JSON.stringify(response.success({
+        messageId,
+        provider: env.EMAIL_PROVIDER
+      }, 'Email sent successfully')), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    } else {
+      return new Response(JSON.stringify(response.error(sendResult.error || 'Failed to send email')), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+  } catch (e) {
+    console.error('Send email error:', e);
+    return new Response(JSON.stringify(response.error('Failed to send email')), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function sendViaSendGrid(env, { to, cc, bcc, subject, html, text, attachments }) {
+  try {
+    const sendGridApiKey = env.SENDGRID_API_KEY;
+    if (!sendGridApiKey) {
+      return { success: false, error: 'SendGrid API key not configured' };
+    }
+
+    const toEmails = Array.isArray(to) ? to : [to];
+    const ccEmails = cc ? (Array.isArray(cc) ? cc : [cc]) : [];
+    
+    const personalizations = toEmails.map(email => ({
+      to: [{ email: email.email, name: email.name || '' }],
+      cc: ccEmails.map(e => ({ email: e.email, name: e.name || '' }))
+    }));
+
+    const body = {
+      personalizations,
+      from: { email: env.FROM_EMAIL || env.SENDGRID_FROM_EMAIL, name: env.FROM_NAME || env.SENDGRID_FROM_NAME || 'MA Malnu Kananga' },
+      subject,
+      content: [
+        { type: 'text/plain', value: text || html.replace(/<[^>]*>/g, '') },
+        { type: 'text/html', value: html }
+      ]
+    };
+
+    if (attachments && attachments.length > 0) {
+      body.attachments = attachments.map(att => ({
+        content: Buffer.from(att.content).toString('base64'),
+        filename: att.filename,
+        type: att.contentType,
+        disposition: 'attachment'
+      }));
+    }
+
+    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${sendGridApiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (response.ok) {
+      return { success: true };
+    } else {
+      const errorText = await response.text();
+      return { success: false, error: errorText || 'SendGrid API error' };
+    }
+  } catch (e) {
+    return { success: false, error: e.message || 'SendGrid sending failed' };
+  }
+}
+
+async function sendViaMailgun(env, { to, cc, bcc, subject, html, text, attachments }) {
+  try {
+    const mailgunApiKey = env.MAILGUN_API_KEY;
+    const mailgunDomain = env.MAILGUN_DOMAIN;
+    
+    if (!mailgunApiKey || !mailgunDomain) {
+      return { success: false, error: 'Mailgun credentials not configured' };
+    }
+
+    const toEmails = Array.isArray(to) ? to.map(t => `${t.name ? `${t.name} <${t.email}>` : t.email}`).join(',') : `${to.name ? `${to.name} <${to.email}>` : to.email}`;
+    
+    const formData = new FormData();
+    formData.append('from', env.FROM_EMAIL || env.MAILGUN_FROM_EMAIL || env.MAILGUN_FROM);
+    formData.append('to', toEmails);
+    if (cc) {
+      const ccEmails = Array.isArray(cc) ? cc : [cc];
+      formData.append('cc', ccEmails.map(c => `${c.name ? `${c.name} <${c.email}>` : c.email}`).join(','));
+    }
+    formData.append('subject', subject);
+    formData.append('html', html);
+    if (text) {
+      formData.append('text', text);
+    }
+
+    if (attachments && attachments.length > 0) {
+      for (const att of attachments) {
+        const blob = att.content instanceof ArrayBuffer ? new Blob([att.content]) : new Blob([att.content]);
+        formData.append('attachment', blob, att.filename);
+      }
+    }
+
+    const auth = btoa(`api:${mailgunApiKey}`);
+    const response = await fetch(`https://api.mailgun.net/v3/${mailgunDomain}/messages`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`
+      },
+      body: formData
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      return { success: true, messageId: result.id };
+    } else {
+      const errorText = await response.text();
+      return { success: false, error: errorText || 'Mailgun API error' };
+    }
+  } catch (e) {
+    return { success: false, error: e.message || 'Mailgun sending failed' };
+  }
+}
+
+async function sendViaCloudflareEmail(env, { to, cc, bcc, subject, html, text, attachments }) {
+  try {
+    const cloudflareApiKey = env.CLOUDFLARE_EMAIL_API_KEY;
+    if (!cloudflareApiKey) {
+      return { success: false, error: 'Cloudflare Email API key not configured' };
+    }
+
+    const toEmails = Array.isArray(to) ? to : [to];
+    const ccEmails = cc ? (Array.isArray(cc) ? cc : [cc]) : [];
+
+    const body = {
+      to: toEmails.map(e => ({ email: e.email, name: e.name || '' })),
+      cc: ccEmails.map(e => ({ email: e.email, name: e.name || '' })),
+      from: { email: env.FROM_EMAIL || 'noreply@ma-malnukananga.sch.id', name: env.FROM_NAME || 'MA Malnu Kananga' },
+      subject,
+      content: {
+        text: text || html.replace(/<[^>]*>/g, ''),
+        html
+      }
+    };
+
+    const response = await fetch('https://api.cloudflare.com/client/v4/email/send', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${cloudflareApiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      return { success: true, messageId: result.id };
+    } else {
+      const errorText = await response.text();
+      return { success: false, error: errorText || 'Cloudflare Email API error' };
+    }
+  } catch (e) {
+    return { success: false, error: e.message || 'Cloudflare Email sending failed' };
+  }
+}
+
+// ============================================
 // PARENT API HANDLERS
 // ============================================
 
@@ -1416,6 +1658,7 @@ export default {
       '/api/auth/login': handleLogin,
       '/api/auth/logout': handleLogout,
       '/api/auth/refresh': handleRefreshToken,
+      '/api/email/send': handleSendEmail,
       '/api/files/upload': handleFileUpload,
       '/api/files/download': handleFileDownload,
       '/api/files/delete': handleFileDelete,

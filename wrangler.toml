@@ -96,3 +96,21 @@ LOG_LEVEL = "info"
 # NOTE: Worker uses GEMINI_API_KEY (WITHOUT VITE_ prefix)
 # Frontend uses VITE_GEMINI_API_KEY (WITH VITE_ prefix) - these are DIFFERENT services
 # Set via Wrangler: echo "your_key" | wrangler secret put GEMINI_API_KEY --env dev
+
+# Email Service Configuration
+# EMAIL_PROVIDER: Choose from 'sendgrid', 'mailgun', 'cloudflare-email'
+# Set via Wrangler: echo "sendgrid" | wrangler secret put EMAIL_PROVIDER --env dev
+# 
+# For SendGrid:
+# Set via Wrangler: echo "your_sendgrid_api_key" | wrangler secret put SENDGRID_API_KEY --env dev
+# Optional: echo "your_from_email" | wrangler secret put FROM_EMAIL --env dev
+# Optional: echo "MA Malnu Kananga" | wrangler secret put FROM_NAME --env dev
+#
+# For Mailgun:
+# Set via Wrangler: echo "your_mailgun_api_key" | wrangler secret put MAILGUN_API_KEY --env dev
+# Set via Wrangler: echo "your_mailgun_domain" | wrangler secret put MAILGUN_DOMAIN --env dev
+# Optional: echo "your_from_email" | wrangler secret put FROM_EMAIL --env dev
+#
+# For Cloudflare Email:
+# Set via Wrangler: echo "your_cloudflare_email_api_key" | wrangler secret put CLOUDFLARE_EMAIL_API_KEY --env dev
+# Optional: echo "your_from_email" | wrangler secret put FROM_EMAIL --env dev
