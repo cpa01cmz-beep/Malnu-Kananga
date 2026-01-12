@@ -134,10 +134,10 @@ describe('DocumentationPage', () => {
 
   it('calls onClose when modal close button is clicked', () => {
     render(<DocumentationPage {...defaultProps} />);
-    
-    const closeButton = screen.getByRole('button', { name: /tutup/i });
+
+    const closeButton = screen.getByRole('button', { name: /Close modal/i });
     fireEvent.click(closeButton);
-    
+
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -150,14 +150,15 @@ describe('DocumentationPage', () => {
 
   it('renders documentation content for students', async () => {
     render(<DocumentationPage {...defaultProps} />);
-    
+
     const button = screen.getByText('Untuk Siswa').closest('button');
     if (!button) throw new Error('Button not found');
-    
+
     fireEvent.click(button);
-    
+
     await waitFor(() => {
-      expect(screen.getByText(/Portal Siswa/)).toBeInTheDocument();
+      const portalSiswaElements = screen.getAllByText(/Portal Siswa/);
+      expect(portalSiswaElements.length).toBeGreaterThan(0);
     });
   });
 });
