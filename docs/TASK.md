@@ -349,6 +349,14 @@
       - See src/components/Footer.tsx:40-70 for implementation
       - See src/components/__tests__/Footer.test.tsx for test coverage
    - [x] ProfileSection Interactive Cards Accessibility Improvement (Phase 5 - COMPLETED 2026-01-12)
+  - [x] SkipLink Redundant tabIndex Removal (Phase 5 - COMPLETED 2026-01-12)
+     - Removed redundant tabIndex={0} from <a> elements in SkipLink.tsx (lines 46 and 62)
+     - Anchor elements are naturally focusable by default in HTML5, making tabIndex={0} redundant
+     - Follows WCAG 2.1 best practices (First Rule of ARIA: use native HTML semantics when possible)
+     - Improved code maintainability and adherence to HTML5 specifications
+     - Verified other tabIndex={0} usage is correct (div elements with role="button"/role="listitem"/role="gridcell" need tabIndex for keyboard access)
+     - No test updates needed (existing tests don't verify tabIndex attribute)
+     - See src/components/ui/SkipLink.tsx for implementation
       - Converted Visi and Misi cards from <div> elements to <button> elements for semantic structure
       - Added type="button" attribute to ensure proper form behavior
       - Added aria-labelledby attributes linking buttons to their heading IDs (visi-heading, misi-heading)
