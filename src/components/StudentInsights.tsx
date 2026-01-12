@@ -10,6 +10,7 @@ import { useStudentInsights } from '../hooks/useStudentInsights';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
 import Card from './ui/Card';
+import Heading from './ui/Heading';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import { GRADIENT_CLASSES } from '../config/gradients';
@@ -43,7 +44,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">My Insights</h2>
+            <Heading level={2} size="2xl" weight="bold">My Insights</Heading>
             <p className="text-neutral-600 dark:text-neutral-400 mt-1">Analisis AI performa akademik Anda</p>
           </div>
           <Button variant="ghost" onClick={onBack}>
@@ -61,7 +62,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
       <div>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">My Insights</h2>
+            <Heading level={2} size="2xl" weight="bold">My Insights</Heading>
             <p className="text-neutral-600 dark:text-neutral-400 mt-1">Analisis AI performa akademik Anda</p>
           </div>
           <Button variant="ghost" onClick={onBack}>
@@ -90,7 +91,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
       <div>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">My Insights</h2>
+            <Heading level={2} size="2xl" weight="bold">My Insights</Heading>
             <p className="text-neutral-600 dark:text-neutral-400 mt-1">Analisis AI performa akademik Anda</p>
           </div>
           <Button variant="ghost" onClick={onBack}>
@@ -104,9 +105,9 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+          <Heading level={3} size="lg" weight="semibold" className="mb-2">
             AI Insights Dinonaktifkan
-          </h3>
+          </Heading>
           <p className="text-neutral-600 dark:text-neutral-400 mb-6 max-w-md mx-auto">
             Aktifkan insight AI untuk mendapatkan analisis personal tentang performa akademik Anda.
           </p>
@@ -123,7 +124,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
       <div>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">My Insights</h2>
+            <Heading level={2} size="2xl" weight="bold">My Insights</Heading>
             <p className="text-neutral-600 dark:text-neutral-400 mt-1">Analisis AI performa akademik Anda</p>
           </div>
           <Button variant="ghost" onClick={onBack}>
@@ -137,9 +138,9 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+          <Heading level={3} size="lg" weight="semibold" className="mb-2">
             Memuat Insights
-          </h3>
+          </Heading>
           <p className="text-neutral-600 dark:text-neutral-400">
             Sedang menganalisis data performa Anda...
           </p>

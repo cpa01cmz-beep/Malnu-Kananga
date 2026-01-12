@@ -6,6 +6,7 @@ import { UsersIcon } from '../icons/UsersIcon';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
+import Heading from '../ui/Heading';
 import Section from '../ui/Section';
 import { getResponsiveGradient, GRADIENT_CLASSES } from '../../config/gradients';
 
@@ -36,7 +37,7 @@ const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
                 <div className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 ${GRADIENT_CLASSES.BLUE_LIGHT} dark:from-blue-900/30 dark:to-blue-800/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-subtle`}>
                     <DocumentTextIcon />
                 </div>
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-neutral-900 dark:text-white mb-2 sm:mb-3">Isi Formulir</h3>
+                <Heading level={3} size="lg" weight="semibold" className="sm:text-xl lg:text-2xl mb-2 sm:mb-3">Isi Formulir</Heading>
                 <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">Lengkapi data diri dan data sekolah asal melalui formulir pendaftaran online kami.</p>
             </Card>
 
@@ -49,7 +50,7 @@ const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
                 <div className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 ${GRADIENT_CLASSES.PURPLE_LIGHT} dark:from-purple-900/30 dark:to-purple-800/30 text-purple-600 dark:text-purple-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-subtle`}>
                     <ClipboardDocumentCheckIcon />
                 </div>
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-neutral-900 dark:text-white mb-2 sm:mb-3">Verifikasi Berkas</h3>
+                <Heading level={3} size="lg" weight="semibold" className="sm:text-xl lg:text-2xl mb-2 sm:mb-3">Verifikasi Berkas</Heading>
                 <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">Panitia akan memverifikasi data yang Anda kirimkan dalam waktu 1x24 jam.</p>
             </Card>
 
@@ -62,7 +63,7 @@ const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
                 <div className={`w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 ${GRADIENT_CLASSES.ORANGE_LIGHT} dark:from-orange-900/30 dark:to-orange-800/30 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center mx-auto mb-5 sm:mb-6 group-hover:scale-110 transition-transform duration-300 shadow-subtle`}>
                     <UsersIcon />
                 </div>
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-neutral-900 dark:text-white mb-2 sm:mb-3">Wawancara & Tes</h3>
+                <Heading level={3} size="lg" weight="semibold" className="sm:text-xl lg:text-2xl mb-2 sm:mb-3">Wawancara & Tes</Heading>
                 <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">Ikuti tes akademik and wawancara sesuai jadwal yang ditentukan.</p>
             </Card>
         </div>
