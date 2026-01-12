@@ -55,6 +55,7 @@ export default [
         KeyboardEvent: 'readonly',
         MouseEvent: 'readonly',
         HTMLSpanElement: 'readonly',
+        HTMLHeadingElement: 'readonly',
         CustomEvent: 'readonly',
         CustomEventInit: 'readonly',
       },
