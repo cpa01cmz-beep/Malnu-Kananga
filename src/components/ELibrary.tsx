@@ -1463,20 +1463,24 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                 <div className="flex gap-2 mb-3">
                   <button
                     onClick={() => toggleOCRForMaterial(item.id)}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                    aria-label={selectedForOCR.has(item.id) ? `Hapus pemilihan OCR untuk ${item.title}` : `Pilih untuk diproses OCR: ${item.title}`}
+                    aria-pressed={selectedForOCR.has(item.id)}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 ${
                       selectedForOCR.has(item.id)
                         ? 'bg-blue-500 text-white'
                         : 'bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
                     }`}
                     disabled={ocrProcessing.has(item.id)}
                   >
-                    <input
-                      type="checkbox"
-                      checked={selectedForOCR.has(item.id)}
-                      onChange={() => {}}
-                      className="w-3 h-3 rounded border-neutral-300"
-                      readOnly
-                    />
+                    <svg
+                      className={`w-3 h-3 transition-transform duration-200 ${selectedForOCR.has(item.id) ? 'rotate-90' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                     {selectedForOCR.has(item.id) ? 'Dipilih' : 'Pilih'}
                   </button>
                   

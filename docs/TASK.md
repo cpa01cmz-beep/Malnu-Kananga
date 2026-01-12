@@ -240,26 +240,39 @@
         - Contrast testing guidelines for WCAG compliance verification
          - Color blindness testing guidelines for accessibility
          - Enhanced design system consistency through semantic color tokens
-      - [x] Raw Button Component Refactoring (Phase 5 - COMPLETED 2026-01-12)
-         - Refactored raw button elements in PPDBManagement.tsx to use IconButton component (3 instances)
-         - Replaced document view, approve, and reject buttons with IconButton component
-         - Added proper ARIA labels for all icon buttons (e.g., "Lihat dokumen untuk pendaftar ini", "Terima pendaftaran ini", "Tolak pendaftaran ini")
-         - Added tooltip attributes for better UX (e.g., "Lihat dokumen", "Terima", "Tolak")
-         - Refactored sort direction toggle to use IconButton component with proper ARIA labels
-         - Replaced "Tutup" button in scoring modal with Button component (secondary variant)
-         - Replaced close button in document preview modal with IconButton component
-         - Refactored raw button elements in GradingManagement.tsx to use centralized UI components (2 instances)
-         - Replaced "Tutup Analisis" button with Button component (ghost variant, sm size)
-         - Replaced "Coba Lagi" button in error banner with Button component (ghost variant, sm size)
-         - Refactored error dismiss button in ParentNotificationSettings.tsx to use IconButton component
-         - Replaced "×" dismiss button with IconButton component using XMarkIcon
-         - Added proper ARIA label ("Tutup pesan error")
-         - Improved accessibility through built-in ARIA support from IconButton and Button components
-         - Enhanced design system consistency by using centralized UI components
-         - Improved keyboard navigation and focus management through IconButton's built-in support
-         - Eliminated ~20 lines of duplicate button styling code
-         - Better hover animations and transitions through IconButton and Button components
-         - Dark mode support automatically inherited from centralized components
+   - [x] Raw Button Component Refactoring (Phase 5 - COMPLETED 2026-01-12)
+      - Refactored raw button elements in PPDBManagement.tsx to use IconButton component (3 instances)
+      - Replaced document view, approve, and reject buttons with IconButton component
+      - Added proper ARIA labels for all icon buttons (e.g., "Lihat dokumen untuk pendaftar ini", "Terima pendaftaran ini", "Tolak pendaftaran ini")
+      - Added tooltip attributes for better UX (e.g., "Lihat dokumen", "Terima", "Tolak")
+      - Refactored sort direction toggle to use IconButton component with proper ARIA labels
+      - Replaced "Tutup" button in scoring modal with Button component (secondary variant)
+      - Replaced close button in document preview modal with IconButton component
+      - Refactored raw button elements in GradingManagement.tsx to use centralized UI components (2 instances)
+      - Replaced "Tutup Analisis" button with Button component (ghost variant, sm size)
+      - Replaced "Coba Lagi" button in error banner with Button component (ghost variant, sm size)
+      - Refactored error dismiss button in ParentNotificationSettings.tsx to use IconButton component
+      - Replaced "×" dismiss button with IconButton component using XMarkIcon
+      - Added proper ARIA label ("Tutup pesan error")
+      - Improved accessibility through built-in ARIA support from IconButton and Button components
+      - Enhanced design system consistency by using centralized UI components
+      - Improved keyboard navigation and focus management through IconButton's built-in support
+      - Eliminated ~20 lines of duplicate button styling code
+      - Better hover animations and transitions through IconButton and Button components
+      - Dark mode support automatically inherited from centralized components
+   - [x] ELibrary OCR Selection Button Accessibility Improvement (Phase 5 - COMPLETED 2026-01-12)
+      - Added proper aria-label with dynamic text based on selection state ("Pilih untuk diproses OCR: [title]" / "Hapus pemilihan OCR untuk [title]")
+      - Added aria-pressed attribute to indicate toggle state to screen readers (true/false)
+      - Replaced decorative read-only checkbox with proper SVG chevron icon that rotates on selection
+      - Added aria-hidden="true" to decorative chevron icon for screen reader optimization
+      - Added focus-visible styles (focus:outline-none, focus-visible:ring-2) for keyboard navigation
+      - Added dark mode support with focus-visible:ring-offset-neutral-900
+      - Improved WCAG 2.1 AA compliance (SC 4.1.2 Name, Role, Value)
+      - Enhanced visual feedback with chevron rotation (rotate-90) when selected
+      - Screen readers now receive clear, contextual information about button state and purpose
+      - Keyboard users benefit from visible focus indicators
+      - Eliminated confusing read-only checkbox pattern that provided no semantic value
+      - See src/components/ELibrary.tsx:1464-1485 for implementation
 
 
 ### P2: Medium
