@@ -19,6 +19,7 @@ import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
+import { STORAGE_KEYS } from '../constants';
 import { standardValidationRules } from '../hooks/useFieldValidation';
 
 interface PPDBRegistrationProps {
@@ -123,7 +124,7 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
   const [autoSaveState, autoSaveActions] = useAutoSave<Partial<PPDBRegistrant>>(
     initialFormData,
     {
-      storageKey: 'malnu_ppdb_draft',
+      storageKey: STORAGE_KEYS.PPDB_DRAFT,
       delay: 2000,
       enableOffline: true,
       onSave: async () => {
@@ -132,7 +133,7 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
       },
       onSaved: () => {
         // Show draft saved notification
-        if (Object.values(autoSaveState.data).some(val => val && val.length > 0)) {
+        if (Object.values(autoSaveState.data).some(val => val && typeof val === 'string' && val.length > 0)) {
           onShowToast('Draft tersimpan otomatis', 'info');
         }
       },
@@ -151,7 +152,6 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
     setOcrProgress({ status: 'Idle', progress: 0 });
   }, [autoSaveActions, initialFormData]);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedDocument, setUploadedDocument] = useState<FileUploadResponse | null>(null);
 
   // Network status and offline queue
@@ -180,11 +180,11 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
   // Check for and recover draft on component mount
   useEffect(() => {
     if (isOpen && !hasDraftRecovered) {
-      const savedDraft = localStorage.getItem('malnu_ppdb_draft');
+      const savedDraft = localStorage.getItem(STORAGE_KEYS.PPDB_DRAFT);
       if (savedDraft) {
         try {
           const draftData = JSON.parse(savedDraft);
-          const hasData = Object.values(draftData).some((val: any) => val && val.length > 0);
+          const hasData = Object.values(draftData).some((val) => val && typeof val === 'string' && val.length > 0);
           
           if (hasData) {
             autoSaveActions.updateData(() => draftData);
@@ -196,7 +196,7 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
         }
       }
     }
-  }, [isOpen, hasDraftRecovered]);
+  }, [isOpen, hasDraftRecovered, autoSaveActions, onShowToast]);
 
   // Monitor PPDB localStorage for new registrations and notify admins
   useMonitorLocalStorage('malnu_ppdb_registrants', (newValue, oldValue) => {
@@ -217,6 +217,25 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
       }
     }
   });
+
+  // OCR timeout handler
+  useEffect(() => {
+    let timeoutId: number;
+    
+    if (isProcessingOCR) {
+      timeoutId = window.setTimeout(() => {
+        if (isProcessingOCR) {
+          onShowToast('Waktu pemrosesan habis. Silakan coba lagi.', 'error');
+          setIsProcessingOCR(false);
+          setOcrProgress({ status: 'Idle', progress: 0 });
+        }
+      }, 60000); // 60 second timeout
+    }
+    
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, [isProcessingOCR, onShowToast]);
 
   if (!isOpen) return null;
 
@@ -286,25 +305,6 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
       setIsProcessingOCR(false);
     }
   };
-
-  // OCR timeout handler
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    
-    if (isProcessingOCR) {
-      timeoutId = setTimeout(() => {
-        if (isProcessingOCR) {
-          onShowToast('Waktu pemrosesan habis. Silakan coba lagi.', 'error');
-          setIsProcessingOCR(false);
-          setOcrProgress({ status: 'Idle', progress: 0 });
-        }
-      }, 60000); // 60 second timeout
-    }
-    
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [isProcessingOCR]);
 
   const clearDiplomaImage = () => {
     setDiplomaImage(null);
@@ -447,74 +447,6 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
       }
 
       setIsSubmittingFinal(false);
-      onShowToast('Gagal mendaftar. Silakan coba lagi.', 'error');
-      logger.error('PPDB submission error:', error);
-    }
-  };
-
-    try {
-      // Check if we should queue for offline sync
-      if (!isOnline || isSlow) {
-        // Queue PPDB registration using the offline action queue
-        const actionId = addAction({
-          type: 'submit',
-          entity: 'ppdb',
-          entityId: ppdbData.nisn || generateTempId(),
-          data: ppdbData,
-          endpoint: '/api/ppdb',
-          method: 'POST',
-        });
-
-        setIsSubmitting(false);
-        onShowToast('Pendaftaran akan dikirim saat koneksi tersedia.', 'info');
-        logger.info('PPDB registration queued for offline sync', { actionId, nisn: ppdbData.nisn });
-        return;
-      }
-
-      // Online submission
-      const response = await ppdbAPI.create(ppdbData);
-
-      if (response.success) {
-        setIsSubmittingFinal(false);
-        onShowToast('Pendaftaran berhasil! Data Anda sedang diverifikasi.', 'success');
-
-        // Notify admins about new PPDB registration using event notifications hook
-        await notifyPPDBStatus(1);
-
-        autoSaveActions.reset({
-          fullName: '',
-          nisn: '',
-          originSchool: '',
-          parentName: '',
-          phoneNumber: '',
-          email: '',
-          address: '',
-        });
-
-        setUploadedDocument(null);
-        onClose();
-      } else {
-        throw new Error(response.error || 'Gagal mendaftar');
-      }
-    } catch (error) {
-      // Auto-queue on network failure
-      if (!isOnline) {
-        const actionId = addAction({
-          type: 'submit',
-          entity: 'ppdb',
-          entityId: ppdbData.nisn || generateTempId(),
-          data: ppdbData,
-          endpoint: '/api/ppdb',
-          method: 'POST',
-        });
-
-        setIsSubmitting(false);
-        onShowToast('Koneksi terputus. Pendaftaran akan dikirim saat online.', 'info');
-        logger.info('PPDB registration auto-queued after network failure', { actionId, error });
-        return;
-      }
-
-      setIsSubmitting(false);
       onShowToast('Gagal mendaftar. Silakan coba lagi.', 'error');
       logger.error('PPDB submission error:', error);
     }
@@ -828,7 +760,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                             <button
                                 type="button"
                                 onClick={() => {
-                                    localStorage.removeItem('malnu_ppdb_draft');
+                                    localStorage.removeItem(STORAGE_KEYS.PPDB_DRAFT);
                                     autoSaveActions.reset(initialFormData);
                                     setHasDraftRecovered(false);
                                     onShowToast('Draft telah dihapus', 'info');
