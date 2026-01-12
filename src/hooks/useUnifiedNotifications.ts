@@ -47,7 +47,6 @@ export function useUnifiedNotifications() {
   const [permissionDenied, setPermissionDenied] = useState(false);
   const [settings, setSettingsState] = useState(unifiedNotificationManager.getUnifiedSettings());
   const [history, setHistory] = useState<NotificationHistoryItem[]>([]);
-  const [subscribed, setSubscribed] = useState(false);
   const [batches, setBatches] = useState<NotificationBatch[]>([]);
   const [templates, setTemplates] = useState<UnifiedNotificationTemplate[]>([]);
   const [analytics, setAnalytics] = useState<NotificationAnalytics[]>([]);
@@ -342,7 +341,6 @@ export function useUnifiedNotifications() {
     permissionDenied,
     settings,
     history,
-    subscribed,
     batches,
     templates,
     analytics,
