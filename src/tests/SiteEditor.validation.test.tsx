@@ -221,7 +221,7 @@ describe('SiteEditor Security Validation', () => {
     fireEvent.click(sendButton);
 
      await waitFor(() => {
-       screen.getByText(/🛡️ Validasi gagal/);
-     }, { timeout: 2000 });
+        screen.getByText(/Validasi keamanan gagal/);
+      }, { timeout: 2000 });
   });
 });
