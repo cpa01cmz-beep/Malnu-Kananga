@@ -1,6 +1,6 @@
 # Deployment Status
 
-**Last Updated**: 2026-01-08  
+**Last Updated**: 2026-01-12  
 **Status**: ✅ Production Deployed
 
 ## Current Deployment Status
@@ -236,6 +236,8 @@ wrangler deploy --env ""
 
 | Date | Component | Status | Notes |
 |-------|-----------|--------|-------|
+| 2026-01-12 | Pages (malnu-kananga) | ✅ Deployed | OCR validation event test fix merged |
+| 2026-01-12 | Worker (malnu-kananga-worker) | ✅ Deployed | Latest main branch sync |
 | 2026-01-08 | Pages (malnu-kananga) | ✅ Deployed | Latest build with env vars configured |
 | 2026-01-08 | Worker (malnu-kananga-worker) | ✅ Deployed | Fixed dbExec helper for D1 compatibility |
 | 2026-01-06 | Worker (malnu-kananga-worker) | ⚠️ Issues | DB.exec() not compatible with latest D1 |
