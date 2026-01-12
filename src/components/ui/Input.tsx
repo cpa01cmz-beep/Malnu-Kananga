@@ -25,6 +25,7 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   };
   inputMask?: 'nisn' | 'phone' | 'date' | 'year' | 'class' | 'grade';
   customType?: InputType;
+  clearOnEscape?: boolean;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed";
@@ -75,6 +76,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   accessibility = { announceErrors: true },
   inputMask,
   customType = 'text',
+  clearOnEscape = false,
   value,
   onChange,
   onBlur,
@@ -128,6 +130,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     
     if (onBlur) {
       onBlur(e);
+    }
+  };
+
+  // Escape key handler to clear input value
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (clearOnEscape && e.key === 'Escape') {
+      const syntheticEvent = {
+        target: { value: '' }
+      } as React.ChangeEvent<HTMLInputElement>;
+      handleMaskedChange(syntheticEvent);
+    }
+    if (props.onKeyDown) {
+      props.onKeyDown(e);
     }
   };
 
@@ -223,6 +238,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           value={value}
           onChange={handleMaskedChange}
           onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           {...accessibilityProps}
           {...props}
         />
