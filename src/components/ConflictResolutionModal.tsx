@@ -76,30 +76,38 @@ export function ConflictResolutionModal({
     return (
       <div className="space-y-3">
         <h4 className="font-medium text-neutral-900 dark:text-neutral-100">Merge Data</h4>
-        {allKeys.map(key => (
-          <div key={key} className="space-y-1">
-            <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              {key}
-            </label>
-            <div className="flex gap-2 items-center">
-              <span className="text-xs text-neutral-500">Local:</span>
-              <span className="text-xs text-neutral-700 dark:text-neutral-300 flex-1">
-                {JSON.stringify((conflict.data as Record<string, unknown>)?.[key] as unknown)}
-              </span>
-              <span className="text-xs text-neutral-500">Server:</span>
-              <span className="text-xs text-neutral-700 dark:text-neutral-300 flex-1">
-                {JSON.stringify(serverData?.[key] as unknown)}
-              </span>
+        {allKeys.map(key => {
+          const inputId = `merge-${key}`;
+          return (
+            <div key={key} className="space-y-1">
+              <label
+                htmlFor={inputId}
+                className="text-sm font-medium text-neutral-700 dark:text-neutral-300"
+              >
+                {key}
+              </label>
+              <div className="flex gap-2 items-center">
+                <span className="text-xs text-neutral-500">Local:</span>
+                <span className="text-xs text-neutral-700 dark:text-neutral-300 flex-1">
+                  {JSON.stringify((conflict.data as Record<string, unknown>)?.[key] as unknown)}
+                </span>
+                <span className="text-xs text-neutral-500">Server:</span>
+                <span className="text-xs text-neutral-700 dark:text-neutral-300 flex-1">
+                  {JSON.stringify(serverData?.[key] as unknown)}
+                </span>
+              </div>
+              <input
+                id={inputId}
+                type="text"
+                value={String(mergedData?.[key] || '')}
+                onChange={(e) => handleMergeDataChange(key, e.target.value)}
+                className="w-full p-2 border border-neutral-300 dark:border-neutral-600 rounded text-sm bg-white dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+                placeholder="Enter merged value"
+                aria-label={`Merge value for ${key}`}
+              />
             </div>
-            <input
-              type="text"
-              value={String(mergedData?.[key] || '')}
-              onChange={(e) => handleMergeDataChange(key, e.target.value)}
-              className="w-full p-2 border border-neutral-300 dark:border-neutral-600 rounded text-sm bg-white dark:bg-neutral-800"
-              placeholder="Enter merged value"
-            />
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
   };
