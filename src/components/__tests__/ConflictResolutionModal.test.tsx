@@ -155,6 +155,27 @@ describe('ConflictResolutionModal', () => {
         expect(mergeRegion).toBeInTheDocument();
       });
     });
+
+    it('should have aria-describedby linking to local and server data values', async () => {
+      render(
+        <ConflictResolutionModal
+          conflict={mockConflict}
+          serverData={mockServerData}
+          isOpen={true}
+          onClose={mockOnClose}
+        />
+      );
+
+      fireEvent.click(screen.getByLabelText(/merge changes/i));
+
+      await waitFor(() => {
+        const nameInput = screen.getByLabelText(/merge value for name/i);
+        expect(nameInput).toHaveAttribute('aria-describedby');
+        const describedBy = nameInput.getAttribute('aria-describedby');
+        expect(describedBy).toContain('merge-name-local');
+        expect(describedBy).toContain('merge-name-server');
+      });
+    });
   });
 
   describe('Conflict Resolution', () => {

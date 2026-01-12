@@ -78,6 +78,8 @@ export function ConflictResolutionModal({
         <h4 className="font-medium text-neutral-900 dark:text-neutral-100">Merge Data</h4>
         {allKeys.map(key => {
           const inputId = `merge-${key}`;
+          const localValueId = `merge-${key}-local`;
+          const serverValueId = `merge-${key}-server`;
           return (
             <div key={key} className="space-y-1">
               <label
@@ -88,11 +90,11 @@ export function ConflictResolutionModal({
               </label>
               <div className="flex gap-2 items-center">
                 <span className="text-xs text-neutral-500">Local:</span>
-                <span className="text-xs text-neutral-700 dark:text-neutral-300 flex-1">
+                <span id={localValueId} className="text-xs text-neutral-700 dark:text-neutral-300 flex-1">
                   {JSON.stringify((conflict.data as Record<string, unknown>)?.[key] as unknown)}
                 </span>
                 <span className="text-xs text-neutral-500">Server:</span>
-                <span className="text-xs text-neutral-700 dark:text-neutral-300 flex-1">
+                <span id={serverValueId} className="text-xs text-neutral-700 dark:text-neutral-300 flex-1">
                   {JSON.stringify(serverData?.[key] as unknown)}
                 </span>
               </div>
@@ -104,6 +106,7 @@ export function ConflictResolutionModal({
                 className="w-full p-2 border border-neutral-300 dark:border-neutral-600 rounded text-sm bg-white dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
                 placeholder="Enter merged value"
                 aria-label={`Merge value for ${key}`}
+                aria-describedby={`${localValueId} ${serverValueId}`}
               />
             </div>
           );
