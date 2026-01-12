@@ -21,6 +21,17 @@ vi.mock('tesseract.js', () => ({
   }
 }));
 
+// Polyfill File.arrayBuffer for test environment
+if (!File.prototype.arrayBuffer) {
+  File.prototype.arrayBuffer = function(this: File): Promise<ArrayBuffer> {
+    return new Promise<ArrayBuffer>((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as ArrayBuffer);
+      reader.readAsArrayBuffer(this);
+    });
+  };
+}
+
 vi.mock('../pushNotificationService', () => ({
   pushNotificationService: {
     showLocalNotification: vi.fn()
@@ -51,8 +62,11 @@ describe('OCR Validation Notification Integration', () => {
       
       const customEventHandler = vi.fn();
       
-      // Listen for custom events
-      window.addEventListener('ocrValidation', customEventHandler);
+      // Listen for custom events - event data is in event.detail property
+      window.addEventListener('ocrValidation', (event: Event) => {
+        const customEvent = event as CustomEvent;
+        customEventHandler(customEvent.detail);
+      });
       
       // Call the OCR service - it should emit the event
       const result = await ocrService.extractTextFromImage(mockFile, undefined, {
@@ -66,9 +80,22 @@ describe('OCR Validation Notification Integration', () => {
       // Verify OCR result has low confidence
       expect(result.confidence).toBe(45);
 
+      // Verify mock was called
+      expect(mockRecognize).toHaveBeenCalled();
+      
       // Check if event handler was called
       expect(customEventHandler).toHaveBeenCalled();
-      window.removeEventListener('ocrValidation', customEventHandler);
+      
+      // Verify event data
+      expect(customEventHandler).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'validation-failure',
+          documentId: 'test-doc-123',
+          confidence: 45
+        })
+      );
+      
+      window.removeEventListener('ocrValidation', customEventHandler as EventListener);
     });
 
     it('should detect validation issues correctly', async () => {
