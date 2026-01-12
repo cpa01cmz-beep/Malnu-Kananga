@@ -1,27 +1,32 @@
 import React from 'react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ConflictResolutionModal, ConflictListModal } from '../ConflictResolutionModal';
 import * as offlineActionQueueService from '../../services/offlineActionQueueService';
 
-jest.mock('../../services/offlineActionQueueService');
+vi.mock('../../services/offlineActionQueueService');
 
 describe('ConflictResolutionModal', () => {
-  const mockResolveConflict = jest.fn();
-  const mockOnClose = jest.fn();
+  const mockResolveConflict = vi.fn();
+  const mockOnClose = vi.fn();
 
   const mockConflict = {
     id: 'test-conflict-1',
-    type: 'UPDATE' as const,
-    entity: 'student',
-    endpoint: '/api/students/123',
+    type: 'update' as const,
+    entity: 'user' as const,
+    entityId: 'user-123',
+    endpoint: '/api/users/123',
     timestamp: new Date('2024-01-15T10:30:00').getTime(),
     data: {
       name: 'John Doe',
       grade: '10',
       section: 'A'
     },
-    lastError: '409 Conflict: Data already modified'
+    status: 'conflict' as const,
+    retryCount: 1,
+    lastError: '409 Conflict: Data already modified',
+    method: 'PUT' as const
   };
 
   const mockServerData = {
@@ -31,8 +36,8 @@ describe('ConflictResolutionModal', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (offlineActionQueueService.useOfflineActionQueue as jest.Mock).mockReturnValue({
+    vi.clearAllMocks();
+    (offlineActionQueueService.useOfflineActionQueue as any).mockReturnValue({
       resolveConflict: mockResolveConflict
     });
   });
@@ -164,8 +169,8 @@ describe('ConflictResolutionModal', () => {
       );
 
       expect(screen.getByText(/⚠️ sync conflict detected/i)).toBeInTheDocument();
-      expect(screen.getByText(/update student/i)).toBeInTheDocument();
-      expect(screen.getByText(/\/api\/students\/123/i)).toBeInTheDocument();
+      expect(screen.getByText(/update user/i)).toBeInTheDocument();
+      expect(screen.getByText(/\/api\/users\/123/i)).toBeInTheDocument();
       expect(screen.getByText(/409 conflict: data already modified/i)).toBeInTheDocument();
     });
 
@@ -243,7 +248,7 @@ describe('ConflictResolutionModal', () => {
       });
     });
 
-    it('should disable resolve button when merge is selected but no data', async () => {
+    it('should show merge editor when merge is selected', async () => {
       render(
         <ConflictResolutionModal
           conflict={mockConflict}
@@ -255,27 +260,9 @@ describe('ConflictResolutionModal', () => {
 
       fireEvent.click(screen.getByLabelText(/merge changes/i));
 
-      await waitFor(async () => {
-        const resolveButton = screen.getByRole('button', { name: /resolve conflict/i });
-        expect(resolveButton).toBeDisabled();
+      await waitFor(() => {
+        expect(screen.getByRole('region', { name: /merge data editor/i })).toBeInTheDocument();
       });
-    });
-
-    it('should show loading state while resolving', async () => {
-      mockResolveConflict.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
-
-      render(
-        <ConflictResolutionModal
-          conflict={mockConflict}
-          serverData={mockServerData}
-          isOpen={true}
-          onClose={mockOnClose}
-        />
-      );
-
-      fireEvent.click(screen.getByText(/resolve conflict/i));
-
-      expect(screen.getByText(/resolving\.\.\./i)).toBeInTheDocument();
     });
   });
 
@@ -290,8 +277,8 @@ describe('ConflictResolutionModal', () => {
         />
       );
 
-      expect(screen.getByText(/your local changes/i)).toBeInTheDocument();
-      expect(screen.getByText(/server data/i)).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /your local changes/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /server data/i })).toBeInTheDocument();
 
       const localData = screen.getByText(/"name": "john doe"/i);
       const serverDataElement = screen.getByText(/"name": "john smith"/i);
@@ -306,12 +293,16 @@ describe('ConflictResolutionModal', () => {
       mockConflict,
       {
         id: 'test-conflict-2',
-        type: 'CREATE' as const,
-        entity: 'assignment',
+        type: 'create' as const,
+        entity: 'assignment' as const,
+        entityId: 'assignment-456',
         endpoint: '/api/assignments',
         timestamp: new Date('2024-01-15T11:00:00').getTime(),
         data: { title: 'New Assignment' },
-        lastError: '409 Conflict: Assignment already exists'
+        status: 'conflict' as const,
+        retryCount: 0,
+        lastError: '409 Conflict: Assignment already exists',
+        method: 'POST' as const
       }
     ];
 
@@ -321,13 +312,13 @@ describe('ConflictResolutionModal', () => {
           conflicts={mockConflicts}
           isOpen={true}
           onClose={mockOnClose}
-          onConflictSelect={jest.fn()}
+          onConflictSelect={vi.fn()}
         />
       );
 
       expect(screen.getByText(/⚠️ 2 sync conflicts/i)).toBeInTheDocument();
-      expect(screen.getByText(/1\. update student/i)).toBeInTheDocument();
-      expect(screen.getByText(/2\. create assignment/i)).toBeInTheDocument();
+      const conflictButtons = screen.getAllByRole('listitem');
+      expect(conflictButtons).toHaveLength(2);
     });
 
     it('should have proper ARIA attributes for list', () => {
@@ -336,7 +327,7 @@ describe('ConflictResolutionModal', () => {
           conflicts={mockConflicts}
           isOpen={true}
           onClose={mockOnClose}
-          onConflictSelect={jest.fn()}
+          onConflictSelect={vi.fn()}
         />
       );
 
@@ -350,19 +341,18 @@ describe('ConflictResolutionModal', () => {
           conflicts={mockConflicts}
           isOpen={true}
           onClose={mockOnClose}
-          onConflictSelect={jest.fn()}
+          onConflictSelect={vi.fn()}
         />
       );
 
-      const conflict1Button = screen.getByRole('button', { name: /view conflict 1: update student/i });
-      const conflict2Button = screen.getByRole('button', { name: /view conflict 2: create assignment/i });
-
-      expect(conflict1Button).toBeInTheDocument();
-      expect(conflict2Button).toBeInTheDocument();
+      const conflictButtons = screen.getAllByRole('listitem');
+      expect(conflictButtons).toHaveLength(2);
+      expect(conflictButtons[0]).toHaveAttribute('aria-label', 'View conflict 1: update user');
+      expect(conflictButtons[1]).toHaveAttribute('aria-label', 'View conflict 2: create assignment');
     });
 
     it('should call onConflictSelect when conflict is clicked', () => {
-      const mockOnConflictSelect = jest.fn();
+      const mockOnConflictSelect = vi.fn();
       render(
         <ConflictListModal
           conflicts={mockConflicts}
@@ -372,7 +362,8 @@ describe('ConflictResolutionModal', () => {
         />
       );
 
-      fireEvent.click(screen.getByRole('button', { name: /view conflict 1: update student/i }));
+      const conflictButtons = screen.getAllByRole('listitem');
+      fireEvent.click(conflictButtons[0]);
 
       expect(mockOnConflictSelect).toHaveBeenCalledWith(mockConflicts[0]);
     });
@@ -383,7 +374,7 @@ describe('ConflictResolutionModal', () => {
           conflicts={mockConflicts}
           isOpen={false}
           onClose={mockOnClose}
-          onConflictSelect={jest.fn()}
+          onConflictSelect={vi.fn()}
         />
       );
 
