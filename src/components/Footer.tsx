@@ -5,12 +5,11 @@ import { FacebookIcon, InstagramIcon, YoutubeIcon } from './icons/StatusIcons';
 
 interface FooterProps {
     onDocsClick: () => void;
-    tabIndex?: number;
 }
 
-const Footer: React.FC<FooterProps> = ({ onDocsClick, tabIndex }) => {
+const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
     return (
-        <footer id="footer" tabIndex={tabIndex} role="contentinfo" className={`${getResponsiveGradient('FOOTER')} border-t border-neutral-200 dark:border-neutral-700`}>
+        <footer id="footer" role="contentinfo" className={`${getResponsiveGradient('FOOTER')} border-t border-neutral-200 dark:border-neutral-700`}>
             <div className="max-w-7xl mx-auto py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16 text-center sm:text-left">
                     <div>

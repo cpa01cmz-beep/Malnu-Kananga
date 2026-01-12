@@ -284,28 +284,28 @@ const App: React.FC = () => {
           { id: 'footer', label: 'Langsung ke footer' },
         ] as SkipTarget[]}
       />
-      <div id="main-nav" tabIndex={-1}>
+      <div id="main-nav">
         <Header
-        onLoginClick={() => setIsLoginOpen(true)}
-        onChatClick={() => setIsChatOpen(true)}
-        onEditClick={() => setIsEditorOpen(true)}
-        isLoggedIn={isLoggedIn}
-        userRole={userRole}
-        userExtraRole={userExtraRole}
-        onLogout={handleLogout}
-        isPublicView={isPublicView}
-        onTogglePublicView={() => setIsPublicView(!isPublicView)}
-        onToggleTheme={toggleTheme}
-        onShowToast={showToast}
-      />
+          onLoginClick={() => setIsLoginOpen(true)}
+          onChatClick={() => setIsChatOpen(true)}
+          onEditClick={() => setIsEditorOpen(true)}
+          isLoggedIn={isLoggedIn}
+          userRole={userRole}
+          userExtraRole={userExtraRole}
+          onLogout={handleLogout}
+          isPublicView={isPublicView}
+          onTogglePublicView={() => setIsPublicView(!isPublicView)}
+          onToggleTheme={toggleTheme}
+          onShowToast={showToast}
+        />
       </div>
 
       {isLoggedIn && !isPublicView ? (
-        <main id="main-content" tabIndex={-1}>
+        <main id="main-content">
           {renderDashboard()}
         </main>
       ) : (
-        <main id="main-content" tabIndex={-1}>
+        <main id="main-content">
           <HeroSection />
           <RelatedLinksSection />
           <ProfileSection />
@@ -316,7 +316,7 @@ const App: React.FC = () => {
         </main>
       )}
 
-      <Footer onDocsClick={() => setIsDocsOpen(true)} tabIndex={-1} />
+      <Footer onDocsClick={() => setIsDocsOpen(true)} />
 
       <div
         className={`fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2.5rem)] max-w-sm h-[70vh] max-h-[600px] transition-all duration-300 ease-in-out ${

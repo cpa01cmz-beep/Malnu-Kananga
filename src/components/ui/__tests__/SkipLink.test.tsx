@@ -25,12 +25,11 @@ describe('SkipLink', () => {
   });
 
    describe('Single Target (Backward Compatibility)', () => {
-     beforeEach(() => {
-       const mainElement = document.createElement('div');
-       mainElement.id = 'main-content';
-       mainElement.setAttribute('tabindex', '-1');
-       document.body.appendChild(mainElement);
-     });
+      beforeEach(() => {
+        const mainElement = document.createElement('main');
+        mainElement.id = 'main-content';
+        document.body.appendChild(mainElement);
+      });
 
      it('should render skip link with default props', () => {
       render(<SkipLink />);
@@ -126,22 +125,19 @@ describe('SkipLink', () => {
   });
 
    describe('Multiple Targets', () => {
-    beforeEach(() => {
-      const navElement = document.createElement('nav');
-      navElement.id = 'main-nav';
-      navElement.setAttribute('tabindex', '-1');
-      document.body.appendChild(navElement);
+     beforeEach(() => {
+       const navElement = document.createElement('nav');
+       navElement.id = 'main-nav';
+       document.body.appendChild(navElement);
 
-      const mainElement = document.createElement('div');
-      mainElement.id = 'main-content';
-      mainElement.setAttribute('tabindex', '-1');
-      document.body.appendChild(mainElement);
+       const mainElement = document.createElement('main');
+       mainElement.id = 'main-content';
+       document.body.appendChild(mainElement);
 
-      const footerElement = document.createElement('footer');
-      footerElement.id = 'footer';
-      footerElement.setAttribute('tabindex', '-1');
-      document.body.appendChild(footerElement);
-    });
+       const footerElement = document.createElement('footer');
+       footerElement.id = 'footer';
+       document.body.appendChild(footerElement);
+     });
 
     it('should render multiple skip links', () => {
       const targets: SkipTarget[] = [
@@ -242,7 +238,7 @@ describe('SkipLink', () => {
 
   describe('Styling', () => {
     beforeEach(() => {
-      const mainElement = document.createElement('div');
+      const mainElement = document.createElement('main');
       mainElement.id = 'main-content';
       document.body.appendChild(mainElement);
     });
