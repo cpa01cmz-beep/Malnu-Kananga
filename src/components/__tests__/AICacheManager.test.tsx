@@ -1,6 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import AICacheManager from '../AICacheManager';
+import { useAICache } from '../../hooks/useAICache';
+
+vi.mock('../../hooks/useAICache');
 
 describe('AICacheManager', () => {
   const mockStats = {
@@ -51,9 +54,10 @@ describe('AICacheManager', () => {
     refresh: vi.fn()
   };
 
-  vi.mock('../hooks/useAICache', () => ({
-    useAICache: () => mockAICacheHook
-  }));
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(useAICache).mockReturnValue(mockAICacheHook);
+  });
 
   it('renders cache manager with accessible expand/collapse buttons', () => {
     render(<AICacheManager />);
@@ -107,13 +111,22 @@ describe('AICacheManager', () => {
   it('has accessible section clear buttons with aria-label', () => {
     render(<AICacheManager />);
 
-    const clearChatButton = screen.getByLabelText('Clear Chat Cache');
-    const clearAnalysisButton = screen.getByLabelText('Clear Analysis Cache');
-    const clearEditorButton = screen.getByLabelText('Clear Editor Cache');
+    const clearButtons = [
+      { label: 'Clear Chat Cache', expandLabel: 'Expand Chat Cache' },
+      { label: 'Clear Analysis Cache', expandLabel: 'Expand Analysis Cache' },
+      { label: 'Clear Editor Cache', expandLabel: 'Expand Editor Cache' }
+    ];
 
-    expect(clearChatButton).toBeInTheDocument();
-    expect(clearAnalysisButton).toBeInTheDocument();
-    expect(clearEditorButton).toBeInTheDocument();
+    clearButtons.forEach(({ label, expandLabel }) => {
+      const expandButton = screen.getByLabelText(expandLabel);
+      fireEvent.click(expandButton);
+      
+      const clearButton = screen.getByLabelText(label);
+      expect(clearButton).toBeInTheDocument();
+
+      fireEvent.click(expandButton);
+      expect(screen.queryByLabelText(label)).not.toBeInTheDocument();
+    });
   });
 
   it('displays cache statistics correctly', () => {
@@ -126,7 +139,7 @@ describe('AICacheManager', () => {
   });
 
   it('renders loading state properly', () => {
-    mockAICacheHook.isLoading = true;
+    vi.mocked(useAICache).mockReturnValue({ ...mockAICacheHook, isLoading: true });
     render(<AICacheManager />);
 
     expect(screen.queryByText('Total Entries')).not.toBeInTheDocument();
