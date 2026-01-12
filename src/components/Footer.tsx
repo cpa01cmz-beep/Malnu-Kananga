@@ -36,35 +36,38 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick, tabIndex }) => {
                     <div className="sm:justify-self-end">
                         <h3 className="text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
                           <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
-                                <li><button onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button></li>
-                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Download</a></li>
-                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Kebijakan Privasi</a></li>
-                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Karir</a></li>
-                                <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Beasiswa</a></li>
+                                <li><button type="button" onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button></li>
+                                <li><button type="button" onClick={() => {}} disabled className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Download</button></li>
+                                <li><button type="button" onClick={() => {}} disabled className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Kebijakan Privasi</button></li>
+                                <li><button type="button" onClick={() => {}} disabled className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Karir</button></li>
+                                <li><button type="button" onClick={() => {}} disabled className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Beasiswa</button></li>
                           </ul>
                            <div className="flex justify-center sm:justify-start gap-3 mt-6">
-                               <SocialLink
-                                   href="#"
-                                   icon={<FacebookIcon />}
-                                   label="Facebook"
-                                   variant="default"
-                                   size="lg"
-                               />
-                               <SocialLink
-                                   href="#"
-                                   icon={<InstagramIcon />}
-                                   label="Instagram"
-                                   variant="default"
-                                   size="lg"
-                               />
-                               <SocialLink
-                                   href="#"
-                                   icon={<YoutubeIcon />}
-                                   label="YouTube"
-                                   variant="default"
-                                   size="lg"
-                               />
-                           </div>
+                                <SocialLink
+                                    icon={<FacebookIcon />}
+                                    label="Facebook"
+                                    variant="default"
+                                    size="lg"
+                                    disabled
+                                    onClick={() => {}}
+                                />
+                                <SocialLink
+                                    icon={<InstagramIcon />}
+                                    label="Instagram"
+                                    variant="default"
+                                    size="lg"
+                                    disabled
+                                    onClick={() => {}}
+                                />
+                                <SocialLink
+                                    icon={<YoutubeIcon />}
+                                    label="YouTube"
+                                    variant="default"
+                                    size="lg"
+                                    disabled
+                                    onClick={() => {}}
+                                />
+                            </div>
                     </div>
                 </div>
                 <div className="mt-12 border-t border-neutral-200 dark:border-neutral-700 pt-8">
