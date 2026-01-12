@@ -266,7 +266,7 @@ const AICacheManager: React.FC<AICacheManagerProps> = ({ className = '' }) => {
                     <div className="flex justify-end">
                       <button
                         onClick={section.clear}
-                        aria-label={`Clear ${section.title} cache`}
+                        aria-label={`Clear ${section.title}`}
                         className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 border border-neutral-300 dark:border-neutral-600 rounded-lg transition-colors"
                       >
                         <TrashIcon className="w-3 h-3" />

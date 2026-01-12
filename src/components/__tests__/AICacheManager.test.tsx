@@ -107,9 +107,9 @@ describe('AICacheManager', () => {
   it('has accessible section clear buttons with aria-label', () => {
     render(<AICacheManager />);
 
-    const clearChatButton = screen.getByLabelText('Clear Chat Cache cache');
-    const clearAnalysisButton = screen.getByLabelText('Clear Analysis Cache cache');
-    const clearEditorButton = screen.getByLabelText('Clear Editor Cache cache');
+    const clearChatButton = screen.getByLabelText('Clear Chat Cache');
+    const clearAnalysisButton = screen.getByLabelText('Clear Analysis Cache');
+    const clearEditorButton = screen.getByLabelText('Clear Editor Cache');
 
     expect(clearChatButton).toBeInTheDocument();
     expect(clearAnalysisButton).toBeInTheDocument();
