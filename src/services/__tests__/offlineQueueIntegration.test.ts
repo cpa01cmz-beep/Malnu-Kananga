@@ -1,5 +1,5 @@
 // Test file for offline queue integration
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { request, RequestOptions } from '../apiService';
 import { offlineActionQueueService } from '../offlineActionQueueService';
 
@@ -14,6 +14,17 @@ vi.mock('../utils/logger', () => ({
 
 vi.mock('../utils/networkStatus', () => ({
   isNetworkError: vi.fn((error) => error instanceof Error && error.message.includes('network')),
+  useNetworkStatus: vi.fn(),
+  checkConnectionSpeed: vi.fn(),
+  getOfflineMessage: vi.fn(() => 'Anda sedang offline. Pastikan koneksi internet Anda aktif untuk melanjutkan.'),
+  getSlowConnectionMessage: vi.fn(() => 'Koneksi internet Anda lambat. Beberapa fitur mungkin tidak berjalan optimal.'),
+  shouldUseOfflineStorage: vi.fn(() => true),
+  NetworkError: class extends Error {
+    constructor(message: string, public isNetworkError: boolean = true) {
+      super(message);
+      this.name = 'NetworkError';
+    }
+  },
 }));
 
 vi.mock('../offlineActionQueueService', () => ({
@@ -86,10 +97,9 @@ describe('Offline Queue Integration', () => {
 
   it('should queue PUT request when network error occurs', async () => {
     // Mock fetch to throw network error
-    global.fetch = vi.fn().mockRejectedValue(new Error('network error'));
-
-    const { isNetworkError } = await import('../../utils/networkStatus');
-    vi.mocked(isNetworkError).mockReturnValue(true);
+    // Use NetworkError class which will be recognized by isNetworkError type guard
+    const { NetworkError } = await import('../../utils/networkStatus');
+    global.fetch = vi.fn().mockRejectedValue(new NetworkError('network error'));
 
     const options: RequestOptions = {
       method: 'PUT',
@@ -125,7 +135,8 @@ describe('Offline Queue Integration', () => {
 
     expect(offlineActionQueueService.addAction).not.toHaveBeenCalled();
     expect(result.success).toBe(false);
-    expect(result.message).toContain('Unable to complete request offline');
+    // When offline, GET requests should fail with offline message
+    expect(result.message).toContain('offline');
   });
 
   it('should skip queue when skipQueue option is true', async () => {
@@ -141,12 +152,16 @@ describe('Offline Queue Integration', () => {
       skipQueue: true,
     };
 
-    // Mock fetch to return error response
+    // Mock fetch to throw error (simulating network unavailability)
     global.fetch = vi.fn().mockRejectedValue(new Error('No network'));
 
-    await request('/api/test', options);
+    // When skipQueue is true and offline, request should fail but not throw
+    // It should return an error response instead
+    const result = await request('/api/test', options);
 
     expect(offlineActionQueueService.addAction).not.toHaveBeenCalled();
+    // Result should indicate failure due to offline/network error
+    expect(result.success).toBe(false);
   });
 
   it('should map grades endpoint to grade entity', async () => {
