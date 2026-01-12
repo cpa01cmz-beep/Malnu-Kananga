@@ -57,12 +57,20 @@
    - Added smooth transition animations for expand/collapse states
    - Added comprehensive test coverage with 14 accessibility-focused test cases
    - Improved WCAG 2.1 AA compliance (Accordion Pattern)
-- [x] AICacheManager Accessibility Improvement (Phase 5 - COMPLETED 2026-01-11)
-  - Added aria-label to expand/collapse buttons for screen reader support
-  - Added aria-expanded attribute to indicate section state
-  - Added aria-label to refresh and clear buttons
-  - Improved WCAG 2.1 AA compliance (SC 4.1.2 - Name, Role, Value)
-  - Created comprehensive test coverage with 9 accessibility-focused test cases
+  - [x] AICacheManager Accessibility Improvement (Phase 5 - COMPLETED 2026-01-11)
+   - Added aria-label to expand/collapse buttons for screen reader support
+   - Added aria-expanded attribute to indicate section state
+   - Added aria-label to refresh and clear buttons
+   - Improved WCAG 2.1 AA compliance (SC 4.1.2 - Name, Role, Value)
+   - Created comprehensive test coverage with 9 accessibility-focused test cases
+  - [x] AICacheManager aria-label Redundancy Fix (COMPLETED 2026-01-12)
+   - Removed redundant 'cache' word from clear button aria-labels
+   - Changed 'Clear Chat Cache cache' to 'Clear Chat Cache'
+   - Changed 'Clear Analysis Cache cache' to 'Clear Analysis Cache'
+   - Changed 'Clear Editor Cache cache' to 'Clear Editor Cache'
+   - Updated test expectations to match improved aria-labels
+   - Improved screen reader announcement clarity and conciseness
+   - Enhanced WCAG 2.1 AA compliance (SC 2.4.6 - Headings and Labels)
 - [x] Error Boundary Implementation (Phase 5 - COMPLETED 2026-01-11)
    - [x] Created reusable ErrorBoundary component with comprehensive error handling
    - [x] Implemented graceful error UI with user-friendly messages in Indonesian
