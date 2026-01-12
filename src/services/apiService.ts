@@ -444,9 +444,19 @@ async function request<T>(
   const method = options.method?.toUpperCase() || 'GET';
   const isWriteOperation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
   
-  if (isWriteOperation && !skipQueue && !isOnline) {
-    // Queue for offline execution
-    return queueOfflineRequest<T>(endpoint, options, token);
+  // Handle offline scenarios
+  if (!isOnline) {
+    if (isWriteOperation && !skipQueue) {
+      // Queue for offline execution
+      return queueOfflineRequest<T>(endpoint, options, token);
+    }
+    
+    // For non-write operations or when skipQueue is true, fail gracefully
+    return {
+      success: false,
+      message: 'Anda sedang offline. Pastikan koneksi internet Anda aktif untuk melanjutkan.',
+      error: 'OFFLINE_ERROR'
+    };
   }
 
   // Server-side permission validation
