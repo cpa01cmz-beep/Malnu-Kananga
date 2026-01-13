@@ -15,7 +15,7 @@ import { EmptyState } from './ui/LoadingState';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { CheckIcon, XMarkIcon } from './icons/MaterialIcons';
 import { getMinHeight } from '../config/dimensions';
-import { CONTAINERS } from '../config/styling';
+import { CONTAINERS, getContainer } from '../config/styling';
 
 interface PPDBManagementProps {
   onBack: () => void;
@@ -282,19 +282,19 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+            <div className={`${getContainer('CARD_MD')} border-neutral-100 dark:border-neutral-700 p-4`}>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Pendaftar</p>
                 <p className="text-xl font-bold text-neutral-900 dark:text-white">{registrants.length}</p>
             </div>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+            <div className={`${getContainer('CARD_MD')} border-neutral-100 dark:border-neutral-700 p-4`}>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Perlu Verifikasi</p>
                 <p className="text-xl font-bold text-yellow-600">{registrants.filter(r => r.status === 'pending').length}</p>
             </div>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+            <div className={`${getContainer('CARD_MD')} border-neutral-100 dark:border-neutral-700 p-4`}>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Diterima</p>
                 <p className="text-xl font-bold text-green-600">{registrants.filter(r => r.status === 'approved').length}</p>
             </div>
-             <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+             <div className={`${getContainer('CARD_MD')} border-neutral-100 dark:border-neutral-700 p-4`}>
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Ditolak</p>
                 <p className="text-xl font-bold text-red-600">{registrants.filter(r => r.status === 'rejected').length}</p>
             </div>
@@ -520,7 +520,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
         {/* Scoring Modal */}
         {showScoringModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 w-full max-w-md">
+            <div className={`${getContainer('CARD_LG')} p-6 w-full max-w-md`}>
               <h3 className="text-lg font-semibold mb-4 text-neutral-900 dark:text-white">Penilaian Calon Siswa</h3>
               <div className="space-y-4">
                 {rubric.criteria.map(criterion => {
@@ -575,7 +575,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
         {/* Document Preview Modal */}
         {showDocumentPreview && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 w-full max-w-2xl">
+            <div className={`${getContainer('CARD_LG')} p-6 w-full max-w-2xl`}>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Preview Dokumen</h3>
                 <IconButton
