@@ -396,14 +396,24 @@
        - Improved WCAG 2.1 AA compliance (SC 3.2.3 - On Input: Help Users Avoid and Correct Errors)
        - See src/components/OsisEvents.tsx:52-55,115-144,167-212 for implementation
    - [x] BatchManagement Loading States Enhancement (Phase 5 - COMPLETED 2026-01-13)
-       - Added sendingBatchId state to track which batch is currently being sent
-       - Updated handleSendBatch function to use try-finally block for proper state management
-       - Applied isLoading prop to "Kirim Sekarang" button with conditional loading state
-       - Prevents double-submissions by disabling button during async sendBatch operation
-       - Provides visual feedback during batch sending operation with loading spinner
-       - Improved user experience by showing operation progress clearly
-       - Follows design system patterns with Button component's isLoading prop
-       - See src/components/BatchManagement.tsx:26,51-65,116 for implementation
+        - Added sendingBatchId state to track which batch is currently being sent
+        - Updated handleSendBatch function to use try-finally block for proper state management
+        - Applied isLoading prop to "Kirim Sekarang" button with conditional loading state
+        - Prevents double-submissions by disabling button during async sendBatch operation
+        - Provides visual feedback during batch sending operation with loading spinner
+        - Improved user experience by showing operation progress clearly
+        - Follows design system patterns with Button component's isLoading prop
+        - See src/components/BatchManagement.tsx:26,51-65,116 for implementation
+   - [x] ChildDataErrorBoundary Button Refactoring (Phase 5 - COMPLETED 2026-01-13)
+        - Refactored 2 raw button elements to use centralized Button component
+        - Replaced "Coba Lagi" button with Button component using danger variant (red color)
+        - Replaced "Mode Offline" button with Button component using secondary variant (neutral color)
+        - Maintained all ARIA labels and functionality from original implementation
+        - Improved accessibility with Button's built-in ARIA attributes and keyboard navigation
+        - Enhanced design system consistency with centralized component usage
+        - Added comprehensive test coverage with 10 test cases
+        - Eliminated ~4 lines of inline button styling code
+        - PR #1128: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1128
 
 
 
