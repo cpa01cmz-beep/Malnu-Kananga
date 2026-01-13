@@ -45,7 +45,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <Heading level={2} size="2xl" weight="bold">My Insights</Heading>
+            <Heading level={2} size="xl sm:2xl" weight="bold">My Insights</Heading>
             <p className="text-neutral-600 dark:text-neutral-400 mt-1">Analisis AI performa akademik Anda</p>
           </div>
           <Button variant="ghost" onClick={onBack}>
@@ -215,7 +215,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">My Insights</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">My Insights</h2>
           <p className="text-neutral-600 dark:text-neutral-400 mt-1">
             Analisis AI performa akademik • Terakhir diperbarui: {new Date(insights.lastUpdated).toLocaleString('id-ID')}
           </p>
@@ -248,21 +248,21 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <Card>
           <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">IPK</div>
-          <div className="text-3xl font-bold text-neutral-900 dark:text-white">
+          <div className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white">
             {insights.overallPerformance.gpa.toFixed(2)}
           </div>
         </Card>
 
         <Card>
           <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Total Mata Pelajaran</div>
-          <div className="text-3xl font-bold text-neutral-900 dark:text-white">
+          <div className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white">
             {insights.overallPerformance.totalSubjects}
           </div>
         </Card>
 
         <Card>
           <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Tingkat Perbaikan</div>
-          <div className={`text-3xl font-bold ${
+          <div className={`text-2xl sm:text-3xl font-bold ${
             insights.overallPerformance.improvementRate >= 0 ? 'text-green-600' : 'text-red-600'
           } dark:text-white`}>
             {insights.overallPerformance.improvementRate >= 0 ? '+' : ''}{insights.overallPerformance.improvementRate.toFixed(1)}%
@@ -271,7 +271,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
 
         <Card>
           <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Kehadiran</div>
-          <div className={`text-3xl font-bold ${
+          <div className={`text-2xl sm:text-3xl font-bold ${
             insights.attendanceInsight.percentage >= 90 ? 'text-green-600' : 'text-yellow-600'
           } dark:text-white`}>
             {insights.attendanceInsight.percentage.toFixed(1)}%

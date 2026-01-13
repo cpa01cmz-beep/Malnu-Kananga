@@ -448,15 +448,15 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className={`${getGradientClass('GREEN_MAIN')} rounded-xl p-6 text-white`}>
               <p className="text-green-100 text-sm mb-2">Rata-rata Nilai</p>
-              <h3 className="text-3xl font-bold">{correlation?.averageGrade || 0}</h3>
+              <h3 className="text-2xl sm:text-3xl font-bold">{correlation?.averageGrade || 0}</h3>
             </div>
             <div className={`${getGradientClass('BLUE_MAIN')} rounded-xl p-6 text-white`}>
               <p className="text-blue-100 text-sm mb-2">Persentase Kehadiran</p>
-              <h3 className="text-3xl font-bold">{correlation?.attendancePercentage || 0}%</h3>
+              <h3 className="text-2xl sm:text-3xl font-bold">{correlation?.attendancePercentage || 0}%</h3>
             </div>
             <div className={`${getGradientClass('PURPLE_MAIN')} rounded-xl p-6 text-white`}>
               <p className="text-purple-100 text-sm mb-2">Skor Korelasi</p>
-              <h3 className="text-3xl font-bold">{correlation?.correlationScore || 0}/100</h3>
+              <h3 className="text-2xl sm:text-3xl font-bold">{correlation?.correlationScore || 0}/100</h3>
             </div>
           </div>
 
@@ -645,13 +645,13 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
-                  <span className="text-3xl font-bold text-green-600 dark:text-green-400">{correlation.attendancePercentage}%</span>
+                  <span className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">{correlation.attendancePercentage}%</span>
                 </div>
                 <p className="text-neutral-700 dark:text-neutral-300 font-medium">Persentase Kehadiran</p>
               </div>
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-100 dark:bg-blue-900/30 mb-4">
-                  <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">{correlation.averageGrade}</span>
+                  <span className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">{correlation.averageGrade}</span>
                 </div>
                 <p className="text-neutral-700 dark:text-neutral-300 font-medium">Rata-rata Nilai</p>
               </div>
@@ -679,7 +679,7 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
-                    <span className="text-4xl font-bold text-neutral-900 dark:text-white">{correlation.correlationScore}</span>
+                    <span className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white">{correlation.correlationScore}</span>
                     <span className="text-sm text-neutral-600 dark:text-neutral-400">/100</span>
                   </div>
                 </div>

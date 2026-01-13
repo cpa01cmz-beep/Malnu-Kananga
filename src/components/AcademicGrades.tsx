@@ -390,13 +390,13 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
   return (
     <div className="animate-fade-in-up">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-        <div>
-          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
-            ← Kembali ke Portal
-          </Button>
-           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Progress Akademik Siswa</h2>
-           <p className="text-neutral-500 dark:text-neutral-400">Semester Ganjil 2024/2025</p>
-         </div>
+          <div>
+            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
+              ← Kembali ke Portal
+            </Button>
+             <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">Progress Akademik Siswa</h2>
+             <p className="text-neutral-500 dark:text-neutral-400">Semester Ganjil 2024/2025</p>
+           </div>
         <div className="flex gap-2">
           <Button
             variant="green-solid"
