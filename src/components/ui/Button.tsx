@@ -36,15 +36,15 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "px-3 py-2 text-sm",
-  md: "px-4 py-2.5 text-sm sm:text-base",
-  lg: "px-6 py-3 text-base sm:text-lg",
+  sm: "px-3 py-2.5 text-sm min-h-[44px]",
+  md: "px-4 py-3 text-sm sm:text-base min-h-[44px]",
+  lg: "px-6 py-3.5 text-base sm:text-lg min-h-[48px]",
 };
 
 const iconOnlySizes: Record<ButtonSize, string> = {
-  sm: "p-1.5",
-  md: "p-2",
-  lg: "p-2.5",
+  sm: "p-3 min-w-[44px] min-h-[44px]",
+  md: "p-3 min-w-[44px] min-h-[44px]",
+  lg: "p-4 min-w-[48px] min-h-[48px]",
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({

@@ -31,7 +31,7 @@ describe('IconButton', () => {
     it('renders with custom size', () => {
       render(<IconButton icon={mockIcon} ariaLabel="Test" size="lg" />);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('p-2.5');
+      expect(button).toHaveClass('p-4', 'min-w-[48px]', 'min-h-[48px]');
     });
 
     it('renders with tooltip', () => {
