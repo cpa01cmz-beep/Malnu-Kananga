@@ -102,6 +102,9 @@ jspm_packages/
 *.tmp
 *.temp
 
+# Git hook samples (standard Git templates, should not be tracked)
+.git/hooks/*.sample
+
 # CI/CD generated files
 ci-context.txt
 docs/reports/
