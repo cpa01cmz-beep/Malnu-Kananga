@@ -32,6 +32,7 @@ import { User, UserRole, UserExtraRole } from '../types';
 import ErrorMessage from './ui/ErrorMessage';
 import { OfflineIndicator } from './OfflineIndicator';
 import SearchInput from './ui/SearchInput';
+import { getContainer, getSurface, getRadius } from '../config/styling';
 
 
 interface StudentGrade {
@@ -1291,7 +1292,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
         {/* Grading Table */}
         {!loading && !error && (
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+        <div className={`${getContainer('CARD')} overflow-hidden`}>
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
                     <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
@@ -1465,7 +1466,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         {/* OCR Processing Modal */}
         {showOCRModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div className={`${getSurface('MODAL')} ${getRadius('2XL')} p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto`}>
                     <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-4">
                         📷 OCR Grade Extraction
                     </h3>
@@ -1588,7 +1589,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                             {/* Raw OCR Text */}
                             <div className="bg-neutral-50 dark:bg-neutral-900/20 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
                                 <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">Raw OCR Text</h4>
-                                <div className="max-h-32 overflow-y-auto text-xs text-neutral-600 dark:text-neutral-400 bg-white dark:bg-neutral-800 p-2 rounded border">
+                                <div className={`${getSurface('INPUT')} max-h-32 overflow-y-auto text-xs text-neutral-600 dark:text-neutral-400 p-2 rounded border`}>
                                     {ocrReviewData.extractedText}
                                 </div>
                             </div>

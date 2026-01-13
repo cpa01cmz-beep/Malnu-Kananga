@@ -24,6 +24,7 @@ import { GRADIENT_CLASSES } from '../config/gradients';
 import { CHART_COLORS } from '../config/chartColors';
 import ErrorMessage from './ui/ErrorMessage';
 import AccessDenied from './AccessDenied';
+import { getContainer, getSurface, getRadius } from '../config/styling';
 
 interface GradeItem {
   subject: string;
@@ -436,7 +437,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
 
         {gradeTrends.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+            <div className={`${getContainer('CARD')} p-6`}>
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Tren Nilai Akademik</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={gradeTrends}>
@@ -450,7 +451,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+            <div className={`${getContainer('CARD')} p-6`}>
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Performa per Mata Pelajaran</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={subjectPerformance}>
@@ -466,7 +467,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
         )}
 
         {goals.length > 0 && (
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6 mb-8">
+          <div className={`${getContainer('CARD')} p-6 mb-8`}>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Target Belajar</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {goals.map(goal => (
@@ -488,7 +489,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
           </div>
         )}
 
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+        <div className={`${getContainer('CARD')} overflow-hidden`}>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
               <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
@@ -547,7 +548,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
 
       {showGoalModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 w-full max-w-md">
+          <div className={`${getSurface('MODAL')} ${getRadius('2XL')} p-6 w-full max-w-md`}>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Target Belajar Baru</h3>
             <div className="space-y-4">
               <div>
