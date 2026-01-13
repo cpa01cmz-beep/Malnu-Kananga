@@ -25,10 +25,11 @@ src/
 ├── data/              # Default data and static resources
 ├── hooks/             # Custom React hooks
 ├── services/          # API and business logic services
-├── tests/             # Integration tests
 ├── types/             # TypeScript type definitions
 ├── utils/             # Utility functions and helpers
 └── config.ts          # Main configuration
+
+Note: Tests are located in `__tests__/` directories alongside the code they test
 ```
 
 ### Key Services
@@ -45,11 +46,8 @@ src/
 ### Storage Keys
 
 All localStorage keys use `malnu_` prefix:
-- `malnu_site_content` - Site content
-- `malnu_users` - User data
-- `malnu_auth_session` - Auth session
-- `malnu_materials` - Library materials
-- `malnu_voice_settings` - Voice configuration
+- 60+ keys defined in STORAGE_KEYS constant
+- Keys cover: auth session, users, site content, materials, notifications, voice settings, offline data, AI cache, OCR, PPDB, and more
 - See `src/constants.ts` for complete list
 
 ### User Roles
