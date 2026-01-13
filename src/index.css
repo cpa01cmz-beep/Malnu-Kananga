@@ -350,6 +350,10 @@
   }
 }
 
+.skeleton-wave {
+  background-size: 200% 100% !important;
+}
+
 /* Respect user's motion preference for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
