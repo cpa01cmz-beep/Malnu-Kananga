@@ -76,8 +76,8 @@ These files are operational instructions for AI agents and should not be conside
 - **Source Files (Non-Test)**: 245 files
 - **Documentation Files**: 18 (in /docs directory)
 - **Services**: 25 services in src/services/ (excluding .test., .types., and template files: aiCache.types.ts, emailTemplates.ts, notificationTemplates.ts)
-- **Components**: 214 component files (40 exported from ui/index.ts)
-- **Total Tests**: 1494 (1465 passing, 19 failing, 10 skipped)
+- **Components**: 40 components exported from ui/index.ts
+- **Total Tests**: 1494 (1462 passing, 22 failing, 10 skipped)
 - **Code Examples**: 20+
 - **Troubleshooting Scenarios**: 25+
 - **Architecture Diagrams**: 1+
