@@ -45,7 +45,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <Heading level={2} size="xl sm:2xl" weight="bold">My Insights</Heading>
+            <Heading level={2} size="xl" weight="bold">My Insights</Heading>
             <p className="text-neutral-600 dark:text-neutral-400 mt-1">Analisis AI performa akademik Anda</p>
           </div>
           <Button variant="ghost" onClick={onBack}>

@@ -174,7 +174,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
             onClick={onClose}
             iconOnly
             icon={<CloseIcon className="w-5 h-5" />}
-            aria-label="Tutup"
+            ariaLabel="Tutup"
           />
         </div>
 
@@ -565,14 +565,14 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               <h3 id="history-title" className="text-lg font-semibold text-neutral-900 dark:text-white">
                 Riwayat Notifikasi
               </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowHistory(false)}
-                iconOnly
-                icon={<CloseIcon className="w-5 h-5" />}
-                aria-label="Tutup"
-              />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowHistory(false)}
+            iconOnly
+            icon={<CloseIcon className="w-5 h-5" />}
+            ariaLabel="Tutup"
+          />
             </div>
 
               <div className="p-4">
@@ -622,7 +622,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                               onClick={() => handleDeleteNotification(item.id)}
                               iconOnly
                               icon={<CloseIcon className="w-4 h-4" />}
-                              aria-label="Hapus notifikasi"
+                              ariaLabel="Hapus notifikasi"
                             />
                           </div>
                           <p className="text-sm text-neutral-600 mb-2">

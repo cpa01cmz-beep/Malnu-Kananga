@@ -269,7 +269,7 @@ const deleteVersion = (versionId: string) => {
                       onClick={() => downloadVersion(version)}
                       iconOnly
                       icon={<EyeIcon className="w-4 h-4" />}
-                      aria-label="Unduh versi ini"
+                      ariaLabel="Unduh versi ini"
                     />
 
                     {!version.isActive && (
@@ -279,7 +279,7 @@ const deleteVersion = (versionId: string) => {
                         onClick={() => restoreVersion(version)}
                         iconOnly
                         icon={<ArrowPathIcon className="w-4 h-4" />}
-                        aria-label="Aktifkan kembali versi ini"
+                        ariaLabel="Aktifkan kembali versi ini"
                       />
                     )}
 
@@ -290,7 +290,7 @@ const deleteVersion = (versionId: string) => {
                         onClick={() => deleteVersion(version.id)}
                         iconOnly
                         icon={<TrashIcon className="w-4 h-4" />}
-                        aria-label="Hapus versi ini"
+                        ariaLabel="Hapus versi ini"
                       />
                     )}
                   </div>

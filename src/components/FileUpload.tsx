@@ -323,7 +323,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   disabled={disabled}
                   iconOnly
                   icon={<ArrowDownTrayIcon className="w-4 h-4" />}
-                  aria-label="Download file"
+                  ariaLabel="Download file"
                 />
                 <Button
                   variant="danger"
@@ -332,7 +332,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   disabled={disabled}
                   iconOnly
                   icon={<TrashIcon className="w-4 h-4" />}
-                  aria-label="Delete file"
+                  ariaLabel="Delete file"
                 />
               </div>
             </div>
