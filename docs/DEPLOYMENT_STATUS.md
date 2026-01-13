@@ -1,7 +1,16 @@
 # Deployment Status
 
-**Last Updated**: 2026-01-12  
+**Created**: 2026-01-08
+**Last Updated**: 2026-01-13
 **Status**: ✅ Production Deployed
+
+---
+
+## Overview
+
+This document provides current deployment status and quick reference for to MA Malnu Kananga system. For detailed deployment procedures, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md). For comprehensive Cloudflare Workers status, see [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md).
+
+---
 
 ## Current Deployment Status
 
@@ -242,13 +251,18 @@ wrangler deploy --env ""
 | 2026-01-08 | Worker (malnu-kananga-worker) | ✅ Deployed | Fixed dbExec helper for D1 compatibility |
 | 2026-01-06 | Worker (malnu-kananga-worker) | ⚠️ Issues | DB.exec() not compatible with latest D1 |
 
+## Related Documentation
+
+- **Detailed Deployment Guide**: [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)
+- **Cloudflare Workers Status**: [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md)
+- **API Reference**: [api-documentation.md](./api-documentation.md)
+
 ## Support
 
 - **Cloudflare Dashboard**: https://dash.cloudflare.com/
 - **Workers Dashboard**: https://dash.cloudflare.com/2560d478b3d26a83c3efe3565bed7f4f/workers
 - **Pages Dashboard**: https://dash.cloudflare.com/2560d478b3d26a83c3efe3565bed7f4f/pages/view/malnu-kananga
 - **D1 Dashboard**: https://dash.cloudflare.com/2560d478b3d26a83c3efe3565bed7f4f/d1
-- **Deployment Guide**: [DEPLOYMENT_GUIDE.md](./docs/DEPLOYMENT_GUIDE.md)
 
 ---
 
