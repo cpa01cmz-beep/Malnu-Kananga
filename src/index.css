@@ -177,6 +177,12 @@
   --color-rose-700: var(--theme-rose-700, 338 100% 33%);
   --color-rose-800: var(--theme-rose-800, 338 100% 30%);
   --color-rose-900: var(--theme-rose-900, 339 90% 29%);
+
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-fade-in-up: fade-in-up 0.5s ease-out;
+  --animate-scale-in: scale-in 0.3s ease-out;
+  --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-wave: wave 2s linear infinite;
 }
 
 :root {
@@ -429,14 +435,6 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-@theme {
-  --animate-fade-in: fade-in 0.3s ease-out;
-  --animate-fade-in-up: fade-in-up 0.5s ease-out;
-  --animate-scale-in: scale-in 0.3s ease-out;
-  --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  --animate-wave: wave 2s linear infinite;
 }
 
 :root {

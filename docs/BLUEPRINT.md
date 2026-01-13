@@ -1,8 +1,8 @@
 # Blueprint Sistem Informasi Manajemen Sekolah
 
 **Created**: 2025-01-01
-**Last Updated**: 2026-01-10
-**Version**: 2.1.0
+**Last Updated**: 2026-01-13
+**Version**: 2.1.1
 **Status**: Active
 
 ## 1. Ringkasan
@@ -315,6 +315,7 @@ src/
     - See `src/components/ui/index.ts` for complete export list and component organization
 
     ### 3.27 High-Contrast Accessibility Fix (Fase 5 - COMPLETED 2026-01-13)
+
     - Fixed broken `@media (prefers-contrast: high)` media query in `src/styles/themes.css`
     - Replaced non-existent CSS variables (`--color-border`, `--color-text`, `--color-background`) with correct Tailwind v4 format
     - Implemented proper `--theme-neutral-*` and `--theme-primary-*` variable overrides
@@ -397,6 +398,6 @@ src/
 
 ---
 
-**Last Updated**: 2026-01-06
-**Version**: 2.1.0
+**Last Updated**: 2026-01-13
+**Version**: 2.1.1
 **Status**: Active

@@ -88,10 +88,11 @@
 
 ---
 
- ## Version History
+  ## Version History
 
  | Version | Date | Changes |
  |---------|------|---------|
  | 7.2.0 | 2026-01-13 | Repository audit: Fixed test failure count (25→18 failures, 6→5 files), verified documentation metrics (326 files, 81 tests, 25 services, 214 components), fixed OfflineIndicator.tsx lint errors (removed unused hours/minutes variables), confirmed codebase integrity |
+ | 7.1.1 | 2026-01-13 | Styling system optimization: Consolidated duplicate `@theme` blocks in `src/index.css`, merged animation definitions into single `@theme` block for better maintainability |
  | 7.1.0 | 2026-01-13 | Repository audit: Fixed test failure count (24→25 failures, 5→6 files), verified documentation metrics (326 files, 81 tests, 25 services, 214 components), confirmed codebase integrity |
  | 7.0.0 | 2026-01-13 | Repository cleanup: Synthesized TASK.md for clarity, corrected metrics (25 services, 214 components), fixed broken links (api-documentation.md → api-reference.md), consolidated version history |
