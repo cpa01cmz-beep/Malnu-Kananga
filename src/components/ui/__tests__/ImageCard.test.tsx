@@ -95,7 +95,7 @@ describe('ImageCard', () => {
   });
 
   it('does not show hover effect when disabled', () => {
-    const { container } = render(
+    render(
       <ImageCard {...defaultProps} variant="hover" disabled />
     );
     const title = screen.getByText('Test Title');

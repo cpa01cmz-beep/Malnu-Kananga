@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-13
-**Version**: 2.5.5
+**Version**: 2.5.6
 
 ---
 
@@ -67,9 +67,9 @@
 | Metric | Status | Details |
 |--------|--------|---------|
 | TypeScript | ✅ Passing | Strict mode enabled |
- | Tests | ✅ Passing | 81 test files |
+  | Tests | ✅ Passing | 81 test files |
 | Build | ✅ Success | ~10s build time |
-| Linting | ⚠️ Minor Issues | 12 lint warnings in test files (unrelated to styling refactoring) |
+| Linting | ⚠️ Minor Issues | 19 errors in studentPortalValidator (unrelated to UI components) |
 | Security | ✅ Clean | 0 vulnerabilities |
 | Accessibility | ✅ Compliant | WCAG 2.1 AA compliant |
 | UI/UX | ✅ Excellent | Comprehensive design system, 95%+ component consistency |
@@ -79,6 +79,19 @@
 ---
 
 ## Completed Work (Q1 2026)
+
+### Accessibility Fix - Button and Badge Type Variants (2026-01-13)
+- Added missing 'neutral' variant to Button component type definition
+- Implemented neutral button styling with proper hover, focus, and active states
+- Added missing 'secondary' variant to Badge component type definition
+- Implemented secondary badge styles for both solid and outline variants
+- Fixed TypeScript type errors in OsisEvents.tsx (neutral button usage)
+- Fixed TypeScript type errors in ImageCard.tsx (secondary badge usage)
+- Removed unused GRADIENT_CLASSES import from ProfileSection.tsx
+- Removed unused container variable from ImageCard.test.tsx
+- Improved type safety across Button and Badge components
+- All variants now support dark mode with appropriate color scales
+- Zero new lint errors introduced, reduced from 21 to 19 errors
 
 ### Styling System Debug - RealTimeExample Component Refactoring (2026-01-13)
 - Refactored 4 hardcoded `bg-white dark:bg-neutral-800` patterns in RealTimeExample component to use centralized styling tokens
@@ -364,6 +377,7 @@
 
   | Version | Date | Changes |
   |---------|------|---------|
+  | 2.5.6 | 2026-01-13 | Accessibility Fix - Added missing Button and Badge variants to fix type errors, added 'neutral' variant to Button component with proper styling (bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 with hover states and focus ring), added 'secondary' variant to Badge component with solid and outline style support (bg-neutral-600 dark:bg-neutral-500 for solid, border-neutral-500 for outline), fixed OsisEvents.tsx type error by enabling neutral button variant, fixed ImageCard.tsx type error by enabling secondary badge variant, removed unused GRADIENT_CLASSES import from ProfileSection.tsx, removed unused container variable from ImageCard.test.tsx, reduced lint errors from 21 to 19 (all remaining errors in studentPortalValidator utility), improved TypeScript type safety across UI components |
   | 2.5.5 | 2026-01-13 | Styling system debug - refactored 12 hardcoded `bg-white dark:bg-neutral-800` patterns across RealTimeExample (4 instances), FolderNavigation (4 instances), and PermissionManager (4 instances) components to use centralized styling tokens, RealTimeExample updated 3 card containers and 1 table body with `getSurface('CARD')`, `getRadius('LG')`, `getShadow('SM')`, `getBorder('CARD')`, FolderNavigation updated 4 form inputs with `getSurface('INPUT')`, PermissionManager removed redundant Card className and updated 3 table bodies with `getSurface('CARD')`, improved design system consistency across example, e-library, and admin components, reduced hardcoded container patterns from 71 → 50 instances, all changes preserve functionality and UI appearance |
   | 2.5.4 | 2026-01-13 | Styling system debug - refactored 8 hardcoded `bg-white dark:bg-neutral-800` patterns in GradingManagement and AcademicGrades components to use centralized `getContainer()` tokens, updated GradingManagement (3 instances: grading table, OCR modal, raw OCR text), updated AcademicGrades (5 instances: 4 chart/section cards, 1 goal modal), used `getContainer('CARD')` for card patterns, used `getSurface('MODAL')` + `getRadius('2XL')` for modals, improved design system consistency across grading components, reduced hardcoded container patterns from 38 → 30 remaining, all changes preserve functionality and UI appearance |
  | 2.5.2 | 2026-01-13 | Styling system debug - refactored OsisEvents component (9 hardcoded `bg-white dark:bg-neutral-800` patterns) to use centralized `getContainer()` tokens, updated 5 tab containers to use `getContainer('CARD_LG')`, updated 2 event list containers to use `getContainer('CARD')`, replaced hardcoded button styling with Button component, improved design system consistency across event management UI, reduced hardcoded container patterns from 115 → 105, all changes preserve functionality and UI appearance |

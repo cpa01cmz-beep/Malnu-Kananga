@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'info' | 'warning' | 'indigo' | 'green-solid' | 'blue-solid' | 'purple-solid' | 'red-solid' | 'orange-solid' | 'teal-solid' | 'outline';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'info' | 'warning' | 'neutral' | 'indigo' | 'green-solid' | 'blue-solid' | 'purple-solid' | 'red-solid' | 'orange-solid' | 'teal-solid' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -21,6 +21,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
   secondary: "bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02]",
   ghost: "bg-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-neutral-500/50 hover:scale-[1.05]",
+  neutral: "bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-600 focus:ring-neutral-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
   danger: "bg-red-700 text-white dark:bg-red-600 dark:text-white hover:bg-red-800 dark:hover:bg-red-700 focus:ring-red-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
   success: "bg-green-700 text-white dark:bg-green-600 dark:text-white hover:bg-green-800 dark:hover:bg-green-700 focus:ring-green-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
   info: "bg-blue-700 text-white dark:bg-blue-600 dark:text-white hover:bg-blue-800 dark:hover:bg-blue-700 focus:ring-blue-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",

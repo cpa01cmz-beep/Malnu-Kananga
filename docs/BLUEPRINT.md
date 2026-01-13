@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-13
-**Version**: 2.1.1
+**Version**: 2.1.3
 **Status**: Active
 
 ## 1. Ringkasan
