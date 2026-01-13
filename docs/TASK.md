@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-13
-**Version**: 2.4.2
+**Version**: 2.4.3
 
 ---
 
@@ -107,6 +107,19 @@
 - Improved color consistency with design system
 - Enhanced dark mode support for notification type indicators
 
+### Hardcoded Dark Mode Gradient Fixes (2026-01-13)
+- Fixed hardcoded dark mode gradient overrides in ProfileSection.tsx (2 instances)
+- Fixed hardcoded dark mode gradient overrides in PPDBSection.tsx (6 instances)
+- Added missing dark mode gradients to GRADIENT_CLASSES:
+  - BLUE_LIGHT: dark:from-blue-900/30 dark:to-blue-800/30
+  - PURPLE_LIGHT: dark:from-purple-900/30 dark:to-purple-800/30
+  - ORANGE_LIGHT: dark:from-orange-900/30 dark:to-orange-800/30
+  - PRIMARY_LIGHT_SOLID: dark:from-primary-900 dark:to-primary-800
+- Replaced hardcoded dark mode overrides with getResponsiveGradient() function calls
+- Improved gradient system consistency across ProfileSection and PPDBSection
+- All gradient variants now properly support light/dark mode switching
+- See `src/config/gradients.ts` for complete gradient configuration
+
 ### Component Library & Design System
 - Created centralized UI components: Card, Modal, Button, Input, Select, Textarea, Alert, Badge, FileInput, Tab, IconButton, ProgressBar, etc.
 - Implemented CSS custom properties system for dynamic theming
@@ -171,6 +184,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.4.3 | 2026-01-13 | Hardcoded dark mode gradient fixes - replaced 8 hardcoded dark mode overrides in ProfileSection and PPDBSection with getResponsiveGradient() function calls, added 4 missing dark mode gradients to gradient configuration |
 | 2.4.2 | 2026-01-13 | Color palette alignment for VoiceNotificationDemo component - fixed hardcoded colors to use semantic color system with proper dark mode support |
 | 2.4.1 | 2026-01-13 | Enhanced Tab component with arrow key navigation, aria-label/orientation, and badge positioning fix |
 | 2.4.0 | 2026-01-13 | Enhanced Toast component with focus management for keyboard users and screen readers |
