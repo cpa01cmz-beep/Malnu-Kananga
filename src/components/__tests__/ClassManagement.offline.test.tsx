@@ -82,13 +82,40 @@ describe('ClassManagement Offline Queue Integration', () => {
   });
 
   it('should queue attendance update when offline', async () => {
-    // TODO: Proper mocking requires deeper component refactoring
-    // Skipping for now
+    render(
+      <ClassManagement
+        onBack={mockOnBack}
+        onShowToast={mockOnShowToast}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Student 001/)).toBeInTheDocument();
+      expect(screen.getByText(/Student 002/)).toBeInTheDocument();
+    });
+
+    const attendanceButtons = screen.getAllByRole('button');
+    expect(attendanceButtons.length).toBeGreaterThan(0);
   });
 
   it('should update attendance normally when online', async () => {
-    // TODO: Proper mocking requires deeper component refactoring  
-    // Skipping for now
+    vi.doMock('../../utils/networkStatus', () => ({
+      useNetworkStatus: () => ({
+        isOnline: true,
+        isSlow: false,
+      }),
+    }));
+
+    render(
+      <ClassManagement
+        onBack={mockOnBack}
+        onShowToast={mockOnShowToast}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Student 001/)).toBeInTheDocument();
+    });
   });
 
   it('should show offline indicator', async () => {
