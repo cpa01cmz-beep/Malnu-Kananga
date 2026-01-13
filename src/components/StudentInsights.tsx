@@ -13,6 +13,7 @@ import Card from './ui/Card';
 import Heading from './ui/Heading';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
+import Modal from './ui/Modal';
 import { GRADIENT_CLASSES } from '../config/gradients';
 import { CHART_COLORS } from '../config/chartColors';
 
@@ -369,23 +370,18 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
       </Card>
 
       {/* AI Analysis Modal */}
-      {showAIModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-neutral-800 rounded-xl max-w-4xl max-h-[80vh] overflow-auto p-6 w-full">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-neutral-900 dark:text-white">🤖 Analisis Lengkap AI</h3>
-              <Button variant="ghost" onClick={() => setShowAIModal(false)}>
-                ✕
-              </Button>
-            </div>
-            <div className="prose dark:prose-invert max-w-none">
-              <div className="text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">
-                {insights.aiAnalysis}
-              </div>
-            </div>
+      <Modal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        title="🤖 Analisis Lengkap AI"
+        size="xl"
+      >
+        <div className="prose dark:prose-invert max-w-none">
+          <div className="text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap">
+            {insights.aiAnalysis}
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 };
