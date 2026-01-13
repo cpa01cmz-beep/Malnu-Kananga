@@ -14,6 +14,7 @@ import Textarea from './ui/Textarea';
 import ProgressBar from './ui/ProgressBar';
 import { EmptyState } from './ui/LoadingState';
 import ConfirmationDialog from './ui/ConfirmationDialog';
+import Card from './ui/Card';
 import { GRADIENT_CLASSES, DARK_GRADIENT_CLASSES } from '../config/gradients';
 
 interface OsisEventsProps {
@@ -296,9 +297,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
   const renderTabContent = () => {
     if (!selectedEvent) {
       return (
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
+        <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
           <p className="text-yellow-800 dark:text-yellow-200">Pilih kegiatan untuk melihat detail dan fitur pengelolaan.</p>
-        </div>
+        </Card>
       );
     }
 
@@ -306,7 +307,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
       case 'registrations':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <Card rounded="xl" shadow="card" border="neutral-200">
               <h3 className="text-lg font-bold mb-4">Daftar Pendaftar</h3>
               <form onSubmit={handleAddRegistration} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <Input
@@ -357,14 +358,14 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           </div>
         );
 
       case 'budget':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <Card rounded="xl" shadow="card" border="neutral-200">
               <h3 className="text-lg font-bold mb-4">Anggaran Kegiatan</h3>
               <form onSubmit={handleAddBudget} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <Select
@@ -435,14 +436,14 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           </div>
         );
 
       case 'photos':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <Card rounded="xl" shadow="card" border="neutral-200">
               <h3 className="text-lg font-bold mb-4">Galeri Foto</h3>
               <form onSubmit={handleUploadPhoto} className="mb-4">
                 <div className="flex gap-4 mb-2">
@@ -487,14 +488,14 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           </div>
         );
 
       case 'feedback':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <Card rounded="xl" shadow="card" border="neutral-200">
               <h3 className="text-lg font-bold mb-4">Umpan Balik Kegiatan</h3>
               <form onSubmit={handleAddFeedback} className="space-y-4 mb-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -587,13 +588,13 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           </div>
         );
 
       case 'announcements':
         return (
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+          <Card rounded="xl" shadow="card" border="neutral-200">
             <div className="flex items-center gap-3 mb-4">
               <MegaphoneIcon className="w-6 h-6 text-orange-600" />
               <div>
@@ -601,12 +602,12 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 <p className="text-sm text-neutral-500">Buat pengumuman untuk kegiatan "{selectedEvent.eventName}"</p>
               </div>
             </div>
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+            <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
                 Pengumuman kegiatan akan dikirim ke semua siswa melalui sistem notifikasi terpusat.
               </p>
-            </div>
-          </div>
+            </Card>
+          </Card>
         );
 
       default:
@@ -628,7 +629,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+          <Card rounded="2xl" shadow="sm" border="neutral-200">
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Buat Kegiatan Baru</h3>
             <form onSubmit={handleAddEvent} className="space-y-4">
               <Input
@@ -668,10 +669,10 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 {isCreating ? 'Menyimpan...' : 'Simpan Kegiatan'}
               </Button>
             </form>
-          </div>
+          </Card>
 
           {selectedEvent && (
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-4">
+            <Card rounded="2xl" shadow="sm" border="neutral-200" padding="sm">
               <h4 className="font-bold text-neutral-900 dark:text-white mb-3">Navigasi Fitur</h4>
               <div className="space-y-2">
                 {[
@@ -695,7 +696,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   </button>
                 ))}
               </div>
-            </div>
+            </Card>
           )}
         </div>
 
@@ -764,7 +765,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
           </div>
 
           {selectedEvent && (
-            <div className={`${GRADIENT_CLASSES.ORANGE_GREEN} dark:${DARK_GRADIENT_CLASSES.ORANGE_GREEN} border border-orange-200 dark:border-orange-800 rounded-2xl p-6`}>
+            <Card className={`${GRADIENT_CLASSES.ORANGE_GREEN} dark:${DARK_GRADIENT_CLASSES.ORANGE_GREEN} border border-orange-200 dark:border-orange-800 rounded-2xl p-6`}>
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-neutral-900 dark:text-white">{selectedEvent.eventName}</h3>
@@ -779,7 +780,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 </button>
               </div>
               {renderTabContent()}
-            </div>
+            </Card>
           )}
         </div>
       </div>

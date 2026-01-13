@@ -12,6 +12,7 @@ import AccessDenied from './AccessDenied';
 import Badge from './ui/Badge';
 import SearchInput from './ui/SearchInput';
 import { EmptyState } from './ui/LoadingState';
+import Card from './ui/Card';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { CheckIcon, XMarkIcon } from './icons/MaterialIcons';
 
@@ -280,26 +281,26 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+            <Card padding="sm" rounded="xl" shadow="sm" border="neutral-100">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Pendaftar</p>
                 <p className="text-xl font-bold text-neutral-900 dark:text-white">{registrants.length}</p>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+            </Card>
+            <Card padding="sm" rounded="xl" shadow="sm" border="neutral-100">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Perlu Verifikasi</p>
                 <p className="text-xl font-bold text-yellow-600">{registrants.filter(r => r.status === 'pending').length}</p>
-            </div>
-            <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+            </Card>
+            <Card padding="sm" rounded="xl" shadow="sm" border="neutral-100">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Diterima</p>
                 <p className="text-xl font-bold text-green-600">{registrants.filter(r => r.status === 'approved').length}</p>
-            </div>
-             <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+            </Card>
+             <Card padding="sm" rounded="xl" shadow="sm" border="neutral-100">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Ditolak</p>
                 <p className="text-xl font-bold text-red-600">{registrants.filter(r => r.status === 'rejected').length}</p>
-            </div>
+            </Card>
         </div>
 
         {/* Advanced Filters */}
-        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-4 mb-6">
+        <Card rounded="xl" shadow="sm" border="neutral-200" padding="sm" className="mb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300 block mb-1">Status</label>
@@ -377,10 +378,10 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
               />
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Table */}
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+        <Card rounded="2xl" shadow="sm" border="neutral-200" padding="none" className="overflow-hidden">
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
                     <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
@@ -514,12 +515,12 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                     </tbody>
                 </table>
             </div>
-        </div>
+        </Card>
 
         {/* Scoring Modal */}
         {showScoringModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 w-full max-w-md">
+            <Card rounded="xl" padding="md" className="w-full max-w-md">
               <h3 className="text-lg font-semibold mb-4 text-neutral-900 dark:text-white">Penilaian Calon Siswa</h3>
               <div className="space-y-4">
                 {rubric.criteria.map(criterion => {
@@ -567,14 +568,14 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                   Tutup
                 </Button>
               </div>
-            </div>
+            </Card>
           </div>
         )}
 
         {/* Document Preview Modal */}
         {showDocumentPreview && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 w-full max-w-2xl">
+            <Card rounded="xl" padding="md" className="w-full max-w-2xl">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Preview Dokumen</h3>
                 <IconButton
@@ -585,10 +586,10 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                   onClick={() => setShowDocumentPreview(null)}
                 />
               </div>
-              <div className="bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4 min-h-[400px] flex items-center justify-center">
+              <Card className="bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4 min-h-[400px] flex items-center justify-center">
                 <p className="text-neutral-500 dark:text-neutral-400">Preview dokumen akan ditampilkan di sini</p>
-              </div>
-            </div>
+              </Card>
+            </Card>
           </div>
         )}
     </div>
