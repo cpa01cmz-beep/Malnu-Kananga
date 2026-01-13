@@ -388,8 +388,9 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
             {autoSaveState.data.quietHours.enabled && (
               <div className="flex items-center gap-4 ml-4">
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-neutral-600">Mulai:</label>
+                  <label htmlFor="quiet-hours-start" className="text-sm text-neutral-600">Mulai:</label>
                   <input
+                    id="quiet-hours-start"
                     type="time"
                     value={autoSaveState.data.quietHours.start}
                     onChange={(e) =>
@@ -406,8 +407,9 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-neutral-600">Selesai:</label>
+                  <label htmlFor="quiet-hours-end" className="text-sm text-neutral-600">Selesai:</label>
                   <input
+                    id="quiet-hours-end"
                     type="time"
                     value={autoSaveState.data.quietHours.end}
                     onChange={(e) =>
