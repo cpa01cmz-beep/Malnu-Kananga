@@ -1150,7 +1150,7 @@ async function handleSendEmail(request, env, corsHeaders) {
       });
     }
 
-    const { to, cc, bcc, subject, html, text, attachments, trackDelivery, priority } = await request.json();
+    const { to, cc, bcc, subject, html, text, attachments, trackDelivery, _priority } = await request.json();
 
     if (!to || !subject || !html) {
       return new Response(JSON.stringify(response.error('Missing required fields: to, subject, html')), {
@@ -1216,7 +1216,7 @@ async function handleSendEmail(request, env, corsHeaders) {
   }
 }
 
-async function sendViaSendGrid(env, { to, cc, bcc, subject, html, text, attachments }) {
+async function sendViaSendGrid(env, { to, cc, _bcc, subject, html, text, _attachments }) {
   try {
     const sendGridApiKey = env.SENDGRID_API_KEY;
     if (!sendGridApiKey) {
@@ -1270,7 +1270,7 @@ async function sendViaSendGrid(env, { to, cc, bcc, subject, html, text, attachme
   }
 }
 
-async function sendViaMailgun(env, { to, cc, bcc, subject, html, text, attachments }) {
+async function sendViaMailgun(env, { to, cc, _bcc, subject, html, text, _attachments }) {
   try {
     const mailgunApiKey = env.MAILGUN_API_KEY;
     const mailgunDomain = env.MAILGUN_DOMAIN;
@@ -1322,7 +1322,7 @@ async function sendViaMailgun(env, { to, cc, bcc, subject, html, text, attachmen
   }
 }
 
-async function sendViaCloudflareEmail(env, { to, cc, bcc, subject, html, text, attachments }) {
+async function sendViaCloudflareEmail(env, { to, cc, _bcc, subject, html, text, _attachments }) {
   try {
     const cloudflareApiKey = env.CLOUDFLARE_EMAIL_API_KEY;
     if (!cloudflareApiKey) {
