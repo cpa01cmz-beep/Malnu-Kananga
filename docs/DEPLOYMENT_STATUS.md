@@ -23,8 +23,8 @@ This document provides current deployment status and quick reference for to MA M
 - **Build Command**: `npm run build`
 
 ### Backend (Cloudflare Worker)
-- **Project Name**: malnu-kananga-worker
-- **Production URL**: https://malnu-kananga-worker.cpa01cmz.workers.dev
+- **Project Name**: malnu-kananga-worker-prod
+- **Production URL**: https://malnu-kananga-worker-prod.cpa01cmz.workers.dev
 - **Status**: ✅ Successfully Deployed
 - **Latest Deployment**: b619af1f-fe74-4de8-bc04-e5aeb8897b25
 - **Main File**: worker.js
@@ -104,12 +104,12 @@ LOG_LEVEL = "info"
 ### Backend API Tests
 ```bash
 # ✅ Test Login
-curl -X POST https://malnu-kananga-worker.cpa01cmz.workers.dev/api/auth/login \
+curl -X POST https://malnu-kananga-worker-prod.cpa01cmz.workers.dev/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@malnu.sch.id","password":"admin123"}'
 
 # ✅ Test Database Seed
-curl -X POST https://malnu-kananga-worker.cpa01cmz.workers.dev/seed
+curl -X POST https://malnu-kananga-worker-prod.cpa01cmz.workers.dev/seed
 ```
 
 ### Frontend Tests
