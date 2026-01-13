@@ -1216,7 +1216,7 @@ async function handleSendEmail(request, env, corsHeaders) {
   }
 }
 
-async function sendViaSendGrid(env, { to, cc, _bcc, subject, html, text, attachments }) {
+async function sendViaSendGrid(env, { to, cc, bcc, subject, html, text, attachments }) {
   try {
     const sendGridApiKey = env.SENDGRID_API_KEY;
     if (!sendGridApiKey) {
@@ -1225,10 +1225,12 @@ async function sendViaSendGrid(env, { to, cc, _bcc, subject, html, text, attachm
 
     const toEmails = Array.isArray(to) ? to : [to];
     const ccEmails = cc ? (Array.isArray(cc) ? cc : [cc]) : [];
+    const bccEmails = bcc ? (Array.isArray(bcc) ? bcc : [bcc]) : [];
     
     const personalizations = toEmails.map(email => ({
       to: [{ email: email.email, name: email.name || '' }],
-      cc: ccEmails.map(e => ({ email: e.email, name: e.name || '' }))
+      cc: ccEmails.map(e => ({ email: e.email, name: e.name || '' })),
+      bcc: bccEmails.map(e => ({ email: e.email, name: e.name || '' }))
     }));
 
     const body = {
@@ -1270,7 +1272,7 @@ async function sendViaSendGrid(env, { to, cc, _bcc, subject, html, text, attachm
   }
 }
 
-async function sendViaMailgun(env, { to, cc, _bcc, subject, html, text, attachments }) {
+async function sendViaMailgun(env, { to, cc, bcc, subject, html, text, attachments }) {
   try {
     const mailgunApiKey = env.MAILGUN_API_KEY;
     const mailgunDomain = env.MAILGUN_DOMAIN;
@@ -1287,6 +1289,10 @@ async function sendViaMailgun(env, { to, cc, _bcc, subject, html, text, attachme
     if (cc) {
       const ccEmails = Array.isArray(cc) ? cc : [cc];
       formData.append('cc', ccEmails.map(c => `${c.name ? `${c.name} <${c.email}>` : c.email}`).join(','));
+    }
+    if (bcc) {
+      const bccEmails = Array.isArray(bcc) ? bcc : [bcc];
+      formData.append('bcc', bccEmails.map(b => `${b.name ? `${b.name} <${b.email}>` : b.email}`).join(','));
     }
     formData.append('subject', subject);
     formData.append('html', html);

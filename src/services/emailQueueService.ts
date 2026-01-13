@@ -123,7 +123,7 @@ class EmailQueueService {
       const delayIndex = Math.min(Math.max(0, item.attempts - 1), this.retryDelays.length - 1);
       const nextAttempt = new Date(Date.now() + this.retryDelays[delayIndex]);
       item.nextAttemptAt = nextAttempt.toISOString();
-      logger.warn(`Email retry scheduled: ${itemId}, attempt ${item.attempts}, next at ${item.nextAttemptAt}`);
+      logger.warn(`Email retry scheduled: ${itemId}, attempt ${item.attempts + 1}, next at ${item.nextAttemptAt}`);
     }
 
     this.saveQueue(queue);
