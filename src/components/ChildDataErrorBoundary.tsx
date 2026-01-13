@@ -1,6 +1,7 @@
 import React from 'react';
 import Card from './ui/Card';
 import { UserIcon } from './icons/UserIcon';
+import Button from './ui/Button';
 
 interface ChildDataStatusIndicatorProps {
   status: 'unavailable' | 'limited';
@@ -42,20 +43,20 @@ const ChildDataStatusIndicator: React.FC<ChildDataStatusIndicatorProps> = ({
             </ul>
             {onRetry && onShowToast && (
               <div className="flex gap-3">
-                <button
+                <Button
+                  variant="danger"
                   onClick={onRetry}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                   aria-label="Coba memuat ulang data anak"
                 >
                   Coba Lagi
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="secondary"
                   onClick={() => onShowToast('Menggunakan mode offline', 'info')}
-                  className="px-4 py-2 bg-neutral-600 text-white rounded-lg hover:bg-neutral-700 transition-colors"
                   aria-label="Aktifkan mode offline"
                 >
                   Mode Offline
-                </button>
+                </Button>
               </div>
             )}
           </div>
