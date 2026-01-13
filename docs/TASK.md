@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-13
-**Version**: 2.4.0
+**Version**: 2.4.1
 
 ---
 
@@ -92,6 +92,7 @@
 - Implemented ErrorBoundary with comprehensive error handling
 - Replaced blocking confirm dialogs with accessible ConfirmationDialog
 - Added comprehensive ARIA labels and keyboard navigation support
+- Fixed Toggle component aria-checked attribute to always be boolean (2026-01-13)
 
 ### Loading States & UX
 - Added loading states to OsisEvents (4 states), BatchManagement, UserManagement, ChildDataErrorBoundary
@@ -141,6 +142,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.4.1 | 2026-01-13 | Fixed Toggle component accessibility (aria-checked boolean coercion) |
 | 2.4.0 | 2026-01-13 | Synthesized task list, removed verbose completed items, improved clarity, updated test count |
 | 2.3.0 | 2026-01-13 | Previous version with verbose details |
 | 2.2.0 | 2026-01-13 | Updated file counts to reflect actual codebase |
