@@ -23,7 +23,7 @@ const LinkCard: React.FC<LinkCardProps> = ({
         target="_blank"
         rel="noopener noreferrer"
         aria-label={ariaLabel}
-        className="group flex flex-col items-center"
+        className="group flex flex-col items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800 rounded-xl transition-all duration-200"
       >
         <Card
           variant="hover"

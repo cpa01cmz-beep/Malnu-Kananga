@@ -62,11 +62,19 @@ describe('LinkCard', () => {
     expect(iconContainer).toHaveClass('text-primary-600');
   });
 
-  it('has focus styles for accessibility on link wrapper', () => {
+  it('has focus-visible styles for keyboard navigation accessibility', () => {
     render(<ul><LinkCard {...defaultProps} /></ul>);
     const link = screen.getByRole('link');
     expect(link).toHaveClass('group');
     expect(link).toHaveClass('flex');
+    expect(link).toHaveClass('focus:outline-none');
+    expect(link).toHaveClass('focus-visible:ring-2');
+    expect(link).toHaveClass('focus-visible:ring-primary-500/50');
+    expect(link).toHaveClass('focus-visible:ring-offset-2');
+    expect(link).toHaveClass('dark:focus-visible:ring-offset-neutral-800');
+    expect(link).toHaveClass('rounded-xl');
+    expect(link).toHaveClass('transition-all');
+    expect(link).toHaveClass('duration-200');
   });
 
   it('has hover effects on Card component', () => {
