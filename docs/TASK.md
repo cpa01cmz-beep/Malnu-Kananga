@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-13
-**Version**: 2.4.5
+**Version**: 2.4.6
 
 ---
 
@@ -79,6 +79,18 @@
 ---
 
 ## Completed Work (Q1 2026)
+
+### Component Extraction - ImageCard (2026-01-13)
+- Created reusable ImageCard component for image-based cards with consistent hover effects
+- Refactored NewsCard to use ImageCard, reducing code from 44 lines to 24 lines (-45%)
+- Refactored ProgramCard to use ImageCard, reducing code from 33 lines to 16 lines (-52%)
+- Added comprehensive test coverage with 20+ test cases
+- Maintained consistent hover effects (group-hover:scale-105, aspect-video)
+- Added optional badge, footer, and children props for flexibility
+- Improved accessibility with proper aria-label support
+- Updated ui/index.ts to export ImageCard component
+- Total: -23 lines of code, improved maintainability and consistency
+- See PR #1139
 
 ### Interaction Polish - Disabled Element States (2026-01-13)
 - Removed hover and focus styles from disabled buttons in Footer component
@@ -201,6 +213,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.4.6 | 2026-01-13 | Component extraction - created reusable ImageCard component, refactored NewsCard (-45%) and ProgramCard (-52%), added comprehensive test coverage with 20+ cases, improved code maintainability and consistency |
 | 2.4.5 | 2026-01-13 | Arbitrary value cleanup - replaced text-[color:var(--color-text)] in App.tsx with text-neutral-900 dark:text-neutral-100, improved Tailwind v4 consistency and theme integration |
 | 2.4.4 | 2026-01-13 | Interaction polish - removed hover/focus/active states from disabled elements in Footer and SocialLink components, improved UX clarity and accessibility compliance |
 | 2.4.3 | 2026-01-13 | Hardcoded dark mode gradient fixes - replaced 8 hardcoded dark mode overrides in ProfileSection and PPDBSection with getResponsiveGradient() function calls, added 4 missing dark mode gradients to gradient configuration |
