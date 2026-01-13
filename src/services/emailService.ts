@@ -9,8 +9,7 @@ import type {
 } from '../types/email.types';
 import { emailTemplatesService } from './emailTemplates';
 import { emailQueueService } from './emailQueueService';
-import { apiService, request } from './apiService';
-import type { ApiResponse } from './apiService';
+import { request } from './apiService';
 import { logger } from '../utils/logger';
 import { isNetworkError } from '../utils/networkStatus';
 import { STORAGE_KEYS } from '../constants';
@@ -318,7 +317,7 @@ class EmailService {
     return history.slice(-limit).reverse();
   }
 
-  getNotificationSettingsForUser(userId: string): EmailNotificationSettings {
+  getNotificationSettingsForUser(_userId: string): EmailNotificationSettings {
     const globalSettings = this.getNotificationSettings();
 
     if (!globalSettings) {

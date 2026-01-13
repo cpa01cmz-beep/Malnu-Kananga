@@ -82,7 +82,6 @@ class EmailQueueService {
 
     item.status = 'processing';
     item.lastAttemptAt = new Date().toISOString();
-    item.attempts += 1;
 
     this.saveQueue(queue);
 
@@ -114,6 +113,8 @@ class EmailQueueService {
       return false;
     }
 
+    item.attempts++;
+
     if (item.attempts >= this.maxRetryAttempts) {
       item.status = 'failed';
       item.error = error;
@@ -121,7 +122,7 @@ class EmailQueueService {
     } else {
       item.status = 'pending';
       item.error = error;
-      const delayIndex = Math.min(item.attempts - 1, this.retryDelays.length - 1);
+      const delayIndex = Math.min(Math.max(0, item.attempts - 1), this.retryDelays.length - 1);
       const nextAttempt = new Date(Date.now() + this.retryDelays[delayIndex]);
       item.nextAttemptAt = nextAttempt.toISOString();
       logger.warn(`Email retry scheduled: ${itemId}, attempt ${item.attempts + 1}, next at ${item.nextAttemptAt}`);
