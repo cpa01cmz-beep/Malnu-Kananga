@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import IconButton from './ui/IconButton';
 
@@ -13,6 +13,8 @@ interface ToastProps {
 }
 
 const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onClose, duration = 3000 }) => {
+  const toastRef = useRef<HTMLDivElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [remainingTime, setRemainingTime] = useState(duration);
 
@@ -44,6 +46,13 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     if (isVisible) {
       setRemainingTime(duration);
       setIsPaused(false);
+      
+      previousActiveElementRef.current = document.activeElement as HTMLElement;
+      toastRef.current?.focus();
+    } else {
+      if (previousActiveElementRef.current) {
+        previousActiveElementRef.current.focus();
+      }
     }
   }, [isVisible, duration]);
 
@@ -81,6 +90,8 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
 
   return (
     <div
+      ref={toastRef}
+      tabIndex={-1}
       className={`${baseClasses} ${typeClasses[type]} ${visibilityClasses}`}
       role={ariaRole}
       aria-live={ariaLive}

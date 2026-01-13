@@ -96,7 +96,7 @@
 
 ### Loading States & UX
 - Added loading states to OsisEvents (4 states), BatchManagement, UserManagement, ChildDataErrorBoundary
-- Enhanced Toast component with Escape key and pause-on-hover
+- Enhanced Toast component with Escape key, pause-on-hover, and focus management (2026-01-13)
 - Improved modal accessibility with focus trap and body scroll lock
 
 ### Documentation
@@ -142,6 +142,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.4.2 | 2026-01-13 | Enhanced Toast component with focus management for keyboard users and screen readers |
 | 2.4.1 | 2026-01-13 | Fixed Toggle component accessibility (aria-checked boolean coercion) |
 | 2.4.0 | 2026-01-13 | Synthesized task list, removed verbose completed items, improved clarity, updated test count |
 | 2.3.0 | 2026-01-13 | Previous version with verbose details |
