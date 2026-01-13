@@ -1,8 +1,8 @@
 # Documentation Index
 
  **Created**: 2026-01-05
- **Last Updated**: 2026-01-07
- **Version**: 2.1.0
+ **Last Updated**: 2026-01-13
+ **Version**: 2.2.0
  **Status**: Active
 
 ## Overview
@@ -32,9 +32,8 @@ These files are operational instructions for AI agents and should not be conside
 - **[ROADMAP.md](./ROADMAP.md)** - Development roadmap and milestones
 - **[TASK.md](./TASK.md)** - Current tasks and progress tracking
 
-### 🚀 Deployment & Infrastructure
+ ### 🚀 Deployment & Infrastructure
 - **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Complete deployment procedures (Cloudflare Workers, D1, R2)
-- **[CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md)** - Cloudflare Workers deployment status and guide
 - **[DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md)** - Current deployment status and quick reference
 
 ### 🎤 Voice & Accessibility
@@ -66,11 +65,11 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 330 TypeScript/TSX files in src/ directory
-- **Test Files**: 81 test files (*.test.ts, *.test.tsx)
-- **Documentation Files**: 21 (in /docs directory)
+- **Total Source Files**: 331 TypeScript/TSX files in src/ directory
+- **Test Files**: 82 test files (*.test.ts, *.test.tsx)
+- **Documentation Files**: 18 (in /docs directory)
 - **Total Tests**: Run `npm test` to verify current test count
-- **Services**: 32 services in src/services/
+- **Services**: 45 services in src/services/
 - **Code Examples**: 20+
 - **Troubleshooting Scenarios**: 25+
 - **Architecture Diagrams**: 1+

@@ -8,7 +8,7 @@
 
 ## Overview
 
-This document provides current deployment status and quick reference for to MA Malnu Kananga system. For detailed deployment procedures, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md). For comprehensive Cloudflare Workers status, see [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md).
+This document provides current deployment status and quick reference for the MA Malnu Kananga system. For detailed deployment procedures, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).
 
 ---
 
