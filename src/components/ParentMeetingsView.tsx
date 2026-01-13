@@ -9,6 +9,7 @@ import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateAndSanitizeMeeting, validateParentMeeting } from '../utils/parentValidation';
 import { EmptyState } from './ui/LoadingState';
+import { getContainer } from '../config/styling';
 
 interface ParentMeetingsViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -150,7 +151,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+      <div className={`${getContainer('CARD_XL')} p-8`}>
         <div className="animate-pulse">
           <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg mb-6"></div>
           <div className="h-64 bg-neutral-200 dark:bg-neutral-700 rounded-xl"></div>
@@ -161,7 +162,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+      <div className={`${getContainer('CARD_XL')} p-8`}>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Jadwal Pertemuan</h2>
           <div className="flex items-center gap-4">
@@ -352,7 +353,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
         </div>
       </div>
 
-      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+      <div className={`${getContainer('CARD_XL')} p-8`}>
         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-6">Tips Pertemuan Efektif</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-neutral-600 dark:text-neutral-400">
           <div>• Datang tepat waktu</div>

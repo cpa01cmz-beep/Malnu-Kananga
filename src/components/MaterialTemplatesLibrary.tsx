@@ -8,6 +8,7 @@ import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
 import FileInput from './ui/FileInput';
+import { CONTAINERS } from '../config/styling';
 
 interface MaterialTemplatesProps {
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
@@ -308,7 +309,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {filteredTemplates.length > 0 ? (
           filteredTemplates.map((template) => (
-            <div key={template.id} className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-5 hover:shadow-md transition-all hover:-translate-y-1">
+            <div key={template.id} className={`${CONTAINERS.CARD_LG} p-5 hover:shadow-md transition-all hover:-translate-y-1`}>
               <div className="flex justify-between items-start mb-4">
                 <div className={`p-3 rounded-lg ${
                   template.fileType === 'pptx' ? 'bg-orange-50 text-orange-600 dark:bg-orange-900/20' :

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
+import { getSurface, getRadius, getShadow, getBorder } from '../../config/styling';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 export type ModalAnimation = 'fade-in' | 'fade-in-up' | 'scale-in';
@@ -77,7 +78,7 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div
         ref={modalRef}
-        className={`bg-white dark:bg-neutral-800 rounded-xl shadow-float border border-neutral-200 dark:border-neutral-700 ${sizeClasses[size]} ${animationClasses[animation]} ${className}`}
+        className={`${getSurface('MODAL')} ${getRadius('XL')} ${getShadow('FLOAT')} ${getBorder('MODAL')} ${sizeClasses[size]} ${animationClasses[animation]} ${className}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}

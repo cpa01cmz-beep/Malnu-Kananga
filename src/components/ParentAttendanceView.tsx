@@ -6,6 +6,7 @@ import { logger } from '../utils/logger';
 import { TableSkeleton } from './ui/Skeleton';
 import { EmptyState } from './ui/LoadingState';
 import Badge from './ui/Badge';
+import { getContainer } from '../config/styling';
 
 interface ParentAttendanceViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -93,7 +94,7 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
     : 0;
 
   return (
-    <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+    <div className={`${getContainer('CARD_XL')} p-8`}>
       <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">
         Kehadiran - {child.studentName}
       </h2>

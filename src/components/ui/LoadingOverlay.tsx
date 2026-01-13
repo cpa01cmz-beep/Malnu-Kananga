@@ -1,5 +1,7 @@
 import React from 'react';
 import LoadingSpinner from './LoadingSpinner';
+import { getMinHeight } from '../../config/dimensions';
+import { getSurface, getRadius, getShadow, getBorder } from '../../config/styling';
 
 export type LoadingOverlaySize = 'sm' | 'md' | 'lg' | 'full';
 export type LoadingOverlayVariant = 'default' | 'minimal' | 'centered';
@@ -53,7 +55,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   };
 
   const variantClasses = {
-    default: 'flex items-center justify-center min-h-[200px]',
+    default: `flex items-center justify-center ${getMinHeight('MEDIUM')}`,
     minimal: 'flex items-center justify-center',
     centered: 'flex items-center justify-center fixed inset-0',
   };
@@ -105,7 +107,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
         aria-live="polite"
         aria-busy={isLoading}
       >
-        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-float border border-neutral-200 dark:border-neutral-700">
+        <div className={`${getSurface('MODAL')} ${getRadius('XL')} ${getShadow('FLOAT')} ${getBorder('MODAL')}`}>
           {content}
         </div>
       </div>

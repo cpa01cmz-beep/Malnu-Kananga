@@ -4,6 +4,7 @@ import { WebSocketStatus } from '../WebSocketStatus';
 import { logger } from '../../utils/logger';
 import { NotificationType } from '../../types';
 import type { RealTimeEvent } from '../../services/webSocketService';
+import { getSurface, getRadius, getShadow, getBorder } from '../../config/styling';
 
 // Missing types - add temporary definitions
 interface Grade {
@@ -83,7 +84,7 @@ export function RealTimeExample() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+      <div className={`${getSurface('CARD')} ${getRadius('LG')} ${getShadow('SM')} ${getBorder('CARD')} p-6`}>
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">
           Real-Time WebSocket Demo
         </h1>
@@ -143,7 +144,7 @@ export function RealTimeExample() {
       </div>
 
       {/* Real-time Grades Section */}
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+      <div className={`${getSurface('CARD')} ${getRadius('LG')} ${getShadow('SM')} ${getBorder('CARD')} p-6`}>
         <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Real-Time Grades</h2>
         {grades.length === 0 ? (
           <p className="text-neutral-500 dark:text-neutral-400">No grades available. Create a test grade to see real-time updates.</p>
@@ -166,7 +167,7 @@ export function RealTimeExample() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+              <tbody className={`${getSurface('CARD')} divide-y divide-neutral-200 dark:divide-neutral-700`}>
                 {grades.map((grade: Grade) => (
                   <tr key={grade.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
@@ -197,7 +198,7 @@ export function RealTimeExample() {
       </div>
 
       {/* Real-time Announcements Section */}
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+      <div className={`${getSurface('CARD')} ${getRadius('LG')} ${getShadow('SM')} ${getBorder('CARD')} p-6`}>
         <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-4">Real-Time Announcements</h2>
         {announcements.length === 0 ? (
           <p className="text-neutral-500 dark:text-neutral-400">No announcements available. Create a test announcement to see real-time updates.</p>

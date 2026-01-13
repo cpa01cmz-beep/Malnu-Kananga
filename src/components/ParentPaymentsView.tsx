@@ -11,6 +11,7 @@ import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateParentPayment } from '../utils/parentValidation';
 import { GRADIENT_CLASSES } from '../config/gradients';
+import { getContainer } from '../config/styling';
 
 interface ParentPaymentsViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -132,7 +133,7 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+      <div className={`${getContainer('CARD_XL')} p-8`}>
         <div className="animate-pulse">
           <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg mb-6"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -151,7 +152,7 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+      <div className={`${getContainer('CARD_XL')} p-8`}>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Pembayaran</h2>
           <div className="flex items-center gap-4">
@@ -228,7 +229,7 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
 
       {/* Individual Payment Details */}
       {paymentData.map((data) => (
-        <div key={data.child.studentId} className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+        <div key={data.child.studentId} className={`${getContainer('CARD_XL')} p-8`}>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <div className={`${GRADIENT_CLASSES.GREEN_MEDIUM} w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg`}>

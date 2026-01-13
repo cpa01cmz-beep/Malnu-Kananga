@@ -11,7 +11,7 @@ import PPDBManagement from './PPDBManagement'; // Import PPDB Component
 import PermissionManager from './admin/PermissionManager'; // Import Permission Manager
 import AICacheManager from './AICacheManager'; // Import AI Cache Manager
 import { ToastType } from './Toast';
-import { STORAGE_KEYS } from '../constants'; // Import constants
+import { STORAGE_KEYS, OPACITY_TOKENS } from '../constants'; // Import constants
 import { logger } from '../utils/logger';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
@@ -26,6 +26,7 @@ import VoiceCommandsHelp from './VoiceCommandsHelp';
 import SmallActionButton from './ui/SmallActionButton';
 import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
+import { getSurface, getRadius, getBorder, getShadow } from '../config/styling';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -255,7 +256,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
         {currentView === 'home' && (
             <>
-                <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 ${!isOnline ? 'animate-pulse' : 'animate-fade-in-up'}`}>
+                <div className={`${getSurface('CARD')} ${getRadius('XL')} p-6 sm:p-8 ${getShadow('CARD')} ${getBorder('CARD')} mb-8 ${!isOnline ? 'animate-pulse' : 'animate-fade-in-up'}`}>
                     <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">
                         Dashboard Administrator
                         {!isOnline && <span className="ml-2 text-sm font-normal text-amber-600 dark:text-amber-400">(Offline)</span>}
@@ -272,7 +273,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
                 {/* Voice Commands Section */}
                 {voiceSupported && (
-                    <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up`}>
+                    <div className={`${getSurface('CARD')} ${getRadius('XL')} p-6 ${getShadow('CARD')} ${getBorder('CARD')} mb-8 animate-fade-in-up`}>
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
@@ -308,8 +309,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                             aria-label="Buka AI Site Editor"
                              className={`${getGradientClass('INDIGO_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
                         >
-                            <div className="bg-white/20% w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30% group-hover:scale-110 transition-all duration-300 ease-out">
-                                <SparklesIcon className="w-6 h-6 sm:w-7 sm:h-7 text-white" aria-hidden="true" />
+                            <div className={`${OPACITY_TOKENS.WHITE_20} w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:${OPACITY_TOKENS.WHITE_30.replace('bg-white/', '')} group-hover:scale-110 transition-all duration-300 ease-out`}>
+                                <SparklesIcon className="w-6 h-6 text-white" aria-hidden="true" />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Site Editor</h3>
                             <p className="text-indigo-100 text-sm leading-relaxed">Edit konten Program Unggulan dan Berita menggunakan bantuan AI.</p>
@@ -369,8 +370,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                             aria-label="Buka AI Cache Manager"
                              className={`${getGradientClass('GREEN_TEAL')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
                         >
-                            <div className="bg-white/20% w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30% group-hover:scale-110 transition-all duration-300 ease-out">
-                                <ChartBarIcon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                            <div className={`${OPACITY_TOKENS.WHITE_20} w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:${OPACITY_TOKENS.WHITE_30.replace('bg-white/', '')} group-hover:scale-110 transition-all duration-300 ease-out`}>
+                                <ChartBarIcon className="w-6 h-6 text-white" />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Cache Manager</h3>
                             <p className="text-green-100 text-sm leading-relaxed">Monitor dan kelola cache respons AI untuk performa optimal.</p>
@@ -383,8 +384,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                             aria-label="Buka Permission System"
                              className={`${getGradientClass('PURPLE_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
                         >
-                            <div className="bg-white/20% w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-4 group-hover:bg-white/30% group-hover:scale-110 transition-all duration-300 ease-out">
-                                <UsersIcon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                            <div className={`${OPACITY_TOKENS.WHITE_20} w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:${OPACITY_TOKENS.WHITE_30.replace('bg-white/', '')} group-hover:scale-110 transition-all duration-300 ease-out`}>
+                                <UsersIcon className="w-6 h-6 text-white" />
                             </div>
                             <h3 className="text-lg sm:text-xl font-semibold mb-2">Permission System</h3>
                             <p className="text-purple-100 text-sm leading-relaxed">Kelola sistem perizinan peran dan audit log akses.</p>
@@ -438,6 +439,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     <button
                         onClick={() => setCurrentView('home')}
                         className="px-4 py-2.5 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+                        type="button"
                     >
                         Kembali ke Dashboard
                     </button>

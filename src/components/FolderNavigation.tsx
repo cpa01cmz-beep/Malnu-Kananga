@@ -6,6 +6,7 @@ import { UsersIcon } from './icons/UsersIcon';
 import { FolderIcon, FolderOpenIcon, ChevronRightIcon, ChevronDownIcon } from './icons/MaterialIcons';
 import { MaterialFolder, ELibrary } from '../types';
 import { logger } from '../utils/logger';
+import { getSurface } from '../config/styling';
 import Button from './ui/Button';
 import SmallActionButton from './ui/SmallActionButton';
 import ConfirmationDialog from './ui/ConfirmationDialog';
@@ -345,7 +346,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
             value={newFolderName}
             onChange={(e) => setNewFolderName(e.target.value)}
             placeholder="Nama folder"
-            className="w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+            className={`w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg ${getSurface('INPUT')} text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm`}
             autoFocus
           />
           <textarea
@@ -353,7 +354,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
             onChange={(e) => setNewFolderDescription(e.target.value)}
             placeholder="Deskripsi (opsional)"
             rows={2}
-            className="w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+            className={`w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg ${getSurface('INPUT')} text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm`}
           />
           <div className="flex gap-2">
             <Button
@@ -384,14 +385,14 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
             type="text"
             value={editingFolder.name}
             onChange={(e) => setEditingFolder({...editingFolder, name: e.target.value})}
-            className="w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+            className={`w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg ${getSurface('INPUT')} text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm`}
           />
           <textarea
             value={editingFolder.description || ''}
             onChange={(e) => setEditingFolder({...editingFolder, description: e.target.value})}
             placeholder="Deskripsi"
             rows={2}
-            className="w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+            className={`w-full px-3 py-2 mb-2 border border-neutral-300 dark:border-neutral-600 rounded-lg ${getSurface('INPUT')} text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm`}
           />
           <div className="flex items-center gap-2 mb-2">
             <input

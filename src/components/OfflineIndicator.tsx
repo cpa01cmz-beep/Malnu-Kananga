@@ -10,8 +10,6 @@ import Button from './ui/Button';
 import Badge from './ui/Badge';
 import Card from './ui/Card';
 import Modal from './ui/Modal';
-import IconButton from './ui/IconButton';
-import { XMarkIcon } from './icons';
 
 interface OfflineIndicatorProps {
   className?: string;

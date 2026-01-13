@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'purple' | 'indigo' | 'orange' | 'red';
+export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'secondary' | 'purple' | 'indigo' | 'orange' | 'red';
 export type BadgeSize = 'sm' | 'md' | 'lg' | 'xl';
 export type BadgeStyle = 'solid' | 'outline';
 
@@ -40,6 +40,10 @@ const variantClasses: Record<BadgeVariant, Record<BadgeStyle, string>> = {
   primary: {
     solid: "bg-primary-600 text-white dark:bg-primary-500 dark:text-white",
     outline: "border-2 border-primary-500 text-primary-700 dark:border-primary-400 dark:text-primary-300",
+  },
+  secondary: {
+    solid: "bg-neutral-600 text-white dark:bg-neutral-500 dark:text-white",
+    outline: "border-2 border-neutral-500 text-neutral-700 dark:border-neutral-400 dark:text-neutral-300",
   },
   purple: {
     solid: "bg-purple-700 text-white dark:bg-purple-600 dark:text-white",

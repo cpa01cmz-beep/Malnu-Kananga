@@ -35,6 +35,7 @@ import VoiceCommandsHelp from './VoiceCommandsHelp';
 import Button from './ui/Button';
 import OfflineBanner from './ui/OfflineBanner';
 import Alert from './ui/Alert';
+import { getContainer, getSurface, getBorder, getRadius, getShadow } from '../config/styling';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -588,8 +589,8 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
           <>
          {currentView === 'home' && (
             <>
-                {/* Welcome Banner */}
-                <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up relative overflow-hidden">
+                 {/* Welcome Banner */}
+                 <div className={`${getContainer('CARD_LG')} p-6 sm:p-8 mb-8 animate-fade-in-up relative overflow-hidden`}>
                   <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>
                       <h1 className="text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">Portal Siswa</h1>
@@ -615,9 +616,9 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                   <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-primary-500/10 rounded-full blur-2xl"></div>
 </div>
 
-                {/* Voice Commands Section */}
-                {voiceSupported && (
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up">
+                 {/* Voice Commands Section */}
+                 {voiceSupported && (
+                     <div className={`${getContainer('CARD_LG')} mb-8 animate-fade-in-up`}>
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
@@ -700,7 +701,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
 
         {/* Offline Status Indicator */}
         {!isOnline && (
-          <div className="fixed bottom-4 right-4 bg-white dark:bg-neutral-800 border border-red-200 dark:border-red-800 rounded-lg p-3 shadow-lg max-w-xs">
+          <div className={`fixed bottom-4 right-4 ${getSurface('CARD')} border border-red-200 dark:border-red-800 ${getRadius('LG')} p-3 ${getShadow('LG')} max-w-xs`}>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
               <span className="text-sm text-red-700 dark:text-red-300 font-medium">Offline Mode</span>
@@ -715,7 +716,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
 
         {/* Sync Complete Toast */}
         {syncStatus.lastSync > 0 && !syncStatus.needsSync && (
-          <div className="fixed bottom-4 right-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 shadow-lg max-w-xs animate-fade-in-up">
+          <div className="fixed bottom-4 right-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 ${getRadius('LG')} p-3 ${getShadow('LG')} max-w-xs animate-fade-in-up">
             <div className="flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

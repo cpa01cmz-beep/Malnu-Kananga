@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'info' | 'warning' | 'indigo' | 'green-solid' | 'blue-solid' | 'purple-solid' | 'red-solid' | 'orange-solid' | 'teal-solid' | 'outline';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'info' | 'warning' | 'neutral' | 'indigo' | 'green-solid' | 'blue-solid' | 'purple-solid' | 'red-solid' | 'orange-solid' | 'teal-solid' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -21,6 +21,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
   secondary: "bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02]",
   ghost: "bg-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-neutral-500/50 hover:scale-[1.05]",
+  neutral: "bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-600 focus:ring-neutral-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
   danger: "bg-red-700 text-white dark:bg-red-600 dark:text-white hover:bg-red-800 dark:hover:bg-red-700 focus:ring-red-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
   success: "bg-green-700 text-white dark:bg-green-600 dark:text-white hover:bg-green-800 dark:hover:bg-green-700 focus:ring-green-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
   info: "bg-blue-700 text-white dark:bg-blue-600 dark:text-white hover:bg-blue-800 dark:hover:bg-blue-700 focus:ring-blue-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
@@ -36,15 +37,15 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "px-3 py-2.5 text-sm min-h-[44px]",
-  md: "px-4 py-3 text-sm sm:text-base min-h-[44px]",
-  lg: "px-6 py-3.5 text-base sm:text-lg min-h-[48px]",
+  sm: "px-3 py-2 text-sm",
+  md: "px-4 py-2.5 text-sm sm:text-base",
+  lg: "px-6 py-3 text-base sm:text-lg",
 };
 
 const iconOnlySizes: Record<ButtonSize, string> = {
-  sm: "p-3 min-w-[44px] min-h-[44px]",
-  md: "p-3 min-w-[44px] min-h-[44px]",
-  lg: "p-4 min-w-[48px] min-h-[48px]",
+  sm: "p-1.5",
+  md: "p-2",
+  lg: "p-2.5",
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
@@ -70,13 +71,24 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
+  const ariaProps: Record<string, string | boolean> = {};
+  
+  if (ariaLabel) {
+    ariaProps['aria-label'] = ariaLabel;
+  } else if (iconOnly) {
+    ariaProps['aria-label'] = '';
+  }
+  
+  if (isLoading) {
+    ariaProps['aria-busy'] = true;
+  }
+
   return (
     <button
       ref={ref}
       className={classes}
       disabled={disabled || isLoading}
-      aria-label={iconOnly ? ariaLabel : undefined}
-      aria-busy={isLoading}
+      {...ariaProps}
       {...props}
     >
       {isLoading && iconOnly ? (
