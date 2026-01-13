@@ -19,6 +19,7 @@ interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
   validationRules?: Array<{ validate: (value: string) => boolean; message: string }>;
   validateOnChange?: boolean;
   validateOnBlur?: boolean;
+  clearOnEscape?: boolean;
   accessibility?: {
     announceErrors?: boolean;
     describedBy?: string;
@@ -72,6 +73,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
   validationRules = [],
   validateOnChange = true,
   validateOnBlur = true,
+  clearOnEscape = false,
   accessibility = { announceErrors: true },
   className = '',
   value,
@@ -130,8 +132,8 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
 
   // Enhanced key down handler
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Escape') {
-      // Clear value on Escape key
+    if (e.key === 'Escape' && clearOnEscape) {
+      e.preventDefault();
       const syntheticEvent = {
         target: { value: '' }
       } as React.ChangeEvent<HTMLInputElement>;

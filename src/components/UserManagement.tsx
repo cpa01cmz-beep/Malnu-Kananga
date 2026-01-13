@@ -267,13 +267,13 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         {canUpdateUser && (
-                                            <Button 
-                                              variant="info" 
-                                              size="sm" 
-                                              iconOnly 
-                                              onClick={() => handleEditUser(user)} 
-                                              icon={<PencilIcon />} 
-                                              aria-label={`Edit pengguna ${user.name}`}
+                                            <Button
+                                              variant="info"
+                                              size="sm"
+                                              iconOnly
+                                              onClick={() => handleEditUser(user)}
+                                              icon={<PencilIcon />}
+                                              ariaLabel={`Edit pengguna ${user.name}`}
                                             />
                                         )}
                                         {canDeleteUser && (
@@ -283,7 +283,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                                               iconOnly
                                               onClick={() => handleDeleteUser(user.id)}
                                               icon={<TrashIcon />}
-                                              aria-label={`Hapus pengguna ${user.name}`}
+                                              ariaLabel={`Hapus pengguna ${user.name}`}
                                             />
                                         )}
                                     </td>
