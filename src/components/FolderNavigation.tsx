@@ -216,7 +216,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
                 aria-label={isExpanded ? `Tutup folder ${folder.name}` : `Buka folder ${folder.name}`}
                 aria-expanded={isExpanded}
                 aria-controls={`folder-${folder.id}-subfolders`}
-                className="p-0.5 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                className="p-0.5 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50"
               >
                 {isExpanded ? (
                   <ChevronDownIcon className="w-4 h-4" />

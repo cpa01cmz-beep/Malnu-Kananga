@@ -191,7 +191,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
     <div className="relative">
       <button
         onClick={handleToggleOpen}
-        className="relative p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+        className="relative p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900"
         aria-label={`Notifikasi (${unreadCount} belum dibaca)`}
         aria-expanded={isOpen}
         aria-controls="notification-dropdown"

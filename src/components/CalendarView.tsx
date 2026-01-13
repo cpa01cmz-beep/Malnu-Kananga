@@ -191,7 +191,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 ${!isCurrentMonth ? 'bg-neutral-50 text-neutral-400' : 'bg-white'}
                 ${isToday ? 'bg-blue-50' : ''}
                 ${isSelected ? 'ring-2 ring-blue-500' : ''}
-                hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
               aria-label={fullDateLabel}
               aria-selected={isSelected}
               tabIndex={isToday ? 0 : -1}
@@ -291,7 +291,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 onKeyDown={(e) => handleDateKeyDown(date, e)}
                 className={`min-h-[60px] p-1 border-r border-b cursor-pointer transition-colors
                   ${date.toDateString() === new Date().toDateString() ? 'bg-blue-50' : 'bg-white'}
-                  hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
                 role="gridcell"
                 aria-label={`${fullDayNames[date.getDay()]} ${date.getDate()}, ${hour}:00`}
                 tabIndex={0}
@@ -378,7 +378,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                     onClick={() => onEventClick?.(event)}
                     aria-label={getEventAriaLabel(event)}
                     className="p-4 border rounded-lg transition-all duration-200 ease-out text-left
-                      hover:shadow-md hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                      hover:shadow-md hover:border-neutral-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 w-full"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
