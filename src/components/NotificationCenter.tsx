@@ -213,7 +213,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
           <div
             id="notification-dropdown"
-            className="absolute right-0 mt-2 w-full sm:w-96 max-h-[80vh] bg-white dark:bg-neutral-900 rounded-xl shadow-card-hover z-50 overflow-hidden"
+            className="absolute right-0 mt-2 w-full sm:w-96 lg:w-[28rem] max-h-[80vh] bg-white dark:bg-neutral-900 rounded-xl shadow-card-hover z-50 overflow-hidden"
             role="dialog"
             aria-modal="true"
             aria-label="Pusat Notifikasi"

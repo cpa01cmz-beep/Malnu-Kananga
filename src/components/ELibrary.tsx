@@ -836,7 +836,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             className="p-2"
             aria-label="Pencarian lanjutan"
           >
-            <FunnelIcon className="w-5 h-5" />
+            <FunnelIcon className="w-5 h-5 sm:w-6 sm:h-6" />
           </Button>
           <Button
             onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
@@ -845,7 +845,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             className="p-2"
             aria-label="Tampilkan hanya favorit"
           >
-            <StarIcon className="w-5 h-5" />
+            <StarIcon className="w-5 h-5 sm:w-6 sm:h-6" />
           </Button>
           <Button
             onClick={() => setIsSemanticMode(!isSemanticMode)}
@@ -854,7 +854,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             className="p-2"
             aria-label="Pencarian semantik AI"
           >
-            <div className="w-5 h-5 flex items-center justify-center">
+            <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
               {isSemanticMode ? '🧠' : '🔍'}
             </div>
           </Button>
@@ -865,7 +865,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             className="p-2"
             aria-label="Opsi pencarian semantik"
           >
-            <div className="w-5 h-5 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
+            <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
               ⚙️
             </div>
           </Button>
@@ -876,7 +876,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             className="p-2"
             aria-label="Pengaturan OCR"
           >
-            <div className="w-5 h-5 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
+            <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
               <DocumentTextIcon />
             </div>
           </Button>
@@ -901,7 +901,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             className="p-2"
             aria-label="Bantuan perintah suara"
           >
-            <div className="w-5 h-5 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
+            <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
               ❓
             </div>
           </Button>
