@@ -479,7 +479,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   <div key={photo.id} className="relative group">
                     <img
                       src={photo.photoUrl}
-                      alt={photo.caption}
+                      alt={photo.caption || 'Foto kegiatan'}
                       className="w-full h-48 object-cover rounded-lg"
                     />
                     {photo.caption && (

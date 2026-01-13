@@ -72,10 +72,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 
   const ariaProps: Record<string, string | boolean> = {};
   
-  if (ariaLabel) {
+  if (iconOnly) {
+    ariaProps['aria-label'] = ariaLabel || '';
+  } else if (ariaLabel) {
     ariaProps['aria-label'] = ariaLabel;
-  } else if (iconOnly) {
-    console.warn('Button: iconOnly button requires ariaLabel prop for accessibility');
   }
   
   if (isLoading) {
