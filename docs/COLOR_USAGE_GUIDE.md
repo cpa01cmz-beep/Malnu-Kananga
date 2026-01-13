@@ -321,9 +321,7 @@ All colors automatically support dark mode:
 ## 📚 Documentation
 
 - **Complete Color Palette**: [docs/COLOR_PALETTE.md](./COLOR_PALETTE.md)
-- **Semantic Color System**: [docs/COLOR_SYSTEM.md](./COLOR_SYSTEM.md)
 - **Configuration**: [src/config/colors.ts](../src/config/colors.ts)
-- **Usage Examples**: [src/examples/colorSystemExamples.tsx](../src/examples/colorSystemExamples.tsx)
 
 ## 🤝 Support
 
