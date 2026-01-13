@@ -400,6 +400,25 @@
 
 
 ### P2: Medium
+- [x] Complete UI Component Index Export (COMPLETED 2026-01-13)
+    - Updated src/components/ui/index.ts to export all 32+ available components
+    - Organized exports into 9 logical categories for better discoverability:
+      - Form Components (7): Input, Select, Textarea, Label, FileInput, Toggle, SearchInput
+      - Button Components (5): Button, IconButton, GradientButton, BackButton, SmallActionButton
+      - Layout Components (6): Card, Modal, BaseModal, ConfirmationDialog, Section, ErrorBoundary, SkipLink
+      - Display Components (6): Heading, Badge, Alert, LinkCard, DashboardActionCard, SocialLink
+      - Table Components (2): Table (with subcomponents), DataTable
+      - Interactive Components (2): Tab, Toast
+      - Navigation Components (1): Pagination
+      - Loading Components (5): LoadingState (EmptyState, ErrorState), LoadingSpinner, SuspenseLoading, LoadingOverlay, Skeleton
+      - Progress Components (1): ProgressBar
+      - Utility Components (3): PageHeader, ErrorMessage, PDFExportButton
+    - Improved developer experience: Single import location for all UI components
+    - Eliminated need for longer relative import paths throughout codebase
+    - Enhanced component discoverability with logical categorization
+    - Maintained backward compatibility with FileUpload legacy export
+    - All components verified to exist and be properly typed
+    - See src/components/ui/index.ts for complete export list
 - [ ] Optimize bundle size to <500KB initial load
   - Implement code splitting for heavy modules
   - Lazy load non-critical components
