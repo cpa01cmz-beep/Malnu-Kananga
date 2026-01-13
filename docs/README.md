@@ -19,7 +19,7 @@ These files are operational instructions for AI agents and should not be conside
 ### 📚 Core Documentation
 - **[../README.md](../README.md)** - Project overview, features, and quick start guide (root-level)
 - **[BLUEPRINT.md](./BLUEPRINT.md)** - Project blueprint, architecture, and specifications
-- **[API Reference](./api-documentation.md)** - Complete API reference and endpoints
+- **[API Reference](./api-reference.md)** - Complete API reference and endpoints
 - **[Troubleshooting Guide](./troubleshooting-guide.md)** - Common issues and solutions
 
 ### 🔧 Development Documentation
@@ -75,7 +75,7 @@ These files are operational instructions for AI agents and should not be conside
 - **Test Files**: 81 test files (*.test.ts, *.test.tsx)
 - **Source Files (Non-Test)**: 245 files
 - **Documentation Files**: 18 (in /docs directory)
-- **Services**: 27 services in src/services/ (excluding .test., .types., and template files: aiCache.types.ts, emailTemplates.ts, notificationTemplates.ts)
+- **Services**: 25 services in src/services/ (excluding .test., .types., and template files: aiCache.types.ts, emailTemplates.ts, notificationTemplates.ts)
 - **Components**: 214 component files (40 exported from ui/index.ts)
 - **Total Tests**: 1494 (1460 passing, 24 failing, 10 skipped)
 - **Code Examples**: 20+
@@ -103,7 +103,7 @@ These files are operational instructions for AI agents and should not be conside
 ## Documentation Standards
 
 ### File Naming Conventions
-- Use kebab-case for file names (e.g., `api-documentation.md`)
+- Use kebab-case for file names (e.g., `api-reference.md`)
 - Use descriptive, self-explanatory names
 - All documentation resides in `/docs` directory
 
@@ -187,10 +187,10 @@ This index maintains relationships between documents:
 
 ## Recent Changes (v2.4.0 - 2026-01-13)
 
-       - **Repository Cleanup (2026-01-13 - Current)**:
-         - Synthesized TASK.md for improved clarity and conciseness (96 lines, already optimized)
-        - Corrected all documentation metrics to reflect actual codebase:
-          - Services: 27 (excluding .test., .types., and template files)
+   - **Repository Cleanup (2026-01-13 - Current)**:
+          - Synthesized TASK.md for improved clarity and conciseness (95 lines, already optimized)
+         - Corrected all documentation metrics to reflect actual codebase:
+           - Services: 25 (excluding .test., .types., and template files)
           - Components: 214 (down from 216)
           - UI components exported: 40 (correct)
         - Verified TypeScript and linting status (both passing)

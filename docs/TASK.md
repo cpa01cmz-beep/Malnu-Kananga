@@ -60,7 +60,7 @@
 - **Test Files**: 81 test files (*.test.ts, *.test.tsx)
 - **Source Files (Non-Test)**: 245 files
 - **Documentation Files**: 18 (in /docs directory)
-- **Services**: 27 services in src/services/ (excluding .test. and .types. files)
+- **Services**: 25 services in src/services/ (excluding .test., .types., and template files)
 - **Components**: 214 component files
   - UI components: 40 exported from src/components/ui/index.ts
   - Other components: 174
@@ -92,4 +92,4 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 7.0.0 | 2026-01-13 | Repository cleanup: Synthesized TASK.md for clarity, corrected metrics (27 services, 214 components), consolidated version history |
+| 7.0.0 | 2026-01-13 | Repository cleanup: Synthesized TASK.md for clarity, corrected metrics (25 services, 214 components), fixed broken links (api-documentation.md → api-reference.md), consolidated version history |

@@ -697,7 +697,7 @@ wrangler deploy --env production
 - [Cloudflare R2 Documentation](https://developers.cloudflare.com/r2/)
 - [Cloudflare Pages Documentation](https://developers.cloudflare.com/pages/)
 - [Wrangler CLI Documentation](https://developers.cloudflare.com/workers/wrangler/)
-- [API Reference](./api-documentation.md)
+- [API Reference](./api-reference.md)
 
 ## Quick Reference URLs
 
