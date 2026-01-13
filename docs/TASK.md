@@ -1,13 +1,13 @@
 # Task List
 
 **Last Updated**: 2026-01-13
-**Version**: 12.0.0
+**Version**: 12.1.0
 
 ## Current Goals
 
 ### P0: Critical (Blockers)
 
-- [ ] Fix test failures (35 failures across 11 test files)
+- [ ] Fix test failures (27 failures, 1458 passing, 10 skipped)
   - Button (2 failures) - Focus styles
   - Card (2 failures) - Focus styles in dark mode
   - ErrorBoundary (1 failure) - Error handling
@@ -16,7 +16,9 @@
   - PermissionManager (6 failures) - Permission UI component
   - SmallActionButton (2 failures) - Focus styles
   - StudentPortalValidator (4 failures) - Validation logic
-  - Other components (17 failures) - Various accessibility issues
+  - ProfileSection (3 failures) - Accessibility testing
+  - Other components (3 failures) - Various accessibility issues
+  - 2 unhandled errors in test framework (jsdom event dispatch)
 
 ### P1: High Priority
 
@@ -42,6 +44,11 @@
    - Several chunks exceed 300KB after minification
    - Implement better manual chunking strategy
 
+- [ ] Complete notification system migration
+   - Migrate from deprecated `pushNotificationService` to `unifiedNotificationManager`
+   - Update test mocks and references
+   - Remove deprecated services after migration complete
+
 ---
 
 ## System Status
@@ -50,8 +57,9 @@
 |--------|--------|---------|
 | TypeScript | ✅ Clean | No errors |
 | Linting | ⚠️ 2 errors | False positives in worker.js |
-| Tests | ❌ Failing | 35 failures, 1450 passing, 10 skipped |
+| Tests | ❌ Failing | 27 failures, 1458 passing, 10 skipped |
 | Security | ✅ Clean | 0 vulnerabilities |
+| Dependencies | ✅ Up to date | No outdated packages |
 | Build | ✅ Success | ~13s build time with chunk warnings |
 
 ---
@@ -65,6 +73,7 @@
 - [x] Semantic color system with WCAG compliance
 - [x] Accessibility improvements (WCAG 2.1 AA)
 - [x] Documentation consolidation and cleanup
+- [x] Repository audit and cleanup
 - [ ] Fix test failures
 - [ ] Complete UI component documentation
 - [ ] Bring test coverage to 80%+
@@ -74,6 +83,7 @@
 - [ ] Optimize bundle size to <500KB
 - [ ] Database query optimization
 - [ ] Reduce chunk sizes with better code splitting
+- [ ] Complete notification system migration
 
 ---
 
@@ -81,6 +91,5 @@
 
 | Version | Date | Changes |
 |---------|------|------|
-| 12.0.0 | 2026-01-13 | Repository audit: Removed duplicate test failure entries from TASK.md, confirmed all metrics accurate (246 source files, 81 test files, 327 total), verified documentation completeness, validated no deprecated code for removal |
-| 11.0.0 | 2026-01-13 | Repository audit: Corrected test metrics (35 failures, 1450 passing), corrected source file count (327 total/246 source), streamlined version history |
-| 10.0.0 | 2026-01-13 | Repository cleanup: Synthesized TASK.md for clarity, removed verbose version history, consolidated documentation structure |
+| 12.1.0 | 2026-01-13 | Repository audit cleanup: Synthesized TASK.md for clarity, corrected test metrics (27 failures, 1458 passing), streamlined version history, added notification migration task |
+| 12.0.0 | 2026-01-13 | Previous repository audit version |
