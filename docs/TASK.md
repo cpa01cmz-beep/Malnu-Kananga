@@ -57,9 +57,9 @@
 
 ## Repository Metrics (Updated 2026-01-13)
 
-- **Total Source Files**: 328 TypeScript/TSX files
+- **Total Source Files**: 326 TypeScript/TSX files
 - **Test Files**: 81 test files (*.test.ts, *.test.tsx)
-- **Source Files (Non-Test)**: 247 files
+- **Source Files (Non-Test)**: 245 files
 - **Documentation Files**: 18 (in /docs directory)
 - **Services**: 28 services in src/services/
 - **Components**: 158 components total
