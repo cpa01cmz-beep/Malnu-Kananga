@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-13
-**Version**: 2.4.1
+**Version**: 2.4.2
 
 ---
 
@@ -89,6 +89,14 @@
 - Users with accessibility needs receive enhanced contrast
 - Improved WCAG 2.1 AAA compliance for high-contrast mode
 
+### Color Palette Alignment (2026-01-13)
+- Fixed VoiceNotificationDemo component color system
+- Replaced hardcoded colors (bg-yellow-400, bg-red-400, bg-blue-400) with semantic colors
+- Updated to use proper dark mode variants (bg-*-600 dark:bg-*-500)
+- Replaced yellow warning note with neutral color scheme
+- Improved color consistency with design system
+- Enhanced dark mode support for notification type indicators
+
 ### Component Library & Design System
 - Created centralized UI components: Card, Modal, Button, Input, Select, Textarea, Alert, Badge, FileInput, Tab, IconButton, ProgressBar, etc.
 - Implemented CSS custom properties system for dynamic theming
@@ -153,10 +161,11 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 2.4.3 | 2026-01-13 | Enhanced Tab component with arrow key navigation, aria-label/orientation, and badge positioning fix |
-| 2.4.2 | 2026-01-13 | Enhanced Toast component with focus management for keyboard users and screen readers |
-| 2.4.1 | 2026-01-13 | Fixed Toggle component accessibility (aria-checked boolean coercion) |
-| 2.4.0 | 2026-01-13 | Synthesized task list, removed verbose completed items, improved clarity, updated test count |
+| 2.4.2 | 2026-01-13 | Color palette alignment for VoiceNotificationDemo component - fixed hardcoded colors to use semantic color system with proper dark mode support |
+| 2.4.1 | 2026-01-13 | Enhanced Tab component with arrow key navigation, aria-label/orientation, and badge positioning fix |
+| 2.4.0 | 2026-01-13 | Enhanced Toast component with focus management for keyboard users and screen readers |
+| 2.3.3 | 2026-01-13 | Fixed Toggle component accessibility (aria-checked boolean coercion) |
+| 2.3.2 | 2026-01-13 | Synthesized task list, removed verbose completed items, improved clarity, updated test count |
 | 2.3.0 | 2026-01-13 | Previous version with verbose details |
 | 2.2.0 | 2026-01-13 | Updated file counts to reflect actual codebase |
 | 2.1.0 | 2026-01-12 | Updated with recent accessibility improvements |
