@@ -2,7 +2,6 @@
 // Validates grades, schedules, materials, attendance, and offline data consistency
 
 import type { Grade, Schedule, Attendance, Student } from '../types';
-import { logger } from '../utils/logger';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -34,7 +33,6 @@ export interface DataConsistencyResult {
 const GRADE_WEIGHTS = { assignment: 0.3, mid: 0.3, final: 0.4 };
 const MIN_SCORE = 0;
 const MAX_SCORE = 100;
-const MIN_ATTENDANCE_PERCENTAGE = 75;
 const VALID_ATTENDANCE_STATUSES = ['hadir', 'sakit', 'izin', 'alpa'];
 const VALID_SUBJECT_NAMES = /^(matematika|bahasa\s+indonesia|bahasa\s+inggris|ipa|ips|fisika|kimia|biologi|sejarah|geografi|sosiologi|ekonomi|penjaskes|seni|pkn|agama|tik|prakarya)$/i;
 
@@ -304,7 +302,7 @@ export class StudentPortalValidator {
       };
     }
 
-    const { date, status, studentId, confirmedBy } = attendance;
+    const { date, status, studentId, recordedBy, classId, notes, createdAt } = attendance;
 
     if (!date || typeof date !== 'string') {
       errors.push('Tanggal kehadiran tidak valid');
@@ -323,8 +321,8 @@ export class StudentPortalValidator {
       errors.push('ID siswa tidak valid');
     }
 
-    if (!confirmedBy) {
-      warnings.push('Kehadiran belum dikonfirmasi oleh wali kelas');
+    if (!recordedBy) {
+      warnings.push('Kehadiran belum direkam');
     }
 
     return {
@@ -338,27 +336,23 @@ export class StudentPortalValidator {
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    if (!attendance.confirmedBy) {
-      errors.push('Kehadiran belum dikonfirmasi');
+    if (!attendance.recordedBy) {
+      errors.push('Kehadiran belum direkam');
       return { isValid: false, errors, warnings };
     }
 
-    if (attendance.confirmedBy !== teacherId) {
-      warnings.push('Kehadiran dikonfirmasi oleh guru yang berbeda');
-    }
-
-    const confirmationDate = attendance.confirmedAt
-      ? new Date(attendance.confirmedAt)
+    const recordedDate = attendance.createdAt
+      ? new Date(attendance.createdAt)
       : null;
 
-    if (!confirmationDate || isNaN(confirmationDate.getTime())) {
-      errors.push('Tanggal konfirmasi tidak valid');
+    if (!recordedDate || isNaN(recordedDate.getTime())) {
+      errors.push('Tanggal perekaman tidak valid');
     } else {
       const attendanceDate = new Date(attendance.date);
-      const daysDiff = Math.abs(confirmationDate.getTime() - attendanceDate.getTime()) / (1000 * 60 * 60 * 24);
+      const daysDiff = Math.abs(recordedDate.getTime() - attendanceDate.getTime()) / (1000 * 60 * 60 * 24);
 
       if (daysDiff > 7) {
-        warnings.push(`Konfirmasi kehadiran dilambatkan ${Math.floor(daysDiff)} hari setelah tanggal kehadiran`);
+        warnings.push(`Perekaman kehadiran dilambatkan ${Math.floor(daysDiff)} hari setelah tanggal kehadiran`);
       }
     }
 
@@ -381,10 +375,8 @@ export class StudentPortalValidator {
       };
     }
 
-    if (!student.name || typeof student.name !== 'string' || student.name.trim().length === 0) {
-      errors.push('Nama siswa tidak valid');
-    } else if (student.name.length < 3) {
-      errors.push('Nama siswa terlalu pendek (minimal 3 karakter)');
+    if (!student.nisn || typeof student.nisn !== 'string' || student.nisn.trim().length === 0) {
+      errors.push('NISN tidak valid');
     }
 
     if (!student.nis || typeof student.nis !== 'string' || student.nis.trim().length === 0) {
@@ -395,11 +387,7 @@ export class StudentPortalValidator {
       warnings.push('Informasi kelas tidak tersedia');
     }
 
-    if (student.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(student.email)) {
-      errors.push('Format email tidak valid');
-    }
-
-    if (student.phone && !/^[\d\s\-\+]+$/.test(student.phone)) {
+    if (student.phoneNumber && !/^\d[\s\-\+]+$/.test(student.phoneNumber)) {
       errors.push('Format nomor telepon tidak valid');
     }
 
