@@ -527,6 +527,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                               onClick={() => handleDeleteItem(item.id)}
                               className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 rounded-full transition-colors"
                               title="Hapus"
+                              aria-label="Hapus"
                             >
                               <TrashIcon className="w-4 h-4" />
                             </button>
