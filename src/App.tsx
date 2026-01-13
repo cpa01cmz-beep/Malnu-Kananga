@@ -38,7 +38,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { api } from './services/apiService';
 import { permissionService } from './services/permissionService';
 import { unifiedNotificationManager } from './services/unifiedNotificationManager';
-import { GRADIENT_CLASSES } from './config/gradients';
+
 
 // Auth Session Interface
 interface AuthSession {

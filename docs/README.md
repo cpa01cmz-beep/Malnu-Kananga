@@ -56,12 +56,12 @@ These files are operational instructions for AI agents and should not be conside
 4. Use [CODING_STANDARDS.md](./CODING_STANDARDS.md) for code guidelines
 
 ### For Administrators
-1. Review [API Reference](./api-documentation.md) for integration
+1. Review [API Reference](./api-reference.md) for integration
 2. Use [Troubleshooting Guide](./troubleshooting-guide.md) for issue resolution
 
 ### For DevOps Engineers
 1. Read [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete deployment steps
-2. See [API Reference](./api-documentation.md) for backend endpoints
+2. See [API Reference](./api-reference.md) for backend endpoints
 
 ### For Project Managers
 1. Review [BLUEPRINT.md](./BLUEPRINT.md) for project specifications
@@ -187,8 +187,8 @@ This index maintains relationships between documents:
 
 ## Recent Changes (v2.4.0 - 2026-01-13)
 
-   - **Repository Cleanup (2026-01-13 - Current)**:
-        - Synthesized TASK.md for improved clarity and conciseness (99→58 lines)
+       - **Repository Cleanup (2026-01-13 - Current)**:
+         - Synthesized TASK.md for improved clarity and conciseness (96 lines, already optimized)
         - Corrected all documentation metrics to reflect actual codebase:
           - Services: 27 (excluding .test., .types., and template files)
           - Components: 214 (down from 216)
