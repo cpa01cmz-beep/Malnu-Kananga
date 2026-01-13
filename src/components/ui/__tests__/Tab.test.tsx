@@ -424,6 +424,141 @@ describe('Tab', () => {
       expect(mockOnTabChange).toHaveBeenCalledWith('trends');
     });
 
+    it('responds to ArrowRight key for horizontal orientation', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+          orientation="horizontal"
+        />
+      );
+
+      const activeTab = screen.getByText('Ringkasan');
+      fireEvent.keyDown(activeTab, { key: 'ArrowRight' });
+      expect(mockOnTabChange).toHaveBeenCalledWith('trends');
+    });
+
+    it('responds to ArrowLeft key for horizontal orientation', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="trends"
+          onTabChange={mockOnTabChange}
+          orientation="horizontal"
+        />
+      );
+
+      const activeTab = screen.getByText('Tren Nilai');
+      fireEvent.keyDown(activeTab, { key: 'ArrowLeft' });
+      expect(mockOnTabChange).toHaveBeenCalledWith('overview');
+    });
+
+    it('responds to ArrowDown key for vertical orientation', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+          orientation="vertical"
+        />
+      );
+
+      const activeTab = screen.getByText('Ringkasan');
+      fireEvent.keyDown(activeTab, { key: 'ArrowDown' });
+      expect(mockOnTabChange).toHaveBeenCalledWith('trends');
+    });
+
+    it('responds to ArrowUp key for vertical orientation', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="trends"
+          onTabChange={mockOnTabChange}
+          orientation="vertical"
+        />
+      );
+
+      const activeTab = screen.getByText('Tren Nilai');
+      fireEvent.keyDown(activeTab, { key: 'ArrowUp' });
+      expect(mockOnTabChange).toHaveBeenCalledWith('overview');
+    });
+
+    it('skips disabled tabs when navigating with arrow keys', () => {
+      const optionsWithDisabled: TabOption[] = [
+        { id: 'overview', label: 'Ringkasan' },
+        { id: 'trends', label: 'Tren Nilai', disabled: true },
+        { id: 'goals', label: 'Target Prestasi' },
+      ];
+
+      render(
+        <Tab
+          options={optionsWithDisabled}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+          orientation="horizontal"
+        />
+      );
+
+      const activeTab = screen.getByText('Ringkasan');
+      fireEvent.keyDown(activeTab, { key: 'ArrowRight' });
+      expect(mockOnTabChange).toHaveBeenCalledWith('goals');
+    });
+
+    it('has aria-label on tablist', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+        />
+      );
+
+      const tablist = screen.getByRole('tablist');
+      expect(tablist).toHaveAttribute('aria-label', 'Tabs');
+    });
+
+    it('uses custom aria-label when provided', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+          aria-label="Main Navigation"
+        />
+      );
+
+      const tablist = screen.getByRole('tablist');
+      expect(tablist).toHaveAttribute('aria-label', 'Main Navigation');
+    });
+
+    it('has aria-orientation="horizontal" by default', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+        />
+      );
+
+      const tablist = screen.getByRole('tablist');
+      expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
+    });
+
+    it('has aria-orientation="vertical" when orientation is vertical', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+          orientation="vertical"
+        />
+      );
+
+      const tablist = screen.getByRole('tablist');
+      expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
+    });
+
     it('sets disabled attribute on disabled tabs', () => {
       const optionsWithDisabled: TabOption[] = [
         { id: 'overview', label: 'Ringkasan' },

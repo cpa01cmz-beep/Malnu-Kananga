@@ -6,6 +6,7 @@ import Select from './ui/Select';
 import Textarea from './ui/Textarea';
 import Badge from './ui/Badge';
 import Modal from './ui/Modal';
+import { EmptyState } from './ui/LoadingState';
 
 interface TemplateManagementProps {
   templates: NotificationTemplate[];
@@ -26,6 +27,7 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
   const [showTestModal, setShowTestModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<NotificationTemplate | null>(null);
   const [testVariables, setTestVariables] = useState<Record<string, string>>({});
+  const [sendingNotification, setSendingNotification] = useState(false);
   
   const [newTemplate, setNewTemplate] = useState({
     name: '',
@@ -72,6 +74,8 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
   const handleTestNotification = async () => {
     if (!selectedTemplate) return;
 
+    setSendingNotification(true);
+
     const notification = createNotificationFromTemplate(selectedTemplate.id, testVariables);
     if (notification) {
       await showNotification(notification);
@@ -84,6 +88,8 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
         onShowToast('Gagal membuat notifikasi dari template', 'error');
       }
     }
+
+    setSendingNotification(false);
   };
 
   const getTypeVariant = (type: PushNotification['type']): 'info' | 'success' | 'purple' | 'warning' | 'indigo' | 'error' | 'neutral' => {
@@ -111,9 +117,7 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
       </div>
 
       {templates.length === 0 ? (
-        <div className="text-center py-8 text-neutral-500">
-          <p>Belum ada template notifikasi</p>
-        </div>
+        <EmptyState message="Belum ada template notifikasi" size="md" />
       ) : (
         <div className="space-y-3">
           {templates.map((template) => (
@@ -275,12 +279,15 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
               onClick={handleTestNotification}
               variant="success"
               fullWidth
+              isLoading={sendingNotification}
+              disabled={sendingNotification}
             >
-              Kirim Notifikasi Tes
+              {sendingNotification ? 'Mengirim...' : 'Kirim Notifikasi Tes'}
             </Button>
             <Button
               onClick={() => setShowTestModal(false)}
               variant="secondary"
+              disabled={sendingNotification}
             >
               Batal
             </Button>

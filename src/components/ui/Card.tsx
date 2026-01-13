@@ -95,7 +95,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
 
     switch (variant) {
       case 'hover':
-        classes += ' hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02]';
+        classes += ' hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900';
         break;
       case 'interactive':
         classes += ' hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 active:scale-95 text-left group';
