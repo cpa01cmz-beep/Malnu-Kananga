@@ -20,6 +20,7 @@ export interface TabProps {
   color?: TabColor;
   className?: string;
   orientation?: 'horizontal' | 'vertical';
+  'aria-label'?: string;
 }
 
 const Tab: React.FC<TabProps> = ({
@@ -30,6 +31,7 @@ const Tab: React.FC<TabProps> = ({
   color = 'green',
   className = '',
   orientation = 'horizontal',
+  'aria-label': ariaLabel = 'Tabs',
 }) => {
   const containerClasses = orientation === 'horizontal'
     ? 'flex gap-2 overflow-x-auto pb-2'
@@ -85,9 +87,22 @@ const Tab: React.FC<TabProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, tabId: string) => {
+    const enabledOptions = options.filter((opt) => !opt.disabled);
+    const currentEnabledIndex = enabledOptions.findIndex((opt) => opt.id === tabId);
+
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       onTabChange(tabId);
+    } else if (orientation === 'horizontal' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+      e.preventDefault();
+      const direction = e.key === 'ArrowRight' ? 1 : -1;
+      const nextEnabledIndex = (currentEnabledIndex + direction + enabledOptions.length) % enabledOptions.length;
+      onTabChange(enabledOptions[nextEnabledIndex].id);
+    } else if (orientation === 'vertical' && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+      e.preventDefault();
+      const direction = e.key === 'ArrowDown' ? 1 : -1;
+      const nextEnabledIndex = (currentEnabledIndex + direction + enabledOptions.length) % enabledOptions.length;
+      onTabChange(enabledOptions[nextEnabledIndex].id);
     }
   };
 
@@ -95,7 +110,12 @@ const Tab: React.FC<TabProps> = ({
     <div className={className}>
       {variant === 'border' && (
         <div className="border-b border-neutral-200 dark:border-neutral-700">
-          <nav className="flex space-x-8 px-6" role="tablist" aria-label="Tabs">
+          <nav
+            className="flex space-x-8 px-6"
+            role="tablist"
+            aria-label={ariaLabel}
+            aria-orientation={orientation}
+          >
             {options.map((option) => (
               <button
                 key={option.id}
@@ -106,7 +126,7 @@ const Tab: React.FC<TabProps> = ({
                 aria-selected={activeTab === option.id}
                 aria-controls={`panel-${option.id}`}
                 tabIndex={activeTab === option.id ? 0 : -1}
-                className={getButtonClasses(option.id)}
+                className={`relative ${getButtonClasses(option.id)}`}
               >
                 {option.icon && <option.icon className="w-4 h-4" />}
                 {option.label}
@@ -125,7 +145,7 @@ const Tab: React.FC<TabProps> = ({
       )}
 
       {variant !== 'border' && (
-        <div className={containerClasses} role="tablist">
+        <div className={containerClasses} role="tablist" aria-label={ariaLabel} aria-orientation={orientation}>
           {options.map((option) => (
             <button
               key={option.id}
@@ -136,7 +156,7 @@ const Tab: React.FC<TabProps> = ({
               aria-selected={activeTab === option.id}
               aria-controls={`panel-${option.id}`}
               tabIndex={activeTab === option.id ? 0 : -1}
-              className={getButtonClasses(option.id)}
+              className={`relative ${getButtonClasses(option.id)}`}
             >
               {option.icon && <option.icon className="w-4 h-4" />}
               {option.label}

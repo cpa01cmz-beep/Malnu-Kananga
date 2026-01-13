@@ -102,6 +102,8 @@
 - Replaced blocking confirm dialogs with accessible ConfirmationDialog
 - Added comprehensive ARIA labels and keyboard navigation support
 - Fixed Toggle component aria-checked attribute to always be boolean (2026-01-13)
+- Enhanced Tab component accessibility with arrow key navigation, aria-label, and aria-orientation (2026-01-13)
+- Fixed badge positioning in Tab component border variant (2026-01-13)
 
 ### Loading States & UX
 - Added loading states to OsisEvents (4 states), BatchManagement, UserManagement, ChildDataErrorBoundary
@@ -151,6 +153,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.4.3 | 2026-01-13 | Enhanced Tab component with arrow key navigation, aria-label/orientation, and badge positioning fix |
 | 2.4.2 | 2026-01-13 | Enhanced Toast component with focus management for keyboard users and screen readers |
 | 2.4.1 | 2026-01-13 | Fixed Toggle component accessibility (aria-checked boolean coercion) |
 | 2.4.0 | 2026-01-13 | Synthesized task list, removed verbose completed items, improved clarity, updated test count |
