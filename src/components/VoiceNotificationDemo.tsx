@@ -144,7 +144,7 @@ const VoiceNotificationDemo: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-3 h-3 bg-yellow-400 dark:bg-yellow-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-yellow-600 dark:bg-yellow-500 rounded-full"></div>
                 <h4 className="font-semibold text-neutral-900 dark:text-neutral-100">
                   Notifikasi Nilai
                 </h4>
@@ -166,7 +166,7 @@ const VoiceNotificationDemo: React.FC = () => {
 
             <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-3 h-3 bg-red-400 dark:bg-red-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-red-600 dark:bg-red-500 rounded-full"></div>
                 <h4 className="font-semibold text-neutral-900 dark:text-neutral-100">
                   Notifikasi Kehadiran
                 </h4>
@@ -188,7 +188,7 @@ const VoiceNotificationDemo: React.FC = () => {
 
             <div className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-3 h-3 bg-blue-400 dark:bg-blue-500 rounded-full"></div>
+                <div className="w-3 h-3 bg-blue-600 dark:bg-blue-500 rounded-full"></div>
                 <h4 className="font-semibold text-neutral-900 dark:text-neutral-100">
                   Notifikasi Sistem
                 </h4>
@@ -243,8 +243,8 @@ const VoiceNotificationDemo: React.FC = () => {
             <li>5. <strong>Kontrol</strong> - Gunakan tombol Stop untuk menghentikan pembacaan</li>
           </ol>
           
-          <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+          <div className="mt-4 p-3 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg">
+            <p className="text-sm text-neutral-700 dark:text-neutral-300">
               <strong>Catatan:</strong> Fitur ini berfungsi baik di browser modern yang mendukung Web Speech API 
               (Chrome, Edge, Safari). Pastikan volume perangkat aktif.
             </p>

@@ -276,7 +276,7 @@ const App: React.FC = () => {
   return (
     <NotificationProvider>
       <ErrorBoundary>
-        <div className={`${GRADIENT_CLASSES.APP_BACKGROUND} w-full min-h-screen font-sans antialiased text-[color:var(--color-text)] transition-colors duration-300`}>
+        <div className={`${GRADIENT_CLASSES.APP_BACKGROUND} w-full min-h-screen font-sans antialiased text-neutral-900 dark:text-neutral-100 transition-colors duration-300`}>
       <SkipLink
         targets={[
           { id: 'main-nav', label: 'Langsung ke navigasi utama' },

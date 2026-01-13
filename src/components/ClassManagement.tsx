@@ -17,6 +17,7 @@ import ErrorMessage from './ui/ErrorMessage';
 import AccessDenied from './AccessDenied';
 import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
+import { CardSkeleton, TableSkeleton } from './ui/Skeleton';
 
 interface ClassStudent {
   id: string;
@@ -262,18 +263,9 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
           onBackButtonClick={onBack}
           backButtonLabel="Kembali ke Dashboard"
         />
-        <ErrorMessage
-          title="Error Loading Class Data"
-          message={error || "Terjadi kesalahan saat memuat data kelas"}
-          variant="card"
-        />
-        <div className="text-center">
-          <Button
-            onClick={fetchStudents}
-            variant="red-solid"
-          >
-            Coba Lagi
-          </Button>
+        <div className="space-y-6">
+          <CardSkeleton />
+          <TableSkeleton rows={10} cols={4} />
         </div>
       </div>
     );

@@ -155,6 +155,12 @@ describe('Card', () => {
       expect(button).toHaveClass('focus:outline-none', 'focus:ring-2');
     });
 
+    it('hover variant with onClick has focus ring classes', () => {
+      render(<Card variant="hover" onClick={vi.fn()}>Hover Card</Card>);
+      const button = screen.getByRole('button');
+      expect(button).toHaveClass('focus:outline-none', 'focus:ring-2', 'focus:ring-primary-500/50', 'focus:ring-offset-2');
+    });
+
     it('has keyboard focus on interactive cards', async () => {
       const user = userEvent.setup();
       render(<Card variant="interactive">Focusable Card</Card>);
