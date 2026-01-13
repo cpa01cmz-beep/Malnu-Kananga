@@ -294,6 +294,34 @@ src/
    - See `src/components/ui/GradientButton.tsx` for implementation details
 
    ### 3.26 UI Component Index Completion (Fase 5 - COMPLETED 2026-01-13)
+    - Updated `src/components/ui/index.ts` to export all 32+ available UI components
+    - Organized exports into 9 logical categories for better discoverability:
+      - Form Components (7): Input, Select, Textarea, Label, FileInput, Toggle, SearchInput
+      - Button Components (5): Button, IconButton, GradientButton, BackButton, SmallActionButton
+      - Layout Components (7): Card, Modal, BaseModal, ConfirmationDialog, Section, ErrorBoundary, SkipLink
+      - Display Components (6): Heading, Badge, Alert, LinkCard, DashboardActionCard, SocialLink
+      - Table Components (2): Table (with Thead, Tbody, Tfoot, Tr, Th, Td), DataTable
+      - Interactive Components (2): Tab, Toast
+      - Navigation Components (1): Pagination
+      - Loading Components (5): LoadingState (EmptyState, ErrorState), LoadingSpinner, SuspenseLoading, LoadingOverlay, Skeleton
+      - Progress Components (1): ProgressBar
+      - Utility Components (3): PageHeader, ErrorMessage, PDFExportButton
+    - Improved developer experience: Single import location for all UI components
+    - Eliminated need for longer relative import paths throughout codebase
+    - Enhanced component discoverability with logical categorization and comments
+    - Maintained backward compatibility with legacy FileUpload export
+    - All components verified to exist, be properly typed, and support accessibility
+    - Developers can now use concise imports like: `import { Button, Input, Modal } from './components/ui'`
+    - See `src/components/ui/index.ts` for complete export list and component organization
+
+    ### 3.27 High-Contrast Accessibility Fix (Fase 5 - COMPLETED 2026-01-13)
+    - Fixed broken `@media (prefers-contrast: high)` media query in `src/styles/themes.css`
+    - Replaced non-existent CSS variables (`--color-border`, `--color-text`, `--color-background`) with correct Tailwind v4 format
+    - Implemented proper `--theme-neutral-*` and `--theme-primary-*` variable overrides
+    - Added separate high-contrast overrides for light mode (`:root`) and dark mode (`.dark`)
+    - Enhanced contrast ratios to meet WCAG 2.1 AAA standards for high-contrast preference
+    - Users with high-contrast OS preference now receive improved visual clarity
+    - See `src/styles/themes.css:204-221` for implementation
    - Updated `src/components/ui/index.ts` to export all 32+ available UI components
    - Organized exports into 9 logical categories for better discoverability:
      - Form Components (7): Input, Select, Textarea, Label, FileInput, Toggle, SearchInput
