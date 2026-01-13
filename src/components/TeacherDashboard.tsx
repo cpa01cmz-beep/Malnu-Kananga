@@ -19,6 +19,7 @@ import Card from './ui/Card';
 import DashboardActionCard from './ui/DashboardActionCard';
 import ErrorMessage from './ui/ErrorMessage';
 import { CardSkeleton } from './ui/Skeleton';
+import OfflineBanner from './ui/OfflineBanner';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import type { VoiceCommand } from '../types';
 import VoiceInputButton from './VoiceInputButton';
@@ -257,9 +258,17 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        {/* Offline Banner */}
+        <OfflineBanner
+          mode={(!isOnline && isSlow) ? 'both' : !isOnline ? 'offline' : 'slow'}
+          show={!isOnline || isSlow}
+          cachedDataAvailable={!!localStorage.getItem(STORAGE_KEYS.TEACHER_DASHBOARD_CACHE)}
+          cachedDataInfo="Data terakhir dari cache"
+        />
+
         {/* Offline/ Error State */}
         {error && (
-          <ErrorMessage 
+          <ErrorMessage
             message={error}
             variant="card"
             className="mb-6"
