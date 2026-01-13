@@ -38,6 +38,7 @@ const ProfileSection: React.FC = () => {
                   type="button"
                   className={`w-full text-left p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800`}
                   aria-labelledby="visi-heading"
+                  aria-label="Lihat detail Visi"
                 >
                     <div className="flex items-center gap-3 mb-4">
                         <div className={`p-3 ${GRADIENT_CLASSES.PRIMARY_LIGHT} dark:from-primary-900/60 dark:to-primary-900/80 rounded-lg shadow-subtle hover:scale-105 transition-transform duration-200`} aria-hidden="true">
@@ -54,6 +55,7 @@ const ProfileSection: React.FC = () => {
                   type="button"
                   className={`w-full text-left p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800`}
                   aria-labelledby="misi-heading"
+                  aria-label="Lihat detail Misi"
                 >
                     <div className="flex items-center gap-3 mb-4">
                         <div className={`p-3 ${GRADIENT_CLASSES.PRIMARY_LIGHT} dark:from-primary-900/60 dark:to-primary-900/80 rounded-lg shadow-subtle hover:scale-105 transition-transform duration-200`} aria-hidden="true">

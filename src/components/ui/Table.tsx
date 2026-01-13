@@ -74,20 +74,22 @@ const Table = forwardRef<HTMLTableElement, TableProps>( // eslint-disable-line n
       ${className}
     `.replace(/\s+/g, ' ').trim();
 
+    const descriptionId = description ? `table-desc-${Math.random().toString(36).substr(2, 9)}` : undefined;
+
     return (
       <table
         ref={ref}
         className={classes}
         role="table"
         aria-label={ariaLabel || caption}
-        aria-describedby={description ? `table-desc-${Math.random().toString(36).substr(2, 9)}` : undefined}
+        aria-describedby={descriptionId}
         {...props}
       >
         {caption && (
           <caption className="sr-only">
             {caption}
-            {description && (
-              <span id={`table-desc-${Math.random().toString(36).substr(2, 9)}`} className="sr-only">
+            {description && descriptionId && (
+              <span id={descriptionId} className="sr-only">
                 {description}
               </span>
             )}

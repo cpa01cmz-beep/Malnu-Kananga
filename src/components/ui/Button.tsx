@@ -69,12 +69,20 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     ${isLoading ? 'cursor-wait' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
-
-  const computedAriaLabel = iconOnly ? (ariaLabel || (typeof children === 'string' ? children : 'Button')) : undefined;
-
+ 
+  const computedAriaLabel = iconOnly
+    ? ariaLabel || (typeof children === 'string' ? children : 'Button')
+    : undefined;
+  
   const ariaProps: Record<string, string | boolean | undefined> = {
     'aria-label': computedAriaLabel,
   };
+
+  if (iconOnly && !ariaLabel && typeof children !== 'string') {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Button: When using iconOnly without ariaLabel, please provide a descriptive ariaLabel for screen reader accessibility.');
+    }
+  }
 
   if (isLoading) {
     ariaProps['aria-busy'] = 'true';

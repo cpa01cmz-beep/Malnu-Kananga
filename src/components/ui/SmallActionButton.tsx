@@ -8,6 +8,7 @@ interface SmallActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
   fullWidth?: boolean;
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
+  ariaLabel?: string;
   children: React.ReactNode;
 }
 
@@ -29,6 +30,7 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
   fullWidth = false,
   icon,
   iconPosition = 'left',
+  ariaLabel,
   children,
   className = '',
   disabled,
@@ -42,7 +44,9 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
-  const ariaProps: Record<string, string | boolean | undefined> = {};
+  const ariaProps: Record<string, string | boolean | undefined> = {
+    'aria-label': ariaLabel,
+  };
   
   if (isLoading) {
     ariaProps['aria-busy'] = 'true';
