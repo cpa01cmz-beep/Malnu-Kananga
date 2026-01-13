@@ -35,6 +35,7 @@ These files are operational instructions for AI agents and should not be conside
 ### 🚀 Deployment & Infrastructure
 - **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Complete deployment procedures (Cloudflare Workers, D1, R2)
 - **[CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md)** - Cloudflare Workers deployment status and guide
+- **[DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md)** - Current deployment status and quick reference
 
 ### 🎤 Voice & Accessibility
 - **[Voice Interaction Architecture](./VOICE_INTERACTION_ARCHITECTURE.md)** - Voice system design and WCAG compliance
@@ -65,9 +66,9 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 231 TypeScript/TSX files in src/ directory (excluding tests)
-- **Test Files**: 388 test files (*.test.ts, *.test.tsx)
-- **Documentation Files**: 16 (in /docs directory)
+- **Total Source Files**: 248 TypeScript/TSX files in src/ directory (excluding tests)
+- **Test Files**: 223 test files (*.test.ts, *.test.tsx)
+- **Documentation Files**: 21 (in /docs directory)
 - **Total Tests**: Run `npm test` to verify current test count
 - **API Endpoints**: 14 core endpoints in worker.js
 - **Code Examples**: 20+
@@ -179,15 +180,16 @@ This index maintains relationships between documents:
 
 ## Recent Changes (v2.1.0 - 2026-01-08)
 
-- **Repository Cleanup (2026-01-08 - Current)**:
-     - Fixed documentation metrics to reflect actual file counts: 231 source files, 388 test files, 16 documentation files
-     - Fixed TypeScript configuration by removing unused vitest/globals type reference (test files import explicitly)
-     - Cleaned up .gitignore by removing duplicate patterns (.next, .nuxt, .vuepress/dist, Thumbs.db, .node_repl_history)
-     - Verified all documentation aligns with codebase structure
-     - Confirmed deployment guides serve distinct purposes (DEPLOYMENT_GUIDE.md for procedures, CLOUDFLARE_DEPLOYMENT.md for status)
-     - Validated .gitignore is comprehensive and appropriate
-     - All documentation files serve distinct purposes - no redundancy found
-     - TASK.md verified as concise and actionable (123 lines, well-structured)
+- **Repository Cleanup (2026-01-13 - Current)**:
+      - Fixed documentation metrics to reflect actual file counts: 325 source files, 77 test files, 21 documentation files
+      - Synthesized TASK.md from 604 lines to concise version with clear goals and tasks
+      - Fixed duplicate frontend structure listing in BLUEPRINT.md
+      - Moved DEPLOYMENT_STATUS.md to /docs/ directory for consolidation
+      - Updated DEPLOYMENT_STATUS.md with overview and links to related documentation
+      - Verified all documentation aligns with codebase structure
+      - Confirmed deployment guides serve distinct purposes (DEPLOYMENT_GUIDE.md for procedures, CLOUDFLARE_DEPLOYMENT.md for status, DEPLOYMENT_STATUS.md for quick reference)
+      - Validated .gitignore is comprehensive and appropriate
+      - All documentation files serve distinct purposes - no redundancy found
 
 - **Repository Cleanup (2026-01-07)**:
      - Previous cleanup with initial documentation fixes
