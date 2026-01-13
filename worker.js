@@ -1216,7 +1216,7 @@ async function handleSendEmail(request, env, corsHeaders) {
   }
 }
 
-async function sendViaSendGrid(env, { to, cc, _bcc, subject, html, text, _attachments }) {
+async function sendViaSendGrid(env, { to, cc, _bcc, subject, html, text, attachments }) {
   try {
     const sendGridApiKey = env.SENDGRID_API_KEY;
     if (!sendGridApiKey) {
@@ -1270,7 +1270,7 @@ async function sendViaSendGrid(env, { to, cc, _bcc, subject, html, text, _attach
   }
 }
 
-async function sendViaMailgun(env, { to, cc, _bcc, subject, html, text, _attachments }) {
+async function sendViaMailgun(env, { to, cc, _bcc, subject, html, text, attachments }) {
   try {
     const mailgunApiKey = env.MAILGUN_API_KEY;
     const mailgunDomain = env.MAILGUN_DOMAIN;

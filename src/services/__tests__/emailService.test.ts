@@ -397,8 +397,9 @@ describe('EmailQueueService', () => {
       };
 
       const item = emailQueueService.enqueue(emailData);
-      
+
       for (let i = 0; i < 4; i++) {
+        emailQueueService.markAsProcessing(item.id);
         emailQueueService.markAsFailed(item.id, 'Test error');
       }
 
