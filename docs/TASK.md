@@ -1,7 +1,7 @@
 # Task List
 
 **Last Updated**: 2026-01-13
-**Version**: 5.0.0
+**Version**: 6.0.0
 
 ---
 
@@ -20,8 +20,8 @@
 ### P1: High Priority
 
 - [ ] Complete UI component documentation
-  - Document all 32+ UI components from `src/components/ui/index.ts`
-  - Current: 7/32 documented
+  - Document all 40 UI components from `src/components/ui/index.ts`
+  - Current: 7/40 documented
   - See `docs/UI_COMPONENTS.md` for TODO list
 
 - [ ] Implement backend WebSocket support
@@ -57,14 +57,14 @@
 
 ## Repository Metrics (Updated 2026-01-13)
 
-- **Total Source Files**: 326 TypeScript/TSX files
+- **Total Source Files**: 328 TypeScript/TSX files
 - **Test Files**: 81 test files (*.test.ts, *.test.tsx)
-- **Source Files (Non-Test)**: 245 files
+- **Source Files (Non-Test)**: 247 files
 - **Documentation Files**: 18 (in /docs directory)
 - **Services**: 28 services in src/services/
-- **Components**: 159 components total
-  - UI components: 33 exported (32 active + 1 legacy)
-  - Feature components: ~126
+- **Components**: 158 components total
+  - UI components: 40 exported from index.ts
+  - Feature components: ~118
 - **Total Tests**: 1494 (1460 passing, 24 failing, 10 skipped)
 
 ---
@@ -73,7 +73,7 @@
 
 ### Q1 2026 (January - March)
 - [x] Color system migration (gray → neutral)
-- [x] Reusable UI component library (32+ components)
+- [x] Reusable UI component library (40 components)
 - [x] CSS custom properties for theming
 - [x] Semantic color system with WCAG compliance
 - [x] Accessibility improvements (WCAG 2.1 AA)
@@ -93,5 +93,5 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 6.0.0 | 2026-01-13 | Repository cleanup: Corrected all metrics (328 total files, 247 source, 40 UI components, 158 total components), updated documentation references, verified security (0 vulnerabilities), confirmed .gitignore completeness |
 | 5.0.0 | 2026-01-13 | Repository maintenance: Updated all metrics, removed obsolete service references, fixed test counts, updated TypeScript/linting status to reflect current state |
-| 4.0.0 | 2026-01-13 | Previous version with outdated service references and metrics |

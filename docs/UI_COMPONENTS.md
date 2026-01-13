@@ -1,17 +1,17 @@
 # UI Components Documentation
 
-**Status**: ⚠️ INCOMPLETE (7 of 32 components documented)
+**Status**: ⚠️ INCOMPLETE (7 of 40 components documented)
 **Last Updated**: 2026-01-13
 
-> **IMPORTANT**: This document currently covers only 7 of the 32 exported UI components from `src/components/ui/index.ts`. The following 25 components are missing documentation:
+> **IMPORTANT**: This document currently covers only 7 of the 40 exported UI components from `src/components/ui/index.ts`. The following 33 components are missing documentation:
 > - Form: Textarea, Toggle, SearchInput, Label
-> - Buttons: GradientButton, SmallActionButton
+> - Buttons: GradientButton, SmallActionButton, BackButton
 > - Layout: Modal, BaseModal, ConfirmationDialog, Section, ErrorBoundary, SkipLink
-> - Display: Heading, Badge, Alert, DashboardActionCard, SocialLink
+> - Display: Heading, Badge, Alert, DashboardActionCard, SocialLink, LinkCard
 > - Table: Table (with sub-components), DataTable
 > - Interactive: Tab
 > - Navigation: Pagination
-> - Loading: LoadingSpinner, LoadingOverlay, Skeleton
+> - Loading: LoadingState, EmptyState, ErrorState, LoadingSpinner, SuspenseLoading, LoadingOverlay, Skeleton
 > - Progress: ProgressBar
 > - Utility: PageHeader, ErrorMessage, PDFExportButton
 >
