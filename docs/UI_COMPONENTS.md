@@ -1,5 +1,22 @@
 # UI Components Documentation
 
+**Status**: ⚠️ INCOMPLETE (7 of 32 components documented)
+**Last Updated**: 2026-01-13
+
+> **IMPORTANT**: This document currently covers only 7 of the 32 exported UI components from `src/components/ui/index.ts`. The following 25 components are missing documentation:
+> - Form: Textarea, Toggle, SearchInput, Label
+> - Buttons: GradientButton, SmallActionButton
+> - Layout: Modal, BaseModal, ConfirmationDialog, Section, ErrorBoundary, SkipLink
+> - Display: Heading, Badge, Alert, DashboardActionCard, SocialLink
+> - Table: Table (with sub-components), DataTable
+> - Interactive: Tab
+> - Navigation: Pagination
+> - Loading: LoadingSpinner, LoadingOverlay, Skeleton
+> - Progress: ProgressBar
+> - Utility: PageHeader, ErrorMessage, PDFExportButton
+>
+> See `src/components/ui/index.ts` for complete export list. Documentation updates are tracked in TASK.md (P1 priority).
+
 ## Overview
 
 This document provides usage examples and guidelines for reusable UI components in MA Malnu Kananga application.

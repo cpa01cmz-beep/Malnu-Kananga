@@ -1,5 +1,10 @@
 # WebSocket Real-Time Implementation
 
+**Status**: ⚠️ PARTIALLY IMPLEMENTED (94 code usages found, architecture documented)
+**Last Updated**: 2026-01-13
+
+> **Note**: WebSocket infrastructure is in use across the codebase (`useWebSocket.ts` hook, `webSocketService.ts`, real-time subscriptions), but full implementation with all features described in this document is not yet complete. This document serves as the architectural plan and reference for ongoing development.
+
 ## Overview
 
 This implementation provides real-time data synchronization for the MA Malnu Kananga school management system using WebSocket technology with offline-first fallback support.

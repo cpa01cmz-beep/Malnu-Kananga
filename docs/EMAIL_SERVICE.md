@@ -1,5 +1,10 @@
 # Email Service Documentation
 
+**Status**: ⚠️ PLANNED (Architecture documented, not yet implemented)
+**Last Updated**: 2026-01-13
+
+> **Note**: Email service infrastructure is defined in this document with service files (`emailService.ts`, `emailTemplates.ts`, `emailQueueService.ts`), but full backend integration with email providers and production deployment is not yet complete. This document serves as an architectural plan and reference for future implementation.
+
 ## Overview
 
 The Email Service provides a comprehensive email sending solution with template support, offline queue, and delivery tracking. It integrates with multiple email providers (SendGrid, Mailgun, Cloudflare Email) and includes Indonesian language templates for school communications.

@@ -39,6 +39,12 @@ These files are operational instructions for AI agents and should not be conside
 ### 🎤 Voice & Accessibility
 - **[Voice Interaction Architecture](./VOICE_INTERACTION_ARCHITECTURE.md)** - Voice system design and WCAG compliance
 
+### 🔌 Advanced Architecture (Planned/In Progress)
+- **[WebSocket Implementation](./WEBSOCKET_IMPLEMENTATION.md)** - Real-time synchronization architecture (partial implementation)
+- **[Email Service](./EMAIL_SERVICE.md)** - Email sending architecture with templates (planned)
+
+> **Note**: WebSocket and Email Service documentation describes architectures that are either partially implemented or planned. See individual documents for current implementation status.
+
 ---
 
 ## Quick Navigation
