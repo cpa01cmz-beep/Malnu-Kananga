@@ -128,6 +128,14 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     onEventClick?.(event);
   };
 
+  const handleEventKeyDown = (event: Schedule | ParentMeeting, e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      e.stopPropagation();
+      onEventClick?.(event);
+    }
+  };
+
   const handleDateKeyDown = (date: Date, e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -194,13 +202,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 {date.getDate()}
               </div>
               <div className="space-y-1">
-                {events.slice(0, 3).map((event, idx) => {
+                  {events.slice(0, 3).map((event, idx) => {
                   const isMeeting = 'status' in event;
                   return (
                       <button
                         key={idx}
                         type="button"
                         onClick={(e) => handleEventClick(event, e)}
+                        onKeyDown={(e) => handleEventKeyDown(event, e)}
+                        tabIndex={0}
                         className={`text-xs p-1 rounded truncate
                           ${isMeeting
                             ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
@@ -294,6 +304,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                         key={idx}
                         type="button"
                         onClick={(e) => handleEventClick(event, e)}
+                        onKeyDown={(e) => handleEventKeyDown(event, e)}
+                        tabIndex={0}
                         className={`text-xs p-1 rounded truncate
                           ${isMeeting
                             ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
