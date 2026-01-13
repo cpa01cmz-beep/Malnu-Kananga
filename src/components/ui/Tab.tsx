@@ -74,11 +74,11 @@ const Tab: React.FC<TabProps> = ({
   };
 
   const getButtonClasses = (tabId: string) => {
-    const baseClasses = 'px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap flex items-center gap-2 relative';
+    const baseClasses = 'px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap flex items-center gap-2 relative focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900';
     const activeColorClasses = getColorClasses(tabId);
 
     if (variant === 'border') {
-      return `${activeColorClasses} py-4 px-1 border-b-2 text-sm font-medium`;
+      return `${activeColorClasses} py-4 px-1 border-b-2 text-sm font-medium focus-visible:ring-0`;
     }
 
     return `${baseClasses} ${activeColorClasses}`;

@@ -98,7 +98,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
         classes += ' hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02]';
         break;
       case 'interactive':
-        classes += ' hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 active:scale-95 text-left group';
+        classes += ' hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 active:scale-95 text-left group';
         break;
       case 'gradient':
         if (gradient) {
@@ -107,7 +107,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
           if (gradient.text === 'light') {
             classes += ' text-white';
           }
-          classes += ' hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900';
+            classes += ' hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900';
         }
         break;
       default:
