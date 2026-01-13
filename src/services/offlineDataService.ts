@@ -5,6 +5,7 @@ import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import type { Student, Grade, Attendance, Schedule, ParentChild } from '../types';
 import React from 'react';
+import { useNetworkStatus } from '../utils/networkStatus';
 
 // ============================================
 // TYPES
@@ -428,9 +429,6 @@ export const offlineDataService = new OfflineDataService();
  * Hook for using offline data service
  */
 export function useOfflineDataService() {
-  // Import hooks dynamically for this service context
-  const networkStatusModule = eval('require("../utils/networkStatus")');
-  const { useNetworkStatus } = networkStatusModule;
   const networkStatus = useNetworkStatus();
  
   return {
