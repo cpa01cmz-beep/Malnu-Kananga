@@ -16,7 +16,7 @@ interface BaseSocialLinkProps {
   disabled?: boolean;
 }
 
-const baseClasses = "inline-flex items-center justify-center transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded-xl shadow-sm hover:shadow-md hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+const baseClasses = "inline-flex items-center justify-center transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded-xl shadow-sm hover:shadow-md hover:scale-110 active:scale-95";
 
 const sizeClasses: Record<SocialLinkSize, string> = {
   sm: 'p-2',
@@ -67,13 +67,11 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
 }) => {
   const variantStyle = variantClasses[variant];
   const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : '';
+  const hoverFocusClasses = disabled ? '' : `${variantStyle.hover} ${variantStyle.hoverBg} ${variantStyle.hoverBgDark}`;
   const classes = `
-    ${baseClasses}
     ${sizeClasses[size]}
     ${variantStyle.base}
-    ${variantStyle.hover}
-    ${variantStyle.hoverBg}
-    ${variantStyle.hoverBgDark}
+    ${hoverFocusClasses}
     ${disabledClasses}
     ${className}
   `.replace(/\s+/g, ' ').trim();
