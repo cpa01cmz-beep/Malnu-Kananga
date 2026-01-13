@@ -206,12 +206,6 @@ export class ThemeManager {
       }
     });
 
-    // Apply background, surface, text, and text-secondary colors
-    root.style.setProperty('--color-background', theme.colors.background);
-    root.style.setProperty('--color-surface', theme.colors.surface);
-    root.style.setProperty('--color-text', theme.colors.text);
-    root.style.setProperty('--color-text-secondary', theme.colors.textSecondary);
-
     // Apply progress bar striped overlay color based on theme brightness
     const overlayColor = theme.isDark ? '0 0 0' : '255 255 255';
     root.style.setProperty('--progress-bar-striped-overlay', overlayColor);
