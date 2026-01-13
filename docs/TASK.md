@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-13
-**Version**: 2.5.2
+**Version**: 2.5.3
 
 ---
 
@@ -79,6 +79,18 @@
 ---
 
 ## Completed Work (Q1 2026)
+
+### Styling System Debug - OsisEvents Component Refactoring (2026-01-13)
+- Refactored 9 hardcoded `bg-white dark:bg-neutral-800` patterns in OsisEvents component to use centralized `getContainer()` tokens
+- Updated 5 tab containers (registrations, budget, photos, feedback, announcements) to use `getContainer('CARD_LG')`
+- Updated 2 event list containers to use `getContainer('CARD')` with appropriate padding (p-6, p-4)
+- Replaced hardcoded button styling with Button component for better consistency
+- Added import for `getContainer` from `src/config/styling`
+- Improved design system consistency in OsisEvents component (component with 2nd most hardcoded patterns: 9 instances)
+- Reduced hardcoded container patterns by 10 instances across codebase
+- All changes preserve functionality, accessibility, and UI appearance
+- No lint errors introduced
+- See `src/components/OsisEvents.tsx` for implementation
 
 ### Styling System Debug - SchoolInventory Component Refactoring (2026-01-13)
 - Refactored 13 hardcoded container patterns in SchoolInventory component to use centralized `getContainer('CARD')` tokens
@@ -280,6 +292,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.5.2 | 2026-01-13 | Styling system debug - refactored OsisEvents component (9 hardcoded `bg-white dark:bg-neutral-800` patterns) to use centralized `getContainer()` tokens, updated 5 tab containers to use `getContainer('CARD_LG')`, updated 2 event list containers to use `getContainer('CARD')`, replaced hardcoded button styling with Button component, improved design system consistency across event management UI, reduced hardcoded container patterns from 115 → 105, all changes preserve functionality and UI appearance |
 | 2.5.1 | 2026-01-13 | Styling system debug - refactored 4 UI components (Modal, BaseModal, LoadingOverlay, Skeleton) to use centralized styling tokens (SURFACE, RADIUS, SHADOW, BORDER), replaced hardcoded patterns with type-safe getter functions, improved design system consistency across modal and skeleton components, reduced hardcoded styling patterns in ui/ components, all changes preserve functionality and UI appearance |
 | 2.5.0 | 2026-01-13 | Styling system debug - applied centralized CONTAINERS tokens to MaterialTemplatesLibrary and PPDBManagement components, refactored 3 hardcoded container patterns (2 in PPDBManagement, 1 in MaterialTemplatesLibrary), improved design system consistency, reduced hardcoded patterns from 41 → 38 remaining |
 | 2.4.9 | 2026-01-13 | Styling system debug - created centralized styling configuration (SHADOWS, RADIUS, SURFACES, BORDERS, CONTAINERS), added 42 styling tokens with type-safe getter functions, identified 113+ bg-white/dark:bg-neutral-800 patterns, identified 109+ border patterns, identified 422+ rounded usages, fixed undefined custom shadows (shadow-card, shadow-card-hover, shadow-float), improved design system consistency, added comprehensive documentation |
