@@ -70,12 +70,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
+  const computedAriaLabel = iconOnly ? (ariaLabel || (typeof children === 'string' ? children : 'Button')) : undefined;
+
   return (
     <button
       ref={ref}
       className={classes}
       disabled={disabled || isLoading}
-      aria-label={iconOnly ? ariaLabel : undefined}
+      aria-label={computedAriaLabel}
       aria-busy={isLoading}
       {...props}
     >

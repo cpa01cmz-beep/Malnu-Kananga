@@ -127,11 +127,18 @@ describe('Button', () => {
       expect(button).toHaveAttribute('aria-label', 'Open menu');
     });
 
-    it('should have empty aria-label for icon-only button when not provided', () => {
+    it('should have default aria-label for icon-only button when not provided', () => {
+      render(<Button iconOnly icon={<MockIcon />}>Edit</Button>);
+      
+      const button = screen.getByRole('button', { name: 'Edit' });
+      expect(button).toHaveAttribute('aria-label', 'Edit');
+    });
+
+    it('should have fallback aria-label "Button" for icon-only button without children', () => {
       render(<Button iconOnly icon={<MockIcon />} />);
       
-      const button = screen.getByRole('button');
-      expect(button).toHaveAttribute('aria-label', '');
+      const button = screen.getByRole('button', { name: 'Button' });
+      expect(button).toHaveAttribute('aria-label', 'Button');
     });
 
     it('should have aria-busy when loading', () => {
