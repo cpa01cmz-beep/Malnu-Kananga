@@ -75,9 +75,9 @@ These files are operational instructions for AI agents and should not be conside
 - **Test Files**: 81 test files (*.test.ts, *.test.tsx)
 - **Source Files (Non-Test)**: 245 files
 - **Documentation Files**: 18 (in /docs directory)
+- **Services**: 25 services in src/services/ (plus 3 type/template files: aiCache.types.ts, emailTemplates.ts, notificationTemplates.ts)
+- **Components**: 216 component files (40 exported from ui/index.ts)
 - **Total Tests**: 1494 (1460 passing, 24 failing, 10 skipped)
-- **Services**: 28 services in src/services/
-- **Components**: 158 components total (40 UI + 118 feature components)
 - **Code Examples**: 20+
 - **Troubleshooting Scenarios**: 25+
 - **Architecture Diagrams**: 1+
@@ -187,16 +187,17 @@ This index maintains relationships between documents:
 
 ## Recent Changes (v2.2.0 - 2026-01-13)
 
-  - **Repository Cleanup (2026-01-13 - Current)**:
-      - Corrected all documentation metrics to reflect actual codebase: 328 total files (247 source + 81 test), 28 services, 158 total components, 40 UI components exported
-      - Updated TASK.md, docs/README.md, and UI_COMPONENTS.md with accurate metrics
-      - Verified TypeScript and linting status (both passing)
-      - Confirmed 0 security vulnerabilities in dependency audit
-      - Validated .gitignore is comprehensive and appropriate
-      - All documentation files serve distinct purposes - no redundancy found
-      - Confirmed all documentation aligns with actual codebase structure
-      - Verified DEPLOYMENT_GUIDE.md and DEPLOYMENT_STATUS.md serve distinct purposes
-      - Test failures documented in TASK.md (P0 priority): 24 failures across 5 test files
+   - **Repository Cleanup (2026-01-13 - Current)**:
+       - Corrected all documentation metrics to reflect actual codebase: 326 total files (245 source + 81 test), 25 services, 216 component files, 40 UI components exported
+       - Updated TASK.md and docs/README.md with accurate metrics
+       - Clarified service count includes only .ts files excluding types, templates, and tests (aiCache.types.ts, emailTemplates.ts, notificationTemplates.ts)
+       - Verified TypeScript and linting status (both passing)
+       - Confirmed 0 security vulnerabilities in dependency audit
+       - Validated .gitignore is comprehensive and appropriate
+       - All documentation files serve distinct purposes - no redundancy found
+       - Confirmed all documentation aligns with actual codebase structure
+       - Verified DEPLOYMENT_GUIDE.md and DEPLOYMENT_STATUS.md serve distinct purposes
+       - Test failures documented in TASK.md (P0 priority): 24 failures across 5 test files
 
   - **Repository Cleanup (2026-01-08)**:
       - Previous cleanup with initial documentation fixes

@@ -61,10 +61,10 @@
 - **Test Files**: 81 test files (*.test.ts, *.test.tsx)
 - **Source Files (Non-Test)**: 245 files
 - **Documentation Files**: 18 (in /docs directory)
-- **Services**: 28 services in src/services/
-- **Components**: 158 components total
+- **Services**: 25 services in src/services/ (excluding type/template files)
+- **Components**: 216 component files
   - UI components: 40 exported from index.ts
-  - Feature components: ~118
+  - Other components: 176
 - **Total Tests**: 1494 (1460 passing, 24 failing, 10 skipped)
 
 ---
@@ -93,5 +93,6 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 6.0.0 | 2026-01-13 | Repository cleanup: Corrected all metrics (328 total files, 247 source, 40 UI components, 158 total components), updated documentation references, verified security (0 vulnerabilities), confirmed .gitignore completeness |
+| 7.0.0 | 2026-01-13 | Repository maintenance audit: Fixed service count metric (28→25), clarified type/template files exclusion, corrected component count (158→216), verified all other metrics accurate |
+| 6.0.0 | 2026-01-13 | Repository cleanup: Corrected all metrics (326 total files, 245 source, 40 UI components), updated documentation references, verified security (0 vulnerabilities), confirmed .gitignore completeness |
 | 5.0.0 | 2026-01-13 | Repository maintenance: Updated all metrics, removed obsolete service references, fixed test counts, updated TypeScript/linting status to reflect current state |
