@@ -50,7 +50,7 @@ Main configuration for OpenCode in GitHub Actions:
 }
 ```
 
-### `.github/prompts/*.md`
+### `.github/prompt/*.md`
 
 Prompt templates used by workflows:
 - `user-story.md` - Generate user stories from existing features
@@ -91,10 +91,10 @@ steps:
 
 ### Adding New Prompts
 
-1. Create prompt file in `.github/prompts/`:
-   ```bash
-   touch .github/prompts/my-feature.md
-   ```
+1. Create prompt file in `.github/prompt/`:
+    ```bash
+    touch .github/prompt/my-feature.md
+    ```
 
 2. Add content:
    ```markdown
@@ -102,11 +102,11 @@ steps:
    ```
 
 3. Use in workflow:
-   ```yaml
-   - uses: ./.github/actions/opencode-run
-     with:
-       prompt-file: .github/prompts/my-feature.md
-   ```
+    ```yaml
+    - uses: ./.github/actions/opencode-run
+      with:
+        prompt-file: .github/prompt/my-feature.md
+    ```
 
 ### Modifying OpenCode Model
 
@@ -140,8 +140,8 @@ If you see "opencode: command not found":
 ### Prompt File Not Found
 
 Ensure prompt file paths are relative to repository root:
-- ✅ `.github/prompts/maintenance.md`
-- ❌ `/home/runner/work/repo/.github/prompts/maintenance.md`
+- ✅ `.github/prompt/maintenance.md`
+- ❌ `/home/runner/work/repo/.github/prompt/maintenance.md`
 
 ### Timeout Issues
 
@@ -174,12 +174,12 @@ Multiple OpenCode runs can execute in parallel:
 - name: Analysis 1
   uses: ./.github/actions/opencode-run
   with:
-    prompt-file: .github/prompts/analysis1.md
+    prompt-file: .github/prompt/analysis1.md
 
 - name: Analysis 2
   uses: ./.github/actions/opencode-run
   with:
-    prompt-file: .github/prompts/analysis2.md
+    prompt-file: .github/prompt/analysis2.md
 ```
 
 ## Security
@@ -234,5 +234,5 @@ OpenCode output is automatically logged:
 - `.github/actions/opencode-run/` - Run action
 - `.github/workflows/on-push.yml` - Push workflow
 - `.github/workflows/on-pull.yml` - Pull workflow
-- `.github/prompts/` - Prompt templates
+- `.github/prompt/` - Prompt templates
 - `.opencode/` - Local OpenCode configuration (for development)
