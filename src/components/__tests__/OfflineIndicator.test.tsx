@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { OfflineIndicator, OfflineQueueDetails } from '../OfflineIndicator';
@@ -145,7 +145,7 @@ describe('OfflineIndicator', () => {
     expect(screen.getByText('Syncing...')).toBeInTheDocument();
   });
 
-  it('shows sync status popup after sync completes', () => {
+  it('shows sync status popup after sync completes', async () => {
     const mockOnSyncComplete = vi.fn();
     vi.mocked(useOfflineActionQueue).mockReturnValue(
       createMockOfflineActionQueue({
@@ -155,12 +155,14 @@ describe('OfflineIndicator', () => {
 
     render(<OfflineIndicator />);
 
-    mockOnSyncComplete.mock.calls[0][0]({
-      success: true,
-      actionsProcessed: 5,
-      actionsFailed: 0,
-      conflicts: [],
-      errors: []
+    act(() => {
+      mockOnSyncComplete.mock.calls[0][0]({
+        success: true,
+        actionsProcessed: 5,
+        actionsFailed: 0,
+        conflicts: [],
+        errors: []
+      });
     });
 
     expect(screen.getByText('Sync Complete')).toBeInTheDocument();
@@ -177,12 +179,14 @@ describe('OfflineIndicator', () => {
 
     render(<OfflineIndicator />);
 
-    mockOnSyncComplete.mock.calls[0][0]({
-      success: false,
-      actionsProcessed: 0,
-      actionsFailed: 2,
-      conflicts: [],
-      errors: ['Network error']
+    act(() => {
+      mockOnSyncComplete.mock.calls[0][0]({
+        success: false,
+        actionsProcessed: 0,
+        actionsFailed: 2,
+        conflicts: [],
+        errors: ['Network error']
+      });
     });
 
     expect(screen.getByText('Sync Failed')).toBeInTheDocument();

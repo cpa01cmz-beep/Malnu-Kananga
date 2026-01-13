@@ -25,6 +25,7 @@ export interface CardProps {
   role?: string;
   'aria-label'?: string;
   'aria-describedby'?: string;
+  'aria-live'?: 'off' | 'polite' | 'assertive';
 }
 
 interface InteractiveCardProps extends Omit<CardProps, 'onClick' | 'role'>, Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'variant' | 'children'> {
@@ -82,6 +83,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
   role,
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedby,
+  'aria-live': ariaLive,
   ...rest
 }, ref) => {
   const paddingClass = paddingClasses[padding];
@@ -143,6 +145,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
       role={role}
       aria-label={ariaLabel}
       aria-describedby={ariaDescribedby}
+      aria-live={ariaLive}
       className={getCardClasses()}
     >
       {children}
