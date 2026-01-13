@@ -27,6 +27,7 @@ import { inventoryAPI } from '../services/apiService';
 import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
 import { CHART_COLORS } from '../config/chartColors';
+import { getContainer } from '../config/styling';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Modal from './ui/Modal';
@@ -364,7 +365,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
           </div>
 
           {showAddForm && (
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+            <div className={`${getContainer('CARD')} p-6`}>
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Catat Barang Baru</h3>
               <form onSubmit={handleAddItem} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Input
@@ -480,8 +481,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
             </div>
           )}
 
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-            {isLoading ? (
+          <div className={`${getContainer('CARD')} overflow-hidden`}>
+             {isLoading ? (
               <div className="p-8 text-center text-neutral-500">Memuat data inventaris...</div>
             ) : (
               <div className="overflow-x-auto">
@@ -545,7 +546,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
       {/* Maintenance Tab */}
       {activeTab === 'maintenance' && (
         <div className="space-y-6">
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+          <div className={`${getContainer('CARD')} p-6`}>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Tambah Jadwal 维护</h3>
             <form onSubmit={handleAddMaintenance} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Select
@@ -594,8 +595,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
             </form>
           </div>
 
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-            <div className="p-4 border-b bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700">
+          <div className={`${getContainer('CARD')} overflow-hidden`}>
+             <div className="p-4 border-b bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700">
               <h3 className="font-bold text-neutral-800 dark:text-white">Jadwal 维护 ({maintenanceSchedules.length})</h3>
             </div>
             <div className="overflow-x-auto">
@@ -665,7 +666,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
               </Button>
             </div>
           ) : (
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+            <div className={`${getContainer('CARD')} p-6`}>
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Audit Sedang Berlangsung</h3>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -702,7 +703,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
 
           {/* Audit History */}
           {audits.length > 0 && (
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+            <div className={`${getContainer('CARD')} overflow-hidden`}>
               <div className="p-4 border-b bg-neutral-50 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700">
                 <h3 className="font-bold text-neutral-800 dark:text-white">Riwayat Audit</h3>
               </div>
@@ -758,7 +759,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
+            <div className={`${getContainer('CARD')} p-6`}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-neutral-600 dark:text-neutral-400">Total Nilai Aset</p>
@@ -767,7 +768,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                 <ChartBarIcon />
               </div>
             </div>
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
+            <div className={`${getContainer('CARD')} p-6`}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-neutral-600 dark:text-neutral-400">Total Barang</p>
@@ -776,7 +777,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                 <ArchiveBoxIcon />
               </div>
             </div>
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
+            <div className={`${getContainer('CARD')} p-6`}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-neutral-600 dark:text-neutral-400">Jadwal 维护 Aktif</p>
@@ -790,7 +791,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
           {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Category Breakdown Chart */}
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
+            <div className={`${getContainer('CARD')} p-6`}>
               <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Distribusi Kategori</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -815,7 +816,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
             </div>
 
             {/* Condition Breakdown Chart */}
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
+            <div className={`${getContainer('CARD')} p-6`}>
               <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Status Kondisi</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={report.conditionBreakdown}>
@@ -830,7 +831,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
           </div>
 
           {/* Depreciation Chart */}
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700">
+          <div className={`${getContainer('CARD')} p-6`}>
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Analisis Depresiasi</h3>
             <ResponsiveContainer width="100%" height={400}>
               <AreaChart data={report.depreciationData.slice(0, 10)}>
