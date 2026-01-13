@@ -728,7 +728,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     selectedEvent?.id === event.id
                       ? 'border-orange-500 ring-2 ring-orange-200'
                       : 'border-neutral-100 dark:border-neutral-700 hover:border-orange-300'
-                  } flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
+                  } flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900`}
                 >
                   <div className="flex items-start gap-4">
                     <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-2xl text-orange-600 dark:text-orange-400">

@@ -306,7 +306,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         <button
                             onClick={onOpenEditor}
                             aria-label="Buka AI Site Editor"
-                             className={`${getGradientClass('INDIGO_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
+                             className={`${getGradientClass('INDIGO_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900`}
                         >
                             <div className={`${OPACITY_TOKENS.WHITE_20} w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:${OPACITY_TOKENS.WHITE_30.replace('bg-white/', '')} group-hover:scale-110 transition-all duration-300 ease-out`}>
                                 <SparklesIcon className="w-6 h-6 text-white" aria-hidden="true" />

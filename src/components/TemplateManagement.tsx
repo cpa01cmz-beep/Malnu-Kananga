@@ -26,6 +26,7 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
   const [showTestModal, setShowTestModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<NotificationTemplate | null>(null);
   const [testVariables, setTestVariables] = useState<Record<string, string>>({});
+  const [isSendingTestNotification, setIsSendingTestNotification] = useState(false);
   
   const [newTemplate, setNewTemplate] = useState({
     name: '',
@@ -72,17 +73,22 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
   const handleTestNotification = async () => {
     if (!selectedTemplate) return;
 
-    const notification = createNotificationFromTemplate(selectedTemplate.id, testVariables);
-    if (notification) {
-      await showNotification(notification);
-      setShowTestModal(false);
-      if (onShowToast) {
-        onShowToast('Notifikasi tes berhasil dikirim', 'success');
+    setIsSendingTestNotification(true);
+    try {
+      const notification = createNotificationFromTemplate(selectedTemplate.id, testVariables);
+      if (notification) {
+        await showNotification(notification);
+        setShowTestModal(false);
+        if (onShowToast) {
+          onShowToast('Notifikasi tes berhasil dikirim', 'success');
+        }
+      } else {
+        if (onShowToast) {
+          onShowToast('Gagal membuat notifikasi dari template', 'error');
+        }
       }
-    } else {
-      if (onShowToast) {
-        onShowToast('Gagal membuat notifikasi dari template', 'error');
-      }
+    } finally {
+      setIsSendingTestNotification(false);
     }
   };
 
@@ -275,8 +281,9 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
               onClick={handleTestNotification}
               variant="success"
               fullWidth
+              disabled={isSendingTestNotification}
             >
-              Kirim Notifikasi Tes
+              {isSendingTestNotification ? 'Mengirim...' : 'Kirim Notifikasi Tes'}
             </Button>
             <Button
               onClick={() => setShowTestModal(false)}

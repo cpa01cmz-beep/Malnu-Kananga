@@ -35,6 +35,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<NotificationType | 'all'>('all');
   const [selectedStatus, setSelectedStatus] = useState<'all' | 'read' | 'unread'>('all');
+  const [isSendingTestNotification, setIsSendingTestNotification] = useState(false);
 
   const relevantTypes = NotificationTemplateService.getRelevantNotificationTypes(userRole);
 
@@ -133,20 +134,25 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   }, [clearHistory, onShowToast]);
 
   const handleSendTestNotification = useCallback(async () => {
-    const testNotification = createNotification(
-      'system',
-      'Tes Notifikasi Terpadu',
-      'Ini adalah notifikasi tes dari Pusat Notifikasi Terpadu MA Malnu Kananga',
-      { type: 'test', source: 'notification-center' }
-    );
+    setIsSendingTestNotification(true);
+    try {
+      const testNotification = createNotification(
+        'system',
+        'Tes Notifikasi Terpadu',
+        'Ini adalah notifikasi tes dari Pusat Notifikasi Terpadu MA Malnu Kananga',
+        { type: 'test', source: 'notification-center' }
+      );
 
-    await showNotification(testNotification);
+      await showNotification(testNotification);
 
-    if (onShowToast) {
-      onShowToast('Notifikasi tes berhasil dikirim', 'success');
+      if (onShowToast) {
+        onShowToast('Notifikasi tes berhasil dikirim', 'success');
+      }
+
+      logger.info('Test notification sent from notification center');
+    } finally {
+      setIsSendingTestNotification(false);
     }
-
-    logger.info('Test notification sent from notification center');
   }, [createNotification, showNotification, onShowToast]);
 
    const getPriorityColor = (priority: string): string => {
@@ -185,7 +191,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
     <div className="relative">
       <button
         onClick={handleToggleOpen}
-        className="relative p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+        className="relative p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900"
         aria-label={`Notifikasi (${unreadCount} belum dibaca)`}
         aria-expanded={isOpen}
         aria-controls="notification-dropdown"
@@ -292,11 +298,11 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   </Button>
                   <Button
                     onClick={handleSendTestNotification}
-                    disabled={!permissionGranted}
+                    disabled={!permissionGranted || isSendingTestNotification}
                     variant="secondary"
                     size="sm"
                   >
-                    Tes
+                    {isSendingTestNotification ? 'Mengirim...' : 'Tes'}
                   </Button>
                 </div>
               </div>

@@ -17,7 +17,7 @@ interface GradientButtonProps extends CommonProps {
   children: React.ReactNode;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95";
+const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95";
 
 const variantClasses: Record<GradientButtonVariant, string> = {
   primary: `${GRADIENT_CLASSES.CHAT_HEADER} text-white hover:from-primary-700 hover:to-primary-800 focus:ring-primary-500/50% hover:scale-[1.01]`,

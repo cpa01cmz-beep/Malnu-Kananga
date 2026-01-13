@@ -28,12 +28,14 @@ const VersionControl: React.FC<VersionControlProps> = ({
   const [newFile, setNewFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [showVersionHistory, setShowVersionHistory] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
-  
+
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRestoreDialogOpen, setIsRestoreDialogOpen] = useState(false);
   const [versionToDelete, setVersionToDelete] = useState<MaterialVersion | null>(null);
   const [versionToRestore, setVersionToRestore] = useState<MaterialVersion | null>(null);
+  const [downloadingVersionId, setDownloadingVersionId] = useState<string | null>(null);
+  const [restoringVersionId, setRestoringVersionId] = useState<string | null>(null);
+  const [deletingVersionId, setDeletingVersionId] = useState<string | null>(null);
 
   const fetchVersions = useCallback(async () => {
     try {
@@ -122,7 +124,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
   };
 
   const downloadVersion = async (version: MaterialVersion) => {
-    setIsDownloading(true);
+    setDownloadingVersionId(version.id);
     try {
       // Mock download - replace with actual implementation
       const downloadUrl = `/api/download/version/${version.id}`;
@@ -132,7 +134,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
       logger.error('Error downloading version:', err);
       onShowToast('Gagal mengunduh versi', 'error');
     } finally {
-      setIsDownloading(false);
+      setDownloadingVersionId(null);
     }
   };
 
@@ -150,6 +152,7 @@ const deleteVersion = (versionId: string) => {
   const confirmRestoreVersion = async () => {
     if (!versionToRestore) return;
 
+    setRestoringVersionId(versionToRestore.id);
     try {
       const updatedVersions = versions.map(v => ({
         ...v,
@@ -165,13 +168,14 @@ const deleteVersion = (versionId: string) => {
     } finally {
       setIsRestoreDialogOpen(false);
       setVersionToRestore(null);
+      setRestoringVersionId(null);
     }
   };
 
   const confirmDeleteVersion = async () => {
     if (!versionToDelete) return;
 
-
+    setDeletingVersionId(versionToDelete.id);
     try {
       const updatedVersions = versions.filter(v => v.id !== versionToDelete.id);
       setVersions(updatedVersions);
@@ -183,6 +187,7 @@ const deleteVersion = (versionId: string) => {
     } finally {
       setIsDeleteDialogOpen(false);
       setVersionToDelete(null);
+      setDeletingVersionId(null);
     }
   };
 
@@ -273,10 +278,11 @@ const deleteVersion = (versionId: string) => {
                       variant="ghost"
                       size="sm"
                       onClick={() => downloadVersion(version)}
-                      isLoading={isDownloading}
+                      isLoading={downloadingVersionId === version.id}
                       iconOnly
                       icon={<EyeIcon className="w-4 h-4" />}
                       aria-label="Unduh versi ini"
+                      disabled={downloadingVersionId === version.id}
                     />
 
                     {!version.isActive && (
@@ -287,6 +293,8 @@ const deleteVersion = (versionId: string) => {
                         iconOnly
                         icon={<ArrowPathIcon className="w-4 h-4" />}
                         aria-label="Aktifkan kembali versi ini"
+                        disabled={restoringVersionId === version.id}
+                        isLoading={restoringVersionId === version.id}
                       />
                     )}
 
@@ -298,6 +306,8 @@ const deleteVersion = (versionId: string) => {
                         iconOnly
                         icon={<TrashIcon className="w-4 h-4" />}
                         aria-label="Hapus versi ini"
+                        disabled={deletingVersionId === version.id}
+                        isLoading={deletingVersionId === version.id}
                       />
                     )}
                   </div>

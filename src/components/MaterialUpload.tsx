@@ -605,7 +605,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                               key={index}
                               type="button"
                               onClick={() => handleCategoryChange(suggestion)}
-                              className="text-left text-sm hover:text-green-600 focus:outline-none focus:ring-2 focus:ring-green-500/50 rounded px-1"
+                              className="text-left text-sm hover:text-green-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50 rounded px-1"
                               aria-label={`Pilih kategori: ${suggestion}`}
                             >
                               • {suggestion}

@@ -28,7 +28,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ title, children }) => {
                 <button
                     id={buttonId}
                     type="button"
-                    className="flex items-center justify-between w-full p-5 font-medium text-left text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                    className="flex items-center justify-between w-full p-5 font-medium text-left text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50"
                     onClick={() => setIsOpen(!isOpen)}
                     onKeyDown={handleKeyDown}
                     aria-expanded={isOpen}

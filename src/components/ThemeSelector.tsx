@@ -121,7 +121,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
                 onClick={() => applyTheme(theme)}
                 aria-label={`Pilih tema ${theme.displayName}`}
                 aria-pressed={currentTheme.id === theme.id}
-                className={`group flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800 ${
+                className={`group flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800 ${
                   currentTheme.id === theme.id
                     ? 'border-primary-600 dark:border-primary-400 bg-primary-50 dark:bg-primary-900/20'
                     : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800'
