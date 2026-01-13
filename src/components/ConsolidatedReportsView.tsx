@@ -202,7 +202,7 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
               <ClipboardDocumentCheckIcon />
             </div>
             <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Rata-rata Nilai Keluarga</p>
-            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            <p className="text-2xl sm:text-xl font-bold text-blue-600 dark:text-blue-400">
               {consolidatedData.length > 0 
                 ? (consolidatedData.reduce((sum, d) => sum + d.averageGrade, 0) / consolidatedData.length).toFixed(1)
                 : '0'
@@ -214,7 +214,7 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
               <UsersIcon />
             </div>
             <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Rata-rata Kehadiran</p>
-            <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+            <p className="text-2xl sm:text-xl font-bold text-green-600 dark:text-green-400">
               {consolidatedData.length > 0 
                 ? Math.round(consolidatedData.reduce((sum, d) => sum + d.attendanceRate, 0) / consolidatedData.length)
                 : '0'
@@ -226,7 +226,7 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
               <UsersIcon />
             </div>
             <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">Total Ketidakhadiran</p>
-            <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+            <p className="text-2xl sm:text-xl font-bold text-yellow-600 dark:text-yellow-400">
               {consolidatedData.reduce((sum, d) => sum + d.totalAbsences, 0)} hari
             </p>
           </div>

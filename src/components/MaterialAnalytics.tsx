@@ -160,7 +160,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
             <ArrowDownTrayIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">Total Unduhan</span>
           </div>
-          <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+          <p className="text-2xl sm:text-xl font-bold text-neutral-900 dark:text-white">
             {analytics.totalDownloads}
           </p>
           {downloadsTrend.isUp ? (
@@ -185,7 +185,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
             <UserIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
             <span className="text-xs text-green-600 dark:text-green-400 font-medium">Pengguna Unik</span>
           </div>
-          <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+          <p className="text-2xl sm:text-xl font-bold text-neutral-900 dark:text-white">
             {analytics.uniqueUsers}
           </p>
           <div className="flex items-center gap-1 mt-1">
@@ -204,7 +204,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
             <StarIcon className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
             <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">Rating</span>
           </div>
-          <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+          <p className="text-2xl sm:text-xl font-bold text-neutral-900 dark:text-white">
             {analytics.averageRating.toFixed(1)}
           </p>
           <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">

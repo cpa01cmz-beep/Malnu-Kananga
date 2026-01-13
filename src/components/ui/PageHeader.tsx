@@ -21,11 +21,11 @@ const sizeClasses: Record<PageHeaderSize, { title: string; subtitle: string }> =
     subtitle: 'text-sm',
   },
   md: {
-    title: 'text-2xl font-bold',
+    title: 'text-2xl sm:text-xl font-bold',
     subtitle: 'text-sm',
   },
   lg: {
-    title: 'text-3xl font-bold',
+    title: 'text-3xl sm:text-2xl font-bold',
     subtitle: 'text-base',
   },
 };

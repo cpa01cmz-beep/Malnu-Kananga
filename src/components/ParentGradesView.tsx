@@ -182,7 +182,7 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
                 return (
                   <div key={subject} className="p-4 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg">
                     <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">{subject}</div>
-                    <div className={`text-2xl font-bold ${
+                    <div className={`text-2xl sm:text-xl font-bold ${
                       avg >= 80 ? 'text-green-600 dark:text-green-400' :
                       avg >= 70 ? 'text-blue-600 dark:text-blue-400' :
                       avg >= 60 ? 'text-yellow-600 dark:text-yellow-400' :

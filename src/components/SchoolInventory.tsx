@@ -686,11 +686,11 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                     <div className="text-sm text-blue-600 dark:text-blue-400">Total Barang</div>
                   </div>
                   <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">{currentAudit?.matchedItems}</div>
+                    <div className="text-2xl sm:text-xl font-bold text-green-600 dark:text-green-400">{currentAudit?.matchedItems}</div>
                     <div className="text-sm text-green-600 dark:text-green-400">Cocok</div>
                   </div>
                   <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{currentAudit?.mismatchedItems}</div>
+                    <div className="text-2xl sm:text-xl font-bold text-yellow-600 dark:text-yellow-400">{currentAudit?.mismatchedItems}</div>
                     <div className="text-sm text-yellow-600 dark:text-yellow-400">Tidak Cocok</div>
                   </div>
                 </div>

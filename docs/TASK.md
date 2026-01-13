@@ -457,12 +457,18 @@
            - Screen readers now receive meaningful labels or no label (better than empty labels)
            - All icon-only button instances in codebase already have proper aria-labels
            - See src/components/ui/Button.tsx:78 for implementation
-    - [x] GradingManagement and NotificationSettings Accessibility Fix (Phase 5 - COMPLETED 2026-01-13)
-           - Added aria-label to student selection checkbox in GradingManagement.tsx (line 1324)
-           - Added htmlFor and id attributes to quiet hours time inputs in NotificationSettings.tsx (lines 392, 410)
-           - Ensures WCAG 2.1 AA compliance for screen reader users and form accessibility
-           - Improves keyboard navigation and label-to-input association
-           - PR #7: Updated with accessibility improvements
+  - [x] GradingManagement and NotificationSettings Accessibility Fix (Phase 5 - COMPLETED 2026-01-13)
+            - Added aria-label to student selection checkbox in GradingManagement.tsx (line 1324)
+            - Added htmlFor and id attributes to quiet hours time inputs in NotificationSettings.tsx (lines 392, 410)
+            - Ensures WCAG 2.1 AA compliance for screen reader users and form accessibility
+            - Improves keyboard navigation and label-to-input association
+            - PR #7: Updated with accessibility improvements
+  - [x] Responsive Design Enhancement (COMPLETED 2026-01-13)
+            - Updated Heading component to use responsive text sizes (text-2xl → text-2xl sm:text-xl, text-3xl → text-3xl sm:text-2xl md:text-xl)
+            - Added responsive variants to large text across 15+ components (ParentDashboard, StudentPortal, GradingManagement, SchoolInventory, AcademicGrades, StudentInsights, ProgressAnalytics, ParentGradesView, ParentAttendanceView, NotificationAnalytics, ConsolidatedReportsView, MaterialAnalytics, MaterialUpload, UserManagement, PPDBManagement, StudentLearningModule, ParentMessagingView, ParentMeetingsView, MaterialTemplatesLibrary, AICacheManager, ELibrary, VoiceNotificationDemo, PageHeader, Footer)
+            - Made decorative elements responsive (w-64 h-64 → w-64 sm:w-48 h-64 sm:h-48)
+            - Improved mobile user experience with properly scaled text and elements
+            - Enhanced responsive design consistency across application
 
 
 

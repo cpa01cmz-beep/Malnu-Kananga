@@ -198,7 +198,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
             <div>
                 <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">← Kembali</Button>
-                <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Manajemen Pengguna</h2>
+                <h2 className="text-2xl sm:text-xl font-bold text-neutral-900 dark:text-white">Manajemen Pengguna</h2>
             </div>
             {canCreateUser && (
                 <Button onClick={handleAddUser} icon={<PlusIcon className="w-5 h-5" />}>

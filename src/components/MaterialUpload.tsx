@@ -453,11 +453,11 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     return (
       <div className="animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-          <div>
+           <div>
             <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
               ← Kembali ke Dashboard
             </Button>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Upload Materi Pembelajaran</h2>
+            <h2 className="text-2xl sm:text-xl font-bold text-neutral-900 dark:text-white">Upload Materi Pembelajaran</h2>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

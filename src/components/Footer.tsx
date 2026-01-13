@@ -13,7 +13,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
             <div className="max-w-7xl mx-auto py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16 text-center sm:text-left">
                     <div>
-                        <h3 className="text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-white mb-4">MA Malnu Kananga</h3>
+                        <h3 className="text-xl sm:text-lg font-semibold text-neutral-900 dark:text-white mb-4">MA Malnu Kananga</h3>
                         <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-3">
                             Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
                         </p>

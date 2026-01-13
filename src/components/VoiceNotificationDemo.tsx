@@ -83,7 +83,7 @@ const VoiceNotificationDemo: React.FC = () => {
           <BellIcon className="w-8 h-8 text-blue-600 dark:text-blue-400" aria-hidden="true" />
           <SpeakerWaveIcon className="w-8 h-8 text-green-600 dark:text-green-400" aria-hidden="true" />
         </div>
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
+        <h1 className="text-2xl sm:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2">
           Voice Notifications Demo
         </h1>
         <p className="text-neutral-600 dark:text-neutral-400">

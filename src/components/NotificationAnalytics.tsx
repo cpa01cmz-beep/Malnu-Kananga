@@ -41,8 +41,20 @@ const NotificationAnalyticsComponent: React.FC<NotificationAnalyticsProps> = ({ 
           {/* Summary Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card variant="default" padding="sm" rounded="lg" shadow="none" border="none" className="bg-blue-50 dark:bg-blue-900/20">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-300">{totalDelivered}</div>
+              <div className="text-2xl sm:text-xl font-bold text-blue-600 dark:text-blue-300">{totalDelivered}</div>
               <div className="text-sm text-blue-600 dark:text-blue-300">Terkirim</div>
+            </Card>
+            <Card variant="default" padding="sm" rounded="lg" shadow="none" border="none" className="bg-green-50 dark:bg-green-900/20">
+              <div className="text-2xl sm:text-xl font-bold text-green-600 dark:text-green-300">{totalRead}</div>
+              <div className="text-sm text-green-600 dark:text-green-300">Dibaca ({readRate}%)</div>
+            </Card>
+            <Card variant="default" padding="sm" rounded="lg" shadow="none" border="none" className="bg-purple-50 dark:bg-purple-900/20">
+              <div className="text-2xl sm:text-xl font-bold text-purple-600 dark:text-purple-300">{totalClicked}</div>
+              <div className="text-sm text-purple-600 dark:text-purple-300">Diklik ({clickRate}%)</div>
+            </Card>
+            <Card variant="default" padding="sm" rounded="lg" shadow="none" border="none" className="bg-neutral-50 dark:bg-neutral-900/50">
+              <div className="text-2xl sm:text-xl font-bold text-neutral-600 dark:text-neutral-300">{totalBounced}</div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-300">Gagal ({bounceRate}%)</div>
             </Card>
             <Card variant="default" padding="sm" rounded="lg" shadow="none" border="none" className="bg-green-50 dark:bg-green-900/20">
               <div className="text-2xl font-bold text-green-600 dark:text-green-300">{totalRead}</div>
