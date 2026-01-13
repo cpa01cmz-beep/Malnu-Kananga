@@ -150,15 +150,15 @@ describe('Card', () => {
     });
 
     it('interactive card has focus ring classes', () => {
-      render(<Card variant="interactive">Interactive</Card>);
+      render(<Card variant="interactive">Interactive Card</Card>);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('focus:outline-none', 'focus:ring-2');
+      expect(button).toHaveClass('focus:outline-none', 'focus-visible:ring-2');
     });
 
     it('hover variant with onClick has focus ring classes', () => {
       render(<Card variant="hover" onClick={vi.fn()}>Hover Card</Card>);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('focus:outline-none', 'focus:ring-2', 'focus:ring-primary-500/50', 'focus:ring-offset-2');
+      expect(button).toHaveClass('focus:outline-none', 'focus-visible:ring-2', 'focus-visible:ring-primary-500/50', 'focus-visible:ring-offset-2');
     });
 
     it('has keyboard focus on interactive cards', async () => {
@@ -180,9 +180,9 @@ describe('Card', () => {
     });
 
     it('interactive card has dark mode focus offset classes', () => {
-      render(<Card variant="interactive">Dark Focus</Card>);
+      render(<Card variant="interactive">Interactive Card</Card>);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('dark:focus:ring-offset-neutral-900');
+      expect(button).toHaveClass('dark:focus-visible:ring-offset-neutral-900');
     });
   });
 

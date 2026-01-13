@@ -188,7 +188,7 @@ describe('IconButton', () => {
     it('has focus ring styles', () => {
       const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" />);
       const button = container.querySelector('button');
-      expect(button).toHaveClass('focus:outline-none', 'focus:ring-2');
+      expect(button).toHaveClass('focus:outline-none', 'focus-visible:ring-2');
     });
 
     it('has keyboard focus styles', () => {
@@ -217,13 +217,13 @@ describe('IconButton', () => {
     it('applies dark mode focus ring offset', () => {
       const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" />);
       const button = container.querySelector('button');
-      expect(button).toHaveClass('dark:focus:ring-offset-neutral-900');
+      expect(button).toHaveClass('dark:focus-visible:ring-offset-neutral-900');
     });
 
     it('applies dark mode classes for colored variants', () => {
       const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" variant="primary" />);
       const button = container.querySelector('button');
-      expect(button).toHaveClass('dark:focus:ring-offset-neutral-900');
+      expect(button).toHaveClass('dark:focus-visible:ring-offset-neutral-900');
     });
   });
 

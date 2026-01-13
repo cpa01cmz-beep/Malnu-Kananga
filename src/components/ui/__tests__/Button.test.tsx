@@ -113,9 +113,9 @@ describe('Button', () => {
 
   it('should have proper focus styles', () => {
     render(<Button>Focus me</Button>);
-    
+
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('focus:ring-2', 'focus:ring-offset-2', 'focus:outline-none');
+    expect(button).toHaveClass('focus-visible:ring-2', 'focus-visible:ring-offset-2', 'focus:outline-none');
   });
 
   describe('Accessibility', () => {
@@ -165,22 +165,22 @@ describe('Button', () => {
 
     it('should have proper focus visible states', () => {
       render(<Button>Focus test</Button>);
-      
+
       const button = screen.getByRole('button');
       expect(button).toHaveClass(
         'focus:outline-none',
-        'focus:ring-2',
-        'focus:ring-offset-2',
-        'dark:focus:ring-offset-neutral-900'
+        'focus-visible:ring-2',
+        'focus-visible:ring-offset-2',
+        'dark:focus-visible:ring-offset-neutral-900'
       );
     });
 
     it('should maintain focus ring color based on variant', () => {
       const { rerender } = render(<Button variant="primary">Primary</Button>);
-      expect(screen.getByRole('button')).toHaveClass('focus:ring-primary-500/50');
+      expect(screen.getByRole('button')).toHaveClass('focus-visible:ring-primary-500/50');
 
       rerender(<Button variant="danger">Danger</Button>);
-      expect(screen.getByRole('button')).toHaveClass('focus:ring-red-500/50');
+      expect(screen.getByRole('button')).toHaveClass('focus-visible:ring-red-500/50');
     });
 
     it('should have loading spinner with proper ARIA attributes', () => {
