@@ -14,14 +14,14 @@ import { ToastType } from './Toast';
 import type { ParentChild, Grade } from '../types';
 import { parentsAPI, authAPI, gradesAPI, attendanceAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
-import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
+import { useNetworkStatus, getOfflineMessage } from '../utils/networkStatus';
 import { validateParentChildDataAccess, validateChildDataIsolation, validateGradeVisibilityRestriction, validateOfflineDataIntegrity } from '../utils/parentValidation';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import BackButton from './ui/BackButton';
-import Alert from './ui/Alert';
 import Card from './ui/Card';
+import OfflineBanner from './ui/OfflineBanner';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import { useOfflineDataService, useOfflineData, type CachedParentData, type CachedStudentData } from '../services/offlineDataService';
 
@@ -369,49 +369,17 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        {/* Network Status Bar */}
-        {!networkStatus.isOnline && (
-          <Alert variant="error" size="md" border="full" className="mb-6">
-            {getOfflineMessage()}
-            {isCached && offlineData && (
-              <p className="text-xs mt-1">📦 Data offline tersedia untuk {offlineData.children.length} anak</p>
-            )}
-          </Alert>
-        )}
 
-        {networkStatus.isSlow && networkStatus.isOnline && (
-          <Alert variant="warning" size="md" border="full" className="mb-6">
-            {getSlowConnectionMessage()}
-          </Alert>
-        )}
-
-        {/* Sync Status Bar */}
-        {networkStatus.isOnline && (syncStatus.needsSync || syncStatus.pendingActions > 0) && (
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-card p-4 mb-6 flex items-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            <div className="flex-1">
-              <p className="text-blue-700 dark:text-blue-300 text-sm font-medium">
-                {syncStatus.pendingActions > 0 
-                  ? `${syncStatus.pendingActions} aksi pending perlu disinkronkan` 
-                  : 'Data perlu diperbarui'
-                }
-              </p>
-              <p className="text-blue-600 dark:text-blue-400 text-xs">
-                Terakhir diperbarui: {syncStatus.lastSync ? new Date(syncStatus.lastSync).toLocaleTimeString('id-ID') : 'Belum pernah'}
-              </p>
-            </div>
-            <button
-              onClick={handleSync}
-              disabled={syncInProgress}
-              className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {syncInProgress ? 'Menyinkronkan...' : 'Sinkronkan'}
-            </button>
-          </div>
-        )}
+        {/* Offline Banner */}
+        <OfflineBanner
+          mode={(!networkStatus.isOnline && networkStatus.isSlow) ? 'both' : !networkStatus.isOnline ? 'offline' : 'slow'}
+          show={!networkStatus.isOnline || networkStatus.isSlow}
+          syncStatus={syncStatus.needsSync || syncStatus.pendingActions > 0 ? syncStatus : undefined}
+          onSync={handleSync}
+          isSyncLoading={syncInProgress}
+          cachedDataAvailable={isCached}
+          cachedDataInfo={isCached && offlineData ? `Data offline tersedia untuk ${offlineData.children.length} anak` : undefined}
+        />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -22,7 +22,6 @@ import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '.
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useOfflineDataService, useOfflineData, type CachedStudentData } from '../services/offlineDataService';
 
-import Alert from './ui/Alert';
 import ErrorMessage from './ui/ErrorMessage';
 import DashboardActionCard from './ui/DashboardActionCard';
 import Badge from './ui/Badge';
@@ -33,6 +32,7 @@ import type { VoiceCommand } from '../types';
 import VoiceInputButton from './VoiceInputButton';
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import Button from './ui/Button';
+import OfflineBanner from './ui/OfflineBanner';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -310,53 +310,31 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
   // Filter menu items based on permissions
   const menuItems = allMenuItems.filter(item => checkPermission(item.permission));
 
+  // Determine offline banner mode
+  const getBannerMode = () => {
+    if (!isOnline && isSlow) return 'both';
+    if (!isOnline) return 'offline';
+    if (isSlow) return 'slow';
+    return 'offline';
+  };
+
+  const bannerMode = getBannerMode();
+  const showBanner = !isOnline || isSlow;
+
   return (
     <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        {/* Network Status Bar */}
-        {!isOnline && (
-          <Alert variant="error" size="md" border="full" className="mb-6">
-            {getOfflineMessage()}
-            {isCached && (
-              <p className="text-xs mt-1">📦 Data Offline Tersedia</p>
-            )}
-          </Alert>
-        )}
-
-        {isSlow && isOnline && (
-          <Alert variant="warning" size="md" border="full" className="mb-6">
-            {getSlowConnectionMessage()}
-          </Alert>
-        )}
-
-        {/* Sync Status Bar */}
-        {isOnline && (syncStatus.needsSync || syncStatus.pendingActions > 0) && (
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-card p-4 mb-6 flex items-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            <div className="flex-1">
-              <p className="text-blue-700 dark:text-blue-300 text-sm font-medium">
-                {syncStatus.pendingActions > 0 
-                  ? `${syncStatus.pendingActions} aksi pending perlu disinkronkan` 
-                  : 'Data perlu diperbarui'
-                }
-              </p>
-              <p className="text-blue-600 dark:text-blue-400 text-xs">
-                Terakhir diperbarui: {syncStatus.lastSync ? new Date(syncStatus.lastSync).toLocaleTimeString('id-ID') : 'Belum pernah'}
-              </p>
-            </div>
-            <Button
-              onClick={handleSync}
-              isLoading={syncInProgress}
-              variant="blue-solid"
-              size="sm"
-            >
-              Sinkronkan
-            </Button>
-          </div>
-        )}
+        {/* Offline Banner */}
+        <OfflineBanner
+          mode={bannerMode}
+          show={showBanner}
+          syncStatus={syncStatus.needsSync || syncStatus.pendingActions > 0 ? syncStatus : undefined}
+          onSync={handleSync}
+          isSyncLoading={syncInProgress}
+          cachedDataAvailable={isCached}
+          cachedDataInfo={isCached ? 'Data Offline Tersedia' : undefined}
+        />
 
         {loading ? (
           <div className="space-y-6">
