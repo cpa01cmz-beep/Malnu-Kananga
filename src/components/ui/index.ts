@@ -29,6 +29,7 @@ export { default as Badge } from './Badge';
 export { default as Alert } from './Alert';
 export { default as LinkCard } from './LinkCard';
 export { default as DashboardActionCard } from './DashboardActionCard';
+export { default as ImageCard } from './ImageCard';
 export { default as SocialLink } from './SocialLink';
 
 // Table Components
