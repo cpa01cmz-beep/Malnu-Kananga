@@ -1,7 +1,7 @@
 # Task List
 
 **Last Updated**: 2026-01-13
-**Version**: 6.0.0
+**Version**: 7.0.0
 
 ---
 
@@ -9,8 +9,7 @@
 
 ### P0: Critical (Blockers)
 
-- [ ] Fix test failures
-  - 24 failing tests across 5 files
+- [ ] Fix test failures (24 failures across 5 files)
   - OfflineIndicator.test.tsx (5 failures)
   - ErrorBoundary.test.tsx (2 failures)
   - emailService.test.ts (4 failures)
@@ -22,7 +21,7 @@
 - [ ] Complete UI component documentation
   - Document all 40 UI components from `src/components/ui/index.ts`
   - Current: 7/40 documented
-  - See `docs/UI_COMPONENTS.md` for TODO list
+  - See `docs/UI_COMPONENTS.md` for complete list
 
 - [ ] Implement backend WebSocket support
   - Frontend: Fully implemented (`webSocketService.ts`)
@@ -57,14 +56,14 @@
 
 ## Repository Metrics (Updated 2026-01-13)
 
-- **Total Source Files**: 326 TypeScript/TSX files
+- **Total Source Files**: 326 TypeScript/TSX files in src/
 - **Test Files**: 81 test files (*.test.ts, *.test.tsx)
 - **Source Files (Non-Test)**: 245 files
 - **Documentation Files**: 18 (in /docs directory)
-- **Services**: 25 services in src/services/ (excluding type/template files)
-- **Components**: 216 component files
-  - UI components: 40 exported from index.ts
-  - Other components: 176
+- **Services**: 27 services in src/services/ (excluding .test. and .types. files)
+- **Components**: 214 component files
+  - UI components: 40 exported from src/components/ui/index.ts
+  - Other components: 174
 - **Total Tests**: 1494 (1460 passing, 24 failing, 10 skipped)
 
 ---
@@ -93,6 +92,4 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 7.0.0 | 2026-01-13 | Repository maintenance audit: Fixed service count metric (28→25), clarified type/template files exclusion, corrected component count (158→216), verified all other metrics accurate |
-| 6.0.0 | 2026-01-13 | Repository cleanup: Corrected all metrics (326 total files, 245 source, 40 UI components), updated documentation references, verified security (0 vulnerabilities), confirmed .gitignore completeness |
-| 5.0.0 | 2026-01-13 | Repository maintenance: Updated all metrics, removed obsolete service references, fixed test counts, updated TypeScript/linting status to reflect current state |
+| 7.0.0 | 2026-01-13 | Repository cleanup: Synthesized TASK.md for clarity, corrected metrics (27 services, 214 components), consolidated version history |
