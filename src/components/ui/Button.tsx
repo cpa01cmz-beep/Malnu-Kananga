@@ -15,7 +15,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
+const baseClasses = "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
@@ -72,13 +72,20 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 
   const computedAriaLabel = iconOnly ? (ariaLabel || (typeof children === 'string' ? children : 'Button')) : undefined;
 
+  const ariaProps: Record<string, string | boolean | undefined> = {
+    'aria-label': computedAriaLabel,
+  };
+
+  if (isLoading) {
+    ariaProps['aria-busy'] = 'true';
+  }
+
   return (
     <button
       ref={ref}
       className={classes}
       disabled={disabled || isLoading}
-      aria-label={computedAriaLabel}
-      aria-busy={isLoading}
+      {...ariaProps}
       {...props}
     >
       {isLoading && iconOnly ? (
