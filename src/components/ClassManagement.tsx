@@ -18,6 +18,7 @@ import AccessDenied from './AccessDenied';
 import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
 import { CardSkeleton, TableSkeleton } from './ui/Skeleton';
+import { getContainer } from '../config/styling';
 
 interface ClassStudent {
   id: string;
@@ -324,25 +325,25 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
       />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+        <div className={`${getContainer('CARD_LG')} p-4`}>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Hadir Hari Ini</p>
           <p className="text-xl font-bold text-green-600 dark:text-green-400">
             {students.filter((s) => s.attendanceToday === 'hadir').length}
           </p>
         </div>
-        <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+        <div className={`${getContainer('CARD_LG')} p-4`}>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Sakit</p>
           <p className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
             {students.filter((s) => s.attendanceToday === 'sakit').length}
           </p>
         </div>
-        <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+        <div className={`${getContainer('CARD_LG')} p-4`}>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Izin</p>
           <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
             {students.filter((s) => s.attendanceToday === 'izin').length}
           </p>
         </div>
-        <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
+        <div className={`${getContainer('CARD_LG')} p-4`}>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Alpa</p>
           <p className="text-xl font-bold text-red-600 dark:text-red-400">
             {students.filter((s) => s.attendanceToday === 'alpa').length}
@@ -350,7 +351,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
         </div>
       </div>
 
-      <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+      <div className={`${getContainer('CARD')} overflow-hidden`}>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
             <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
