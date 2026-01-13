@@ -5,6 +5,8 @@ import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../../config/permissions';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Tab from '../ui/Tab';
+import Card from '../ui/Card';
+import Select from '../ui/Select';
 
 interface PermissionManagerProps {
   onShowToast: (message: string, type: 'success' | 'error' | 'info') => void;
@@ -67,7 +69,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-md p-6">
+      <Card padding="lg" className="bg-white dark:bg-neutral-800">
         <h2 className="text-2xl font-bold mb-4 text-neutral-800 dark:text-neutral-200">
           Permission Management System
         </h2>
@@ -90,34 +92,30 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
             {/* Role Selection */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                  User Role
-                </label>
-                <select
+                <Select
+                  label="User Role"
                   value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value as UserRole)}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-700 dark:text-neutral-200"
-                >
-                  <option value="admin">Administrator</option>
-                  <option value="teacher">Teacher</option>
-                  <option value="student">Student</option>
-                  <option value="parent">Parent</option>
-                </select>
+                  onChange={(value) => setSelectedRole(value as UserRole)}
+                  options={[
+                    { value: 'admin', label: 'Administrator' },
+                    { value: 'teacher', label: 'Teacher' },
+                    { value: 'student', label: 'Student' },
+                    { value: 'parent', label: 'Parent' }
+                  ]}
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                  Extra Role
-                </label>
-                <select
-                  value={selectedExtraRole || ''}
-                  onChange={(e) => setSelectedExtraRole(e.target.value as UserExtraRole)}
-                  className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-neutral-700 dark:text-neutral-200"
-                >
-                  <option value="">None</option>
-                  <option value="staff">Staff</option>
-                  <option value="osis">OSIS</option>
-                </select>
+                <Select
+                  label="Extra Role"
+                  value={selectedExtraRole || 'none'}
+                  onChange={(value) => setSelectedExtraRole(value === 'none' ? null : value as UserExtraRole)}
+                  options={[
+                    { value: 'none', label: 'None' },
+                    { value: 'staff', label: 'Staff' },
+                    { value: 'osis', label: 'OSIS' }
+                  ]}
+                />
               </div>
 
               <div className="flex items-end space-x-2">
@@ -334,7 +332,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
             </div>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 };

@@ -413,7 +413,32 @@
         - Enhanced design system consistency with centralized component usage
         - Added comprehensive test coverage with 10 test cases
         - Eliminated ~4 lines of inline button styling code
-        - PR #1128: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1128
+         - PR #1128: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1128
+   - [x] PermissionManager Card Component Refactoring (Phase 5 - COMPLETED 2026-01-13)
+        - Refactored main container div to use centralized Card component
+        - Replaced hardcoded card styling (bg-white dark:bg-neutral-800 rounded-lg shadow-md p-6) with Card component
+        - Refactored inline select elements to use centralized Select component for role selection
+        - Maintained all functionality and styling
+        - Improved accessibility with Card's built-in ARIA attributes and keyboard navigation
+        - Enhanced design system consistency with centralized component usage
+        - Added comprehensive test coverage with 12 accessibility-focused test cases
+        - Eliminated hardcoded card patterns for better maintainability
+        - See src/components/admin/PermissionManager.tsx:70 for implementation
+   - [x] OfflineIndicator Card and Modal Component Refactoring (Phase 5 - COMPLETED 2026-01-13)
+        - Refactored main indicator div to use centralized Card component
+        - Refactored sync status popup div to use centralized Card component
+        - Refactored OfflineQueueDetails to use centralized Modal component instead of custom modal implementation
+        - Replaced custom modal with Modal's built-in focus trap and accessibility features
+        - Maintained all functionality (offline status, queue counts, sync actions)
+        - Improved accessibility with Card and Modal's built-in ARIA attributes
+        - Enhanced keyboard navigation with Modal's focus management
+        - Added body scroll lock when modal is open
+        - Added Escape key and backdrop click handlers for modal
+        - Added comprehensive test coverage with 28 accessibility-focused test cases
+        - Eliminated ~30 lines of duplicate card and modal code
+        - Improved design system consistency and maintainability
+        - See src/components/OfflineIndicator.tsx for implementation
+
 
 
 
