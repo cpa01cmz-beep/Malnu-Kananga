@@ -325,25 +325,21 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   />
                 </div>
               ) : (
-                 <div className="divide-y divide-neutral-100 dark:divide-neutral-800" role="list" aria-label="Daftar notifikasi">
-                  {filteredHistory().map((item) => (
-                    <div
-                      key={item.id}
-                      onClick={() => handleNotificationClick(item)}
-                      role="listitem"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          handleNotificationClick(item);
-                        }
-                      }}
-                      className={`p-4 hover:bg-neutral-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors ${getPriorityColor(
-                        item.notification.priority
-                      )} ${item.notification.read ? 'bg-white dark:bg-neutral-900' : 'bg-blue-50 dark:bg-blue-900/20'} focus:outline-none focus:ring-2 focus:ring-primary-500/50`}
-                      aria-label={`${item.notification.title}, ${item.notification.body}`}
-                      aria-current={!item.notification.read ? 'true' : undefined}
-                    >
+                  <ul className="divide-y divide-neutral-100 dark:divide-neutral-800" role="list" aria-label="Daftar notifikasi">
+                   {filteredHistory().map((item) => (
+                     <li
+                       key={item.id}
+                       role="listitem"
+                     >
+                       <button
+                         type="button"
+                         onClick={() => handleNotificationClick(item)}
+                         className={`w-full text-left p-4 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors ${getPriorityColor(
+                           item.notification.priority
+                         )} ${item.notification.read ? 'bg-white dark:bg-neutral-900' : 'bg-blue-50 dark:bg-blue-900/20'} focus:outline-none focus:ring-2 focus:ring-primary-500/50`}
+                         aria-label={`${item.notification.title}, ${item.notification.body}${!item.notification.read ? ', belum dibaca' : ''}`}
+                         aria-current={!item.notification.read ? 'true' : undefined}
+                       >
                       <div className="flex items-start gap-3">
                         <span className="text-2xl" role="img" aria-label={getTypeIcon(item.notification.type)}>
                           {getTypeIcon(item.notification.type)}
@@ -361,25 +357,26 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                             {item.notification.body}
                           </p>
                           <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-500">
-                            <span>
-                              {new Date(
-                                item.notification.timestamp
-                              ).toLocaleString('id-ID', {
-                                month: 'short',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })}
-                            </span>
-                            <span className="capitalize">
-                              {item.notification.type}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                             <span>
+                               {new Date(
+                                 item.notification.timestamp
+                               ).toLocaleString('id-ID', {
+                                 month: 'short',
+                                 day: 'numeric',
+                                 hour: '2-digit',
+                                 minute: '2-digit',
+                               })}
+                             </span>
+                             <span className="capitalize">
+                               {item.notification.type}
+                              </span>
+                           </div>
+                         </div>
+                       </div>
+                       </button>
+                     </li>
                   ))}
-                </div>
+                </ul>
               )}
             </div>
 

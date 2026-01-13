@@ -843,6 +843,8 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             size="md"
             className="p-2"
             aria-label="Pencarian lanjutan"
+            aria-expanded={showAdvancedSearch}
+            aria-controls="advanced-search-panel"
           >
             <FunnelIcon className="w-5 h-5 sm:w-6 sm:h-6" />
           </Button>
@@ -875,6 +877,8 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             size="md"
             className="p-2"
             aria-label="Opsi pencarian semantik"
+            aria-expanded={showSemanticOptions}
+            aria-controls="semantic-options-panel"
           >
             <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
               ⚙️
@@ -921,7 +925,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
       {/* Advanced Search Panel */}
       {showAdvancedSearch && (
-        <div className="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4 mb-6 border border-neutral-200 dark:border-neutral-700">
+        <div id="advanced-search-panel" className="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4 mb-6 border border-neutral-200 dark:border-neutral-700">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Teacher Filter */}
             <Input
@@ -1125,7 +1129,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
       {/* Semantic Search Options Panel */}
       {showSemanticOptions && (
-        <div className={`${GRADIENT_CLASSES.AI_SEMANTIC} rounded-xl p-4 mb-6 border border-purple-200 dark:border-purple-700`}>
+        <div id="semantic-options-panel" className={`${GRADIENT_CLASSES.AI_SEMANTIC} rounded-xl p-4 mb-6 border border-purple-200 dark:border-purple-700`}>
           <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">🧠 Pencarian Semantik AI</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
