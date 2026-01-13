@@ -451,69 +451,6 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
       logger.error('PPDB submission error:', error);
     }
   };
-        const actionId = addAction({
-          type: 'submit',
-          entity: 'ppdb',
-          entityId: ppdbData.nisn || generateTempId(),
-          data: ppdbData,
-          endpoint: '/api/ppdb',
-          method: 'POST',
-        });
-
-        setIsSubmittingFinal(false);
-        onShowToast('Pendaftaran akan dikirim saat koneksi tersedia.', 'info');
-        logger.info('PPDB registration queued for offline sync', { actionId, nisn: ppdbData.nisn });
-        return;
-      }
-
-      // Online submission
-      const response = await ppdbAPI.create(ppdbData);
-
-      if (response.success) {
-        setIsSubmittingFinal(false);
-        onShowToast('Pendaftaran berhasil! Data Anda sedang diverifikasi.', 'success');
-
-        // Notify admins about new PPDB registration using event notifications hook
-        await notifyPPDBStatus(1);
-
-        autoSaveActions.reset({
-          fullName: '',
-          nisn: '',
-          originSchool: '',
-          parentName: '',
-          phoneNumber: '',
-          email: '',
-          address: '',
-        });
-
-        setUploadedDocument(null);
-        onClose();
-      } else {
-        throw new Error(response.error || 'Gagal mendaftar');
-      }
-    } catch (error) {
-      // Auto-queue on network failure
-      if (!isOnline) {
-        const actionId = addAction({
-          type: 'submit',
-          entity: 'ppdb',
-          entityId: ppdbData.nisn || generateTempId(),
-          data: ppdbData,
-          endpoint: '/api/ppdb',
-          method: 'POST',
-        });
-
-        setIsSubmittingFinal(false);
-        onShowToast('Koneksi terputus. Pendaftaran akan dikirim saat online.', 'info');
-        logger.info('PPDB registration auto-queued after network failure', { actionId, error });
-        return;
-      }
-
-      setIsSubmittingFinal(false);
-      onShowToast('Gagal mendaftar. Silakan coba lagi.', 'error');
-      logger.error('PPDB submission error:', error);
-    }
-  };
 
   return (
     <Modal

@@ -796,7 +796,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
           setIsDeleteDialogOpen(false);
           setEventToDelete(null);
         }}
-        disabled={isDeleting}
+        isLoading={isDeleting}
       />
     </div>
   );
