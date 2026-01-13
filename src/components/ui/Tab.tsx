@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 export type TabColor = 'green' | 'blue' | 'purple' | 'red' | 'yellow' | 'neutral';
 
@@ -86,10 +86,19 @@ const Tab: React.FC<TabProps> = ({
     return `${baseClasses} ${activeColorClasses}`;
   };
 
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+  useEffect(() => {
+    const activeTabButton = tabRefs.current[activeTab];
+    if (activeTabButton) {
+      activeTabButton.focus();
+    }
+  }, [activeTab]);
+
   const handleKeyDown = (e: React.KeyboardEvent, tabId: string) => {
     const enabledOptions = options.filter((opt) => !opt.disabled);
     const currentEnabledIndex = enabledOptions.findIndex((opt) => opt.id === tabId);
-
+    
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       onTabChange(tabId);
@@ -119,6 +128,7 @@ const Tab: React.FC<TabProps> = ({
             {options.map((option) => (
               <button
                 key={option.id}
+                ref={(el) => { tabRefs.current[option.id] = el; }}
                 onClick={() => !option.disabled && onTabChange(option.id)}
                 onKeyDown={(e) => !option.disabled && handleKeyDown(e, option.id)}
                 disabled={option.disabled}
@@ -149,6 +159,7 @@ const Tab: React.FC<TabProps> = ({
           {options.map((option) => (
             <button
               key={option.id}
+              ref={(el) => { tabRefs.current[option.id] = el; }}
               onClick={() => !option.disabled && onTabChange(option.id)}
               onKeyDown={(e) => !option.disabled && handleKeyDown(e, option.id)}
               disabled={option.disabled}

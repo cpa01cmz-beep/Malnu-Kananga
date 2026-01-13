@@ -92,7 +92,7 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
           className={`${labelSizeClasses[size]} font-semibold text-neutral-700 dark:text-neutral-300 block`}
         >
           {label}
-          {props.required && <span className="text-red-500 ml-1" aria-label="wajib diisi">*</span>}
+          {props.required && <span className="text-red-500 ml-1" aria-label="required">*</span>}
         </label>
       )}
 
