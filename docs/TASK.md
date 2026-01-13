@@ -67,7 +67,7 @@
 | Metric | Status | Details |
 |--------|--------|---------|
 | TypeScript | ✅ Passing | Strict mode enabled |
-| Tests | ✅ Passing | 437 test files |
+ | Tests | ✅ Passing | 81 test files |
 | Build | ✅ Success | ~10s build time |
 | Linting | ⚠️ Minor Issues | 12 lint warnings in test files |
 | Security | ✅ Clean | 0 vulnerabilities |
