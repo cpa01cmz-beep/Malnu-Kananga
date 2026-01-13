@@ -95,6 +95,13 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
     language: VoiceLanguage.Indonesian
   });
 
+  const handleFilterKeyDown = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      action();
+    }
+  };
+
   const handleVoiceCommand = useCallback((command: VoiceCommand): boolean => {
     logger.info('Voice command received:', command);
 
@@ -831,6 +838,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           />
           <Button
             onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
+            onKeyDown={(e) => handleFilterKeyDown(e, () => setShowAdvancedSearch(!showAdvancedSearch))}
             variant={showAdvancedSearch ? 'success' : 'secondary'}
             size="md"
             className="p-2"
@@ -840,6 +848,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           </Button>
           <Button
             onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+            onKeyDown={(e) => handleFilterKeyDown(e, () => setShowOnlyFavorites(!showOnlyFavorites))}
             variant={showOnlyFavorites ? 'info' : 'secondary'}
             size="md"
             className="p-2"
@@ -849,6 +858,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           </Button>
           <Button
             onClick={() => setIsSemanticMode(!isSemanticMode)}
+            onKeyDown={(e) => handleFilterKeyDown(e, () => setIsSemanticMode(!isSemanticMode))}
             variant={isSemanticMode ? 'success' : 'secondary'}
             size="md"
             className="p-2"
@@ -860,6 +870,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           </Button>
           <Button
             onClick={() => setShowSemanticOptions(!showSemanticOptions)}
+            onKeyDown={(e) => handleFilterKeyDown(e, () => setShowSemanticOptions(!showSemanticOptions))}
             variant={showSemanticOptions ? 'success' : 'secondary'}
             size="md"
             className="p-2"
