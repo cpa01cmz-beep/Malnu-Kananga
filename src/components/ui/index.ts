@@ -4,7 +4,7 @@ export { default as Select } from './Select';
 export { default as Textarea } from './Textarea';
 export { default as Label } from './Label';
 export { default as FileInput } from './FileUploader';
-export { default as Toggle } from './Toggle';
+export { Toggle } from './Toggle';
 export { default as SearchInput } from './SearchInput';
 
 // Button Components
@@ -37,7 +37,8 @@ export { default as DataTable } from './DataTable';
 
 // Interactive Components
 export { default as Tab } from './Tab';
-export { Toast } from '../Toast';
+import Toast from '../Toast';
+export { Toast };
 
 // Navigation Components
 export { default as Pagination } from './Pagination';
