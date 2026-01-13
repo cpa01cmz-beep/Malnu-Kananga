@@ -75,7 +75,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
           variant="card" 
         />
         <div className="mt-4 flex gap-3">
-          <Button onClick={handleRefresh} variant="primary">
+          <Button onClick={handleRefresh} variant="primary" isLoading={isGenerating}>
             Coba Lagi
           </Button>
           <Button onClick={onBack} variant="ghost">

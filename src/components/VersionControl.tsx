@@ -28,7 +28,8 @@ const VersionControl: React.FC<VersionControlProps> = ({
   const [newFile, setNewFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [showVersionHistory, setShowVersionHistory] = useState(false);
-
+  const [isDownloading, setIsDownloading] = useState(false);
+  
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRestoreDialogOpen, setIsRestoreDialogOpen] = useState(false);
   const [versionToDelete, setVersionToDelete] = useState<MaterialVersion | null>(null);
@@ -121,6 +122,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
   };
 
   const downloadVersion = async (version: MaterialVersion) => {
+    setIsDownloading(true);
     try {
       // Mock download - replace with actual implementation
       const downloadUrl = `/api/download/version/${version.id}`;
@@ -129,6 +131,8 @@ const VersionControl: React.FC<VersionControlProps> = ({
     } catch (err) {
       logger.error('Error downloading version:', err);
       onShowToast('Gagal mengunduh versi', 'error');
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -269,6 +273,7 @@ const deleteVersion = (versionId: string) => {
                       variant="ghost"
                       size="sm"
                       onClick={() => downloadVersion(version)}
+                      isLoading={isDownloading}
                       iconOnly
                       icon={<EyeIcon className="w-4 h-4" />}
                       aria-label="Unduh versi ini"
