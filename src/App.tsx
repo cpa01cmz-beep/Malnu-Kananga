@@ -319,7 +319,7 @@ const App: React.FC = () => {
       <Footer onDocsClick={() => setIsDocsOpen(true)} />
 
       <div
-        className={`fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2.5rem)] max-w-sm h-[70vh] max-h-[600px] transition-all duration-300 ease-in-out ${
+        className={`fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2rem)] max-w-sm h-[50vh] max-h-[400px] sm:h-[60vh] sm:max-h-[500px] md:h-[70vh] md:max-h-[600px] transition-all duration-300 ease-in-out ${
           isChatOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
         }`}
         aria-hidden={!isChatOpen}
