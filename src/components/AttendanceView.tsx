@@ -249,7 +249,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
         <div>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Status Kehadiran Hari Ini</p>
           <h3
-            className={`text-3xl font-bold ${
+            className={`text-2xl sm:text-3xl font-bold ${
               todayStatus === 'Hadir'
                 ? 'text-green-600 dark:text-green-400'
                 : todayStatus === 'Sakit'
@@ -267,19 +267,19 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <Alert variant="success" size="md" centered fullWidth>
-          <span className="block text-2xl font-bold">{presentPercentage}%</span>
+          <span className="block text-xl sm:text-2xl font-bold">{presentPercentage}%</span>
           <span className="text-xs">Persentase Hadir</span>
         </Alert>
         <Alert variant="warning" size="md" centered fullWidth>
-          <span className="block text-2xl font-bold">{sickCount}</span>
+          <span className="block text-xl sm:text-2xl font-bold">{sickCount}</span>
           <span className="text-xs">Sakit</span>
         </Alert>
         <Alert variant="info" size="md" centered fullWidth>
-          <span className="block text-2xl font-bold">{permissionCount}</span>
+          <span className="block text-xl sm:text-2xl font-bold">{permissionCount}</span>
           <span className="text-xs">Izin</span>
         </Alert>
         <Alert variant="error" size="md" centered fullWidth>
-          <span className="block text-2xl font-bold">{absentCount}</span>
+          <span className="block text-xl sm:text-2xl font-bold">{absentCount}</span>
           <span className="text-xs">Alpa</span>
         </Alert>
       </div>

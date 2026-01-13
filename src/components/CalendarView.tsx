@@ -136,13 +136,6 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     }
   };
 
-  const handleDateKeyDown = (date: Date, e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleDateClick(date);
-    }
-  };
-
   const renderMonthView = () => (
     <Card padding="none" role="grid" aria-label="Kalender bulanan">
       <div className="flex items-center justify-between p-4 border-b">
@@ -182,12 +175,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           const fullDateLabel = `${fullDayNames[date.getDay()]}, ${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
 
           return (
-            <div
+            <button
               key={index}
+              type="button"
               role="gridcell"
               onClick={() => handleDateClick(date)}
-              onKeyDown={(e) => handleDateKeyDown(date, e)}
-              className={`min-h-[100px] p-2 border-r border-b cursor-pointer transition-colors
+              className={`min-h-[100px] p-2 border-r border-b cursor-pointer transition-colors text-left
                 ${!isCurrentMonth ? 'bg-neutral-50 text-neutral-400' : 'bg-white'}
                 ${isToday ? 'bg-blue-50' : ''}
                 ${isSelected ? 'ring-2 ring-blue-500' : ''}
@@ -226,9 +219,9 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                   <div className="text-xs text-neutral-500">+{events.length - 3} lagi</div>
                 )}
                 </div>
-              </div>
-            );
-          })}
+            </button>
+          );
+        })}
         </div>
       </Card>
     );
@@ -285,14 +278,14 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             });
 
             return (
-              <div
+              <button
                 key={`${date.toISOString()}-${hour}`}
+                type="button"
+                role="gridcell"
                 onClick={() => handleDateClick(date)}
-                onKeyDown={(e) => handleDateKeyDown(date, e)}
-                className={`min-h-[60px] p-1 border-r border-b cursor-pointer transition-colors
+                className={`min-h-[60px] p-1 border-r border-b cursor-pointer transition-colors text-left
                   ${date.toDateString() === new Date().toDateString() ? 'bg-blue-50' : 'bg-white'}
                   hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                role="gridcell"
                 aria-label={`${fullDayNames[date.getDay()]} ${date.getDate()}, ${hour}:00`}
                 tabIndex={0}
               >
@@ -318,7 +311,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                     );
                   })}
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
