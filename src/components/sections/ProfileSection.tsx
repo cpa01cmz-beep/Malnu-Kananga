@@ -34,23 +34,25 @@ const ProfileSection: React.FC = () => {
                 </div>
             </div>
              <div className="lg:col-span-2 space-y-6">
-                <article
-                  className={`w-full p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out`}
+                <button
+                  type="button"
+                  className={`w-full text-left p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800`}
                   aria-labelledby="visi-heading"
                 >
                     <div className="flex items-center gap-3 mb-4">
                         <div className={`p-3 ${GRADIENT_CLASSES.PRIMARY_LIGHT} dark:from-primary-900/60 dark:to-primary-900/80 rounded-lg shadow-subtle hover:scale-105 transition-transform duration-200`} aria-hidden="true">
                             <svg className="w-5.5 h-5.5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268 2.943-9.542 7z" />
                             </svg>
                         </div>
                         <h3 id="visi-heading" className="text-xl font-semibold text-primary-600 dark:text-primary-400">Visi</h3>
                     </div>
                     <p className="text-neutral-700 dark:text-neutral-200 leading-relaxed">Melahirkan peserta didik berakhlak mulia, akademis unggul, serta berjiwa wirausaha.</p>
-                </article>
-                <article
-                  className={`w-full p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out`}
+                </button>
+                <button
+                  type="button"
+                  className={`w-full text-left p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800`}
                   aria-labelledby="misi-heading"
                 >
                     <div className="flex items-center gap-3 mb-4">
@@ -75,7 +77,7 @@ const ProfileSection: React.FC = () => {
                             <span>Pengembangan kompetensi literasi, numerasi, dan teknologi informasi.</span>
                         </li>
                     </ul>
-                </article>
+                </button>
           </div>
         </div>
     </Section>
