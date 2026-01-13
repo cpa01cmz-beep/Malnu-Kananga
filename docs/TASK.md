@@ -89,6 +89,16 @@
 - Users with accessibility needs receive enhanced contrast
 - Improved WCAG 2.1 AAA compliance for high-contrast mode
 
+### Card Keyboard Focus Accessibility Fix (2026-01-13)
+- Added keyboard focus styles to Card component hover variant
+- Implemented focus ring classes (focus:outline-none, focus:ring-2, focus:ring-primary-500/50, focus:ring-offset-2)
+- Added dark mode focus offset support (dark:focus:ring-offset-neutral-900)
+- Ensures keyboard users see visual focus indicator on interactive cards
+- Matches focus styles from interactive and gradient variants
+- Added test case to verify hover variant focus styles
+- Improves WCAG 2.1 AA accessibility compliance
+- Affects NewsCard, ProgramCard, PPDBSection cards, and other hover variant cards
+
 ### Color Palette Alignment (2026-01-13)
 - Fixed VoiceNotificationDemo component color system
 - Replaced hardcoded colors (bg-yellow-400, bg-red-400, bg-blue-400) with semantic colors
