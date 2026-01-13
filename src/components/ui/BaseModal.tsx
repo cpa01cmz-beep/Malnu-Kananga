@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import Button from './Button';
+import { getSurface, getRadius, getShadow, getBorder } from '../../config/styling';
 
 export interface ModalBaseProps {
   isOpen: boolean;
@@ -163,7 +164,7 @@ const BaseModal: React.FC<ModalBaseProps> = ({
     >
       <div
         ref={modalRef}
-        className={`bg-white dark:bg-neutral-800 rounded-xl shadow-float border border-neutral-200 dark:border-neutral-700 ${sizeClasses[size]} ${className}`}
+        className={`${getSurface('MODAL')} ${getRadius('XL')} ${getShadow('FLOAT')} ${getBorder('MODAL')} ${sizeClasses[size]} ${className}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}

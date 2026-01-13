@@ -1,4 +1,5 @@
 import React from 'react';
+import { getContainer } from '../../config/styling';
 
 interface SkeletonProps {
   className?: string;
@@ -51,7 +52,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
 };
 
 export const CardSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div className={`bg-white dark:bg-neutral-800 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 overflow-hidden ${className}`}>
+  <div className={`${getContainer('CARD_LG')} overflow-hidden ${className}`}>
     <Skeleton variant="rectangular" height="200" className="w-full" />
     <div className="p-6 space-y-4">
       <Skeleton variant="text" height={28} className="w-3/4" />

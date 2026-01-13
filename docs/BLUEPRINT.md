@@ -1,8 +1,8 @@
 # Blueprint Sistem Informasi Manajemen Sekolah
 
 **Created**: 2025-01-01
-**Last Updated**: 2026-01-10
-**Version**: 2.1.0
+**Last Updated**: 2026-01-13
+**Version**: 2.1.1
 **Status**: Active
 
 ## 1. Ringkasan
@@ -338,17 +338,30 @@ src/
       - Improved gradient system consistency and maintainability
       - See `src/config/gradients.ts` for complete gradient configuration
 
-     ### 3.29 TemplateManagement Loading State Enhancement (Fase 5 - COMPLETED 2026-01-13)
-      - Added loading state tracking for test notification sending operation
-      - Implemented `sendingNotification` state to prevent duplicate submissions
-      - Added `isLoading` and `disabled` props to "Kirim Notifikasi Tes" button
-      - Button displays "Mengirim..." text during async operation
-      - Disabled "Batal" button during sending to prevent modal closure issues
-      - Improved UX with clear visual feedback during notification sending
-      - Replaced custom empty state div with EmptyState component for consistency
-      - Added comprehensive test coverage with 11 test cases
-      - Tests verify loading state, disabled buttons, toast messages, and form validation
-      - See `src/components/TemplateManagement.tsx` and `src/components/__tests__/TemplateManagement.test.tsx`
+      ### 3.29 TemplateManagement Loading State Enhancement (Fase 5 - COMPLETED 2026-01-13)
+       - Added loading state tracking for test notification sending operation
+       - Implemented `sendingNotification` state to prevent duplicate submissions
+       - Added `isLoading` and `disabled` props to "Kirim Notifikasi Tes" button
+       - Button displays "Mengirim..." text during async operation
+       - Disabled "Batal" button during sending to prevent modal closure issues
+       - Improved UX with clear visual feedback during notification sending
+       - Replaced custom empty state div with EmptyState component for consistency
+       - Added comprehensive test coverage with 11 test cases
+       - Tests verify loading state, disabled buttons, toast messages, and form validation
+       - See `src/components/TemplateManagement.tsx` and `src/components/__tests__/TemplateManagement.test.tsx`
+
+      ### 3.30 UI Component Styling Token Refactoring (Fase 5 - COMPLETED 2026-01-13)
+       - Refactored 4 UI components to use centralized styling tokens from `src/config/styling.ts`
+       - Updated Modal.tsx: Replaced hardcoded container with getSurface('MODAL'), getRadius('XL'), getShadow('FLOAT'), getBorder('MODAL')
+       - Updated BaseModal.tsx: Same refactoring as Modal for consistency
+       - Updated LoadingOverlay.tsx: Centered variant now uses centralized styling tokens
+       - Updated Skeleton.tsx: CardSkeleton now uses getContainer('CARD_LG')
+       - Improved design system consistency across modal and skeleton components
+       - Reduced hardcoded styling patterns from 100+ to 96+ remaining
+       - All changes preserve functionality, accessibility, and UI appearance
+       - No lint errors introduced by refactoring
+       - Type-safe styling utilities ensure compile-time correctness
+       - See `src/config/styling.ts`, `src/components/ui/Modal.tsx`, `src/components/ui/BaseModal.tsx`, `src/components/ui/LoadingOverlay.tsx`, `src/components/ui/Skeleton.tsx`
 
 ## 4. User Roles & Access Control
 

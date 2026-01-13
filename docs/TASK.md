@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-13
-**Version**: 2.4.9
+**Version**: 2.5.0
 
 ---
 
@@ -79,6 +79,17 @@
 ---
 
 ## Completed Work (Q1 2026)
+
+### Styling System Debug - UI Component Refactoring (2026-01-13)
+- Refactored 4 UI components to use centralized styling tokens (SURFACE, RADIUS, SHADOW, BORDER)
+- Updated Modal.tsx: Replaced hardcoded modal container with getSurface('MODAL'), getRadius('XL'), getShadow('FLOAT'), getBorder('MODAL')
+- Updated BaseModal.tsx: Same refactoring as Modal for consistency
+- Updated LoadingOverlay.tsx: Centered variant now uses centralized styling tokens
+- Updated Skeleton.tsx: CardSkeleton now uses getContainer('CARD_LG') instead of hardcoded pattern
+- Improved design system consistency across modal and skeleton components
+- Reduced hardcoded styling patterns in ui/ components
+- All changes preserve functionality, accessibility, and UI appearance
+- No lint errors introduced
 
 ### Styling System Debug - CONTAINERS Token Application (2026-01-13)
 - Refactored 3 hardcoded container patterns to use centralized `CONTAINERS` tokens
@@ -257,6 +268,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.5.1 | 2026-01-13 | Styling system debug - refactored 4 UI components (Modal, BaseModal, LoadingOverlay, Skeleton) to use centralized styling tokens (SURFACE, RADIUS, SHADOW, BORDER), replaced hardcoded patterns with type-safe getter functions, improved design system consistency across modal and skeleton components, reduced hardcoded styling patterns in ui/ components, all changes preserve functionality and UI appearance |
 | 2.5.0 | 2026-01-13 | Styling system debug - applied centralized CONTAINERS tokens to MaterialTemplatesLibrary and PPDBManagement components, refactored 3 hardcoded container patterns (2 in PPDBManagement, 1 in MaterialTemplatesLibrary), improved design system consistency, reduced hardcoded patterns from 41 → 38 remaining |
 | 2.4.9 | 2026-01-13 | Styling system debug - created centralized styling configuration (SHADOWS, RADIUS, SURFACES, BORDERS, CONTAINERS), added 42 styling tokens with type-safe getter functions, identified 113+ bg-white/dark:bg-neutral-800 patterns, identified 109+ border patterns, identified 422+ rounded usages, fixed undefined custom shadows (shadow-card, shadow-card-hover, shadow-float), improved design system consistency, added comprehensive documentation |
 | 2.4.8 | 2026-01-13 | Styling system debug - created centralized dimension token system (getMinHeight, getMaxHeight, getMinWidth, getMaxWidth), added 15 dimension tokens (TOUCH_TARGET, SMALL, MEDIUM, LARGE, VIEWPORT, etc.), refactored 5 components to use dimension tokens, eliminated hardcoded dimensions, improved WCAG 2.1 AAA compliance, added comprehensive documentation |
