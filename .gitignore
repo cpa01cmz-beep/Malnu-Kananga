@@ -75,6 +75,7 @@ jspm_packages/
 
 # Output of 'npm pack'
 *.tgz
+npm-pack-*.tgz
 
 # Yarn Integrity file
 .yarn-integrity
@@ -83,20 +84,20 @@ jspm_packages/
 .cache
 .parcel-cache
 
-# Serverless directories
-.serverless
+# Serverless directories (not used in this project - Cloudflare Workers instead)
+# .serverless/
+# .dynamodb/
+# .fusebox/
+# .rts2_cache_*
+# .turbo/
 
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
-.tern-port
+# TernJS port file (not used in this project)
+# .tern-port
 
 # Cloudflare
 .wrangler/
+.wrangler/state/
+.wrangler/metrics/
 
 # Temporary files
 *.tmp

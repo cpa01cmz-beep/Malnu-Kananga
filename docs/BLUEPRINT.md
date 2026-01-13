@@ -57,6 +57,26 @@ src/
 ├── components/          # React UI components
 │   ├── admin/         # Admin-specific components
 │   ├── icons/         # Icon components
+│   ├── sections/      # Bagian-bagian besar halaman
+│   └── ui/           # Reusable UI components
+├── config/             # Configuration files (permissions, notification templates)
+├── contexts/           # React Context providers
+├── constants.ts        # Centralized constants (STORAGE_KEYS)
+├── data/              # Default data dan static resources
+├── hooks/             # Custom React hooks (useVoiceRecognition, useVoiceSynthesis)
+├── services/          # API dan business logic services
+├── styles/            # Global CSS styles (themes.css)
+├── tests/             # Integration tests
+├── types/             # TypeScript type definitions
+├── utils/             # Utility functions dan helpers
+├── App.tsx            # Main application component
+├── config.ts          # Main configuration
+└── index.tsx          # Entry point
+```
+src/
+├── components/          # React UI components
+│   ├── admin/         # Admin-specific components
+│   ├── icons/         # Icon components
 │   ├── sections/      # Page sections
 │   └── ui/           # Reusable UI components
 ├── config/             # Configuration files (permissions, notification templates)
