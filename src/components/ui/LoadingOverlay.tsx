@@ -1,5 +1,6 @@
 import React from 'react';
 import LoadingSpinner from './LoadingSpinner';
+import { getMinHeight } from '../../config/dimensions';
 
 export type LoadingOverlaySize = 'sm' | 'md' | 'lg' | 'full';
 export type LoadingOverlayVariant = 'default' | 'minimal' | 'centered';
@@ -53,7 +54,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   };
 
   const variantClasses = {
-    default: 'flex items-center justify-center min-h-[200px]',
+    default: `flex items-center justify-center ${getMinHeight('MEDIUM')}`,
     minimal: 'flex items-center justify-center',
     centered: 'flex items-center justify-center fixed inset-0',
   };

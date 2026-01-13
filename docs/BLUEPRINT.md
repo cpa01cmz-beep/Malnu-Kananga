@@ -413,6 +413,18 @@ src/
 - **Performance**: Target <2s page load
 - **User Satisfaction**: Target 4.0/5.0 NPS score
 
+### 3.30 Dimension Token System (Fase 5 - COMPLETED 2026-01-13)
+- Created centralized dimension configuration in `src/config/dimensions.ts`
+- Implemented type-safe dimension utilities (getMinHeight, getMaxHeight, getMinWidth, getMaxWidth)
+- Added 5 min-height tokens (TOUCH_TARGET, SMALL, MEDIUM, LARGE, VIEWPORT)
+- Added 6 max-height tokens (SMALL, MEDIUM, LARGE, XL, XXL, FIXED_LARGE)
+- Added 2 min-width tokens (SMALL, MEDIUM) and 2 max-width tokens (RESPONSIVE_MD, RESPONSIVE_LG)
+- Refactored 5 components to use dimension tokens (VoiceCommandsHelp, VoiceSettings, LoadingOverlay, PPDBManagement, ChatWindow)
+- Eliminated hardcoded dimension duplication across 5+ components
+- Improved WCAG 2.1 AAA compliance for touch targets
+- Enhanced design system consistency and maintainability
+- See `docs/DIMENSIONS.md` for complete documentation and migration guide
+
 ## 7. Cost Considerations
 
 **Estimated Monthly Cost (Free Tier)**
@@ -425,5 +437,5 @@ src/
 ---
 
 **Last Updated**: 2026-01-13
-**Version**: 2.1.1
+**Version**: 2.1.2
 **Status**: Active
