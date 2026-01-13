@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-13
-**Version**: 2.5.6
+**Version**: 2.5.7
 
 ---
 
@@ -209,6 +209,20 @@
 - Total: -12 hardcoded patterns, +6 imports, improved maintainability
 - See src/components/ParentScheduleView.tsx, ParentMeetingsView.tsx, ParentPaymentsView.tsx, ParentMessagingView.tsx, ParentGradesView.tsx, ParentAttendanceView.tsx for implementation
 
+### Styling System Debug - StudentPortal Component Refactoring (2026-01-13)
+- Refactored 4 hardcoded `bg-white dark:bg-neutral-800` patterns in StudentPortal component to use centralized styling tokens
+- Updated Welcome Banner (line 593) to use `getContainer('CARD_LG')` with custom padding `p-6 sm:p-8`
+- Updated Voice Commands Section (line 621) to use `getContainer('CARD_LG')`
+- Updated Offline Status Indicator (line 704) to use `getSurface('CARD')`, `getRadius('LG')`, `getShadow('LG')` with custom red border
+- Updated Sync Complete Toast (line 719) to use `getRadius('LG')`, `getShadow('LG')` with custom green background and border
+- Added import for `getContainer, getSurface, getBorder, getRadius, getShadow` from `src/config/styling`
+- Improved design system consistency in StudentPortal component
+- Reduced hardcoded patterns in StudentPortal from 4 to 0 instances
+- All changes preserve functionality, accessibility, and UI appearance
+- No lint errors introduced
+- Total: -4 hardcoded patterns, +1 import, improved maintainability
+- See `src/components/StudentPortal.tsx` for implementation
+
 ### Styling System Debug - Centralized Styling Configuration (2026-01-13)
 - Created centralized styling configuration in `src/config/styling.ts`
 - Implemented type-safe styling utilities with TypeScript interfaces
@@ -375,10 +389,11 @@
 
 ## Version History
 
-  | Version | Date | Changes |
-  |---------|------|---------|
-  | 2.5.6 | 2026-01-13 | Accessibility Fix - Added missing Button and Badge variants to fix type errors, added 'neutral' variant to Button component with proper styling (bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 with hover states and focus ring), added 'secondary' variant to Badge component with solid and outline style support (bg-neutral-600 dark:bg-neutral-500 for solid, border-neutral-500 for outline), fixed OsisEvents.tsx type error by enabling neutral button variant, fixed ImageCard.tsx type error by enabling secondary badge variant, removed unused GRADIENT_CLASSES import from ProfileSection.tsx, removed unused container variable from ImageCard.test.tsx, reduced lint errors from 21 to 19 (all remaining errors in studentPortalValidator utility), improved TypeScript type safety across UI components |
-  | 2.5.5 | 2026-01-13 | Styling system debug - refactored 12 hardcoded `bg-white dark:bg-neutral-800` patterns across RealTimeExample (4 instances), FolderNavigation (4 instances), and PermissionManager (4 instances) components to use centralized styling tokens, RealTimeExample updated 3 card containers and 1 table body with `getSurface('CARD')`, `getRadius('LG')`, `getShadow('SM')`, `getBorder('CARD')`, FolderNavigation updated 4 form inputs with `getSurface('INPUT')`, PermissionManager removed redundant Card className and updated 3 table bodies with `getSurface('CARD')`, improved design system consistency across example, e-library, and admin components, reduced hardcoded container patterns from 71 → 50 instances, all changes preserve functionality and UI appearance |
+   | Version | Date | Changes |
+   |---------|------|---------|
+   | 2.5.7 | 2026-01-13 | Styling system debug - refactored 4 hardcoded `bg-white dark:bg-neutral-800` patterns in StudentPortal component to use centralized styling tokens, updated Welcome Banner and Voice Commands Section to use `getContainer('CARD_LG')`, updated Offline Status Indicator to use `getSurface('CARD')`, `getRadius('LG')`, `getShadow('LG')` with custom red border, updated Sync Complete Toast to use `getRadius('LG')`, `getShadow('LG')` with custom green background and border, added import for `getContainer, getSurface, getBorder, getRadius, getShadow` from `src/config/styling`, improved design system consistency in StudentPortal component, reduced hardcoded patterns in StudentPortal from 4 to 0 instances, all changes preserve functionality, accessibility, and UI appearance, no lint errors introduced |
+   | 2.5.6 | 2026-01-13 | Accessibility Fix - Added missing Button and Badge variants to fix type errors, added 'neutral' variant to Button component with proper styling (bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 with hover states and focus ring), added 'secondary' variant to Badge component with solid and outline style support (bg-neutral-600 dark:bg-neutral-500 for solid, border-neutral-500 for outline), fixed OsisEvents.tsx type error by enabling neutral button variant, fixed ImageCard.tsx type error by enabling secondary badge variant, removed unused GRADIENT_CLASSES import from ProfileSection.tsx, removed unused container variable from ImageCard.test.tsx, reduced lint errors from 21 to 19 (all remaining errors in studentPortalValidator utility), improved TypeScript type safety across UI components |
+   | 2.5.5 | 2026-01-13 | Styling system debug - refactored 12 hardcoded `bg-white dark:bg-neutral-800` patterns across RealTimeExample (4 instances), FolderNavigation (4 instances), and PermissionManager (4 instances) components to use centralized styling tokens, RealTimeExample updated 3 card containers and 1 table body with `getSurface('CARD')`, `getRadius('LG')`, `getShadow('SM')`, `getBorder('CARD')`, FolderNavigation updated 4 form inputs with `getSurface('INPUT')`, PermissionManager removed redundant Card className and updated 3 table bodies with `getSurface('CARD')`, improved design system consistency across example, e-library, and admin components, reduced hardcoded container patterns from 71 → 50 instances, all changes preserve functionality and UI appearance |
   | 2.5.4 | 2026-01-13 | Styling system debug - refactored 8 hardcoded `bg-white dark:bg-neutral-800` patterns in GradingManagement and AcademicGrades components to use centralized `getContainer()` tokens, updated GradingManagement (3 instances: grading table, OCR modal, raw OCR text), updated AcademicGrades (5 instances: 4 chart/section cards, 1 goal modal), used `getContainer('CARD')` for card patterns, used `getSurface('MODAL')` + `getRadius('2XL')` for modals, improved design system consistency across grading components, reduced hardcoded container patterns from 38 → 30 remaining, all changes preserve functionality and UI appearance |
  | 2.5.2 | 2026-01-13 | Styling system debug - refactored OsisEvents component (9 hardcoded `bg-white dark:bg-neutral-800` patterns) to use centralized `getContainer()` tokens, updated 5 tab containers to use `getContainer('CARD_LG')`, updated 2 event list containers to use `getContainer('CARD')`, replaced hardcoded button styling with Button component, improved design system consistency across event management UI, reduced hardcoded container patterns from 115 → 105, all changes preserve functionality and UI appearance |
 | 2.5.1 | 2026-01-13 | Styling system debug - refactored 4 UI components (Modal, BaseModal, LoadingOverlay, Skeleton) to use centralized styling tokens (SURFACE, RADIUS, SHADOW, BORDER), replaced hardcoded patterns with type-safe getter functions, improved design system consistency across modal and skeleton components, reduced hardcoded styling patterns in ui/ components, all changes preserve functionality and UI appearance |
