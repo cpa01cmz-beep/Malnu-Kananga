@@ -59,6 +59,7 @@ describe('PPDBRegistration Offline Queue Integration', () => {
 
     render(
       <PPDBRegistration
+        isOpen={true}
         onClose={_mockOnClose}
         onShowToast={_mockOnShowToast}
       />
@@ -79,6 +80,7 @@ describe('PPDBRegistration Offline Queue Integration', () => {
 
     render(
       <PPDBRegistration
+        isOpen={true}
         onClose={_mockOnClose}
         onShowToast={_mockOnShowToast}
       />
