@@ -1,0 +1,44 @@
+{
+  "name": "testing",
+  "version": "1.0.0",
+  "description": "Testing tools and commands for comprehensive test coverage",
+  "enabled": true,
+  "commands": [
+    {
+      "name": "test-generate",
+      "description": "Generate tests for existing code",
+      "prompt": "Generate comprehensive tests for the specified component, service, hook, or utility. Follow the test-generator skill patterns: 1) Check existing code structure, 2) Create appropriate test file in __tests__ folder, 3) Write tests for all code paths (success, error, loading), 4) Mock external dependencies, 5) Test user interactions for components, 6) Test async operations with waitFor, 7) Run tests to verify they pass"
+    },
+    {
+      "name": "debug-test",
+      "description": "Debug failing test",
+      "prompt": "Analyze the failing test: 1) Read the test file and understand what's being tested, 2) Check the implementation code, 3) Identify why it's failing, 4) Fix the implementation or the test as appropriate, 5) Run the specific test to verify the fix, 6) Run all tests to ensure no regressions."
+    }
+  ],
+  "tools": [
+    {
+      "name": "check-missing-tests",
+      "description": "Find TypeScript/JavaScript files without corresponding test files"
+    }
+  ],
+  "rules": [
+    {
+      "name": "Component testing",
+      "description": "Write tests for all components",
+      "pattern": "Every React component should have corresponding tests in __tests__ folders. Use React Testing Library. Test user interactions, props rendering, and edge cases. Maintain good test coverage.",
+      "priority": "medium"
+    },
+    {
+      "name": "Service testing",
+      "description": "Write tests for all services",
+      "pattern": "Every service should have corresponding tests in src/services/__tests__/. Test async functions, error cases, and edge cases. Mock external dependencies like API calls.",
+      "priority": "medium"
+    },
+    {
+      "name": "Test coverage",
+      "description": "Maintain high test coverage",
+      "pattern": "Aim for at least 80% test coverage. Write tests for critical paths first. Use coverage reports to identify untested code. Add tests before fixing bugs (TDD).",
+      "priority": "medium"
+    }
+  ]
+}

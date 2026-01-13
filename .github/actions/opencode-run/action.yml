@@ -1,0 +1,50 @@
+name: 'OpenCode Run'
+description: 'Run OpenCode with a prompt file'
+
+inputs:
+  prompt-file:
+    description: 'Path to prompt file (relative to repo root)'
+    required: true
+  model:
+    description: 'OpenCode model to use'
+    required: false
+    default: 'opencode/glm-4.7-free'
+  share:
+    description: 'Enable/disable sharing'
+    required: false
+    default: 'false'
+  max-retries:
+    description: 'Maximum retry attempts'
+    required: false
+    default: '2'
+  retry-delay:
+    description: 'Delay between retries (seconds)'
+    required: false
+    default: '30'
+  continue-on-error:
+    description: 'Continue workflow even if OpenCode fails'
+    required: false
+    default: 'false'
+
+outputs:
+  success:
+    description: 'Whether OpenCode execution succeeded'
+    value: ${{ steps.run-opencode.outputs.success }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run OpenCode
+      id: run-opencode
+      shell: bash
+      run: |
+        "$GITHUB_ACTION_PATH/run.sh" "${{ inputs.prompt-file }}" "${{ inputs.model }}" "${{ inputs.share }}" "${{ inputs.max-retries }}" "${{ inputs.retry-delay }}" "${{ inputs.continue-on-error }}"
+
+    - name: Report Result
+      shell: bash
+      run: |
+        if [ "${{ steps.run-opencode.outputs.success }}" = "true" ]; then
+          echo "OpenCode execution completed successfully"
+        else
+          echo "OpenCode execution failed"
+        fi

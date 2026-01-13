@@ -1,0 +1,42 @@
+{
+  "name": "performance",
+  "version": "1.0.0",
+  "description": "Performance optimization tools and commands",
+  "enabled": true,
+  "commands": [
+    {
+      "name": "optimize-performance",
+      "description": "Optimize component or service performance",
+      "prompt": "Analyze and optimize the performance of the specified component or service: 1) Check for unnecessary re-renders in React components, 2) Look for inefficient algorithms or data structures, 3) Check for proper memoization (useMemo, useCallback), 4) Review API calls for batching or caching opportunities, 5) Identify memory leaks or resource cleanup issues."
+    },
+    {
+      "name": "analyze-bundle",
+      "description": "Analyze bundle size and identify optimization opportunities",
+      "prompt": "Analyze the production bundle: 1) Run npm run build with bundle analyzer, 2) Identify large dependencies, 3) Find opportunities for code splitting, 4) Check for unused code, 5) Suggest lazy loading opportunities. Provide specific recommendations for reducing bundle size."
+    }
+  ],
+  "tools": [
+    {
+      "name": "find-large-files",
+      "description": "Find large files that might impact performance"
+    },
+    {
+      "name": "analyze-imports",
+      "description": "Analyze import patterns for optimization"
+    }
+  ],
+  "rules": [
+    {
+      "name": "Performance optimization",
+      "description": "Optimize for performance",
+      "pattern": "Use React.memo for expensive renders. Use useMemo and useCallback to optimize dependencies. Implement lazy loading for routes and components. Optimize images and assets.",
+      "priority": "medium"
+    },
+    {
+      "name": "Bundle size awareness",
+      "description": "Be mindful of bundle size when adding dependencies",
+      "pattern": "Before adding new dependencies, check their size and tree-shakeability. Prefer smaller alternatives when available. Use dynamic imports for code splitting. Avoid importing entire libraries when only using a small portion.",
+      "priority": "medium"
+    }
+  ]
+}
