@@ -21,6 +21,7 @@ import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useOfflineDataService, useOfflineData, type CachedStudentData } from '../services/offlineDataService';
+import { StudentPortalValidator, type CacheFreshnessInfo, type ValidationResult } from '../utils/studentPortalValidator';
 
 import ErrorMessage from './ui/ErrorMessage';
 import DashboardActionCard from './ui/DashboardActionCard';
@@ -33,6 +34,7 @@ import VoiceInputButton from './VoiceInputButton';
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import Button from './ui/Button';
 import OfflineBanner from './ui/OfflineBanner';
+import Alert from './ui/Alert';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -47,6 +49,9 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
   const [offlineData, setOfflineData] = useState<CachedStudentData | null>(null);
   const [syncInProgress, setSyncInProgress] = useState(false);
+  const [validationResults, setValidationResults] = useState<Record<string, ValidationResult>>({});
+  const [cacheFreshness, setCacheFreshness] = useState<CacheFreshnessInfo | null>(null);
+  const [showValidationDetails, setShowValidationDetails] = useState(false);
 
   // Initialize push notifications and offline services
   const { 
@@ -86,6 +91,29 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
         if (cachedData) {
           setStudentData(cachedData.student);
           setOfflineData(cachedData);
+
+          const freshness = StudentPortalValidator.getCacheFreshnessInfo(
+            cachedData.lastUpdated,
+            cachedData.expiresAt
+          );
+          setCacheFreshness(freshness);
+
+          const studentValidation = StudentPortalValidator.validatePersonalInformation(cachedData.student);
+          const gradesValidation = StudentPortalValidator.validateGradeCalculation(cachedData.grades || []);
+          const attendanceValidation = (cachedData.attendance || []).map(att =>
+            StudentPortalValidator.validateAttendanceRecord(att)
+          );
+
+          setValidationResults({
+            student: studentValidation,
+            grades: gradesValidation,
+            attendance: {
+              isValid: attendanceValidation.every(v => v.isValid),
+              errors: attendanceValidation.flatMap(v => v.errors),
+              warnings: attendanceValidation.flatMap(v => v.warnings)
+            }
+          });
+
           onShowToast('Menggunakan data offline', 'info');
           setLoading(false);
           return;
@@ -110,11 +138,29 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
             ]);
 
             if (gradesResponse.success && attendanceResponse.success) {
-              offlineDataService.cacheStudentData({
+              const cachedData = {
                 student: studentResponse.data,
                 grades: gradesResponse.data || [],
                 attendance: attendanceResponse.data || [],
                 schedule: [], // TODO: Fetch schedule when API is available
+              };
+
+              offlineDataService.cacheStudentData(cachedData);
+
+              const studentValidation = StudentPortalValidator.validatePersonalInformation(studentResponse.data);
+              const gradesValidation = StudentPortalValidator.validateGradeCalculation(gradesResponse.data || []);
+              const attendanceValidation = (attendanceResponse.data || []).map(att =>
+                StudentPortalValidator.validateAttendanceRecord(att)
+              );
+
+              setValidationResults({
+                student: studentValidation,
+                grades: gradesValidation,
+                attendance: {
+                  isValid: attendanceValidation.every(v => v.isValid),
+                  errors: attendanceValidation.flatMap(v => v.errors),
+                  warnings: attendanceValidation.flatMap(v => v.warnings)
+                }
               });
             }
           } catch (error) {
@@ -126,6 +172,29 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
           if (cachedData) {
             setStudentData(cachedData.student);
             setOfflineData(cachedData);
+
+            const freshness = StudentPortalValidator.getCacheFreshnessInfo(
+              cachedData.lastUpdated,
+              cachedData.expiresAt
+            );
+            setCacheFreshness(freshness);
+
+            const studentValidation = StudentPortalValidator.validatePersonalInformation(cachedData.student);
+            const gradesValidation = StudentPortalValidator.validateGradeCalculation(cachedData.grades || []);
+            const attendanceValidation = (cachedData.attendance || []).map(att =>
+              StudentPortalValidator.validateAttendanceRecord(att)
+            );
+
+            setValidationResults({
+              student: studentValidation,
+              grades: gradesValidation,
+              attendance: {
+                isValid: attendanceValidation.every(v => v.isValid),
+                errors: attendanceValidation.flatMap(v => v.errors),
+                warnings: attendanceValidation.flatMap(v => v.warnings)
+              }
+            });
+
             onShowToast('Server tidak tersedia, menggunakan data offline', 'info');
           } else {
             setError('Data siswa tidak ditemukan');
@@ -139,6 +208,29 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
         if (cachedData) {
           setStudentData(cachedData.student);
           setOfflineData(cachedData);
+
+          const freshness = StudentPortalValidator.getCacheFreshnessInfo(
+            cachedData.lastUpdated,
+            cachedData.expiresAt
+          );
+          setCacheFreshness(freshness);
+
+          const studentValidation = StudentPortalValidator.validatePersonalInformation(cachedData.student);
+          const gradesValidation = StudentPortalValidator.validateGradeCalculation(cachedData.grades || []);
+          const attendanceValidation = (cachedData.attendance || []).map(att =>
+            StudentPortalValidator.validateAttendanceRecord(att)
+          );
+
+          setValidationResults({
+            student: studentValidation,
+            grades: gradesValidation,
+            attendance: {
+              isValid: attendanceValidation.every(v => v.isValid),
+              errors: attendanceValidation.flatMap(v => v.errors),
+              warnings: attendanceValidation.flatMap(v => v.warnings)
+            }
+          });
+
           onShowToast('Gagal memuat data, menggunakan data offline', 'info');
         } else {
           setError('Gagal memuat data siswa. Silakan coba lagi.');
@@ -335,6 +427,135 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
           cachedDataAvailable={isCached}
           cachedDataInfo={isCached ? 'Data Offline Tersedia' : undefined}
         />
+
+        {/* Validation Status Alert */}
+        {!loading && validationResults.student && (
+          <div className="mb-4">
+            {cacheFreshness && !cacheFreshness.isFresh && (
+              <Alert variant="warning" size="md" fullWidth>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-yellow-800 dark:text-yellow-200">Status Data Offline</p>
+                    <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">{cacheFreshness.message}</p>
+                  </div>
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    onClick={handleSync}
+                    disabled={syncInProgress}
+                  >
+                    {syncInProgress ? 'Sinkronisasi...' : 'Sinkronkan'}
+                  </Button>
+                </div>
+              </Alert>
+            )}
+
+            {(validationResults.grades?.warnings.length > 0 ||
+              validationResults.attendance?.warnings.length > 0) && (
+              <Alert variant="info" size="md" fullWidth className="mt-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-blue-800 dark:text-blue-200">Validasi Data</p>
+                    <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                      {validationResults.grades?.warnings.length || 0} peringatan nilai, {validationResults.attendance?.warnings.length || 0} peringatan kehadiran
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowValidationDetails(!showValidationDetails)}
+                  >
+                    {showValidationDetails ? 'Tutup Detail' : 'Lihat Detail'}
+                  </Button>
+                </div>
+              </Alert>
+            )}
+
+            {showValidationDetails && (
+              <div className="mt-2 space-y-2">
+                {validationResults.grades?.warnings.length > 0 && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                    <h4 className="font-semibold text-sm text-blue-800 dark:text-blue-200 mb-2">Peringatan Nilai</h4>
+                    <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1 list-disc list-inside">
+                      {validationResults.grades.warnings.map((warning, idx) => (
+                        <li key={idx}>{warning}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {validationResults.attendance?.warnings.length > 0 && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                    <h4 className="font-semibold text-sm text-blue-800 dark:text-blue-200 mb-2">Peringatan Kehadiran</h4>
+                    <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1 list-disc list-inside">
+                      {validationResults.attendance.warnings.map((warning, idx) => (
+                        <li key={idx}>{warning}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {(validationResults.student?.errors.length > 0 ||
+              validationResults.grades?.errors.length > 0 ||
+              validationResults.attendance?.errors.length > 0) && (
+              <Alert variant="error" size="md" fullWidth className="mt-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-red-800 dark:text-red-200">Error Validasi Data</p>
+                    <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                      {validationResults.student?.errors.length || 0} error siswa, {validationResults.grades?.errors.length || 0} error nilai, {validationResults.attendance?.errors.length || 0} error kehadiran
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowValidationDetails(!showValidationDetails)}
+                  >
+                    {showValidationDetails ? 'Tutup Detail' : 'Lihat Detail'}
+                  </Button>
+                </div>
+              </Alert>
+            )}
+
+            {showValidationDetails && (validationResults.student?.errors.length > 0 ||
+              validationResults.grades?.errors.length > 0 ||
+              validationResults.attendance?.errors.length > 0) && (
+              <div className="mt-2 space-y-2">
+                {validationResults.student?.errors.length > 0 && (
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                    <h4 className="font-semibold text-sm text-red-800 dark:text-red-200 mb-2">Error Data Siswa</h4>
+                    <ul className="text-sm text-red-700 dark:text-red-300 space-y-1 list-disc list-inside">
+                      {validationResults.student.errors.map((error, idx) => (
+                        <li key={idx}>{error}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {validationResults.grades?.errors.length > 0 && (
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                    <h4 className="font-semibold text-sm text-red-800 dark:text-red-200 mb-2">Error Data Nilai</h4>
+                    <ul className="text-sm text-red-700 dark:text-red-300 space-y-1 list-disc list-inside">
+                      {validationResults.grades.errors.map((error, idx) => (
+                        <li key={idx}>{error}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {validationResults.attendance?.errors.length > 0 && (
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                    <h4 className="font-semibold text-sm text-red-800 dark:text-red-200 mb-2">Error Data Kehadiran</h4>
+                    <ul className="text-sm text-red-700 dark:text-red-300 space-y-1 list-disc list-inside">
+                      {validationResults.attendance.errors.map((error, idx) => (
+                        <li key={idx}>{error}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {loading ? (
           <div className="space-y-6">

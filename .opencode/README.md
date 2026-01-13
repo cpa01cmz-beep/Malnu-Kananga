@@ -8,12 +8,52 @@ The configuration includes:
 - **AGENTS.md** - Project context and guidelines
 - **commands.json** - Custom commands for common tasks
 - **rules.json** - Code style and best practice rules
-- **tools.json** - Custom tools for code analysis
+- **tools/** - Custom tools for code analysis
 - **skills/** - Specialized skills for specific tasks
+- **Oh My OpenCode** - Plugin and theme management system
 
 ## Setup
 
 The configuration is automatically loaded by OpenCode when you run `/init` in the project root.
+
+## Oh My OpenCode Plugin System 🚀
+
+Oh My OpenCode is a powerful plugin and theme management system included in this project.
+
+### Quick Start
+
+```bash
+# Show Oh My OpenCode status
+npx ts-node .opencode/oh-my-opencode.ts status
+
+# List available plugins
+npx ts-node .opencode/oh-my-opencode.ts list-plugins
+
+# Enable/disable plugins
+npx ts-node .opencode/oh-my-opencode.ts enable security
+npx ts-node .opencode/oh-my-opencode.ts disable testing
+
+# Change themes
+npx ts-node .opencode/oh-my-opencode.ts list-themes
+npx ts-node .opencode/oh-my-opencode.ts set-theme dark
+```
+
+### Available Plugins
+
+| Plugin | Status | Description |
+|--------|--------|-------------|
+| **core** | ✅ Enabled | Essential commands (test, typecheck, lint, deploy) |
+| **performance** | ✅ Enabled | Performance optimization tools |
+| **testing** | ✅ Enabled | Test generation and debugging |
+| **security** | ❌ Disabled | Security analysis and vulnerability detection |
+
+### Available Themes
+
+- **default** - Standard theme (active)
+- **dark** - Dark theme for low-light environments
+- **minimal** - Minimal theme with subtle colors
+
+For complete documentation, see [OH_MY_OPENCODE.md](./OH_MY_OPENCODE.md)
 
 ## Custom Commands
 

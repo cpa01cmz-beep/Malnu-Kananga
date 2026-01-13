@@ -8,6 +8,10 @@ import { logger } from '../utils/logger';
 import Alert from './ui/Alert';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
+import Card from './ui/Card';
+import Modal from './ui/Modal';
+import IconButton from './ui/IconButton';
+import { XMarkIcon } from './icons';
 
 interface OfflineIndicatorProps {
   className?: string;
@@ -103,10 +107,11 @@ export function OfflineIndicator({
     <>
       {/* Main indicator */}
       <div className={`fixed ${positionClasses[position]} z-50 flex flex-col items-end gap-2 ${className}`}>
-        <div 
+        <Card
           role="status"
           aria-live="polite"
-          className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-3 flex items-center gap-2 min-w-[120px]"
+          padding="sm"
+          className="flex items-center gap-2 min-w-[120px]"
         >
           {/* Status dot */}
           <div className={`w-3 h-3 rounded-full ${getStatusColor()} animate-pulse`} />
@@ -136,11 +141,14 @@ export function OfflineIndicator({
               {isSyncing ? 'Syncing...' : 'Sync Now'}
             </Button>
           )}
-        </div>
+        </Card>
 
         {/* Sync status popup */}
         {showSyncStatus && syncResult && (
-          <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-lg p-3 min-w-[200px] animate-in slide-in-from-top-2">
+          <Card
+            padding="sm"
+            className="min-w-[200px] animate-in slide-in-from-top-2"
+          >
             <div className="text-sm font-medium mb-1">
               {syncResult.success ? 'Sync Complete' : 'Sync Failed'}
             </div>
@@ -160,7 +168,7 @@ export function OfflineIndicator({
                 {syncResult.errors?.join(', ') || 'Unknown sync error'}
               </div>
             )}
-          </div>
+          </Card>
         )}
 
         {/* Failed actions alert */}
@@ -212,21 +220,14 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
-        {/* Header */}
-        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Offline Action Queue</h2>
-          <button
-            onClick={onClose}
-            className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Status and actions */}
-        <div className="p-4 border-b border-neutral-200 dark:border-neutral-700">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+      title="Offline Action Queue"
+    >
+      {/* Status and actions */}
+      <div className="border-b border-neutral-200 dark:border-neutral-700 mb-4 pb-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-4">
               <span className={`px-2 py-1 rounded-full text-sm font-medium ${
@@ -285,7 +286,7 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
         </div>
 
         {/* Action lists */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto space-y-4">
           {/* Pending actions */}
           {pendingActions.length > 0 && (
             <div>
@@ -359,7 +360,6 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
             </div>
           )}
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }

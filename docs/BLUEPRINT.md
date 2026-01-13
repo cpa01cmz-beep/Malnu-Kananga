@@ -73,26 +73,6 @@ src/
 ├── config.ts          # Main configuration
 └── index.tsx          # Entry point
 ```
-src/
-├── components/          # React UI components
-│   ├── admin/         # Admin-specific components
-│   ├── icons/         # Icon components
-│   ├── sections/      # Page sections
-│   └── ui/           # Reusable UI components
-├── config/             # Configuration files (permissions, notification templates)
-├── contexts/           # React contexts
-├── constants.ts        # Centralized constants (STORAGE_KEYS)
-├── data/              # Default data and static resources
-├── hooks/             # Custom React hooks (useVoiceRecognition, useVoiceSynthesis)
-├── services/          # API and business logic services
-├── styles/            # Global CSS styles (themes.css)
-├── tests/             # Integration tests
-├── types/             # TypeScript type definitions
-├── utils/             # Utility functions and helpers
-├── App.tsx            # Main application component
-├── config.ts          # Main configuration
-└── index.tsx          # Entry point
-```
 
 ### 2.2 Teknologi Stack
 

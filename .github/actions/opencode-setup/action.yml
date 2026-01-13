@@ -1,0 +1,52 @@
+name: 'OpenCode Setup'
+description: 'Setup and configure OpenCode CLI for GitHub Actions'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure Git
+      shell: bash
+      run: |
+        git config --global user.name "opencode-agent"
+        git config --global user.email "opencode@github-actions"
+
+    - name: Setup Cache
+      uses: actions/cache@v5
+      with:
+        path: |
+          ~/.opencode
+          ~/.npm
+        key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v2
+        restore-keys: |
+          opencode-${{ runner.os }}-v2
+          opencode-${{ runner.os }}-
+
+    - name: Install OpenCode CLI
+      shell: bash
+      run: |
+        if [ ! -f "$HOME/.opencode/bin/opencode" ]; then
+          echo "Installing OpenCode CLI..."
+          curl -fsSL https://opencode.ai/install | bash
+        else
+          echo "OpenCode CLI already installed, skipping..."
+        fi
+        echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+
+    - name: Validate OpenCode Installation
+      shell: bash
+      run: |
+        opencode --version || {
+          echo "Error: OpenCode CLI not properly installed"
+          exit 1
+        }
+
+    - name: Load OpenCode Config
+      shell: bash
+      run: |
+        if [ -f ".github/opencode.json" ]; then
+          echo "OpenCode config found at .github/opencode.json"
+        elif [ -f ".opencode/config.json" ]; then
+          echo "OpenCode config found at .opencode/config.json"
+        else
+          echo "Warning: No OpenCode config found"
+        fi

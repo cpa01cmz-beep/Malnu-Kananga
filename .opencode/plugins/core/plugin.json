@@ -1,0 +1,58 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "description": "Core OpenCode commands and rules for MA Malnu Kananga project",
+  "enabled": true,
+  "commands": [
+    {
+      "name": "test",
+      "description": "Run tests and verify everything passes",
+      "prompt": "Run the test suite using 'npm run test:run'. If there are any failing tests, analyze the failure and fix the issues. After fixing, run the tests again to confirm they pass."
+    },
+    {
+      "name": "typecheck",
+      "description": "Run TypeScript type checking",
+      "prompt": "Run TypeScript type checking using 'npm run typecheck'. If there are any type errors, analyze them and fix all issues. Ensure all fixes maintain type safety."
+    },
+    {
+      "name": "lint",
+      "description": "Run linting and fix issues",
+      "prompt": "Run linting using 'npm run lint:fix'. Review any linting issues and fix them. Ensure the code follows the project's linting rules and best practices."
+    },
+    {
+      "name": "full-check",
+      "description": "Run all quality checks (typecheck, lint, test)",
+      "prompt": "Run all quality checks in sequence: typecheck, lint:fix, and test:run. If any check fails, analyze and fix the issues. Then rerun all checks until everything passes."
+    },
+    {
+      "name": "build-verify",
+      "description": "Build the project and verify production readiness",
+      "prompt": "Build the production bundle using 'npm run build'. Verify there are no build errors or warnings. Check the dist folder is created correctly with all necessary assets."
+    },
+    {
+      "name": "deploy",
+      "description": "Deploy to production (frontend + backend)",
+      "prompt": "Deploy both frontend and backend to production: 1) Run full quality checks (test, typecheck, lint), 2) Build production bundle with npm run build, 3) Deploy backend to Cloudflare Workers with wrangler deploy --env production, 4) Deploy frontend to Cloudflare Pages with wrangler pages deploy dist --project-name=malnu-kananga, 5) Verify deployment by testing critical features, 6) Check for any deployment errors or warnings"
+    }
+  ],
+  "rules": [
+    {
+      "name": "Git workflow - Never push directly to main",
+      "description": "Always use feature/fix branches and pull requests",
+      "pattern": "NEVER push directly to main. ALWAYS: 1) Create feature/fix branch, 2) Commit changes to branch, 3) Push branch, 4) Create pull request, 5) Wait for approval, 6) Merge to main. No exceptions - even 'small' changes must go through PR process. This ensures code review, catches bugs, and maintains main branch stability.",
+      "priority": "critical"
+    },
+    {
+      "name": "TypeScript strict mode",
+      "description": "Always use TypeScript strict mode and proper type annotations",
+      "pattern": "Ensure all code is properly typed with TypeScript. Avoid 'any' types. Use interfaces or type aliases for complex types. Use generics when appropriate. Never suppress TypeScript errors with @ts-ignore unless absolutely necessary and documented.",
+      "priority": "high"
+    },
+    {
+      "name": "Naming conventions",
+      "description": "Follow project naming conventions",
+      "pattern": "Use UPPER_SNAKE_CASE for constants and configuration values. Use camelCase for functions, variables, services, and hooks. Use PascalCase for React components and TypeScript interfaces/types.",
+      "priority": "high"
+    }
+  ]
+}

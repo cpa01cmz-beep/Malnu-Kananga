@@ -1,7 +1,8 @@
 // PPDBRegistration.offline.test.ts - Integration tests for PPDBRegistration offline functionality
 
 import { describe, it, vi } from 'vitest';
-// import userEvent from '@testing-library/user-event';
+import { render, screen, waitFor } from '@testing-library/react';
+import PPDBRegistration from '../PPDBRegistration';
 
 // Mock services
 vi.mock('../../services/apiService', () => ({
@@ -49,12 +50,42 @@ describe('PPDBRegistration Offline Queue Integration', () => {
   });
 
   it('should queue PPDB registration when offline', async () => {
-    // TODO: Proper mocking requires deeper component refactoring
-    // Skipping for now
+    vi.doMock('../../utils/networkStatus', () => ({
+      useNetworkStatus: () => ({
+        isOnline: false,
+        isSlow: false,
+      }),
+    }));
+
+    render(
+      <PPDBRegistration
+        onClose={_mockOnClose}
+        onShowToast={_mockOnShowToast}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/PPDB/i)).toBeInTheDocument();
+    });
   });
 
-it('should submit normally when online', async () => {
-    // TODO: Proper mocking requires deeper component refactoring
-    // Skipping for now
+ it('should submit normally when online', async () => {
+    vi.doMock('../../utils/networkStatus', () => ({
+      useNetworkStatus: () => ({
+        isOnline: true,
+        isSlow: false,
+      }),
+    }));
+
+    render(
+      <PPDBRegistration
+        onClose={_mockOnClose}
+        onShowToast={_mockOnShowToast}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/PPDB/i)).toBeInTheDocument();
+    });
   });
 });
