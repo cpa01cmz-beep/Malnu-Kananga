@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-13
-**Version**: 2.4.3
+**Version**: 2.4.5
 
 ---
 
@@ -97,6 +97,14 @@
 - High-contrast accessibility preference now works correctly
 - Users with accessibility needs receive enhanced contrast
 - Improved WCAG 2.1 AAA compliance for high-contrast mode
+
+### Arbitrary Value Cleanup (2026-01-13)
+- Replaced arbitrary text color value in App.tsx with proper Tailwind utility classes
+- Changed `text-[color:var(--color-text)]` to `text-neutral-900 dark:text-neutral-100`
+- Improves design system consistency by using standard Tailwind v4 color classes
+- Ensures proper dark mode support via `dark:` prefix
+- Eliminates dependency on non-existent CSS variable
+- Text color now correctly adapts to theme changes through ThemeManager
 
 ### Card Keyboard Focus Accessibility Fix (2026-01-13)
 - Added keyboard focus styles to Card component hover variant
@@ -193,6 +201,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.4.5 | 2026-01-13 | Arbitrary value cleanup - replaced text-[color:var(--color-text)] in App.tsx with text-neutral-900 dark:text-neutral-100, improved Tailwind v4 consistency and theme integration |
 | 2.4.4 | 2026-01-13 | Interaction polish - removed hover/focus/active states from disabled elements in Footer and SocialLink components, improved UX clarity and accessibility compliance |
 | 2.4.3 | 2026-01-13 | Hardcoded dark mode gradient fixes - replaced 8 hardcoded dark mode overrides in ProfileSection and PPDBSection with getResponsiveGradient() function calls, added 4 missing dark mode gradients to gradient configuration |
 | 2.4.2 | 2026-01-13 | Color palette alignment for VoiceNotificationDemo component - fixed hardcoded colors to use semantic color system with proper dark mode support |
