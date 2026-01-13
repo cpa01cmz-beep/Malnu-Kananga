@@ -31,6 +31,11 @@
 
 ### P2: Medium Priority
 
+- [x] Fix accessibility issues in ProfileSection (2026-01-13)
+  - Converted non-functional button elements to semantic article elements
+  - Removed confusing interactive elements for Vision and Mission content
+  - Improved WCAG compliance for screen readers and keyboard users
+
  - [ ] Optimize bundle size
    - Target: <500KB initial load
    - Current: index-RmtyMoE4.js at 506.03 kB (slightly over target)
