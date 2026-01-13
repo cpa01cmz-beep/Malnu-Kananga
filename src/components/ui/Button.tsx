@@ -15,6 +15,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
 }
 
+type ButtonPropsWithValidation = ButtonProps & (
+  | { iconOnly?: false; ariaLabel?: string }
+  | { iconOnly: true; ariaLabel: string }
+);
+
 const baseClasses = "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -47,7 +52,7 @@ const iconOnlySizes: Record<ButtonSize, string> = {
   lg: "p-4 min-w-[48px] min-h-[48px]",
 };
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
+const Button = React.forwardRef<HTMLButtonElement, ButtonPropsWithValidation>(({
   variant = 'primary',
   size = 'md',
   isLoading = false,
@@ -112,3 +117,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 Button.displayName = 'Button';
 
 export default Button;
+export type { ButtonProps, ButtonPropsWithValidation };
