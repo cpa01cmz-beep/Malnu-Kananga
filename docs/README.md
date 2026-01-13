@@ -82,7 +82,7 @@ These files are operational instructions for AI agents and should not be conside
 - **Documentation Files**: 19 (in /docs directory)
 - **Services**: 27 services in src/services/ (excluding .test., .types., and template files)
 - **Components**: 40 components exported from src/components/ui/index.ts
-- **Total Tests**: 1495 (1450 passing, 35 failing, 10 skipped)
+- **Total Tests**: 1495 (1458 passing, 27 failing, 10 skipped)
 - **Code Examples**: 20+
 - **Troubleshooting Scenarios**: 25+
 - **Architecture Diagrams**: 1+
@@ -193,26 +193,26 @@ This index maintains relationships between documents:
 ## Recent Changes (v3.1.0 - 2026-01-13)
 
      - **Repository Audit & Cleanup (2026-01-13 - Current)**:
-              - Comprehensive repository audit and documentation alignment
-              - Synthesized TASK.md for clarity (reduced verbose version history)
-              - Corrected test metrics (27 failures, 1458 passing, 10 skipped, 2 unhandled errors)
-              - Added notification system migration task to P2 priorities
-              - Updated system status with up-to-date dependency verification
-              - Verified TypeScript clean (0 errors)
-              - Confirmed 0 security vulnerabilities in dependency audit
-              - Validated all dependencies up to date (npm outdated: no results)
-              - Confirmed .gitignore is comprehensive and appropriate
-              - All 19 documentation files serve distinct purposes
-              - Confirmed all documentation aligns with actual codebase structure
-              - DEPLOYMENT_GUIDE.md and DEPLOYMENT_STATUS.md serve distinct purposes (guide vs status)
-              - COLOR_PALETTE.md and COLOR_USAGE_GUIDE.md serve distinct purposes (reference vs quick-start)
-              - Deprecated services (pushNotificationService, usePushNotifications) retained for migration
+               - Comprehensive repository audit and documentation alignment
+               - Removed duplicate "Step 4: Deploy Backend Worker" section from DEPLOYMENT_GUIDE.md
+               - Corrected test metrics (27 failures, 1458 passing, 10 skipped)
+               - Added notification system migration task to P2 priorities
+               - Updated system status with up-to-date dependency verification
+               - Verified TypeScript clean (0 errors)
+               - Confirmed 0 security vulnerabilities in dependency audit
+               - Validated all dependencies up to date (npm outdated: no results)
+               - Confirmed .gitignore is comprehensive and appropriate
+               - All 19 documentation files serve distinct purposes
+               - Confirmed all documentation aligns with actual codebase structure
+               - DEPLOYMENT_GUIDE.md and DEPLOYMENT_STATUS.md serve distinct purposes (guide vs status)
+               - COLOR_PALETTE.md and COLOR_USAGE_GUIDE.md serve distinct purposes (reference vs quick-start)
+               - Deprecated services (pushNotificationService, usePushNotifications) retained for migration
 
-    - **Previous Updates (v3.0.0 - 2026-01-13)**:
-              - Corrected test metrics (35 failures, 1450 passing, 10 skipped)
-              - Corrected source file count (327 total/246 source + 81 test)
-              - Updated documentation file count (19 files in /docs)
-              - Streamlined TASK.md version history for clarity
+     - **Previous Updates (v3.0.0 - 2026-01-13)**:
+               - Corrected test metrics (27 failures, 1458 passing, 10 skipped)
+               - Corrected source file count (327 total/246 source + 81 test)
+               - Updated documentation file count (19 files in /docs)
+               - Streamlined TASK.md version history for clarity
 
 ---
 
