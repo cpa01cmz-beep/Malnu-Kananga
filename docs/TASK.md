@@ -1,21 +1,20 @@
 # Task List
 
 **Last Updated**: 2026-01-13
-**Version**: 7.1.0
+**Version**: 7.2.0
 
 ---
 
 ## Current Goals
 
-### P0: Critical (Blockers)
+ ### P0: Critical (Blockers)
 
-- [ ] Fix test failures (25 failures across 6 files)
-  - OfflineIndicator.test.tsx (5 failures)
-  - ErrorBoundary.test.tsx (2 failures)
-  - emailService.test.ts (4 failures)
-  - PermissionManager.test.tsx (4 failures)
-  - studentPortalValidator.test.ts (9 failures)
-  - Button.test.tsx (1 failure)
+- [ ] Fix test failures (18 failures across 5 files)
+   - emailService.test.ts (4 failures)
+   - studentPortalValidator.test.ts (9 failures)
+   - PermissionManager.test.tsx (3 failures)
+   - ErrorBoundary.test.tsx (1 failure)
+   - Button.test.tsx (1 failure)
 
 ### P1: High Priority
 
@@ -89,9 +88,10 @@
 
 ---
 
-## Version History
+ ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 7.1.0 | 2026-01-13 | Repository audit: Fixed test failure count (24→25 failures, 5→6 files), verified documentation metrics (326 files, 81 tests, 25 services, 214 components), confirmed codebase integrity |
-| 7.0.0 | 2026-01-13 | Repository cleanup: Synthesized TASK.md for clarity, corrected metrics (25 services, 214 components), fixed broken links (api-documentation.md → api-reference.md), consolidated version history |
+ | Version | Date | Changes |
+ |---------|------|---------|
+ | 7.2.0 | 2026-01-13 | Repository audit: Fixed test failure count (25→18 failures, 6→5 files), verified documentation metrics (326 files, 81 tests, 25 services, 214 components), fixed OfflineIndicator.tsx lint errors (removed unused hours/minutes variables), confirmed codebase integrity |
+ | 7.1.0 | 2026-01-13 | Repository audit: Fixed test failure count (24→25 failures, 5→6 files), verified documentation metrics (326 files, 81 tests, 25 services, 214 components), confirmed codebase integrity |
+ | 7.0.0 | 2026-01-13 | Repository cleanup: Synthesized TASK.md for clarity, corrected metrics (25 services, 214 components), fixed broken links (api-documentation.md → api-reference.md), consolidated version history |
