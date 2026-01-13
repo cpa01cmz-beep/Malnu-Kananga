@@ -35,6 +35,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<NotificationType | 'all'>('all');
   const [selectedStatus, setSelectedStatus] = useState<'all' | 'read' | 'unread'>('all');
+  const [isSendingTestNotification, setIsSendingTestNotification] = useState(false);
 
   const relevantTypes = NotificationTemplateService.getRelevantNotificationTypes(userRole);
 
@@ -133,20 +134,25 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   }, [clearHistory, onShowToast]);
 
   const handleSendTestNotification = useCallback(async () => {
-    const testNotification = createNotification(
-      'system',
-      'Tes Notifikasi Terpadu',
-      'Ini adalah notifikasi tes dari Pusat Notifikasi Terpadu MA Malnu Kananga',
-      { type: 'test', source: 'notification-center' }
-    );
+    setIsSendingTestNotification(true);
+    try {
+      const testNotification = createNotification(
+        'system',
+        'Tes Notifikasi Terpadu',
+        'Ini adalah notifikasi tes dari Pusat Notifikasi Terpadu MA Malnu Kananga',
+        { type: 'test', source: 'notification-center' }
+      );
 
-    await showNotification(testNotification);
+      await showNotification(testNotification);
 
-    if (onShowToast) {
-      onShowToast('Notifikasi tes berhasil dikirim', 'success');
+      if (onShowToast) {
+        onShowToast('Notifikasi tes berhasil dikirim', 'success');
+      }
+
+      logger.info('Test notification sent from notification center');
+    } finally {
+      setIsSendingTestNotification(false);
     }
-
-    logger.info('Test notification sent from notification center');
   }, [createNotification, showNotification, onShowToast]);
 
    const getPriorityColor = (priority: string): string => {
@@ -292,11 +298,11 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   </Button>
                   <Button
                     onClick={handleSendTestNotification}
-                    disabled={!permissionGranted}
+                    disabled={!permissionGranted || isSendingTestNotification}
                     variant="secondary"
                     size="sm"
                   >
-                    Tes
+                    {isSendingTestNotification ? 'Mengirim...' : 'Tes'}
                   </Button>
                 </div>
               </div>
