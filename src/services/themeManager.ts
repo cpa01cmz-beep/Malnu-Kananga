@@ -206,6 +206,30 @@ export class ThemeManager {
       }
     });
 
+    // Generate and apply amber scale
+    const amberScale = this.generateColorScale('#f59e0b', 10);
+    Object.entries(amberScale).forEach(([key, value]) => {
+      if (key !== 'DEFAULT') {
+        root.style.setProperty(`--theme-amber-${key}`, value);
+      }
+    });
+
+    // Generate and apply teal scale
+    const tealScale = this.generateColorScale('#14b8a6', 10);
+    Object.entries(tealScale).forEach(([key, value]) => {
+      if (key !== 'DEFAULT') {
+        root.style.setProperty(`--theme-teal-${key}`, value);
+      }
+    });
+
+    // Generate and apply rose scale
+    const roseScale = this.generateColorScale('#f43f5e', 10);
+    Object.entries(roseScale).forEach(([key, value]) => {
+      if (key !== 'DEFAULT') {
+        root.style.setProperty(`--theme-rose-${key}`, value);
+      }
+    });
+
     // Apply progress bar striped overlay color based on theme brightness
     const overlayColor = theme.isDark ? '0 0 0' : '255 255 255';
     root.style.setProperty('--progress-bar-striped-overlay', overlayColor);

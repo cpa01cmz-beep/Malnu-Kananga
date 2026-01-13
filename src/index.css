@@ -144,6 +144,39 @@
   --color-sky-700: var(--theme-sky-700, 205 80% 35%);
   --color-sky-800: var(--theme-sky-800, 207 77% 31%);
   --color-sky-900: var(--theme-sky-900, 209 75% 27%);
+
+  --color-amber-50: var(--theme-amber-50, 48 100% 96%);
+  --color-amber-100: var(--theme-amber-100, 48 97% 89%);
+  --color-amber-200: var(--theme-amber-200, 48 96% 76%);
+  --color-amber-300: var(--theme-amber-300, 48 96% 60%);
+  --color-amber-400: var(--theme-amber-400, 48 96% 50%);
+  --color-amber-500: var(--theme-amber-500, 48 96% 39%);
+  --color-amber-600: var(--theme-amber-600, 45 93% 36%);
+  --color-amber-700: var(--theme-amber-700, 41 96% 31%);
+  --color-amber-800: var(--theme-amber-800, 31 95% 28%);
+  --color-amber-900: var(--theme-amber-900, 26 90% 25%);
+
+  --color-teal-50: var(--theme-teal-50, 166 77% 97%);
+  --color-teal-100: var(--theme-teal-100, 167 87% 89%);
+  --color-teal-200: var(--theme-teal-200, 169 85% 78%);
+  --color-teal-300: var(--theme-teal-300, 171 82% 60%);
+  --color-teal-400: var(--theme-teal-400, 175 100% 31%);
+  --color-teal-500: var(--theme-teal-500, 175 100% 26%);
+  --color-teal-600: var(--theme-teal-600, 176 100% 21%);
+  --color-teal-700: var(--theme-teal-700, 176 100% 19%);
+  --color-teal-800: var(--theme-teal-800, 177 100% 17%);
+  --color-teal-900: var(--theme-teal-900, 176 76% 18%);
+
+  --color-rose-50: var(--theme-rose-50, 356 100% 97%);
+  --color-rose-100: var(--theme-rose-100, 356 100% 95%);
+  --color-rose-200: var(--theme-rose-200, 353 100% 90%);
+  --color-rose-300: var(--theme-rose-300, 352 100% 82%);
+  --color-rose-400: var(--theme-rose-400, 350 100% 70%);
+  --color-rose-500: var(--theme-rose-500, 345 100% 56%);
+  --color-rose-600: var(--theme-rose-600, 338 100% 39%);
+  --color-rose-700: var(--theme-rose-700, 338 100% 33%);
+  --color-rose-800: var(--theme-rose-800, 338 100% 30%);
+  --color-rose-900: var(--theme-rose-900, 339 90% 29%);
 }
 
 :root {
@@ -290,6 +323,39 @@
   --theme-sky-700: 205 80% 35%;
   --theme-sky-800: 207 77% 31%;
   --theme-sky-900: 209 75% 27%;
+
+  --theme-amber-50: 48 100% 96%;
+  --theme-amber-100: 48 97% 89%;
+  --theme-amber-200: 48 96% 76%;
+  --theme-amber-300: 48 96% 60%;
+  --theme-amber-400: 48 96% 50%;
+  --theme-amber-500: 48 96% 39%;
+  --theme-amber-600: 45 93% 36%;
+  --theme-amber-700: 41 96% 31%;
+  --theme-amber-800: 31 95% 28%;
+  --theme-amber-900: 26 90% 25%;
+
+  --theme-teal-50: 166 77% 97%;
+  --theme-teal-100: 167 87% 89%;
+  --theme-teal-200: 169 85% 78%;
+  --theme-teal-300: 171 82% 60%;
+  --theme-teal-400: 175 100% 31%;
+  --theme-teal-500: 175 100% 26%;
+  --theme-teal-600: 176 100% 21%;
+  --theme-teal-700: 176 100% 19%;
+  --theme-teal-800: 177 100% 17%;
+  --theme-teal-900: 176 76% 18%;
+
+  --theme-rose-50: 356 100% 97%;
+  --theme-rose-100: 356 100% 95%;
+  --theme-rose-200: 353 100% 90%;
+  --theme-rose-300: 352 100% 82%;
+  --theme-rose-400: 350 100% 70%;
+  --theme-rose-500: 345 100% 56%;
+  --theme-rose-600: 338 100% 39%;
+  --theme-rose-700: 338 100% 33%;
+  --theme-rose-800: 338 100% 30%;
+  --theme-rose-900: 339 90% 29%;
 }
 
 @keyframes progress-bar-stripes {
