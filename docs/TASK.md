@@ -449,14 +449,20 @@
           - Focus indicators already present via focus:ring-2 classes
           - See src/components/CalendarView.tsx:131-137,208,307 for implementation
    - [x] Button Component Icon-Only Accessibility Improvement (Phase 5 - COMPLETED 2026-01-13)
-          - Changed iconOnly button aria-label from empty string to undefined when ariaLabel not provided
-          - Prevents screen readers from announcing empty/meaningless ARIA labels
-          - Previously: aria-label={iconOnly && !ariaLabel ? '' : ariaLabel} (sets empty string)
-          - Now: aria-label={iconOnly ? ariaLabel : undefined} (only sets if ariaLabel provided)
-          - Follows WCAG 2.1 AA compliance (SC 4.1.2 - Name, Role, Value)
-          - Screen readers now receive meaningful labels or no label (better than empty labels)
-          - All icon-only button instances in codebase already have proper aria-labels
-          - See src/components/ui/Button.tsx:78 for implementation
+           - Changed iconOnly button aria-label from empty string to undefined when ariaLabel not provided
+           - Prevents screen readers from announcing empty/meaningless ARIA labels
+           - Previously: aria-label={iconOnly && !ariaLabel ? '' : ariaLabel} (sets empty string)
+           - Now: aria-label={iconOnly ? ariaLabel : undefined} (only sets if ariaLabel provided)
+           - Follows WCAG 2.1 AA compliance (SC 4.1.2 - Name, Role, Value)
+           - Screen readers now receive meaningful labels or no label (better than empty labels)
+           - All icon-only button instances in codebase already have proper aria-labels
+           - See src/components/ui/Button.tsx:78 for implementation
+    - [x] GradingManagement and NotificationSettings Accessibility Fix (Phase 5 - COMPLETED 2026-01-13)
+           - Added aria-label to student selection checkbox in GradingManagement.tsx (line 1324)
+           - Added htmlFor and id attributes to quiet hours time inputs in NotificationSettings.tsx (lines 392, 410)
+           - Ensures WCAG 2.1 AA compliance for screen reader users and form accessibility
+           - Improves keyboard navigation and label-to-input association
+           - PR #7: Updated with accessibility improvements
 
 
 
