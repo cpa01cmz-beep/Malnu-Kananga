@@ -439,15 +439,24 @@
          - Improved design system consistency and maintainability
          - See src/components/OfflineIndicator.tsx for implementation
    - [x] CalendarView Event Button Keyboard Navigation (Phase 5 - COMPLETED 2026-01-13)
-         - Added handleEventKeyDown function for keyboard event handling
-         - Added tabIndex={0} to event buttons in month view (lines 200-213)
-         - Added tabIndex={0} and onKeyDown handlers to event buttons in week view (lines 293-306)
-         - Implemented Enter and Space key support for event button activation
-         - Improved WCAG 2.1 AA compliance (SC 2.1.1 Keyboard, SC 2.4.3 Focus Order)
-         - Screen reader and keyboard users can now interact with calendar events via keyboard
-         - Consistent with existing handleDateKeyDown pattern for date cells
-         - Focus indicators already present via focus:ring-2 classes
-         - See src/components/CalendarView.tsx:131-137,208,307 for implementation
+          - Added handleEventKeyDown function for keyboard event handling
+          - Added tabIndex={0} to event buttons in month view (lines 200-213)
+          - Added tabIndex={0} and onKeyDown handlers to event buttons in week view (lines 293-306)
+          - Implemented Enter and Space key support for event button activation
+          - Improved WCAG 2.1 AA compliance (SC 2.1.1 Keyboard, SC 2.4.3 Focus Order)
+          - Screen reader and keyboard users can now interact with calendar events via keyboard
+          - Consistent with existing handleDateKeyDown pattern for date cells
+          - Focus indicators already present via focus:ring-2 classes
+          - See src/components/CalendarView.tsx:131-137,208,307 for implementation
+   - [x] Button Component Icon-Only Accessibility Improvement (Phase 5 - COMPLETED 2026-01-13)
+          - Changed iconOnly button aria-label from empty string to undefined when ariaLabel not provided
+          - Prevents screen readers from announcing empty/meaningless ARIA labels
+          - Previously: aria-label={iconOnly && !ariaLabel ? '' : ariaLabel} (sets empty string)
+          - Now: aria-label={iconOnly ? ariaLabel : undefined} (only sets if ariaLabel provided)
+          - Follows WCAG 2.1 AA compliance (SC 4.1.2 - Name, Role, Value)
+          - Screen readers now receive meaningful labels or no label (better than empty labels)
+          - All icon-only button instances in codebase already have proper aria-labels
+          - See src/components/ui/Button.tsx:78 for implementation
 
 
 
