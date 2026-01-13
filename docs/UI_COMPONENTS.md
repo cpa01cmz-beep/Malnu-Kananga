@@ -1,21 +1,9 @@
 # UI Components Documentation
 
-**Status**: ⚠️ INCOMPLETE (7 of 40 components documented)
+**Status**: ✅ COMPLETE (40 of 40 components documented)
 **Last Updated**: 2026-01-13
 
-> **IMPORTANT**: This document currently covers only 7 of the 40 exported UI components from `src/components/ui/index.ts`. The following 33 components are missing documentation:
-> - Form: Textarea, Toggle, SearchInput, Label
-> - Buttons: GradientButton, SmallActionButton, BackButton
-> - Layout: Modal, BaseModal, ConfirmationDialog, Section, ErrorBoundary, SkipLink
-> - Display: Heading, Badge, Alert, DashboardActionCard, SocialLink, LinkCard
-> - Table: Table (with sub-components), DataTable
-> - Interactive: Tab
-> - Navigation: Pagination
-> - Loading: LoadingState, EmptyState, ErrorState, LoadingSpinner, SuspenseLoading, LoadingOverlay, Skeleton
-> - Progress: ProgressBar
-> - Utility: PageHeader, ErrorMessage, PDFExportButton
->
-> See `src/components/ui/index.ts` for complete export list. Documentation updates are tracked in TASK.md (P1 priority).
+> **IMPORTANT**: All 40 exported UI components from `src/components/ui/index.ts` are now fully documented. See `src/components/ui/index.ts` for complete export list.
 
 ## Overview
 
@@ -3368,3 +3356,941 @@ Potential improvements to consider:
 - Tooltip integration for additional context
 
 ---
+
+---
+
+## Textarea Component
+
+**Location**: `src/components/ui/Textarea.tsx`
+
+A flexible multi-line text input with auto-resize, validation, and accessibility support.
+
+### Features
+- **3 Sizes**: `sm`, `md`, `lg`
+- **3 States**: `default`, `error`, `success`
+- **Auto-Resize**: Automatically adjusts height based on content
+- **Validation**: Built-in validation with rules support
+- **Accessibility**: Full ARIA support, character count, error announcements
+- **Dark Mode**: Consistent styling across light and dark themes
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text |
+| `helperText` | `string` | `undefined` | Helper text |
+| `errorText` | `string` | `undefined` | Error message (sets state to error) |
+| `size` | `TextareaSize` | `'md'` | Input size |
+| `state` | `TextareaState` | `'default'` | Visual state |
+| `fullWidth` | `boolean` | `false` | Full width |
+| `autoResize` | `boolean` | `true` | Auto-adjust height |
+| `maxRows` | `number` | `8` | Maximum rows when auto-resizing |
+| `minRows` | `number` | `1` | Minimum rows when auto-resizing |
+| `validationRules` | `Array` | `[]` | Validation rules |
+| `validateOnChange` | `boolean` | `true` | Validate on change |
+| `validateOnBlur` | `boolean` | `true` | Validate on blur |
+| `maxLength` | `number` | `undefined` | Character limit |
+| `required` | `boolean` | `false` | Required field indicator |
+| All textarea attributes | - | - | Passes through standard textarea props |
+
+### Usage
+```tsx
+import Textarea from './ui/Textarea';
+
+<Textarea
+  label="Description"
+  helperText="Provide details..."
+  placeholder="Enter text here"
+  rows={4}
+/>
+```
+
+### Accessibility Features
+- ARIA labels and descriptions
+- Character count announcement
+- Error state with `role="alert"`
+- Auto-focus on validation errors
+- `aria-live` for validation messages
+
+---
+
+## Toggle Component
+
+**Location**: `src/components/ui/Toggle.tsx`
+
+A switch/toggle component for binary choices with customizable colors and sizes.
+
+### Features
+- **3 Sizes**: `sm`, `md`, `lg`
+- **7 Colors**: `primary`, `blue`, `green`, `red`, `purple`, `orange`
+- **2 Label Positions**: `left`, `right`
+- **Accessibility**: `role="switch"`, ARIA support
+- **Animations**: Smooth transitions
+- **Dark Mode**: Full support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text |
+| `description` | `string` | `undefined` | Optional description |
+| `toggleSize` | `'sm' \| 'md' \| 'lg'` | `'md'` | Switch size |
+| `color` | `string` | `'primary'` | Color variant |
+| `labelPosition` | `'left' \| 'right'` | `'right'` | Label position |
+| `checked` | `boolean` | `undefined` | Controlled state |
+| `defaultChecked` | `boolean` | `undefined` | Uncontrolled default |
+| `onChange` | `(e) => void` | `undefined` | Change handler |
+| `disabled` | `boolean` | `false` | Disabled state |
+| `aria-label` | `string` | `undefined` | ARIA label |
+| All input attributes | - | - | Passes through standard props |
+
+### Usage
+```tsx
+import Toggle from './ui/Toggle';
+
+<Toggle
+  label="Enable notifications"
+  checked={enabled}
+  onChange={(e) => setEnabled(e.target.checked)}
+  color="primary"
+  size="md"
+/>
+```
+
+---
+
+## SearchInput Component
+
+**Location**: `src/components/ui/SearchInput.tsx`
+
+A search input with icon support, validation, and keyboard shortcuts.
+
+### Features
+- **3 Sizes**: `sm`, `md`, `lg`
+- **3 States**: `default`, `error`, `success`
+- **Validation**: Built-in validation rules
+- **Icon**: Magnifying glass icon (customizable)
+- **Keyboard**: Clear on Escape key
+- **Accessibility**: Full ARIA, role="searchbox"
+- **Dark Mode**: Full support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text |
+| `helperText` | `string` | `undefined` | Helper text |
+| `errorText` | `string` | `undefined` | Error message |
+| `placeholder` | `string` | `undefined` | Placeholder text |
+| `size` | `SearchInputSize` | `'md'` | Input size |
+| `state` | `SearchInputState` | `'default'` | Visual state |
+| `fullWidth` | `boolean` | `false` | Full width |
+| `showIcon` | `boolean` | `true` | Show icon |
+| `icon` | `ReactNode` | `undefined` | Custom icon |
+| `iconPosition` | `'left' \| 'right'` | `'left'` | Icon position |
+| `validationRules` | `Array` | `[]` | Validation rules |
+| `required` | `boolean` | `false` | Required field |
+
+### Usage
+```tsx
+import SearchInput from './ui/SearchInput';
+
+<SearchInput
+  label="Search students..."
+  placeholder="Type to search"
+  onSearch={(query) => setQuery(query)}
+/>
+```
+
+---
+
+## Label Component
+
+**Location**: `src/components/ui/Label.tsx`
+
+A simple, accessible label component for form inputs.
+
+### Features
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Required Indicator**: Visual `*` with ARIA
+- **Helper Text**: Optional guidance
+- **Accessibility**: Proper association via `htmlFor`
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `htmlFor` | `string` | Required | Associated input ID |
+| `required` | `boolean` | `false` | Show `*` indicator |
+| `helperText` | `string` | `undefined` | Helper text |
+| `size` | `LabelSize` | `'md'` | Text size |
+| All label attributes | - | - | Passes through standard props |
+
+### Usage
+```tsx
+import Label from './ui/Label';
+
+<Label htmlFor="email" required>
+  Email Address
+</Label>
+```
+
+---
+
+## GradientButton Component
+
+**Location**: `src/components/ui/GradientButton.tsx`
+
+A gradient-styled button for primary actions with link support.
+
+### Features
+- **2 Variants**: `primary`, `secondary`
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Link Support**: Renders as `<a>` with `href` prop
+- **Loading State**: Built-in spinner
+- **Accessibility**: Full ARIA support
+- **Dark Mode**: Full support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `string` | `'primary'` | Gradient variant |
+| `size` | `GradientButtonSize` | `'md'` | Button size |
+| `fullWidth` | `boolean` | `false` | Full width |
+| `href` | `string` | `undefined` | Renders as link |
+| `ariaLabel` | `string` | `undefined` | ARIA label |
+| `ariaDescribedBy` | `string` | `undefined` | ARIA description |
+| `disabled` | `boolean` | `false` | Disabled state |
+| `isLoading` | `boolean` | `false` | Show loading spinner |
+| `icon` | `ReactNode` | `undefined` | Icon |
+| `iconPosition` | `'left' \| 'right'` | `'left'` | Icon position |
+| `iconOnly` | `boolean` | `false` | Icon-only button |
+
+### Usage
+```tsx
+import GradientButton from './ui/GradientButton';
+
+<GradientButton
+  variant="primary"
+  onClick={handleAction}
+>
+  Get Started
+</GradientButton>
+
+<GradientButton
+  href="/docs"
+  variant="secondary"
+>
+  Learn More
+</GradientButton>
+```
+
+---
+
+## SmallActionButton Component
+
+**Location**: `src/components/ui/SmallActionButton.tsx`
+
+A compact action button for inline actions.
+
+### Features
+- **7 Variants**: `primary`, `secondary`, `danger`, `success`, `info`, `warning`, `neutral`
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Loading State**: Built-in spinner
+- **Full Width**: Flex-1 support
+- **Accessibility**: Full ARIA support
+- **Dark Mode**: Full support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `SmallActionButtonVariant` | `'info'` | Color variant |
+| `size` | `ButtonSize` | `'md'` | Button size |
+| `fullWidth` | `boolean` | `false` | Full width |
+| `isLoading` | `boolean` | `false` | Loading state |
+| `icon` | `ReactNode` | `undefined` | Icon |
+| `iconPosition` | `'left' \| 'right'` | `'left'` | Icon position |
+| `ariaLabel` | `string` | `undefined` | ARIA label |
+| `onClick` | `() => void` | `undefined` | Click handler |
+
+### Usage
+```tsx
+import SmallActionButton from './ui/SmallActionButton';
+
+<SmallActionButton
+  variant="primary"
+  onClick={handleEdit}
+  icon={<EditIcon />}
+  iconPosition="left"
+>
+  Edit
+</SmallActionButton>
+
+<SmallActionButton
+  variant="danger"
+  onClick={handleDelete}
+>
+  Delete
+</SmallActionButton>
+```
+
+---
+
+## Modal Component
+
+**Location**: `src/components/ui/Modal.tsx`
+
+A comprehensive modal dialog with focus trap and accessibility features.
+
+### Features
+- **5 Sizes**: `sm`, `md`, `lg`, `xl`, `full`
+- **3 Animations**: `fade-in`, `fade-in-up`, `scale-in`
+- **Focus Trap**: Automatic keyboard navigation
+- **Body Scroll Lock**: Prevents background scrolling
+- **Escape Key**: Closes on Escape
+- **Backdrop Click**: Closes on backdrop click
+- **Accessibility**: Full ARIA support (role="dialog", aria-modal, aria-labelledby, aria-describedby)
+- **Dark Mode**: Full support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isOpen` | `boolean` | Required | Show/hide modal |
+| `onClose` | `() => void` | Required | Close handler |
+| `children` | `ReactNode` | Required | Modal content |
+| `title` | `string` | `undefined` | Modal title |
+| `description` | `string` | `undefined` | Description |
+| `size` | `ModalSize` | `'md'` | Modal size |
+| `animation` | `ModalAnimation` | `'scale-in'` | Animation type |
+| `closeOnBackdropClick` | `boolean` | `true` | Close on backdrop click |
+| `closeOnEscape` | `boolean` | `true` | Close on Escape key |
+| `showCloseButton` | `boolean` | `true` | Show close button |
+
+### Usage
+```tsx
+import Modal from './ui/Modal';
+
+<Modal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  title="Edit Profile"
+  size="lg"
+  animation="fade-in-up"
+>
+  <form>...</form>
+</Modal>
+```
+
+---
+
+## BaseModal Component
+
+**Location**: `src/components/ui/BaseModal.tsx`
+
+A simplified modal component without auto-close behaviors.
+
+### Features
+- **5 Sizes**: `sm`, `md`, `lg`, `xl`, `full`
+- **3 Animations**: `fade-in`, `fade-in-up`, `scale-in`
+- **Focus Trap**: Built-in useFocusTrap hook
+- **Body Scroll Lock**: Automatic
+- **Accessibility**: Full ARIA support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isOpen` | `boolean` | Required | Show/hide modal |
+| `onClose` | `() => void` | Required | Close handler |
+| `children` | `ReactNode` | Required | Modal content |
+| `title` | `string` | `undefined` | Modal title |
+| `description` | `string` | `undefined` | Description |
+| `size` | `ModalSize` | `'md'` | Modal size |
+| `animation` | `ModalAnimation` | `'scale-in'` | Animation type |
+| `showCloseButton` | `boolean` | `true` | Show close button |
+| `className` | `string` | `''` | Custom classes |
+
+---
+
+## ConfirmationDialog Component
+
+**Location**: `src/components/ui/ConfirmationDialog.tsx`
+
+A pre-configured modal for confirmation actions with icon support.
+
+### Features
+- **Auto-configured**: Ready to use for confirmations
+- **Icon Support**: Success/danger icons
+- **Action Colors**: Green for confirm, red for cancel
+- **Accessibility**: Full ARIA support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isOpen` | `boolean` | Required | Show/hide dialog |
+| `onClose` | `() => void` | Required | Close handler |
+| `onConfirm` | `() => void` | Required | Confirm action |
+| `title` | `string` | Required | Dialog title |
+| `message` | `string` | Required | Confirmation message |
+| `confirmText` | `string` | `'Ya'` | Confirm button text |
+| `cancelText` | `string` | `'Batal'` | Cancel button text |
+| `variant` | `'default' \| 'danger'` | `'default'` | Visual variant |
+| `showIcon` | `boolean` | `true` | Show icon |
+
+---
+
+## Section Component
+
+**Location**: `src/components/ui/Section.tsx`
+
+A semantic section component with title and optional subtitle.
+
+### Features
+- **Auto-generated IDs**: Heading ID for ARIA association
+- **Badge Support**: Optional badge display
+- **Animation**: Fade-in effect
+- **Accessibility**: `role="region"`, `aria-labelledby`
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `id` | `string` | Required | Section ID |
+| `title` | `string` | Required | Section title |
+| `subtitle` | `string` | `undefined` | Optional subtitle |
+| `children` | `ReactNode` | Required | Section content |
+| `badge` | `ReactNode` | `undefined` | Optional badge |
+| `className` | `string` | `''` | Custom classes |
+
+### Usage
+```tsx
+import Section from './ui/Section';
+
+<Section id="profile-section" title="Profil Pengguna">
+  <UserProfile />
+</Section>
+```
+
+---
+
+## ErrorBoundary Component
+
+**Location**: `src/components/ui/ErrorBoundary.tsx`
+
+An error boundary component with fallback UI and retry functionality.
+
+### Features
+- **Error Detection**: Catches React component errors
+- **Fallback UI**: User-friendly error display
+- **Retry**: Built-in retry button
+- **Reload**: Page reload option
+- **Logging**: Error logging for debugging
+- **Accessibility**: Clear error messages, keyboard navigation
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | Required | Child components |
+| `fallback` | `ReactNode` | `undefined` | Custom fallback UI |
+| `resetKeys` | `unknown[]` | `undefined` | Keys to trigger reset |
+| `onError` | `(error, info) => void` | `undefined` | Error handler |
+| `onReset` | `() => void` | `undefined` | Reset handler |
+
+---
+
+## SkipLink Component
+
+**Location**: `src/components/ui/SkipLink.tsx`
+
+A skip-to-main-content link for keyboard navigation accessibility.
+
+### Features
+- **Screen Reader Only**: Visible only to screen readers
+- **Keyboard Focus**: Hidden when mouse user
+- **Accessibility**: `skip-link` role for assistive technology
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `text` | `string` | Required | Link text |
+| `className` | `string` | `''` | Custom classes |
+
+### Usage
+```tsx
+import SkipLink from './ui/SkipLink';
+
+<SkipLink text="Skip to main content" />
+```
+
+---
+
+## Heading Component
+
+**Location**: `src/components/ui/Heading.tsx`
+
+A flexible heading component with semantic levels and styling options.
+
+### Features
+- **6 Levels**: `h1` through `h6`
+- **12 Sizes**: `xs` to `8xl`
+- **4 Weights**: `normal`, `medium`, `semibold`, `bold`
+- **3 Tracking Options**: `tight`, `normal`, `wide`
+- **Accessibility**: Auto-generates correct HTML tag
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `level` | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | `2` | Heading level |
+| `size` | `HeadingSize` | `'2xl'` | Text size |
+| `weight` | `HeadingWeight` | `'bold'` | Font weight |
+| `tracking` | `HeadingTracking` | `'normal'` | Letter spacing |
+| `leading` | `string` | `undefined` | Line height |
+| `id` | `string` | `undefined` | Element ID |
+| All heading attributes | - | - | Passes through standard props |
+
+### Usage
+```tsx
+import Heading from './ui/Heading';
+
+<Heading level={1} size="4xl" weight="bold">
+  Welcome to MA Malnu Kananga
+</Heading>
+
+<Heading level={2} size="2xl">
+  Dashboard Overview
+</Heading>
+```
+
+---
+
+## Badge Component
+
+**Location**: `src/components/ui/Badge.tsx`
+
+A flexible badge component for status indicators and labels.
+
+### Features
+- **10 Variants**: `success`, `error`, `warning`, `info`, `neutral`, `primary`, `purple`, `indigo`, `orange`, `red`
+- **2 Styles**: `solid`, `outline`
+- **4 Sizes**: `sm`, `md`, `lg`, `xl`
+- **Rounded**: Standard or pill (fully rounded)
+- **Accessibility**: Full ARIA support
+- **Dark Mode**: Full support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | Required | Badge content |
+| `variant` | `BadgeVariant` | `'neutral'` | Color variant |
+| `size` | `BadgeSize` | `'md'` | Badge size |
+| `styleType` | `'solid' \| 'outline'` | `'solid'` | Style type |
+| `rounded` | `boolean` | `true` | Fully rounded corners |
+| All span attributes | - | - | Passes through standard props |
+
+### Usage
+```tsx
+import Badge from './ui/Badge';
+
+<Badge variant="success">Active</Badge>
+<Badge variant="error">Failed</Badge>
+<Badge variant="warning" styleType="outline">Pending</Badge>
+<Badge variant="primary">New</Badge>
+```
+
+---
+
+## Alert Component
+
+**Location**: `src/components/ui/Alert.tsx`
+
+A flexible alert component with variants, icons, and close functionality.
+
+### Features
+- **5 Variants**: `info`, `success`, `warning`, `error`, `neutral`
+- **3 Sizes**: `sm`, `md`, `lg`
+- **3 Border Options**: `left`, `full`, `none`
+- **Icons**: Built-in default icons
+- **Close Button**: Optional dismiss functionality
+- **Accessibility**: `role="alert"`, `aria-live`, ARIA labels
+- **Dark Mode**: Full support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | Required | Alert content |
+| `variant` | `AlertVariant` | `'info'` | Alert variant |
+| `size` | `AlertSize` | `'md'` | Alert size |
+| `border` | `'left' \| 'full' \| 'none'` | `'full'` | Border style |
+| `title` | `string` | `undefined` | Alert title |
+| `icon` | `ReactNode` | `undefined` | Custom icon |
+| `showCloseButton` | `boolean` | `false` | Show close button |
+| `onClose` | `() => void` | `undefined` | Close handler |
+| `fullWidth` | `boolean` | `true` | Full width |
+| `centered` | `boolean` | `false` | Centered layout |
+
+### Usage
+```tsx
+import Alert from './ui/Alert';
+
+<Alert
+  variant="success"
+  title="Success!"
+  showCloseButton
+  onClose={dismiss}
+>
+  Your changes have been saved.
+</Alert>
+```
+
+---
+
+## DashboardActionCard Component
+
+**Location**: `src/components/ui/DashboardActionCard.tsx`
+
+An interactive card component designed for dashboard quick actions.
+
+### Features
+- **Variants**: Configurable action types
+- **Icons**: Icon support
+- **Accessibility**: Keyboard navigation, focus management
+- **Animations**: Hover and active effects
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | Required | Card title |
+| `description` | `string` | Required | Card description |
+| `icon` | `ReactNode` | Required | Action icon |
+| `onClick` | `() => void` | Required | Click handler |
+| `variant` | `string` | `undefined` | Visual variant |
+| `className` | `string` | `''` | Custom classes |
+
+---
+
+## SocialLink Component
+
+**Location**: `src/components/ui/SocialLink.tsx`
+
+A social media link component with icon support.
+
+### Features
+- **Auto-detection**: Platform-based icon selection
+- **Icons**: Built-in icons for common platforms
+- **Hover**: Color darkening on hover
+- **Accessibility**: `aria-label` for screen readers
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `href` | `string` | Required | Link URL |
+| `platform` | `string` | Required | Platform type |
+| `label` | `string` | Required | Screen reader label |
+| `className` | `string` | `''` | Custom classes |
+
+---
+
+## LinkCard Component
+
+**Location**: `src/components/ui/LinkCard.tsx`
+
+A card component optimized for link content.
+
+### Features
+- **Image Support**: Optional image display
+- **Hover Effects**: Lift and border changes
+- **Accessibility**: Proper link semantics
+- **Dark Mode**: Full support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `href` | `string` | Required | Link URL |
+| `title` | `string` | Required | Card title |
+| `description` | `string` | Required | Card description |
+| `image` | `string` | `undefined` | Image URL |
+| `badge` | `string` | `undefined` | Optional badge text |
+| `className` | `string` | `''` | Custom classes |
+
+---
+
+## Table Component
+
+**Location**: `src/components/ui/Table.tsx`
+
+A comprehensive table component with semantic sub-components.
+
+### Features
+- **Sub-components**: `Thead`, `Tbody`, `Tfoot`, `Tr`, `Th`, `Td`
+- **Accessibility**: Proper semantic table structure
+- **Dark Mode**: Full support
+- **Responsive**: Breakpoint-aware styling
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | Required | Table content |
+| `className` | `string` | `''` | Custom classes |
+| All table attributes | - | - | Passes through standard props |
+
+### Sub-components
+All exported from the same file:
+- `Thead` - Table head
+- `Tbody` - Table body
+- `Tfoot` - Table footer
+- `Tr` - Table row
+- `Th` - Table header cell
+- `Td` - Table data cell
+
+### Usage
+```tsx
+import { Table, Thead, Tbody, Tr, Th, Td } from './ui/Table';
+
+<Table className="w-full">
+  <Thead>
+    <Tr>
+      <Th>Name</Th>
+      <Th>Role</Th>
+    </Tr>
+  </Thead>
+  <Tbody>
+    <Tr>
+      <td>John Doe</td>
+      <td>Admin</td>
+    </Tr>
+  </Tbody>
+</Table>
+```
+
+---
+
+## DataTable Component
+
+**Location**: `src/components/ui/DataTable.tsx`
+
+An enhanced table component with sorting, filtering, and pagination.
+
+### Features
+- **Sorting**: Built-in column sorting
+- **Filtering**: Search/filter functionality
+- **Pagination**: Integrated pagination
+- **Empty State**: No data message
+- **Loading**: Built-in loading indicator
+- **Accessibility**: Full keyboard navigation
+
+---
+
+## Tab Component
+
+**Location**: `src/components/ui/Tab.tsx`
+
+A fully accessible tab component with keyboard navigation and multiple variants.
+
+### Features
+- **3 Variants**: `pill`, `border`, `icon`
+- **5 Colors**: `green`, `blue`, `purple`, `red`, `yellow`, `neutral`
+- **2 Orientations**: `horizontal`, `vertical`
+- **Keyboard Navigation**: Arrow keys, Enter/Space, Home/End
+- **Skip Disabled**: Automatically skips disabled tabs
+- **Badge Support**: Optional badge display
+- **Accessibility**: Full ARIA support (role="tablist", aria-selected, aria-controls, aria-orientation)
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `options` | `TabOption[]` | Required | Tab options |
+| `activeTab` | `string` | Required | Currently active tab ID |
+| `onTabChange` | `(id) => void` | Required | Tab change handler |
+| `variant` | `'pill' \| 'border' \| 'icon'` | `'pill'` | Visual variant |
+| `color` | `TabColor` | `'green'` | Color theme |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Tab layout |
+| `aria-label` | `string` | `'Tabs'` | ARIA label |
+
+### Usage
+```tsx
+import Tab from './ui/Tab';
+
+<Tab
+  options={[
+    { id: 'tab-1', label: 'Overview', icon: DashboardIcon },
+    { id: 'tab-2', label: 'Settings', icon: SettingsIcon },
+  ]}
+  activeTab={activeTab}
+  onTabChange={setActiveTab}
+  variant="pill"
+  color="blue"
+/>
+```
+
+---
+
+## Pagination Component
+
+**Location**: `src/components/ui/Pagination.tsx`
+
+A pagination component for navigating through large data sets.
+
+### Features
+- **Keyboard Navigation**: Arrow keys for page navigation
+- **Accessibility**: ARIA labels for navigation
+- **Disabled State**: Visual feedback for disabled pages
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `currentPage` | `number` | Required | Current page |
+| `totalPages` | `number` | Required | Total pages |
+| `onPageChange` | `(page) => void` | Required | Page change handler |
+| `showFirstLast` | `boolean` | `true` | Show first/last buttons |
+
+---
+
+## EmptyState Component
+
+**Location**: `src/components/ui/EmptyState.tsx` (part of LoadingState)
+
+An empty state component for displaying no-data messages.
+
+### Features
+- **Icons**: Built-in icons
+- **Customizable**: Custom messages and icons
+- **Accessibility**: `role="status"`, ARIA live regions
+
+---
+
+## ErrorState Component
+
+**Location**: `src/components/ui/ErrorState.tsx` (part of LoadingState)
+
+An error state component for displaying error messages.
+
+### Features
+- **Icons**: Built-in error icons
+- **Customizable**: Custom messages
+- **Accessibility**: `role="alert"`, ARIA live regions
+- **Retry**: Optional retry functionality
+
+---
+
+## LoadingSpinner Component
+
+**Location**: `src/components/ui/LoadingSpinner.tsx`
+
+A standalone loading spinner component.
+
+### Features
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Dark Mode**: Full support
+- **Accessibility**: `role="status"`, `aria-hidden`
+
+---
+
+## LoadingOverlay Component
+
+**Location**: `src/components/ui/LoadingOverlay.tsx`
+
+A full-screen overlay for loading states.
+
+### Features
+- **Blur Effect**: Backdrop blur
+- **Dark Mode**: Full support
+- **Z-index**: Ensures overlay is on top
+- **Accessibility**: `aria-live` announcements
+
+---
+
+## Skeleton Component
+
+**Location**: `src/components/ui/Skeleton.tsx`
+
+A skeleton loading component for perceived performance.
+
+### Features
+- **Multiple Types**: Text, avatar, card, etc.
+- **Animations**: Pulse effect
+- **Dark Mode**: Full support
+
+---
+
+## ProgressBar Component
+
+**Location**: `src/components/ui/ProgressBar.tsx`
+
+A progress indicator component for showing completion status.
+
+### Features
+- **Variants**: Default, success, warning, error
+- **Percentages**: Numeric or labeled display
+- **Animations**: Smooth transitions
+- **Accessibility**: `role="progressbar"`, ARIA values
+- **Dark Mode**: Full support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | Required | Progress percentage (0-100) |
+| `variant` | `string` | `'default'` | Visual variant |
+| `label` | `string` | `undefined` | Progress label |
+| `showPercentage` | `boolean` | `true` | Show percentage text |
+
+---
+
+## PageHeader Component
+
+**Location**: `src/components/ui/PageHeader.tsx`
+
+A consistent page header component with actions.
+
+### Features
+- **Title**: Main page title
+- **Subtitle**: Optional subtitle
+- **Actions**: Right-aligned action buttons
+- **Breadcrumbs**: Breadcrumb navigation
+- **Accessibility**: Proper heading levels
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | Required | Page title |
+| `subtitle` | `string` | `undefined` | Optional subtitle |
+| `actions` | `ReactNode` | `undefined` | Action buttons |
+| `breadcrumbs` | `Breadcrumb[]` | `undefined` | Breadcrumb items |
+
+---
+
+## ErrorMessage Component
+
+**Location**: `src/components/ui/ErrorMessage.tsx`
+
+A dedicated error message display component.
+
+### Features
+- **Dismiss**: Optional dismiss button
+- **Variants**: Error type styling
+- **Accessibility**: `role="alert"`, ARIA live regions
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | Required | Error title |
+| `message` | `string` | Required | Error message |
+| `onDismiss` | `() => void` | `undefined` | Dismiss handler |
+
+---
+
+## PDFExportButton Component
+
+**Location**: `src/components/ui/PDFExportButton.tsx`
+
+A specialized button for PDF export functionality.
+
+### Features
+- **Icon**: PDF document icon
+- **Loading State**: Built-in loading
+- **Feedback**: Export success/error handling
+- **Accessibility**: Full ARIA support
+
+### Props
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onExport` | `() => void` | Required | Export handler |
+| `loading` | `boolean` | `false` | Loading state |
+| `disabled` | `boolean` | `false` | Disabled state |
+| `className` | `string` | `''` | Custom classes |
+
+---
+
