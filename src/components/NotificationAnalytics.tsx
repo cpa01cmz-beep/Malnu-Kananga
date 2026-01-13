@@ -119,19 +119,19 @@ const NotificationAnalyticsComponent: React.FC<NotificationAnalyticsProps> = ({ 
 
                     return (
                       <tr key={item.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           {new Date(item.timestamp).toLocaleString('id-ID')}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           {item.delivered}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           {item.read}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           {item.clicked}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           <Badge
                             variant={parseFloat(itemReadRate) >= 50 ? 'success' : 'warning'}
                             size="md"
@@ -140,7 +140,7 @@ const NotificationAnalyticsComponent: React.FC<NotificationAnalyticsProps> = ({ 
                             {itemReadRate}%
                           </Badge>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           <Badge
                             variant={parseFloat(itemClickRate) >= 20 ? 'success' : 'warning'}
                             size="md"

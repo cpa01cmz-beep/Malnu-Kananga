@@ -183,29 +183,29 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
-                    {allPermissions.map((permission) => {
-                      const status = getPermissionStatus(permission);
-                      return (
-                        <tr key={permission.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-200">
-                            {permission.name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
-                            {permission.resource}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
-                            {permission.action}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <Badge variant={status === 'granted' ? 'success' : 'error'}>
-                              {status}
-                            </Badge>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
+                   <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+                     {allPermissions.map((permission) => {
+                       const status = getPermissionStatus(permission);
+                       return (
+                         <tr key={permission.id}>
+                           <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-200">
+                             {permission.name}
+                           </td>
+                           <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
+                             {permission.resource}
+                           </td>
+                           <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
+                             {permission.action}
+                           </td>
+                           <td className="px-6 py-4">
+                             <Badge variant={status === 'granted' ? 'success' : 'error'}>
+                               {status}
+                             </Badge>
+                           </td>
+                         </tr>
+                       );
+                     })}
+                   </tbody>
                 </table>
               </div>
             </div>
@@ -232,32 +232,32 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
-                  {Object.entries(ROLE_PERMISSION_MATRIX).map(([role, permissions]) => (
-                    <tr key={role}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-200">
-                        {role}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
-                        {permissions.length}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
-                        <div className="max-w-xs">
-                          {permissions.slice(0, 3).map(permId => {
-                            const perm = PERMISSIONS[permId];
-                            return perm ? (
-                              <span key={permId} className="inline-block bg-neutral-100 dark:bg-neutral-700 rounded px-2 py-1 text-xs mr-1 mb-1">
-                                {perm.name}
-                              </span>
-                            ) : null;
-                          })}
-                          {permissions.length > 3 && (
-                            <span className="text-xs text-neutral-400">+{permissions.length - 3} more</span>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                 <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+                   {Object.entries(ROLE_PERMISSION_MATRIX).map(([role, permissions]) => (
+                     <tr key={role}>
+                       <td className="px-6 py-4 text-sm font-medium text-neutral-900 dark:text-neutral-200">
+                         {role}
+                       </td>
+                       <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
+                         {permissions.length}
+                       </td>
+                       <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
+                         <div className="max-w-full sm:max-w-xs">
+                           {permissions.slice(0, 3).map(permId => {
+                             const perm = PERMISSIONS[permId];
+                             return perm ? (
+                               <span key={permId} className="inline-block bg-neutral-100 dark:bg-neutral-700 rounded px-2 py-1 text-xs mr-1 mb-1">
+                                 {perm.name}
+                               </span>
+                             ) : null;
+                           })}
+                           {permissions.length > 3 && (
+                             <span className="text-xs text-neutral-400">+{permissions.length - 3} more</span>
+                           )}
+                         </div>
+                       </td>
+                     </tr>
+                   ))}
                 </tbody>
               </table>
             </div>
@@ -299,30 +299,30 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
-                  {auditLogs.slice(0, 50).map((log, index) => (
-                    <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
-                        {new Date(log.timestamp).toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-200">
-                        {log.userRole}
-                        {log.userExtraRole && ` (${log.userExtraRole})`}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
-                        {log.resource}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
-                        {log.action}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge variant={log.granted ? 'success' : 'error'}>
-                          {log.granted ? 'Granted' : 'Denied'}
-                        </Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+                 <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+                   {auditLogs.slice(0, 50).map((log, index) => (
+                     <tr key={index}>
+                       <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
+                         {new Date(log.timestamp).toLocaleString()}
+                       </td>
+                       <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-200">
+                         {log.userRole}
+                         {log.userExtraRole && ` (${log.userExtraRole})`}
+                       </td>
+                       <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
+                         {log.resource}
+                       </td>
+                       <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
+                         {log.action}
+                       </td>
+                       <td className="px-6 py-4">
+                         <Badge variant={log.granted ? 'success' : 'error'}>
+                           {log.granted ? 'Granted' : 'Denied'}
+                         </Badge>
+                       </td>
+                     </tr>
+                   ))}
+                 </tbody>
               </table>
               {auditLogs.length === 0 && (
                 <div className="text-center py-8 text-neutral-500 dark:text-neutral-400">

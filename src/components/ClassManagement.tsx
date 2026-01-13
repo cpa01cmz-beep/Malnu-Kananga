@@ -394,7 +394,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
                         {student.gender}
                       </span>
                     </td>
-                    <td className="px-6 py-4 truncate max-w-xs">{student.address}</td>
+                                    <td className="px-6 py-4 truncate max-w-full sm:max-w-xs">{student.address}</td>
                     <td className="px-6 py-4">
                       <select
                         value={student.attendanceToday}
