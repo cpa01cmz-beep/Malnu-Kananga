@@ -266,7 +266,31 @@ describe('SearchInput Component', () => {
       expect(input).toHaveValue('test');
     });
 
-    it('clears value when Escape key is pressed', async () => {
+    it('clears value when Escape key is pressed with clearOnEscape enabled', async () => {
+      const user = userEvent.setup();
+      render(<SearchInput placeholder="Search..." clearOnEscape />);
+      
+      const input = screen.getByRole('searchbox');
+      await user.type(input, 'test');
+      expect(input).toHaveValue('test');
+      
+      await user.keyboard('{Escape}');
+      expect(input).toHaveValue('');
+    });
+
+    it('does not clear value when Escape key is pressed with clearOnEscape disabled', async () => {
+      const user = userEvent.setup();
+      render(<SearchInput placeholder="Search..." clearOnEscape={false} />);
+      
+      const input = screen.getByRole('searchbox');
+      await user.type(input, 'test');
+      expect(input).toHaveValue('test');
+      
+      await user.keyboard('{Escape}');
+      expect(input).toHaveValue('test');
+    });
+
+    it('does not clear value when Escape key is pressed by default', async () => {
       const user = userEvent.setup();
       render(<SearchInput placeholder="Search..." />);
       
@@ -275,6 +299,7 @@ describe('SearchInput Component', () => {
       expect(input).toHaveValue('test');
       
       await user.keyboard('{Escape}');
+      expect(input).toHaveValue('test');
     });
   });
 
