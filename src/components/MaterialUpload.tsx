@@ -621,7 +621,9 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                       <button
                         type="button"
                         onClick={() => setShowSuggestionForm(!showSuggestionForm)}
-                        className="text-xs text-green-600 hover:text-green-700 font-medium"
+                        aria-label={showSuggestionForm ? 'Tutup form kategori baru' : 'Ajukan kategori baru'}
+                        aria-expanded={showSuggestionForm}
+                        className="text-xs text-green-600 hover:text-green-700 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 rounded px-2 py-1 transition-all"
                       >
                         Ajukan Kategori Baru
                       </button>
