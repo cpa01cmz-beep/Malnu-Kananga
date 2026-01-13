@@ -80,6 +80,15 @@
 
 ## Completed Work (Q1 2026)
 
+### Styling System Debug - CONTAINERS Token Application (2026-01-13)
+- Refactored 3 hardcoded container patterns to use centralized `CONTAINERS` tokens
+- Updated MaterialTemplatesLibrary.tsx (1 instance): Template card container using CONTAINERS.CARD_LG
+- Updated PPDBManagement.tsx (2 instances): Advanced filters and table container using CONTAINERS tokens
+- Improved design system consistency and maintainability
+- Reduced hardcoded container patterns from 41 → 38 remaining
+- All changes preserve functionality and UI appearance
+- See PR #1140 for details
+
 ### Styling System Debug - Centralized Styling Configuration (2026-01-13)
 - Created centralized styling configuration in `src/config/styling.ts`
 - Implemented type-safe styling utilities with TypeScript interfaces
@@ -248,6 +257,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.5.0 | 2026-01-13 | Styling system debug - applied centralized CONTAINERS tokens to MaterialTemplatesLibrary and PPDBManagement components, refactored 3 hardcoded container patterns (2 in PPDBManagement, 1 in MaterialTemplatesLibrary), improved design system consistency, reduced hardcoded patterns from 41 → 38 remaining |
 | 2.4.9 | 2026-01-13 | Styling system debug - created centralized styling configuration (SHADOWS, RADIUS, SURFACES, BORDERS, CONTAINERS), added 42 styling tokens with type-safe getter functions, identified 113+ bg-white/dark:bg-neutral-800 patterns, identified 109+ border patterns, identified 422+ rounded usages, fixed undefined custom shadows (shadow-card, shadow-card-hover, shadow-float), improved design system consistency, added comprehensive documentation |
 | 2.4.8 | 2026-01-13 | Styling system debug - created centralized dimension token system (getMinHeight, getMaxHeight, getMinWidth, getMaxWidth), added 15 dimension tokens (TOUCH_TARGET, SMALL, MEDIUM, LARGE, VIEWPORT, etc.), refactored 5 components to use dimension tokens, eliminated hardcoded dimensions, improved WCAG 2.1 AAA compliance, added comprehensive documentation |
 | 2.4.7 | 2026-01-13 | Interaction polish - added loading states to TemplateManagement component test notification button, improved UX with "Mengirim..." feedback, disabled buttons during sending, replaced custom empty state with EmptyState component, added comprehensive test coverage with 11 test cases |
