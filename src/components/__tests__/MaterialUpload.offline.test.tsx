@@ -1,6 +1,8 @@
 // MaterialUpload.offline.test.ts - Integration tests for MaterialUpload offline functionality
 
 import { describe, it, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import MaterialUpload from '../MaterialUpload';
 
 // Mock services
 vi.mock('../../services/apiService', () => ({
@@ -70,13 +72,29 @@ describe('MaterialUpload Offline Queue Integration', () => {
     vi.resetAllMocks();
   });
 
-it('should queue material upload when offline', async () => {
-    // TODO: Proper mocking requires deeper component refactoring
-    // Skipping for now
+  it('should queue material upload when offline', async () => {
+    render(
+      <MaterialUpload
+        onBack={_mockOnBack}
+        onShowToast={_mockOnShowToast}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Materi Pembelajaran/i)).toBeInTheDocument();
+    });
   });
 
   it('should show offline indicator', async () => {
-    // TODO: Proper mocking requires deeper component refactoring
-    // Skipping for now
+    render(
+      <MaterialUpload
+        onBack={_mockOnBack}
+        onShowToast={_mockOnShowToast}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Materi Pembelajaran/i)).toBeInTheDocument();
+    });
   });
 });
