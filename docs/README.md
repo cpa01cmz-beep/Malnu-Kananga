@@ -66,8 +66,8 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 330 TypeScript/TSX files in src/ directory (excluding tests)
-- **Test Files**: 81 test files (*.test.ts, *.test.tsx)
+- **Total Source Files**: 330 TypeScript/TSX files in src/ directory
+- **Test Files**: 437 test files (*.test.ts, *.test.tsx)
 - **Documentation Files**: 21 (in /docs directory)
 - **Total Tests**: Run `npm test` to verify current test count
 - **API Endpoints**: 14 core endpoints in worker.js
