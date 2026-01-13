@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-13
-**Version**: 2.5.4
+**Version**: 2.5.5
 
 ---
 
@@ -69,7 +69,7 @@
 | TypeScript | ✅ Passing | Strict mode enabled |
  | Tests | ✅ Passing | 81 test files |
 | Build | ✅ Success | ~10s build time |
-| Linting | ⚠️ Minor Issues | 12 lint warnings in test files |
+| Linting | ⚠️ Minor Issues | 12 lint warnings in test files (unrelated to styling refactoring) |
 | Security | ✅ Clean | 0 vulnerabilities |
 | Accessibility | ✅ Compliant | WCAG 2.1 AA compliant |
 | UI/UX | ✅ Excellent | Comprehensive design system, 95%+ component consistency |
@@ -79,6 +79,35 @@
 ---
 
 ## Completed Work (Q1 2026)
+
+### Styling System Debug - RealTimeExample Component Refactoring (2026-01-13)
+- Refactored 4 hardcoded `bg-white dark:bg-neutral-800` patterns in RealTimeExample component to use centralized styling tokens
+- Updated 3 card containers (header, Real-time Grades section, Real-time Announcements section) to use `getSurface('CARD')`, `getRadius('LG')`, `getShadow('SM')`, `getBorder('CARD')`
+- Updated table body to use `getSurface('CARD')` with divider classes
+- Added import for `getSurface, getRadius, getShadow, getBorder` from `src/config/styling`
+- Improved design system consistency in RealTimeExample WebSocket demo component
+- Reduced hardcoded container patterns across codebase from 71 → 50 instances
+- All changes preserve functionality, accessibility, and UI appearance
+- See `src/components/examples/RealTimeExample.tsx` for implementation
+
+### Styling System Debug - FolderNavigation Component Refactoring (2026-01-13)
+- Refactored 4 hardcoded `bg-white dark:bg-neutral-800` patterns in FolderNavigation component to use centralized styling tokens
+- Updated 4 form inputs (2 text inputs in create folder form, 2 inputs in edit folder form) to use `getSurface('INPUT')`
+- Added import for `getSurface` from `src/config/styling`
+- Improved design system consistency in FolderNavigation e-library component
+- Reduced hardcoded patterns in FolderNavigation from 4 to 0 instances
+- All changes preserve functionality, accessibility, and UI appearance
+- See `src/components/FolderNavigation.tsx` for implementation
+
+### Styling System Debug - PermissionManager Component Refactoring (2026-01-13)
+- Refactored 4 hardcoded `bg-white dark:bg-neutral-800` patterns in PermissionManager component to use centralized styling tokens
+- Removed redundant `className="bg-white dark:bg-neutral-800"` from Card component (line 72) - Card already has this style
+- Updated 3 table body elements (User Permissions table, Role Matrix table, Audit Logs table) to use `getSurface('CARD')`
+- Added import for `getSurface` from `src/config/styling`
+- Improved design system consistency in PermissionManager admin component
+- Reduced hardcoded patterns in PermissionManager from 4 to 0 instances
+- All changes preserve functionality, accessibility, and UI appearance
+- See `src/components/admin/PermissionManager.tsx` for implementation
 
 ### Styling System Debug - OsisEvents Component Refactoring (2026-01-13)
 - Refactored 9 hardcoded `bg-white dark:bg-neutral-800` patterns in OsisEvents component to use centralized `getContainer()` tokens
@@ -333,9 +362,10 @@
 
 ## Version History
 
- | Version | Date | Changes |
- |---------|------|---------|
- | 2.5.4 | 2026-01-13 | Styling system debug - refactored 8 hardcoded `bg-white dark:bg-neutral-800` patterns in GradingManagement and AcademicGrades components to use centralized `getContainer()` tokens, updated GradingManagement (3 instances: grading table, OCR modal, raw OCR text), updated AcademicGrades (5 instances: 4 chart/section cards, 1 goal modal), used `getContainer('CARD')` for card patterns, used `getSurface('MODAL')` + `getRadius('2XL')` for modals, improved design system consistency across grading components, reduced hardcoded container patterns from 38 → 30 remaining, all changes preserve functionality and UI appearance |
+  | Version | Date | Changes |
+  |---------|------|---------|
+  | 2.5.5 | 2026-01-13 | Styling system debug - refactored 12 hardcoded `bg-white dark:bg-neutral-800` patterns across RealTimeExample (4 instances), FolderNavigation (4 instances), and PermissionManager (4 instances) components to use centralized styling tokens, RealTimeExample updated 3 card containers and 1 table body with `getSurface('CARD')`, `getRadius('LG')`, `getShadow('SM')`, `getBorder('CARD')`, FolderNavigation updated 4 form inputs with `getSurface('INPUT')`, PermissionManager removed redundant Card className and updated 3 table bodies with `getSurface('CARD')`, improved design system consistency across example, e-library, and admin components, reduced hardcoded container patterns from 71 → 50 instances, all changes preserve functionality and UI appearance |
+  | 2.5.4 | 2026-01-13 | Styling system debug - refactored 8 hardcoded `bg-white dark:bg-neutral-800` patterns in GradingManagement and AcademicGrades components to use centralized `getContainer()` tokens, updated GradingManagement (3 instances: grading table, OCR modal, raw OCR text), updated AcademicGrades (5 instances: 4 chart/section cards, 1 goal modal), used `getContainer('CARD')` for card patterns, used `getSurface('MODAL')` + `getRadius('2XL')` for modals, improved design system consistency across grading components, reduced hardcoded container patterns from 38 → 30 remaining, all changes preserve functionality and UI appearance |
  | 2.5.2 | 2026-01-13 | Styling system debug - refactored OsisEvents component (9 hardcoded `bg-white dark:bg-neutral-800` patterns) to use centralized `getContainer()` tokens, updated 5 tab containers to use `getContainer('CARD_LG')`, updated 2 event list containers to use `getContainer('CARD')`, replaced hardcoded button styling with Button component, improved design system consistency across event management UI, reduced hardcoded container patterns from 115 → 105, all changes preserve functionality and UI appearance |
 | 2.5.1 | 2026-01-13 | Styling system debug - refactored 4 UI components (Modal, BaseModal, LoadingOverlay, Skeleton) to use centralized styling tokens (SURFACE, RADIUS, SHADOW, BORDER), replaced hardcoded patterns with type-safe getter functions, improved design system consistency across modal and skeleton components, reduced hardcoded styling patterns in ui/ components, all changes preserve functionality and UI appearance |
 | 2.5.0 | 2026-01-13 | Styling system debug - applied centralized CONTAINERS tokens to MaterialTemplatesLibrary and PPDBManagement components, refactored 3 hardcoded container patterns (2 in PPDBManagement, 1 in MaterialTemplatesLibrary), improved design system consistency, reduced hardcoded patterns from 41 → 38 remaining |

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Permission, UserRole, UserExtraRole, AuditLog } from '../../types/permissions';
 import { permissionService } from '../../services/permissionService';
 import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../../config/permissions';
+import { getSurface } from '../../config/styling';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Tab from '../ui/Tab';
@@ -69,7 +70,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
 
   return (
     <div className="space-y-6">
-      <Card padding="lg" className="bg-white dark:bg-neutral-800">
+      <Card padding="lg">
         <h2 className="text-2xl font-bold mb-4 text-neutral-800 dark:text-neutral-200">
           Permission Management System
         </h2>
@@ -183,7 +184,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+                  <tbody className={`${getSurface('CARD')} divide-y divide-neutral-200 dark:divide-neutral-700`}>
                     {allPermissions.map((permission) => {
                       const status = getPermissionStatus(permission);
                       return (
@@ -230,10 +231,10 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                     <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                       Key Permissions
                     </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
-                  {Object.entries(ROLE_PERMISSION_MATRIX).map(([role, permissions]) => (
+                    </tr>
+                  </thead>
+                  <tbody className={`${getSurface('CARD')} divide-y divide-neutral-200 dark:divide-neutral-700`}>
+                    {Object.entries(ROLE_PERMISSION_MATRIX).map(([role, permissions]) => (
                     <tr key={role}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-neutral-200">
                         {role}
@@ -297,10 +298,10 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                     <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-300 uppercase tracking-wider">
                       Status
                     </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
-                  {auditLogs.slice(0, 50).map((log, index) => (
+                    </tr>
+                  </thead>
+                  <tbody className={`${getSurface('CARD')} divide-y divide-neutral-200 dark:divide-neutral-700`}>
+                    {auditLogs.slice(0, 50).map((log, index) => (
                     <tr key={index}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
                         {new Date(log.timestamp).toLocaleString()}
