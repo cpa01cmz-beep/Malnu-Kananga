@@ -7,6 +7,7 @@ import Button from './ui/Button';
 import Badge from './ui/Badge';
 import Card from './ui/Card';
 import { EmptyState } from './ui/LoadingState';
+import FormGrid from './ui/FormGrid';
 
 interface StudentLearningModuleProps {
     onShowToast: (msg: string, type: 'success' | 'error' | 'info' | 'warning') => void;
@@ -414,14 +415,14 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                         {showFlashcards && (
                             <div className="mt-6">
                                 <h3 className="text-lg font-semibold mb-4">Flashcards</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormGrid>
                                     {flashcards.map(card => (
                                         <Card key={card.id} variant="default" padding="md" className="border">
                                             <div className="font-medium">Front: {card.front}</div>
                                             <div className="text-neutral-600">Back: {card.back}</div>
                                         </Card>
                                     ))}
-                                </div>
+                                </FormGrid>
                             </div>
                         )}
                     </Card>

@@ -11,6 +11,7 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import { EmptyState } from './ui/LoadingState';
+import FormGrid from './ui/FormGrid';
 
 interface ParentMessagingViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -268,12 +269,12 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
 
       <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-6">Tips Komunikasi</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-neutral-600 dark:text-neutral-400">
+        <FormGrid className="text-sm text-neutral-600 dark:text-neutral-400">
           <div>• Tulis pesan yang jelas dan ringkas</div>
           <div>• Sertakan subjek yang relevan</div>
           <div>• Hormati waktu respon guru</div>
           <div>• Fokus pada hal-hal penting terkait pembelajaran</div>
-        </div>
+        </FormGrid>
       </div>
     </div>
   );

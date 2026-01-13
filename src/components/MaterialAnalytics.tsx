@@ -7,6 +7,7 @@ import { ClockIcon, TrendingUpIcon, TrendingDownIcon } from './icons/MaterialIco
 import { ELibrary } from '../types';
 import { logger } from '../utils/logger';
 import ProgressBar from './ui/ProgressBar';
+import FormGrid from './ui/FormGrid';
 
 interface MaterialAnalyticsProps {
   material: ELibrary;
@@ -271,7 +272,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
           <div>
             <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-3">Trend Bulanan (6 Bulan Terakhir)</h4>
             <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormGrid>
                 <div>
                   <h5 className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">Unduhan per Bulan</h5>
                   <div className="space-y-1">
@@ -310,9 +311,9 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
                     ))}
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
+               </FormGrid>
+             </div>
+           </div>
 
           {/* Engagement Insights */}
           <div>
