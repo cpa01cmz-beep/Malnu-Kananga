@@ -1,13 +1,13 @@
 // studentPortalValidator.ts - Validation utilities for Student Portal data
 // Validates grades, schedules, materials, attendance, and offline data consistency
 
-import type { Grade, Schedule, Attendance, Student } from '../types';
+import type { Grade, Schedule, Attendance, Student, Bookmark } from '../types';
 
 export interface ValidationResult {
   isValid: boolean;
   errors: string[];
   warnings: string[];
-  data?: any;
+  data?: Record<string, string | number>;
 }
 
 export interface CacheFreshnessInfo {
@@ -24,20 +24,24 @@ export interface DataConsistencyResult {
   isConsistent: boolean;
   mismatches: {
     field: string;
-    onlineValue: any;
-    offlineValue: any;
+    onlineValue: unknown;
+    offlineValue: unknown;
     severity: 'error' | 'warning';
   }[];
+}
+
+export interface FavoriteItem {
+  id: string;
+  addedAt?: string;
 }
 
 const GRADE_WEIGHTS = { assignment: 0.3, mid: 0.3, final: 0.4 };
 const MIN_SCORE = 0;
 const MAX_SCORE = 100;
 const VALID_ATTENDANCE_STATUSES = ['hadir', 'sakit', 'izin', 'alpa'];
-const VALID_SUBJECT_NAMES = /^(matematika|bahasa\s+indonesia|bahasa\s+inggris|ipa|ips|fisika|kimia|biologi|sejarah|geografi|sosiologi|ekonomi|penjaskes|seni|pkn|agama|tik|prakarya)$/i;
 
 export class StudentPortalValidator {
-  static validateGradeDisplay(grade: any): ValidationResult {
+  static validateGradeDisplay(grade: Grade | { [key: string]: unknown }): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -79,7 +83,7 @@ export class StudentPortalValidator {
     if (!createdAt) {
       warnings.push('Tanggal nilai tidak tersedia');
     } else {
-      const createdDate = new Date(createdAt);
+      const createdDate = new Date(createdAt as string | number | Date);
       if (isNaN(createdDate.getTime())) {
         errors.push('Format tanggal nilai tidak valid');
       }
@@ -115,7 +119,7 @@ export class StudentPortalValidator {
     const gradesBySubject = new Map<string, Grade[]>();
 
     grades.forEach(grade => {
-      const validation = this.validateGradeDisplay(grade);
+      const validation = this.validateGradeDisplay(grade as unknown as Record<string, unknown>);
       if (!validation.isValid) {
         errors.push(`Nilai untuk mata pelajaran ${grade.subjectId}: ${validation.errors.join(', ')}`);
       }
@@ -196,7 +200,7 @@ export class StudentPortalValidator {
     return !(end1 <= start2 || end2 <= start1);
   }
 
-  static validateScheduleDisplay(schedule: any): ValidationResult {
+  static validateScheduleDisplay(schedule: Schedule | { [key: string]: unknown }): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -208,22 +212,22 @@ export class StudentPortalValidator {
       };
     }
 
-    const { dayOfWeek, startTime, endTime, subjectId, teacherId, room } = schedule;
+    const { dayOfWeek, startTime, endTime, subjectId, room } = schedule;
 
     const validDays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-    if (!dayOfWeek || !validDays.includes(dayOfWeek)) {
+    if (!dayOfWeek || !validDays.includes(dayOfWeek as string)) {
       errors.push(`Hari "${dayOfWeek}" tidak valid`);
     }
 
-    if (!startTime || !/^\d{2}:\d{2}$/.test(startTime)) {
+    if (!startTime || !/^\d{2}:\d{2}$/.test(startTime as string)) {
       errors.push('Format waktu mulai tidak valid (harus HH:MM)');
     }
 
-    if (!endTime || !/^\d{2}:\d{2}$/.test(endTime)) {
+    if (!endTime || !/^\d{2}:\d{2}$/.test(endTime as string)) {
       errors.push('Format waktu selesai tidak valid (harus HH:MM)');
     }
 
-    if (startTime && endTime && startTime >= endTime) {
+    if (startTime && endTime && (startTime as string) >= (endTime as string)) {
       errors.push('Waktu selesai harus setelah waktu mulai');
     }
 
@@ -290,7 +294,7 @@ export class StudentPortalValidator {
     };
   }
 
-  static validateAttendanceRecord(attendance: any): ValidationResult {
+  static validateAttendanceRecord(attendance: Attendance | { [key: string]: unknown }): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -302,7 +306,7 @@ export class StudentPortalValidator {
       };
     }
 
-    const { date, status, studentId, recordedBy, classId, notes, createdAt } = attendance;
+    const { date, status, studentId, recordedBy } = attendance;
 
     if (!date || typeof date !== 'string') {
       errors.push('Tanggal kehadiran tidak valid');
@@ -313,7 +317,7 @@ export class StudentPortalValidator {
       }
     }
 
-    if (!status || !VALID_ATTENDANCE_STATUSES.includes(status.toLowerCase())) {
+    if (!status || typeof status !== 'string' || !VALID_ATTENDANCE_STATUSES.includes(status.toLowerCase())) {
       errors.push(`Status kehadiran "${status}" tidak valid. Status yang valid: ${VALID_ATTENDANCE_STATUSES.join(', ')}`);
     }
 
@@ -332,7 +336,7 @@ export class StudentPortalValidator {
     };
   }
 
-  static validateAttendanceConfirmation(attendance: Attendance, teacherId: string): ValidationResult {
+  static validateAttendanceConfirmation(attendance: Attendance, _teacherId: string): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -387,7 +391,7 @@ export class StudentPortalValidator {
       warnings.push('Informasi kelas tidak tersedia');
     }
 
-    if (student.phoneNumber && !/^\d[\s\-\+]+$/.test(student.phoneNumber)) {
+    if (student.phoneNumber && !/^\d[\s+-]+$/.test(student.phoneNumber)) {
       errors.push('Format nomor telepon tidak valid');
     }
 
@@ -434,7 +438,7 @@ export class StudentPortalValidator {
     };
   }
 
-  static validateDataConsistency(onlineData: any, offlineData: any, fields: string[]): DataConsistencyResult {
+  static validateDataConsistency(onlineData: Record<string, unknown>, offlineData: Record<string, unknown>, fields: string[]): DataConsistencyResult {
     const mismatches: DataConsistencyResult['mismatches'] = [];
 
     fields.forEach(field => {
@@ -452,8 +456,8 @@ export class StudentPortalValidator {
           const threshold = Math.abs(onlineValue) * 0.1;
           severity = diff > threshold ? 'error' : 'warning';
         } else if (isDateField) {
-          const onlineDate = new Date(onlineValue);
-          const offlineDate = new Date(offlineValue);
+          const onlineDate = new Date(onlineValue as string | number | Date);
+          const offlineDate = new Date(offlineValue as string | number | Date);
           const hoursDiff = Math.abs(onlineDate.getTime() - offlineDate.getTime()) / (1000 * 60 * 60);
           severity = hoursDiff > 24 ? 'error' : 'warning';
         }
@@ -467,15 +471,13 @@ export class StudentPortalValidator {
       }
     });
 
-    const errorCount = mismatches.filter(m => m.severity === 'error').length;
-
     return {
       isConsistent: mismatches.length === 0,
       mismatches
     };
   }
 
-  static validateBookmarkSync(bookmarks: any[]): ValidationResult {
+  static validateBookmarkSync(bookmarks: Bookmark[] | { [key: string]: unknown }[]): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -531,7 +533,7 @@ export class StudentPortalValidator {
     };
   }
 
-  static validateFavoritesSync(favorites: any[]): ValidationResult {
+  static validateFavoritesSync(favorites: (string | FavoriteItem)[] | { [key: string]: unknown }[]): ValidationResult {
     const errors: string[] = [];
     const warnings: string[] = [];
 
