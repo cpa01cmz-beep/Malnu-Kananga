@@ -82,7 +82,6 @@ class EmailQueueService {
 
     item.status = 'processing';
     item.lastAttemptAt = new Date().toISOString();
-    item.attempts += 1;
 
     this.saveQueue(queue);
 

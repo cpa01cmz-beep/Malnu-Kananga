@@ -942,18 +942,25 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 Rating Minimal
               </label>
-              <div className="flex gap-1">
+              <div className="flex gap-1" role="group" aria-label="Filter berdasarkan rating">
                 {[0, 1, 2, 3, 4, 5].map((rating) => (
                   <button
                     key={rating}
                     onClick={() => setFilterRating(rating)}
-                    className={`p-1.5 rounded transition-colors ${
+                    aria-label={`Filter rating ${rating === 0 ? 'semua' : rating + ' bintang'}`}
+                    aria-pressed={filterRating === rating}
+                    className={`p-1.5 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 ${
                       filterRating === rating
                         ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-300'
                         : 'bg-neutral-100 text-neutral-400 hover:bg-neutral-200 dark:bg-neutral-700 dark:text-neutral-500 dark:hover:bg-neutral-600'
                     }`}
                   >
-                    {rating === 0 ? 'Semua' : '★'.repeat(rating)}
+                    {rating === 0 ? 'Semua' : (
+                      <>
+                        <span className="sr-only">{rating} bintang</span>
+                        <span aria-hidden="true">{'★'.repeat(rating)}</span>
+                      </>
+                    )}
                   </button>
                 ))}
               </div>
@@ -1166,12 +1173,14 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           {isSemanticMode && semanticSearchHook.suggestedQueries.length > 0 && (
             <div className="mt-4 pt-4 border-t border-purple-200 dark:border-purple-700">
               <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">Saran Pencarian</h4>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" role="list" aria-label="Daftar saran pencarian">
                 {semanticSearchHook.suggestedQueries.map((suggestion, index) => (
                   <button
                     key={index}
                     onClick={() => setSearch(suggestion)}
-                    className="px-3 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 rounded-full text-xs hover:bg-purple-200 dark:hover:bg-purple-900/60 transition-colors"
+                    aria-label={`Cari: ${suggestion}`}
+                    role="listitem"
+                    className="px-3 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 rounded-full text-xs hover:bg-purple-200 dark:hover:bg-purple-900/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900"
                   >
                     {suggestion}
                   </button>
