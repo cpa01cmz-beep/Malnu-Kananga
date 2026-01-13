@@ -327,9 +327,8 @@ All colors automatically support dark mode:
 
 For questions or issues:
 1. Check [COLOR_PALETTE.md](./COLOR_PALETTE.md) for complete color reference
-2. Review [colorSystemExamples.tsx](../src/examples/colorSystemExamples.tsx) for patterns
-3. Ensure you're using semantic colors (see mapping above)
-4. Verify dark mode support with `dark:` prefixes
+2. Ensure you're using semantic colors (see mapping above)
+3. Verify dark mode support with `dark:` prefixes
 
 ---
 

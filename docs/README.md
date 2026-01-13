@@ -193,23 +193,24 @@ This index maintains relationships between documents:
 ## Recent Changes (v2.5.0 - 2026-01-13)
 
      - **Repository Cleanup (2026-01-13 - Current)**:
-            - Comprehensive repository audit and documentation alignment
-            - Removed redundant COLOR_SYSTEM.md (consolidated into COLOR_PALETTE.md)
-            - Removed src/examples/ directory (example file not needed in production)
-            - Synthesized TASK.md for clarity (removed verbose version history and metrics)
-            - Corrected all documentation metrics to reflect actual codebase:
-              - Services: 27 (excluding .test., .types., and template files)
-              - UI components: 40 exported from src/components/ui/index.ts
-            - Verified TypeScript clean
-            - Confirmed 0 security vulnerabilities in dependency audit
-            - Validated .gitignore is comprehensive and appropriate
-            - All documentation files serve distinct purposes
-            - Confirmed all documentation aligns with actual codebase structure
-            - Verified DEPLOYMENT_GUIDE.md and DEPLOYMENT_STATUS.md serve distinct purposes
-            - Fixed test failure count accuracy (22 failures, 1462 passing, 10 skipped)
+             - Comprehensive repository audit and documentation alignment
+             - Removed redundant COLOR_SYSTEM.md (consolidated into COLOR_PALETTE.md)
+             - Removed src/examples/ directory (example file not needed in production)
+             - Synthesized TASK.md for clarity (removed verbose version history and metrics)
+             - Corrected all documentation metrics to reflect actual codebase:
+               - Services: 27 (excluding .test., .types., and template files)
+               - UI components: 40 exported from src/components/ui/index.ts
+             - Verified TypeScript clean
+             - Confirmed 0 security vulnerabilities in dependency audit
+             - Validated .gitignore is comprehensive and appropriate
+             - All documentation files serve distinct purposes
+             - Confirmed all documentation aligns with actual codebase structure
+             - Verified DEPLOYMENT_GUIDE.md and DEPLOYMENT_STATUS.md serve distinct purposes
+             - Fixed test failure count accuracy (35 failures, 1450 passing, 10 skipped)
+             - Removed broken reference to colorSystemExamples.tsx in COLOR_USAGE_GUIDE.md
 
-   - **Repository Cleanup (2026-01-08)**:
-       - Previous cleanup with initial documentation fixes
+    - **Repository Cleanup (2026-01-08)**:
+        - Previous cleanup with initial documentation fixes
 
 ---
 
