@@ -254,7 +254,6 @@ wrangler deploy --env ""
 ## Related Documentation
 
 - **Detailed Deployment Guide**: [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)
-- **Cloudflare Workers Status**: [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md)
 - **API Reference**: [api-documentation.md](./api-documentation.md)
 
 ## Support

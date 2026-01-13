@@ -65,11 +65,12 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 331 TypeScript/TSX files in src/ directory
-- **Test Files**: 82 test files (*.test.ts, *.test.tsx)
+- **Total Source Files**: 330 TypeScript/TSX files in src/ directory
+- **Test Files**: 81 test files (*.test.ts, *.test.tsx)
 - **Documentation Files**: 18 (in /docs directory)
 - **Total Tests**: Run `npm test` to verify current test count
 - **Services**: 45 services in src/services/
+- **Components**: 215 components (32 UI + 183 feature components)
 - **Code Examples**: 20+
 - **Troubleshooting Scenarios**: 25+
 - **Architecture Diagrams**: 1+
@@ -179,14 +180,12 @@ This index maintains relationships between documents:
 
 ## Recent Changes (v2.1.0 - 2026-01-08)
 
-- **Repository Cleanup (2026-01-13 - Current)**:
-      - Fixed documentation metrics to reflect actual file counts: 325 source files, 77 test files, 21 documentation files
+ - **Repository Cleanup (2026-01-13 - Current)**:
+      - Fixed documentation metrics to reflect actual file counts: 330 source files, 81 test files, 18 documentation files
       - Synthesized TASK.md from 604 lines to concise version with clear goals and tasks
-      - Fixed duplicate frontend structure listing in BLUEPRINT.md
-      - Moved DEPLOYMENT_STATUS.md to /docs/ directory for consolidation
-      - Updated DEPLOYMENT_STATUS.md with overview and links to related documentation
+      - Removed dead reference to CLOUDFLARE_DEPLOYMENT.md from DEPLOYMENT_STATUS.md
       - Verified all documentation aligns with codebase structure
-      - Confirmed deployment guides serve distinct purposes (DEPLOYMENT_GUIDE.md for procedures, CLOUDFLARE_DEPLOYMENT.md for status, DEPLOYMENT_STATUS.md for quick reference)
+      - Confirmed deployment guides serve distinct purposes (DEPLOYMENT_GUIDE.md for procedures, DEPLOYMENT_STATUS.md for quick reference)
       - Validated .gitignore is comprehensive and appropriate
       - All documentation files serve distinct purposes - no redundancy found
 
