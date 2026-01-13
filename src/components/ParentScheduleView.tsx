@@ -11,6 +11,7 @@ import { logger } from '../utils/logger';
 import CalendarView from './CalendarView';
 import { TableSkeleton } from './ui/Skeleton';
 import Button from './ui/Button';
+import { getContainer } from '../config/styling';
 
 interface ParentScheduleViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -114,7 +115,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
   };
 
   return (
-    <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+    <div className={`${getContainer('CARD_XL')} p-8`}>
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">

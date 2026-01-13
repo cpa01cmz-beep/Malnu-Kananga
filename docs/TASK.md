@@ -150,6 +150,23 @@
 - Total: -8 hardcoded patterns, +2 imports, improved maintainability
 - See src/components/GradingManagement.tsx and src/components/AcademicGrades.tsx for implementation
 
+### Styling System Debug - Parent View Components Refactoring (2026-01-13)
+- Refactored 12 hardcoded `bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700` patterns in Parent view components to use centralized `getContainer()` tokens
+- ParentScheduleView.tsx (1 instance): Main schedule container
+- ParentMeetingsView.tsx (3 instances): Loading container, main meetings container, tips section
+- ParentPaymentsView.tsx (3 instances): Loading container, main payments container, individual payment details
+- ParentMessagingView.tsx (3 instances): Loading container, main messages container
+- ParentGradesView.tsx (1 instance): Main grades container
+- ParentAttendanceView.tsx (1 instance): Main attendance container
+- Replaced hardcoded pattern with `${getContainer('CARD_XL')} p-8` (padding added separately)
+- Added `getContainer` import from src/config/styling to all 6 files
+- Reduced hardcoded container patterns across entire codebase
+- Improved design system consistency across all Parent views
+- All changes preserve functionality, accessibility, and UI appearance
+- No lint errors introduced
+- Total: -12 hardcoded patterns, +6 imports, improved maintainability
+- See src/components/ParentScheduleView.tsx, ParentMeetingsView.tsx, ParentPaymentsView.tsx, ParentMessagingView.tsx, ParentGradesView.tsx, ParentAttendanceView.tsx for implementation
+
 ### Styling System Debug - Centralized Styling Configuration (2026-01-13)
 - Created centralized styling configuration in `src/config/styling.ts`
 - Implemented type-safe styling utilities with TypeScript interfaces

@@ -9,6 +9,7 @@ import PDFExportButton from './ui/PDFExportButton';
 import { pdfExportService } from '../services/pdfExportService';
 import { TableSkeleton } from './ui/Skeleton';
 import { EmptyState } from './ui/LoadingState';
+import { getContainer } from '../config/styling';
 
 interface ParentGradesViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -90,7 +91,7 @@ const ParentGradesView: React.FC<ParentGradesViewProps> = ({ onShowToast, child 
   };
 
   return (
-    <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+    <div className={`${getContainer('CARD_XL')} p-8`}>
       <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">
         Nilai Akademik - {child.studentName}
       </h2>
