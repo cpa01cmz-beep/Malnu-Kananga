@@ -41,14 +41,13 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                 <li><button type="button" disabled aria-label="Karir - Tidak tersedia" className="text-left transition-colors duration-200 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Karir</button></li>
                                 <li><button type="button" disabled aria-label="Beasiswa - Tidak tersedia" className="text-left transition-colors duration-200 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Beasiswa</button></li>
                           </ul>
-                           <div className="flex justify-center sm:justify-start gap-3 mt-6">
+                             <div className="flex justify-center sm:justify-start gap-3 mt-6">
                                 <SocialLink
                                     icon={<FacebookIcon />}
                                     label="Facebook"
                                     variant="default"
                                     size="lg"
                                     disabled
-                                    onClick={() => {}}
                                 />
                                 <SocialLink
                                     icon={<InstagramIcon />}
@@ -56,7 +55,6 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     variant="default"
                                     size="lg"
                                     disabled
-                                    onClick={() => {}}
                                 />
                                 <SocialLink
                                     icon={<YoutubeIcon />}
@@ -64,7 +62,6 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     variant="default"
                                     size="lg"
                                     disabled
-                                    onClick={() => {}}
                                 />
                             </div>
                     </div>

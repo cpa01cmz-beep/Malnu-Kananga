@@ -264,6 +264,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
         <CalendarView
           schedules={schedules}
           viewMode={viewMode}
+          onViewModeChange={setViewMode}
           onDateSelect={handleDateSelect}
           onEventClick={handleEventClick}
           className="mb-6"
