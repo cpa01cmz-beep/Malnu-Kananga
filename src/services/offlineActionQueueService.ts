@@ -3,7 +3,7 @@
 
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
-import { isNetworkError } from '../utils/networkStatus';
+import { isNetworkError, useNetworkStatus } from '../utils/networkStatus';
 import type { ApiResponse } from './apiService';
 import { webSocketService, type RealTimeEvent } from './webSocketService';
 
@@ -695,8 +695,6 @@ export const offlineActionQueueService = new OfflineActionQueueService();
  * Hook for using offline action queue
  */
 export function useOfflineActionQueue() {
-  // Use the imported hook
-  const { useNetworkStatus } = require('../utils/networkStatus');
   const networkStatus = useNetworkStatus();
 
   return {
