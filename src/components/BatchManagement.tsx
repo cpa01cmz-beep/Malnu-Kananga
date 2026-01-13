@@ -23,6 +23,7 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [batchName, setBatchName] = useState('');
   const [notificationText, setNotificationText] = useState('');
+  const [sendingBatchId, setSendingBatchId] = useState<string | null>(null);
 
   const handleCreateBatch = () => {
     if (!batchName.trim() || !notificationText.trim()) return;
@@ -48,13 +49,18 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
   };
 
   const handleSendBatch = async (batchId: string) => {
-    const success = await sendBatch(batchId);
-    if (onShowToast) {
-      if (success) {
-        onShowToast('Batch berhasil dikirim', 'success');
-      } else {
-        onShowToast('Gagal mengirim batch', 'error');
+    setSendingBatchId(batchId);
+    try {
+      const success = await sendBatch(batchId);
+      if (onShowToast) {
+        if (success) {
+          onShowToast('Batch berhasil dikirim', 'success');
+        } else {
+          onShowToast('Gagal mengirim batch', 'error');
+        }
       }
+    } finally {
+      setSendingBatchId(null);
     }
   };
 
@@ -107,6 +113,7 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
                     onClick={() => handleSendBatch(batch.id)}
                     size="sm"
                     variant="success"
+                    isLoading={sendingBatchId === batch.id}
                   >
                     Kirim Sekarang
                   </Button>
