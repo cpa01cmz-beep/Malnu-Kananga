@@ -26,6 +26,7 @@ import VoiceCommandsHelp from './VoiceCommandsHelp';
 import SmallActionButton from './ui/SmallActionButton';
 import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
+import { getSurface, getRadius, getBorder, getShadow } from '../config/styling';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -255,7 +256,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
         {currentView === 'home' && (
             <>
-                <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 ${!isOnline ? 'animate-pulse' : 'animate-fade-in-up'}`}>
+                <div className={`${getSurface('CARD')} ${getRadius('XL')} p-6 sm:p-8 ${getShadow('CARD')} ${getBorder('CARD')} mb-8 ${!isOnline ? 'animate-pulse' : 'animate-fade-in-up'}`}>
                     <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">
                         Dashboard Administrator
                         {!isOnline && <span className="ml-2 text-sm font-normal text-amber-600 dark:text-amber-400">(Offline)</span>}
@@ -272,7 +273,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
                 {/* Voice Commands Section */}
                 {voiceSupported && (
-                    <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up`}>
+                    <div className={`${getSurface('CARD')} ${getRadius('XL')} p-6 ${getShadow('CARD')} ${getBorder('CARD')} mb-8 animate-fade-in-up`}>
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
@@ -438,6 +439,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     <button
                         onClick={() => setCurrentView('home')}
                         className="px-4 py-2.5 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+                        type="button"
                     >
                         Kembali ke Dashboard
                     </button>

@@ -9,6 +9,7 @@ import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { GRADIENT_CLASSES } from '../config/gradients';
 import Button from './ui/Button';
+import { getContainer } from '../config/styling';
 
 interface ParentReportsViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -99,7 +100,7 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+      <div className={getContainer('CARD_XL')}>
         <div className="animate-pulse">
           <div className="h-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg mb-6"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -114,7 +115,7 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+      <div className={getContainer('CARD_XL')}>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Laporan Konsolidasi Semua Anak</h2>
           <div className="flex items-center gap-4">
@@ -194,7 +195,7 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
         </div>
       </div>
 
-      <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
+      <div className={getContainer('CARD_XL')}>
         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-6">Ringkasan Keseluruhan</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center">
