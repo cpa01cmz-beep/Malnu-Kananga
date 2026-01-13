@@ -104,6 +104,18 @@
 - Total: -13 hardcoded patterns, +1 import, improved maintainability
 - See `src/components/SchoolInventory.tsx` for implementation
 
+### Styling System Debug - PPDBManagement Component Refactoring (2026-01-13)
+- Refactored 6 hardcoded `bg-white dark:bg-neutral-800` patterns in PPDBManagement component to use centralized `getContainer()` tokens
+- Updated 4 stat cards (Total Pendaftar, Perlu Verifikasi, Diterima, Ditolak) to use `getContainer('CARD_MD')` with custom border and padding
+- Refactored scoring modal container to use `getContainer('CARD_LG')` with custom width (`max-w-md`)
+- Refactored document preview modal container to use `getContainer('CARD_LG')` with custom width (`max-w-2xl`)
+- Added `getContainer` import from `src/config/styling`
+- Reduced hardcoded styling patterns in PPDBManagement from 6 to 0
+- All changes preserve functionality, accessibility, and UI appearance
+- No lint errors introduced
+- Total: -6 hardcoded patterns, +1 import, improved maintainability
+- See `src/components/PPDBManagement.tsx` for implementation
+
 ### Styling System Debug - UI Component Refactoring (2026-01-13)
 - Refactored 4 UI components to use centralized styling tokens (SURFACE, RADIUS, SHADOW, BORDER)
 - Updated Modal.tsx: Replaced hardcoded modal container with getSurface('MODAL'), getRadius('XL'), getShadow('FLOAT'), getBorder('MODAL')
