@@ -1,4 +1,3 @@
-// ParentNotificationSettings.tsx - Component for configuring parent grade notifications
 import React, { useState, useEffect } from 'react';
 import { BellIcon } from './icons/BellIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
@@ -6,6 +5,8 @@ import { ClockIcon } from './icons/MaterialIcons';
 import { ToastType } from './Toast';
 import { Toggle } from './ui/Toggle';
 import IconButton from './ui/IconButton';
+import Input from './ui/Input';
+import Card from './ui/Card';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import type { ParentGradeNotificationSettings } from '../services/parentGradeNotificationService';
 import { logger } from '../utils/logger';
@@ -99,9 +100,9 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
   if (loading) {
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-md w-full mx-4">
+        <Card padding="lg" className="max-w-md w-full mx-4">
           <LoadingSpinner text="Memuat pengaturan..." />
-        </div>
+        </Card>
       </div>
     );
   }
@@ -110,7 +111,7 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <Card padding="lg" className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -262,25 +263,21 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
                    className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg"
                  />
 
-                 {settings.missingGradeAlert && (
-                   <div className="ml-4">
-                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                       Hari Alert Nilai Kosong
-                     </label>
-                     <input
-                       type="number"
-                       min="1"
-                       max="30"
-                       value={settings.missingGradeDays}
-                       onChange={(e) => updateSettings({ missingGradeDays: Number(e.target.value) })}
-                       className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                       disabled={!settings.enabled}
-                     />
-                     <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
-                       Kirim alert setelah {settings.missingGradeDays} hari tidak ada nilai
-                     </p>
-                   </div>
-                 )}
+                  {settings.missingGradeAlert && (
+                    <div className="ml-4">
+                      <Input
+                        type="number"
+                        label="Hari Alert Nilai Kosong"
+                        helperText={`Kirim alert setelah ${settings.missingGradeDays} hari tidak ada nilai`}
+                        min="1"
+                        max="30"
+                        value={settings.missingGradeDays}
+                        onChange={(e) => updateSettings({ missingGradeDays: Number(e.target.value) })}
+                        disabled={!settings.enabled}
+                        size="sm"
+                      />
+                    </div>
+                  )}
 
                  <Toggle
                    checked={settings.quietHours.enabled}
@@ -293,32 +290,43 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
                    className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-neutral-900/50 rounded-lg"
                  />
 
-                 {settings.quietHours.enabled && (
-                   <div className="ml-4 space-y-3">
-                     <div className="flex items-center gap-3">
-                       <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                         Mulai
-                       </label>
-                       <input
-                         type="time"
-                         value={settings.quietHours.start}
-                         onChange={(e) => updateSettings({ 
-                           quietHours: { ...settings.quietHours, start: e.target.value }
-                         })}
-                         className="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white"
-                       />
-                       <span className="text-neutral-600 dark:text-neutral-400">hingga</span>
-                       <input
-                         type="time"
-                         value={settings.quietHours.end}
-                         onChange={(e) => updateSettings({ 
-                           quietHours: { ...settings.quietHours, end: e.target.value }
-                         })}
-                         className="px-3 py-1 border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white"
-                       />
-                     </div>
-                   </div>
-                 )}
+                  {settings.quietHours.enabled && (
+                    <div className="ml-4 space-y-3">
+                      <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+                        <div className="flex-shrink-0">
+                          <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300 block mb-1">
+                            Mulai
+                          </label>
+                          <Input
+                            type="time"
+                            value={settings.quietHours.start}
+                            onChange={(e) => updateSettings({
+                              quietHours: { ...settings.quietHours, start: e.target.value }
+                            })}
+                            disabled={!settings.enabled}
+                            size="sm"
+                            className="w-32"
+                          />
+                        </div>
+                        <span className="text-neutral-600 dark:text-neutral-400 mt-5">hingga</span>
+                        <div className="flex-shrink-0">
+                          <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300 block mb-1">
+                            Selesai
+                          </label>
+                          <Input
+                            type="time"
+                            value={settings.quietHours.end}
+                            onChange={(e) => updateSettings({
+                              quietHours: { ...settings.quietHours, end: e.target.value }
+                            })}
+                            disabled={!settings.enabled}
+                            size="sm"
+                            className="w-32"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
               </div>
             </>
           )}
@@ -346,15 +354,15 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
                 Simpan Sekarang
               </Button>
             )}
-            <button
+            <Button
               onClick={onClose}
-              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              variant="primary"
             >
               Selesai
-            </button>
+            </Button>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
