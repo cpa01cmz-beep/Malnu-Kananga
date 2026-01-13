@@ -70,11 +70,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
-  const computedAriaLabel = iconOnly ? (ariaLabel || (typeof children === 'string' ? children : 'Button')) : undefined;
+  const computedAriaLabel = iconOnly ? (ariaLabel || (typeof children === 'string' ? children : 'Button')) : ariaLabel;
 
-  const ariaProps: Record<string, string | boolean | undefined> = {
-    'aria-label': computedAriaLabel,
-  };
+  const ariaProps: Record<string, string | boolean | undefined> = {};
+
+  if (computedAriaLabel) {
+    ariaProps['aria-label'] = computedAriaLabel;
+  }
 
   if (isLoading) {
     ariaProps['aria-busy'] = 'true';
