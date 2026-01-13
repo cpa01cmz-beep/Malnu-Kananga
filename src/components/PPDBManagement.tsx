@@ -15,6 +15,7 @@ import { EmptyState } from './ui/LoadingState';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { CheckIcon, XMarkIcon } from './icons/MaterialIcons';
 import { getMinHeight } from '../config/dimensions';
+import { CONTAINERS } from '../config/styling';
 
 interface PPDBManagementProps {
   onBack: () => void;
@@ -300,7 +301,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
         </div>
 
         {/* Advanced Filters */}
-        <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-4 mb-6">
+        <div className={`${CONTAINERS.CARD_LG} p-4 mb-6`}>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300 block mb-1">Status</label>
@@ -381,7 +382,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
         </div>
 
         {/* Table */}
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+        <div className={`${CONTAINERS.CARD} overflow-hidden`}>
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-neutral-600 dark:text-neutral-300">
                     <thead className="bg-neutral-50 dark:bg-neutral-700 text-xs uppercase font-semibold text-neutral-500 dark:text-neutral-400">
