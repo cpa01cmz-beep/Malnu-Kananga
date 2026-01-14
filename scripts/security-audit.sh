@@ -84,9 +84,7 @@ if [ -f ".env" ]; then
     fi
 fi
 
-if [ -f ".env.production" ]; then
-    echo "✅ .env.production file found"
-fi
+# Note: Production environment variables should be set via Cloudflare secrets, not .env.production file
 
 # Check .env.example for security issues
 if [ -f ".env.example" ]; then

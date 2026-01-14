@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { LatestNews } from '../types';
 import ImageWithFallback from './ImageWithFallback';
 import Badge from './ui/Badge';

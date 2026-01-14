@@ -1,4 +1,3 @@
-import React from 'react';
 
 const DocumentTextIcon: React.FC<{ className?: string }> = ({ className = 'h-8 w-8 sm:h-10 sm:w-10' }) => (
     <svg

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { SparklesIcon } from './icons/SparklesIcon';

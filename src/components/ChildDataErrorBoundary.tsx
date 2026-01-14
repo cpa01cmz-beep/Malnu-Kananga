@@ -1,4 +1,3 @@
-import React from 'react';
 import Card from './ui/Card';
 import { UserIcon } from './icons/UserIcon';
 import Button from './ui/Button';

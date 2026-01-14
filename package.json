@@ -68,6 +68,12 @@
     "vitest": "^4.0.17",
     "wrangler": "^4.59.1"
   },
+  "overrides": {
+    "undici": "7.18.2"
+  },
+  "overrides": {
+    "undici": "7.18.2"
+  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix"

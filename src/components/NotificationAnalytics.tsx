@@ -1,4 +1,3 @@
-import React from 'react';
 import { NotificationAnalytics } from '../types';
 import ProgressBar from './ui/ProgressBar';
 import { EmptyState } from './ui/LoadingState';

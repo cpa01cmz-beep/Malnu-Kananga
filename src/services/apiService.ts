@@ -12,9 +12,7 @@ import {
   logError
 } from '../utils/errorHandler';
 
-import { API_BASE_URL as CONFIG_API_BASE_URL } from '../config';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || CONFIG_API_BASE_URL;
+import { API_BASE_URL } from '../config/api';
 
 // ============================================
 // TYPES

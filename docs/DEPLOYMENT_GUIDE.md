@@ -322,9 +322,6 @@ Set environment variables for Pages:
 # Set API base URL
 echo "https://malnu-kananga-worker.cpa01cmz.workers.dev" | wrangler pages secret put VITE_API_BASE_URL --project-name=malnu-kananga
 
-# Enable PWA features
-echo "true" | wrangler pages secret put VITE_ENABLE_PWA --project-name=malnu-kananga
-
 # Enable AI chat features
 echo "true" | wrangler pages secret put VITE_ENABLE_AI_CHAT --project-name=malnu-kananga
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { UserRole, UserExtraRole } from '../types';
 import { permissionService } from '../services/permissionService';
 import AccessDenied from './AccessDenied';

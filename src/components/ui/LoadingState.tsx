@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import Button from './Button';
 import { CardSkeleton, ListItemSkeleton, TableSkeleton } from './Skeleton';
 import { AlertCircleIcon } from '../icons/StatusIcons';

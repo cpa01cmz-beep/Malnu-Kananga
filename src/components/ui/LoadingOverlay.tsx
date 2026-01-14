@@ -1,4 +1,3 @@
-import React from 'react';
 import LoadingSpinner from './LoadingSpinner';
 
 export type LoadingOverlaySize = 'sm' | 'md' | 'lg' | 'full';

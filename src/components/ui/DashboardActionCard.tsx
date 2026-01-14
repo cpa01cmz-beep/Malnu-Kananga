@@ -1,4 +1,3 @@
-import React from 'react';
 import Card, { CardVariant, CardGradient } from './Card';
 import Badge from './Badge';
 
