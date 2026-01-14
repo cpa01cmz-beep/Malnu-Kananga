@@ -448,15 +448,15 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className={`${getGradientClass('GREEN_MAIN')} rounded-xl p-6 text-white`}>
               <p className="text-green-100 text-sm mb-2">Rata-rata Nilai</p>
-              <h3 className="text-3xl font-bold">{correlation?.averageGrade || 0}</h3>
+              <h3 className="text-3xl sm:text-2xl font-bold">{correlation?.averageGrade || 0}</h3>
             </div>
             <div className={`${getGradientClass('BLUE_MAIN')} rounded-xl p-6 text-white`}>
               <p className="text-blue-100 text-sm mb-2">Persentase Kehadiran</p>
-              <h3 className="text-3xl font-bold">{correlation?.attendancePercentage || 0}%</h3>
+              <h3 className="text-3xl sm:text-2xl font-bold">{correlation?.attendancePercentage || 0}%</h3>
             </div>
             <div className={`${getGradientClass('PURPLE_MAIN')} rounded-xl p-6 text-white`}>
               <p className="text-purple-100 text-sm mb-2">Skor Korelasi</p>
-              <h3 className="text-3xl font-bold">{correlation?.correlationScore || 0}/100</h3>
+              <h3 className="text-3xl sm:text-2xl font-bold">{correlation?.correlationScore || 0}/100</h3>
             </div>
           </div>
 

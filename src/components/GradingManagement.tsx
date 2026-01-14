@@ -1325,6 +1325,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                                 type="checkbox"
                                                 checked={isSelected}
                                                 onChange={() => toggleStudentSelection(student.id)}
+                                                aria-label={`Pilih siswa ${student.name}`}
                                                 className="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600"
                                             />
                                         </td>

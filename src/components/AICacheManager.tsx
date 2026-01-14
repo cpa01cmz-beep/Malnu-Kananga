@@ -147,21 +147,21 @@ const AICacheManager: React.FC<AICacheManagerProps> = ({ className = '' }) => {
 
       {/* Overall Statistics */}
       <div className="px-6 py-4 bg-neutral-50 dark:bg-neutral-900/50 border-b border-neutral-200 dark:border-neutral-700">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+            <div className="text-2xl sm:text-xl font-bold text-neutral-900 dark:text-neutral-100">
               {stats.total.entries}
             </div>
             <div className="text-sm text-neutral-600 dark:text-neutral-400">Total Entries</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+            <div className="text-2xl sm:text-xl font-bold text-green-600 dark:text-green-400">
               {formatHitRate(stats.total.hitRate)}
             </div>
             <div className="text-sm text-neutral-600 dark:text-neutral-400">Overall Hit Rate</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            <div className="text-2xl sm:text-xl font-bold text-blue-600 dark:text-blue-400">
               {formatMemory(stats.total.memoryUsage)}
             </div>
             <div className="text-sm text-neutral-600 dark:text-neutral-400">Memory Usage</div>

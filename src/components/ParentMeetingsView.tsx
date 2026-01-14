@@ -164,7 +164,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
     <div className="space-y-6">
       <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Jadwal Pertemuan</h2>
+          <h2 className="text-2xl sm:text-xl font-bold text-neutral-900 dark:text-white">Jadwal Pertemuan</h2>
           <div className="flex items-center gap-4">
             {children.length > 1 && (
               <select

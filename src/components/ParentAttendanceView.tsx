@@ -128,19 +128,19 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
           {/* Stats Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
             <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.hadir}</div>
+              <div className="text-2xl sm:text-xl font-bold text-green-600 dark:text-green-400">{stats.hadir}</div>
               <div className="text-sm text-neutral-600 dark:text-neutral-400">Hadir</div>
             </div>
             <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-              <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.sakit}</div>
+              <div className="text-2xl sm:text-xl font-bold text-yellow-600 dark:text-yellow-400">{stats.sakit}</div>
               <div className="text-sm text-neutral-600 dark:text-neutral-400">Sakit</div>
             </div>
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.izin}</div>
+              <div className="text-2xl sm:text-xl font-bold text-blue-600 dark:text-blue-400">{stats.izin}</div>
               <div className="text-sm text-neutral-600 dark:text-neutral-400">Izin</div>
             </div>
             <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
-              <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.alpa}</div>
+              <div className="text-2xl sm:text-xl font-bold text-red-600 dark:text-red-400">{stats.alpa}</div>
               <div className="text-sm text-neutral-600 dark:text-neutral-400">Alpa</div>
             </div>
           </div>

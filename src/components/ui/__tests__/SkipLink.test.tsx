@@ -28,6 +28,7 @@ describe('SkipLink', () => {
       beforeEach(() => {
         const mainElement = document.createElement('main');
         mainElement.id = 'main-content';
+        mainElement.tabIndex = -1;
         document.body.appendChild(mainElement);
       });
 
@@ -52,6 +53,13 @@ describe('SkipLink', () => {
       focusSpy.mockRestore();
     });
 
+    it('should verify target element has tabIndex=-1 for programmatic focus', () => {
+      render(<SkipLink />);
+
+      const targetElement = document.getElementById('main-content') as HTMLElement;
+      expect(targetElement).toHaveAttribute('tabindex', '-1');
+    });
+
     it('should prevent default anchor behavior and use smooth scroll', () => {
       render(<SkipLink />);
 
@@ -68,6 +76,7 @@ describe('SkipLink', () => {
     it('should render with custom target id', () => {
       const customElement = document.createElement('div');
       customElement.id = 'custom-target';
+      customElement.tabIndex = -1;
       document.body.appendChild(customElement);
 
       render(<SkipLink targetId="custom-target" />);
@@ -128,14 +137,17 @@ describe('SkipLink', () => {
      beforeEach(() => {
        const navElement = document.createElement('nav');
        navElement.id = 'main-nav';
+       navElement.tabIndex = -1;
        document.body.appendChild(navElement);
 
        const mainElement = document.createElement('main');
        mainElement.id = 'main-content';
+       mainElement.tabIndex = -1;
        document.body.appendChild(mainElement);
 
        const footerElement = document.createElement('footer');
        footerElement.id = 'footer';
+       footerElement.tabIndex = -1;
        document.body.appendChild(footerElement);
      });
 
@@ -236,12 +248,13 @@ describe('SkipLink', () => {
     });
   });
 
-  describe('Styling', () => {
-    beforeEach(() => {
-      const mainElement = document.createElement('main');
-      mainElement.id = 'main-content';
-      document.body.appendChild(mainElement);
-    });
+   describe('Styling', () => {
+     beforeEach(() => {
+       const mainElement = document.createElement('main');
+       mainElement.id = 'main-content';
+       mainElement.tabIndex = -1;
+       document.body.appendChild(mainElement);
+     });
 
     it('should have high z-index for accessibility', () => {
       render(<SkipLink />);
