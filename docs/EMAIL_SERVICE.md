@@ -183,7 +183,7 @@ const result = await emailService.sendTemplateEmail(
     subjectName: 'Matematika',
     grade: 85,
     semester: '1',
-    academicYear: '2024-2025',
+    academicYear: '2025-2026',
     className: 'X-A',
     teacherName: 'Bapak Guru',
     recipientName: 'Budi Santoso'

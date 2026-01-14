@@ -1,6 +1,6 @@
 # Roadmap Pengembangan
 
-**Created**: 2025-01-01
+**Created**: 2026-01-01
 **Last Updated**: 2026-01-14
 **Version**: 2.3.0
 **Status**: Active
