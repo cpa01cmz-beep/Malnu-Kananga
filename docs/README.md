@@ -21,6 +21,7 @@ These files are operational instructions for AI agents and should not be conside
 - **[BLUEPRINT.md](./BLUEPRINT.md)** - Project blueprint, architecture, and specifications
 - **[API Reference](./api-reference.md)** - Complete API reference and endpoints
 - **[Troubleshooting Guide](./troubleshooting-guide.md)** - Common issues and solutions
+- **[TASK.md](./TASK.md)** - Current development goals and task tracking
 
 ### 🔧 Development Documentation
 - **[CODING_STANDARDS.md](./CODING_STANDARDS.md)** - Code style and development guidelines
