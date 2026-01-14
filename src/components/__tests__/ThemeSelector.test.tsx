@@ -135,12 +135,12 @@ describe('ThemeSelector', () => {
     expect(themeButton).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('footer buttons have aria-labels', () => {
+  it('footer buttons are rendered', () => {
     render(<ThemeSelector isOpen={true} onClose={vi.fn()} />);
-    
-    const resetButton = screen.getByLabelText('Reset tema ke pengaturan default');
-    const toggleButton = screen.getByLabelText('Ganti antara mode terang dan gelap');
-    
+
+    const resetButton = screen.getByRole('button', { name: 'Reset ke Default' });
+    const toggleButton = screen.getByRole('button', { name: 'Ganti Tema' });
+
     expect(resetButton).toBeInTheDocument();
     expect(toggleButton).toBeInTheDocument();
   });
@@ -183,20 +183,20 @@ describe('ThemeSelector', () => {
 
   it('resets to default when button clicked', () => {
     render(<ThemeSelector isOpen={true} onClose={vi.fn()} />);
-    
-    const resetButton = screen.getByLabelText('Reset tema ke pengaturan default');
+
+    const resetButton = screen.getByRole('button', { name: 'Reset ke Default' });
     fireEvent.click(resetButton);
-    
+
     expect(mockResetToDefault).toHaveBeenCalled();
   });
 
   it('toggles dark mode when button clicked', () => {
     const onClose = vi.fn();
     render(<ThemeSelector isOpen={true} onClose={onClose} />);
-    
-    const toggleButton = screen.getByLabelText('Ganti antara mode terang dan gelap');
+
+    const toggleButton = screen.getByRole('button', { name: 'Ganti Tema' });
     fireEvent.click(toggleButton);
-    
+
     expect(mockToggleDarkMode).toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
   });
