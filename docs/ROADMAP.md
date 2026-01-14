@@ -38,7 +38,7 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
 - [x] Workflow Reliability: Resolved merge conflicts, applied retry logic untuk OpenCode connectivity issues
 - [x] Gemini API Error Recovery: Exponential backoff retry mechanism, circuit breaker pattern, specific error handling untuk rate limits, timeout handling
 - [x] Remove Console Statements: Replaced semua console statements dengan centralized logger utility (development-only logging)
-- [x] Remove Production Deployment Blockers: Pre-deployment validation script, seeder-worker.js dengan full database seeding, CI/CD workflow untuk configuration validation
+- [x] Remove Production Deployment Blockers: Pre-deployment validation script, database seeding endpoint in main worker, CI/CD workflow untuk configuration validation
 - [x] Environment Variable & Memory Leak Fixes: Clarified environment variable documentation, fixed memory leak in ChatWindow component (history size limiting, proper cleanup)
 
 ---

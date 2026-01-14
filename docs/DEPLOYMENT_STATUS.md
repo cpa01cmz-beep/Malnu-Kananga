@@ -49,7 +49,7 @@ wrangler pages secret list --project-name=malnu-kananga
 ```
 
 Configured Secrets:
-- ✅ `VITE_API_BASE_URL` = "https://malnu-kananga-worker.cpa01cmz.workers.dev"
+- ✅ `VITE_API_BASE_URL` = "https://malnu-kananga-worker-prod.cpa01cmz.workers.dev"
 - ✅ `VITE_ENABLE_PWA` = "true"
 - ✅ `VITE_ENABLE_AI_CHAT` = "true"
 
