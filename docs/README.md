@@ -78,29 +78,20 @@ These files are operational instructions for AI agents and should not be conside
 
 ## Known Issues & Mitigations
 
-### Security Vulnerabilities (Low Severity)
+### Security Vulnerabilities
 
-#### Wrangler Dependency (Dev Dependency)
-- **Affected Version**: wrangler@4.59.1
-- **CVE**: GHSA-g9mf-h72j-4rw9 (Undici unbounded decompression chain)
-- **Severity**: Low (CVSS 3.7)
-- **Impact**: Dev dependency only, does not affect production runtime
-- **Status**: Monitored, awaiting upstream fix
-- **Mitigation**: 
-  - Vulnerability is in dev dependency (wrangler used only for deployment)
-  - Production deployment uses pre-built artifacts
-  - No action required for production deployments
-  - Monitor for wrangler updates that fix this issue
-- **Alternative Workaround**: Downgrade to wrangler@4.35.0 (not recommended - may introduce breaking changes)
+No known security vulnerabilities as of 2026-01-14.
+
+The undici vulnerability in the wrangler dependency has been mitigated using a package override (undici@7.18.2). All security audits pass with 0 vulnerabilities.
 
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 332 TypeScript/TSX files in src/ directory (248 source + 84 test)
+- **Total Source Files**: 334 TypeScript/TSX files in src/ directory (250 source + 84 test)
 - **Test Files**: 84 test files (*.test.ts, *.test.tsx)
-- **Source Files (Non-Test)**: 248 files
+- **Source Files (Non-Test)**: 250 files
 - **Documentation Files**: 19 (in /docs directory)
-- **Services**: 27 services in src/services/ (excluding .test., .types., and deprecated files)
+- **Services**: 28 services in src/services/ (excluding test files and types)
 - **Components**: 40 components exported from src/components/ui/index.ts
 - **Total Tests**: 1529 passing, 10 skipped
 - **Code Examples**: 20+
