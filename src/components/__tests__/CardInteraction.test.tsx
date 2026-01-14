@@ -13,7 +13,7 @@ describe('ProgramCard Interactivity', () => {
 
   it('renders without onClick handler as static card', () => {
     render(<ProgramCard program={mockProgram} />);
-    const card = screen.getByRole('article') || screen.getByText(mockProgram.title).closest('article');
+    const card = screen.getByText(mockProgram.title).closest('div[aria-label]');
     expect(card).toBeInTheDocument();
     expect(card).not.toHaveAttribute('role', 'button');
   });

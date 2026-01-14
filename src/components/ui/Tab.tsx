@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export type TabColor = 'green' | 'blue' | 'purple' | 'red' | 'yellow' | 'neutral';
 
@@ -36,6 +36,14 @@ const Tab: React.FC<TabProps> = ({
   const containerClasses = orientation === 'horizontal'
     ? 'flex gap-2 overflow-x-auto pb-2'
     : 'flex flex-col gap-1';
+  const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  useEffect(() => {
+    const activeTabButton = tabRefs.current.get(activeTab);
+    if (activeTabButton && document.activeElement !== activeTabButton) {
+      activeTabButton.focus();
+    }
+  }, [activeTab]);
 
   const getColorClasses = (tabId: string) => {
     const isActive = activeTab === tabId;
@@ -97,12 +105,14 @@ const Tab: React.FC<TabProps> = ({
       e.preventDefault();
       const direction = e.key === 'ArrowRight' ? 1 : -1;
       const nextEnabledIndex = (currentEnabledIndex + direction + enabledOptions.length) % enabledOptions.length;
-      onTabChange(enabledOptions[nextEnabledIndex].id);
+      const nextTab = enabledOptions[nextEnabledIndex];
+      onTabChange(nextTab.id);
     } else if (orientation === 'vertical' && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
       e.preventDefault();
       const direction = e.key === 'ArrowDown' ? 1 : -1;
       const nextEnabledIndex = (currentEnabledIndex + direction + enabledOptions.length) % enabledOptions.length;
-      onTabChange(enabledOptions[nextEnabledIndex].id);
+      const nextTab = enabledOptions[nextEnabledIndex];
+      onTabChange(nextTab.id);
     }
   };
 
@@ -119,6 +129,7 @@ const Tab: React.FC<TabProps> = ({
             {options.map((option) => (
               <button
                 key={option.id}
+                ref={(el) => { if (el) tabRefs.current.set(option.id, el); }}
                 onClick={() => !option.disabled && onTabChange(option.id)}
                 onKeyDown={(e) => !option.disabled && handleKeyDown(e, option.id)}
                 disabled={option.disabled}
@@ -149,6 +160,7 @@ const Tab: React.FC<TabProps> = ({
           {options.map((option) => (
             <button
               key={option.id}
+              ref={(el) => { if (el) tabRefs.current.set(option.id, el); }}
               onClick={() => !option.disabled && onTabChange(option.id)}
               onKeyDown={(e) => !option.disabled && handleKeyDown(e, option.id)}
               disabled={option.disabled}

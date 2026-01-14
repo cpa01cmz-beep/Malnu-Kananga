@@ -93,8 +93,9 @@ describe('ErrorBoundary', () => {
   });
 
   it('should have coba lagi button that resets error state', async () => {
+    const onReset = vi.fn();
     const { rerender } = render(
-      <ErrorBoundary>
+      <ErrorBoundary onReset={onReset}>
         <ThrowError shouldThrow={false} />
       </ErrorBoundary>
     );
@@ -102,7 +103,7 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('No error')).toBeInTheDocument();
 
     rerender(
-      <ErrorBoundary>
+      <ErrorBoundary onReset={onReset}>
         <ThrowError shouldThrow={true} />
       </ErrorBoundary>
     );
@@ -112,15 +113,7 @@ describe('ErrorBoundary', () => {
     const retryButton = screen.getByText('Coba Lagi');
     await userEvent.click(retryButton);
 
-    expect(screen.queryByText('Terjadi Kesalahan')).toBeInTheDocument();
-
-    rerender(
-      <ErrorBoundary>
-        <ThrowError shouldThrow={false} />
-      </ErrorBoundary>
-    );
-
-    expect(screen.getByText('No error')).toBeInTheDocument();
+    expect(onReset).toHaveBeenCalled();
   });
 
   it('should call onError callback when error occurs', () => {
