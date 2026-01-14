@@ -1,19 +1,9 @@
 # UI Components Documentation
 
-**Status**: ⚠️ INCOMPLETE (15 of 41 components documented)
+**Status**: ✅ COMPLETE (41 of 41 components documented)
 **Last Updated**: 2026-01-14
 
-> **IMPORTANT**: This document currently covers 15 of 41 exported UI components from `src/components/ui/index.ts`. The following 26 components are missing documentation:
-> - Form: SearchInput
-> - Buttons: GradientButton, SmallActionButton
-> - Layout: BaseModal, ConfirmationDialog, Section, ErrorBoundary, SkipLink
-> - Display: DashboardActionCard, SocialLink
-> - Table: Table (with sub-components), DataTable
-> - Interactive: Tab
-> - Navigation: Pagination
-> - Loading: EmptyState, ErrorState, LoadingSpinner, LoadingOverlay, Skeleton
-> - Progress: ProgressBar
-> - Utility: PageHeader, ErrorMessage, PDFExportButton
+> **COMPLETED**: All 41 exported UI components from `src/components/ui/index.ts` are now documented.
 >
 > See `src/components/ui/index.ts` for complete export list. Documentation updates are tracked in TASK.md (P1 priority).
 
@@ -6733,3 +6723,4191 @@ Potential improvements to consider:
 - Removable badges with close button
 
 ---
+## SearchInput Component
+
+**Location**: `src/components/ui/SearchInput.tsx`
+
+A specialized input component designed for search functionality with built-in icon, validation, and keyboard shortcuts.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg`
+- **3 States**: `default`, `error`, `success`
+- **Built-in Search Icon**: Magnifying glass icon with customizable position
+- **Icon Support**: Custom icon option for brand-specific searches
+- **Field Validation**: Integrated with `useFieldValidation` hook
+- **Keyboard Shortcut**: Escape key clears input value
+- **Accessibility**: Full ARIA support, keyboard navigation, focus management
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Validation Indicators**: Loading spinner during async validation
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text displayed above the input |
+| `helperText` | `string` | `undefined` | Helper text displayed below the input |
+| `errorText` | `string` | `undefined` | Error message displayed below the input (sets state to error) |
+| `size` | `SearchInputSize` | `'md'` | Input size (affects padding, text size, and icon size) |
+| `state` | `SearchInputState` | `'default'` | Visual state variant (defaults to 'error' if errorText provided) |
+| `fullWidth` | `boolean` | `false` | Whether the input should take full width |
+| `showIcon` | `boolean` | `true` | Whether to show the search icon |
+| `placeholder` | `string` | `undefined` | Placeholder text displayed in the input |
+| `icon` | `React.ReactNode` | `undefined` | Custom icon to replace default search icon |
+| `iconPosition` | `'left'` \| `'right'` | `'left'` | Position of the icon relative to text |
+| `validationRules` | `Array<{validate: (value: string) => boolean; message: string}>` | `[]` | Custom validation rules |
+| `validateOnChange` | `boolean` | `true` | Whether to validate on value change |
+| `validateOnBlur` | `boolean` | `true` | Whether to validate on blur |
+| `accessibility` | `{announceErrors?: boolean; describedBy?: string}` | `{announceErrors: true}` | Accessibility configuration |
+| `id` | `string` | Auto-generated | Unique identifier for the input |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard input attributes | - | - | Passes through all standard HTML input props |
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for dense interfaces.
+
+```tsx
+import SearchInput from './ui/SearchInput';
+
+<SearchInput
+  label="Cari Siswa"
+  size="sm"
+  placeholder="Masukkan nama atau NIS"
+  fullWidth
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-3 py-2`
+- Input text: `text-sm`
+- Icon size: `w-4 h-4`
+- Label: `text-xs`
+- Helper text: `text-xs`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<SearchInput
+  label="Cari Guru"
+  size="md"
+  placeholder="Masukkan nama guru"
+  fullWidth
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-4 py-3`
+- Input text: `text-sm sm:text-base`
+- Icon size: `w-5 h-5`
+- Label: `text-sm`
+- Helper text: `text-xs`
+
+#### Large (lg)
+
+Larger size for better accessibility and touch targets.
+
+```tsx
+<SearchInput
+  label="Cari Materi"
+  size="lg"
+  placeholder="Cari materi pelajaran"
+  fullWidth
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-5 py-4`
+- Input text: `text-base sm:text-lg`
+- Icon size: `w-6 h-6`
+- Label: `text-base`
+- Helper text: `text-sm`
+
+### States
+
+#### Default State
+
+```tsx
+<SearchInput
+  label="Cari Buku"
+  placeholder="Masukkan judul buku"
+  state="default"
+/>
+```
+
+**Appearance**:
+- Border: Neutral gray with hover effect
+- Background: White (light mode) / Neutral-700 (dark mode)
+- Focus: Primary ring with primary border
+
+#### Error State
+
+```tsx
+<SearchInput
+  label="Cari Buku"
+  placeholder="Masukkan judul buku"
+  errorText="Minimal 3 karakter"
+  state="error"
+/>
+```
+
+**Appearance**:
+- Border: Red with hover effect
+- Background: Red-50 (light mode) / Red-900/20 (dark mode)
+- Placeholder: Red-400 (dark mode: Red-500)
+- Focus: Red ring with red border
+
+#### Success State
+
+```tsx
+<SearchInput
+  label="Cari Buku"
+  placeholder="Masukkan judul buku"
+  helperText="Ketik untuk mencari"
+  state="success"
+/>
+```
+
+**Appearance**:
+- Border: Green with hover effect
+- Background: Green-50 (light mode) / Green-900/20 (dark mode)
+- Placeholder: Green-400 (dark mode: Green-500)
+- Focus: Green ring with green border
+
+### Icon Position
+
+#### Left Icon (Default)
+
+```tsx
+<SearchInput
+  label="Cari"
+  placeholder="Masukkan kata kunci"
+  iconPosition="left"
+/>
+```
+
+- Icon appears on the left side of input
+- Text starts after icon (padding adjusted)
+
+#### Right Icon
+
+```tsx
+<SearchInput
+  label="Cari"
+  placeholder="Masukkan kata kunci"
+  iconPosition="right"
+/>
+```
+
+- Icon appears on the right side of input
+- Text starts at normal position
+
+### Custom Icon
+
+```tsx
+import { FunnelIcon } from '@heroicons/react/24/outline';
+
+<SearchInput
+  label="Filter"
+  placeholder="Masukkan kriteria filter"
+  icon={<FunnelIcon aria-hidden />}
+  showIcon
+/>
+```
+
+### Validation
+
+```tsx
+<SearchInput
+  label="Cari Siswa"
+  placeholder="Masukkan NIS atau nama"
+  validationRules={[
+    { validate: (value) => value.length >= 3, message: 'Minimal 3 karakter' },
+    { validate: (value) => /^[a-zA-Z0-9\s]+$/.test(value), message: 'Hanya huruf dan angka' }
+  ]}
+  validateOnChange
+  validateOnBlur
+  errorText={error}
+/>
+```
+
+### Keyboard Shortcuts
+
+The SearchInput component includes built-in keyboard support:
+
+- **Escape Key**: Clears the input value
+- **Tab**: Normal tab navigation
+- **Shift+Tab**: Reverse tab navigation
+
+### Accessibility
+
+Full WCAG 2.1 AA compliance:
+
+- **Semantic HTML**: Uses `<input type="search">` with `role="searchbox"`
+- **Label Association**: `htmlFor` connects label to input via `id`
+- **Error Announcement**: Uses `role="alert"` and `aria-live="polite"` for errors
+- **Validation Feedback**: `aria-invalid` and `aria-errormessage` attributes
+- **Loading State**: `aria-live="polite"` and `aria-busy` during validation
+- **Screen Reader**: Hidden decorative elements with `aria-hidden`
+- **Focus Management**: Visible focus ring, proper tab order
+- **Required Indicator**: `aria-required` for required fields
+
+### Usage Examples
+
+#### Basic Search
+
+```tsx
+const [searchTerm, setSearchTerm] = useState('');
+
+<SearchInput
+  label="Cari Siswa"
+  placeholder="Masukkan nama atau NIS"
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  fullWidth
+/>
+```
+
+#### Search with Validation
+
+```tsx
+const [searchValue, setSearchValue] = useState('');
+const [error, setError] = useState('');
+
+const handleSearch = (value: string) => {
+  setSearchValue(value);
+  if (value.length > 0 && value.length < 3) {
+    setError('Minimal 3 karakter');
+  } else {
+    setError('');
+  }
+};
+
+<SearchInput
+  label="Cari Guru"
+  placeholder="Nama guru atau mapel"
+  value={searchValue}
+  onChange={handleSearch}
+  errorText={error}
+  fullWidth
+/>
+```
+
+#### Search with Custom Icon and Position
+
+```tsx
+import { DocumentMagnifyingGlassIcon } from '@heroicons/react/24/outline';
+
+<SearchInput
+  label="Cari Dokumen"
+  placeholder="Nama dokumen"
+  icon={<DocumentMagnifyingGlassIcon aria-hidden />}
+  iconPosition="left"
+  fullWidth
+/>
+```
+
+### Testing
+
+Comprehensive test coverage with 30+ test cases:
+
+- Props rendering and validation
+- Size variants (sm, md, lg)
+- State variants (default, error, success)
+- Icon position and custom icon
+- Label and helper text
+- Error text display
+- Validation rules and triggers
+- Keyboard shortcuts (Escape clear)
+- Accessibility attributes (ARIA labels, roles)
+- Focus management
+- Form integration
+
+See `src/components/ui/__tests__/SearchInput.test.tsx` for complete test suite.
+
+### Common Patterns
+
+**In DataTable**:
+```tsx
+<SearchInput
+  value={searchValue}
+  onChange={(e) => onSearch(e.target.value)}
+  placeholder="Search data..."
+  size="sm"
+  showIcon
+/>
+```
+
+**In Modal**:
+```tsx
+<SearchInput
+  label="Cari Item"
+  placeholder="Ketik untuk mencari"
+  fullWidth
+  autoFocus
+/>
+```
+
+**With Async Validation**:
+```tsx
+<SearchInput
+  label="Cari Pengguna"
+  placeholder="Email atau username"
+  validationRules={[
+    { validate: async (value) => await checkUserExists(value), message: 'User tidak ditemukan' }
+  ]}
+  validateOnChange={false}
+  validateOnBlur
+/>
+```
+
+---
+
+## GradientButton Component
+
+**Location**: `src/components/ui/GradientButton.tsx`
+
+A visually striking button component with gradient backgrounds, designed for primary actions and call-to-action elements.
+
+### Features
+
+- **2 Variants**: `primary`, `secondary`
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Gradient Background**: Uses centralized gradient system (`GRADIENT_CLASSES`)
+- **Dark Mode Support**: Automatic color adaptation
+- **Hover Effects**: Scale transform, shadow enhancement
+- **Active States**: Press animation with scale reduction
+- **Link or Button**: Can render as `<a>` or `<button>` element
+- **Full Width Option**: For full-width button layouts
+- **Focus Management**: Visible focus ring with offset
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `GradientButtonVariant` | `'primary'` | Button variant style |
+| `size` | `GradientButtonSize` | `'md'` | Button size |
+| `fullWidth` | `boolean` | `false` | Whether button takes full width |
+| `href` | `string` | `undefined` | If provided, renders as `<a>` element |
+| `children` | `React.ReactNode` | **Required** | Button content |
+| `className` | `string` | `''` | Additional CSS classes |
+| Standard HTML attributes | - | - | Passes through `<button>` or `<a>` props |
+
+### Variants
+
+#### Primary Variant
+
+Gradient background with primary colors.
+
+```tsx
+<GradientButton variant="primary" size="md">
+  Login
+</GradientButton>
+```
+
+**Styling**:
+- Background: `GRADIENT_CLASSES.CHAT_HEADER` (primary gradient)
+- Text: White
+- Hover: Darker gradient tones
+- Focus: Primary ring (50% opacity)
+
+#### Secondary Variant
+
+White/neutral background with border.
+
+```tsx
+<GradientButton variant="secondary" size="md">
+  Batal
+</GradientButton>
+```
+
+**Styling**:
+- Background: White (light mode) / Neutral-800 (dark mode)
+- Border: Neutral-200 (light mode) / Neutral-600 (dark mode)
+- Text: Neutral-700 (light mode) / Neutral-200 (dark mode)
+- Hover: Border changes to primary, slight background tint
+
+### Sizes
+
+#### Small (sm)
+
+Compact button for tight spaces.
+
+```tsx
+<GradientButton size="sm">Edit</GradientButton>
+```
+
+**Dimensions**:
+- Padding: `px-6 py-2.5`
+- Text: `text-sm`
+
+#### Medium (md)
+
+Standard button (default).
+
+```tsx
+<GradientButton size="md">Submit</GradientButton>
+```
+
+**Dimensions**:
+- Padding: `px-8 sm:px-10 lg:px-12 py-4`
+- Text: `text-sm sm:text-base`
+
+#### Large (lg)
+
+Prominent button for key actions.
+
+```tsx
+<GradientButton size="lg">Register Now</GradientButton>
+```
+
+**Dimensions**:
+- Padding: `px-10 sm:px-12 lg:px-14 py-5`
+- Text: `text-base sm:text-lg`
+
+### As Link
+
+Render as anchor element for navigation:
+
+```tsx
+<GradientButton
+  href="/register"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  Register
+</GradientButton>
+```
+
+### Full Width
+
+Button stretches to fill container:
+
+```tsx
+<GradientButton fullWidth size="md">
+  Sign Up
+</GradientButton>
+```
+
+### With Icon
+
+Include icons inside button:
+
+```tsx
+<GradientButton variant="primary" size="md">
+  <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+  </svg>
+  Tambah Baru
+</GradientButton>
+```
+
+### Accessibility
+
+WCAG 2.1 AA compliant:
+
+- **Keyboard Navigation**: Tab to focus, Enter/Space to activate
+- **Focus Ring**: Visible ring with 2px border and offset
+- **ARIA Labels**: Can accept `aria-label` for screen readers
+- **Color Contrast**: WCAG AA compliant in both light and dark modes
+- **Role**: Automatic role based on element type (button/link)
+
+### Animation States
+
+- **Hover**: `hover:shadow-xl` and `hover:-translate-y-0.5` and `hover:scale-[1.01]`
+- **Active**: `active:scale-95` for press feedback
+- **Focus**: `focus-visible:ring-2 focus-visible:ring-offset-2`
+
+### Usage Examples
+
+#### Primary Action
+
+```tsx
+<GradientButton variant="primary" size="md" onClick={handleSubmit}>
+  Simpan Perubahan
+</GradientButton>
+```
+
+#### Secondary Action
+
+```tsx
+<GradientButton variant="secondary" size="md" onClick={handleCancel}>
+  Batal
+</GradientButton>
+```
+
+#### Full Width CTA
+
+```tsx
+<div className="w-full max-w-md">
+  <GradientButton fullWidth size="lg" variant="primary">
+    Mulai Sekarang
+  </GradientButton>
+</div>
+```
+
+#### Link to External Site
+
+```tsx
+<GradientButton
+  href="https://example.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  variant="primary"
+  size="md"
+>
+  Kunjungi Website
+</GradientButton>
+```
+
+### Integration
+
+The GradientButton uses the centralized gradient system:
+
+```typescript
+// Uses GRADIENT_CLASSES from src/config/gradients.ts
+variantClasses = {
+  primary: GRADIENT_CLASSES.CHAT_HEADER,
+  // ... other variants
+}
+```
+
+### Best Practices
+
+- Use `primary` variant for main actions (Submit, Save, Register)
+- Use `secondary` variant for secondary actions (Cancel, Back)
+- Use `fullWidth` for mobile layouts and centered content
+- Include meaningful icon + text for better UX
+- Ensure proper spacing with adjacent elements
+
+---
+
+## SmallActionButton Component
+
+**Location**: `src/components/ui/SmallActionButton.tsx`
+
+A compact button component designed for inline actions, table rows, and toolbar controls with seven color variants.
+
+### Features
+
+- **7 Variants**: `primary`, `secondary`, `danger`, `success`, `info`, `warning`, `neutral`
+- **3 Sizes**: Not applicable (fixed `sm` size) - **Actually has fixed text-sm**
+- **Icon Support**: Optional icon with left/right positioning
+- **Loading State**: Built-in spinner for async operations
+- **Full Width Option**: For flex layouts
+- **Accessibility**: Full ARIA support and keyboard navigation
+- **Dark Mode**: Consistent styling across themes
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `SmallActionButtonVariant` | `'info'` | Button color variant |
+| `isLoading` | `boolean` | `false` | Loading state with spinner |
+| `fullWidth` | `boolean` | `false` | Whether button takes full width (flex) |
+| `icon` | `React.ReactNode` | `undefined` | Icon to display |
+| `iconPosition` | `'left'` \| `'right'` | `'left'` | Position of icon relative to text |
+| `children` | `React.ReactNode` | **Required** | Button text content |
+| `className` | `string` | `''` | Additional CSS classes |
+| Standard HTML button attributes | - | - | Passes through all standard HTML button props |
+
+### Color Variants
+
+#### Primary
+
+```tsx
+<SmallActionButton variant="primary">Edit</SmallActionButton>
+```
+
+- Background: Primary-600
+- Text: White
+- Hover: Primary-700
+
+#### Secondary
+
+```tsx
+<SmallActionButton variant="secondary">Cancel</SmallActionButton>
+```
+
+- Background: White (light mode) / Neutral-800 (dark mode)
+- Text: Neutral-700 (light mode) / Neutral-300 (dark mode)
+- Border: Neutral-200 (light mode) / Neutral-600 (dark mode)
+
+#### Danger
+
+```tsx
+<SmallActionButton variant="danger">Delete</SmallActionButton>
+```
+
+- Background: Red-100 (light mode) / Red-900/30 (dark mode)
+- Text: Red-700 (light mode) / Red-300 (dark mode)
+- Hover: Red-200 (light mode) / Red-800/50 (dark mode)
+
+#### Success
+
+```tsx
+<SmallActionButton variant="success">Approve</SmallActionButton>
+```
+
+- Background: Green-100 (light mode) / Green-900/30 (dark mode)
+- Text: Green-700 (light mode) / Green-300 (dark mode)
+- Hover: Green-200 (light mode) / Green-800/50 (dark mode)
+
+#### Info
+
+```tsx
+<SmallActionButton variant="info">Details</SmallActionButton>
+```
+
+- Background: Blue-50 (light mode) / Blue-900/20 (dark mode)
+- Text: Blue-600 (light mode) / Blue-400 (dark mode)
+- Hover: Blue-100 (light mode) / Blue-900/30 (dark mode)
+
+#### Warning
+
+```tsx
+<SmallActionButton variant="warning">Warning</SmallActionButton>
+```
+
+- Background: Orange-100 (light mode) / Orange-900/30 (dark mode)
+- Text: Orange-700 (light mode) / Orange-300 (dark mode)
+- Hover: Orange-200 (light mode) / Orange-800/50 (dark mode)
+
+#### Neutral
+
+```tsx
+<SmallActionButton variant="neutral">Action</SmallActionButton>
+```
+
+- Background: Neutral-200 (light mode) / Neutral-700 (dark mode)
+- Text: Neutral-700 (light mode) / Neutral-300 (dark mode)
+- Hover: Neutral-300 (light mode) / Neutral-600 (dark mode)
+
+### Loading State
+
+```tsx
+const [isDeleting, setIsDeleting] = useState(false);
+
+<SmallActionButton
+  variant="danger"
+  isLoading={isDeleting}
+  onClick={async () => {
+    setIsDeleting(true);
+    await handleDelete();
+    setIsDeleting(false);
+  }}
+>
+  Delete
+</SmallActionButton>
+```
+
+Shows spinner and disables button during operation.
+
+### Icon Support
+
+#### Icon Left (Default)
+
+```tsx
+<SmallActionButton
+  variant="primary"
+  icon={<PencilIcon className="w-4 h-4" />}
+  iconPosition="left"
+>
+  Edit
+</SmallActionButton>
+```
+
+#### Icon Right
+
+```tsx
+<SmallActionButton
+  variant="primary"
+  icon={<ArrowRightIcon className="w-4 h-4" />}
+  iconPosition="right"
+>
+  Continue
+</SmallActionButton>
+```
+
+### Full Width
+
+For flex layouts with multiple buttons:
+
+```tsx
+<div className="flex gap-2">
+  <SmallActionButton variant="secondary" fullWidth>
+    Cancel
+  </SmallActionButton>
+  <SmallActionButton variant="primary" fullWidth>
+    Save
+  </SmallActionButton>
+</div>
+```
+
+### Accessibility
+
+- **Keyboard**: Tab to focus, Enter/Space to activate
+- **Loading State**: `aria-busy="true"` during loading
+- **Focus Ring**: 2px focus ring with offset
+- **Disabled**: `disabled` attribute with visual feedback
+- **Screen Reader**: Hidden loading spinner with `role="status"`
+
+### Usage Examples
+
+#### Table Row Actions
+
+```tsx
+<td>
+  <div className="flex gap-2">
+    <SmallActionButton variant="info" onClick={() => onView(record)}>
+      View
+    </SmallActionButton>
+    <SmallActionButton variant="primary" onClick={() => onEdit(record)}>
+      Edit
+    </SmallActionButton>
+    <SmallActionButton variant="danger" onClick={() => onDelete(record)}>
+      Delete
+    </SmallActionButton>
+  </div>
+</td>
+```
+
+#### Toolbar Actions
+
+```tsx
+<div className="flex items-center gap-3">
+  <SmallActionButton variant="primary" onClick={handleAdd}>
+    Add New
+  </SmallActionButton>
+  <SmallActionButton variant="neutral" onClick={handleRefresh}>
+    Refresh
+  </SmallActionButton>
+  <SmallActionButton variant="warning" onClick={handleExport}>
+    Export
+  </SmallActionButton>
+</div>
+```
+
+#### Status Actions
+
+```tsx
+<SmallActionButton
+  variant={user.isActive ? 'danger' : 'success'}
+  onClick={() => toggleStatus(user.id)}
+>
+  {user.isActive ? 'Deactivate' : 'Activate'}
+</SmallActionButton>
+```
+
+### Loading Pattern
+
+```tsx
+<SmallActionButton
+  variant="primary"
+  isLoading={isSubmitting}
+  disabled={isSubmitting}
+  onClick={handleSubmit}
+>
+  {isSubmitting ? 'Processing...' : 'Submit'}
+</SmallActionButton>
+```
+
+### Testing
+
+Comprehensive test coverage:
+
+- Prop validation and rendering
+- All color variants
+- Icon positioning
+- Loading state transitions
+- Full width behavior
+- Disabled states
+- Accessibility attributes
+- Keyboard interaction
+- Click event handling
+
+### Best Practices
+
+- Use color variants to indicate action type (danger = delete, success = approve)
+- Add icons for better visual recognition
+- Use `isLoading` for async operations
+- Pair with other buttons using `fullWidth` for consistent layout
+- Ensure sufficient color contrast for text variants
+
+---
+
+
+## BaseModal Component
+
+**Location**: `src/components/ui/BaseModal.tsx`
+
+A foundational modal component with comprehensive accessibility features, focus management, and customizable footer actions.
+
+### Features
+
+- **5 Sizes**: `sm`, `md`, `lg`, `xl`, `full`
+- **3 Variants**: `default`, `danger`, `success`
+- **Focus Management**: Auto-focus on confirm button or first focusable element
+- **Escape Key Handler**: Closes modal when enabled
+- **Backdrop Click**: Close on overlay click when enabled
+- **Body Scroll Lock**: Prevents background scrolling when modal is open
+- **Footer Actions**: Built-in confirm/cancel buttons with loading states
+- **Custom Footer**: Override default footer with custom content
+- **Accessibility**: Full ARIA compliance with dialog role
+- **Dark Mode**: Consistent styling across themes
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isOpen` | `boolean` | **Required** | Whether modal is visible |
+| `onClose` | `() => void` | **Required** | Callback when modal closes |
+| `children` | `React.ReactNode` | **Required** | Modal body content |
+| `title` | `string` | `undefined` | Modal title displayed in header |
+| `description` | `string` | `undefined` | Screen reader description (hidden) |
+| `size` | `'sm'` \| `'md'` \| `'lg'` \| `'xl'` \| `'full'` | `'md'` | Modal size |
+| `closeOnBackdropClick` | `boolean` | `true` | Allow closing by clicking backdrop |
+| `closeOnEscape` | `boolean` | `true` | Allow closing with Escape key |
+| `showCloseButton` | `boolean` | `true` | Show X button in header |
+| `showHeader` | `boolean` | `true` | Show header section |
+| `showFooter` | `boolean` | `false` | Show footer with actions |
+| `footer` | `React.ReactNode` | `undefined` | Custom footer content |
+| `confirmText` | `string` | `'Confirm'` | Text for confirm button |
+| `cancelText` | `string` | `'Cancel'` | Text for cancel button |
+| `onConfirm` | `() => void \| Promise<void>` | `undefined` | Callback for confirm action |
+| `loading` | `boolean` | `false` | Loading state for confirm button |
+| `disabled` | `boolean` | `false` | Disable confirm button |
+| `variant` | `'default'` \| `'danger'` \| `'success'` | `'default'` | Color variant for confirm button |
+| `className` | `string` | `''` | Additional CSS classes |
+| `overlayClassName` | `string` | `''` | Additional CSS classes for overlay |
+
+### Sizes
+
+#### Small (sm)
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  size="sm"
+  title="Konfirmasi"
+>
+  <p>Konfirmasi aksi ini?</p>
+</BaseModal>
+```
+
+- Max width: `max-w-sm`
+
+#### Medium (md)
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  size="md"
+  title="Edit User"
+>
+  {/* Form content */}
+</BaseModal>
+```
+
+- Max width: `max-w-md`
+
+#### Large (lg)
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  size="lg"
+  title="Form Pendaftaran"
+>
+  {/* Long form content */}
+</BaseModal>
+```
+
+- Max width: `max-w-lg`
+
+#### Extra Large (xl)
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  size="xl"
+  title="Detail Dokumen"
+>
+  {/* Detailed content */}
+</BaseModal>
+```
+
+- Max width: `max-w-xl`
+
+#### Full Screen
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  size="full"
+  title="Pengaturan"
+>
+  {/* Full-screen settings */}
+</BaseModal>
+```
+
+- Width: `w-full`, Height: `h-full`, No rounded corners
+
+### Variants
+
+#### Default Variant
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  variant="default"
+  title="Simpan Perubahan"
+  showFooter
+  onConfirm={handleSave}
+>
+  <p>Simpan perubahan data?</p>
+</BaseModal>
+```
+
+- Confirm button: Primary color (blue)
+- Normal action flow
+
+#### Danger Variant
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  variant="danger"
+  title="Hapus Data"
+  showFooter
+  onConfirm={handleDelete}
+>
+  <p>Tindakan ini tidak dapat dibatalkan.</p>
+</BaseModal>
+```
+
+- Confirm button: Red color
+- For destructive actions
+
+#### Success Variant
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  variant="success"
+  title="Konfirmasi"
+  showFooter
+  onConfirm={handleApprove}
+>
+  <p>Setujui data ini?</p>
+</BaseModal>
+```
+
+- Confirm button: Green color
+- For positive confirmations
+
+### Footer Actions
+
+#### Default Footer
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  title="Konfirmasi"
+  showFooter
+  confirmText="Ya, Lanjutkan"
+  cancelText="Batal"
+  onConfirm={handleConfirm}
+  loading={isSaving}
+>
+  <p>Lanjutkan dengan aksi ini?</p>
+</BaseModal>
+```
+
+Shows cancel (secondary) and confirm (primary) buttons.
+
+#### Custom Footer
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  title="Pilih Aksi"
+  showFooter
+  footer={
+    <div className="flex gap-3">
+      <Button variant="secondary" onClick={onClose}>
+        Tutup
+      </Button>
+      <Button variant="primary" onClick={handleSave}>
+        Simpan
+      </Button>
+      <Button variant="danger" onClick={handleDelete}>
+        Hapus
+      </Button>
+    </div>
+  }
+>
+  <p>Pilih aksi yang ingin dilakukan.</p>
+</BaseModal>
+```
+
+Override footer with custom content.
+
+### Loading State
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  title="Upload File"
+  showFooter
+  onConfirm={handleUpload}
+  loading={isUploading}
+  confirmText="Upload"
+>
+  <p>Upload file ke server?</p>
+</BaseModal>
+```
+
+Shows loading spinner in confirm button during operation.
+
+### No Header
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  showHeader={false}
+>
+  <div className="p-6">
+    {/* Content without header */}
+  </div>
+</BaseModal>
+```
+
+### Description (Screen Reader)
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={onClose}
+  title="Form Input"
+  description="Formulir untuk memasukkan data siswa baru"
+>
+  {/* Content */}
+</BaseModal>
+```
+
+Description is hidden visually but announced to screen readers.
+
+### Accessibility
+
+WCAG 2.1 AA compliant:
+
+- **Dialog Role**: `role="dialog"` with `aria-modal="true"`
+- **Label Association**: `aria-labelledby` links to title
+- **Description Association**: `aria-describedby` links to description
+- **Focus Management**: Auto-focus on open, return focus on close
+- **Escape Key**: Closes modal when enabled
+- **Backdrop Click**: Close overlay when enabled
+- **Body Scroll Lock**: Prevents scrolling in background
+- **Keyboard Navigation**: Tab within modal only
+- **ARIA Live**: Proper announcements for screen readers
+
+### Focus Management
+
+1. **On Open**: Focuses confirm button or first focusable element
+2. **Within Modal**: Tab cycles through modal elements
+3. **Escape**: Closes modal and returns focus to trigger
+4. **On Close**: Returns focus to element that opened modal
+
+### Usage Examples
+
+#### Confirmation Dialog
+
+```tsx
+const [showModal, setShowModal] = useState(false);
+
+<BaseModal
+  isOpen={showModal}
+  onClose={() => setShowModal(false)}
+  title="Konfirmasi Penghapusan"
+  showFooter
+  variant="danger"
+  confirmText="Ya, Hapus"
+  cancelText="Batal"
+  onConfirm={async () => {
+    await deleteItem();
+    setShowModal(false);
+  }}
+>
+  <p>Apakah Anda yakin ingin menghapus item ini? Tindakan ini tidak dapat dibatalkan.</p>
+</BaseModal>
+```
+
+#### Form Modal
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+
+<BaseModal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  title="Edit Profil"
+  size="lg"
+  showFooter
+  confirmText="Simpan"
+  onConfirm={handleSave}
+  loading={isSaving}
+>
+  <form onSubmit={handleSave}>
+    <div className="space-y-4">
+      <Input label="Nama" name="name" />
+      <Input label="Email" name="email" />
+    </div>
+  </form>
+</BaseModal>
+```
+
+#### Info Modal
+
+```tsx
+<BaseModal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  title="Informasi"
+  size="md"
+>
+  <div className="prose dark:prose-invert">
+    <p>Detail informasi...</p>
+  </div>
+</BaseModal>
+```
+
+### Testing
+
+Comprehensive test coverage:
+
+- Modal open/close states
+- Size variants
+- Backdrop click handling
+- Escape key handling
+- Footer button rendering
+- Custom footer rendering
+- Loading states
+- Accessibility attributes
+- Focus management
+- Body scroll lock
+
+### Best Practices
+
+- Always provide `title` for accessibility
+- Use `variant="danger"` for destructive actions
+- Include `description` for complex modals
+- Set `closeOnEscape={false}` for critical confirmations
+- Use `size="lg"` or `xl` for forms
+- Disable buttons during async operations with `loading` prop
+
+---
+
+## ConfirmationDialog Component
+
+**Location**: `src/components/ui/ConfirmationDialog.tsx`
+
+A pre-configured modal for confirmations with type-specific icons and colors, using the Modal component internally.
+
+### Features
+
+- **3 Types**: `danger`, `warning`, `info`
+- **Type-Specific Icons**: Auto-configured icons for each type
+- **Color Themes**: Consistent color schemes by type
+- **No Close Button**: Requires explicit action
+- **Built-in Loading**: Loading spinner during confirmation action
+- **Accessibility**: Full ARIA compliance
+- **Responsive**: Adapts to all screen sizes
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isOpen` | `boolean` | **Required** | Whether dialog is visible |
+| `title` | `string` | **Required** | Dialog title |
+| `message` | `string` | **Required** | Dialog message content |
+| `confirmText` | `string` | `'Ya, Lanjutkan'` | Text for confirm button |
+| `cancelText` | `string` | `'Batal'` | Text for cancel button |
+| `type` | `'danger'` \| `'warning'` \| `'info'` | `'warning'` | Dialog type |
+| `onConfirm` | `() => void` | **Required** | Callback for confirm action |
+| `onCancel` | `() => void` | **Required** | Callback for cancel action |
+| `isLoading` | `boolean` | `false` | Loading state for confirm button |
+
+### Types
+
+#### Danger Type
+
+```tsx
+<ConfirmationDialog
+  isOpen={showDialog}
+  title="Hapus Data"
+  message="Data akan dihapus permanen. Tindakan ini tidak dapat dibatalkan."
+  type="danger"
+  confirmText="Ya, Hapus"
+  cancelText="Batal"
+  onConfirm={handleDelete}
+  onCancel={() => setShowDialog(false)}
+  isLoading={isDeleting}
+/>
+```
+
+**Appearance**:
+- Icon: Trash can (red)
+- Icon background: Red-50 (light mode) / Red-900/20 (dark mode)
+- Border: Red-200 (light mode) / Red-800 (dark mode)
+- Confirm button: Red-solid variant
+
+#### Warning Type
+
+```tsx
+<ConfirmationDialog
+  isOpen={showDialog}
+  title="Peringatan"
+  message="Perubahan ini akan mempengaruhi data lain."
+  type="warning"
+  confirmText="Ya, Lanjutkan"
+  cancelText="Batal"
+  onConfirm={handleProceed}
+  onCancel={() => setShowDialog(false)}
+/>
+```
+
+**Appearance**:
+- Icon: Exclamation triangle (amber)
+- Icon background: Amber-50 (light mode) / Amber-900/20 (dark mode)
+- Border: Amber-200 (light mode) / Amber-800 (dark mode)
+- Confirm button: Orange-solid variant
+
+#### Info Type
+
+```tsx
+<ConfirmationDialog
+  isOpen={showDialog}
+  title="Informasi"
+  message="Data akan diproses dalam beberapa saat."
+  type="info"
+  confirmText="OK"
+  cancelText="Tutup"
+  onConfirm={handleProceed}
+  onCancel={() => setShowDialog(false)}
+/>
+```
+
+**Appearance**:
+- Icon: Information circle (blue)
+- Icon background: Blue-50 (light mode) / Blue-900/20 (dark mode)
+- Border: Blue-200 (light mode) / Blue-800 (dark mode)
+- Confirm button: Blue-solid variant
+
+### Loading State
+
+```tsx
+<ConfirmationDialog
+  isOpen={showDialog}
+  title="Proses Data"
+  message="Memproses data Anda..."
+  type="info"
+  confirmText="OK"
+  isLoading={isProcessing}
+  onConfirm={handleConfirm}
+  onCancel={() => setShowDialog(false)}
+/>
+```
+
+Shows loading spinner in confirm button during operation.
+
+### Custom Labels
+
+```tsx
+<ConfirmationDialog
+  isOpen={showDialog}
+  title="Konfirmasi Logout"
+  message="Anda akan keluar dari sistem."
+  type="warning"
+  confirmText="Ya, Logout"
+  cancelText="Tetap Masuk"
+  onConfirm={handleLogout}
+  onCancel={() => setShowDialog(false)}
+/>
+```
+
+### Accessibility
+
+- **Dialog Role**: Uses Modal component with proper ARIA
+- **Type Icons**: Decorative icons with `role="img"` and `aria-hidden`
+- **Button Labels**: Proper `aria-label` attributes
+- **Focus Trap**: Inherits from Modal component
+- **Keyboard Navigation**: Escape to cancel, Tab to navigate
+- **Screen Reader**: Announces title and message clearly
+
+### Usage Examples
+
+#### Delete Confirmation
+
+```tsx
+const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+<ConfirmationDialog
+  isOpen={showDeleteDialog}
+  title="Hapus Siswa"
+  message={`Hapus data siswa ${studentName}? Data akan dihapus permanen.`}
+  type="danger"
+  confirmText="Ya, Hapus"
+  cancelText="Batal"
+  onConfirm={async () => {
+    await deleteStudent(studentId);
+    setShowDeleteDialog(false);
+  }}
+  onCancel={() => setShowDeleteDialog(false)}
+  isLoading={isDeleting}
+/>
+```
+
+#### Logout Confirmation
+
+```tsx
+<ConfirmationDialog
+  isOpen={showLogoutDialog}
+  title="Konfirmasi Logout"
+  message="Anda akan keluar dari sistem. Perubahan yang belum disimpan akan hilang."
+  type="warning"
+  confirmText="Ya, Logout"
+  cancelText="Batal"
+  onConfirm={handleLogout}
+  onCancel={() => setShowLogoutDialog(false)}
+/>
+```
+
+#### System Reset Confirmation
+
+```tsx
+<ConfirmationDialog
+  isOpen={showResetDialog}
+  title="Reset Pengaturan"
+  message="Semua pengaturan akan dikembalikan ke default. Lanjutkan?"
+  type="warning"
+  confirmText="Ya, Reset"
+  cancelText="Batal"
+  onConfirm={async () => {
+    await resetSettings();
+    setShowResetDialog(false);
+  }}
+  onCancel={() => setShowResetDialog(false)}
+  isLoading={isResetting}
+/>
+```
+
+### Best Practices
+
+- Use `type="danger"` for destructive actions (delete, remove)
+- Use `type="warning"` for actions with consequences (logout, reset)
+- Use `type="info"` for informational confirmations
+- Provide clear, concise messages
+- Use `isLoading` for async operations
+- Consider irreversible actions carefully (use double confirmation for critical operations)
+
+---
+
+## Section Component
+
+**Location**: `src/components/ui/Section.tsx`
+
+A section wrapper component for page-level content areas with semantic HTML structure and optional badge support.
+
+### Features
+
+- **Semantic HTML**: Uses `<section>` element
+- **ARIA Labeling**: `aria-labelledby` for accessibility
+- **Responsive Spacing**: Adaptive padding for different screen sizes
+- **Title & Subtitle**: Built-in heading and description
+- **Badge Support**: Optional badge element above title
+- **Center Alignment**: Text and content centered by default
+- **Fade Animation**: Subtle fade-in animation for title area
+- **Flexible Layout**: Supports any child content
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `id` | `string` | **Required** | Section identifier (used for navigation) |
+| `title` | `string` | **Required** | Section heading |
+| `subtitle` | `string` | `undefined` | Subtitle/description text |
+| `children` | `React.ReactNode` | **Required** | Section content |
+| `className` | `string` | `''` | Additional CSS classes |
+| `badge` | `React.ReactNode` | `undefined` | Badge element displayed above title |
+
+### Basic Usage
+
+```tsx
+<Section id="about" title="Tentang Kami">
+  <p>Lorem ipsum dolor sit amet...</p>
+</Section>
+```
+
+### With Subtitle
+
+```tsx
+<Section
+  id="features"
+  title="Fitur Utama"
+  subtitle="Platform lengkap untuk manajemen sekolah"
+>
+  <div className="grid grid-cols-3 gap-6">
+    {/* Feature cards */}
+  </div>
+</Section>
+```
+
+### With Badge
+
+```tsx
+import Badge from './ui/Badge';
+
+<Section
+  id="new-features"
+  title="Fitur Baru"
+  badge={<Badge variant="success">Updated</Badge>}
+>
+  <div>
+    {/* New feature content */}
+  </div>
+</Section>
+```
+
+### With Custom Classes
+
+```tsx
+<Section
+  id="contact"
+  title="Hubungi Kami"
+  subtitle="Ada pertanyaan? Kami siap membantu."
+  className="bg-neutral-50 dark:bg-neutral-900"
+>
+  {/* Contact form */}
+</Section>
+```
+
+### Semantic Structure
+
+```html
+<section id="about" aria-labelledby="about-heading" class="py-20 sm:py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12 sm:mb-16 animate-fade-in">
+      <h2 id="about-heading" class="text-4xl sm:text-5xl md:text-6xl font-bold">
+        Tentang Kami
+      </h2>
+    </div>
+    <!-- Children content -->
+  </div>
+</section>
+```
+
+### Responsive Behavior
+
+- **Padding**: `py-20 sm:py-24` (desktop has more padding)
+- **Title Size**: `text-4xl sm:text-5xl md:text-6xl` (responsive text size)
+- **Container**: `max-w-7xl` with responsive horizontal padding
+
+### Skip Link Integration
+
+Works seamlessly with SkipLink component:
+
+```tsx
+<SkipLink targetId="about" label="Langsung ke Tentang Kami" />
+
+<Section id="about" title="Tentang Kami">
+  {/* Content */}
+</Section>
+```
+
+### Accessibility
+
+- **Semantic HTML**: `<section>` element
+- **Heading Association**: `aria-labelledby` connects to heading
+- **Screen Reader**: Clear heading structure
+- **Keyboard**: Tab to section, standard navigation
+
+### Usage Examples
+
+#### About Section
+
+```tsx
+<Section
+  id="about"
+  title="Tentang MA Malnu Kananga"
+  subtitle="Sistem manajemen sekolah modern dan terintegrasi"
+>
+  <div className="max-w-3xl mx-auto prose dark:prose-invert">
+    <p>
+      MA Malnu Kananga adalah platform berbasis web yang menyediakan solusi
+      lengkap untuk manajemen pendidikan...
+    </p>
+  </div>
+</Section>
+```
+
+#### Features Section
+
+```tsx
+<Section
+  id="features"
+  title="Fitur Unggulan"
+  badge={<Badge variant="success">Baru</Badge>}
+>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+    <Card title="Manajemen Akademik">
+      {/* Content */}
+    </Card>
+    <Card title="E-Learning">
+      {/* Content */}
+    </Card>
+    <Card title="Keuangan">
+      {/* Content */}
+    </Card>
+  </div>
+</Section>
+```
+
+#### Contact Section
+
+```tsx
+<Section
+  id="contact"
+  title="Hubungi Kami"
+  subtitle="Kami siap membantu Anda"
+>
+  <div className="max-w-2xl mx-auto">
+    <form>
+      {/* Contact form */}
+    </form>
+  </div>
+</Section>
+```
+
+### Best Practices
+
+- Use unique `id` for navigation and skip links
+- Include `subtitle` for additional context
+- Use `badge` for status or important information
+- Keep content within max-width container
+- Use semantic heading hierarchy
+
+---
+
+
+## ErrorBoundary Component
+
+**Location**: `src/components/ui/ErrorBoundary.tsx`
+
+A React error boundary component that catches JavaScript errors in component tree, displays fallback UI, and provides recovery options.
+
+### Features
+
+- **Error Catching**: Catches JavaScript errors in component tree
+- **Fallback UI**: Default error display with Card component
+- **Custom Fallback**: Override with custom error component
+- **Error Logging**: Logs errors via centralized logger
+- **Reset Keys**: Automatic reset on prop changes
+- **Reload Option**: Page reload button for recovery
+- **Retry Option**: Try again button to reset error boundary
+- **Error Details**: Expandable error stack for debugging
+- **Contact Support**: Links to support email
+- **Accessibility**: `role="alert"` and `aria-live` for screen readers
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | **Required** | Child components to monitor |
+| `fallback` | `ReactNode` | `undefined` | Custom fallback UI to display on error |
+| `onError` | `(error: Error, errorInfo: ErrorInfo) => void` | `undefined` | Callback when error occurs |
+| `resetKeys` | `Array<string \| number>` | `undefined` | Array of keys that trigger reset when changed |
+| `onReset` | `() => void` | `undefined` | Callback when error boundary is reset |
+
+### Default Fallback
+
+```tsx
+<ErrorBoundary>
+  <App />
+</ErrorBoundary>
+```
+
+Displays default error UI with:
+- Error icon (triangle with exclamation)
+- Title: "Terjadi Kesalahan"
+- Message: Error description
+- Reload and Retry buttons
+- Expandable error details (for debugging)
+- Contact support link
+
+### Custom Fallback
+
+```tsx
+<ErrorBoundary fallback={<CustomErrorPage />}>
+  <App />
+</ErrorBoundary>
+```
+
+Replace with your own error page.
+
+### Error Callback
+
+```tsx
+<ErrorBoundary
+  onError={(error, errorInfo) => {
+    // Log to error tracking service
+    logErrorToService(error, errorInfo);
+    // Show user notification
+    showNotification('Terjadi error');
+  }}
+>
+  <App />
+</ErrorBoundary>
+```
+
+### Reset on Props Change
+
+```tsx
+<ErrorBoundary
+  resetKeys={[userId]}
+  onReset={() => {
+    // Perform cleanup
+    clearData();
+  }}
+>
+  <UserProfile userId={userId} />
+</ErrorBoundary>
+```
+
+Resets error boundary when `userId` changes.
+
+### Reset Handler
+
+```tsx
+<ErrorBoundary
+  onReset={() => {
+    // Navigate to home
+    navigate('/');
+  }}
+>
+  <App />
+</ErrorBoundary>
+```
+
+Called when user clicks "Coba Lagi" button.
+
+### Default Error UI Structure
+
+```tsx
+<div role="alert" aria-live="assertive">
+  <Card padding="lg" shadow="float" className="max-w-2xl w-full">
+    <div className="text-center">
+      {/* Error Icon */}
+      <div className="h-20 w-20 mx-auto mb-6 rounded-full bg-red-100">
+        <AlertTriangleIcon className="h-10 w-10 text-red-600" />
+      </div>
+
+      {/* Error Title */}
+      <h1 className="text-3xl font-bold mb-3">
+        Terjadi Kesalahan
+      </h1>
+
+      {/* Error Message */}
+      <p className="text-base mb-8">
+        Maaf, terjadi kesalahan yang tidak terduga.
+        Tim kami telah menerima laporan mengenai masalah ini.
+      </p>
+
+      {/* Expandable Error Details */}
+      <details>
+        <summary>Lihat detail error (untuk debugging)</summary>
+        <div className="p-4 bg-neutral-100 rounded-lg">
+          <p className="text-red-600 mb-2">
+            {error.name}: {error.message}
+          </p>
+          <pre className="text-neutral-600 whitespace-pre-wrap">
+            {error.stack}
+          </pre>
+        </div>
+      </details>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <Button variant="primary" onClick={() => window.location.reload()}>
+          Reload Halaman
+        </Button>
+        <Button variant="secondary" onClick={() => errorBoundary.reset()}>
+          Coba Lagi
+        </Button>
+      </div>
+
+      {/* Contact Support */}
+      <p className="mt-6 text-sm">
+        Jika masalah ini berlanjut, hubungi{' '}
+        <a href={`mailto:${INFO_EMAIL}`}>
+          {INFO_EMAIL}
+        </a>
+      </p>
+    </div>
+  </Card>
+</div>
+```
+
+### Custom Error UI Example
+
+```tsx
+const CustomErrorFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 dark:from-neutral-900 dark:to-neutral-800">
+    <div className="text-center p-8">
+      <div className="text-6xl mb-4">🐛</div>
+      <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
+        Oops! Terjadi Error
+      </h1>
+      <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+        Jangan khawatir, kami sedang memperbaikinya.
+      </p>
+      <Button variant="primary" onClick={() => window.location.reload()}>
+        Kembali ke Beranda
+      </Button>
+    </div>
+  </div>
+);
+
+<ErrorBoundary fallback={<CustomErrorFallback />}>
+  <App />
+</ErrorBoundary>
+```
+
+### Best Practices
+
+- **Wrap at Root Level**: Place at top of component tree
+- **Use Reset Keys**: Reset on route/user changes
+- **Log Errors**: Send to error tracking service
+- **Provide Recovery**: Give users options to recover
+- **Friendly Messages**: User-friendly error descriptions
+- **Debug Info**: Hide technical details by default
+- **Contact Support**: Link to support channels
+
+### Usage Patterns
+
+#### Root Level
+
+```tsx
+function App() {
+  return (
+    <ErrorBoundary>
+      <Routes>
+        {/* Routes */}
+      </Routes>
+    </ErrorBoundary>
+  );
+}
+```
+
+#### Feature Specific
+
+```tsx
+function FeaturePage() {
+  return (
+    <ErrorBoundary
+      resetKeys={[featureId]}
+      fallback={<FeatureError />}
+    >
+      <ComplexFeature id={featureId} />
+    </ErrorBoundary>
+  );
+}
+```
+
+#### With Error Tracking
+
+```tsx
+import * as Sentry from '@sentry/react';
+
+<ErrorBoundary
+  onError={(error, errorInfo) => {
+    Sentry.captureException(error, { extra: errorInfo });
+  }}
+>
+  <App />
+</ErrorBoundary>
+```
+
+---
+
+## SkipLink Component
+
+**Location**: `src/components/ui/SkipLink.tsx`
+
+An accessibility component that provides keyboard-only navigation links, allowing users to skip to main content or specific sections.
+
+### Features
+
+- **Keyboard Only**: Invisible until focused (for screen readers and keyboard users)
+- **Multiple Targets**: Support for multiple skip links
+- **Smooth Scroll**: Animated scrolling to target
+- **Focus Management**: Auto-focuses target element
+- **Single Target**: Simplified API for single skip link
+- **Multiple Targets**: Support for navigation menu
+- **Full Accessibility**: ARIA attributes and semantic HTML
+- **High Contrast**: WCAG AA compliant colors
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `targetId` | `string` | `'main-content'` | ID of target element to skip to |
+| `label` | `string` | `'Langsung ke konten utama'` | Text displayed in link |
+| `className` | `string` | `''` | Additional CSS classes |
+| `targets` | `Array<{id: string, label: string}>` | `undefined` | Array of skip targets (for multiple links) |
+
+### Single Target
+
+```tsx
+<SkipLink
+  targetId="main-content"
+  label="Langsung ke konten utama"
+/>
+
+<main id="main-content">
+  {/* Main content */}
+</main>
+```
+
+Renders single skip link above header.
+
+### Multiple Targets
+
+```tsx
+<SkipLink
+  targets={[
+    { id: 'main-content', label: 'Langsung ke konten utama' },
+    { id: 'navigation', label: 'Langsung ke navigasi' },
+    { id: 'search', label: 'Langsung ke pencarian' },
+    { id: 'footer', label: 'Langsung ke footer' }
+  ]}
+/>
+```
+
+Renders multiple skip links as navigation menu.
+
+### Visual Behavior
+
+```css
+/* Default state: hidden above viewport */
+transform: -translate-y-[200%];
+
+/* Focused state: visible at top-left */
+focus:translate-y-0;
+```
+
+Links are invisible until Tab key focuses them.
+
+### Skip Handler
+
+```tsx
+const handleSkip = (e: React.MouseEvent, targetId: string) => {
+  e.preventDefault();
+  const targetElement = document.getElementById(targetId);
+  if (targetElement) {
+    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    targetElement.focus();
+  }
+};
+```
+
+1. Prevents default link behavior
+2. Finds target element by ID
+3. Scrolls to target with animation
+4. Sets focus to target element
+
+### Accessibility
+
+- **Keyboard Navigation**: Tab to skip link, Enter/Space to activate
+- **Screen Reader**: Announces skip links on page load
+- **Focus Management**: Sets focus to target element
+- **ARIA Labels**: Proper `aria-label` attributes
+- **Semantic HTML**: Uses `<a>` elements
+- **High Contrast**: Visible when focused
+
+### Common Targets
+
+#### Main Content
+
+```tsx
+<SkipLink targetId="main-content" label="Langsung ke konten utama" />
+
+<main id="main-content">
+  {/* Main content */}
+</main>
+```
+
+#### Navigation
+
+```tsx
+<SkipLink targetId="main-nav" label="Langsung ke navigasi" />
+
+<nav id="main-nav">
+  {/* Navigation */}
+</nav>
+```
+
+#### Search
+
+```tsx
+<SkipLink targetId="search-input" label="Langsung ke pencarian" />
+
+<input id="search-input" type="search" />
+```
+
+#### Footer
+
+```tsx
+<SkipLink targetId="footer" label="Langsung ke footer" />
+
+<footer id="footer">
+  {/* Footer content */}
+</footer>
+```
+
+### Multiple Links as Nav
+
+```tsx
+<SkipLink
+  targets={[
+    { id: 'main-content', label: 'Konten Utama' },
+    { id: 'nav-menu', label: 'Menu Navigasi' },
+    { id: 'search-box', label: 'Pencarian' }
+  ]}
+/>
+```
+
+Renders as navigation menu:
+
+```html
+<nav aria-label="Tautan navigasi cepat" class="absolute top-4 left-4 flex flex-col gap-2">
+  <a href="#main-content" aria-label="Konten Utama">Konten Utama</a>
+  <a href="#nav-menu" aria-label="Menu Navigasi">Menu Navigasi</a>
+  <a href="#search-box" aria-label="Pencarian">Pencarian</a>
+</nav>
+```
+
+### Custom Styling
+
+```tsx
+<SkipLink
+  targetId="main-content"
+  label="Skip to content"
+  className="z-[100] px-6 py-3 text-base rounded-lg bg-primary-600 text-white"
+/>
+```
+
+### Integration with App
+
+```tsx
+function App() {
+  return (
+    <>
+      <SkipLink
+        targetId="main-content"
+        label="Langsung ke konten utama"
+      />
+
+      <Header />
+
+      <main id="main-content">
+        {/* Main content */}
+      </main>
+
+      <Footer />
+    </>
+  );
+}
+```
+
+### Best Practices
+
+- **Place at Top**: Render as first element after `<body>`
+- **Use Meaningful Labels**: Clear, descriptive text
+- **Match Target IDs**: Ensure target IDs exist in DOM
+- **Focusable Targets**: Targets should be focusable elements
+- **Multiple Targets**: Use for complex pages with many sections
+- **Test Keyboard**: Verify Tab navigation works correctly
+- **Test Screen Reader**: Verify announcements are correct
+
+### WCAG Compliance
+
+- **SC 2.4.1 Bypass Blocks**: Provides way to skip navigation
+- **SC 2.4.6 Headings and Labels**: Clear labeling
+- **SC 1.3.1 Info and Relationships**: Proper semantic structure
+- **SC 2.1.1 Keyboard**: Fully keyboard accessible
+
+---
+
+
+## DashboardActionCard Component
+
+**Location**: `src/components/ui/DashboardActionCard.tsx`
+
+A specialized card component for dashboard action buttons with 13 color themes, status badges, and offline detection.
+
+### Features
+
+- **13 Color Themes**: Primary, blue, green, purple, orange, teal, indigo, red, pink, emerald, cyan, yellow, rose
+- **2 Layouts**: Vertical (default), Horizontal
+- **Card Variants**: Inherits from Card component (default, hover, interactive, gradient)
+- **Status Badges**: Inline badge display with offline support
+- **Extra Role Support**: Special badge for extra role users (staff, OSIS)
+- **Offline Detection**: Automatic disabled state when offline
+- **Icon Animation**: Scale animation on hover
+- **Accessibility**: Full ARIA support and keyboard navigation
+- **Dark Mode**: Consistent styling across themes
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | `React.ReactNode` | **Required** | Icon to display in card |
+| `title` | `string` | **Required** | Card title |
+| `description` | `string` | **Required** | Card description |
+| `colorTheme` | `ColorTheme` | `'primary'` | Color theme for icon and badge |
+| `variant` | `CardVariant` | `'interactive'` | Card visual variant |
+| `gradient` | `CardGradient` | `undefined` | Gradient background (if enabled) |
+| `statusBadge` | `string` | `undefined` | Status badge text |
+| `offlineBadge` | `string` | `undefined` | Badge text when offline |
+| `isOnline` | `boolean` | `true` | Network status |
+| `isExtraRole` | `boolean` | `false` | Whether user has extra role |
+| `extraRoleBadge` | `string` | `undefined` | Extra role badge text |
+| `disabled` | `boolean` | `false` | Disable card interaction |
+| `layout` | `'vertical'` \| `'horizontal'` | `'vertical'` | Card layout orientation |
+| `onClick` | `() => void` | `undefined` | Click handler |
+| `ariaLabel` | `string` | `undefined` | ARIA label for screen readers |
+| `className` | `string` | `''` | Additional CSS classes |
+| `style` | `React.CSSProperties` | `undefined` | Inline styles |
+
+### Color Themes
+
+#### Primary
+
+```tsx
+<DashboardActionCard
+  icon={<AcademicCapIcon />}
+  title="Manajemen Akademik"
+  description="Kelola nilai, jadwal, dan absensi"
+  colorTheme="primary"
+  onClick={() => navigate('/academic')}
+/>
+```
+
+#### Blue
+
+```tsx
+<DashboardActionCard
+  icon={<UsersIcon />}
+  title="Data Siswa"
+  description="Kelola data siswa dan ortu"
+  colorTheme="blue"
+/>
+```
+
+#### Green
+
+```tsx
+<DashboardActionCard
+  icon={<BanknoteIcon />}
+  title="Keuangan"
+  description="SPP dan pembayaran lain"
+  colorTheme="green"
+/>
+```
+
+#### Purple
+
+```tsx
+<DashboardActionCard
+  icon={<BookOpenIcon />}
+  title="E-Library"
+  description="Akses materi dan dokumen"
+  colorTheme="purple"
+/>
+```
+
+#### Orange
+
+```tsx
+<DashboardActionCard
+  icon={<CalendarIcon />}
+  title="Jadwal"
+  description="Jadwal pelajaran dan ujian"
+  colorTheme="orange"
+/>
+```
+
+#### Teal
+
+```tsx
+<DashboardActionCard
+  icon={<ChartBarIcon />}
+  title="Analitik"
+  description="Statistik dan laporan"
+  colorTheme="teal"
+/>
+```
+
+#### Indigo
+
+```tsx
+<DashboardActionCard
+  icon={<ChatBubbleLeftRightIcon />}
+  title="Komunikasi"
+  description="Pesan dan pengumuman"
+  colorTheme="indigo"
+/>
+```
+
+#### Red
+
+```tsx
+<DashboardActionCard
+  icon={<ShieldCheckIcon />}
+  title="Keamanan"
+  description="Pengaturan keamanan akun"
+  colorTheme="red"
+/>
+```
+
+#### Pink
+
+```tsx
+<DashboardActionCard
+  icon={<HeartIcon />}
+  title="Favorit"
+  description="Materi favorit Anda"
+  colorTheme="pink"
+/>
+```
+
+#### Emerald
+
+```tsx
+<DashboardActionCard
+  icon={<CheckCircleIcon />}
+  title="Tugas"
+  description="Tugas dan proyek"
+  colorTheme="emerald"
+/>
+```
+
+#### Cyan
+
+```tsx
+<DashboardActionCard
+  icon={<DocumentIcon />}
+  title="Dokumen"
+  description="Dokumen dan arsip"
+  colorTheme="cyan"
+/>
+```
+
+#### Yellow
+
+```tsx
+<DashboardActionCard
+  icon={<StarIcon />}
+  title="Prestasi"
+  description="Prestasi dan penghargaan"
+  colorTheme="yellow"
+/>
+```
+
+#### Rose
+
+```tsx
+<DashboardActionCard
+  icon={<BellIcon />}
+  title="Notifikasi"
+  description="Notifikasi dan pengingat"
+  colorTheme="rose"
+/>
+```
+
+### Layouts
+
+#### Vertical (Default)
+
+```tsx
+<DashboardActionCard
+  icon={<AcademicCapIcon />}
+  title="Akademik"
+  description="Kelola nilai dan jadwal"
+  colorTheme="primary"
+  layout="vertical"
+/>
+```
+
+Icon centered above title, full width layout.
+
+#### Horizontal
+
+```tsx
+<DashboardActionCard
+  icon={<AcademicCapIcon />}
+  title="Akademik"
+  description="Kelola nilai dan jadwal"
+  colorTheme="primary"
+  layout="horizontal"
+/>
+```
+
+Icon on left, content on right, inline layout.
+
+### Status Badge
+
+```tsx
+<DashboardActionCard
+  icon={<UsersIcon />}
+  title="Manajemen User"
+  description="Kelola hak akses dan roles"
+  colorTheme="primary"
+  statusBadge="Aktif"
+/>
+```
+
+Shows "Aktif" badge in status color.
+
+### Offline Detection
+
+```tsx
+<DashboardActionCard
+  icon={<CloudIcon />}
+  title="Sinkronisasi"
+  description="Sinkronisasi data offline"
+  colorTheme="blue"
+  isOnline={isNetworkOnline}
+  offlineBadge="Offline"
+  statusBadge={isNetworkOnline ? "Aktif" : undefined}
+/>
+```
+
+Automatically disables and shows offline badge when offline.
+
+### Extra Role Badge
+
+```tsx
+<DashboardActionCard
+  icon={<CalendarIcon />}
+  title="Kegiatan OSIS"
+  description="Kelola kegiatan dan event"
+  colorTheme="orange"
+  isExtraRole={user.extraRole === 'osis'}
+  extraRoleBadge="OSIS Only"
+/>
+```
+
+Shows special badge for users with extra role.
+
+### Disabled State
+
+```tsx
+<DashboardActionCard
+  icon={<LockClosedIcon />}
+  title="Fitur Terkunci"
+  description="Fitur ini belum tersedia"
+  colorTheme="neutral"
+  disabled
+/>
+```
+
+Card appears dimmed and non-interactive.
+
+### With Gradient
+
+```tsx
+import { GRADIENT_CLASSES } from '../../config/gradients';
+
+<DashboardActionCard
+  icon={<AcademicCapIcon />}
+  title="Akademik"
+  description="Kelola nilai dan jadwal"
+  colorTheme="primary"
+  gradient={GRADIENT_CLASSES.PRIMARY_DECORATIVE}
+/>
+```
+
+Applies gradient background.
+
+### Click Handler
+
+```tsx
+<DashboardActionCard
+  icon={<HomeIcon />}
+  title="Dashboard"
+  description="Kembali ke dashboard utama"
+  colorTheme="primary"
+  onClick={() => navigate('/dashboard')}
+  ariaLabel="Buka dashboard"
+/>
+```
+
+Card becomes clickable with hover effect.
+
+### Accessibility
+
+- **Button Role**: Interactive cards have proper button semantics
+- **ARIA Labels**: Custom labels for screen readers
+- **Focus Management**: Visible focus ring on keyboard navigation
+- **Keyboard Access**: Enter/Space to activate cards
+- **Disabled State**: `aria-disabled` for non-interactive cards
+- **Screen Reader**: Clear title and description announcements
+
+### Usage Examples
+
+#### Admin Dashboard
+
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <DashboardActionCard
+    icon={<AcademicCapIcon />}
+    title="Manajemen Akademik"
+    description="Nilai, jadwal, absensi"
+    colorTheme="primary"
+    onClick={() => navigate('/academic')}
+  />
+  <DashboardActionCard
+    icon={<UsersIcon />}
+    title="Manajemen User"
+    description="Roles dan hak akses"
+    colorTheme="blue"
+    onClick={() => navigate('/users')}
+  />
+  <DashboardActionCard
+    icon={<BanknoteIcon />}
+    title="Keuangan"
+    description="SPP dan pembayaran"
+    colorTheme="green"
+    onClick={() => navigate('/finance')}
+  />
+</div>
+```
+
+#### Role-Based Dashboard
+
+```tsx
+{user.role === 'student' && (
+  <DashboardActionCard
+    icon={<BookOpenIcon />}
+    title="E-Library"
+    description="Materi pelajaran dan dokumen"
+    colorTheme="purple"
+    onClick={() => navigate('/library')}
+  />
+)}
+
+{user.extraRole === 'osis' && (
+  <DashboardActionCard
+    icon={<CalendarIcon />}
+    title="Kegiatan OSIS"
+    description="Kelola event OSIS"
+    colorTheme="orange"
+    isExtraRole
+    extraRoleBadge="OSIS Only"
+    onClick={() => navigate('/osis')}
+  />
+)}
+```
+
+#### Offline-First Design
+
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <DashboardActionCard
+    icon={<UserIcon />}
+    title="Profil"
+    description="Lihat dan edit profil"
+    colorTheme="primary"
+    isOnline={isOnline}
+    offlineBadge="Offline"
+    statusBadge={isOnline ? "Aktif" : undefined}
+    onClick={() => navigate('/profile')}
+  />
+  <DashboardActionCard
+    icon={<CloudIcon />}
+    title="Sinkronisasi"
+    description="Sinkronisasi data"
+    colorTheme="blue"
+    isOnline={isOnline}
+    offlineBadge="Perlu Koneksi"
+    statusBadge={isOnline ? "Sinkron" : undefined}
+    onClick={syncData}
+  />
+</div>
+```
+
+### Best Practices
+
+- **Match Purpose**: Use appropriate color theme for function
+- **Clear Descriptions**: Keep descriptions concise and clear
+- **Status Indicators**: Show online/offline status for network-dependent features
+- **Extra Roles**: Highlight extra role features with special badges
+- **Visual Hierarchy**: Use layout and color to guide users
+- **Offline UX**: Provide clear offline state and requirements
+
+---
+
+## SocialLink Component
+
+**Location**: `src/components/ui/SocialLink.tsx`
+
+A social media link/button component with 3 variants, 4 sizes, and support for both anchor and button elements.
+
+### Features
+
+- **3 Variants**: `default`, `primary`, `secondary`
+- **4 Sizes**: `sm`, `md`, `lg`, `xl`
+- **Dual Mode**: Can render as `<a>` or `<button>`
+- **Disabled State**: Visual feedback when disabled
+- **Hover Effects**: Scale transform, shadow enhancement
+- **Active Press**: Scale reduction for press feedback
+- **Focus Ring**: Visible focus indicator for keyboard users
+- **Dark Mode**: Consistent styling across themes
+- **Accessibility**: Full ARIA support and keyboard navigation
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `icon` | `React.ReactNode` | **Required** | Icon to display |
+| `label` | `string` | **Required** | Text label for accessibility |
+| `href` | `string` | `undefined` | Link URL (renders as `<a>`) |
+| `onClick` | `() => void` | `undefined` | Click handler (renders as `<button>`) |
+| `size` | `SocialLinkSize` | `'lg'` | Icon size |
+| `variant` | `SocialLinkVariant` | `'default'` | Color and style variant |
+| `className` | `string` | `''` | Additional CSS classes |
+| `target` | `string` | `undefined` | Link target (e.g., `_blank`) |
+| `rel` | `string` | `'noopener noreferrer'` | Link relationship attribute |
+| `disabled` | `boolean` | `false` | Disable interaction |
+
+### Variants
+
+#### Default
+
+```tsx
+<SocialLink
+  icon={<FacebookIcon />}
+  label="Facebook"
+  href="https://facebook.com/malnukananga"
+  variant="default"
+/>
+```
+
+**Styling**:
+- Color: Neutral-400 (light mode) / Neutral-500 (dark mode)
+- Hover: Primary-600 (light mode) / Primary-400 (dark mode)
+- Background hover: Primary-50 (light mode) / Primary-900/40 (dark mode)
+
+#### Primary
+
+```tsx
+<SocialLink
+  icon={<TwitterIcon />}
+  label="Twitter"
+  href="https://twitter.com/malnukananga"
+  variant="primary"
+/>
+```
+
+**Styling**:
+- Color: Primary-600 (light mode) / Primary-400 (dark mode)
+- Hover: Darker/lighter primary shade
+- Background hover: Primary-100 (light mode) / Primary-900/60 (dark mode)
+
+#### Secondary
+
+```tsx
+<SocialLink
+  icon={<InstagramIcon />}
+  label="Instagram"
+  href="https://instagram.com/malnukananga"
+  variant="secondary"
+/>
+```
+
+**Styling**:
+- Color: Neutral-500 (light mode) / Neutral-500 (dark mode)
+- Hover: Neutral-700 (light mode) / Neutral-300 (dark mode)
+- Background hover: Neutral-100 (light mode) / Neutral-800/50 (dark mode)
+
+### Sizes
+
+#### Small (sm)
+
+```tsx
+<SocialLink
+  icon={<FacebookIcon />}
+  label="Facebook"
+  size="sm"
+  href="https://facebook.com/page"
+/>
+```
+
+- Padding: `p-2`
+- Icon: `w-5 h-5`
+
+#### Medium (md)
+
+```tsx
+<SocialLink
+  icon={<TwitterIcon />}
+  label="Twitter"
+  size="md"
+  href="https://twitter.com/page"
+/>
+```
+
+- Padding: `p-2.5`
+- Icon: `w-5 h-5`
+
+#### Large (lg)
+
+```tsx
+<SocialLink
+  icon={<InstagramIcon />}
+  label="Instagram"
+  size="lg"
+  href="https://instagram.com/page"
+/>
+```
+
+- Padding: `p-3`
+- Icon: `w-6 h-6`
+
+#### Extra Large (xl)
+
+```tsx
+<SocialLink
+  icon={<YouTubeIcon />}
+  label="YouTube"
+  size="xl"
+  href="https://youtube.com/channel"
+/>
+```
+
+- Padding: `p-4`
+- Icon: `w-7 h-7`
+
+### As Link
+
+```tsx
+<SocialLink
+  icon={<FacebookIcon />}
+  label="Ikuti kami di Facebook"
+  href="https://facebook.com/malnukananga"
+  target="_blank"
+  rel="noopener noreferrer"
+  variant="default"
+  size="lg"
+/>
+```
+
+Renders as anchor element with external link behavior.
+
+### As Button
+
+```tsx
+<SocialLink
+  icon={<ShareIcon />}
+  label="Share"
+  onClick={handleShare}
+  variant="primary"
+  size="md"
+/>
+```
+
+Renders as button element for in-page actions.
+
+### Disabled State
+
+```tsx
+<SocialLink
+  icon={<FacebookIcon />}
+  label="Facebook (Coming Soon)"
+  href="#"
+  disabled
+  variant="default"
+  size="lg"
+/>
+```
+
+Shows reduced opacity and prevents interaction.
+
+### Social Media Icons
+
+Typical icon usage:
+
+```tsx
+import { FacebookIcon, InstagramIcon, TwitterIcon, YouTubeIcon, LinkedInIcon } from './icons';
+
+<div className="flex gap-3">
+  <SocialLink icon={<FacebookIcon />} label="Facebook" href="..." />
+  <SocialLink icon={<InstagramIcon />} label="Instagram" href="..." />
+  <SocialLink icon={<TwitterIcon />} label="Twitter" href="..." />
+  <SocialLink icon={<YouTubeIcon />} label="YouTube" href="..." />
+  <SocialLink icon={<LinkedInIcon />} label="LinkedIn" href="..." />
+</div>
+```
+
+### Footer Usage
+
+```tsx
+<footer className="bg-neutral-100 dark:bg-neutral-800 py-8">
+  <div className="max-w-7xl mx-auto px-4 flex justify-center gap-4">
+    <SocialLink icon={<FacebookIcon />} label="Facebook" href="..." size="lg" />
+    <SocialLink icon={<InstagramIcon />} label="Instagram" href="..." size="lg" />
+    <SocialLink icon={<TwitterIcon />} label="Twitter" href="..." size="lg" />
+    <SocialLink icon={<YouTubeIcon />} label="YouTube" href="..." size="lg" />
+  </div>
+</footer>
+```
+
+### Contact Section
+
+```tsx
+<div className="flex items-center gap-4">
+  <SocialLink icon={<EmailIcon />} label="Email" href="mailto:info@malnu.com" variant="primary" />
+  <SocialLink icon={<PhoneIcon />} label="Phone" href="tel:+62812345678" variant="primary" />
+  <SocialLink icon={<MapPinIcon />} label="Location" href="https://maps.google.com/..." variant="primary" />
+</div>
+```
+
+### Accessibility
+
+- **ARIA Labels**: Provides `aria-label` for screen readers
+- **Icon Hidden**: Icons marked with `aria-hidden` for decoration
+- **Keyboard Navigation**: Tab to focus, Enter/Space to activate
+- **Focus Ring**: 2px focus ring with offset
+- **Disabled State**: `aria-disabled` and reduced opacity
+- **External Links**: Proper `rel="noopener noreferrer"` for external links
+
+### Animation States
+
+- **Hover**: `hover:shadow-md hover:scale-110`
+- **Active**: `active:scale-95` for press feedback
+- **Focus**: `focus-visible:ring-2` for keyboard visibility
+
+### Best Practices
+
+- **Use Meaningful Labels**: Clear accessibility labels
+- **External Links**: Always use `target="_blank"` and `rel="noopener noreferrer"`
+- **Consistent Sizing**: Use same size for social links in same section
+- **Disabled Features**: Use disabled state for unavailable features
+- **Button vs Link**: Use button for in-page actions, link for navigation
+
+---
+
+
+## Table Components
+
+**Location**: `src/components/ui/Table.tsx`
+
+A comprehensive table component with sub-components (Thead, Tbody, Tfoot, Tr, Th, Td) for accessible data display.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg`
+- **4 Variants**: `default`, `striped`, `bordered`, `simple`
+- **Sub-components**: Modular Table, Thead, Tbody, Tfoot, Tr, Th, Td
+- **Sortable Headers**: Built-in sort icon support
+- **Hoverable Rows**: Visual hover effect on rows
+- **Selected State**: Highlight selected rows
+- **Accessibility**: Full ARIA compliance
+- **Dark Mode**: Consistent styling
+- **Responsive**: Adapts to screen sizes
+
+### Table Component
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | **Required** | Table content |
+| `size` | `'sm'` \| `'md'` \| `'lg'` | `'md'` | Font size for table content |
+| `variant` | `'default'` \| `'striped'` \| `'bordered'` \| `'simple'` | `'default'` | Table visual style |
+| `caption` | `string` | `undefined` | Table caption (screen reader only) |
+| `description` | `string` | `undefined` | Table description (screen reader only) |
+| `ariaLabel` | `string` | `undefined` | ARIA label for table |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Sub-Components
+
+#### Thead (Table Header)
+
+```tsx
+<Table size="md">
+  <Thead>
+    <Tr>
+      <Th>Name</Th>
+      <Th>Email</Th>
+      <Th>Role</Th>
+    </Tr>
+  </Thead>
+  <Tbody>
+    {/* Rows */}
+  </Tbody>
+</Table>
+```
+
+#### Tbody (Table Body)
+
+```tsx
+<Table>
+  <Thead>...</Thead>
+  <Tbody>
+    <Tr>
+      <td>John Doe</td>
+      <td>john@example.com</td>
+      <td>Admin</td>
+    </Tr>
+  </Tbody>
+</Table>
+```
+
+#### Tfoot (Table Footer)
+
+```tsx
+<Table>
+  <Thead>...</Thead>
+  <Tbody>...</Tbody>
+  <Tfoot>
+    <Tr>
+      <td colSpan={3}>Total: 10 records</td>
+    </Tr>
+  </Tfoot>
+</Table>
+```
+
+#### Tr (Table Row)
+
+```tsx
+<Tr hoverable selected>
+  <Td>Content</Td>
+</Tr>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | **Required** | Row content |
+| `hoverable` | `boolean` | `true` | Hover effect |
+| `selected` | `boolean` | `false` | Highlight row |
+| `className` | `string` | `''` | Additional classes |
+
+#### Th (Table Header Cell)
+
+```tsx
+<Th sortable sortDirection="asc">Name</Th>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | **Required** | Header text |
+| `scope` | `'col'` \| `'row'` \| `'colgroup'` \| `'rowgroup'` | `'col'` | Cell scope |
+| `sortable` | `boolean` | `false` | Enable sort click |
+| `sortDirection` | `'asc'` \| `'desc'` | `undefined` | Sort direction |
+| `className` | `string` | `''` | Additional classes |
+
+#### Td (Table Data Cell)
+
+```tsx
+<Td>Cell content</Td>
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | **Required** | Cell content |
+| `className` | `string` | `''` | Additional classes |
+
+### Sizes
+
+#### Small (sm)
+
+```tsx
+<Table size="sm">
+  <Thead>...</Thead>
+</Table>
+```
+
+Text size: `text-xs`
+
+#### Medium (md)
+
+```tsx
+<Table size="md">
+  <Thead>...</Thead>
+</Table>
+```
+
+Text size: `text-sm`
+
+#### Large (lg)
+
+```tsx
+<Table size="lg">
+  <Thead>...</Thead>
+</Table>
+```
+
+Text size: `text-base`
+
+### Variants
+
+#### Default
+
+```tsx
+<Table variant="default">
+  <Thead>...</Thead>
+</Table>
+```
+
+- Dividers between rows
+- Neutral border colors
+
+#### Striped
+
+```tsx
+<Table variant="striped">
+  <Thead>...</Thead>
+</Table>
+```
+
+- Alternating row colors
+- Improved readability
+
+#### Bordered
+
+```tsx
+<Table variant="bordered">
+  <Thead>...</Thead>
+</Table>
+```
+
+- Vertical borders on sides
+- Enhanced visual structure
+
+#### Simple
+
+```tsx
+<Table variant="simple">
+  <Thead>...</Thead>
+</Table>
+```
+
+- Minimal styling
+- No row dividers
+
+### Sortable Headers
+
+```tsx
+const [sortKey, setSortKey] = useState('name');
+const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+<Table>
+  <Thead>
+    <Tr>
+      <Th
+        sortable
+        sortDirection={sortKey === 'name' ? sortDirection : undefined}
+        onClick={() => {
+          setSortKey('name');
+          setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        }}
+      >
+        Name
+      </Th>
+    </Tr>
+  </Thead>
+</Table>
+```
+
+### Selected Rows
+
+```tsx
+<Table>
+  <Thead>...</Thead>
+  <Tbody>
+    <Tr selected={selectedRows.includes(user.id)} hoverable>
+      <Td>{user.name}</Td>
+    </Tr>
+  </Tbody>
+</Table>
+```
+
+### Accessibility
+
+- **Role**: `role="table"` on table
+- **Caption**: `sr-only` caption for screen readers
+- **Scope**: Proper `scope` attributes on headers
+- **Sort**: `aria-sort` on sortable headers
+- **Selection**: `aria-selected` on selected rows
+
+---
+
+## DataTable Component
+
+**Location**: `src/components/ui/DataTable.tsx`
+
+A comprehensive data table component with search, pagination, sorting, selection, and loading states.
+
+### Features
+
+- **Search**: Built-in search input
+- **Pagination**: Integrated pagination component
+- **Sorting**: Column sorting with indicators
+- **Row Selection**: Multi-select with checkboxes
+- **Loading States**: Loading overlay and skeleton
+- **Empty State**: Empty state display
+- **Error State**: Error message with retry
+- **Sticky Header**: Fixed header on scroll
+- **Custom Rendering**: Custom cell renderers
+- **Fixed Columns**: Left/right column pinning
+- **Accessibility**: Full ARIA compliance
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `data` | `T[]` | **Required** | Table data |
+| `columns` | `Column<T>[]` | **Required** | Column definitions |
+| `loading` | `boolean` | `false` | Loading state |
+| `error` | `string \| null` | `null` | Error message |
+| `empty` | `boolean` | `false` | Empty data state |
+| `emptyMessage` | `string` | `'No data available'` | Empty state message |
+| `pagination` | `PaginationProps` | `undefined` | Pagination configuration |
+| `selection` | `SelectionProps` | `undefined` | Row selection configuration |
+| `filter` | `FilterProps` | `undefined` | Search/filter configuration |
+| `sort` | `SortProps` | `undefined` | Sort configuration |
+| `rowClassName` | `(record: T, index: number) => string` | `undefined` | Custom row class |
+| `onRowClick` | `(record: T, index: number) => void` | `undefined` | Row click handler |
+| `size` | `'sm'` \| `'md'` \| `'lg'` | `'md'` | Table size |
+| `variant` | `'default'` \| `'bordered'` \| `'striped'` \| `'simple'` | `'default'` | Table style |
+| `stickyHeader` | `boolean` | `false` | Sticky header |
+| `scrollX` | `boolean` | `false` | Horizontal scroll |
+| `scrollY` | `number` | `undefined` | Max height with scroll |
+| `className` | `string` | `''` | Additional classes |
+
+### Column Definition
+
+```tsx
+interface Column<User> {
+  key: string;
+  title: string;
+  sortable?: boolean;
+  width?: string;
+  render?: (value: unknown, record: User, index: number) => React.ReactNode;
+  align?: 'left' | 'center' | 'right';
+  fixed?: 'left' | 'right';
+}
+```
+
+### Basic Usage
+
+```tsx
+const columns: Column<User>[] = [
+  { key: 'name', title: 'Nama' },
+  { key: 'email', title: 'Email' },
+  { key: 'role', title: 'Role' },
+];
+
+<DataTable
+  data={users}
+  columns={columns}
+  loading={loading}
+/>
+```
+
+### With Search
+
+```tsx
+<DataTable
+  data={users}
+  columns={columns}
+  filter={{
+    searchable: true,
+    onSearch: (value) => handleSearch(value),
+    placeholder: 'Search users...'
+  }}
+/>
+```
+
+### With Pagination
+
+```tsx
+<DataTable
+  data={users}
+  columns={columns}
+  pagination={{
+    currentPage: page,
+    totalPages: totalPages,
+    totalItems: total,
+    itemsPerPage: pageSize,
+    onPageChange: handlePageChange,
+    onItemsPerPageChange: handlePageSizeChange,
+  }}
+/>
+```
+
+### With Sorting
+
+```tsx
+const [sortKey, setSortKey] = useState('name');
+const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+<DataTable
+  data={users}
+  columns={columns}
+  sort={{
+    sortKey,
+    sortDirection,
+    onSortChange: (key, direction) => {
+      setSortKey(key);
+      setSortDirection(direction);
+    }
+  }}
+/>
+```
+
+### With Selection
+
+```tsx
+const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+<DataTable
+  data={users}
+  columns={columns}
+  selection={{
+    selectedRowKeys: selectedRows,
+    onSelectAll: (checked) => {
+      setSelectedRows(checked ? users.map(u => u.id) : []);
+    },
+    onSelect: (key, checked) => {
+      setSelectedRows(prev =>
+        checked ? [...prev, key] : prev.filter(k => k !== key)
+      );
+    },
+    getRowKey: (record) => record.id,
+  }}
+/>
+```
+
+### Custom Cell Renderer
+
+```tsx
+const columns: Column<User>[] = [
+  {
+    key: 'name',
+    title: 'Nama',
+    render: (value, record) => (
+      <div className="flex items-center gap-2">
+        <Avatar src={record.avatar} size="sm" />
+        <span>{value as string}</span>
+      </div>
+    ),
+  },
+  {
+    key: 'status',
+    title: 'Status',
+    render: (value) => (
+      <Badge variant={value === 'Active' ? 'success' : 'neutral'}>
+        {value as string}
+      </Badge>
+    ),
+  },
+];
+```
+
+### Row Click
+
+```tsx
+<DataTable
+  data={users}
+  columns={columns}
+  onRowClick={(record, index) => {
+    navigate(`/users/${record.id}`);
+  }}
+/>
+```
+
+### Custom Row Class
+
+```tsx
+<DataTable
+  data={users}
+  columns={columns}
+  rowClassName={(record, index) => {
+    if (record.status === 'Inactive') return 'opacity-50';
+    return '';
+  }}
+/>
+```
+
+### Sticky Header with Scroll
+
+```tsx
+<DataTable
+  data={users}
+  columns={columns}
+  stickyHeader
+  scrollY={400}
+  scrollX
+/>
+```
+
+### Empty State
+
+```tsx
+<DataTable
+  data={[]}
+  columns={columns}
+  empty
+  emptyMessage="Tidak ada data user"
+/>
+```
+
+### Error State
+
+```tsx
+<DataTable
+  data={users}
+  columns={columns}
+  error="Failed to load data"
+  loading={false}
+/>
+```
+
+### Loading State
+
+```tsx
+<DataTable
+  data={[]}
+  columns={columns}
+  loading
+/>
+```
+
+### Combined Example
+
+```tsx
+<DataTable
+  data={users}
+  columns={[
+    { key: 'name', title: 'Nama', sortable: true },
+    { key: 'email', title: 'Email', sortable: true },
+    { key: 'role', title: 'Role' },
+    { key: 'status', title: 'Status', sortable: true },
+  ]}
+  loading={loading}
+  error={error}
+  empty={users.length === 0}
+  emptyMessage="Tidak ada data user"
+  pagination={{
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    onPageChange,
+  }}
+  filter={{
+    searchable: true,
+    onSearch: setSearchValue,
+    placeholder: 'Search users...',
+  }}
+  sort={{
+    sortKey,
+    sortDirection,
+    onSortChange: handleSortChange,
+  }}
+  selection={{
+    selectedRowKeys,
+    onSelectAll,
+    onSelect,
+    getRowKey: (record) => record.id,
+  }}
+  onRowClick={handleRowClick}
+  stickyHeader
+  scrollY={500}
+  size="md"
+  variant="bordered"
+/>
+```
+
+### Accessibility
+
+- **Keyboard Navigation**: Arrow keys for pagination
+- **Selection ARIA**: Proper checkbox states
+- **Sort Indicators**: Visual and ARIA sort direction
+- **Loading Announcements**: `aria-live="polite"` and `aria-busy`
+- **Empty/Error States**: `role="status"` announcements
+
+---
+
+
+## Tab Component
+
+**Location**: `src/components/ui/Tab.tsx`
+
+A tab component with 3 variants, 6 colors, badges, and keyboard navigation.
+
+### Features
+
+- **3 Variants**: `pill`, `border`, `icon`
+- **6 Colors**: green, blue, purple, red, yellow, neutral
+- **Badges**: Optional count badges on tabs
+- **Keyboard Navigation**: Arrow keys + Enter/Space
+- **Icons**: Optional icon support
+- **Orientation**: Horizontal or vertical
+- **Accessibility**: Full ARIA tab roles
+- **Focus Management**: Auto-focus on tab change
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `options` | `TabOption[]` | **Required** | Tab configuration |
+| `activeTab` | `string` | **Required** | Currently active tab ID |
+| `onTabChange` | `(tabId: string) => void` | **Required** | Tab change handler |
+| `variant` | `'pill'` \| `'border'` \| `'icon'` | `'pill'` | Tab style |
+| `color` | `TabColor` | `'green'` | Color theme |
+| `className` | `string` | `''` | Additional CSS classes |
+| `orientation` | `'horizontal'` \| `'vertical'` | `'horizontal'` | Layout direction |
+| `aria-label` | `string` | `'Tabs'` | ARIA label for tablist |
+
+### Tab Option
+
+```tsx
+interface TabOption {
+  id: string;
+  label: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  badge?: number;
+  disabled?: boolean;
+}
+```
+
+### Pill Variant
+
+```tsx
+<Tab
+  options={[
+    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'students', label: 'Siswa', badge: studentCount },
+    { id: 'teachers', label: 'Guru' },
+  ]}
+  activeTab={activeTab}
+  onTabChange={setActiveTab}
+  variant="pill"
+  color="green"
+/>
+```
+
+### Border Variant
+
+```tsx
+<Tab
+  options={[
+    { id: 'overview', label: 'Overview' },
+    { id: 'details', label: 'Details' },
+    { id: 'settings', label: 'Settings' },
+  ]}
+  activeTab={activeTab}
+  onTabChange={setActiveTab}
+  variant="border"
+  color="blue"
+/>
+```
+
+### Icon Variant
+
+```tsx
+<Tab
+  options={[
+    { id: 'home', label: 'Home', icon: HomeIcon },
+    { id: 'profile', label: 'Profile', icon: UserIcon },
+    { id: 'settings', label: 'Settings', icon: CogIcon },
+  ]}
+  activeTab={activeTab}
+  onTabChange={setActiveTab}
+  variant="icon"
+  color="purple"
+/>
+```
+
+### With Badges
+
+```tsx
+<Tab
+  options={[
+    { id: 'inbox', label: 'Inbox', badge: 5 },
+    { id: 'sent', label: 'Sent', badge: 12 },
+    { id: 'drafts', label: 'Drafts', badge: 3 },
+  ]}
+  activeTab={activeTab}
+  onTabChange={setActiveTab}
+  variant="pill"
+/>
+```
+
+### With Disabled Tabs
+
+```tsx
+<Tab
+  options={[
+    { id: 'available', label: 'Available' },
+    { id: 'locked', label: 'Locked', disabled: true },
+    { id: 'coming-soon', label: 'Coming Soon', disabled: true },
+  ]}
+  activeTab={activeTab}
+  onTabChange={setActiveTab}
+/>
+```
+
+### Vertical Orientation
+
+```tsx
+<Tab
+  options={[
+    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'reports', label: 'Reports' },
+    { id: 'settings', label: 'Settings' },
+  ]}
+  activeTab={activeTab}
+  onTabChange={setActiveTab}
+  orientation="vertical"
+  variant="icon"
+/>
+```
+
+### Colors
+
+All variants support 6 colors: `green`, `blue`, `purple`, `red`, `yellow`, `neutral`.
+
+```tsx
+<Tab color="green" />  {/* Green tabs */}
+<Tab color="blue" />   {/* Blue tabs */}
+<Tab color="purple" /> {/* Purple tabs */}
+<Tab color="red" />    {/* Red tabs */}
+<Tab color="yellow" />  {/* Yellow tabs */}
+<Tab color="neutral" /> {/* Neutral tabs */}
+```
+
+### Accessibility
+
+- **Tab Role**: `role="tab"` on buttons
+- **Tablist Role**: `role="tablist"` on container
+- **ARIA Selected**: `aria-selected` on active tab
+- **ARIA Controls**: `aria-controls` links to panel
+- **Keyboard**: Arrow keys for navigation, Enter/Space to select
+- **Disabled**: `disabled` attribute on inactive tabs
+- **Badges**: `aria-label` on badge count
+
+---
+
+## Pagination Component
+
+**Location**: `src/components/ui/Pagination.tsx`
+
+A pagination component with 3 variants, items per page selector, and keyboard navigation.
+
+### Features
+
+- **3 Variants**: `default`, `compact`, `minimal`
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Page Numbers**: Ellipsis for large page counts
+- **Items Per Page**: Configurable dropdown
+- **Total Count**: Display showing X to Y of Z
+- **Keyboard Nav**: Previous/Next buttons with ARIA
+- **Auto Hide**: Hides when 1 or fewer pages
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `currentPage` | `number` | **Required** | Current page (1-indexed) |
+| `totalPages` | `number` | **Required** | Total number of pages |
+| `totalItems` | `number` | **Required** | Total item count |
+| `itemsPerPage` | `number` | **Required** | Items per page |
+| `onPageChange` | `(page: number) => void` | **Required** | Page change handler |
+| `onItemsPerPageChange` | `(itemsPerPage: number) => void` | `undefined` | Page size change handler |
+| `variant` | `'default'` \| `'compact'` \| `'minimal'` | `'default'` | Pagination style |
+| `size` | `'sm'` \| `'md'` \| `'lg'` | `'md'` | Text/button size |
+| `showItemsPerPageSelector` | `boolean` | `true` | Show items per page dropdown |
+| `showTotalCount` | `boolean` | `true` | Show "X to Y of Z" text |
+| `maxVisiblePages` | `number` | `5` | Maximum page numbers to show |
+| `ariaLabel` | `string` | `'Pagination navigation'` | ARIA label |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Default Variant
+
+```tsx
+<Pagination
+  currentPage={currentPage}
+  totalPages={totalPages}
+  totalItems={totalItems}
+  itemsPerPage={itemsPerPage}
+  onPageChange={handlePageChange}
+  onItemsPerPageChange={handlePageSizeChange}
+/>
+```
+
+Shows: Total count, Previous/Next buttons, Page numbers, Items per page selector.
+
+### Compact Variant
+
+```tsx
+<Pagination
+  variant="compact"
+  currentPage={currentPage}
+  totalPages={totalPages}
+  totalItems={totalItems}
+  itemsPerPage={itemsPerPage}
+  onPageChange={handlePageChange}
+/>
+```
+
+Shows: Previous/Next buttons, Page numbers (no total count).
+
+### Minimal Variant
+
+```tsx
+<Pagination
+  variant="minimal"
+  currentPage={currentPage}
+  totalPages={totalPages}
+  totalItems={totalItems}
+  itemsPerPage={itemsPerPage}
+  onPageChange={handlePageChange}
+/>
+```
+
+Shows: Previous/Next buttons, "X / Y" counter (no page numbers).
+
+### Without Items Per Page
+
+```tsx
+<Pagination
+  showItemsPerPageSelector={false}
+  currentPage={currentPage}
+  totalPages={totalPages}
+  totalItems={totalItems}
+  itemsPerPage={itemsPerPage}
+  onPageChange={handlePageChange}
+/>
+```
+
+### Without Total Count
+
+```tsx
+<Pagination
+  showTotalCount={false}
+  currentPage={currentPage}
+  totalPages={totalPages}
+  totalItems={totalItems}
+  itemsPerPage={itemsPerPage}
+  onPageChange={handlePageChange}
+/>
+```
+
+### Custom Max Visible Pages
+
+```tsx
+<Pagination
+  maxVisiblePages={7}
+  currentPage={currentPage}
+  totalPages={totalPages}
+  totalItems={totalItems}
+  itemsPerPage={itemsPerPage}
+  onPageChange={handlePageChange}
+/>
+```
+
+### Accessibility
+
+- **Navigation Role**: `role="navigation"` on container
+- **ARIA Labels**: `aria-label` for buttons
+- **Current Page**: `aria-current="page"` on active page button
+- **Disabled States**: `disabled` attribute on first/last buttons
+
+---
+
+
+## Loading Components
+
+### EmptyState Component
+
+**Location**: `src/components/ui/LoadingState.tsx` (exported)
+
+A reusable empty state component with optional action button.
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `message` | `string` | **Required** | Empty state message |
+| `icon` | `ReactNode` | `undefined` | Custom icon |
+| `action` | `{ label: string; onClick: () => void }` | `undefined` | Action button |
+| `size` | `'sm'` \| `'md'` \| `'lg'` | `'md'` | Component size |
+| `variant` | `'default'` \| `'minimal'` \| `'illustrated'` | `'default'` | Visual style |
+| `ariaLabel` | `string` | `undefined` | ARIA label |
+
+### Usage
+
+```tsx
+<EmptyState
+  message="Tidak ada data"
+  icon={<DocumentIcon />}
+  action={{
+    label: 'Tambah Data',
+    onClick: handleAdd,
+  }}
+/>
+```
+
+### ErrorState Component
+
+**Location**: `src/components/ui/LoadingState.tsx` (exported)
+
+An error state component with retry button.
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `message` | `string` | **Required** | Error message |
+| `onRetry` | `() => void` | `undefined` | Retry handler |
+| `size` | `'sm'` \| `'md'` \| `'lg'` | `'md'` | Component size |
+
+### Usage
+
+```tsx
+<ErrorState
+  message="Gagal memuat data"
+  onRetry={handleRetry}
+/>
+```
+
+---
+
+### LoadingSpinner Component
+
+**Location**: `src/components/ui/LoadingSpinner.tsx`
+
+A loading spinner component with 4 colors, 3 sizes, and full-screen option.
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `'sm'` \| `'md'` \| `'lg'` | `'md'` | Spinner size |
+| `color` | `'primary'` \| `'neutral'` \| `'success'` \| `'error'` | `'primary'` | Spinner color |
+| `text` | `string` | `undefined` | Loading text message |
+| `fullScreen` | `boolean` | `false` | Full-screen overlay |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Sizes
+
+```tsx
+<LoadingSpinner size="sm" />   {/* h-4 w-4 */}
+<LoadingSpinner size="md" />   {/* h-8 w-8 */}
+<LoadingSpinner size="lg" />   {/* h-12 w-12 */}
+```
+
+### Colors
+
+```tsx
+<LoadingSpinner color="primary" />  {/* Blue */}
+<LoadingSpinner color="neutral" />  {/* Gray */}
+<LoadingSpinner color="success" />  {/* Green */}
+<LoadingSpinner color="error" />    {/* Red */}
+```
+
+### With Text
+
+```tsx
+<LoadingSpinner
+  text="Memuat data..."
+  size="md"
+  color="primary"
+/>
+```
+
+### Full Screen
+
+```tsx
+<LoadingSpinner
+  fullScreen
+  text="Harap tunggu..."
+  size="lg"
+/>
+```
+
+---
+
+### LoadingOverlay Component
+
+**Location**: `src/components/ui/LoadingOverlay.tsx`
+
+An overlay loading component with optional progress bar and backdrop.
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isLoading` | `boolean` | **Required** | Show loading state |
+| `message` | `string` | `'Loading...'` | Loading message |
+| `size` | `'sm'` \| `'md'` \| `'lg'` \| `'full'` | `'md'` | Content size |
+| `variant` | `'default'` \| `'minimal'` \| `'centered'` | `'default'` | Overlay style |
+| `showBackdrop` | `boolean` | `true` | Show backdrop |
+| `backdropBlur` | `boolean` | `true` | Blur backdrop |
+| `progress` | `number` | `undefined` | Progress percentage (0-100) |
+| `showProgress` | `boolean` | `false` | Show progress bar |
+| `className` | `string` | `''` | Additional CSS classes |
+| `children` | `ReactNode` | `undefined` | Content (hidden when loading) |
+
+### Variants
+
+```tsx
+// Default: Min-height container
+<LoadingOverlay isLoading={loading}>
+  {/* Content */}
+</LoadingOverlay>
+
+// Minimal: Simple overlay
+<LoadingOverlay isLoading={loading} variant="minimal">
+  {/* Content */}
+</LoadingOverlay>
+
+// Centered: Fixed position modal-style
+<LoadingOverlay isLoading={loading} variant="centered">
+  {/* Content */}
+</LoadingOverlay>
+```
+
+### With Progress Bar
+
+```tsx
+<LoadingOverlay
+  isLoading={uploading}
+  message={`Uploading: ${fileName}`}
+  progress={uploadProgress}
+  showProgress
+>
+  {/* Content */}
+</LoadingOverlay>
+```
+
+### Backdrop Options
+
+```tsx
+// No backdrop
+<LoadingOverlay
+  isLoading={loading}
+  showBackdrop={false}
+>
+  {/* Content */}
+</LoadingOverlay>
+
+// No blur
+<LoadingOverlay
+  isLoading={loading}
+  backdropBlur={false}
+>
+  {/* Content */}
+</LoadingOverlay>
+```
+
+---
+
+### Skeleton Component
+
+**Location**: `src/components/ui/Skeleton.tsx`
+
+Skeleton loading placeholders with 3 variants and 2 animations.
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `''` | Additional CSS classes |
+| `variant` | `'text'` \| `'rectangular'` \| `'circular'` | `'rectangular'` | Shape variant |
+| `width` | `string \| number` | `undefined` | Custom width |
+| `height` | `string \| number` | `undefined` | Custom height |
+| `animation` | `'pulse'` \| `'wave'` | `'pulse'` | Animation type |
+
+### Basic Usage
+
+```tsx
+<Skeleton variant="text" width={200} height={20} />
+<Skeleton variant="rectangular" width="100%" height={150} />
+<Skeleton variant="circular" width={48} height={48} />
+```
+
+### Variants
+
+```tsx
+{/* Text placeholder */}
+<Skeleton variant="text" width="75%" height={16} />
+
+{/* Rectangular (image/card) */}
+<Skeleton variant="rectangular" width="100%" height={200} />
+
+{/* Circular (avatar) */}
+<Skeleton variant="circular" width={48} height={48} />
+```
+
+### Animations
+
+```tsx
+<Skeleton animation="pulse" />   {/* Pulse animation */}
+<Skeleton animation="wave" />    {/* Wave gradient animation */}
+```
+
+### Pre-built Skeletons
+
+#### CardSkeleton
+
+```tsx
+import { CardSkeleton } from './Skeleton';
+
+<CardSkeleton />
+```
+
+Renders: Image placeholder + 3 text lines.
+
+#### ListItemSkeleton
+
+```tsx
+import { ListItemSkeleton } from './Skeleton';
+
+<ListItemSkeleton />
+```
+
+Renders: Circular avatar + 2 text lines.
+
+#### TableSkeleton
+
+```tsx
+import { TableSkeleton } from './Skeleton';
+
+<TableSkeleton rows={5} cols={4} />
+```
+
+Renders: Table with 5 rows, 4 columns.
+
+---
+
+
+## ProgressBar Component
+
+**Location**: `src/components/ui/ProgressBar.tsx`
+
+A progress bar component with 12 colors, 4 sizes, 3 variants, and label support.
+
+### Features
+
+- **4 Sizes**: `sm`, `md`, `lg`, `xl`
+- **12 Colors**: primary, secondary, success, error, warning, info, purple, indigo, orange, red, blue, green
+- **3 Variants**: `default`, `striped`, `animated`
+- **Label Support**: Optional label overlay (xl size only)
+- **Accessibility**: Full ARIA progressbar role
+- **Smooth Transitions**: 300ms transition duration
+- **Dark Mode**: Consistent colors
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `number` | **Required** | Current progress value |
+| `max` | `number` | `100` | Maximum value |
+| `size` | `'sm'` \| `'md'` \| `'lg'` \| `'xl'` | `'md'` | Bar height |
+| `color` | `ProgressBarColor` | `'primary'` | Bar color |
+| `variant` | `'default'` \| `'striped'` \| `'animated'` | `'default'` | Visual style |
+| `showLabel` | `boolean` | `false` | Show percentage label (xl size only) |
+| `label` | `string` | `undefined` | Custom label text |
+| `fullWidth` | `boolean` | `true` | Full width bar |
+| `className` | `string` | `''` | Additional CSS classes |
+| `aria-label` | `string` | `undefined` | ARIA label |
+| `aria-valuenow` | `number` | `undefined` | ARIA current value |
+| `aria-valuemin` | `number` | `0` | ARIA minimum value |
+| `aria-valuemax` | `number` | `undefined` | ARIA maximum value |
+
+### Sizes
+
+```tsx
+<ProgressBar value={50} size="sm" />   {/* h-1.5 */}
+<ProgressBar value={50} size="md" />   {/* h-2 */}
+<ProgressBar value={50} size="lg" />   {/* h-2.5 */}
+<ProgressBar value={50} size="xl" />   {/* h-6, supports label */}
+```
+
+### Colors
+
+```tsx
+<ProgressBar color="primary" value={50} />
+<ProgressBar color="success" value={75} />
+<ProgressBar color="warning" value={25} />
+<ProgressBar color="error" value={10} />
+<ProgressBar color="neutral" value={60} />
+```
+
+### Variants
+
+```tsx
+{/* Default: Solid color */}
+<ProgressBar variant="default" value={50} />
+
+{/* Striped: Static stripes */}
+<ProgressBar variant="striped" value={50} />
+
+{/* Animated: Moving stripes */}
+<ProgressBar variant="animated" value={50} />
+```
+
+### With Label
+
+```tsx
+<ProgressBar
+  value={75}
+  size="xl"
+  showLabel
+  label="Processing"
+/>
+```
+
+Shows percentage inside bar.
+
+### Custom ARIA
+
+```tsx
+<ProgressBar
+  value={50}
+  max={200}
+  aria-label="Upload progress"
+  aria-valuenow={50}
+  aria-valuemin={0}
+  aria-valuemax={200}
+/>
+```
+
+### Dynamic Progress
+
+```tsx
+const [progress, setProgress] = useState(0);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setProgress(p => Math.min(p + 1, 100));
+  }, 100);
+  return () => clearInterval(interval);
+}, []);
+
+<ProgressBar
+  value={progress}
+  size="md"
+  color="primary"
+  variant="animated"
+  label="Uploading..."
+/>
+```
+
+### Accessibility
+
+- **Progress Role**: `role="progressbar"` on container
+- **Value Now**: `aria-valuenow` for current value
+- **Value Min/Max**: `aria-valuemin` and `aria-valuemax`
+- **Labels**: `aria-label` for descriptive text
+- **Hidden Label**: `aria-hidden` on text inside bar
+
+---
+
+
+## Utility Components
+
+### PageHeader Component
+
+**Location**: `src/components/ui/PageHeader.tsx`
+
+A page header component with back button, title, subtitle, and action area.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Back Button**: Optional back button with customizable label
+- **Back Button Variants**: `primary`, `green`, `custom`
+- **Actions**: Optional action buttons/elements
+- **Responsive**: Flex layout adapts to screen size
+- **Accessibility**: Semantic heading structure
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | **Required** | Page title |
+| `subtitle` | `string` | `undefined` | Page subtitle |
+| `showBackButton` | `boolean` | `false` | Show back button |
+| `backButtonLabel` | `string` | `'Kembali'` | Back button text |
+| `backButtonVariant` | `'primary'` \| `'green'` \| `'custom'` | `'primary'` | Back button style |
+| `onBackButtonClick` | `() => void` | `undefined` | Back button click handler |
+| `actions` | `ReactNode` | `undefined` | Action buttons area |
+| `size` | `'sm'` \| `'md'` \| `'lg'` | `'md'` | Header size |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Basic Usage
+
+```tsx
+<PageHeader
+  title="Manajemen User"
+  subtitle="Kelola data user dan hak akses"
+/>
+```
+
+### With Back Button
+
+```tsx
+<PageHeader
+  title="Edit User"
+  showBackButton
+  onBackButtonClick={() => navigate(-1)}
+/>
+```
+
+### With Actions
+
+```tsx
+<PageHeader
+  title="Daftar Siswa"
+  actions={
+    <div className="flex gap-2">
+      <Button variant="primary" onClick={handleAdd}>
+        Tambah Siswa
+      </Button>
+      <Button variant="secondary" onClick={handleExport}>
+        Export
+      </Button>
+    </div>
+  }
+/>
+```
+
+### With Subtitle
+
+```tsx
+<PageHeader
+  title="Dashboard"
+  subtitle="Selamat datang kembali, {user.name}"
+/>
+```
+
+### Complete Example
+
+```tsx
+<PageHeader
+  title="Manajemen Akademik"
+  subtitle="Kelola nilai, jadwal, dan absensi"
+  showBackButton
+  backButtonLabel="Kembali ke Dashboard"
+  onBackButtonClick={() => navigate('/dashboard')}
+  backButtonVariant="primary"
+  actions={
+    <div className="flex gap-2">
+      <Button variant="secondary" onClick={handleRefresh}>
+        Refresh
+      </Button>
+      <Button variant="primary" onClick={handleAdd}>
+        Tambah Baru
+      </Button>
+    </div>
+  }
+  size="lg"
+/>
+```
+
+### Sizes
+
+```tsx
+<PageHeader size="sm"> {/* text-xl */}
+  <h3>Small Title</h3>
+</PageHeader>
+
+<PageHeader size="md"> {/* text-2xl sm:text-xl */}
+  <h2>Medium Title</h2>
+</PageHeader>
+
+<PageHeader size="lg"> {/* text-3xl sm:text-2xl */}
+  <h1>Large Title</h1>
+</PageHeader>
+```
+
+---
+
+### ErrorMessage Component
+
+**Location**: `src/components/ui/ErrorMessage.tsx`
+
+A reusable error message component with 2 variants and icon support.
+
+### Features
+
+- **2 Variants**: `inline`, `card`
+- **Icon Support**: Optional icon element
+- **Custom Title**: Override default "Error" title
+- **Semantic HTML**: `role="alert"` for accessibility
+- **Responsive**: Adapts to content
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `title` | `string` | `'Error'` | Error title (card variant only) |
+| `message` | `string` | **Required** | Error message |
+| `variant` | `'inline'` \| `'card'` | `'card'` | Display style |
+| `icon` | `ReactNode` | `undefined` | Custom error icon |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Inline Variant
+
+```tsx
+<ErrorMessage
+  message="Gagal memuat data"
+  variant="inline"
+/>
+```
+
+Simple inline error message.
+
+### Card Variant
+
+```tsx
+<ErrorMessage
+  title="Error Jaringan"
+  message="Tidak dapat terhubung ke server. Periksa koneksi Anda."
+  variant="card"
+/>
+```
+
+Full card with title and message.
+
+### With Icon
+
+```tsx
+<ErrorMessage
+  title="Error Upload"
+  message="File terlalu besar (max 10MB)"
+  variant="card"
+  icon={<ExclamationTriangleIcon />}
+/>
+```
+
+### Custom Styling
+
+```tsx
+<ErrorMessage
+  message="Field ini wajib diisi"
+  variant="inline"
+  className="mt-2 text-xs"
+/>
+```
+
+---
+
+### PDFExportButton Component
+
+**Location**: `src/components/ui/PDFExportButton.tsx`
+
+A PDF export button with loading state and icon.
+
+### Features
+
+- **3 Variants**: `primary`, `secondary`, `ghost`
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Loading State**: Spinner during export
+- **Icon**: Built-in DocumentArrowDownIcon
+- **Disabled State**: Prevents clicks during export
+- **Dark Mode**: Consistent styling
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onExport` | `() => void` | **Required** | Export handler |
+| `loading` | `boolean` | `false` | Loading state |
+| `disabled` | `boolean` | `false` | Disabled state |
+| `variant` | `'primary'` \| `'secondary'` \| `'ghost'` | `'primary'` | Button style |
+| `size` | `'sm'` \| `'md'` \| `'lg'` | `'sm'` | Button size |
+| `label` | `string` | `'Export PDF'` | Button text |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Basic Usage
+
+```tsx
+<PDFExportButton
+  onExport={handleExportPDF}
+  loading={isExporting}
+/>
+```
+
+### Custom Label
+
+```tsx
+<PDFExportButton
+  label="Download Laporan"
+  onExport={handleExportPDF}
+  variant="primary"
+  size="md"
+/>
+```
+
+### With Disabled State
+
+```tsx
+<PDFExportButton
+  label="Export PDF"
+  onExport={handleExportPDF}
+  disabled={!canExport}
+  loading={isExporting}
+/>
+```
+
+### Different Variants
+
+```tsx
+<PDFExportButton variant="primary" label="Export PDF" onExport={handleExport} />
+<PDFExportButton variant="secondary" label="Export PDF" onExport={handleExport} />
+<PDFExportButton variant="ghost" label="Export PDF" onExport={handleExport} />
+```
+
+### Different Sizes
+
+```tsx
+<PDFExportButton size="sm" label="Export" onExport={handleExport} />
+<PDFExportButton size="md" label="Export PDF" onExport={handleExport} />
+<PDFExportButton size="lg" label="Export PDF Report" onExport={handleExport} />
+```
+
+---
+
