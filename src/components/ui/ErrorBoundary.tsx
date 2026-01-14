@@ -3,6 +3,7 @@ import { logger } from '../../utils/logger';
 import Card from './Card';
 import Button from './Button';
 import { ArrowPathIcon, AlertTriangleIcon } from '../icons/StatusIcons';
+import { INFO_EMAIL } from '../../constants';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -153,10 +154,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             <p className="mt-6 text-sm text-neutral-500 dark:text-neutral-400">
               Jika masalah ini berlanjut, hubungi{' '}
               <a
-                href="mailto:info@ma-malnukananga.sch.id"
+                href={`mailto:${INFO_EMAIL}`}
                 className="text-primary-600 dark:text-primary-400 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 rounded"
               >
-                info@ma-malnukananga.sch.id
+                {INFO_EMAIL}
               </a>
             </p>
           </div>

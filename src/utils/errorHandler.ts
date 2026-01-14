@@ -1,4 +1,5 @@
 import { logger } from './logger';
+import { ADMIN_EMAIL } from '../constants';
 
 export enum ErrorType {
   NETWORK_ERROR = 'NETWORK_ERROR',
@@ -529,7 +530,7 @@ export function getUIFeedback(error: AppError): ErrorFeedback {
           label: 'Hubungi Administrator',
           action: () => {
             // Navigate to contact admin or open email
-            window.open('mailto:admin@malnu-kananga.sch.id');
+            window.open(`mailto:${ADMIN_EMAIL}`);
           }
         }
       ];

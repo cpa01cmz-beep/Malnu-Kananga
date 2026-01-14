@@ -169,6 +169,9 @@ export const ERROR_MESSAGES = {
     QUEUE_FULL: 'Antrian pesan penuh. Tunggu hingga pesan selesai dibaca.',
 } as const;
 
+export const ADMIN_EMAIL = 'admin@malnu-kananga.sch.id';
+export const INFO_EMAIL = 'info@ma-malnukananga.sch.id';
+
 export const VOICE_COMMANDS = {
     OPEN_SETTINGS: ['buka pengaturan', 'buka setting', 'open settings', 'open setting'],
     CLOSE_SETTINGS: ['tutup pengaturan', 'tutup setting', 'close settings', 'close setting'],

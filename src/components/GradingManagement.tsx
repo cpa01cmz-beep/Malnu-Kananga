@@ -33,6 +33,7 @@ import { User, UserRole, UserExtraRole } from '../types';
 import ErrorMessage from './ui/ErrorMessage';
 import { OfflineIndicator } from './OfflineIndicator';
 import SearchInput from './ui/SearchInput';
+import { DEFAULT_API_BASE_URL } from '../config';
 
 
 interface StudentGrade {
@@ -358,7 +359,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev'}/api/grades/${grade.id}`,
+            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/grades/${grade.id}`,
             method: 'PUT'
           });
           
@@ -429,7 +430,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev'}/api/grades/${grade.id}`,
+            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/grades/${grade.id}`,
             method: 'PUT'
           });
           
