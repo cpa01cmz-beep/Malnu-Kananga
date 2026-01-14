@@ -1,8 +1,8 @@
  
- 
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { webSocketService, type RealTimeEvent } from '../webSocketService';
-import { apiService } from '../apiService';
+import { getAuthToken, parseJwtPayload } from '../../utils/authUtils';
 import { logger } from '../../utils/logger';
 import { STORAGE_KEYS } from '../../constants';
 
@@ -143,11 +143,10 @@ class MockCloseEvent implements Event {
 (global as any).CloseEvent = MockCloseEvent;
 
 // Mock dependencies
-vi.mock('../apiService', () => ({
-  apiService: {
-    getAuthToken: vi.fn(),
-    parseJwtPayload: vi.fn(),
-  },
+vi.mock('../../utils/authUtils', () => ({
+  getAuthToken: vi.fn(),
+  parseJwtPayload: vi.fn(),
+  isTokenExpired: vi.fn(),
 }));
 
 vi.mock('../../utils/logger', () => ({
@@ -181,10 +180,10 @@ describe('WebSocketService', () => {
     mockWebSocket.send.mockClear();
     mockWebSocket.close.mockClear();
     mockWebSocket.addEventListener.mockClear();
-    
+
     // Setup default mocks
-    vi.mocked(apiService.getAuthToken).mockReturnValue('test-token');
-    vi.mocked(apiService.parseJwtPayload).mockReturnValue({
+    vi.mocked(getAuthToken).mockReturnValue('test-token');
+    vi.mocked(parseJwtPayload).mockReturnValue({
       user_id: 'test-user',
       email: 'test@example.com',
       role: 'teacher',
@@ -214,7 +213,7 @@ describe('WebSocketService', () => {
     });
 
     it('should not initialize without token', async () => {
-      vi.mocked(apiService.getAuthToken).mockReturnValue(null);
+      vi.mocked(getAuthToken).mockReturnValue(null);
 
       await webSocketService.initialize();
 
@@ -396,11 +395,11 @@ describe('WebSocketService', () => {
     });
 
     it('should handle token expiration', async () => {
-      vi.mocked(apiService.parseJwtPayload).mockReturnValue({
+      vi.mocked(parseJwtPayload).mockReturnValue({
         user_id: 'test-user',
         email: 'test@example.com',
         role: 'teacher',
-        exp: Date.now() / 1000 - 3600, // 1 hour ago (expired)
+        exp: Date.now() / 1000 - 3600, // Expired 1 hour ago
         session_id: 'test-session',
       });
 
