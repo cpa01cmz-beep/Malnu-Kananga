@@ -712,19 +712,12 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
               />
             ) : (
               events.map(event => (
-                <div
+                <button
                   key={event.id}
+                  type="button"
                   onClick={() => setSelectedEvent(event)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setSelectedEvent(event);
-                    }
-                  }}
-                  role="button"
-                  tabIndex={0}
                   aria-label={`Lihat detail kegiatan: ${event.eventName}`}
-                  className={`bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border ${
+                  className={`bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border text-left w-full ${
                     selectedEvent?.id === event.id
                       ? 'border-orange-500 ring-2 ring-orange-200'
                       : 'border-neutral-100 dark:border-neutral-700 hover:border-orange-300'
@@ -759,7 +752,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                       <TrashIcon />
                     </button>
                   </div>
-                </div>
+                </button>
               ))
             )}
           </div>

@@ -9,6 +9,7 @@
 
 - [x] Fix UI/UX accessibility test failures (10 failures fixed, 1466 passing)
 - [x] Fix misleading hover effects on non-interactive cards (WCAG compliance)
+- [x] Fix semantic HTML: Replace div role="button" with button element in OsisEvents.tsx (2026-01-14)
 - [ ] Fix remaining test failures (17 failures, 1466 passing, 10 skipped)
   - emailService (4 failures) - API mock configuration issues
   - studentPortalValidator (13 failures) - Validation logic issues
@@ -75,6 +76,18 @@
 ---
 
 ## Completed (2026-01-14)
+
+- [x] **Semantic HTML Accessibility Fix** - Replaced div role="button" with semantic button element in OsisEvents.tsx
+  - Changed `<div role="button">` to `<button type="button">` (line 715-755)
+  - Removed manual keyboard handler (`onKeyDown`) since button handles Enter/Space automatically
+  - Removed `tabIndex={0}` since button is automatically in tab order
+  - Removed `role="button"` since button has this role implicitly
+  - Added `text-left` and `w-full` to maintain visual layout
+  - Improved accessibility by using semantic HTML
+  - Better screen reader support and native keyboard navigation
+  - Follows WCAG best practices for interactive elements
+  - Aligns with project's "use semantic HTML" design principle
+  - Verified with typecheck and lint (no regressions)
 
 - [x] **Height Token System** - Created centralized height design token system
   - Added `src/config/heights.ts` with reusable height tokens
