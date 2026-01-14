@@ -53,6 +53,10 @@ export interface RealTimeSubscription {
 
 /**
  * Configuration for WebSocket service
+ *
+ * TODO: Refactor circular dependency between config.ts and apiService.ts to eliminate
+ * hardcoded fallback URL 'wss://malnu-kananga-worker-prod.cpa01cmz.workers.dev'.
+ * Currently using DEFAULT_API_BASE_URL causes issues due to module evaluation order in tests.
  */
 export const WS_CONFIG = {
   WS_BASE_URL: import.meta.env.VITE_WS_BASE_URL ||
