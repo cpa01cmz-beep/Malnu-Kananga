@@ -162,9 +162,8 @@ describe('Input Component', () => {
       );
 
       const input = screen.getByLabelText('Email');
-      
-      userEvent.click(input);
-      userEvent.tab(); // Touch the field
+
+      fireEvent.focus(input);
       fireEvent.blur(input);
 
       await waitFor(() => {
@@ -186,10 +185,10 @@ describe('Input Component', () => {
       );
 
       const input = screen.getByLabelText('Required Field');
-      
-      userEvent.click(input);
-      userEvent.tab(); // Touch the field
+
+      fireEvent.focus(input);
       userEvent.type(input, 'test');
+      fireEvent.blur(input);
       userEvent.clear(input);
 
       await waitFor(() => {
@@ -206,13 +205,14 @@ describe('Input Component', () => {
           validationRules={[standardValidationRules.required()]}
           onChange={mockOnChange}
           validateOnChange={false}
+          validateOnBlur={false}
+          accessibility={{ announceErrors: false }}
         />
       );
 
       const input = screen.getByLabelText('Required Field');
-      
-      userEvent.click(input);
-      userEvent.tab(); // Touch the field
+
+      fireEvent.focus(input);
       userEvent.type(input, 'test');
       userEvent.clear(input);
 
@@ -263,9 +263,8 @@ describe('Input Component', () => {
       );
 
       const input = screen.getByLabelText('Email');
-      
-      userEvent.click(input);
-      userEvent.tab(); // Touch the field
+
+      fireEvent.focus(input);
       fireEvent.blur(input);
 
       await waitFor(() => {
@@ -284,9 +283,8 @@ describe('Input Component', () => {
       );
 
       const input = screen.getByLabelText('Email');
-      
-      userEvent.click(input);
-      userEvent.tab(); // Touch the field
+
+      fireEvent.focus(input);
       fireEvent.blur(input);
 
       await waitFor(() => {

@@ -3,7 +3,7 @@ import { vi, describe, it, beforeEach, expect } from 'vitest';
 import TeacherDashboard from '../TeacherDashboard';
 
 // Mock hooks
-vi.mock('../../hooks/usePushNotifications', () => ({
+vi.mock('../../hooks/useUnifiedNotifications', () => ({
   usePushNotifications: () => ({
     showNotification: vi.fn(),
     createNotification: vi.fn(),
