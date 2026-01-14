@@ -50,14 +50,16 @@ vi.mock('../../services/ocrEnhancementService', () => ({
 
 vi.mock('../../hooks/useSemanticSearch', () => ({
   useSemanticSearch: () => ({
-    query: '',
-    results: [],
-    isLoading: false,
+    searchResults: [],
+    isSearching: false,
     error: null,
-    search: vi.fn(),
+    searchQuery: '',
+    suggestedQueries: [],
+    relatedMaterials: [],
+    semanticSearch: vi.fn(),
     clearSearch: vi.fn(),
-    isSemanticMode: false,
-    setIsSemanticMode: vi.fn()
+    getSuggestions: vi.fn(),
+    getRelatedMaterials: vi.fn()
   })
 }));
 vi.mock('../../hooks/useVoiceCommands', () => ({
@@ -115,22 +117,24 @@ describe('ELibrary Keyboard Navigation', () => {
 
   it('should toggle semantic mode with Enter key', async () => {
     render(<ELibrary {...defaultProps} />);
-    
+
     const semanticModeButton = await screen.findByLabelText('Pencarian semantik AI');
-    
+
+    semanticModeButton.focus();
     fireEvent.keyDown(semanticModeButton, { key: 'Enter' });
 
-    expect(semanticModeButton).toBeInTheDocument();
+    expect(semanticModeButton).toHaveFocus();
   });
 
   it('should toggle semantic mode with Space key', async () => {
     render(<ELibrary {...defaultProps} />);
-    
+
     const semanticModeButton = await screen.findByLabelText('Pencarian semantik AI');
-    
+
+    semanticModeButton.focus();
     fireEvent.keyDown(semanticModeButton, { key: ' ' });
 
-    expect(semanticModeButton).toBeInTheDocument();
+    expect(semanticModeButton).toHaveFocus();
   });
 
   it('should toggle semantic options with Enter key', async () => {
@@ -188,46 +192,54 @@ describe('ELibrary Keyboard Navigation', () => {
 
   it('should toggle semantic mode with Enter key', async () => {
     render(<ELibrary {...defaultProps} />);
-    
+
     const semanticModeButton = await screen.findByLabelText('Pencarian semantik AI');
-    
     semanticModeButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
     fireEvent.keyDown(semanticModeButton, { key: 'Enter' });
 
-    expect(semanticModeButton).toHaveFocus();
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should toggle semantic mode with Space key', async () => {
     render(<ELibrary {...defaultProps} />);
-    
+
     const semanticModeButton = await screen.findByLabelText('Pencarian semantik AI');
-    
     semanticModeButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
     fireEvent.keyDown(semanticModeButton, { key: ' ' });
 
-    expect(semanticModeButton).toHaveFocus();
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should toggle semantic options with Enter key', async () => {
     render(<ELibrary {...defaultProps} />);
-    
+
     const semanticOptionsButton = await screen.findByLabelText('Opsi pencarian semantik');
-    
     semanticOptionsButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
     fireEvent.keyDown(semanticOptionsButton, { key: 'Enter' });
 
-    expect(semanticOptionsButton).toHaveFocus();
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should toggle semantic options with Space key', async () => {
     render(<ELibrary {...defaultProps} />);
-    
+
     const semanticOptionsButton = await screen.findByLabelText('Opsi pencarian semantik');
-    
     semanticOptionsButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
     fireEvent.keyDown(semanticOptionsButton, { key: ' ' });
 
-    expect(semanticOptionsButton).toHaveFocus();
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should have proper aria-labels for all filter buttons', async () => {
@@ -241,58 +253,54 @@ describe('ELibrary Keyboard Navigation', () => {
 
   it('should prevent default behavior on Space key activation', async () => {
     render(<ELibrary {...defaultProps} />);
-    
-    const advancedSearchButton = await screen.findByLabelText('Pencarian lanjutan');
-    const preventDefault = vi.fn();
-    
-    fireEvent.keyDown(advancedSearchButton, { 
-      key: ' ',
-      preventDefault 
-    });
 
-    expect(preventDefault).toHaveBeenCalled();
+    const advancedSearchButton = await screen.findByLabelText('Pencarian lanjutan');
+    advancedSearchButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
+    fireEvent.keyDown(advancedSearchButton, { key: ' ' });
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should prevent default behavior on Enter key activation', async () => {
     render(<ELibrary {...defaultProps} />);
-    
-    const favoritesButton = await screen.findByLabelText('Tampilkan hanya favorit');
-    const preventDefault = vi.fn();
-    
-    fireEvent.keyDown(favoritesButton, { 
-      key: 'Enter',
-      preventDefault 
-    });
 
-    expect(preventDefault).toHaveBeenCalled();
+    const favoritesButton = await screen.findByLabelText('Tampilkan hanya favorit');
+    favoritesButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
+    fireEvent.keyDown(favoritesButton, { key: 'Enter' });
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should handle Enter key with correct keyCode', async () => {
     render(<ELibrary {...defaultProps} />);
-    
-    const semanticModeButton = await screen.findByLabelText('Pencarian semantik AI');
-    const preventDefault = vi.fn();
-    
-    fireEvent.keyDown(semanticModeButton, { 
-      keyCode: 13,
-      preventDefault 
-    });
 
-    expect(preventDefault).toHaveBeenCalled();
+    const semanticModeButton = await screen.findByLabelText('Pencarian semantik AI');
+    semanticModeButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
+    fireEvent.keyDown(semanticModeButton, { keyCode: 13 });
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should handle Space key with correct keyCode', async () => {
     render(<ELibrary {...defaultProps} />);
-    
-    const semanticOptionsButton = await screen.findByLabelText('Opsi pencarian semantik');
-    const preventDefault = vi.fn();
-    
-    fireEvent.keyDown(semanticOptionsButton, { 
-      keyCode: 32,
-      preventDefault 
-    });
 
-    expect(preventDefault).toHaveBeenCalled();
+    const semanticOptionsButton = await screen.findByLabelText('Opsi pencarian semantik');
+    semanticOptionsButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
+    fireEvent.keyDown(semanticOptionsButton, { keyCode: 32 });
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should not trigger on other keys', async () => {
@@ -311,62 +319,54 @@ describe('ELibrary Keyboard Navigation', () => {
 
   it('should prevent default behavior on Space key activation', async () => {
     render(<ELibrary {...defaultProps} />);
-    
-    const advancedSearchButton = await screen.findByLabelText('Pencarian lanjutan');
-    const preventDefault = vi.fn();
-    
-    advancedSearchButton.focus();
-    fireEvent.keyDown(advancedSearchButton, { 
-      key: ' ',
-      preventDefault 
-    });
 
-    expect(preventDefault).toHaveBeenCalled();
+    const advancedSearchButton = await screen.findByLabelText('Pencarian lanjutan');
+    advancedSearchButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
+    fireEvent.keyDown(advancedSearchButton, { key: ' ' });
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should prevent default behavior on Enter key activation', async () => {
     render(<ELibrary {...defaultProps} />);
-    
-    const favoritesButton = await screen.findByLabelText('Tampilkan hanya favorit');
-    const preventDefault = vi.fn();
-    
-    favoritesButton.focus();
-    fireEvent.keyDown(favoritesButton, { 
-      key: 'Enter',
-      preventDefault 
-    });
 
-    expect(preventDefault).toHaveBeenCalled();
+    const favoritesButton = await screen.findByLabelText('Tampilkan hanya favorit');
+    favoritesButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
+    fireEvent.keyDown(favoritesButton, { key: 'Enter' });
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should handle Enter key with correct keyCode', async () => {
     render(<ELibrary {...defaultProps} />);
-    
-    const semanticModeButton = await screen.findByLabelText('Pencarian semantik AI');
-    const preventDefault = vi.fn();
-    
-    semanticModeButton.focus();
-    fireEvent.keyDown(semanticModeButton, { 
-      keyCode: 13,
-      preventDefault 
-    });
 
-    expect(preventDefault).toHaveBeenCalled();
+    const semanticModeButton = await screen.findByLabelText('Pencarian semantik AI');
+    semanticModeButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
+    fireEvent.keyDown(semanticModeButton, { keyCode: 13 });
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should handle Space key with correct keyCode', async () => {
     render(<ELibrary {...defaultProps} />);
-    
-    const semanticOptionsButton = await screen.findByLabelText('Opsi pencarian semantik');
-    const preventDefault = vi.fn();
-    
-    semanticOptionsButton.focus();
-    fireEvent.keyDown(semanticOptionsButton, { 
-      keyCode: 32,
-      preventDefault 
-    });
 
-    expect(preventDefault).toHaveBeenCalled();
+    const semanticOptionsButton = await screen.findByLabelText('Opsi pencarian semantik');
+    semanticOptionsButton.focus();
+    const preventDefaultSpy = vi.spyOn(KeyboardEvent.prototype, 'preventDefault');
+
+    fireEvent.keyDown(semanticOptionsButton, { keyCode: 32 });
+
+    expect(preventDefaultSpy).toHaveBeenCalled();
+    preventDefaultSpy.mockRestore();
   });
 
   it('should not trigger on other keys', async () => {
