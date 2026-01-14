@@ -14,7 +14,7 @@ import SearchInput from './ui/SearchInput';
 import { EmptyState } from './ui/LoadingState';
 import Card from './ui/Card';
 import DocumentTextIcon from './icons/DocumentTextIcon';
-import PencilIcon from './icons/PencilIcon';
+import { PencilIcon } from './icons/PencilIcon';
 import { CheckIcon, XMarkIcon } from './icons/MaterialIcons';
 import { HEIGHTS } from '../config/heights';
 
@@ -444,9 +444,8 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                                   size="sm"
                                                   ariaLabel="Edit skor"
                                                   tooltip="Edit skor"
-                                                >
-                                                  <PencilIcon className="w-4 h-4" />
-                                                </IconButton>
+                                                  icon={<PencilIcon />}
+                                                />
                                               </>
                                             ) : (
                                               <button

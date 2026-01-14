@@ -391,7 +391,7 @@ export class StudentPortalValidator {
       warnings.push('Informasi kelas tidak tersedia');
     }
 
-    if (student.phoneNumber && !/^\d[\s+-]+$/.test(student.phoneNumber)) {
+    if (student.phoneNumber && !/^[\d\s+-]+$/.test(student.phoneNumber)) {
       errors.push('Format nomor telepon tidak valid');
     }
 
