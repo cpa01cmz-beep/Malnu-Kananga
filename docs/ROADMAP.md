@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-14
-**Version**: 2.2.0
+**Version**: 2.3.0
 **Status**: Active
 
 Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal MA Malnu Kananga**.
@@ -240,8 +240,23 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
 - Type-safe error handling dengan constants
 - Reduced risk of inconsistencies across endpoints
 
+### Bundle Size Optimization (2026-01-14)
+- Optimized main bundle to 488KB (12KB below 500KB target)
+- Lazy loaded heavy dashboard components (Teacher, Parent, Student, Admin)
+- Lazy loaded modal components (Documentation, SiteEditor, PPDBRegistration)
+- Split vendor libraries into separate on-demand chunks:
+  - vendor-charts (Recharts): 388KB
+  - vendor-jpdf (jsPDF): 380KB
+  - vendor-genai (Google GenAI): 248KB
+  - vendor-html2canvas: 196KB
+  - vendor-tesseract: 16KB
+- Split offline data service into 83KB chunk
+- Improved initial load time and caching strategy
+- Enhanced code splitting for optimal chunk loading
+- Verified all typecheck, lint, and tests passing
+
 ---
 
 **Last Updated**: 2026-01-14
-**Version**: 2.1.2
+**Version**: 2.2.0
 **Status**: Active
