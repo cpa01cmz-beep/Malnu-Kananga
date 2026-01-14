@@ -1,6 +1,7 @@
 import React from 'react';
+import { getColorClasses } from '../../config/colors';
 
-export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'purple' | 'indigo' | 'orange' | 'red';
+export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'secondary';
 export type BadgeSize = 'sm' | 'md' | 'lg' | 'xl';
 export type BadgeStyle = 'solid' | 'outline';
 
@@ -14,46 +15,35 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 
 const baseClasses = "inline-flex items-center justify-center font-semibold transition-colors duration-200";
 
-const redVariantStyles: Record<BadgeStyle, string> = {
-  solid: "bg-red-700 text-white dark:bg-red-600 dark:text-white",
-  outline: "border-2 border-red-600 text-red-700 dark:border-red-400 dark:text-red-300",
-};
-
 const variantClasses: Record<BadgeVariant, Record<BadgeStyle, string>> = {
   success: {
-    solid: "bg-green-700 text-white dark:bg-green-600 dark:text-white",
+    solid: getColorClasses('success', 'badge'),
     outline: "border-2 border-green-600 text-green-700 dark:border-green-400 dark:text-green-300",
   },
-  error: redVariantStyles,
+  error: {
+    solid: getColorClasses('error', 'badge'),
+    outline: "border-2 border-red-600 text-red-700 dark:border-red-400 dark:text-red-300",
+  },
   warning: {
-    solid: "bg-yellow-600 text-white dark:bg-yellow-500 dark:text-white",
+    solid: getColorClasses('warning', 'badge'),
     outline: "border-2 border-yellow-600 text-yellow-700 dark:border-yellow-400 dark:text-yellow-300",
   },
   info: {
-    solid: "bg-blue-700 text-white dark:bg-blue-600 dark:text-white",
+    solid: getColorClasses('info', 'badge'),
     outline: "border-2 border-blue-600 text-blue-700 dark:border-blue-400 dark:text-blue-300",
   },
   neutral: {
-    solid: "bg-neutral-700 text-white dark:bg-neutral-600 dark:text-white",
+    solid: getColorClasses('neutral', 'badge'),
     outline: "border-2 border-neutral-500 text-neutral-700 dark:border-neutral-400 dark:text-neutral-300",
   },
   primary: {
-    solid: "bg-primary-600 text-white dark:bg-primary-500 dark:text-white",
+    solid: getColorClasses('primary', 'badge'),
     outline: "border-2 border-primary-500 text-primary-700 dark:border-primary-400 dark:text-primary-300",
   },
-  purple: {
-    solid: "bg-purple-700 text-white dark:bg-purple-600 dark:text-white",
+  secondary: {
+    solid: getColorClasses('secondary', 'badge'),
     outline: "border-2 border-purple-600 text-purple-700 dark:border-purple-400 dark:text-purple-300",
   },
-  indigo: {
-    solid: "bg-indigo-700 text-white dark:bg-indigo-600 dark:text-white",
-    outline: "border-2 border-indigo-600 text-indigo-700 dark:border-indigo-400 dark:text-indigo-300",
-  },
-  orange: {
-    solid: "bg-orange-700 text-white dark:bg-orange-600 dark:text-white",
-    outline: "border-2 border-orange-600 text-orange-700 dark:border-orange-400 dark:text-orange-300",
-  },
-  red: redVariantStyles,
 };
 
 const sizeClasses: Record<BadgeSize, string> = {
