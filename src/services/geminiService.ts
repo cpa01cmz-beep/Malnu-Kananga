@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 import type { FeaturedProgram, LatestNews } from '../types';
-import { WORKER_CHAT_ENDPOINT } from '../config';
+import { WORKER_CHAT_ENDPOINT } from '../config/api';
 import { STORAGE_KEYS } from '../constants';
 import {
   classifyError,

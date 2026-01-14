@@ -17,13 +17,14 @@ import { useOfflineActionQueue, type SyncResult } from '../services/offlineActio
 import { STORAGE_KEYS } from '../constants';
 import { pdfExportService } from '../services/pdfExportService';
 import ProgressBar from './ui/ProgressBar';
+import { DEFAULT_API_BASE_URL } from '../config/api';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { 
-  validateGradeInput, 
-  sanitizeGradeInput, 
-  calculateGradeLetter, 
+import {
+  validateGradeInput,
+  sanitizeGradeInput,
+  calculateGradeLetter,
   calculateFinalGrade,
-  GradeInput 
+  GradeInput
 } from '../utils/teacherValidation';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { createToastHandler } from '../utils/teacherErrorHandler';
@@ -35,7 +36,6 @@ import { User, UserRole, UserExtraRole } from '../types';
 import ErrorMessage from './ui/ErrorMessage';
 import { OfflineIndicator } from './OfflineIndicator';
 import SearchInput from './ui/SearchInput';
-import { DEFAULT_API_BASE_URL } from '../config';
 
 
 interface StudentGrade {

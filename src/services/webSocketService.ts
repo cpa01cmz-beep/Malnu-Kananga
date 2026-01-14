@@ -1,12 +1,12 @@
   
-import { 
-  STORAGE_KEYS, 
-  type UserRole 
+import {
+  STORAGE_KEYS,
+  type UserRole
 } from '../constants';
 import { apiService } from './apiService';
 import type { AuthPayload } from './apiService';
 import { logger } from '../utils/logger';
-import { DEFAULT_API_BASE_URL } from '../config';
+import { WS_BASE_URL, DEFAULT_API_BASE_URL } from '../config/api';
 import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification } from '../types';
 
 /* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
@@ -53,14 +53,9 @@ export interface RealTimeSubscription {
 
 /**
  * Configuration for WebSocket service
- *
- * TODO: Refactor circular dependency between config.ts and apiService.ts to eliminate
- * hardcoded fallback URL 'wss://malnu-kananga-worker-prod.cpa01cmz.workers.dev'.
- * Currently using DEFAULT_API_BASE_URL causes issues due to module evaluation order in tests.
  */
 export const WS_CONFIG = {
-  WS_BASE_URL: import.meta.env.VITE_WS_BASE_URL ||
-    (import.meta.env.VITE_API_BASE_URL?.replace('https://', 'wss://') || 'wss://malnu-kananga-worker-prod.cpa01cmz.workers.dev') + '/ws',
+  WS_BASE_URL,
   MAX_RECONNECT_ATTEMPTS: 5,
   RECONNECT_DELAY: 5000,
   CONNECTION_TIMEOUT: 10000,
