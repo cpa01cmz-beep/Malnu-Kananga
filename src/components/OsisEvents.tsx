@@ -11,6 +11,9 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
+import FormGrid from './ui/FormGrid';
+import Select from './ui/Select';
+import Textarea from './ui/Textarea';
 import ProgressBar from './ui/ProgressBar';
 import { EmptyState } from './ui/LoadingState';
 import ConfirmationDialog from './ui/ConfirmationDialog';
@@ -308,7 +311,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
           <div className="space-y-4">
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
               <h3 className="text-lg font-bold mb-4">Daftar Pendaftar</h3>
-              <form onSubmit={handleAddRegistration} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <form onSubmit={handleAddRegistration} className="mb-4">
+                <FormGrid>
                 <Input
                   type="text"
                   placeholder="NISN Siswa"
@@ -330,6 +334,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   onChange={e => setNewRegistration({ ...newRegistration, studentClass: e.target.value })}
                   required
                 />
+                </FormGrid>
                 <Button type="submit" variant="warning" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" isLoading={isAddingRegistration}>
                   {isAddingRegistration ? 'Mendaftarkan...' : 'Daftar'}
                 </Button>
@@ -495,101 +500,101 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
         return (
           <div className="space-y-4">
             <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
-              <h3 className="text-lg font-bold mb-4">Umpan Balik Kegiatan</h3>
-              <form onSubmit={handleAddFeedback} className="space-y-4 mb-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="NISN Siswa"
-                    value={newFeedback.studentId || ''}
-                    onChange={e => setNewFeedback({ ...newFeedback, studentId: e.target.value })}
-                    className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
-                    required
-                  />
-                  <input
-                    type="text"
-                    placeholder="Nama Siswa"
-                    value={newFeedback.studentName || ''}
-                    onChange={e => setNewFeedback({ ...newFeedback, studentName: e.target.value })}
-                    className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
-                    required
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Rating Keseluruhan</label>
-                    <select
-                      value={newFeedback.overallRating || 5}
-                      onChange={e => setNewFeedback({ ...newFeedback, overallRating: parseInt(e.target.value) })}
-                      className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
-                      required
-                    >
-                      {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Rating Organisasi</label>
-                    <select
-                      value={newFeedback.organizationRating || 5}
-                      onChange={e => setNewFeedback({ ...newFeedback, organizationRating: parseInt(e.target.value) })}
-                      className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
-                      required
-                    >
-                      {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Rating Konten</label>
-                    <select
-                      value={newFeedback.contentRating || 5}
-                      onChange={e => setNewFeedback({ ...newFeedback, contentRating: parseInt(e.target.value) })}
-                      className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
-                      required
-                    >
-                      {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <Textarea
-                  rows={3}
-                  placeholder="Komentar atau saran..."
-                  value={newFeedback.comments || ''}
-                  onChange={e => setNewFeedback({ ...newFeedback, comments: e.target.value })}
-                  size="md"
-                />
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={newFeedback.wouldRecommend || false}
-                    onChange={e => setNewFeedback({ ...newFeedback, wouldRecommend: e.target.checked })}
-                    className="w-4 h-4 text-green-600"
-                  />
-                  <span className="text-sm font-medium">Saya merekomendasikan kegiatan ini</span>
-                </label>
-                <Button type="submit" variant="info" fullWidth>
-                  Kirim Umpan Balik
-                </Button>
-              </form>
-              <div className="space-y-3">
-                {feedback.map(fb => (
-                  <div key={fb.id} className="p-4 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="font-semibold">{fb.studentName} ({fb.studentClass})</p>
-                      <div className="flex gap-1">
-                        <span title="Rating Keseluruhan">⭐ {fb.overallRating}</span>
-                        <span title="Rating Organisasi">🏆 {fb.organizationRating}</span>
-                        <span title="Rating Konten">📝 {fb.contentRating}</span>
-                      </div>
-                    </div>
-                    {fb.comments && <p className="text-sm text-neutral-600 dark:text-neutral-300 italic">"{fb.comments}"</p>}
-                    {fb.wouldRecommend && <p className="text-xs text-green-600 font-semibold">✓ Merekomendasikan</p>}
-                    <p className="text-xs text-neutral-500 mt-1">{fb.submittedAt}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
+               <h3 className="text-lg font-bold mb-4">Umpan Balik Kegiatan</h3>
+               <form onSubmit={handleAddFeedback} className="space-y-4 mb-4">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <input
+                     type="text"
+                     placeholder="NISN Siswa"
+                     value={newFeedback.studentId || ''}
+                     onChange={e => setNewFeedback({ ...newFeedback, studentId: e.target.value })}
+                     className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                     required
+                   />
+                   <input
+                     type="text"
+                     placeholder="Nama Siswa"
+                     value={newFeedback.studentName || ''}
+                     onChange={e => setNewFeedback({ ...newFeedback, studentName: e.target.value })}
+                     className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                     required
+                   />
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                   <div>
+                     <label className="block text-sm font-medium mb-1">Rating Keseluruhan</label>
+                     <select
+                       value={newFeedback.overallRating || 5}
+                       onChange={e => setNewFeedback({ ...newFeedback, overallRating: parseInt(e.target.value) })}
+                       className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                       required
+                     >
+                       {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
+                     </select>
+                   </div>
+                   <div>
+                     <label className="block text-sm font-medium mb-1">Rating Organisasi</label>
+                     <select
+                       value={newFeedback.organizationRating || 5}
+                       onChange={e => setNewFeedback({ ...newFeedback, organizationRating: parseInt(e.target.value) })}
+                       className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                       required
+                     >
+                       {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
+                     </select>
+                   </div>
+                   <div>
+                     <label className="block text-sm font-medium mb-1">Rating Konten</label>
+                     <select
+                       value={newFeedback.contentRating || 5}
+                       onChange={e => setNewFeedback({ ...newFeedback, contentRating: parseInt(e.target.value) })}
+                       className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                       required
+                     >
+                       {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
+                     </select>
+                   </div>
+                 </div>
+                 <Textarea
+                   rows={3}
+                   placeholder="Komentar atau saran..."
+                   value={newFeedback.comments || ''}
+                   onChange={e => setNewFeedback({ ...newFeedback, comments: e.target.value })}
+                   size="md"
+                 />
+                 <label className="flex items-center gap-2">
+                   <input
+                     type="checkbox"
+                     checked={newFeedback.wouldRecommend || false}
+                     onChange={e => setNewFeedback({ ...newFeedback, wouldRecommend: e.target.checked })}
+                     className="w-4 h-4 text-green-600"
+                   />
+                   <span className="text-sm font-medium">Saya merekomendasikan kegiatan ini</span>
+                 </label>
+                 <Button type="submit" variant="info" fullWidth>
+                   Kirim Umpan Balik
+                 </Button>
+               </form>
+               <div className="space-y-3">
+                 {feedback.map(fb => (
+                   <div key={fb.id} className="p-4 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
+                     <div className="flex items-center justify-between mb-2">
+                       <p className="font-semibold">{fb.studentName} ({fb.studentClass})</p>
+                       <div className="flex gap-1">
+                         <span title="Rating Keseluruhan">⭐ {fb.overallRating}</span>
+                         <span title="Rating Organisasi">🏆 {fb.organizationRating}</span>
+                         <span title="Rating Konten">📝 {fb.contentRating}</span>
+                       </div>
+                     </div>
+                     {fb.comments && <p className="text-sm text-neutral-600 dark:text-neutral-300 italic">"{fb.comments}"</p>}
+                     {fb.wouldRecommend && <p className="text-xs text-green-600 font-semibold">✓ Merekomendasikan</p>}
+                     <p className="text-xs text-neutral-500 mt-1">{fb.submittedAt}</p>
+                   </div>
+                 ))}
+               </div>
+             </div>
+           </div>
+         );
 
       case 'announcements':
         return (

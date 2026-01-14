@@ -6,6 +6,7 @@ export { default as Label } from './Label';
 export { default as FileInput } from './FileUploader';
 export { Toggle } from './Toggle';
 export { default as SearchInput } from './SearchInput';
+export { default as FormGrid } from './FormGrid';
 
 // Button Components
 export { default as Button } from './Button';

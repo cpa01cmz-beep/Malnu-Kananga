@@ -4,6 +4,7 @@ import AcademicCapIcon from './icons/AcademicCapIcon';
 import { ToastType } from './Toast';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
+import FormGrid from './ui/FormGrid';
 import type { ParentChild, ParentTeacher, ParentMeeting } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
@@ -193,7 +194,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
         {showScheduleForm && (
           <div className="bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl p-6 mb-6">
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Jadwalkan Pertemuan Baru</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormGrid>
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                   Guru
@@ -270,7 +271,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
                   className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400"
                 />
               </div>
-              </div>
+            </FormGrid>
 
             <div className="flex justify-end gap-3 mt-4">
               <Button
@@ -354,14 +355,14 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
 
       <div className="bg-white dark:bg-neutral-800 rounded-3xl p-8 shadow-sm border border-neutral-100 dark:border-neutral-700">
         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-6">Tips Pertemuan Efektif</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-neutral-600 dark:text-neutral-400">
+        <FormGrid className="text-sm text-neutral-600 dark:text-neutral-400">
           <div>• Datang tepat waktu</div>
           <div>• Bawa daftar pertanyaan</div>
           <div>• Fokus pada topik pendidikan</div>
           <div>• Catat poin-poin penting</div>
           <div>• Hormati waktu guru</div>
           <div>• Diskusikan follow-up actions</div>
-        </div>
+        </FormGrid>
       </div>
     </div>
   );

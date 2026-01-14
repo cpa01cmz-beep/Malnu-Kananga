@@ -166,16 +166,16 @@ export function RealTimeExample() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
+                  <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
                 {grades.map((grade: Grade) => (
                   <tr key={grade.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-700/50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                    <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                       {grade.studentId}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                    <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                       {grade.subject || `Subject ${grade.subjectId}`}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                    <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         grade.score >= 90 ? 'bg-green-100 text-green-800' :
                         grade.score >= 80 ? 'bg-blue-100 text-blue-800' :
@@ -185,7 +185,7 @@ export function RealTimeExample() {
                         {grade.score}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500 dark:text-neutral-400">
+                    <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
                       {new Date().toLocaleTimeString()}
                     </td>
                   </tr>

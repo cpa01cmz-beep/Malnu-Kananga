@@ -324,7 +324,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
               autoComplete="email"
               fullWidth
             />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Select
                 id="user-role"
                 label="Role Utama"

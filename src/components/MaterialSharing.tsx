@@ -322,7 +322,7 @@ const teachersToRevokeList = teachers.filter(t => teacherIds.includes(t.id));
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 Izin Akses
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {(['view', 'edit', 'admin'] as const).map((perm) => (
                   <button
                     key={perm}

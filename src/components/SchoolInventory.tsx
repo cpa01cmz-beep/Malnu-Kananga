@@ -9,6 +9,7 @@ import Badge from './ui/Badge';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import Tab from './ui/Tab';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
+import FormGrid from './ui/FormGrid';
 import { BarChart } from 'recharts/es6/chart/BarChart';
 import { Bar } from 'recharts/es6/cartesian/Bar';
 import { XAxis } from 'recharts/es6/cartesian/XAxis';
@@ -88,6 +89,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [isSubmittingItem, setIsSubmittingItem] = useState(false);
+  const [isAddingMaintenance, setIsAddingMaintenance] = useState(false);
 
   const loadInventory = useCallback(async () => {
     setIsLoading(true);
@@ -154,6 +157,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
     e.preventDefault();
     if (!newItem.itemName) return;
 
+    setIsSubmittingItem(true);
     try {
       const itemData = {
         ...newItem,
@@ -181,6 +185,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
       }
     } catch {
       onShowToast('Gagal menambahkan barang. Silakan coba lagi.', 'error');
+    } finally {
+      setIsSubmittingItem(false);
     }
   };
 
@@ -210,6 +216,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
     e.preventDefault();
     if (!newMaintenance.itemId || !newMaintenance.scheduledDate) return;
 
+    setIsAddingMaintenance(true);
     try {
       const maintenanceData = {
         ...newMaintenance,
@@ -227,6 +234,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
       onShowToast('Jadwal维护 berhasil ditambahkan.', 'success');
     } catch {
       onShowToast('Gagal menambahkan jadwal维护.', 'error');
+    } finally {
+      setIsAddingMaintenance(false);
     }
   };
 
@@ -465,6 +474,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                     type="submit"
                     variant="blue-solid"
                     icon={<PlusIcon className="w-5 h-5" />}
+                    isLoading={isSubmittingItem}
                   >
                     Simpan Barang
                   </Button>
@@ -472,6 +482,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                     type="button"
                     variant="secondary"
                     onClick={() => setShowAddForm(false)}
+                    disabled={isSubmittingItem}
                   >
                     Batal
                   </Button>
@@ -587,6 +598,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   variant="blue-solid"
                   fullWidth
                   icon={<PlusIcon className="w-5 h-5" />}
+                  isLoading={isAddingMaintenance}
                 >
                   Tambah Jadwal
                 </Button>
