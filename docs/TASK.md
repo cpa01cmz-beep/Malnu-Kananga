@@ -44,7 +44,7 @@
 |--------|--------|---------|
 | TypeScript | ✅ Clean | No errors |
 | Linting | ✅ Clean | No errors |
-| Tests | ⚠️ Mixed | 0 TypeScript errors, 17 skipped (services/utils), 1466 passing |
+| Tests | ⚠️ Mixed | 17 failing, 1466 passing, 10 skipped |
 | Security | ✅ Clean | 0 vulnerabilities |
 | Dependencies | ✅ Up to date | No outdated packages |
 | Build | ✅ Success | ~13s build time |
