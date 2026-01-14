@@ -1,4 +1,5 @@
 import type { FeaturedProgram, LatestNews } from '../types';
+import { logger } from './logger';
 
 export interface AICommandValidationResult {
   isValid: boolean;
@@ -232,7 +233,7 @@ function logAuditEntry(entry: AuditLogEntry): void {
     localStorage.setItem(AUDIT_LOG_KEY, JSON.stringify(trimmedLogs));
   } catch (error) {
     // Silently fail audit logging to not block the main functionality
-    console.warn('Failed to log audit entry:', error);
+    logger.warn('Failed to log audit entry:', error);
   }
 }
 
