@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import FormGrid from './FormGrid';
+import FormGrid from '../FormGrid';
 
 describe('FormGrid', () => {
   it('renders children correctly', () => {

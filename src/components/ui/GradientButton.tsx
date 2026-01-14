@@ -1,5 +1,6 @@
 import React from 'react';
 import { GRADIENT_CLASSES } from '../../config/gradients';
+import { OPACITY_TOKENS } from '../../constants';
 
 export type GradientButtonVariant = 'primary' | 'secondary';
 export type GradientButtonSize = 'sm' | 'md' | 'lg';
@@ -20,7 +21,7 @@ const baseClasses = "inline-flex items-center justify-center font-semibold round
 
 const variantClasses: Record<GradientButtonVariant, string> = {
   primary: `${GRADIENT_CLASSES.CHAT_HEADER} text-white hover:from-primary-700 hover:to-primary-800 focus:ring-primary-500/50% hover:scale-[1.01]`,
-  secondary: "bg-white/95% dark:bg-neutral-800/95% backdrop-blur-sm text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:border-primary-500 dark:hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/40% focus:ring-primary-500/50% hover:scale-[1.01]",
+  secondary: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_SM} text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:border-primary-500 dark:hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/40% ${OPACITY_TOKENS.RING_PRIMARY_50} hover:scale-[1.01]`,
 };
 
 const sizeClasses: Record<GradientButtonSize, string> = {

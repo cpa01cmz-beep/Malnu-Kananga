@@ -12,6 +12,7 @@ import ErrorBoundary from './components/ui/ErrorBoundary';
 import ConfirmationDialog from './components/ui/ConfirmationDialog';
 import { logger } from './utils/logger';
 import { useTheme } from './hooks/useTheme';
+import { HEIGHTS } from './config/heights';
 
 // Lazy load modal/dialog components
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
@@ -38,7 +39,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { api } from './services/apiService';
 import { permissionService } from './services/permissionService';
 import { unifiedNotificationManager } from './services/unifiedNotificationManager';
-import { GRADIENT_CLASSES } from './config/gradients';
+
 
 // Auth Session Interface
 interface AuthSession {
@@ -276,7 +277,7 @@ const App: React.FC = () => {
   return (
     <NotificationProvider>
       <ErrorBoundary>
-        <div className={`${GRADIENT_CLASSES.APP_BACKGROUND} w-full min-h-screen font-sans antialiased text-[color:var(--color-text)] transition-colors duration-300`}>
+        <div className="w-full min-h-screen font-sans antialiased text-neutral-900 dark:text-neutral-100 bg-white dark:bg-neutral-900 transition-colors duration-300">
       <SkipLink
         targets={[
           { id: 'main-nav', label: 'Langsung ke navigasi utama' },
@@ -319,7 +320,7 @@ const App: React.FC = () => {
       <Footer onDocsClick={() => setIsDocsOpen(true)} />
 
       <div
-        className={`fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2.5rem)] max-w-sm h-[70vh] max-h-[600px] transition-all duration-300 ease-in-out ${
+        className={`fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2.5rem)] max-w-sm ${HEIGHTS.VIEWPORT.MEDIUM} ${HEIGHTS.VIEWPORT_MAX.COMPACT} transition-all duration-300 ease-in-out ${
           isChatOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
         }`}
         aria-hidden={!isChatOpen}

@@ -8,7 +8,7 @@
 
 ## Overview
 
-This document provides current deployment status and quick reference for to MA Malnu Kananga system. For detailed deployment procedures, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md). For comprehensive Cloudflare Workers status, see [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md).
+This document provides current deployment status and quick reference for the MA Malnu Kananga system. For detailed deployment procedures, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).
 
 ---
 
@@ -49,7 +49,7 @@ wrangler pages secret list --project-name=malnu-kananga
 ```
 
 Configured Secrets:
-- ✅ `VITE_API_BASE_URL` = "https://malnu-kananga-worker.cpa01cmz.workers.dev"
+- ✅ `VITE_API_BASE_URL` = "https://malnu-kananga-worker-prod.cpa01cmz.workers.dev"
 - ✅ `VITE_ENABLE_PWA` = "true"
 - ✅ `VITE_ENABLE_AI_CHAT` = "true"
 
@@ -254,8 +254,7 @@ wrangler deploy --env ""
 ## Related Documentation
 
 - **Detailed Deployment Guide**: [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)
-- **Cloudflare Workers Status**: [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md)
-- **API Reference**: [api-documentation.md](./api-documentation.md)
+- **API Reference**: [api-reference.md](./api-reference.md)
 
 ## Support
 

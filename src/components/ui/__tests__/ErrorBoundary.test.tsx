@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import _userEvent from '@testing-library/user-event';
 import ErrorBoundary from '../ErrorBoundary';
 
 describe('ErrorBoundary', () => {
@@ -91,9 +92,10 @@ describe('ErrorBoundary', () => {
     expect(reloadMock).toHaveBeenCalled();
   });
 
-  it('should have coba lagi button that resets error state', () => {
+  it('should have coba lagi button that resets error state', async () => {
+    const onReset = vi.fn();
     const { rerender } = render(
-      <ErrorBoundary>
+      <ErrorBoundary onReset={onReset}>
         <ThrowError shouldThrow={false} />
       </ErrorBoundary>
     );
@@ -101,7 +103,7 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('No error')).toBeInTheDocument();
 
     rerender(
-      <ErrorBoundary>
+      <ErrorBoundary onReset={onReset}>
         <ThrowError shouldThrow={true} />
       </ErrorBoundary>
     );

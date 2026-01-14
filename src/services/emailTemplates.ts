@@ -1,9 +1,10 @@
 import type { EmailTemplate, EmailTemplateContext } from '../types/email.types';
+import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 
 class EmailTemplatesService {
   private templates: Map<string, EmailTemplate> = new Map();
-  private storageKey = 'malnu_email_templates';
+  private storageKey = STORAGE_KEYS.EMAIL_TEMPLATES;
 
   constructor() {
     this.loadTemplates();

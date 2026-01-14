@@ -1,6 +1,6 @@
 import React from 'react';
 import { useWebSocket } from '../hooks/useWebSocket';
-import { Wifi, WifiOff, Loader2, AlertTriangle, RefreshCw } from 'lucide-react';
+import { WifiIcon, ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 interface WebSocketStatusProps {
   className?: string;
@@ -21,12 +21,12 @@ export function WebSocketStatus({
 
   const getStatusIcon = () => {
     if (isConnecting || isReconnecting) {
-      return <Loader2 className="w-4 h-4 animate-spin text-blue-500" />;
+      return <ArrowPathIcon className="w-4 h-4 animate-spin text-blue-500" />;
     }
     if (isConnected) {
-      return <Wifi className="w-4 h-4 text-green-500" />;
+      return <WifiIcon className="w-4 h-4 text-green-500" />;
     }
-    return <WifiOff className="w-4 h-4 text-red-500" />;
+    return <WifiIcon className="w-4 h-4 text-red-500 opacity-50" />;
   };
 
   const getStatusText = () => {
@@ -64,7 +64,7 @@ export function WebSocketStatus({
             className="ml-1 p-0.5 hover:bg-black/10 dark:hover:bg-white/10 rounded transition-colors"
             title="Reconnect"
           >
-            <RefreshCw className="w-3 h-3" />
+            <ArrowPathIcon className="w-3 h-3" />
           </button>
         )}
       </div>
@@ -79,7 +79,7 @@ export function WebSocketStatus({
           <p className="font-medium text-sm">{getStatusText()}</p>
           {!isConnected && (
             <p className="text-xs opacity-75 flex items-center gap-1 mt-0.5">
-              <AlertTriangle className="w-3 h-3" />
+              <ExclamationTriangleIcon className="w-3 h-3" />
               Using fallback polling (30s intervals)
             </p>
           )}
@@ -93,8 +93,8 @@ export function WebSocketStatus({
           aria-label="Reconnect WebSocket connection"
           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-white/50 dark:bg-neutral-700/50 hover:bg-white dark:hover:bg-neutral-600/70 text-neutral-900 dark:text-neutral-100 rounded-md border border-white/30 dark:border-neutral-600/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          <RefreshCw className="w-3 h-3" />
-          Reconnect
+            <ArrowPathIcon className="w-3 h-3" />
+            Reconnect
         </button>
       )}
     </div>
@@ -196,12 +196,12 @@ export function WebSocketStatusPanel({ className = '' }: { className?: string })
             >
               {isConnecting || isReconnecting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <ArrowPathIcon className="w-4 h-4 animate-spin" />
                   Connecting...
                 </>
               ) : (
                 <>
-                  <RefreshCw className="w-4 h-4" />
+                  <ArrowPathIcon className="w-4 h-4" />
                   Reconnect Now
                 </>
               )}

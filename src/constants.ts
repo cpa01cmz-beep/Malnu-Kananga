@@ -169,6 +169,9 @@ export const ERROR_MESSAGES = {
     QUEUE_FULL: 'Antrian pesan penuh. Tunggu hingga pesan selesai dibaca.',
 } as const;
 
+export const ADMIN_EMAIL = 'admin@malnu-kananga.sch.id';
+export const INFO_EMAIL = 'info@ma-malnukananga.sch.id';
+
 export const VOICE_COMMANDS = {
     OPEN_SETTINGS: ['buka pengaturan', 'buka setting', 'open settings', 'open setting'],
     CLOSE_SETTINGS: ['tutup pengaturan', 'tutup setting', 'close settings', 'close setting'],
@@ -296,4 +299,28 @@ export const VOICE_NOTIFICATION_CONFIG = {
     RETRY_ATTEMPTS: 2,
     RETRY_DELAY: 2000, // 2 seconds
     HIGH_PRIORITY_TYPES: ['grade', 'attendance', 'system'],
+} as const;
+
+export const OPACITY_TOKENS = {
+    WHITE_10: 'bg-white/10%',
+    WHITE_20: 'bg-white/20%',
+    WHITE_30: 'bg-white/30%',
+    WHITE_40: 'bg-white/40%',
+    WHITE_50: 'bg-white/50%',
+    WHITE_80: 'bg-white/80%',
+    WHITE_95: 'bg-white/95%',
+    WHITE_100: 'bg-white',
+    NEUTRAL_800_80: 'dark:bg-neutral-800/80%',
+    NEUTRAL_800_95: 'dark:bg-neutral-800/95%',
+    NEUTRAL_900_80: 'dark:bg-neutral-900/80%',
+    NEUTRAL_900_95: 'dark:bg-neutral-900/95%',
+    NEUTRAL_900_10: 'dark:ring-neutral-900/10%',
+    WHITE_10_HOVER: 'hover:bg-white/20%',
+    WHITE_20_HOVER: 'hover:bg-white/30%',
+    WHITE_30_HOVER: 'hover:bg-white/40%',
+    RING_WHITE_50: 'focus:ring-white/50%',
+    RING_PRIMARY_50: 'focus:ring-primary-500/50%',
+    BACKDROP_BLUR: 'backdrop-blur',
+    BACKDROP_BLUR_SM: 'backdrop-blur-sm',
+    BACKDROP_BLUR_XL: 'backdrop-blur-xl',
 } as const;

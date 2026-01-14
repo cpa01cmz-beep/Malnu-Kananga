@@ -8,6 +8,7 @@ import PageHeader from './ui/PageHeader';
 import { TableSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import Button from './ui/Button';
+import { HEIGHTS } from '../config/heights';
 
 interface ScheduleItem {
   id: string;
@@ -216,7 +217,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
       )}
 
       {viewMode === 'list' && (
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-700 overflow-hidden min-h-[400px]">
+        <div className={`bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-700 overflow-hidden ${HEIGHTS.CONTENT.TABLE}`}>
           <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50">
             <h3 className="font-bold text-lg text-neutral-800 dark:text-white">Jadwal Hari {activeDay}</h3>
           </div>

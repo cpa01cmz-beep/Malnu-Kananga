@@ -7,6 +7,7 @@ import { useOfflineActionQueue, type OfflineAction, type ConflictResolution } fr
 import Modal from './ui/Modal';
 import Button from './ui/Button';
 import FormGrid from './ui/FormGrid';
+import { HEIGHT_CLASSES } from '../config/heights';
 
 interface ConflictResolutionModalProps {
   conflict: OfflineAction;
@@ -269,7 +270,7 @@ export function ConflictListModal({
       </p>
 
       {/* Conflict list */}
-      <div className="flex-1 overflow-y-auto max-h-[60vh] mb-4" role="list" aria-label="List of sync conflicts">
+      <div className={`flex-1 overflow-y-auto ${HEIGHT_CLASSES.MODAL.SCROLLABLE} mb-4`} role="list" aria-label="List of sync conflicts">
         <div className="space-y-3">
           {conflicts.map((conflict, index) => (
             <button

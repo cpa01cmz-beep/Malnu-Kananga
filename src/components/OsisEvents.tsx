@@ -12,11 +12,10 @@ import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
 import FormGrid from './ui/FormGrid';
-import Select from './ui/Select';
-import Textarea from './ui/Textarea';
 import ProgressBar from './ui/ProgressBar';
 import { EmptyState } from './ui/LoadingState';
 import ConfirmationDialog from './ui/ConfirmationDialog';
+import Card from './ui/Card';
 import { GRADIENT_CLASSES, DARK_GRADIENT_CLASSES } from '../config/gradients';
 
 interface OsisEventsProps {
@@ -299,9 +298,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
   const renderTabContent = () => {
     if (!selectedEvent) {
       return (
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
+        <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
           <p className="text-yellow-800 dark:text-yellow-200">Pilih kegiatan untuk melihat detail dan fitur pengelolaan.</p>
-        </div>
+        </Card>
       );
     }
 
@@ -309,7 +308,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
       case 'registrations':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <Card rounded="xl" shadow="card" border="neutral-200">
               <h3 className="text-lg font-bold mb-4">Daftar Pendaftar</h3>
               <form onSubmit={handleAddRegistration} className="mb-4">
                 <FormGrid>
@@ -362,14 +361,14 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           </div>
         );
 
       case 'budget':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <Card rounded="xl" shadow="card" border="neutral-200">
               <h3 className="text-lg font-bold mb-4">Anggaran Kegiatan</h3>
               <form onSubmit={handleAddBudget} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <Select
@@ -440,14 +439,14 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           </div>
         );
 
       case 'photos':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+            <Card rounded="xl" shadow="card" border="neutral-200">
               <h3 className="text-lg font-bold mb-4">Galeri Foto</h3>
               <form onSubmit={handleUploadPhoto} className="mb-4">
                 <div className="flex gap-4 mb-2">
@@ -483,7 +482,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   <div key={photo.id} className="relative group">
                     <img
                       src={photo.photoUrl}
-                      alt={photo.caption}
+                      alt={photo.caption || 'Foto kegiatan'}
                       className="w-full h-48 object-cover rounded-lg"
                     />
                     {photo.caption && (
@@ -492,113 +491,113 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           </div>
         );
 
       case 'feedback':
         return (
           <div className="space-y-4">
-            <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
-               <h3 className="text-lg font-bold mb-4">Umpan Balik Kegiatan</h3>
-               <form onSubmit={handleAddFeedback} className="space-y-4 mb-4">
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <input
-                     type="text"
-                     placeholder="NISN Siswa"
-                     value={newFeedback.studentId || ''}
-                     onChange={e => setNewFeedback({ ...newFeedback, studentId: e.target.value })}
-                     className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
-                     required
-                   />
-                   <input
-                     type="text"
-                     placeholder="Nama Siswa"
-                     value={newFeedback.studentName || ''}
-                     onChange={e => setNewFeedback({ ...newFeedback, studentName: e.target.value })}
-                     className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
-                     required
-                   />
-                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                   <div>
-                     <label className="block text-sm font-medium mb-1">Rating Keseluruhan</label>
-                     <select
-                       value={newFeedback.overallRating || 5}
-                       onChange={e => setNewFeedback({ ...newFeedback, overallRating: parseInt(e.target.value) })}
-                       className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
-                       required
-                     >
-                       {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
-                     </select>
-                   </div>
-                   <div>
-                     <label className="block text-sm font-medium mb-1">Rating Organisasi</label>
-                     <select
-                       value={newFeedback.organizationRating || 5}
-                       onChange={e => setNewFeedback({ ...newFeedback, organizationRating: parseInt(e.target.value) })}
-                       className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
-                       required
-                     >
-                       {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
-                     </select>
-                   </div>
-                   <div>
-                     <label className="block text-sm font-medium mb-1">Rating Konten</label>
-                     <select
-                       value={newFeedback.contentRating || 5}
-                       onChange={e => setNewFeedback({ ...newFeedback, contentRating: parseInt(e.target.value) })}
-                       className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
-                       required
-                     >
-                       {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
-                     </select>
-                   </div>
-                 </div>
-                 <Textarea
-                   rows={3}
-                   placeholder="Komentar atau saran..."
-                   value={newFeedback.comments || ''}
-                   onChange={e => setNewFeedback({ ...newFeedback, comments: e.target.value })}
-                   size="md"
-                 />
-                 <label className="flex items-center gap-2">
-                   <input
-                     type="checkbox"
-                     checked={newFeedback.wouldRecommend || false}
-                     onChange={e => setNewFeedback({ ...newFeedback, wouldRecommend: e.target.checked })}
-                     className="w-4 h-4 text-green-600"
-                   />
-                   <span className="text-sm font-medium">Saya merekomendasikan kegiatan ini</span>
-                 </label>
-                 <Button type="submit" variant="info" fullWidth>
-                   Kirim Umpan Balik
-                 </Button>
-               </form>
-               <div className="space-y-3">
-                 {feedback.map(fb => (
-                   <div key={fb.id} className="p-4 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
-                     <div className="flex items-center justify-between mb-2">
-                       <p className="font-semibold">{fb.studentName} ({fb.studentClass})</p>
-                       <div className="flex gap-1">
-                         <span title="Rating Keseluruhan">⭐ {fb.overallRating}</span>
-                         <span title="Rating Organisasi">🏆 {fb.organizationRating}</span>
-                         <span title="Rating Konten">📝 {fb.contentRating}</span>
-                       </div>
-                     </div>
-                     {fb.comments && <p className="text-sm text-neutral-600 dark:text-neutral-300 italic">"{fb.comments}"</p>}
-                     {fb.wouldRecommend && <p className="text-xs text-green-600 font-semibold">✓ Merekomendasikan</p>}
-                     <p className="text-xs text-neutral-500 mt-1">{fb.submittedAt}</p>
-                   </div>
-                 ))}
-               </div>
-             </div>
-           </div>
-         );
+            <Card rounded="xl" shadow="card" border="neutral-200">
+              <h3 className="text-lg font-bold mb-4">Umpan Balik Kegiatan</h3>
+              <form onSubmit={handleAddFeedback} className="space-y-4 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder="NISN Siswa"
+                    value={newFeedback.studentId || ''}
+                    onChange={e => setNewFeedback({ ...newFeedback, studentId: e.target.value })}
+                    className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Nama Siswa"
+                    value={newFeedback.studentName || ''}
+                    onChange={e => setNewFeedback({ ...newFeedback, studentName: e.target.value })}
+                    className="px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Rating Keseluruhan</label>
+                    <select
+                      value={newFeedback.overallRating || 5}
+                      onChange={e => setNewFeedback({ ...newFeedback, overallRating: parseInt(e.target.value) })}
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                      required
+                    >
+                      {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Rating Organisasi</label>
+                    <select
+                      value={newFeedback.organizationRating || 5}
+                      onChange={e => setNewFeedback({ ...newFeedback, organizationRating: parseInt(e.target.value) })}
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                      required
+                    >
+                      {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">Rating Konten</label>
+                    <select
+                      value={newFeedback.contentRating || 5}
+                      onChange={e => setNewFeedback({ ...newFeedback, contentRating: parseInt(e.target.value) })}
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-neutral-700 dark:border-neutral-600"
+                      required
+                    >
+                      {[5,4,3,2,1].map(r => <option key={r} value={r}>{'⭐'.repeat(r)}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <Textarea
+                  rows={3}
+                  placeholder="Komentar atau saran..."
+                  value={newFeedback.comments || ''}
+                  onChange={e => setNewFeedback({ ...newFeedback, comments: e.target.value })}
+                  size="md"
+                />
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={newFeedback.wouldRecommend || false}
+                    onChange={e => setNewFeedback({ ...newFeedback, wouldRecommend: e.target.checked })}
+                    className="w-4 h-4 text-green-600"
+                  />
+                  <span className="text-sm font-medium">Saya merekomendasikan kegiatan ini</span>
+                </label>
+                <Button type="submit" variant="info" fullWidth>
+                  Kirim Umpan Balik
+                </Button>
+              </form>
+              <div className="space-y-3">
+                {feedback.map(fb => (
+                  <div key={fb.id} className="p-4 bg-neutral-50 dark:bg-neutral-700/50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="font-semibold">{fb.studentName} ({fb.studentClass})</p>
+                      <div className="flex gap-1">
+                        <span title="Rating Keseluruhan">⭐ {fb.overallRating}</span>
+                        <span title="Rating Organisasi">🏆 {fb.organizationRating}</span>
+                        <span title="Rating Konten">📝 {fb.contentRating}</span>
+                      </div>
+                    </div>
+                    {fb.comments && <p className="text-sm text-neutral-600 dark:text-neutral-300 italic">"{fb.comments}"</p>}
+                    {fb.wouldRecommend && <p className="text-xs text-green-600 font-semibold">✓ Merekomendasikan</p>}
+                    <p className="text-xs text-neutral-500 mt-1">{fb.submittedAt}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        );
 
       case 'announcements':
         return (
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 border border-neutral-200 dark:border-neutral-700">
+          <Card rounded="xl" shadow="card" border="neutral-200">
             <div className="flex items-center gap-3 mb-4">
               <MegaphoneIcon className="w-6 h-6 text-orange-600" />
               <div>
@@ -606,12 +605,12 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 <p className="text-sm text-neutral-500">Buat pengumuman untuk kegiatan "{selectedEvent.eventName}"</p>
               </div>
             </div>
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+            <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
                 Pengumuman kegiatan akan dikirim ke semua siswa melalui sistem notifikasi terpusat.
               </p>
-            </div>
-          </div>
+            </Card>
+          </Card>
         );
 
       default:
@@ -633,7 +632,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+          <Card rounded="2xl" shadow="sm" border="neutral-200">
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Buat Kegiatan Baru</h3>
             <form onSubmit={handleAddEvent} className="space-y-4">
               <Input
@@ -673,10 +672,10 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 {isCreating ? 'Menyimpan...' : 'Simpan Kegiatan'}
               </Button>
             </form>
-          </div>
+          </Card>
 
           {selectedEvent && (
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-4">
+            <Card rounded="2xl" shadow="sm" border="neutral-200" padding="sm">
               <h4 className="font-bold text-neutral-900 dark:text-white mb-3">Navigasi Fitur</h4>
               <div className="space-y-2">
                 {[
@@ -700,7 +699,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   </button>
                 ))}
               </div>
-            </div>
+            </Card>
           )}
         </div>
 
@@ -717,11 +716,11 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
             ) : (
               events.map(event => (
                 <button
-                  type="button"
                   key={event.id}
+                  type="button"
                   onClick={() => setSelectedEvent(event)}
                   aria-label={`Lihat detail kegiatan: ${event.eventName}`}
-                  className={`bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border text-left ${
+                  className={`bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border text-left w-full ${
                     selectedEvent?.id === event.id
                       ? 'border-orange-500 ring-2 ring-orange-200'
                       : 'border-neutral-100 dark:border-neutral-700 hover:border-orange-300'
@@ -762,7 +761,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
           </div>
 
           {selectedEvent && (
-            <div className={`${GRADIENT_CLASSES.ORANGE_GREEN} dark:${DARK_GRADIENT_CLASSES.ORANGE_GREEN} border border-orange-200 dark:border-orange-800 rounded-2xl p-6`}>
+            <Card className={`${GRADIENT_CLASSES.ORANGE_GREEN} dark:${DARK_GRADIENT_CLASSES.ORANGE_GREEN} border border-orange-200 dark:border-orange-800 rounded-2xl p-6`}>
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-neutral-900 dark:text-white">{selectedEvent.eventName}</h3>
@@ -777,7 +776,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 </button>
               </div>
               {renderTabContent()}
-            </div>
+            </Card>
           )}
         </div>
       </div>

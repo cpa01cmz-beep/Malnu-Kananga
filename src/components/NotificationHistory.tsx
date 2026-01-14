@@ -11,6 +11,7 @@ import Badge from './ui/Badge';
 import { EmptyState } from './ui/LoadingState';
 import LoadingSpinner from './ui/LoadingSpinner';
 import Modal from './ui/Modal';
+import { HEIGHT_CLASSES } from '../config/heights';
 
 interface NotificationHistoryProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -201,7 +202,7 @@ case 'announcement':
       closeOnBackdropClick={true}
       closeOnEscape={true}
       showCloseButton={true}
-      className="max-h-[90vh]"
+      className={HEIGHT_CLASSES.MODAL.FULL}
     >
       {/* Filters */}
       <div className="flex items-center gap-4 mb-4">

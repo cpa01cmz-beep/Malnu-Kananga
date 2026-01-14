@@ -9,7 +9,6 @@ import Badge from './ui/Badge';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import Tab from './ui/Tab';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
-import FormGrid from './ui/FormGrid';
 import { BarChart } from 'recharts/es6/chart/BarChart';
 import { Bar } from 'recharts/es6/cartesian/Bar';
 import { XAxis } from 'recharts/es6/cartesian/XAxis';
@@ -538,6 +537,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                               onClick={() => handleDeleteItem(item.id)}
                               className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 rounded-full transition-colors"
                               title="Hapus"
+                              aria-label="Hapus"
                             >
                               <TrashIcon className="w-4 h-4" />
                             </button>

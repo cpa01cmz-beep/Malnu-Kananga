@@ -18,6 +18,7 @@ import Modal from './ui/Modal';
 import { SendIcon } from './icons/SendIcon';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
+import { HEIGHTS } from '../config/heights';
 
 interface SiteEditorProps {
   isOpen: boolean;
@@ -378,7 +379,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       closeOnEscape={true}
       closeOnBackdropClick={true}
       showCloseButton={false}
-      className="bg-white dark:bg-neutral-800 rounded-2xl shadow-xl w-full max-w-4xl h-[90vh] flex flex-col"
+      className={`bg-white dark:bg-neutral-800 rounded-2xl shadow-xl w-full max-w-4xl ${HEIGHTS.VIEWPORT.XLARGE} flex flex-col`}
     >
       <header className="flex justify-between items-center p-5 border-b border-neutral-200 dark:border-neutral-700 flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -509,11 +510,11 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                      handleSend();
                    }
                  }}
-                 disabled={isLoading}
-                 placeholder={isLoading ? "AI sedang berpikir..." : "Ketik permintaan Anda..."}
-                 fullWidth={true}
-                 className="min-h-[44px]"
-                 autoResize={true}
+                  disabled={isLoading}
+                  placeholder={isLoading ? "AI sedang berpikir..." : "Ketik permintaan Anda..."}
+                  fullWidth={true}
+                  className={HEIGHTS.CONTENT.MINIMUM}
+                  autoResize={true}
                  minRows={1}
                  maxRows={5}
               />

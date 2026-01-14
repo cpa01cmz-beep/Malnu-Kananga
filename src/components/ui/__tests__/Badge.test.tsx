@@ -33,6 +33,12 @@ describe('Badge Component', () => {
       expect(badge).toHaveClass('bg-green-700', 'text-white', 'dark:bg-green-600', 'dark:text-white');
     });
 
+    it('renders secondary variant', () => {
+      render(<Badge variant="secondary">Secondary</Badge>);
+      const badge = screen.getByText('Secondary');
+      expect(badge).toHaveClass('bg-purple-700', 'text-white', 'dark:bg-purple-600', 'dark:text-white');
+    });
+
     it('renders error variant', () => {
       render(<Badge variant="error">Error</Badge>);
       const badge = screen.getByText('Error');
@@ -61,12 +67,6 @@ describe('Badge Component', () => {
       render(<Badge variant="primary">Primary</Badge>);
       const badge = screen.getByText('Primary');
       expect(badge).toHaveClass('bg-primary-600', 'text-white', 'dark:bg-primary-500', 'dark:text-white');
-    });
-
-    it('renders purple variant', () => {
-      render(<Badge variant="purple">Purple</Badge>);
-      const badge = screen.getByText('Purple');
-      expect(badge).toHaveClass('bg-purple-700', 'text-white', 'dark:bg-purple-600', 'dark:text-white');
     });
   });
 

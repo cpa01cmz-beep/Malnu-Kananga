@@ -22,7 +22,6 @@ jobs:
 
     env:
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
 
     steps:
       - name: Wait in Queue

@@ -15,6 +15,7 @@ import { useOfflineActionQueue, type SyncResult } from '../services/offlineActio
 import { STORAGE_KEYS } from '../constants';
 import { pdfExportService } from '../services/pdfExportService';
 import ProgressBar from './ui/ProgressBar';
+import { HEIGHT_CLASSES } from '../config/heights';
 import { 
   validateGradeInput, 
   sanitizeGradeInput, 
@@ -32,6 +33,7 @@ import { User, UserRole, UserExtraRole } from '../types';
 import ErrorMessage from './ui/ErrorMessage';
 import { OfflineIndicator } from './OfflineIndicator';
 import SearchInput from './ui/SearchInput';
+import { DEFAULT_API_BASE_URL } from '../config';
 
 
 interface StudentGrade {
@@ -357,7 +359,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev'}/api/grades/${grade.id}`,
+            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/grades/${grade.id}`,
             method: 'PUT'
           });
           
@@ -428,7 +430,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev'}/api/grades/${grade.id}`,
+            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/grades/${grade.id}`,
             method: 'PUT'
           });
           
@@ -1466,7 +1468,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         {/* OCR Processing Modal */}
         {showOCRModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div className={`bg-white dark:bg-neutral-800 rounded-2xl p-6 w-full max-w-4xl ${HEIGHT_CLASSES.MODAL.FULL} overflow-y-auto`}>
                     <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-4">
                         📷 OCR Grade Extraction
                     </h3>

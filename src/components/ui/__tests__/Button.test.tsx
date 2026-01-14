@@ -40,10 +40,10 @@ describe('Button', () => {
 
   it('should render with different sizes', () => {
     const { rerender } = render(<Button size="sm">Small</Button>);
-    expect(screen.getByRole('button')).toHaveClass('px-3', 'py-2.5', 'text-sm', 'min-h-[44px]');
+    expect(screen.getByRole('button')).toHaveClass('px-3', 'py-2', 'text-sm');
 
     rerender(<Button size="lg">Large</Button>);
-    expect(screen.getByRole('button')).toHaveClass('px-6', 'py-3.5', 'min-h-[48px]');
+    expect(screen.getByRole('button')).toHaveClass('px-6', 'py-3');
   });
 
   it('should be disabled when isLoading is true', () => {

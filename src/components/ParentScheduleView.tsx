@@ -11,6 +11,7 @@ import { logger } from '../utils/logger';
 import CalendarView from './CalendarView';
 import { TableSkeleton } from './ui/Skeleton';
 import Button from './ui/Button';
+import { HEIGHT_CLASSES } from '../config/heights';
 
 interface ParentScheduleViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -217,7 +218,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
       {/* Meeting Request Modal */}
       {showMeetingRequest && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+          <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-2xl w-full ${HEIGHT_CLASSES.PARENT.VIEW} overflow-y-auto`}>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-neutral-900 dark:text-white">
                 Ajukan Pertemuan dengan Guru

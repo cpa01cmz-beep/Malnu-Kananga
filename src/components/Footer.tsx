@@ -2,6 +2,7 @@ import React from 'react';
 import { getResponsiveGradient } from '../config/gradients';
 import SocialLink from './ui/SocialLink';
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from './icons/StatusIcons';
+import { INFO_EMAIL } from '../constants';
 
 interface FooterProps {
     onDocsClick: () => void;
@@ -18,7 +19,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                             Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
                         </p>
                         <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
-                            <a href="mailto:info@ma-malnukananga.sch.id" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">info@ma-malnukananga.sch.id</a>
+                            <a href={`mailto:${INFO_EMAIL}`} className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">{INFO_EMAIL}</a>
                         </p>
                     </div>
 
@@ -36,10 +37,10 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                         <h3 className="text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
                           <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
                                 <li><button type="button" onClick={onDocsClick} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button></li>
-                                <li><button type="button" disabled aria-label="Download - Tidak tersedia" className="text-left transition-colors duration-200 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Download</button></li>
-                                <li><button type="button" disabled aria-label="Kebijakan Privasi - Tidak tersedia" className="text-left transition-colors duration-200 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Kebijakan Privasi</button></li>
-                                <li><button type="button" disabled aria-label="Karir - Tidak tersedia" className="text-left transition-colors duration-200 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Karir</button></li>
-                                <li><button type="button" disabled aria-label="Beasiswa - Tidak tersedia" className="text-left transition-colors duration-200 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Beasiswa</button></li>
+                                <li><button type="button" onClick={() => {}} disabled className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Download</button></li>
+                                <li><button type="button" onClick={() => {}} disabled className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Kebijakan Privasi</button></li>
+                                <li><button type="button" onClick={() => {}} disabled className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Karir</button></li>
+                                <li><button type="button" onClick={() => {}} disabled className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Beasiswa</button></li>
                           </ul>
                              <div className="flex justify-center sm:justify-start gap-3 mt-6">
                                 <SocialLink

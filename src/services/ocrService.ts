@@ -1,5 +1,6 @@
 import { createWorker, PSM, Worker } from 'tesseract.js';
 import { OCRValidationEvent, UserRole } from '../types';
+import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 import { handleOCRError } from '../utils/serviceErrorHandlers';
 import { ocrCache } from './aiCacheService';
@@ -327,7 +328,7 @@ class OCRService {
       };
 
       // Store event in localStorage for event monitoring system
-      const events = JSON.parse(localStorage.getItem('ocr_validation_events') || '[]');
+      const events = JSON.parse(localStorage.getItem(STORAGE_KEYS.OCR_VALIDATION_EVENTS) || '[]');
       events.push(event);
       
       // Keep only last 100 events
@@ -335,7 +336,7 @@ class OCRService {
         events.splice(0, events.length - 100);
       }
       
-      localStorage.setItem('ocr_validation_events', JSON.stringify(events));
+      localStorage.setItem(STORAGE_KEYS.OCR_VALIDATION_EVENTS, JSON.stringify(events));
       
       // Emit custom event for immediate handling
       if (typeof window !== 'undefined' && 'CustomEvent' in window) {

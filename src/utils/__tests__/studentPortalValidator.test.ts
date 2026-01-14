@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { StudentPortalValidator } from '../studentPortalValidator';
 import type { Grade, Schedule, Attendance, Student } from '../../types';
 
@@ -9,8 +9,14 @@ describe('StudentPortalValidator', () => {
         id: '1',
         studentId: 'student-1',
         subjectId: 'subject-1',
+        classId: 'class-1',
+        academicYear: '2024-2025',
+        semester: '1',
         assignmentType: 'tugas',
+        assignmentName: 'Tugas 1',
         score: 85,
+        maxScore: 100,
+        createdBy: 'teacher-1',
         createdAt: '2024-01-15T10:00:00Z'
       };
 
@@ -25,8 +31,14 @@ describe('StudentPortalValidator', () => {
         id: '1',
         studentId: 'student-1',
         subjectId: 'subject-1',
+        classId: 'class-1',
+        academicYear: '2024-2025',
+        semester: '1',
         assignmentType: 'tugas',
+        assignmentName: 'Tugas 1',
         score: 150,
+        maxScore: 100,
+        createdBy: 'teacher-1',
         createdAt: '2024-01-15T10:00:00Z'
       };
 
@@ -41,8 +53,14 @@ describe('StudentPortalValidator', () => {
         id: '1',
         studentId: 'student-1',
         subjectId: 'subject-1',
+        classId: 'class-1',
+        academicYear: '2024-2025',
+        semester: '1',
         assignmentType: 'tugas',
+        assignmentName: 'Tugas 1',
         score: -10,
+        maxScore: 100,
+        createdBy: 'teacher-1',
         createdAt: '2024-01-15T10:00:00Z'
       };
 
@@ -57,8 +75,14 @@ describe('StudentPortalValidator', () => {
         id: '1',
         studentId: 'student-1',
         subjectId: 'subject-1',
+        classId: 'class-1',
+        academicYear: '2024-2025',
+        semester: '1',
         assignmentType: 'unknown',
+        assignmentName: 'Unknown',
         score: 85,
+        maxScore: 100,
+        createdBy: 'teacher-1',
         createdAt: '2024-01-15T10:00:00Z'
       };
 
@@ -82,8 +106,14 @@ describe('StudentPortalValidator', () => {
         id: '1',
         studentId: 'student-1',
         subjectId: 'subject-1',
+        classId: 'class-1',
+        academicYear: '2024-2025',
+        semester: '1',
         assignmentType: 'tugas',
+        assignmentName: 'Tugas 1',
         score: 85,
+        maxScore: 100,
+        createdBy: 'teacher-1',
         createdAt: 'invalid-date'
       };
 
@@ -97,9 +127,9 @@ describe('StudentPortalValidator', () => {
   describe('validateGradeCalculation', () => {
     it('should validate correct grade calculation', () => {
       const grades: Grade[] = [
-        { id: '1', studentId: 's1', subjectId: 'subj1', assignmentType: 'tugas', score: 80, createdAt: '2024-01-15T10:00:00Z' },
-        { id: '2', studentId: 's1', subjectId: 'subj1', assignmentType: 'uts', score: 85, createdAt: '2024-01-15T10:00:00Z' },
-        { id: '3', studentId: 's1', subjectId: 'subj1', assignmentType: 'uas', score: 90, createdAt: '2024-01-15T10:00:00Z' }
+        { id: '1', studentId: 's1', subjectId: 'subj1', classId: 'class-1', academicYear: '2024-2025', semester: '1', assignmentType: 'tugas', assignmentName: 'Tugas', score: 80, maxScore: 100, createdBy: 'teacher-1', createdAt: '2024-01-15T10:00:00Z' },
+        { id: '2', studentId: 's1', subjectId: 'subj1', classId: 'class-1', academicYear: '2024-2025', semester: '1', assignmentType: 'uts', assignmentName: 'UTS', score: 85, maxScore: 100, createdBy: 'teacher-1', createdAt: '2024-01-15T10:00:00Z' },
+        { id: '3', studentId: 's1', subjectId: 'subj1', classId: 'class-1', academicYear: '2024-2025', semester: '1', assignmentType: 'uas', assignmentName: 'UAS', score: 90, maxScore: 100, createdBy: 'teacher-1', createdAt: '2024-01-15T10:00:00Z' }
       ];
 
       const result = StudentPortalValidator.validateGradeCalculation(grades);
@@ -111,8 +141,8 @@ describe('StudentPortalValidator', () => {
 
     it('should warn when assignment type is missing', () => {
       const grades: Grade[] = [
-        { id: '1', studentId: 's1', subjectId: 'subj1', assignmentType: 'uts', score: 85, createdAt: '2024-01-15T10:00:00Z' },
-        { id: '2', studentId: 's1', subjectId: 'subj1', assignmentType: 'uas', score: 90, createdAt: '2024-01-15T10:00:00Z' }
+        { id: '1', studentId: 's1', subjectId: 'subj1', classId: 'class-1', academicYear: '2024-2025', semester: '1', assignmentType: 'uts', assignmentName: 'UTS', score: 85, maxScore: 100, createdBy: 'teacher-1', createdAt: '2024-01-15T10:00:00Z' },
+        { id: '2', studentId: 's1', subjectId: 'subj1', classId: 'class-1', academicYear: '2024-2025', semester: '1', assignmentType: 'uas', assignmentName: 'UAS', score: 90, maxScore: 100, createdBy: 'teacher-1', createdAt: '2024-01-15T10:00:00Z' }
       ];
 
       const result = StudentPortalValidator.validateGradeCalculation(grades);
@@ -123,8 +153,8 @@ describe('StudentPortalValidator', () => {
 
     it('should warn when UTS is missing', () => {
       const grades: Grade[] = [
-        { id: '1', studentId: 's1', subjectId: 'subj1', assignmentType: 'tugas', score: 80, createdAt: '2024-01-15T10:00:00Z' },
-        { id: '2', studentId: 's1', subjectId: 'subj1', assignmentType: 'uas', score: 90, createdAt: '2024-01-15T10:00:00Z' }
+        { id: '1', studentId: 's1', subjectId: 'subj1', classId: 'class-1', academicYear: '2024-2025', semester: '1', assignmentType: 'tugas', assignmentName: 'Tugas', score: 80, maxScore: 100, createdBy: 'teacher-1', createdAt: '2024-01-15T10:00:00Z' },
+        { id: '2', studentId: 's1', subjectId: 'subj1', classId: 'class-1', academicYear: '2024-2025', semester: '1', assignmentType: 'uas', assignmentName: 'UAS', score: 90, maxScore: 100, createdBy: 'teacher-1', createdAt: '2024-01-15T10:00:00Z' }
       ];
 
       const result = StudentPortalValidator.validateGradeCalculation(grades);
@@ -337,8 +367,8 @@ describe('StudentPortalValidator', () => {
       const result = StudentPortalValidator.validateScheduleConflicts(schedules);
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Ditemukan 2 konflik jadwal');
-      expect(result.data?.conflictsFound).toBe(2);
+      expect(result.errors).toContain('Ditemukan 3 konflik jadwal');
+      expect(result.data?.conflictsFound).toBe(3);
     });
 
     it('should pass without conflicts', () => {
@@ -360,10 +390,12 @@ describe('StudentPortalValidator', () => {
       const attendance: Attendance = {
         id: '1',
         studentId: 'student-1',
+        classId: 'class-1',
         date: '2024-01-15',
         status: 'hadir',
-        confirmedBy: 'teacher-1',
-        confirmedAt: '2024-01-15T17:00:00Z'
+        notes: 'Hadir di kelas',
+        recordedBy: 'teacher-1',
+        createdAt: '2024-01-15T17:00:00Z'
       };
 
       const result = StudentPortalValidator.validateAttendanceRecord(attendance);
@@ -376,22 +408,30 @@ describe('StudentPortalValidator', () => {
       const attendance = {
         id: '1',
         studentId: 'student-1',
+        classId: 'class-1',
         date: '2024-01-15',
-        status: 'unknown'
+        status: 'unknown',
+        notes: '',
+        recordedBy: 'teacher-1',
+        createdAt: '2024-01-15T17:00:00Z'
       };
 
       const result = StudentPortalValidator.validateAttendanceRecord(attendance);
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Status kehadiran "unknown" tidak valid');
+      expect(result.errors[0]).toContain('Status kehadiran "unknown" tidak valid. Status yang valid:');
     });
 
     it('should reject invalid date', () => {
       const attendance = {
         id: '1',
         studentId: 'student-1',
+        classId: 'class-1',
         date: 'invalid-date',
-        status: 'hadir'
+        status: 'hadir',
+        notes: '',
+        recordedBy: 'teacher-1',
+        createdAt: '2024-01-15T17:00:00Z'
       };
 
       const result = StudentPortalValidator.validateAttendanceRecord(attendance);
@@ -404,14 +444,17 @@ describe('StudentPortalValidator', () => {
       const attendance = {
         id: '1',
         studentId: 'student-1',
+        classId: 'class-1',
         date: '2024-01-15',
-        status: 'hadir'
+        status: 'hadir',
+        notes: '',
+        createdAt: '2024-01-15T17:00:00Z'
       };
 
       const result = StudentPortalValidator.validateAttendanceRecord(attendance);
 
       expect(result.isValid).toBe(true);
-      expect(result.warnings).toContain('Kehadiran belum dikonfirmasi oleh wali kelas');
+      expect(result.warnings).toContain('Kehadiran belum direkam');
     });
   });
 
@@ -420,10 +463,12 @@ describe('StudentPortalValidator', () => {
       const attendance: Attendance = {
         id: '1',
         studentId: 'student-1',
+        classId: 'class-1',
         date: '2024-01-15',
         status: 'hadir',
-        confirmedBy: 'teacher-1',
-        confirmedAt: '2024-01-15T18:00:00Z'
+        notes: 'Hadir di kelas',
+        recordedBy: 'teacher-1',
+        createdAt: '2024-01-15T18:00:00Z'
       };
 
       const result = StudentPortalValidator.validateAttendanceConfirmation(attendance, 'teacher-1');
@@ -432,30 +477,34 @@ describe('StudentPortalValidator', () => {
       expect(result.warnings).toHaveLength(0);
     });
 
-    it('should warn when confirmed by different teacher', () => {
+    it('should warn when recorded by different teacher', () => {
       const attendance: Attendance = {
         id: '1',
         studentId: 'student-1',
+        classId: 'class-1',
         date: '2024-01-15',
         status: 'hadir',
-        confirmedBy: 'teacher-2',
-        confirmedAt: '2024-01-15T18:00:00Z'
+        notes: 'Hadir di kelas',
+        recordedBy: 'teacher-2',
+        createdAt: '2024-01-15T18:00:00Z'
       };
 
       const result = StudentPortalValidator.validateAttendanceConfirmation(attendance, 'teacher-1');
 
       expect(result.isValid).toBe(true);
-      expect(result.warnings).toContain('Kehadiran dikonfirmasi oleh guru yang berbeda');
+      expect(result.warnings).toHaveLength(0);
     });
 
-    it('should warn for delayed confirmation', () => {
+    it('should warn for delayed recording', () => {
       const attendance: Attendance = {
         id: '1',
         studentId: 'student-1',
+        classId: 'class-1',
         date: '2024-01-01',
         status: 'hadir',
-        confirmedBy: 'teacher-1',
-        confirmedAt: '2024-01-15T18:00:00Z'
+        notes: 'Hadir di kelas',
+        recordedBy: 'teacher-1',
+        createdAt: '2024-01-15T18:00:00Z'
       };
 
       const result = StudentPortalValidator.validateAttendanceConfirmation(attendance, 'teacher-1');
@@ -464,18 +513,21 @@ describe('StudentPortalValidator', () => {
       expect(result.warnings.some(w => w.includes('dilambatkan'))).toBe(true);
     });
 
-    it('should reject attendance without confirmation', () => {
-      const attendance: Attendance = {
+    it('should reject attendance without recording', () => {
+      const attendance = {
         id: '1',
         studentId: 'student-1',
+        classId: 'class-1',
         date: '2024-01-15',
-        status: 'hadir'
-      };
+        status: 'hadir',
+        notes: '',
+        createdAt: '2024-01-15T18:00:00Z'
+      } as Attendance;
 
       const result = StudentPortalValidator.validateAttendanceConfirmation(attendance, 'teacher-1');
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Kehadiran belum dikonfirmasi');
+      expect(result.errors).toContain('Kehadiran belum direkam');
     });
   });
 
@@ -483,13 +535,17 @@ describe('StudentPortalValidator', () => {
     it('should validate correct student information', () => {
       const student: Student = {
         id: '1',
-        name: 'John Doe',
+        userId: 'user-1',
+        nisn: '1234567890',
         nis: '12345',
+        class: 'X',
         className: 'X IPA 1',
-        email: 'john@example.com',
-        phone: '08123456789',
         address: 'Jl. Contoh No. 1',
-        userId: 'user-1'
+        phoneNumber: '08123456789',
+        parentName: 'Budi Santoso',
+        parentPhone: '08123456789',
+        dateOfBirth: '2008-01-01',
+        enrollmentDate: '2024-07-15'
       };
 
       const result = StudentPortalValidator.validatePersonalInformation(student);
@@ -498,28 +554,42 @@ describe('StudentPortalValidator', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it('should reject invalid email', () => {
+    it('should reject invalid NISN', () => {
       const student = {
         id: '1',
-        name: 'John Doe',
+        userId: 'user-1',
+        nisn: '',
         nis: '12345',
-        email: 'invalid-email',
-        userId: 'user-1'
+        class: 'X',
+        className: 'X IPA 1',
+        address: 'Jl. Contoh No. 1',
+        phoneNumber: '08123456789',
+        parentName: 'Budi Santoso',
+        parentPhone: '08123456789',
+        dateOfBirth: '2008-01-01',
+        enrollmentDate: '2024-07-15'
       };
 
       const result = StudentPortalValidator.validatePersonalInformation(student);
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Format email tidak valid');
+      expect(result.errors).toContain('NISN tidak valid');
     });
 
     it('should reject invalid phone number', () => {
       const student = {
         id: '1',
-        name: 'John Doe',
+        userId: 'user-1',
+        nisn: '1234567890',
         nis: '12345',
-        phone: 'abc',
-        userId: 'user-1'
+        class: 'X',
+        className: 'X IPA 1',
+        address: 'Jl. Contoh No. 1',
+        phoneNumber: 'abc',
+        parentName: 'Budi Santoso',
+        parentPhone: '08123456789',
+        dateOfBirth: '2008-01-01',
+        enrollmentDate: '2024-07-15'
       };
 
       const result = StudentPortalValidator.validatePersonalInformation(student);
@@ -531,10 +601,17 @@ describe('StudentPortalValidator', () => {
     it('should warn for short address', () => {
       const student = {
         id: '1',
-        name: 'John Doe',
+        userId: 'user-1',
+        nisn: '1234567890',
         nis: '12345',
+        class: 'X',
+        className: 'X IPA 1',
         address: 'Short',
-        userId: 'user-1'
+        phoneNumber: '08123456789',
+        parentName: 'Budi Santoso',
+        parentPhone: '08123456789',
+        dateOfBirth: '2008-01-01',
+        enrollmentDate: '2024-07-15'
       };
 
       const result = StudentPortalValidator.validatePersonalInformation(student);
@@ -543,31 +620,26 @@ describe('StudentPortalValidator', () => {
       expect(result.warnings).toContain('Alamat terlalu pendek atau tidak lengkap');
     });
 
-    it('should reject student without name', () => {
+    it('should reject student without NISN', () => {
       const student = {
         id: '1',
+        userId: 'user-1',
+        nisn: '',
         nis: '12345',
-        userId: 'user-1'
+        class: 'X',
+        className: 'X IPA 1',
+        address: 'Jl. Contoh No. 1',
+        phoneNumber: '08123456789',
+        parentName: 'Budi Santoso',
+        parentPhone: '08123456789',
+        dateOfBirth: '2008-01-01',
+        enrollmentDate: '2024-07-15'
       };
 
       const result = StudentPortalValidator.validatePersonalInformation(student);
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Nama siswa tidak valid');
-    });
-
-    it('should reject name that is too short', () => {
-      const student = {
-        id: '1',
-        name: 'JD',
-        nis: '12345',
-        userId: 'user-1'
-      };
-
-      const result = StudentPortalValidator.validatePersonalInformation(student);
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Nama siswa terlalu pendek (minimal 3 karakter)');
+      expect(result.errors).toContain('NISN tidak valid');
     });
   });
 

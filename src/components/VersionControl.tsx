@@ -7,6 +7,8 @@ import Button from './ui/Button';
 import FileInput from './ui/FileInput';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import Modal from './ui/Modal';
+import Input from './ui/Input';
+import Textarea from './ui/Textarea';
 
 interface VersionControlProps {
   material: ELibrary;
@@ -276,11 +278,11 @@ const deleteVersion = (versionId: string) => {
                       variant="ghost"
                       size="sm"
                       onClick={() => downloadVersion(version)}
+                      isLoading={downloadingVersionId === version.id}
                       iconOnly
                       icon={<EyeIcon className="w-4 h-4" />}
                       aria-label="Unduh versi ini"
                       disabled={downloadingVersionId === version.id}
-                      isLoading={downloadingVersionId === version.id}
                     />
 
                     {!version.isActive && (
@@ -327,43 +329,39 @@ const deleteVersion = (versionId: string) => {
       >
         <div className="space-y-4">
           <div>
-            <label htmlFor="version-input" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-              Versi
-            </label>
-            <input
+            <Input
               id="version-input"
-              type="text"
+              label="Versi"
               value={generateNextVersion()}
               disabled
-              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-100 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400"
+              fullWidth
+              size="md"
             />
           </div>
 
           <div>
-            <label htmlFor="version-title" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-              Judul Versi
-            </label>
-            <input
+            <Input
               id="version-title"
-              type="text"
+              label="Judul Versi"
               value={versionTitle}
               onChange={(e) => setVersionTitle(e.target.value)}
               placeholder="Mis: Update materi bab 3"
-              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:outline-none"
+              fullWidth
+              size="md"
             />
           </div>
 
           <div>
-            <label htmlFor="version-changelog" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-              Catatan Perubahan
-            </label>
-            <textarea
+            <Textarea
               id="version-changelog"
+              label="Catatan Perubahan"
               value={changeLog}
               onChange={(e) => setChangeLog(e.target.value)}
               placeholder="Jelaskan perubahan yang dilakukan pada versi ini..."
               rows={3}
-              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:outline-none"
+              fullWidth
+              size="md"
+              autoResize
             />
           </div>
 

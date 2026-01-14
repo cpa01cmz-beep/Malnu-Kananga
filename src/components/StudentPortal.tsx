@@ -596,7 +596,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                       <p className="mt-2 text-neutral-600 dark:text-neutral-300 text-lg">
                         Selamat datang kembali, <strong>{loading ? 'Loading...' : studentData?.className || 'Siswa'}</strong>!
                         {extraRole === 'osis' && (
-                          <Badge variant="orange" size="sm" className="block mt-1">
+                          <Badge variant="warning" size="sm" className="block mt-1">
                             ⭐ Pengurus OSIS
                           </Badge>
                         )}

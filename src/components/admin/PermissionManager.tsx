@@ -95,7 +95,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                 <Select
                   label="User Role"
                   value={selectedRole}
-                  onChange={(value) => setSelectedRole(value as UserRole)}
+                  onChange={(e) => setSelectedRole(e.target.value as UserRole)}
                   options={[
                     { value: 'admin', label: 'Administrator' },
                     { value: 'teacher', label: 'Teacher' },
@@ -109,7 +109,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                 <Select
                   label="Extra Role"
                   value={selectedExtraRole || 'none'}
-                  onChange={(value) => setSelectedExtraRole(value === 'none' ? null : value as UserExtraRole)}
+                  onChange={(e) => setSelectedExtraRole(e.target.value === 'none' ? null : e.target.value as UserExtraRole)}
                   options={[
                     { value: 'none', label: 'None' },
                     { value: 'staff', label: 'Staff' },

@@ -17,8 +17,9 @@ import IconButton from './ui/IconButton';
 import { useVoiceSynthesis } from '../hooks/useVoiceSynthesis';
 import { useVoiceQueue } from '../hooks/useVoiceQueue';
 import { useFocusTrap } from '../hooks/useFocusTrap';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, OPACITY_TOKENS } from '../constants';
 import { logger } from '../utils/logger';
+import { HEIGHTS } from '../config/heights';
 
 import { ToastType } from './Toast';
 
@@ -261,70 +262,56 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         </div>
         <div className="flex items-center gap-2">
              {voiceQueue.isPlaying && (
-              <div className="flex items-center gap-2 bg-white/10% rounded-lg px-2.5 py-1.5">
+               <div className={`flex items-center gap-2 ${OPACITY_TOKENS.WHITE_10} rounded-lg px-2.5 py-1.5`}>
                 <span className="text-xs font-medium text-white mr-1.5">
                   {voiceQueue.currentIndex + 1}/{voiceQueue.queueSize}
                 </span>
                 {voiceQueue.isPaused ? (
-                  <IconButton
-                    onClick={() => {
-                      voiceQueue.resume();
-                      synthesis.speak('Melanjutkan pembacaan');
-                    }}
-                    ariaLabel="Lanjutkan baca"
-                    size="sm"
-                    className="p-1.5 bg-white/10% hover:bg-white/20% text-white focus:ring-white/50%"
+                 <IconButton
+                   onClick={() => {
+                     voiceQueue.stop();
+                     synthesis.stop();
+                     synthesis.speak('Pembacaan dihentikan');
+                   }}
+                   ariaLabel="Hentikan baca"
+                   size="sm"
+                   className={`p-1.5 ${OPACITY_TOKENS.WHITE_10} ${OPACITY_TOKENS.WHITE_10_HOVER} text-white ${OPACITY_TOKENS.RING_WHITE_50}`}
                     icon={
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                       </svg>
                     }
                   />
-                ) : (
+                 ) : (
+                   <IconButton
+                     onClick={() => {
+                       voiceQueue.pause();
+                       synthesis.speak('Pembacaan dijeda');
+                     }}
+                     ariaLabel="Jeda baca"
+                     size="sm"
+                     className={`p-1.5 ${OPACITY_TOKENS.WHITE_10} ${OPACITY_TOKENS.WHITE_10_HOVER} text-white ${OPACITY_TOKENS.RING_WHITE_50}`}
+                     icon={
+                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                         <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z" />
+                        </svg>
+                      }
+                    />
+                  )}
                   <IconButton
                     onClick={() => {
-                      voiceQueue.pause();
-                      synthesis.speak('Pembacaan dijeda');
+                      voiceQueue.skip();
                     }}
-                    ariaLabel="Jeda baca"
+                    ariaLabel="Lewati pesan"
                     size="sm"
-                    className="p-1.5 bg-white/10% hover:bg-white/20% text-white focus:ring-white/50%"
+                    className={`p-1.5 ${OPACITY_TOKENS.WHITE_10} ${OPACITY_TOKENS.WHITE_10_HOVER} text-white ${OPACITY_TOKENS.RING_WHITE_50}`}
                     icon={
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clipRule="evenodd" />
                       </svg>
                     }
                   />
-                )}
-                <IconButton
-                  onClick={() => {
-                    voiceQueue.skip();
-                  }}
-                  ariaLabel="Lewati pesan"
-                  size="sm"
-                  className="p-1.5 bg-white/10% hover:bg-white/20% text-white focus:ring-white/50%"
-                  icon={
-                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798l-5.445-3.63z" />
-                    </svg>
-                  }
-                />
-                <IconButton
-                  onClick={() => {
-                    voiceQueue.stop();
-                    synthesis.stop();
-                    synthesis.speak('Pembacaan dihentikan');
-                  }}
-                  ariaLabel="Hentikan baca"
-                  size="sm"
-                  className="p-1.5 bg-white/10% hover:bg-white/20% text-white focus:ring-white/50%"
-                  icon={
-                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clipRule="evenodd" />
-                    </svg>
-                  }
-                />
-              </div>
+               </div>
             )}
 
                {synthesis.isSupported && (
@@ -356,7 +343,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                   ariaLabel="Tutup obrolan"
                   size="md"
                   variant="ghost"
-                  className="p-2 bg-white/10% hover:bg-white/20% text-white focus:ring-white/50%"
+                   className={`p-2 ${OPACITY_TOKENS.WHITE_10} ${OPACITY_TOKENS.WHITE_10_HOVER} text-white ${OPACITY_TOKENS.RING_WHITE_50}`}
                   icon={<CloseIcon />}
                 />
         </div>
@@ -404,7 +391,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
         </ul>
       </div>
 
-      <div className="p-4 border-t border-neutral-200 dark:border-neutral-700 bg-white/95% dark:bg-neutral-800/95% backdrop-blur-sm flex-shrink-0 rounded-b-xl shadow-sm">
+      <div className={`p-4 border-t border-neutral-200 dark:border-neutral-700 ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_SM} flex-shrink-0 rounded-b-xl shadow-sm`}>
         <div className="flex items-end gap-2.5">
           <Textarea
               value={input}
@@ -418,7 +405,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               disabled={isLoading}
               placeholder={isThinkingMode ? "Ketik pertanyaan kompleks..." : "Ketik pertanyaan Anda..."}
               fullWidth={true}
-              className="min-h-[44px]"
+              className={HEIGHTS.CONTENT.MINIMUM}
               autoResize={true}
               minRows={1}
               maxRows={5}

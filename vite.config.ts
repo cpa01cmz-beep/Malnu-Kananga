@@ -93,7 +93,6 @@ export default defineConfig(({ mode }) => {
       })
     ],
     define: {
-      'process.env.API_KEY': JSON.stringify(process.env.VITE_GEMINI_API_KEY),
       'process.env.VITE_GEMINI_API_KEY': JSON.stringify(process.env.VITE_GEMINI_API_KEY)
     },
     build: {
@@ -101,24 +100,50 @@ export default defineConfig(({ mode }) => {
         external: ['fsevents'],
         output: {
           manualChunks: (id: string) => {
-            // Minimal chunking strategy to prevent circular dependencies
-            // Only split the largest third-party libraries
+            // Optimize chunking to reduce bundle size and improve load times
 
             // Google GenAI library (very large, keep separate)
             if (id.includes('@google/genai')) {
               return 'vendor-genai';
             }
+
+            // Tesseract.js (OCR - large library)
+            if (id.includes('tesseract.js')) {
+              return 'vendor-tesseract';
+            }
+
+            // PDF generation libraries (split into smaller chunks)
+            if (id.includes('jspdf-autotable')) {
+              return 'vendor-jpdf-autotable';
+            }
+            if (id.includes('html2canvas')) {
+              return 'vendor-html2canvas';
+            }
+            if (id.includes('jspdf')) {
+              return 'vendor-jpdf';
+            }
+
+            // Recharts (charts - medium size)
+            if (id.includes('recharts')) {
+              return 'vendor-charts';
+            }
+
             // Test libraries (only in test mode)
             if (id.includes('vitest') || id.includes('@vitest')) {
               return 'tests';
             }
 
-            // Don't manually split anything else - let Vite handle optimally
+            // Group UI component libraries
+            if (id.includes('@heroicons/react')) {
+              return 'vendor-icons';
+            }
+
+            // Don't split application code
             return undefined;
           }
         }
       },
-      chunkSizeWarningLimit: 300,
+      chunkSizeWarningLimit: 500,
       target: 'esnext',
       minify: 'terser' as const,
       terserOptions: {

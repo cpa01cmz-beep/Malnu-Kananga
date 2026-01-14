@@ -312,7 +312,7 @@ Please provide the updated JSON content following the safety and content rules a
                         return session.user?.id || session.userId || 'anonymous';
                     }
                 } catch (e) {
-                    console.warn('Failed to get user ID for validation:', e);
+                    logger.warn('Failed to get user ID for validation:', e);
                 }
                 return 'anonymous';
             })() : 'anonymous';

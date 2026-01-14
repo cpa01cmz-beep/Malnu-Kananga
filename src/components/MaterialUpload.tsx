@@ -15,9 +15,9 @@ import { CategoryValidator } from '../utils/categoryValidator';
 import { CategoryValidationResult } from '../services/categoryService';
 import { validateMaterialData } from '../utils/teacherValidation';
 import { EmptyState } from './ui/LoadingState';
-import { 
-  executeWithRetry, 
-  createToastHandler 
+import {
+  executeWithRetry,
+  createToastHandler
 } from '../utils/teacherErrorHandler';
 import { useCanAccess } from '../hooks/useCanAccess';
 import { useOfflineActionQueue } from '../services/offlineActionQueueService';
@@ -33,6 +33,7 @@ import MaterialAnalytics from './MaterialAnalytics';
 import MaterialTemplatesLibrary from './MaterialTemplatesLibrary';
 import Button from './ui/Button';
 import AccessDenied from './AccessDenied';
+import { HEIGHT_CLASSES } from '../config/heights';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
@@ -707,7 +708,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                 {selectedFolder ? selectedFolder.name : 'Semua Materi'} ({materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).length})
               </h3>
             </div>
-            <div className="divide-y divide-neutral-100 dark:divide-neutral-700 max-h-[600px] overflow-y-auto">
+            <div className={`divide-y divide-neutral-100 dark:divide-neutral-700 ${HEIGHT_CLASSES.MATERIAL.LIST} overflow-y-auto`}>
               {materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).length > 0 ? (
                 materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).map((item) => (
                   <div key={item.id} className="p-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
@@ -779,6 +780,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                           onClick={() => handleDelete(item)}
                           className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
                           title="Hapus Materi"
+                          aria-label="Hapus Materi"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

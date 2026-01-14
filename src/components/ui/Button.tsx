@@ -15,7 +15,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
+const baseClasses = "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
@@ -36,15 +36,15 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "px-3 py-2.5 text-sm min-h-[44px]",
-  md: "px-4 py-3 text-sm sm:text-base min-h-[44px]",
-  lg: "px-6 py-3.5 text-base sm:text-lg min-h-[48px]",
+  sm: "px-3 py-2 text-sm",
+  md: "px-4 py-2.5 text-sm sm:text-base",
+  lg: "px-6 py-3 text-base sm:text-lg",
 };
 
 const iconOnlySizes: Record<ButtonSize, string> = {
-  sm: "p-3 min-w-[44px] min-h-[44px]",
-  md: "p-3 min-w-[44px] min-h-[44px]",
-  lg: "p-4 min-w-[48px] min-h-[48px]",
+  sm: "p-1.5",
+  md: "p-2",
+  lg: "p-2.5",
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
@@ -72,13 +72,20 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 
   const computedAriaLabel = iconOnly ? (ariaLabel || (typeof children === 'string' ? children : 'Button')) : undefined;
 
+  const ariaProps: Record<string, string | boolean | undefined> = {
+    'aria-label': computedAriaLabel,
+  };
+
+  if (isLoading) {
+    ariaProps['aria-busy'] = 'true';
+  }
+
   return (
     <button
       ref={ref}
       className={classes}
       disabled={disabled || isLoading}
-      aria-label={computedAriaLabel}
-      aria-busy={isLoading}
+      {...ariaProps}
       {...props}
     >
       {isLoading && iconOnly ? (

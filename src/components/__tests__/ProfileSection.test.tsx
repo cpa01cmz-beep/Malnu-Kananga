@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import ProfileSection from '../sections/ProfileSection';
 
 describe('ProfileSection', () => {
@@ -9,20 +8,18 @@ describe('ProfileSection', () => {
     expect(screen.getByText('Mengenal Lebih Dekat MA Malnu Kananga')).toBeInTheDocument();
   });
 
-  it('renders the Visi card as a focusable button', () => {
+  it('renders the Visi article correctly', () => {
     render(<ProfileSection />);
-    const visiButton = screen.getByRole('button', { name: /Visi/i });
-    expect(visiButton).toBeInTheDocument();
-    expect(visiButton).toHaveAttribute('type', 'button');
-    expect(visiButton).toHaveAttribute('aria-labelledby', 'visi-heading');
+    const visiArticle = screen.getByRole('article', { name: 'Visi' });
+    expect(visiArticle).toBeInTheDocument();
+    expect(visiArticle).toHaveAttribute('aria-labelledby', 'visi-heading');
   });
 
-  it('renders the Misi card as a focusable button', () => {
+  it('renders Misi article correctly', () => {
     render(<ProfileSection />);
-    const misiButton = screen.getByRole('button', { name: /Misi/i });
-    expect(misiButton).toBeInTheDocument();
-    expect(misiButton).toHaveAttribute('type', 'button');
-    expect(misiButton).toHaveAttribute('aria-labelledby', 'misi-heading');
+    const misiArticle = screen.getByRole('article', { name: 'Misi' });
+    expect(misiArticle).toBeInTheDocument();
+    expect(misiArticle).toHaveAttribute('aria-labelledby', 'misi-heading');
   });
 
   it('renders Visi content correctly', () => {
@@ -56,23 +53,7 @@ describe('ProfileSection', () => {
     expect(misiHeading).toHaveAttribute('id', 'misi-heading');
   });
 
-  it('Visi button is keyboard accessible', async () => {
-    render(<ProfileSection />);
-    const visiButton = screen.getByRole('button', { name: /Visi/i });
-    visiButton.focus();
-    expect(visiButton).toHaveFocus();
-    await userEvent.keyboard('{Enter}');
-    await userEvent.keyboard('{Space}');
-  });
 
-  it('Misi button is keyboard accessible', async () => {
-    render(<ProfileSection />);
-    const misiButton = screen.getByRole('button', { name: /Misi/i });
-    misiButton.focus();
-    expect(misiButton).toHaveFocus();
-    await userEvent.keyboard('{Enter}');
-    await userEvent.keyboard('{Space}');
-  });
 
   it('applies responsive classes', () => {
     const { container } = render(<ProfileSection />);
@@ -98,22 +79,21 @@ describe('ProfileSection', () => {
     });
   });
 
-  it('applies focus-visible styles for keyboard navigation', () => {
+  it('does not apply hover styles to articles (WCAG compliance)', () => {
     const { container } = render(<ProfileSection />);
-    const buttons = container.querySelectorAll('button');
-    buttons.forEach(button => {
-      expect(button.className).toContain('focus-visible:ring-2');
-      expect(button.className).toContain('focus-visible:ring-primary-500/50');
-      expect(button.className).toContain('focus-visible:ring-offset-2');
+    const articles = container.querySelectorAll('article');
+    articles.forEach(article => {
+      expect(article.className).not.toContain('hover:');
+      expect(article.className).not.toContain('shadow-card-hover');
+      expect(article.className).not.toContain('-translate-y-1');
     });
   });
 
-  it('applies dark mode support', () => {
+  it('applies dark mode support to articles', () => {
     const { container } = render(<ProfileSection />);
-    const buttons = container.querySelectorAll('button');
-    buttons.forEach(button => {
-      expect(button.className).toContain('dark:border-neutral-700');
-      expect(button.className).toContain('dark:focus-visible:ring-offset-neutral-800');
+    const articles = container.querySelectorAll('article');
+    articles.forEach(article => {
+      expect(article.className).toContain('dark:border-neutral-700');
     });
   });
 });

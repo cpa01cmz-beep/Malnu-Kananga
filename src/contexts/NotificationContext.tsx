@@ -1,5 +1,5 @@
 import React from 'react';
-import { usePushNotifications } from '../hooks/usePushNotifications';
+import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';

@@ -303,56 +303,9 @@ npm run validate-config
 
 If validation fails, fix all reported errors before proceeding.
 
-## Step 4: Deploy Backend Worker
+## Step 4: Deploy Frontend to Cloudflare Pages
 
-### 4.1 Deploy to Production
-
-```bash
-# Deploy the worker
-wrangler deploy --env production
-
-# Verify deployment
-wrangler deployments list --env production
-```
-
-Expected output:
-```
-✨ Successfully published your Worker to
-  https://malnu-kananga-worker-prod.workers.dev
-```
-
-### 4.2 Seed the Database
-
-```bash
-# Seed the database with initial data
-curl https://malnu-kananga-worker-prod.workers.dev/seed
-
-# Expected response:
-# {"success":true,"message":"Database seeded successfully",...}
-```
-
-This will create:
-- All required tables
-- Default admin user (email: admin@malnu.sch.id, password: admin123)
-- Sample subjects
-
-**⚠️ IMPORTANT**: Change the default admin password immediately after first login!
-
-### 4.3 Verify Deployment
-
-```bash
-# Test health endpoint
-curl https://malnu-kananga-worker-prod.workers.dev/health
-
-# Test login endpoint
-curl -X POST https://malnu-kananga-worker-prod.workers.dev/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@malnu.sch.id","password":"admin123"}'
-```
-
-## Step 3: Deploy Frontend to Cloudflare Pages
-
-### 3.1 Create Pages Project (First Time Only)
+### 4.1 Create Pages Project (First Time Only)
 
 ```bash
 # Create Pages project (first time only)
@@ -361,7 +314,7 @@ wrangler pages project create malnu-kananga
 # Follow the prompts to connect to GitHub repository or upload manually
 ```
 
-### 3.2 Configure Pages Secrets
+### 4.2 Configure Pages Secrets
 
 Set environment variables for Pages:
 
@@ -379,7 +332,7 @@ echo "true" | wrangler pages secret put VITE_ENABLE_AI_CHAT --project-name=malnu
 wrangler pages secret list --project-name=malnu-kananga
 ```
 
-### 3.3 Build Frontend
+### 4.3 Build Frontend
 
 ```bash
 # Install dependencies
@@ -409,7 +362,7 @@ dist/
     └── ...
 ```
 
-### 3.4 Deploy to Cloudflare Pages
+### 4.4 Deploy to Cloudflare Pages
 
 ```bash
 # Deploy to Cloudflare Pages
@@ -428,7 +381,7 @@ Uploading... (39/39)
 ✨ Deployment complete! Take a peek over at https://xxx.pages.dev
 ```
 
-### 3.5 Verify Pages Deployment
+### 4.5 Verify Pages Deployment
 
 ```bash
 # Check deployed site
@@ -440,7 +393,7 @@ curl -I https://malnu-kananga.pages.dev
 # content-type: text/html; charset=utf-8
 ```
 
-### 3.6 (Optional) Configure Custom Domain
+### 4.6 (Optional) Configure Custom Domain
 
 If you have a custom domain:
 
@@ -453,7 +406,7 @@ If you have a custom domain:
 
 **Note**: This step is optional. The default Pages URL works perfectly fine.
 
-## Step 4: Post-Deployment Checklist
+## Step 5: Post-Deployment Checklist
 
 After successful deployment:
 
@@ -485,9 +438,9 @@ Maintenance:
 - [ ] Review security headers
 - [ ] Test with real user workflows
 
-## Step 7: Monitoring and Maintenance
+## Step 6: Monitoring and Maintenance
 
-### 7.1 View Worker Logs
+### 6.1 View Worker Logs
 
 ```bash
 # View real-time logs
@@ -497,7 +450,7 @@ wrangler tail --env production
 wrangler deployments tail --env production
 ```
 
-### 7.2 Database Management
+### 6.2 Database Management
 
 ```bash
 # Execute SQL queries
@@ -507,7 +460,7 @@ wrangler d1 execute malnu-kananga-db-prod --env production --command="SELECT COU
 wrangler d1 export malnu-kananga-db-prod --env production --output=backup.sql
 ```
 
-### 7.3 R2 Storage Management
+### 6.3 R2 Storage Management
 
 ```bash
 # View bucket contents
@@ -520,7 +473,7 @@ wrangler r2 object get malnu-kananga-files --key=ppdb-documents/2024/abc123/ijaz
 wrangler r2 object delete malnu-kananga-files --key=ppdb-documents/2024/abc123/ijazah.pdf
 ```
 
-### 7.4 Performance Monitoring
+### 6.4 Performance Monitoring
 
 Monitor key metrics:
 - Worker response time
@@ -697,7 +650,7 @@ wrangler deploy --env production
 - [Cloudflare R2 Documentation](https://developers.cloudflare.com/r2/)
 - [Cloudflare Pages Documentation](https://developers.cloudflare.com/pages/)
 - [Wrangler CLI Documentation](https://developers.cloudflare.com/workers/wrangler/)
-- [API Reference](./api-documentation.md)
+- [API Reference](./api-reference.md)
 
 ## Quick Reference URLs
 

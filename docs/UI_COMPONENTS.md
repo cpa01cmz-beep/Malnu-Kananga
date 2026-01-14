@@ -1,5 +1,22 @@
 # UI Components Documentation
 
+**Status**: ⚠️ INCOMPLETE (15 of 41 components documented)
+**Last Updated**: 2026-01-14
+
+> **IMPORTANT**: This document currently covers 15 of 41 exported UI components from `src/components/ui/index.ts`. The following 26 components are missing documentation:
+> - Form: SearchInput
+> - Buttons: GradientButton, SmallActionButton
+> - Layout: BaseModal, ConfirmationDialog, Section, ErrorBoundary, SkipLink
+> - Display: DashboardActionCard, SocialLink
+> - Table: Table (with sub-components), DataTable
+> - Interactive: Tab
+> - Navigation: Pagination
+> - Loading: EmptyState, ErrorState, LoadingSpinner, LoadingOverlay, Skeleton
+> - Progress: ProgressBar
+> - Utility: PageHeader, ErrorMessage, PDFExportButton
+>
+> See `src/components/ui/index.ts` for complete export list. Documentation updates are tracked in TASK.md (P1 priority).
+
 ## Overview
 
 This document provides usage examples and guidelines for reusable UI components in MA Malnu Kananga application.
@@ -2273,6 +2290,2277 @@ Potential improvements to consider:
 
 **Last Updated**: 2026-01-10
 **Component Version**: 1.0.0
+
+## Textarea Component
+
+**Location**: `src/components/ui/Textarea.tsx`
+
+A reusable textarea component with auto-resize, validation, and comprehensive accessibility support.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg` for flexible layouts
+- **3 States**: `default`, `error`, `success`
+- **Auto-Resize**: Configurable automatic height adjustment based on content
+- **Validation**: Built-in validation rules with error announcement
+- **Accessibility**: Full ARIA support, character count, keyboard navigation, focus management
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Label Support**: Optional label with required indicator
+- **Helper Text**: Contextual guidance for users
+- **Error Handling**: Built-in error state with role="alert"
+- **Character Count**: Automatic character count when maxLength is set
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text displayed above the textarea |
+| `helperText` | `string` | `undefined` | Helper text displayed below the textarea |
+| `errorText` | `string` | `undefined` | Error message displayed below the textarea (sets state to error) |
+| `size` | `TextareaSize` | `'md'` | Textarea size (affects padding and text size) |
+| `state` | `TextareaState` | `'default'` | Visual state variant (defaults to 'error' if errorText provided) |
+| `fullWidth` | `boolean` | `false` | Whether the textarea should take full width |
+| `autoResize` | `boolean` | `true` | Enable automatic height adjustment based on content |
+| `maxRows` | `number` | `8` | Maximum number of rows for auto-resize |
+| `minRows` | `number` | `1` | Minimum number of rows for auto-resize |
+| `validationRules` | `Array<ValidationRule>` | `[]` | Array of validation rules with validate function and error message |
+| `validateOnChange` | `boolean` | `true` | Validate on every change event |
+| `validateOnBlur` | `boolean` | `true` | Validate on blur event |
+| `accessibility.announceErrors` | `boolean` | `true` | Announce validation errors via ARIA |
+| `accessibility.describedBy` | `string` | `undefined` | Additional ARIA describedby IDs |
+| `id` | `string` | Auto-generated | Unique identifier for the textarea |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard textarea attributes | - | - | Passes through all standard HTML textarea props |
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for dense interfaces.
+
+```tsx
+import Textarea from './ui/Textarea';
+
+<Textarea
+  label="Description"
+  size="sm"
+  placeholder="Enter description..."
+/>
+```
+
+**Dimensions**:
+- Padding: `px-3 py-2`
+- Text: `text-sm`
+- Label: `text-xs`
+- Helper/Error text: `text-xs`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<Textarea
+  label="Description"
+  size="md"
+  placeholder="Enter description..."
+/>
+```
+
+**Dimensions**:
+- Padding: `px-4 py-3`
+- Text: `text-sm sm:text-base`
+- Label: `text-sm`
+- Helper/Error text: `text-xs`
+
+#### Large (lg)
+
+Larger size for better accessibility and touch targets.
+
+```tsx
+<Textarea
+  label="Description"
+  size="lg"
+  placeholder="Enter description..."
+/>
+```
+
+**Dimensions**:
+- Padding: `px-5 py-4`
+- Text: `text-base sm:text-lg`
+- Label: `text-base`
+- Helper/Error text: `text-sm`
+
+### States
+
+#### Default State
+
+Standard styling for normal textarea.
+
+```tsx
+<Textarea
+  label="Description"
+  placeholder="Enter description..."
+/>
+```
+
+**Styling**:
+- Border: `border-neutral-300` / `dark:border-neutral-600`
+- Background: `bg-white` / `dark:bg-neutral-700`
+- Text: `text-neutral-900` / `dark:text-white`
+- Focus: `focus:ring-primary-500/50 focus:border-primary-500`
+
+#### Error State
+
+Red styling when validation fails.
+
+```tsx
+<Textarea
+  label="Description"
+  errorText="Description must be at least 10 characters"
+  placeholder="Enter description..."
+/>
+```
+
+**Styling**:
+- Border: `border-red-300` / `dark:border-red-700`
+- Background: `bg-red-50` / `dark:bg-red-900/20`
+- Focus: `focus:ring-red-500/50 focus:border-red-500`
+- Error text: `text-red-600 dark:text-red-400` with `role="alert"`
+- `aria-invalid`: `true`
+
+#### Success State
+
+Green styling for successful validation.
+
+```tsx
+<Textarea
+  label="Description"
+  state="success"
+  helperText="Description looks good!"
+  placeholder="Enter description..."
+/>
+```
+
+**Styling**:
+- Border: `border-green-300` / `dark:border-green-700`
+- Background: `bg-green-50` / `dark:bg-green-900/20`
+- Focus: `focus:ring-green-500/50 focus:border-green-500`
+
+### Auto-Resize
+
+Enable automatic height adjustment based on content.
+
+```tsx
+<Textarea
+  label="Description"
+  autoResize={true}
+  minRows={3}
+  maxRows={10}
+  placeholder="Type here and textarea will auto-resize..."
+/>
+```
+
+**Features**:
+- Automatically adjusts height as content grows
+- Respects `minRows` and `maxRows` limits
+- Disabled with `autoResize={false}` for fixed height
+
+**Disabled Auto-Resize**:
+
+```tsx
+<Textarea
+  label="Description"
+  autoResize={false}
+  minRows={5}
+  placeholder="Fixed height textarea with 5 rows..."
+/>
+```
+
+### Validation
+
+Built-in validation with custom rules and error announcement.
+
+```tsx
+<Textarea
+  label="Description"
+  validationRules={[
+    {
+      validate: (value) => value.length >= 10,
+      message: 'Description must be at least 10 characters'
+    },
+    {
+      validate: (value) => value.length <= 500,
+      message: 'Description must not exceed 500 characters'
+    }
+  ]}
+  validateOnChange={true}
+  validateOnBlur={true}
+  placeholder="Enter description..."
+/>
+```
+
+**Features**:
+- Validate on change and/or blur
+- Automatic error announcement with `role="alert"`
+- Visual loading indicator during validation
+- Auto-focus on error after touch
+- Error messages displayed below textarea
+
+### Character Count
+
+Automatic character count when `maxLength` is set.
+
+```tsx
+<Textarea
+  label="Bio"
+  maxLength={150}
+  helperText="Tell us about yourself"
+  placeholder="Enter your bio..."
+/>
+```
+
+**Features**:
+- Displays `current/maxLength` count below textarea
+- Right-aligned for clean layout
+- Announced via `aria-live="polite"` for screen readers
+
+### Accessibility Features
+
+The Textarea component includes comprehensive accessibility support:
+
+1. **ARIA Labels**: Generated unique IDs for label association
+2. **ARIA DescribedBy**: Associates helper text and error text with textarea
+3. **ARIA Invalid**: Automatically set when `state === 'error'`
+4. **Error Role**: Error text has `role="alert"` for screen readers
+5. **Required Indicator**: Visual `*` with `aria-label="wajib diisi"` for screen readers
+6. **Error Announcement**: `aria-live="polite"` on error messages
+7. **Validation State**: `aria-busy` during validation
+8. **Focus Management**: `focus:ring-2` with `focus:ring-offset-2` for clear focus indication
+9. **Keyboard Navigation**: Full keyboard support with visible focus states
+
+```tsx
+<Textarea
+  label="Description"
+  helperText="Provide a detailed description"
+  errorText="Description is required"
+  required
+  maxLength={500}
+  validationRules={[
+    { validate: (value) => value.length >= 10, message: 'Too short' }
+  ]}
+  aria-label="Enter item description"
+/>
+```
+
+### Real-World Examples
+
+#### Description Field with Validation
+
+```tsx
+function ProductForm() {
+  const [description, setDescription] = useState('');
+
+  return (
+    <Textarea
+      label="Product Description"
+      value={description}
+      onChange={(e) => setDescription(e.target.value)}
+      helperText="Describe your product in detail"
+      validationRules={[
+        {
+          validate: (value) => value.length >= 50,
+          message: 'Description must be at least 50 characters'
+        }
+      ]}
+      maxLength={1000}
+      size="lg"
+    />
+  );
+}
+```
+
+#### Comment Field with Auto-Resize
+
+```tsx
+function CommentSection() {
+  const [comment, setComment] = useState('');
+
+  return (
+    <Textarea
+      label="Add a Comment"
+      value={comment}
+      onChange={(e) => setComment(e.target.value)}
+      autoResize={true}
+      minRows={3}
+      maxRows={8}
+      placeholder="Share your thoughts..."
+      helperText="Be respectful and constructive"
+      size="md"
+    />
+  );
+}
+```
+
+#### Notes Field with Character Count
+
+```tsx
+function NotesEditor() {
+  const [notes, setNotes] = useState('');
+
+  return (
+    <Textarea
+      label="Meeting Notes"
+      value={notes}
+      onChange={(e) => setNotes(e.target.value)}
+      maxLength={500}
+      helperText="Record key discussion points"
+      placeholder="Enter meeting notes..."
+      size="lg"
+      fullWidth
+    />
+  );
+}
+```
+
+#### Multi-Field Form with Validation
+
+```tsx
+function FeedbackForm() {
+  const [feedback, setFeedback] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const handleSubmit = () => {
+    if (feedback.length < 10) {
+      setErrors({ feedback: 'Too short' });
+      return;
+    }
+    submitFeedback(feedback);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <Textarea
+        label="Your Feedback"
+        value={feedback}
+        onChange={(e) => setFeedback(e.target.value)}
+        errorText={errors.feedback}
+        validationRules={[
+          { validate: (v) => v.length >= 10, message: 'Minimum 10 characters' }
+        ]}
+        helperText="Help us improve our service"
+        placeholder="What did you like or dislike?"
+        size="lg"
+        fullWidth
+      />
+      <Button type="submit">Submit Feedback</Button>
+    </form>
+  );
+}
+```
+
+### Dark Mode
+
+All Textarea states automatically support dark mode:
+
+- Background: `bg-white` → `dark:bg-neutral-700`
+- Borders: `border-neutral-300` → `dark:border-neutral-600`
+- Text: `text-neutral-900` → `dark:text-white`
+- Error background: `bg-red-50` → `dark:bg-red-900/20`
+- Success background: `bg-green-50` → `dark:bg-green-900/20`
+
+### Performance Considerations
+
+The Textarea component is optimized using:
+- `forwardRef` for ref forwarding
+- Proper TypeScript typing
+- Debounced auto-resize calculations
+- No unnecessary re-renders
+- Efficient validation state management
+- CSS-only transitions and animations
+
+### Migration Guide
+
+To migrate existing textarea implementations:
+
+**Before:**
+```tsx
+<div className="mb-4">
+  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+    Description
+  </label>
+  <textarea
+    placeholder="Enter description..."
+    className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 focus:outline-none resize-none"
+    maxLength={500}
+  />
+  <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+    Max 500 characters
+  </p>
+</div>
+```
+
+**After:**
+```tsx
+import Textarea from './ui/Textarea';
+
+<Textarea
+  label="Description"
+  maxLength={500}
+  helperText="Max 500 characters"
+  placeholder="Enter description..."
+/>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Built-in auto-resize functionality
+- ✅ Character count display
+- ✅ Built-in validation rules
+- ✅ Error and success states
+- ✅ Helper text support
+- ✅ Dark mode support
+- ✅ Reduced code duplication
+
+### Test Coverage
+
+The Textarea component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Textarea.test.tsx
+```
+
+Test scenarios include:
+- Rendering with default props
+- Rendering with label
+- Rendering with helper text
+- Rendering with error text
+- All size variants (sm, md, lg)
+- All state variants (default, error, success)
+- Full width variant
+- Auto-resize functionality
+- Disabled state behavior
+- Required field indicator
+- Character count display
+- Validation rules
+- Error announcement
+- ARIA attributes
+- Unique ID generation
+- Custom className application
+- Dark mode styling
+
+### Usage in Application
+
+Currently integrated in:
+- `src/components/BatchManagement.tsx` - Batch description textarea
+- `src/components/PPDBRegistration.tsx` - Multiple textarea fields
+
+**Common Patterns:**
+
+```tsx
+// Simple textarea with label
+<Textarea label="Description" placeholder="Enter..." />
+
+// With validation and character count
+<Textarea
+  label="Notes"
+  maxLength={500}
+  validationRules={[{ validate: (v) => v.length >= 10, message: 'Too short' }]}
+/>
+
+// Auto-resize with min/max rows
+<Textarea
+  label="Comments"
+  autoResize
+  minRows={3}
+  maxRows={10}
+/>
+
+// With error state
+<Textarea
+  label="Description"
+  errorText="This field is required"
+  state="error"
+/>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Markdown preview mode
+- Syntax highlighting for code
+- Rich text editor variant
+- Word count display
+- Undo/redo history
+- Paste from rich text format handling
+
+---
+
+## Toggle Component
+
+**Location**: `src/components/ui/Toggle.tsx`
+
+A reusable toggle/switch component for boolean values with multiple sizes, colors, and comprehensive accessibility support.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg` for flexible layouts
+- **6 Colors**: `primary`, `blue`, `green`, `red`, `purple`, `orange`
+- **Label Support**: Optional label with description
+- **Label Position**: Configurable label position (left or right)
+- **Accessibility**: Full ARIA support, keyboard navigation, screen reader support
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Smooth Transitions**: Animated toggle with color transitions
+- **Disabled State**: Proper visual and keyboard disabled handling
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text for the toggle |
+| `description` | `string` | `undefined` | Description text displayed below label |
+| `toggleSize` | `'sm' \| 'md' \| 'lg'` | `'md'` | Toggle size (affects switch and dot dimensions) |
+| `color` | `ToggleColor` | `'primary'` | Color theme when checked |
+| `labelPosition` | `'left' \| 'right'` | `'right'` | Label position relative to toggle |
+| `disabled` | `boolean` | `false` | Disable toggle interaction |
+| `checked` | `boolean` | `undefined` | Controlled checked state |
+| `defaultChecked` | `boolean` | `undefined` | Uncontrolled initial checked state |
+| `onChange` | `(e: ChangeEvent) => void` | `undefined` | Change handler function |
+| `aria-label` | `string` | `undefined` | Accessibility label for screen readers |
+| `aria-labelledby` | `string` | `undefined` | ID of element labeling the toggle |
+| `aria-describedby` | `string` | `undefined` | ID of element describing the toggle |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard input attributes | - | - | Passes through all standard HTML input props |
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for dense interfaces.
+
+```tsx
+import { Toggle } from './ui/Toggle';
+
+<Toggle
+  label="Dark Mode"
+  toggleSize="sm"
+  checked={isDark}
+  onChange={(e) => setDark(e.target.checked)}
+/>
+```
+
+**Dimensions**:
+- Switch: `w-9 h-5` (36px × 20px)
+- Dot: `w-4 h-4` (16px × 16px)
+- Label text: `text-sm`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<Toggle
+  label="Notifications"
+  toggleSize="md"
+  checked={notifications}
+  onChange={(e) => setNotifications(e.target.checked)}
+/>
+```
+
+**Dimensions**:
+- Switch: `w-11 h-6` (44px × 24px)
+- Dot: `w-5 h-5` (20px × 20px)
+- Label text: `text-base`
+
+#### Large (lg)
+
+Larger size for better accessibility and touch targets.
+
+```tsx
+<Toggle
+  label="Auto-save"
+  toggleSize="lg"
+  checked={autoSave}
+  onChange={(e) => setAutoSave(e.target.checked)}
+/>
+```
+
+**Dimensions**:
+- Switch: `w-14 h-8` (56px × 32px)
+- Dot: `w-6 h-6` (24px × 24px)
+- Label text: `text-lg`
+
+### Colors
+
+Toggle colors when checked (unchecked state is always neutral):
+
+```tsx
+// Primary (default)
+<Toggle label="Primary" color="primary" checked={true} />
+
+// Blue
+<Toggle label="Blue" color="blue" checked={true} />
+
+// Green
+<Toggle label="Green" color="green" checked={true} />
+
+// Red
+<Toggle label="Red" color="red" checked={true} />
+
+// Purple
+<Toggle label="Purple" color="purple" checked={true} />
+
+// Orange
+<Toggle label="Orange" color="orange" checked={true} />
+```
+
+**Color Classes**:
+- Primary: `peer-checked:bg-primary-600`
+- Blue: `peer-checked:bg-blue-600`
+- Green: `peer-checked:bg-green-600`
+- Red: `peer-checked:bg-red-600`
+- Purple: `peer-checked:bg-purple-600`
+- Orange: `peer-checked:bg-orange-600`
+
+### Label Position
+
+#### Right Label (Default)
+
+Label positioned to the right of the toggle.
+
+```tsx
+<Toggle
+  label="Enable notifications"
+  labelPosition="right"
+  checked={notifications}
+  onChange={(e) => setNotifications(e.target.checked)}
+/>
+```
+
+#### Left Label
+
+Label positioned to the left of the toggle.
+
+```tsx
+<Toggle
+  label="Enable notifications"
+  labelPosition="left"
+  checked={notifications}
+  onChange={(e) => setNotifications(e.target.checked)}
+/>
+```
+
+### Description
+
+Add description text below the label.
+
+```tsx
+<Toggle
+  label="Email Notifications"
+  description="Receive email updates about new features"
+  checked={emailNotifications}
+  onChange={(e) => setEmailNotifications(e.target.checked)}
+  labelPosition="right"
+/>
+```
+
+**Styling**:
+- Label text: `font-medium` with size-based font size
+- Description text: `text-sm text-neutral-600 dark:text-neutral-400`
+
+### Disabled State
+
+Disable toggle interaction.
+
+```tsx
+<Toggle
+  label="Restricted Feature"
+  disabled={true}
+  checked={false}
+  onChange={() => {}}
+/>
+```
+
+**Styling**:
+- Opacity: `opacity-50`
+- Cursor: `cursor-not-allowed`
+- Prevents click/keyboard interaction
+- Maintains visual styling
+
+### Controlled Component
+
+Use `checked` prop for controlled toggle.
+
+```tsx
+function SettingsPanel() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [notifications, setNotifications] = useState(true);
+
+  return (
+    <div className="space-y-4">
+      <Toggle
+        label="Dark Mode"
+        checked={darkMode}
+        onChange={(e) => setDarkMode(e.target.checked)}
+      />
+      <Toggle
+        label="Notifications"
+        checked={notifications}
+        onChange={(e) => setNotifications(e.target.checked)}
+      />
+    </div>
+  );
+}
+```
+
+### Uncontrolled Component
+
+Use `defaultChecked` prop for uncontrolled toggle.
+
+```tsx
+<form>
+  <Toggle
+    label="Remember me"
+    name="remember"
+    defaultChecked={true}
+  />
+  <button type="submit">Submit</button>
+</form>
+```
+
+### Accessibility Features
+
+The Toggle component includes comprehensive accessibility support:
+
+1. **ARIA Roles**:
+   - `role="switch"` - Indicates toggle switch component
+   - `aria-checked` - Reflects checked state
+   - `aria-label` - Descriptive label for screen readers
+   - `aria-labelledby` - Associates with external label element
+   - `aria-describedby` - Associates with description element
+
+2. **Keyboard Navigation**:
+   - Full keyboard support with Enter and Space keys
+   - Visible focus ring with `peer-focus:ring-4`
+   - Focus color matches toggle color
+
+3. **Screen Reader Support**:
+   - Label text announced when toggle has focus
+   - State change announced (checked/unchecked)
+   - Description text announced when provided
+
+4. **Visual Accessibility**:
+   - High contrast colors
+   - Large touch targets (especially in lg size)
+   - Clear visual indication of state (dot position)
+
+```tsx
+<Toggle
+  label="Dark Mode"
+  description="Switch to dark theme for better visibility in low light"
+  checked={isDark}
+  onChange={(e) => setDark(e.target.checked)}
+  aria-label="Toggle dark mode theme"
+  aria-describedby="dark-mode-desc"
+/>
+```
+
+### Dark Mode
+
+All Toggle colors automatically support dark mode:
+
+- Unchecked background: `bg-neutral-200` → `dark:bg-neutral-700`
+- Dot border: `after:border-neutral-300` (light) → `after:border-neutral-500` (dark)
+- Checked dot border: `peer-checked:after:border-white` (consistent)
+- Focus ring: Adapts to dark theme background
+- Text colors: Adapted for both themes
+
+### Real-World Examples
+
+#### Settings Panel
+
+```tsx
+function SettingsPanel() {
+  const [settings, setSettings] = useState({
+    darkMode: false,
+    notifications: true,
+    autoSave: true,
+    soundEffects: false,
+  });
+
+  const handleSettingChange = (key: string) => (e: ChangeEvent) => {
+    setSettings(prev => ({ ...prev, [key]: e.target.checked }));
+  };
+
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold">Settings</h2>
+      
+      <Toggle
+        label="Dark Mode"
+        checked={settings.darkMode}
+        onChange={handleSettingChange('darkMode')}
+        toggleSize="lg"
+        color="primary"
+      />
+      
+      <Toggle
+        label="Notifications"
+        description="Receive push notifications for important updates"
+        checked={settings.notifications}
+        onChange={handleSettingChange('notifications')}
+        toggleSize="md"
+        color="blue"
+      />
+      
+      <Toggle
+        label="Auto-save"
+        description="Automatically save your work every 30 seconds"
+        checked={settings.autoSave}
+        onChange={handleSettingChange('autoSave')}
+        toggleSize="md"
+        color="green"
+      />
+      
+      <Toggle
+        label="Sound Effects"
+        description="Play sound effects for UI interactions"
+        checked={settings.soundEffects}
+        onChange={handleSettingChange('soundEffects')}
+        toggleSize="md"
+        color="orange"
+      />
+    </div>
+  );
+}
+```
+
+#### Preference Form
+
+```tsx
+function UserPreferences() {
+  return (
+    <form className="space-y-4">
+      <Toggle
+        label="Email Marketing"
+        description="Receive promotional emails and product updates"
+        name="emailMarketing"
+        defaultChecked={false}
+      />
+      
+      <Toggle
+        label="Public Profile"
+        description="Make your profile visible to other users"
+        name="publicProfile"
+        defaultChecked={true}
+      />
+      
+      <Toggle
+        label="Two-Factor Authentication"
+        description="Add an extra layer of security to your account"
+        name="twoFactor"
+        defaultChecked={false}
+        color="primary"
+        toggleSize="lg"
+      />
+      
+      <Button type="submit">Save Preferences</Button>
+    </form>
+  );
+}
+```
+
+#### Compact Toggle List
+
+```tsx
+function QuickSettings() {
+  return (
+    <div className="flex flex-wrap gap-4">
+      <Toggle
+        label="A"
+        aria-label="Option A"
+        toggleSize="sm"
+        color="blue"
+      />
+      <Toggle
+        label="B"
+        aria-label="Option B"
+        toggleSize="sm"
+        color="green"
+      />
+      <Toggle
+        label="C"
+        aria-label="Option C"
+        toggleSize="sm"
+        color="orange"
+      />
+      <Toggle
+        label="D"
+        aria-label="Option D"
+        toggleSize="sm"
+        color="purple"
+      />
+    </div>
+  );
+}
+```
+
+### Performance Considerations
+
+The Toggle component is optimized using:
+- Functional component with `forwardRef`
+- Proper TypeScript typing
+- CSS-only animations and transitions
+- No unnecessary re-renders
+- Peer class based state management
+- Efficient class string concatenation
+
+### Migration Guide
+
+To migrate existing toggle implementations:
+
+**Before:**
+```tsx
+<label className="flex items-center gap-3">
+  <span className="font-medium text-base text-neutral-900 dark:text-white">
+    Notifications
+  </span>
+  <input
+    type="checkbox"
+    checked={notifications}
+    onChange={(e) => setNotifications(e.target.checked)}
+    className="sr-only peer"
+  />
+  <div className="w-11 h-6 bg-neutral-200 dark:bg-neutral-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-700 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:bg-white after:rounded-full after:h-5 after:w-5 after:top-[2px] after:left-[2px] after:border after:border-neutral-300 peer-checked:after:border-white peer-checked:after:translate-x-full after:transition-all transition-colors duration-200 ease-in-out cursor-pointer" />
+</label>
+```
+
+**After:**
+```tsx
+import { Toggle } from './ui/Toggle';
+
+<Toggle
+  label="Notifications"
+  checked={notifications}
+  onChange={(e) => setNotifications(e.target.checked)}
+/>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Multiple size and color variants
+- ✅ Label and description support
+- ✅ Dark mode support
+- ✅ Smooth animations
+- ✅ Reduced code duplication
+- ✅ Type-safe props
+
+### Test Coverage
+
+The Toggle component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Toggle.test.tsx
+```
+
+Test scenarios include:
+- Rendering with default props
+- Rendering with label
+- Rendering with description
+- All size variants (sm, md, lg)
+- All color variants (primary, blue, green, red, purple, orange)
+- Label position (left, right)
+- Controlled component (checked prop)
+- Uncontrolled component (defaultChecked prop)
+- Disabled state behavior
+- Change handler invocation
+- Focus management
+- Keyboard accessibility
+- Dark mode styling
+- ARIA attributes (role, aria-checked, aria-label, aria-labelledby, aria-describedby)
+- Peer class application
+- Dot positioning
+
+### Usage in Application
+
+Currently integrated in various settings and preference panels.
+
+**Common Patterns:**
+
+```tsx
+// Basic toggle
+<Toggle
+  label="Dark Mode"
+  checked={darkMode}
+  onChange={(e) => setDarkMode(e.target.checked)}
+/>
+
+// Toggle with description
+<Toggle
+  label="Notifications"
+  description="Receive push notifications"
+  checked={notifications}
+  onChange={(e) => setNotifications(e.target.checked)}
+/>
+
+// Toggle with custom color
+<Toggle
+  label="Danger Zone"
+  color="red"
+  checked={dangerZone}
+  onChange={(e) => setDangerZone(e.target.checked)}
+/>
+
+// Large toggle for accessibility
+<Toggle
+  label="Critical Setting"
+  toggleSize="lg"
+  checked={critical}
+  onChange={(e) => setCritical(e.target.checked)}
+/>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Loading state variant
+- Intermediate state (three-way toggle)
+- Custom toggle animations
+- Icon support in label
+- Toggle group component
+- Tooltip integration for additional context
+
+---
+
+## Heading Component
+
+**Location**: `src/components/ui/Heading.tsx`
+
+A semantic heading component with flexible size, weight, tracking, and level control.
+
+### Features
+
+- **6 Levels**: `h1` through `h6` for proper HTML semantics
+- **12 Sizes**: `xs` through `8xl` for flexible typography
+- **4 Weights**: `normal`, `medium`, `semibold`, `bold`
+- **3 Tracking Options**: `tight`, `normal`, `wide` for letter spacing
+- **Accessibility**: Semantic HTML elements with proper ARIA roles
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Custom Leading**: Configurable line-height via `leading` prop
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `level` | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | `2` | HTML heading element (h1-h6) |
+| `size` | `HeadingSize` | `'2xl'` | Text size variant |
+| `weight` | `HeadingWeight` | `'bold'` | Font weight |
+| `tracking` | `HeadingTracking` | `'normal'` | Letter spacing |
+| `leading` | `string` | `undefined` | Custom line-height (Tailwind class) |
+| `id` | `string` | `undefined` | Unique identifier for anchor links |
+| `className` | `string` | `''` | Additional CSS classes |
+| `children` | `ReactNode` | Required | Heading content |
+| All standard HTML heading attributes | - | - | Passes through all standard HTML heading props |
+
+### Levels
+
+Semantic heading levels map to proper HTML elements.
+
+```tsx
+import Heading from './ui/Heading';
+
+// H1 - Main page title
+<Heading level={1} size="4xl">Welcome to Our Application</Heading>
+
+// H2 - Section titles (default)
+<Heading level={2} size="2xl">User Profile</Heading>
+
+// H3 - Subsection titles
+<Heading level={3} size="xl">Account Settings</Heading>
+
+// H4 - Component titles
+<Heading level={4} size="lg">Notifications</Heading>
+
+// H5 - Small titles
+<Heading level={5} size="base">Filter Options</Heading>
+
+// H6 - Tiny titles
+<Heading level={6} size="sm">Legend</Heading>
+```
+
+**HTML Element Mapping**:
+- `level={1}` → `<h1>`
+- `level={2}` → `<h2>`
+- `level={3}` → `<h3>`
+- `level={4}` → `<h4>`
+- `level={5}` → `<h5>`
+- `level={6}` → `<h6>`
+
+### Sizes
+
+Available size options from smallest to largest.
+
+```tsx
+<Heading size="xs">Extra Small</Heading>
+<Heading size="sm">Small</Heading>
+<Heading size="base">Base</Heading>
+<Heading size="lg">Large</Heading>
+<Heading size="xl">Extra Large</Heading>
+<Heading size="2xl">2X Large</Heading>
+<Heading size="3xl">3X Large</Heading>
+<Heading size="4xl">4X Large</Heading>
+<Heading size="5xl">5X Large</Heading>
+<Heading size="6xl">6X Large</Heading>
+<Heading size="7xl">7X Large</Heading>
+<Heading size="8xl">8X Large</Heading>
+```
+
+**Tailwind Mapping**:
+- `xs`: `text-xs`
+- `sm`: `text-sm`
+- `base`: `text-base`
+- `lg`: `text-lg`
+- `xl`: `text-xl`
+- `2xl`: `text-2xl`
+- `3xl`: `text-3xl`
+- `4xl`: `text-4xl`
+- `5xl`: `text-5xl`
+- `6xl`: `text-6xl`
+- `7xl`: `text-7xl`
+- `8xl`: `text-8xl`
+
+### Weights
+
+Font weight options for visual hierarchy.
+
+```tsx
+<Heading weight="normal">Normal Weight</Heading>
+<Heading weight="medium">Medium Weight</Heading>
+<Heading weight="semibold">Semibold Weight</Heading>
+<Heading weight="bold">Bold Weight</Heading>
+```
+
+**Tailwind Mapping**:
+- `normal`: `font-normal`
+- `medium`: `font-medium`
+- `semibold`: `font-semibold`
+- `bold`: `font-bold`
+
+### Tracking
+
+Letter spacing options for readability.
+
+```tsx
+<Heading tracking="tight">Tight Tracking</Heading>
+<Heading tracking="normal">Normal Tracking</Heading>
+<Heading tracking="wide">Wide Tracking</Heading>
+```
+
+**Tailwind Mapping**:
+- `tight`: `tracking-tight`
+- `normal`: `tracking-normal`
+- `wide`: `tracking-wide`
+
+### Custom Leading
+
+Custom line-height for better typography.
+
+```tsx
+<Heading leading="leading-tight">Tight Line Height</Heading>
+<Heading leading="leading-loose">Loose Line Height</Heading>
+<Heading leading="leading-[2]">Custom 2rem Line Height</Heading>
+```
+
+### Accessibility Features
+
+The Heading component includes comprehensive accessibility support:
+
+1. **Semantic HTML**: Uses proper heading elements (h1-h6)
+2. **Logical Hierarchy**: Enables proper document structure
+3. **Screen Reader Support**: Heading levels announced by screen readers
+4. **Anchor Support**: ID prop enables anchor links
+5. **Focus Management**: Proper tab order through heading levels
+
+```tsx
+<Heading
+  level={2}
+  id="profile-section"
+  size="2xl"
+>
+  User Profile
+</Heading>
+
+// Anchor link to heading
+<a href="#profile-section">Jump to Profile</a>
+```
+
+### Dark Mode
+
+All Heading sizes automatically support dark mode:
+
+- Text color: `text-neutral-900` → `dark:text-white`
+- Consistent across all sizes and weights
+
+### Real-World Examples
+
+#### Page Title
+
+```tsx
+function DashboardPage() {
+  return (
+    <div>
+      <Heading level={1} size="4xl">
+        Welcome to Your Dashboard
+      </Heading>
+      <p className="mt-4 text-neutral-600 dark:text-neutral-400">
+        Here's an overview of your activity.
+      </p>
+    </div>
+  );
+}
+```
+
+#### Section Title
+
+```tsx
+function UserProfile() {
+  return (
+    <section>
+      <Heading level={2} size="2xl">
+        Account Settings
+      </Heading>
+      <form>
+        {/* Form fields */}
+      </form>
+    </section>
+  );
+}
+```
+
+#### Card Title
+
+```tsx
+function UserCard({ user }) {
+  return (
+    <Card>
+      <Heading level={3} size="xl" className="mb-4">
+        {user.name}
+      </Heading>
+      <p className="text-neutral-600 dark:text-neutral-400">
+        {user.email}
+      </p>
+    </Card>
+  );
+}
+```
+
+#### Typography Variants
+
+```tsx
+function TypographyShowcase() {
+  return (
+    <div className="space-y-8">
+      <div>
+        <Heading level={1} size="4xl" weight="bold">
+          Hero Title
+        </Heading>
+        <p>Use for main page titles</p>
+      </div>
+      
+      <div>
+        <Heading level={2} size="2xl" weight="semibold" tracking="tight">
+          Section Title
+        </Heading>
+        <p>Use for major sections</p>
+      </div>
+      
+      <div>
+        <Heading level={3} size="xl" weight="medium">
+          Subsection Title
+        </Heading>
+        <p>Use for subsections and components</p>
+      </div>
+      
+      <div>
+        <Heading level={4} size="lg" weight="normal">
+          Small Title
+        </Heading>
+        <p>Use for card titles and small sections</p>
+      </div>
+    </div>
+  );
+}
+```
+
+#### Responsive Heading
+
+```tsx
+function ResponsiveHeader() {
+  return (
+    <Heading
+      level={1}
+      size="lg sm:xl md:2xl lg:3xl"
+      weight="bold"
+    >
+      Responsive Title
+    </Heading>
+  );
+}
+```
+
+#### With Anchor ID
+
+```tsx
+function DocumentationPage() {
+  return (
+    <div>
+      <nav>
+        <a href="#getting-started">Getting Started</a>
+        <a href="#features">Features</a>
+        <a href="#api">API Reference</a>
+      </nav>
+      
+      <article>
+        <Heading level={2} id="getting-started" size="2xl">
+          Getting Started
+        </Heading>
+        {/* Content */}
+        
+        <Heading level={2} id="features" size="2xl">
+          Features
+        </Heading>
+        {/* Content */}
+        
+        <Heading level={2} id="api" size="2xl">
+          API Reference
+        </Heading>
+        {/* Content */}
+      </article>
+    </div>
+  );
+}
+```
+
+### Performance Considerations
+
+The Heading component is optimized using:
+- Functional component with `forwardRef`
+- Proper TypeScript typing
+- No unnecessary re-renders
+- Efficient class string concatenation
+- Semantic HTML without JavaScript overhead
+
+### Migration Guide
+
+To migrate existing heading implementations:
+
+**Before:**
+```tsx
+<h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
+  Section Title
+</h2>
+```
+
+**After:**
+```tsx
+import Heading from './ui/Heading';
+
+<Heading level={2} size="2xl" weight="bold">
+  Section Title
+</Heading>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Semantic HTML with proper heading levels
+- ✅ Multiple size and weight variants
+- ✅ Tracking and leading control
+- ✅ Dark mode support
+- ✅ Type-safe props
+- ✅ Improved accessibility
+
+### Best Practices
+
+1. **Use Correct Heading Levels**:
+   ```tsx
+   ✅ Good: Logical heading hierarchy
+   <Heading level={1}>Page Title</Heading>
+   <Heading level={2}>Section Title</Heading>
+   <Heading level={3}>Subsection Title</Heading>
+
+   ❌ Bad: Skipping levels
+   <Heading level={1}>Title</Heading>
+   <Heading level={3}>Subtitle</Heading>
+   ```
+
+2. **Match Size to Importance**:
+   ```tsx
+   ✅ Good: Size matches visual importance
+   <Heading level={1} size="4xl">Main Title</Heading>
+
+   ❌ Bad: Size mismatch
+   <Heading level={1} size="xs">Main Title</Heading>
+   ```
+
+3. **Provide IDs for Anchor Links**:
+   ```tsx
+   ✅ Good: ID for anchor navigation
+   <Heading level={2} id="section-title">Title</Heading>
+
+   ❌ Bad: No ID for documentation
+   <Heading level={2}>Title</Heading>
+   ```
+
+### Test Coverage
+
+The Heading component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Heading.test.tsx
+```
+
+Test scenarios include:
+- Rendering with all levels (1-6)
+- Rendering with all sizes (xs-8xl)
+- Rendering with all weights (normal, medium, semibold, bold)
+- Rendering with all tracking options (tight, normal, wide)
+- Custom leading prop
+- ID prop for anchor links
+- Custom className application
+- Props passthrough
+- Semantic HTML element mapping
+- Dark mode styling
+
+### Usage in Application
+
+**Common Patterns:**
+
+```tsx
+// Page title
+<Heading level={1} size="4xl">Page Title</Heading>
+
+// Section title
+<Heading level={2} size="2xl">Section Title</Heading>
+
+// Subsection title
+<Heading level={3} size="xl">Subsection Title</Heading>
+
+// Card title
+<Heading level={4} size="lg">Card Title</Heading>
+
+// Small title
+<Heading level={5} size="base">Small Title</Heading>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Gradient text support
+- Gradient underline effect
+- Decorative prefix/suffix components
+- Animated entrance effects
+- Truncate variant for long titles
+
+---
+
+## Label Component
+
+**Location**: `src/components/ui/Label.tsx`
+
+A reusable label component for form fields with accessibility support and customizable styling.
+
+### Features
+
+- **Accessibility**: Full ARIA support with proper label association
+- **Required Indicator**: Visual `*` indicator for required fields
+- **HTML For**: Automatic `htmlFor` association with form inputs
+- **Custom Styling**: Flexible className prop for custom styling
+- **Dark Mode**: Consistent styling across light and dark themes
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `htmlFor` | `string` | `undefined` | ID of the form element this label is associated with |
+| `children` | `ReactNode` | Required | Label content |
+| `required` | `boolean` | `false` | Show required indicator (*) |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard label attributes | - | - | Passes through all standard HTML label props |
+
+### Basic Usage
+
+```tsx
+import Label from './ui/Label';
+
+<Label htmlFor="username">Username</Label>
+<input id="username" type="text" />
+```
+
+### Required Field
+
+Show required indicator with visual `*`.
+
+```tsx
+<Label htmlFor="email" required>
+  Email Address
+</Label>
+<input id="email" type="email" />
+```
+
+**Accessibility**: Required indicator includes `aria-label="required"` for screen readers.
+
+### With Input Component
+
+```tsx
+import Input from './ui/Input';
+import Label from './ui/Label';
+
+<div>
+  <Label htmlFor="firstName" required>
+    First Name
+  </Label>
+  <Input
+    id="firstName"
+    type="text"
+    placeholder="Enter your first name"
+  />
+</div>
+```
+
+### Custom Styling
+
+Add custom classes while preserving default label styling.
+
+```tsx
+<Label
+  htmlFor="password"
+  className="text-primary-600 font-semibold block mb-2"
+  required
+>
+  Password
+</Label>
+<input id="password" type="password" />
+```
+
+### Accessibility Features
+
+The Label component includes comprehensive accessibility support:
+
+1. **HTML For**: Proper association with form element via `htmlFor` prop
+2. **Required Indicator**: Visual `*` with `aria-label="required"` for screen readers
+3. **Semantic HTML**: Uses native `<label>` element
+4. **Keyboard Navigation**: Clicking label focuses associated form element
+
+```tsx
+<Label
+  htmlFor="address"
+  required
+  aria-label="Street address (required)"
+>
+  Street Address
+</Label>
+<input id="address" type="text" />
+```
+
+### Dark Mode
+
+All Label styling automatically supports dark mode:
+
+- Text color: Adapts to dark theme
+- Required indicator: `text-red-500` maintains visibility
+
+### Real-World Examples
+
+#### Form with Labels
+
+```tsx
+function ContactForm() {
+  return (
+    <form className="space-y-6">
+      <div>
+        <Label htmlFor="name" required className="block mb-2">
+          Full Name
+        </Label>
+        <Input
+          id="name"
+          type="text"
+          placeholder="John Doe"
+          fullWidth
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="email" required className="block mb-2">
+          Email Address
+        </Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="john@example.com"
+          fullWidth
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="message" className="block mb-2">
+          Message
+        </Label>
+        <Textarea
+          id="message"
+          placeholder="Your message..."
+          autoResize
+          fullWidth
+        />
+      </div>
+      
+      <Button type="submit">Send Message</Button>
+    </form>
+  );
+}
+```
+
+#### Label with Description
+
+```tsx
+function LabeledField() {
+  return (
+    <div>
+      <Label
+        htmlFor="bio"
+        className="block mb-2"
+      >
+        Bio
+      </Label>
+      <Textarea
+        id="bio"
+        placeholder="Tell us about yourself..."
+        helperText="Max 500 characters"
+        maxLength={500}
+        fullWidth
+      />
+    </div>
+  );
+}
+```
+
+#### Grouped Labels
+
+```tsx
+function AddressForm() {
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <Label htmlFor="city" className="block mb-2">
+          City
+        </Label>
+        <Input id="city" type="text" fullWidth />
+      </div>
+      
+      <div>
+        <Label htmlFor="state" className="block mb-2">
+          State
+        </Label>
+        <Select id="state" fullWidth>
+          <option value="">Select State</option>
+          <option value="CA">California</option>
+          <option value="NY">New York</option>
+        </Select>
+      </div>
+    </div>
+  );
+}
+```
+
+### Performance Considerations
+
+The Label component is optimized using:
+- Functional component with proper typing
+- No unnecessary re-renders
+- Semantic HTML without JavaScript overhead
+- Efficient class string concatenation
+
+### Migration Guide
+
+To migrate existing label implementations:
+
+**Before:**
+```tsx
+<label className="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
+  Username
+</label>
+<input type="text" />
+```
+
+**After:**
+```tsx
+import Label from './ui/Label';
+
+<Label htmlFor="username" className="block mb-2">
+  Username
+</Label>
+<input id="username" type="text" />
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper `htmlFor` association
+- ✅ Built-in required indicator
+- ✅ ARIA labels for screen readers
+- ✅ Dark mode support
+- ✅ Type-safe props
+
+### Test Coverage
+
+The Label component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Label.test.tsx
+```
+
+Test scenarios include:
+- Rendering with default props
+- Rendering with `htmlFor` prop
+- Rendering with `required` prop
+- Required indicator display
+- ARIA label on required indicator
+- Custom className application
+- Props passthrough
+
+### Usage in Application
+
+**Common Patterns:**
+
+```tsx
+// Simple label
+<Label htmlFor="field">Field Label</Label>
+
+// Required label
+<Label htmlFor="required" required>Required Field</Label>
+
+// Custom styled label
+<Label htmlFor="custom" className="text-primary-600 font-bold">
+  Custom Label
+</Label>
+
+// Label with helper text
+<div>
+  <Label htmlFor="password" required>Password</Label>
+  <Input id="password" type="password" helperText="Min 8 characters" />
+</div>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Tooltip support for additional context
+- Help icon integration
+- Custom required indicator component
+- Label positioning (top, left, inline)
+
+---
+
+## Alert Component
+
+**Location**: `src/components/ui/Alert.tsx`
+
+A comprehensive alert component for notifications, warnings, errors, and informational messages with multiple variants, sizes, and border styles.
+
+### Features
+
+- **5 Variants**: `info`, `success`, `warning`, `error`, `neutral`
+- **3 Sizes**: `sm`, `md`, `lg`
+- **3 Border Styles**: `left`, `full`, `none`
+- **Built-in Icons**: Default icons for each variant
+- **Custom Icons**: Support for custom icon components
+- **Close Button**: Optional dismiss functionality
+- **Accessibility**: Full ARIA support with proper live regions
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Centered Content**: Optional text centering
+- **Full Width**: Configurable width behavior
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | Required | Alert content |
+| `variant` | `AlertVariant` | `'info'` | Visual color variant |
+| `size` | `AlertSize` | `'md'` | Alert size |
+| `border` | `AlertBorder` | `'full'` | Border style |
+| `title` | `string` | `undefined` | Alert title text |
+| `icon` | `ReactNode` | `undefined` | Custom icon component |
+| `showCloseButton` | `boolean` | `false` | Show close button |
+| `onClose` | `() => void` | `undefined` | Close handler function |
+| `fullWidth` | `boolean` | `true` | Alert takes full width of container |
+| `centered` | `boolean` | `false` | Center text content |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Variants
+
+#### Info Variant
+
+Blue alert for informational messages.
+
+```tsx
+import Alert from './ui/Alert';
+
+<Alert variant="info">
+  Your account has been created successfully.
+</Alert>
+```
+
+**Styling**:
+- Background: `bg-blue-50` / `dark:bg-blue-900/20`
+- Border: `border-blue-200` / `dark:border-blue-800`
+- Title: `text-blue-900` / `dark:text-blue-100`
+- Text: `text-blue-700` / `dark:text-blue-300`
+- Icon background: `bg-blue-100` / `dark:bg-blue-900/50`
+
+#### Success Variant
+
+Green alert for success messages.
+
+```tsx
+<Alert variant="success">
+  Changes saved successfully!
+</Alert>
+```
+
+**Styling**:
+- Background: `bg-green-50` / `dark:bg-green-900/20`
+- Border: `border-green-200` / `dark:border-green-800`
+- Title: `text-green-900` / `dark:text-green-100`
+- Text: `text-green-700` / `dark:text-green-300`
+- Icon background: `bg-green-100` / `dark:bg-green-900/50`
+
+#### Warning Variant
+
+Yellow alert for cautionary messages.
+
+```tsx
+<Alert variant="warning">
+  Your session will expire in 5 minutes.
+</Alert>
+```
+
+**Styling**:
+- Background: `bg-yellow-50` / `dark:bg-yellow-900/20`
+- Border: `border-yellow-200` / `dark:border-yellow-800`
+- Title: `text-yellow-900` / `dark:text-yellow-100`
+- Text: `text-yellow-700` / `dark:text-yellow-300`
+- Icon background: `bg-yellow-100` / `dark:bg-yellow-900/50`
+
+#### Error Variant
+
+Red alert for error messages.
+
+```tsx
+<Alert variant="error">
+  Failed to save changes. Please try again.
+</Alert>
+```
+
+**Styling**:
+- Background: `bg-red-50` / `dark:bg-red-900/20`
+- Border: `border-red-200` / `dark:border-red-800`
+- Title: `text-red-900` / `dark:text-red-100`
+- Text: `text-red-700` / `dark:text-red-300`
+- Icon background: `bg-red-100` / `dark:bg-red-900/50`
+
+#### Neutral Variant
+
+Gray alert for neutral messages.
+
+```tsx
+<Alert variant="neutral">
+  This is a neutral notification.
+</Alert>
+```
+
+**Styling**:
+- Background: `bg-neutral-50` / `dark:bg-neutral-900/50`
+- Border: `border-neutral-200` / `dark:border-neutral-700`
+- Title: `text-neutral-900` / `dark:text-neutral-100`
+- Text: `text-neutral-700` / `dark:text-neutral-300`
+- Icon background: `bg-neutral-100` / `dark:bg-neutral-700`
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for inline alerts.
+
+```tsx
+<Alert variant="info" size="sm">
+  Small info message
+</Alert>
+```
+
+**Dimensions**:
+- Padding: `p-3`
+- Text: `text-xs`
+- Icon: `w-5 h-5`
+- Title: `text-sm`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<Alert variant="success" size="md">
+  Medium success message
+</Alert>
+```
+
+**Dimensions**:
+- Padding: `p-4`
+- Text: `text-sm`
+- Icon: `w-6 h-6`
+- Title: `text-base`
+
+#### Large (lg)
+
+Larger size for important alerts.
+
+```tsx
+<Alert variant="warning" size="lg">
+  Large warning message
+</Alert>
+```
+
+**Dimensions**:
+- Padding: `p-6`
+- Text: `text-base`
+- Icon: `w-8 h-8`
+- Title: `text-lg`
+
+### Border Styles
+
+#### Left Border
+
+Accent border on left side only.
+
+```tsx
+<Alert variant="error" border="left">
+  Error with left border accent
+</Alert>
+```
+
+**Styling**:
+- Left border: `border-l-4 border-l-red-500`
+- No other borders
+
+#### Full Border
+
+Border around entire alert (default).
+
+```tsx
+<Alert variant="info" border="full">
+  Info with full border
+</Alert>
+```
+
+**Styling**:
+- Full border: `border border-blue-200` / `dark:border-blue-800`
+
+#### No Border
+
+No border styling.
+
+```tsx
+<Alert variant="success" border="none">
+  Success with no border
+</Alert>
+```
+
+**Styling**:
+- No border classes applied
+
+### With Title
+
+Add a title to the alert.
+
+```tsx
+<Alert variant="warning" title="Attention Required">
+  Your account needs verification before you can continue.
+</Alert>
+```
+
+### Custom Icon
+
+Use a custom icon instead of the default.
+
+```tsx
+<Alert
+  variant="info"
+  icon={<BellIcon />}
+>
+  You have a new notification!
+</Alert>
+```
+
+### Close Button
+
+Add a dismissible close button.
+
+```tsx
+function DismissibleAlert() {
+  const [visible, setVisible] = useState(true);
+
+  if (!visible) return null;
+
+  return (
+    <Alert
+      variant="success"
+      showCloseButton
+      onClose={() => setVisible(false)}
+    >
+      Changes saved successfully!
+    </Alert>
+  );
+}
+```
+
+### Centered Content
+
+Center the alert text.
+
+```tsx
+<Alert variant="info" centered>
+  This alert content is centered
+</Alert>
+```
+
+### Real-World Examples
+
+#### Success Notification
+
+```tsx
+function SaveNotification({ visible, onClose }) {
+  if (!visible) return null;
+
+  return (
+    <Alert
+      variant="success"
+      title="Success"
+      showCloseButton
+      onClose={onClose}
+    >
+      Your changes have been saved successfully.
+    </Alert>
+  );
+}
+```
+
+#### Error Alert
+
+```tsx
+function FormError({ error }) {
+  if (!error) return null;
+
+  return (
+    <Alert variant="error" border="left">
+      <strong>Error:</strong> {error.message}
+    </Alert>
+  );
+}
+```
+
+#### Warning Banner
+
+```tsx
+function WarningBanner() {
+  return (
+    <Alert variant="warning" size="lg" centered>
+      <p>
+        <strong>Warning:</strong> This feature is currently in beta.
+        Some functionality may be unstable.
+      </p>
+    </Alert>
+  );
+}
+```
+
+#### Info Alert with Action
+
+```tsx
+function InfoAlert() {
+  return (
+    <Alert variant="info" title="New Feature Available">
+      <p className="mb-4">
+        We've added a new dashboard with advanced analytics.
+      </p>
+      <Button size="sm">Explore Dashboard</Button>
+    </Alert>
+  );
+}
+```
+
+#### Multi-Alert Stack
+
+```tsx
+function AlertStack({ alerts, onDismiss }) {
+  return (
+    <div className="space-y-4">
+      {alerts.map((alert) => (
+        <Alert
+          key={alert.id}
+          variant={alert.variant}
+          title={alert.title}
+          showCloseButton
+          onClose={() => onDismiss(alert.id)}
+        >
+          {alert.message}
+        </Alert>
+      ))}
+    </div>
+  );
+}
+```
+
+### Accessibility Features
+
+The Alert component includes comprehensive accessibility support:
+
+1. **ARIA Role**: `role="alert"` indicates important message
+2. **ARIA Live Region**: `aria-live="polite"` announces changes to screen readers
+3. **ARIA Labelled By**: Associates title with alert content
+4. **Icon Hiding**: Icon has `aria-hidden="true"` for screen readers
+5. **Keyboard Navigation**: Close button is keyboard accessible
+6. **Focus Management**: Close button has proper focus handling
+
+```tsx
+<Alert
+  variant="info"
+  title="System Update"
+  role="alert"
+  aria-live="polite"
+>
+  A new update is available. Please refresh to continue.
+</Alert>
+```
+
+### Dark Mode
+
+All Alert variants automatically support dark mode:
+
+- Backgrounds: Darker versions in dark mode (e.g., `bg-blue-50` → `dark:bg-blue-900/20`)
+- Borders: Adapted to dark theme colors
+- Text colors: Lighter colors in dark mode for contrast
+- Icon backgrounds: Semi-transparent in dark mode
+
+### Performance Considerations
+
+The Alert component is optimized using:
+- Functional component with proper typing
+- No unnecessary re-renders
+- CSS-only transitions
+- Efficient class string concatenation
+- Reusable default icons
+
+### Migration Guide
+
+To migrate existing alert implementations:
+
+**Before:**
+```tsx
+<div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
+  <div className="flex items-start gap-3">
+    <InformationCircleIcon className="w-6 h-6 text-blue-600" />
+    <div>
+      <h3 className="text-base text-blue-900 dark:text-blue-100 font-semibold mb-1.5">
+        Info
+      </h3>
+      <p className="text-sm text-blue-700 dark:text-blue-300">
+        Your message here
+      </p>
+    </div>
+  </div>
+</div>
+```
+
+**After:**
+```tsx
+import Alert from './ui/Alert';
+
+<Alert variant="info" title="Info">
+  Your message here
+</Alert>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Multiple variants for different message types
+- ✅ Built-in icons for each variant
+- ✅ Close button support
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Dark mode support
+- ✅ Reduced code duplication
+
+### Test Coverage
+
+The Alert component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Alert.test.tsx
+```
+
+Test scenarios include:
+- Rendering with all variants (info, success, warning, error, neutral)
+- Rendering with all sizes (sm, md, lg)
+- Rendering with all border styles (left, full, none)
+- Title rendering
+- Default icon rendering
+- Custom icon rendering
+- Close button display
+- Close button interaction
+- Centered content
+- Full width variant
+- ARIA attributes (role, aria-live, aria-labelledby)
+- Dark mode styling
+- Icon hiding (aria-hidden)
+
+### Usage in Application
+
+**Common Patterns:**
+
+```tsx
+// Success message
+<Alert variant="success" showCloseButton onClose={dismiss}>
+  Changes saved successfully!
+</Alert>
+
+// Error message
+<Alert variant="error" title="Error">
+  Failed to complete action. Please try again.
+</Alert>
+
+// Warning message
+<Alert variant="warning">
+  Your session will expire soon.
+</Alert>
+
+// Info message
+<Alert variant="info" border="left">
+  New feature available for testing.
+</Alert>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Auto-dismiss timer
+- Progress bar variant
+- Action buttons integrated
+- Icon animation variants
+- Collapsible alert content
+
+---
 ## LinkCard Component
 
 **Location**: `src/components/ui/LinkCard.tsx`
@@ -3349,5 +5637,1099 @@ Potential improvements to consider:
 - Badge overlay for notification counts
 - Keyboard shortcut support (e.g., Cmd+S)
 - Tooltip integration for additional context
+
+---
+
+## Modal Component
+
+**Location**: `src/components/ui/Modal.tsx`
+
+A reusable modal/dialog component with comprehensive accessibility support, animations, and focus management.
+
+### Features
+
+- **5 Sizes**: `sm`, `md`, `lg`, `xl`, `full`
+- **3 Animations**: `fade-in`, `fade-in-up`, `scale-in`
+- **Accessibility**: Full ARIA support, focus trap, keyboard navigation, screen reader support
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Focus Management**: Automatic focus trap using `useFocusTrap` hook
+- **Body Scroll Lock**: Prevents background scrolling when modal is open
+- **Backdrop Interaction**: Optional close on backdrop click
+- **Escape Key**: Optional close on Escape key press
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isOpen` | `boolean` | `false` | Whether the modal is visible |
+| `onClose` | `() => void` | Required | Function to call when modal should close |
+| `children` | `ReactNode` | Required | Content to display inside the modal |
+| `title` | `string` | `undefined` | Modal title (displayed in header) |
+| `description` | `string` | `undefined` | Screen reader description (hidden visually) |
+| `size` | `ModalSize` | `'md'` | Modal size variant |
+| `animation` | `ModalAnimation` | `'scale-in'` | Animation variant |
+| `closeOnBackdropClick` | `boolean` | `true` | Allow closing by clicking the backdrop |
+| `closeOnEscape` | `boolean` | `true` | Allow closing with the Escape key |
+| `showCloseButton` | `boolean` | `true` | Show the close button in the header |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Sizes
+
+#### Small (sm)
+
+Compact modal for simple dialogs.
+
+```tsx
+import Modal from './ui/Modal';
+
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  size="sm"
+  title="Confirm Action"
+>
+  <p>Are you sure you want to proceed?</p>
+</Modal>
+```
+
+**Dimensions**:
+- Max width: `max-w-sm` (384px / 24rem)
+- Padding: `p-4` (from default padding)
+
+#### Medium (md)
+
+Standard modal for most use cases (default).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  size="md"
+  title="Edit Profile"
+>
+  <form>...</form>
+</Modal>
+```
+
+**Dimensions**:
+- Max width: `max-w-md` (448px / 28rem)
+
+#### Large (lg)
+
+Larger modal for forms with multiple fields.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  size="lg"
+  title="Create New Assignment"
+>
+  <form>...</form>
+</Modal>
+```
+
+**Dimensions**:
+- Max width: `max-w-lg` (512px / 32rem)
+
+#### Extra Large (xl)
+
+Maximum width for complex modals.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  size="xl"
+  title="Advanced Settings"
+>
+  <form>...</form>
+</Modal>
+```
+
+**Dimensions**:
+- Max width: `max-w-xl` (576px / 36rem)
+
+#### Full
+
+Full-screen modal for immersive experiences.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  size="full"
+  title="Fullscreen View"
+>
+  <div>Content takes full viewport</div>
+</Modal>
+```
+
+**Dimensions**:
+- Width: `w-full`
+- Height: `h-full`
+- No margins or rounded corners
+
+### Animations
+
+#### Fade In
+
+Simple opacity fade animation.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  animation="fade-in"
+  title="Notification"
+>
+  <p>Modal fades in</p>
+</Modal>
+```
+
+#### Fade In Up
+
+Fade with upward slide animation.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  animation="fade-in-up"
+  title="Alert"
+>
+  <p>Modal slides up while fading in</p>
+</Modal>
+```
+
+#### Scale In
+
+Scale up from center (default).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  animation="scale-in"
+  title="Dialog"
+>
+  <p>Modal scales up from center</p>
+</Modal>
+```
+
+### Close Behavior
+
+#### Close on Backdrop Click
+
+Allow closing by clicking the overlay (default).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  closeOnBackdropClick={true}
+  title="Optional Dialog"
+>
+  <p>Click outside to close</p>
+</Modal>
+```
+
+#### Prevent Backdrop Close
+
+Require explicit action to close (e.g., for confirmation dialogs).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  closeOnBackdropClick={false}
+  title="Confirm Deletion"
+>
+  <p>You must click the confirm button</p>
+</Modal>
+```
+
+#### Close on Escape
+
+Allow closing with Escape key (default).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  closeOnEscape={true}
+  title="Dismissible Modal"
+>
+  <p>Press Escape to close</p>
+</Modal>
+```
+
+#### Prevent Escape Close
+
+Disable Escape key (e.g., for critical modals).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  closeOnEscape={false}
+  title="Critical Action"
+>
+  <p>Must use buttons to close</p>
+</Modal>
+```
+
+### Header Configuration
+
+#### With Title and Close Button
+
+Standard modal with title and close button.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  title="Edit User"
+  showCloseButton={true}
+>
+  <form>
+    <input type="text" placeholder="Name" />
+    <button type="submit">Save</button>
+  </form>
+</Modal>
+```
+
+#### Without Title
+
+Modal for simple content without a header.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  showCloseButton={true}
+>
+  <p>Simple modal with just close button</p>
+</Modal>
+```
+
+#### Without Close Button
+
+Modal that requires specific action to close.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  title="Terms of Service"
+  showCloseButton={false}
+>
+  <p>Read the terms, then click "Accept" to continue.</p>
+  <button onClick={handleClose}>Accept</button>
+</Modal>
+```
+
+### Accessibility Features
+
+The Modal component includes comprehensive accessibility support:
+
+1. **ARIA Roles**:
+   - `role="dialog"` - Indicates dialog element
+   - `aria-modal="true"` - Identifies modal content
+   - `aria-labelledby` - Associates title with modal
+   - `aria-describedby` - Associates description with modal
+
+2. **Focus Management**:
+   - Automatic focus trap using `useFocusTrap` hook
+   - Focus remains within modal when open
+   - Returns focus to trigger element when closed
+
+3. **Keyboard Navigation**:
+   - Escape key closes modal (if `closeOnEscape={true}`)
+   - Tab/Shift+Tab navigates through interactive elements
+   - Focus trap prevents leaving modal with keyboard
+
+4. **Body Scroll Lock**:
+   - Prevents background scrolling when modal is open
+   - Restores scroll state when closed
+   - Uses `overflow: hidden` on body
+
+5. **Screen Reader Support**:
+   - Hidden description via `sr-only` class
+   - Clear titles and labels
+   - Proper ARIA attributes for assistive technology
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  title="Account Settings"
+  description="Configure your account preferences and security settings"
+  closeOnEscape={true}
+>
+  <form>
+    <label htmlFor="username">Username</label>
+    <input id="username" type="text" />
+  </form>
+</Modal>
+```
+
+### Dark Mode
+
+All Modal features automatically support dark mode:
+
+- Background: `bg-white` → `dark:bg-neutral-800`
+- Borders: `border-neutral-200` → `dark:border-neutral-700`
+- Text: `text-neutral-900` → `dark:text-white`
+- Backdrop: `bg-black/50` (consistent across themes)
+
+### Real-World Examples
+
+#### Confirmation Dialog
+
+```tsx
+function DeleteConfirmation({ isOpen, onClose, onConfirm }: Props) {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Delete Item"
+      description="This action cannot be undone"
+      size="sm"
+      closeOnBackdropClick={false}
+      closeOnEscape={false}
+      animation="fade-in-up"
+    >
+      <div className="space-y-4">
+        <p className="text-neutral-700 dark:text-neutral-300">
+          Are you sure you want to delete this item? This action is permanent.
+        </p>
+        <div className="flex justify-end gap-3">
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={onConfirm}>
+            Delete
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+```
+
+#### Form Modal
+
+```tsx
+function EditUserModal({ isOpen, onClose, user }: Props) {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Edit User Profile"
+      size="lg"
+      animation="scale-in"
+    >
+      <form className="space-y-4">
+        <div>
+          <Label htmlFor="name">Full Name</Label>
+          <Input
+            id="name"
+            type="text"
+            defaultValue={user.name}
+          />
+        </div>
+        <div>
+          <Label htmlFor="email">Email Address</Label>
+          <Input
+            id="email"
+            type="email"
+            defaultValue={user.email}
+          />
+        </div>
+        <div className="flex justify-end gap-3 pt-4">
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleSubmit}>
+            Save Changes
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+```
+
+#### Information Modal
+
+```tsx
+function InfoModal({ isOpen, onClose }: Props) {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Welcome to New Features"
+      size="md"
+      animation="fade-in"
+    >
+      <div className="space-y-4">
+        <p className="text-neutral-700 dark:text-neutral-300">
+          We've added new features to help you manage your data more efficiently.
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-neutral-700 dark:text-neutral-300">
+          <li>Improved search functionality</li>
+          <li>Faster data loading</li>
+          <li>New analytics dashboard</li>
+        </ul>
+        <div className="flex justify-end">
+          <Button variant="primary" onClick={onClose}>
+            Got It
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+```
+
+#### Fullscreen Modal
+
+```tsx
+function ImageViewerModal({ isOpen, onClose, imageUrl }: Props) {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="full"
+      animation="fade-in"
+      showCloseButton={true}
+    >
+      <div className="flex items-center justify-center h-full">
+        <img
+          src={imageUrl}
+          alt="Fullscreen view"
+          className="max-w-full max-h-full object-contain"
+        />
+      </div>
+    </Modal>
+  );
+}
+```
+
+### Performance Considerations
+
+The Modal component is optimized using:
+- Proper `useEffect` cleanup for body scroll restoration
+- Conditional rendering (`!isOpen` returns `null`)
+- Focus trap ref management
+- CSS-only animations and transitions
+- Minimal re-renders
+
+### Migration Guide
+
+To migrate existing modal implementations:
+
+**Before:**
+```tsx
+<div className={`fixed inset-0 bg-black/50 ${isOpen ? 'flex' : 'hidden'}`}>
+  <div className="bg-white rounded-xl p-6 max-w-md">
+    <div className="flex justify-between items-center mb-4">
+      <h2>Title</h2>
+      <button onClick={onClose}>✕</button>
+    </div>
+    <div>Content</div>
+  </div>
+</div>
+```
+
+**After:**
+```tsx
+import Modal from './ui/Modal';
+
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  title="Title"
+>
+  Content
+</Modal>
+```
+
+**Benefits:**
+- ✅ Consistent modal styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Built-in focus trap and keyboard navigation
+- ✅ Automatic body scroll lock
+- ✅ Multiple size and animation variants
+- ✅ Dark mode support
+- ✅ Reduced code duplication
+
+### Test Coverage
+
+The Modal component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Modal.test.tsx
+```
+
+Test scenarios include:
+- Rendering with all sizes (sm, md, lg, xl, full)
+- Rendering with all animations (fade-in, fade-in-up, scale-in)
+- Title and description rendering
+- Close button display/hide
+- Backdrop click behavior
+- Escape key behavior
+- Body scroll lock on open/close
+- ARIA attributes (role, aria-modal, aria-labelledby, aria-describedby)
+- Focus trap functionality
+- Keyboard navigation
+- Dark mode styling
+
+### Usage in Application
+
+Currently integrated in:
+- `src/components/LoginModal.tsx` - Authentication modal
+- `src/components/UserManagement.tsx` - User edit modal
+- `src/components/ConfirmationDialog.tsx` - Uses BaseModal
+
+**Common Patterns:**
+
+```tsx
+// Form modal
+<Modal isOpen={isOpen} onClose={handleClose} title="Edit Item" size="lg">
+  <form onSubmit={handleSubmit}>...</form>
+</Modal>
+
+// Confirmation modal
+<Modal isOpen={isOpen} onClose={handleClose} title="Confirm" size="sm" closeOnBackdropClick={false}>
+  <div className="flex gap-3">
+    <Button variant="secondary" onClick={handleClose}>Cancel</Button>
+    <Button variant="danger" onClick={onConfirm}>Delete</Button>
+  </div>
+</Modal>
+
+// Information modal
+<Modal isOpen={isOpen} onClose={handleClose} title="Info" animation="fade-in">
+  <p>Information content</p>
+  <Button onClick={handleClose}>Close</Button>
+</Modal>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Nested modal support
+- Draggable modal headers
+- Multiple modal stacking
+- Custom close button component
+- Scrollable content area with custom scrollbar
+- Modal transition groups for coordinated animations
+
+---
+
+## Badge Component
+
+**Location**: `src/components/ui/Badge.tsx`
+
+A reusable badge component for status indicators, labels, and notifications with multiple variants and styles.
+
+### Features
+
+- **7 Variants**: `success`, `error`, `warning`, `info`, `neutral`, `primary`, `secondary`
+- **4 Sizes**: `sm`, `md`, `lg`, `xl`
+- **2 Styles**: `solid` and `outline`
+- **Corner Radius**: Rounded (`rounded-full` by default) or standard corners
+- **Accessibility**: Proper semantic HTML, screen reader support
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Smooth Transitions**: Color and style transitions
+- **Semantic Colors**: Uses centralized `getColorClasses` from `src/config/colors.ts`
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | Required | Content to display inside the badge |
+| `variant` | `BadgeVariant` | `'neutral'` | Visual color variant |
+| `size` | `BadgeSize` | `'md'` | Badge size |
+| `styleType` | `BadgeStyle` | `'solid'` | Visual style (solid or outline) |
+| `rounded` | `boolean` | `true` | Use fully rounded corners (pill shape) |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard HTML span attributes | - | - | Passes through all standard span props |
+
+### Variants
+
+#### Success Variant
+
+Green badge for success states and positive feedback.
+
+```tsx
+import Badge from './ui/Badge';
+
+<Badge variant="success">Active</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-green-700 dark:bg-green-600` (from `getColorClasses('success', 'badge')`)
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-green-600 dark:border-green-400`
+- Text: `text-green-700 dark:text-green-300`
+
+#### Error Variant
+
+Red badge for error states and negative feedback.
+
+```tsx
+<Badge variant="error">Failed</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-red-700 dark:bg-red-600`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-red-600 dark:border-red-400`
+- Text: `text-red-700 dark:text-red-300`
+
+#### Warning Variant
+
+Yellow/orange badge for warning states and caution.
+
+```tsx
+<Badge variant="warning">Pending</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-yellow-600 dark:bg-yellow-500`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-yellow-600 dark:border-yellow-400`
+- Text: `text-yellow-700 dark:text-yellow-300`
+
+#### Info Variant
+
+Blue badge for informational messages and neutral status.
+
+```tsx
+<Badge variant="info">New</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-blue-700 dark:bg-blue-600`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-blue-600 dark:border-blue-400`
+- Text: `text-blue-700 dark:text-blue-300`
+
+#### Neutral Variant
+
+Gray badge for neutral or undefined states.
+
+```tsx
+<Badge variant="neutral">Draft</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-neutral-700 dark:bg-neutral-600`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-neutral-500 dark:border-neutral-400`
+- Text: `text-neutral-700 dark:text-neutral-300`
+
+#### Primary Variant
+
+Primary brand color badge.
+
+```tsx
+<Badge variant="primary">Featured</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-primary-600 dark:bg-primary-500`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-primary-500 dark:border-primary-400`
+- Text: `text-primary-700 dark:text-primary-300`
+
+#### Secondary Variant
+
+Purple/secondary brand color badge.
+
+```tsx
+<Badge variant="secondary">Premium</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-purple-700 dark:bg-purple-600`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-purple-600 dark:border-purple-400`
+- Text: `text-purple-700 dark:text-purple-300`
+
+### Sizes
+
+#### Small (sm)
+
+Compact badge for dense interfaces and inline text.
+
+```tsx
+<Badge variant="success" size="sm">Active</Badge>
+```
+
+**Dimensions**:
+- Padding: `px-1.5 py-0.5`
+- Text: `text-xs`
+- Border radius: `rounded-md` (standard) or `rounded-full` (pill)
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<Badge variant="info" size="md">New</Badge>
+```
+
+**Dimensions**:
+- Padding: `px-2 py-1`
+- Text: `text-xs`
+- Border radius: `rounded-lg` (standard) or `rounded-full` (pill)
+
+#### Large (lg)
+
+Larger badge for better visibility.
+
+```tsx
+<Badge variant="warning" size="lg">Pending</Badge>
+```
+
+**Dimensions**:
+- Padding: `px-2.5 py-1.5`
+- Text: `text-sm`
+- Border radius: `rounded-xl` (standard) or `rounded-full` (pill)
+
+#### Extra Large (xl)
+
+Maximum size for prominent badges.
+
+```tsx
+<Badge variant="error" size="xl">Critical</Badge>
+```
+
+**Dimensions**:
+- Padding: `px-5 py-2.5`
+- Text: `text-sm`
+- Border radius: `rounded-2xl` (standard) or `rounded-full` (pill)
+
+### Styles
+
+#### Solid Style
+
+Filled background badge (default).
+
+```tsx
+<Badge variant="success" styleType="solid">Active</Badge>
+```
+
+Uses semantic color classes from `getColorClasses('success', 'badge')`:
+- Success: `bg-green-700 text-white dark:bg-green-600`
+- Error: `bg-red-700 text-white dark:bg-red-600`
+- Warning: `bg-yellow-600 text-white dark:bg-yellow-500`
+- Info: `bg-blue-700 text-white dark:bg-blue-600`
+- Neutral: `bg-neutral-700 text-white dark:bg-neutral-600`
+- Primary: `bg-primary-600 text-white dark:bg-primary-500`
+- Secondary: `bg-purple-700 text-white dark:bg-purple-600`
+
+#### Outline Style
+
+Border-only badge with text color.
+
+```tsx
+<Badge variant="success" styleType="outline">Active</Badge>
+```
+
+Styling:
+- Success: `border-green-600 text-green-700 dark:border-green-400 dark:text-green-300`
+- Error: `border-red-600 text-red-700 dark:border-red-400 dark:text-red-300`
+- Warning: `border-yellow-600 text-yellow-700 dark:border-yellow-400 dark:text-yellow-300`
+- Info: `border-blue-600 text-blue-700 dark:border-blue-400 dark:text-blue-300`
+- Neutral: `border-neutral-500 text-neutral-700 dark:border-neutral-400 dark:text-neutral-300`
+- Primary: `border-primary-500 text-primary-700 dark:border-primary-400 dark:text-primary-300`
+- Secondary: `border-purple-600 text-purple-700 dark:border-purple-400 dark:text-purple-300`
+
+### Corner Radius
+
+#### Fully Rounded (Pill)
+
+Fully rounded corners (default).
+
+```tsx
+<Badge variant="success" rounded={true}>Active</Badge>
+```
+
+Rounded corners:
+- `sm`: `rounded-full`
+- `md`: `rounded-full`
+- `lg`: `rounded-full`
+- `xl`: `rounded-full`
+
+#### Standard Corners
+
+Less rounded corners for badge lists or tables.
+
+```tsx
+<Badge variant="success" rounded={false}>Active</Badge>
+```
+
+Rounded corners:
+- `sm`: `rounded-md`
+- `md`: `rounded-lg`
+- `lg`: `rounded-xl`
+- `xl`: `rounded-2xl`
+
+### Dark Mode
+
+All Badge variants automatically support dark mode:
+
+- **Solid backgrounds**: Darker shades in dark mode (e.g., `bg-green-700` → `dark:bg-green-600`)
+- **Outline borders**: Lighter border colors in dark mode (e.g., `border-green-600` → `dark:border-green-400`)
+- **Text colors**: Lighter text in dark mode for outline variant
+- Smooth transitions for theme changes
+
+### Accessibility Features
+
+The Badge component includes comprehensive accessibility support:
+
+1. **Semantic HTML**: Uses native `<span>` element
+2. **Screen Reader Support**: Text content is announced by screen readers
+3. **Visual Feedback**: Clear color differentiation for different states
+4. **WCAG Contrast**: All color combinations meet WCAG 2.1 AA standards
+5. **Transition Effects**: Smooth color changes prevent visual jumps
+
+```tsx
+<Badge variant="success" aria-label="Status: Active">
+  Active
+</Badge>
+```
+
+### Real-World Examples
+
+#### User Status Badge
+
+```tsx
+function UserStatusBadge({ status }: { status: 'active' | 'inactive' | 'pending' }) {
+  const variant = {
+    active: 'success' as const,
+    inactive: 'neutral' as const,
+    pending: 'warning' as const,
+  }[status];
+
+  return (
+    <Badge variant={variant} size="sm">
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </Badge>
+  );
+}
+```
+
+#### Notification Count Badge
+
+```tsx
+function NotificationBadge({ count }: { count: number }) {
+  return (
+    <Badge
+      variant="error"
+      size="sm"
+      className="absolute -top-2 -right-2"
+    >
+      {count}
+    </Badge>
+  );
+}
+
+// Usage
+<div className="relative">
+  <BellIcon />
+  {count > 0 && <NotificationBadge count={count} />}
+</div>
+```
+
+#### Online/Offline Status
+
+```tsx
+function ConnectionStatus({ isOnline }: { isOnline: boolean }) {
+  return (
+    <Badge
+      variant={isOnline ? 'success' : 'error'}
+      size="md"
+      rounded={false}
+    >
+      {isOnline ? 'Connected' : 'Disconnected'}
+    </Badge>
+  );
+}
+```
+
+#### Role Badge
+
+```tsx
+function RoleBadge({ role }: { role: 'admin' | 'teacher' | 'student' }) {
+  const variant = {
+    admin: 'primary' as const,
+    teacher: 'info' as const,
+    student: 'neutral' as const,
+  }[role];
+
+  return (
+    <Badge variant={variant} size="md">
+      {role.charAt(0).toUpperCase() + role.slice(1)}
+    </Badge>
+  );
+}
+```
+
+#### File Type Badge
+
+```tsx
+function FileTypeBadge({ type }: { type: 'pdf' | 'doc' | 'img' }) {
+  const config = {
+    pdf: { variant: 'error' as const, label: 'PDF' },
+    doc: { variant: 'info' as const, label: 'DOC' },
+    img: { variant: 'success' as const, label: 'IMG' },
+  }[type];
+
+  return (
+    <Badge variant={config.variant} size="sm" styleType="outline">
+      {config.label}
+    </Badge>
+  );
+}
+```
+
+#### Multi-Badge List
+
+```tsx
+function MultiBadgeList({ items }: { items: Array<{ label: string; variant: BadgeVariant }> }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {items.map((item, index) => (
+        <Badge
+          key={index}
+          variant={item.variant}
+          size="sm"
+          rounded={false}
+        >
+          {item.label}
+        </Badge>
+      ))}
+    </div>
+  );
+}
+
+// Usage
+<MultiBadgeList
+  items={[
+    { label: 'React', variant: 'info' },
+    { label: 'TypeScript', variant: 'success' },
+    { label: 'Tailwind', variant: 'warning' },
+  ]}
+/>
+```
+
+### Migration Guide
+
+To migrate existing badge implementations:
+
+**Before:**
+```tsx
+<span className="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded-full bg-green-700 text-white">
+  Active
+</span>
+```
+
+**After:**
+```tsx
+import Badge from './ui/Badge';
+
+<Badge variant="success">Active</Badge>
+```
+
+**Benefits:**
+- ✅ Consistent badge styling across application
+- ✅ Multiple variants and sizes for flexibility
+- ✅ Solid and outline styles for different contexts
+- ✅ Dark mode support
+- ✅ Semantic color system integration
+- ✅ WCAG-compliant color contrast
+- ✅ Reduced code duplication
+
+### Test Coverage
+
+The Badge component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Badge.test.tsx
+```
+
+Test scenarios include:
+- Rendering with all variants (success, error, warning, info, neutral, primary, secondary)
+- Rendering with all sizes (sm, md, lg, xl)
+- All style types (solid, outline)
+- Rounded and non-rounded variants
+- Custom className application
+- Props passthrough to span element
+- Dark mode styling
+- Transition effects
+- Semantic color integration
+
+### Usage in Application
+
+Currently integrated in:
+- `src/components/admin/PermissionManager.tsx` - Permission badges
+- `src/components/PPDBManagement.tsx` - Status badges
+- `src/components/DashboardActionCard.tsx` - Status and role badges
+
+**Common Patterns:**
+
+```tsx
+// Status indicator
+<Badge variant={isActive ? 'success' : 'neutral'}>
+  {isActive ? 'Active' : 'Inactive'}
+</Badge>
+
+// Notification count
+<Badge variant="error" size="sm">
+  {notificationCount}
+</Badge>
+
+// Category label
+<Badge variant="info" size="md" styleType="outline" rounded={false}>
+  {category}
+</Badge>
+
+// Feature tag
+<Badge variant="primary" size="lg">
+  New Feature
+</Badge>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Animated badges (pulse, bounce)
+- Clickable badge variant (as button)
+- Badge with icon + text
+- Progress indicator badge
+- Badge grouping/stacking
+- Custom animations for badge appearance
+- Removable badges with close button
 
 ---
