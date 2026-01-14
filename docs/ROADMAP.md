@@ -1,8 +1,8 @@
 # Roadmap Pengembangan
 
 **Created**: 2025-01-01
-**Last Updated**: 2026-01-06
-**Version**: 2.1.0
+**Last Updated**: 2026-01-14
+**Version**: 2.2.0
 **Status**: Active
 
 Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal MA Malnu Kananga**.
@@ -216,6 +216,19 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
 - Accessibility compliance (WCAG 2.1 AA)
 - Type safety improvements untuk all roles
 - Permission system enhancement dengan extra roles
+
+### Backend WebSocket Support Implementation (2026-01-14)
+- WebSocket endpoint `/ws` with JWT token authentication
+- Client connection management with Map for tracking active connections
+- Event broadcasting system for real-time updates across all clients
+- Real-time CRUD event broadcasting: grades, attendance, announcements, e_library, school_events, users
+- `/api/updates` polling fallback endpoint for compatibility
+- Event type mapping for consistent frontend integration
+- Automatic connection cleanup on close/error events
+- Integration with existing authentication system
+- Frontend `webSocketService.ts` fully integrated with backend endpoints
+- See `worker.js:113-252` for backend implementation
+- See `src/services/webSocketService.ts` for frontend implementation
 
 ### Backend Error Handling Standardization (2026-01-14)
 - Standardized all 28 API endpoint error handling

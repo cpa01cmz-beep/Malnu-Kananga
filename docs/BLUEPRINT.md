@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-14
-**Version**: 2.1.2
+**Version**: 2.2.0
 **Status**: Active
 
 ## 1. Ringkasan
@@ -312,15 +312,32 @@ src/
     - Developers can now use concise imports like: `import { Button, Input, Modal } from './components/ui'`
     - See `src/components/ui/index.ts` for complete export list and component organization
 
-    ### 3.27 High-Contrast Accessibility Fix (Fase 5 - COMPLETED 2026-01-13)
+     ### 3.27 High-Contrast Accessibility Fix (Fase 5 - COMPLETED 2026-01-13)
 
-    - Fixed broken `@media (prefers-contrast: high)` media query in `src/styles/themes.css`
-    - Replaced non-existent CSS variables (`--color-border`, `--color-text`, `--color-background`) with correct Tailwind v4 format
-    - Implemented proper `--theme-neutral-*` and `--theme-primary-*` variable overrides
-     - Added separate high-contrast overrides for light mode (`:root`) and dark mode (`.dark`)
-     - Enhanced contrast ratios to meet WCAG 2.1 AAA standards for high-contrast preference
-     - Users with high-contrast OS preference now receive improved visual clarity
-     - See `src/styles/themes.css:204-221` for implementation
+     - Fixed broken `@media (prefers-contrast: high)` media query in `src/styles/themes.css`
+     - Replaced non-existent CSS variables (`--color-border`, `--color-text`, `--color-background`) with correct Tailwind v4 format
+     - Implemented proper `--theme-neutral-*` and `--theme-primary-*` variable overrides
+      - Added separate high-contrast overrides for light mode (`:root`) and dark mode (`.dark`)
+      - Enhanced contrast ratios to meet WCAG 2.1 AAA standards for high-contrast preference
+      - Users with high-contrast OS preference now receive improved visual clarity
+      - See `src/styles/themes.css:204-221` for implementation
+
+     ### 3.28 WebSocket Backend Support (Fase 6 - COMPLETED 2026-01-14)
+
+     - WebSocket connection handler (`handleWebSocketConnection`) with JWT token authentication
+     - Client connection management using Map for tracking active connections
+     - Event broadcasting system (`broadcastEvent`) for real-time updates
+     - Real-time CRUD event broadcasting for: grades, attendance, announcements, e_library, school_events, users
+     - Event type mapping helper functions (`getEventType`, `getEntityName`) for consistent event format
+     - `/api/updates` polling fallback endpoint for compatibility with WebSocket unavailable scenarios
+     - WebSocket message handling: ping/pong, subscribe/unsubscribe, disconnect
+     - Automatic connection cleanup on close/error events
+     - Integration with existing authentication system using `authenticate()` middleware
+     - Frontend service (`webSocketService.ts`) fully integrated with backend endpoints
+     - Consistent event format matching frontend expectations
+     - Improved scalability and real-time synchronization across all clients
+     - See `worker.js:113-252` for WebSocket implementation details
+     - See `src/services/webSocketService.ts` for frontend integration details
 
 ## 4. User Roles & Access Control
 
@@ -405,5 +422,5 @@ src/
 ---
 
 **Last Updated**: 2026-01-14
-**Version**: 2.1.2
+**Version**: 2.2.0
 **Status**: Active
