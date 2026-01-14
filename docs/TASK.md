@@ -18,11 +18,24 @@
   - [x] ErrorBoundary (1 failure) - Investigating (not UI-related)
   - [x] PermissionManager (6 failures) - Investigating (requires further analysis)
 
+- [x] Fix misleading hover effects on non-interactive cards (WCAG compliance)
+  - [x] ProgramCard - Changed variant="hover" to "default", removed group hover effects
+  - [x] PPDBSection - Changed 3 process cards from variant="hover" to "default", removed group hover effects
+  - [x] Fixed WCAG compliance: No longer relies on visual cues alone for interactivity
+  - See `src/components/ProgramCard.tsx:14-15` and `src/components/sections/PPDBSection.tsx:33,46,59`
+
 - [ ] Fix remaining test failures (17 failures, 1466 passing, 10 skipped)
   - emailService (4 failures) - API mock configuration issues
   - studentPortalValidator (13 failures) - Validation logic issues
 
 ### P1: High Priority
+
+- [x] Fix misleading hover effects on non-interactive cards
+   - ProgramCard: Changed variant from "hover" to "default"
+   - PPDBSection: Changed 3 process step cards from "hover" to "default"
+   - Removed group-hover classes (image scale, icon scale, title color changes)
+   - Fixed WCAG compliance: No longer relies on visual cues alone for interactivity
+   - See `src/components/ProgramCard.tsx:14-29` and `src/components/sections/PPDBSection.tsx:32-69`
 
 - [x] Fix NewsCard accessibility issue
    - Removed misleading hover variant (fake interactivity)
@@ -101,9 +114,10 @@
 ## Version History
 
  | Version | Date | Changes |
-|---------|------|------|
-| 12.4.0 | 2026-01-14 | Accessibility fix - NewsCard: Removed misleading hover variant, replaced Card with semantic `<article>`, removed group-hover effects, added aria-hidden to decorative SVG. Fixed WCAG compliance - no longer relies on visual cues for interactivity. |
-| 12.3.0 | 2026-01-14 | Color palette alignment: Refactored Badge component to use semantic color utilities from colors.ts. Removed deprecated variants (purple, indigo, orange, red) and added secondary variant. Theme-aware colors now adapt to user selection. |
-| 12.2.0 | 2026-01-14 | Fixed UI/UX accessibility test failures: Card (focus-visible styles), FileInput (aria-label), ProfileSection (article vs button), ThemeSelector (button queries). Fixed ProfileSection import lint error. Reduced failures from 27 to 17 (services/utils only). |
-| 12.1.0 | 2026-01-13 | Repository audit cleanup: Synthesized TASK.md for clarity, corrected test metrics (27 failures, 1458 passing), streamlined version history, added notification migration task |
-| 12.0.0 | 2026-01-13 | Previous repository audit version |
+ |---------|------|------|
+ | 12.5.0 | 2026-01-14 | Accessibility fix - ProgramCard & PPDBSection: Removed misleading hover variants on non-interactive cards. ProgramCard: Changed variant to "default", removed group-hover effects (image scale, title color). PPDBSection: Changed 3 process step cards to "default", removed group-hover effects (icon scale, text color). Fixed WCAG compliance - cards no longer imply interactivity through visual cues. |
+ | 12.4.0 | 2026-01-14 | Accessibility fix - NewsCard: Removed misleading hover variant, replaced Card with semantic `<article>`, removed group-hover effects, added aria-hidden to decorative SVG. Fixed WCAG compliance - no longer relies on visual cues for interactivity. |
+ | 12.3.0 | 2026-01-14 | Color palette alignment: Refactored Badge component to use semantic color utilities from colors.ts. Removed deprecated variants (purple, indigo, orange, red) and added secondary variant. Theme-aware colors now adapt to user selection. |
+ | 12.2.0 | 2026-01-14 | Fixed UI/UX accessibility test failures: Card (focus-visible styles), FileInput (aria-label), ProfileSection (article vs button), ThemeSelector (button queries). Fixed ProfileSection import lint error. Reduced failures from 27 to 17 (services/utils only). |
+ | 12.1.0 | 2026-01-13 | Repository audit cleanup: Synthesized TASK.md for clarity, corrected test metrics (27 failures, 1458 passing), streamlined version history, added notification migration task |
+ | 12.0.0 | 2026-01-13 | Previous repository audit version |
