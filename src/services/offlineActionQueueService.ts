@@ -1,5 +1,12 @@
 // offlineActionQueueService.ts - Offline Action Queue and Sync System
 // Handles queuing actions when offline and syncing when online
+//
+// NOTE: This service uses dynamic imports for geminiService and aiCacheService to avoid
+// circular dependencies during module initialization. These modules are also statically imported
+// elsewhere in the codebase, so Vite will show warnings about dynamic imports not
+// actually lazy-loading. These warnings are expected and intentional - the dynamic imports
+// serve to break the circular dependency chain (geminiService → offlineActionQueueService →
+// geminiService) during initialization, not to enable lazy loading.
 
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
