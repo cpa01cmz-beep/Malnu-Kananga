@@ -382,6 +382,61 @@ CREATE INDEX IF NOT EXISTS idx_parent_relationship_parent ON parent_student_rela
 CREATE INDEX IF NOT EXISTS idx_parent_relationship_student ON parent_student_relationship(student_id);
 
 -- ============================================
+-- OPTIMIZATION: PERFORMANCE INDEXES
+-- ============================================
+-- Added 2026-01-14: Database Query Optimization (Phase 6)
+
+-- Composite indexes for frequently queried columns
+CREATE INDEX IF NOT EXISTS idx_grades_student_class ON grades(student_id, class_id);
+CREATE INDEX IF NOT EXISTS idx_grades_student_academic_semester ON grades(student_id, academic_year, semester);
+CREATE INDEX IF NOT EXISTS idx_attendance_class_date ON attendance(class_id, date);
+CREATE INDEX IF NOT EXISTS idx_schedules_class_day ON schedules(class_id, day_of_week);
+CREATE INDEX IF NOT EXISTS idx_schedules_teacher_day ON schedules(teacher_id, day_of_week);
+CREATE INDEX IF NOT EXISTS idx_schedules_day_time ON schedules(day_of_week, start_time);
+CREATE INDEX IF NOT EXISTS idx_event_registrations_event_status ON event_registrations(event_id, attendance_status);
+CREATE INDEX IF NOT EXISTS idx_events_date_status ON school_events(date, status);
+CREATE INDEX IF NOT EXISTS idx_announcements_active_created ON announcements(is_active, created_at);
+CREATE INDEX IF NOT EXISTS idx_sessions_user_expires_revoked ON sessions(user_id, expires_at, is_revoked);
+CREATE INDEX IF NOT EXISTS idx_classes_name_academic_semester ON classes(name, academic_year, semester);
+CREATE INDEX IF NOT EXISTS idx_library_subject_uploaded ON e_library(subject_id, uploaded_at);
+CREATE INDEX IF NOT EXISTS idx_audit_log_created ON audit_log(created_at);
+
+-- Single column indexes for WHERE clauses and JOINs
+CREATE INDEX IF NOT EXISTS idx_grades_class ON grades(class_id);
+CREATE INDEX IF NOT EXISTS idx_grades_academic_year ON grades(academic_year);
+CREATE INDEX IF NOT EXISTS idx_grades_semester ON grades(semester);
+CREATE INDEX IF NOT EXISTS idx_grades_assignment_type ON grades(assignment_type);
+CREATE INDEX IF NOT EXISTS idx_grades_created_at ON grades(created_at);
+CREATE INDEX IF NOT EXISTS idx_attendance_status ON attendance(status);
+CREATE INDEX IF NOT EXISTS idx_subjects_code ON subjects(code);
+CREATE INDEX IF NOT EXISTS idx_classes_homeroom_teacher ON classes(homeroom_teacher_id);
+CREATE INDEX IF NOT EXISTS idx_library_uploaded_by ON e_library(uploaded_by);
+CREATE INDEX IF NOT EXISTS idx_announcements_category ON announcements(category);
+CREATE INDEX IF NOT EXISTS idx_announcements_target_audience ON announcements(target_audience);
+CREATE INDEX IF NOT EXISTS idx_sessions_last_accessed ON sessions(last_accessed);
+CREATE INDEX IF NOT EXISTS idx_users_status ON users(status);
+
+-- Optimized view for faster queries
+CREATE VIEW IF NOT EXISTS active_students_with_class AS
+SELECT
+  s.id,
+  s.nisn,
+  s.nis,
+  s.class_name,
+  u.name,
+  u.email,
+  c.name as class_name_full,
+  c.academic_year,
+  c.semester
+FROM students s
+JOIN users u ON s.user_id = u.id
+LEFT JOIN classes c ON s.class = c.name
+WHERE u.status = 'active'
+AND c.id IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_users_email_status ON users(email, status);
+
+-- ============================================
 -- TRIGGERS for automatic timestamp updates
 -- ============================================
 CREATE TRIGGER IF NOT EXISTS update_users_timestamp

@@ -118,6 +118,69 @@ const HTTP_STATUS_CODES = {
 };
 
 // ============================================
+// QUERY RESULT CACHE (In-Memory with TTL)
+// ============================================
+
+class QueryCache {
+  constructor() {
+    this.cache = new Map();
+    this.defaultTTL = 60000; // 60 seconds default
+  }
+
+  set(key, value, ttl = this.defaultTTL) {
+    const expiresAt = Date.now() + ttl;
+    this.cache.set(key, { value, expiresAt });
+    logger.debug(`Cache set: ${key}, TTL: ${ttl}ms`);
+  }
+
+  get(key) {
+    const entry = this.cache.get(key);
+    if (!entry) {
+      logger.debug(`Cache miss: ${key}`);
+      return null;
+    }
+
+    if (Date.now() > entry.expiresAt) {
+      logger.debug(`Cache expired: ${key}`);
+      this.cache.delete(key);
+      return null;
+    }
+
+    logger.debug(`Cache hit: ${key}`);
+    return entry.value;
+  }
+
+  invalidate(key) {
+    this.cache.delete(key);
+    logger.debug(`Cache invalidated: ${key}`);
+  }
+
+  invalidatePattern(pattern) {
+    const regex = new RegExp(pattern);
+    for (const key of this.cache.keys()) {
+      if (regex.test(key)) {
+        this.cache.delete(key);
+        logger.debug(`Cache invalidated by pattern: ${key}`);
+      }
+    }
+  }
+
+  clear() {
+    this.cache.clear();
+    logger.debug('Cache cleared');
+  }
+
+  getStats() {
+    return {
+      size: this.cache.size,
+      keys: Array.from(this.cache.keys())
+    };
+  }
+}
+
+const queryCache = new QueryCache();
+
+// ============================================
 // WEBSOCKET CONNECTION MANAGEMENT
 // ============================================
 
@@ -1051,6 +1114,8 @@ async function handleCRUD(request, env, corsHeaders, table, _options = {}) {
           });
         }
 
+        queryCache.invalidatePattern(`^${table}:`);
+
         return new Response(JSON.stringify(response.success(newItem, 'Data berhasil dibuat')), {
           status: HTTP_STATUS_CODES.CREATED,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1084,6 +1149,8 @@ async function handleCRUD(request, env, corsHeaders, table, _options = {}) {
           });
         }
 
+        queryCache.invalidatePattern(`^${table}:`);
+
         return new Response(JSON.stringify(response.success(updatedItem || updateBody, 'Data berhasil diperbarui')), {
           status: HTTP_STATUS_CODES.OK,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1113,6 +1180,8 @@ async function handleCRUD(request, env, corsHeaders, table, _options = {}) {
             userId: payload.user_id,
           });
         }
+
+        queryCache.invalidatePattern(`^${table}:`);
 
         return new Response(JSON.stringify(response.success(null, 'Data berhasil dihapus')), {
           status: HTTP_STATUS_CODES.OK,
@@ -1700,6 +1769,17 @@ async function handleGetChildren(request, env, corsHeaders) {
       });
     }
 
+    const cacheKey = `children:${payload.user_id}`;
+    const cachedData = queryCache.get(cacheKey);
+
+    if (cachedData) {
+      logger.debug('Returning cached children data');
+      return new Response(JSON.stringify(response.success(cachedData, 'Data anak berhasil diambil (cached)')), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Cache': 'HIT' }
+      });
+    }
+
     const children = await env.DB.prepare(`
       SELECT
         psr.id as relationship_id,
@@ -1722,11 +1802,14 @@ async function handleGetChildren(request, env, corsHeaders) {
       LEFT JOIN classes c ON s.class = c.name
       WHERE psr.parent_id = ?
       ORDER BY psr.is_primary_contact DESC, u.name ASC
+      LIMIT 50
     `).bind(payload.user_id).all();
+
+    queryCache.set(cacheKey, children, 120000); // Cache for 2 minutes
 
     return new Response(JSON.stringify(response.success(children, 'Data anak berhasil diambil')), {
       status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Cache': 'MISS' }
     });
   } catch (e) {
     logger.error('Get children error:', e);
@@ -1769,6 +1852,17 @@ async function handleGetChildGrades(request, env, corsHeaders) {
       });
     }
 
+    const cacheKey = `grades:${studentId}`;
+    const cachedData = queryCache.get(cacheKey);
+
+    if (cachedData) {
+      logger.debug('Returning cached grades data');
+      return new Response(JSON.stringify(response.success(cachedData, 'Data nilai berhasil diambil (cached)')), {
+        status: HTTP_STATUS_CODES.OK,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Cache': 'HIT' }
+      });
+    }
+
     const grades = await env.DB.prepare(`
       SELECT
         g.id,
@@ -1787,11 +1881,14 @@ async function handleGetChildGrades(request, env, corsHeaders) {
       JOIN classes c ON g.class_id = c.id
       WHERE g.student_id = ?
       ORDER BY g.created_at DESC
+      LIMIT 200
     `).bind(studentId).all();
+
+    queryCache.set(cacheKey, grades, 120000); // Cache for 2 minutes
 
     return new Response(JSON.stringify(response.success(grades, 'Data nilai berhasil diambil')), {
       status: HTTP_STATUS_CODES.OK,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Cache': 'MISS' }
     });
   } catch (e) {
     logger.error('Get child grades error:', e);
@@ -1983,7 +2080,7 @@ async function handleGetUpdates(request, env, corsHeaders) {
 
     for (const table of tables) {
       const results = await env.DB.prepare(`
-        SELECT * FROM ${table.name}
+        SELECT id, updated_at FROM ${table.name}
         WHERE updated_at > ?
         ORDER BY updated_at DESC
         LIMIT 100
@@ -1994,7 +2091,6 @@ async function handleGetUpdates(request, env, corsHeaders) {
           type: table.eventTypes[1] || table.eventTypes[0],
           entity: table.entity,
           entityId: row.id,
-          data: row,
           timestamp: row.updated_at,
           userRole: payload.role,
           userId: payload.user_id,
