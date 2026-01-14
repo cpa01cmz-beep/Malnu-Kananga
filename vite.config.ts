@@ -129,7 +129,7 @@ export default defineConfig(({ mode }) => {
             }
 
             // Group UI component libraries
-            if (id.includes('lucide-react') || id.includes('@heroicons/react')) {
+            if (id.includes('@heroicons/react')) {
               return 'vendor-icons';
             }
 
