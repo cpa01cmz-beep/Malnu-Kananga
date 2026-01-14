@@ -77,6 +77,43 @@
 
 ## Completed (2026-01-14)
 
+- [x] **Interaction Polish: Enhanced Card Interactivity** - Added optional click handlers and hover effects to ProgramCard and NewsCard
+  - **ProgramCard Component** (`src/components/ProgramCard.tsx`):
+    - Added optional `onClick` prop for navigation functionality
+    - Added optional `ariaLabel` prop for accessibility customization
+    - Uses Card's "hover" variant when onClick is provided
+    - Image zooms slightly on hover (`group-hover:scale-105`)
+    - Title color changes on hover (`group-hover:text-primary-600`)
+    - Added "Lihat Selengkapnya" (See more) link with arrow icon
+    - Arrow icon slides right on hover (`group-hover:translate-x-1`)
+    - Full keyboard navigation support when interactive (Tab, Enter, Space)
+    - Proper ARIA labels for screen readers
+  - **NewsCard Component** (`src/components/NewsCard.tsx`):
+    - Added optional `onClick` prop for navigation functionality
+    - Added optional `ariaLabel` prop for accessibility customization
+    - Card lifts slightly on hover (`hover:-translate-y-0.5`) with shadow enhancement
+    - Image zooms on hover (`group-hover:scale-105`)
+    - Title color changes on hover (`group-hover:text-primary-600`)
+    - Added "Baca Selengkapnya" (Read more) link with arrow icon
+    - Arrow icon slides right on hover (`group-hover:translate-x-1`)
+    - Renders as button when interactive (`role="button"`, `tabIndex="0"`)
+    - Full keyboard navigation support when interactive
+    - Maintains semantic HTML (article element becomes interactive when needed)
+  - **Test Coverage** (`src/components/__tests__/CardInteraction.test.tsx`):
+    - Tests for both ProgramCard and NewsCard
+    - Verifies static vs interactive rendering
+    - Tests onClick handler invocation
+    - Tests keyboard navigation (Enter, Space keys)
+    - Tests ARIA labels generation
+    - Tests conditional link display
+  - **Benefits**:
+    - Improved visual feedback for users (hover effects, animations)
+    - Cards feel more alive and responsive
+    - Optional navigation capability for program/news details
+    - Consistent interaction patterns across card components
+    - Better accessibility (keyboard support, ARIA labels)
+    - Enhanced user experience through micro-interactions
+
 - [x] **Semantic HTML Accessibility Fix** - Replaced div role="button" with semantic button element in OsisEvents.tsx
   - Changed `<div role="button">` to `<button type="button">` (line 715-755)
   - Removed manual keyboard handler (`onKeyDown`) since button handles Enter/Space automatically
