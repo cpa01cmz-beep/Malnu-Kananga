@@ -76,7 +76,7 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
   const calculateLocalStorageSize = () => {
     let total = 0;
     for (let key in localStorage) {
-        if (Object.prototype.hasOwnProperty.call(localStorage, key)) {
+        if (Object.prototype.hasOwnProperty.call(localStorage, key) && key.startsWith('malnu_')) {
             total += localStorage[key].length + key.length;
         }
     }
