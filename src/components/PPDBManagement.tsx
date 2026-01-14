@@ -15,6 +15,7 @@ import { EmptyState } from './ui/LoadingState';
 import Card from './ui/Card';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { CheckIcon, XMarkIcon } from './icons/MaterialIcons';
+import { HEIGHTS } from '../config/heights';
 
 interface PPDBManagementProps {
   onBack: () => void;
@@ -586,7 +587,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                   onClick={() => setShowDocumentPreview(null)}
                 />
               </div>
-              <Card className="bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4 min-h-[400px] flex items-center justify-center">
+              <Card className={`bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4 ${HEIGHTS.CONTENT.TABLE} flex items-center justify-center`}>
                 <p className="text-neutral-500 dark:text-neutral-400">Preview dokumen akan ditampilkan di sini</p>
               </Card>
             </Card>

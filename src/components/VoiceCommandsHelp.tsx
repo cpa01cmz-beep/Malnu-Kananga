@@ -3,6 +3,7 @@ import { MicrophoneIcon } from './icons/MicrophoneIcon';
 import { UserRole } from '../types/permissions';
 import Modal from './ui/Modal';
 import Badge from './ui/Badge';
+import { HEIGHTS } from '../config/heights';
 
 interface VoiceCommandsHelpProps {
   isOpen: boolean;
@@ -180,7 +181,7 @@ const VoiceCommandsHelp: React.FC<VoiceCommandsHelpProps> = ({
         </p>
       </div>
 
-      <div className="max-h-[50vh] overflow-y-auto">
+      <div className={`${HEIGHTS.VIEWPORT_MAX.HALF} overflow-y-auto`}>
         {getCommandsByCategory().map((category, categoryIndex) => (
           <div key={categoryIndex} className="mb-6">
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-3">

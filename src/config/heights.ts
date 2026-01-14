@@ -33,6 +33,7 @@ export const HEIGHTS = {
     SMALL: 'max-h-[200px]',
     MEDIUM: 'max-h-[400px]',
     COMPACT: 'max-h-[600px]',
+    HALF: 'max-h-[50vh]',
     TALL: 'max-h-[70vh]',
     TALLER: 'max-h-[80vh]',
     TALLEST: 'max-h-[90vh]',

@@ -6,6 +6,7 @@ import { EmptyState } from './LoadingState';
 import Button from './Button';
 import SearchInput from './SearchInput';
 import FunnelIcon from '../icons/FunnelIcon';
+import { HEIGHTS } from '../../config/heights';
 
 export interface Column<T = Record<string, unknown>> {
   key: string;
@@ -138,7 +139,7 @@ const DataTable = <T extends Record<string, unknown>>({
       <LoadingOverlay
         isLoading={loading}
         message={loading ? 'Loading data...' : undefined}
-        className="min-h-[400px]"
+        className={HEIGHTS.CONTENT.TABLE}
       >
         {error && (
           <div className="text-center py-12">

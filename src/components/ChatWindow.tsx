@@ -19,6 +19,7 @@ import { useVoiceQueue } from '../hooks/useVoiceQueue';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { STORAGE_KEYS, OPACITY_TOKENS } from '../constants';
 import { logger } from '../utils/logger';
+import { HEIGHTS } from '../config/heights';
 
 import { ToastType } from './Toast';
 
@@ -404,7 +405,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
               disabled={isLoading}
               placeholder={isThinkingMode ? "Ketik pertanyaan kompleks..." : "Ketik pertanyaan Anda..."}
               fullWidth={true}
-              className="min-h-[44px]"
+              className={HEIGHTS.CONTENT.MINIMUM}
               autoResize={true}
               minRows={1}
               maxRows={5}
