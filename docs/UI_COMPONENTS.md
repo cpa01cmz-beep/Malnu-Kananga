@@ -3368,3 +3368,1097 @@ Potential improvements to consider:
 - Tooltip integration for additional context
 
 ---
+
+## Modal Component
+
+**Location**: `src/components/ui/Modal.tsx`
+
+A reusable modal/dialog component with comprehensive accessibility support, animations, and focus management.
+
+### Features
+
+- **5 Sizes**: `sm`, `md`, `lg`, `xl`, `full`
+- **3 Animations**: `fade-in`, `fade-in-up`, `scale-in`
+- **Accessibility**: Full ARIA support, focus trap, keyboard navigation, screen reader support
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Focus Management**: Automatic focus trap using `useFocusTrap` hook
+- **Body Scroll Lock**: Prevents background scrolling when modal is open
+- **Backdrop Interaction**: Optional close on backdrop click
+- **Escape Key**: Optional close on Escape key press
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `isOpen` | `boolean` | `false` | Whether the modal is visible |
+| `onClose` | `() => void` | Required | Function to call when modal should close |
+| `children` | `ReactNode` | Required | Content to display inside the modal |
+| `title` | `string` | `undefined` | Modal title (displayed in header) |
+| `description` | `string` | `undefined` | Screen reader description (hidden visually) |
+| `size` | `ModalSize` | `'md'` | Modal size variant |
+| `animation` | `ModalAnimation` | `'scale-in'` | Animation variant |
+| `closeOnBackdropClick` | `boolean` | `true` | Allow closing by clicking the backdrop |
+| `closeOnEscape` | `boolean` | `true` | Allow closing with the Escape key |
+| `showCloseButton` | `boolean` | `true` | Show the close button in the header |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Sizes
+
+#### Small (sm)
+
+Compact modal for simple dialogs.
+
+```tsx
+import Modal from './ui/Modal';
+
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  size="sm"
+  title="Confirm Action"
+>
+  <p>Are you sure you want to proceed?</p>
+</Modal>
+```
+
+**Dimensions**:
+- Max width: `max-w-sm` (384px / 24rem)
+- Padding: `p-4` (from default padding)
+
+#### Medium (md)
+
+Standard modal for most use cases (default).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  size="md"
+  title="Edit Profile"
+>
+  <form>...</form>
+</Modal>
+```
+
+**Dimensions**:
+- Max width: `max-w-md` (448px / 28rem)
+
+#### Large (lg)
+
+Larger modal for forms with multiple fields.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  size="lg"
+  title="Create New Assignment"
+>
+  <form>...</form>
+</Modal>
+```
+
+**Dimensions**:
+- Max width: `max-w-lg` (512px / 32rem)
+
+#### Extra Large (xl)
+
+Maximum width for complex modals.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  size="xl"
+  title="Advanced Settings"
+>
+  <form>...</form>
+</Modal>
+```
+
+**Dimensions**:
+- Max width: `max-w-xl` (576px / 36rem)
+
+#### Full
+
+Full-screen modal for immersive experiences.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  size="full"
+  title="Fullscreen View"
+>
+  <div>Content takes full viewport</div>
+</Modal>
+```
+
+**Dimensions**:
+- Width: `w-full`
+- Height: `h-full`
+- No margins or rounded corners
+
+### Animations
+
+#### Fade In
+
+Simple opacity fade animation.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  animation="fade-in"
+  title="Notification"
+>
+  <p>Modal fades in</p>
+</Modal>
+```
+
+#### Fade In Up
+
+Fade with upward slide animation.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  animation="fade-in-up"
+  title="Alert"
+>
+  <p>Modal slides up while fading in</p>
+</Modal>
+```
+
+#### Scale In
+
+Scale up from center (default).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  animation="scale-in"
+  title="Dialog"
+>
+  <p>Modal scales up from center</p>
+</Modal>
+```
+
+### Close Behavior
+
+#### Close on Backdrop Click
+
+Allow closing by clicking the overlay (default).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  closeOnBackdropClick={true}
+  title="Optional Dialog"
+>
+  <p>Click outside to close</p>
+</Modal>
+```
+
+#### Prevent Backdrop Close
+
+Require explicit action to close (e.g., for confirmation dialogs).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  closeOnBackdropClick={false}
+  title="Confirm Deletion"
+>
+  <p>You must click the confirm button</p>
+</Modal>
+```
+
+#### Close on Escape
+
+Allow closing with Escape key (default).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  closeOnEscape={true}
+  title="Dismissible Modal"
+>
+  <p>Press Escape to close</p>
+</Modal>
+```
+
+#### Prevent Escape Close
+
+Disable Escape key (e.g., for critical modals).
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  closeOnEscape={false}
+  title="Critical Action"
+>
+  <p>Must use buttons to close</p>
+</Modal>
+```
+
+### Header Configuration
+
+#### With Title and Close Button
+
+Standard modal with title and close button.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  title="Edit User"
+  showCloseButton={true}
+>
+  <form>
+    <input type="text" placeholder="Name" />
+    <button type="submit">Save</button>
+  </form>
+</Modal>
+```
+
+#### Without Title
+
+Modal for simple content without a header.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  showCloseButton={true}
+>
+  <p>Simple modal with just close button</p>
+</Modal>
+```
+
+#### Without Close Button
+
+Modal that requires specific action to close.
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  title="Terms of Service"
+  showCloseButton={false}
+>
+  <p>Read the terms, then click "Accept" to continue.</p>
+  <button onClick={handleClose}>Accept</button>
+</Modal>
+```
+
+### Accessibility Features
+
+The Modal component includes comprehensive accessibility support:
+
+1. **ARIA Roles**:
+   - `role="dialog"` - Indicates dialog element
+   - `aria-modal="true"` - Identifies modal content
+   - `aria-labelledby` - Associates title with modal
+   - `aria-describedby` - Associates description with modal
+
+2. **Focus Management**:
+   - Automatic focus trap using `useFocusTrap` hook
+   - Focus remains within modal when open
+   - Returns focus to trigger element when closed
+
+3. **Keyboard Navigation**:
+   - Escape key closes modal (if `closeOnEscape={true}`)
+   - Tab/Shift+Tab navigates through interactive elements
+   - Focus trap prevents leaving modal with keyboard
+
+4. **Body Scroll Lock**:
+   - Prevents background scrolling when modal is open
+   - Restores scroll state when closed
+   - Uses `overflow: hidden` on body
+
+5. **Screen Reader Support**:
+   - Hidden description via `sr-only` class
+   - Clear titles and labels
+   - Proper ARIA attributes for assistive technology
+
+```tsx
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  title="Account Settings"
+  description="Configure your account preferences and security settings"
+  closeOnEscape={true}
+>
+  <form>
+    <label htmlFor="username">Username</label>
+    <input id="username" type="text" />
+  </form>
+</Modal>
+```
+
+### Dark Mode
+
+All Modal features automatically support dark mode:
+
+- Background: `bg-white` → `dark:bg-neutral-800`
+- Borders: `border-neutral-200` → `dark:border-neutral-700`
+- Text: `text-neutral-900` → `dark:text-white`
+- Backdrop: `bg-black/50` (consistent across themes)
+
+### Real-World Examples
+
+#### Confirmation Dialog
+
+```tsx
+function DeleteConfirmation({ isOpen, onClose, onConfirm }: Props) {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Delete Item"
+      description="This action cannot be undone"
+      size="sm"
+      closeOnBackdropClick={false}
+      closeOnEscape={false}
+      animation="fade-in-up"
+    >
+      <div className="space-y-4">
+        <p className="text-neutral-700 dark:text-neutral-300">
+          Are you sure you want to delete this item? This action is permanent.
+        </p>
+        <div className="flex justify-end gap-3">
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={onConfirm}>
+            Delete
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+```
+
+#### Form Modal
+
+```tsx
+function EditUserModal({ isOpen, onClose, user }: Props) {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Edit User Profile"
+      size="lg"
+      animation="scale-in"
+    >
+      <form className="space-y-4">
+        <div>
+          <Label htmlFor="name">Full Name</Label>
+          <Input
+            id="name"
+            type="text"
+            defaultValue={user.name}
+          />
+        </div>
+        <div>
+          <Label htmlFor="email">Email Address</Label>
+          <Input
+            id="email"
+            type="email"
+            defaultValue={user.email}
+          />
+        </div>
+        <div className="flex justify-end gap-3 pt-4">
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleSubmit}>
+            Save Changes
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+```
+
+#### Information Modal
+
+```tsx
+function InfoModal({ isOpen, onClose }: Props) {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Welcome to New Features"
+      size="md"
+      animation="fade-in"
+    >
+      <div className="space-y-4">
+        <p className="text-neutral-700 dark:text-neutral-300">
+          We've added new features to help you manage your data more efficiently.
+        </p>
+        <ul className="list-disc list-inside space-y-2 text-neutral-700 dark:text-neutral-300">
+          <li>Improved search functionality</li>
+          <li>Faster data loading</li>
+          <li>New analytics dashboard</li>
+        </ul>
+        <div className="flex justify-end">
+          <Button variant="primary" onClick={onClose}>
+            Got It
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+```
+
+#### Fullscreen Modal
+
+```tsx
+function ImageViewerModal({ isOpen, onClose, imageUrl }: Props) {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="full"
+      animation="fade-in"
+      showCloseButton={true}
+    >
+      <div className="flex items-center justify-center h-full">
+        <img
+          src={imageUrl}
+          alt="Fullscreen view"
+          className="max-w-full max-h-full object-contain"
+        />
+      </div>
+    </Modal>
+  );
+}
+```
+
+### Performance Considerations
+
+The Modal component is optimized using:
+- Proper `useEffect` cleanup for body scroll restoration
+- Conditional rendering (`!isOpen` returns `null`)
+- Focus trap ref management
+- CSS-only animations and transitions
+- Minimal re-renders
+
+### Migration Guide
+
+To migrate existing modal implementations:
+
+**Before:**
+```tsx
+<div className={`fixed inset-0 bg-black/50 ${isOpen ? 'flex' : 'hidden'}`}>
+  <div className="bg-white rounded-xl p-6 max-w-md">
+    <div className="flex justify-between items-center mb-4">
+      <h2>Title</h2>
+      <button onClick={onClose}>✕</button>
+    </div>
+    <div>Content</div>
+  </div>
+</div>
+```
+
+**After:**
+```tsx
+import Modal from './ui/Modal';
+
+<Modal
+  isOpen={isOpen}
+  onClose={handleClose}
+  title="Title"
+>
+  Content
+</Modal>
+```
+
+**Benefits:**
+- ✅ Consistent modal styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Built-in focus trap and keyboard navigation
+- ✅ Automatic body scroll lock
+- ✅ Multiple size and animation variants
+- ✅ Dark mode support
+- ✅ Reduced code duplication
+
+### Test Coverage
+
+The Modal component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Modal.test.tsx
+```
+
+Test scenarios include:
+- Rendering with all sizes (sm, md, lg, xl, full)
+- Rendering with all animations (fade-in, fade-in-up, scale-in)
+- Title and description rendering
+- Close button display/hide
+- Backdrop click behavior
+- Escape key behavior
+- Body scroll lock on open/close
+- ARIA attributes (role, aria-modal, aria-labelledby, aria-describedby)
+- Focus trap functionality
+- Keyboard navigation
+- Dark mode styling
+
+### Usage in Application
+
+Currently integrated in:
+- `src/components/LoginModal.tsx` - Authentication modal
+- `src/components/UserManagement.tsx` - User edit modal
+- `src/components/ConfirmationDialog.tsx` - Uses BaseModal
+
+**Common Patterns:**
+
+```tsx
+// Form modal
+<Modal isOpen={isOpen} onClose={handleClose} title="Edit Item" size="lg">
+  <form onSubmit={handleSubmit}>...</form>
+</Modal>
+
+// Confirmation modal
+<Modal isOpen={isOpen} onClose={handleClose} title="Confirm" size="sm" closeOnBackdropClick={false}>
+  <div className="flex gap-3">
+    <Button variant="secondary" onClick={handleClose}>Cancel</Button>
+    <Button variant="danger" onClick={onConfirm}>Delete</Button>
+  </div>
+</Modal>
+
+// Information modal
+<Modal isOpen={isOpen} onClose={handleClose} title="Info" animation="fade-in">
+  <p>Information content</p>
+  <Button onClick={handleClose}>Close</Button>
+</Modal>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Nested modal support
+- Draggable modal headers
+- Multiple modal stacking
+- Custom close button component
+- Scrollable content area with custom scrollbar
+- Modal transition groups for coordinated animations
+
+---
+
+## Badge Component
+
+**Location**: `src/components/ui/Badge.tsx`
+
+A reusable badge component for status indicators, labels, and notifications with multiple variants and styles.
+
+### Features
+
+- **7 Variants**: `success`, `error`, `warning`, `info`, `neutral`, `primary`, `secondary`
+- **4 Sizes**: `sm`, `md`, `lg`, `xl`
+- **2 Styles**: `solid` and `outline`
+- **Corner Radius**: Rounded (`rounded-full` by default) or standard corners
+- **Accessibility**: Proper semantic HTML, screen reader support
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Smooth Transitions**: Color and style transitions
+- **Semantic Colors**: Uses centralized `getColorClasses` from `src/config/colors.ts`
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | Required | Content to display inside the badge |
+| `variant` | `BadgeVariant` | `'neutral'` | Visual color variant |
+| `size` | `BadgeSize` | `'md'` | Badge size |
+| `styleType` | `BadgeStyle` | `'solid'` | Visual style (solid or outline) |
+| `rounded` | `boolean` | `true` | Use fully rounded corners (pill shape) |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard HTML span attributes | - | - | Passes through all standard span props |
+
+### Variants
+
+#### Success Variant
+
+Green badge for success states and positive feedback.
+
+```tsx
+import Badge from './ui/Badge';
+
+<Badge variant="success">Active</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-green-700 dark:bg-green-600` (from `getColorClasses('success', 'badge')`)
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-green-600 dark:border-green-400`
+- Text: `text-green-700 dark:text-green-300`
+
+#### Error Variant
+
+Red badge for error states and negative feedback.
+
+```tsx
+<Badge variant="error">Failed</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-red-700 dark:bg-red-600`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-red-600 dark:border-red-400`
+- Text: `text-red-700 dark:text-red-300`
+
+#### Warning Variant
+
+Yellow/orange badge for warning states and caution.
+
+```tsx
+<Badge variant="warning">Pending</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-yellow-600 dark:bg-yellow-500`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-yellow-600 dark:border-yellow-400`
+- Text: `text-yellow-700 dark:text-yellow-300`
+
+#### Info Variant
+
+Blue badge for informational messages and neutral status.
+
+```tsx
+<Badge variant="info">New</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-blue-700 dark:bg-blue-600`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-blue-600 dark:border-blue-400`
+- Text: `text-blue-700 dark:text-blue-300`
+
+#### Neutral Variant
+
+Gray badge for neutral or undefined states.
+
+```tsx
+<Badge variant="neutral">Draft</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-neutral-700 dark:bg-neutral-600`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-neutral-500 dark:border-neutral-400`
+- Text: `text-neutral-700 dark:text-neutral-300`
+
+#### Primary Variant
+
+Primary brand color badge.
+
+```tsx
+<Badge variant="primary">Featured</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-primary-600 dark:bg-primary-500`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-primary-500 dark:border-primary-400`
+- Text: `text-primary-700 dark:text-primary-300`
+
+#### Secondary Variant
+
+Purple/secondary brand color badge.
+
+```tsx
+<Badge variant="secondary">Premium</Badge>
+```
+
+**Styling (Solid)**:
+- Background: `bg-purple-700 dark:bg-purple-600`
+- Text: `text-white`
+
+**Styling (Outline)**:
+- Border: `border-2 border-purple-600 dark:border-purple-400`
+- Text: `text-purple-700 dark:text-purple-300`
+
+### Sizes
+
+#### Small (sm)
+
+Compact badge for dense interfaces and inline text.
+
+```tsx
+<Badge variant="success" size="sm">Active</Badge>
+```
+
+**Dimensions**:
+- Padding: `px-1.5 py-0.5`
+- Text: `text-xs`
+- Border radius: `rounded-md` (standard) or `rounded-full` (pill)
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<Badge variant="info" size="md">New</Badge>
+```
+
+**Dimensions**:
+- Padding: `px-2 py-1`
+- Text: `text-xs`
+- Border radius: `rounded-lg` (standard) or `rounded-full` (pill)
+
+#### Large (lg)
+
+Larger badge for better visibility.
+
+```tsx
+<Badge variant="warning" size="lg">Pending</Badge>
+```
+
+**Dimensions**:
+- Padding: `px-2.5 py-1.5`
+- Text: `text-sm`
+- Border radius: `rounded-xl` (standard) or `rounded-full` (pill)
+
+#### Extra Large (xl)
+
+Maximum size for prominent badges.
+
+```tsx
+<Badge variant="error" size="xl">Critical</Badge>
+```
+
+**Dimensions**:
+- Padding: `px-5 py-2.5`
+- Text: `text-sm`
+- Border radius: `rounded-2xl` (standard) or `rounded-full` (pill)
+
+### Styles
+
+#### Solid Style
+
+Filled background badge (default).
+
+```tsx
+<Badge variant="success" styleType="solid">Active</Badge>
+```
+
+Uses semantic color classes from `getColorClasses('success', 'badge')`:
+- Success: `bg-green-700 text-white dark:bg-green-600`
+- Error: `bg-red-700 text-white dark:bg-red-600`
+- Warning: `bg-yellow-600 text-white dark:bg-yellow-500`
+- Info: `bg-blue-700 text-white dark:bg-blue-600`
+- Neutral: `bg-neutral-700 text-white dark:bg-neutral-600`
+- Primary: `bg-primary-600 text-white dark:bg-primary-500`
+- Secondary: `bg-purple-700 text-white dark:bg-purple-600`
+
+#### Outline Style
+
+Border-only badge with text color.
+
+```tsx
+<Badge variant="success" styleType="outline">Active</Badge>
+```
+
+Styling:
+- Success: `border-green-600 text-green-700 dark:border-green-400 dark:text-green-300`
+- Error: `border-red-600 text-red-700 dark:border-red-400 dark:text-red-300`
+- Warning: `border-yellow-600 text-yellow-700 dark:border-yellow-400 dark:text-yellow-300`
+- Info: `border-blue-600 text-blue-700 dark:border-blue-400 dark:text-blue-300`
+- Neutral: `border-neutral-500 text-neutral-700 dark:border-neutral-400 dark:text-neutral-300`
+- Primary: `border-primary-500 text-primary-700 dark:border-primary-400 dark:text-primary-300`
+- Secondary: `border-purple-600 text-purple-700 dark:border-purple-400 dark:text-purple-300`
+
+### Corner Radius
+
+#### Fully Rounded (Pill)
+
+Fully rounded corners (default).
+
+```tsx
+<Badge variant="success" rounded={true}>Active</Badge>
+```
+
+Rounded corners:
+- `sm`: `rounded-full`
+- `md`: `rounded-full`
+- `lg`: `rounded-full`
+- `xl`: `rounded-full`
+
+#### Standard Corners
+
+Less rounded corners for badge lists or tables.
+
+```tsx
+<Badge variant="success" rounded={false}>Active</Badge>
+```
+
+Rounded corners:
+- `sm`: `rounded-md`
+- `md`: `rounded-lg`
+- `lg`: `rounded-xl`
+- `xl`: `rounded-2xl`
+
+### Dark Mode
+
+All Badge variants automatically support dark mode:
+
+- **Solid backgrounds**: Darker shades in dark mode (e.g., `bg-green-700` → `dark:bg-green-600`)
+- **Outline borders**: Lighter border colors in dark mode (e.g., `border-green-600` → `dark:border-green-400`)
+- **Text colors**: Lighter text in dark mode for outline variant
+- Smooth transitions for theme changes
+
+### Accessibility Features
+
+The Badge component includes comprehensive accessibility support:
+
+1. **Semantic HTML**: Uses native `<span>` element
+2. **Screen Reader Support**: Text content is announced by screen readers
+3. **Visual Feedback**: Clear color differentiation for different states
+4. **WCAG Contrast**: All color combinations meet WCAG 2.1 AA standards
+5. **Transition Effects**: Smooth color changes prevent visual jumps
+
+```tsx
+<Badge variant="success" aria-label="Status: Active">
+  Active
+</Badge>
+```
+
+### Real-World Examples
+
+#### User Status Badge
+
+```tsx
+function UserStatusBadge({ status }: { status: 'active' | 'inactive' | 'pending' }) {
+  const variant = {
+    active: 'success' as const,
+    inactive: 'neutral' as const,
+    pending: 'warning' as const,
+  }[status];
+
+  return (
+    <Badge variant={variant} size="sm">
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </Badge>
+  );
+}
+```
+
+#### Notification Count Badge
+
+```tsx
+function NotificationBadge({ count }: { count: number }) {
+  return (
+    <Badge
+      variant="error"
+      size="sm"
+      className="absolute -top-2 -right-2"
+    >
+      {count}
+    </Badge>
+  );
+}
+
+// Usage
+<div className="relative">
+  <BellIcon />
+  {count > 0 && <NotificationBadge count={count} />}
+</div>
+```
+
+#### Online/Offline Status
+
+```tsx
+function ConnectionStatus({ isOnline }: { isOnline: boolean }) {
+  return (
+    <Badge
+      variant={isOnline ? 'success' : 'error'}
+      size="md"
+      rounded={false}
+    >
+      {isOnline ? 'Connected' : 'Disconnected'}
+    </Badge>
+  );
+}
+```
+
+#### Role Badge
+
+```tsx
+function RoleBadge({ role }: { role: 'admin' | 'teacher' | 'student' }) {
+  const variant = {
+    admin: 'primary' as const,
+    teacher: 'info' as const,
+    student: 'neutral' as const,
+  }[role];
+
+  return (
+    <Badge variant={variant} size="md">
+      {role.charAt(0).toUpperCase() + role.slice(1)}
+    </Badge>
+  );
+}
+```
+
+#### File Type Badge
+
+```tsx
+function FileTypeBadge({ type }: { type: 'pdf' | 'doc' | 'img' }) {
+  const config = {
+    pdf: { variant: 'error' as const, label: 'PDF' },
+    doc: { variant: 'info' as const, label: 'DOC' },
+    img: { variant: 'success' as const, label: 'IMG' },
+  }[type];
+
+  return (
+    <Badge variant={config.variant} size="sm" styleType="outline">
+      {config.label}
+    </Badge>
+  );
+}
+```
+
+#### Multi-Badge List
+
+```tsx
+function MultiBadgeList({ items }: { items: Array<{ label: string; variant: BadgeVariant }> }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {items.map((item, index) => (
+        <Badge
+          key={index}
+          variant={item.variant}
+          size="sm"
+          rounded={false}
+        >
+          {item.label}
+        </Badge>
+      ))}
+    </div>
+  );
+}
+
+// Usage
+<MultiBadgeList
+  items={[
+    { label: 'React', variant: 'info' },
+    { label: 'TypeScript', variant: 'success' },
+    { label: 'Tailwind', variant: 'warning' },
+  ]}
+/>
+```
+
+### Migration Guide
+
+To migrate existing badge implementations:
+
+**Before:**
+```tsx
+<span className="inline-flex items-center justify-center px-2 py-1 text-xs font-semibold rounded-full bg-green-700 text-white">
+  Active
+</span>
+```
+
+**After:**
+```tsx
+import Badge from './ui/Badge';
+
+<Badge variant="success">Active</Badge>
+```
+
+**Benefits:**
+- ✅ Consistent badge styling across application
+- ✅ Multiple variants and sizes for flexibility
+- ✅ Solid and outline styles for different contexts
+- ✅ Dark mode support
+- ✅ Semantic color system integration
+- ✅ WCAG-compliant color contrast
+- ✅ Reduced code duplication
+
+### Test Coverage
+
+The Badge component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Badge.test.tsx
+```
+
+Test scenarios include:
+- Rendering with all variants (success, error, warning, info, neutral, primary, secondary)
+- Rendering with all sizes (sm, md, lg, xl)
+- All style types (solid, outline)
+- Rounded and non-rounded variants
+- Custom className application
+- Props passthrough to span element
+- Dark mode styling
+- Transition effects
+- Semantic color integration
+
+### Usage in Application
+
+Currently integrated in:
+- `src/components/admin/PermissionManager.tsx` - Permission badges
+- `src/components/PPDBManagement.tsx` - Status badges
+- `src/components/DashboardActionCard.tsx` - Status and role badges
+
+**Common Patterns:**
+
+```tsx
+// Status indicator
+<Badge variant={isActive ? 'success' : 'neutral'}>
+  {isActive ? 'Active' : 'Inactive'}
+</Badge>
+
+// Notification count
+<Badge variant="error" size="sm">
+  {notificationCount}
+</Badge>
+
+// Category label
+<Badge variant="info" size="md" styleType="outline" rounded={false}>
+  {category}
+</Badge>
+
+// Feature tag
+<Badge variant="primary" size="lg">
+  New Feature
+</Badge>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Animated badges (pulse, bounce)
+- Clickable badge variant (as button)
+- Badge with icon + text
+- Progress indicator badge
+- Badge grouping/stacking
+- Custom animations for badge appearance
+- Removable badges with close button
+
+---
