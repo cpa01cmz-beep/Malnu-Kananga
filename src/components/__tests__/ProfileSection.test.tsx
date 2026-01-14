@@ -79,12 +79,13 @@ describe('ProfileSection', () => {
     });
   });
 
-  it('applies hover styles to articles', () => {
+  it('does not apply hover styles to articles (WCAG compliance)', () => {
     const { container } = render(<ProfileSection />);
     const articles = container.querySelectorAll('article');
     articles.forEach(article => {
-      expect(article.className).toContain('hover:shadow-card-hover');
-      expect(article.className).toContain('hover:-translate-y-1');
+      expect(article.className).not.toContain('hover:');
+      expect(article.className).not.toContain('shadow-card-hover');
+      expect(article.className).not.toContain('-translate-y-1');
     });
   });
 

@@ -35,7 +35,7 @@ const ProfileSection: React.FC = () => {
             </div>
              <div className="lg:col-span-2 space-y-6">
                 <article
-                  className={`w-full p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out`}
+                  className={`w-full p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700`}
                   aria-labelledby="visi-heading"
                 >
                     <div className="flex items-center gap-3 mb-4">
@@ -50,7 +50,7 @@ const ProfileSection: React.FC = () => {
                     <p className="text-neutral-700 dark:text-neutral-200 leading-relaxed">Melahirkan peserta didik berakhlak mulia, akademis unggul, serta berjiwa wirausaha.</p>
                 </article>
                 <article
-                  className={`w-full p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out`}
+                  className={`w-full p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700`}
                   aria-labelledby="misi-heading"
                 >
                     <div className="flex items-center gap-3 mb-4">
