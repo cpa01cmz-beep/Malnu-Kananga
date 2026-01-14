@@ -18,11 +18,11 @@ if ! command -v npm &> /dev/null; then
     exit 1
 fi
 
-# Check environment variables
-if [ ! -f ".env.production" ]; then
-    echo "❌ .env.production file not found. Please create it from .env.example"
-    exit 1
-fi
+# Note: Production environment variables should be set via Cloudflare secrets:
+# - For Worker: wrangler secret put JWT_SECRET --env production
+# - For Worker: wrangler secret put GEMINI_API_KEY --env production
+# - For Pages: wrangler pages secret put VITE_GEMINI_API_KEY --project-name=malnu-kananga
+# - For Pages: wrangler pages secret put VITE_API_BASE_URL --project-name=malnu-kananga
 
 echo "📦 Installing dependencies..."
 npm ci --production=false
@@ -38,11 +38,20 @@ echo "☁️  Deploying to Cloudflare Workers..."
 # Deploy worker
 wrangler deploy --env production
 
-echo "🌱 Seeding vector database..."
-# Seed the vector database with documents
+echo "🌐 Deploying frontend to Cloudflare Pages..."
+# Build frontend if not already built
+if [ ! -d "dist" ]; then
+    echo "🔧 Building frontend..."
+    npm run build
+fi
+
+# Deploy to Cloudflare Pages
+wrangler pages deploy dist --project-name=malnu-kananga
+
+echo "🌱 Seeding database..."
+# Seed database with documents
 WORKER_URL="https://malnu-kananga-worker-prod.cpa01cmz.workers.dev"
 curl -X POST "${WORKER_URL}/seed" \
-    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
     -H "Content-Type: application/json" || {
     echo "⚠️  Database seeding failed, continuing deployment..."
 }
@@ -87,5 +96,9 @@ for endpoint in "${ENDPOINTS[@]}"; do
 done
 
 echo "✅ Production deployment completed successfully!"
-echo "🌐 Frontend should be deployed to: https://ma-malnukananga.sch.id"
+echo "🌐 Frontend deployed to: https://malnu-kananga.pages.dev"
 echo "📝 Worker API is available at: ${WORKER_URL}"
+echo ""
+echo "📋 Next steps:"
+echo "  - Set up custom domain (e.g., ma-malnukananga.sch.id) via Cloudflare Dashboard"
+echo "  - Configure R2 bucket for file uploads (PPDB documents, E-Library)"
