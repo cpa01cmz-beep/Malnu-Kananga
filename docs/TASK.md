@@ -76,6 +76,7 @@
 - [x] Accessibility improvements (WCAG 2.1 AA)
 - [x] Documentation consolidation and cleanup
 - [x] Repository audit and cleanup
+- [x] Component semantic color integration - Refactored Badge component to use colors.ts utilities
 - [ ] Fix test failures
 - [ ] Complete UI component documentation
 - [ ] Bring test coverage to 80%+
@@ -91,8 +92,9 @@
 
 ## Version History
 
-| Version | Date | Changes |
+ | Version | Date | Changes |
 |---------|------|------|
+| 12.3.0 | 2026-01-14 | Color palette alignment: Refactored Badge component to use semantic color utilities from colors.ts. Removed deprecated variants (purple, indigo, orange, red) and added secondary variant. Theme-aware colors now adapt to user selection. |
 | 12.2.0 | 2026-01-14 | Fixed UI/UX accessibility test failures: Card (focus-visible styles), FileInput (aria-label), ProfileSection (article vs button), ThemeSelector (button queries). Fixed ProfileSection import lint error. Reduced failures from 27 to 17 (services/utils only). |
 | 12.1.0 | 2026-01-13 | Repository audit cleanup: Synthesized TASK.md for clarity, corrected test metrics (27 failures, 1458 passing), streamlined version history, added notification migration task |
 | 12.0.0 | 2026-01-13 | Previous repository audit version |
