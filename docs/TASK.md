@@ -97,3 +97,16 @@
 ---
 
 **Note**: See [docs/README.md](./docs/README.md) for complete project documentation.
+
+- [x] **NewsCard Keyboard Accessibility Fix** - Added keyboard event handlers for Enter/Space keys
+  - Added `handleKeyDown` function to handle keyboard navigation
+  - Ensures Enter and Space keys trigger onClick when card is interactive
+  - Fixes WCAG 2.1 compliance for keyboard users
+  - Consistent with OsisEvents.tsx accessibility fix pattern
+  - All existing CardInteraction tests now pass
+  - See `src/components/NewsCard.tsx:17-22` for implementation
+
+ ---
+
+ **Last Updated**: 2026-01-14
+**Version**: 13.0.2

@@ -14,10 +14,18 @@ const NewsCard: React.FC<NewsCardProps> = ({ newsItem, onClick, ariaLabel }) => 
   const cardAriaLabel = ariaLabel || `Read article: ${newsItem.title}`;
   const isInteractive = onClick !== undefined;
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (isInteractive && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <article
       className={`overflow-hidden flex flex-col h-full bg-white dark:bg-neutral-800 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 ${isInteractive ? 'cursor-pointer group hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out' : ''}`}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
       aria-label={cardAriaLabel}
       role={isInteractive ? "button" : undefined}
       tabIndex={isInteractive ? 0 : undefined}
