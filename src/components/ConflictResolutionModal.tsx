@@ -6,6 +6,7 @@ import { logger } from '../utils/logger';
 import { useOfflineActionQueue, type OfflineAction, type ConflictResolution } from '../services/offlineActionQueueService';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
+import FormGrid from './ui/FormGrid';
 import { HEIGHT_CLASSES } from '../config/heights';
 
 interface ConflictResolutionModalProps {
@@ -146,10 +147,10 @@ export function ConflictResolutionModal({
         </div>
 
         {/* Data comparison */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormGrid>
           {formatData(conflict.data as Record<string, unknown> | null, 'Your Local Changes')}
           {formatData(serverData, 'Server Data')}
-        </div>
+        </FormGrid>
 
         {/* Resolution options */}
         <div>

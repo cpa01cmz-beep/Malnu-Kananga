@@ -7,6 +7,7 @@ import Button from './ui/Button';
 import Badge from './ui/Badge';
 import Card from './ui/Card';
 import { EmptyState } from './ui/LoadingState';
+import FormGrid from './ui/FormGrid';
 
 interface StudentLearningModuleProps {
     onShowToast: (msg: string, type: 'success' | 'error' | 'info' | 'warning') => void;
@@ -202,7 +203,7 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
     return (
         <main className="pt-24 min-h-screen bg-neutral-50 dark:bg-neutral-900">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-8">Learning Module</h1>
+                <h1 className="text-3xl sm:text-2xl font-bold text-neutral-900 dark:text-white mb-8">Learning Module</h1>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {topics.map(topic => (
@@ -414,14 +415,14 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
                         {showFlashcards && (
                             <div className="mt-6">
                                 <h3 className="text-lg font-semibold mb-4">Flashcards</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormGrid>
                                     {flashcards.map(card => (
                                         <Card key={card.id} variant="default" padding="md" className="border">
                                             <div className="font-medium">Front: {card.front}</div>
                                             <div className="text-neutral-600">Back: {card.back}</div>
                                         </Card>
                                     ))}
-                                </div>
+                                </FormGrid>
                             </div>
                         )}
                     </Card>

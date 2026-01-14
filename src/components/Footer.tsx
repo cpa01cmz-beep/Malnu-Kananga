@@ -10,11 +10,11 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
     return (
-        <footer id="footer" role="contentinfo" className={`${getResponsiveGradient('FOOTER')} border-t border-neutral-200 dark:border-neutral-700`}>
+        <footer id="footer" role="contentinfo" tabIndex={-1} className={`${getResponsiveGradient('FOOTER')} border-t border-neutral-200 dark:border-neutral-700`}>
             <div className="max-w-7xl mx-auto py-16 sm:py-20 px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 sm:gap-16 text-center sm:text-left">
                     <div>
-                        <h3 className="text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-white mb-4">MA Malnu Kananga</h3>
+                        <h3 className="text-xl sm:text-lg font-semibold text-neutral-900 dark:text-white mb-4">MA Malnu Kananga</h3>
                         <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-3">
                             Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten
                         </p>
@@ -42,14 +42,13 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                 <li><button type="button" onClick={() => {}} disabled className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Karir</button></li>
                                 <li><button type="button" onClick={() => {}} disabled className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium cursor-not-allowed opacity-60">Beasiswa</button></li>
                           </ul>
-                           <div className="flex justify-center sm:justify-start gap-3 mt-6">
+                             <div className="flex justify-center sm:justify-start gap-3 mt-6">
                                 <SocialLink
                                     icon={<FacebookIcon />}
                                     label="Facebook"
                                     variant="default"
                                     size="lg"
                                     disabled
-                                    onClick={() => {}}
                                 />
                                 <SocialLink
                                     icon={<InstagramIcon />}
@@ -57,7 +56,6 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     variant="default"
                                     size="lg"
                                     disabled
-                                    onClick={() => {}}
                                 />
                                 <SocialLink
                                     icon={<YoutubeIcon />}
@@ -65,7 +63,6 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     variant="default"
                                     size="lg"
                                     disabled
-                                    onClick={() => {}}
                                 />
                             </div>
                     </div>

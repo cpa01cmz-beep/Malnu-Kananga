@@ -10,6 +10,7 @@ interface CalendarViewProps {
   schedules: Schedule[];
   meetings?: ParentMeeting[];
   viewMode: 'month' | 'week' | 'day';
+  onViewModeChange?: (mode: 'month' | 'week' | 'day') => void;
   onDateSelect?: (date: Date) => void;
   onEventClick?: (event: Schedule | ParentMeeting) => void;
   className?: string;
@@ -19,6 +20,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   schedules,
   meetings = [],
   viewMode,
+  onViewModeChange,
   onDateSelect,
   onEventClick,
   className = ''
@@ -440,7 +442,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           {(['month', 'week', 'day'] as const).map(mode => (
             <Button
               key={mode}
-              onClick={() => { }}
+              onClick={() => onViewModeChange?.(mode)}
               variant={viewMode === mode ? 'primary' : 'ghost'}
               size="sm"
               className={`rounded-none first:rounded-l-lg last:rounded-r-lg ${viewMode !== mode ? 'rounded-none' : ''}`}

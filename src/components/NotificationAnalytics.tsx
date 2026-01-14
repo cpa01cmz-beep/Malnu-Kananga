@@ -14,9 +14,11 @@ const NotificationAnalyticsComponent: React.FC<NotificationAnalyticsProps> = ({ 
   const totalRead = analytics.reduce((sum, item) => sum + item.read, 0);
   const totalClicked = analytics.reduce((sum, item) => sum + item.clicked, 0);
   const totalDismissed = analytics.reduce((sum, item) => sum + item.dismissed, 0);
+  const totalBounced = analytics.reduce((sum, item) => sum + item.dismissed, 0);
 
   const readRate = totalDelivered > 0 ? ((totalRead / totalDelivered) * 100).toFixed(1) : '0';
   const clickRate = totalRead > 0 ? ((totalClicked / totalRead) * 100).toFixed(1) : '0';
+  const bounceRate = totalDelivered > 0 ? ((totalBounced / totalDelivered) * 100).toFixed(1) : '0';
 
   const getRoleBreakdown = () => {
     const breakdown: Record<string, number> = {};
@@ -41,20 +43,20 @@ const NotificationAnalyticsComponent: React.FC<NotificationAnalyticsProps> = ({ 
           {/* Summary Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card variant="default" padding="sm" rounded="lg" shadow="none" border="none" className="bg-blue-50 dark:bg-blue-900/20">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-300">{totalDelivered}</div>
+              <div className="text-2xl sm:text-xl font-bold text-blue-600 dark:text-blue-300">{totalDelivered}</div>
               <div className="text-sm text-blue-600 dark:text-blue-300">Terkirim</div>
             </Card>
             <Card variant="default" padding="sm" rounded="lg" shadow="none" border="none" className="bg-green-50 dark:bg-green-900/20">
-              <div className="text-2xl font-bold text-green-600 dark:text-green-300">{totalRead}</div>
+              <div className="text-2xl sm:text-xl font-bold text-green-600 dark:text-green-300">{totalRead}</div>
               <div className="text-sm text-green-600 dark:text-green-300">Dibaca ({readRate}%)</div>
             </Card>
             <Card variant="default" padding="sm" rounded="lg" shadow="none" border="none" className="bg-purple-50 dark:bg-purple-900/20">
-              <div className="text-2xl font-bold text-purple-600 dark:text-purple-300">{totalClicked}</div>
+              <div className="text-2xl sm:text-xl font-bold text-purple-600 dark:text-purple-300">{totalClicked}</div>
               <div className="text-sm text-purple-600 dark:text-purple-300">Diklik ({clickRate}%)</div>
             </Card>
             <Card variant="default" padding="sm" rounded="lg" shadow="none" border="none" className="bg-neutral-50 dark:bg-neutral-900/50">
-              <div className="text-2xl font-bold text-neutral-600 dark:text-neutral-300">{totalDismissed}</div>
-              <div className="text-sm text-neutral-600 dark:text-neutral-300">Disingkirkan</div>
+              <div className="text-2xl sm:text-xl font-bold text-neutral-600 dark:text-neutral-300">{totalDismissed}</div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-300">Disingkirkan ({bounceRate}%)</div>
             </Card>
           </div>
 
@@ -119,19 +121,19 @@ const NotificationAnalyticsComponent: React.FC<NotificationAnalyticsProps> = ({ 
 
                     return (
                       <tr key={item.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           {new Date(item.timestamp).toLocaleString('id-ID')}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           {item.delivered}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           {item.read}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           {item.clicked}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           <Badge
                             variant={parseFloat(itemReadRate) >= 50 ? 'success' : 'warning'}
                             size="md"
@@ -140,7 +142,7 @@ const NotificationAnalyticsComponent: React.FC<NotificationAnalyticsProps> = ({ 
                             {itemReadRate}%
                           </Badge>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100">
+                        <td className="px-6 py-4 text-sm text-neutral-900 dark:text-neutral-100">
                           <Badge
                             variant={parseFloat(itemClickRate) >= 20 ? 'success' : 'warning'}
                             size="md"

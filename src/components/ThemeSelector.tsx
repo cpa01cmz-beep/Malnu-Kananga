@@ -142,7 +142,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ isOpen, onClose }) => {
                 </div>
                 <div className="flex items-center gap-2">
                   {/* Color Preview */}
-                  <div className="flex gap-1">
+                  <div className="flex gap-1" aria-hidden="true">
                     <div
                       className="w-4 h-4 rounded-full border-2 border-white dark:border-neutral-800 shadow-sm"
                       style={{ backgroundColor: theme.colors.primary }}

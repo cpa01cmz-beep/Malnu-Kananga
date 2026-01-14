@@ -209,6 +209,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
           schedules={schedules}
           meetings={meetings}
           viewMode={viewMode}
+          onViewModeChange={setViewMode}
           onDateSelect={handleDateSelect}
           onEventClick={handleEventClick}
         />

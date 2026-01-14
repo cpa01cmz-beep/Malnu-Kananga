@@ -151,7 +151,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                     Pilih peran untuk login instan:
                 </p>
 
-                     <div className="grid grid-cols-3 gap-2.5">
+                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                        <Button variant="secondary" size="md" onClick={() => handleSimulatedLogin('student')}>
                           Siswa
                        </Button>
@@ -163,7 +163,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                        </Button>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5 mt-3">
+                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
                        <Button variant="info" size="md" onClick={() => handleSimulatedLogin('teacher', 'staff')}>
                           Guru (Staff)
                        </Button>

@@ -1327,6 +1327,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                                 type="checkbox"
                                                 checked={isSelected}
                                                 onChange={() => toggleStudentSelection(student.id)}
+                                                aria-label={`Pilih siswa ${student.name}`}
                                                 className="w-4 h-4 text-blue-600 bg-neutral-100 border-neutral-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-neutral-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600"
                                             />
                                         </td>
@@ -1344,7 +1345,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                             onChange={(e) => handleInputChange(student.id, 'assignment', e.target.value)}
                                             min="0"
                                             max="100"
-                                            className="w-full max-w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
+                                            className="w-full sm:max-w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
                                         />
                                     </td>
                                     <td className="px-2 py-4 text-center sm:px-4">
@@ -1354,7 +1355,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                             onChange={(e) => handleInputChange(student.id, 'midExam', e.target.value)}
                                             min="0"
                                             max="100"
-                                            className="w-full max-w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
+                                            className="w-full sm:max-w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
                                         />
                                     </td>
                                     <td className="px-2 py-4 text-center sm:px-4">
@@ -1364,7 +1365,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                                             onChange={(e) => handleInputChange(student.id, 'finalExam', e.target.value)}
                                             min="0"
                                             max="100"
-                                            className="w-full max-w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
+                                            className="w-full sm:max-w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
                                         />
                                     </td>
 

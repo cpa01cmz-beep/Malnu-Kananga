@@ -257,7 +257,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                 <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
                     ← Kembali ke Dashboard
                 </Button>
-                <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Penerimaan Siswa Baru</h2>
+                <h2 className="text-2xl sm:text-xl font-bold text-neutral-900 dark:text-white">Penerimaan Siswa Baru</h2>
                 <p className="text-neutral-500 dark:text-neutral-400">Kelola data calon siswa yang mendaftar online.</p>
             </div>
              {selectedIds.length > 0 && canApprovePPDB && (

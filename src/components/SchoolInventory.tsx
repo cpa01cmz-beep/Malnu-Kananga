@@ -88,6 +88,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [isSubmittingItem, setIsSubmittingItem] = useState(false);
+  const [isAddingMaintenance, setIsAddingMaintenance] = useState(false);
 
   const loadInventory = useCallback(async () => {
     setIsLoading(true);
@@ -154,6 +156,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
     e.preventDefault();
     if (!newItem.itemName) return;
 
+    setIsSubmittingItem(true);
     try {
       const itemData = {
         ...newItem,
@@ -181,6 +184,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
       }
     } catch {
       onShowToast('Gagal menambahkan barang. Silakan coba lagi.', 'error');
+    } finally {
+      setIsSubmittingItem(false);
     }
   };
 
@@ -210,6 +215,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
     e.preventDefault();
     if (!newMaintenance.itemId || !newMaintenance.scheduledDate) return;
 
+    setIsAddingMaintenance(true);
     try {
       const maintenanceData = {
         ...newMaintenance,
@@ -227,6 +233,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
       onShowToast('Jadwal维护 berhasil ditambahkan.', 'success');
     } catch {
       onShowToast('Gagal menambahkan jadwal维护.', 'error');
+    } finally {
+      setIsAddingMaintenance(false);
     }
   };
 
@@ -465,6 +473,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                     type="submit"
                     variant="blue-solid"
                     icon={<PlusIcon className="w-5 h-5" />}
+                    isLoading={isSubmittingItem}
                   >
                     Simpan Barang
                   </Button>
@@ -472,6 +481,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                     type="button"
                     variant="secondary"
                     onClick={() => setShowAddForm(false)}
+                    disabled={isSubmittingItem}
                   >
                     Batal
                   </Button>
@@ -588,6 +598,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   variant="blue-solid"
                   fullWidth
                   icon={<PlusIcon className="w-5 h-5" />}
+                  isLoading={isAddingMaintenance}
                 >
                   Tambah Jadwal
                 </Button>
@@ -675,11 +686,11 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                     <div className="text-sm text-blue-600 dark:text-blue-400">Total Barang</div>
                   </div>
                   <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">{currentAudit?.matchedItems}</div>
+                    <div className="text-2xl sm:text-xl font-bold text-green-600 dark:text-green-400">{currentAudit?.matchedItems}</div>
                     <div className="text-sm text-green-600 dark:text-green-400">Cocok</div>
                   </div>
                   <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
-                    <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{currentAudit?.mismatchedItems}</div>
+                    <div className="text-2xl sm:text-xl font-bold text-yellow-600 dark:text-yellow-400">{currentAudit?.mismatchedItems}</div>
                     <div className="text-sm text-yellow-600 dark:text-yellow-400">Tidak Cocok</div>
                   </div>
                 </div>

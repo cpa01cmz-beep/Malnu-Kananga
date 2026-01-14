@@ -285,7 +285,7 @@ const App: React.FC = () => {
           { id: 'footer', label: 'Langsung ke footer' },
         ] as SkipTarget[]}
       />
-      <div id="main-nav">
+      <div id="main-nav" tabIndex={-1}>
         <Header
           onLoginClick={() => setIsLoginOpen(true)}
           onChatClick={() => setIsChatOpen(true)}
@@ -302,11 +302,11 @@ const App: React.FC = () => {
       </div>
 
       {isLoggedIn && !isPublicView ? (
-        <main id="main-content">
+        <main id="main-content" tabIndex={-1}>
           {renderDashboard()}
         </main>
       ) : (
-        <main id="main-content">
+        <main id="main-content" tabIndex={-1}>
           <HeroSection />
           <RelatedLinksSection />
           <ProfileSection />

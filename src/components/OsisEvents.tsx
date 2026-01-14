@@ -11,6 +11,7 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
+import FormGrid from './ui/FormGrid';
 import ProgressBar from './ui/ProgressBar';
 import { EmptyState } from './ui/LoadingState';
 import ConfirmationDialog from './ui/ConfirmationDialog';
@@ -309,7 +310,8 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
           <div className="space-y-4">
             <Card rounded="xl" shadow="card" border="neutral-200">
               <h3 className="text-lg font-bold mb-4">Daftar Pendaftar</h3>
-              <form onSubmit={handleAddRegistration} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <form onSubmit={handleAddRegistration} className="mb-4">
+                <FormGrid>
                 <Input
                   type="text"
                   placeholder="NISN Siswa"
@@ -331,6 +333,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   onChange={e => setNewRegistration({ ...newRegistration, studentClass: e.target.value })}
                   required
                 />
+                </FormGrid>
                 <Button type="submit" variant="warning" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" isLoading={isAddingRegistration}>
                   {isAddingRegistration ? 'Mendaftarkan...' : 'Daftar'}
                 </Button>

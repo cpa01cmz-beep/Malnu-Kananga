@@ -14,6 +14,7 @@ import ProgressBar from './ui/ProgressBar';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Modal from './ui/Modal';
+import FormGrid from './ui/FormGrid';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
@@ -613,7 +614,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                 {/* Data Siswa */}
                 <div className="space-y-4">
                     <h3 className="text-sm font-bold uppercase tracking-wide text-green-600 dark:text-green-400 border-b border-green-100 dark:border-green-900 pb-2">Data Calon Siswa</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <FormGrid>
                         <Input
                             id="ppdb-fullName"
                             name="fullName"
@@ -642,31 +643,29 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                             validationRules={validationRules.nisn}
                             customType="nisn"
                             helperText={hasDraftRecovered && autoSaveState.data.nisn ? 'Data dari draft' : undefined}
+                         />
+                         <Input
+                            id="ppdb-originSchool"
+                            name="originSchool"
+                            label="Asal Sekolah"
+                            required
+                            type="text"
+                            value={autoSaveState.data.originSchool}
+                            onChange={handleChange}
+                            placeholder="SMP/MTs..."
+                            autoComplete="organization"
+                            size="md"
+                            fullWidth
+                            validationRules={validationRules.originSchool}
+                            helperText={hasDraftRecovered && autoSaveState.data.originSchool ? 'Data dari draft' : undefined}
                         />
-                        <div className="md:col-span-2">
-                            <Input
-                                id="ppdb-originSchool"
-                                name="originSchool"
-                                label="Asal Sekolah"
-                                required
-                                type="text"
-                                value={autoSaveState.data.originSchool}
-                                onChange={handleChange}
-                                placeholder="SMP/MTs..."
-                                autoComplete="organization"
-                                size="md"
-                                fullWidth
-                                validationRules={validationRules.originSchool}
-                                helperText={hasDraftRecovered && autoSaveState.data.originSchool ? 'Data dari draft' : undefined}
-                            />
-                        </div>
-                    </div>
+                     </FormGrid>
                 </div>
 
                 {/* Data Kontak */}
                 <div className="space-y-4">
                      <h3 className="text-sm font-bold uppercase tracking-wide text-green-600 dark:text-green-400 border-b border-green-100 dark:border-green-900 pb-2">Data Orang Tua & Kontak</h3>
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormGrid>
                         <Input
                             id="ppdb-parentName"
                             name="parentName"
@@ -712,20 +711,19 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                                 helperText={hasDraftRecovered && autoSaveState.data.email ? 'Data dari draft' : undefined}
                             />
                         </div>
-                        <div className="md:col-span-2">
-                            <Textarea
-                                name="address"
-                                label="Alamat Lengkap"
-                                required
-                                value={autoSaveState.data.address}
-                                onChange={handleChange}
-                                rows={3}
-                                size="md"
-                                validationRules={validationRules.address}
-                                helperText={hasDraftRecovered && autoSaveState.data.address ? 'Data dari draft' : undefined}
-                            />
-                        </div>
-                     </div>
+                    </FormGrid>
+                    <Textarea
+                        name="address"
+                        label="Alamat Lengkap"
+                        required
+                        value={autoSaveState.data.address}
+                        onChange={handleChange}
+                        rows={3}
+                        size="md"
+                        fullWidth
+                        validationRules={validationRules.address}
+                        helperText={hasDraftRecovered && autoSaveState.data.address ? 'Data dari draft' : undefined}
+                    />
                 </div>
 
                 {/* Upload Dokumen */}
