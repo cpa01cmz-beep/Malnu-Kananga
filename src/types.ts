@@ -1108,3 +1108,19 @@ export interface OCRValidationNotificationData extends OCRValidationEvent {
   automatedRetryCount?: number;
   nextAction?: 'review' | 'reprocess' | 'manual-entry';
 }
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data?: T;
+  error?: string;
+}
+
+export interface AuthPayload {
+  user_id: string;
+  email: string;
+  role: string;
+  extra_role?: string | null;
+  session_id: string;
+  exp: number;
+}

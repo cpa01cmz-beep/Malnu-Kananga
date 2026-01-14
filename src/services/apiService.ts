@@ -1,14 +1,14 @@
 // apiService.ts - Frontend API Service
 // Handles all backend API interactions
 
-import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, UserRole, UserExtraRole } from '../types';
+import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, UserRole, UserExtraRole, ApiResponse } from '../types';
 import { logger } from '../utils/logger';
 import { permissionService } from './permissionService';
-import { STORAGE_KEYS } from '../constants';
+import { getAuthToken, setAuthToken, getRefreshToken, setRefreshToken, clearAuthToken, parseJwtPayload, isTokenExpired, isTokenExpiringSoon } from '../utils/authUtils';
 import { offlineActionQueueService } from './offlineActionQueueService';
 import { isNetworkError } from '../utils/networkStatus';
-import { 
-  classifyError, 
+import {
+  classifyError,
   logError
 } from '../utils/errorHandler';
 
@@ -28,95 +28,8 @@ export interface LoginResponse {
   };
 }
 
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data?: T;
-  error?: string;
-}
-
-export interface AuthPayload {
-  user_id: string;
-  email: string;
-  role: string;
-  extra_role?: string | null;
-  session_id: string;
-  exp: number;
-}
-
 export interface RequestOptions extends RequestInit {
-  skipQueue?: boolean; // Opt-out for real-time requirements
-}
-
-// ============================================
-// UTILITY FUNCTIONS
-// ============================================
-
-// Get stored auth token
-function getAuthToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-}
-
-// Set auth token
-function setAuthToken(token: string): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
-}
-
-// Get stored refresh token
-function getRefreshToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-}
-
-// Set refresh token
-function setRefreshToken(token: string): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, token);
-}
-
-// Clear auth tokens
-function clearAuthToken(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-  localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-}
-
-// Parse JWT token (without verification, for payload access only)
-function parseJwtPayload(token: string): AuthPayload | null {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      (typeof window !== 'undefined' ? window.atob(base64) : globalThis.Buffer.from(base64, 'base64').toString())
-        .split('')
-        .map((c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch {
-    return null;
-  }
-}
-
-// Check if token is expired
-function isTokenExpired(token: string): boolean {
-  const payload = parseJwtPayload(token);
-  if (!payload) return true;
-
-  const now = Math.floor(Date.now() / 1000);
-  return payload.exp < now;
-}
-
-// Check if token is about to expire (within 5 minutes)
-function isTokenExpiringSoon(token: string): boolean {
-  const payload = parseJwtPayload(token);
-  if (!payload) return true;
-
-  const now = Math.floor(Date.now() / 1000);
-  const fiveMinutes = 5 * 60;
-  return (payload.exp - now) < fiveMinutes;
+  skipQueue?: boolean;
 }
 
 // Track ongoing refresh to prevent multiple simultaneous refreshes
