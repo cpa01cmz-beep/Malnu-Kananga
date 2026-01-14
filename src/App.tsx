@@ -38,7 +38,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { api } from './services/apiService';
 import { permissionService } from './services/permissionService';
 import { unifiedNotificationManager } from './services/unifiedNotificationManager';
-import { GRADIENT_CLASSES } from './config/gradients';
+
 
 // Auth Session Interface
 interface AuthSession {
@@ -276,7 +276,7 @@ const App: React.FC = () => {
   return (
     <NotificationProvider>
       <ErrorBoundary>
-        <div className={`${GRADIENT_CLASSES.APP_BACKGROUND} w-full min-h-screen font-sans antialiased text-[color:var(--color-text)] transition-colors duration-300`}>
+        <div className="w-full min-h-screen font-sans antialiased text-neutral-900 dark:text-neutral-100 bg-white dark:bg-neutral-900 transition-colors duration-300">
       <SkipLink
         targets={[
           { id: 'main-nav', label: 'Langsung ke navigasi utama' },

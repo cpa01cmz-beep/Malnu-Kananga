@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { OfflineIndicator, OfflineQueueDetails } from '../OfflineIndicator';
@@ -8,20 +8,48 @@ import { useNetworkStatus } from '../../utils/networkStatus';
 vi.mock('../../services/offlineActionQueueService');
 vi.mock('../../utils/networkStatus');
 
+// Helper function to create complete mock for useOfflineActionQueue
+const createMockOfflineActionQueue = (overrides = {}) => ({
+  // Queue operations
+  addAction: vi.fn(),
+  removeAction: vi.fn(),
+  getQueue: vi.fn(() => []),
+  getPendingCount: vi.fn(() => 0),
+  getFailedCount: vi.fn(() => 0),
+  clearCompletedActions: vi.fn(),
+
+  // Sync operations
+  sync: vi.fn(),
+  retryFailedActions: vi.fn(),
+  resolveConflict: vi.fn(),
+  onSyncComplete: vi.fn(),
+
+  // Status
+  isOnline: true,
+  isSlow: false,
+  isSyncing: false,
+
+  ...overrides
+});
+
+// Helper function to create complete mock for useNetworkStatus
+const createMockNetworkStatus = (overrides = {}) => ({
+  isOnline: true,
+  isSlow: false,
+  lastCheck: new Date(),
+
+  ...overrides
+});
+
 describe('OfflineIndicator', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getPendingCount: vi.fn(() => 0),
-      getFailedCount: vi.fn(() => 0),
-      sync: vi.fn(),
-      isSyncing: false,
-      onSyncComplete: vi.fn()
-    });
-    vi.mocked(useNetworkStatus).mockReturnValue({
-      isOnline: true,
-      isSlow: false
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue()
+    );
+    vi.mocked(useNetworkStatus).mockReturnValue(
+      createMockNetworkStatus()
+    );
   });
 
   it('does not render when online with no pending actions', () => {
@@ -31,10 +59,9 @@ describe('OfflineIndicator', () => {
   });
 
   it('renders offline status indicator when offline', () => {
-    vi.mocked(useNetworkStatus).mockReturnValue({
-      isOnline: false,
-      isSlow: false
-    });
+    vi.mocked(useNetworkStatus).mockReturnValue(
+      createMockNetworkStatus({ isOnline: false })
+    );
 
     render(<OfflineIndicator />);
 
@@ -44,10 +71,9 @@ describe('OfflineIndicator', () => {
   });
 
   it('renders slow connection indicator when connection is slow', () => {
-    vi.mocked(useNetworkStatus).mockReturnValue({
-      isOnline: true,
-      isSlow: true
-    });
+    vi.mocked(useNetworkStatus).mockReturnValue(
+      createMockNetworkStatus({ isSlow: true })
+    );
 
     render(<OfflineIndicator />);
 
@@ -57,13 +83,11 @@ describe('OfflineIndicator', () => {
   });
 
   it('displays pending actions count', () => {
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getPendingCount: vi.fn(() => 5),
-      getFailedCount: vi.fn(() => 0),
-      sync: vi.fn(),
-      isSyncing: false,
-      onSyncComplete: vi.fn()
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        getPendingCount: vi.fn(() => 5)
+      })
+    );
 
     render(<OfflineIndicator showQueueCount />);
 
@@ -72,13 +96,12 @@ describe('OfflineIndicator', () => {
   });
 
   it('displays failed actions count', () => {
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getPendingCount: vi.fn(() => 2),
-      getFailedCount: vi.fn(() => 3),
-      sync: vi.fn(),
-      isSyncing: false,
-      onSyncComplete: vi.fn()
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        getPendingCount: vi.fn(() => 2),
+        getFailedCount: vi.fn(() => 3)
+      })
+    );
 
     render(<OfflineIndicator showQueueCount />);
 
@@ -88,17 +111,15 @@ describe('OfflineIndicator', () => {
 
   it('calls sync function when sync button is clicked', async () => {
     const mockSync = vi.fn();
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getPendingCount: vi.fn(() => 5),
-      getFailedCount: vi.fn(() => 0),
-      sync: mockSync,
-      isSyncing: false,
-      onSyncComplete: vi.fn()
-    });
-    vi.mocked(useNetworkStatus).mockReturnValue({
-      isOnline: false,
-      isSlow: false
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        getPendingCount: vi.fn(() => 5),
+        sync: mockSync
+      })
+    );
+    vi.mocked(useNetworkStatus).mockReturnValue(
+      createMockNetworkStatus({ isOnline: false })
+    );
 
     render(<OfflineIndicator showSyncButton />);
 
@@ -109,41 +130,39 @@ describe('OfflineIndicator', () => {
   });
 
   it('displays loading state when syncing', () => {
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getPendingCount: vi.fn(() => 5),
-      getFailedCount: vi.fn(() => 0),
-      sync: vi.fn(),
-      isSyncing: true,
-      onSyncComplete: vi.fn()
-    });
-    vi.mocked(useNetworkStatus).mockReturnValue({
-      isOnline: false,
-      isSlow: false
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        getPendingCount: vi.fn(() => 5),
+        isSyncing: true
+      })
+    );
+    vi.mocked(useNetworkStatus).mockReturnValue(
+      createMockNetworkStatus({ isOnline: false })
+    );
 
     render(<OfflineIndicator showSyncButton />);
 
     expect(screen.getByText('Syncing...')).toBeInTheDocument();
   });
 
-  it('shows sync status popup after sync completes', () => {
+  it('shows sync status popup after sync completes', async () => {
     const mockOnSyncComplete = vi.fn();
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getPendingCount: vi.fn(() => 0),
-      getFailedCount: vi.fn(() => 0),
-      sync: vi.fn(),
-      isSyncing: false,
-      onSyncComplete: mockOnSyncComplete
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        onSyncComplete: mockOnSyncComplete
+      })
+    );
 
     render(<OfflineIndicator />);
 
-    mockOnSyncComplete.mock.calls[0][0]({
-      success: true,
-      actionsProcessed: 5,
-      actionsFailed: 0,
-      conflicts: [],
-      errors: []
+    act(() => {
+      mockOnSyncComplete.mock.calls[0][0]({
+        success: true,
+        actionsProcessed: 5,
+        actionsFailed: 0,
+        conflicts: [],
+        errors: []
+      });
     });
 
     expect(screen.getByText('Sync Complete')).toBeInTheDocument();
@@ -152,22 +171,22 @@ describe('OfflineIndicator', () => {
 
   it('shows sync error popup when sync fails', () => {
     const mockOnSyncComplete = vi.fn();
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getPendingCount: vi.fn(() => 0),
-      getFailedCount: vi.fn(() => 0),
-      sync: vi.fn(),
-      isSyncing: false,
-      onSyncComplete: mockOnSyncComplete
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        onSyncComplete: mockOnSyncComplete
+      })
+    );
 
     render(<OfflineIndicator />);
 
-    mockOnSyncComplete.mock.calls[0][0]({
-      success: false,
-      actionsProcessed: 0,
-      actionsFailed: 2,
-      conflicts: [],
-      errors: ['Network error']
+    act(() => {
+      mockOnSyncComplete.mock.calls[0][0]({
+        success: false,
+        actionsProcessed: 0,
+        actionsFailed: 2,
+        conflicts: [],
+        errors: ['Network error']
+      });
     });
 
     expect(screen.getByText('Sync Failed')).toBeInTheDocument();
@@ -175,13 +194,12 @@ describe('OfflineIndicator', () => {
   });
 
   it('displays failed actions alert', () => {
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getPendingCount: vi.fn(() => 2),
-      getFailedCount: vi.fn(() => 3),
-      sync: vi.fn(),
-      isSyncing: false,
-      onSyncComplete: vi.fn()
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        getPendingCount: vi.fn(() => 2),
+        getFailedCount: vi.fn(() => 3)
+      })
+    );
 
     render(<OfflineIndicator />);
 
@@ -189,10 +207,9 @@ describe('OfflineIndicator', () => {
   });
 
   it('renders at correct position', () => {
-    vi.mocked(useNetworkStatus).mockReturnValue({
-      isOnline: false,
-      isSlow: false
-    });
+    vi.mocked(useNetworkStatus).mockReturnValue(
+      createMockNetworkStatus({ isOnline: false })
+    );
 
     const { container } = render(<OfflineIndicator position="top-left" />);
     const indicator = container.querySelector('.fixed.top-4.left-4');
@@ -201,10 +218,9 @@ describe('OfflineIndicator', () => {
   });
 
   it('has proper ARIA attributes', () => {
-    vi.mocked(useNetworkStatus).mockReturnValue({
-      isOnline: false,
-      isSlow: false
-    });
+    vi.mocked(useNetworkStatus).mockReturnValue(
+      createMockNetworkStatus({ isOnline: false })
+    );
 
     render(<OfflineIndicator />);
 
@@ -218,18 +234,12 @@ describe('OfflineQueueDetails', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getQueue: vi.fn(() => []),
-      getPendingCount: vi.fn(() => 0),
-      getFailedCount: vi.fn(() => 0),
-      sync: vi.fn(),
-      retryFailedActions: vi.fn(),
-      clearCompletedActions: vi.fn()
-    });
-    vi.mocked(useNetworkStatus).mockReturnValue({
-      isOnline: true,
-      isSlow: false
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue()
+    );
+    vi.mocked(useNetworkStatus).mockReturnValue(
+      createMockNetworkStatus()
+    );
   });
 
   it('does not render when closed', () => {
@@ -251,10 +261,9 @@ describe('OfflineQueueDetails', () => {
   });
 
   it('displays offline status badge', () => {
-    vi.mocked(useNetworkStatus).mockReturnValue({
-      isOnline: false,
-      isSlow: false
-    });
+    vi.mocked(useNetworkStatus).mockReturnValue(
+      createMockNetworkStatus({ isOnline: false })
+    );
 
     render(<OfflineQueueDetails isOpen={true} onClose={mockOnClose} />);
 
@@ -262,25 +271,25 @@ describe('OfflineQueueDetails', () => {
   });
 
   it('displays pending actions', () => {
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getQueue: vi.fn(() => [
-        {
-          id: '1',
-          type: 'create',
-          entity: 'Student',
-          data: {},
-          endpoint: '/api/students',
-          timestamp: Date.now(),
-          status: 'pending',
-          retryCount: 0
-        }
-      ]),
-      getPendingCount: vi.fn(() => 1),
-      getFailedCount: vi.fn(() => 0),
-      sync: vi.fn(),
-      retryFailedActions: vi.fn(),
-      clearCompletedActions: vi.fn()
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        getQueue: vi.fn(() => [
+          {
+            id: '1',
+            type: 'create',
+            entity: 'Student',
+            entityId: 'student-1',
+            data: {},
+            endpoint: '/api/students',
+            method: 'POST',
+            timestamp: Date.now(),
+            status: 'pending',
+            retryCount: 0
+          }
+        ]),
+        getPendingCount: vi.fn(() => 1)
+      })
+    );
 
     render(<OfflineQueueDetails isOpen={true} onClose={mockOnClose} />);
 
@@ -290,26 +299,26 @@ describe('OfflineQueueDetails', () => {
   });
 
   it('displays failed actions', () => {
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getQueue: vi.fn(() => [
-        {
-          id: '1',
-          type: 'update',
-          entity: 'Grade',
-          data: {},
-          endpoint: '/api/grades',
-          timestamp: Date.now(),
-          status: 'failed',
-          retryCount: 3,
-          lastError: 'Network error'
-        }
-      ]),
-      getPendingCount: vi.fn(() => 0),
-      getFailedCount: vi.fn(() => 1),
-      sync: vi.fn(),
-      retryFailedActions: vi.fn(),
-      clearCompletedActions: vi.fn()
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        getQueue: vi.fn(() => [
+          {
+            id: '1',
+            type: 'update',
+            entity: 'Grade',
+            entityId: 'grade-1',
+            data: {},
+            endpoint: '/api/grades',
+            method: 'PUT',
+            timestamp: Date.now(),
+            status: 'failed',
+            retryCount: 3,
+            lastError: 'Network error'
+          }
+        ]),
+        getFailedCount: vi.fn(() => 1)
+      })
+    );
 
     render(<OfflineQueueDetails isOpen={true} onClose={mockOnClose} />);
 
@@ -331,25 +340,26 @@ describe('OfflineQueueDetails', () => {
 
   it('calls sync when sync button is clicked', async () => {
     const mockSync = vi.fn();
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getQueue: vi.fn(() => [
-        {
-          id: '1',
-          type: 'create',
-          entity: 'Student',
-          data: {},
-          endpoint: '/api/students',
-          timestamp: Date.now(),
-          status: 'pending',
-          retryCount: 0
-        }
-      ]),
-      getPendingCount: vi.fn(() => 1),
-      getFailedCount: vi.fn(() => 0),
-      sync: mockSync,
-      retryFailedActions: vi.fn(),
-      clearCompletedActions: vi.fn()
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        getQueue: vi.fn(() => [
+          {
+            id: '1',
+            type: 'create',
+            entity: 'Student',
+            entityId: 'student-1',
+            data: {},
+            endpoint: '/api/students',
+            method: 'POST',
+            timestamp: Date.now(),
+            status: 'pending',
+            retryCount: 0
+          }
+        ]),
+        getPendingCount: vi.fn(() => 1),
+        sync: mockSync
+      })
+    );
 
     render(<OfflineQueueDetails isOpen={true} onClose={mockOnClose} />);
 
@@ -361,26 +371,27 @@ describe('OfflineQueueDetails', () => {
 
   it('calls retryFailedActions when retry button is clicked', async () => {
     const mockRetry = vi.fn();
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getQueue: vi.fn(() => [
-        {
-          id: '1',
-          type: 'create',
-          entity: 'Student',
-          data: {},
-          endpoint: '/api/students',
-          timestamp: Date.now(),
-          status: 'failed',
-          retryCount: 3,
-          lastError: 'Network error'
-        }
-      ]),
-      getPendingCount: vi.fn(() => 0),
-      getFailedCount: vi.fn(() => 1),
-      sync: vi.fn(),
-      retryFailedActions: mockRetry,
-      clearCompletedActions: vi.fn()
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        getQueue: vi.fn(() => [
+          {
+            id: '1',
+            type: 'create',
+            entity: 'Student',
+            entityId: 'student-1',
+            data: {},
+            endpoint: '/api/students',
+            method: 'POST',
+            timestamp: Date.now(),
+            status: 'failed',
+            retryCount: 3,
+            lastError: 'Network error'
+          }
+        ]),
+        getFailedCount: vi.fn(() => 1),
+        retryFailedActions: mockRetry
+      })
+    );
 
     render(<OfflineQueueDetails isOpen={true} onClose={mockOnClose} />);
 
@@ -392,14 +403,11 @@ describe('OfflineQueueDetails', () => {
 
   it('calls clearCompletedActions when clear button is clicked', async () => {
     const mockClear = vi.fn();
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getQueue: vi.fn(() => []),
-      getPendingCount: vi.fn(() => 0),
-      getFailedCount: vi.fn(() => 0),
-      sync: vi.fn(),
-      retryFailedActions: vi.fn(),
-      clearCompletedActions: mockClear
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        clearCompletedActions: mockClear
+      })
+    );
 
     render(<OfflineQueueDetails isOpen={true} onClose={mockOnClose} />);
 
@@ -417,26 +425,26 @@ describe('OfflineQueueDetails', () => {
   });
 
   it('displays retry count for failed actions', () => {
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getQueue: vi.fn(() => [
-        {
-          id: '1',
-          type: 'create',
-          entity: 'Student',
-          data: {},
-          endpoint: '/api/students',
-          timestamp: Date.now(),
-          status: 'failed',
-          retryCount: 5,
-          lastError: 'Timeout'
-        }
-      ]),
-      getPendingCount: vi.fn(() => 0),
-      getFailedCount: vi.fn(() => 1),
-      sync: vi.fn(),
-      retryFailedActions: vi.fn(),
-      clearCompletedActions: vi.fn()
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        getQueue: vi.fn(() => [
+          {
+            id: '1',
+            type: 'create',
+            entity: 'Student',
+            entityId: 'student-1',
+            data: {},
+            endpoint: '/api/students',
+            method: 'POST',
+            timestamp: Date.now(),
+            status: 'failed',
+            retryCount: 5,
+            lastError: 'Timeout'
+          }
+        ]),
+        getFailedCount: vi.fn(() => 1)
+      })
+    );
 
     render(<OfflineQueueDetails isOpen={true} onClose={mockOnClose} />);
 
@@ -445,25 +453,25 @@ describe('OfflineQueueDetails', () => {
 
   it('formats timestamp correctly', () => {
     const timestamp = new Date('2024-01-15T10:30:00').getTime();
-    vi.mocked(useOfflineActionQueue).mockReturnValue({
-      getQueue: vi.fn(() => [
-        {
-          id: '1',
-          type: 'create',
-          entity: 'Student',
-          data: {},
-          endpoint: '/api/students',
-          timestamp,
-          status: 'pending',
-          retryCount: 0
-        }
-      ]),
-      getPendingCount: vi.fn(() => 1),
-      getFailedCount: vi.fn(() => 0),
-      sync: vi.fn(),
-      retryFailedActions: vi.fn(),
-      clearCompletedActions: vi.fn()
-    });
+    vi.mocked(useOfflineActionQueue).mockReturnValue(
+      createMockOfflineActionQueue({
+        getQueue: vi.fn(() => [
+          {
+            id: '1',
+            type: 'create',
+            entity: 'Student',
+            entityId: 'student-1',
+            data: {},
+            endpoint: '/api/students',
+            method: 'POST',
+            timestamp,
+            status: 'pending',
+            retryCount: 0
+          }
+        ]),
+        getPendingCount: vi.fn(() => 1)
+      })
+    );
 
     render(<OfflineQueueDetails isOpen={true} onClose={mockOnClose} />);
 

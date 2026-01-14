@@ -128,6 +128,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
                 variant="primary"
+                type="button"
                 onClick={this.handleReload}
                 icon={<ArrowPathIcon aria-hidden="true" />}
                 iconPosition="left"
@@ -137,6 +138,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
               </Button>
               <Button
                 variant="secondary"
+                type="button"
                 onClick={this.reset}
                 size="lg"
               >

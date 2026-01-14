@@ -34,9 +34,8 @@ const ProfileSection: React.FC = () => {
                 </div>
             </div>
              <div className="lg:col-span-2 space-y-6">
-                <button
-                  type="button"
-                  className={`w-full text-left p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 active:translate-y-0 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800`}
+                <article
+                  className={`w-full p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out`}
                   aria-labelledby="visi-heading"
                 >
                     <div className="flex items-center gap-3 mb-4">
@@ -49,10 +48,9 @@ const ProfileSection: React.FC = () => {
                         <h3 id="visi-heading" className="text-xl font-semibold text-primary-600 dark:text-primary-400">Visi</h3>
                     </div>
                     <p className="text-neutral-700 dark:text-neutral-200 leading-relaxed">Melahirkan peserta didik berakhlak mulia, akademis unggul, serta berjiwa wirausaha.</p>
-                </button>
-                <button
-                  type="button"
-                  className={`w-full text-left p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 active:translate-y-0 transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-800`}
+                </article>
+                <article
+                  className={`w-full p-6 sm:p-7 ${getResponsiveGradient('NEUTRAL')} rounded-xl shadow-card border border-neutral-200/90 dark:border-neutral-700 hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 ease-out`}
                   aria-labelledby="misi-heading"
                 >
                     <div className="flex items-center gap-3 mb-4">
@@ -77,7 +75,7 @@ const ProfileSection: React.FC = () => {
                             <span>Pengembangan kompetensi literasi, numerasi, dan teknologi informasi.</span>
                         </li>
                     </ul>
-                </button>
+                </article>
           </div>
         </div>
     </Section>

@@ -1,6 +1,16 @@
 // OfflineIndicator.tsx - Offline status and action queue indicator component
 // Shows users when they're offline and how many actions are queued
 
+const formatActionType = (type: string) => {
+  const typeMap: Record<string, string> = {
+    'create': 'Create',
+    'update': 'Update',
+    'delete': 'Delete',
+    'read': 'Read'
+  };
+  return typeMap[type] || type.charAt(0).toUpperCase() + type.slice(1);
+};
+
 import React, { useEffect, useState } from 'react';
 import { useOfflineActionQueue, type SyncResult } from '../services/offlineActionQueueService';
 import { useNetworkStatus } from '../utils/networkStatus';
@@ -10,8 +20,6 @@ import Button from './ui/Button';
 import Badge from './ui/Badge';
 import Card from './ui/Card';
 import Modal from './ui/Modal';
-import IconButton from './ui/IconButton';
-import { XMarkIcon } from './icons';
 
 interface OfflineIndicatorProps {
   className?: string;
@@ -216,7 +224,11 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
   };
 
   const formatTimestamp = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString('id-ID');
+    const date = new Date(timestamp);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -298,7 +310,7 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
                   <div key={action.id} className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="font-medium capitalize">{action.type}</span>
+                        <span className="font-medium">{formatActionType(action.type)}</span>
                         <span className="text-neutral-500 dark:text-neutral-400 ml-2">•</span>
                         <span className="text-neutral-700 dark:text-neutral-300 ml-2">{action.entity}</span>
                       </div>
@@ -328,7 +340,7 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
                   <div key={action.id} className="bg-red-50 dark:bg-red-900/20 rounded-lg p-3 border border-red-200 dark:border-red-800">
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="font-medium capitalize">{action.type}</span>
+                        <span className="font-medium">{formatActionType(action.type)}</span>
                         <span className="text-neutral-500 dark:text-neutral-400 ml-2">•</span>
                         <span className="text-neutral-700 dark:text-neutral-300 ml-2">{action.entity}</span>
                         <span className="text-red-600 dark:text-red-400 ml-2">({action.status})</span>
