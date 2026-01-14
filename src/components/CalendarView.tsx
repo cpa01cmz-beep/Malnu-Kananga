@@ -4,7 +4,7 @@ import type { Schedule, ParentMeeting } from '../types';
 import IconButton from './ui/IconButton';
 import Button from './ui/Button';
 import Card from './ui/Card';
-import { HEIGHTS } from '../config/heights';
+import { HEIGHT_CLASSES } from '../config/heights';
 
 interface CalendarViewProps {
   schedules: Schedule[];
@@ -180,7 +180,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               role="gridcell"
               onClick={() => handleDateClick(date)}
               onKeyDown={(e) => handleDateKeyDown(date, e)}
-              className={`${HEIGHTS.FORM.CALENDAR_CELL_DESKTOP} p-2 border-r border-b cursor-pointer transition-colors
+              className={`${HEIGHT_CLASSES.FORM.CALENDAR_CELL_DESKTOP} p-2 border-r border-b cursor-pointer transition-colors
                 ${!isCurrentMonth ? 'bg-neutral-50 text-neutral-400' : 'bg-white'}
                 ${isToday ? 'bg-blue-50' : ''}
                 ${isSelected ? 'ring-2 ring-blue-500' : ''}
@@ -280,7 +280,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 key={`${date.toISOString()}-${hour}`}
                 onClick={() => handleDateClick(date)}
                 onKeyDown={(e) => handleDateKeyDown(date, e)}
-                className={`${HEIGHTS.FORM.CALENDAR_CELL} p-1 border-r border-b cursor-pointer transition-colors
+                className={`${HEIGHT_CLASSES.FORM.CALENDAR_CELL} p-1 border-r border-b cursor-pointer transition-colors
                   ${date.toDateString() === new Date().toDateString() ? 'bg-blue-50' : 'bg-white'}
                 hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
                 role="gridcell"
