@@ -94,9 +94,9 @@ describe('SmallActionButton', () => {
 
   it('should have proper focus styles', () => {
     render(<SmallActionButton>Focus me</SmallActionButton>);
-    
+
     const button = screen.getByRole('button');
-    expect(button).toHaveClass('focus:ring-2', 'focus:ring-offset-2', 'focus:outline-none');
+    expect(button).toHaveClass('focus-visible:ring-2', 'focus-visible:ring-offset-2', 'focus:outline-none');
   });
 
   it('should render as fullWidth', () => {
@@ -122,22 +122,22 @@ describe('SmallActionButton', () => {
 
     it('should have proper focus visible states', () => {
       render(<SmallActionButton>Focus test</SmallActionButton>);
-      
+
       const button = screen.getByRole('button');
       expect(button).toHaveClass(
         'focus:outline-none',
-        'focus:ring-2',
-        'focus:ring-offset-2',
-        'dark:focus:ring-offset-neutral-900'
+        'focus-visible:ring-2',
+        'focus-visible:ring-offset-2',
+        'dark:focus-visible:ring-offset-neutral-900'
       );
     });
 
     it('should maintain focus ring color based on variant', () => {
       const { rerender } = render(<SmallActionButton variant="info">Info</SmallActionButton>);
-      expect(screen.getByRole('button')).toHaveClass('focus:ring-blue-500/50');
+      expect(screen.getByRole('button')).toHaveClass('focus-visible:ring-blue-500/50');
 
       rerender(<SmallActionButton variant="danger">Danger</SmallActionButton>);
-      expect(screen.getByRole('button')).toHaveClass('focus:ring-red-500/50');
+      expect(screen.getByRole('button')).toHaveClass('focus-visible:ring-red-500/50');
     });
 
     it('should have loading spinner with proper ARIA attributes', () => {

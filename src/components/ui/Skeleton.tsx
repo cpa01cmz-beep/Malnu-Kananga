@@ -27,18 +27,23 @@ const Skeleton: React.FC<SkeletonProps> = ({
   height,
   animation = 'pulse',
 }) => {
-  const style: React.CSSProperties = {};
-  if (width) style.width = typeof width === 'number' ? `${width}px` : width;
-  if (height) style.height = typeof height === 'number' ? `${height}px` : height;
+  const isWave = animation === 'wave';
+  const backgroundClass = isWave
+    ? 'bg-gradient-to-r from-neutral-200 via-neutral-100 to-neutral-200 dark:from-neutral-700 dark:via-neutral-600 dark:to-neutral-700 skeleton-wave'
+    : baseClasses;
 
   const classes = `
-    ${baseClasses}
+    ${backgroundClass}
     ${variantClasses[variant]}
     ${animationClasses[animation]}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
-  return <div className={classes} style={style} aria-hidden="true" />;
+  const style: React.CSSProperties = {};
+  if (width) style.width = typeof width === 'number' ? `${width}px` : width;
+  if (height) style.height = typeof height === 'number' ? `${height}px` : height;
+
+  return <div className={classes} style={Object.keys(style).length > 0 ? style : undefined} aria-hidden="true" />;
 };
 
 export const CardSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
