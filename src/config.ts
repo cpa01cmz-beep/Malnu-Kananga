@@ -6,7 +6,7 @@
 // Use type assertion safely to avoid TypeScript errors if vite/client types are missing
 const env: { VITE_API_BASE_URL?: string } = import.meta.env || {};
 
-export const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
+export const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
 
 export const API_BASE_URL = env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 

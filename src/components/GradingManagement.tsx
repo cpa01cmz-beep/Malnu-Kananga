@@ -358,7 +358,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev'}/api/grades/${grade.id}`,
+            endpoint: `${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev'}/api/grades/${grade.id}`,
             method: 'PUT'
           });
           
@@ -429,7 +429,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev'}/api/grades/${grade.id}`,
+            endpoint: `${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev'}/api/grades/${grade.id}`,
             method: 'PUT'
           });
           

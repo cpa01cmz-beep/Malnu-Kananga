@@ -55,8 +55,8 @@ export interface RealTimeSubscription {
  * Configuration for WebSocket service
  */
 export const WS_CONFIG = {
-  WS_BASE_URL: import.meta.env.VITE_WS_BASE_URL || 
-    (import.meta.env.VITE_API_BASE_URL?.replace('https://', 'wss://') || 'wss://malnu-kananga-worker.cpa01cmz.workers.dev') + '/ws',
+  WS_BASE_URL: import.meta.env.VITE_WS_BASE_URL ||
+    (import.meta.env.VITE_API_BASE_URL?.replace('https://', 'wss://') || 'wss://malnu-kananga-worker-prod.cpa01cmz.workers.dev') + '/ws',
   MAX_RECONNECT_ATTEMPTS: 5,
   RECONNECT_DELAY: 5000,
   CONNECTION_TIMEOUT: 10000,
