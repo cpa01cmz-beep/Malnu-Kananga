@@ -101,19 +101,39 @@ export default defineConfig(({ mode }) => {
         external: ['fsevents'],
         output: {
           manualChunks: (id: string) => {
-            // Minimal chunking strategy to prevent circular dependencies
-            // Only split the largest third-party libraries
+            // Optimize chunking to reduce bundle size and improve load times
 
             // Google GenAI library (very large, keep separate)
             if (id.includes('@google/genai')) {
               return 'vendor-genai';
             }
+
+            // Tesseract.js (OCR - large library)
+            if (id.includes('tesseract.js')) {
+              return 'vendor-tesseract';
+            }
+
+            // PDF generation libraries
+            if (id.includes('jspdf') || id.includes('html2canvas')) {
+              return 'vendor-pdf';
+            }
+
+            // Recharts (charts - medium size)
+            if (id.includes('recharts')) {
+              return 'vendor-charts';
+            }
+
             // Test libraries (only in test mode)
             if (id.includes('vitest') || id.includes('@vitest')) {
               return 'tests';
             }
 
-            // Don't manually split anything else - let Vite handle optimally
+            // Group UI component libraries
+            if (id.includes('lucide-react') || id.includes('@heroicons/react')) {
+              return 'vendor-icons';
+            }
+
+            // Don't split application code
             return undefined;
           }
         }
