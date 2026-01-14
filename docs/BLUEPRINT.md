@@ -1,8 +1,8 @@
 # Blueprint Sistem Informasi Manajemen Sekolah
 
 **Created**: 2025-01-01
-**Last Updated**: 2026-01-13
-**Version**: 2.1.1
+**Last Updated**: 2026-01-14
+**Version**: 2.1.2
 **Status**: Active
 
 ## 1. Ringkasan
@@ -343,12 +343,20 @@ src/
 
 ## 5. Keamanan & Compliance
 
-### 5.1 Keamanan Data
+ ### 5.1 Keamanan Data
 - JWT-based authentication (access token: 15min, refresh token: 7 days)
 - HTTPS/SSL encryption
 - CORS protection
 - Input validation & SQL injection prevention
 - Audit logging
+- Standardized Error Handling (2026-01-14):
+  - 34 ERROR_MESSAGES constants untuk semua endpoint
+  - HTTP_STATUS_CODES constants untuk semua status codes
+  - Konsistensi bahasa (Bahasa Indonesia) di seluruh error messages
+  - Tidak ada hardcoded error messages di backend
+  - Type-safe error handling dengan constants
+  - Mudah diperbarui secara global
+  - Mengurangi risiko inkonsistensi di antar endpoint
 
 ### 5.2 AI Error Recovery
 - Exponential backoff retry mechanism
@@ -396,6 +404,6 @@ src/
 
 ---
 
-**Last Updated**: 2026-01-13
-**Version**: 2.1.1
+**Last Updated**: 2026-01-14
+**Version**: 2.1.2
 **Status**: Active

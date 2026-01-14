@@ -100,6 +100,8 @@ const ERROR_MESSAGES = {
   FAILED_GET_GRADES: 'Gagal mengambil data nilai',
   FAILED_GET_ATTENDANCE: 'Gagal mengambil data kehadiran',
   FAILED_GET_SCHEDULE: 'Gagal mengambil jadwal',
+  STUDENT_ID_REQUIRED: 'student_id parameter required',
+  AI_SERVICE_UNAVAILABLE: 'Layanan AI tidak tersedia saat ini',
   ENDPOINT_NOT_FOUND: 'Endpoint tidak ditemukan'
 };
 
@@ -741,8 +743,8 @@ async function handleLogin(request, env, corsHeaders) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch {
-    return new Response(JSON.stringify(response.error('Terjadi kesalahan pada server', 500)), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -753,7 +755,7 @@ async function handleLogout(request, env, corsHeaders) {
     const payload = await authenticate(request, env);
     if (!payload) {
       return new Response(JSON.stringify(response.unauthorized()), {
-        status: 401,
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -763,12 +765,12 @@ async function handleLogout(request, env, corsHeaders) {
       .run();
 
     return new Response(JSON.stringify(response.success(null, 'Logout berhasil')), {
-      status: 200,
+      status: HTTP_STATUS_CODES.OK,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch {
-    return new Response(JSON.stringify(response.error('Terjadi kesalahan pada server', 500)), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -779,8 +781,8 @@ async function handleRefreshToken(request, env, corsHeaders) {
     const { refreshToken } = await request.json();
 
     if (!refreshToken) {
-      return new Response(JSON.stringify(response.error('Refresh token diperlukan')), {
-        status: 400,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.REFRESH_TOKEN_REQUIRED)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -793,8 +795,8 @@ async function handleRefreshToken(request, env, corsHeaders) {
     `).bind(refreshToken).first();
 
     if (!session) {
-      return new Response(JSON.stringify(response.error('Refresh token tidak valid atau kadaluarsa')), {
-        status: 401,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INVALID_REFRESH_TOKEN)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -816,12 +818,12 @@ async function handleRefreshToken(request, env, corsHeaders) {
     return new Response(JSON.stringify(response.success({
       token: newToken
     }, 'Token berhasil diperbarui')), {
-      status: 200,
+      status: HTTP_STATUS_CODES.OK,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch {
-    return new Response(JSON.stringify(response.error('Terjadi kesalahan pada server', 500)), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -833,101 +835,100 @@ async function handleCRUD(request, env, corsHeaders, table, _options = {}) {
     const payload = await authenticate(request, env);
     if (!payload) {
       return new Response(JSON.stringify(response.unauthorized()), {
-        status: 401,
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
-    
+
     const url = new URL(request.url);
     const id = url.pathname.split('/').pop();
     const method = request.method;
-    
+
     switch (method) {
       case 'GET': {
         if (id && id !== table) {
           const item = await env.DB.prepare(`SELECT * FROM ${table} WHERE id = ?`).bind(id).first();
           if (!item) {
-            return new Response(JSON.stringify(response.error('Data tidak ditemukan', 404)), {
-              status: 404,
+            return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
+              status: HTTP_STATUS_CODES.NOT_FOUND,
               headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             });
           }
           return new Response(JSON.stringify(response.success(item)), {
-            status: 200,
+            status: HTTP_STATUS_CODES.OK,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
           });
         } else {
           const { results } = await env.DB.prepare(`SELECT * FROM ${table}`).all();
           return new Response(JSON.stringify(response.success(results)), {
-            status: 200,
+            status: HTTP_STATUS_CODES.OK,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
           });
         }
       }
-        
+
       case 'POST': {
         const body = await request.json();
         const newItemId = generateId();
         const newItem = { id: newItemId, ...body };
-        
+
         const columns = Object.keys(newItem).join(', ');
         const placeholders = Object.keys(newItem).map(() => '?').join(', ');
         const values = Object.values(newItem);
-        
+
         await env.DB.prepare(`INSERT INTO ${table} (${columns}) VALUES (${placeholders})`).bind(...values).run();
-        
+
         return new Response(JSON.stringify(response.success(newItem, 'Data berhasil dibuat')), {
-          status: 201,
+          status: HTTP_STATUS_CODES.CREATED,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
-        
+
       case 'PUT': {
         if (!id || id === table) {
-          return new Response(JSON.stringify(response.error('ID diperlukan')), {
-            status: 400,
+          return new Response(JSON.stringify(response.error(ERROR_MESSAGES.ID_REQUIRED)), {
+            status: HTTP_STATUS_CODES.BAD_REQUEST,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
           });
         }
-        
+
         const updateBody = await request.json();
         const updateSet = Object.keys(updateBody).map(key => `${key} = ?`).join(', ');
         const updateValues = [...Object.values(updateBody), id];
-        
+
         await env.DB.prepare(`UPDATE ${table} SET ${updateSet} WHERE id = ?`).bind(...updateValues).run();
-        
+
         return new Response(JSON.stringify(response.success(updateBody, 'Data berhasil diperbarui')), {
-          status: 200,
+          status: HTTP_STATUS_CODES.OK,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
-        
+
       case 'DELETE': {
         if (!id || id === table) {
-          return new Response(JSON.stringify(response.error('ID diperlukan')), {
-            status: 400,
+          return new Response(JSON.stringify(response.error(ERROR_MESSAGES.ID_REQUIRED)), {
+            status: HTTP_STATUS_CODES.BAD_REQUEST,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
           });
         }
-        
+
         await env.DB.prepare(`DELETE FROM ${table} WHERE id = ?`).bind(id).run();
-        
+
         return new Response(JSON.stringify(response.success(null, 'Data berhasil dihapus')), {
-          status: 200,
+          status: HTTP_STATUS_CODES.OK,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
-        
+
       default:
-        return new Response(JSON.stringify(response.error('Method tidak didukung')), {
+        return new Response(JSON.stringify(response.error(ERROR_MESSAGES.METHOD_NOT_SUPPORTED)), {
           status: 405,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
     }
-  } catch (e) {
-    logger.error(`CRUD Error for table ${table}:`, e);
-    return new Response(JSON.stringify(response.error('Terjadi kesalahan pada server', 500)), {
-      status: 500,
+  } catch {
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -938,8 +939,8 @@ async function handleChat(request, env, corsHeaders) {
     const { message } = await request.json();
 
     if (!env.AI || !env.VECTORIZE_INDEX) {
-      return new Response(JSON.stringify(response.error('Layanan AI tidak tersedia saat ini', HTTP_STATUS_CODES.SERVICE_UNAVAILABLE || 503)), {
-        status: 503,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.AI_SERVICE_UNAVAILABLE, HTTP_STATUS_CODES.SERVICE_UNAVAILABLE || 503)), {
+        status: HTTP_STATUS_CODES.SERVICE_UNAVAILABLE || 503,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -960,7 +961,7 @@ async function handleChat(request, env, corsHeaders) {
     }
 
     return new Response(JSON.stringify({ context }), {
-      status: 200,
+      status: HTTP_STATUS_CODES.OK,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
@@ -1012,8 +1013,8 @@ async function handleSeed(request, env, corsHeaders) {
   } catch (e) {
     logger.error('Seed error:', e);
     logger.error('Error details:', JSON.stringify(e));
-    return new Response(JSON.stringify(response.error(`Error seeding data: ${e.message}`)), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(`${ERROR_MESSAGES.SEED_FAILED}: ${e.message}`)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1108,8 +1109,8 @@ async function handleFileUpload(request, env, corsHeaders) {
     });
   } catch (e) {
     logger.error('File upload error:', e);
-    return new Response(JSON.stringify(response.error('Failed to upload file')), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FILE_UPLOAD_FAILED, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1154,8 +1155,8 @@ async function handleFileDownload(request, env, corsHeaders) {
     });
   } catch (e) {
     logger.error('File download error:', e);
-    return new Response(JSON.stringify(response.error('Failed to download file')), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FILE_DOWNLOAD_FAILED, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1182,8 +1183,8 @@ async function handleFileDelete(request, env, corsHeaders) {
     const key = url.searchParams.get('key');
 
     if (!key) {
-      return new Response(JSON.stringify(response.error('Key parameter required')), {
-        status: 400,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.KEY_REQUIRED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1191,13 +1192,13 @@ async function handleFileDelete(request, env, corsHeaders) {
     await env.BUCKET.delete(key);
 
     return new Response(JSON.stringify(response.success(null, 'File deleted successfully')), {
-      status: 200,
+      status: HTTP_STATUS_CODES.OK,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
     logger.error('File delete error:', e);
-    return new Response(JSON.stringify(response.error('Failed to delete file')), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FILE_DELETE_FAILED, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1206,7 +1207,7 @@ async function handleFileDelete(request, env, corsHeaders) {
 async function handleFileList(request, env, corsHeaders) {
   try {
     if (!env.BUCKET) {
-      return new Response(JSON.stringify(response.error('R2 storage not enabled')), {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.R2_NOT_ENABLED, 503)), {
         status: 503,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -1215,7 +1216,7 @@ async function handleFileList(request, env, corsHeaders) {
     const payload = await authenticate(request, env);
     if (!payload) {
       return new Response(JSON.stringify(response.unauthorized()), {
-        status: 401,
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1239,13 +1240,13 @@ async function handleFileList(request, env, corsHeaders) {
     }));
 
     return new Response(JSON.stringify(response.success(files, 'Files listed successfully')), {
-      status: 200,
+      status: HTTP_STATUS_CODES.OK,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
     logger.error('File list error:', e);
-    return new Response(JSON.stringify(response.error('Failed to list files')), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.DATABASE_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1268,21 +1269,21 @@ async function handleSendEmail(request, env, corsHeaders) {
     const { to, cc, bcc, subject, html, text, attachments, trackDelivery, _priority } = await request.json();
 
     if (!to || !subject || !html) {
-      return new Response(JSON.stringify(response.error('Missing required fields: to, subject, html')), {
-        status: 400,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.MISSING_EMAIL_FIELDS)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
     if (!env.EMAIL_PROVIDER) {
-      return new Response(JSON.stringify(response.error('Email provider not configured')), {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.EMAIL_PROVIDER_NOT_CONFIGURED)), {
         status: 503,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
     const messageId = generateId();
-    
+
     let sendResult;
     switch (env.EMAIL_PROVIDER.toLowerCase()) {
       case 'sendgrid':
@@ -1295,8 +1296,8 @@ async function handleSendEmail(request, env, corsHeaders) {
         sendResult = await sendViaCloudflareEmail(env, { to, cc, bcc, subject, html, text, attachments });
         break;
       default:
-        return new Response(JSON.stringify(response.error('Unsupported email provider')), {
-          status: 400,
+        return new Response(JSON.stringify(response.error(ERROR_MESSAGES.UNSUPPORTED_EMAIL_PROVIDER)), {
+          status: HTTP_STATUS_CODES.BAD_REQUEST,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
     }
@@ -1313,19 +1314,19 @@ async function handleSendEmail(request, env, corsHeaders) {
         messageId,
         provider: env.EMAIL_PROVIDER
       }, 'Email sent successfully')), {
-        status: 200,
+        status: HTTP_STATUS_CODES.OK,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     } else {
-      return new Response(JSON.stringify(response.error(sendResult.error || 'Failed to send email')), {
-        status: 500,
+      return new Response(JSON.stringify(response.error(sendResult.error || ERROR_MESSAGES.EMAIL_SEND_FAILED)), {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
   } catch (e) {
     logger.error('Send email error:', e);
-    return new Response(JSON.stringify(response.error('Failed to send email')), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.EMAIL_SEND_FAILED, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1529,8 +1530,8 @@ async function handleGetChildren(request, env, corsHeaders) {
     });
   } catch (e) {
     logger.error('Get children error:', e);
-    return new Response(JSON.stringify(response.error('Gagal mengambil data anak')), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FAILED_GET_CHILDREN, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1541,7 +1542,7 @@ async function handleGetChildGrades(request, env, corsHeaders) {
     const payload = await authenticate(request, env);
     if (!payload || payload.role !== 'parent') {
       return new Response(JSON.stringify(response.unauthorized()), {
-        status: 401,
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1550,8 +1551,8 @@ async function handleGetChildGrades(request, env, corsHeaders) {
     const studentId = url.searchParams.get('student_id');
 
     if (!studentId) {
-      return new Response(JSON.stringify(response.error('student_id parameter required')), {
-        status: 400,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.STUDENT_ID_REQUIRED)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1562,8 +1563,8 @@ async function handleGetChildGrades(request, env, corsHeaders) {
     `).bind(payload.user_id, studentId).first();
 
     if (!relationship) {
-      return new Response(JSON.stringify(response.error('Akses ditolak: Bukan orang tua dari siswa ini')), {
-        status: 403,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.PARENT_ACCESS_DENIED)), {
+        status: HTTP_STATUS_CODES.FORBIDDEN,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1589,13 +1590,13 @@ async function handleGetChildGrades(request, env, corsHeaders) {
     `).bind(studentId).all();
 
     return new Response(JSON.stringify(response.success(grades, 'Data nilai berhasil diambil')), {
-      status: 200,
+      status: HTTP_STATUS_CODES.OK,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
     logger.error('Get child grades error:', e);
-    return new Response(JSON.stringify(response.error('Gagal mengambil data nilai')), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FAILED_GET_GRADES, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1615,8 +1616,8 @@ async function handleGetChildAttendance(request, env, corsHeaders) {
     const studentId = url.searchParams.get('student_id');
 
     if (!studentId) {
-      return new Response(JSON.stringify(response.error('student_id parameter required')), {
-        status: 400,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.STUDENT_ID_REQUIRED)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1627,8 +1628,8 @@ async function handleGetChildAttendance(request, env, corsHeaders) {
     `).bind(payload.user_id, studentId).first();
 
     if (!relationship) {
-      return new Response(JSON.stringify(response.error('Akses ditolak: Bukan orang tua dari siswa ini')), {
-        status: 403,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.PARENT_ACCESS_DENIED)), {
+        status: HTTP_STATUS_CODES.FORBIDDEN,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1649,13 +1650,13 @@ async function handleGetChildAttendance(request, env, corsHeaders) {
     `).bind(studentId).all();
 
     return new Response(JSON.stringify(response.success(attendance, 'Data kehadiran berhasil diambil')), {
-      status: 200,
+      status: HTTP_STATUS_CODES.OK,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
     logger.error('Get child attendance error:', e);
-    return new Response(JSON.stringify(response.error('Gagal mengambil data kehadiran')), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FAILED_GET_ATTENDANCE, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1666,7 +1667,7 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
     const payload = await authenticate(request, env);
     if (!payload || payload.role !== 'parent') {
       return new Response(JSON.stringify(response.unauthorized()), {
-        status: 401,
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1675,8 +1676,8 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
     const studentId = url.searchParams.get('student_id');
 
     if (!studentId) {
-      return new Response(JSON.stringify(response.error('student_id parameter required')), {
-        status: 400,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.STUDENT_ID_REQUIRED)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1687,8 +1688,8 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
     `).bind(payload.user_id, studentId).first();
 
     if (!relationship) {
-      return new Response(JSON.stringify(response.error('Akses ditolak: Bukan orang tua dari siswa ini')), {
-        status: 403,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.PARENT_ACCESS_DENIED)), {
+        status: HTTP_STATUS_CODES.FORBIDDEN,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1698,8 +1699,8 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
       .first();
 
     if (!student) {
-      return new Response(JSON.stringify(response.error('Data siswa tidak ditemukan')), {
-        status: 404,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.STUDENT_NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1710,7 +1711,7 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
 
     if (!classData) {
       return new Response(JSON.stringify(response.success([], 'Jadwal kosong')), {
-        status: 200,
+        status: HTTP_STATUS_CODES.OK,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1744,13 +1745,13 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
     `).bind(classData.id).all();
 
     return new Response(JSON.stringify(response.success(schedules, 'Jadwal berhasil diambil')), {
-      status: 200,
+      status: HTTP_STATUS_CODES.OK,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
     logger.error('Get child schedule error:', e);
-    return new Response(JSON.stringify(response.error('Gagal mengambil jadwal')), {
-      status: 500,
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FAILED_GET_SCHEDULE, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1808,15 +1809,15 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
       '/api/parent/attendance': handleGetChildAttendance,
       '/api/parent/schedule': handleGetChildSchedule,
     };
-    
+
     for (const [path, handler] of Object.entries(routes)) {
       if (url.pathname.startsWith(path)) {
         return await handler(request, env, cors);
       }
     }
-    
-    return new Response(JSON.stringify(response.error('Endpoint tidak ditemukan', 404)), {
-      status: 404,
+
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.ENDPOINT_NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
+      status: HTTP_STATUS_CODES.NOT_FOUND,
       headers: { ...cors, 'Content-Type': 'application/json' }
     });
   },
