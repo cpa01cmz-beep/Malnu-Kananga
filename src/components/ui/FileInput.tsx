@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import { forwardRef, useRef } from 'react';
 
 export type FileInputSize = 'sm' | 'md' | 'lg';
 export type FileInputState = 'default' | 'error' | 'success';

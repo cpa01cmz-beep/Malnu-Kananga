@@ -1,4 +1,3 @@
-import React from 'react';
 
 const BuildingLibraryIcon: React.FC = () => (
     <svg 

@@ -2,16 +2,20 @@ name = "malnu-kananga-worker"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 
-# Deployment Status:
-# - Production: https://malnu-kananga-worker-prod.cpa01cmz.workers.dev ✅ DEPLOYED
-# - Development: Local only (wrangler dev --env dev)
+# Deployment Instructions:
+# - Development (local): wrangler dev --env dev
+# - Development (remote): wrangler deploy --env=""
+# - Production: wrangler deploy --env production
 #
 # SETUP INSTRUCTIONS (for new deployments):
 # 1. Create D1 database: wrangler d1 create malnu-kananga-db-prod
 # 2. Copy the database_id from output and replace placeholder below
 # 3. (Optional) Create R2 bucket: wrangler r2 bucket create malnu-kananga-files
-# 4. Set JWT_SECRET environment variable (32+ characters): openssl rand -base64 32
-# 5. Set GEMINI_API_KEY from Google AI Studio: https://ai.google.dev
+# 4. Set secrets via wrangler:
+#    - echo "your_32_char_secret" | wrangler secret put JWT_SECRET --env production
+#    - echo "your_gemini_key" | wrangler secret put GEMINI_API_KEY --env production
+# 5. Set pages secrets:
+#    - echo "https://your-worker-url.workers.dev" | wrangler pages secret put VITE_API_BASE_URL --project-name=malnu-kananga
 # 6. Run: npm run validate-config to check configuration before deploying
 # 7. After deployment, seed database: curl -X POST <WORKER_URL>/seed
 

@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react'
+
+import { useState } from 'react';
 import { Theme, getLightThemes, getDarkThemes } from '../config/themes';
 import { useTheme } from '../hooks/useTheme';
 import { SunIcon } from './icons/SunIcon';

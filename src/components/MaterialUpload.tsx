@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { ShareIcon } from './icons/MaterialIcons';
@@ -94,7 +95,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     getPendingCount: _getPendingCount 
   } = useOfflineActionQueue();
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchMaterials();
     fetchSubjects();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -145,7 +146,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     setUploadedFile(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     
     // Clear previous errors

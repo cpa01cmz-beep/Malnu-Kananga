@@ -118,6 +118,229 @@ const HTTP_STATUS_CODES = {
 };
 
 // ============================================
+// QUERY RESULT CACHE (In-Memory with TTL)
+// ============================================
+
+class QueryCache {
+  constructor() {
+    this.cache = new Map();
+    this.defaultTTL = 60000; // 60 seconds default
+  }
+
+  set(key, value, ttl = this.defaultTTL) {
+    const expiresAt = Date.now() + ttl;
+    this.cache.set(key, { value, expiresAt });
+    logger.debug(`Cache set: ${key}, TTL: ${ttl}ms`);
+  }
+
+  get(key) {
+    const entry = this.cache.get(key);
+    if (!entry) {
+      logger.debug(`Cache miss: ${key}`);
+      return null;
+    }
+
+    if (Date.now() > entry.expiresAt) {
+      logger.debug(`Cache expired: ${key}`);
+      this.cache.delete(key);
+      return null;
+    }
+
+    logger.debug(`Cache hit: ${key}`);
+    return entry.value;
+  }
+
+  invalidate(key) {
+    this.cache.delete(key);
+    logger.debug(`Cache invalidated: ${key}`);
+  }
+
+  invalidatePattern(pattern) {
+    const regex = new RegExp(pattern);
+    for (const key of this.cache.keys()) {
+      if (regex.test(key)) {
+        this.cache.delete(key);
+        logger.debug(`Cache invalidated by pattern: ${key}`);
+      }
+    }
+  }
+
+  clear() {
+    this.cache.clear();
+    logger.debug('Cache cleared');
+  }
+
+  getStats() {
+    return {
+      size: this.cache.size,
+      keys: Array.from(this.cache.keys())
+    };
+  }
+}
+
+const queryCache = new QueryCache();
+
+// ============================================
+// WEBSOCKET CONNECTION MANAGEMENT
+// ============================================
+
+const connectedClients = new Map();
+
+function broadcastEvent(eventData) {
+  const message = JSON.stringify(eventData);
+  
+  for (const [clientId, ws] of connectedClients.entries()) {
+    try {
+      if (ws.readyState === 1) {
+        ws.send(message);
+      }
+    } catch (error) {
+      logger.error('Failed to send to client', clientId, error);
+      connectedClients.delete(clientId);
+    }
+  }
+}
+
+function getEventType(table, action) {
+  const eventTypes = {
+    'grades': {
+      'created': 'grade_created',
+      'updated': 'grade_updated',
+      'deleted': 'grade_deleted',
+    },
+    'attendance': {
+      'created': 'attendance_marked',
+      'updated': 'attendance_updated',
+    },
+    'announcements': {
+      'created': 'announcement_created',
+      'updated': 'announcement_updated',
+      'deleted': 'announcement_deleted',
+    },
+    'e_library': {
+      'created': 'library_material_added',
+      'updated': 'library_material_updated',
+    },
+    'school_events': {
+      'created': 'event_created',
+      'updated': 'event_updated',
+      'deleted': 'event_deleted',
+    },
+    'users': {
+      'updated': 'user_role_changed',
+    },
+  };
+
+  return eventTypes[table]?.[action] || null;
+}
+
+function getEntityName(table) {
+  const entityNames = {
+    'grades': 'grade',
+    'attendance': 'attendance',
+    'announcements': 'announcement',
+    'e_library': 'library_material',
+    'school_events': 'event',
+    'users': 'user',
+  };
+
+  return entityNames[table] || table;
+}
+
+async function handleWebSocketConnection(request, env) {
+  const upgradeHeader = request.headers.get('Upgrade');
+  
+  if (upgradeHeader !== 'websocket') {
+    return new Response('Expected WebSocket Upgrade', { 
+      status: 426,
+      headers: { 'Upgrade': 'websocket' }
+    });
+  }
+
+  const url = new URL(request.url);
+  const token = url.searchParams.get('token');
+  
+  if (!token) {
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.UNAUTHORIZED)), {
+      status: HTTP_STATUS_CODES.UNAUTHORIZED,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  try {
+    const payload = await JWT.verify(token, env.JWT_SECRET);
+    
+    if (!payload) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const session = await env.DB.prepare('SELECT * FROM sessions WHERE id = ? AND is_revoked = 0')
+      .bind(payload.session_id)
+      .first();
+    
+    if (!session) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const webSocketPair = new WebSocketPair();
+    const [client, server] = Object.values(webSocketPair);
+    
+    server.accept();
+    
+    const clientId = `${payload.user_id}_${Date.now()}`;
+    connectedClients.set(clientId, server);
+    
+    logger.info(`WebSocket: Client connected - ${clientId} (${payload.role})`);
+
+    server.addEventListener('message', (msg) => {
+      try {
+        const data = JSON.parse(msg.data);
+        
+        if (data.type === 'ping') {
+          server.send(JSON.stringify({ type: 'pong', timestamp: new Date().toISOString() }));
+        } else if (data.type === 'subscribe') {
+          logger.debug(`WebSocket: Client ${clientId} subscribed to ${data.eventType}`);
+        } else if (data.type === 'unsubscribe') {
+          logger.debug(`WebSocket: Client ${clientId} unsubscribed from ${data.eventType}`);
+        } else if (data.type === 'disconnect') {
+          connectedClients.delete(clientId);
+          server.close(1000, 'Client disconnect');
+        }
+      } catch (error) {
+        logger.error('WebSocket: Error handling message', error);
+      }
+    });
+
+    server.addEventListener('close', () => {
+      connectedClients.delete(clientId);
+      logger.info(`WebSocket: Client disconnected - ${clientId}`);
+    });
+
+    server.addEventListener('error', (error) => {
+      logger.error(`WebSocket: Error for ${clientId}`, error);
+      connectedClients.delete(clientId);
+    });
+
+    return new Response(null, {
+      status: 101,
+      webSocket: client
+    });
+  } catch (error) {
+    logger.error('WebSocket: Connection failed', error);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.UNAUTHORIZED)), {
+      status: HTTP_STATUS_CODES.UNAUTHORIZED,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// ============================================
 // UTILITY FUNCTIONS
 // ============================================
 
@@ -870,13 +1093,28 @@ async function handleCRUD(request, env, corsHeaders, table, _options = {}) {
       case 'POST': {
         const body = await request.json();
         const newItemId = generateId();
-        const newItem = { id: newItemId, ...body };
+        const newItem = { id: newItemId, ...body, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
 
         const columns = Object.keys(newItem).join(', ');
         const placeholders = Object.keys(newItem).map(() => '?').join(', ');
         const values = Object.values(newItem);
 
         await env.DB.prepare(`INSERT INTO ${table} (${columns}) VALUES (${placeholders})`).bind(...values).run();
+
+        const eventType = getEventType(table, 'created');
+        if (eventType && payload) {
+          broadcastEvent({
+            type: eventType,
+            entity: getEntityName(table),
+            entityId: newItemId,
+            data: newItem,
+            timestamp: newItem.updated_at,
+            userRole: payload.role,
+            userId: payload.user_id,
+          });
+        }
+
+        queryCache.invalidatePattern(`^${table}:`);
 
         return new Response(JSON.stringify(response.success(newItem, 'Data berhasil dibuat')), {
           status: HTTP_STATUS_CODES.CREATED,
@@ -896,9 +1134,24 @@ async function handleCRUD(request, env, corsHeaders, table, _options = {}) {
         const updateSet = Object.keys(updateBody).map(key => `${key} = ?`).join(', ');
         const updateValues = [...Object.values(updateBody), id];
 
-        await env.DB.prepare(`UPDATE ${table} SET ${updateSet} WHERE id = ?`).bind(...updateValues).run();
+        const updatedItem = await env.DB.prepare(`UPDATE ${table} SET ${updateSet}, updated_at = CURRENT_TIMESTAMP WHERE id = ? RETURNING *`).bind(...updateValues).first();
 
-        return new Response(JSON.stringify(response.success(updateBody, 'Data berhasil diperbarui')), {
+        const eventType = getEventType(table, 'updated');
+        if (eventType && payload) {
+          broadcastEvent({
+            type: eventType,
+            entity: getEntityName(table),
+            entityId: id,
+            data: updatedItem || updateBody,
+            timestamp: new Date().toISOString(),
+            userRole: payload.role,
+            userId: payload.user_id,
+          });
+        }
+
+        queryCache.invalidatePattern(`^${table}:`);
+
+        return new Response(JSON.stringify(response.success(updatedItem || updateBody, 'Data berhasil diperbarui')), {
           status: HTTP_STATUS_CODES.OK,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
@@ -912,7 +1165,23 @@ async function handleCRUD(request, env, corsHeaders, table, _options = {}) {
           });
         }
 
+        const deletedItem = await env.DB.prepare(`SELECT * FROM ${table} WHERE id = ?`).bind(id).first();
         await env.DB.prepare(`DELETE FROM ${table} WHERE id = ?`).bind(id).run();
+
+        const eventType = getEventType(table, 'deleted');
+        if (eventType && payload && deletedItem) {
+          broadcastEvent({
+            type: eventType,
+            entity: getEntityName(table),
+            entityId: id,
+            data: deletedItem,
+            timestamp: new Date().toISOString(),
+            userRole: payload.role,
+            userId: payload.user_id,
+          });
+        }
+
+        queryCache.invalidatePattern(`^${table}:`);
 
         return new Response(JSON.stringify(response.success(null, 'Data berhasil dihapus')), {
           status: HTTP_STATUS_CODES.OK,
@@ -1500,6 +1769,17 @@ async function handleGetChildren(request, env, corsHeaders) {
       });
     }
 
+    const cacheKey = `children:${payload.user_id}`;
+    const cachedData = queryCache.get(cacheKey);
+
+    if (cachedData) {
+      logger.debug('Returning cached children data');
+      return new Response(JSON.stringify(response.success(cachedData, 'Data anak berhasil diambil (cached)')), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Cache': 'HIT' }
+      });
+    }
+
     const children = await env.DB.prepare(`
       SELECT
         psr.id as relationship_id,
@@ -1522,11 +1802,14 @@ async function handleGetChildren(request, env, corsHeaders) {
       LEFT JOIN classes c ON s.class = c.name
       WHERE psr.parent_id = ?
       ORDER BY psr.is_primary_contact DESC, u.name ASC
+      LIMIT 50
     `).bind(payload.user_id).all();
+
+    queryCache.set(cacheKey, children, 120000); // Cache for 2 minutes
 
     return new Response(JSON.stringify(response.success(children, 'Data anak berhasil diambil')), {
       status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Cache': 'MISS' }
     });
   } catch (e) {
     logger.error('Get children error:', e);
@@ -1569,6 +1852,17 @@ async function handleGetChildGrades(request, env, corsHeaders) {
       });
     }
 
+    const cacheKey = `grades:${studentId}`;
+    const cachedData = queryCache.get(cacheKey);
+
+    if (cachedData) {
+      logger.debug('Returning cached grades data');
+      return new Response(JSON.stringify(response.success(cachedData, 'Data nilai berhasil diambil (cached)')), {
+        status: HTTP_STATUS_CODES.OK,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Cache': 'HIT' }
+      });
+    }
+
     const grades = await env.DB.prepare(`
       SELECT
         g.id,
@@ -1587,11 +1881,14 @@ async function handleGetChildGrades(request, env, corsHeaders) {
       JOIN classes c ON g.class_id = c.id
       WHERE g.student_id = ?
       ORDER BY g.created_at DESC
+      LIMIT 200
     `).bind(studentId).all();
+
+    queryCache.set(cacheKey, grades, 120000); // Cache for 2 minutes
 
     return new Response(JSON.stringify(response.success(grades, 'Data nilai berhasil diambil')), {
       status: HTTP_STATUS_CODES.OK,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      headers: { ...corsHeaders, 'Content-Type': 'application/json', 'X-Cache': 'MISS' }
     });
   } catch (e) {
     logger.error('Get child grades error:', e);
@@ -1757,6 +2054,65 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
   }
 }
 
+async function handleGetUpdates(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const lastSync = url.searchParams.get('since') || new Date(0).toISOString();
+
+    const updates = [];
+
+    const tables = [
+      { name: 'grades', entity: 'grade', eventTypes: ['grade_created', 'grade_updated', 'grade_deleted'] },
+      { name: 'attendance', entity: 'attendance', eventTypes: ['attendance_marked', 'attendance_updated'] },
+      { name: 'announcements', entity: 'announcement', eventTypes: ['announcement_created', 'announcement_updated', 'announcement_deleted'] },
+      { name: 'e_library', entity: 'library_material', eventTypes: ['library_material_added', 'library_material_updated'] },
+      { name: 'school_events', entity: 'event', eventTypes: ['event_created', 'event_updated', 'event_deleted'] },
+      { name: 'users', entity: 'user', eventTypes: ['user_role_changed', 'user_status_changed'] },
+    ];
+
+    for (const table of tables) {
+      const results = await env.DB.prepare(`
+        SELECT id, updated_at FROM ${table.name}
+        WHERE updated_at > ?
+        ORDER BY updated_at DESC
+        LIMIT 100
+      `).bind(lastSync).all();
+
+      for (const row of results.results || results) {
+        updates.push({
+          type: table.eventTypes[1] || table.eventTypes[0],
+          entity: table.entity,
+          entityId: row.id,
+          timestamp: row.updated_at,
+          userRole: payload.role,
+          userId: payload.user_id,
+        });
+      }
+    }
+
+    updates.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+    return new Response(JSON.stringify(response.success({ updates }, 'Update fetched successfully')), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Get updates error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.DATABASE_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
 // ============================================
 // MAIN HANDLER
 // ============================================
@@ -1774,11 +2130,17 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
     }
     
     const url = new URL(request.url);
+
+    // Handle WebSocket upgrade requests
+    if (url.pathname === '/ws') {
+      return handleWebSocketConnection(request, env);
+    }
     
     // Route handlers
     const routes = {
       '/seed': handleSeed,
       '/api/chat': handleChat,
+      '/api/updates': handleGetUpdates,
       '/api/auth/login': handleLogin,
       '/api/auth/logout': handleLogout,
       '/api/auth/refresh': handleRefreshToken,

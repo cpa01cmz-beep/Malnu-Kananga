@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import Input from '../Input';
 import { standardValidationRules } from '../../../hooks/useFieldValidation';
 
@@ -187,9 +186,9 @@ describe('Input Component', () => {
       const input = screen.getByLabelText('Required Field');
 
       fireEvent.focus(input);
-      userEvent.type(input, 'test');
+      fireEvent.change(input, { target: { value: 'test' } });
       fireEvent.blur(input);
-      userEvent.clear(input);
+      fireEvent.change(input, { target: { value: '' } });
 
       await waitFor(() => {
         const alerts = screen.getAllByRole('alert');
@@ -213,8 +212,8 @@ describe('Input Component', () => {
       const input = screen.getByLabelText('Required Field');
 
       fireEvent.focus(input);
-      userEvent.type(input, 'test');
-      userEvent.clear(input);
+      fireEvent.change(input, { target: { value: 'test' } });
+      fireEvent.change(input, { target: { value: '' } });
 
       await waitFor(() => {
         expect(screen.queryByRole('alert')).not.toBeInTheDocument();
@@ -302,8 +301,8 @@ describe('Input Component', () => {
       );
 
       const input = screen.getByLabelText('Email');
-      userEvent.type(input, 'test');
-      
+      fireEvent.change(input, { target: { value: 'test' } });
+
       // The component should render the loading indicator during validation
       expect(screen.getByLabelText('Email')).toBeInTheDocument();
     });

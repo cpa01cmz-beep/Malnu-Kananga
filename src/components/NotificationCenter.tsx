@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { UserRole, NotificationType, NotificationHistoryItem } from '../types';
 import { NotificationTemplateService } from '../services/notificationTemplates';

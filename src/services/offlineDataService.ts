@@ -4,8 +4,8 @@
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import type { Student, Grade, Attendance, Schedule, ParentChild } from '../types';
-import React from 'react';
 import { useNetworkStatus } from '../utils/networkStatus';
+import { useState, useEffect } from 'react';
 
 // ============================================
 // TYPES
@@ -460,12 +460,10 @@ export function useOfflineDataService() {
  * React Hook for offline data management
  */
 export function useOfflineData(role: 'student' | 'parent', studentId?: string) {
-  // React is already imported at the top of the file for hooks
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>(offlineDataService.getSyncStatus());
+  const [isCached, setIsCached] = useState(false);
   
-  const [syncStatus, setSyncStatus] = React.useState<SyncStatus>(offlineDataService.getSyncStatus());
-  const [isCached, setIsCached] = React.useState(false);
-  
-  React.useEffect(() => {
+  useEffect(() => {
     // Check initial cache state
     if (role === 'student' && studentId) {
       setIsCached(offlineDataService.isStudentDataCached(studentId));

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { LineChart } from 'recharts/es6/chart/LineChart';
 import { Line } from 'recharts/es6/cartesian/Line';
 import { XAxis } from 'recharts/es6/cartesian/XAxis';

@@ -1,4 +1,5 @@
-import React from 'react';
+import React from 'react'
+
 import { MicrophoneIcon } from './icons/MicrophoneIcon';
 import { UserRole } from '../types/permissions';
 import Modal from './ui/Modal';

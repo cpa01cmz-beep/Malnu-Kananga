@@ -1,5 +1,4 @@
 
-import React from 'react';
 
 export const ArrowDownTrayIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg 
