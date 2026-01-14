@@ -18,6 +18,7 @@ export default [
         },
       },
       globals: {
+        React: 'readonly',
         console: 'readonly',
         document: 'readonly',
         window: 'readonly',
