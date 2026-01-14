@@ -9,10 +9,17 @@
 ## Priority Tasks
 
 ### P0: Critical
-- [ ] Verify all API endpoints have consistent error handling
-  - Audit all endpoints in worker.js
-  - Ensure 404, 500, and validation errors are consistent
-  - Test error messages are user-friendly
+- [**In Progress**] Verify all API endpoints have consistent error handling (2026-01-14)
+  - [x] Audit all endpoints in worker.js (28 endpoints, all have try-catch)
+  - [x] Audit frontend API service for error handling patterns
+  - [x] Identify inconsistencies (hardcoded messages, language mix, error detail exposure)
+  - [x] Create backend error message constants (32 constants defined in worker.js)
+  - [x] Update worker.js to use constants and standardize error handling (partial: 5 handlers updated)
+  - [x] Update apiService.ts to handle 403/422 status codes explicitly
+  - [x] Fix special cases (JWT.verify, handleChat, initDatabase)
+  - [ ] Complete updating all 28 handlers in worker.js to use ERROR_MESSAGES constants
+  - [ ] Run tests to verify error messages are user-friendly
+  - [ ] Update docs with new error handling patterns (BLUEPRINT.md, ROADMAP.md)
 
 ### P1: High
 - [ ] Enhance test coverage to 80%+

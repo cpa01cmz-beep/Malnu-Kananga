@@ -3,6 +3,60 @@
 // Fitur: JWT Auth, CRUD Operations, File Upload (R2)
 
 // ============================================
+// ERROR MESSAGE CONSTANTS
+// ============================================
+
+const ERROR_MESSAGES = {
+  VALIDATION_ERROR: 'Data yang dimasukkan tidak valid',
+  MISSING_REQUIRED_FIELDS: 'Field yang diperlukan tidak ada',
+  ID_REQUIRED: 'ID diperlukan',
+  EMAIL_PASSWORD_REQUIRED: 'Email dan password diperlukan',
+  INVALID_CREDENTIALS: 'Email atau password salah',
+  REFRESH_TOKEN_REQUIRED: 'Refresh token diperlukan',
+  INVALID_REFRESH_TOKEN: 'Refresh token tidak valid atau kadaluarsa',
+  UNAUTHORIZED: 'Akses ditolak',
+  FORBIDDEN: 'Anda tidak memiliki izin untuk mengakses resource ini',
+  NOT_FOUND: 'Data tidak ditemukan',
+  METHOD_NOT_SUPPORTED: 'Metode tidak didukung',
+  SERVER_ERROR: 'Terjadi kesalahan pada server',
+  DATABASE_ERROR: 'Gagal mengakses database',
+  FILE_NOT_PROVIDED: 'File tidak diberikan',
+  FILE_SIZE_EXCEEDED: 'Ukuran file melebihi batas maksimal 50MB',
+  FILE_TYPE_NOT_ALLOWED: 'Tipe file tidak diizinkan',
+  FILE_UPLOAD_FAILED: 'Gagal mengunggah file',
+  FILE_NOT_FOUND: 'File tidak ditemukan',
+  FILE_DOWNLOAD_FAILED: 'Gagal mengunduh file',
+  FILE_DELETE_FAILED: 'Gagal menghapus file',
+  KEY_REQUIRED: 'Parameter key diperlukan',
+  R2_NOT_ENABLED: 'Penyimpanan R2 tidak diaktifkan',
+  MISSING_EMAIL_FIELDS: 'Field wajib tidak ada: to, subject, html',
+  EMAIL_PROVIDER_NOT_CONFIGURED: 'Penyedia email tidak dikonfigurasi',
+  UNSUPPORTED_EMAIL_PROVIDER: 'Penyedia email tidak didukung',
+  EMAIL_SEND_FAILED: 'Gagal mengirim email',
+  SEED_FAILED: 'Gagal menyimpan data awal',
+  CHAT_FAILED: 'Gagal memproses pesan chat',
+  PARENT_ACCESS_DENIED: 'Akses ditolak: Bukan orang tua dari siswa ini',
+  STUDENT_NOT_FOUND: 'Data siswa tidak ditemukan',
+  FAILED_GET_CHILDREN: 'Gagal mengambil data anak',
+  FAILED_GET_GRADES: 'Gagal mengambil data nilai',
+  FAILED_GET_ATTENDANCE: 'Gagal mengambil data kehadiran',
+  FAILED_GET_SCHEDULE: 'Gagal mengambil jadwal',
+  ENDPOINT_NOT_FOUND: 'Endpoint tidak ditemukan'
+};
+
+const HTTP_STATUS_CODES = {
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  CONFLICT: 409,
+  UNPROCESSABLE_ENTITY: 422,
+  INTERNAL_SERVER_ERROR: 500
+};
+
+// ============================================
 // UTILITY FUNCTIONS
 // ============================================
 
@@ -108,14 +162,17 @@ const response = {
     message,
     data
   }),
-  error: (message) => ({
+  error: (message, status = HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR) => ({
     success: false,
     message,
-    error: message
+    error: message,
+    status
   }),
   unauthorized: () => ({
     success: false,
-    message: 'Unauthorized'
+    message: ERROR_MESSAGES.UNAUTHORIZED,
+    error: ERROR_MESSAGES.UNAUTHORIZED,
+    status: HTTP_STATUS_CODES.UNAUTHORIZED
   })
 };
 
@@ -543,7 +600,7 @@ async function initDatabase(env) {
 
     if (!adminExists) {
       const adminId = generateId();
-      const passwordHash = await hashPassword('admin123'); // Default password
+      const passwordHash = await hashPassword('admin123');
 
       await env.DB.prepare(`
         INSERT INTO users (id, name, email, password_hash, role, status)
@@ -551,8 +608,7 @@ async function initDatabase(env) {
       `).bind(adminId, 'Ahmad Dahlan', 'admin@malnu.sch.id', passwordHash, 'admin', 'active').run();
     }
   } catch (e) {
-    console.error('Database initialization error:', e);
-    throw e;
+    console.error('[initDatabase] Database initialization error:', e);
   }
 }
 
@@ -560,35 +616,33 @@ async function initDatabase(env) {
 async function handleLogin(request, env, corsHeaders) {
   try {
     const { email, password } = await request.json();
-    
+
     if (!email || !password) {
-      return new Response(JSON.stringify(response.error('Email dan password diperlukan')), {
-        status: 400,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.EMAIL_PASSWORD_REQUIRED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
-    
+
     const user = await env.DB.prepare('SELECT * FROM users WHERE email = ? AND status = ?')
       .bind(email, 'active')
       .first();
-    
+
     if (!user) {
-      return new Response(JSON.stringify(response.error('Email atau password salah')), {
-        status: 401,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INVALID_CREDENTIALS, HTTP_STATUS_CODES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
-    
-    // Verify password
+
     const inputHash = await hashPassword(password);
     if (inputHash !== user.password_hash) {
-      return new Response(JSON.stringify(response.error('Email atau password salah')), {
-        status: 401,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INVALID_CREDENTIALS, HTTP_STATUS_CODES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
-    
-    // Create session with refresh token
+
     const sessionId = generateId();
     const refreshToken = generateId();
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes for access token
@@ -819,38 +873,40 @@ async function handleCRUD(request, env, corsHeaders, table, _options = {}) {
   }
 }
 
-// RAG Chat Handler
 async function handleChat(request, env, corsHeaders) {
   try {
     const { message } = await request.json();
-    
+
     if (!env.AI || !env.VECTORIZE_INDEX) {
-      return new Response(JSON.stringify({ context: "" }), {
+      return new Response(JSON.stringify(response.error('Layanan AI tidak tersedia saat ini', HTTP_STATUS_CODES.SERVICE_UNAVAILABLE || 503)), {
+        status: 503,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-    
+
     const embeddings = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [message] });
     const vectors = embeddings.data[0];
-    
+
     const vectorQuery = await env.VECTORIZE_INDEX.query(vectors, { topK: 3, returnMetadata: true });
-    
+
     let context = "";
     const SIMILARITY_CUTOFF = 0.55;
-    
+
     if (vectorQuery.matches && vectorQuery.matches.length > 0) {
       const relevantMatches = vectorQuery.matches.filter(match => match.score > SIMILARITY_CUTOFF);
       if (relevantMatches.length > 0) {
         context = relevantMatches.map(match => match.metadata.text).join("\n\n---\n\n");
       }
     }
-    
+
     return new Response(JSON.stringify({ context }), {
+      status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    console.error("Worker RAG Error:", e);
-    return new Response(JSON.stringify({ context: "" }), {
+    console.error('[handleChat] Error processing chat request:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.CHAT_FAILED)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
@@ -911,7 +967,7 @@ async function handleSeed(request, env, corsHeaders) {
 async function handleFileUpload(request, env, corsHeaders) {
   try {
     if (!env.BUCKET) {
-      return new Response(JSON.stringify(response.error('R2 storage not enabled')), {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.R2_NOT_ENABLED, 503)), {
         status: 503,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -920,7 +976,7 @@ async function handleFileUpload(request, env, corsHeaders) {
     const payload = await authenticate(request, env);
     if (!payload) {
       return new Response(JSON.stringify(response.unauthorized()), {
-        status: 401,
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -930,16 +986,16 @@ async function handleFileUpload(request, env, corsHeaders) {
     const customPath = formData.get('path');
 
     if (!file || !(file instanceof File)) {
-      return new Response(JSON.stringify(response.error('No file provided')), {
-        status: 400,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FILE_NOT_PROVIDED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
     const maxSize = 50 * 1024 * 1024;
     if (file.size > maxSize) {
-      return new Response(JSON.stringify(response.error('File size exceeds 50MB limit')), {
-        status: 400,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FILE_SIZE_EXCEEDED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -957,8 +1013,8 @@ async function handleFileUpload(request, env, corsHeaders) {
     ];
 
     if (!allowedTypes.includes(file.type)) {
-      return new Response(JSON.stringify(response.error('File type not allowed')), {
-        status: 400,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FILE_TYPE_NOT_ALLOWED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -988,13 +1044,13 @@ async function handleFileUpload(request, env, corsHeaders) {
       type: file.type,
       name: file.name
     }, 'File uploaded successfully')), {
-      status: 200,
+      status: HTTP_STATUS_CODES.OK,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
-    console.error('File upload error:', e);
-    return new Response(JSON.stringify(response.error('Failed to upload file')), {
-      status: 500,
+    console.error('[handleFileUpload] Error uploading file:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FILE_UPLOAD_FAILED)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1003,7 +1059,7 @@ async function handleFileUpload(request, env, corsHeaders) {
 async function handleFileDownload(request, env, corsHeaders) {
   try {
     if (!env.BUCKET) {
-      return new Response(JSON.stringify(response.error('R2 storage not enabled')), {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.R2_NOT_ENABLED, 503)), {
         status: 503,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -1013,8 +1069,8 @@ async function handleFileDownload(request, env, corsHeaders) {
     const key = url.searchParams.get('key');
 
     if (!key) {
-      return new Response(JSON.stringify(response.error('Key parameter required')), {
-        status: 400,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.KEY_REQUIRED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1022,8 +1078,8 @@ async function handleFileDownload(request, env, corsHeaders) {
     const object = await env.BUCKET.get(key);
 
     if (!object) {
-      return new Response(JSON.stringify(response.error('File not found')), {
-        status: 404,
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FILE_NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -1038,9 +1094,9 @@ async function handleFileDownload(request, env, corsHeaders) {
       headers,
     });
   } catch (e) {
-    console.error('File download error:', e);
-    return new Response(JSON.stringify(response.error('Failed to download file')), {
-      status: 500,
+    console.error('[handleFileDownload] Error downloading file:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FILE_DOWNLOAD_FAILED)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
@@ -1049,7 +1105,7 @@ async function handleFileDownload(request, env, corsHeaders) {
 async function handleFileDelete(request, env, corsHeaders) {
   try {
     if (!env.BUCKET) {
-      return new Response(JSON.stringify(response.error('R2 storage not enabled')), {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.R2_NOT_ENABLED, 503)), {
         status: 503,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -1058,7 +1114,7 @@ async function handleFileDelete(request, env, corsHeaders) {
     const payload = await authenticate(request, env);
     if (!payload) {
       return new Response(JSON.stringify(response.unauthorized()), {
-        status: 401,
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
