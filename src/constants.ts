@@ -110,6 +110,12 @@ export const STORAGE_KEYS = {
     EMAIL_NOTIFICATION_SETTINGS: 'malnu_email_notification_settings',
     EMAIL_ANALYTICS: 'malnu_email_analytics',
     EMAIL_DELIVERY_HISTORY: 'malnu_email_delivery_history',
+    
+    // Storage Migration
+    STORAGE_MIGRATION_VERSION: 'malnu_storage_migration_version',
+    
+    // AI Editor Audit
+    AI_EDITOR_AUDIT_LOG: 'malnu_ai_editor_audit_log',
 } as const;
 
 export const USER_ROLES = {

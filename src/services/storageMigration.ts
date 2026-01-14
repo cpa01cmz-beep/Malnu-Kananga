@@ -39,7 +39,7 @@ const MIGRATIONS: MigrationMap[] = [
   { oldKey: 'malnu_material_stats', newKey: STORAGE_KEYS.MATERIAL_STATS },
 ];
 
-const MIGRATION_VERSION_KEY = 'malnu_storage_migration_version';
+const MIGRATION_VERSION_KEY = STORAGE_KEYS.STORAGE_MIGRATION_VERSION;
 const CURRENT_MIGRATION_VERSION = '1.0.0';
 
 /**
