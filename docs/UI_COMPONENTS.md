@@ -1,9 +1,20 @@
 # UI Components Documentation
 
-**Status**: ✅ COMPLETE (41 of 41 components documented)
+**Status**: ✅ COMPLETE (42 of 42 components documented)
 **Last Updated**: 2026-01-14
 
-> **COMPLETED**: All 41 exported UI components from `src/components/ui/index.ts` are now documented.
+> **COMPLETED**: All 42 exported UI components from `src/components/ui/index.ts` are now documented.
+>
+> **Form Components (8)**: Input, Select, Textarea, Label, FileInput, Toggle, SearchInput, FormGrid
+> **Button Components (5)**: Button, IconButton, GradientButton, BackButton, SmallActionButton
+> **Layout Components (7)**: Card, Modal, BaseModal, ConfirmationDialog, Section, ErrorBoundary, SkipLink
+> **Display Components (6)**: Heading, Badge, Alert, LinkCard, DashboardActionCard, SocialLink
+> **Table Components (2)**: Table (Thead, Tbody, Tfoot, Tr, Th, Td), DataTable
+> **Interactive Components (2)**: Tab, Toast
+> **Navigation Components (1)**: Pagination
+> **Loading Components (5)**: LoadingState, EmptyState, ErrorState, LoadingSpinner, LoadingOverlay, Skeleton, SuspenseLoading
+> **Progress Components (1)**: ProgressBar
+> **Utility Components (3)**: PageHeader, ErrorMessage, PDFExportButton
 >
 > See `src/components/ui/index.ts` for complete export list. Documentation updates are tracked in TASK.md (P1 priority).
 
@@ -506,6 +517,1445 @@ Potential improvements to consider:
 - Custom file icon in file button
 - Clear file button
 - File type icons in selected file display
+
+---
+
+## Input Component
+
+**Location**: `src/components/ui/Input.tsx`
+
+A reusable input component with validation, input masks, icons, and comprehensive accessibility support.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg` for flexible layouts
+- **3 States**: `default`, `error`, `success`
+- **Input Masks**: Built-in formatters for NISN, phone, date, year, class, grade
+- **Validation**: Built-in validation rules with error announcement
+- **Icons**: Optional left and right icons
+- **Clear on Escape**: Optional keyboard shortcut to clear input
+- **Accessibility**: Full ARIA support, keyboard navigation, focus management, error announcement
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Label Support**: Optional label with required indicator
+- **Helper Text**: Contextual guidance for users
+- **Error Handling**: Built-in error state with role="alert"
+- **Auto-Focus**: Automatically focuses input on validation errors
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text displayed above the input |
+| `helperText` | `string` | `undefined` | Helper text displayed below the input |
+| `errorText` | `string` | `undefined` | Error message displayed below the input (sets state to error) |
+| `size` | `InputSize` | `'md'` | Input size (affects padding and text size) |
+| `state` | `InputState` | `'default'` | Visual state variant (defaults to 'error' if errorText provided) |
+| `leftIcon` | `ReactNode` | `undefined` | Icon displayed on the left side of input |
+| `rightIcon` | `ReactNode` | `undefined` | Icon displayed on the right side of input |
+| `fullWidth` | `boolean` | `false` | Whether the input should take full width |
+| `validationRules` | `Array<{ validate: (value: string) => boolean; message: string }>` | `[]` | Array of validation rules with validate function and error message |
+| `validateOnChange` | `boolean` | `true` | Validate on every change event |
+| `validateOnBlur` | `boolean` | `true` | Validate on blur event |
+| `accessibility.announceErrors` | `boolean` | `true` | Announce validation errors via ARIA |
+| `accessibility.describedBy` | `string` | `undefined` | Additional ARIA describedby IDs |
+| `inputMask` | `'nisn' \| 'phone' \| 'date' \| 'year' \| 'class' \| 'grade'` | `undefined` | Input mask formatter type |
+| `customType` | `InputType` | `'text'` | Custom HTML input type |
+| `clearOnEscape` | `boolean` | `false` | Clear input value when Escape key is pressed |
+| `id` | `string` | Auto-generated | Unique identifier for the input |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard input attributes | - | - | Passes through all standard HTML input props |
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for dense interfaces.
+
+```tsx
+import Input from './ui/Input';
+
+<Input
+  label="Username"
+  size="sm"
+  placeholder="Enter username..."
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-3 py-2`
+- Input text: `text-sm`
+- Label: `text-xs`
+- Helper/Error text: `text-xs`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<Input
+  label="Email"
+  size="md"
+  placeholder="Enter email..."
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-4 py-3`
+- Input text: `text-sm sm:text-base`
+- Label: `text-sm`
+- Helper/Error text: `text-xs`
+
+#### Large (lg)
+
+Larger size for better accessibility and touch targets.
+
+```tsx
+<Input
+  label="Password"
+  size="lg"
+  type="password"
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-5 py-4`
+- Input text: `text-base sm:text-lg`
+- Label: `text-base`
+- Helper/Error text: `text-sm`
+
+### States
+
+#### Default State
+
+Standard styling for normal input.
+
+```tsx
+<Input
+  label="Full Name"
+  placeholder="Enter your full name..."
+/>
+```
+
+**Styling**:
+- Border: `border-neutral-300` / `dark:border-neutral-600`
+- Background: `bg-white` / `dark:bg-neutral-700`
+- Text: `text-neutral-900` / `dark:text-white`
+- Focus: `focus:ring-primary-500/50 focus:border-primary-500`
+
+#### Error State
+
+Red styling when validation fails.
+
+```tsx
+<Input
+  label="Email"
+  errorText="Invalid email address"
+  placeholder="Enter email..."
+/>
+```
+
+**Styling**:
+- Border: `border-red-300` / `dark:border-red-700`
+- Background: `bg-red-50` / `dark:bg-red-900/20`
+- Focus: `focus:ring-red-500/50 focus:border-red-500`
+- Error text: `text-red-600 dark:text-red-400` with `role="alert"`
+- `aria-invalid`: `true`
+
+#### Success State
+
+Green styling for successful validation.
+
+```tsx
+<Input
+  label="Password"
+  state="success"
+  helperText="Strong password"
+  type="password"
+/>
+```
+
+**Styling**:
+- Border: `border-green-300` / `dark:border-green-700`
+- Background: `bg-green-50` / `dark:bg-green-900/20`
+- Focus: `focus:ring-green-500/50 focus:border-green-500`
+
+### Input Masks
+
+Built-in formatters for common input patterns.
+
+#### NISN Mask
+
+```tsx
+<Input
+  label="NISN"
+  inputMask="nisn"
+  placeholder="1234567890"
+/>
+```
+Auto-formats as: `12345 67890`
+
+#### Phone Mask
+
+```tsx
+<Input
+  label="Phone Number"
+  inputMask="phone"
+  placeholder="08123456789"
+/>
+```
+Auto-formats as: `0812 3456 789`
+
+#### Date Mask
+
+```tsx
+<Input
+  label="Birth Date"
+  inputMask="date"
+  placeholder="DD/MM/YYYY"
+/>
+```
+Auto-formats as: `DD/MM/YYYY`
+
+#### Year Mask
+
+```tsx
+<Input
+  label="Academic Year"
+  inputMask="year"
+  placeholder="2024"
+/>
+```
+Accepts 4-digit year only.
+
+#### Class Mask
+
+```tsx
+<Input
+  label="Class"
+  inputMask="class"
+  placeholder="X-1"
+/>
+```
+Format: Letter-number (e.g., "A-1", "B-2")
+
+#### Grade Mask
+
+```tsx
+<Input
+  label="Grade"
+  inputMask="grade"
+  placeholder="00"
+/>
+```
+Format: Two-digit number (00-99).
+
+### Icons
+
+Add icons to either side of the input.
+
+```tsx
+import { UserIcon } from './icons/UserIcon';
+import { LockClosedIcon } from './icons/LockClosedIcon';
+
+<Input
+  label="Username"
+  leftIcon={<UserIcon />}
+  placeholder="Enter username..."
+/>
+
+<Input
+  label="Password"
+  type="password"
+  rightIcon={<LockClosedIcon />}
+  placeholder="Enter password..."
+/>
+```
+
+### Validation
+
+Built-in validation with custom rules and error announcement.
+
+```tsx
+<Input
+  label="Email"
+  validationRules={[
+    {
+      validate: (value) => value.length >= 5,
+      message: 'Email must be at least 5 characters'
+    },
+    {
+      validate: (value) => /\S+@\S+\.\S+/.test(value),
+      message: 'Invalid email address'
+    }
+  ]}
+  validateOnChange={true}
+  validateOnBlur={true}
+  placeholder="Enter email..."
+/>
+```
+
+**Features**:
+- Validate on change and/or blur
+- Automatic error announcement with `role="alert"`
+- Visual loading indicator during validation
+- Auto-focus on error after touch
+- Error messages displayed below input
+- Required field indicator with `*`
+
+### Clear on Escape
+
+Clear input value when Escape key is pressed.
+
+```tsx
+<Input
+  label="Search"
+  placeholder="Search..."
+  clearOnEscape={true}
+/>
+```
+
+### Full Width
+
+Make input take full width of container.
+
+```tsx
+<Input
+  label="Full Name"
+  fullWidth
+  placeholder="Enter your full name..."
+/>
+```
+
+### Required Field
+
+Show required indicator (*).
+
+```tsx
+<Input
+  label="Email Address"
+  required
+  placeholder="Enter email..."
+/>
+```
+
+**Display**:
+- Label shows `*` indicator with `aria-label="required"` for screen readers
+
+### Helper Text
+
+Provide contextual guidance below the input.
+
+```tsx
+<Input
+  label="Password"
+  helperText="Must be at least 8 characters"
+  type="password"
+/>
+```
+
+### Error Text
+
+Display validation error below the input.
+
+```tsx
+<Input
+  label="Confirm Password"
+  errorText="Passwords do not match"
+  type="password"
+/>
+```
+
+**Automatic State**: When `errorText` is provided, `state` automatically defaults to `'error'`.
+
+### Accessibility Features
+
+The Input component includes comprehensive accessibility support:
+
+1. **ARIA Labels**: Generated unique IDs for label association
+2. **ARIA DescribedBy**: Associates helper text and error text with input
+3. **ARIA Invalid**: Automatically set when state === 'error' or validation fails
+4. **Error Role**: Error text has `role="alert"` for screen readers
+5. **Error Announcement**: Live region announces errors to screen readers
+6. **Focus Management**: `focus:ring-2` with `focus:ring-offset-2` for clear focus indication
+7. **Auto-Focus on Error**: Automatically focuses input when validation errors occur
+8. **Required Indicator**: Visual `*` with `aria-label="required"` for screen readers
+9. **Keyboard Navigation**: Full keyboard support with Escape key to clear
+10. **Validating State**: `aria-live="polite"` and `aria-busy="true"` during validation
+
+```tsx
+<Input
+  label="Email"
+  helperText="We'll send verification link"
+  errorText="Invalid email format"
+  accessibility={{
+    announceErrors: true,
+    describedBy: 'email-help-text'
+  }}
+  inputMask="email"
+  required
+  aria-label="Enter your email address"
+/>
+```
+
+### Dark Mode
+
+All Input states automatically support dark mode:
+
+- **Background**: `bg-white` → `dark:bg-neutral-700`
+- **Borders**: `border-neutral-300` → `dark:border-neutral-600`
+- **Text**: `text-neutral-900` → `dark:text-white`
+- **Placeholder**: `placeholder-neutral-400` → `dark:placeholder-neutral-500`
+- **Focus ring offset**: `focus:ring-offset-2` → `dark:focus:ring-offset-neutral-800`
+
+### Real-World Examples
+
+#### Student Registration Form
+
+```tsx
+function StudentRegistrationForm() {
+  return (
+    <div className="space-y-4">
+      <Input
+        label="Full Name"
+        required
+        fullWidth
+      />
+      
+      <Input
+        label="NISN"
+        inputMask="nisn"
+        required
+        fullWidth
+      />
+      
+      <Input
+        label="Email"
+        type="email"
+        customType="email"
+        validationRules={[
+          {
+            validate: (value) => /\S+@\S+\.\S+/.test(value),
+            message: 'Invalid email address'
+          }
+        ]}
+        required
+        fullWidth
+      />
+      
+      <Input
+        label="Phone Number"
+        inputMask="phone"
+        helperText="Format: 0812 3456 789"
+        required
+        fullWidth
+      />
+    </div>
+  );
+}
+```
+
+#### Search Input with Clear
+
+```tsx
+function SearchBar() {
+  const [query, setQuery] = useState('');
+  
+  return (
+    <Input
+      label="Search"
+      value={query}
+      onChange={(e) => setQuery(e.target.value)}
+      placeholder="Search students, teachers..."
+      clearOnEscape={true}
+      fullWidth
+    />
+  );
+}
+```
+
+#### Password with Validation
+
+```tsx
+function PasswordField() {
+  return (
+    <Input
+      label="Password"
+      type="password"
+      helperText="Must be at least 8 characters"
+      validationRules={[
+        {
+          validate: (value) => value.length >= 8,
+          message: 'Password must be at least 8 characters'
+        }
+      ]}
+      required
+    />
+  );
+}
+```
+
+### Performance Considerations
+
+The Input component is optimized using:
+- `forwardRef` for ref forwarding
+- Proper TypeScript typing
+- Input masking with efficient formatting
+- `useFieldValidation` hook for reusable validation logic
+- No unnecessary re-renders
+- CSS-only transitions and animations
+
+### Migration Guide
+
+To migrate existing input implementations:
+
+**Before:**
+```tsx
+<div className="mb-4">
+  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+    Email
+  </label>
+  <input
+    type="email"
+    className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 focus:outline-none"
+    placeholder="Enter email..."
+  />
+</div>
+```
+
+**After:**
+```tsx
+import Input from './ui/Input';
+
+<Input
+  label="Email"
+  type="email"
+  customType="email"
+  placeholder="Enter email..."
+/>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Built-in validation and error handling
+- ✅ Input masks for common formats
+- ✅ Helper text and error text support
+- ✅ Size variants for flexible layouts
+- ✅ Dark mode support
+- ✅ Clear on Escape functionality
+- ✅ Reduced code duplication
+- ✅ Type-safe props
+
+### Test Coverage
+
+The Input component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Input.test.tsx
+```
+
+Test scenarios include:
+- Rendering with default props
+- Rendering with label
+- Rendering with helper text
+- Rendering with error text
+- Automatic error state when errorText provided
+- All size variants (sm, md, lg)
+- All state variants (default, error, success)
+- Full width variant
+- Required field indicator
+- Left and right icons
+- Input mask formatting (nisn, phone, date, year, class, grade)
+- Validation rules (onChange, onBlur)
+- Error announcement (ARIA live regions)
+- Auto-focus on validation errors
+- Clear on Escape functionality
+- ARIA attributes (aria-label, aria-describedby, aria-invalid)
+- Unique ID generation
+- Custom className application
+- Dark mode styling
+- Focus ring visibility
+
+### Usage in Application
+
+Currently integrated throughout the application for all form inputs.
+
+**Common Patterns:**
+
+```tsx
+// Basic text input
+<Input label="Name" placeholder="Enter name" />
+
+// Email input
+<Input label="Email" type="email" customType="email" placeholder="Enter email" />
+
+// Password input
+<Input label="Password" type="password" />
+
+// NISN input with mask
+<Input label="NISN" inputMask="nisn" placeholder="1234567890" />
+
+// Phone input with mask
+<Input label="Phone" inputMask="phone" placeholder="08123456789" />
+
+// Date input with mask
+<Input label="Date of Birth" inputMask="date" placeholder="DD/MM/YYYY" />
+
+// With validation
+<Input
+  label="Email"
+  validationRules={[{
+    validate: (value) => /\S+@\S+\.\S+/.test(value),
+    message: 'Invalid email'
+  }]}
+/>
+
+// With icons
+<Input label="Search" leftIcon={<SearchIcon />} placeholder="Search..." />
+
+// Required field
+<Input label="Email" required />
+
+// Full width
+<Input label="Full Name" fullWidth />
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Character count with maxLength
+- Password visibility toggle
+- Debounced validation
+- Custom input masks
+- Multiple input validation
+ - Input prefix/suffix
+ 
+---
+
+## Select Component
+
+**Location**: `src/components/ui/Select.tsx`
+
+A reusable select dropdown component with consistent styling, accessibility support, and state management.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg`
+- **3 States**: `default`, `error`, `success`
+- **Accessibility**: Full ARIA support, keyboard navigation, focus management
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Label Support**: Optional label with required indicator
+- **Helper Text**: Contextual guidance for users
+- **Error Handling**: Built-in error state with role="alert"
+- **Options**: Array-based options with disabled support
+- **Placeholder**: Optional placeholder option
+- **Custom Icon**: Built-in chevron-down icon
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text displayed above the select |
+| `helperText` | `string` | `undefined` | Helper text displayed below the select |
+| `errorText` | `string` | `undefined` | Error message displayed below the select (sets state to error) |
+| `size` | `SelectSize` | `'md'` | Select size (affects padding, text size, and icon size) |
+| `state` | `SelectState` | `'default'` | Visual state variant (defaults to 'error' if errorText provided) |
+| `fullWidth` | `boolean` | `false` | Whether the select should take full width |
+| `options` | `Array<{ value: string; label: string; disabled?: boolean }>` | **Required** | Array of option objects |
+| `placeholder` | `string` | `undefined` | Placeholder text for default disabled option |
+| `id` | `string` | Auto-generated | Unique identifier for the select |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard select attributes | - | - | Passes through all standard HTML select props |
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for dense interfaces.
+
+```tsx
+import Select from './ui/Select';
+
+<Select
+  label="Category"
+  size="sm"
+  options={[
+    { value: '1', label: 'Option 1' },
+    { value: '2', label: 'Option 2' }
+  ]}
+/>
+```
+
+**Dimensions**:
+- Select padding: `px-3 py-2`
+- Select text: `text-sm`
+- Icon: `w-4 h-4`
+- Label: `text-xs`
+- Helper/Error text: `text-xs`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<Select
+  label="Category"
+  size="md"
+  options={[
+    { value: '1', label: 'Option 1' },
+    { value: '2', label: 'Option 2' }
+  ]}
+/>
+```
+
+**Dimensions**:
+- Select padding: `px-4 py-3`
+- Select text: `text-sm sm:text-base`
+- Icon: `w-5 h-5`
+- Label: `text-sm`
+- Helper/Error text: `text-xs`
+
+#### Large (lg)
+
+Larger size for better accessibility and touch targets.
+
+```tsx
+<Select
+  label="Category"
+  size="lg"
+  options={[
+    { value: '1', label: 'Option 1' },
+    { value: '2', label: 'Option 2' }
+  ]}
+/>
+```
+
+**Dimensions**:
+- Select padding: `px-5 py-4`
+- Select text: `text-base sm:text-lg`
+- Icon: `w-5 h-5`
+- Label: `text-base`
+- Helper/Error text: `text-sm`
+
+### States
+
+#### Default State
+
+Standard styling for normal select.
+
+```tsx
+<Select
+  label="Category"
+  placeholder="Select a category..."
+  options={categories}
+/>
+```
+
+**Styling**:
+- Border: `border-neutral-300` / `dark:border-neutral-600`
+- Background: `bg-white` / `dark:bg-neutral-700`
+- Text: `text-neutral-900` / `dark:text-white`
+- Focus: `focus:ring-primary-500/50 focus:border-primary-500`
+
+#### Error State
+
+Red styling when validation fails.
+
+```tsx
+<Select
+  label="Category"
+  errorText="Please select a category"
+  placeholder="Select a category..."
+  options={categories}
+/>
+```
+
+**Styling**:
+- Border: `border-red-300` / `dark:border-red-700`
+- Focus: `focus:ring-red-500/50 focus:border-red-500`
+- Error text: `text-red-600 dark:text-red-400` with `role="alert"`
+- `aria-invalid`: `true`
+
+#### Success State
+
+Green styling for successful validation.
+
+```tsx
+<Select
+  label="Category"
+  state="success"
+  helperText="Category selected"
+  placeholder="Select a category..."
+  options={categories}
+/>
+```
+
+**Styling**:
+- Border: `border-green-300` / `dark:border-green-700`
+- Focus: `focus:ring-green-500/50 focus:border-green-500`
+
+### Options
+
+Array-based options with optional disabled state.
+
+```tsx
+const roleOptions = [
+  { value: 'admin', label: 'Administrator' },
+  { value: 'teacher', label: 'Guru' },
+  { value: 'student', label: 'Siswa' },
+  { value: 'parent', label: 'Wali Murid' },
+  { value: 'staff', label: 'Staff', disabled: true }
+];
+
+<Select
+  label="Role"
+  options={roleOptions}
+/>
+```
+
+### Placeholder
+
+Optional placeholder option (disabled).
+
+```tsx
+<Select
+  label="City"
+  placeholder="Select city..."
+  options={cityOptions}
+/>
+```
+
+### Full Width
+
+Make select take full width of container.
+
+```tsx
+<Select
+  label="Category"
+  fullWidth
+  options={categories}
+/>
+```
+
+### Required Field
+
+Show required indicator (*).
+
+```tsx
+<Select
+  label="Role"
+  required
+  options={roleOptions}
+/>
+```
+
+**Display**:
+- Label shows `*` indicator with `aria-label="required"` for screen readers
+
+### Helper Text
+
+Provide contextual guidance below the select.
+
+```tsx
+<Select
+  label="Grade"
+  helperText="Select student's current grade level"
+  placeholder="Select grade..."
+  options={gradeOptions}
+/>
+```
+
+### Error Text
+
+Display validation error below the select.
+
+```tsx
+<Select
+  label="Role"
+  errorText="Role is required"
+  options={roleOptions}
+/>
+```
+
+**Automatic State**: When `errorText` is provided, `state` automatically defaults to `'error'`.
+
+### Disabled Options
+
+Disable specific options.
+
+```tsx
+const options = [
+  { value: '1', label: 'Option 1' },
+  { value: '2', label: 'Option 2 (Unavailable)', disabled: true },
+  { value: '3', label: 'Option 3' }
+];
+
+<Select
+  label="Selection"
+  options={options}
+/>
+```
+
+### Accessibility Features
+
+The Select component includes comprehensive accessibility support:
+
+1. **ARIA Labels**: Generated unique IDs for label association
+2. **ARIA DescribedBy**: Associates helper text and error text with select
+3. **ARIA Invalid**: Automatically set when `state === 'error'`
+4. **Error Role**: Error text has `role="alert"` for screen readers
+5. **Focus Management**: `focus:ring-2` with `focus:ring-offset-2` for clear focus indication
+6. **Required Indicator**: Visual `*` with `aria-label="required"` for screen readers
+7. **Icon Hiding**: Chevron icon has `aria-hidden="true"` for screen readers
+8. **Keyboard Navigation**: Full keyboard support with visible focus states
+9. **Semantic HTML**: Uses native `<select>` element for maximum accessibility
+
+```tsx
+<Select
+  label="Role"
+  helperText="Select user role for access control"
+  errorText="Role is required"
+  placeholder="Select role..."
+  options={roleOptions}
+  required
+  aria-label="Select user role"
+/>
+```
+
+### Dark Mode
+
+All Select states automatically support dark mode:
+
+- **Background**: `bg-white` → `dark:bg-neutral-700`
+- **Borders**: `border-neutral-300` → `dark:border-neutral-600`
+- **Text**: `text-neutral-900` → `dark:text-white`
+- **Icon**: `text-neutral-400` → `dark:text-neutral-500`
+
+### Real-World Examples
+
+#### User Role Selection
+
+```tsx
+function UserRoleForm() {
+  const roles = [
+    { value: 'admin', label: 'Administrator' },
+    { value: 'teacher', label: 'Guru' },
+    { value: 'student', label: 'Siswa' },
+    { value: 'parent', label: 'Wali Murid' }
+  ];
+  
+  return (
+    <Select
+      label="Role"
+      placeholder="Select role..."
+      options={roles}
+      required
+    />
+  );
+}
+```
+
+#### Class Selection
+
+```tsx
+function ClassSelector() {
+  const classes = [
+    { value: '10-1', label: 'Kelas X-1' },
+    { value: '10-2', label: 'Kelas X-2', disabled: true },
+    { value: '10-3', label: 'Kelas X-3' }
+  ];
+  
+  return (
+    <Select
+      label="Kelas"
+      placeholder="Pilih kelas..."
+      options={classes}
+      helperText="Pilih kelas untuk melihat jadwal"
+      fullWidth
+    />
+  );
+}
+```
+
+#### With Validation
+
+```tsx
+function FormSelect() {
+  const [value, setValue] = useState('');
+  const [error, setError] = useState('');
+  
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setValue(e.target.value);
+    
+    if (!e.target.value) {
+      setError('Selection is required');
+    } else {
+      setError('');
+    }
+  };
+  
+  return (
+    <Select
+      label="Category"
+      errorText={error || undefined}
+      placeholder="Select category..."
+      options={categoryOptions}
+      onChange={handleChange}
+      required
+    />
+  );
+}
+```
+
+### Performance Considerations
+
+The Select component is optimized using:
+- `forwardRef` for ref forwarding
+- Proper TypeScript typing
+- No unnecessary re-renders
+- CSS-only transitions and animations
+- Efficient class string concatenation with whitespace normalization
+- Native HTML select element for best performance
+
+### Migration Guide
+
+To migrate existing select implementations:
+
+**Before:**
+```tsx
+<div className="mb-4">
+  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+    Role
+  </label>
+  <div className="relative">
+    <select className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-xl bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 focus:outline-none appearance-none">
+      <option value="">Select role...</option>
+      <option value="admin">Administrator</option>
+      <option value="teacher">Guru</option>
+    </select>
+  </div>
+</div>
+```
+
+**After:**
+```tsx
+import Select from './ui/Select';
+
+<Select
+  label="Role"
+  placeholder="Select role..."
+  options={[
+    { value: 'admin', label: 'Administrator' },
+    { value: 'teacher', label: 'Guru' }
+  ]}
+/>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Built-in error and success states
+- ✅ Helper text support
+- ✅ Size variants for flexible layouts
+- ✅ Dark mode support
+- ✅ Focus management
+- ✅ Required field indicator
+- ✅ Reduced code duplication
+- ✅ Type-safe props
+
+### Test Coverage
+
+The Select component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Select.test.tsx
+```
+
+Test scenarios include:
+- Rendering with default props
+- Rendering with label
+- Rendering with helper text
+- Rendering with error text
+- Automatic error state when errorText provided
+- All size variants (sm, md, lg)
+- All state variants (default, error, success)
+- Full width variant
+- Options array rendering
+- Placeholder option
+- Disabled options
+- Required field indicator
+- ARIA attributes (aria-label, aria-describedby, aria-invalid)
+- Unique ID generation
+- Custom className application
+- Custom props passthrough
+- Dark mode styling
+- Focus ring visibility
+- Keyboard navigation
+- Icon rendering with aria-hidden
+
+### Usage in Application
+
+Currently integrated throughout the application for all form select inputs.
+
+**Common Patterns:**
+
+```tsx
+// Basic select
+<Select label="Category" placeholder="Select..." options={options} />
+
+// With placeholder
+<Select label="City" placeholder="Select city..." options={cities} />
+
+// Required field
+<Select label="Role" required options={roles} />
+
+// With validation
+<Select
+  label="Grade"
+  errorText={error || undefined}
+  placeholder="Select grade..."
+  options={grades}
+/>
+
+// Full width
+<Select label="Class" fullWidth options={classes} />
+
+// Disabled options
+<Select
+  label="Section"
+  options={[
+    { value: 'A', label: 'Section A' },
+    { value: 'B', label: 'Section B', disabled: true }
+  ]}
+/>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Multi-select support
+- Search/filter within options
+- Option groups (optgroup)
+- Custom option rendering
+- Async options loading
+- Option descriptions
+
+---
+
+## FormGrid Component
+
+**Location**: `src/components/ui/FormGrid.tsx`
+
+A responsive grid layout component for form fields with configurable columns and spacing.
+
+### Features
+
+- **4 Column Options**: 1, 2, 3, or 4 columns
+- **3 Gap Options**: `sm`, `md`, `lg` for flexible spacing
+- **Responsive**: 1 column on mobile, configurable on desktop
+- **Accessibility**: Semantic grid layout
+- **Flexible**: Works with any form components
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | **Required** | Form field components to display in grid |
+| `cols` | `1 \| 2 \| 3 \| 4` | `2` | Number of columns on desktop |
+| `gap` | `'sm' \| 'md' \| 'lg'` | `'md'` | Spacing between grid items |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard div attributes | - | - | Passes through all standard HTML div props |
+
+### Column Options
+
+#### 1 Column
+
+Full-width single column layout (stacked vertically).
+
+```tsx
+import FormGrid from './ui/FormGrid';
+
+<FormGrid cols={1}>
+  <Input label="Full Name" />
+  <Input label="Email" />
+  <Input label="Phone" />
+</FormGrid>
+```
+
+**Layout**: `grid-cols-1 md:grid-cols-1`
+
+#### 2 Columns
+
+Two-column grid layout (default).
+
+```tsx
+<FormGrid cols={2}>
+  <Input label="First Name" />
+  <Input label="Last Name" />
+  <Input label="Email" />
+  <Input label="Phone" />
+</FormGrid>
+```
+
+**Layout**: `grid-cols-1 md:grid-cols-2`
+
+#### 3 Columns
+
+Three-column grid layout.
+
+```tsx
+<FormGrid cols={3}>
+  <Input label="Day" />
+  <Input label="Month" />
+  <Input label="Year" />
+</FormGrid>
+```
+
+**Layout**: `grid-cols-1 md:grid-cols-3`
+
+#### 4 Columns
+
+Four-column grid layout.
+
+```tsx
+<FormGrid cols={4}>
+  <Input label="Field 1" />
+  <Input label="Field 2" />
+  <Input label="Field 3" />
+  <Input label="Field 4" />
+</FormGrid>
+```
+
+**Layout**: `grid-cols-1 md:grid-cols-4`
+
+### Gap Options
+
+#### Small Gap (sm)
+
+Compact spacing between grid items.
+
+```tsx
+<FormGrid gap="sm">
+  <Input label="Field 1" />
+  <Input label="Field 2" />
+</FormGrid>
+```
+
+**Spacing**: `gap-2` (0.5rem)
+
+#### Medium Gap (md)
+
+Standard spacing (default).
+
+```tsx
+<FormGrid gap="md">
+  <Input label="Field 1" />
+  <Input label="Field 2" />
+</FormGrid>
+```
+
+**Spacing**: `gap-4` (1rem)
+
+#### Large Gap (lg)
+
+Generous spacing.
+
+```tsx
+<FormGrid gap="lg">
+  <Input label="Field 1" />
+  <Input label="Field 2" />
+</FormGrid>
+```
+
+**Spacing**: `gap-6` (1.5rem)
+
+### Real-World Examples
+
+#### Contact Form
+
+```tsx
+function ContactForm() {
+  return (
+    <FormGrid cols={2}>
+      <Input label="First Name" />
+      <Input label="Last Name" />
+      <Input label="Email" />
+      <Input label="Phone" />
+      <Textarea label="Message" />
+    </FormGrid>
+  );
+}
+```
+
+#### Registration Form
+
+```tsx
+function RegistrationForm() {
+  return (
+    <FormGrid cols={2} gap="lg">
+      <Input label="Full Name" />
+      <Input label="NISN" />
+      <Input label="Email" />
+      <Select label="Role" options={roleOptions} />
+      <Input label="Phone" />
+      <Input label="Class" />
+    </FormGrid>
+  );
+}
+```
+
+#### Date Selection
+
+```tsx
+function DateForm() {
+  return (
+    <FormGrid cols={3}>
+      <Input label="Day" placeholder="DD" />
+      <Input label="Month" placeholder="MM" />
+      <Input label="Year" placeholder="YYYY" />
+    </FormGrid>
+  );
+}
+```
+
+#### Mixed Form
+
+```tsx
+function StudentInfoForm() {
+  return (
+    <div className="space-y-6">
+      <FormGrid cols={2} gap="md">
+        <Input label="Full Name" />
+        <Input label="NISN" />
+      </FormGrid>
+      
+      <FormGrid cols={4} gap="sm">
+        <Input label="Province" />
+        <Input label="City" />
+        <Input label="District" />
+        <Input label="Village" />
+      </FormGrid>
+      
+      <FormGrid cols={1}>
+        <Textarea label="Address" />
+      </FormGrid>
+    </div>
+  );
+}
+```
+
+### Accessibility
+
+The FormGrid component includes accessibility support:
+
+1. **Semantic Layout**: Uses CSS Grid for proper screen reader support
+2. **Responsive**: Single column on mobile for better accessibility
+3. **Logical Grouping**: Maintains logical tab order
+4. **Keyboard Navigation**: Preserves natural keyboard flow
+
+### Styling Customization
+
+Add custom classes while preserving default grid styling:
+
+```tsx
+<FormGrid
+  cols={2}
+  gap="lg"
+  className="p-6 bg-white dark:bg-neutral-800 rounded-xl"
+>
+  <Input label="Field 1" />
+  <Input label="Field 2" />
+</FormGrid>
+```
+
+### Performance Considerations
+
+The FormGrid component is optimized using:
+- CSS Grid for efficient layout
+- Responsive breakpoints (mobile: 1 column, desktop: configurable)
+- No unnecessary re-renders
+- Proper TypeScript typing
+- Minimal component overhead
+
+### Migration Guide
+
+To migrate existing form layouts:
+
+**Before:**
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <Input label="First Name" />
+  <Input label="Last Name" />
+</div>
+```
+
+**After:**
+```tsx
+import FormGrid from './ui/FormGrid';
+
+<FormGrid cols={2}>
+  <Input label="First Name" />
+  <Input label="Last Name" />
+</FormGrid>
+```
+
+**Benefits:**
+- ✅ Consistent grid spacing across application
+- ✅ Easier to read and maintain
+- ✅ Type-safe props
+- ✅ Responsive by default
+- ✅ Reduced code duplication
+- ✅ Standardized gap options
+
+### Usage in Application
+
+Currently integrated for multi-column form layouts throughout the application.
+
+**Common Patterns:**
+
+```tsx
+// Two-column form (most common)
+<FormGrid cols={2}>
+  <Input label="Field 1" />
+  <Input label="Field 2" />
+</FormGrid>
+
+// Three-column form
+<FormGrid cols={3}>
+  <Input label="Field 1" />
+  <Input label="Field 2" />
+  <Input label="Field 3" />
+</FormGrid>
+
+// Compact spacing
+<FormGrid cols={2} gap="sm">
+  <Input label="Field 1" />
+  <Input label="Field 2" />
+</FormGrid>
+
+// Generous spacing
+<FormGrid cols={2} gap="lg">
+  <Input label="Field 1" />
+  <Input label="Field 2" />
+</FormGrid>
+
+// With custom styling
+<FormGrid className="p-6 bg-white rounded-xl">
+  <Input label="Field 1" />
+  <Input label="Field 2" />
+</FormGrid>
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Breakpoint options (sm, md, lg, xl)
+- Auto-fit/ auto-fill column options
+- Custom responsive column configurations
+- Order property support
+- Alignment options (start, center, end)
 
 ---
 
@@ -10124,7 +11574,481 @@ All variants support 6 colors: `green`, `blue`, `purple`, `red`, `yellow`, `neut
 - **ARIA Controls**: `aria-controls` links to panel
 - **Keyboard**: Arrow keys for navigation, Enter/Space to select
 - **Disabled**: `disabled` attribute on inactive tabs
-- **Badges**: `aria-label` on badge count
+ - **Badges**: `aria-label` on badge count
+ 
+---
+ 
+## Toast Component
+
+**Location**: `src/components/Toast.tsx`
+
+A toast notification component with 3 types, keyboard controls, pause-on-hover, and auto-dismiss functionality.
+
+### Features
+
+- **3 Types**: `success`, `info`, `error`
+- **Auto-Dismiss**: Configurable duration with countdown
+- **Pause on Hover**: Suspends timer when user hovers over toast
+- **Keyboard Controls**: Escape key to dismiss
+- **Focus Management**: Manages focus when toast appears/disappears
+- **Accessibility**: Full ARIA support with live regions
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Icons**: Built-in icons for each toast type
+- **Smooth Animations**: Slide-in/out transitions with custom easing
+- **Backdrop Blur**: Visual separation from content
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `message` | `string` | **Required** | Toast message to display |
+| `type` | `ToastType` | `'success'` | Toast type (success, info, error) |
+| `isVisible` | `boolean` | **Required** | Whether toast is visible |
+| `onClose` | `() => void` | **Required** | Callback when toast closes |
+| `duration` | `number` | `3000` | Auto-dismiss duration in milliseconds (default: 3 seconds) |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### Toast Types
+
+#### Success Toast
+
+Green-themed toast for successful operations.
+
+```tsx
+import { Toast } from './Toast';
+
+<Toast
+  message="Data saved successfully"
+  type="success"
+  isVisible={showSuccess}
+  onClose={() => setShowSuccess(false)}
+/>
+```
+
+**Icon**: Checkmark icon in green
+**Border**: Left border in primary green
+**ARIA Role**: `role="status"`, `aria-live="polite"`
+
+#### Info Toast
+
+Blue-themed toast for informational messages.
+
+```tsx
+<Toast
+  message="New message received"
+  type="info"
+  isVisible={showInfo}
+  onClose={() => setShowInfo(false)}
+/>
+```
+
+**Icon**: Info circle icon in blue
+**Border**: Left border in blue
+**ARIA Role**: `role="status"`, `aria-live="polite"`
+
+#### Error Toast
+
+Red-themed toast for error messages.
+
+```tsx
+<Toast
+  message="Failed to save data"
+  type="error"
+  isVisible={showError}
+  onClose={() => setShowError(false)}
+/>
+```
+
+**Icon**: Exclamation triangle icon in red
+**Border**: Left border in red
+**ARIA Role**: `role="alert"`, `aria-live="assertive"`
+
+### Auto-Dismiss Duration
+
+Configure how long toast displays before auto-dismissing.
+
+```tsx
+<Toast
+  message="Short toast (2s)"
+  duration={2000}
+  type="success"
+  isVisible={isVisible}
+  onClose={handleClose}
+/>
+
+<Toast
+  message="Long toast (5s)"
+  duration={5000}
+  type="info"
+  isVisible={isVisible}
+  onClose={handleClose}
+/>
+```
+
+**Behavior**:
+- Timer starts when toast becomes visible
+- Timer pauses when mouse hovers over toast
+- Timer resumes when mouse leaves toast
+- Toast dismisses when timer reaches 0
+- Duration is reset if toast re-appears
+
+### Pause on Hover
+
+Automatic pause when user hovers, preventing premature dismissal.
+
+```tsx
+<Toast
+  message="Long message to read carefully"
+  type="info"
+  isVisible={isVisible}
+  onClose={handleClose}
+  duration={5000}
+/>
+```
+
+**User Experience**:
+- User can read message without toast disappearing
+- Timer pauses during hover
+- Timer resumes when mouse leaves toast
+- Useful for long messages or important notifications
+
+### Keyboard Controls
+
+Press Escape key to dismiss toast immediately.
+
+```tsx
+<Toast
+  message="Press Escape to close"
+  type="info"
+  isVisible={isVisible}
+  onClose={handleClose}
+/>
+```
+
+**Behavior**:
+- Escape key triggers `onClose` callback
+- Works even if toast is not focused
+- Accessibility: Screen reader users can dismiss easily
+
+### Focus Management
+
+Component manages focus for accessibility:
+
+```tsx
+const [showToast, setShowToast] = useState(false);
+
+// Toast appears
+setShowToast(true);
+// Toast receives focus automatically
+
+// Toast dismisses
+setShowToast(false);
+// Focus returns to previous element
+```
+
+**Behavior**:
+- Toast receives focus when `isVisible` becomes `true`
+- Previous focused element is saved
+- When toast closes, focus returns to saved element
+- Improves keyboard navigation and screen reader experience
+
+### Accessibility Features
+
+The Toast component includes comprehensive accessibility support:
+
+1. **ARIA Role**: `role="alert"` for errors, `role="status"` for info/success
+2. **ARIA Live Region**: `aria-live="assertive"` for errors, `aria-live="polite"` for others
+3. **ARIA Atomic**: `aria-atomic="true"` ensures entire toast is announced
+4. **Keyboard Support**: Escape key to dismiss
+5. **Focus Management**: Auto-focus and focus restoration
+6. **Pause on Hover**: Prevents premature dismissal while reading
+7. **Icons**: Descriptive icons for visual feedback
+8. **Colors**: Color-coded for different toast types
+9. **Dismiss Button**: IconButton with proper ARIA label
+
+```tsx
+<Toast
+  message="Operation completed successfully"
+  type="success"
+  isVisible={showSuccess}
+  onClose={handleClose}
+  duration={4000}
+/>
+```
+
+**Screen Reader Experience**:
+- "Operation completed successfully" is announced via live region
+- User can press Escape to dismiss
+- Focus returns to previous element automatically
+- No blocking interactions with rest of page
+
+### Dark Mode
+
+All toast types automatically support dark mode:
+
+- **Background**: Semi-transparent white/neutral overlay with backdrop blur
+- **Border Colors**: 
+  - Success: `border-l-primary-500`
+  - Info: `border-l-blue-500`
+  - Error: `border-l-red-500`
+- **Icons**: Adapt colors to theme
+- **Text**: `text-neutral-900 dark:text-white`
+
+### Real-World Examples
+
+#### Success Toast
+
+```tsx
+function SaveButton() {
+  const [showToast, setShowToast] = useState(false);
+  const [saving, setSaving] = useState(false);
+  
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await saveData();
+      setShowToast(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setSaving(false);
+    }
+  };
+  
+  return (
+    <>
+      <Button onClick={handleSave} isLoading={saving}>
+        Save
+      </Button>
+      <Toast
+        message="Data saved successfully"
+        type="success"
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+      />
+    </>
+  );
+}
+```
+
+#### Error Toast
+
+```tsx
+function DeleteButton({ itemId }) {
+  const [showError, setShowError] = useState(false);
+  
+  const handleDelete = async () => {
+    try {
+      await deleteItem(itemId);
+    } catch (error) {
+      setShowError(true);
+    }
+  };
+  
+  return (
+    <>
+      <Button variant="danger" onClick={handleDelete}>
+        Delete
+      </Button>
+      <Toast
+        message="Failed to delete item"
+        type="error"
+        isVisible={showError}
+        onClose={() => setShowError(false)}
+      />
+    </>
+  );
+}
+```
+
+#### Info Toast with Long Duration
+
+```tsx
+function NotificationDisplay() {
+  const [showToast, setShowToast] = useState(false);
+  
+  const showNotification = (message: string) => {
+    setShowToast(true);
+  };
+  
+  return (
+    <Toast
+      message="You have a new message from Admin. Please check your inbox for important announcements."
+      type="info"
+      isVisible={showToast}
+      onClose={() => setShowToast(false)}
+      duration={8000}
+    />
+  );
+}
+```
+
+#### Integration with Toast Hook
+
+```tsx
+function ComponentWithToast() {
+  const { showSuccessToast, showErrorToast } = useToast();
+  
+  const handleSubmit = async () => {
+    try {
+      await submitForm();
+      showSuccessToast('Form submitted successfully');
+    } catch (error) {
+      showErrorToast('Failed to submit form');
+    }
+  };
+  
+  return (
+    <Button onClick={handleSubmit}>
+      Submit
+    </Button>
+  );
+}
+```
+
+### Performance Considerations
+
+The Toast component is optimized using:
+- Functional component with hooks
+- Efficient timer management with cleanup
+- Proper focus restoration
+- CSS-only animations and transitions
+- No unnecessary re-renders
+- Custom easing function for smooth animations
+- Memoized event handlers with `useCallback`
+
+### Styling Details
+
+The component uses these Tailwind CSS classes:
+
+**Container**:
+- Fixed position: `fixed top-20 right-4 sm:top-6 sm:right-6`
+- Z-index: `z-50`
+- Padding: `px-5 py-4`
+- Rounded: `rounded-xl`
+- Shadow: `shadow-float`
+- Flex layout: `flex items-center gap-3`
+- Transition: `transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]`
+- Transform: `transform`
+- Max width: `max-w-md`
+- Border: `border`
+- Backdrop blur: `backdrop-blur-xl`
+
+**Type-Specific**:
+- **Success**: `border-l-4 border-l-primary-500` with green icon
+- **Info**: `border-l-4 border-l-blue-500` with blue icon
+- **Error**: `border-l-4 border-l-red-500` with red icon
+
+**Visibility States**:
+- **Visible**: `translate-x-0 opacity-100`
+- **Hidden**: `translate-x-full opacity-0 pointer-events-none`
+
+### Migration Guide
+
+To migrate existing toast implementations:
+
+**Before:**
+```tsx
+{showToast && (
+  <div className="fixed top-20 right-4 px-4 py-3 bg-white dark:bg-neutral-800 rounded-lg shadow-lg border-l-4 border-l-green-500 flex items-center gap-3">
+    <svg className="w-6 h-6 text-green-600">
+      {/* Check icon */}
+    </svg>
+    <span>{message}</span>
+    <button onClick={onClose} className="text-neutral-500 hover:text-neutral-700">
+      <CloseIcon />
+    </button>
+  </div>
+)}
+```
+
+**After:**
+```tsx
+import { Toast } from './Toast';
+
+<Toast
+  message={message}
+  type="success"
+  isVisible={showToast}
+  onClose={onClose}
+/>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Improved accessibility with proper ARIA support
+- ✅ Built-in keyboard controls (Escape key)
+- ✅ Pause on hover functionality
+- ✅ Auto-dismiss with countdown
+- ✅ Focus management
+- ✅ Smooth animations
+- ✅ Dark mode support
+- ✅ Reduced code duplication
+- ✅ Type-safe props
+
+### Test Coverage
+
+The Toast component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/Toast.test.tsx
+```
+
+Test scenarios include:
+- Rendering with all toast types (success, info, error)
+- Rendering with custom messages
+- Rendering with custom duration
+- Keyboard controls (Escape key)
+- Mouse enter/leave pause behavior
+- Auto-dismiss after duration
+- onClose callback invocation
+- Focus management (focus on show, restore on hide)
+- ARIA attributes (role, aria-live, aria-atomic)
+- Visibility classes (translate-x-0 vs translate-x-full)
+- Opacity transitions
+- Dismiss button rendering
+- Dismiss button click handling
+- Icon rendering for each type
+- Border colors for each type
+- Dark mode styling
+- Custom className application
+- Accessibility features (pause-on-hover, focus trap)
+
+### Usage in Application
+
+Currently integrated throughout the application for all toast notifications.
+
+**Common Patterns:**
+
+```tsx
+// Success toast
+<Toast message="Saved successfully" type="success" isVisible={show} onClose={close} />
+
+// Info toast
+<Toast message="New message" type="info" isVisible={show} onClose={close} />
+
+// Error toast
+<Toast message="Failed to load" type="error" isVisible={show} onClose={close} />
+
+// Custom duration
+<Toast message="Long message" type="info" duration={5000} isVisible={show} onClose={close} />
+
+// With useToast hook
+const { showSuccessToast } = useToast();
+showSuccessToast('Operation completed');
+```
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Progress bar toast (upload/download progress)
+- Action buttons in toast (e.g., "Undo", "Retry")
+- Stacked toasts (multiple notifications)
+- Custom position options (top-left, bottom-right, etc.)
+- Sound notifications
+- Dismiss timeout with countdown display
+- Grouped notifications (e.g., "3 new messages")
 
 ---
 
