@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { AuthService } from './authService'
-import { authAPI } from './apiService'
+import { AuthService } from '../authService'
+import { authAPI } from '../apiService'
 
 // Mock the authAPI
-vi.mock('./apiService', () => ({
+vi.mock('../apiService', () => ({
   authAPI: {
     login: vi.fn(),
     logout: vi.fn(),
