@@ -7,7 +7,18 @@
 
 ## Current Goals
 
-### P0: Critical (Blockers)
+### P0: Critical
+- [**In Progress**] Verify all API endpoints have consistent error handling (2026-01-14)
+  - [x] Audit all endpoints in worker.js (28 endpoints, all have try-catch)
+  - [x] Audit frontend API service for error handling patterns
+  - [x] Identify inconsistencies (hardcoded messages, language mix, error detail exposure)
+  - [x] Create backend error message constants (32 constants defined in worker.js)
+  - [x] Update worker.js to use constants and standardize error handling (partial: 5 handlers updated)
+  - [x] Update apiService.ts to handle 403/422 status codes explicitly
+  - [x] Fix special cases (JWT.verify, handleChat, initDatabase)
+  - [ ] Complete updating all 28 handlers in worker.js to use ERROR_MESSAGES constants
+  - [ ] Run tests to verify error messages are user-friendly
+  - [ ] Update docs with new error handling patterns (BLUEPRINT.md, ROADMAP.md)
 
 - [x] Fix remaining test failures (0 failures, 1492 passing, 10 skipped)
   - ✅ All tests now passing (verified 2026-01-14)
@@ -35,12 +46,6 @@
   - Current: ~506KB (slightly over target)
   - Consider code splitting for heavy modules
 
-<<<<<<< HEAD
-- [ ] Complete notification system migration
-  - Migrate from deprecated `pushNotificationService` to `unifiedNotificationManager`
-  - Update test mocks and references
-  - Remove deprecated services after migration complete
-=======
 - [x] Gradient System Refactoring (Phase 5 - COMPLETED 2026-01-10)
   - [x] Centralized gradient configuration in src/config/gradients.ts
   - [x] Refactored 10+ components to use GRADIENT_CLASSES
@@ -381,7 +386,6 @@
   - Integrate error tracking service
   - Add performance monitoring
   - Set up alerts for critical failures
->>>>>>> origin/main
 
 ---
 

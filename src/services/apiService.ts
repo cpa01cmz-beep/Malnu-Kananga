@@ -513,6 +513,24 @@ async function request<T>(
       }
     }
 
+    if (response.status === 403) {
+      const classifiedError = classifyError(new Error('Forbidden access'), {
+        operation: `API ${method} ${endpoint}`,
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+
+    if (response.status === 422) {
+      const classifiedError = classifyError(new Error('Validation error'), {
+        operation: `API ${method} ${endpoint}`,
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+
     return json;
   } catch (error) {
     // Auto-queue on network failure for write operations
