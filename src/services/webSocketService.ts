@@ -1,4 +1,4 @@
- 
+  
 import { 
   STORAGE_KEYS, 
   type UserRole 
@@ -6,6 +6,7 @@ import {
 import { apiService } from './apiService';
 import type { AuthPayload } from './apiService';
 import { logger } from '../utils/logger';
+import { DEFAULT_API_BASE_URL } from '../config';
 import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification } from '../types';
 
 /* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
@@ -549,7 +550,7 @@ private updateEventsData(event: RealTimeEvent): void {
     const lastSync = localStorage.getItem(STORAGE_KEYS.LAST_SYNC_TIME) || new Date(0).toISOString();
     
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev'}/api/updates`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/updates`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

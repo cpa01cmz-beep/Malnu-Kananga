@@ -12,7 +12,9 @@ import {
   logError
 } from '../utils/errorHandler';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://malnu-kananga-worker.cpa01cmz.workers.dev';
+import { API_BASE_URL as CONFIG_API_BASE_URL } from '../config';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || CONFIG_API_BASE_URL;
 
 // ============================================
 // TYPES
