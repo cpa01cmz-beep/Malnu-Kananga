@@ -1,7 +1,7 @@
 # Task List
 
 **Last Updated**: 2026-01-14
-**Version**: 13.2.0
+**Version**: 3.2.0
 
 ---
 
@@ -134,4 +134,4 @@
  ---
 
  **Last Updated**: 2026-01-14
-**Version**: 13.2.0
+**Version**: 3.2.0

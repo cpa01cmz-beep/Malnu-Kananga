@@ -113,9 +113,15 @@ export default defineConfig(({ mode }) => {
               return 'vendor-tesseract';
             }
 
-            // PDF generation libraries
-            if (id.includes('jspdf') || id.includes('html2canvas')) {
-              return 'vendor-pdf';
+            // PDF generation libraries (split into smaller chunks)
+            if (id.includes('jspdf-autotable')) {
+              return 'vendor-jpdf-autotable';
+            }
+            if (id.includes('html2canvas')) {
+              return 'vendor-html2canvas';
+            }
+            if (id.includes('jspdf')) {
+              return 'vendor-jpdf';
             }
 
             // Recharts (charts - medium size)
@@ -138,7 +144,7 @@ export default defineConfig(({ mode }) => {
           }
         }
       },
-      chunkSizeWarningLimit: 300,
+      chunkSizeWarningLimit: 500,
       target: 'esnext',
       minify: 'terser' as const,
       terserOptions: {

@@ -3,6 +3,64 @@
 // Fitur: JWT Auth, CRUD Operations, File Upload (R2)
 
 // ============================================
+// LOGGER UTILITY
+// ============================================
+
+class WorkerLogger {
+  constructor(level = 'info') {
+    this.level = level;
+    this.levels = {
+      debug: 0,
+      info: 1,
+      warn: 2,
+      error: 3
+    };
+  }
+
+  setLevel(level) {
+    if (this.levels[level] !== undefined) {
+      this.level = level;
+    }
+  }
+
+  shouldLog(level) {
+    return this.levels[level] >= this.levels[this.level];
+  }
+
+  formatMessage(level, message, ...args) {
+    const timestamp = new Date().toISOString();
+    const prefix = `[${timestamp}] [${level.toUpperCase()}]`;
+    return [prefix, message, ...args];
+  }
+
+  debug(message, ...args) {
+    if (this.shouldLog('debug')) {
+      console.debug(...this.formatMessage('debug', message, ...args));
+    }
+  }
+
+  info(message, ...args) {
+    if (this.shouldLog('info')) {
+      console.info(...this.formatMessage('info', message, ...args));
+    }
+  }
+
+  warn(message, ...args) {
+    if (this.shouldLog('warn')) {
+      console.warn(...this.formatMessage('warn', message, ...args));
+    }
+  }
+
+  error(message, ...args) {
+    if (this.shouldLog('error')) {
+      console.error(...this.formatMessage('error', message, ...args));
+    }
+  }
+}
+
+const logger = new WorkerLogger();
+
+// ============================================
 // UTILITY FUNCTIONS
 // ============================================
 
@@ -211,9 +269,9 @@ async function initDatabase(env) {
     // Enable foreign keys
     try {
       const pragmaResult = await env.DB.exec('PRAGMA foreign_keys = ON;');
-      console.log('Foreign keys enabled:', pragmaResult);
+      logger.info('Foreign keys enabled:', pragmaResult);
     } catch (pragmaError) {
-      console.error('PRAGMA error:', pragmaError);
+      logger.warn('PRAGMA error:', pragmaError);
       // Continue even if PRAGMA fails
     }
 
@@ -551,7 +609,7 @@ async function initDatabase(env) {
       `).bind(adminId, 'Ahmad Dahlan', 'admin@malnu.sch.id', passwordHash, 'admin', 'active').run();
     }
   } catch (e) {
-    console.error('Database initialization error:', e);
+    logger.error('Database initialization error:', e);
     throw e;
   }
 }
@@ -811,7 +869,7 @@ async function handleCRUD(request, env, corsHeaders, table, _options = {}) {
         });
     }
   } catch (e) {
-    console.error(`CRUD Error for table ${table}:`, e);
+    logger.error(`CRUD Error for table ${table}:`, e);
     return new Response(JSON.stringify(response.error('Terjadi kesalahan pada server', 500)), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -849,7 +907,7 @@ async function handleChat(request, env, corsHeaders) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    console.error("Worker RAG Error:", e);
+    logger.error("Worker RAG Error:", e);
     return new Response(JSON.stringify({ context: "" }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -859,11 +917,11 @@ async function handleChat(request, env, corsHeaders) {
 // Seed Handler
 async function handleSeed(request, env, corsHeaders) {
   try {
-    console.log('Starting database seeding...');
+    logger.info('Starting database seeding...');
 
     // Initialize database
     await initDatabase(env);
-    console.log('Database tables created');
+    logger.info('Database tables created');
 
     // Seed Vectorize if available
     try {
@@ -883,20 +941,20 @@ async function handleSeed(request, env, corsHeaders) {
           const batch = vectorsToInsert.slice(i, i + batchSize);
           await env.VECTORIZE_INDEX.insert(batch);
         }
-        console.log('Vectorize seeded');
+        logger.info('Vectorize seeded');
       }
     } catch (aiError) {
-      console.log('AI/Vectorize seeding skipped:', aiError.message);
+      logger.warn('AI/Vectorize seeding skipped:', aiError.message);
     }
 
-    console.log('Seed completed successfully');
+    logger.info('Seed completed successfully');
     return new Response(JSON.stringify(response.success(null, 'Database seeded successfully!')), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
-    console.error('Seed error:', e);
-    console.error('Error details:', JSON.stringify(e));
+    logger.error('Seed error:', e);
+    logger.error('Error details:', JSON.stringify(e));
     return new Response(JSON.stringify(response.error(`Error seeding data: ${e.message}`)), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -992,7 +1050,7 @@ async function handleFileUpload(request, env, corsHeaders) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
-    console.error('File upload error:', e);
+    logger.error('File upload error:', e);
     return new Response(JSON.stringify(response.error('Failed to upload file')), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1038,7 +1096,7 @@ async function handleFileDownload(request, env, corsHeaders) {
       headers,
     });
   } catch (e) {
-    console.error('File download error:', e);
+    logger.error('File download error:', e);
     return new Response(JSON.stringify(response.error('Failed to download file')), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1080,7 +1138,7 @@ async function handleFileDelete(request, env, corsHeaders) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
-    console.error('File delete error:', e);
+    logger.error('File delete error:', e);
     return new Response(JSON.stringify(response.error('Failed to delete file')), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1128,7 +1186,7 @@ async function handleFileList(request, env, corsHeaders) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
-    console.error('File list error:', e);
+    logger.error('File list error:', e);
     return new Response(JSON.stringify(response.error('Failed to list files')), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1208,7 +1266,7 @@ async function handleSendEmail(request, env, corsHeaders) {
       });
     }
   } catch (e) {
-    console.error('Send email error:', e);
+    logger.error('Send email error:', e);
     return new Response(JSON.stringify(response.error('Failed to send email')), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1413,7 +1471,7 @@ async function handleGetChildren(request, env, corsHeaders) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
-    console.error('Get children error:', e);
+    logger.error('Get children error:', e);
     return new Response(JSON.stringify(response.error('Gagal mengambil data anak')), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1478,7 +1536,7 @@ async function handleGetChildGrades(request, env, corsHeaders) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
-    console.error('Get child grades error:', e);
+    logger.error('Get child grades error:', e);
     return new Response(JSON.stringify(response.error('Gagal mengambil data nilai')), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1538,7 +1596,7 @@ async function handleGetChildAttendance(request, env, corsHeaders) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
-    console.error('Get child attendance error:', e);
+    logger.error('Get child attendance error:', e);
     return new Response(JSON.stringify(response.error('Gagal mengambil data kehadiran')), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1633,7 +1691,7 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (e) {
-    console.error('Get child schedule error:', e);
+    logger.error('Get child schedule error:', e);
     return new Response(JSON.stringify(response.error('Gagal mengambil jadwal')), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -1645,10 +1703,12 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
 // MAIN HANDLER
 // ============================================
 
-export default {
+ export default {
   async fetch(request, env, _ctx) {
     const requestOrigin = request.headers.get('Origin') || 'null';
     const cors = corsHeaders(env.ALLOWED_ORIGIN, requestOrigin);
+
+    logger.setLevel(env.LOG_LEVEL || 'info');
     
     // Handle preflight
     if (request.method === 'OPTIONS') {
