@@ -55,7 +55,7 @@ database_id = "7fbd7834-0fd2-475f-8787-55ce81988642"
 ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
 # Secrets are set via: wrangler secret put <SECRET_NAME> --env production
 # JWT_SECRET and GEMINI_API_KEY are managed as Cloudflare secrets, not in wrangler.toml
-# See CLOUDFLARE_DEPLOYMENT.md for secret setup instructions
+# See docs/DEPLOYMENT_GUIDE.md for secret setup instructions
 NODE_ENV = "production"
 LOG_LEVEL = "error"
 
@@ -88,7 +88,7 @@ database_id = "69605f72-4b69-4dd6-a72c-a17006f61254"
 ALLOWED_ORIGIN = "*"
 # Secrets are set via: wrangler secret put <SECRET_NAME> --env dev
 # JWT_SECRET_DEV and GEMINI_API_KEY are managed as Cloudflare secrets, not in wrangler.toml
-# See CLOUDFLARE_DEPLOYMENT.md for secret setup instructions
+# See docs/DEPLOYMENT_GUIDE.md for secret setup instructions
 NODE_ENV = "development"
 # Log level
 LOG_LEVEL = "info"

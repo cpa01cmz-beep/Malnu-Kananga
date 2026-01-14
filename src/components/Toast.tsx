@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import IconButton from './ui/IconButton';
+import { OPACITY_TOKENS } from '../constants';
 
 export type ToastType = 'success' | 'info' | 'error';
 
@@ -13,6 +14,8 @@ interface ToastProps {
 }
 
 const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onClose, duration = 3000 }) => {
+  const toastRef = useRef<HTMLDivElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [remainingTime, setRemainingTime] = useState(duration);
 
@@ -44,14 +47,21 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     if (isVisible) {
       setRemainingTime(duration);
       setIsPaused(false);
+      
+      previousActiveElementRef.current = document.activeElement as HTMLElement;
+      toastRef.current?.focus();
+    } else {
+      if (previousActiveElementRef.current) {
+        previousActiveElementRef.current.focus();
+      }
     }
   }, [isVisible, duration]);
 
-  const baseClasses = "fixed top-20 right-4 sm:top-6 sm:right-6 lg:right-8 z-50 px-5 py-4 rounded-xl shadow-float flex items-center gap-3 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] transform max-w-md border backdrop-blur-xl";
+  const baseClasses = "fixed top-20 right-4 sm:top-6 sm:right-6 z-50 px-5 py-4 rounded-xl shadow-float flex items-center gap-3 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] transform max-w-md border backdrop-blur-xl";
   const typeClasses = {
-    success: "bg-white/95% dark:bg-neutral-800/95% border-l-4 border-l-primary-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white",
-    info: "bg-white/95% dark:bg-neutral-800/95% border-l-4 border-l-blue-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white",
-    error: "bg-white/95% dark:bg-neutral-800/95% border-l-4 border-l-red-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white",
+    success: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-primary-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white`,
+    info: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-blue-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white`,
+    error: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-red-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white`,
   };
 
   const ariaRole = type === 'error' ? 'alert' : 'status';
@@ -81,6 +91,8 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
 
   return (
     <div
+      ref={toastRef}
+      tabIndex={-1}
       className={`${baseClasses} ${typeClasses[type]} ${visibilityClasses}`}
       role={ariaRole}
       aria-live={ariaLive}

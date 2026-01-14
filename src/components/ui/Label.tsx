@@ -36,7 +36,7 @@ const Label = forwardRef<HTMLLabelElement, LabelProps>(({
     <>
       <label ref={ref} htmlFor={htmlFor} className={labelClasses} {...props}>
         {children}
-        {required && <span className="text-red-500 ml-1" aria-label="required">*</span>}
+        {required && <span className="text-red-500 ml-1" aria-label="wajib diisi">*</span>}
       </label>
       {helperText && (
         <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">

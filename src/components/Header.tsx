@@ -13,6 +13,7 @@ import IconButton from './ui/IconButton';
 import Badge from './ui/Badge';
 import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
+import { OPACITY_TOKENS } from '../constants';
 
 const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95";
 
@@ -141,12 +142,12 @@ const Header: React.FC<HeaderProps> = ({
 
     const navContainerClasses = `
         w-full max-w-7xl mx-auto px-4 sm:px-6
-        ${isScrolled ? '' : 'bg-white/95% dark:bg-neutral-800/95% backdrop-blur-xl rounded-full ring-1 ring-neutral-900/10% dark:ring-white/10% shadow-card'}
+        ${isScrolled ? '' : `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} rounded-full ring-1 ring-neutral-900/10% dark:ring-white/10% shadow-card`}
     `;
 
     const innerNavClasses = `
         flex items-center justify-between h-16
-        ${isScrolled ? 'bg-white/95% dark:bg-neutral-800/95% backdrop-blur-xl' : ''}
+        ${isScrolled ? `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL}` : ''}
     `;
 
     return (
@@ -185,15 +186,15 @@ const Header: React.FC<HeaderProps> = ({
 
                            {isLoggedIn ? (
                                 <div className="hidden sm:flex items-center gap-2">
-                                 {userExtraRole && (
-                                     <Badge
-                                         variant={userExtraRole === 'staff' ? 'indigo' : 'orange'}
-                                         size="sm"
-                                         rounded={false}
-                                     >
-                                         {userExtraRole}
-                                     </Badge>
-                                 )}
+                                  {userExtraRole && (
+                                      <Badge
+                                          variant={userExtraRole === 'staff' ? 'info' : userExtraRole === 'osis' ? 'warning' : 'neutral'}
+                                          size="sm"
+                                          rounded={false}
+                                      >
+                                          {userExtraRole}
+                                      </Badge>
+                                  )}
 
                                  {userRole === 'admin' && (
                                      <Button
@@ -250,7 +251,7 @@ const Header: React.FC<HeaderProps> = ({
             {isMenuOpen && (
                 <div
                     ref={mobileMenuRef}
-                    className="md:hidden bg-white/95% dark:bg-neutral-800/95% backdrop-blur-xl shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700"
+                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700`}
                 >
                     <nav
                         id="mobile-menu"

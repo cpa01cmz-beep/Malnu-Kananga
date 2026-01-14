@@ -24,7 +24,7 @@ npm run build
 - **[User Guide](./docs/HOW_TO.md)** - How to use all features
 - **[Blueprint](./docs/BLUEPRINT.md)** - System design and architecture
 - **[Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)** - Production deployment
-- **[API Reference](./docs/api-documentation.md)** - Complete API documentation
+- **[API Reference](./docs/api-reference.md)** - Complete API documentation
 
 ## Features
 

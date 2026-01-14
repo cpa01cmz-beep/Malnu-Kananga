@@ -92,13 +92,13 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
     }
   };
 
-  const getTypeVariant = (type: PushNotification['type']): 'info' | 'success' | 'purple' | 'warning' | 'indigo' | 'error' | 'neutral' => {
+  const getTypeVariant = (type: PushNotification['type']): 'info' | 'success' | 'secondary' | 'warning' | 'error' | 'neutral' => {
     switch (type) {
       case 'announcement': return 'info';
       case 'grade': return 'success';
-      case 'ppdb': return 'purple';
+      case 'ppdb': return 'secondary';
       case 'event': return 'warning';
-      case 'library': return 'indigo';
+      case 'library': return 'info';
       case 'system': return 'error';
       default: return 'neutral';
     }

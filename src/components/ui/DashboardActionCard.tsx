@@ -179,7 +179,7 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
       
       <div className="flex flex-wrap gap-2 mb-2">
         {isExtraRole && extraRoleBadge && (
-          <Badge variant="orange" size="sm">
+          <Badge variant="warning" size="sm">
             {extraRoleBadge}
           </Badge>
         )}

@@ -287,7 +287,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         {extraRole === 'staff' && (
                           <>
                             {' '}
-                            <Badge variant="indigo" size="sm">
+                            <Badge variant="info" size="sm">
                               Mode Staff Aktif
                             </Badge>
                           </>
