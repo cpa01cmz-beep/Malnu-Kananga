@@ -14,6 +14,7 @@ import SearchInput from './ui/SearchInput';
 import { EmptyState } from './ui/LoadingState';
 import Card from './ui/Card';
 import DocumentTextIcon from './icons/DocumentTextIcon';
+import PencilIcon from './icons/PencilIcon';
 import { CheckIcon, XMarkIcon } from './icons/MaterialIcons';
 import { HEIGHTS } from '../config/heights';
 
@@ -436,15 +437,16 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                                   reg.score >= 60 ? 'text-yellow-600' : 'text-red-600'
                                                 }`}>
                                                   {reg.score}
-                                                </span>
-                                                <button
+                                                 </span>
+                                                <IconButton
                                                   onClick={() => setShowScoringModal(reg.id)}
-                                                  className="p-1 text-blue-600 hover:bg-blue-50 rounded"
-                                                  title="Edit skor"
-                                                  aria-label="Edit skor"
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  ariaLabel="Edit skor"
+                                                  tooltip="Edit skor"
                                                 >
-                                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                                </button>
+                                                  <PencilIcon className="w-4 h-4" />
+                                                </IconButton>
                                               </>
                                             ) : (
                                               <button
