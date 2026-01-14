@@ -1,5 +1,4 @@
 
-import React from 'react';
 import NewsCard from '../NewsCard';
 import { LatestNews } from '../../types';
 import Section from '../ui/Section';

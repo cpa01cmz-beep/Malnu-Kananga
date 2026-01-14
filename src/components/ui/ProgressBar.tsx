@@ -1,4 +1,3 @@
-import React from 'react';
 
 export type ProgressBarSize = 'sm' | 'md' | 'lg' | 'xl';
 export type ProgressBarColor = 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info' | 'purple' | 'indigo' | 'orange' | 'red' | 'blue' | 'green';

@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react'
+
+import { useState, useEffect, useCallback } from 'react';
 import { UsersIcon } from './icons/UsersIcon';
 import { attendanceAPI } from '../services/apiService';
 import { Attendance } from '../types';

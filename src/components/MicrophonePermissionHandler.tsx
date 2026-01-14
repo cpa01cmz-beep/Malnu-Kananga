@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';

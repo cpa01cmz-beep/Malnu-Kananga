@@ -1,5 +1,7 @@
+import React from 'react'
 
-import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
+
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';

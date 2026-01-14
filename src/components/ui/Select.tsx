@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 export type SelectSize = 'sm' | 'md' | 'lg';
 export type SelectState = 'default' | 'error' | 'success';

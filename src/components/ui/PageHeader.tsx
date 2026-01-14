@@ -1,4 +1,3 @@
-import React from 'react';
 import BackButton from './BackButton';
 
 export type PageHeaderSize = 'sm' | 'md' | 'lg';

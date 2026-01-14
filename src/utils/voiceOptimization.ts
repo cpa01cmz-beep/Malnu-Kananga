@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { logger } from './logger';
 
 /**
@@ -243,7 +243,9 @@ export const memoryMonitor = {
  * Lazy loader for voice components
  * Prevents unnecessary component mounting
  */
-export function createLazyLoader<T extends React.ComponentType<Record<string, unknown>>>(
+import type { ComponentType } from 'react';
+import React from 'react';
+export function createLazyLoader<T extends ComponentType<Record<string, unknown>>>(
   componentPromise: Promise<{ default: T }>
 ) {
   return React.lazy(() => componentPromise);

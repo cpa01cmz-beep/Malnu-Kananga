@@ -1,5 +1,4 @@
 
-import React from 'react';
 import Badge from '../ui/Badge';
 import Section from '../ui/Section';
 import { getResponsiveGradient } from '../../config/gradients';

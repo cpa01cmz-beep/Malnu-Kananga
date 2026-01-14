@@ -1,7 +1,7 @@
 // ConflictResolutionModal.tsx - Modal for resolving offline sync conflicts
 // Allows users to choose how to handle conflicts between local and server data
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { logger } from '../utils/logger';
 import { useOfflineActionQueue, type OfflineAction, type ConflictResolution } from '../services/offlineActionQueueService';
 import Modal from './ui/Modal';

@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode } from 'react';
+import { forwardRef, ReactNode } from 'react';
 
 export type TableSize = 'sm' | 'md' | 'lg';
 export type TableVariant = 'default' | 'striped' | 'bordered' | 'simple';

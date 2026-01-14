@@ -1,5 +1,4 @@
 
-import React from 'react';
 
 export const ArchiveBoxIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg 

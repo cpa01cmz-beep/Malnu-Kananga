@@ -1,4 +1,3 @@
-import React from 'react';
 
 export type IconButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'warning' | 'ghost';
 export type IconButtonSize = 'sm' | 'md' | 'lg';

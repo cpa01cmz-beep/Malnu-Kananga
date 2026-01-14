@@ -1,4 +1,3 @@
-import React from 'react';
 
 export type SmallActionButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'warning' | 'neutral';
 

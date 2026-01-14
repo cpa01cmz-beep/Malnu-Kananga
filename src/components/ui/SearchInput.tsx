@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MagnifyingGlassIcon } from '../icons/NotificationIcons';
 

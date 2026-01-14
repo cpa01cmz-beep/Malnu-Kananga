@@ -1,5 +1,4 @@
 
-import React from 'react';
 
 export const ArrowPathIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg 

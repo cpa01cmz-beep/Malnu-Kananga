@@ -1,4 +1,3 @@
-import React from 'react';
 
 export const ShareIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">

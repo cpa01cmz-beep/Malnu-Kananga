@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { PlusIcon } from './icons/PlusIcon';
 import { StarIcon } from './icons/MaterialIcons';

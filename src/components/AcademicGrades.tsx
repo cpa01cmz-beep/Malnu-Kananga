@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react'
+
+import { useState, useEffect, useCallback } from 'react';
 import { LineChart } from 'recharts/es6/chart/LineChart';
 import { Line } from 'recharts/es6/cartesian/Line';
 import { BarChart } from 'recharts/es6/chart/BarChart';

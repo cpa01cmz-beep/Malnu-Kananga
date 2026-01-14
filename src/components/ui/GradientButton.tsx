@@ -1,4 +1,3 @@
-import React from 'react';
 import { GRADIENT_CLASSES } from '../../config/gradients';
 import { OPACITY_TOKENS } from '../../constants';
 

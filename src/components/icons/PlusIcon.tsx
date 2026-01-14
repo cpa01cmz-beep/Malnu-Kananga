@@ -1,4 +1,3 @@
-import React from 'react';
 
 export const PlusIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg 

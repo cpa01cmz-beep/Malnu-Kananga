@@ -1,5 +1,7 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
+import React from 'react';
 import Papa from 'papaparse';
 import { analyzeClassPerformance } from '../services/geminiService';
 import { studentsAPI, gradesAPI } from '../services/apiService';
@@ -51,8 +53,8 @@ interface GradingManagementProps {
 }
 
 const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToast }) => {
-  const csvInputRef = React.useRef<HTMLInputElement>(null);
-  const ocrInputRef = React.useRef<HTMLInputElement>(null);
+  const csvInputRef = useRef<HTMLInputElement>(null);
+  const ocrInputRef = useRef<HTMLInputElement>(null);
   // Event notifications hook
   const { notifyGradeUpdate, useMonitorLocalStorage } = useEventNotifications();
   
@@ -490,7 +492,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     ));
   };
   
-  const handleCSVImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCSVImport = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -776,7 +778,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       setIsAnalyzing(false);
   };
 
-  const handleOCRExamUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOCRExamUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 

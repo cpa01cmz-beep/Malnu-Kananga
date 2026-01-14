@@ -1,4 +1,3 @@
-import React from 'react';
 import { getColorClasses } from '../../config/colors';
 
 export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'secondary';

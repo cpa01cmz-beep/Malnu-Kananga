@@ -1,4 +1,4 @@
-import React, { forwardRef, ButtonHTMLAttributes } from 'react';
+import { forwardRef, ButtonHTMLAttributes } from 'react';
 
 export type CardVariant = 'default' | 'hover' | 'interactive' | 'gradient';
 export type CardRounded = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ChartBarIcon } from './icons/ChartBarIcon';
 import { UserIcon } from './icons/UserIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';

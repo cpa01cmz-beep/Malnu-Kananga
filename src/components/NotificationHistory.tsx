@@ -1,5 +1,5 @@
 // NotificationHistory.tsx - Component for viewing notification history
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastType } from './Toast';
 import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';

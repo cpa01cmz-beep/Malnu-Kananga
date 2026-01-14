@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastType } from './Toast';
 import Badge from './ui/Badge';
 import type { ParentChild, Grade } from '../types';

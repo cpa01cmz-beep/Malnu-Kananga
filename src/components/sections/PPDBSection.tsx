@@ -1,5 +1,4 @@
 
-import React from 'react';
 import ClipboardDocumentCheckIcon from '../icons/ClipboardDocumentCheckIcon';
 import DocumentTextIcon from '../icons/DocumentTextIcon';
 import { UsersIcon } from '../icons/UsersIcon';
