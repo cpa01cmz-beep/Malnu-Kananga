@@ -186,15 +186,15 @@ const Header: React.FC<HeaderProps> = ({
 
                            {isLoggedIn ? (
                                 <div className="hidden sm:flex items-center gap-2">
-                                 {userExtraRole && (
-                                     <Badge
-                                         variant={userExtraRole === 'staff' ? 'indigo' : 'orange'}
-                                         size="sm"
-                                         rounded={false}
-                                     >
-                                         {userExtraRole}
-                                     </Badge>
-                                 )}
+                                  {userExtraRole && (
+                                      <Badge
+                                          variant={userExtraRole === 'staff' ? 'info' : userExtraRole === 'osis' ? 'warning' : 'neutral'}
+                                          size="sm"
+                                          rounded={false}
+                                      >
+                                          {userExtraRole}
+                                      </Badge>
+                                  )}
 
                                  {userRole === 'admin' && (
                                      <Button

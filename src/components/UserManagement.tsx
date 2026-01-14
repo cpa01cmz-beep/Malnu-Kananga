@@ -239,31 +239,27 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                                     </td>
                                     <td className="px-6 py-4">
                                         <Badge
-                                            variant={user.role === 'admin' ? 'purple' : user.role === 'teacher' ? 'info' : 'neutral'}
-                                            size="sm"
-                                        >
-                                            {user.role}
-                                        </Badge>
+                                             variant={user.role === 'admin' ? 'secondary' : user.role === 'teacher' ? 'info' : 'neutral'}
+                                             size="sm"
+                                         >
+                                             {user.role}
+                                         </Badge>
                                     </td>
                                     <td className="px-6 py-4">
                                         {user.extraRole ? (
                                             <Badge
                                                 variant={
-                                                    user.extraRole === 'staff' ? 'indigo' : 
-                                                    user.extraRole === 'osis' ? 'orange' :
-                                                    user.extraRole === 'wakasek' ? 'purple' :
-                                                    user.extraRole === 'kepsek' ? 'red' :
+                                                    user.extraRole === 'staff' ? 'info' :
+                                                    user.extraRole === 'osis' ? 'warning' :
+                                                    user.extraRole === 'wakasek' ? 'secondary' :
+                                                    user.extraRole === 'kepsek' ? 'error' :
                                                     'neutral'
                                                 }
                                                 size="sm"
                                             >
-                                                {user.extraRole === 'staff' ? 'Staff' : 
-                                                 user.extraRole === 'osis' ? 'OSIS' :
-                                                 user.extraRole === 'wakasek' ? 'Wakasek' :
-                                                 user.extraRole === 'kepsek' ? 'Kepsek' :
-                                                 user.extraRole}
+                                                {user.extraRole}
                                             </Badge>
-                                        ) : <span className="text-neutral-400">-</span>}
+                                        ) : '-'}
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         {canUpdateUser && (

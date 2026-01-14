@@ -28,7 +28,7 @@ const ProfileSection: React.FC = () => {
                     <Badge variant="info" size="xl" styleType="solid" rounded>
                         Kurikulum Terpadu
                     </Badge>
-                    <Badge variant="purple" size="xl" styleType="solid" rounded>
+                    <Badge variant="secondary" size="xl" styleType="solid" rounded>
                         Berakhlak Mulia
                     </Badge>
                 </div>

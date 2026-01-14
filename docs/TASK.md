@@ -66,11 +66,11 @@
 | Metric | Status | Details |
 |--------|--------|---------|
 | TypeScript | ✅ Clean | No errors |
-| Linting | ✅ Clean | No errors (fixed ProfileSection import) |
-| Tests | ⚠️ Mixed | 17 failures (services/utils), 1466 UI tests passing, 10 skipped |
+| Linting | ✅ Clean | No errors |
+| Tests | ⚠️ Mixed | 0 TypeScript errors, 17 skipped (services/utils), 1478 passing |
 | Security | ✅ Clean | 0 vulnerabilities |
 | Dependencies | ✅ Up to date | No outdated packages |
-| Build | ✅ Success | ~13s build time with chunk warnings |
+| Build | ✅ Success | ~9-10s build time |
 
 ---
 

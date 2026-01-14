@@ -116,6 +116,8 @@ docs/reports/
 .opencode/*.lock
 .opencode/bun.lock
 .opencode/package-lock.json
+.opencode/temp/
+.opencode/logs/
 
 # Test artifacts
 test-results/
@@ -127,3 +129,7 @@ test-results/
 *~.nib
 .local/
 Desktop.ini
+
+# Local deployment
+.wrangler/deployments/
+.local-wrangler/

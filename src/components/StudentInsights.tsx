@@ -201,7 +201,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case 'high':
-        return <Badge variant="red" size="sm">Prioritas Tinggi</Badge>;
+        return <Badge variant="error" size="sm">Prioritas Tinggi</Badge>;
       case 'medium':
         return <Badge variant="warning" size="sm">Prioritas Sedang</Badge>;
       default:
