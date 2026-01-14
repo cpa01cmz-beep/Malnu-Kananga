@@ -8,6 +8,7 @@ import IconButton from './ui/IconButton';
 import Modal from './ui/Modal';
 import SearchInput from './ui/SearchInput';
 import ConfirmationDialog from './ui/ConfirmationDialog';
+import { HEIGHT_CLASSES } from '../config/heights';
 
 interface MaterialSharingProps {
   material: ELibrary;
@@ -209,7 +210,7 @@ const teachersToRevokeList = teachers.filter(t => teacherIds.includes(t.id));
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
         size="xl"
-        className="max-h-[90vh] flex flex-col"
+        className={`${HEIGHT_CLASSES.MODAL.FULL} flex flex-col`}
         showCloseButton={false}
       >
         <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">

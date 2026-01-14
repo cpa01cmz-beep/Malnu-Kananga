@@ -21,6 +21,7 @@ import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { standardValidationRules } from '../hooks/useFieldValidation';
+import { HEIGHT_CLASSES } from '../config/heights';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -463,14 +464,14 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
       closeOnBackdropClick={true}
       closeOnEscape={true}
       showCloseButton={true}
-      className="max-h-[90vh]"
+      className={HEIGHT_CLASSES.MODAL.FULL}
     >
-      <OfflineIndicator 
+      <OfflineIndicator
         showSyncButton={true}
         showQueueCount={true}
         position="top-left"
       />
-      <div className="overflow-y-auto p-6 custom-scrollbar max-h-[70vh]">
+      <div className={`overflow-y-auto p-6 custom-scrollbar ${HEIGHT_CLASSES.MODAL.CONTENT}`}>
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* OCR Section */}
                 <div className="space-y-4">

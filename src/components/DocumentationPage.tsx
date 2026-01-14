@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDownIcon } from './icons/ChevronDownIcon';
 import Modal from './ui/Modal';
+import { HEIGHT_CLASSES } from '../config/heights';
 
 interface DocumentationPageProps {
   isOpen: boolean;
@@ -64,7 +65,7 @@ const DocumentationPage: React.FC<DocumentationPageProps> = ({ isOpen, onClose }
       animation="scale-in"
       description="Pusat bantuan dan dokumentasi untuk pengguna"
     >
-      <main className="flex-grow overflow-y-auto max-h-[70vh]">
+      <main className={`flex-grow overflow-y-auto ${HEIGHT_CLASSES.MODAL.CONTENT}`}>
           <AccordionItem title="Untuk Pengguna Umum">
               <p>Selamat datang di website MA Malnu Kananga. Anda dapat menjelajahi informasi publik seperti profil sekolah, program unggulan, dan berita terbaru. Gunakan menu navigasi di bagian atas untuk berpindah halaman.</p>
               <p>Jika Anda memiliki pertanyaan, jangan ragu untuk menggunakan <strong>Asisten AI</strong> kami yang ada di pojok kanan bawah. Cukup klik ikon chat untuk memulai percakapan.</p>

@@ -8,6 +8,7 @@ import IconButton from './ui/IconButton';
 import { api } from '../services/apiService';
 import { getGradientClass } from '../config/gradients';
 import Modal from './ui/Modal';
+import { HEIGHT_CLASSES } from '../config/heights';
 import { 
   validateEmailRealtime, 
   validatePasswordRealtime, 
@@ -136,7 +137,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       closeOnBackdropClick={true}
       closeOnEscape={true}
       showCloseButton={true}
-      className="max-h-[90vh]"
+      className={HEIGHT_CLASSES.MODAL.FULL}
     >
       <div className="overflow-y-auto">
             <div className={`mb-6 p-5 ${getGradientClass('NEUTRAL')} dark:from-neutral-900/60 dark:to-neutral-800/60 rounded-xl border border-neutral-200/70 dark:border-neutral-700/70`}>

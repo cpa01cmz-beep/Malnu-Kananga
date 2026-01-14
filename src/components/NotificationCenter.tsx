@@ -10,6 +10,7 @@ import { TrashIcon } from './icons/TrashIcon';
 import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
 import { EmptyState } from './ui/LoadingState';
+import { HEIGHT_CLASSES } from '../config/heights';
 
 interface NotificationCenterProps {
   userRole: UserRole;
@@ -219,7 +220,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
           <div
             id="notification-dropdown"
-            className="absolute right-0 mt-2 w-full sm:w-96 max-h-[80vh] bg-white dark:bg-neutral-900 rounded-xl shadow-card-hover z-50 overflow-hidden"
+            className={`absolute right-0 mt-2 w-full sm:w-96 ${HEIGHT_CLASSES.NOTIFICATION.CENTER} bg-white dark:bg-neutral-900 rounded-xl shadow-card-hover z-50 overflow-hidden`}
             role="dialog"
             aria-modal="true"
             aria-label="Pusat Notifikasi"
@@ -308,7 +309,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
               </div>
             </div>
 
-            <div className="overflow-y-auto max-h-[60vh]">
+            <div className={`overflow-y-auto ${HEIGHT_CLASSES.NOTIFICATION.LIST}`}>
               {filteredHistory().length === 0 ? (
                 <div className="p-8">
                   <EmptyState

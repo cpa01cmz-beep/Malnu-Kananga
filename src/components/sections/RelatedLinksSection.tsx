@@ -4,6 +4,7 @@ import { getResponsiveGradient } from '../../config/gradients';
 import { getColorIconLabel } from '../../config/colorIcons';
 import LinkCard from '../ui/LinkCard';
 import Heading from '../ui/Heading';
+import { HEIGHT_CLASSES } from '../../config/heights';
 
 const RelatedLinksSection: React.FC = () => {
   const [links, setLinks] = useState<{name: string; href: string; icon: React.ReactNode; colorClass: string}[]>([]);
@@ -49,7 +50,7 @@ const RelatedLinksSection: React.FC = () => {
             </div>
             <nav aria-label="Tautan terkait eksternal">
                 {isLoading ? (
-                    <div className="flex justify-center items-center min-h-[200px]" role="status" aria-label="Memuat tautan">
+                    <div className={`flex justify-center items-center ${HEIGHT_CLASSES.SECTION}`} role="status" aria-label="Memuat tautan">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600" aria-hidden="true"></div>
                     </div>
                 ) : (

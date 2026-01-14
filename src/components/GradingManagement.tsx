@@ -15,6 +15,7 @@ import { useOfflineActionQueue, type SyncResult } from '../services/offlineActio
 import { STORAGE_KEYS } from '../constants';
 import { pdfExportService } from '../services/pdfExportService';
 import ProgressBar from './ui/ProgressBar';
+import { HEIGHT_CLASSES } from '../config/heights';
 import { 
   validateGradeInput, 
   sanitizeGradeInput, 
@@ -1465,7 +1466,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         {/* OCR Processing Modal */}
         {showOCRModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div className={`bg-white dark:bg-neutral-800 rounded-2xl p-6 w-full max-w-4xl ${HEIGHT_CLASSES.MODAL.FULL} overflow-y-auto`}>
                     <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-4">
                         📷 OCR Grade Extraction
                     </h3>

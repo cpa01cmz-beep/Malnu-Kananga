@@ -17,6 +17,7 @@ import Modal from './ui/Modal';
 import Button from './ui/Button';
 import SmallActionButton from './ui/SmallActionButton';
 import { Toggle } from './ui/Toggle';
+import { HEIGHT_CLASSES } from '../config/heights';
 
 interface VoiceSettingsProps {
   isOpen: boolean;
@@ -253,7 +254,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
         closeOnBackdropClick={true}
         closeOnEscape={true}
         showCloseButton={true}
-        className="max-h-[70vh]"
+        className={HEIGHT_CLASSES.MODAL.CONTENT}
       >
         <div className="flex items-center gap-2 mb-4">
           <SpeakerWaveIcon className="w-5 h-5 text-green-600 dark:text-green-400" aria-hidden="true" />

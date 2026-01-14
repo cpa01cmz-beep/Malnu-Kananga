@@ -12,6 +12,7 @@ import { logger } from '../utils/logger';
 import { useAutoSave } from '../hooks/useAutoSave';
 import Button from './ui/Button';
 import LoadingSpinner from './ui/LoadingSpinner';
+import { HEIGHT_CLASSES } from '../config/heights';
 
 interface ParentNotificationSettingsProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -110,7 +111,7 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 max-w-2xl w-full ${HEIGHT_CLASSES.MODAL.FULL} overflow-y-auto`}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">

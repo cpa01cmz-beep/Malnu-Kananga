@@ -3,12 +3,13 @@ import React from 'react';
 import GradientButton from '../ui/GradientButton';
 import Heading from '../ui/Heading';
 import { getResponsiveGradient } from '../../config/gradients';
+import { HEIGHT_CLASSES } from '../../config/heights';
 
 const HeroSection: React.FC = () => {
   const headingId = 'home-heading';
 
   return (
-    <section id="home" aria-labelledby={headingId} className="relative min-h-[90vh] flex items-center justify-center text-center px-4 sm:px-6 lg:px-8 pt-24 pb-16 sm:pt-28 overflow-hidden">
+    <section id="home" aria-labelledby={headingId} className={`relative ${HEIGHT_CLASSES.HERO} flex items-center justify-center text-center px-4 sm:px-6 lg:px-8 pt-24 pb-16 sm:pt-28 overflow-hidden`}>
       <div className={`absolute inset-0 ${getResponsiveGradient('HERO')}`}></div>
       <div className={`absolute inset-0 ${getResponsiveGradient('HERO_DECORATIVE', 'HERO_DECORATIVE')}`}></div>
       <div className="relative z-10 w-full max-w-6xl mx-auto">
