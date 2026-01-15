@@ -392,3 +392,35 @@ export const PERFORMANCE_CONFIG = {
         seo: 90,
     },
 } as const;
+
+export const MOBILE_CONFIG = {
+    MIN_TOUCH_TARGET_SIZE: 44,
+    DEFAULT_TOUCH_TARGET_SIZE: 48,
+    SWIPE_THRESHOLD: 50,
+    LONG_PRESS_DELAY: 500,
+    DOUBLE_TAP_DELAY: 300,
+    MOBILE_BREAKPOINT: 640,
+    TABLET_BREAKPOINT: 1024,
+    DESKTOP_BREAKPOINT: 1280,
+    DEBOUNCE_DELAY: 150,
+    THROTTLE_DELAY: 100,
+    HAPTIC_FEEDBACK_DURATION: {
+        light: 10,
+        medium: 20,
+        heavy: 30,
+    },
+    HAPTIC_PATTERNS: {
+        success: [10, 30, 10],
+        error: [50, 50, 50],
+        warning: [20, 30],
+        tap: [5],
+        swipe: [5, 5, 5, 5, 5],
+        scaleUp: [5, 10, 15],
+        scaleDown: [15, 10, 5],
+    },
+    OPTIMIZATION_ENABLED: true,
+    ENABLE_HAPTIC_FEEDBACK: true,
+    ENABLE_TOUCH_GESTURES: true,
+    VIEWPORT_HEIGHT_OFFSET: 80,
+    KEYBOARD_VISIBLE_THRESHOLD: 0.75,
+} as const;

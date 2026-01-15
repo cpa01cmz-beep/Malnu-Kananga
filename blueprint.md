@@ -80,6 +80,10 @@ MA Malnu Kananga is a modern, AI-powered school management system designed for I
 - `voiceSettingsBackup.ts` - Voice settings synchronization
 - `performanceMonitor.ts` - Core Web Vitals tracking, performance budgets, and alerting
 
+**Mobile Optimization** (New - 2026-01-15)
+- `mobileOptimization.ts` - Mobile device detection, touch targets, performance optimization
+- `hapticFeedback.ts` - Haptic feedback utilities with predefined patterns
+
 ### 2.3 Data Flow
 
 **Request Flow**:
@@ -180,7 +184,7 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 | `AuthContext` | Authentication state | Derived from authService |
 | `ThemeContext` | Theme (light/dark) | Via useTheme hook |
 
-### 4.2 Custom Hooks (60+)
+### 4.2 Custom Hooks (70+)
 
 **Authentication & Permissions**
 - `useCanAccess` - Permission checking
@@ -214,6 +218,17 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 - `useStudentInsights` - Student analytics
 - `useNotifications` - User notifications
 
+**Mobile Optimization** (New - 2026-01-15)
+- `useMobileOptimization` - Mobile state and metrics (isTouchDevice, isMobile, orientation, screen size)
+- `useTouchGestures` - Touch gesture handling (swipe, pinch, tap, long press)
+- `useHapticFeedback` - Haptic feedback triggering (tap, success, error, warning)
+- `useTouchTarget` - Touch target size optimization
+- `usePreventDoubleTap` - Prevent double-tap execution
+- `useDebounce` - Debounce function
+- `useThrottle` - Throttle function
+- `useMobileMetrics` - Mobile performance metrics collection
+- `useOrientation` - Device orientation tracking
+
 ### 4.3 Storage Strategy
 
 **localStorage Keys** (60+ keys, all prefixed with `malnu_`)
@@ -227,7 +242,7 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 - PPDB: `malnu_ppdb_*`
 - Offline Data: `malnu_offline_*`
 
-**Storage Keys Constants**: `src/constants.ts` - `STORAGE_KEYS`
+**Storage Keys Constants**: `src/constants.ts` - `STORAGE_KEYS`, `PERFORMANCE_CONFIG`, `MOBILE_CONFIG`
 
 ---
 
