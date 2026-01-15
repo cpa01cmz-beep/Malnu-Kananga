@@ -290,14 +290,14 @@ export const NOTIFICATION_ERROR_MESSAGES = {
 } as const;
 
 export const NOTIFICATION_ICONS = {
-    DEFAULT: '/pwa-192x192.png',
-    ANNOUNCEMENT: '/pwa-192x192.png',
-    GRADE: '/pwa-192x192.png',
-    PPDB: '/pwa-192x192.png',
-    EVENT: '/pwa-192x192.png',
-    LIBRARY: '/pwa-192x192.png',
-    SYSTEM: '/pwa-192x192.png',
-    OCR: '/pwa-192x192.png',
+    DEFAULT: '/pwa-192x192.svg',
+    ANNOUNCEMENT: '/pwa-192x192.svg',
+    GRADE: '/pwa-192x192.svg',
+    PPDB: '/pwa-192x192.svg',
+    EVENT: '/pwa-192x192.svg',
+    LIBRARY: '/pwa-192x192.svg',
+    SYSTEM: '/pwa-192x192.svg',
+    OCR: '/pwa-192x192.svg',
 } as const;
 
 export const VOICE_NOTIFICATION_CONFIG = {

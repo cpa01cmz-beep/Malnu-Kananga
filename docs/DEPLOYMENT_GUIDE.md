@@ -351,8 +351,8 @@ dist/
 ├── workbox-*.js
 ├── apple-touch-icon.png
 ├── favicon.ico
-├── pwa-192x192.png
-├── pwa-512x512.png
+├── pwa-192x192.svg
+├── pwa-512x512.svg
 └── assets/
     ├── index-*.js
     ├── index-*.css
