@@ -1,4 +1,5 @@
-import { Permission, PermissionMatrix, UserExtraRole } from '../types/permissions';
+import { Permission, PermissionMatrix } from '../types/permissions';
+import type { UserExtraRole } from '../types';
 
 // Define all available permissions
 export const PERMISSIONS: Record<string, Permission> = {
