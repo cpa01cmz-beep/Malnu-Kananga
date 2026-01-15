@@ -59,6 +59,12 @@ export default [
         HTMLHeadingElement: 'readonly',
         CustomEvent: 'readonly',
         CustomEventInit: 'readonly',
+        performance: 'readonly',
+        PerformanceObserver: 'readonly',
+        PerformanceEntry: 'readonly',
+        PerformanceNavigationTiming: 'readonly',
+        PerformanceResourceTiming: 'readonly',
+        PerformanceMemory: 'readonly',
       },
     },
     plugins: {

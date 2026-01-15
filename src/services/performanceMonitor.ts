@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import {
   type PerformanceMetric,
   type CoreWebVitals,
@@ -9,6 +7,9 @@ import {
   type PerformanceAlert,
   type PerformanceReport,
   type PerformanceMonitoringConfig,
+  type PerformanceMemory,
+  type PerformanceEventTiming,
+  type PerformanceLayoutShift,
 } from '../types/performance.types';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
@@ -183,7 +184,7 @@ export class PerformanceMonitor {
 
     const observer = new PerformanceObserver((list) => {
       const entries = list.getEntries();
-      const firstInput = entries[0] as PerformanceEntry;
+      const firstInput = entries[0] as PerformanceEventTiming;
       this.recordMetric('FID', firstInput.processingStart - firstInput.startTime);
     });
 
@@ -199,8 +200,9 @@ export class PerformanceMonitor {
     let clsValue = 0;
     const observer = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
-        if (!entry.hadRecentInput) {
-          clsValue += entry.value;
+        const shiftEntry = entry as PerformanceLayoutShift;
+        if (!shiftEntry.hadRecentInput) {
+          clsValue += shiftEntry.value;
         }
       }
       this.recordMetric('CLS', clsValue);
@@ -233,8 +235,9 @@ export class PerformanceMonitor {
     let inpValue = 0;
     const observer = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
-        if (entry.interactionId) {
-          inpValue = Math.max(inpValue, entry.duration);
+        const eventEntry = entry as PerformanceEventTiming;
+        if (eventEntry.interactionId) {
+          inpValue = Math.max(inpValue, eventEntry.duration);
         }
       }
       this.recordMetric('INP', inpValue);

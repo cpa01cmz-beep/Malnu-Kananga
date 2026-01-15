@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 export interface PerformanceMetric {
   name: string;
   value: number;
@@ -71,6 +69,17 @@ export interface PerformanceMemory {
   usedJSHeapSize: number;
   totalJSHeapSize: number;
   jsHeapSizeLimit: number;
+}
+
+export interface PerformanceEventTiming extends PerformanceEntry {
+  processingStart: number;
+  duration: number;
+  interactionId?: number;
+}
+
+export interface PerformanceLayoutShift extends PerformanceEntry {
+  value: number;
+  hadRecentInput: boolean;
 }
 
 export interface PerformanceMonitoringConfig {
