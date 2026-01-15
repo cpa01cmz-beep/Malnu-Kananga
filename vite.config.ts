@@ -143,7 +143,7 @@ export default defineConfig(({ mode }) => {
           }
         }
       },
-      chunkSizeWarningLimit: 500,
+      chunkSizeWarningLimit: 600,
       target: 'esnext',
       minify: 'terser' as const,
       terserOptions: {

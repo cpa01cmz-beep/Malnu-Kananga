@@ -92,7 +92,7 @@ The undici vulnerability in the wrangler dependency has been mitigated using a p
 - **Source Files (Non-Test)**: 256 files
 - **Documentation Files**: 19 (in /docs directory)
 - **Services**: 28 services in src/services/ (excluding test files and types)
-- **Components**: 40 components exported from src/components/ui/index.ts
+ - **Components**: 41 components exported from src/components/ui/index.ts
 - **Total Tests**: 1546 passing, 11 skipped
 - **Code Examples**: 20+
 - **Troubleshooting Scenarios**: 25+
