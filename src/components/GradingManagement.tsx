@@ -834,23 +834,6 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
   const processOCRWithAI = async (ocrText: string, confidence: number) => {
     try {
-      // Create AI prompt for grade extraction
-      const _prompt = `
-        Ekstrak data nilai dari teks berikut. Format output JSON:
-        {
-          "studentName": "nama siswa",
-          "nis": "nomor induk siswa",
-          "assignment": nilai tugas (0-100),
-          "midExam": nilai UTS (0-100),
-          "finalExam": nilai UAS (0-100)
-        }
-
-        Teks OCR:
-        ${ocrText}
-
-        Hanya return JSON, tidak ada penjelasan.
-      `;
-
       // Use Gemini service to extract structured data
       const aiResult = await analyzeClassPerformance([{ 
         studentName: '', 
@@ -898,7 +881,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     }
   };
 
-  const parseAIGradeExtraction = (aiResult: string, ocrText: string) => {
+  const parseAIGradeExtraction = (_aiResult: string, ocrText: string) => {
     // Fallback parsing if AI fails
     const numbers = ocrText.match(/\b(100|[1-9]?\d)\b/g);
     if (!numbers || numbers.length < 3) return null;

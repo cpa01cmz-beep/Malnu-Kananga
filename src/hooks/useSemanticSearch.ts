@@ -57,8 +57,6 @@ export function useSemanticSearch(
   const [suggestedQueries, setSuggestedQueries] = useState<string[]>([]);
   const [relatedMaterials, setRelatedMaterials] = useState<ELibraryType[]>([]);
 
-const _searchOptions = useMemo(() => ({ ...DEFAULT_OPTIONS, ...options }), [options]);
-
   // Extract keywords and concepts for indexing
   const materialIndex = useMemo(() => {
     return materials.map(material => ({

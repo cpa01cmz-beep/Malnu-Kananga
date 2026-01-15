@@ -35,12 +35,7 @@ export const useVoiceNotifications = (): UseVoiceNotificationsReturn => {
         setQueue(voiceNotificationService.getQueue());
         setHistory(voiceNotificationService.getHistory());
         setIsSpeaking(voiceNotificationService.isCurrentlySpeaking());
-        
-// Update settings from service
-    const _updateSettingsFromService = () => {
-      setSettings(voiceNotificationService.getSettings());
-    };
-        
+
         // Check speaking status periodically
         const checkSpeakingStatus = () => {
             setIsSpeaking(voiceNotificationService.isCurrentlySpeaking());

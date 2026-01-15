@@ -207,8 +207,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
   // Permission checks for admin dashboard - AFTER all hooks
   const adminAccess = canAccess('system.admin');
-  const _statsAccess = canAccess('system.stats');
-  
+
   if (!adminAccess.canAccess) {
     return (
       <AccessDenied 

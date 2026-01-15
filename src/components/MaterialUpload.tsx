@@ -438,9 +438,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
 
   // Permission checks for content management - AFTER all hooks
   const createAccess = canAccess('content.create');
-  const _updateAccess = canAccess('content.update');
-  const _deleteAccess = canAccess('content.delete');
-  
+
   if (!createAccess.canAccess) {
     return (
       <AccessDenied 
