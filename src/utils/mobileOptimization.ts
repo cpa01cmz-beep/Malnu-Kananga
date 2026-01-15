@@ -71,7 +71,7 @@ export function isTouchDevice(): boolean {
   return (
     'ontouchstart' in window ||
     navigator.maxTouchPoints > 0 ||
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+     
     // @ts-expect-error - msMaxTouchPoints is IE specific
     (navigator as Navigator & { msMaxTouchPoints?: number }).msMaxTouchPoints > 0
   );

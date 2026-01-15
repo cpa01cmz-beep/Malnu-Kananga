@@ -10,6 +10,7 @@ import {
   useMobileMetrics,
   useOrientation,
 } from '../useMobileOptimization';
+import { getMobileOptimization } from '../../utils/mobileOptimization';
 
 describe('useMobileOptimization', () => {
   beforeEach(() => {
@@ -88,8 +89,10 @@ describe('useMobileOptimization', () => {
       throttleDelay: 150,
     }));
 
-    const { getMobileOptimization } = require('../../utils/mobileOptimization');
     const options = getMobileOptimization();
+
+    expect(options.enableHapticFeedback).toBe(false);
+    expect(options.touchTargetSize).toBe(50);
     
     expect(options.enableHapticFeedback).toBe(false);
     expect(options.touchTargetSize).toBe(50);

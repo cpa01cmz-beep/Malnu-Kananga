@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   isTouchDevice,
   isMobile,
@@ -8,7 +8,6 @@ import {
   isLargeScreen,
   getTouchTargetSize,
   setMobileOptimization,
-  getMobileOptimization,
   debounce,
   throttle,
   triggerHapticFeedback,

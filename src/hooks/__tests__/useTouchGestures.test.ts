@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useTouchGestures, SwipeDirection, PinchState, TouchGesturesOptions } from '../useTouchGestures';
+import { useTouchGestures } from '../useTouchGestures';
 
 describe('useTouchGestures', () => {
   let container: HTMLDivElement;
