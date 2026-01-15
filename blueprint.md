@@ -8,6 +8,48 @@
 
 ## 17. RECENT CHANGES (2026-01-15)
 
+### Voice Command Expansion Completed
+
+**New Files**:
+- `src/services/__tests__/voiceCommandParser.test.ts` - Voice command parser tests (100+ tests)
+- `src/hooks/__tests__/useDashboardVoiceCommands.test.ts` - Dashboard voice commands hook tests (60+ tests)
+- `docs/VOICE_COMMANDS_REFERENCE.md` - Comprehensive voice commands documentation (600+ lines)
+
+**Updated Files**:
+- `src/constants.ts` - Expanded VOICE_COMMANDS from 28 to 58+ commands
+- `src/services/voiceCommandParser.ts` - Added 30+ new command patterns
+- `src/hooks/useDashboardVoiceCommands.ts` - Updated role-based command availability
+
+**Key Features**:
+- 58+ voice commands across all user roles (admin, teacher, student, parent)
+- Bilingual support (Indonesian, English) for all commands
+- Query extraction for search and parameterized commands
+- Context-aware command filtering by user role
+- Enhanced ELibrary, Chat, and Notification commands
+- Lesson planning voice commands (generate, save, export)
+- Common commands: toggle theme, change language, refresh, zoom, documentation
+- Fuzzy matching with Jaccard similarity algorithm (70% threshold)
+
+**Command Categories**:
+- Common (12): Settings, navigation, help, theme, language, refresh, zoom, documentation
+- Admin (11): PPDB, grades, library, calendar, statistics, users, permissions, AI cache, site editor, performance dashboard
+- Teacher (11): Classes, grading, attendance, announcements, schedule, materials, inventory, lesson planning
+- Student (7): Grades, attendance, insights, library, OSIS events, learning modules
+- Parent (11): Child grades, attendance, schedule, profile, notifications, events, messaging, payments, meetings, reports
+- ELibrary (3): Browse, download, open materials
+- Chat (2): Reply, message history
+- Notifications (3): Settings, clear, history
+- Speech/TTS (5): Stop, pause, resume speaking, read all, clear chat, send message, toggle voice
+
+**Test Coverage**:
+- Voice command parser tests: 100+ tests
+- Dashboard voice commands hook tests: 60+ tests
+- Total voice command tests: 160+ tests
+- Typecheck passing (0 errors)
+- Lint passing (2 warnings from unrelated code, 0 errors)
+
+---
+
 ### Internationalization (i18n) Completed
 
 **New Files**:

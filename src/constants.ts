@@ -196,6 +196,12 @@ export const VOICE_COMMANDS = {
     GO_HOME: ['pulang', 'kembali', 'go home', 'beranda', 'dashboard'],
     LOGOUT: ['keluar', 'logout', 'sign out'],
     HELP: ['bantuan', 'help', 'bisa ngapain saja'],
+    TOGGLE_THEME: ['ubah tema', 'ganti tema', 'toggle theme', 'change theme', 'dark mode', 'light mode'],
+    CHANGE_LANGUAGE: ['ubah bahasa', 'ganti bahasa', 'change language', 'bahasa', 'language'],
+    REFRESH_PAGE: ['refresh', 'segarkan halaman', 'reload', 'refresh page'],
+    ZOOM_IN: ['perbesar', 'zoom in', 'perbesar tampilan'],
+    ZOOM_OUT: ['perkecil', 'zoom out', 'perkecil tampilan'],
+    OPEN_DOCUMENTATION: ['buka dokumentasi', 'dokumentasi', 'documentation', 'help documentation'],
     
     // Admin dashboard commands
     SHOW_PPDB: ['tampilkan ppdb', 'lihat pendaftaran', 'show ppdb', 'buka ppdb'],
@@ -204,6 +210,11 @@ export const VOICE_COMMANDS = {
     SEARCH_LIBRARY: ['cari materi', 'cari di perpustakaan', 'search materials', 'search library', 'cari materi {query}', 'search materials {query}', 'cari di perpustakaan {query}', 'search library {query}'],
     GO_TO_CALENDAR: ['kalender', 'buka kalender', 'calendar', 'go to calendar'],
     SHOW_STATISTICS: [' statistik', 'tampilkan statistik', 'show statistics', 'stats'],
+    MANAGE_USERS: ['kelola pengguna', 'manajemen pengguna', 'manage users', 'users'],
+    MANAGE_PERMISSIONS: ['kelola izin', 'manajemen izin', 'manage permissions', 'permissions'],
+    AI_CACHE: ['cache ai', 'cache kecerdasan buatan', 'ai cache', 'ai cache manager'],
+    SITE_EDITOR: ['editor situs', 'edit situs', 'site editor', 'edit website'],
+    PERFORMANCE_DASHBOARD: ['dashboard performa', 'kinerja sistem', 'performance dashboard', 'system performance'],
     
     // Teacher dashboard commands
     SHOW_MY_CLASSES: ['kelas saya', 'tampilkan kelas', 'show my classes', 'my classes'],
@@ -211,17 +222,46 @@ export const VOICE_COMMANDS = {
     VIEW_ATTENDANCE: ['absensi', 'lihat absensi', 'view attendance', 'attendance'],
     CREATE_ANNOUNCEMENT: ['buat pengumuman', 'pengumuman baru', 'create announcement', 'announcement'],
     VIEW_SCHEDULE: ['jadwal', 'lihat jadwal', 'view schedule', 'schedule'],
+    MATERIAL_UPLOAD: ['upload materi', 'unggah materi', 'material upload', 'upload materials'],
+    SCHOOL_INVENTORY: ['inventaris sekolah', 'barang sekolah', 'school inventory', 'inventory'],
+    LESSON_PLANNING: ['rencana pelajaran', 'perencanaan pelajaran', 'lesson planning', 'lesson plan'],
+    GENERATE_LESSON_PLAN: ['buat rencana pelajaran', 'generate lesson plan', 'generate lesson plan for {subject}', 'create lesson plan'],
+    SAVE_LESSON_PLAN: ['simpan rencana pelajaran', 'save lesson plan', 'simpan rencana'],
+    EXPORT_LESSON_PLAN: ['ekspor rencana pelajaran', 'export lesson plan', 'ekspor pdf'],
     
     // Student dashboard commands
     SHOW_MY_GRADES: ['nilai saya', 'lihat nilai saya', 'show my grades', 'my grades'],
     CHECK_ATTENDANCE: ['cek absensi', 'absensi saya', 'check attendance', 'my attendance'],
     VIEW_INSIGHTS: ['insight', 'lihat insight', 'view insights', 'my insights'],
+    OPEN_LIBRARY: ['buka perpustakaan', 'perpustakaan', 'open library'],
+    OSIS_EVENTS: ['kegiatan osis', 'event osis', 'osis events', 'student events'],
+    LEARNING_MODULES: ['modul pembelajaran', 'materi belajar', 'learning modules', 'study modules'],
     
     // Parent dashboard commands
     VIEW_CHILD_GRADES: ['nilai anak', 'lihat nilai anak', 'view child grades', 'child grades'],
     VIEW_CHILD_ATTENDANCE: ['absensi anak', 'lihat absensi anak', 'view child attendance', 'child attendance'],
     VIEW_CHILD_SCHEDULE: ['jadwal anak', 'lihat jadwal anak', 'view child schedule', 'child schedule'],
     SEE_NOTIFICATIONS: ['notifikasi', 'lihat notifikasi', 'see notifications', 'notifications'],
+    VIEW_EVENTS: ['lihat kegiatan', 'event', 'events', 'school events'],
+    MESSAGING: ['pesan', 'messaging', 'chat', 'kirim pesan'],
+    PAYMENTS: ['pembayaran', 'biaya', 'payments', 'view payments'],
+    MEETINGS: ['pertemuan', 'rapat', 'meetings', 'view meetings'],
+    REPORTS: ['laporan', 'reports', 'view reports', 'consolidated reports'],
+    CHILD_PROFILE: ['profil anak', 'child profile', 'view profile'],
+    
+    // ELibrary commands
+    BROWSE_MATERIALS: ['jelajahi materi', 'browse materials', 'lihat semua materi'],
+    DOWNLOAD_MATERIAL: ['unduh materi', 'download material', 'download {filename}'],
+    OPEN_MATERIAL: ['buka materi', 'open material', 'buka {filename}'],
+    
+    // Chat/Messaging commands
+    REPLY_MESSAGE: ['balas pesan', 'reply message', 'reply to {name}'],
+    VIEW_MESSAGE_HISTORY: ['riwayat pesan', 'message history', 'chat history'],
+    
+    // Notifications commands
+    VIEW_NOTIFICATION_SETTINGS: ['pengaturan notifikasi', 'notification settings', 'notifikasi settings'],
+    CLEAR_NOTIFICATIONS: ['hapus notifikasi', 'clear notifications', 'bersihkan notifikasi'],
+    VIEW_NOTIFICATION_HISTORY: ['riwayat notifikasi', 'notification history', 'history notifikasi'],
 } as const;
 
 export const NOTIFICATION_CONFIG = {
