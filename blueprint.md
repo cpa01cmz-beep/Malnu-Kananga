@@ -67,10 +67,12 @@ MA Malnu Kananga is a modern, AI-powered school management system designed for I
 - `pushNotificationService.ts` - PWA notifications
 - `ocrService.ts` - Document OCR for PPDB registration
 - `permissionService.ts` - Role-based access control (RBAC)
+- `lessonPlanService.ts` - AI-powered lesson planning with templates and PDF export
 
 **Supporting Services**:
 - `webSocketService.ts` - Real-time communication
 - `aiCacheService.ts` - AI response caching
+- `lessonPlanService.ts` - AI-powered lesson plan generation with Gemini 2.5 Flash
 - `emailService.ts` - Email queue and templates
 - `pdfExportService.ts` - PDF generation
 - `themeManager.ts` - Theme management (light/dark)
@@ -148,6 +150,7 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 - Voice notifications (`voiceNotificationService.ts`)
 - AI cache manager (`AICacheManager.tsx`)
 - AI-powered content editing
+- AI-powered lesson planning (`LessonPlanning.tsx`, `lessonPlanService.ts`)
 
 ### 3.3 UI Component Library
 
@@ -192,6 +195,7 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 - `useVoiceNotifications` - Voice notification alerts
 - `useAICache` - AI response caching
 - `useDashboardVoiceCommands` - Dashboard-specific commands
+- `useLessonPlanning` - Lesson planning state management and AI generation
 
 **Data Management**
 - `useForm` - Form state management
@@ -219,6 +223,7 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 - Notifications: `malnu_notifications_*`
 - Voice Settings: `malnu_voice_*`
 - AI Cache: `malnu_ai_cache_*`
+- Lesson Plans: `malnu_lesson_plans`
 - PPDB: `malnu_ppdb_*`
 - Offline Data: `malnu_offline_*`
 
@@ -274,7 +279,7 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 - Network monitoring (`networkStatus.ts`)
 - Auto-sync on reconnection
 
-**Test Coverage**: 84 test files with offline test suites
+**Test Coverage**: 88 test files with offline test suites (including lesson planning tests)
 
 ---
 

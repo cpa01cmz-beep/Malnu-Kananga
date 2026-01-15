@@ -66,6 +66,9 @@ export const STORAGE_KEYS = {
     ADMIN_DASHBOARD_CACHE: 'malnu_admin_dashboard_cache',
     ATTENDANCE_CACHE: 'malnu_attendance_cache',
     QUEUED_ACTIONS: 'malnu_queued_actions',
+
+    // Lesson Planning
+    LESSON_PLANS: 'malnu_lesson_plans',
     
     // Programs and News storage keys
     PROGRAMS: 'malnu_programs',

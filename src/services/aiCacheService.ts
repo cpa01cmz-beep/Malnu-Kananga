@@ -359,3 +359,8 @@ export const ocrCache = new AIResponseCache({
   ttl: 45 * 60 * 1000 // 45 minutes for OCR processing results
 });
 
+export const lessonPlanCache = new AIResponseCache({
+  maxSize: 20,
+  ttl: 2 * 60 * 60 * 1000 // 2 hours for lesson plans
+});
+
