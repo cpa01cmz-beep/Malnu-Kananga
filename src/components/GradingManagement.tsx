@@ -708,7 +708,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               }
             });
             
-            // TODO: Also notify parents when parent API is available
+            // TODO: Also notify parents (requires backend endpoint for getting parents by student ID)
             // const parents = await parentsAPI.getByStudentId(save.studentId);
             // for (const parent of parents) {
             //   await unifiedNotificationManager.showNotification({
