@@ -1,8 +1,6 @@
-
-import {
-  STORAGE_KEYS,
-  type UserRole
-} from '../constants';
+ 
+import { STORAGE_KEYS } from '../constants';
+import type { UserRole } from '../types';
 import { getAuthToken, parseJwtPayload } from '../utils/authUtils';
 import { logger } from '../utils/logger';
 import { WS_BASE_URL, API_BASE_URL } from '../config/api';

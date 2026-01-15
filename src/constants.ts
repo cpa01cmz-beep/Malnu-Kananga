@@ -121,24 +121,6 @@ export const STORAGE_KEYS = {
     AI_EDITOR_AUDIT_LOG: 'malnu_ai_editor_audit_log',
 } as const;
 
-export const USER_ROLES = {
-    ADMIN: 'admin',
-    TEACHER: 'teacher',
-    STUDENT: 'student',
-    PARENT: 'parent',
-} as const;
-
-export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
-
-export const USER_EXTRA_ROLES = {
-    STAFF: 'staff',
-    OSIS: 'osis',
-    WAKASEK: 'wakasek',
-    KEPSEK: 'kepsek',
-} as const;
-
-export type UserExtraRole = typeof USER_EXTRA_ROLES[keyof typeof USER_EXTRA_ROLES] | null;
-
 export const APP_CONFIG = {
     SCHOOL_NAME: 'MA Malnu Kananga',
     SCHOOL_NPSN: '69881502',
