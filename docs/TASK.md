@@ -36,6 +36,7 @@
      - Document all 41 UI components from `src/components/ui/index.ts`
      - Current: 21/41 documented (FileInput, Card, IconButton, BackButton, LoadingState, SuspenseLoading, LinkCard, Button, Modal, Badge, Textarea, Toggle, Heading, Label, Alert, SearchInput, GradientButton, SmallActionButton, Input, Select, Toast)
      - **Completed in this session**: Input, Select, Toast (3 components)
+     - **Next batch**: ConfirmationDialog, Table, DataTable, Tab, Pagination
      - **Remaining**: 20 components
      - See `docs/UI_COMPONENTS.md` for complete list
      - **Started**: 2026-01-14 by Lead Autonomous Engineer (SCRIBE MODE)
