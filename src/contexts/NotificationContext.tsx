@@ -1,11 +1,11 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { NotificationContext } from './NotificationContext.types';
 
-export function NotificationProvider({ children }: { children: React.ReactNode }) {
+export function NotificationProvider({ children }: { children: ReactNode }) {
   const pushNotificationHelpers = usePushNotifications();
   const eventNotificationHelpers = useEventNotifications();
 

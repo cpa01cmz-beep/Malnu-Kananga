@@ -1,12 +1,13 @@
 
-import React from 'react';
+import { createElement, forwardRef } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 
 export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 export type HeadingSize = 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | '8xl';
 export type HeadingWeight = 'normal' | 'medium' | 'semibold' | 'bold';
 export type HeadingTracking = 'tight' | 'normal' | 'wide';
 
-interface HeadingProps extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'level'> {
+interface HeadingProps extends Omit<HTMLAttributes<HTMLHeadingElement>, 'level'> {
   level?: HeadingLevel;
   size?: HeadingSize;
   weight?: HeadingWeight;
@@ -14,7 +15,7 @@ interface HeadingProps extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'l
   leading?: string;
   id?: string;
   className?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const baseClasses = 'text-neutral-900 dark:text-white';
@@ -47,7 +48,7 @@ const trackingClasses: Record<HeadingTracking, string> = {
   wide: 'tracking-wide',
 };
 
-const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
+const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(({
   level = 2,
   size = '2xl',
   weight = 'bold',
@@ -78,7 +79,7 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
 
   const Tag = levelToTag[level] as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
-  return React.createElement(
+  return createElement(
     Tag,
     {
       ref,
