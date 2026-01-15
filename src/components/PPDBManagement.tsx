@@ -1,6 +1,4 @@
-import React from 'react'
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole } from '../types';
 
 import { STORAGE_KEYS } from '../constants';

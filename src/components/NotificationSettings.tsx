@@ -1,6 +1,4 @@
-import React from 'react'
-
-import { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { CloseIcon } from './icons/CloseIcon';
 import { BellIcon } from './icons/BellIcon';

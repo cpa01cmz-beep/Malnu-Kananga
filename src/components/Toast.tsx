@@ -1,6 +1,4 @@
-import React from 'react'
-
-import { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import IconButton from './ui/IconButton';
 import { OPACITY_TOKENS } from '../constants';

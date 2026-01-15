@@ -1,5 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
-import React from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import type { UseFieldValidationOptions } from './useFieldValidation';
 import { logger } from '../utils/logger';
 

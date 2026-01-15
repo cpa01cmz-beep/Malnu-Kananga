@@ -1,5 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import React from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { ValidationRule, ValidationResult, announceValidation } from '../utils/validation';
 
 export interface ValidationTrigger {
