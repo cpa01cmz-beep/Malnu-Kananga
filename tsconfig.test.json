@@ -9,7 +9,6 @@
   },
   "include": [
     "src/**/*.{test,spec}.{ts,tsx}",
-    "test-setup.ts",
-    "vite.config.ts"
+    "test-setup.ts"
   ]
 }
