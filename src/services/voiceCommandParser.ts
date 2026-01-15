@@ -326,13 +326,6 @@ class VoiceCommandParser {
       language: VoiceLanguage.Indonesian,
     });
 
-    this.commands.set('open_library', {
-      id: 'open_library',
-      patterns: [...VOICE_COMMANDS.OPEN_LIBRARY],
-      action: 'OPEN_LIBRARY',
-      language: VoiceLanguage.Indonesian,
-    });
-
     this.commands.set('osis_events', {
       id: 'osis_events',
       patterns: [...VOICE_COMMANDS.OSIS_EVENTS],
@@ -373,6 +366,48 @@ class VoiceCommandParser {
       id: 'see_notifications',
       patterns: [...VOICE_COMMANDS.SEE_NOTIFICATIONS],
       action: 'SEE_NOTIFICATIONS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_events', {
+      id: 'view_events',
+      patterns: [...VOICE_COMMANDS.VIEW_EVENTS],
+      action: 'VIEW_EVENTS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('messaging', {
+      id: 'messaging',
+      patterns: [...VOICE_COMMANDS.MESSAGING],
+      action: 'MESSAGING',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('payments', {
+      id: 'payments',
+      patterns: [...VOICE_COMMANDS.PAYMENTS],
+      action: 'PAYMENTS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('meetings', {
+      id: 'meetings',
+      patterns: [...VOICE_COMMANDS.MEETINGS],
+      action: 'MEETINGS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('reports', {
+      id: 'reports',
+      patterns: [...VOICE_COMMANDS.REPORTS],
+      action: 'REPORTS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('child_profile', {
+      id: 'child_profile',
+      patterns: [...VOICE_COMMANDS.CHILD_PROFILE],
+      action: 'CHILD_PROFILE',
       language: VoiceLanguage.Indonesian,
     });
 

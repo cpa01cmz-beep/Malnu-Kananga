@@ -1,7 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import VoiceCommandParser from '../voiceCommandParser';
-import type { VoiceCommand } from '../../types';
-import { VOICE_COMMANDS } from '../../constants';
 
 describe('VoiceCommandParser', () => {
   let parser: VoiceCommandParser;

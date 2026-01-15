@@ -233,7 +233,6 @@ export const VOICE_COMMANDS = {
     SHOW_MY_GRADES: ['nilai saya', 'lihat nilai saya', 'show my grades', 'my grades'],
     CHECK_ATTENDANCE: ['cek absensi', 'absensi saya', 'check attendance', 'my attendance'],
     VIEW_INSIGHTS: ['insight', 'lihat insight', 'view insights', 'my insights'],
-    OPEN_LIBRARY: ['buka perpustakaan', 'perpustakaan', 'open library'],
     OSIS_EVENTS: ['kegiatan osis', 'event osis', 'osis events', 'student events'],
     LEARNING_MODULES: ['modul pembelajaran', 'materi belajar', 'learning modules', 'study modules'],
     

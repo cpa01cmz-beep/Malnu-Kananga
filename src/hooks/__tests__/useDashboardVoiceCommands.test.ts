@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useDashboardVoiceCommands } from '../useDashboardVoiceCommands';
 import { UserRole } from '../../types/permissions';
-import type { VoiceCommand } from '../../types';
 
 describe('useDashboardVoiceCommands', () => {
   const mockNavigate = vi.fn();
