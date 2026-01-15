@@ -485,6 +485,13 @@ wrangler deploy --env production
 - **Focus Management**: Focus traps, focus indicators
 - **Screen Reader**: Screen reader compatible
 - **Voice Control**: Voice commands for major actions
+- **Skip Links**: Multiple skip targets for navigation (SkipLink component)
+- **Live Regions**: ARIA live regions for dynamic content updates
+- **WCAG 2.1 AA**: Full compliance with accessibility standards
+- **Accessibility Hooks**: useAnnouncer, useFocusContainment, useKeyboardNavigation, useReducedMotion, usePrefersColorScheme
+- **Accessibility Config**: Centralized accessibility constants (src/config/accessibility.ts)
+- **Accessibility Testing**: Automated tests with jest-axe (19 tests)
+- **Accessibility Documentation**: Comprehensive guidelines in docs/ACCESSIBILITY.md
 
 ---
 
