@@ -123,10 +123,6 @@ export const USER_ROLES = {
     TEACHER: 'teacher',
     STUDENT: 'student',
     PARENT: 'parent',
-    STAFF: 'staff',
-    OSIS: 'osis',
-    WAKASEK: 'wakasek',
-    KEPSEK: 'kepsek',
 } as const;
 
 export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
@@ -138,7 +134,7 @@ export const USER_EXTRA_ROLES = {
     KEPSEK: 'kepsek',
 } as const;
 
-export type UserExtraRole = typeof USER_EXTRA_ROLES[keyof typeof USER_EXTRA_ROLES];
+export type UserExtraRole = typeof USER_EXTRA_ROLES[keyof typeof USER_EXTRA_ROLES] | null;
 
 export const APP_CONFIG = {
     SCHOOL_NAME: 'MA Malnu Kananga',
