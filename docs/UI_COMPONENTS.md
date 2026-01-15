@@ -1,19 +1,9 @@
 # UI Components Documentation
 
-**Status**: ⚠️ INCOMPLETE (18 of 41 components documented)
+**Status**: 🔄 IN PROGRESS (21 of 41 components documented)
 **Last Updated**: 2026-01-15
 
-> **IMPORTANT**: This document currently covers 18 of 41 exported UI components from `src/components/ui/index.ts`. The following 23 components are missing documentation:
-> - Layout: BaseModal, ConfirmationDialog, Section, ErrorBoundary, SkipLink
-> - Display: DashboardActionCard, SocialLink
-> - Table: Table (with sub-components), DataTable
-> - Interactive: Tab
-> - Navigation: Pagination
-> - Loading: EmptyState, ErrorState, LoadingSpinner, LoadingOverlay, Skeleton
-> - Progress: ProgressBar
-> - Utility: PageHeader, ErrorMessage, PDFExportButton
->
-> See `src/components/ui/index.ts` for complete export list. Documentation updates are tracked in TASK.md (P1 priority).
+> **NOTE**: Documenting all exported UI components from `src/components/ui/index.ts` with comprehensive usage examples, accessibility guidelines, and real-world implementation patterns.
 
 ## Overview
 
@@ -7558,8 +7548,1243 @@ Potential improvements to consider:
 - Badge count support
 - Tooltip integration
 - Dropdown trigger variant
-- Multi-select toggle
-- Split button variant
-- Keyboard shortcut support
+  - Multi-select toggle
+  - Split button variant
+  - Keyboard shortcut support
+
+---
+
+## Input Component
+
+**Location**: `src/components/ui/Input.tsx`
+
+A flexible and accessible input component with validation, masking, and comprehensive state management. Supports multiple input types, custom icons, and automatic formatting.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg`
+- **3 States**: `default`, `error`, `success`
+- **Input Masks**: Built-in formatting for NISN, phone, date, year, class, and grade inputs
+- **Validation**: Client-side validation with customizable rules
+- **Accessibility**: Full ARIA support, keyboard navigation, screen reader announcements
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Icons**: Optional left and right icon support with automatic spacing
+- **Clear on Escape**: Optional quick-clear functionality
+- **Auto-focus**: Automatically focuses on validation errors
+- **Real-time Validation**: Change and blur validation triggers
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text displayed above the input |
+| `helperText` | `string` | `undefined` | Helper text displayed below the input |
+| `errorText` | `string` | `undefined` | Error message displayed below the input (sets state to error) |
+| `size` | `InputSize` | `'md'` | Input size (affects padding, text size, and icon size) |
+| `state` | `InputState` | `'default'` | Visual state variant (defaults to 'error' if errorText provided) |
+| `leftIcon` | `ReactNode` | `undefined` | Icon displayed on the left side of input |
+| `rightIcon` | `ReactNode` | `undefined` | Icon displayed on the right side of input |
+| `fullWidth` | `boolean` | `false` | Whether the input should take full width |
+| `validationRules` | `Array<{validate, message}>` | `[]` | Custom validation rules with error messages |
+| `validateOnChange` | `boolean` | `true` | Whether to validate on input change |
+| `validateOnBlur` | `boolean` | `true` | Whether to validate on input blur |
+| `accessibility?.announceErrors` | `boolean` | `true` | Whether to announce errors to screen readers |
+| `accessibility?.describedBy` | `string` | `undefined` | Additional ARIA described-by ID |
+| `inputMask` | `InputMaskType` | `undefined` | Input mask type (nisn, phone, date, year, class, grade) |
+| `customType` | `InputType` | `'text'` | Input type (text, email, password, tel, number, nisn, phone, date, year, class, grade) |
+| `clearOnEscape` | `boolean` | `false` | Whether pressing Escape clears the input |
+| All standard input attributes | - | - | Passes through all standard HTML input props |
+
+### Input Masks
+
+The Input component includes built-in formatters for common Indonesian data types:
+
+#### NISN Mask
+
+Automatically formats Indonesian National Student ID (10 digits).
+
+```tsx
+<Input
+  label="NISN"
+  inputMask="nisn"
+  placeholder="Masukkan NISN"
+  customType="nisn"
+/>
+```
+
+**Behavior**: Auto-formats to 10 digits, displays placeholder pattern `_____-____`, validates with pattern `[0-9]{10}`
+
+#### Phone Mask
+
+Automatically formats Indonesian phone numbers.
+
+```tsx
+<Input
+  label="Nomor Telepon"
+  inputMask="phone"
+  placeholder="08XX-XXXX-XXXX"
+  customType="phone"
+/>
+```
+
+**Behavior**: Auto-formats to `08XX-XXXX-XXXX` pattern (10-13 digits), displays phone icon automatically
+
+#### Date Mask
+
+Formats date inputs.
+
+```tsx
+<Input
+  label="Tanggal Lahir"
+  inputMask="date"
+  placeholder="DD-MM-YYYY"
+  customType="date"
+/>
+```
+
+**Behavior**: Auto-formats to `DD-MM-YYYY` pattern, validates day/month/year ranges
+
+#### Year Mask
+
+Formats year inputs (4 digits).
+
+```tsx
+<Input
+  label="Tahun Masuk"
+  inputMask="year"
+  placeholder="YYYY"
+  customType="year"
+/>
+```
+
+**Behavior**: Auto-formats to 4 digits, validates year range
+
+#### Class Mask
+
+Formats class names (e.g., "10A", "11C").
+
+```tsx
+<Input
+  label="Kelas"
+  inputMask="class"
+  placeholder="Contoh: 10A"
+  customType="class"
+/>
+```
+
+**Behavior**: Auto-formats to pattern `[X][X][A-Z]` (grade + letter)
+
+#### Grade Mask
+
+Formats numeric grades (1-100).
+
+```tsx
+<Input
+  label="Nilai"
+  inputMask="grade"
+  placeholder="0-100"
+  customType="grade"
+/>
+```
+
+**Behavior**: Auto-formats to 1-3 digits, validates 0-100 range
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for dense interfaces.
+
+```tsx
+<Input
+  label="Nama"
+  size="sm"
+  placeholder="Masukkan nama lengkap"
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-3 py-2`
+- Input text: `text-sm`
+- Label text: `text-xs`
+- Helper/error text: `text-xs`
+- Icon size: `w-4 h-4`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<Input
+  label="Email"
+  size="md"
+  placeholder="nama@email.com"
+  customType="email"
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-4 py-3`
+- Input text: `text-sm sm:text-base`
+- Label text: `text-sm`
+- Helper/error text: `text-xs`
+- Icon size: `w-5 h-5`
+
+#### Large (lg)
+
+Larger size for better accessibility and touch targets.
+
+```tsx
+<Input
+  label="Keterangan"
+  size="lg"
+  placeholder="Masukkan keterangan..."
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-5 py-4`
+- Input text: `text-base sm:text-lg`
+- Label text: `text-base`
+- Helper/error text: `text-sm`
+- Icon size: `w-6 h-6`
+
+### States
+
+#### Default State
+
+Standard appearance with neutral colors.
+
+```tsx
+<Input
+  label="Nama"
+  placeholder="Masukkan nama"
+  state="default"
+/>
+```
+
+**Styling**: Neutral border, white background, primary focus ring
+
+#### Error State
+
+Red-themed styling for validation errors.
+
+```tsx
+<Input
+  label="Email"
+  errorText="Format email tidak valid"
+  customType="email"
+/>
+```
+
+**Styling**: Red border, light red background, red focus ring, red error text
+
+**Behavior**: Automatically sets `aria-invalid="true"` and announces errors to screen readers
+
+#### Success State
+
+Green-themed styling for valid inputs.
+
+```tsx
+<Input
+  label="Password"
+  state="success"
+  helperText="Kata sandi yang kuat"
+  customType="password"
+/>
+```
+
+**Styling**: Green border, light green background, green focus ring
+
+### Validation
+
+#### Basic Validation with Rules
+
+```tsx
+<Input
+  label="Email"
+  customType="email"
+  validationRules={[
+    {
+      validate: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+      message: 'Format email tidak valid'
+    },
+    {
+      validate: (value) => value.length > 0,
+      message: 'Email wajib diisi'
+    }
+  ]}
+/>
+```
+
+#### Password Validation
+
+```tsx
+<Input
+  label="Password"
+  customType="password"
+  validationRules={[
+    {
+      validate: (value) => value.length >= 8,
+      message: 'Password minimal 8 karakter'
+    },
+    {
+      validate: (value) => /[A-Z]/.test(value),
+      message: 'Password harus mengandung huruf kapital'
+    },
+    {
+      validate: (value) => /[0-9]/.test(value),
+      message: 'Password harus mengandung angka'
+    }
+  ]}
+/>
+```
+
+#### Validation Timing Control
+
+```tsx
+<Input
+  label="Username"
+  validateOnChange={false}  // Only validate on blur
+  validateOnBlur={true}
+  validationRules={[
+    {
+      validate: (value) => value.length >= 3,
+      message: 'Username minimal 3 karakter'
+    }
+  ]}
+/>
+```
+
+### Icons
+
+#### Left Icon with Spacing
+
+```tsx
+<Input
+  label="Cari..."
+  placeholder="Ketik untuk mencari"
+  leftIcon={
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+  }
+/>
+```
+
+#### Right Icon
+
+```tsx
+<Input
+  label="Password"
+  customType="password"
+  rightIcon={
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+    </svg>
+  }
+/>
+```
+
+### Advanced Features
+
+#### Clear on Escape
+
+```tsx
+<Input
+  label="Filter"
+  placeholder="Ketik untuk memfilter..."
+  clearOnEscape={true}
+/>
+```
+
+**Behavior**: Pressing Escape key clears the input value
+
+#### Full Width Input
+
+```tsx
+<Input
+  label="Alamat Lengkap"
+  placeholder="Masukkan alamat lengkap"
+  fullWidth={true}
+/>
+```
+
+#### Accessibility Configuration
+
+```tsx
+<Input
+  label="Nama"
+  accessibility={{
+    announceErrors: true,
+    describedBy: 'additional-info'
+  }}
+  helperText="Nama sesuai kartu identitas"
+/>
+```
+
+#### Custom Input Types
+
+```tsx
+// Number input with min/max
+<Input
+  label="Usia"
+  customType="number"
+  min="0"
+  max="120"
+/>
+
+// Date input
+<Input
+  label="Tanggal Pendaftaran"
+  customType="date"
+/>
+
+// Tel input
+<Input
+  label="Nomor WhatsApp"
+  customType="tel"
+  placeholder="08XX-XXXX-XXXX"
+/>
+```
+
+### Accessibility Features
+
+- **ARIA Labels**: Automatic label association via `htmlFor`
+- **Required Indicators**: Visual `*` with aria-label="wajib diisi"
+- **Error Announcements**: Screen reader announcements for errors (`role="alert"`, `aria-live="polite"`)
+- **Focus Management**: Auto-focus on validation errors
+- **Keyboard Navigation**: Full keyboard support, Escape key to clear
+- **Described By**: Automatic association with helper and error text
+- **Validation States**: `aria-invalid` attribute reflects validation state
+- **Live Regions**: `aria-live` and `aria-busy` for async validation
+
+### Real-World Examples
+
+#### Login Form
+
+```tsx
+<form onSubmit={handleSubmit}>
+  <Input
+    label="Email"
+    customType="email"
+    placeholder="nama@email.com"
+    fullWidth={true}
+    validationRules={[
+      {
+        validate: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+        message: 'Format email tidak valid'
+      }
+    ]}
+  />
+
+  <Input
+    label="Password"
+    customType="password"
+    placeholder="Masukkan password"
+    fullWidth={true}
+    validationRules={[
+      {
+        validate: (value) => value.length >= 8,
+        message: 'Password minimal 8 karakter'
+      }
+    ]}
+  />
+
+  <Button type="submit" fullWidth>
+    Login
+  </Button>
+</form>
+```
+
+#### Student Registration Form
+
+```tsx
+<form onSubmit={handleRegister}>
+  <Input
+    label="NISN"
+    inputMask="nisn"
+    placeholder="10 digit NISN"
+    customType="nisn"
+    fullWidth={true}
+    required
+  />
+
+  <Input
+    label="Nama Lengkap"
+    placeholder="Masukkan nama lengkap"
+    fullWidth={true}
+    required
+  />
+
+  <Input
+    label="Nomor HP Orang Tua"
+    inputMask="phone"
+    placeholder="08XX-XXXX-XXXX"
+    customType="phone"
+    fullWidth={true}
+    helperText="Akan digunakan untuk notifikasi"
+  />
+</form>
+```
+
+#### Search with Quick Clear
+
+```tsx
+<Input
+  label="Cari Siswa"
+  placeholder="Ketik nama atau NISN..."
+  leftIcon={<SearchIcon />}
+  clearOnEscape={true}
+  fullWidth={true}
+/>
+```
+
+### Benefits
+
+- ✅ Comprehensive input masking for Indonesian data formats
+- ✅ Client-side validation with customizable rules
+- ✅ Automatic error handling and announcements
+- ✅ Consistent styling across all states and sizes
+- ✅ Full accessibility support (WCAG 2.1 AA)
+- ✅ Built-in icon support with automatic spacing
+- ✅ Dark mode support
+- ✅ Responsive design
+- ✅ Type-safe props
+- ✅ Auto-focus on validation errors
+- ✅ Real-time validation feedback
+- ✅ Quick-clear functionality
+
+### Notes
+
+- Input masks automatically add icons for phone and nisn types
+- Validation rules execute in order, stopping at first failure
+- Error state automatically sets state to error even if state prop is different
+- clearOnEscape is false by default for backward compatibility
+- Input refs are properly forwarded for external control
+
+---
+
+## Select Component
+
+**Location**: `src/components/ui/Select.tsx`
+
+A flexible and accessible select dropdown component with consistent styling, full accessibility support, and responsive design.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg`
+- **3 States**: `default`, `error`, `success`
+- **Placeholder Support**: Optional placeholder option
+- **Accessibility**: Full ARIA support, keyboard navigation, screen reader support
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Disabled Options**: Support for disabled option items
+- **Custom Styling**: Dropdown arrow icon with consistent sizing
+- **Label Support**: Optional label with required indicator
+- **Helper Text**: Contextual guidance for users
+- **Error Handling**: Built-in error state with role="alert"
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text displayed above the select |
+| `helperText` | `string` | `undefined` | Helper text displayed below the select |
+| `errorText` | `string` | `undefined` | Error message displayed below the select (sets state to error) |
+| `size` | `SelectSize` | `'md'` | Select size (affects padding and text size) |
+| `state` | `SelectState` | `'default'` | Visual state variant (defaults to 'error' if errorText provided) |
+| `fullWidth` | `boolean` | `false` | Whether the select should take full width |
+| `options` | `Array<{value, label, disabled}>` | **required** | Array of option objects |
+| `placeholder` | `string` | `undefined` | Placeholder text for first option |
+| All standard select attributes | - | - | Passes through all standard HTML select props |
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for dense interfaces.
+
+```tsx
+<Select
+  label="Role"
+  placeholder="Pilih role"
+  size="sm"
+  options={[
+    { value: 'admin', label: 'Administrator' },
+    { value: 'teacher', label: 'Guru' },
+    { value: 'student', label: 'Siswa' },
+  ]}
+/>
+```
+
+**Dimensions**:
+- Select padding: `px-3 py-2`
+- Select text: `text-sm`
+- Label text: `text-xs`
+- Helper/error text: `text-xs`
+- Arrow icon: `w-4 h-4`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<Select
+  label="Kelas"
+  placeholder="Pilih kelas"
+  size="md"
+  options={[
+    { value: '10A', label: 'Kelas 10A' },
+    { value: '10B', label: 'Kelas 10B' },
+    { value: '11A', label: 'Kelas 11A' },
+  ]}
+/>
+```
+
+**Dimensions**:
+- Select padding: `px-4 py-3`
+- Select text: `text-sm sm:text-base`
+- Label text: `text-sm`
+- Helper/error text: `text-xs`
+- Arrow icon: `w-5 h-5`
+
+#### Large (lg)
+
+Larger size for better accessibility and touch targets.
+
+```tsx
+<Select
+  label="Tahun Akademik"
+  placeholder="Pilih tahun akademik"
+  size="lg"
+  options={[
+    { value: '2023-2024', label: '2023-2024' },
+    { value: '2024-2025', label: '2024-2025' },
+    { value: '2025-2026', label: '2025-2026' },
+  ]}
+/>
+```
+
+**Dimensions**:
+- Select padding: `px-5 py-4`
+- Select text: `text-base sm:text-lg`
+- Label text: `text-base`
+- Helper/error text: `text-sm`
+- Arrow icon: `w-5 h-5`
+
+### States
+
+#### Default State
+
+Standard appearance with neutral colors.
+
+```tsx
+<Select
+  label="Jurusan"
+  placeholder="Pilih jurusan"
+  state="default"
+  options={[
+    { value: 'ipa', label: 'IPA' },
+    { value: 'ips', label: 'IPS' },
+  ]}
+/>
+```
+
+**Styling**: Neutral border, white background, primary focus ring
+
+#### Error State
+
+Red-themed styling for validation errors.
+
+```tsx
+<Select
+  label="Kelas"
+  errorText="Kelas wajib dipilih"
+  options={[
+    { value: '10A', label: 'Kelas 10A' },
+    { value: '10B', label: 'Kelas 10B' },
+  ]}
+/>
+```
+
+**Styling**: Red border, white background, red focus ring, red error text
+
+**Behavior**: Automatically sets `aria-invalid="true"` and error role
+
+#### Success State
+
+Green-themed styling for valid selections.
+
+```tsx
+<Select
+  label="Semester"
+  placeholder="Pilih semester"
+  state="success"
+  helperText="Semester aktif"
+  options={[
+    { value: 'ganjil', label: 'Semester Ganjil' },
+    { value: 'genap', label: 'Semester Genap' },
+  ]}
+/>
+```
+
+**Styling**: Green border, white background, green focus ring
+
+### Options
+
+#### Basic Options
+
+```tsx
+<Select
+  label="Mata Pelajaran"
+  placeholder="Pilih mata pelajaran"
+  options={[
+    { value: 'matematika', label: 'Matematika' },
+    { value: 'fisika', label: 'Fisika' },
+    { value: 'kimia', label: 'Kimia' },
+    { value: 'biologi', label: 'Biologi' },
+  ]}
+/>
+```
+
+#### Disabled Options
+
+```tsx
+<Select
+  label="Kelas"
+  placeholder="Pilih kelas"
+  options={[
+    { value: '10A', label: 'Kelas 10A' },
+    { value: '10B', label: 'Kelas 10B', disabled: true },
+    { value: '11A', label: 'Kelas 11A' },
+    { value: '11B', label: 'Kelas 11B', disabled: true },
+  ]}
+/>
+```
+
+#### Dynamic Options from API
+
+```tsx
+const [classes, setClasses] = useState([]);
+
+useEffect(() => {
+  fetchClasses().then(data => setClasses(data));
+}, []);
+
+<Select
+  label="Kelas"
+  placeholder="Pilih kelas"
+  options={classes.map(cls => ({
+    value: cls.id,
+    label: cls.name
+  }))}
+/>
+```
+
+### Advanced Features
+
+#### Full Width Select
+
+```tsx
+<Select
+  label="Jurusan"
+  placeholder="Pilih jurusan"
+  fullWidth={true}
+  options={[
+    { value: 'ipa', label: 'IPA' },
+    { value: 'ips', label: 'IPS' },
+    { value: 'bahasa', label: 'Bahasa' },
+  ]}
+/>
+```
+
+#### Required Field
+
+```tsx
+<Select
+  label="Kelas"
+  placeholder="Pilih kelas"
+  required
+  options={[
+    { value: '10A', label: 'Kelas 10A' },
+    { value: '10B', label: 'Kelas 10B' },
+  ]}
+/>
+```
+
+**Display**: Shows red `*` indicator next to label
+
+#### Controlled Select
+
+```tsx
+const [selectedRole, setSelectedRole] = useState('');
+
+<Select
+  label="Role"
+  placeholder="Pilih role"
+  value={selectedRole}
+  onChange={(e) => setSelectedRole(e.target.value)}
+  options={[
+    { value: 'admin', label: 'Administrator' },
+    { value: 'teacher', label: 'Guru' },
+    { value: 'student', label: 'Siswa' },
+  ]}
+/>
+```
+
+### Accessibility Features
+
+- **ARIA Labels**: Automatic label association via `htmlFor`
+- **Required Indicators**: Visual `*` with aria-label="wajib diisi"
+- **Error Announcements**: `role="alert"` for error text
+- **Focus Management**: Proper focus styles and keyboard navigation
+- **Described By**: Automatic association with helper and error text
+- **Invalid State**: `aria-invalid` attribute reflects error state
+- **Disabled Options**: Properly disabled for keyboard and mouse users
+
+### Real-World Examples
+
+#### Student Form
+
+```tsx
+<form onSubmit={handleSubmit}>
+  <Select
+    label="Kelas"
+    placeholder="Pilih kelas"
+    required
+    fullWidth={true}
+    options={classes.map(cls => ({
+      value: cls.id,
+      label: cls.name
+    }))}
+  />
+
+  <Select
+    label="Jurusan"
+    placeholder="Pilih jurusan"
+    required
+    fullWidth={true}
+    options={[
+      { value: 'ipa', label: 'IPA' },
+      { value: 'ips', label: 'IPS' },
+    ]}
+  />
+
+  <Select
+    label="Tahun Masuk"
+    placeholder="Pilih tahun masuk"
+    fullWidth={true}
+    options={[
+      { value: '2023', label: '2023' },
+      { value: '2024', label: '2024' },
+      { value: '2025', label: '2025' },
+    ]}
+  />
+</form>
+```
+
+#### Teacher Assignment Form
+
+```tsx
+<Select
+  label="Mata Pelajaran"
+  placeholder="Pilih mata pelajaran"
+  helperText="Mata pelajaran yang akan diampu"
+  options={subjects.map(sub => ({
+    value: sub.id,
+    label: `${sub.code} - ${sub.name}`
+  }))}
+/>
+
+<Select
+  label="Kelas yang Diampu"
+  placeholder="Pilih kelas"
+  helperText="Bisa memilih lebih dari satu"
+  multiple
+  options={availableClasses.map(cls => ({
+    value: cls.id,
+    label: cls.name
+  }))}
+/>
+```
+
+#### Filter Dropdown
+
+```tsx
+<Select
+  label="Filter Status"
+  placeholder="Semua status"
+  size="sm"
+  options={[
+    { value: 'all', label: 'Semua' },
+    { value: 'active', label: 'Aktif' },
+    { value: 'inactive', label: 'Tidak Aktif' },
+    { value: 'graduated', label: 'Lulus' },
+  ]}
+/>
+```
+
+### Benefits
+
+- ✅ Consistent styling across all states and sizes
+- ✅ Full accessibility support (WCAG 2.1 AA)
+- ✅ Built-in error handling and announcements
+- ✅ Dark mode support
+- ✅ Responsive design
+- ✅ Type-safe props
+- ✅ Disabled option support
+- ✅ Placeholder support
+- ✅ Custom styling support
+- ✅ Keyboard navigation
+
+### Notes
+
+- Placeholder option is automatically disabled
+- Error state automatically sets state to error even if state prop is different
+- Arrow icon is automatically sized based on size prop
+- All options are keyboard navigable
+- Component uses forwardRef for ref forwarding
+
+---
+
+## Toast Component
+
+**Location**: `src/components/Toast.tsx`
+
+A notification toast component for displaying success, info, and error messages with automatic dismissal, keyboard support, and comprehensive accessibility features.
+
+### Features
+
+- **3 Types**: `success`, `info`, `error`
+- **Auto-dismissal**: Configurable duration (default: 3000ms)
+- **Pause on Hover**: Pauses auto-dismiss when user is reading
+- **Keyboard Dismissal**: Press Escape to close
+- **Accessibility**: Full ARIA support, screen reader announcements, focus management
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Backdrop Blur**: Modern backdrop-blur effect
+- **Smooth Animations**: Enter and exit animations
+- **Focus Management**: Automatic focus restoration
+- **Type-specific Roles**: `alert` for errors, `status` for success/info
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `message` | `string` | **required** | Message text to display |
+| `type` | `ToastType` | `'success'` | Toast type (success, info, error) |
+| `isVisible` | `boolean` | **required** | Whether the toast is visible |
+| `onClose` | `() => void` | **required** | Callback when toast is closed |
+| `duration` | `number` | `3000` | Auto-dismiss duration in milliseconds |
+
+### Types
+
+#### Success Toast
+
+Green-themed notification for successful operations.
+
+```tsx
+<Toast
+  message="Data berhasil disimpan!"
+  type="success"
+  isVisible={showSuccessToast}
+  onClose={() => setShowSuccessToast(false)}
+/>
+```
+
+**Styling**: Primary green accent, checkmark icon, white/neutral background
+
+**Accessibility**: `role="status"`, `aria-live="polite"` (non-critical announcement)
+
+#### Info Toast
+
+Blue-themed notification for informational messages.
+
+```tsx
+<Toast
+  message="Fitur ini akan segera tersedia"
+  type="info"
+  isVisible={showInfoToast}
+  onClose={() => setShowInfoToast(false)}
+  duration={5000}
+/>
+```
+
+**Styling**: Blue accent, info icon, white/neutral background
+
+**Accessibility**: `role="status"`, `aria-live="polite"` (non-critical announcement)
+
+#### Error Toast
+
+Red-themed notification for errors and failures.
+
+```tsx
+<Toast
+  message="Gagal mengambil data. Silakan coba lagi."
+  type="error"
+  isVisible={showErrorToast}
+  onClose={() => setShowErrorToast(false)}
+/>
+```
+
+**Styling**: Red accent, warning icon, white/neutral background
+
+**Accessibility**: `role="alert"`, `aria-live="assertive"` (critical announcement)
+
+### Advanced Features
+
+#### Custom Duration
+
+```tsx
+<Toast
+  message="Penggunaan storage: 85% penuh"
+  type="info"
+  isVisible={showWarningToast}
+  onClose={() => setShowWarningToast(false)}
+  duration={8000}
+/>
+```
+
+**Behavior**: Toast stays visible for 8 seconds
+
+#### Pause on Hover
+
+Automatically enabled. When user hovers over toast, auto-dismissal pauses.
+
+```tsx
+<Toast
+  message="Pesan panjang yang memerlukan waktu untuk dibaca oleh pengguna. User dapat hover untuk memperpanjang waktu baca."
+  type="info"
+  isVisible={showLongToast}
+  onClose={() => setShowLongToast(false)}
+  duration={4000}
+/>
+```
+
+**Behavior**: Timer pauses when mouse enters toast, resumes when mouse leaves
+
+#### Keyboard Dismissal
+
+Press Escape key to close toast.
+
+```tsx
+<Toast
+  message="Tekan Escape untuk menutup notifikasi ini"
+  type="info"
+  isVisible={showKeyboardToast}
+  onClose={() => setShowKeyboardToast(false)}
+/>
+```
+
+**Behavior**: Escape key triggers onClose callback
+
+### Integration with App State
+
+#### Global Toast Hook
+
+```tsx
+// hooks/useToast.ts
+import { useState } from 'react';
+
+export const useToast = () => {
+  const [toast, setToast] = useState({ message: '', type: 'success' as const, isVisible: false });
+
+  const showToast = (message: string, type: 'success' | 'info' | 'error') => {
+    setToast({ message, type, isVisible: true });
+  };
+
+  const hideToast = () => {
+    setToast(prev => ({ ...prev, isVisible: false }));
+  };
+
+  return { toast, showToast, hideToast };
+};
+
+// Usage in component
+function MyComponent() {
+  const { toast, showToast, hideToast } = useToast();
+
+  const handleSave = async () => {
+    try {
+      await saveData();
+      showToast('Data berhasil disimpan!', 'success');
+    } catch (error) {
+      showToast('Gagal menyimpan data', 'error');
+    }
+  };
+
+  return (
+    <>
+      <Button onClick={handleSave}>Simpan</Button>
+      <Toast {...toast} onClose={hideToast} />
+    </>
+  );
+}
+```
+
+#### API Call Feedback
+
+```tsx
+const { toast, showToast, hideToast } = useToast();
+
+const handleDelete = async (id: string) => {
+  try {
+    await apiService.delete(`/students/${id}`);
+    showToast('Siswa berhasil dihapus', 'success');
+    fetchStudents(); // Refresh list
+  } catch (error) {
+    showToast('Gagal menghapus siswa', 'error');
+  }
+};
+```
+
+#### Form Validation Feedback
+
+```tsx
+const { toast, showToast, hideToast } = useToast();
+
+const handleSubmit = (e: FormEvent) => {
+  e.preventDefault();
+
+  if (!validateForm()) {
+    showToast('Mohon lengkapi semua field yang wajib diisi', 'error');
+    return;
+  }
+
+  showToast('Formulir berhasil dikirim!', 'success');
+  // Submit logic...
+};
+```
+
+### Accessibility Features
+
+- **Type-specific Roles**: `role="alert"` for errors, `role="status"` for success/info
+- **Live Regions**: `aria-live="assertive"` for errors, `aria-live="polite"` for non-critical
+- **Atomic Updates**: `aria-atomic="true"` ensures entire toast is announced
+- **Focus Management**: Auto-focuses toast when visible, restores previous focus on close
+- **Keyboard Support**: Escape key to dismiss
+- **Screen Reader Announcements**: Proper ARIA attributes for screen readers
+- **Pause on Hover**: Allows screen reader users to complete announcement
+- **Visual Focus**: Toast receives focus for keyboard users
+
+### Visual Features
+
+- **Backdrop Blur**: `backdrop-blur-xl` for modern glass effect
+- **Border Accents**: Left border color indicates toast type
+- **Smooth Animations**: Slide-in from right with fade effect
+- **Responsive Positioning**: Top-right on desktop, top on mobile
+- **Max Width**: Constrained to `max-w-md` for readability
+- **Shadow**: `shadow-float` for depth
+- **Icons**: Type-specific icons (checkmark, info, warning)
+- **Close Button**: IconButton with proper ARIA label
+
+### Real-World Examples
+
+#### Form Submission Success
+
+```tsx
+const { toast, showToast, hideToast } = useToast();
+
+const handleRegister = async (formData: FormData) => {
+  const loadingToast = useLoadingToast('Mendaftarkan siswa...');
+
+  try {
+    await apiService.post('/students', formData);
+    hideToast();
+    showToast('Siswa berhasil didaftarkan!', 'success');
+    // Redirect to list...
+  } catch (error) {
+    hideToast();
+    showToast('Gagal mendaftarkan siswa', 'error');
+  }
+};
+```
+
+#### API Error Handling
+
+```tsx
+const { toast, showToast, hideToast } = useToast();
+
+const fetchStudents = async () => {
+  try {
+    const data = await apiService.get('/students');
+    setStudents(data);
+  } catch (error) {
+    if (error.response?.status === 401) {
+      showToast('Sesi telah berakhir. Silakan login ulang.', 'error');
+      logout();
+    } else if (error.response?.status === 429) {
+      showToast('Terlalu banyak permintaan. Silakan tunggu sebentar.', 'info');
+    } else {
+      showToast('Gagal mengambil data siswa', 'error');
+    }
+  }
+};
+```
+
+#### File Upload Progress
+
+```tsx
+const { toast, showToast, hideToast } = useToast();
+
+const handleUpload = async (file: File) => {
+  showToast(`Mengunggah ${file.name}...`, 'info');
+
+  try {
+    await uploadFile(file);
+    showToast('File berhasil diunggah!', 'success');
+  } catch (error) {
+    showToast('Gagal mengunggah file', 'error');
+  }
+};
+```
+
+#### Multi-step Form Completion
+
+```tsx
+const { toast, showToast, hideToast } = useToast();
+
+const steps = [
+  { name: 'Informasi Pribadi', completed: false },
+  { name: 'Informasi Akademik', completed: false },
+  { name: 'Orang Tua', completed: false },
+];
+
+const handleStepComplete = (stepIndex: number) => {
+  steps[stepIndex].completed = true;
+
+  if (stepIndex === steps.length - 1) {
+    showToast('Selamat! Semua langkah selesai.', 'success');
+  } else {
+    showToast(`${steps[stepIndex].name} selesai`, 'info');
+  }
+};
+```
+
+### Benefits
+
+- ✅ Consistent notification system across application
+- ✅ Type-specific styling and icons
+- ✅ Automatic dismissal with configurable duration
+- ✅ Pause on hover for longer messages
+- ✅ Keyboard support (Escape to dismiss)
+- ✅ Full accessibility support (WCAG 2.1 AA)
+- ✅ Screen reader announcements with proper ARIA
+- ✅ Focus management and restoration
+- ✅ Dark mode support
+- ✅ Modern glass-morphism design
+- ✅ Smooth animations
+- ✅ Responsive positioning
+- ✅ Type-safe props
+
+### Notes
+
+- Toast auto-focuses when visible for keyboard users
+- Previous focus is restored when toast is closed
+- Error toasts use `aria-live="assertive"` for immediate announcement
+- Success/info toasts use `aria-live="polite"` for non-interruptive announcement
+- Pause on hover allows users to read longer messages
+- Duration is in milliseconds (default: 3000ms)
+- Toast appears at `top-20` (mobile) / `top-6` (desktop) right-aligned
 
 ---
