@@ -68,7 +68,22 @@ wrangler d1 list
 
 **Note**: Currently using development database. For production, create a new database and update wrangler.toml.
 
-### 1.3 (Optional) Create Production D1 Database
+ ### 1.3 (Optional) Create Production D1 Database
+
+```bash
+# Create production database (optional)
+wrangler d1 create malnu-kananga-db-prod
+
+# Copy the database_id from output
+# Example output:
+# ✨ Successfully created DB 'malnu-kananga-db-prod'
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "malnu-kananga-db-prod"
+# database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+```
+
+### 1.4 (Optional) Create R2 Bucket
 
 ```bash
 # Create R2 bucket for file storage
@@ -138,22 +153,7 @@ GET /api/files/download?key={key}
 DELETE /api/files/delete?key={key}
 ```
 
-### 1.4 (Optional) Create Vectorize Index
-
-```bash
-# Create production database (optional)
-wrangler d1 create malnu-kananga-db-prod
-
-# Copy the database_id from output
-# Example output:
-# ✨ Successfully created DB 'malnu-kananga-db-prod'
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "malnu-kananga-db-prod"
-# database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-```
-
-### 1.4 Create R2 Bucket (Optional)
+### 1.5 (Optional) Create Vectorize Index
 
 ## Step 2: Configure Backend Worker
 
