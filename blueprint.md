@@ -287,7 +287,8 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 
 ### 7.1 Test Framework
 
-- **Runner**: Vitest
+- **Unit/Integration Runner**: Vitest
+- **E2E Runner**: Playwright
 - **Rendering**: React Testing Library
 - **Mocking**: Vitest mocking, `__mocks__` directory
 
@@ -300,10 +301,50 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 | Integration Tests | Service/component integration | 15+ files |
 | Offline Tests | PWA offline functionality | 10+ files |
 | Accessibility Tests | ARIA, keyboard nav | 8+ files |
+| E2E Tests | Critical user journeys | 50+ tests |
 
-**Total**: 1565 tests across 86 test files (11 skipped)
+**Total**: 1565 unit/integration tests + 50+ E2E tests (86 test files, 11 skipped)
 
-### 7.3 Test Organization
+### 7.3 E2E Test Configuration
+
+**Playwright Setup** (`playwright.config.ts`):
+- **Test Timeout**: 30 seconds
+- **Action Timeout**: 10 seconds
+- **Navigation Timeout**: 30 seconds
+- **Retry on CI**: 2 retries
+- **Projects**:
+  - Chromium (Desktop)
+  - Firefox (Desktop)
+  - WebKit (Desktop Safari)
+  - Mobile Chrome (Pixel 5)
+  - Mobile Safari (iPhone 12)
+- **Base URL**: http://localhost:5173 (configurable via BASE_URL env var)
+
+**E2E Test Coverage**:
+- **Authentication**: Login/logout for 4 user roles (admin, teacher, parent, student)
+- **Dashboards**: Admin, Teacher, Parent, Student portal navigation
+- **Critical Journeys**:
+  - Admin login and dashboard access
+  - Teacher attendance marking
+  - Parent viewing grades
+  - Student accessing materials
+  - PPDB registration flow
+- **Visual Regression**: All major pages, mobile views, modal components
+- **Accessibility**: WCAG 2.1 AA compliance E2E verification
+
+**Test Data**:
+- Test credentials defined in each test file
+- No production data used
+- Test isolation between runs
+
+**CI/CD Integration**:
+- GitHub Actions workflow: `.github/workflows/e2e-tests.yml`
+- Parallel execution across browsers
+- Artifact retention: 7 days
+- Report merging and PR commenting
+- Visual regression testing separate job
+
+### 7.4 Test Organization
 
 ```
 src/
@@ -312,6 +353,16 @@ src/
 ├── components/__tests__/       # Component tests
 ├── utils/__tests__/           # Utility tests
 └── __tests__/                 # Integration tests
+
+e2e/
+├── admin-dashboard.spec.ts    # Admin authentication and dashboard
+├── teacher-dashboard.spec.ts   # Teacher dashboard functionality
+├── parent-dashboard.spec.ts    # Parent dashboard functionality
+├── student-portal.spec.ts     # Student portal functionality
+├── ppdb-registration.spec.ts  # PPDB registration flow
+├── accessibility.spec.ts       # Accessibility E2E tests
+├── visual-regression.spec.ts  # Visual regression tests
+└── utils.ts                   # Test utilities and helpers
 ```
 
 ---
