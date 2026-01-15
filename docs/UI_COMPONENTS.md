@@ -1,11 +1,9 @@
 # UI Components Documentation
 
-**Status**: ⚠️ INCOMPLETE (15 of 41 components documented)
-**Last Updated**: 2026-01-14
+**Status**: ⚠️ INCOMPLETE (18 of 41 components documented)
+**Last Updated**: 2026-01-15
 
-> **IMPORTANT**: This document currently covers 15 of 41 exported UI components from `src/components/ui/index.ts`. The following 26 components are missing documentation:
-> - Form: SearchInput
-> - Buttons: GradientButton, SmallActionButton
+> **IMPORTANT**: This document currently covers 18 of 41 exported UI components from `src/components/ui/index.ts`. The following 23 components are missing documentation:
 > - Layout: BaseModal, ConfirmationDialog, Section, ErrorBoundary, SkipLink
 > - Display: DashboardActionCard, SocialLink
 > - Table: Table (with sub-components), DataTable
@@ -6731,5 +6729,837 @@ Potential improvements to consider:
 - Badge grouping/stacking
 - Custom animations for badge appearance
 - Removable badges with close button
+
+---
+
+## SearchInput Component
+
+**Location**: `src/components/ui/SearchInput.tsx`
+
+An advanced search input component with built-in validation, icon support, and accessibility features.
+
+### Features
+
+- **3 Sizes**: `sm`, `md`, `lg`
+- **3 States**: `default`, `error`, `success`
+- **Icon Support**: Built-in search icon with custom icon support
+- **Icon Positioning**: Left or right icon placement
+- **Validation**: Integrated field validation with custom rules
+- **Clear on Escape**: Clears input value on Escape key press
+- **Accessibility**: Full ARIA support with live regions for validation
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Loading State**: Visual indicator during async validation
+- **Label Support**: Optional label with required indicator
+- **Helper Text**: Contextual guidance for users
+- **Error Handling**: Built-in error state with role="alert"
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | `undefined` | Label text displayed above the input |
+| `helperText` | `string` | `undefined` | Helper text displayed below the input |
+| `errorText` | `string` | `undefined` | Error message displayed below the input (sets state to error) |
+| `size` | `SearchInputSize` | `'md'` | Input size (affects padding, text size, and icon size) |
+| `state` | `SearchInputState` | `'default'` | Visual state variant (defaults to 'error' if errorText provided) |
+| `fullWidth` | `boolean` | `false` | Whether the input should take full width |
+| `showIcon` | `boolean` | `true` | Whether to show the search icon |
+| `placeholder` | `string` | `undefined` | Placeholder text for the input |
+| `icon` | `ReactNode` | `undefined` | Custom icon component (defaults to MagnifyingGlassIcon) |
+| `iconPosition` | `'left' \| 'right'` | `'left'` | Position of the icon in the input |
+| `validationRules` | `Array<{validate: (value: string) => boolean; message: string}>` | `[]` | Custom validation rules |
+| `validateOnChange` | `boolean` | `true` | Whether to validate on each change |
+| `validateOnBlur` | `boolean` | `true` | Whether to validate on blur |
+| `accessibility.announceErrors` | `boolean` | `true` | Whether to announce errors via ARIA |
+| `accessibility.describedBy` | `string` | `undefined` | Additional ARIA-describedby value |
+| `id` | `string` | Auto-generated | Unique identifier for the input |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard input attributes | - | - | Passes through all standard HTML input props |
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for dense interfaces.
+
+```tsx
+import SearchInput from './ui/SearchInput';
+
+<SearchInput
+  label="Search"
+  size="sm"
+  placeholder="Search..."
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-3 py-2`
+- Input text: `text-sm`
+- Icon: `w-4 h-4`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<SearchInput
+  label="Search"
+  size="md"
+  placeholder="Search..."
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-4 py-3`
+- Input text: `text-sm sm:text-base`
+- Icon: `w-5 h-5`
+
+#### Large (lg)
+
+Larger size for better accessibility and touch targets.
+
+```tsx
+<SearchInput
+  label="Search"
+  size="lg"
+  placeholder="Search..."
+/>
+```
+
+**Dimensions**:
+- Input padding: `px-5 py-4`
+- Input text: `text-base sm:text-lg`
+- Icon: `w-6 h-6`
+
+### States
+
+#### Default State
+
+Standard appearance for normal input state.
+
+```tsx
+<SearchInput
+  label="Search"
+  state="default"
+  placeholder="Search..."
+/>
+```
+
+**Styling**:
+- Border: `border-neutral-300 dark:border-neutral-600`
+- Background: `bg-white dark:bg-neutral-700`
+- Text: `text-neutral-900 dark:text-white`
+- Focus ring: `focus:ring-primary-500/50`
+
+#### Error State
+
+Red-themed appearance for invalid input.
+
+```tsx
+<SearchInput
+  label="Search"
+  errorText="Search query too short"
+  placeholder="Search..."
+/>
+```
+
+**Styling**:
+- Border: `border-red-300 dark:border-red-700`
+- Background: `bg-red-50 dark:bg-red-900/20`
+- Text: `text-neutral-900 dark:text-white`
+- Focus ring: `focus:ring-red-500/50`
+
+#### Success State
+
+Green-themed appearance for valid input.
+
+```tsx
+<SearchInput
+  label="Search"
+  state="success"
+  value="completed query"
+  placeholder="Search..."
+/>
+```
+
+**Styling**:
+- Border: `border-green-300 dark:border-green-700`
+- Background: `bg-green-50 dark:bg-green-900/20`
+- Text: `text-neutral-900 dark:text-white`
+- Focus ring: `focus:ring-green-500/50`
+
+### Validation
+
+SearchInput integrates with `useFieldValidation` hook for real-time validation.
+
+```tsx
+<SearchInput
+  label="Search"
+  placeholder="Enter at least 3 characters..."
+  validationRules={[
+    {
+      validate: (value) => value.length >= 3,
+      message: 'Search query must be at least 3 characters'
+    },
+    {
+      validate: (value) => /^[a-zA-Z0-9\s]+$/.test(value),
+      message: 'Only letters, numbers, and spaces allowed'
+    }
+  ]}
+  validateOnChange={true}
+  validateOnBlur={true}
+  accessibility={{
+    announceErrors: true
+  }}
+/>
+```
+
+**Validation Features**:
+- Real-time validation with custom rules
+- Error messages displayed below input
+- ARIA live region for screen readers
+- Loading spinner during async validation
+- Touched state tracking
+- Multi-error support (shows first error)
+
+### Icon Positioning
+
+```tsx
+// Left icon (default)
+<SearchInput
+  placeholder="Search..."
+  iconPosition="left"
+  showIcon={true}
+/>
+
+// Right icon
+<SearchInput
+  placeholder="Search..."
+  iconPosition="right"
+  showIcon={true}
+/>
+
+// Custom icon
+<SearchInput
+  placeholder="Search..."
+  icon={<FilterIcon />}
+  iconPosition="left"
+/>
+
+// No icon
+<SearchInput
+  placeholder="Search..."
+  showIcon={false}
+/>
+```
+
+### Clear on Escape
+
+SearchInput automatically clears value on Escape key press for quick reset.
+
+```tsx
+<SearchInput
+  label="Search"
+  placeholder="Press Escape to clear..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+/>
+```
+
+**Behavior**:
+- Pressing Escape clears input value
+- Triggers onChange handler with empty string
+- Preserves existing onKeyDown handler
+- User-friendly quick reset functionality
+
+### Accessibility Features
+
+SearchInput has comprehensive accessibility support:
+
+```tsx
+<SearchInput
+  label="Search"
+  placeholder="Search items..."
+  required
+  accessibility={{
+    announceErrors: true,
+    describedBy: 'additional-help-text'
+  }}
+/>
+```
+
+**Accessibility Features**:
+- `role="search"` on container for semantic meaning
+- `role="searchbox"` on input for screen readers
+- `aria-required` for required inputs
+- `aria-invalid` for error state
+- `aria-errormessage` linking to error text
+- `aria-describedby` for helper and error text
+- `aria-live="polite"` for validation announcements
+- `aria-busy` during validation loading
+- Keyboard navigation with Escape key support
+- Focus management with visible focus rings
+- Screen reader announcements for errors
+
+### Usage in Application
+
+**Common Patterns:**
+
+```tsx
+// Basic search
+<SearchInput
+  placeholder="Search..."
+  onChange={(e) => setSearchQuery(e.target.value)}
+/>
+
+// With label and helper text
+<SearchInput
+  label="Search Users"
+  placeholder="Enter name or email..."
+  helperText="Search by name or email address"
+  fullWidth
+/>
+
+// With validation
+<SearchInput
+  label="Search"
+  placeholder="Min 3 characters..."
+  validationRules={[
+    {
+      validate: (v) => v.length >= 3,
+      message: 'Enter at least 3 characters'
+    }
+  ]}
+/>
+
+// With custom icon
+<SearchInput
+  label="Filter"
+  placeholder="Filter results..."
+  icon={<FilterIcon />}
+  iconPosition="right"
+/>
+
+// Controlled search with debounce (custom hook)
+const { value, onChange } = useDebouncedSearch((query) => {
+  // Perform search operation
+  console.log('Searching:', query);
+}, 300);
+
+<SearchInput
+  label="Search"
+  placeholder="Type to search..."
+  value={value}
+  onChange={onChange}
+/>
+```
+
+### Test Coverage
+
+The SearchInput component has comprehensive test coverage:
+
+Run tests with:
+```bash
+npm test src/components/ui/__tests__/SearchInput.test.tsx
+```
+
+Test scenarios include:
+- Rendering with default props
+- Rendering with all sizes (sm, md, lg)
+- Rendering with all states (default, error, success)
+- Icon display and positioning
+- Custom icon support
+- Clear on Escape functionality
+- Validation rules and error display
+- ARIA attributes and accessibility
+- Label and helper text rendering
+- Required indicator display
+- Full width variant
+- Dark mode styling
+- Focus states and keyboard navigation
+
+### Benefits
+
+- ✅ Consistent search input styling across application
+- ✅ Built-in validation support with custom rules
+- ✅ Clear on Escape for quick reset
+- ✅ Full accessibility with ARIA support
+- ✅ Dark mode support
+- ✅ Flexible icon positioning
+- ✅ Type-safe props
+- ✅ Real-time validation feedback
+- ✅ Loading state for async validation
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Debounced search handler (custom hook)
+- Search history dropdown
+- Auto-complete suggestions
+- Advanced search filters (date range, categories)
+- Voice search integration
+- Clear button in addition to Escape key
+- Search result count display
+
+---
+
+## GradientButton Component
+
+**Location**: `src/components/ui/GradientButton.tsx`
+
+A styled button component with gradient backgrounds for primary actions and clean secondary options.
+
+### Features
+
+- **2 Variants**: `primary` (gradient), `secondary` (glass effect)
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Gradient Background**: Uses centralized `GRADIENT_CLASSES` configuration
+- **Glass Effect**: Secondary variant with backdrop blur for modern look
+- **Link Support**: Can render as anchor tag with href
+- **Hover Effects**: Scale, shadow, and gradient shift on hover
+- **Accessibility**: Full focus ring and keyboard navigation support
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Shadow**: Pre-applied shadow with hover elevation
+- **Active State**: Scale down on press for tactile feedback
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `GradientButtonVariant` | `'primary'` | Visual variant (primary/secondary) |
+| `size` | `GradientButtonSize` | `'md'` | Button size |
+| `fullWidth` | `boolean` | `false` | Whether the button takes full width |
+| `href` | `string` | `undefined` | If provided, renders as anchor tag |
+| `children` | `ReactNode` | Required | Button content |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard button/link attributes | - | - | Passes through all standard props |
+
+### Sizes
+
+#### Small (sm)
+
+Compact size for dense interfaces or secondary actions.
+
+```tsx
+import GradientButton from './ui/GradientButton';
+
+<GradientButton size="sm">
+  Cancel
+</GradientButton>
+```
+
+**Dimensions**:
+- Padding: `px-6 py-2.5`
+- Text: `text-sm`
+
+#### Medium (md)
+
+Standard size for most use cases (default).
+
+```tsx
+<GradientButton size="md">
+  Submit
+</GradientButton>
+```
+
+**Dimensions**:
+- Padding: `px-8 sm:px-10 lg:px-12 py-4`
+- Text: `text-sm sm:text-base`
+
+#### Large (lg)
+
+Larger size for prominent CTAs and important actions.
+
+```tsx
+<GradientButton size="lg">
+  Get Started
+</GradientButton>
+```
+
+**Dimensions**:
+- Padding: `px-10 sm:px-12 lg:px-14 py-5`
+- Text: `text-base sm:text-lg`
+
+### Variants
+
+#### Primary (default)
+
+Gradient background with primary color theme.
+
+```tsx
+<GradientButton variant="primary">
+  Primary Action
+</GradientButton>
+```
+
+**Styling**:
+- Gradient: `bg-gradient-to-r from-primary-600 to-primary-700`
+- Text: `text-white`
+- Hover: Darker gradient shift with slight scale
+- Focus ring: `focus:ring-primary-500/50`
+- Uses `GRADIENT_CLASSES.CHAT_HEADER` from centralized config
+
+#### Secondary
+
+Glass effect with border for less prominent actions.
+
+```tsx
+<GradientButton variant="secondary">
+  Secondary Action
+</GradientButton>
+```
+
+**Styling**:
+- Background: Glass effect with backdrop blur
+- Text: `text-neutral-700 dark:text-neutral-200`
+- Border: `border-2 border-neutral-200 dark:border-neutral-600`
+- Hover: Border and background color change with scale
+- Focus ring: `focus:ring-primary-500/50`
+
+### Button vs Link
+
+GradientButton can render as either a button or an anchor tag.
+
+```tsx
+// As button (default)
+<GradientButton onClick={handleClick}>
+  Click Me
+</GradientButton>
+
+// As link
+<GradientButton href="/path/to/page" target="_blank" rel="noopener noreferrer">
+  Open Page
+</GradientButton>
+```
+
+**Note**: When `href` is provided, the component renders as an `<a>` tag instead of `<button>`.
+
+### Full Width
+
+```tsx
+<GradientButton fullWidth>
+  Full Width Button
+</GradientButton>
+```
+
+### Usage in Application
+
+**Common Patterns:**
+
+```tsx
+// Primary CTA
+<GradientButton variant="primary" size="lg">
+  Get Started Today
+</GradientButton>
+
+// Secondary action
+<GradientButton variant="secondary" size="md">
+  Learn More
+</GradientButton>
+
+// Link to page
+<GradientButton href="/contact" variant="primary">
+  Contact Us
+</GradientButton>
+
+// Full width for mobile
+<GradientButton fullWidth size="lg">
+  Submit Application
+</GradientButton>
+
+// External link
+<GradientButton
+  href="https://example.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  variant="secondary"
+>
+  Visit Website
+</GradientButton>
+```
+
+### Benefits
+
+- ✅ Consistent button styling across application
+- ✅ Gradient system integration (uses GRADIENT_CLASSES)
+- ✅ Modern glass effect for secondary variant
+- ✅ Built-in hover and active states
+- ✅ Shadow and scale effects for visual feedback
+- ✅ Works as both button and link
+- ✅ Responsive sizing
+- ✅ Dark mode support
+- ✅ Accessible with keyboard navigation
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Loading state with spinner
+- Disabled state styling
+- Icon support with left/right positioning
+- Success/error state variants
+- Progress indicator variant
+- Ripple effect on click
+- Skeleton loading state
+
+---
+
+## SmallActionButton Component
+
+**Location**: `src/components/ui/SmallActionButton.tsx`
+
+A compact action button component with multiple color variants and loading state support.
+
+### Features
+
+- **7 Variants**: `primary`, `secondary`, `danger`, `success`, `info`, `warning`, `neutral`
+- **Icon Support**: Optional icon with left or right positioning
+- **Loading State**: Built-in loading spinner with `isLoading` prop
+- **Compact Size**: Small footprint for action buttons in tables/lists
+- **Hover Effects**: Color shifts on hover
+- **Accessibility**: Full ARIA support with busy state
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Disabled State**: Visual feedback for disabled buttons
+- **Full Width**: Optional full width for mobile
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `SmallActionButtonVariant` | `'info'` | Color variant |
+| `isLoading` | `boolean` | `false` | Whether button is in loading state |
+| `fullWidth` | `boolean` | `false` | Whether button takes full width |
+| `icon` | `ReactNode` | `undefined` | Optional icon component |
+| `iconPosition` | `'left' \| 'right'` | `'left'` | Position of icon relative to text |
+| `children` | `ReactNode` | Required | Button content |
+| `className` | `string` | `''` | Additional CSS classes |
+| All standard button attributes | - | - | Passes through all standard HTML button props |
+
+### Variants
+
+#### Primary
+
+Blue-themed primary action.
+
+```tsx
+import SmallActionButton from './ui/SmallActionButton';
+
+<SmallActionButton variant="primary">
+  Save
+</SmallActionButton>
+```
+
+**Styling**:
+- Background: `bg-primary-600`
+- Text: `text-white`
+- Hover: `hover:bg-primary-700`
+- Focus ring: `focus:ring-primary-500/50`
+
+#### Secondary
+
+Neutral-themed secondary action.
+
+```tsx
+<SmallActionButton variant="secondary">
+  Cancel
+</SmallActionButton>
+```
+
+**Styling**:
+- Background: `bg-white dark:bg-neutral-800`
+- Text: `text-neutral-700 dark:text-neutral-300`
+- Border: `border border-neutral-200 dark:border-neutral-600`
+- Hover: `hover:bg-neutral-50 dark:hover:bg-neutral-700`
+
+#### Danger
+
+Red-themed destructive action.
+
+```tsx
+<SmallActionButton variant="danger">
+  Delete
+</SmallActionButton>
+```
+
+**Styling**:
+- Background: `bg-red-100 dark:bg-red-900/30`
+- Text: `text-red-700 dark:text-red-300`
+- Hover: `hover:bg-red-200 dark:hover:bg-red-800/50`
+- Focus ring: `focus:ring-red-500/50`
+
+#### Success
+
+Green-themed success action.
+
+```tsx
+<SmallActionButton variant="success">
+  Approve
+</SmallActionButton>
+```
+
+**Styling**:
+- Background: `bg-green-100 dark:bg-green-900/30`
+- Text: `text-green-700 dark:text-green-300`
+- Hover: `hover:bg-green-200 dark:hover:bg-green-800/50`
+
+#### Info
+
+Blue-themed informational action (default).
+
+```tsx
+<SmallActionButton variant="info">
+  Details
+</SmallActionButton>
+```
+
+**Styling**:
+- Background: `bg-blue-50 dark:bg-blue-900/20`
+- Text: `text-blue-600 dark:text-blue-400`
+- Hover: `hover:bg-blue-100 dark:hover:bg-blue-900/30`
+
+#### Warning
+
+Orange-themed warning action.
+
+```tsx
+<SmallActionButton variant="warning">
+  Alert
+</SmallActionButton>
+```
+
+**Styling**:
+- Background: `bg-orange-100 dark:bg-orange-900/30`
+- Text: `text-orange-700 dark:text-orange-300`
+- Hover: `hover:bg-orange-200 dark:hover:bg-orange-800/50`
+
+#### Neutral
+
+Gray-themed neutral action.
+
+```tsx
+<SmallActionButton variant="neutral">
+  Reset
+</SmallActionButton>
+```
+
+**Styling**:
+- Background: `bg-neutral-200 dark:bg-neutral-700`
+- Text: `text-neutral-700 dark:text-neutral-300`
+- Hover: `hover:bg-neutral-300 dark:hover:bg-neutral-600`
+
+### Loading State
+
+Built-in loading spinner with `isLoading` prop.
+
+```tsx
+<SmallActionButton isLoading onClick={handleSave}>
+  {isLoading ? 'Saving...' : 'Save'}
+</SmallActionButton>
+```
+
+**Loading Features**:
+- Shows spinner animation
+- Disables button during loading
+- Sets cursor to `wait`
+- Announces `aria-busy="true"` for screen readers
+- Replaces icon and text with spinner
+
+### Icon Support
+
+Optional icon with flexible positioning.
+
+```tsx
+// Left icon (default)
+<SmallActionButton icon={<SaveIcon />}>
+  Save
+</SmallActionButton>
+
+// Right icon
+<SmallActionButton icon={<ArrowRightIcon />} iconPosition="right">
+  Continue
+</SmallActionButton>
+```
+
+### Full Width
+
+```tsx
+<SmallActionButton fullWidth>
+  Full Width Action
+</SmallActionButton>
+```
+
+### Disabled State
+
+```tsx
+<SmallActionButton disabled>
+  Disabled Action
+</SmallActionButton>
+```
+
+### Usage in Application
+
+**Common Patterns:**
+
+```tsx
+// Action buttons in table
+<SmallActionButton variant="info" icon={<EyeIcon />}>
+  View
+</SmallActionButton>
+<SmallActionButton variant="danger" icon={<TrashIcon />}>
+  Delete
+</SmallActionButton>
+
+// Confirm dialog actions
+<SmallActionButton variant="neutral" onClick={handleCancel}>
+  Cancel
+</SmallActionButton>
+<SmallActionButton variant="danger" onClick={handleConfirm}>
+  Confirm
+</SmallActionButton>
+
+// With loading state
+<SmallActionButton
+  variant="primary"
+  isLoading={isSaving}
+  icon={<SaveIcon />}
+  onClick={handleSave}
+>
+  {isSaving ? 'Saving...' : 'Save'}
+</SmallActionButton>
+
+// Status actions
+<SmallActionButton variant="success" icon={<CheckIcon />}>
+  Approve
+</SmallActionButton>
+<SmallActionButton variant="warning" icon={<ExclamationIcon />}>
+  Flag
+</SmallActionButton>
+
+// Navigation
+<SmallActionButton variant="primary" icon={<ArrowRightIcon />} iconPosition="right">
+  Next Step
+</SmallActionButton>
+```
+
+### Benefits
+
+- ✅ Consistent small button styling across application
+- ✅ 7 color variants for semantic meaning
+- ✅ Built-in loading state with spinner
+- ✅ Icon support with flexible positioning
+- ✅ Accessible with ARIA support
+- ✅ Dark mode support
+- ✅ Compact size for dense interfaces
+- ✅ Type-safe props
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Progress indicator for partial completion
+- Badge count support
+- Tooltip integration
+- Dropdown trigger variant
+- Multi-select toggle
+- Split button variant
+- Keyboard shortcut support
 
 ---
