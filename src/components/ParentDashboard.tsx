@@ -18,6 +18,7 @@ import { useNetworkStatus, getOfflineMessage } from '../utils/networkStatus';
 import { validateParentChildDataAccess, validateChildDataIsolation, validateGradeVisibilityRestriction, validateOfflineDataIntegrity } from '../utils/parentValidation';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useEventNotifications } from '../hooks/useEventNotifications';
+import { STORAGE_KEYS } from '../constants';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import BackButton from './ui/BackButton';
 import Card from './ui/Card';
@@ -232,8 +233,8 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     initializeNotifications();
   }, [requestPermission, showNotification, createNotification]);
 
-  // Initialize grade notification monitoring  
-  useMonitorLocalStorage('malnu_grades', (newValue: unknown, oldValue: unknown) => {
+  // Initialize grade notification monitoring
+  useMonitorLocalStorage(STORAGE_KEYS.GRADES, (newValue: unknown, oldValue: unknown) => {
     // Check if any grades belong to this parent's children
     if (children.length > 0) {
       const childIds = children.map(child => child.studentId);
