@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ocrService } from '../ocrService';
 import { OCRValidationEvent, UserRole } from '../../types';
+import { STORAGE_KEYS } from '../../constants';
 
 // Mock dependencies
 const mockRecognize = vi.fn().mockResolvedValue({
@@ -226,8 +227,8 @@ describe('OCR Validation Notification Integration', () => {
         }
       ];
       
-      localStorage.setItem('ocr_validation_events', JSON.stringify(events));
-      const stored = localStorage.getItem('ocr_validation_events');
+      localStorage.setItem(STORAGE_KEYS.OCR_VALIDATION_EVENTS, JSON.stringify(events));
+      const stored = localStorage.getItem(STORAGE_KEYS.OCR_VALIDATION_EVENTS);
       const parsed = JSON.parse(stored || '[]');
       
       expect(parsed).toHaveLength(1);

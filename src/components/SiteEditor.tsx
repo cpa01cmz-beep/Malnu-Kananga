@@ -166,7 +166,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
   const logUserAction = useCallback((action: string, details: string) => {
     const userId = getUserId();
     try {
-      const logs: AuditLogEntry[] = JSON.parse(localStorage.getItem('malnu_ai_editor_audit_log') || '[]');
+      const logs: AuditLogEntry[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.AI_EDITOR_AUDIT_LOG) || '[]');
       logs.unshift({
         timestamp: Date.now(),
         action: 'command_validated',
@@ -175,7 +175,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
         reason: details
       });
       const trimmedLogs = logs.slice(0, 100);
-      localStorage.setItem('malnu_ai_editor_audit_log', JSON.stringify(trimmedLogs));
+      localStorage.setItem(STORAGE_KEYS.AI_EDITOR_AUDIT_LOG, JSON.stringify(trimmedLogs));
     } catch (e) {
       logger.warn('Failed to log user action:', e);
     }
