@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { STORAGE_KEYS } from '../constants';
+import { logger } from '../utils/logger';
 
 const LANGUAGES = [
   { code: 'id', name: 'id', flag: '🇮🇩' },
@@ -35,7 +36,7 @@ export function useLanguage() {
       await i18n.changeLanguage(languageCode);
       localStorage.setItem(STORAGE_KEYS.LANGUAGE, languageCode);
     } catch (error) {
-      console.error('Failed to change language:', error);
+      logger.error('Failed to change language:', error);
     }
   };
 
