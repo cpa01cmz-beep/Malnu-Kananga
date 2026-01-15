@@ -60,6 +60,17 @@ export function useLessonPlanning(): UseLessonPlanningReturn {
     }
   }, []);
 
+  const loadSavedPlans = useCallback((): LessonPlan[] => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.LESSON_PLANS);
+      if (!saved) return [];
+      return JSON.parse(saved) as LessonPlan[];
+    } catch (err) {
+      logger.error('Error loading saved lesson plans:', err);
+      return [];
+    }
+  }, []);
+
   const saveLessonPlan = useCallback((plan: LessonPlan) => {
     try {
       const savedPlans = loadSavedPlans();
@@ -77,18 +88,7 @@ export function useLessonPlanning(): UseLessonPlanningReturn {
       logger.error('Error saving lesson plan:', err);
       throw new Error('Gagal menyimpan rencana pembelajaran');
     }
-  }, []);
-
-  const loadSavedPlans = useCallback((): LessonPlan[] => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.LESSON_PLANS);
-      if (!saved) return [];
-      return JSON.parse(saved) as LessonPlan[];
-    } catch (err) {
-      logger.error('Error loading saved lesson plans:', err);
-      return [];
-    }
-  }, []);
+  }, [loadSavedPlans]);
 
   const clearError = useCallback(() => {
     setError(null);
