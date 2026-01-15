@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import type { NotificationType } from '../../../src/types';
-import type { PushNotification, VoiceNotificationSettings } from '../../../src/types';
-import { VOICE_NOTIFICATION_CONFIG } from '../../../src/constants';
+import type { NotificationType } from '../../types';
+import type { PushNotification, VoiceNotificationSettings } from '../../types';
+import { VOICE_NOTIFICATION_CONFIG } from '../../constants';
 
 describe('VoiceNotificationSettings Types', () => {
   it('should have correct type structure', () => {

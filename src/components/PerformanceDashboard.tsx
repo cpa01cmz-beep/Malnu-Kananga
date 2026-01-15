@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { usePerformanceMonitor } from '../hooks/usePerformanceMonitor';
 import LoadingSpinner from './ui/LoadingSpinner';
 import Card from './ui/Card';
