@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Roadmap
 **Strategic Goals & Milestones**
-**Version**: 3.3.0
+**Version**: 3.4.0
 **Last Updated**: 2026-01-15
 
 ---
@@ -262,26 +262,32 @@ This roadmap outlines the strategic vision for MA Malnu Kananga, focusing on enh
 ### High Priority
 
 1. **Remove Hardcoded Values** (Pillar 15)
-    - Status: Completed ✓
-    - Completed: 2026-01-15
-    - Impact: Maintainability, localization, dynamic configuration
+     - Status: Completed ✓
+     - Completed: 2026-01-15
+     - Impact: Maintainability, localization, dynamic configuration
 
 2. **Enhance Accessibility** (Pillars 16, 14)
-    - Status: Completed ✓
-    - Completed: 2026-01-15
-    - Impact: WCAG 2.1 AA compliance, improved UX
-    - Achievements: All accessibility tests passing, comprehensive documentation
+     - Status: Completed ✓
+     - Completed: 2026-01-15
+     - Impact: WCAG 2.1 AA compliance, improved UX
+     - Achievements: All accessibility tests passing, comprehensive documentation
 
-3. **Enhanced Error Recovery**
-    - Status: Pending
-    - Target: Q2 2026
-    - Impact: Stability, UX
+3. **Create API Documentation** (Pillar 8)
+     - Status: Completed ✓
+     - Completed: 2026-01-15
+     - Impact: Developer onboarding, API exploration, code generation
+     - Achievements: OpenAPI 3.0 spec, WebSocket docs, Swagger UI setup guide
 
-4. **Advanced Testing**
-    - E2E tests with Playwright
-    - Visual regression tests
-    - Load testing
-    - Target: Q2 2026
+4. **Enhanced Error Recovery**
+     - Status: Pending
+     - Target: Q2 2026
+     - Impact: Stability, UX
+
+5. **Advanced Testing**
+     - E2E tests with Playwright
+     - Visual regression tests
+     - Load testing
+     - Target: Q2 2026
 
 ### Medium Priority
 

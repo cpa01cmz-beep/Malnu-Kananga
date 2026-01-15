@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Blueprint
 **Architecture & System Design Document**
-**Version**: 3.3.0
+**Version**: 3.4.0
 **Last Updated**: 2026-01-15
 
 ---
@@ -448,6 +448,37 @@ wrangler deploy --env production
 - `grade:update` - Grade updated
 - `message:new` - New chat message
 - `system:status` - System status update
+
+### API Documentation
+
+**OpenAPI Specification** (`docs/openapi.yaml`):
+- Complete OpenAPI 3.0 specification for all REST endpoints
+- Machine-readable format for Swagger UI, Postman, and code generation tools
+- Comprehensive request/response schemas with TypeScript types
+- Authentication and authorization documentation
+- Error response documentation
+
+**WebSocket API** (`docs/WEBSOCKET_API.md`):
+- Complete WebSocket connection and event documentation
+- Event schemas for all real-time updates (grades, attendance, announcements, events)
+- Client and server message specifications
+- Reconnection strategies with exponential backoff
+- Security considerations and best practices
+- React integration examples
+
+**Swagger UI Setup** (`docs/SWAGGER_SETUP.md`):
+- Complete guide for setting up Swagger UI
+- Multiple deployment options (Vite, static, Cloudflare Workers)
+- Configuration options and customization
+- Authentication setup for Bearer tokens
+- Production deployment considerations
+
+**REST API Reference** (`docs/api-reference.md`):
+- Comprehensive REST API documentation (1762 lines)
+- Detailed endpoint descriptions with examples
+- cURL and TypeScript code examples
+- Security best practices
+- Rate limiting information
 
 ---
 
