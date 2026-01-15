@@ -243,12 +243,12 @@ export const memoryMonitor = {
  * Lazy loader for voice components
  * Prevents unnecessary component mounting
  */
+import { lazy } from 'react';
 import type { ComponentType } from 'react';
-import React from 'react';
 export function createLazyLoader<T extends ComponentType<Record<string, unknown>>>(
   componentPromise: Promise<{ default: T }>
 ) {
-  return React.lazy(() => componentPromise);
+  return lazy(() => componentPromise);
 }
 
 /**
