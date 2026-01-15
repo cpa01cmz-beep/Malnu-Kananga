@@ -12,7 +12,7 @@ import ParentPaymentsView from './ParentPaymentsView';
 import ParentMeetingsView from './ParentMeetingsView';
 import { ToastType } from './Toast';
 import type { ParentChild, Grade } from '../types';
-import { parentsAPI, authAPI, gradesAPI, attendanceAPI } from '../services/apiService';
+import { parentsAPI, authAPI, gradesAPI, attendanceAPI, schedulesAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage } from '../utils/networkStatus';
 import { validateParentChildDataAccess, validateChildDataIsolation, validateGradeVisibilityRestriction, validateOfflineDataIntegrity } from '../utils/parentValidation';
@@ -110,12 +110,13 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             // Fetch data for each child
             await Promise.all(response.data.map(async (child: ParentChild) => {
               try {
-                const [gradesResponse, attendanceResponse] = await Promise.all([
+                const [gradesResponse, attendanceResponse, scheduleResponse] = await Promise.all([
                   gradesAPI.getByStudent(child.studentId),
-                  attendanceAPI.getByStudent(child.studentId)
+                  attendanceAPI.getByStudent(child.studentId),
+                  schedulesAPI.getAll()
                 ]);
 
-                if (gradesResponse.success && attendanceResponse.success) {
+                if (gradesResponse.success && attendanceResponse.success && scheduleResponse.success) {
                   // Validate data isolation for each child
                   const gradesIsolation = validateChildDataIsolation(child.studentId, gradesResponse.data || [], 'grades');
                   const attendanceIsolation = validateChildDataIsolation(child.studentId, attendanceResponse.data || [], 'attendance');
@@ -150,7 +151,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                     },
                     grades: gradesResponse.data || [],
                     attendance: attendanceResponse.data || [],
-                    schedule: [], // TODO: Fetch schedule when API is available
+                    schedule: scheduleResponse.data || [],
                     lastUpdated: now,
                     expiresAt: now + CACHE_DURATION,
                   };
