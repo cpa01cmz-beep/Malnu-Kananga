@@ -163,11 +163,17 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
   - [x] Add consistent progress tracking across student features
   - [x] Update StudentPortal dengan offline indicators dan error handling
   - [x] Update ProgressAnalytics dengan validation dan proper error handling
-  - [x] Fix Accessibility & Form Validation Issues:
-     - [x] Audit all form inputs across components untuk missing id, name, autocomplete attributes
-     - [x] Fix UserManagement.tsx, MaterialUpload.tsx, ParentMessagingView.tsx, ParentMeetingsView.tsx, VoiceSettings.tsx, PPDBRegistration.tsx
-     - [x] Verify 100% WCAG 2.1 AA compliance untuk all form inputs
-     - [x] Verify all tests passing (10 test files)
+ - [x] Fix Accessibility & Form Validation Issues:
+      - [x] Audit all form inputs across components untuk missing id, name, autocomplete attributes
+      - [x] Fix UserManagement.tsx, MaterialUpload.tsx, ParentMessagingView.tsx, ParentMeetingsView.tsx, VoiceSettings.tsx, PPDBRegistration.tsx
+      - [x] Verify 100% WCAG 2.1 AA compliance untuk all form inputs
+      - [x] Verify all tests passing (10 test files)
+ - [x] Complete UI component documentation (Phase 5 - IN PROGRESS 2026-01-15)
+      - [x] Document Input component (3 sizes, 3 states, 6 input masks, validation, accessibility)
+      - [x] Document Select component (3 sizes, 3 states, placeholder, disabled options)
+      - [x] Document Toast component (3 types, auto-dismissal, pause on hover, keyboard support)
+      - [ ] Document remaining 20 components (ConfirmationDialog, Table, DataTable, Tab, etc.)
+      - Progress: 21/41 components documented (51%)
 - [x] Extract Extra Role from JWT for Proper Permission System:
   - [x] Add extra_role field to AuthPayload interface
   - [x] Update handleLogin dan handleRefreshToken untuk include extra_role
