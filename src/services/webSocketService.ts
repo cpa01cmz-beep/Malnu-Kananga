@@ -5,7 +5,7 @@ import {
 } from '../constants';
 import { getAuthToken, parseJwtPayload } from '../utils/authUtils';
 import { logger } from '../utils/logger';
-import { WS_BASE_URL, DEFAULT_API_BASE_URL } from '../config/api';
+import { WS_BASE_URL, API_BASE_URL } from '../config/api';
 import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification, AuthPayload } from '../types';
 
 /* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
@@ -546,9 +546,9 @@ private updateEventsData(event: RealTimeEvent): void {
     if (!token) return;
 
     const lastSync = localStorage.getItem(STORAGE_KEYS.LAST_SYNC_TIME) || new Date(0).toISOString();
-    
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/updates`, {
+      const response = await fetch(`${API_BASE_URL}/api/updates`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -17,7 +17,7 @@ import { useOfflineActionQueue, type SyncResult } from '../services/offlineActio
 import { STORAGE_KEYS } from '../constants';
 import { pdfExportService } from '../services/pdfExportService';
 import ProgressBar from './ui/ProgressBar';
-import { DEFAULT_API_BASE_URL } from '../config/api';
+import { API_BASE_URL } from '../config/api';
 import { HEIGHT_CLASSES } from '../config/heights';
 import {
   validateGradeInput,
@@ -361,7 +361,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/grades/${grade.id}`,
+            endpoint: `${API_BASE_URL}/api/grades/${grade.id}`,
             method: 'PUT'
           });
           
@@ -432,7 +432,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/grades/${grade.id}`,
+            endpoint: `${API_BASE_URL}/api/grades/${grade.id}`,
             method: 'PUT'
           });
           

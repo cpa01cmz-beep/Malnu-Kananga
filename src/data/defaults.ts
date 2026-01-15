@@ -1,21 +1,22 @@
 
 import type { FeaturedProgram, LatestNews, User } from '../types';
+import { IMAGE_URLS, EXTERNAL_LINKS } from '../constants';
 
 export const INITIAL_PROGRAMS: FeaturedProgram[] = [
   {
     title: 'Tahfidz Al-Qur\'an',
     description: 'Program intensif menghafal Al-Qur\'an dengan bimbingan ustadz/ustadzah berkompeten.',
-    imageUrl: 'https://images.unsplash.com/photo-1599339942293-86b72a38547b?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
+    imageUrl: IMAGE_URLS.UNSPLASH_TAHFIDZ
   },
   {
     title: 'Kajian Kitab Kuning',
     description: 'Pendalaman khazanah Islam klasik melalui kajian kitab-kitab kuning oleh para ahli.',
-    imageUrl: 'https://images.unsplash.com/photo-1585056701393-85835978f84e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
+    imageUrl: IMAGE_URLS.UNSPLASH_KAJIAN
   },
   {
     title: 'Sains & Teknologi',
     description: 'Mengintegrasikan ilmu pengetahuan modern dengan nilai-nilai Islam untuk mencetak generasi unggul.',
-    imageUrl: 'https://placehold.co/600x400?text=Sains+&+Teknologi'
+    imageUrl: IMAGE_URLS.PLACEHOLDER_SAINS_TEKNOLOGI
   }
 ];
 
@@ -24,19 +25,19 @@ export const INITIAL_NEWS: LatestNews[] = [
         title: 'MA Malnu Kananga Raih Juara 1 Lomba Cerdas Cermat Tingkat Kabupaten',
         date: '15 Juli 2024',
         category: 'Prestasi',
-        imageUrl: 'https://images.unsplash.com/photo-1571260899204-42aebca5a2aa?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
+        imageUrl: IMAGE_URLS.UNSPLASH_PRESTASI
     },
     {
         title: 'Penerimaan Peserta Didik Baru (PPDB) Tahun Ajaran 2025/2026 Resmi Dibuka',
         date: '10 Juli 2024',
         category: 'Sekolah',
-        imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
+        imageUrl: IMAGE_URLS.UNSPLASH_PPDB
     },
     {
         title: 'Kegiatan Bakti Sosial Sukses Digelar di Desa Sekitar Sekolah',
         date: '5 Juli 2024',
         category: 'Kegiatan',
-        imageUrl: 'https://images.unsplash.com/photo-1618494955439-78a25c1b698a?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
+        imageUrl: IMAGE_URLS.UNSPLASH_BAKTI_SOSIAL
     }
 ];
 
@@ -63,25 +64,25 @@ export const getRelatedLinks = async () => {
     return [
         {
             name: 'RDM Malnu Kananga',
-            href: 'https://rdm.ma-malnukananga.sch.id',
+            href: EXTERNAL_LINKS.RDM_MALNU_KANANGA,
             icon: DocumentTextIcon,
             color: getColorIconClass('sky')
         },
         {
             name: 'Kemenag RI',
-            href: 'https://kemenag.go.id',
+            href: EXTERNAL_LINKS.KEMENAG_RI,
             icon: BuildingLibraryIcon,
             color: getColorIconClass('emerald')
         },
         {
             name: 'EMIS Pendis',
-            href: 'https://emis.kemenag.go.id',
+            href: EXTERNAL_LINKS.EMIS_PENDIS,
             icon: ClipboardDocumentCheckIcon,
             color: getColorIconClass('amber')
         },
         {
             name: 'Simpatika',
-            href: 'https://simpatika.kemenag.go.id',
+            href: EXTERNAL_LINKS.SIMPATIKA,
             icon: UsersIcon,
             color: getColorIconClass('indigo')
         }

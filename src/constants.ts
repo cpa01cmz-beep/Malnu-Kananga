@@ -178,6 +178,25 @@ export const ERROR_MESSAGES = {
 export const ADMIN_EMAIL = 'admin@malnu-kananga.sch.id';
 export const INFO_EMAIL = 'info@ma-malnukananga.sch.id';
 
+export const IMAGE_URLS = {
+    UNSPLASH_TAHFIDZ: 'https://images.unsplash.com/photo-1599339942293-86b72a38547b?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600',
+    UNSPLASH_KAJIAN: 'https://images.unsplash.com/photo-1585056701393-85835978f84e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600',
+    PLACEHOLDER_SAINS_TEKNOLOGI: 'https://placehold.co/600x400?text=Sains+&+Teknologi',
+    UNSPLASH_PRESTASI: 'https://images.unsplash.com/photo-1571260899204-42aebca5a2aa?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600',
+    UNSPLASH_PPDB: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600',
+    UNSPLASH_BAKTI_SOSIAL: 'https://images.unsplash.com/photo-1618494955439-78a25c1b698a?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600',
+    PLACEHOLDER_PROGRAM: 'https://placehold.co/600x400?text=Program',
+    PLACEHOLDER_NEWS: 'https://placehold.co/600x400?text=News',
+} as const;
+
+export const EXTERNAL_LINKS = {
+    RDM_MALNU_KANANGA: 'https://rdm.ma-malnukananga.sch.id',
+    KEMENAG_RI: 'https://kemenag.go.id',
+    EMIS_PENDIS: 'https://emis.kemenag.go.id',
+    SIMPATIKA: 'https://simpatika.kemenag.go.id',
+    MAKERSUITE_API: 'https://makersuite.google.com/app/apikey',
+} as const;
+
 export const VOICE_COMMANDS = {
     OPEN_SETTINGS: ['buka pengaturan', 'buka setting', 'open settings', 'open setting'],
     CLOSE_SETTINGS: ['tutup pengaturan', 'tutup setting', 'close settings', 'close setting'],
