@@ -1,5 +1,4 @@
 
-import React from 'react';
 
 export const ArrowRightIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
   <svg

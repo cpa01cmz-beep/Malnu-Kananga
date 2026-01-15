@@ -2,13 +2,17 @@
  * Error handling utilities for teacher workflow components
  */
 
-import React from 'react';
 import { OperationResult } from './teacherValidation';
+
+export interface ErrorInfo {
+  componentStack: string;
+  digest?: string;
+}
 
 export interface ErrorBoundaryState {
   hasError: boolean;
   error?: Error;
-  errorInfo?: React.ErrorInfo;
+  errorInfo?: ErrorInfo;
   retryCount: number;
 }
 

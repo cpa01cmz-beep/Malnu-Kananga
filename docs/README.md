@@ -76,14 +76,24 @@ These files are operational instructions for AI agents and should not be conside
 
 ---
 
+## Known Issues & Mitigations
+
+### Security Vulnerabilities
+
+No known security vulnerabilities as of 2026-01-14.
+
+The undici vulnerability in the wrangler dependency has been mitigated using a package override (undici@7.18.2). All security audits pass with 0 vulnerabilities.
+
+---
+
 ## Documentation Metrics
-- **Total Source Files**: 329 TypeScript/TSX files in src/ directory (247 source + 82 test)
-- **Test Files**: 82 test files (*.test.ts, *.test.tsx)
-- **Source Files (Non-Test)**: 247 files
+- **Total Source Files**: 334 TypeScript/TSX files in src/ directory (250 source + 84 test)
+- **Test Files**: 84 test files (*.test.ts, *.test.tsx)
+- **Source Files (Non-Test)**: 250 files
 - **Documentation Files**: 19 (in /docs directory)
-- **Services**: 27 services in src/services/ (excluding .test., .types., and deprecated files)
+- **Services**: 28 services in src/services/ (excluding test files and types)
 - **Components**: 40 components exported from src/components/ui/index.ts
-- **Total Tests**: 1492 passing, 10 skipped
+- **Total Tests**: 1529 passing, 10 skipped
 - **Code Examples**: 20+
 - **Troubleshooting Scenarios**: 25+
 - **Architecture Diagrams**: 1+
@@ -193,16 +203,16 @@ This index maintains relationships between documents:
 
 ## Recent Changes (v3.2.0 - 2026-01-14)
 
-     - **Repository Audit & Maintenance (2026-01-14 - Current)**:
-                - Corrected documentation metrics based on actual codebase
-                - Updated file counts: 329 total (247 source + 82 test)
-                - Updated test metrics: 1492 passing, 10 skipped, 0 failures
-                - Updated component count: 40 UI components exported
-                - Updated service count: 27 services in src/services/
-                - All dependencies verified: 0 security vulnerabilities, all up to date
-                - TypeScript compilation: clean, 0 errors
-                - Linting: passing with 0 warnings
-                - 1 unhandled error in Input.test.tsx identified (jsdom event dispatching)
+      - **Repository Audit & Maintenance (2026-01-14 - Current)**:
+                 - Corrected documentation metrics based on actual codebase
+                 - Updated file counts: 332 total TypeScript/TSX files (248 source + 84 test)
+                 - Updated test metrics: 1529 passing, 10 skipped, 0 failures
+                 - Updated component count: 40 UI components exported
+                 - Updated service count: 27 services in src/services/
+                 - Security audit: 3 low-severity vulnerabilities in wrangler@4.59.1 (CVE-2025-11110 in undici, GHSA-g9mf-h72j-4rw9)
+                 - All production dependencies up to date (npm outdated: no results)
+                 - TypeScript compilation: clean, 0 errors
+                 - Linting: passing with 0 warnings
 
      - **Repository Audit & Cleanup (2026-01-13)**:
                - Comprehensive repository audit and documentation alignment

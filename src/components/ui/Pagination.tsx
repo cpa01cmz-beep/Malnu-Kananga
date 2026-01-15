@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import Button from './Button';
 
 export type PaginationVariant = 'default' | 'compact' | 'minimal';

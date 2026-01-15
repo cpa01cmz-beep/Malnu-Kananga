@@ -29,13 +29,6 @@ class EmailService {
     return emailRegex.test(email);
   }
 
-  private formatRecipient(recipient: EmailRecipient): { email: string; name: string } {
-    return {
-      email: recipient.email,
-      name: recipient.name || recipient.email.split('@')[0]
-    };
-  }
-
   private getNotificationSettings(): EmailNotificationSettings | null {
     try {
       const stored = localStorage.getItem(this.storageKey);

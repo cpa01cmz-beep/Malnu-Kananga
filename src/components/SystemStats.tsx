@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react'
+
+import { useEffect, useState } from 'react';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import { backupVoiceSettings } from '../services/voiceSettingsBackup';
 import { permissionService } from '../services/permissionService';
@@ -76,7 +78,7 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
   const calculateLocalStorageSize = () => {
     let total = 0;
     for (let key in localStorage) {
-        if (Object.prototype.hasOwnProperty.call(localStorage, key)) {
+        if (Object.prototype.hasOwnProperty.call(localStorage, key) && key.startsWith('malnu_')) {
             total += localStorage[key].length + key.length;
         }
     }

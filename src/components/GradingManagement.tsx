@@ -1,5 +1,7 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import type { ChangeEvent } from 'react';
+import React from 'react';
 import Papa from 'papaparse';
 import { analyzeClassPerformance } from '../services/geminiService';
 import { studentsAPI, gradesAPI } from '../services/apiService';
@@ -15,13 +17,14 @@ import { useOfflineActionQueue, type SyncResult } from '../services/offlineActio
 import { STORAGE_KEYS } from '../constants';
 import { pdfExportService } from '../services/pdfExportService';
 import ProgressBar from './ui/ProgressBar';
+import { DEFAULT_API_BASE_URL } from '../config/api';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { 
-  validateGradeInput, 
-  sanitizeGradeInput, 
-  calculateGradeLetter, 
+import {
+  validateGradeInput,
+  sanitizeGradeInput,
+  calculateGradeLetter,
   calculateFinalGrade,
-  GradeInput 
+  GradeInput
 } from '../utils/teacherValidation';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { createToastHandler } from '../utils/teacherErrorHandler';
@@ -33,7 +36,6 @@ import { User, UserRole, UserExtraRole } from '../types';
 import ErrorMessage from './ui/ErrorMessage';
 import { OfflineIndicator } from './OfflineIndicator';
 import SearchInput from './ui/SearchInput';
-import { DEFAULT_API_BASE_URL } from '../config';
 
 
 interface StudentGrade {
@@ -51,8 +53,8 @@ interface GradingManagementProps {
 }
 
 const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToast }) => {
-  const csvInputRef = React.useRef<HTMLInputElement>(null);
-  const ocrInputRef = React.useRef<HTMLInputElement>(null);
+  const csvInputRef = useRef<HTMLInputElement>(null);
+  const ocrInputRef = useRef<HTMLInputElement>(null);
   // Event notifications hook
   const { notifyGradeUpdate, useMonitorLocalStorage } = useEventNotifications();
   
@@ -490,7 +492,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     ));
   };
   
-  const handleCSVImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCSVImport = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -776,7 +778,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       setIsAnalyzing(false);
   };
 
-  const handleOCRExamUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOCRExamUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -832,23 +834,6 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
   const processOCRWithAI = async (ocrText: string, confidence: number) => {
     try {
-      // Create AI prompt for grade extraction
-      const _prompt = `
-        Ekstrak data nilai dari teks berikut. Format output JSON:
-        {
-          "studentName": "nama siswa",
-          "nis": "nomor induk siswa",
-          "assignment": nilai tugas (0-100),
-          "midExam": nilai UTS (0-100),
-          "finalExam": nilai UAS (0-100)
-        }
-
-        Teks OCR:
-        ${ocrText}
-
-        Hanya return JSON, tidak ada penjelasan.
-      `;
-
       // Use Gemini service to extract structured data
       const aiResult = await analyzeClassPerformance([{ 
         studentName: '', 
@@ -896,7 +881,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     }
   };
 
-  const parseAIGradeExtraction = (aiResult: string, ocrText: string) => {
+  const parseAIGradeExtraction = (_aiResult: string, ocrText: string) => {
     // Fallback parsing if AI fails
     const numbers = ocrText.match(/\b(100|[1-9]?\d)\b/g);
     if (!numbers || numbers.length < 3) return null;

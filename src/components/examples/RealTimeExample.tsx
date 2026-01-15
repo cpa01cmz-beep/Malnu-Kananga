@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWebSocket, useRealtimeGrades, useRealtimeAnnouncements } from '../../hooks/useWebSocket';
 import { WebSocketStatus } from '../WebSocketStatus';
 import { logger } from '../../utils/logger';
@@ -58,7 +58,7 @@ export function RealTimeExample() {
   const [notification, setNotification] = useState<string>('');
 
   // Subscribe to custom events
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = subscribe(
       'notification_created',
       (event: RealTimeEvent) => {

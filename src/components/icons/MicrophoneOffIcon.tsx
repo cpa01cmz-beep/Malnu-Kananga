@@ -1,5 +1,4 @@
 
-import React from 'react';
 
 export const MicrophoneOffIcon: React.FC<{ className?: string }> = ({ className }) => (
   <svg

@@ -1,5 +1,7 @@
+import React from 'react'
 
-import React, { useState, useEffect, useCallback } from 'react';
+
+import { useState, useEffect, useCallback } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import BuildingLibraryIcon from './icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
@@ -15,7 +17,7 @@ import OsisEvents from './OsisEvents';
 import { ToastType } from './Toast';
 import { UserExtraRole, Student } from '../types';
 import { UserRole, UserExtraRole as PermUserExtraRole } from '../types/permissions';
-import { authAPI, studentsAPI, gradesAPI, attendanceAPI } from '../services/apiService';
+import { authAPI, studentsAPI, gradesAPI, attendanceAPI, schedulesAPI } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
@@ -132,17 +134,18 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
           
           // Fetch additional data for offline caching
           try {
-            const [gradesResponse, attendanceResponse] = await Promise.all([
+            const [gradesResponse, attendanceResponse, scheduleResponse] = await Promise.all([
               gradesAPI.getByStudent(studentResponse.data.id),
-              attendanceAPI.getByStudent(studentResponse.data.id)
+              attendanceAPI.getByStudent(studentResponse.data.id),
+              schedulesAPI.getAll()
             ]);
 
-            if (gradesResponse.success && attendanceResponse.success) {
+            if (gradesResponse.success && attendanceResponse.success && scheduleResponse.success) {
               const cachedData = {
                 student: studentResponse.data,
                 grades: gradesResponse.data || [],
                 attendance: attendanceResponse.data || [],
-                schedule: [], // TODO: Fetch schedule when API is available
+                schedule: scheduleResponse.data || [],
               };
 
               offlineDataService.cacheStudentData(cachedData);

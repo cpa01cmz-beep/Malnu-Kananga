@@ -1,5 +1,6 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { useFieldValidation, UseFieldValidationOptions } from './useFieldValidation';
+import { useState, useCallback, useRef } from 'react';
+import React from 'react';
+import type { UseFieldValidationOptions } from './useFieldValidation';
 import { logger } from '../utils/logger';
 
 export interface FormFieldConfig {
@@ -73,7 +74,6 @@ export function useForm(options: UseFormOptions): UseFormReturn {
     isDirty: false
   });
 
-  const _fieldValidatorsRef = useRef<Record<string, ReturnType<typeof useFieldValidation>>>({});
   const validateOnBlurRef = useRef(validateOnBlur);
   const validateOnChangeRef = useRef(validateOnChange);
 

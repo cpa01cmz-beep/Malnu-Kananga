@@ -1,4 +1,3 @@
-import React from 'react';
 import { getResponsiveGradient } from '../config/gradients';
 import SocialLink from './ui/SocialLink';
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from './icons/StatusIcons';

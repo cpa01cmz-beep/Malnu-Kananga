@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { logger } from '../../utils/logger';
 import { getResponsiveGradient } from '../../config/gradients';
 import { getColorIconLabel } from '../../config/colorIcons';

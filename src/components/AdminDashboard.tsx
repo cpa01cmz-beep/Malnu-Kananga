@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { SparklesIcon } from './icons/SparklesIcon';
 import { UsersIcon } from './icons/UsersIcon';
 
@@ -207,8 +207,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
   // Permission checks for admin dashboard - AFTER all hooks
   const adminAccess = canAccess('system.admin');
-  const _statsAccess = canAccess('system.stats');
-  
+
   if (!adminAccess.canAccess) {
     return (
       <AccessDenied 

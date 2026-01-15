@@ -1,11 +1,24 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import SiteEditor from '../components/SiteEditor';
-import type { FeaturedProgram, LatestNews } from '../types';
+import SiteEditor from '../SiteEditor';
+import type { FeaturedProgram, LatestNews } from '../../types';
 
-// Mock the geminiService
-vi.mock('../services/geminiService', () => ({
+// Mock is-dom-available
+vi.mock('is-dom-available', () => ({
+  isDOMAvailable: () => true,
+}));
+
+// Mock geminiService
+vi.mock('../../services/geminiService', () => ({
   getAIEditorResponse: vi.fn()
+}));
+
+// Mock logger
+vi.mock('../../utils/logger', () => ({
+  logger: {
+    warn: vi.fn(),
+    error: vi.fn()
+  }
 }));
 
 // Mock the logger
@@ -136,7 +149,7 @@ describe('SiteEditor Security Validation', () => {
   });
 
   it('should allow valid content editing commands', async () => {
-    const { getAIEditorResponse } = await import('../services/geminiService');
+    const { getAIEditorResponse } = await import('../../services/geminiService');
     vi.mocked(getAIEditorResponse).mockResolvedValue(mockCurrentContent);
 
     render(
@@ -199,7 +212,7 @@ describe('SiteEditor Security Validation', () => {
   });
 
   it('should validate AI response structure', async () => {
-    const { getAIEditorResponse } = await import('../services/geminiService');
+    const { getAIEditorResponse } = await import('../../services/geminiService');
     
     // Mock invalid response
     vi.mocked(getAIEditorResponse).mockRejectedValue(new Error('Struktur respon AI tidak valid'));

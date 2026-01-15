@@ -1,13 +1,12 @@
-  
-import { 
-  STORAGE_KEYS, 
-  type UserRole 
+
+import {
+  STORAGE_KEYS,
+  type UserRole
 } from '../constants';
-import { apiService } from './apiService';
-import type { AuthPayload } from './apiService';
+import { getAuthToken, parseJwtPayload } from '../utils/authUtils';
 import { logger } from '../utils/logger';
-import { DEFAULT_API_BASE_URL } from '../config';
-import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification } from '../types';
+import { WS_BASE_URL, DEFAULT_API_BASE_URL } from '../config/api';
+import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification, AuthPayload } from '../types';
 
 /* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
 
@@ -55,8 +54,7 @@ export interface RealTimeSubscription {
  * Configuration for WebSocket service
  */
 export const WS_CONFIG = {
-  WS_BASE_URL: import.meta.env.VITE_WS_BASE_URL ||
-    (import.meta.env.VITE_API_BASE_URL?.replace('https://', 'wss://') || 'wss://malnu-kananga-worker-prod.cpa01cmz.workers.dev') + '/ws',
+  WS_BASE_URL,
   MAX_RECONNECT_ATTEMPTS: 5,
   RECONNECT_DELAY: 5000,
   CONNECTION_TIMEOUT: 10000,
@@ -101,13 +99,13 @@ class WebSocketService {
    * Initialize WebSocket connection with authentication
    */
   async initialize(): Promise<void> {
-    const token = apiService.getAuthToken();
+    const token = getAuthToken();
     if (!token) {
       logger.warn('WebSocket: No auth token available');
       return;
     }
 
-    const payload = apiService.parseJwtPayload(token);
+    const payload = parseJwtPayload(token);
     if (!payload || this.isTokenExpired(payload)) {
       logger.warn('WebSocket: Token expired, skipping connection');
       return;
@@ -544,7 +542,7 @@ private updateEventsData(event: RealTimeEvent): void {
    * Poll for updates when WebSocket is unavailable
    */
   private async pollForUpdates(): Promise<void> {
-    const token = apiService.getAuthToken();
+    const token = getAuthToken();
     if (!token) return;
 
     const lastSync = localStorage.getItem(STORAGE_KEYS.LAST_SYNC_TIME) || new Date(0).toISOString();

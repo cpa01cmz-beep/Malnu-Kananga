@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import type { ChatMessage, FeaturedProgram, LatestNews, VoiceCommand } from '../types';
 import { Sender } from '../types';
 import { getAIResponseStream, initialGreeting } from '../services/geminiService';

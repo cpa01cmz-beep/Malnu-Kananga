@@ -1,4 +1,3 @@
-import React from 'react';
 import ChevronLeftIcon from '../icons/ChevronLeftIcon';
 
 export type BackButtonVariant = 'primary' | 'green' | 'custom';

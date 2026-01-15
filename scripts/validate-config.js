@@ -142,36 +142,35 @@ function validateEnvironmentFiles() {
   });
 }
 
-function validateSeederWorker() {
-  log('\n=== Validating seeder-worker.js ===', 'blue');
-  
-  const seederPath = join(rootDir, 'seeder-worker.js');
-  
+function validateWorkerSeedEndpoint() {
+  log('\n=== Validating worker.js seed endpoint ===', 'blue');
+
+  const workerPath = join(rootDir, 'worker.js');
+
   try {
-    const content = readFileSync(seederPath, 'utf-8');
-    
-    if (content.trim().length === 0) {
-      log('✗ seeder-worker.js is empty - needs implementation', 'red');
-      hasErrors = true;
+    const content = readFileSync(workerPath, 'utf-8');
+
+    if (content.includes('handleSeed') && content.includes("'/seed'")) {
+      log('✓ worker.js contains /seed endpoint', 'green');
     } else {
-      log('✓ seeder-worker.js has content', 'green');
+      log('✗ worker.js missing /seed endpoint', 'red');
+      hasErrors = true;
     }
   } catch (error) {
-    log(`✗ Error reading seeder-worker.js: ${error.message}`, 'red');
+    log(`✗ Error reading worker.js: ${error.message}`, 'red');
     hasErrors = true;
   }
 }
 
 function printSummary() {
   log('\n=== Validation Summary ===', 'blue');
-  
+
   if (hasErrors) {
     log('\n✗ VALIDATION FAILED - Please fix the errors above before deploying', 'red');
     log('\nNext steps:', 'yellow');
     log('1. Replace all placeholder values in wrangler.toml', 'yellow');
     log('2. Set up actual environment variables in .env.production', 'yellow');
-    log('3. Implement seeder-worker.js functionality', 'yellow');
-    log('4. Review BACKEND_GUIDE.md for detailed setup instructions', 'yellow');
+    log('3. Review DEPLOYMENT_GUIDE.md for detailed setup instructions', 'yellow');
     process.exit(1);
   } else if (hasWarnings) {
     log('\n⚠ VALIDATION PASSED WITH WARNINGS - Review the warnings above', 'yellow');
@@ -186,7 +185,7 @@ function printSummary() {
 try {
   validateWranglerConfig();
   validateEnvironmentFiles();
-  validateSeederWorker();
+  validateWorkerSeedEndpoint();
   printSummary();
 } catch (error) {
   log(`\n✗ Unexpected error: ${error.message}`, 'red');

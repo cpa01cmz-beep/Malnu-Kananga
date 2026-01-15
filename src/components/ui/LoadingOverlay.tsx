@@ -1,4 +1,3 @@
-import React from 'react';
 import LoadingSpinner from './LoadingSpinner';
 
 export type LoadingOverlaySize = 'sm' | 'md' | 'lg' | 'full';
@@ -36,13 +35,6 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
     md: 'p-8',
     lg: 'p-12',
     full: 'p-16',
-  };
-
-  const _spinnerSizes = {
-    sm: 'w-6 h-6',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12',
-    full: 'w-16 h-16',
   };
 
   const textSizes = {

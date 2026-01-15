@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { ChatMessage, FeaturedProgram, LatestNews } from '../types';
 import { Sender } from '../types';
 import Button from './ui/Button';

@@ -1,5 +1,5 @@
 // ParentNotificationSettings.tsx - Component for configuring parent grade notifications
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BellIcon } from './icons/BellIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { ClockIcon } from './icons/MaterialIcons';
