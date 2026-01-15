@@ -1,5 +1,7 @@
 import { useWebSocket } from '../hooks/useWebSocket';
-import { WifiIcon, ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { WifiIcon } from './icons/WifiIcon';
+import { ArrowPathIcon } from './icons/ArrowPathIcon';
+import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
 
 interface WebSocketStatusProps {
   className?: string;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { CalendarDaysIcon, ListBulletIcon } from '@heroicons/react/24/outline';
+import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
+import { ListBulletIcon } from './icons/ListBulletIcon';
 import { schedulesAPI, subjectsAPI } from '../services/apiService';
 import { Schedule, Subject, ParentMeeting } from '../types';
 import { logger } from '../utils/logger';

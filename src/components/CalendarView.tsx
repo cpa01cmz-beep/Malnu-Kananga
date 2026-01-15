@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import ChevronLeftIcon from './icons/ChevronLeftIcon';
+import { ChevronRightIcon } from './icons/MaterialIcons';
+import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import type { Schedule, ParentMeeting } from '../types';
 import IconButton from './ui/IconButton';
 import Button from './ui/Button';
