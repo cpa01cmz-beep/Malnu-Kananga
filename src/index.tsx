@@ -9,6 +9,8 @@ import './styles/themes.css';
 import { registerSW } from 'virtual:pwa-register';
 // Import storage migration
 import { runStorageMigration } from './services/storageMigration';
+// Initialize i18n
+import './i18n/config';
 
 // Run storage migration before initialization
 runStorageMigration();

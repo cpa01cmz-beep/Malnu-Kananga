@@ -119,6 +119,9 @@ export const STORAGE_KEYS = {
     
     // AI Editor Audit
     AI_EDITOR_AUDIT_LOG: 'malnu_ai_editor_audit_log',
+    
+    // Language / i18n
+    LANGUAGE: 'malnu_language',
 } as const;
 
 export const APP_CONFIG = {

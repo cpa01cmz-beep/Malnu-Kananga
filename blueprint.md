@@ -8,6 +8,45 @@
 
 ## 17. RECENT CHANGES (2026-01-15)
 
+### Internationalization (i18n) Completed
+
+**New Files**:
+- `src/i18n/config.ts` - i18next configuration with language detection
+- `src/i18n/locales/en.json` - English translations (500+ keys)
+- `src/i18n/locales/id.json` - Indonesian translations (500+ keys)
+- `src/hooks/useLanguage.ts` - Language management custom hook
+- `src/components/LanguageSwitcher.tsx` - Language switcher UI component
+- `docs/I18N_GUIDE.md` - Comprehensive i18n documentation (500+ lines)
+
+**Updated Files**:
+- `src/index.tsx` - Added i18n initialization
+- `src/constants.ts` - Added STORAGE_KEYS.LANGUAGE
+- `package.json` - Added i18next, react-i18next, i18next-browser-languagedetector
+
+**Test Files**:
+- `src/i18n/__tests__/config.test.ts` - i18n configuration tests (14 tests)
+- `src/hooks/__tests__/useLanguage.test.ts` - Hook tests (8 tests)
+- `src/components/__tests__/LanguageSwitcher.test.tsx` - Component tests (11 tests)
+
+**Key Features**:
+- Multi-language support (Bahasa Indonesia, English)
+- Automatic language detection (localStorage, browser)
+- Language persistence in localStorage
+- Comprehensive translation coverage (20 sections, 500+ keys)
+- Language switcher component with ARIA attributes
+- Custom hook for language management
+
+**Translation Sections**:
+- app, common, navigation, auth, dashboard, users, attendance, grades, materials, notifications, settings, language, errors, messages, forms, ppdb, ai, voice, accessibility, offline, export, time, validation
+
+**Test Coverage**:
+- Total i18n tests: 33
+- All tests passing (33/33)
+- Typecheck passing (0 errors)
+- Lint passing (2 warnings from unrelated code, 0 errors)
+
+---
+
 ### Mobile Optimization Completed
 
 **New Files**:
