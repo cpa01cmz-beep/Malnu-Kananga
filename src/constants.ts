@@ -349,3 +349,47 @@ export const OPACITY_TOKENS = {
     BACKDROP_BLUR_SM: 'backdrop-blur-sm',
     BACKDROP_BLUR_XL: 'backdrop-blur-xl',
 } as const;
+
+export const PERFORMANCE_CONFIG = {
+    PERFORMANCE_ALERTS_KEY: 'malnu_performance_alerts',
+    
+    CORE_WEB_VITALS_THRESHOLDS: {
+        LCP: { good: 2500, poor: 4000 },
+        FID: { good: 100, poor: 300 },
+        CLS: { good: 0.1, poor: 0.25 },
+        FCP: { good: 1800, poor: 3000 },
+        TTFB: { good: 800, poor: 1800 },
+        INP: { good: 200, poor: 500 },
+    },
+    
+    ALERT_THRESHOLDS: {
+        LCP: 4000,
+        FID: 300,
+        CLS: 0.25,
+        FCP: 3000,
+        TTFB: 1800,
+        INP: 500,
+    },
+    
+    PERFORMANCE_BUDGETS: [
+        { type: 'javascript', size: 200, unit: 'kb' as const },
+        { type: 'css', size: 50, unit: 'kb' as const },
+        { type: 'image', size: 500, unit: 'kb' as const },
+        { type: 'total', size: 1000, unit: 'kb' as const },
+    ],
+    
+    MONITORING_CONFIG: {
+        enabled: true,
+        sampleRate: 1.0,
+        budgetAlertThreshold: 1.1,
+        alertHistoryMaxSize: 50,
+        reportInterval: 60000,
+    },
+    
+    TARGET_SCORES: {
+        performance: 90,
+        accessibility: 95,
+        bestPractices: 90,
+        seo: 90,
+    },
+} as const;

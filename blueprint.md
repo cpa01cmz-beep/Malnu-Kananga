@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Blueprint
 **Architecture & System Design Document**
-**Version**: 3.2.0
+**Version**: 3.3.0
 **Last Updated**: 2026-01-15
 
 ---
@@ -74,6 +74,7 @@ MA Malnu Kananga is a modern, AI-powered school management system designed for I
 - `themeManager.ts` - Theme management (light/dark)
 - `storageMigration.ts` - localStorage schema migrations
 - `voiceSettingsBackup.ts` - Voice settings synchronization
+- `performanceMonitor.ts` - Core Web Vitals tracking, performance budgets, and alerting
 
 ### 2.3 Data Flow
 
@@ -196,6 +197,7 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 - `useAutoSave` - Auto-save functionality
 - `useFieldValidation` - Field validation
 - `useSemanticSearch` - Content search
+- `usePerformanceMonitor` - Performance monitoring integration
 
 **Real-Time & Events**
 - `useWebSocket` - WebSocket connection
