@@ -164,14 +164,14 @@ export function useDebounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   delay?: number
 ): T {
-  return useCallback(debounce(func, delay), [func, delay]) as T;
+  return debounce(func, delay) as T;
 }
 
 export function useThrottle<T extends (...args: unknown[]) => unknown>(
   func: T,
   limit?: number
 ): T {
-  return useCallback(throttle(func, limit), [func, limit]) as T;
+  return throttle(func, limit) as T;
 }
 
 export function useMobileMetrics() {
