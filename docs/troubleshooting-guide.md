@@ -192,10 +192,10 @@ if (token) {
 }
 ```
 
-**Debug Steps**:
+ **Debug Steps**:
 1. Verify API endpoint connectivity
 2. Check JWT token format and expiration
-3. Review authentication flow in authService.ts
+3. Review authentication flow in apiService.ts (authAPI)
 
 ### File upload failures
 **Problem**: Files won't upload or show errors

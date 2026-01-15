@@ -181,15 +181,14 @@
   - `/components/sections` - Bagian-bagian besar halaman
   - `/components/admin` - Admin-specific components
 
-- **`/services`**: Logika bisnis dan pemanggilan API (Gemini, Fetch)
-  - `apiService.ts` - Main API service dengan JWT auth
-  - `authService.ts` - Authentication service
-  - `geminiService.ts` - AI/LLM integration
-  - `speechRecognitionService.ts` - Voice recognition
-  - `speechSynthesisService.ts` - Text-to-speech
-  - `pushNotificationService.ts` - PWA notifications
-  - `ocrService.ts` - OCR untuk PPDB documents
-  - `permissionService.ts` - Role-based permissions
+ - **`/services`**: Logika bisnis dan pemanggilan API (Gemini, Fetch)
+   - `apiService.ts` - Main API service dengan JWT auth
+   - `geminiService.ts` - AI/LLM integration
+   - `speechRecognitionService.ts` - Voice recognition
+   - `speechSynthesisService.ts` - Text-to-speech
+   - `pushNotificationService.ts` - PWA notifications
+   - `ocrService.ts` - OCR untuk PPDB documents
+   - `permissionService.ts` - Role-based permissions
 
 - **`/hooks`**: Custom React hooks
   - `useVoiceRecognition.ts`
@@ -206,9 +205,9 @@
 - **`/data`**: Data statis atau konfigurasi default
 
 ### 3.2 File Naming
-- **Components**: PascalCase (`UserProfile.tsx`, `Button.tsx`)
-- **Services**: camelCase (`apiService.ts`, `authService.ts`)
-- **Hooks**: camelCase with `use` prefix (`useAuth.ts`, `useVoiceRecognition.ts`)
+ - **Components**: PascalCase (`UserProfile.tsx`, `Button.tsx`)
+ - **Services**: camelCase (`apiService.ts`, `geminiService.ts`)
+ - **Hooks**: camelCase with `use` prefix (`useAuth.ts`, `useVoiceRecognition.ts`)
 - **Utils**: camelCase (`formatDate.ts`, `validateEmail.ts`)
 - **Constants**: UPPER_SNAKE_CASE (`API_BASE_URL.ts`, `STORAGE_KEYS.ts`)
 - **Types**: PascalCase for interfaces/Types (`User.ts`, `UserRole.ts`)
@@ -233,18 +232,19 @@
   };
   ```
 
-### 4.2 Authentication
-- **JWT Token Management**: Gunakan `authService.ts` untuk token management
-  ```ts
-  // Login
-  const { user, token } = await authService.login(email, password);
+ ### 4.2 Authentication
+ - **JWT Token Management**: Gunakan `authAPI` dari `apiService.ts` untuk token management
+   ```ts
+   // Login
+   import { authAPI } from './services/apiService';
+   const { user, token } = await authAPI.login(email, password);
 
-  // Refresh token
-  const newToken = await authService.refreshToken(refreshToken);
+   // Refresh token
+   const newToken = await authAPI.refreshToken();
 
-  // Logout
-  await authService.logout();
-  ```
+   // Logout
+   await authAPI.logout();
+   ```
 
 ### 4.3 Error Handling
 - **API Error Handling**: Tangani error dengan baik di setiap API call
