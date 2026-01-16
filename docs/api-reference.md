@@ -64,7 +64,7 @@ This document provides comprehensive API reference for MA Malnu Kananga web appl
 ---
 
 **Related Documentation**:
-- [BLUEPRINT.md](./BLUEPRINT.md) - System architecture overview
+- [BLUEPRINT.md](../blueprint.md) - System architecture overview
 - [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Deployment and setup
 - [CODING_STANDARDS.md](./CODING_STANDARDS.md) - Development guidelines
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution process
@@ -1762,7 +1762,7 @@ VITE_LOG_LEVEL=DEBUG
 ---
 
 **Related Documentation:**
-- [BLUEPRINT.md](./BLUEPRINT.md) - System architecture overview
+- [BLUEPRINT.md](../blueprint.md) - System architecture overview
 - [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Deployment and setup
 - [CODING_STANDARDS.md](./CODING_STANDARDS.md) - Development guidelines
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution process

@@ -18,10 +18,10 @@ These files are operational instructions for AI agents and should not be conside
 
 ### 📚 Core Documentation
 - **[../README.md](../README.md)** - Project overview, features, and quick start guide (root-level)
-- **[BLUEPRINT.md](./BLUEPRINT.md)** - Project blueprint, architecture, and specifications
+- **[BLUEPRINT.md](../blueprint.md)** - Project blueprint, architecture, and specifications
 - **[API Reference](./api-reference.md)** - Complete API reference and endpoints
 - **[Troubleshooting Guide](./troubleshooting-guide.md)** - Common issues and solutions
-- **[TASK.md](./TASK.md)** - Current development goals and task tracking
+- **[TASK.md](../task.md)** - Current development goals and task tracking
 
 ### 🔧 Development Documentation
 - **[CODING_STANDARDS.md](./CODING_STANDARDS.md)** - Code style and development guidelines
@@ -31,7 +31,7 @@ These files are operational instructions for AI agents and should not be conside
 
 ### 🏗️ Project Management
 - **[ROADMAP.md](./ROADMAP.md)** - Development roadmap and milestones
-- **[TASK.md](./TASK.md)** - Current tasks and progress tracking
+- **[TASK.md](../task.md)** - Current tasks and progress tracking
 
  ### 🚀 Deployment & Infrastructure
 - **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Complete deployment procedures (Cloudflare Workers, D1, R2)
@@ -57,7 +57,7 @@ These files are operational instructions for AI agents and should not be conside
 
 ### For New Developers
 1. Start with [../README.md](../README.md) for project overview
-2. Read [BLUEPRINT.md](./BLUEPRINT.md) to understand the system
+2. Read [BLUEPRINT.md](../blueprint.md) to understand the system
 3. Follow [CONTRIBUTING.md](./CONTRIBUTING.md) for development setup
 4. Use [CODING_STANDARDS.md](./CODING_STANDARDS.md) for code guidelines
 
@@ -70,9 +70,9 @@ These files are operational instructions for AI agents and should not be conside
 2. See [API Reference](./api-reference.md) for backend endpoints
 
 ### For Project Managers
-1. Review [BLUEPRINT.md](./BLUEPRINT.md) for project specifications
+1. Review [BLUEPRINT.md](../blueprint.md) for project specifications
 2. Monitor [ROADMAP.md](./ROADMAP.md) for development progress
-3. Track [TASK.md](./TASK.md) for current tasks and milestones
+3. Track [TASK.md](../task.md) for current tasks and milestones
 
 ---
 

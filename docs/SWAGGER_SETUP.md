@@ -696,7 +696,7 @@ corsHeaders(env.ALLOWED_ORIGIN, requestOrigin)
 - [OpenAPI Specification](./openapi.yaml) - The API specification
 - [API Reference](./api-reference.md) - Detailed REST API documentation
 - [WebSocket API](./WEBSOCKET_API.md) - Real-time WebSocket documentation
-- [Blueprint](./BLUEPRINT.md) - System architecture overview
+- [Blueprint](../blueprint.md) - System architecture overview
 
 ---
 

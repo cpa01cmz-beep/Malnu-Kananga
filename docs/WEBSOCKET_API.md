@@ -849,7 +849,7 @@ export function useWebSocket() {
 
 - [API Reference](./api-reference.md) - Complete REST API documentation
 - [OpenAPI Specification](./openapi.yaml) - OpenAPI 3.0 spec for REST endpoints
-- [Blueprint](./BLUEPRINT.md) - System architecture overview
+- [Blueprint](../blueprint.md) - System architecture overview
 - [Deployment Guide](./DEPLOYMENT_GUIDE.md) - Deployment and setup instructions
 
 ---

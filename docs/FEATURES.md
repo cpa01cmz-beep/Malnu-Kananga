@@ -182,4 +182,4 @@ The system now supports **Extra Roles** for Teachers and Students with special r
 
 - [User Guide (HOW_TO.md)](./HOW_TO.md) - Detailed usage instructions
 - [API Reference](./api-reference.md) - Complete API documentation
-- [Blueprint (BLUEPRINT.md)](./BLUEPRINT.md) - System architecture and specifications
+- [Blueprint (BLUEPRINT.md)](../blueprint.md) - System architecture and specifications
