@@ -138,6 +138,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       closeOnEscape={true}
       showCloseButton={true}
       className={HEIGHT_CLASSES.MODAL.FULL}
+      data-testid="login-modal"
     >
       <div className="overflow-y-auto">
             <div className={`mb-6 p-5 ${getGradientClass('NEUTRAL')} dark:from-neutral-900/60 dark:to-neutral-800/60 rounded-xl border border-neutral-200/70 dark:border-neutral-700/70`}>
