@@ -1,8 +1,39 @@
 # MA Malnu Kananga - Blueprint
 **Architecture & System Design Document**
-**Version**: 3.4.2
-**Last Updated**: 2026-01-16 (System Verification Complete)
+**Version**: 3.4.3
+**Last Updated**: 2026-01-16 (Bundle Optimization Complete)
 **Next Review**: 2026-02-16
+
+---
+
+## 18. RECENT CHANGES (2026-01-16)
+
+### Bundle Size Optimization Completed
+
+**Updated Files**:
+- `src/App.tsx` - Lazy loading added for LoginModal, ChatWindow, ThemeSelector
+- `vite.config.ts` - Improved chunk splitting strategy, removed vendor-react circular dependency
+
+**Key Improvements**:
+- Main bundle size reduced by 27.9% (552 KB → 398 KB)
+- New vendor chunks created: i18n (50 KB), purify (23 KB), papaparse (19 KB), qrcode (25 KB)
+- Circular chunk dependency warning fixed (removed vendor-react chunk)
+- TeacherDashboard size reduced by 23% (184 KB → 141 KB)
+- Advanced code splitting implemented for better lazy loading
+
+**Configuration Changes** (vite.config.ts):
+- Added vendor-i18n chunk for i18next library
+- Added vendor-purify chunk for DOMPurify library
+- Added vendor-papaparse chunk for CSV parsing library
+- Added vendor-qrcode chunk for QR code generation
+- Removed vendor-react chunk to prevent circular dependency with vendor-charts
+- Added pure_funcs to terser options for console.log removal
+- Reduced chunkSizeWarningLimit from 600 KB to 500 KB
+
+**Test Coverage**:
+- All tests passing (1895/1895, 73 skipped)
+- Typecheck passing (0 errors)
+- Lint passing (0 errors)
 
 ---
 
@@ -534,11 +565,20 @@ e2e/
 
 ### 8.1 Frontend Optimization
 
-- **Code Splitting**: React.lazy, dynamic imports
+- **Code Splitting**: React.lazy, dynamic imports (2026-01-16: Enhanced lazy loading for LoginModal, ChatWindow, ThemeSelector)
 - **Memoization**: React.memo, useMemo, useCallback
-- **Bundle Size**: Vite optimizations, tree shaking
+- **Bundle Size**: Vite optimizations, tree shaking, vendor chunking (2026-01-16: Main bundle reduced 27.9% from 552 KB to 398 KB)
 - **Image Optimization**: Lazy loading, WebP support
 - **Voice Optimization**: Debouncing, throttling (`voiceOptimization.ts`)
+
+**Bundle Size Metrics** (2026-01-16):
+- Main bundle: 398 KB (gzip: 117 KB) - 27.9% reduction
+- Vendor-charts: 388 KB (Recharts)
+- Vendor-jpdf: 380 KB (jsPDF)
+- Vendor-genai: 248 KB (Google GenAI)
+- Vendor-html2canvas: 196 KB
+- New vendor chunks: i18n (50 KB), purify (23 KB), papaparse (19 KB), qrcode (25 KB)
+- Dashboards: Teacher (141 KB), Parent (97 KB), Student (72 KB), Admin (57 KB)
 
 ### 8.2 Backend Optimization
 

@@ -1,10 +1,7 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import LoginModal from './components/LoginModal';
-import ChatWindow from './components/ChatWindow';
 import Toast, { ToastType } from './components/Toast';
-import ThemeSelector from './components/ThemeSelector';
 import SkipLink, { SkipTarget } from './components/ui/SkipLink';
 import SuspenseLoading from './components/ui/SuspenseLoading';
 import ErrorBoundary from './components/ui/ErrorBoundary';
@@ -13,7 +10,10 @@ import { logger } from './utils/logger';
 import { useTheme } from './hooks/useTheme';
 import { HEIGHTS } from './config/heights';
 
-// Lazy load modal/dialog components
+// Lazy load modal/dialog components to reduce initial bundle
+const LoginModal = lazy(() => import('./components/LoginModal'));
+const ChatWindow = lazy(() => import('./components/ChatWindow'));
+const ThemeSelector = lazy(() => import('./components/ThemeSelector'));
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
 const SiteEditor = lazy(() => import('./components/SiteEditor'));
 const PPDBRegistration = lazy(() => import('./components/PPDBRegistration'));
