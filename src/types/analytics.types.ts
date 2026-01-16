@@ -11,7 +11,7 @@ export interface StudentPerformanceAnalytics {
   totalStudents: number;
   topSubjects: string[];
   needsImprovement: string[];
-  goals: Goal[];
+  goals: AnalyticsStudentGoal[];
 }
 
 export interface TeacherEffectivenessAnalytics {

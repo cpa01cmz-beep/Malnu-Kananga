@@ -29,6 +29,7 @@ export type UserExtraRole = 'staff' | 'osis' | 'wakasek' | 'kepsek' | null;
 export interface Student {
   id: string;
   userId: string;
+  name: string;
   nisn: string;
   nis: string;
   class: string;
@@ -44,6 +45,7 @@ export interface Student {
 export interface Teacher {
   id: string;
   userId: string;
+  name: string;
   nip: string;
   subjects: string;
   joinDate: string;

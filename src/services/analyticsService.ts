@@ -16,6 +16,8 @@ import type {
   SubjectPopularity,
   MonthlyTrendData,
   ClassPerformance,
+  AnalyticsExportOptions,
+  TeacherPerformanceTrend,
 } from '../types/analytics.types';
 import type { Grade, Attendance, Student, Teacher } from '../types';
 
@@ -77,13 +79,13 @@ class AnalyticsService {
     return users.filter((u: Teacher) => u.id.includes('teacher'));
   }
 
-  private getGrades(filters: AnalyticsFilters): Grade[] {
+  private getGrades(_filters: AnalyticsFilters): Grade[] {
     const data = localStorage.getItem(STORAGE_KEYS.GRADES);
     if (!data) return [];
     return JSON.parse(data);
   }
 
-  private getAttendance(filters: AnalyticsFilters): Attendance[] {
+  private getAttendance(_filters: AnalyticsFilters): Attendance[] {
     const data = localStorage.getItem(STORAGE_KEYS.ATTENDANCE);
     if (!data) return [];
     return JSON.parse(data);
@@ -335,7 +337,7 @@ class AnalyticsService {
     return classes.size;
   }
 
-  private calculateSubjectPerformance(grades: Grade[], filters: AnalyticsFilters): SubjectPerformance[] {
+  private calculateSubjectPerformance(grades: Grade[], _filters: AnalyticsFilters): SubjectPerformance[] {
     const subjectMap = new Map<string, Grade[]>();
 
     grades.forEach(grade => {
@@ -434,7 +436,7 @@ class AnalyticsService {
   private calculateStudentProgression(students: Student[], grades: Grade[], attendance: Attendance[]): StudentProgressionData[] {
     return students.slice(0, 10).map(student => {
       const studentGrades = grades.filter(g => g.studentId === student.id);
-      const studentAttendance = attendance.filter(a => a.studentId === student.id);
+      const _studentAttendance = attendance.filter(a => a.studentId === student.id);
 
       return {
         studentId: student.id,
@@ -555,72 +557,51 @@ class AnalyticsService {
     }));
   }
 
-  private calculateMonthlyTrends(grades: Grade[], attendance: Attendance[]): MonthlyTrendData[] {
-    const monthMap = new Map<string, { grades: Grade[]; attendance: Attendance[] }>();
-
-    const combineMaps = (map: Map<string, any>, items: any[], keyFn: (item: any) => string) => {
-      items.forEach(item => {
-        const key = keyFn(item);
-        if (!map.has(key)) {
-          map.set(key, { grades: [], attendance: [] });
-        }
-        map.get(key)!.grades.push(...(grades.filter(g => new Date(g.createdAt).toISOString().startsWith(key))));
-        map.get(key)!.attendance.push(...(attendance.filter(a => new Date(a.date).toISOString().startsWith(key))));
-      });
-    };
-
-    return Array.from(monthMap.entries()).map(([month, data]) => ({
-      month,
-      year: parseInt(month.split('-')[0]),
-      totalStudents: new Set(data.grades.map(g => g.studentId)).size,
-      averageAttendance: this.calculateAttendanceRate(data.attendance),
-      averageGrade: this.calculateGPA(data.grades),
-      topSubject: '',
-      bottomSubject: '',
-    }));
-  }
-
-  private getTeacherClasses(teacherId: string): string[] {
-    return ['Class A', 'Class B'];
-  }
-
-  private getTeacherStudentCount(teacherId: string, students: Student[]): number {
-    return students.length;
-  }
-
-  private calculateAverageStudentGrade(teacherId: string, grades: Grade[]): number {
-    return this.calculateGPA(grades);
-  }
-
-  private calculateTeacherClassAttendance(teacherId: string, attendance: Attendance[]): number {
-    return this.calculateAttendanceRate(attendance);
-  }
-
-  private calculateAssignmentCompletionRate(teacherId: string, grades: Grade[]): number {
-    return 100;
-  }
-
-  private calculateGradingTimeliness(teacherId: string, grades: Grade[]): number {
-    return 95;
-  }
-
-  private calculateStudentSatisfaction(teacherId: string): number {
-    return 85;
-  }
-
-  private calculateMostEffectiveSubject(teacherId: string, grades: Grade[]): string {
-    return 'Mathematics';
-  }
-
-  private calculateTeacherPerformanceTrend(teacherId: string, grades: Grade[], attendance: Attendance[]): any[] {
+  private calculateMonthlyTrends(_grades: Grade[], _attendance: Attendance[]): MonthlyTrendData[] {
     return [];
   }
 
-  private getTeacherTopPerformingClasses(teacherId: string, grades: Grade[]): string[] {
+  private getTeacherClasses(_teacherId: string): string[] {
     return ['Class A', 'Class B'];
   }
 
-  private getStudentsAtRisk(teacherId: string, grades: Grade[], attendance: Attendance[]): string[] {
+  private getTeacherStudentCount(_teacherId: string, students: Student[]): number {
+    return students.length;
+  }
+
+  private calculateAverageStudentGrade(_teacherId: string, grades: Grade[]): number {
+    return this.calculateGPA(grades);
+  }
+
+  private calculateTeacherClassAttendance(_teacherId: string, attendance: Attendance[]): number {
+    return this.calculateAttendanceRate(attendance);
+  }
+
+  private calculateAssignmentCompletionRate(_teacherId: string, _grades: Grade[]): number {
+    return 100;
+  }
+
+  private calculateGradingTimeliness(_teacherId: string, _grades: Grade[]): number {
+    return 95;
+  }
+
+  private calculateStudentSatisfaction(_teacherId: string): number {
+    return 85;
+  }
+
+  private calculateMostEffectiveSubject(_teacherId: string, _grades: Grade[]): string {
+    return 'Mathematics';
+  }
+
+  private calculateTeacherPerformanceTrend(_teacherId: string, _grades: Grade[], _attendance: Attendance[]): TeacherPerformanceTrend[] {
+    return [];
+  }
+
+  private getTeacherTopPerformingClasses(_teacherId: string, _grades: Grade[]): string[] {
+    return ['Class A', 'Class B'];
+  }
+
+  private getStudentsAtRisk(_teacherId: string, _grades: Grade[], _attendance: Attendance[]): string[] {
     return [];
   }
 }

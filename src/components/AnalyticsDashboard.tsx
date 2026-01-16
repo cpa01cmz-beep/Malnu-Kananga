@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   ChartBarIcon,
   AcademicCapIcon,
@@ -18,6 +18,8 @@ import type {
   TeacherEffectivenessAnalytics,
   AnalyticsFilters,
   AnalyticsInsight,
+  MonthlyTrendData,
+  GradeTrendData,
 } from '../../types/analytics.types';
 import type { UserRole } from '../../types';
 import DateRangeFilter from './DateRangeFilter';
@@ -80,7 +82,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, userRole, userId, onShowToast]);
 
   const handleFiltersChange = (newFilters: AnalyticsFilters) => {
     setFilters(newFilters);
@@ -350,7 +352,7 @@ const PerformanceTab: React.FC<{
           <PerformanceTrendChart
             data={{
               name: 'Monthly Grade Trends',
-              data: schoolAnalytics.monthlyTrends.map((trend) => ({
+              data: schoolAnalytics.monthlyTrends.map((trend: MonthlyTrendData) => ({
                 name: trend.month,
                 value: trend.averageGrade,
               })),
@@ -370,7 +372,7 @@ const PerformanceTab: React.FC<{
         <PerformanceTrendChart
           data={{
             name: 'Grade Trend',
-            data: studentAnalytics.gradeTrend.map((trend) => ({
+            data: studentAnalytics.gradeTrend.map((trend: GradeTrendData) => ({
               name: trend.date,
               value: trend.score,
               movingAverage: trend.movingAverage,

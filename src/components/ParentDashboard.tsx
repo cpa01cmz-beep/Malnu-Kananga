@@ -139,6 +139,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                     student: {
                       id: child.studentId,
                       userId: child.studentId,
+                      name: child.studentName || '',
                       nisn: '',
                       nis: child.studentId,
                       class: child.className || '',
