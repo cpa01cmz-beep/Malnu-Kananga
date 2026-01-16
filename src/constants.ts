@@ -127,6 +127,14 @@ export const STORAGE_KEYS = {
 
     // Report Templates
     REPORT_TEMPLATES: 'malnu_report_templates',
+
+    // Real-Time Collaboration (Milestone 3.0)
+    COLLABORATIVE_DOCUMENTS: 'malnu_collaborative_documents',
+    CLASSROOM_SESSIONS: 'malnu_classroom_sessions',
+    CONVERSATIONS: 'malnu_conversations',
+    CHAT_MESSAGES: 'malnu_chat_messages',
+    CHAT_PRESENCE: 'malnu_chat_presence',
+    PRESENCE: 'malnu_presence',
 } as const;
 
 export const APP_CONFIG = {

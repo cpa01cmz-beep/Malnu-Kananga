@@ -224,6 +224,13 @@ MA Malnu Kananga is a modern, AI-powered school management system designed for I
 - `voiceSettingsBackup.ts` - Voice settings synchronization
 - `performanceMonitor.ts` - Core Web Vitals tracking, performance budgets, and alerting
 
+**Real-Time Collaboration Services** (New - 2026-01-16):
+- `collaborativeEditingService.ts` - Real-time document editing with Operational Transformation (500+ lines)
+- `classroomManagementService.ts` - Live classroom sessions with screen sharing and whiteboard (400+ lines)
+- `liveChatService.ts` - Parent-teacher live chat with typing indicators and read receipts (500+ lines)
+- `realTimeGradeService.ts` - Real-time grade updates with notifications (300+ lines)
+- `presenceManagementService.ts` - User presence tracking across application (350+ lines)
+
 **Mobile Optimization** (New - 2026-01-15)
 - `mobileOptimization.ts` - Mobile device detection, touch targets, performance optimization
 - `hapticFeedback.ts` - Haptic feedback utilities with predefined patterns
