@@ -195,10 +195,10 @@ Repository shows **active maintenance** with focus on:
 - docs/README.md (Documentation index)
 - docs/DEPLOYMENT_GUIDE.md
 - docs/HOW_TO.md
-- docs/API_REFERENCE.md
+- docs/api-reference.md
 - docs/CODING_STANDARDS.md
 - docs/ACCESSIBILITY.md
-- docs/TROUBLESHOOTING_GUIDE.md
+- docs/troubleshooting-guide.md
 
 ### ✅ Configuration
 - .env.example (environment template)
