@@ -133,11 +133,6 @@ export default defineConfig(({ mode }) => {
               return 'vendor-i18n';
             }
 
-            // DOMPurify (XSS protection)
-            if (id.includes('dompurify') || id.includes('purify')) {
-              return 'vendor-purify';
-            }
-
             // Papaparse (CSV parsing)
             if (id.includes('papaparse')) {
               return 'vendor-papaparse';
