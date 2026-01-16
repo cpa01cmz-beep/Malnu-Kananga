@@ -1,7 +1,7 @@
 # Swagger UI Integration Guide
 
 **Created**: 2026-01-15
-**Version**: 3.3.0
+**Version**: 3.2.2
 **Status**: Active
 
 ## Overview
@@ -506,7 +506,7 @@ SwaggerUIBundle({
     info: {
       title: "MA Malnu Kananga API",
       description: "School Management System API",
-      version: "3.3.0"
+      version: "3.2.2"
     }
   }
 })
@@ -701,5 +701,5 @@ corsHeaders(env.ALLOWED_ORIGIN, requestOrigin)
 ---
 
 **Last Updated**: 2026-01-15
-**Version**: 3.3.0
+**Version**: 3.2.2
 **Maintained By**: Autonomous System Guardian

@@ -277,7 +277,7 @@
 - **Prefix Semua Keys**: Semua localStorage keys harus menggunakan prefix `malnu_`
   ```ts
   // Benar
-  'malnu_auth_session', 'malnu_users', 'malnu_site_content'
+  STORAGE_KEYS.AUTH_TOKEN, STORAGE_KEYS.AUTH_SESSION, STORAGE_KEYS.USERS, STORAGE_KEYS.SITE_CONTENT
 
   // Salah
   'auth_session', 'users', 'site_content'

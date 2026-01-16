@@ -1,7 +1,7 @@
 # WebSocket API Documentation
 
 **Created**: 2026-01-15
-**Version**: 3.3.0
+**Version**: 3.2.2
 **Status**: Active
 
 ## Overview
@@ -31,7 +31,10 @@ The MA Malnu Kananga API supports real-time communication via WebSocket connecti
 ### Establish Connection
 
 ```javascript
-const token = localStorage.getItem('malnu_auth_session');
+// Import STORAGE_KEYS from constants
+import { STORAGE_KEYS } from './src/constants';
+
+const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
 const ws = new WebSocket(`wss://your-domain.com/ws?token=${token}`);
 
 ws.onopen = () => {
@@ -59,7 +62,7 @@ ws.onclose = (event) => {
 
 WebSocket connections require a valid JWT token:
 
-- **Token Source**: `localStorage.getItem('malnu_auth_session')`
+- **Token Source**: `localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)`
 - **Token Type**: Bearer token (same as REST API)
 - **Session Check**: Server validates token and session in database
 - **Revocation**: If session is revoked, connection is refused
@@ -574,7 +577,7 @@ const maxReconnectAttempts = 10;
 const baseDelay = 1000; // 1 second
 
 function connect() {
-  const token = localStorage.getItem('malnu_auth_session');
+  const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
   const ws = new WebSocket(`wss://your-domain.com/ws?token=${token}`);
   
   ws.onclose = (event) => {
@@ -855,5 +858,5 @@ export function useWebSocket() {
 ---
 
 **Last Updated**: 2026-01-15
-**Version**: 3.3.0
+**Version**: 3.2.2
 **Maintained By**: Autonomous System Guardian
