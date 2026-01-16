@@ -1,8 +1,8 @@
 # MA Malnu Kananga - Blueprint
 **Architecture & System Design Document**
-**Version**: 3.4.0
-**Last Updated**: 2026-01-15
-**Next Review**: 2026-02-15
+**Version**: 3.4.1
+**Last Updated**: 2026-01-16
+**Next Review**: 2026-02-16
 
 ---
 
