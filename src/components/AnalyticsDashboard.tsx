@@ -10,8 +10,8 @@ import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
 } from '@heroicons/react/24/outline';
-import { analyticsService } from '../../services/analyticsService';
-import { logger } from '../../utils/logger';
+import { analyticsService } from '../services/analyticsService';
+import { logger } from '../utils/logger';
 import type {
   SchoolWideAnalytics,
   StudentPerformanceAnalytics,
@@ -20,20 +20,32 @@ import type {
   AnalyticsInsight,
   MonthlyTrendData,
   GradeTrendData,
-} from '../../types/analytics.types';
-import type { UserRole } from '../../types';
-import DateRangeFilter from './DateRangeFilter';
+} from '../types/analytics.types';
+import type { UserRole } from '../types';
+import DateRangeFilter from './analytics/DateRangeFilter';
 import {
   PerformanceTrendChart,
   AttendanceChart,
   GradeDistributionChart,
   SubjectComparisonChart,
-} from './AnalyticsCharts';
+} from './analytics/AnalyticsCharts';
 
 interface AnalyticsDashboardProps {
   userRole: UserRole;
   userId?: string;
   onShowToast: (message: string, type: 'success' | 'info' | 'error') => void;
+}
+
+function isSchoolWideAnalytics(
+  analytics: SchoolWideAnalytics | StudentPerformanceAnalytics | TeacherEffectivenessAnalytics
+): analytics is SchoolWideAnalytics {
+  return 'totalStudents' in analytics;
+}
+
+function isStudentPerformanceAnalytics(
+  analytics: SchoolWideAnalytics | StudentPerformanceAnalytics | TeacherEffectivenessAnalytics
+): analytics is StudentPerformanceAnalytics {
+  return 'studentName' in analytics && 'studentId' in analytics;
 }
 
 const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
@@ -53,7 +65,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       endDate: new Date().toISOString().split('T')[0],
       label: 'Last 30 Days',
     },
-    role: userRole,
+    role: userRole === 'admin' || userRole === 'teacher' || userRole === 'student' ? userRole : undefined,
     academicYear: new Date().getFullYear().toString(),
     semester: '1',
   });
@@ -272,66 +284,64 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 const OverviewTab: React.FC<{
   analytics: SchoolWideAnalytics | StudentPerformanceAnalytics | TeacherEffectivenessAnalytics;
 }> = ({ analytics }) => {
-  if ('totalStudents' in analytics) {
-    const schoolAnalytics = analytics as SchoolWideAnalytics;
+  if (isSchoolWideAnalytics(analytics)) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
           icon={<UserGroupIcon className="w-8 h-8" />}
           title="Total Students"
-          value={schoolAnalytics.totalStudents}
+          value={analytics.totalStudents}
           color="blue"
         />
         <MetricCard
           icon={<AcademicCapIcon className="w-8 h-8" />}
           title="Average Grade"
-          value={`${schoolAnalytics.overallAverageGrade.toFixed(1)}%`}
+          value={`${analytics.overallAverageGrade.toFixed(1)}%`}
           color="green"
         />
         <MetricCard
           icon={<CalendarIcon className="w-8 h-8" />}
           title="Attendance Rate"
-          value={`${schoolAnalytics.overallAttendanceRate.toFixed(1)}%`}
+          value={`${analytics.overallAttendanceRate.toFixed(1)}%`}
           color="purple"
         />
         <MetricCard
           icon={<ChartBarIcon className="w-8 h-8" />}
           title="Total Teachers"
-          value={schoolAnalytics.totalTeachers}
+          value={analytics.totalTeachers}
           color="orange"
         />
       </div>
     );
   }
 
-  if ('studentName' in analytics) {
-    const studentAnalytics = analytics as StudentPerformanceAnalytics;
+  if (isStudentPerformanceAnalytics(analytics)) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
           icon={<AcademicCapIcon className="w-8 h-8" />}
           title="GPA"
-          value={studentAnalytics.overallGPA.toFixed(2)}
+          value={analytics.overallGPA.toFixed(2)}
           color="blue"
         />
         <MetricCard
           icon={<CalendarIcon className="w-8 h-8" />}
           title="Attendance"
-          value={`${studentAnalytics.attendanceRate.toFixed(1)}%`}
+          value={`${analytics.attendanceRate.toFixed(1)}%`}
           color="green"
         />
         <MetricCard
           icon={<UserGroupIcon className="w-8 h-8" />}
           title="Class Rank"
-          value={`${studentAnalytics.rankInClass}/${studentAnalytics.totalStudents}`}
+          value={`${analytics.rankInClass}/${analytics.totalStudents}`}
           color="purple"
         />
         <MetricCard
           icon={<ChartBarIcon className="w-8 h-8" />}
           title="Improvement"
-          value={`${studentAnalytics.improvementRate.toFixed(1)}%`}
+          value={`${analytics.improvementRate.toFixed(1)}%`}
           color="orange"
-          trend={studentAnalytics.improvementRate >= 0 ? 'up' : 'down'}
+          trend={analytics.improvementRate >= 0 ? 'up' : 'down'}
         />
       </div>
     );
@@ -343,16 +353,15 @@ const OverviewTab: React.FC<{
 const PerformanceTab: React.FC<{
   analytics: SchoolWideAnalytics | StudentPerformanceAnalytics | TeacherEffectivenessAnalytics;
 }> = ({ analytics }) => {
-  if ('subjectPerformance' in analytics) {
-    const schoolAnalytics = analytics as SchoolWideAnalytics;
+  if (isSchoolWideAnalytics(analytics)) {
     return (
       <div className="space-y-6">
-        <SubjectComparisonChart data={schoolAnalytics.subjectPerformance} height={400} />
-        {schoolAnalytics.monthlyTrends.length > 0 && (
+        <SubjectComparisonChart data={analytics.subjectPerformance} height={400} />
+        {analytics.monthlyTrends.length > 0 && (
           <PerformanceTrendChart
             data={{
               name: 'Monthly Grade Trends',
-              data: schoolAnalytics.monthlyTrends.map((trend: MonthlyTrendData) => ({
+              data: analytics.monthlyTrends.map((trend: MonthlyTrendData) => ({
                 name: trend.month,
                 value: trend.averageGrade,
               })),
@@ -364,15 +373,14 @@ const PerformanceTab: React.FC<{
     );
   }
 
-  if ('subjectPerformance' in analytics) {
-    const studentAnalytics = analytics as StudentPerformanceAnalytics;
+  if (isStudentPerformanceAnalytics(analytics)) {
     return (
       <div className="space-y-6">
-        <SubjectComparisonChart data={studentAnalytics.subjectPerformance} height={400} />
+        <SubjectComparisonChart data={analytics.subjectPerformance} height={400} />
         <PerformanceTrendChart
           data={{
             name: 'Grade Trend',
-            data: studentAnalytics.gradeTrend.map((trend: GradeTrendData) => ({
+            data: analytics.gradeTrend.map((trend: GradeTrendData) => ({
               name: trend.date,
               value: trend.score,
               movingAverage: trend.movingAverage,
@@ -391,18 +399,16 @@ const PerformanceTab: React.FC<{
 const AttendanceTab: React.FC<{
   analytics: SchoolWideAnalytics | StudentPerformanceAnalytics | TeacherEffectivenessAnalytics;
 }> = ({ analytics }) => {
-  if ('attendanceByDay' in analytics) {
-    const schoolAnalytics = analytics as SchoolWideAnalytics;
-    return <AttendanceChart data={schoolAnalytics.attendanceByDay} height={400} />;
+  if (isSchoolWideAnalytics(analytics)) {
+    return <AttendanceChart data={analytics.attendanceByDay} height={400} />;
   }
 
-  if ('attendanceRate' in analytics) {
-    const studentAnalytics = analytics as StudentPerformanceAnalytics;
+  if (isStudentPerformanceAnalytics(analytics)) {
     return (
       <div className="text-center py-12">
         <CalendarIcon className="w-16 h-16 mx-auto text-purple-600 dark:text-purple-400 mb-4" />
         <p className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-          {studentAnalytics.attendanceRate.toFixed(1)}%
+          {analytics.attendanceRate.toFixed(1)}%
         </p>
         <p className="text-neutral-600 dark:text-neutral-400">Overall Attendance Rate</p>
       </div>
@@ -415,9 +421,8 @@ const AttendanceTab: React.FC<{
 const GradesTab: React.FC<{
   analytics: SchoolWideAnalytics | StudentPerformanceAnalytics | TeacherEffectivenessAnalytics;
 }> = ({ analytics }) => {
-  if ('gradeDistribution' in analytics) {
-    const schoolAnalytics = analytics as SchoolWideAnalytics;
-    return <GradeDistributionChart data={schoolAnalytics.gradeDistribution} height={400} />;
+  if (isSchoolWideAnalytics(analytics)) {
+    return <GradeDistributionChart data={analytics.gradeDistribution} height={400} />;
   }
 
   return <p className="text-neutral-600 dark:text-neutral-400">No grade distribution data available</p>;

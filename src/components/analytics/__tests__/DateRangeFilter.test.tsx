@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import DateRangeFilter from '../DateRangeFilter';
-import type { AnalyticsFilters } from '../../types/analytics.types';
+import type { AnalyticsFilters } from '../../../types/analytics.types';
 
 describe('DateRangeFilter', () => {
   const mockOnFiltersChange = vi.fn();

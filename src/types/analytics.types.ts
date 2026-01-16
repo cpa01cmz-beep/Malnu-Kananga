@@ -156,6 +156,7 @@ export interface ChartDataPoint {
   value: number;
   label?: string;
   color?: string;
+  movingAverage?: number;
 }
 
 export interface LineChartData {

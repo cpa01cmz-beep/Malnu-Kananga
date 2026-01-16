@@ -56,30 +56,34 @@ describe('AnalyticsService', () => {
       expect(firstCall.totalTeachers).toBe(1);
     });
 
-    it('should invalidate cache after TTL expires', async () => {
-      const filters: AnalyticsFilters = {
-        dateRange: {
-          startDate: '2026-01-01',
-          endDate: '2026-01-31',
-          label: 'Test Range',
-        },
-        role: 'admin',
-      };
+    it(
+      'should invalidate cache after TTL expires',
+      { timeout: 10000 },
+      async () => {
+        const filters: AnalyticsFilters = {
+          dateRange: {
+            startDate: '2026-01-01',
+            endDate: '2026-01-31',
+            label: 'Test Range',
+          },
+          role: 'admin',
+        };
 
-      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify([
-        { id: 'student-1', name: 'John Doe', role: 'student', className: 'Class A' },
-      ]));
-      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([]));
-      localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify([]));
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify([
+          { id: 'student-1', name: 'John Doe', role: 'student', className: 'Class A' },
+        ]));
+        localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([]));
+        localStorage.setItem(STORAGE_KEYS.ATTENDANCE, JSON.stringify([]));
 
-      const firstCall = await analyticsService.getSchoolWideAnalytics(filters);
-      
-      await new Promise(resolve => setTimeout(resolve, 5100));
+        const firstCall = await analyticsService.getSchoolWideAnalytics(filters);
 
-      const secondCall = await analyticsService.getSchoolWideAnalytics(filters);
+        await new Promise(resolve => setTimeout(resolve, 5100));
 
-      expect(firstCall.totalStudents).toBe(secondCall.totalStudents);
-    }, { timeout: 10000 });
+        const secondCall = await analyticsService.getSchoolWideAnalytics(filters);
+
+        expect(firstCall.totalStudents).toBe(secondCall.totalStudents);
+      }
+    );
   });
 
   describe('School-Wide Analytics', () => {
