@@ -232,6 +232,16 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 - Caching system for performance optimization
 - Accessibility compliant (WCAG 2.1 AA)
 
+**CustomReportBuilder** (`src/components/CustomReportBuilder.tsx`)
+- Full custom report builder with metric/chart/table selection
+- Report template management (save, load, delete, duplicate)
+- Template persistence in localStorage
+- Role-based filtering of available options
+- Integration with existing analytics service
+- Export functionality for custom reports (PDF/Excel)
+- Real-time report preview
+- Accessibility compliant (WCAG 2.1 AA)
+
 **AnalyticsCharts** (`src/components/analytics/AnalyticsCharts.tsx`)
 - PerformanceTrendChart - Line chart with moving average
 - AttendanceChart - Area chart with stacked data

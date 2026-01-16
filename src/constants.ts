@@ -124,6 +124,9 @@ export const STORAGE_KEYS = {
     
     // Language / i18n
     LANGUAGE: 'malnu_language',
+
+    // Report Templates
+    REPORT_TEMPLATES: 'malnu_report_templates',
 } as const;
 
 export const APP_CONFIG = {
