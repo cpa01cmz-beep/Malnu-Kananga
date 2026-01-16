@@ -89,15 +89,15 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
   - [x] Create PWA icons dan manifest
   - [x] Implement caching strategies untuk static assets
   - [x] Verify offline functionality dan service worker registration
-- [x] Push Notifications:
-  - [x] Design Push Notifications architecture dan VAPID key strategy
-  - [x] Create pushNotificationService.ts dengan Web Push API integration
-  - [x] Implement notification subscription management
-  - [x] Create NotificationSettings component untuk user preferences
-  - [x] Integrate notification triggers untuk key events
-  - [x] Add notification history dan management UI
-  - [x] Implement notification type filtering (announcement, grade, PPDB, event, library, system)
-  - [x] Implement quiet hours functionality
+ - [x] Push Notifications:
+   - [x] Design Push Notifications architecture dan VAPID key strategy
+   - [x] Create unifiedNotificationManager.ts dengan Web Push API integration
+   - [x] Implement notification subscription management
+   - [x] Create NotificationSettings component untuk user preferences
+   - [x] Integrate notification triggers untuk key events
+   - [x] Add notification history dan management UI
+   - [x] Implement notification type filtering (announcement, grade, PPDB, event, library, system)
+   - [x] Implement quiet hours functionality
 - [x] Parent Portal:
   - [x] Lock task in TASK.md
   - [x] Update schema.sql untuk add parent role dan parent_student_relationship table
@@ -123,11 +123,11 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
   - [x] Create ProgressAnalytics component dengan multiple tabs
 - [x] Unified Notification System Implementation:
   - [x] Design notification center architecture dengan role-based filtering
-  - [x] Create notification template engine untuk different event types
-  - [x] Build unified notification center UI component
-  - [x] Implement notification history dengan search functionality
-  - [x] Add role-based notification filtering logic
-  - [x] Integrate dengan existing pushNotificationService
+   - [x] Create notification template engine untuk different event types
+   - [x] Build unified notification center UI component
+   - [x] Implement notification history dengan search functionality
+   - [x] Add role-based notification filtering logic
+   - [x] Consolidate into unifiedNotificationManager for unified PWA + in-app notifications
 - [x] Improved E-Library Experience:
   - [x] Add advanced search dengan filters (subject, teacher, date, file type, rating)
   - [x] Implement material favoriting dan bookmarking

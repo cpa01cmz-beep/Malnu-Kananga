@@ -470,7 +470,7 @@ See `src/services/emailService.ts` for complete API documentation.
 ## Related Services
 
 - `pdfExportService.ts`: For generating PDF reports
-- `pushNotificationService.ts`: For in-app notifications
+- `unifiedNotificationManager.ts`: For unified in-app and PWA notifications
 - `apiService.ts`: For backend API communication
 
 ## Support

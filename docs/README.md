@@ -257,7 +257,7 @@ This index maintains relationships between documents:
                 - Confirmed all documentation aligns with actual codebase structure
                 - DEPLOYMENT_GUIDE.md and DEPLOYMENT_STATUS.md serve distinct purposes (guide vs status)
                 - COLOR_PALETTE.md and COLOR_USAGE_GUIDE.md serve distinct purposes (reference vs quick-start)
-                - Deprecated services (pushNotificationService, usePushNotifications) retained for migration
+                - Consolidated notification services into unifiedNotificationManager
 
      - **Previous Updates (v3.0.0 - 2026-01-13)**:
                 - Corrected test metrics (1492 passing, 10 skipped, 0 failures)

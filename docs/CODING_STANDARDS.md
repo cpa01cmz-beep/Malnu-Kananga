@@ -182,13 +182,13 @@
   - `/components/admin` - Admin-specific components
 
  - **`/services`**: Logika bisnis dan pemanggilan API (Gemini, Fetch)
-   - `apiService.ts` - Main API service dengan JWT auth
-   - `geminiService.ts` - AI/LLM integration
-   - `speechRecognitionService.ts` - Voice recognition
-   - `speechSynthesisService.ts` - Text-to-speech
-   - `pushNotificationService.ts` - PWA notifications
-   - `ocrService.ts` - OCR untuk PPDB documents
-   - `permissionService.ts` - Role-based permissions
+    - `apiService.ts` - Main API service dengan JWT auth
+    - `geminiService.ts` - AI/LLM integration
+    - `speechRecognitionService.ts` - Voice recognition
+    - `speechSynthesisService.ts` - Text-to-speech
+    - `unifiedNotificationManager.ts` - Unified notification system (PWA + in-app)
+    - `ocrService.ts` - OCR untuk PPDB documents
+    - `permissionService.ts` - Role-based permissions
 
 - **`/hooks`**: Custom React hooks
   - `useVoiceRecognition.ts`
