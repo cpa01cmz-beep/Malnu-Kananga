@@ -20,7 +20,7 @@ The repository is in **excellent condition** with:
  - **Source Files (Non-Test)**: 274 files (102 .ts + 172 .tsx)
  - **Test Files**: 101 test files (*.test.ts, *.test.tsx)
  - **Services**: 29 service modules in src/services/
- - **UI Components**: 42 component files in src/components/ui/
+ - **UI Components**: 41 component files in src/components/ui/
  - **Configuration**: 10 config files
 - **Node Modules**: 1006 packages
 - **Build Output**: 2.8MB dist (24 JS bundles)
