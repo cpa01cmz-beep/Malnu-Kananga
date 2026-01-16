@@ -180,6 +180,7 @@ MA Malnu Kananga is a modern, AI-powered school management system designed for I
 - `ocrService.ts` - Document OCR for PPDB registration
 - `permissionService.ts` - Role-based access control (RBAC)
 - `lessonPlanService.ts` - AI-powered lesson planning with templates and PDF export
+- `analyticsService.ts` - Comprehensive analytics aggregation with caching (600+ lines)
 
 **Supporting Services**:
 - `webSocketService.ts` - Real-time communication
@@ -218,6 +219,30 @@ Error → errorHandler.ts → logger.ts → Toast Notification
 ## 3. KEY COMPONENTS
 
 ### 3.1 Dashboard Architecture
+
+**AnalyticsDashboard** (`src/components/AnalyticsDashboard.tsx`)
+- School-wide analytics with 50+ metrics
+- Student performance analytics with grade trends
+- Teacher effectiveness metrics
+- Interactive data visualization (4 chart types)
+- Date range filtering (presets + custom)
+- Export functionality (PDF/Excel/CSV)
+- AI-powered insights and recommendations
+- Role-based dashboards (admin, student, teacher)
+- Caching system for performance optimization
+- Accessibility compliant (WCAG 2.1 AA)
+
+**AnalyticsCharts** (`src/components/analytics/AnalyticsCharts.tsx`)
+- PerformanceTrendChart - Line chart with moving average
+- AttendanceChart - Area chart with stacked data
+- GradeDistributionChart - Line chart for grade breakdown
+- SubjectComparisonChart - Multi-line comparison chart
+
+**DateRangeFilter** (`src/components/analytics/DateRangeFilter.tsx`)
+- Preset date ranges (Today, 7 Days, 30 Days, 3 Months, Year)
+- Custom date range picker
+- Real-time filter application
+- Accessible UI with ARIA labels
 
 **AdminDashboard** (`src/components/AdminDashboard.tsx`)
 - User management
