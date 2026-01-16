@@ -1,6 +1,6 @@
 # Voice Commands Reference
 
-**Version**: 3.4.0
+**Version**: 3.4.3
 **Last Updated**: 2026-01-15
 
 ---
