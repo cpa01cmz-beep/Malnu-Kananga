@@ -46,8 +46,8 @@ describe('DateRangeFilter', () => {
     );
 
     expect(screen.getByText(/Selected:/)).toBeInTheDocument();
-    expect(screen.getByText(/2026-01-01/)).toBeInTheDocument();
-    expect(screen.getByText(/2026-01-31/)).toBeInTheDocument();
+    expect(screen.getByText(/1 Jan 2026/)).toBeInTheDocument();
+    expect(screen.getByText(/31 Jan 2026/)).toBeInTheDocument();
   });
 
   it('should call onFiltersChange when preset is selected', () => {

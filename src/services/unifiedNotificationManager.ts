@@ -255,6 +255,18 @@ class UnifiedNotificationManager {
     } catch (error) {
       logger.error('Failed to load analytics during initialization:', error);
     }
+
+    try {
+      this.loadVoiceQueue();
+    } catch (error) {
+      logger.error('Failed to load voice queue during initialization:', error);
+    }
+
+    try {
+      this.loadVoiceHistory();
+    } catch (error) {
+      logger.error('Failed to load voice history during initialization:', error);
+    }
   }
 
   // Voice Notification Queue Management

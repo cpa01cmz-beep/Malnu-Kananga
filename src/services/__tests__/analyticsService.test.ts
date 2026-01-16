@@ -7,6 +7,7 @@ describe('AnalyticsService', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();
+    analyticsService.clearCache();
   });
 
   describe('Cache Management', () => {

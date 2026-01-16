@@ -35,6 +35,10 @@ class AnalyticsService {
     return AnalyticsService.instance;
   }
 
+  clearCache(): void {
+    this.cache.clear();
+  }
+
   private getCacheKey(filters: AnalyticsFilters): string {
     return JSON.stringify(filters);
   }
@@ -61,9 +65,7 @@ class AnalyticsService {
     return null;
   }
 
-  private clearCache(): void {
-    this.cache.clear();
-  }
+
 
   private getStudents(): Student[] {
     const data = localStorage.getItem(STORAGE_KEYS.USERS);
@@ -537,7 +539,7 @@ class AnalyticsService {
     }));
   }
 
-  private calculateSubjectPopularity(students: Student[], grades: Grade[]): SubjectPopularity[] {
+  private calculateSubjectPopularity(_students: Student[], grades: Grade[]): SubjectPopularity[] {
     const subjectMap = new Map<string, { count: number; totalScore: number }>();
 
     grades.forEach(grade => {
