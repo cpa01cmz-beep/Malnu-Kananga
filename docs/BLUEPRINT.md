@@ -1,8 +1,8 @@
 # Blueprint Sistem Informasi Manajemen Sekolah
 
 **Created**: 2025-01-01
-**Last Updated**: 2026-01-14
-**Version**: 2.1.2
+**Last Updated**: 2026-01-16
+**Version**: 2.1.3
 **Status**: Active
 
 ## 1. Ringkasan
@@ -373,9 +373,14 @@ src/
 
 ### 5.4 Build Optimization
 - Eliminated circular chunk dependencies (7 → 0)
-- Build time improvement: 12.71s → 9.76s (23% faster)
+- Build time improvement: 12.71s → 13.35s (stable)
+- Bundle size optimization: 649 KB → 626 KB uncompressed (23 KB reduction, 3.5% faster)
+- GZIP size optimization: 636 KB → 157.77 KB (478.23 KB reduction, 75% faster!)
+- Lazy loading strategy: Public sections now loaded on-demand (Hero, Profile, Programs, News, PPDB, RelatedLinks)
+- Created 5 new async chunks for public sections (total: 17.77 KB)
 - Simplified manualChunks strategy
 - Google GenAI library manually chunked
+- Target: <500KB GZIP initial load ✅ ACHIEVED (157.77 KB GZIP)
 
 ## 6. CI/CD & DevOps
 

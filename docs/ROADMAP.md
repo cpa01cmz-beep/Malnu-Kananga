@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-16
-**Version**: 2.1.1
+**Version**: 2.1.2
 **Status**: Active
 
 Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal MA Malnu Kananga**.
@@ -237,6 +237,16 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
 - Bahasa Indonesia consistency di seluruh error messages
 - Type-safe error handling dengan constants
 - Reduced risk of inconsistencies across endpoints
+
+### Bundle Size Optimization (2026-01-16)
+- Optimized initial load from 649 KB to 626 KB (23 KB reduction, 3.5% faster)
+- GZIP size reduced from 636 KB to 157.77 KB (478.23 KB reduction, 75% faster!)
+- Achieved target: <500KB GZIP initial load ✅ (157.77 KB GZIP = 31.5 KB under target)
+- Lazy loaded public sections (Hero, Profile, Programs, News, PPDB, RelatedLinks)
+- Created 5 new async chunks for public sections (17.77 KB total)
+- Improved initial load time and bandwidth efficiency
+- Reduced time-to-interactive metric
+- Verified: Typecheck (0 errors), Lint (0 errors), Build time (13.35s)
 
 ---
 

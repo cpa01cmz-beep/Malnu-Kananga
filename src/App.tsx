@@ -25,12 +25,13 @@ const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const TeacherDashboard = lazy(() => import('./components/TeacherDashboard'));
 const ParentDashboard = lazy(() => import('./components/ParentDashboard'));
 
-import HeroSection from './components/sections/HeroSection';
-import RelatedLinksSection from './components/sections/RelatedLinksSection';
-import ProfileSection from './components/sections/ProfileSection';
-import ProgramsSection from './components/sections/ProgramsSection';
-import NewsSection from './components/sections/NewsSection';
-import PPDBSection from './components/sections/PPDBSection';
+// Lazy load public sections to reduce initial bundle size
+const HeroSection = lazy(() => import('./components/sections/HeroSection'));
+const RelatedLinksSection = lazy(() => import('./components/sections/RelatedLinksSection'));
+const ProfileSection = lazy(() => import('./components/sections/ProfileSection'));
+const ProgramsSection = lazy(() => import('./components/sections/ProgramsSection'));
+const NewsSection = lazy(() => import('./components/sections/NewsSection'));
+const PPDBSection = lazy(() => import('./components/sections/PPDBSection'));
 
 import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './types';
 import { STORAGE_KEYS } from './constants';
@@ -307,13 +308,25 @@ const App: React.FC = () => {
         </main>
       ) : (
         <main id="main-content" tabIndex={-1}>
-          <HeroSection />
-          <RelatedLinksSection />
-          <ProfileSection />
-          <PPDBSection onRegisterClick={() => setIsPPDBOpen(true)} />
+          <Suspense fallback={<SuspenseLoading message="Memuat halaman..." />}>
+            <HeroSection />
+          </Suspense>
+          <Suspense fallback={<SuspenseLoading message="Memuat tautan..." />}>
+            <RelatedLinksSection />
+          </Suspense>
+          <Suspense fallback={<SuspenseLoading message="Memuat profil..." />}>
+            <ProfileSection />
+          </Suspense>
+          <Suspense fallback={<SuspenseLoading message="Memuat PPDB..." />}>
+            <PPDBSection onRegisterClick={() => setIsPPDBOpen(true)} />
+          </Suspense>
           {/* Robustness Fix: Added fallback to empty array to prevent crashes if localStorage data is corrupted/incomplete */}
-          <ProgramsSection programs={siteContent?.featuredPrograms || []} />
-          <NewsSection news={siteContent?.latestNews || []} />
+          <Suspense fallback={<SuspenseLoading message="Memuat program..." />}>
+            <ProgramsSection programs={siteContent?.featuredPrograms || []} />
+          </Suspense>
+          <Suspense fallback={<SuspenseLoading message="Memuat berita..." />}>
+            <NewsSection news={siteContent?.latestNews || []} />
+          </Suspense>
         </main>
       )}
 
