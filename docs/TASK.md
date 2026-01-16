@@ -32,6 +32,21 @@
 
 ### P1: High Priority
 
+- [✅ COMPLETED 2026-01-16] Implement backend WebSocket support
+  - Frontend: Fully implemented (`webSocketService.ts`)
+  - Backend: Implemented `/ws` endpoint and `/api/updates` fallback
+  - [x] Added WebSocket server implementation to worker.js
+  - [x] Created `/ws` route for WebSocket connections
+  - [x] Created `/api/updates` fallback endpoint for long-polling
+  - [x] Implemented connection management with JWT authentication
+  - [x] Added message subscription and unsubscription handling
+  - [x] Implemented ping/pong for connection health
+  - [x] Added error messages for WebSocket (WS_AUTH_FAILED, WS_CONNECTION_LIMIT, WS_INVALID_MESSAGE, WS_UNAUTHORIZED)
+  - **Mode**: OPTIMIZER MODE (Integrations, Optimization Ops, Performance)
+  - **Impact**: Real-time notifications without polling overhead, improved performance
+  - **Lines Added**: ~200 lines (handleWebSocket, handleUpdates, mapTableToEventType)
+  - **Verified**: Lint passed (0 errors, 0 warnings)
+
 - [✅ COMPLETED 2026-01-16] Complete UI component documentation
     - Documented all 41 UI components from `src/components/ui/index.ts`
     - **All Components Documented**: 41/41 (100%)

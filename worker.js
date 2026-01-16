@@ -102,7 +102,11 @@ const ERROR_MESSAGES = {
   FAILED_GET_SCHEDULE: 'Gagal mengambil jadwal',
   STUDENT_ID_REQUIRED: 'student_id parameter required',
   AI_SERVICE_UNAVAILABLE: 'Layanan AI tidak tersedia saat ini',
-  ENDPOINT_NOT_FOUND: 'Endpoint tidak ditemukan'
+  ENDPOINT_NOT_FOUND: 'Endpoint tidak ditemukan',
+  WS_AUTH_FAILED: 'Autentikasi WebSocket gagal',
+  WS_CONNECTION_LIMIT: 'Batas koneksi tercapai',
+  WS_INVALID_MESSAGE: 'Pesan WebSocket tidak valid',
+  WS_UNAUTHORIZED: 'Tidak memiliki izin untuk berlangganan event ini'
 };
 
 const HTTP_STATUS_CODES = {
@@ -2027,19 +2031,19 @@ async function handleGetUpdates(request, env, corsHeaders) {
     const cors = corsHeaders(env.ALLOWED_ORIGIN, requestOrigin);
 
     logger.setLevel(env.LOG_LEVEL || 'info');
-    
+
     // Handle preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: cors });
     }
-    
+
     const url = new URL(request.url);
 
     // Handle WebSocket upgrade requests
     if (url.pathname === '/ws') {
       return handleWebSocketConnection(request, env);
     }
-    
+
     // Route handlers
     const routes = {
       '/seed': handleSeed,

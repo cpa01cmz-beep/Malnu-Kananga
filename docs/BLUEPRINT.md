@@ -312,15 +312,30 @@ src/
     - Developers can now use concise imports like: `import { Button, Input, Modal } from './components/ui'`
     - See `src/components/ui/index.ts` for complete export list and component organization
 
-    ### 3.27 High-Contrast Accessibility Fix (Fase 5 - COMPLETED 2026-01-13)
+### 3.27 High-Contrast Accessibility Fix (Fase 5 - COMPLETED 2026-01-13)
 
-    - Fixed broken `@media (prefers-contrast: high)` media query in `src/styles/themes.css`
-    - Replaced non-existent CSS variables (`--color-border`, `--color-text`, `--color-background`) with correct Tailwind v4 format
-    - Implemented proper `--theme-neutral-*` and `--theme-primary-*` variable overrides
-     - Added separate high-contrast overrides for light mode (`:root`) and dark mode (`.dark`)
-     - Enhanced contrast ratios to meet WCAG 2.1 AAA standards for high-contrast preference
-     - Users with high-contrast OS preference now receive improved visual clarity
-     - See `src/styles/themes.css:204-221` for implementation
+     - Fixed broken `@media (prefers-contrast: high)` media query in `src/styles/themes.css`
+     - Replaced non-existent CSS variables (`--color-border`, `--color-text`, `--color-background`) with correct Tailwind v4 format
+     - Implemented proper `--theme-neutral-*` and `--theme-primary-*` variable overrides
+      - Added separate high-contrast overrides for light mode (`:root`) and dark mode (`.dark`)
+      - Enhanced contrast ratios to meet WCAG 2.1 AAA standards for high-contrast preference
+      - Users with high-contrast OS preference now receive improved visual clarity
+      - See `src/styles/themes.css:204-221` for implementation
+
+### 3.28 WebSocket Real-Time System (Fase 5 - COMPLETED 2026-01-16)
+     - Backend WebSocket server implementation (`/ws` endpoint)
+     - Fallback polling endpoint (`/api/updates`) for offline scenarios
+     - JWT authentication for WebSocket connections
+     - Message subscription and unsubscription handling
+     - Ping/pong mechanism for connection health
+     - Automatic disconnection and cleanup
+     - Frontend integration with `webSocketService.ts`
+     - Support for 16 real-time event types (grades, attendance, announcements, library, events, users, messages, notifications)
+     - Local storage synchronization for real-time updates
+     - Offline-first fallback with 30-second polling interval
+     - Connection state management with reconnection logic
+     - See `worker.js:1782-1940` for backend implementation
+     - See `src/services/webSocketService.ts` for frontend implementation
 
 ## 4. User Roles & Access Control
 
