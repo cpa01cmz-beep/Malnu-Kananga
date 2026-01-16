@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.svg', 'mask-icon.svg'],
+        includeAssets: ['favicon.svg', 'apple-touch-icon.svg', 'mask-icon.svg'],
         manifest: {
           name: 'MA Malnu Kananga Smart Portal',
           short_name: 'MA Malnu App',

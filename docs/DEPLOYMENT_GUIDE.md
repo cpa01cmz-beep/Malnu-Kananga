@@ -350,7 +350,7 @@ dist/
 ├── sw.js
 ├── workbox-*.js
 ├── apple-touch-icon.svg
-├── favicon.ico
+├── favicon.svg
 ├── pwa-192x192.svg
 ├── pwa-512x512.svg
 └── assets/
