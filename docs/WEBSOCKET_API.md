@@ -1,8 +1,8 @@
 # WebSocket API Documentation
 
-**Created**: 2026-01-15
-**Version**: 3.2.2
-**Status**: Active
+ **Created**: 2026-01-15
+ **Version**: 3.4.2
+ **Status**: Active
 
 ## Overview
 
