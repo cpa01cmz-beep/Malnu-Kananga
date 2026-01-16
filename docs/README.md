@@ -1,9 +1,9 @@
 # Documentation Index
 
  **Created**: 2026-01-05
-  **Last Updated**: 2026-01-15
-  **Version**: 3.2.1
-  **Status**: Active
+   **Last Updated**: 2026-01-16
+   **Version**: 3.2.2
+   **Status**: Active
 
 ## Overview
 
@@ -87,13 +87,13 @@ The undici vulnerability in the wrangler dependency has been mitigated using a p
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 341 TypeScript/TSX files in src/ directory
-- **Test Files**: 85 test files (*.test.ts, *.test.tsx)
-- **Source Files (Non-Test)**: 256 files
-- **Documentation Files**: 19 (in /docs directory)
-- **Services**: 28 services in src/services/ (excluding test files and types)
- - **Components**: 41 components exported from src/components/ui/index.ts
-- **Total Tests**: 1546 passing, 11 skipped
+- **Total TypeScript/TSX Files**: 396 files (excluding node_modules and dist)
+- **Test Files**: 101 test files (*.test.ts, *.test.tsx)
+- **Source Files (Non-Test)**: 274 files (102 .ts + 172 .tsx)
+- **Documentation Files**: 23 (in /docs directory)
+- **Services**: 29 services in src/services/ (excluding test files and types)
+- **UI Components**: 41 component files in src/components/ui/
+- **Total Tests**: 1855 passing, 73 skipped
 - **Code Examples**: 20+
 - **Troubleshooting Scenarios**: 25+
 - **Architecture Diagrams**: 1+
@@ -201,20 +201,20 @@ This index maintains relationships between documents:
 
 ---
 
-## Recent Changes (v3.2.1 - 2026-01-15)
+## Recent Changes (v3.2.1 - 2026-01-16)
 
-      - **Repository Audit & Maintenance (2026-01-15 - Current)**:
-                 - Comprehensive repository analysis and verification
-                 - All security scans pass: 0 vulnerabilities
-                 - All tests pass: 1546 passing, 11 skipped, 0 failures
-                 - TypeScript compilation clean: 0 errors
-                 - Linting passes: 0 errors, 0 warnings
-                 - Build successful: optimized bundles generated
-                 - All dependencies up to date: no outdated packages
-                 - Updated documentation metrics to reflect current codebase state
-                 - 341 total TypeScript/TSX files (256 source + 85 test)
-                 - 28 services and 40 UI components
-                 - Version bumped to 3.2.1
+      - **Repository Audit & Maintenance (2026-01-16 - Current)**:
+                  - Comprehensive repository analysis and verification
+                  - All security scans pass: 0 vulnerabilities
+                  - All tests pass: 1855 passing, 73 skipped, 0 failures
+                  - TypeScript compilation clean: 0 errors
+                  - Linting passes: 0 errors, 0 warnings
+                  - Build successful: optimized bundles generated
+                  - All dependencies up to date: no outdated packages
+                  - Updated documentation metrics to reflect current codebase state
+                  - 396 total TypeScript/TSX files (274 source + 101 test, excluding node_modules and dist)
+                  - 29 services and 41 UI components
+                  - Corrected documentation metrics to match actual file counts
 
       - **Repository Audit & Maintenance (2026-01-14)**:
                  - Corrected documentation metrics based on actual codebase
@@ -269,7 +269,7 @@ This index maintains relationships between documents:
 
 **Documentation Maintainer**: Repository Team
 **Review Frequency**: Monthly (first Friday of each month)
-**Last Comprehensive Review**: 2026-01-15
+**Last Comprehensive Review**: 2026-01-16
 **Next Scheduled Review**: 2026-02-07
 
 ---

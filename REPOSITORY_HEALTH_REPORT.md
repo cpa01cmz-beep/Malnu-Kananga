@@ -1,8 +1,8 @@
 # Repository Health Report
-**Date**: 2026-01-15
+**Date**: 2026-01-16
 **Repository**: MA Malnu Kananga - Smart Portal
-**Version**: 3.2.1
-**Last Updated**: 2026-01-15 (Test fixes and repository maintenance)
+**Version**: 3.2.2
+**Last Updated**: 2026-01-16 (Documentation metrics correction)
 
 ## Executive Summary
 
@@ -16,13 +16,14 @@ The repository is in **excellent condition** with:
 
 ## Repository Statistics
 
-- **Source Files**: 351 TypeScript/TSX files
-- **Test Files**: 89 test files
-- **Services**: 24 service modules
-- **Components**: 24 component files
+- **Total TypeScript/TSX Files**: 396 files (excluding node_modules and dist)
+- **Source Files (Non-Test)**: 274 files (102 .ts + 172 .tsx)
+- **Test Files**: 101 test files (*.test.ts, *.test.tsx)
+- **Services**: 29 service modules in src/services/
+- **UI Components**: 41 component files in src/components/ui/
 - **Configuration**: 10 config files
-- **Node Modules**: 950 packages (672MB)
-- **Build Output**: 2.8MB dist (34 JS bundles)
+- **Node Modules**: 1006 packages
+- **Build Output**: 2.8MB dist (24 JS bundles)
 
 ## Code Quality Assessment
 
@@ -41,11 +42,11 @@ The repository is in **excellent condition** with:
 - Automatic fixes via lint-staged
 
 ### ✅ Testing Coverage
-- 1,586 tests passing
+- 1,855 tests passing
 - Vitest as test runner
 - React Testing Library for component tests
 - Test files located in `__tests__/` directories
-- 35 tests skipped (intentional WebSocket mock fixes pending)
+- 73 tests skipped (intentional WebSocket mock improvements pending)
 
 ### ✅ Build Configuration
 - Vite 7.3.1 for fast builds
@@ -59,8 +60,8 @@ The repository is in **excellent condition** with:
 - No security vulnerabilities
 - Undici pinned to 7.18.2 (security fix)
 - Active dependency updates
-- Production: 19 dependencies
-- Development: 30 dependencies
+- Production: 13 dependencies
+- Development: 31 dependencies
 - Override system used for security patches
 
 ### ✅ Architecture
