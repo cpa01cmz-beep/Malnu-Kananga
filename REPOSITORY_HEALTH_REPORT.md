@@ -182,10 +182,11 @@ Repository shows **active maintenance** with focus on:
 ### ✅ Available Documentation
 - README.md
 - AGENTS.md (OpenCode configuration)
+- blueprint.md (System architecture and design)
+- task.md (Task tracking)
 - docs/README.md (Documentation index)
 - docs/DEPLOYMENT_GUIDE.md
 - docs/HOW_TO.md
-- docs/BLUEPRINT.md
 - docs/API_REFERENCE.md
 - docs/CODING_STANDARDS.md
 - docs/ACCESSIBILITY.md
