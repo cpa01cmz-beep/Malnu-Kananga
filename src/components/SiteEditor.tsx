@@ -113,7 +113,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
             ...entry,
             timestamp: new Date(entry.timestamp)
           })));
-        } catch (e) {
+        } catch (e: unknown) {
           logger.warn('Failed to load change history:', e);
         }
       }
@@ -128,7 +128,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
         const session = JSON.parse(authSession);
         return session.user?.id || session.userId || 'anonymous';
       }
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('Failed to get user ID for rate limiting:', e);
     }
     return 'anonymous';
@@ -176,7 +176,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
       });
       const trimmedLogs = logs.slice(0, 100);
       localStorage.setItem(STORAGE_KEYS.AI_EDITOR_AUDIT_LOG, JSON.stringify(trimmedLogs));
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('Failed to log user action:', e);
     }
   }, [getUserId]);

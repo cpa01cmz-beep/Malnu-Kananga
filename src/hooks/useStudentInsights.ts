@@ -255,7 +255,7 @@ export const useStudentInsights = ({
           logger.info('Using cached AI analysis');
           return matchingAnalysis.result;
         }
-      } catch (e) {
+      } catch (e: unknown) {
         logger.warn('Failed to check cached AI analyses:', e);
       }
 
@@ -283,7 +283,7 @@ export const useStudentInsights = ({
         // Otherwise, keep old insights but fetch fresh ones
         setInsights(cachedInsights);
       }
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('Failed to load cached insights:', e);
     }
 
@@ -356,7 +356,7 @@ export const useStudentInsights = ({
       // Cache insights locally
       try {
         localStorage.setItem(STORAGE_KEYS.STUDENT_INSIGHTS(studentId), JSON.stringify(newInsights));
-      } catch (e) {
+      } catch (e: unknown) {
         logger.warn('Failed to cache insights:', e);
       }
 
@@ -424,7 +424,7 @@ export const useStudentInsights = ({
           return;
         }
       }
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn('Failed to load cached insights:', e);
     }
 
@@ -464,7 +464,7 @@ export const useStudentInsights = ({
         if (saved !== null) {
           setIsEnabled(saved === 'true');
         }
-      } catch (e) {
+      } catch (e: unknown) {
         logger.warn('Failed to load insights preference:', e);
       }
     }

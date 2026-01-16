@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CalendarIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import type { DateRange, AnalyticsFilters } from '../../types/analytics.types';
 

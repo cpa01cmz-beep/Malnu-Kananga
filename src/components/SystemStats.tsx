@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import { backupVoiceSettings } from '../services/voiceSettingsBackup';
 import { permissionService } from '../services/permissionService';

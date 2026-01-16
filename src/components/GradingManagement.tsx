@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, ChangeEvent } from 'react';
+import { useState, useEffect, useCallback, useRef, ChangeEvent } from 'react';
 import Papa from 'papaparse';
 import { analyzeClassPerformance } from '../services/geminiService';
 import { studentsAPI, gradesAPI } from '../services/apiService';

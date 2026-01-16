@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import BuildingLibraryIcon from './icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';

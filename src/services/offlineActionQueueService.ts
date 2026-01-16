@@ -466,7 +466,7 @@ class OfflineActionQueueService {
         }
         
         localStorage.setItem(STORAGE_KEYS.CACHED_AI_ANALYSES, JSON.stringify(existingResults));
-      } catch (e) {
+      } catch (e: unknown) {
         logger.warn('Failed to cache AI analysis result:', e);
       }
 

@@ -61,7 +61,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   const uploadStartTimeRef = useRef<number>(0);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const abortControllerRef = useRef<AbortController | null>(null); // eslint-disable-line no-undef
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     return () => {
@@ -117,7 +117,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         return;
       }
       
-      // eslint-disable-next-line no-undef
       const reader = new FileReader();
       reader.onload = (e) => resolve(e.target?.result as string);
       reader.onerror = () => resolve(undefined);
@@ -125,7 +124,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     });
   }, []);
 
-  const handleFileSelect = useCallback(async (selectedFiles: FileList | null) => { // eslint-disable-line no-undef
+  const handleFileSelect = useCallback(async (selectedFiles: FileList | null) => {
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     const filesArray = Array.from(selectedFiles);
@@ -154,7 +153,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       setUploadedBytes(0);
       uploadStartTimeRef.current = Date.now();
 
-      const abortController = new AbortController(); // eslint-disable-line no-undef
+      const abortController = new AbortController();
       abortControllerRef.current = abortController;
 
       try {

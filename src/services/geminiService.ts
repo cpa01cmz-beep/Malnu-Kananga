@@ -310,7 +310,7 @@ Please provide the updated JSON content following the safety and content rules a
                         const session = JSON.parse(authSession);
                         return session.user?.id || session.userId || 'anonymous';
                     }
-                } catch (e) {
+                } catch (e: unknown) {
                     logger.warn('Failed to get user ID for validation:', e);
                 }
                 return 'anonymous';

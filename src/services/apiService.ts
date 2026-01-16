@@ -54,20 +54,26 @@ function onTokenRefreshed(token: string): void {
 export const authAPI = {
   // Login
   async login(email: string, password: string): Promise<LoginResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data: LoginResponse = await response.json();
+      const data: LoginResponse = await response.json();
 
-    if (data.success && data.data?.token && data.data?.refreshToken) {
-      setAuthToken(data.data.token);
-      setRefreshToken(data.data.refreshToken);
+      if (data.success && data.data?.token && data.data?.refreshToken) {
+        setAuthToken(data.data.token);
+        setRefreshToken(data.data.refreshToken);
+      }
+
+      return data;
+    } catch (e: unknown) {
+      const error = classifyError(e, { operation: 'authAPI.login', timestamp: Date.now() });
+      logError(error);
+      throw error;
     }
-
-    return data;
   },
 
   // Logout
@@ -83,7 +89,7 @@ export const authAPI = {
           'Authorization': `Bearer ${token}`,
         },
       });
-    } catch (e) {
+    } catch (e: unknown) {
       logger.error('Logout error:', e);
     } finally {
       clearAuthToken();
@@ -112,7 +118,7 @@ export const authAPI = {
       }
 
       return false;
-    } catch (e) {
+    } catch (e: unknown) {
       logger.error('Refresh token error:', e);
       return false;
     }
@@ -873,13 +879,19 @@ export const eventFeedbackAPI = {
 export const chatAPI = {
   // Get RAG context for chat
   async getContext(message: string): Promise<{ context: string }> {
-    const response = await fetch(`${API_BASE_URL}/api/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      });
 
-    return response.json();
+      return response.json();
+    } catch (e: unknown) {
+      const error = classifyError(e, { operation: 'chatAPI.getContext', timestamp: Date.now() });
+      logError(error);
+      throw error;
+    }
   },
 };
 

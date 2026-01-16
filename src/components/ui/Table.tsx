@@ -3,7 +3,7 @@ import { forwardRef, ReactNode } from 'react';
 export type TableSize = 'sm' | 'md' | 'lg';
 export type TableVariant = 'default' | 'striped' | 'bordered' | 'simple';
 
-interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> { // eslint-disable-line no-undef
+interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> {
   children: ReactNode;
   size?: TableSize;
   variant?: TableVariant;
@@ -24,20 +24,20 @@ interface TfootProps extends React.HTMLAttributes<HTMLElement> {
   children: ReactNode;
 }
 
-interface TrProps extends React.HTMLAttributes<HTMLTableRowElement> { // eslint-disable-line no-undef
+interface TrProps extends React.HTMLAttributes<HTMLTableRowElement> {
   children: ReactNode;
   hoverable?: boolean;
   selected?: boolean;
 }
 
-interface ThProps extends React.ThHTMLAttributes<HTMLTableCellElement> { // eslint-disable-line no-undef
+interface ThProps extends React.ThHTMLAttributes<HTMLTableCellElement> {
   children: ReactNode;
   scope?: 'col' | 'row' | 'colgroup' | 'rowgroup';
   sortable?: boolean;
   sortDirection?: 'asc' | 'desc';
 }
 
-interface TdProps extends React.TdHTMLAttributes<HTMLTableCellElement> { // eslint-disable-line no-undef
+interface TdProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
   children: ReactNode;
 }
 
@@ -54,7 +54,7 @@ const variantClasses: Record<TableVariant, string> = {
   simple: '',
 };
 
-const Table = forwardRef<HTMLTableElement, TableProps>( // eslint-disable-line no-undef
+const Table = forwardRef<HTMLTableElement, TableProps>(
   (
     {
       children,
