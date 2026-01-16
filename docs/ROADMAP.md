@@ -1,8 +1,8 @@
 # Roadmap Pengembangan
 
 **Created**: 2025-01-01
-**Last Updated**: 2026-01-06
-**Version**: 2.1.0
+**Last Updated**: 2026-01-16
+**Version**: 2.1.1
 **Status**: Active
 
 Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal MA Malnu Kananga**.
@@ -168,12 +168,17 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
       - [x] Fix UserManagement.tsx, MaterialUpload.tsx, ParentMessagingView.tsx, ParentMeetingsView.tsx, VoiceSettings.tsx, PPDBRegistration.tsx
       - [x] Verify 100% WCAG 2.1 AA compliance untuk all form inputs
       - [x] Verify all tests passing (10 test files)
- - [x] Complete UI component documentation (Phase 5 - IN PROGRESS 2026-01-15)
-      - [x] Document Input component (3 sizes, 3 states, 6 input masks, validation, accessibility)
-      - [x] Document Select component (3 sizes, 3 states, placeholder, disabled options)
-      - [x] Document Toast component (3 types, auto-dismissal, pause on hover, keyboard support)
-      - [ ] Document remaining 20 components (ConfirmationDialog, Table, DataTable, Tab, etc.)
-      - Progress: 21/41 components documented (51%)
+  - [x] Complete UI component documentation (Phase 5 - IN PROGRESS 2026-01-16)
+       - [x] Document Input component (3 sizes, 3 states, 6 input masks, validation, accessibility)
+       - [x] Document Select component (3 sizes, 3 states, placeholder, disabled options)
+       - [x] Document Toast component (3 types, auto-dismissal, pause on hover, keyboard support)
+       - [x] Document ConfirmationDialog (3 types, loading states, accessibility)
+       - [x] Document Table suite (Thead, Tbody, Tfoot, Tr, Th, Td - 4 variants, 3 sizes)
+       - [x] Document Tab component (3 variants, 6 colors, icons, badges, keyboard navigation)
+       - [x] Document Pagination (3 variants, smart page numbering, items per page)
+       - [x] Document DataTable (sorting, search, selection, pagination, loading states)
+       - [ ] Document remaining 15 components (BaseModal, Section, DashboardActionCard, SocialLink, LoadingSpinner, LoadingOverlay, Skeleton, ProgressBar, PageHeader, ErrorMessage, PDFExportButton, FormGrid)
+       - Progress: 26/41 components documented (63%)
 - [x] Extract Extra Role from JWT for Proper Permission System:
   - [x] Add extra_role field to AuthPayload interface
   - [x] Update handleLogin dan handleRefreshToken untuk include extra_role
