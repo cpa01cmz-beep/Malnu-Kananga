@@ -233,3 +233,14 @@ export interface AnalyticsPerformanceMetrics {
   improvementTrend: number;
   consistencyScore: number;
 }
+
+export interface AnalyticsStudentGoal {
+  id: string;
+  studentId: string;
+  subject: string;
+  targetGrade: string;
+  currentGrade: number;
+  deadline: string;
+  status: 'in-progress' | 'achieved' | 'not-achieved';
+  createdAt: string;
+}
