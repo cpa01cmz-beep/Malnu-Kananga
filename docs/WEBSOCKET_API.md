@@ -1,8 +1,8 @@
 # WebSocket API Documentation
 
  **Created**: 2026-01-15
- **Version**: 3.4.2
- **Status**: Active
+  **Version**: 3.4.3
+  **Status**: Active
 
 ## Overview
 
@@ -858,5 +858,5 @@ export function useWebSocket() {
 ---
 
 **Last Updated**: 2026-01-15
-**Version**: 3.2.2
+**Version**: 3.4.3
 **Maintained By**: Autonomous System Guardian
