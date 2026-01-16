@@ -12,7 +12,7 @@
 > **Table Components (2)**: Table (Thead, Tbody, Tfoot, Tr, Th, Td), DataTable
 > **Interactive Components (2)**: Tab, Toast
 > **Navigation Components (1)**: Pagination
-> **Loading Components (5)**: LoadingState, EmptyState, ErrorState, LoadingSpinner, LoadingOverlay, Skeleton, SuspenseLoading
+> **Loading Components (7)**: LoadingState, EmptyState, ErrorState, LoadingSpinner, LoadingOverlay, Skeleton, SuspenseLoading
 > **Progress Components (1)**: ProgressBar
 > **Utility Components (3)**: PageHeader, ErrorMessage, PDFExportButton
 >
