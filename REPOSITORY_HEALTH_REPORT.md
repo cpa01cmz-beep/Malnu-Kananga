@@ -139,7 +139,7 @@ Repository shows **active maintenance** with focus on:
 - ✅ Environment: Configured
 
 ### Backend (Cloudflare Worker)
-- ✅ URL: https://malnu-kananga-worker.cpa01cmz.workers.dev
+- ✅ URL: https://malnu-kananga-worker-prod.cpa01cmz.workers.dev
 - ✅ D1 Database: Connected
 - ✅ Secrets: Configured
 - ✅ Environment: Configured

@@ -86,7 +86,7 @@ LOG_LEVEL = "info"
                  ▼ (VITE_API_BASE_URL)
 ┌─────────────────────────────────────────┐
 │   Cloudflare Worker                 │
-│   malnu-kananga-worker.workers.dev │
+│   malnu-kananga-worker-prod.workers.dev │
 │   (API + Business Logic)          │
 └────────────────┬────────────────────────┘
                  │
@@ -162,8 +162,8 @@ wrangler d1 list
 # Execute SQL on remote database
 wrangler d1 execute malnu-kananga-db-dev --remote --command="SELECT * FROM users LIMIT 5"
 
-# Seed database
-curl -X POST https://malnu-kananga-worker.cpa01cmz.workers.dev/seed
+ # Seed database
+ curl -X POST https://malnu-kananga-worker-prod.cpa01cmz.workers.dev/seed
 ```
 
 ## Troubleshooting
