@@ -102,7 +102,11 @@ const ERROR_MESSAGES = {
   FAILED_GET_SCHEDULE: 'Gagal mengambil jadwal',
   STUDENT_ID_REQUIRED: 'student_id parameter required',
   AI_SERVICE_UNAVAILABLE: 'Layanan AI tidak tersedia saat ini',
-  ENDPOINT_NOT_FOUND: 'Endpoint tidak ditemukan'
+  ENDPOINT_NOT_FOUND: 'Endpoint tidak ditemukan',
+  WS_AUTH_FAILED: 'Autentikasi WebSocket gagal',
+  WS_CONNECTION_LIMIT: 'Batas koneksi tercapai',
+  WS_INVALID_MESSAGE: 'Pesan WebSocket tidak valid',
+  WS_UNAUTHORIZED: 'Tidak memiliki izin untuk berlangganan event ini'
 };
 
 const HTTP_STATUS_CODES = {
@@ -1758,6 +1762,190 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
 }
 
 // ============================================
+// WEBSOCKET & REAL-TIME HANDLERS
+// ============================================
+
+async function handleWebSocket(request, env) {
+  try {
+    const url = new URL(request.url);
+    const token = url.searchParams.get('token');
+
+    if (!token) {
+      return new Response('Token required', { status: 401 });
+    }
+
+    const payload = await JWT.verify(token, env.JWT_SECRET || 'default_secret');
+    if (!payload) {
+      return new Response('Invalid token', { status: 401 });
+    }
+
+    const pair = new WebSocketPair();
+    const [client, server] = pair;
+
+    server.accept();
+
+    const connectionId = generateId();
+    const subscriptions = new Set();
+
+    logger.info(`WebSocket: Connection established - ${payload.role}/${payload.user_id} (${connectionId})`);
+
+    server.addEventListener('message', async (event) => {
+      try {
+        const data = JSON.parse(event.data);
+
+        switch (data.type) {
+          case 'subscribe':
+            subscriptions.add(data.eventType);
+            logger.debug(`WebSocket: User ${payload.user_id} subscribed to ${data.eventType}`);
+            break;
+
+          case 'unsubscribe':
+            subscriptions.delete(data.eventType);
+            logger.debug(`WebSocket: User ${payload.user_id} unsubscribed from ${data.eventType}`);
+            break;
+
+          case 'ping':
+            server.send(JSON.stringify({
+              type: 'pong',
+              timestamp: new Date().toISOString()
+            }));
+            break;
+
+          case 'disconnect':
+            server.close(1000, 'Client disconnect');
+            break;
+
+          default:
+            logger.warn(`WebSocket: Unknown message type: ${data.type}`);
+        }
+      } catch (error) {
+        logger.error('WebSocket: Message handling error:', error);
+        server.send(JSON.stringify({
+          type: 'error',
+          message: ERROR_MESSAGES.WS_INVALID_MESSAGE
+        }));
+      }
+    });
+
+    server.addEventListener('close', () => {
+      logger.info(`WebSocket: Connection closed - ${payload.user_id} (${connectionId})`);
+      subscriptions.clear();
+    });
+
+    return new Response(null, {
+      status: 101,
+      webSocket: client,
+    });
+
+  } catch (error) {
+    logger.error('WebSocket: Connection error:', error);
+    return new Response(ERROR_MESSAGES.SERVER_ERROR, { status: 500 });
+  }
+}
+
+async function handleUpdates(request, env, corsHeaders) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const token = authHeader.substring(7);
+    const payload = await JWT.verify(token, env.JWT_SECRET || 'default_secret');
+
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const lastSync = request.headers.get('If-Modified-Since');
+    const lastSyncDate = lastSync ? new Date(lastSync) : new Date(0);
+
+    const updates = [];
+
+    const tables = [
+      'grades',
+      'attendance',
+      'announcements',
+      'e_library',
+      'school_events',
+      'users'
+    ];
+
+    for (const table of tables) {
+      try {
+        const hasUpdatedAt = await env.DB.prepare(`
+          PRAGMA table_info(${table})
+        `).all();
+
+        const updatedAtColumn = hasUpdatedAt.results?.some((col) => col.name === 'updated_at');
+
+        let query = '';
+        let params = [];
+
+        if (updatedAtColumn) {
+          query = `SELECT * FROM ${table} WHERE updated_at > ?`;
+          params = [lastSyncDate.toISOString()];
+        } else {
+          query = `SELECT * FROM ${table} LIMIT 100`;
+        }
+
+        const result = await env.DB.prepare(query).bind(...params).all();
+
+        if (result.results && result.results.length > 0) {
+          for (const row of result.results) {
+            const eventType = mapTableToEventType(table, row);
+            if (eventType) {
+              updates.push({
+                type: eventType,
+                entity: table.replace(/_/g, ''),
+                entityId: row.id,
+                data: row,
+                timestamp: row.updated_at || new Date().toISOString(),
+                userRole: payload.role,
+                userId: payload.user_id
+              });
+            }
+          }
+        }
+      } catch (error) {
+        logger.debug(`WebSocket: Failed to fetch updates from ${table}:`, error);
+      }
+    }
+
+    return new Response(JSON.stringify(response.success({ updates }, 'Updates retrieved')), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+
+  } catch (error) {
+    logger.error('WebSocket: Updates error:', error);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+function mapTableToEventType(table, _row) {
+  const entity = table.replace(/_/g, '');
+
+  if (entity === 'grades') return 'grade_updated';
+  if (entity === 'attendance') return 'attendance_updated';
+  if (entity === 'announcements') return 'announcement_updated';
+  if (entity === 'elibrary') return 'library_material_updated';
+  if (entity === 'schoolevents') return 'event_updated';
+  if (entity === 'users') return 'user_status_changed';
+
+  return null;
+}
+
+// ============================================
 // MAIN HANDLER
 // ============================================
 
@@ -1767,14 +1955,19 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
     const cors = corsHeaders(env.ALLOWED_ORIGIN, requestOrigin);
 
     logger.setLevel(env.LOG_LEVEL || 'info');
-    
+
     // Handle preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: cors });
     }
-    
+
     const url = new URL(request.url);
-    
+
+    // Handle WebSocket upgrade
+    if (url.pathname === '/ws' && request.headers.get('upgrade') === 'websocket') {
+      return handleWebSocket(request, env);
+    }
+
     // Route handlers
     const routes = {
       '/seed': handleSeed,
@@ -1787,6 +1980,7 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
       '/api/files/download': handleFileDownload,
       '/api/files/delete': handleFileDelete,
       '/api/files/list': handleFileList,
+      '/api/updates': handleUpdates,
       '/api/users': (r, e, c) => handleCRUD(r, e, c, 'users'),
       '/api/ppdb_registrants': (r, e, c) => handleCRUD(r, e, c, 'ppdb_registrants'),
       '/api/inventory': (r, e, c) => handleCRUD(r, e, c, 'inventory'),

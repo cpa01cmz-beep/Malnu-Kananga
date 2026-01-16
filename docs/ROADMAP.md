@@ -179,11 +179,21 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
        - [x] Document DataTable (sorting, search, selection, pagination, loading states)
        - [ ] Document remaining 15 components (BaseModal, Section, DashboardActionCard, SocialLink, LoadingSpinner, LoadingOverlay, Skeleton, ProgressBar, PageHeader, ErrorMessage, PDFExportButton, FormGrid)
        - Progress: 26/41 components documented (63%)
-- [x] Extract Extra Role from JWT for Proper Permission System:
-  - [x] Add extra_role field to AuthPayload interface
-  - [x] Update handleLogin dan handleRefreshToken untuk include extra_role
-  - [x] Update validateRequestPermissions untuk pass extracted extra_role
-  - [x] Extra role permissions (staff, osis) now work correctly
+  - [x] Extract Extra Role from JWT for Proper Permission System:
+   - [x] Add extra_role field to AuthPayload interface
+   - [x] Update handleLogin dan handleRefreshToken untuk include extra_role
+   - [x] Update validateRequestPermissions untuk pass extracted extra_role
+   - [x] Extra role permissions (staff, osis) now work correctly
+- [x] Implement backend WebSocket support (COMPLETED 2026-01-16)
+   - [x] Add `/ws` endpoint for WebSocket connections
+   - [x] Add `/api/updates` fallback endpoint for long-polling
+   - [x] Implement JWT authentication for WebSocket
+   - [x] Handle subscribe/unsubscribe messages
+   - [x] Implement ping/pong for connection health
+   - [x] Add connection cleanup and error handling
+   - Frontend already fully implemented (`webSocketService.ts`)
+   - Eliminates polling overhead, provides real-time updates
+   - Improved performance with WebSocket instead of 30-second polling
 
 ---
 
