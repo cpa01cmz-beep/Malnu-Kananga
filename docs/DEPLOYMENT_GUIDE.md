@@ -349,14 +349,14 @@ dist/
 ├── manifest.webmanifest
 ├── sw.js
 ├── workbox-*.js
-├── apple-touch-icon.png
+├── apple-touch-icon.svg
 ├── favicon.ico
 ├── pwa-192x192.svg
 ├── pwa-512x512.svg
 └── assets/
     ├── index-*.js
     ├── index-*.css
-    └── ...
+    └ ...
 ```
 
 ### 4.4 Deploy to Cloudflare Pages
