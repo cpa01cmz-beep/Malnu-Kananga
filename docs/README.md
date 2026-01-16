@@ -87,13 +87,13 @@ The undici vulnerability in the wrangler dependency has been mitigated using a p
 ---
 
 ## Documentation Metrics
-- **Total TypeScript/TSX Files**: 396 files (excluding node_modules and dist)
+- **Total TypeScript/TSX Files**: 375 files (excluding node_modules and dist)
 - **Test Files**: 101 test files (*.test.ts, *.test.tsx)
 - **Source Files (Non-Test)**: 274 files (102 .ts + 172 .tsx)
 - **Documentation Files**: 23 (in /docs directory)
 - **Services**: 29 services in src/services/ (excluding test files and types)
 - **UI Components**: 41 component files in src/components/ui/
-- **Total Tests**: 1855 passing, 73 skipped
+- **Total Tests**: 1884 passing, 73 skipped
 - **Code Examples**: 20+
 - **Troubleshooting Scenarios**: 25+
 - **Architecture Diagrams**: 1+
@@ -206,13 +206,13 @@ This index maintains relationships between documents:
       - **Repository Audit & Maintenance (2026-01-16 - Current)**:
                   - Comprehensive repository analysis and verification
                   - All security scans pass: 0 vulnerabilities
-                  - All tests pass: 1855 passing, 73 skipped, 0 failures
+                  - All tests pass: 1884 passing, 73 skipped, 0 failures
                   - TypeScript compilation clean: 0 errors
                   - Linting passes: 0 errors, 0 warnings
                   - Build successful: optimized bundles generated
                   - All dependencies up to date: no outdated packages
                   - Updated documentation metrics to reflect current codebase state
-                  - 396 total TypeScript/TSX files (274 source + 101 test, excluding node_modules and dist)
+                  - 375 total TypeScript/TSX files (274 source + 101 test, excluding node_modules and dist)
                   - 29 services and 41 UI components
                   - Corrected documentation metrics to match actual file counts
 
