@@ -183,7 +183,7 @@ MA Malnu Kananga is a modern, AI-powered school management system designed for I
 - `analyticsService.ts` - Comprehensive analytics aggregation with caching (600+ lines)
 
 **Supporting Services**:
-- `webSocketService.ts` - Real-time communication
+- `webSocketService.ts` - Real-time communication with message queuing, deduplication, and health monitoring
 - `aiCacheService.ts` - AI response caching
 - `lessonPlanService.ts` - AI-powered lesson plan generation with Gemini 2.5 Flash
 - `emailService.ts` - Email queue and templates
@@ -620,6 +620,130 @@ wrangler deploy --env production
 ---
 
 ## 11. API ARCHITECTURE
+
+### 11.0 WebSocket Reliability Enhancements (New - 2026-01-16)
+
+**Enhanced WebSocket Service Features**:
+
+**Message Queue (Offline Buffering)**:
+- Queue outbound messages when connection is lost
+- Maximum queue size: 100 messages
+- Message TTL: 5 minutes (expires old messages)
+- Automatic retry with exponential backoff (max 3 retries)
+- Priority-based message delivery
+- Persistent storage in localStorage (`STORAGE_KEYS.WS_MESSAGE_QUEUE`)
+
+**Message Deduplication**:
+- Track received message IDs to prevent duplicates
+- Deduplication window: 5 minutes
+- Map-based cache for efficient lookup
+- Automatic cleanup of expired entries
+- Persistent storage in localStorage (`STORAGE_KEYS.WS_DEDUPLICATION_CACHE`)
+
+**Health Monitoring**:
+- Real-time latency tracking via ping/pong round-trip
+- Message delivery success rate calculation
+- Connection uptime tracking
+- Connection quality rating (excellent/good/fair/poor/offline)
+- Health check interval: 60 seconds
+- Metrics: latency (ms), delivery rate (0-1), uptime (ms), messages sent/received/delivered/failed
+- Thresholds: max latency 5000ms, min delivery rate 90%
+
+**Enhanced Reconnection**:
+- Exponential backoff with random jitter (0-1000ms)
+- Prevents thundering herd on reconnection
+- Max reconnection attempts: 10 (increased from 5)
+- Base delay: 5000ms
+- Formula: `delay = 5000 * 2^(attempt-1) + random(0-1000)`
+- Automatic fallback to polling after max attempts
+
+**Graceful Degradation**:
+- Fallback polling interval: 30 seconds
+- Automatic fallback when WebSocket fails
+- Polling endpoint: `/api/updates`
+- Continues to sync data via HTTP
+- Seamless switch between WebSocket and polling
+
+**Structured Logging**:
+- Comprehensive logging with context objects
+- Connection attempt logging with delay and jitter info
+- Message queue operation logging
+- Health metrics logging on disconnect
+- Poor connection quality warnings
+- Error handling with full context
+
+**Storage Persistence**:
+- Message queue: `malnu_ws_message_queue`
+- Deduplication cache: `malnu_ws_deduplication_cache`
+- Connection state: `malnu_ws_connection`
+- Automatic cleanup of expired entries
+- Restoration on service restart
+
+**New Interfaces**:
+```typescript
+interface QueuedMessage {
+  id: string;
+  type: string;
+  data: Record<string, unknown>;
+  timestamp: number;
+  priority: number;
+  retryCount: number;
+  maxRetries: number;
+}
+
+interface WebSocketHealthMetrics {
+  connected: boolean;
+  uptime: number;
+  lastConnected?: string;
+  lastDisconnected?: string;
+  latency: number;
+  deliverySuccessRate: number;
+  messagesSent: number;
+  messagesReceived: number;
+  messagesDelivered: number;
+  messagesFailed: number;
+  reconnectAttempts: number;
+  connectionQuality: 'excellent' | 'good' | 'fair' | 'poor' | 'offline';
+}
+```
+
+**Configuration Constants**:
+```typescript
+WS_CONFIG = {
+  MAX_RECONNECT_ATTEMPTS: 10,        // Increased from 5
+  RECONNECT_DELAY: 5000,             // Base delay (ms)
+  CONNECTION_TIMEOUT: 10000,            // Connection timeout (ms)
+  PING_INTERVAL: 30000,              // Heartbeat interval (ms)
+  FALLBACK_POLLING_INTERVAL: 30000,    // Fallback polling (ms)
+  MESSAGE_QUEUE_MAX_SIZE: 100,         // Max queued messages
+  MESSAGE_QUEUE_TTL: 300000,           // Message expiry (5 min)
+  DEDUPLICATION_WINDOW: 300000,        // Deduplication window (5 min)
+  HEALTH_CHECK_INTERVAL: 60000,         // Health check interval (1 min)
+  MAX_LATENCY_THRESHOLD: 5000,          // Max acceptable latency (5 sec)
+  MIN_DELIVERY_RATE_THRESHOLD: 0.9,    // Min acceptable delivery rate (90%)
+}
+```
+
+**Test Coverage**: 40+ new tests added
+- Message queue tests (queueing, expiration, size limits, reconnection processing)
+- Message deduplication tests (ID tracking, window, duplicate detection)
+- Health monitoring tests (latency tracking, delivery rate, quality calculation, uptime)
+- Reconnection tests (jitter, exponential backoff, max attempts, fallback)
+- Structured logging tests (connection, queue, health metrics, quality warnings)
+- Graceful degradation tests (polling fallback, error handling, callback errors)
+- Storage persistence tests (queue, cache, connection state)
+- API getter tests (health metrics, connection state)
+
+**Impact**:
+- ✓ Improved connection reliability with jitter-based reconnection
+- ✓ No message loss during network interruptions (message queue)
+- ✓ Zero duplicate message processing (deduplication)
+- ✓ Real-time visibility into connection health (monitoring)
+- ✓ Better debugging with structured logging
+- ✓ Seamless fallback to polling when WebSocket unavailable
+- ✓ Foundation for Q3 2026 Milestone 3.0 (Real-Time Collaboration)
+
+---
 
 ### 11.1 RESTful Endpoints
 

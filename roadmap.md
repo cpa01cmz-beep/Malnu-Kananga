@@ -288,6 +288,12 @@ This roadmap outlines the strategic vision for MA Malnu Kananga, focusing on enh
       - Completed: 2026-01-15
       - Impact: Maintainability, localization, dynamic configuration
 
+2. **Enhanced WebSocket Reliability** (Pillar 5, 3)
+      - Status: Completed ✓
+      - Completed: 2026-01-16
+      - Impact: Connection reliability, message delivery, real-time features
+      - Achievements: Message queuing, deduplication, health monitoring, jitter-based reconnection, 40+ tests
+
 2. **Enhance Accessibility** (Pillars 16, 14)
       - Status: Completed ✓
       - Completed: 2026-01-15

@@ -93,6 +93,8 @@ export const STORAGE_KEYS = {
     
     // WebSocket real-time sync
     WS_CONNECTION: 'malnu_ws_connection',
+    WS_MESSAGE_QUEUE: 'malnu_ws_message_queue',
+    WS_DEDUPLICATION_CACHE: 'malnu_ws_deduplication_cache',
     ANNOUNCEMENTS: 'malnu_announcements',
     NOTIFICATIONS: 'malnu_notifications',
     ATTENDANCE: 'malnu_attendance',

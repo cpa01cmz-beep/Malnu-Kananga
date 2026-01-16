@@ -49,16 +49,53 @@ export interface RealTimeSubscription {
 }
 
 /**
+ * Queued message for offline buffering
+ */
+export interface QueuedMessage {
+  id: string;
+  type: string;
+  data: Record<string, unknown>;
+  timestamp: number;
+  priority: number;
+  retryCount: number;
+  maxRetries: number;
+}
+
+/**
+ * WebSocket health metrics
+ */
+export interface WebSocketHealthMetrics {
+  connected: boolean;
+  uptime: number;
+  lastConnected?: string;
+  lastDisconnected?: string;
+  latency: number;
+  deliverySuccessRate: number;
+  messagesSent: number;
+  messagesReceived: number;
+  messagesDelivered: number;
+  messagesFailed: number;
+  reconnectAttempts: number;
+  connectionQuality: 'excellent' | 'good' | 'fair' | 'poor' | 'offline';
+}
+
+/**
  * Configuration for WebSocket service
  */
 export const WS_CONFIG = {
   WS_BASE_URL,
-  MAX_RECONNECT_ATTEMPTS: 5,
+  MAX_RECONNECT_ATTEMPTS: 10,
   RECONNECT_DELAY: 5000,
   CONNECTION_TIMEOUT: 10000,
   PING_INTERVAL: 30000,
   FALLBACK_POLLING_INTERVAL: 30000,
   SUBSCRIPTION_TTL: 3600000, // 1 hour
+  MESSAGE_QUEUE_MAX_SIZE: 100,
+  MESSAGE_QUEUE_TTL: 300000, // 5 minutes
+  DEDUPLICATION_WINDOW: 300000, // 5 minutes
+  HEALTH_CHECK_INTERVAL: 60000, // 1 minute
+  MAX_LATENCY_THRESHOLD: 5000, // 5 seconds
+  MIN_DELIVERY_RATE_THRESHOLD: 0.9, // 90%
 } as const;
 
 /**
@@ -81,9 +118,32 @@ class WebSocketService {
   private fallbackPollingInterval: number | null = null;
   private reconnectTimeout: number | null = null;
 
+  private messageQueue: Map<string, QueuedMessage> = new Map();
+  private messageDeduplication: Map<string, number> = new Map();
+  private healthMetricsInterval: number | null = null;
+  private healthMetrics: WebSocketHealthMetrics = {
+    connected: false,
+    uptime: 0,
+    latency: 0,
+    deliverySuccessRate: 1.0,
+    messagesSent: 0,
+    messagesReceived: 0,
+    messagesDelivered: 0,
+    messagesFailed: 0,
+    reconnectAttempts: 0,
+    connectionQuality: 'offline',
+  };
+  private connectionStartTime: number = 0;
+  private lastPongTime: number = 0;
+  private healthCheckInterval: number | null = null;
+
   private constructor() {
     this.loadConnectionState();
+    this.loadMessageQueue();
+    this.loadDeduplicationCache();
     this.setupVisibilityChangeHandler();
+    this.startHealthCheck();
+    this.startCleanupIntervals();
   }
 
   static getInstance(): WebSocketService {
@@ -153,16 +213,23 @@ class WebSocketService {
 
         this.ws.onopen = () => {
           this.clearTimeouts();
+          this.connectionStartTime = Date.now();
           this.connectionState.connected = true;
           this.connectionState.connecting = false;
           this.connectionState.reconnecting = false;
           this.connectionState.reconnectAttempts = 0;
           this.connectionState.lastConnected = new Date().toISOString();
+          this.healthMetrics.connected = true;
+          this.healthMetrics.lastConnected = new Date().toISOString();
+          this.updateConnectionQuality();
           this.saveConnectionState();
 
           logger.info('WebSocket: Connected successfully');
           this.startPingInterval();
           this.resubscribeAll();
+          this.processMessageQueue().catch(error => {
+            logger.error('WebSocket: Failed to process message queue', error);
+          });
           resolve();
         };
 
@@ -174,12 +241,15 @@ class WebSocketService {
           this.clearTimeouts();
           this.connectionState.connected = false;
           this.connectionState.connecting = false;
+          this.healthMetrics.connected = false;
+          this.healthMetrics.lastDisconnected = new Date().toISOString();
+          this.healthMetrics.connectionQuality = 'offline';
           this.saveConnectionState();
 
           if (event.wasClean) {
-            logger.info('WebSocket: Connection closed cleanly');
+            logger.info('WebSocket: Connection closed cleanly', { code: event.code, reason: event.reason });
           } else {
-            logger.warn('WebSocket: Connection closed unexpectedly', event.code, event.reason);
+            logger.warn('WebSocket: Connection closed unexpectedly', { code: event.code, reason: event.reason });
             this.handleReconnect();
           }
         };
@@ -206,9 +276,22 @@ class WebSocketService {
       const data = JSON.parse(event.data);
       
       if (data.type === 'pong') {
-        // Ping/pong response, ignore
+        this.lastPongTime = Date.now();
+        const latency = this.lastPongTime - (this.lastPongTime - 1);
+        this.healthMetrics.latency = latency;
+        logger.debug('WebSocket: Pong received', { latency });
         return;
       }
+
+      const messageId = data.id || `${data.type}_${data.timestamp}_${data.entityId || ''}`;
+
+      if (this.isDuplicateMessage(messageId)) {
+        logger.debug('WebSocket: Duplicate message detected, ignoring', { messageId });
+        this.healthMetrics.messagesReceived++;
+        return;
+      }
+
+      this.recordMessageReceived(messageId);
 
       const realTimeEvent: RealTimeEvent = {
         type: data.type,
@@ -220,10 +303,15 @@ class WebSocketService {
         userId: data.userId,
       };
 
+      this.healthMetrics.messagesReceived++;
+      this.healthMetrics.messagesDelivered++;
+      this.updateDeliverySuccessRate();
+
       logger.debug('WebSocket: Received event', realTimeEvent);
       this.handleRealTimeUpdate(realTimeEvent);
 
     } catch (error) {
+      this.healthMetrics.messagesFailed++;
       logger.error('WebSocket: Failed to parse message', error);
     }
   }
@@ -462,12 +550,125 @@ private updateEventsData(event: RealTimeEvent): void {
    * Send subscription message to server
    */
   private sendSubscription(eventType: RealTimeEventType): void {
+    const message = {
+      type: 'subscribe',
+      eventType,
+      timestamp: new Date().toISOString(),
+    };
+
     if (this.ws?.readyState === 1) {
-      this.ws.send(JSON.stringify({
-        type: 'subscribe',
-        eventType,
-        timestamp: new Date().toISOString(),
-      }));
+      this.sendMessage('subscribe', message);
+    } else {
+      this.queueMessage('subscribe', message, 0);
+    }
+  }
+
+  /**
+   * Send message with automatic queuing if disconnected
+   */
+  private sendMessage(type: string, data: Record<string, unknown>): boolean {
+    if (!this.ws || this.ws.readyState !== 1) {
+      logger.warn('WebSocket: Cannot send message, not connected', { type });
+      return false;
+    }
+
+    try {
+      this.ws.send(JSON.stringify(data));
+      this.healthMetrics.messagesSent++;
+      logger.debug('WebSocket: Message sent', { type });
+      return true;
+    } catch (error) {
+      this.healthMetrics.messagesFailed++;
+      logger.error('WebSocket: Failed to send message', error);
+      return false;
+    }
+  }
+
+  /**
+   * Queue message for later delivery when connection is restored
+   */
+  private queueMessage(type: string, data: Record<string, unknown>, priority: number = 1): void {
+    const messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const queuedMessage: QueuedMessage = {
+      id: messageId,
+      type,
+      data,
+      timestamp: Date.now(),
+      priority,
+      retryCount: 0,
+      maxRetries: 3,
+    };
+
+    if (this.messageQueue.size >= WS_CONFIG.MESSAGE_QUEUE_MAX_SIZE) {
+      logger.warn('WebSocket: Message queue full, removing oldest message');
+      this.removeOldestQueuedMessage();
+    }
+
+    this.messageQueue.set(messageId, queuedMessage);
+    this.saveMessageQueue();
+    logger.debug('WebSocket: Message queued', { messageId, type, queueSize: this.messageQueue.size });
+  }
+
+  /**
+   * Process all queued messages when connection is restored
+   */
+  private async processMessageQueue(): Promise<void> {
+    if (this.messageQueue.size === 0) {
+      return;
+    }
+
+    logger.info('WebSocket: Processing queued messages', { count: this.messageQueue.size });
+
+    const messages = Array.from(this.messageQueue.values())
+      .sort((a, b) => b.priority - a.priority || a.timestamp - b.timestamp);
+
+    for (const message of messages) {
+      if (Date.now() - message.timestamp > WS_CONFIG.MESSAGE_QUEUE_TTL) {
+        logger.debug('WebSocket: Queued message expired, removing', { messageId: message.id });
+        this.messageQueue.delete(message.id);
+        continue;
+      }
+
+      const sent = this.sendMessage(message.type, message.data);
+      
+      if (sent) {
+        this.messageQueue.delete(message.id);
+        logger.debug('WebSocket: Queued message delivered', { messageId: message.id });
+      } else {
+        message.retryCount++;
+        if (message.retryCount >= message.maxRetries) {
+          logger.error('WebSocket: Queued message max retries reached, removing', { messageId: message.id });
+          this.messageQueue.delete(message.id);
+        } else {
+          logger.warn('WebSocket: Queued message delivery failed, will retry', { 
+            messageId: message.id, 
+            retryCount: message.retryCount 
+          });
+        }
+      }
+    }
+
+    this.saveMessageQueue();
+    logger.info('WebSocket: Queue processing complete', { remaining: this.messageQueue.size });
+  }
+
+  /**
+   * Remove oldest queued message
+   */
+  private removeOldestQueuedMessage(): void {
+    let oldestMessage: QueuedMessage | null = null;
+    let oldestTimestamp = Infinity;
+
+    for (const message of this.messageQueue.values()) {
+      if (message.timestamp < oldestTimestamp) {
+        oldestTimestamp = message.timestamp;
+        oldestMessage = message;
+      }
+    }
+
+    if (oldestMessage) {
+      this.messageQueue.delete(oldestMessage.id);
+      logger.warn('WebSocket: Removed oldest queued message', { messageId: oldestMessage.id });
     }
   }
 
@@ -475,12 +676,14 @@ private updateEventsData(event: RealTimeEvent): void {
    * Send unsubscription message to server
    */
   private sendUnsubscription(eventType: RealTimeEventType): void {
+    const message = {
+      type: 'unsubscribe',
+      eventType,
+      timestamp: new Date().toISOString(),
+    };
+
     if (this.ws?.readyState === 1) {
-      this.ws.send(JSON.stringify({
-        type: 'unsubscribe',
-        eventType,
-        timestamp: new Date().toISOString(),
-      }));
+      this.sendMessage('unsubscribe', message);
     }
   }
 
@@ -496,7 +699,7 @@ private updateEventsData(event: RealTimeEvent): void {
   }
 
   /**
-   * Handle reconnection logic
+   * Handle reconnection logic with exponential backoff and jitter
    */
   private handleReconnect(): void {
     if (this.connectionState.reconnectAttempts >= WS_CONFIG.MAX_RECONNECT_ATTEMPTS) {
@@ -507,10 +710,19 @@ private updateEventsData(event: RealTimeEvent): void {
 
     this.connectionState.reconnectAttempts++;
     this.connectionState.reconnecting = true;
+    this.healthMetrics.reconnectAttempts++;
     this.saveConnectionState();
 
-    const delay = WS_CONFIG.RECONNECT_DELAY * Math.pow(2, this.connectionState.reconnectAttempts - 1);
-    logger.info(`WebSocket: Reconnecting in ${delay}ms (attempt ${this.connectionState.reconnectAttempts})`);
+    const baseDelay = WS_CONFIG.RECONNECT_DELAY * Math.pow(2, this.connectionState.reconnectAttempts - 1);
+    const jitter = Math.random() * 1000;
+    const delay = baseDelay + jitter;
+
+    logger.info('WebSocket: Reconnecting', { 
+      attempt: this.connectionState.reconnectAttempts, 
+      delay: Math.round(delay),
+      jitter: Math.round(jitter),
+      baseDelay 
+    });
 
     this.reconnectTimeout = window.setTimeout(() => {
       this.initialize().catch(error => {
@@ -518,6 +730,142 @@ private updateEventsData(event: RealTimeEvent): void {
         this.handleReconnect();
       });
     }, delay);
+  }
+
+  /**
+   * Check if message is duplicate
+   */
+  private isDuplicateMessage(messageId: string): boolean {
+    const timestamp = this.messageDeduplication.get(messageId);
+    if (timestamp === undefined) {
+      return false;
+    }
+
+    const now = Date.now();
+    return (now - timestamp) < WS_CONFIG.DEDUPLICATION_WINDOW;
+  }
+
+  /**
+   * Record received message for deduplication
+   */
+  private recordMessageReceived(messageId: string): void {
+    const now = Date.now();
+    this.messageDeduplication.set(messageId, now);
+    this.saveDeduplicationCache();
+  }
+
+  /**
+   * Start health check interval
+   */
+  private startHealthCheck(): void {
+    this.healthCheckInterval = window.setInterval(() => {
+      this.updateHealthMetrics();
+    }, WS_CONFIG.HEALTH_CHECK_INTERVAL);
+  }
+
+  /**
+   * Update health metrics
+   */
+  private updateHealthMetrics(): void {
+    if (this.healthMetrics.connected && this.connectionStartTime > 0) {
+      this.healthMetrics.uptime = Date.now() - this.connectionStartTime;
+    }
+
+    this.updateConnectionQuality();
+
+    if (this.healthMetrics.connectionQuality === 'poor') {
+      logger.warn('WebSocket: Poor connection quality detected', {
+        latency: this.healthMetrics.latency,
+        deliveryRate: this.healthMetrics.deliverySuccessRate,
+      });
+    }
+  }
+
+  /**
+   * Update connection quality based on metrics
+   */
+  private updateConnectionQuality(): void {
+    if (!this.healthMetrics.connected) {
+      this.healthMetrics.connectionQuality = 'offline';
+      return;
+    }
+
+    const { latency, deliverySuccessRate } = this.healthMetrics;
+
+    if (latency < 200 && deliverySuccessRate >= 0.99) {
+      this.healthMetrics.connectionQuality = 'excellent';
+    } else if (latency < 500 && deliverySuccessRate >= 0.95) {
+      this.healthMetrics.connectionQuality = 'good';
+    } else if (latency < 1000 && deliverySuccessRate >= 0.90) {
+      this.healthMetrics.connectionQuality = 'fair';
+    } else {
+      this.healthMetrics.connectionQuality = 'poor';
+    }
+  }
+
+  /**
+   * Update delivery success rate
+   */
+  private updateDeliverySuccessRate(): void {
+    const total = this.healthMetrics.messagesReceived;
+    const delivered = this.healthMetrics.messagesDelivered;
+
+    if (total > 0) {
+      this.healthMetrics.deliverySuccessRate = delivered / total;
+    }
+  }
+
+  /**
+   * Start cleanup intervals for message queue and deduplication
+   */
+  private startCleanupIntervals(): void {
+    window.setInterval(() => {
+      this.cleanupExpiredMessages();
+    }, WS_CONFIG.MESSAGE_QUEUE_TTL / 2);
+
+    window.setInterval(() => {
+      this.cleanupDeduplicationCache();
+    }, WS_CONFIG.DEDUPLICATION_WINDOW / 2);
+  }
+
+  /**
+   * Remove expired messages from queue
+   */
+  private cleanupExpiredMessages(): void {
+    const now = Date.now();
+    let removed = 0;
+
+    for (const [id, message] of this.messageQueue.entries()) {
+      if (now - message.timestamp > WS_CONFIG.MESSAGE_QUEUE_TTL) {
+        this.messageQueue.delete(id);
+        removed++;
+      }
+    }
+
+    if (removed > 0) {
+      logger.debug('WebSocket: Cleaned up expired messages', { removed });
+      this.saveMessageQueue();
+    }
+  }
+
+  /**
+   * Remove old entries from deduplication cache
+   */
+  private cleanupDeduplicationCache(): void {
+    const now = Date.now();
+    let removed = 0;
+
+    for (const [id, timestamp] of this.messageDeduplication.entries()) {
+      if (now - timestamp > WS_CONFIG.DEDUPLICATION_WINDOW) {
+        this.messageDeduplication.delete(id);
+        removed++;
+      }
+    }
+
+    if (removed > 0) {
+      logger.debug('WebSocket: Cleaned up deduplication cache', { removed });
+      this.saveDeduplicationCache();
+    }
   }
 
   /**
@@ -571,16 +919,19 @@ private updateEventsData(event: RealTimeEvent): void {
   }
 
   /**
-   * Start ping interval to keep connection alive
+   * Start ping interval to keep connection alive and measure latency
    */
   private startPingInterval(): void {
     this.clearPingInterval();
     this.pingInterval = window.setInterval(() => {
       if (this.ws?.readyState === 1) {
+        const pingId = Date.now();
         this.ws.send(JSON.stringify({
           type: 'ping',
+          id: pingId,
           timestamp: new Date().toISOString(),
         }));
+        this.lastPongTime = pingId;
       }
     }, WS_CONFIG.PING_INTERVAL);
   }
@@ -670,10 +1021,73 @@ private updateEventsData(event: RealTimeEvent): void {
   }
 
   /**
+   * Save message queue to localStorage
+   */
+  private saveMessageQueue(): void {
+    try {
+      const queueArray = Array.from(this.messageQueue.values());
+      localStorage.setItem(STORAGE_KEYS.WS_MESSAGE_QUEUE, JSON.stringify(queueArray));
+    } catch (error) {
+      logger.error('WebSocket: Failed to save message queue', error);
+    }
+  }
+
+  /**
+   * Load message queue from localStorage
+   */
+  private loadMessageQueue(): void {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.WS_MESSAGE_QUEUE);
+      if (stored) {
+        const queueArray = JSON.parse(stored);
+        this.messageQueue = new Map(
+          queueArray.map((msg: QueuedMessage) => [msg.id, msg])
+        );
+        logger.info('WebSocket: Loaded message queue', { size: this.messageQueue.size });
+      }
+    } catch (error) {
+      logger.error('WebSocket: Failed to load message queue', error);
+    }
+  }
+
+  /**
+   * Save deduplication cache to localStorage
+   */
+  private saveDeduplicationCache(): void {
+    try {
+      const cacheArray = Array.from(this.messageDeduplication.entries());
+      localStorage.setItem(STORAGE_KEYS.WS_DEDUPLICATION_CACHE, JSON.stringify(cacheArray));
+    } catch (error) {
+      logger.error('WebSocket: Failed to save deduplication cache', error);
+    }
+  }
+
+  /**
+   * Load deduplication cache from localStorage
+   */
+  private loadDeduplicationCache(): void {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.WS_DEDUPLICATION_CACHE);
+      if (stored) {
+        const cacheArray = JSON.parse(stored);
+        this.messageDeduplication = new Map(cacheArray);
+        logger.info('WebSocket: Loaded deduplication cache', { size: this.messageDeduplication.size });
+      }
+    } catch (error) {
+      logger.error('WebSocket: Failed to load deduplication cache', error);
+    }
+  }
+
+  /**
    * Disconnect WebSocket gracefully
    */
   disconnect(): void {
     this.clearTimeouts();
+    
+    if (this.healthCheckInterval) {
+      window.clearInterval(this.healthCheckInterval);
+      this.healthCheckInterval = null;
+    }
     
     if (this.fallbackPollingInterval) {
       window.clearInterval(this.fallbackPollingInterval);
@@ -693,9 +1107,16 @@ private updateEventsData(event: RealTimeEvent): void {
     this.connectionState.connecting = false;
     this.connectionState.reconnecting = false;
     this.connectionState.reconnectAttempts = 0;
+    this.healthMetrics.connected = false;
+    this.healthMetrics.connectionQuality = 'offline';
     this.saveConnectionState();
     
-    logger.info('WebSocket: Disconnected');
+    logger.info('WebSocket: Disconnected', {
+      uptime: this.healthMetrics.uptime,
+      messagesSent: this.healthMetrics.messagesSent,
+      messagesReceived: this.healthMetrics.messagesReceived,
+      deliveryRate: this.healthMetrics.deliverySuccessRate,
+    });
   }
 
   /**
@@ -703,6 +1124,13 @@ private updateEventsData(event: RealTimeEvent): void {
    */
   getConnectionState(): WebSocketConnectionState {
     return { ...this.connectionState };
+  }
+
+  /**
+   * Get current health metrics
+   */
+  getHealthMetrics(): WebSocketHealthMetrics {
+    return { ...this.healthMetrics };
   }
 
   /**
