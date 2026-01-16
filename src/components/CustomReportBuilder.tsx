@@ -18,10 +18,14 @@ import type {
   ReportConfig,
   ReportTemplate,
   ReportPreviewData,
-  AvailableMetric,
   AvailableChart,
   AvailableTable,
 } from '../types/report.types';
+import type {
+  SchoolWideAnalytics,
+  StudentPerformanceAnalytics,
+  TeacherEffectivenessAnalytics,
+} from '../types/analytics.types';
 import { AVAILABLE_METRICS, AVAILABLE_CHARTS, AVAILABLE_TABLES } from '../constants/reports';
 import { DateRangeFilter } from './analytics/DateRangeFilter';
 import type { UserRole } from '../types';
@@ -58,10 +62,6 @@ const CustomReportBuilder: React.FC<CustomReportBuilderProps> = ({
   const [templateDescription, setTemplateDescription] = useState('');
   const [activeTab, setActiveTab] = useState<'metrics' | 'charts' | 'tables'>('metrics');
 
-  useEffect(() => {
-    loadTemplates();
-  }, []);
-
   const loadTemplates = useCallback(() => {
     try {
       const templates = reportTemplatesService.getTemplates();
@@ -72,6 +72,10 @@ const CustomReportBuilder: React.FC<CustomReportBuilderProps> = ({
       onShowToast('Failed to load templates', 'error');
     }
   }, [userId, userRole, onShowToast]);
+
+  useEffect(() => {
+    loadTemplates();
+  }, [loadTemplates]);
 
   const handleConfigChange = <K extends keyof ReportConfig>(key: K, value: ReportConfig[K]) => {
     setConfig(prev => ({ ...prev, [key]: value }));
@@ -225,8 +229,13 @@ const CustomReportBuilder: React.FC<CustomReportBuilderProps> = ({
   };
 
   const handleExport = async (format: 'pdf' | 'excel') => {
+    if (!preview) {
+      onShowToast('Please generate a preview first', 'error');
+      return;
+    }
+
     try {
-      await analyticsService.exportAnalyticsReport(preview as any, {
+      await analyticsService.exportAnalyticsReport(preview as unknown as SchoolWideAnalytics | StudentPerformanceAnalytics | TeacherEffectivenessAnalytics, {
         format,
         includeCharts: config.selectedCharts.length > 0,
         includeTables: config.selectedTables.length > 0,

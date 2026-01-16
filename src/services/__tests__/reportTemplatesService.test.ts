@@ -239,7 +239,7 @@ describe('ReportTemplatesService', () => {
     });
 
     it('should throw error when localStorage fails', () => {
-      const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      const spy = vi.spyOn(window.Storage.prototype, 'setItem').mockImplementation(() => {
         throw new Error('Storage error');
       });
 
