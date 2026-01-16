@@ -166,24 +166,33 @@ jobs:
         with:
           script: |
             const fs = require('fs');
+            const { execSync } = require('child_process');
+            
             let comment = '## E2E Test Results\n\n';
             
             comment += '### Test Status\n';
-            comment += '- ✅ E2E Tests: Passed\n';
-            comment += '- ✅ Visual Regression: Passed\n';
-            comment += '- ✅ Accessibility: Passed\n\n';
+            try {
+              const status = execSync('npx playwright show-report --json 2>/dev/null || echo "{}"', { encoding: 'utf8' });
+              const report = JSON.parse(status);
+              comment += `📊 Total Tests: ${report.summary?.total || 'N/A'}\n`;
+              comment += `✅ Passed: ${report.summary?.passed || 'N/A'}\n`;
+              comment += `❌ Failed: ${report.summary?.failed || 'N/A'}\n`;
+              comment += `⏭️ Skipped: ${report.summary?.skipped || 'N/A'}\n\n`;
+            } catch (e) {
+              comment += '- ⚠️ Unable to fetch test results from report\n\n';
+            }
             
             comment += '### Test Coverage\n';
-            comment += '- Admin Dashboard: ✅\n';
-            comment += '- Teacher Dashboard: ✅\n';
-            comment += '- Parent Dashboard: ✅\n';
-            comment += '- Student Portal: ✅\n';
-            comment += '- PPDB Registration: ✅\n\n';
+            comment += '- Admin Dashboard: Tested\n';
+            comment += '- Teacher Dashboard: Tested\n';
+            comment += '- Parent Dashboard: Tested\n';
+            comment += '- Student Portal: Tested\n';
+            comment += '- PPDB Registration: Tested\n\n';
             
             comment += '### Browser Coverage\n';
-            comment += '- Chromium: ✅\n';
-            comment += '- Firefox: ✅\n';
-            comment += '- WebKit: ✅\n\n';
+            comment += '- Chromium: Tested\n';
+            comment += '- Firefox: Tested\n';
+            comment += '- WebKit: Tested\n\n';
             
             comment += 'Full report available in artifacts.';
             

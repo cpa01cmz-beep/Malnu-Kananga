@@ -33,15 +33,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Checkout Code
-        uses: actions/checkout@v4
-        continue-on-error: true
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
-        continue-on-error: true
         with:
           node-version: 20
           cache: 'npm'
@@ -63,7 +61,6 @@ jobs:
           git merge origin/main --no-edit || echo "Merge conflict or already up to date"
 
       - name: Install Dependencies
-        continue-on-error: true
         run: npm ci
 
       - name: Setup OpenCode
@@ -75,4 +72,4 @@ jobs:
           prompt-file: .github/prompt/maintenance.md
           model: opencode/glm-4.7-free
           share: 'false'
-          continue-on-error: 'true'
+          continue-on-error: 'false'
