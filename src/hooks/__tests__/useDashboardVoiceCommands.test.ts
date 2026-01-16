@@ -603,13 +603,11 @@ describe('useDashboardVoiceCommands', () => {
         })
       );
 
-      const handled = act(() => {
-        return result.current.handleVoiceCommand({
-          id: 'manage_users',
-          action: 'MANAGE_USERS',
-          transcript: 'manage users',
-          confidence: 1.0,
-        });
+      const handled = result.current.handleVoiceCommand({
+        id: 'admin_only',
+        action: 'MANAGE_USERS',
+        transcript: 'manage users',
+        confidence: 1.0,
       });
 
       expect(handled).toBe(false);
@@ -628,13 +626,11 @@ describe('useDashboardVoiceCommands', () => {
         })
       );
 
-      const handled = act(() => {
-        return result.current.handleVoiceCommand({
-          id: 'unknown_command',
-          action: 'UNKNOWN_ACTION',
-          transcript: 'unknown command',
-          confidence: 0.5,
-        });
+      const handled = result.current.handleVoiceCommand({
+        id: 'unknown_command',
+        action: 'UNKNOWN_ACTION',
+        transcript: 'unknown command',
+        confidence: 0.5,
       });
 
       expect(handled).toBe(false);
