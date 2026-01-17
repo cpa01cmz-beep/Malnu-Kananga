@@ -68,10 +68,11 @@ CREATE INDEX IF NOT EXISTS idx_ppdb_status_date ON ppdb_registrants(status, regi
 
 -- ============================================
 -- 3. OPTIMIZED VIEWS for Common Queries
+-- Note: D1 doesn't support CREATE OR REPLACE VIEW, using CREATE VIEW IF NOT EXISTS
 -- ============================================
 
 -- View: Active sessions with user details (for session validation)
-CREATE OR REPLACE VIEW active_sessions_with_users AS
+CREATE VIEW IF NOT EXISTS active_sessions_with_users AS
 SELECT
   s.id,
   s.user_id,
@@ -88,7 +89,7 @@ JOIN users u ON s.user_id = u.id
 WHERE s.is_revoked = 0 AND s.expires_at > CURRENT_TIMESTAMP;
 
 -- View: Student grades with full context (for parent/teacher dashboards)
-CREATE OR REPLACE VIEW student_grades_detail AS
+CREATE VIEW IF NOT EXISTS student_grades_detail AS
 SELECT
   g.id,
   g.student_id,
@@ -117,7 +118,7 @@ LEFT JOIN teachers t ON g.created_by = t.id
 LEFT JOIN users tc ON t.user_id = tc.id;
 
 -- View: Attendance summary by class (for teacher/admin dashboards)
-CREATE OR REPLACE VIEW class_attendance_summary AS
+CREATE VIEW IF NOT EXISTS class_attendance_summary AS
 SELECT
   a.class_id,
   c.name as class_name,
@@ -134,7 +135,7 @@ GROUP BY a.class_id, c.name, a.date
 ORDER BY a.date DESC, c.name;
 
 -- View: Event summary with registration counts
-CREATE OR REPLACE VIEW events_with_registration_counts AS
+CREATE VIEW IF NOT EXISTS events_with_registration_counts AS
 SELECT
   e.id,
   e.event_name,
