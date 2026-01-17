@@ -2,7 +2,7 @@
 
 **Created**: 2025-01-01
 **Last Updated**: 2026-01-17
-**Version**: 2.1.4
+**Version**: 2.1.5
 **Status**: Active
 
 Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal MA Malnu Kananga**.
@@ -269,5 +269,5 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
 ---
 
 **Last Updated**: 2026-01-17
-**Version**: 2.1.4
+**Version**: 2.1.5
 **Status**: Active

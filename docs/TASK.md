@@ -1,7 +1,7 @@
 # Task List
 
 **Last Updated**: 2026-01-17
-**Version**: 3.2.3
+**Version**: 3.2.4
 
 ---
 
@@ -32,13 +32,15 @@
 
 ### P1: High Priority
 
-- [🔄 IN PROGRESS 2026-01-17] Fix documentation inconsistencies in TASK.md
-  - Remove duplicate P2 pending entries (bundle size optimization, WebSocket)
-  - Ensure Single Source of Truth (Point 8: Documentation)
-  - Mark completed tasks correctly across all sections
-  - **Mode**: SCRIBE MODE (Documentation - Point 8: Keep docs as Single Source of Truth)
-  - **Impact**: Eliminates confusion about task status, improves maintainability
-  - **Reason**: Bundle size optimization and WebSocket are already COMPLETED but incorrectly listed as pending in P2 section
+ - [✅ COMPLETED 2026-01-17] Fix documentation inconsistencies in TASK.md
+   - Removed duplicate P2 pending entries (bundle size optimization, WebSocket)
+   - Ensured Single Source of Truth (Point 8: Documentation)
+   - Marked completed tasks correctly across all sections
+   - **Mode**: SCRIBE MODE (Documentation - Point 8: Keep docs as Single Source of Truth)
+   - **Impact**: Eliminates confusion about task status, improves maintainability
+   - **Reason**: Bundle size optimization and WebSocket are already COMPLETED but were incorrectly listed as pending in P2 section
+   - **Lines Removed**: 30 duplicate lines from P2 section
+   - **Result**: Clean, consistent documentation with no pending duplicates
 
 - [✅ COMPLETED 2026-01-16] Implement backend WebSocket support
   - Frontend: Fully implemented (`webSocketService.ts`)
@@ -394,37 +396,7 @@
 
 
 
-### P2: Medium
-- [✅ COMPLETED 2026-01-16] Optimize bundle size to <500KB initial load
-  - **Achieved**: 157.77 KB GZIP (31.5 KB under target)
-  - **Before**: 649 KB (636 KB GZIP)
-  - **After**: 626 KB (157.77 KB GZIP)
-  - **Reduction**: 23 KB uncompressed, 478.23 KB GZIP (75% reduction!)
-  - **Optimizations Applied**:
-    - Lazy loaded public sections (Hero, Profile, Programs, News, PPDB, RelatedLinks)
-    - Public sections now loaded on-demand with SuspenseLoading fallbacks
-    - Created 5 new async chunks: HeroSection (3.27 KB), RelatedLinksSection (2.68 KB), ProfileSection (5.04 KB), PPDBSection (4.41 KB), NewsSection (2.37 KB)
-  - **Mode**: OPTIMIZER MODE (Performance, Standardization)
-  - **Impact**: Improved initial load time, reduced bandwidth, better time-to-interactive
-  - **Verification**:
-    - ✅ Typecheck: 0 errors
-    - ✅ Lint: 0 errors
-    - ✅ Build time: 13.35s (within acceptable range)
 
-- [✅ COMPLETED 2026-01-16] Add real-time notifications with WebSocket
-  - **Frontend**: Fully implemented (`webSocketService.ts`)
-  - **Backend**: Implemented `/ws` endpoint and `/api/updates` fallback
-  - [x] Added WebSocket server implementation to worker.js
-  - [x] Created `/ws` route for WebSocket connections
-  - [x] Created `/api/updates` fallback endpoint for long-polling
-  - [x] Implemented connection management with JWT authentication
-  - [x] Added message subscription and unsubscription handling
-  - [x] Implemented ping/pong for connection health
-  - [x] Added error messages for WebSocket (WS_AUTH_FAILED, WS_CONNECTION_LIMIT, WS_INVALID_MESSAGE, WS_UNAUTHORIZED)
-  - **Mode**: OPTIMIZER MODE (Integrations, Optimization Ops, Performance)
-  - **Impact**: Real-time notifications without polling overhead, improved performance
-  - **Lines Added**: ~200 lines (handleWebSocket, handleUpdates, mapTableToEventType)
-  - **Verified**: Lint passed (0 errors, 0 warnings)
 
 - [ ] Implement database query optimization
   - Add indexes for frequently queried columns
@@ -677,11 +649,11 @@
 - Documented branch naming conventions (feature/, fix/, refactor/, ux/, docs/)
 - Established 4-stage branch lifecycle (Creation, Development, Review & Merge, Cleanup)
 - Defined cleanup criteria, guidelines, and automation recommendations
-- Improved repository maintainability and Git operations
-- Enhanced developer onboarding with clear branch management rules
-- See docs/BRANCH_LIFECYCLE.md for complete policy
+  - Improved repository maintainability and Git operations
+  - Enhanced developer onboarding with clear branch management rules
+  - See docs/BRANCH_LIFECYCLE.md for complete policy
 
 ---
 
 **Last Updated**: 2026-01-17
-**Version**: 3.2.4
+**Version**: 3.2.5
