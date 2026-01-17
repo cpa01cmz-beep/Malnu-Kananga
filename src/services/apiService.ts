@@ -11,6 +11,7 @@ import {
   classifyError, 
   logError
 } from '../utils/errorHandler';
+import { performanceMonitor } from './performanceMonitor';
 
 import { API_BASE_URL as CONFIG_API_BASE_URL } from '../config';
 
@@ -487,6 +488,9 @@ async function request<T>(
     }
   }
 
+  // Start performance monitoring
+  const startReqTime = typeof window !== 'undefined' && window.performance ? window.performance.now() : Date.now();
+
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
@@ -498,6 +502,9 @@ async function request<T>(
     });
 
     const json = await response.json();
+
+    // Record performance metrics
+    performanceMonitor.recordResponse(endpoint, method, Date.now() - startReqTime, response.status);
 
     if (response.status === 401 && !isRefreshing && getRefreshToken()) {
       if (!isRefreshing) {
@@ -533,6 +540,10 @@ async function request<T>(
 
     return json;
   } catch (error) {
+    // Ensure performance monitoring is ended even on error
+    performanceMonitor.recordResponse(endpoint, method, Date.now() - startReqTime, 0);
+
+    // Auto-queue on network failure for write operations
     // Auto-queue on network failure for write operations
     if (isWriteOperation && !skipQueue && isNetworkError(error)) {
       logger.warn('Network error detected, queuing request for offline sync', {

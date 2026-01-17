@@ -352,19 +352,47 @@ src/
       - Migration ready for deployment: `wrangler d1 execute malnu-database --remote --file=migration-2026-01-17-database-optimization.sql`
       - See docs/DATABASE_OPTIMIZATION_GUIDE.md for complete usage examples and migration steps
       - See migration-2026-01-17-database-optimization.sql for all SQL changes
-     - Backend WebSocket server implementation (`/ws` endpoint)
-     - Fallback polling endpoint (`/api/updates`) for offline scenarios
-     - JWT authentication for WebSocket connections
-     - Message subscription and unsubscription handling
-     - Ping/pong mechanism for connection health
-     - Automatic disconnection and cleanup
-     - Frontend integration with `webSocketService.ts`
-     - Support for 16 real-time event types (grades, attendance, announcements, library, events, users, messages, notifications)
-     - Local storage synchronization for real-time updates
-     - Offline-first fallback with 30-second polling interval
-     - Connection state management with reconnection logic
-     - See `worker.js:1782-1940` for backend implementation
-     - See `src/services/webSocketService.ts` for frontend implementation
+
+   ### 3.30 Error Monitoring & Alerting System (Fase 5 - COMPLETED 2026-01-17)
+      - Implemented Sentry-based error tracking service (src/services/errorMonitoringService.ts)
+      - Implemented API performance monitoring service (src/services/performanceMonitor.ts)
+      - Implemented system health metrics collection (src/utils/healthMetrics.ts)
+      - Created centralized monitoring configuration (src/config/monitoringConfig.ts)
+      - Created monitoring initialization helper (src/utils/initializeMonitoring.ts)
+      - Integrated performance tracking in apiService.ts for all API requests
+      - Initialized monitoring services in App.tsx on mount
+      - Set monitoring user context on successful authentication
+      - Performance tracking features:
+        - Request/response time measurement
+        - Slow request detection (configurable threshold)
+        - Error rate tracking
+        - Consecutive failure detection
+        - Request metrics aggregation by endpoint
+      - Health metrics features:
+        - WebSocket connection health monitoring
+        - PWA offline/online status tracking
+        - Memory usage monitoring (JS heap)
+        - Browser and network information collection
+        - Alert system with severity levels (critical, warning, info)
+        - Health status checking
+      - Error monitoring features:
+        - Exception capture with user context
+        - Message capture with custom severity levels
+        - Breadcrumb tracking for user actions
+        - Transaction/span tracking (optional, requires DSN)
+        - Automatic error sending to Sentry in production
+        - Development-only logging
+      - Configuration features:
+        - Environment-based configuration (development/production)
+        - Configurable thresholds for slow requests, error rates, consecutive failures
+        - Web browser memory and PWA warning thresholds
+        - Alert thresholds for WebSocket, PWA, and performance metrics
+      - Updated tsconfig.json to use ES2022 module and allow import.meta
+      - SystemHealthDashboard component created (ready for future integration)
+      - See src/services/errorMonitoringService.ts for complete error tracking implementation
+      - See src/services/performanceMonitor.ts for complete performance monitoring implementation
+      - See src/utils/healthMetrics.ts for complete health metrics implementation
+      - See src/config/monitoringConfig.ts for monitoring configuration
 
 ## 4. User Roles & Access Control
 

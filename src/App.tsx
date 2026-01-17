@@ -13,6 +13,7 @@ import ConfirmationDialog from './components/ui/ConfirmationDialog';
 import { logger } from './utils/logger';
 import { useTheme } from './hooks/useTheme';
 import { HEIGHTS } from './config/heights';
+import { initializeMonitoring, setMonitoringUser } from './utils/initializeMonitoring';
 
 // Lazy load modal/dialog components
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
@@ -77,7 +78,12 @@ const App: React.FC = () => {
 
   // Initialize Advanced Theme System using useTheme hook for proper sync
   const { isReady: themeReady } = useTheme();
-  
+
+  useEffect(() => {
+    // Initialize all monitoring services on app mount
+    initializeMonitoring();
+  }, []);
+
   useEffect(() => {
     // Ensure ThemeManager is available throughout app
     if (themeReady) {
@@ -103,6 +109,13 @@ const App: React.FC = () => {
             loggedIn: true,
             role: user.role,
             extraRole: null
+          });
+          // Set monitoring user context
+          setMonitoringUser({
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            extraRole: user.extraRole,
           });
         }
       }
@@ -330,7 +343,9 @@ const App: React.FC = () => {
         </main>
       )}
 
-      <Footer onDocsClick={() => setIsDocsOpen(true)} />
+      <Footer
+        onDocsClick={() => setIsDocsOpen(true)}
+      />
 
       <div
         className={`fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2.5rem)] max-w-sm ${HEIGHTS.VIEWPORT.MEDIUM} ${HEIGHTS.VIEWPORT_MAX.COMPACT} transition-all duration-300 ease-in-out ${
