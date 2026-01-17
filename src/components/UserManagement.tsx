@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { PlusIcon } from './icons/PlusIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { TrashIcon } from './icons/TrashIcon';
@@ -9,7 +9,7 @@ import Select from './ui/Select';
 import Badge from './ui/Badge';
 import Modal from './ui/Modal';
 import ConfirmationDialog from './ui/ConfirmationDialog';
-import { api } from '../services/apiService';
+import { apiService } from '../services/apiService';
 import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useCanAccess } from '../hooks/useCanAccess';
@@ -40,7 +40,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
     setIsLoading(true);
     clearError();
     const result = await handleAsyncError(
-      () => api.users.getAll(),
+      () => apiService.users.getAll(),
       {
         operation: 'fetchUsers',
         component: 'UserManagement',
@@ -89,7 +89,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
     if (!userToDelete) return;
 
     const result = await handleAsyncError(
-      () => api.users.delete(userToDelete),
+      () => apiService.users.delete(userToDelete),
       {
         operation: 'deleteUser',
         component: 'UserManagement',
@@ -127,7 +127,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
               const previousUserData = users.find(u => u.id === userData.id)!;
               const roleChanged = previousUserData.role !== userData.role || previousUserData.extraRole !== userData.extraRole;
               
-              response = await api.users.update(userData.id!, userData);
+              response = await apiService.users.update(userData.id!, userData);
               
               if (response.success && roleChanged) {
                 // Send notification about role change
@@ -151,7 +151,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                 });
               }
           } else {
-              response = await api.users.create(userData);
+              response = await apiService.users.create(userData);
               
               if (response.success) {
                 // Send welcome notification to new user

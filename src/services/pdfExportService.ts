@@ -1,6 +1,12 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import type { UserOptions } from 'jspdf-autotable';
+import type {
+  SchoolWideAnalytics,
+  StudentPerformanceAnalytics,
+  TeacherEffectivenessAnalytics,
+  AnalyticsExportOptions,
+} from '../types/analytics.types';
 
 export interface PDFReportData {
   title: string;
@@ -236,7 +242,72 @@ class PDFExportService {
     if (validValues.length === 0) return 0;
     return validValues.reduce((sum, val) => sum + val, 0) / validValues.length;
   }
+
+  async generateAnalyticsReport(
+    analytics: SchoolWideAnalytics | StudentPerformanceAnalytics | TeacherEffectivenessAnalytics,
+    _options: AnalyticsExportOptions,
+  ): Promise<void> {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    this.addHeader(doc, 'Laporan Analitik', pageWidth);
+
+    let yPosition = 50;
+
+    if ('totalStudents' in analytics) {
+      const schoolData = analytics as SchoolWideAnalytics;
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Statistik Sekolah', 20, yPosition);
+      yPosition += 10;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      const summary: Record<string, string> = {
+        'Total Siswa': schoolData.totalStudents.toString(),
+        'Total Guru': schoolData.totalTeachers.toString(),
+        'Total Kelas': schoolData.totalClasses.toString(),
+        'Rata-rata Kehadiran': `${schoolData.overallAttendanceRate.toFixed(1)}%`,
+        'Rata-rata Nilai': `${schoolData.overallAverageGrade.toFixed(1)}%`,
+      };
+
+      Object.entries(summary).forEach(([key, value]) => {
+        doc.text(`${key}: ${value}`, 25, yPosition);
+        yPosition += 7;
+      });
+
+      yPosition += 10;
+    }
+
+    if ('studentName' in analytics) {
+      const studentData = analytics as StudentPerformanceAnalytics;
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Siswa: ${studentData.studentName}`, 20, yPosition);
+      yPosition += 10;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(`Kelas: ${studentData.className}`, 25, yPosition);
+      yPosition += 7;
+      doc.text(`GPA: ${studentData.overallGPA.toFixed(2)}`, 25, yPosition);
+      yPosition += 7;
+      doc.text(`Kehadiran: ${studentData.attendanceRate.toFixed(1)}%`, 25, yPosition);
+      yPosition += 7;
+      doc.text(`Peringkat: ${studentData.rankInClass}/${studentData.totalStudents}`, 25, yPosition);
+    }
+
+    this.addFooter(doc, pageWidth, pageHeight);
+
+    const filename = `analytics-report-${Date.now()}.pdf`;
+    doc.save(filename);
+  }
 }
+
+export const exportService = {
+  generateAnalyticsReport: (analytics: SchoolWideAnalytics | StudentPerformanceAnalytics | TeacherEffectivenessAnalytics, options: AnalyticsExportOptions) => pdfExportService.generateAnalyticsReport(analytics, options),
+};
 
 export const pdfExportService = new PDFExportService();
 export default PDFExportService;

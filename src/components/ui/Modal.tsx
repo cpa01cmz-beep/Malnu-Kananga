@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
@@ -16,6 +16,7 @@ export interface ModalProps {
   closeOnEscape?: boolean;
   showCloseButton?: boolean;
   className?: string;
+  'data-testid'?: string;
 }
 
 const sizeClasses: Record<ModalSize, string> = {
@@ -44,6 +45,7 @@ const Modal: React.FC<ModalProps> = ({
   closeOnEscape = true,
   showCloseButton = true,
   className = '',
+  'data-testid': dataTestId,
 }) => {
   const modalRef = useFocusTrap({ isOpen, onClose: closeOnEscape ? onClose : undefined });
 
@@ -82,6 +84,7 @@ const Modal: React.FC<ModalProps> = ({
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
         aria-describedby={description ? 'modal-description' : undefined}
+        data-testid={dataTestId}
       >
         {(title || showCloseButton) && (
           <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">

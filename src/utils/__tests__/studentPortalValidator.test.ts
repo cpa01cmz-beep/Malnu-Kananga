@@ -536,6 +536,7 @@ describe('StudentPortalValidator', () => {
       const student: Student = {
         id: '1',
         userId: 'user-1',
+        name: 'Budi Santoso',
         nisn: '1234567890',
         nis: '12345',
         class: 'X',
@@ -558,6 +559,7 @@ describe('StudentPortalValidator', () => {
       const student = {
         id: '1',
         userId: 'user-1',
+        name: 'Budi Santoso',
         nisn: '',
         nis: '12345',
         class: 'X',
@@ -580,6 +582,7 @@ describe('StudentPortalValidator', () => {
       const student = {
         id: '1',
         userId: 'user-1',
+        name: 'Budi Santoso',
         nisn: '1234567890',
         nis: '12345',
         class: 'X',
@@ -602,6 +605,7 @@ describe('StudentPortalValidator', () => {
       const student = {
         id: '1',
         userId: 'user-1',
+        name: 'Budi Santoso',
         nisn: '1234567890',
         nis: '12345',
         class: 'X',
@@ -624,6 +628,7 @@ describe('StudentPortalValidator', () => {
       const student = {
         id: '1',
         userId: 'user-1',
+        name: 'Budi Santoso',
         nisn: '',
         nis: '12345',
         class: 'X',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useVoiceNotifications } from '../hooks/useVoiceNotifications';
 import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';
 import { SpeakerXMarkIcon } from './icons/SpeakerXMarkIcon';

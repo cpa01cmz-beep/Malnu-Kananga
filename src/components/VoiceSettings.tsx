@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useVoiceSynthesis } from '../hooks/useVoiceSynthesis';
 import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { UsersIcon } from './icons/UsersIcon';
 import { ShareIcon, ShieldIcon, XMarkIcon } from './icons/MaterialIcons';
 import { MaterialSharing, ELibrary } from '../types';

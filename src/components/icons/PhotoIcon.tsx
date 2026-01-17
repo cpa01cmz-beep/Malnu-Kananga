@@ -1,5 +1,4 @@
 
-import React from 'react';
 
 /* eslint-disable no-undef */
 interface PhotoIconProps extends React.HTMLAttributes<SVGSVGElement> {

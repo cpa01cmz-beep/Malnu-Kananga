@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
@@ -18,9 +18,9 @@ import FormGrid from './ui/FormGrid';
 import { useAutoSave } from '../hooks/useAutoSave';
 import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
+import { STORAGE_KEYS } from '../constants';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
 import { standardValidationRules } from '../hooks/useFieldValidation';
 import { HEIGHT_CLASSES } from '../config/heights';
 
@@ -201,7 +201,7 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
   }, [isOpen, hasDraftRecovered, autoSaveActions, onShowToast]);
 
   // Monitor PPDB localStorage for new registrations and notify admins
-  useMonitorLocalStorage('malnu_ppdb_registrants', (newValue, oldValue) => {
+  useMonitorLocalStorage(STORAGE_KEYS.PPDB_REGISTRANTS, (newValue, oldValue) => {
     // Check for new PPDB registrations
     if (oldValue && typeof oldValue === 'object' && newValue && typeof newValue === 'object') {
       const oldRegistrants = Array.isArray(oldValue) ? oldValue : [];

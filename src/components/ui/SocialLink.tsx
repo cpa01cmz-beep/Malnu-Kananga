@@ -1,4 +1,3 @@
-import React from 'react';
 
 export type SocialLinkVariant = 'default' | 'primary' | 'secondary';
 export type SocialLinkSize = 'sm' | 'md' | 'lg' | 'xl';

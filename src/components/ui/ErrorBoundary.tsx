@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { logger } from '../../utils/logger';
 import Card from './Card';
 import Button from './Button';

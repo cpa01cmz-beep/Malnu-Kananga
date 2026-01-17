@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { FeaturedProgram } from '../types';
 import ImageWithFallback from './ImageWithFallback';
 import Card from './ui/Card';

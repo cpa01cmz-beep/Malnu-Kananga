@@ -1,11 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { UserRole, UserExtraRole } from '../types';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Alert from './ui/Alert';
 import IconButton from './ui/IconButton';
-import { api } from '../services/apiService';
+import { apiService } from '../services/apiService';
 import { getGradientClass } from '../config/gradients';
 import Modal from './ui/Modal';
 import { HEIGHT_CLASSES } from '../config/heights';
@@ -103,7 +103,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       setPasswordError('');
 
       try {
-        const response = await api.auth.login(email, password);
+        const response = await apiService.auth.login(email, password);
 
         if (response.success && response.data) {
           const user = response.data.user;
@@ -138,6 +138,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       closeOnEscape={true}
       showCloseButton={true}
       className={HEIGHT_CLASSES.MODAL.FULL}
+      data-testid="login-modal"
     >
       <div className="overflow-y-auto">
             <div className={`mb-6 p-5 ${getGradientClass('NEUTRAL')} dark:from-neutral-900/60 dark:to-neutral-800/60 rounded-xl border border-neutral-200/70 dark:border-neutral-700/70`}>

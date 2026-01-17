@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+        includeAssets: ['favicon.svg', 'apple-touch-icon.svg', 'mask-icon.svg'],
         manifest: {
           name: 'MA Malnu Kananga Smart Portal',
           short_name: 'MA Malnu App',
@@ -107,7 +107,7 @@ export default defineConfig(({ mode }) => {
               return 'vendor-genai';
             }
 
-            // Tesseract.js (OCR - large library)
+            // Tesseract.js (OCR - large library, lazy load)
             if (id.includes('tesseract.js')) {
               return 'vendor-tesseract';
             }
@@ -128,6 +128,21 @@ export default defineConfig(({ mode }) => {
               return 'vendor-charts';
             }
 
+            // i18next (internationalization)
+            if (id.includes('i18next')) {
+              return 'vendor-i18n';
+            }
+
+            // Papaparse (CSV parsing)
+            if (id.includes('papaparse')) {
+              return 'vendor-papaparse';
+            }
+
+            // QRCode (QR generation)
+            if (id.includes('qrcode')) {
+              return 'vendor-qrcode';
+            }
+
             // Test libraries (only in test mode)
             if (id.includes('vitest') || id.includes('@vitest')) {
               return 'tests';
@@ -137,6 +152,10 @@ export default defineConfig(({ mode }) => {
             if (id.includes('@heroicons/react')) {
               return 'vendor-icons';
             }
+
+            // Don't split React ecosystem to avoid circular dependencies with vendor-charts
+            // React will be included in main bundle and lazy-loaded chunks
+            // This prevents circular chunk: vendor-react -> vendor-charts -> vendor-react
 
             // Don't split application code
             return undefined;
@@ -150,6 +169,7 @@ export default defineConfig(({ mode }) => {
         compress: {
           drop_console: true,
           drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info', 'console.debug'],
         },
       },
     }
@@ -163,6 +183,7 @@ export default defineConfig(({ mode }) => {
         globals: true,
         environment: 'jsdom',
         setupFiles: ['./test-setup.ts'],
+        exclude: ['node_modules/**', 'dist/**', 'e2e/**', '.opencode/**'],
       }
     }
   }

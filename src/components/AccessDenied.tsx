@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Card from './ui/Card';
 import Alert from './ui/Alert';
 import Button from './ui/Button';

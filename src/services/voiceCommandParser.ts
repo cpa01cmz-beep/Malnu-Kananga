@@ -106,6 +106,48 @@ class VoiceCommandParser {
       language: VoiceLanguage.Indonesian,
     });
 
+    this.commands.set('toggle_theme', {
+      id: 'toggle_theme',
+      patterns: [...VOICE_COMMANDS.TOGGLE_THEME],
+      action: 'TOGGLE_THEME',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('change_language', {
+      id: 'change_language',
+      patterns: [...VOICE_COMMANDS.CHANGE_LANGUAGE],
+      action: 'CHANGE_LANGUAGE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('refresh_page', {
+      id: 'refresh_page',
+      patterns: [...VOICE_COMMANDS.REFRESH_PAGE],
+      action: 'REFRESH_PAGE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('zoom_in', {
+      id: 'zoom_in',
+      patterns: [...VOICE_COMMANDS.ZOOM_IN],
+      action: 'ZOOM_IN',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('zoom_out', {
+      id: 'zoom_out',
+      patterns: [...VOICE_COMMANDS.ZOOM_OUT],
+      action: 'ZOOM_OUT',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('open_documentation', {
+      id: 'open_documentation',
+      patterns: [...VOICE_COMMANDS.OPEN_DOCUMENTATION],
+      action: 'OPEN_DOCUMENTATION',
+      language: VoiceLanguage.Indonesian,
+    });
+
     // Admin dashboard commands
     this.commands.set('show_ppdb', {
       id: 'show_ppdb',
@@ -149,6 +191,41 @@ class VoiceCommandParser {
       language: VoiceLanguage.Indonesian,
     });
 
+    this.commands.set('manage_users', {
+      id: 'manage_users',
+      patterns: [...VOICE_COMMANDS.MANAGE_USERS],
+      action: 'MANAGE_USERS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('manage_permissions', {
+      id: 'manage_permissions',
+      patterns: [...VOICE_COMMANDS.MANAGE_PERMISSIONS],
+      action: 'MANAGE_PERMISSIONS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('ai_cache', {
+      id: 'ai_cache',
+      patterns: [...VOICE_COMMANDS.AI_CACHE],
+      action: 'AI_CACHE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('site_editor', {
+      id: 'site_editor',
+      patterns: [...VOICE_COMMANDS.SITE_EDITOR],
+      action: 'SITE_EDITOR',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('performance_dashboard', {
+      id: 'performance_dashboard',
+      patterns: [...VOICE_COMMANDS.PERFORMANCE_DASHBOARD],
+      action: 'PERFORMANCE_DASHBOARD',
+      language: VoiceLanguage.Indonesian,
+    });
+
     // Teacher dashboard commands
     this.commands.set('show_my_classes', {
       id: 'show_my_classes',
@@ -185,6 +262,48 @@ class VoiceCommandParser {
       language: VoiceLanguage.Indonesian,
     });
 
+    this.commands.set('material_upload', {
+      id: 'material_upload',
+      patterns: [...VOICE_COMMANDS.MATERIAL_UPLOAD],
+      action: 'MATERIAL_UPLOAD',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('school_inventory', {
+      id: 'school_inventory',
+      patterns: [...VOICE_COMMANDS.SCHOOL_INVENTORY],
+      action: 'SCHOOL_INVENTORY',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('lesson_planning', {
+      id: 'lesson_planning',
+      patterns: [...VOICE_COMMANDS.LESSON_PLANNING],
+      action: 'LESSON_PLANNING',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('generate_lesson_plan', {
+      id: 'generate_lesson_plan',
+      patterns: [...VOICE_COMMANDS.GENERATE_LESSON_PLAN],
+      action: 'GENERATE_LESSON_PLAN',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('save_lesson_plan', {
+      id: 'save_lesson_plan',
+      patterns: [...VOICE_COMMANDS.SAVE_LESSON_PLAN],
+      action: 'SAVE_LESSON_PLAN',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('export_lesson_plan', {
+      id: 'export_lesson_plan',
+      patterns: [...VOICE_COMMANDS.EXPORT_LESSON_PLAN],
+      action: 'EXPORT_LESSON_PLAN',
+      language: VoiceLanguage.Indonesian,
+    });
+
     // Student dashboard commands
     this.commands.set('show_my_grades', {
       id: 'show_my_grades',
@@ -204,6 +323,20 @@ class VoiceCommandParser {
       id: 'view_insights',
       patterns: [...VOICE_COMMANDS.VIEW_INSIGHTS],
       action: 'VIEW_INSIGHTS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('osis_events', {
+      id: 'osis_events',
+      patterns: [...VOICE_COMMANDS.OSIS_EVENTS],
+      action: 'OSIS_EVENTS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('learning_modules', {
+      id: 'learning_modules',
+      patterns: [...VOICE_COMMANDS.LEARNING_MODULES],
+      action: 'LEARNING_MODULES',
       language: VoiceLanguage.Indonesian,
     });
 
@@ -233,6 +366,107 @@ class VoiceCommandParser {
       id: 'see_notifications',
       patterns: [...VOICE_COMMANDS.SEE_NOTIFICATIONS],
       action: 'SEE_NOTIFICATIONS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_events', {
+      id: 'view_events',
+      patterns: [...VOICE_COMMANDS.VIEW_EVENTS],
+      action: 'VIEW_EVENTS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('messaging', {
+      id: 'messaging',
+      patterns: [...VOICE_COMMANDS.MESSAGING],
+      action: 'MESSAGING',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('payments', {
+      id: 'payments',
+      patterns: [...VOICE_COMMANDS.PAYMENTS],
+      action: 'PAYMENTS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('meetings', {
+      id: 'meetings',
+      patterns: [...VOICE_COMMANDS.MEETINGS],
+      action: 'MEETINGS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('reports', {
+      id: 'reports',
+      patterns: [...VOICE_COMMANDS.REPORTS],
+      action: 'REPORTS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('child_profile', {
+      id: 'child_profile',
+      patterns: [...VOICE_COMMANDS.CHILD_PROFILE],
+      action: 'CHILD_PROFILE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    // ELibrary commands
+    this.commands.set('browse_materials', {
+      id: 'browse_materials',
+      patterns: [...VOICE_COMMANDS.BROWSE_MATERIALS],
+      action: 'BROWSE_MATERIALS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('download_material', {
+      id: 'download_material',
+      patterns: [...VOICE_COMMANDS.DOWNLOAD_MATERIAL],
+      action: 'DOWNLOAD_MATERIAL',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('open_material', {
+      id: 'open_material',
+      patterns: [...VOICE_COMMANDS.OPEN_MATERIAL],
+      action: 'OPEN_MATERIAL',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    // Chat/Messaging commands
+    this.commands.set('reply_message', {
+      id: 'reply_message',
+      patterns: [...VOICE_COMMANDS.REPLY_MESSAGE],
+      action: 'REPLY_MESSAGE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_message_history', {
+      id: 'view_message_history',
+      patterns: [...VOICE_COMMANDS.VIEW_MESSAGE_HISTORY],
+      action: 'VIEW_MESSAGE_HISTORY',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    // Notifications commands
+    this.commands.set('view_notification_settings', {
+      id: 'view_notification_settings',
+      patterns: [...VOICE_COMMANDS.VIEW_NOTIFICATION_SETTINGS],
+      action: 'VIEW_NOTIFICATION_SETTINGS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('clear_notifications', {
+      id: 'clear_notifications',
+      patterns: [...VOICE_COMMANDS.CLEAR_NOTIFICATIONS],
+      action: 'CLEAR_NOTIFICATIONS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_notification_history', {
+      id: 'view_notification_history',
+      patterns: [...VOICE_COMMANDS.VIEW_NOTIFICATION_HISTORY],
+      action: 'VIEW_NOTIFICATION_HISTORY',
       language: VoiceLanguage.Indonesian,
     });
 

@@ -1,6 +1,6 @@
 # OpenCode Configuration for MA Malnu Kananga
 
-**Last Updated**: 2026-01-08 (Updated deployment documentation)
+**Last Updated**: 2026-01-16 (Repository verification complete)
 
 ## Project Overview
 
@@ -35,11 +35,10 @@ Note: Tests are located in `__tests__/` directories alongside the code they test
 ### Key Services
 
 - `apiService.ts` - Main API service with JWT auth
-- `authService.ts` - Authentication service
 - `geminiService.ts` - AI/LLM integration
 - `speechRecognitionService.ts` - Voice recognition
 - `speechSynthesisService.ts` - Text-to-speech
-- `pushNotificationService.ts` - PWA notifications
+- `unifiedNotificationManager.ts` - Unified notification system (PWA + in-app)
 - `ocrService.ts` - OCR for PPDB documents
 - `permissionService.ts` - Role-based permissions
 

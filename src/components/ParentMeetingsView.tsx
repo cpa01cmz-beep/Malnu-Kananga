@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { ToastType } from './Toast';

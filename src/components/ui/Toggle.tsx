@@ -1,6 +1,7 @@
-import React, { forwardRef } from 'react'
+import { forwardRef } from 'react'
+import type { ComponentPropsWithoutRef } from 'react'
 
-export interface ToggleProps extends Omit<React.ComponentPropsWithoutRef<'input'>, 'type'> {
+export interface ToggleProps extends Omit<ComponentPropsWithoutRef<'input'>, 'type'> {
   label?: string
   description?: string
   toggleSize?: 'sm' | 'md' | 'lg'

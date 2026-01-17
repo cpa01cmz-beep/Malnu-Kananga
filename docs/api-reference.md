@@ -1,15 +1,21 @@
 # API Reference
 
 **Created**: 2026-01-05
-**Last Updated**: 2026-01-07
-**Version**: 2.1.0
+**Last Updated**: 2026-01-15
+**Version**: 3.0.0
 **Status**: Active
 
 ## Overview
 
-This document provides comprehensive API reference for the MA Malnu Kananga web application. The application uses Cloudflare Workers as the backend with JWT-based authentication.
+This document provides comprehensive API reference for MA Malnu Kananga web application. The application uses Cloudflare Workers as backend with JWT-based authentication.
 
 **For deployment and setup instructions, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).**
+
+## Documentation Resources
+
+- **[OpenAPI 3.0 Specification](./openapi.yaml)** - Machine-readable API specification for Swagger UI, Postman, and other tools
+- **[WebSocket API Documentation](./WEBSOCKET_API.md)** - Real-time WebSocket events and integration guide
+- **[This Document](./api-reference.md)** - Detailed REST API reference with examples
 
 ## Architecture
 
@@ -58,7 +64,7 @@ This document provides comprehensive API reference for the MA Malnu Kananga web 
 ---
 
 **Related Documentation**:
-- [BLUEPRINT.md](./BLUEPRINT.md) - System architecture overview
+- [BLUEPRINT.md](../blueprint.md) - System architecture overview
 - [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Deployment and setup
 - [CODING_STANDARDS.md](./CODING_STANDARDS.md) - Development guidelines
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution process
@@ -1756,7 +1762,7 @@ VITE_LOG_LEVEL=DEBUG
 ---
 
 **Related Documentation:**
-- [BLUEPRINT.md](./BLUEPRINT.md) - System architecture overview
+- [BLUEPRINT.md](../blueprint.md) - System architecture overview
 - [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Deployment and setup
 - [CODING_STANDARDS.md](./CODING_STANDARDS.md) - Development guidelines
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution process

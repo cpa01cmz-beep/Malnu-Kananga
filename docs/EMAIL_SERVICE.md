@@ -183,7 +183,7 @@ const result = await emailService.sendTemplateEmail(
     subjectName: 'Matematika',
     grade: 85,
     semester: '1',
-    academicYear: '2024-2025',
+    academicYear: '2025-2026',
     className: 'X-A',
     teacherName: 'Bapak Guru',
     recipientName: 'Budi Santoso'
@@ -470,7 +470,7 @@ See `src/services/emailService.ts` for complete API documentation.
 ## Related Services
 
 - `pdfExportService.ts`: For generating PDF reports
-- `pushNotificationService.ts`: For in-app notifications
+- `unifiedNotificationManager.ts`: For unified in-app and PWA notifications
 - `apiService.ts`: For backend API communication
 
 ## Support

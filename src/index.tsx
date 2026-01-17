@@ -1,6 +1,6 @@
 
-import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { StrictMode } from 'react';
 import App from './App';
 import { logger } from './utils/logger';
 import './index.css';
@@ -9,6 +9,8 @@ import './styles/themes.css';
 import { registerSW } from 'virtual:pwa-register';
 // Import storage migration
 import { runStorageMigration } from './services/storageMigration';
+// Initialize i18n
+import './i18n/config';
 
 // Run storage migration before initialization
 runStorageMigration();
@@ -32,7 +34,7 @@ if (!rootElement) {
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
-  <React.StrictMode>
+  <StrictMode>
     <App />
-  </React.StrictMode>
+  </StrictMode>
 );

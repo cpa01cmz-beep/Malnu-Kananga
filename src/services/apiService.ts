@@ -1,20 +1,18 @@
 // apiService.ts - Frontend API Service
 // Handles all backend API interactions
 
-import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, UserRole, UserExtraRole } from '../types';
+import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, UserRole, UserExtraRole, ApiResponse } from '../types';
 import { logger } from '../utils/logger';
 import { permissionService } from './permissionService';
-import { STORAGE_KEYS } from '../constants';
+import { getAuthToken, setAuthToken, getRefreshToken, setRefreshToken, clearAuthToken, parseJwtPayload, isTokenExpired, isTokenExpiringSoon } from '../utils/authUtils';
 import { offlineActionQueueService } from './offlineActionQueueService';
 import { isNetworkError } from '../utils/networkStatus';
-import { 
-  classifyError, 
+import {
+  classifyError,
   logError
 } from '../utils/errorHandler';
 
-import { API_BASE_URL as CONFIG_API_BASE_URL } from '../config';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || CONFIG_API_BASE_URL;
+import { API_BASE_URL } from '../config/api';
 
 // ============================================
 // TYPES
@@ -30,95 +28,8 @@ export interface LoginResponse {
   };
 }
 
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data?: T;
-  error?: string;
-}
-
-export interface AuthPayload {
-  user_id: string;
-  email: string;
-  role: string;
-  extra_role?: string | null;
-  session_id: string;
-  exp: number;
-}
-
 export interface RequestOptions extends RequestInit {
-  skipQueue?: boolean; // Opt-out for real-time requirements
-}
-
-// ============================================
-// UTILITY FUNCTIONS
-// ============================================
-
-// Get stored auth token
-function getAuthToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-}
-
-// Set auth token
-function setAuthToken(token: string): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
-}
-
-// Get stored refresh token
-function getRefreshToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-}
-
-// Set refresh token
-function setRefreshToken(token: string): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, token);
-}
-
-// Clear auth tokens
-function clearAuthToken(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-  localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-}
-
-// Parse JWT token (without verification, for payload access only)
-function parseJwtPayload(token: string): AuthPayload | null {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      (typeof window !== 'undefined' ? window.atob(base64) : globalThis.Buffer.from(base64, 'base64').toString())
-        .split('')
-        .map((c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch {
-    return null;
-  }
-}
-
-// Check if token is expired
-function isTokenExpired(token: string): boolean {
-  const payload = parseJwtPayload(token);
-  if (!payload) return true;
-
-  const now = Math.floor(Date.now() / 1000);
-  return payload.exp < now;
-}
-
-// Check if token is about to expire (within 5 minutes)
-function isTokenExpiringSoon(token: string): boolean {
-  const payload = parseJwtPayload(token);
-  if (!payload) return true;
-
-  const now = Math.floor(Date.now() / 1000);
-  const fiveMinutes = 5 * 60;
-  return (payload.exp - now) < fiveMinutes;
+  skipQueue?: boolean;
 }
 
 // Track ongoing refresh to prevent multiple simultaneous refreshes
@@ -143,20 +54,26 @@ function onTokenRefreshed(token: string): void {
 export const authAPI = {
   // Login
   async login(email: string, password: string): Promise<LoginResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-    const data: LoginResponse = await response.json();
+      const data: LoginResponse = await response.json();
 
-    if (data.success && data.data?.token && data.data?.refreshToken) {
-      setAuthToken(data.data.token);
-      setRefreshToken(data.data.refreshToken);
+      if (data.success && data.data?.token && data.data?.refreshToken) {
+        setAuthToken(data.data.token);
+        setRefreshToken(data.data.refreshToken);
+      }
+
+      return data;
+    } catch (e: unknown) {
+      const error = classifyError(e, { operation: 'authAPI.login', timestamp: Date.now() });
+      logError(error);
+      throw error;
     }
-
-    return data;
   },
 
   // Logout
@@ -172,7 +89,7 @@ export const authAPI = {
           'Authorization': `Bearer ${token}`,
         },
       });
-    } catch (e) {
+    } catch (e: unknown) {
       logger.error('Logout error:', e);
     } finally {
       clearAuthToken();
@@ -201,7 +118,7 @@ export const authAPI = {
       }
 
       return false;
-    } catch (e) {
+    } catch (e: unknown) {
       logger.error('Refresh token error:', e);
       return false;
     }
@@ -962,13 +879,19 @@ export const eventFeedbackAPI = {
 export const chatAPI = {
   // Get RAG context for chat
   async getContext(message: string): Promise<{ context: string }> {
-    const response = await fetch(`${API_BASE_URL}/api/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      });
 
-    return response.json();
+      return response.json();
+    } catch (e: unknown) {
+      const error = classifyError(e, { operation: 'chatAPI.getContext', timestamp: Date.now() });
+      logError(error);
+      throw error;
+    }
   },
 };
 
@@ -1466,6 +1389,3 @@ export const apiService = {
 
 // Export request function for testing
 export { request };
-
-// Export for backward compatibility
-export const api = apiService;

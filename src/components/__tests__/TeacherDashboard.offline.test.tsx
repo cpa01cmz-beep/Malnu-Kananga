@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { vi, describe, it, beforeEach, expect } from 'vitest';
 import TeacherDashboard from '../TeacherDashboard';
+import { STORAGE_KEYS } from '../../constants';
 
 // Mock hooks
 vi.mock('../../hooks/useUnifiedNotifications', () => ({
@@ -56,7 +57,7 @@ describe('TeacherDashboard Offline Support', () => {
   });
 
   it('should show offline message in error state', async () => {
-    localStorage.removeItem('malnu_teacher_dashboard_cache');
+    localStorage.removeItem(STORAGE_KEYS.TEACHER_DASHBOARD_CACHE);
     
     render(<TeacherDashboard {...defaultProps} />);
     

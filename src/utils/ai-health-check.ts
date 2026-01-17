@@ -3,6 +3,8 @@
  * Validates that environment configuration allows AI functionality
  */
 
+import { EXTERNAL_LINKS } from '../constants';
+
 export async function checkAIServiceHealth(): Promise<{
   status: 'healthy' | 'warning' | 'error';
   issues: string[];
@@ -18,7 +20,7 @@ export async function checkAIServiceHealth(): Promise<{
     recommendations.push('Set VITE_GEMINI_API_KEY in .env file');
   } else if (typeof apiKey === 'string' && (apiKey.includes('your_actual') || apiKey.includes('placeholder'))) {
     issues.push('VITE_GEMINI_API_KEY contains placeholder value');
-    recommendations.push('Replace placeholder with actual Gemini API key from https://makersuite.google.com/app/apikey');
+    recommendations.push(`Replace placeholder with actual Gemini API key from ${EXTERNAL_LINKS.MAKERSUITE_API}`);
   }
 
   // Check worker configuration

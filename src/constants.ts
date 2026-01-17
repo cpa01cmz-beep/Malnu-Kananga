@@ -66,6 +66,9 @@ export const STORAGE_KEYS = {
     ADMIN_DASHBOARD_CACHE: 'malnu_admin_dashboard_cache',
     ATTENDANCE_CACHE: 'malnu_attendance_cache',
     QUEUED_ACTIONS: 'malnu_queued_actions',
+
+    // Lesson Planning
+    LESSON_PLANS: 'malnu_lesson_plans',
     
     // Programs and News storage keys
     PROGRAMS: 'malnu_programs',
@@ -90,6 +93,8 @@ export const STORAGE_KEYS = {
     
     // WebSocket real-time sync
     WS_CONNECTION: 'malnu_ws_connection',
+    WS_MESSAGE_QUEUE: 'malnu_ws_message_queue',
+    WS_DEDUPLICATION_CACHE: 'malnu_ws_deduplication_cache',
     ANNOUNCEMENTS: 'malnu_announcements',
     NOTIFICATIONS: 'malnu_notifications',
     ATTENDANCE: 'malnu_attendance',
@@ -110,29 +115,27 @@ export const STORAGE_KEYS = {
     EMAIL_NOTIFICATION_SETTINGS: 'malnu_email_notification_settings',
     EMAIL_ANALYTICS: 'malnu_email_analytics',
     EMAIL_DELIVERY_HISTORY: 'malnu_email_delivery_history',
+    
+    // Storage Migration
+    STORAGE_MIGRATION_VERSION: 'malnu_storage_migration_version',
+    
+    // AI Editor Audit
+    AI_EDITOR_AUDIT_LOG: 'malnu_ai_editor_audit_log',
+    
+    // Language / i18n
+    LANGUAGE: 'malnu_language',
+
+    // Report Templates
+    REPORT_TEMPLATES: 'malnu_report_templates',
+
+    // Real-Time Collaboration (Milestone 3.0)
+    COLLABORATIVE_DOCUMENTS: 'malnu_collaborative_documents',
+    CLASSROOM_SESSIONS: 'malnu_classroom_sessions',
+    CONVERSATIONS: 'malnu_conversations',
+    CHAT_MESSAGES: 'malnu_chat_messages',
+    CHAT_PRESENCE: 'malnu_chat_presence',
+    PRESENCE: 'malnu_presence',
 } as const;
-
-export const USER_ROLES = {
-    ADMIN: 'admin',
-    TEACHER: 'teacher',
-    STUDENT: 'student',
-    PARENT: 'parent',
-    STAFF: 'staff',
-    OSIS: 'osis',
-    WAKASEK: 'wakasek',
-    KEPSEK: 'kepsek',
-} as const;
-
-export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
-
-export const USER_EXTRA_ROLES = {
-    STAFF: 'staff',
-    OSIS: 'osis',
-    WAKASEK: 'wakasek',
-    KEPSEK: 'kepsek',
-} as const;
-
-export type UserExtraRole = typeof USER_EXTRA_ROLES[keyof typeof USER_EXTRA_ROLES];
 
 export const APP_CONFIG = {
     SCHOOL_NAME: 'MA Malnu Kananga',
@@ -172,6 +175,25 @@ export const ERROR_MESSAGES = {
 export const ADMIN_EMAIL = 'admin@malnu-kananga.sch.id';
 export const INFO_EMAIL = 'info@ma-malnukananga.sch.id';
 
+export const IMAGE_URLS = {
+    UNSPLASH_TAHFIDZ: 'https://images.unsplash.com/photo-1599339942293-86b72a38547b?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600',
+    UNSPLASH_KAJIAN: 'https://images.unsplash.com/photo-1585056701393-85835978f84e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600',
+    PLACEHOLDER_SAINS_TEKNOLOGI: 'https://placehold.co/600x400?text=Sains+&+Teknologi',
+    UNSPLASH_PRESTASI: 'https://images.unsplash.com/photo-1571260899204-42aebca5a2aa?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600',
+    UNSPLASH_PPDB: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600',
+    UNSPLASH_BAKTI_SOSIAL: 'https://images.unsplash.com/photo-1618494955439-78a25c1b698a?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600',
+    PLACEHOLDER_PROGRAM: 'https://placehold.co/600x400?text=Program',
+    PLACEHOLDER_NEWS: 'https://placehold.co/600x400?text=News',
+} as const;
+
+export const EXTERNAL_LINKS = {
+    RDM_MALNU_KANANGA: 'https://rdm.ma-malnukananga.sch.id',
+    KEMENAG_RI: 'https://kemenag.go.id',
+    EMIS_PENDIS: 'https://emis.kemenag.go.id',
+    SIMPATIKA: 'https://simpatika.kemenag.go.id',
+    MAKERSUITE_API: 'https://makersuite.google.com/app/apikey',
+} as const;
+
 export const VOICE_COMMANDS = {
     OPEN_SETTINGS: ['buka pengaturan', 'buka setting', 'open settings', 'open setting'],
     CLOSE_SETTINGS: ['tutup pengaturan', 'tutup setting', 'close settings', 'close setting'],
@@ -187,6 +209,12 @@ export const VOICE_COMMANDS = {
     GO_HOME: ['pulang', 'kembali', 'go home', 'beranda', 'dashboard'],
     LOGOUT: ['keluar', 'logout', 'sign out'],
     HELP: ['bantuan', 'help', 'bisa ngapain saja'],
+    TOGGLE_THEME: ['ubah tema', 'ganti tema', 'toggle theme', 'change theme', 'dark mode', 'light mode'],
+    CHANGE_LANGUAGE: ['ubah bahasa', 'ganti bahasa', 'change language', 'bahasa', 'language'],
+    REFRESH_PAGE: ['refresh', 'segarkan halaman', 'reload', 'refresh page'],
+    ZOOM_IN: ['perbesar', 'zoom in', 'perbesar tampilan'],
+    ZOOM_OUT: ['perkecil', 'zoom out', 'perkecil tampilan'],
+    OPEN_DOCUMENTATION: ['buka dokumentasi', 'dokumentasi', 'documentation', 'help documentation'],
     
     // Admin dashboard commands
     SHOW_PPDB: ['tampilkan ppdb', 'lihat pendaftaran', 'show ppdb', 'buka ppdb'],
@@ -195,6 +223,11 @@ export const VOICE_COMMANDS = {
     SEARCH_LIBRARY: ['cari materi', 'cari di perpustakaan', 'search materials', 'search library', 'cari materi {query}', 'search materials {query}', 'cari di perpustakaan {query}', 'search library {query}'],
     GO_TO_CALENDAR: ['kalender', 'buka kalender', 'calendar', 'go to calendar'],
     SHOW_STATISTICS: [' statistik', 'tampilkan statistik', 'show statistics', 'stats'],
+    MANAGE_USERS: ['kelola pengguna', 'manajemen pengguna', 'manage users', 'users'],
+    MANAGE_PERMISSIONS: ['kelola izin', 'manajemen izin', 'manage permissions', 'permissions'],
+    AI_CACHE: ['cache ai', 'cache kecerdasan buatan', 'ai cache', 'ai cache manager'],
+    SITE_EDITOR: ['editor situs', 'edit situs', 'site editor', 'edit website'],
+    PERFORMANCE_DASHBOARD: ['dashboard performa', 'kinerja sistem', 'performance dashboard', 'system performance'],
     
     // Teacher dashboard commands
     SHOW_MY_CLASSES: ['kelas saya', 'tampilkan kelas', 'show my classes', 'my classes'],
@@ -202,17 +235,45 @@ export const VOICE_COMMANDS = {
     VIEW_ATTENDANCE: ['absensi', 'lihat absensi', 'view attendance', 'attendance'],
     CREATE_ANNOUNCEMENT: ['buat pengumuman', 'pengumuman baru', 'create announcement', 'announcement'],
     VIEW_SCHEDULE: ['jadwal', 'lihat jadwal', 'view schedule', 'schedule'],
+    MATERIAL_UPLOAD: ['upload materi', 'unggah materi', 'material upload', 'upload materials'],
+    SCHOOL_INVENTORY: ['inventaris sekolah', 'barang sekolah', 'school inventory', 'inventory'],
+    LESSON_PLANNING: ['rencana pelajaran', 'perencanaan pelajaran', 'lesson planning', 'lesson plan'],
+    GENERATE_LESSON_PLAN: ['buat rencana pelajaran', 'generate lesson plan', 'generate lesson plan for {subject}', 'create lesson plan'],
+    SAVE_LESSON_PLAN: ['simpan rencana pelajaran', 'save lesson plan', 'simpan rencana'],
+    EXPORT_LESSON_PLAN: ['ekspor rencana pelajaran', 'export lesson plan', 'ekspor pdf'],
     
     // Student dashboard commands
     SHOW_MY_GRADES: ['nilai saya', 'lihat nilai saya', 'show my grades', 'my grades'],
     CHECK_ATTENDANCE: ['cek absensi', 'absensi saya', 'check attendance', 'my attendance'],
     VIEW_INSIGHTS: ['insight', 'lihat insight', 'view insights', 'my insights'],
+    OSIS_EVENTS: ['kegiatan osis', 'event osis', 'osis events', 'student events'],
+    LEARNING_MODULES: ['modul pembelajaran', 'materi belajar', 'learning modules', 'study modules'],
     
     // Parent dashboard commands
     VIEW_CHILD_GRADES: ['nilai anak', 'lihat nilai anak', 'view child grades', 'child grades'],
     VIEW_CHILD_ATTENDANCE: ['absensi anak', 'lihat absensi anak', 'view child attendance', 'child attendance'],
     VIEW_CHILD_SCHEDULE: ['jadwal anak', 'lihat jadwal anak', 'view child schedule', 'child schedule'],
     SEE_NOTIFICATIONS: ['notifikasi', 'lihat notifikasi', 'see notifications', 'notifications'],
+    VIEW_EVENTS: ['lihat kegiatan', 'event', 'events', 'school events'],
+    MESSAGING: ['pesan', 'messaging', 'chat', 'kirim pesan'],
+    PAYMENTS: ['pembayaran', 'biaya', 'payments', 'view payments'],
+    MEETINGS: ['pertemuan', 'rapat', 'meetings', 'view meetings'],
+    REPORTS: ['laporan', 'reports', 'view reports', 'consolidated reports'],
+    CHILD_PROFILE: ['profil anak', 'child profile', 'view profile'],
+    
+    // ELibrary commands
+    BROWSE_MATERIALS: ['jelajahi materi', 'browse materials', 'lihat semua materi'],
+    DOWNLOAD_MATERIAL: ['unduh materi', 'download material', 'download {filename}'],
+    OPEN_MATERIAL: ['buka materi', 'open material', 'buka {filename}'],
+    
+    // Chat/Messaging commands
+    REPLY_MESSAGE: ['balas pesan', 'reply message', 'reply to {name}'],
+    VIEW_MESSAGE_HISTORY: ['riwayat pesan', 'message history', 'chat history'],
+    
+    // Notifications commands
+    VIEW_NOTIFICATION_SETTINGS: ['pengaturan notifikasi', 'notification settings', 'notifikasi settings'],
+    CLEAR_NOTIFICATIONS: ['hapus notifikasi', 'clear notifications', 'bersihkan notifikasi'],
+    VIEW_NOTIFICATION_HISTORY: ['riwayat notifikasi', 'notification history', 'history notifikasi'],
 } as const;
 
 export const NOTIFICATION_CONFIG = {
@@ -266,14 +327,14 @@ export const NOTIFICATION_ERROR_MESSAGES = {
 } as const;
 
 export const NOTIFICATION_ICONS = {
-    DEFAULT: '/pwa-192x192.png',
-    ANNOUNCEMENT: '/pwa-192x192.png',
-    GRADE: '/pwa-192x192.png',
-    PPDB: '/pwa-192x192.png',
-    EVENT: '/pwa-192x192.png',
-    LIBRARY: '/pwa-192x192.png',
-    SYSTEM: '/pwa-192x192.png',
-    OCR: '/pwa-192x192.png',
+    DEFAULT: '/pwa-192x192.svg',
+    ANNOUNCEMENT: '/pwa-192x192.svg',
+    GRADE: '/pwa-192x192.svg',
+    PPDB: '/pwa-192x192.svg',
+    EVENT: '/pwa-192x192.svg',
+    LIBRARY: '/pwa-192x192.svg',
+    SYSTEM: '/pwa-192x192.svg',
+    OCR: '/pwa-192x192.svg',
 } as const;
 
 export const VOICE_NOTIFICATION_CONFIG = {
@@ -323,4 +384,80 @@ export const OPACITY_TOKENS = {
     BACKDROP_BLUR: 'backdrop-blur',
     BACKDROP_BLUR_SM: 'backdrop-blur-sm',
     BACKDROP_BLUR_XL: 'backdrop-blur-xl',
+} as const;
+
+export const PERFORMANCE_CONFIG = {
+    PERFORMANCE_ALERTS_KEY: 'malnu_performance_alerts',
+    
+    CORE_WEB_VITALS_THRESHOLDS: {
+        LCP: { good: 2500, poor: 4000 },
+        FID: { good: 100, poor: 300 },
+        CLS: { good: 0.1, poor: 0.25 },
+        FCP: { good: 1800, poor: 3000 },
+        TTFB: { good: 800, poor: 1800 },
+        INP: { good: 200, poor: 500 },
+    },
+    
+    ALERT_THRESHOLDS: {
+        LCP: 4000,
+        FID: 300,
+        CLS: 0.25,
+        FCP: 3000,
+        TTFB: 1800,
+        INP: 500,
+    },
+    
+    PERFORMANCE_BUDGETS: [
+        { type: 'javascript', size: 200, unit: 'kb' as const },
+        { type: 'css', size: 50, unit: 'kb' as const },
+        { type: 'image', size: 500, unit: 'kb' as const },
+        { type: 'total', size: 1000, unit: 'kb' as const },
+    ],
+    
+    MONITORING_CONFIG: {
+        enabled: true,
+        sampleRate: 1.0,
+        budgetAlertThreshold: 1.1,
+        alertHistoryMaxSize: 50,
+        reportInterval: 60000,
+    },
+    
+    TARGET_SCORES: {
+        performance: 90,
+        accessibility: 95,
+        bestPractices: 90,
+        seo: 90,
+    },
+} as const;
+
+export const MOBILE_CONFIG = {
+    MIN_TOUCH_TARGET_SIZE: 44,
+    DEFAULT_TOUCH_TARGET_SIZE: 48,
+    SWIPE_THRESHOLD: 50,
+    LONG_PRESS_DELAY: 500,
+    DOUBLE_TAP_DELAY: 300,
+    MOBILE_BREAKPOINT: 640,
+    TABLET_BREAKPOINT: 1024,
+    DESKTOP_BREAKPOINT: 1280,
+    DEBOUNCE_DELAY: 150,
+    THROTTLE_DELAY: 100,
+    HAPTIC_FEEDBACK_DURATION: {
+        light: 10,
+        medium: 20,
+        heavy: 30,
+    },
+    HAPTIC_PATTERNS: {
+        success: [10, 30, 10],
+        error: [50, 50, 50],
+        warning: [20, 30],
+        tap: [5],
+        swipe: [5, 5, 5, 5, 5],
+        scaleUp: [5, 10, 15],
+        scaleDown: [15, 10, 5],
+    },
+    OPTIMIZATION_ENABLED: true,
+    ENABLE_HAPTIC_FEEDBACK: true,
+    ENABLE_TOUCH_GESTURES: true,
+    VIEWPORT_HEIGHT_OFFSET: 80,
+    KEYBOARD_VISIBLE_THRESHOLD: 0.75,
 } as const;

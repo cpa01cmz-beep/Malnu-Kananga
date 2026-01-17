@@ -1,11 +1,11 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { NotificationContext } from './NotificationContext.types';
 
-export function NotificationProvider({ children }: { children: React.ReactNode }) {
+export function NotificationProvider({ children }: { children: ReactNode }) {
   const pushNotificationHelpers = usePushNotifications();
   const eventNotificationHelpers = useEventNotifications();
 
@@ -28,7 +28,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
   // Monitor grade updates for student/parent notifications
   eventNotificationHelpers.useMonitorLocalStorage(
-    'malnu_grades',
+    STORAGE_KEYS.GRADES,
     (newValue: unknown, oldValue: unknown) => {
       // This would be triggered when grades are updated
       // Implementation depends on the grade data structure

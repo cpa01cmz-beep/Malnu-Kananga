@@ -24,13 +24,12 @@ export interface LatestNews {
 }
 
 export type UserRole = 'admin' | 'teacher' | 'student' | 'parent';
-
-// Role tambahan untuk tugas khusus
 export type UserExtraRole = 'staff' | 'osis' | 'wakasek' | 'kepsek' | null;
 
 export interface Student {
   id: string;
   userId: string;
+  name: string;
   nisn: string;
   nis: string;
   class: string;
@@ -46,6 +45,7 @@ export interface Student {
 export interface Teacher {
   id: string;
   userId: string;
+  name: string;
   nip: string;
   subjects: string;
   joinDate: string;
@@ -1107,4 +1107,20 @@ export interface OCRValidationNotificationData extends OCRValidationEvent {
   requiresReview: boolean;
   automatedRetryCount?: number;
   nextAction?: 'review' | 'reprocess' | 'manual-entry';
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data?: T;
+  error?: string;
+}
+
+export interface AuthPayload {
+  user_id: string;
+  email: string;
+  role: string;
+  extra_role?: string | null;
+  session_id: string;
+  exp: number;
 }

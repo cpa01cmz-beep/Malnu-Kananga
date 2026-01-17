@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 import type { FeaturedProgram, LatestNews } from '../types';
-import { WORKER_CHAT_ENDPOINT } from '../config';
+import { WORKER_CHAT_ENDPOINT } from '../config/api';
 import { STORAGE_KEYS } from '../constants';
 import {
   classifyError,
@@ -12,7 +12,6 @@ import {
 import { logger } from '../utils/logger';
 import { validateAIResponse } from '../utils/aiEditorValidator';
 import { chatCache, analysisCache, editorCache } from './aiCacheService';
-import { offlineActionQueueService } from './offlineActionQueueService';
 
 // Initialize the Google AI client
 const ai = new GoogleGenAI({ apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' });
@@ -311,7 +310,7 @@ Please provide the updated JSON content following the safety and content rules a
                         const session = JSON.parse(authSession);
                         return session.user?.id || session.userId || 'anonymous';
                     }
-                } catch (e) {
+                } catch (e: unknown) {
                     logger.warn('Failed to get user ID for validation:', e);
                 }
                 return 'anonymous';
@@ -368,7 +367,8 @@ export async function analyzeStudentPerformance(studentData: {
       // Generate a unique ID for this analysis
       const analysisId = `student_analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
-      // Queue the analysis
+      // Queue the analysis using dynamic import to break circular dependency
+      const { offlineActionQueueService } = await import('./offlineActionQueueService');
       offlineActionQueueService.addAction({
         type: 'create',
         entity: 'ai_analysis',

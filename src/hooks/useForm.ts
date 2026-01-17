@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { useFieldValidation, UseFieldValidationOptions } from './useFieldValidation';
+import type { UseFieldValidationOptions } from './useFieldValidation';
 import { logger } from '../utils/logger';
 
 export interface FormFieldConfig {
@@ -73,7 +73,6 @@ export function useForm(options: UseFormOptions): UseFormReturn {
     isDirty: false
   });
 
-  const _fieldValidatorsRef = useRef<Record<string, ReturnType<typeof useFieldValidation>>>({});
   const validateOnBlurRef = useRef(validateOnBlur);
   const validateOnChangeRef = useRef(validateOnChange);
 
@@ -105,10 +104,17 @@ export function useForm(options: UseFormOptions): UseFormReturn {
   /**
    * Set field value
    */
-  const setFieldValue = useCallback((name: string, value: unknown) => {
+   const setFieldValue = useCallback((name: string, value: unknown) => {
     setFormState(prev => {
       const newFields = { ...prev.fields, [name]: value };
-      const isDirty = JSON.stringify(newFields) !== JSON.stringify(initialValues);
+      let isDirty = false;
+      
+      try {
+        isDirty = JSON.stringify(newFields) !== JSON.stringify(initialValues);
+      } catch (error) {
+        logger.warn('Failed to calculate dirty state:', error);
+        isDirty = true;
+      }
 
       return {
         ...prev,

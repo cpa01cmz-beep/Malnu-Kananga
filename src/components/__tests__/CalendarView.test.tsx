@@ -3,10 +3,14 @@ import { render, screen } from '@testing-library/react';
 import CalendarView from '../CalendarView';
 import type { Schedule } from '../../types';
 
-// Mock Heroicons
-vi.mock('@heroicons/react/24/outline', () => ({
-  ChevronLeftIcon: () => <div data-testid="chevron-left" />,
+// Mock icons
+vi.mock('../icons/ChevronLeftIcon', () => ({
+  default: () => <div data-testid="chevron-left" />,
+}));
+vi.mock('../icons/MaterialIcons', () => ({
   ChevronRightIcon: () => <div data-testid="chevron-right" />,
+}));
+vi.mock('../icons/CalendarDaysIcon', () => ({
   CalendarDaysIcon: () => <div data-testid="calendar-days" />,
 }));
 

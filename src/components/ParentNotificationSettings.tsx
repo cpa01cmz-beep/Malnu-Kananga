@@ -1,5 +1,5 @@
 // ParentNotificationSettings.tsx - Component for configuring parent grade notifications
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BellIcon } from './icons/BellIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { ClockIcon } from './icons/MaterialIcons';
@@ -13,6 +13,7 @@ import { useAutoSave } from '../hooks/useAutoSave';
 import Button from './ui/Button';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { HEIGHT_CLASSES } from '../config/heights';
+import { STORAGE_KEYS } from '../constants';
 
 interface ParentNotificationSettingsProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -45,7 +46,7 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
   const [autoSaveState, autoSaveActions] = useAutoSave<ParentGradeNotificationSettings>(
     defaultSettings,
     {
-      storageKey: 'malnu_parent_notification_settings',
+      storageKey: STORAGE_KEYS.PARENT_NOTIFICATION_SETTINGS,
       delay: 1500, // Slightly faster for settings
       enableOffline: true,
       onSave: async (settings) => {

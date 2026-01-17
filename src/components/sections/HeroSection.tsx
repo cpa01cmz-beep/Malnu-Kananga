@@ -1,5 +1,4 @@
 
-import React from 'react';
 import GradientButton from '../ui/GradientButton';
 import Heading from '../ui/Heading';
 import { getResponsiveGradient } from '../../config/gradients';

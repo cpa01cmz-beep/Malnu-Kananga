@@ -50,7 +50,6 @@ wrangler pages secret list --project-name=malnu-kananga
 
 Configured Secrets:
 - ✅ `VITE_API_BASE_URL` = "https://malnu-kananga-worker-prod.cpa01cmz.workers.dev"
-- ✅ `VITE_ENABLE_PWA` = "true"
 - ✅ `VITE_ENABLE_AI_CHAT` = "true"
 
 ### Cloudflare Worker Secrets
@@ -87,7 +86,7 @@ LOG_LEVEL = "info"
                  ▼ (VITE_API_BASE_URL)
 ┌─────────────────────────────────────────┐
 │   Cloudflare Worker                 │
-│   malnu-kananga-worker.workers.dev │
+│   malnu-kananga-worker-prod.workers.dev │
 │   (API + Business Logic)          │
 └────────────────┬────────────────────────┘
                  │
@@ -163,8 +162,8 @@ wrangler d1 list
 # Execute SQL on remote database
 wrangler d1 execute malnu-kananga-db-dev --remote --command="SELECT * FROM users LIMIT 5"
 
-# Seed database
-curl -X POST https://malnu-kananga-worker.cpa01cmz.workers.dev/seed
+ # Seed database
+ curl -X POST https://malnu-kananga-worker-prod.cpa01cmz.workers.dev/seed
 ```
 
 ## Troubleshooting

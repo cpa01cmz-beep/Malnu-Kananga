@@ -1,4 +1,4 @@
-import { ApiResponse } from '../services/apiService';
+import type { ApiResponse } from '../types';
 
 export const handleApiResponse = <T>(
   response: ApiResponse<T>,

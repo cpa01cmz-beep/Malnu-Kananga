@@ -1,4 +1,4 @@
-import React from 'react';
+import type { FC } from 'react';
 import { MicrophoneIcon } from './icons/MicrophoneIcon';
 import { UserRole } from '../types/permissions';
 import Modal from './ui/Modal';
@@ -17,7 +17,7 @@ interface CommandCategory {
   commands: { action: string; examples: string[] }[];
 }
 
-const VoiceCommandsHelp: React.FC<VoiceCommandsHelpProps> = ({
+const VoiceCommandsHelp: FC<VoiceCommandsHelpProps> = ({
   isOpen,
   onClose,
   userRole,

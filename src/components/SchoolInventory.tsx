@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ArchiveBoxIcon } from './icons/ArchiveBoxIcon';
 import { PlusIcon } from './icons/PlusIcon';
 import { TrashIcon } from './icons/TrashIcon';
@@ -9,19 +9,7 @@ import Badge from './ui/Badge';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import Tab from './ui/Tab';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
-import { BarChart } from 'recharts/es6/chart/BarChart';
-import { Bar } from 'recharts/es6/cartesian/Bar';
-import { XAxis } from 'recharts/es6/cartesian/XAxis';
-import { YAxis } from 'recharts/es6/cartesian/YAxis';
-import { CartesianGrid } from 'recharts/es6/cartesian/CartesianGrid';
-import { Tooltip } from 'recharts/es6/component/Tooltip';
-import { Legend } from 'recharts/es6/component/Legend';
-import { ResponsiveContainer } from 'recharts/es6/component/ResponsiveContainer';
-import { PieChart } from 'recharts/es6/chart/PieChart';
-import { Pie } from 'recharts/es6/polar/Pie';
-import { Cell } from 'recharts/es6/component/Cell';
-import { Area } from 'recharts/es6/cartesian/Area';
-import { AreaChart } from 'recharts/es6/chart/AreaChart';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
 import QRCode from 'qrcode';
 import { inventoryAPI } from '../services/apiService';
 import { useCanAccess } from '../hooks/useCanAccess';
@@ -820,7 +808,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => [`Rp ${value.toLocaleString()}`, 'Nilai']} />
+                  <Tooltip formatter={(value: number | undefined) => [`Rp ${value?.toLocaleString() || 0}`, 'Nilai']} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -834,7 +822,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="condition" />
                   <YAxis />
-                  <Tooltip formatter={(value: number) => [`${value} barang`, 'Jumlah']} />
+                  <Tooltip formatter={(value: number | undefined) => [`${value || 0} barang`, 'Jumlah']} />
                   <Bar dataKey="count" fill={CHART_COLORS.green} />
                 </BarChart>
               </ResponsiveContainer>
@@ -849,7 +837,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="itemName" angle={-45} textAnchor="end" height={80} />
                 <YAxis />
-                <Tooltip formatter={(value: number) => [`Rp ${value.toLocaleString()}`, '']} />
+                <Tooltip formatter={(value: number | undefined) => [`Rp ${value?.toLocaleString() || 0}`, '']} />
                 <Legend />
                 <Area type="monotone" dataKey="purchaseValue" stackId="1" stroke={CHART_COLORS.purple} fill={CHART_COLORS.purple} name="Nilai Pembelian" />
                 <Area type="monotone" dataKey="currentValue" stackId="2" stroke={CHART_COLORS.emerald} fill={CHART_COLORS.emerald} name="Nilai Saat Ini" />

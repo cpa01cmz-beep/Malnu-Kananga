@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { validateAICommand, validateAIResponse } from '../aiEditorValidator';
+import { validateAICommand, validateAIResponse, type AuditLogEntry } from '../aiEditorValidator';
 import type { FeaturedProgram, LatestNews } from '../../types';
 
 // Mock localStorage for audit logging tests
@@ -134,14 +134,14 @@ describe('AI Editor Validator', () => {
 
     it('should implement rate limiting', () => {
       const userId = 'rate-limit-test-user';
-      
+
       // Allow first few requests
       for (let i = 0; i < 10; i++) {
         const result = validateAICommand(`request ${i}`, userId);
         expect(result.isValid).toBe(true);
       }
-      
-      // Should block the 11th request
+
+      // Should block 11th request
       const blockedResult = validateAICommand('request 10', userId);
       expect(blockedResult.isValid).toBe(false);
       expect(blockedResult.error).toContain('Terlalu banyak permintaan');
@@ -157,11 +157,11 @@ describe('AI Editor Validator', () => {
       const cmd3 = validateAICommand('delete program yang tidak aktif', 'user');
       expect(cmd3.isValid).toBe(true);
 
-      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]');
+      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]') as AuditLogEntry[];
       expect(logs.length).toBeGreaterThan(0);
-      expect(logs.some((l: any) => l.reason.includes('risiko: low'))).toBe(true);
-      expect(logs.some((l: any) => l.reason.includes('risiko: medium'))).toBe(true);
-      expect(logs.some((l: any) => l.reason.includes('risiko: high'))).toBe(true);
+      expect(logs.some((l) => l.reason?.includes('risiko: low'))).toBe(true);
+      expect(logs.some((l) => l.reason?.includes('risiko: medium'))).toBe(true);
+      expect(logs.some((l) => l.reason?.includes('risiko: high'))).toBe(true);
     });
   });
 
@@ -194,7 +194,7 @@ describe('AI Editor Validator', () => {
     });
 
     it('should extract JSON from response with text around it', () => {
-      const responseWithText = `Here is the JSON you requested:
+      const responseWithText = `Here is JSON you requested:
 \`\`\`json
 {"featuredPrograms": [{"title": "Test", "description": "Desc", "imageUrl": "https://example.com/img.jpg"}], "latestNews": []}
 \`\`\`
@@ -282,7 +282,7 @@ Let me know if you need anything else.`;
         latestNews: []
       });
       validateAIResponse(maliciousJson, mockCurrentContent, 'test-user');
-      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]');
+      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]') as AuditLogEntry[];
       expect(logs).toHaveLength(1);
       expect(logs[0]).toMatchObject({
         action: 'response_validated',
@@ -297,7 +297,7 @@ Let me know if you need anything else.`;
         latestNews: []
       });
       validateAIResponse(validJson, mockCurrentContent, 'test-user');
-      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]');
+      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]') as AuditLogEntry[];
       expect(logs).toHaveLength(1);
       expect(logs[0]).toMatchObject({
         action: 'response_validated',

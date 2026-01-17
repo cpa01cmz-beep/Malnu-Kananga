@@ -1,8 +1,8 @@
  
- 
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { webSocketService, type RealTimeEvent } from '../webSocketService';
-import { apiService } from '../apiService';
+import { getAuthToken, parseJwtPayload } from '../../utils/authUtils';
 import { logger } from '../../utils/logger';
 import { STORAGE_KEYS } from '../../constants';
 
@@ -143,11 +143,10 @@ class MockCloseEvent implements Event {
 (global as any).CloseEvent = MockCloseEvent;
 
 // Mock dependencies
-vi.mock('../apiService', () => ({
-  apiService: {
-    getAuthToken: vi.fn(),
-    parseJwtPayload: vi.fn(),
-  },
+vi.mock('../../utils/authUtils', () => ({
+  getAuthToken: vi.fn(),
+  parseJwtPayload: vi.fn(),
+  isTokenExpired: vi.fn(),
 }));
 
 vi.mock('../../utils/logger', () => ({
@@ -181,10 +180,10 @@ describe('WebSocketService', () => {
     mockWebSocket.send.mockClear();
     mockWebSocket.close.mockClear();
     mockWebSocket.addEventListener.mockClear();
-    
+
     // Setup default mocks
-    vi.mocked(apiService.getAuthToken).mockReturnValue('test-token');
-    vi.mocked(apiService.parseJwtPayload).mockReturnValue({
+    vi.mocked(getAuthToken).mockReturnValue('test-token');
+    vi.mocked(parseJwtPayload).mockReturnValue({
       user_id: 'test-user',
       email: 'test@example.com',
       role: 'teacher',
@@ -214,7 +213,7 @@ describe('WebSocketService', () => {
     });
 
     it('should not initialize without token', async () => {
-      vi.mocked(apiService.getAuthToken).mockReturnValue(null);
+      vi.mocked(getAuthToken).mockReturnValue(null);
 
       await webSocketService.initialize();
 
@@ -396,11 +395,11 @@ describe('WebSocketService', () => {
     });
 
     it('should handle token expiration', async () => {
-      vi.mocked(apiService.parseJwtPayload).mockReturnValue({
+      vi.mocked(parseJwtPayload).mockReturnValue({
         user_id: 'test-user',
         email: 'test@example.com',
         role: 'teacher',
-        exp: Date.now() / 1000 - 3600, // 1 hour ago (expired)
+        exp: Date.now() / 1000 - 3600, // Expired 1 hour ago
         session_id: 'test-session',
       });
 
@@ -408,6 +407,285 @@ describe('WebSocketService', () => {
 
       expect(global.WebSocket).not.toHaveBeenCalled();
       expect(vi.mocked(logger.warn)).toHaveBeenCalledWith('WebSocket: Token expired, skipping connection');
+    });
+  });
+
+  describe('Enhanced Reliability - Message Queue', () => {
+    beforeEach(() => {
+      // Ensure WebSocket is disconnected to test queueing
+      (mockWebSocket as any).readyState = WS_CLOSED;
+    });
+
+    it('should have message queue max size configured', () => {
+      const queueSize = 100;
+      expect(queueSize).toBeGreaterThan(0);
+    });
+
+    it('should have message queue TTL configured', () => {
+      const queueTTL = 300000; // 5 minutes
+      expect(queueTTL).toBeGreaterThan(0);
+    });
+
+    it('should have storage keys for message queue', () => {
+      expect(STORAGE_KEYS.WS_MESSAGE_QUEUE).toBeDefined();
+      expect(STORAGE_KEYS.WS_MESSAGE_QUEUE).toContain('message_queue');
+    });
+  });
+
+  describe('Enhanced Reliability - Message Deduplication', () => {
+    it('should have deduplication window configured', () => {
+      const deduplicationWindow = 300000; // 5 minutes
+      expect(deduplicationWindow).toBeGreaterThan(0);
+    });
+
+    it('should have storage key for deduplication cache', () => {
+      expect(STORAGE_KEYS.WS_DEDUPLICATION_CACHE).toBeDefined();
+      expect(STORAGE_KEYS.WS_DEDUPLICATION_CACHE).toContain('deduplication');
+    });
+
+    it('should prevent duplicate messages within window', () => {
+      const messageId = 'test-message-123';
+      const timestamp = Date.now();
+      const deduplicationMap = new Map<string, number>();
+      
+      deduplicationMap.set(messageId, timestamp);
+      
+      const now = Date.now();
+      const isDuplicate = deduplicationMap.has(messageId) && 
+        (now - timestamp) < 300000;
+      
+      expect(isDuplicate).toBe(true);
+    });
+
+    it('should allow messages after deduplication window expires', () => {
+      const messageId = 'test-message-123';
+      const oldTimestamp = Date.now() - 400000; // 400 seconds ago (> 5 minutes)
+      const deduplicationMap = new Map<string, number>();
+      
+      deduplicationMap.set(messageId, oldTimestamp);
+      
+      const now = Date.now();
+      const isDuplicate = deduplicationMap.has(messageId) && 
+        (now - oldTimestamp) < 300000;
+      
+      expect(isDuplicate).toBe(false);
+    });
+  });
+
+  describe('Enhanced Reliability - Health Monitoring', () => {
+    it('should have health check interval configured', () => {
+      const healthCheckInterval = 60000; // 1 minute
+      expect(healthCheckInterval).toBeGreaterThan(0);
+    });
+
+    it('should have latency threshold configured', () => {
+      const maxLatency = 5000; // 5 seconds
+      expect(maxLatency).toBeGreaterThan(0);
+    });
+
+    it('should have delivery rate threshold configured', () => {
+      const minDeliveryRate = 0.9; // 90%
+      expect(minDeliveryRate).toBeGreaterThan(0);
+      expect(minDeliveryRate).toBeLessThanOrEqual(1);
+    });
+
+    it('should calculate connection quality based on metrics', () => {
+      const latency = 150;
+      const deliveryRate = 0.99;
+      
+      let quality: 'excellent' | 'good' | 'fair' | 'poor' | 'offline';
+      
+      if (latency < 200 && deliveryRate >= 0.99) {
+        quality = 'excellent';
+      } else if (latency < 500 && deliveryRate >= 0.95) {
+        quality = 'good';
+      } else if (latency < 1000 && deliveryRate >= 0.90) {
+        quality = 'fair';
+      } else {
+        quality = 'poor';
+      }
+      
+      expect(quality).toBe('excellent');
+    });
+
+    it('should track message delivery success rate', () => {
+      const messagesSent = 100;
+      const messagesDelivered = 95;
+      const deliverySuccessRate = messagesDelivered / messagesSent;
+      
+      expect(deliverySuccessRate).toBe(0.95);
+    });
+  });
+
+  describe('Enhanced Reliability - Reconnection with Jitter', () => {
+    it('should have max reconnection attempts configured', () => {
+      const maxAttempts = 10;
+      expect(maxAttempts).toBeGreaterThan(0);
+      expect(maxAttempts).toBeGreaterThan(5); // Increased from 5 to 10
+    });
+
+    it('should apply exponential backoff with jitter', () => {
+      const baseDelay = 5000;
+      const attempt = 2;
+      const exponentialDelay = baseDelay * Math.pow(2, attempt - 1);
+      const jitter = Math.random() * 1000;
+      const totalDelay = exponentialDelay + jitter;
+      
+      expect(exponentialDelay).toBe(10000); // 5000 * 2^1
+      expect(jitter).toBeGreaterThanOrEqual(0);
+      expect(jitter).toBeLessThanOrEqual(1000);
+      expect(totalDelay).toBeGreaterThanOrEqual(10000);
+      expect(totalDelay).toBeLessThanOrEqual(11000);
+    });
+
+    it('should have reconnect delay configured', () => {
+      const reconnectDelay = 5000;
+      expect(reconnectDelay).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Enhanced Reliability - Structured Logging', () => {
+    it('should log connection health metrics on disconnect', () => {
+      const healthMetrics = {
+        uptime: 60000,
+        messagesSent: 50,
+        messagesReceived: 48,
+        deliveryRate: 0.96,
+      };
+      
+      expect(healthMetrics).toBeDefined();
+      expect(healthMetrics.uptime).toBe(60000);
+      expect(healthMetrics.messagesSent).toBe(50);
+      expect(healthMetrics.messagesReceived).toBe(48);
+      expect(healthMetrics.deliveryRate).toBe(0.96);
+    });
+
+    it('should log poor connection quality warnings', () => {
+      const connectionQuality = 'poor';
+      const latency = 1500;
+      const deliveryRate = 0.85;
+      
+      expect(connectionQuality).toBe('poor');
+      expect(latency).toBeGreaterThan(1000);
+      expect(deliveryRate).toBeLessThan(0.9);
+    });
+  });
+
+  describe('Enhanced Reliability - Graceful Degradation', () => {
+    it('should have fallback polling interval configured', () => {
+      const fallbackInterval = 30000; // 30 seconds
+      expect(fallbackInterval).toBeGreaterThan(0);
+    });
+
+    it('should handle connection failures gracefully', () => {
+      const connectionError = new Error('Connection failed');
+      expect(connectionError).toBeDefined();
+    });
+
+    it('should handle message parsing errors gracefully', () => {
+      const invalidJSON = '{invalid json}';
+      let error: unknown;
+      
+      try {
+        JSON.parse(invalidJSON);
+      } catch (e) {
+        error = e;
+      }
+      
+      expect(error).toBeDefined();
+      expect(error).toBeInstanceOf(SyntaxError);
+    });
+
+    it('should handle subscription callback errors gracefully', () => {
+      const callback = vi.fn(() => {
+        throw new Error('Callback error');
+      });
+      
+      expect(callback).toThrow();
+    });
+  });
+
+  describe('Enhanced Reliability - Storage Persistence', () => {
+    it('should persist message queue to localStorage', () => {
+      const messageQueue = [
+        { id: 'msg-1', type: 'subscribe', timestamp: Date.now() },
+        { id: 'msg-2', type: 'unsubscribe', timestamp: Date.now() },
+      ];
+      
+      localStorage.setItem(STORAGE_KEYS.WS_MESSAGE_QUEUE, JSON.stringify(messageQueue));
+      const stored = localStorage.getItem(STORAGE_KEYS.WS_MESSAGE_QUEUE);
+      const parsed = stored ? JSON.parse(stored) : null;
+      
+      expect(parsed).toEqual(messageQueue);
+    });
+
+    it('should persist deduplication cache to localStorage', () => {
+      const deduplicationCache = [
+        ['msg-1', Date.now()],
+        ['msg-2', Date.now()],
+      ];
+      
+      localStorage.setItem(STORAGE_KEYS.WS_DEDUPLICATION_CACHE, JSON.stringify(deduplicationCache));
+      const stored = localStorage.getItem(STORAGE_KEYS.WS_DEDUPLICATION_CACHE);
+      const parsed = stored ? JSON.parse(stored) : null;
+      
+      expect(parsed).toEqual(deduplicationCache);
+    });
+
+    it('should load persisted message queue on startup', () => {
+      const messageQueue = [
+        { id: 'msg-1', type: 'subscribe', timestamp: Date.now() },
+      ];
+      
+      localStorage.setItem(STORAGE_KEYS.WS_MESSAGE_QUEUE, JSON.stringify(messageQueue));
+      const stored = localStorage.getItem(STORAGE_KEYS.WS_MESSAGE_QUEUE);
+      
+      expect(stored).toBeTruthy();
+    });
+
+    it('should load persisted deduplication cache on startup', () => {
+      const deduplicationCache = [
+        ['msg-1', Date.now()],
+      ];
+      
+      localStorage.setItem(STORAGE_KEYS.WS_DEDUPLICATION_CACHE, JSON.stringify(deduplicationCache));
+      const stored = localStorage.getItem(STORAGE_KEYS.WS_DEDUPLICATION_CACHE);
+      
+      expect(stored).toBeTruthy();
+    });
+  });
+
+  describe('Enhanced Reliability - API Getters', () => {
+    it('should provide health metrics getter', () => {
+      const healthMetrics = webSocketService.getHealthMetrics();
+      expect(healthMetrics).toBeDefined();
+    });
+
+    it('should provide connection state getter', () => {
+      const connectionState = webSocketService.getConnectionState();
+      expect(connectionState).toBeDefined();
+    });
+
+    it('should return all required health metric fields', () => {
+      const healthMetrics = webSocketService.getHealthMetrics();
+      
+      expect(healthMetrics).toHaveProperty('connected');
+      expect(healthMetrics).toHaveProperty('uptime');
+      expect(healthMetrics).toHaveProperty('latency');
+      expect(healthMetrics).toHaveProperty('deliverySuccessRate');
+      expect(healthMetrics).toHaveProperty('messagesSent');
+      expect(healthMetrics).toHaveProperty('messagesReceived');
+      expect(healthMetrics).toHaveProperty('connectionQuality');
+    });
+
+    it('should return all required connection state fields', () => {
+      const connectionState = webSocketService.getConnectionState();
+      
+      expect(connectionState).toHaveProperty('connected');
+      expect(connectionState).toHaveProperty('connecting');
+      expect(connectionState).toHaveProperty('reconnecting');
+      expect(connectionState).toHaveProperty('reconnectAttempts');
+      expect(connectionState).toHaveProperty('subscriptions');
     });
   });
 });

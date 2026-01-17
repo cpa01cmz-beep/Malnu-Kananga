@@ -1,4 +1,3 @@
-import React from 'react';
 
 export type SuspenseLoadingSize = 'sm' | 'md' | 'lg';
 

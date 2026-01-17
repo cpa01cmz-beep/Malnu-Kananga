@@ -20,7 +20,6 @@ class SpeechSynthesisService {
   private config: SpeechSynthesisConfig;
   private callbacks: SpeechSynthesisEventCallbacks = {};
   private voiceCache: Map<string, SpeechSynthesisUtterance> = new Map();
-  private currentUtterance: SpeechSynthesisUtterance | null = null;
   private isSupported: boolean;
   private voices: SpeechSynthesisVoice[] = [];
 
@@ -134,7 +133,6 @@ class SpeechSynthesisService {
 
     utterance.onend = () => {
       this.state = 'idle';
-      this.currentUtterance = null;
       this.callbacks.onEnd?.();
     };
 
@@ -147,7 +145,6 @@ class SpeechSynthesisService {
       logger.error('Speech synthesis error:', error);
 
       this.state = 'error';
-      this.currentUtterance = null;
       this.callbacks.onError?.(error);
     };
 
@@ -219,7 +216,6 @@ class SpeechSynthesisService {
         this.addToCache(text, utterance);
       }
 
-      this.currentUtterance = utterance;
       this.synth?.speak(utterance);
       logger.debug('Speaking:', text.substring(0, 50));
     } catch (error) {
@@ -266,7 +262,6 @@ class SpeechSynthesisService {
     try {
       this.synth.cancel();
       this.state = 'idle';
-      this.currentUtterance = null;
       logger.debug('Speech synthesis stopped');
     } catch (error) {
       logger.error('Failed to stop speech synthesis:', error);
@@ -360,7 +355,6 @@ class SpeechSynthesisService {
     this.stop();
     this.callbacks = {};
     this.voiceCache.clear();
-    this.currentUtterance = null;
     this.state = 'idle';
     logger.debug('SpeechSynthesisService cleaned up');
   }

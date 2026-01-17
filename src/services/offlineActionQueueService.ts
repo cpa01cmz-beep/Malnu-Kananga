@@ -11,7 +11,7 @@
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { isNetworkError, useNetworkStatus } from '../utils/networkStatus';
-import type { ApiResponse } from './apiService';
+import type { ApiResponse } from '../types';
 import { webSocketService, type RealTimeEvent } from './webSocketService';
 
 // ============================================
@@ -466,7 +466,7 @@ class OfflineActionQueueService {
         }
         
         localStorage.setItem(STORAGE_KEYS.CACHED_AI_ANALYSES, JSON.stringify(existingResults));
-      } catch (e) {
+      } catch (e: unknown) {
         logger.warn('Failed to cache AI analysis result:', e);
       }
 

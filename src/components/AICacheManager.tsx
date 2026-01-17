@@ -3,7 +3,7 @@
  * Provides UI for monitoring and managing AI response caches
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAICache } from '../hooks/useAICache';
 import { TrashIcon } from './icons/TrashIcon';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';

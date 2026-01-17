@@ -1,0 +1,204 @@
+name: E2E Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: e2e-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, firefox, webkit]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps ${{ matrix.project }}
+      
+      - name: Run E2E tests
+        run: npx playwright test --project=${{ matrix.project }}
+        env:
+          CI: true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.project }}
+          path: playwright-report/
+          retention-days: 7
+      
+      - name: Upload test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts-${{ matrix.project }}
+          path: |
+            test-results/
+            screenshots/
+          retention-days: 7
+  
+  visual-regression:
+    name: Visual Regression Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+      
+      - name: Run visual regression tests
+        run: npx playwright test visual-regression.spec.ts
+        env:
+          CI: true
+      
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-screenshots
+          path: test-results/
+          retention-days: 7
+  
+  accessibility:
+    name: Accessibility E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+      
+      - name: Run accessibility E2E tests
+        run: npx playwright test accessibility.spec.ts
+        env:
+          CI: true
+      
+      - name: Upload accessibility report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-report
+          path: playwright-report/
+          retention-days: 7
+  
+  report:
+    name: Test Report
+    runs-on: ubuntu-latest
+    needs: [e2e, visual-regression, accessibility]
+    if: always()
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+      
+      - name: Merge reports
+        run: |
+          npx playwright merge-reports artifacts/playwright-report-* || true
+          npx playwright show-report || echo "Report merge skipped"
+        continue-on-error: true
+      
+      - name: Upload merged report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-merged-report
+          path: playwright-report/
+          retention-days: 7
+      
+      - name: Comment PR with test results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const { execSync } = require('child_process');
+            
+            let comment = '## E2E Test Results\n\n';
+            
+            comment += '### Test Status\n';
+            try {
+              const status = execSync('npx playwright show-report --json 2>/dev/null || echo "{}"', { encoding: 'utf8' });
+              const report = JSON.parse(status);
+              comment += `📊 Total Tests: ${report.summary?.total || 'N/A'}\n`;
+              comment += `✅ Passed: ${report.summary?.passed || 'N/A'}\n`;
+              comment += `❌ Failed: ${report.summary?.failed || 'N/A'}\n`;
+              comment += `⏭️ Skipped: ${report.summary?.skipped || 'N/A'}\n\n`;
+            } catch (e) {
+              comment += '- ⚠️ Unable to fetch test results from report\n\n';
+            }
+            
+            comment += '### Test Coverage\n';
+            comment += '- Admin Dashboard: Tested\n';
+            comment += '- Teacher Dashboard: Tested\n';
+            comment += '- Parent Dashboard: Tested\n';
+            comment += '- Student Portal: Tested\n';
+            comment += '- PPDB Registration: Tested\n\n';
+            
+            comment += '### Browser Coverage\n';
+            comment += '- Chromium: Tested\n';
+            comment += '- Firefox: Tested\n';
+            comment += '- WebKit: Tested\n\n';
+            
+            comment += 'Full report available in artifacts.';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

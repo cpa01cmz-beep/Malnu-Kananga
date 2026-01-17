@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useVoiceNotifications } from '../../../src/hooks/useVoiceNotifications';
-import { voiceNotificationService } from '../../../src/services/voiceNotificationService';
+import { useVoiceNotifications } from '../useVoiceNotifications';
+import { voiceNotificationService } from '../../services/voiceNotificationService';
 
 // Mock the service
-vi.mock('../../../src/services/voiceNotificationService');
+vi.mock('../../services/voiceNotificationService');
 const mockVoiceNotificationService = vi.mocked(voiceNotificationService);
 
 describe('useVoiceNotifications', () => {

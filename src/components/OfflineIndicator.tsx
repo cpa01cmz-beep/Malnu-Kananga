@@ -11,7 +11,7 @@ const formatActionType = (type: string) => {
   return typeMap[type] || type.charAt(0).toUpperCase() + type.slice(1);
 };
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useOfflineActionQueue, type SyncResult } from '../services/offlineActionQueueService';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';

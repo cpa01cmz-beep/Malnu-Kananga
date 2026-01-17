@@ -1,5 +1,6 @@
 import type { FeaturedProgram, LatestNews } from '../types';
 import { logger } from './logger';
+import { STORAGE_KEYS, IMAGE_URLS } from '../constants';
 
 export interface AICommandValidationResult {
   isValid: boolean;
@@ -177,7 +178,7 @@ const RATE_LIMIT_WINDOW = 60000; // 1 minute in milliseconds
 const MAX_REQUESTS_PER_MINUTE = 10;
 
 // Audit log storage
-const AUDIT_LOG_KEY = 'malnu_ai_editor_audit_log';
+const AUDIT_LOG_KEY = STORAGE_KEYS.AI_EDITOR_AUDIT_LOG;
 const MAX_AUDIT_ENTRIES = 100;
 
 export interface AuditLogEntry {
@@ -464,7 +465,7 @@ export function validateAIResponse(
           const program: FeaturedProgram = {
             title,
             description: description || '',
-            imageUrl: imageUrl || 'https://placehold.co/600x400?text=Program'
+            imageUrl: imageUrl || IMAGE_URLS.PLACEHOLDER_PROGRAM
           };
           
           // Additional structural validation
@@ -512,7 +513,7 @@ export function validateAIResponse(
             title,
             date: date || new Date().toISOString().split('T')[0],
             category: category || 'Umum',
-            imageUrl: imageUrl || 'https://placehold.co/600x400?text=News'
+            imageUrl: imageUrl || IMAGE_URLS.PLACEHOLDER_NEWS
           };
           
           // Additional structural validation

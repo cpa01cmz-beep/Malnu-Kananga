@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, ChangeEvent } from 'react';
 import Papa from 'papaparse';
 import { analyzeClassPerformance } from '../services/geminiService';
 import { studentsAPI, gradesAPI } from '../services/apiService';
@@ -15,13 +14,14 @@ import { useOfflineActionQueue, type SyncResult } from '../services/offlineActio
 import { STORAGE_KEYS } from '../constants';
 import { pdfExportService } from '../services/pdfExportService';
 import ProgressBar from './ui/ProgressBar';
+import { API_BASE_URL } from '../config/api';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { 
-  validateGradeInput, 
-  sanitizeGradeInput, 
-  calculateGradeLetter, 
+import {
+  validateGradeInput,
+  sanitizeGradeInput,
+  getGradeLetter,
   calculateFinalGrade,
-  GradeInput 
+  GradeInput
 } from '../utils/teacherValidation';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { createToastHandler } from '../utils/teacherErrorHandler';
@@ -33,7 +33,6 @@ import { User, UserRole, UserExtraRole } from '../types';
 import ErrorMessage from './ui/ErrorMessage';
 import { OfflineIndicator } from './OfflineIndicator';
 import SearchInput from './ui/SearchInput';
-import { DEFAULT_API_BASE_URL } from '../config';
 
 
 interface StudentGrade {
@@ -51,8 +50,8 @@ interface GradingManagementProps {
 }
 
 const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToast }) => {
-  const csvInputRef = React.useRef<HTMLInputElement>(null);
-  const ocrInputRef = React.useRef<HTMLInputElement>(null);
+  const csvInputRef = useRef<HTMLInputElement>(null);
+  const ocrInputRef = useRef<HTMLInputElement>(null);
   // Event notifications hook
   const { notifyGradeUpdate, useMonitorLocalStorage } = useEventNotifications();
   
@@ -125,7 +124,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const subjectId = 'Matematika Wajib';
 
   // Validation and Error Handling State
-  const [isSaving, _setIsSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     title: string;
@@ -300,6 +299,15 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     }
   });
 
+  // Cleanup auto-save timeout on unmount to prevent memory leak
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimeout) {
+        clearTimeout(autoSaveTimeout);
+      }
+    };
+  }, [autoSaveTimeout]);
+
   // If user cannot manage grades, show access denied
   if (!canManageGrades) {
     return <AccessDenied onBack={onBack} message="You don't have permission to manage grades" requiredPermission="academic.grades" />;
@@ -359,7 +367,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/grades/${grade.id}`,
+            endpoint: `${API_BASE_URL}/api/grades/${grade.id}`,
             method: 'PUT'
           });
           
@@ -430,7 +438,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/grades/${grade.id}`,
+            endpoint: `${API_BASE_URL}/api/grades/${grade.id}`,
             method: 'PUT'
           });
           
@@ -490,7 +498,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     ));
   };
   
-  const handleCSVImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCSVImport = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -557,7 +565,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       midExam: g.midExam,
       finalExam: g.finalExam,
       finalScore: calculateFinalGrade(g.assignment, g.midExam, g.finalExam).toFixed(1),
-      grade: calculateGradeLetter(calculateFinalGrade(g.assignment, g.midExam, g.finalExam))
+      grade: getGradeLetter(calculateFinalGrade(g.assignment, g.midExam, g.finalExam))
     }));
 
     const csv = Papa.unparse(csvData);
@@ -644,7 +652,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   
   const doBatchSave = async () => {
     try {
-      _setIsSaving(true);
+      setIsSaving(true);
       
       // Track save progress
       let successCount = 0;
@@ -681,7 +689,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
           const grade = grades.find(g => g.id === save.studentId);
           if (grade) {
             const finalScore = calculateFinalGrade(grade.assignment, grade.midExam, grade.finalExam);
-            const gradeLetter = calculateGradeLetter(finalScore);
+                            const gradeLetter = getGradeLetter(finalScore);
             
             // Use event notifications hook for standardized notifications
             await notifyGradeUpdate(
@@ -709,7 +717,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
               }
             });
             
-            // TODO: Also notify parents when parent API is available
+            // TODO: Also notify parents (requires backend endpoint for getting parents by student ID)
             // const parents = await parentsAPI.getByStudentId(save.studentId);
             // for (const parent of parents) {
             //   await unifiedNotificationManager.showNotification({
@@ -756,7 +764,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       logger.error('Error in batch save:', error);
       toast.error('Terjadi kesalahan sistem saat menyimpan nilai');
     } finally {
-      _setIsSaving(false);
+      setIsSaving(false);
     }
   };
 
@@ -767,7 +775,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       const dataForAI = grades.map(g => ({
           studentName: g.name,
           subject: 'Matematika Wajib',
-          grade: calculateGradeLetter(calculateFinalGrade(g.assignment, g.midExam, g.finalExam)),
+          grade: getGradeLetter(calculateFinalGrade(g.assignment, g.midExam, g.finalExam)),
           semester: 'Semester 1'
       }));
 
@@ -776,7 +784,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       setIsAnalyzing(false);
   };
 
-  const handleOCRExamUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOCRExamUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -832,23 +840,6 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
   const processOCRWithAI = async (ocrText: string, confidence: number) => {
     try {
-      // Create AI prompt for grade extraction
-      const _prompt = `
-        Ekstrak data nilai dari teks berikut. Format output JSON:
-        {
-          "studentName": "nama siswa",
-          "nis": "nomor induk siswa",
-          "assignment": nilai tugas (0-100),
-          "midExam": nilai UTS (0-100),
-          "finalExam": nilai UAS (0-100)
-        }
-
-        Teks OCR:
-        ${ocrText}
-
-        Hanya return JSON, tidak ada penjelasan.
-      `;
-
       // Use Gemini service to extract structured data
       const aiResult = await analyzeClassPerformance([{ 
         studentName: '', 
@@ -896,7 +887,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     }
   };
 
-  const parseAIGradeExtraction = (aiResult: string, ocrText: string) => {
+  const parseAIGradeExtraction = (_aiResult: string, ocrText: string) => {
     // Fallback parsing if AI fails
     const numbers = ocrText.match(/\b(100|[1-9]?\d)\b/g);
     if (!numbers || numbers.length < 3) return null;
@@ -1313,7 +1304,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
                         {filteredData.map((student) => {
                             const finalScore = calculateFinalGrade(student.assignment, student.midExam, student.finalExam);
-                            const gradeLetter = calculateGradeLetter(finalScore);
+            const gradeLetter = getGradeLetter(finalScore);
                             const isRowEditing = isEditing === student.id;
                             const isSelected = selectedStudents.has(student.id);
 

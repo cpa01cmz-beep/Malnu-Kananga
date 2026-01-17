@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MaskOptions } from '../../utils/inputMasks';
 import { createFormatter } from '../../utils/inputMasks';

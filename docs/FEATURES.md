@@ -1,6 +1,6 @@
 # Feature Matrix
 
-**Created**: 2025-01-01
+**Created**: 2026-01-01
 **Last Updated**: 2026-01-10
 **Version**: 2.1.0
 **Status**: Active
@@ -182,4 +182,4 @@ The system now supports **Extra Roles** for Teachers and Students with special r
 
 - [User Guide (HOW_TO.md)](./HOW_TO.md) - Detailed usage instructions
 - [API Reference](./api-reference.md) - Complete API documentation
-- [Blueprint (BLUEPRINT.md)](./BLUEPRINT.md) - System architecture and specifications
+- [Blueprint (BLUEPRINT.md)](../blueprint.md) - System architecture and specifications

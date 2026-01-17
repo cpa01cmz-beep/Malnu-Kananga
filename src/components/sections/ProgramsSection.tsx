@@ -1,5 +1,4 @@
 
-import React from 'react';
 import ProgramCard from '../ProgramCard';
 import { FeaturedProgram } from '../../types';
 import Section from '../ui/Section';

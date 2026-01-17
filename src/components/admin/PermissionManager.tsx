@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import type { FC } from 'react';
 import { Permission, UserRole, UserExtraRole, AuditLog } from '../../types/permissions';
 import { permissionService } from '../../services/permissionService';
 import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../../config/permissions';
@@ -12,7 +13,7 @@ interface PermissionManagerProps {
   onShowToast: (message: string, type: 'success' | 'error' | 'info') => void;
 }
 
-const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) => {
+const PermissionManager: FC<PermissionManagerProps> = ({ onShowToast }) => {
   const [selectedRole, setSelectedRole] = useState<UserRole>('admin');
   const [selectedExtraRole, setSelectedExtraRole] = useState<UserExtraRole | null>(null);
   const [rolePermissions, setRolePermissions] = useState<Permission[]>([]);
