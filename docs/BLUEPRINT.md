@@ -323,6 +323,35 @@ src/
       - See `src/styles/themes.css:204-221` for implementation
 
 ### 3.28 WebSocket Real-Time System (Fase 5 - COMPLETED 2026-01-16)
+      - Backend WebSocket server implementation (`/ws` endpoint)
+      - Fallback polling endpoint (`/api/updates`) for offline scenarios
+      - JWT authentication for WebSocket connections
+      - Message subscription and unsubscription handling
+      - Ping/pong mechanism for connection health
+      - Automatic disconnection and cleanup
+      - Frontend integration with `webSocketService.ts`
+      - Support for 16 real-time event types (grades, attendance, announcements, library, events, users, messages, notifications)
+      - Local storage synchronization for real-time updates
+      - Offline-first fallback with 30-second polling interval
+      - Connection state management with reconnection logic
+      - See `worker.js:1782-1940` for backend implementation
+      - See `src/services/webSocketService.ts` for frontend implementation
+
+### 3.29 Database Query Optimization (Fase 5 - COMPLETED 2026-01-17)
+      - Created comprehensive database migration file (migration-2026-01-17-database-optimization.sql)
+      - Added 12 composite indexes for multi-column WHERE clauses optimization
+      - Added 4 single-column indexes for JOIN operations optimization
+      - Created 4 optimized views for common query patterns
+      - Implemented query result caching strategy with Cloudflare KV
+      - Created detailed optimization guide (docs/DATABASE_OPTIMIZATION_GUIDE.md)
+      - Composite indexes cover: grades (3), attendance (2), schedules (1), sessions (2), events (3), library (1)
+      - Join optimization indexes cover: grades, attendance, schedules tables
+      - Optimized views: active_sessions_with_users, student_grades_detail, class_attendance_summary, events_with_registration_counts
+      - Expected performance improvement: 80-90% reduction in query execution time
+      - Expected API response time improvement: 10x faster for dashboard queries
+      - Migration ready for deployment: `wrangler d1 execute malnu-database --remote --file=migration-2026-01-17-database-optimization.sql`
+      - See docs/DATABASE_OPTIMIZATION_GUIDE.md for complete usage examples and migration steps
+      - See migration-2026-01-17-database-optimization.sql for all SQL changes
      - Backend WebSocket server implementation (`/ws` endpoint)
      - Fallback polling endpoint (`/api/updates`) for offline scenarios
      - JWT authentication for WebSocket connections

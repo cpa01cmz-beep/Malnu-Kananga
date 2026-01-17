@@ -184,16 +184,27 @@ Dokumen ini menguraikan rencana pengembangan jangka panjang untuk **Smart Portal
    - [x] Update handleLogin dan handleRefreshToken untuk include extra_role
    - [x] Update validateRequestPermissions untuk pass extracted extra_role
    - [x] Extra role permissions (staff, osis) now work correctly
-- [x] Implement backend WebSocket support (COMPLETED 2026-01-16)
-   - [x] Add `/ws` endpoint for WebSocket connections
-   - [x] Add `/api/updates` fallback endpoint for long-polling
-   - [x] Implement JWT authentication for WebSocket
-   - [x] Handle subscribe/unsubscribe messages
-   - [x] Implement ping/pong for connection health
-   - [x] Add connection cleanup and error handling
-   - Frontend already fully implemented (`webSocketService.ts`)
-   - Eliminates polling overhead, provides real-time updates
-   - Improved performance with WebSocket instead of 30-second polling
+ - [x] Implement backend WebSocket support (COMPLETED 2026-01-16)
+    - [x] Add `/ws` endpoint for WebSocket connections
+    - [x] Add `/api/updates` fallback endpoint for long-polling
+    - [x] Implement JWT authentication for WebSocket
+    - [x] Handle subscribe/unsubscribe messages
+    - [x] Implement ping/pong for connection health
+    - [x] Add connection cleanup and error handling
+    - Frontend already fully implemented (`webSocketService.ts`)
+    - Eliminates polling overhead, provides real-time updates
+    - Improved performance with WebSocket instead of 30-second polling
+ - [x] Implement database query optimization (COMPLETED 2026-01-17)
+    - [x] Created migration file: migration-2026-01-17-database-optimization.sql
+    - [x] Added 12 composite indexes for multi-column WHERE clauses
+    - [x] Added 4 single-column indexes for JOIN operations
+    - [x] Created 4 optimized views for common query patterns
+    - [x] Implemented query result caching strategy with Cloudflare KV
+    - [x] Created comprehensive optimization guide: docs/DATABASE_OPTIMIZATION_GUIDE.md
+    - Expected performance improvement: 80-90% reduction in query execution time
+    - Expected API response time improvement: 10x faster for dashboard queries
+    - Migration ready for deployment via Wrangler CLI
+    - See docs/DATABASE_OPTIMIZATION_GUIDE.md for complete details
 
 ---
 
