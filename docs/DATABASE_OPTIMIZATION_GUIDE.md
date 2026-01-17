@@ -1,8 +1,9 @@
 # Database Query Optimization Guide
 
 **Created**: 2026-01-17
+**Last Updated**: 2026-01-17
 **Mode**: OPTIMIZER MODE (Performance, Standardization)
-**Version**: 1.0.0
+**Version**: 1.0.1
 
 ## Overview
 
@@ -276,11 +277,18 @@ Monitor query performance via Cloudflare Dashboard:
 
 ```bash
 # Apply optimization migration to D1 database
-wrangler d1 execute malnu-database --local --file=migration-2026-01-17-database-optimization.sql
+wrangler d1 execute malnu-kananga-db-dev --local --file=migration-2026-01-17-database-optimization.sql
+
+# Apply to remote dev database
+wrangler d1 execute malnu-kananga-db-dev --remote --file=migration-2026-01-17-database-optimization.sql
 
 # Apply to production database
-wrangler d1 execute malnu-database --remote --file=migration-2026-01-17-database-optimization.sql
+wrangler d1 execute malnu-kananga-db-prod --remote --file=migration-2026-01-17-database-optimization.sql
 ```
+
+**Note**: This migration includes:
+- D1 compatibility fix (CREATE VIEW IF NOT EXISTS instead of CREATE OR REPLACE VIEW)
+- Corrected student_grades_detail view (fixed column reference from classes.name to students.class_name)
 
 ### 2. Verify Indexes Created
 
@@ -291,10 +299,10 @@ FROM sqlite_master
 WHERE type = 'index' AND name LIKE 'idx_%'
 ORDER BY name;
 
--- Count indexes (should be 20+ after migration)
-SELECT COUNT(*) as total_indexes
-FROM sqlite_master
-WHERE type = 'index';
+ -- Count indexes (should be 46+ after migration)
+ SELECT COUNT(*) as total_indexes
+ FROM sqlite_master
+ WHERE type = 'index' AND name LIKE 'idx_%';
 ```
 
 ### 3. Update Worker.js Queries

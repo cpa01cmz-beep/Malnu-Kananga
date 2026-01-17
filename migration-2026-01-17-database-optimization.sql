@@ -94,7 +94,7 @@ SELECT
   g.id,
   g.student_id,
   u.name as student_name,
-  s.class_name,
+  st.class_name,
   g.subject_id,
   subj.name as subject_name,
   subj.code as subject_code,
@@ -112,7 +112,7 @@ SELECT
 FROM grades g
 JOIN students st ON g.student_id = st.id
 JOIN users u ON st.user_id = u.id
-JOIN classes s ON g.class_id = s.id
+JOIN classes c ON g.class_id = c.id
 JOIN subjects subj ON g.subject_id = subj.id
 LEFT JOIN teachers t ON g.created_by = t.id
 LEFT JOIN users tc ON t.user_id = tc.id;
