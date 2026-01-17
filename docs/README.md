@@ -1,13 +1,17 @@
 # Documentation Index
 
  **Created**: 2026-01-05
-  **Last Updated**: 2026-01-14
-  **Version**: 3.2.0
-  **Status**: Active
+   **Last Updated**: 2026-01-17
+   **Version**: 3.3.0
+   **Status**: Active
 
 ## Overview
 
-This index provides a comprehensive overview of all documentation available for the MA Malnu Kananga web application project. All documentation is centralized in the `/docs` directory.
+This index provides a comprehensive overview of all documentation available for MA Malnu Kananga web application project. All documentation is centralized in `/docs` directory.
+
+**Important**: Project documentation has been consolidated (2026-01-17):
+- **Single Source of Truth**: `[ROADMAP.md](./ROADMAP.md)` - Complete system documentation (architecture, features, roadmap, tasks)
+- **Archived Documentation**: `archive/` directory contains previous BLUEPRINT.md, ROADMAP.md, and TASK.md for reference only
 
 **Note**: The following files are NOT part of documentation:
 - `AGENTS.md` (root) - AI agent configuration for OpenCode CLI tool
@@ -17,11 +21,15 @@ These files are operational instructions for AI agents and should not be conside
 ## Documentation Structure
 
 ### 📚 Core Documentation
+- **[ROADMAP.md](./ROADMAP.md)** - **Complete system documentation** (Single Source of Truth) - Architecture, features, roadmap, tasks, status
 - **[../README.md](../README.md)** - Project overview, features, and quick start guide (root-level)
-- **[BLUEPRINT.md](./BLUEPRINT.md)** - Project blueprint, architecture, and specifications
 - **[API Reference](./api-reference.md)** - Complete API reference and endpoints
 - **[Troubleshooting Guide](./troubleshooting-guide.md)** - Common issues and solutions
-- **[TASK.md](./TASK.md)** - Current development goals and task tracking
+
+### 🗄️ Archived Documentation (For Reference Only)
+- **[archive/BLUEPRINT_ARCHIVE.md](./archive/BLUEPRINT_ARCHIVE.md)** - Previous blueprint, architecture, and specifications
+- **[archive/ROADMAP_ARCHIVE.md](./archive/ROADMAP_ARCHIVE.md)** - Previous development roadmap and milestones
+- **[archive/TASK_ARCHIVE.md](./archive/TASK_ARCHIVE.md)** - Previous task tracking and progress
 
 ### 🔧 Development Documentation
 - **[CODING_STANDARDS.md](./CODING_STANDARDS.md)** - Code style and development guidelines
@@ -30,8 +38,8 @@ These files are operational instructions for AI agents and should not be conside
 - **[HOW_TO.md](./HOW_TO.md)** - How-to guides for common tasks
 
 ### 🏗️ Project Management
-- **[ROADMAP.md](./ROADMAP.md)** - Development roadmap and milestones
-- **[TASK.md](./TASK.md)** - Current tasks and progress tracking
+- **[ROADMAP.md](./ROADMAP.md)** - **Consolidated** - Roadmap, tasks, status (Single Source of Truth)
+- See archive/ directory for historical documentation
 
  ### 🚀 Deployment & Infrastructure
 - **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Complete deployment procedures (Cloudflare Workers, D1, R2)
@@ -56,37 +64,38 @@ These files are operational instructions for AI agents and should not be conside
 ## Quick Navigation
 
 ### For New Developers
-1. Start with [../README.md](../README.md) for project overview
-2. Read [BLUEPRINT.md](./BLUEPRINT.md) to understand the system
-3. Follow [CONTRIBUTING.md](./CONTRIBUTING.md) for development setup
-4. Use [CODING_STANDARDS.md](./CODING_STANDARDS.md) for code guidelines
+ 1. Start with [../README.md](../README.md) for project overview
+ 2. Read [ROADMAP.md](./ROADMAP.md) - **Complete system documentation** (architecture, features, roadmap, tasks)
+ 3. Follow [CONTRIBUTING.md](./CONTRIBUTING.md) for development setup
+ 4. Use [CODING_STANDARDS.md](./CODING_STANDARDS.md) for code guidelines
 
 ### For Administrators
-1. Review [API Reference](./api-reference.md) for integration
-2. Use [Troubleshooting Guide](./troubleshooting-guide.md) for issue resolution
+ 1. Review [ROADMAP.md](./ROADMAP.md) for complete system overview
+ 2. Review [API Reference](./api-reference.md) for integration
+ 3. Use [Troubleshooting Guide](./troubleshooting-guide.md) for issue resolution
 
 ### For DevOps Engineers
-1. Read [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete deployment steps
-2. See [API Reference](./api-reference.md) for backend endpoints
+ 1. Read [ROADMAP.md](./ROADMAP.md) for deployment and infrastructure overview
+ 2. Read [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete deployment steps
+ 3. See [API Reference](./api-reference.md) for backend endpoints
 
 ### For Project Managers
-1. Review [BLUEPRINT.md](./BLUEPRINT.md) for project specifications
-2. Monitor [ROADMAP.md](./ROADMAP.md) for development progress
-3. Track [TASK.md](./TASK.md) for current tasks and milestones
+ 1. Review [ROADMAP.md](./ROADMAP.md) - **Complete project documentation** (specifications, roadmap, tasks, status)
+ 2. Monitor "Current Status" and "Upcoming Tasks" sections in ROADMAP.md
 
 ---
 
 ## Documentation Metrics
-- **Total Source Files**: 329 TypeScript/TSX files in src/ directory (247 source + 82 test)
-- **Test Files**: 82 test files (*.test.ts, *.test.tsx)
-- **Source Files (Non-Test)**: 247 files
-- **Documentation Files**: 19 (in /docs directory)
-- **Services**: 27 services in src/services/ (excluding .test., .types., and deprecated files)
-- **Components**: 40 components exported from src/components/ui/index.ts
-- **Total Tests**: 1492 passing, 10 skipped
-- **Code Examples**: 20+
-- **Troubleshooting Scenarios**: 25+
-- **Architecture Diagrams**: 1+
+ - **Total Source Files**: 329 TypeScript/TSX files in src/ directory (247 source + 82 test)
+ - **Test Files**: 82 test files (*.test.ts, *.test.tsx)
+ - **Source Files (Non-Test)**: 247 files
+ - **Documentation Files**: 19 (in /docs directory) + 3 archived in `archive/`
+ - **Services**: 27 services in src/services/ (excluding .test., .types., and deprecated files)
+ - **Components**: 41 components exported from src/components/ui/index.ts
+ - **Total Tests**: 1529 passing, 10 skipped, 0 failing
+ - **Code Examples**: 20+
+ - **Troubleshooting Scenarios**: 25+
+ - **Architecture Diagrams**: 1+ (in ROADMAP.md)
 
 ### Coverage Areas
 - ✅ **Frontend Documentation** - React components, state management
@@ -191,9 +200,19 @@ This index maintains relationships between documents:
 
 ---
 
-## Recent Changes (v3.2.0 - 2026-01-14)
+## Recent Changes (v3.3.0 - 2026-01-17)
 
-     - **Repository Audit & Maintenance (2026-01-14 - Current)**:
+     - **Documentation Consolidation (2026-01-17 - Current)**:
+                - Created consolidated ROADMAP.md as Single Source of Truth (Point 8: Documentation)
+                - Combined BLUEPRINT.md (497 lines), ROADMAP.md (285 lines), TASK.md (761 lines) into one file (~850 lines)
+                - Eliminated redundant information across 3 files
+                - Archived old documentation to docs/archive/ (BLUEPRINT_ARCHIVE.md, ROADMAP_ARCHIVE.md, TASK_ARCHIVE.md)
+                - Updated README.md and docs/README.md to reference new consolidated documentation
+                - Improved documentation maintainability and clarity
+                - Reduced documentation overhead from 1543 lines to ~850 lines (45% reduction)
+
+     - **Repository Audit & Maintenance (2026-01-14)**:
+                - Corrected documentation metrics based on actual codebase
                 - Corrected documentation metrics based on actual codebase
                 - Updated file counts: 329 total (247 source + 82 test)
                 - Updated test metrics: 1492 passing, 10 skipped, 0 failures
