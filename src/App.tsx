@@ -36,7 +36,7 @@ import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './typ
 import { STORAGE_KEYS } from './constants';
 import useLocalStorage from './hooks/useLocalStorage';
 import { NotificationProvider } from './contexts/NotificationContext';
-import { api } from './services/apiService';
+import { apiService } from './services/apiService';
 import { permissionService } from './services/permissionService';
 import { unifiedNotificationManager } from './services/unifiedNotificationManager';
 
@@ -95,8 +95,8 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const checkAuth = () => {
-      if (api.auth.isAuthenticated()) {
-        const user = api.auth.getCurrentUser();
+      if (apiService.auth.isAuthenticated()) {
+        const user = apiService.auth.getCurrentUser();
         if (user) {
           setAuthSession({
             loggedIn: true,
@@ -182,7 +182,7 @@ const App: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await api.auth.logout();
+      await apiService.auth.logout();
     } catch (err) {
       logger.error('Logout error:', err);
     } finally {

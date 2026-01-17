@@ -120,7 +120,6 @@ class WebSocketService {
 
   private messageQueue: Map<string, QueuedMessage> = new Map();
   private messageDeduplication: Map<string, number> = new Map();
-  private healthMetricsInterval: number | null = null;
   private healthMetrics: WebSocketHealthMetrics = {
     connected: false,
     uptime: 0,

@@ -19,7 +19,7 @@ import { HEIGHT_CLASSES } from '../config/heights';
 import {
   validateGradeInput,
   sanitizeGradeInput,
-  calculateGradeLetter,
+  getGradeLetter,
   calculateFinalGrade,
   GradeInput
 } from '../utils/teacherValidation';
@@ -124,7 +124,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const subjectId = 'Matematika Wajib';
 
   // Validation and Error Handling State
-  const [isSaving, _setIsSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     title: string;
@@ -298,6 +298,15 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       });
     }
   });
+
+  // Cleanup auto-save timeout on unmount to prevent memory leak
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimeout) {
+        clearTimeout(autoSaveTimeout);
+      }
+    };
+  }, [autoSaveTimeout]);
 
   // If user cannot manage grades, show access denied
   if (!canManageGrades) {
@@ -556,7 +565,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       midExam: g.midExam,
       finalExam: g.finalExam,
       finalScore: calculateFinalGrade(g.assignment, g.midExam, g.finalExam).toFixed(1),
-      grade: calculateGradeLetter(calculateFinalGrade(g.assignment, g.midExam, g.finalExam))
+      grade: getGradeLetter(calculateFinalGrade(g.assignment, g.midExam, g.finalExam))
     }));
 
     const csv = Papa.unparse(csvData);
@@ -643,7 +652,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   
   const doBatchSave = async () => {
     try {
-      _setIsSaving(true);
+      setIsSaving(true);
       
       // Track save progress
       let successCount = 0;
@@ -680,7 +689,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
           const grade = grades.find(g => g.id === save.studentId);
           if (grade) {
             const finalScore = calculateFinalGrade(grade.assignment, grade.midExam, grade.finalExam);
-            const gradeLetter = calculateGradeLetter(finalScore);
+                            const gradeLetter = getGradeLetter(finalScore);
             
             // Use event notifications hook for standardized notifications
             await notifyGradeUpdate(
@@ -755,7 +764,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       logger.error('Error in batch save:', error);
       toast.error('Terjadi kesalahan sistem saat menyimpan nilai');
     } finally {
-      _setIsSaving(false);
+      setIsSaving(false);
     }
   };
 
@@ -766,7 +775,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       const dataForAI = grades.map(g => ({
           studentName: g.name,
           subject: 'Matematika Wajib',
-          grade: calculateGradeLetter(calculateFinalGrade(g.assignment, g.midExam, g.finalExam)),
+          grade: getGradeLetter(calculateFinalGrade(g.assignment, g.midExam, g.finalExam)),
           semester: 'Semester 1'
       }));
 
@@ -1295,7 +1304,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
                         {filteredData.map((student) => {
                             const finalScore = calculateFinalGrade(student.assignment, student.midExam, student.finalExam);
-                            const gradeLetter = calculateGradeLetter(finalScore);
+            const gradeLetter = getGradeLetter(finalScore);
                             const isRowEditing = isEditing === student.id;
                             const isSelected = selectedStudents.has(student.id);
 

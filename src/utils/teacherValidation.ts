@@ -159,8 +159,6 @@ export const getGradeLetter = (score: number): string => {
   return 'D';
 };
 
-export const calculateGradeLetter = getGradeLetter;
-
 export function sanitizeGradeInput(input: string | number): number {
   const numValue = typeof input === 'string' ? parseFloat(input) : input;
   return isNaN(numValue) ? 0 : Math.min(100, Math.max(0, numValue));

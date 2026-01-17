@@ -1389,6 +1389,3 @@ export const apiService = {
 
 // Export request function for testing
 export { request };
-
-// Export for backward compatibility
-export const api = apiService;

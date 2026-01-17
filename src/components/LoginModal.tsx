@@ -5,7 +5,7 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Alert from './ui/Alert';
 import IconButton from './ui/IconButton';
-import { api } from '../services/apiService';
+import { apiService } from '../services/apiService';
 import { getGradientClass } from '../config/gradients';
 import Modal from './ui/Modal';
 import { HEIGHT_CLASSES } from '../config/heights';
@@ -103,7 +103,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       setPasswordError('');
 
       try {
-        const response = await api.auth.login(email, password);
+        const response = await apiService.auth.login(email, password);
 
         if (response.success && response.data) {
           const user = response.data.user;

@@ -104,10 +104,17 @@ export function useForm(options: UseFormOptions): UseFormReturn {
   /**
    * Set field value
    */
-  const setFieldValue = useCallback((name: string, value: unknown) => {
+   const setFieldValue = useCallback((name: string, value: unknown) => {
     setFormState(prev => {
       const newFields = { ...prev.fields, [name]: value };
-      const isDirty = JSON.stringify(newFields) !== JSON.stringify(initialValues);
+      let isDirty = false;
+      
+      try {
+        isDirty = JSON.stringify(newFields) !== JSON.stringify(initialValues);
+      } catch (error) {
+        logger.warn('Failed to calculate dirty state:', error);
+        isDirty = true;
+      }
 
       return {
         ...prev,
