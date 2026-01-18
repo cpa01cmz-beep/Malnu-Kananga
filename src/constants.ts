@@ -139,6 +139,15 @@ export const APP_CONFIG = {
     SCHOOL_NPSN: '69881502',
 };
 
+export const EXTERNAL_URLS = {
+    MAKER_SUITE_API: 'https://makersuite.google.com/app/apikey',
+    PLACEHOLDER_IMAGE_BASE: 'https://placehold.co/600x400?text=',
+    RDM_PORTAL: 'https://rdm.ma-malnukananga.sch.id',
+    KEMENAG: 'https://kemenag.go.id',
+    EMIS: 'https://emis.kemenag.go.id',
+    SIMPATIKA: 'https://simpatika.kemenag.go.id',
+} as const;
+
 export const VOICE_CONFIG = {
     DEFAULT_RECOGNITION_CONFIG: {
         language: VoiceLanguage.Indonesian,

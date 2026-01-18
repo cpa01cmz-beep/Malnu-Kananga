@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-18
+**Last Updated**: 2026-01-18 (Security audit completed)
 
 ## Architecture Overview
 
@@ -260,6 +260,16 @@ All localStorage keys use `malnu_` prefix:
 - `.env` in `.gitignore`
 - `.secrets.baseline` for security scanning
 - No hardcoded secrets in code
+- Centralized URL constants in `EXTERNAL_URLS` (constants.ts)
+- All localStorage access uses `STORAGE_KEYS` constants
+
+#### Code Quality & Security
+- Zero `any` types in production code (TypeScript strict mode)
+- No console.log usage in production code (uses logger.ts)
+- All async functions have proper error handling with try-catch
+- Centralized error handling in `errorHandler.ts`
+- Structured logging via `logger.ts`
+- Regular security scans (npm audit, SecretLint)
 
 ### Performance Optimization
 
