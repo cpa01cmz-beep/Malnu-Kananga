@@ -87,6 +87,7 @@
 - **`NotificationAnalytics.tsx`** - Notification analytics dashboard
 - **`NotificationCenter.tsx`** - Notification management center
 - **`BatchManagement.tsx`** - Batch operation management
+- **`UserImport.tsx`** - CSV bulk user import with validation and preview
 
 ##### Teacher Components
 - **`TeacherDashboard.tsx`** - Teacher dashboard with class and grade management
