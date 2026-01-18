@@ -5,7 +5,24 @@
 ## Active Tasks
 
 ### In Progress 🚧
-No active tasks in progress
+- [x] **PPDB Document OCR Integration** (PPDB-002)
+  - Task ID: PPDB-002
+  - Description: Connect OCR service to PPDB document uploads for automatic text extraction
+  - Priority: Critical
+  - Estimated: 2 days
+  - Status: **Completed**
+  - Completed: 2026-01-18
+  - Dependencies: PPDB-001 (✅ completed), OCR service (✅ exists), PPDB-003 (✅ completed)
+  - Agent: Lead Autonomous Engineer & System Guardian
+  - Changes:
+    - Updated PPDBRegistrant type to include ocrMetadata field
+    - PPDBRegistration now saves OCR results (extracted grades, fullName, NISN, school)
+    - PPDBRegistration saves OCR confidence, quality metrics, processing timestamp
+    - PPDBManagement displays OCR results in new modal
+    - PPDBManagement shows OCR quality indicators (confidence, accuracy, word count)
+    - PPDBManagement allows admins to re-run OCR on any document
+    - OCR results shown with extracted grades, quality badges, and processing status
+    - Files modified: src/types.ts, src/components/PPDBRegistration.tsx, src/components/PPDBManagement.tsx
 
 ---
 
@@ -186,12 +203,12 @@ No active tasks in progress
   - Dependencies: User management (✅ completed)
 
 #### PPDB Module
-- [ ] **PPDB Document OCR Integration**
+- [x] **PPDB Document OCR Integration**
   - Task ID: PPDB-002
   - Description: Connect OCR service to PPDB document uploads
   - Priority: Critical
   - Estimated: 2 days
-  - Status: Pending
+  - Status: **Completed** (2026-01-18)
   - Dependencies: PPDB-001 (✅ completed), OCR service (✅ exists), PPDB-003 (✅ completed)
 
 ### Medium Priority

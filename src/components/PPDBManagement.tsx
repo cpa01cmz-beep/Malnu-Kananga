@@ -7,6 +7,7 @@ import { permissionService } from '../services/permissionService';
 import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { emailService } from '../services/emailService';
 import { pdfExportService } from '../services/pdfExportService';
+import { ocrService, type OCRExtractionResult, type OCRProgress as OCRProgressType } from '../services/ocrService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import IconButton from './ui/IconButton';
@@ -15,6 +16,7 @@ import Badge from './ui/Badge';
 import SearchInput from './ui/SearchInput';
 import { EmptyState } from './ui/LoadingState';
 import Card from './ui/Card';
+import ProgressBar from './ui/ProgressBar';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { CheckIcon, XMarkIcon } from './icons/MaterialIcons';
@@ -43,6 +45,9 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showDocumentPreview, setShowDocumentPreview] = useState<string | null>(null);
   const [showScoringModal, setShowScoringModal] = useState<string | null>(null);
+  const [showOCRModal, setShowOCRModal] = useState<string | null>(null);
+  const [isProcessingOCR, setIsProcessingOCR] = useState(false);
+  const [ocrProgress, setOcrProgress] = useState<{ status: string; progress: number }>({ status: 'Idle', progress: 0 });
 
   // Default templates for bulk actions
   const [templates] = useState<PPDBTemplate[]>([
@@ -292,6 +297,57 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
     setSelectedIds([]);
   };
 
+  const handleRerunOCR = async (registrantId: string) => {
+    const registrant = registrants.find(r => r.id === registrantId);
+    if (!registrant?.documentUrl) {
+      onShowToast('Tidak ada dokumen untuk diproses', 'error');
+      return;
+    }
+
+    setIsProcessingOCR(true);
+    setOcrProgress({ status: 'Memuat dokumen...', progress: 0 });
+
+    try {
+      await ocrService.initialize((progress) => {
+        setOcrProgress(progress);
+      });
+
+      const response = await fetch(registrant.documentUrl);
+      const blob = await response.blob();
+      const file = new File([blob], 'document.jpg', { type: 'image/jpeg' });
+
+      const result: OCRExtractionResult = await ocrService.extractTextFromImage(file, (progress) => {
+        setOcrProgress(progress);
+      });
+
+      const updated = registrants.map(r => {
+        if (r.id === registrantId) {
+          return {
+            ...r,
+            ocrMetadata: {
+              extractedGrades: result.data.grades,
+              extractedFullName: result.data.fullName,
+              extractedNisn: result.data.nisn,
+              extractedSchoolName: result.data.schoolName,
+              confidence: result.confidence,
+              quality: result.quality,
+              processedAt: new Date().toISOString(),
+            }
+          };
+        }
+        return r;
+      });
+      setRegistrants(updated);
+      onShowToast('OCR berhasil diproses ulang', 'success');
+    } catch (error) {
+      logger.error('Rerun OCR error:', error);
+      onShowToast('Gagal memproses ulang OCR', 'error');
+    } finally {
+      setIsProcessingOCR(false);
+      setOcrProgress({ status: 'Idle', progress: 0 });
+    }
+  };
+
   const filteredRegistrants = getFilteredAndSortedRegistrants();
 
   return (
@@ -522,6 +578,16 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                                 onClick={() => setShowDocumentPreview(reg.id)}
                                               />
                                             )}
+                                            {reg.ocrMetadata && (
+                                              <IconButton
+                                                icon={<span className="text-lg">🔍</span>}
+                                                ariaLabel="Lihat hasil OCR untuk pendaftar ini"
+                                                tooltip="Hasil OCR"
+                                                variant="info"
+                                                size="sm"
+                                                onClick={() => setShowOCRModal(reg.id)}
+                                              />
+                                            )}
                                             {reg.status === 'pending' && canApprovePPDB && (
                                               <>
                                                 <IconButton
@@ -618,6 +684,180 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
             </Card>
           </div>
         )}
+
+        {/* OCR Results Modal */}
+        {showOCRModal && (() => {
+          const registrant = registrants.find(r => r.id === showOCRModal);
+          return (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <Card rounded="xl" padding="md" className="w-full max-w-4xl">
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Hasil OCR</h3>
+                    <p className="text-sm text-neutral-500">{registrant?.fullName} - {registrant?.nisn}</p>
+                  </div>
+                  <IconButton
+                    icon={<XMarkIcon className="w-5 h-5" />}
+                    ariaLabel="Tutup hasil OCR"
+                    variant="ghost"
+                    size="md"
+                    onClick={() => setShowOCRModal(null)}
+                  />
+                </div>
+
+                {isProcessingOCR && (
+                  <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                        Memproses OCR...
+                      </span>
+                      <span className="text-xs text-blue-700 dark:text-blue-300">{ocrProgress.progress.toFixed(0)}%</span>
+                    </div>
+                    <ProgressBar
+                      value={ocrProgress.progress}
+                      size="md"
+                      color="info"
+                      ariaLabel={`OCR processing: ${ocrProgress.status}`}
+                    />
+                    <p className="text-xs text-blue-700 dark:text-blue-300 mt-2">{ocrProgress.status}</p>
+                  </Card>
+                )}
+
+                {!isProcessingOCR && registrant?.ocrMetadata ? (
+                  <div className="space-y-4">
+                    <Card className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4">
+                      <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">Kualitas & Keakuratan</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                          <p className="text-xs text-neutral-500">Confidence</p>
+                          <p className="text-lg font-bold text-neutral-900 dark:text-white">
+                            {registrant.ocrMetadata.confidence?.toFixed(1)}%
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-neutral-500">Akurasi Est.</p>
+                          <p className="text-lg font-bold text-neutral-900 dark:text-white">
+                            {registrant.ocrMetadata.quality?.estimatedAccuracy?.toFixed(1)}%
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-neutral-500">Jumlah Kata</p>
+                          <p className="text-lg font-bold text-neutral-900 dark:text-white">
+                            {registrant.ocrMetadata.quality?.wordCount || 0}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-neutral-500">Tipe Dokumen</p>
+                          <Badge
+                            variant={registrant.ocrMetadata.quality?.documentType === 'academic' ? 'success' : 'info'}
+                            size="sm"
+                          >
+                            {registrant.ocrMetadata.quality?.documentType || 'Unknown'}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {registrant.ocrMetadata.quality?.isHighQuality && (
+                          <Badge variant="success" size="sm">High Quality</Badge>
+                        )}
+                        {registrant.ocrMetadata.quality?.isSearchable && (
+                          <Badge variant="success" size="sm">Searchable</Badge>
+                        )}
+                        {registrant.ocrMetadata.quality?.hasMeaningfulContent && (
+                          <Badge variant="success" size="sm">Valid Content</Badge>
+                        )}
+                      </div>
+                    </Card>
+
+                    {registrant.ocrMetadata.extractedGrades && Object.keys(registrant.ocrMetadata.extractedGrades).length > 0 && (
+                      <Card className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4">
+                        <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">Nilai yang Diekstrak</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                          {Object.entries(registrant.ocrMetadata.extractedGrades).map(([subject, grade]) => (
+                            <div key={subject} className="flex justify-between text-sm bg-white dark:bg-neutral-800 rounded px-2 py-1">
+                              <span className="text-neutral-700 dark:text-neutral-300">{subject}</span>
+                              <span className="font-bold text-green-600 dark:text-green-400">{grade}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+                    )}
+
+                    <Card className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4">
+                      <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">Data yang Diekstrak</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-neutral-500">Nama Lengkap:</span>
+                          <span className="font-medium text-neutral-900 dark:text-white">
+                            {registrant.ocrMetadata.extractedFullName || '-'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-500">NISN:</span>
+                          <span className="font-medium text-neutral-900 dark:text-white">
+                            {registrant.ocrMetadata.extractedNisn || '-'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-500">Asal Sekolah:</span>
+                          <span className="font-medium text-neutral-900 dark:text-white">
+                            {registrant.ocrMetadata.extractedSchoolName || '-'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-500">Diproses Pada:</span>
+                          <span className="font-medium text-neutral-900 dark:text-white">
+                            {registrant.ocrMetadata.processedAt
+                              ? new Date(registrant.ocrMetadata.processedAt).toLocaleString('id-ID')
+                              : '-'}
+                          </span>
+                        </div>
+                      </div>
+                    </Card>
+
+                    <div className="flex justify-end gap-2">
+                      {registrant?.documentUrl && (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleRerunOCR(registrant.id)}
+                          disabled={isProcessingOCR}
+                        >
+                          {isProcessingOCR ? 'Memproses...' : 'Proses Ulang OCR'}
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowOCRModal(null)}
+                      >
+                        Tutup
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
+                    <p className="text-center text-sm text-yellow-900 dark:text-yellow-100">
+                      Belum ada data OCR untuk pendaftar ini.
+                    </p>
+                    {registrant?.documentUrl && (
+                      <div className="mt-4 text-center">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleRerunOCR(registrant.id)}
+                          disabled={isProcessingOCR}
+                        >
+                          {isProcessingOCR ? 'Memproses...' : 'Jalankan OCR Sekarang'}
+                        </Button>
+                      </div>
+                    )}
+                  </Card>
+                )}
+              </Card>
+            </div>
+          );
+        })()}
 
         {/* Document Preview Modal */}
         {showDocumentPreview && (() => {

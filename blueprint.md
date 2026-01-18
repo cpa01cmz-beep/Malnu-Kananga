@@ -157,7 +157,7 @@
 
 #### PPDB (New Student Admission)
 - Student registration data
-- Document uploads (OCR processed)
+- Document uploads (OCR processed and saved)
 - Status tracking
 - Admin management interface with:
   - Filtering and sorting (status, date, score, school)
@@ -166,6 +166,8 @@
   - PDF generation for acceptance/rejection letters
   - Email integration for notifications
   - Document preview (images, PDFs)
+  - **OCR results display** (extracted grades, confidence, quality metrics)
+  - **Re-run OCR capability** for any document
   - Statistics dashboard
 
 ### Storage Architecture (`STORAGE_KEYS`)

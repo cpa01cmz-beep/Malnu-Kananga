@@ -152,6 +152,23 @@ export interface PPDBRegistrant {
   score?: number;
   rubricScores?: Record<string, number>;
   documentPreviews?: DocumentPreview[];
+  ocrMetadata?: {
+    extractedGrades?: Record<string, number>;
+    extractedFullName?: string;
+    extractedNisn?: string;
+    extractedSchoolName?: string;
+    confidence?: number;
+    quality?: {
+      isSearchable: boolean;
+      isHighQuality: boolean;
+      estimatedAccuracy: number;
+      wordCount: number;
+      characterCount: number;
+      hasMeaningfulContent: boolean;
+      documentType: 'unknown' | 'academic' | 'administrative' | 'form' | 'certificate';
+    };
+    processedAt?: string;
+  };
 }
 
 export interface DocumentPreview {
