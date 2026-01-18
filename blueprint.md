@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-18 (Security audit completed)
+**Last Updated**: 2026-01-18 (Material sharing permissions system completed)
 
 ## Architecture Overview
 
@@ -76,6 +76,7 @@
 - **`themeManager.ts`** - Theme management and persistence
 - **`categoryService.ts`** - Category management for resources
 - **`pdfExportService.ts`** - PDF generation for reports and certificates
+- **`materialPermissionService.ts`** - Material sharing permissions and access control
 
 #### Frontend Components (`src/components/`)
 
@@ -119,7 +120,8 @@
   - Active filter chips with individual clear buttons
   - Reset all filters with count display
   - Filtered material count in header
-- **`MaterialSharing.tsx`** - Material sharing with permissions
+- **`MaterialSharing.tsx`** - Material sharing with permissions (basic version)
+- **`EnhancedMaterialSharing.tsx`** - Advanced material sharing with role-based access, analytics, and audit trail
 - **`MaterialAnalytics.tsx`** - Material usage analytics
 - **`MaterialTemplatesLibrary.tsx`** - Template library for materials
 - **`GradingManagement.tsx`** - Grade entry and management (direct entry model)
@@ -193,6 +195,10 @@
 - Site pages, announcements, news
 - Learning materials, assignments
 - Events, schedules
+- Material sharing with role-based permissions (view/edit/admin)
+- Material access control and audit logging
+- Public/private material sharing with optional expiration
+- Sharing analytics (views, downloads, unique users, top users)
 
 #### PPDB (New Student Admission)
 - Student registration data

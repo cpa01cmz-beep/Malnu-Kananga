@@ -495,10 +495,14 @@ export interface MaterialSharing {
   id: string;
   materialId: string;
   sharedWith: string[]; // User IDs
+  sharedRoles?: UserRole[]; // Role-based sharing
+  sharedExtraRoles?: UserExtraRole[]; // Extra role-based sharing
+  isPublic: boolean;
   sharedBy: string;
   permission: 'view' | 'edit' | 'admin';
   sharedAt: string;
   expiresAt?: string;
+  auditLog?: MaterialShareAudit[];
 }
 
 export interface MaterialTemplate {
@@ -536,6 +540,40 @@ export interface MaterialAnalytics {
   }[];
 }
 
+export interface MaterialSharePermission {
+  id: string;
+  userId?: string;
+  role?: UserRole;
+  extraRole?: UserExtraRole;
+  permission: 'view' | 'edit' | 'admin';
+  grantedBy: string;
+  grantedAt: string;
+  expiresAt?: string;
+  lastAccessed?: string;
+  accessCount: number;
+}
+
+export interface MaterialShareSettings {
+  isPublic: boolean;
+  allowAnonymous: boolean;
+  requirePassword: boolean;
+  password?: string;
+  publicLink?: string;
+  publicLinkExpiresAt?: string;
+}
+
+export interface MaterialShareAudit {
+  id: string;
+  materialId: string;
+  userId: string;
+  userName: string;
+  action: 'shared' | 'accessed' | 'downloaded' | 'revoked' | 'permission_changed';
+  details: string;
+  timestamp: string;
+  ipAddress?: string;
+  userAgent?: string;
+}
+
 export interface ELibrary {
   id: string;
   title: string;
@@ -552,6 +590,8 @@ export interface ELibrary {
   folderId?: string;
   isShared: boolean;
   sharedWith?: string[];
+  sharePermissions?: MaterialSharePermission[];
+  shareSettings?: MaterialShareSettings;
   currentVersion?: string;
   versions?: MaterialVersion[];
   analytics?: MaterialAnalytics;

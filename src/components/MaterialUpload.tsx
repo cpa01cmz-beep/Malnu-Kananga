@@ -28,6 +28,7 @@ import FolderNavigation from './FolderNavigation';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import MaterialSharing from './MaterialSharing';
+import EnhancedMaterialSharing from './EnhancedMaterialSharing';
 import VersionControl from './VersionControl';
 import MaterialAnalytics from './MaterialAnalytics';
 import MaterialTemplatesLibrary from './MaterialTemplatesLibrary';
@@ -1038,10 +1039,13 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Berbagi Materi</h4>
-                <MaterialSharing
+                <EnhancedMaterialSharing
                   material={selectedMaterial}
                   onShowToast={onShowToast}
                   onSharingUpdate={fetchMaterials}
+                  currentUserId="current_user"
+                  currentUserRole="teacher"
+                  currentUserName="Current User"
                 />
               </div>
               
