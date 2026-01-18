@@ -47,21 +47,88 @@
 - **`permissionService.ts`** - Role-based access control (RBAC)
 - **`errorHandler.ts`** - Centralized error handling
 - **`logger.ts`** - Structured logging utility
+- **`webSocketService.ts`** - WebSocket client for real-time communication
+- **`offlineDataService.ts`** - Offline data caching and synchronization
+- **`offlineActionQueueService.ts`** - Queue for offline actions to sync
+- **`errorMonitoringService.ts`** - Sentry error tracking integration
+- **`performanceMonitor.ts`** - Performance metrics collection
 
 #### AI & Voice Services
 - **`geminiService.ts`** - Google Gemini AI integration
+- **`aiCacheService.ts`** - AI response caching and management
 - **`speechRecognitionService.ts`** - Web Speech API (Voice → Text)
 - **`speechSynthesisService.ts`** - Text-to-Speech (Text → Voice)
+- **`voiceSettingsBackup.ts`** - Voice settings persistence
+- **`voiceMessageQueue.ts`** - Queue for voice commands/messages
+- **`voiceNotificationService.ts`** - Voice notification alerts
+- **`voiceCommandParser.ts`** - Voice command parsing and validation
+- **`ocrService.ts`** - OCR for PPDB documents
+- **`ocrEnhancementService.ts`** - OCR result enhancement and validation
 
 #### Feature Services
-- **`ocrService.ts`** - OCR for PPDB documents
 - **`pushNotificationService.ts`** - PWA push notifications
-- **`dataService.ts`** - Data management & CRUD operations
+- **`unifiedNotificationManager.ts`** - Unified notification system
+- **`notificationTemplates.ts`** - Notification message templates
+- **`emailService.ts`** - Email sending service (SendGrid, Mailgun, Cloudflare)
+- **`emailQueueService.ts`** - Email sending queue and retry logic
+- **`emailTemplates.ts`** - Email template management
+- **`parentGradeNotificationService.ts`** - Parent grade change notifications
+- **`themeManager.ts`** - Theme management and persistence
+- **`categoryService.ts`** - Category management for resources
+- **`pdfExportService.ts`** - PDF generation for reports and certificates
 
 #### Frontend Components (`src/components/`)
-- **UI Components** - Reusable UI elements
-- **Feature Components** - Domain-specific functionality
-- **Layout Components** - Page structure & navigation
+
+##### Dashboard Components
+- **`AdminDashboard.tsx`** - Admin dashboard with management cards
+- **`TeacherDashboard.tsx`** - Teacher dashboard with class and grade management
+- **`StudentPortal.tsx`** - Student portal with grades, materials, schedule
+- **`ParentDashboard.tsx`** - Parent portal with child's academic data
+
+##### Feature Components
+- **`UserManagement.tsx`** - User CRUD with permissions
+- **`PPDBRegistration.tsx`** - New student registration form
+- **`PPDBManagement.tsx`** - PPDB application management
+- **`SiteEditor.tsx`** - WYSIWYG site content editor
+- **`MaterialUpload.tsx`** - Learning material upload interface
+- **`MaterialSharing.tsx`** - Material sharing with permissions
+- **`MaterialAnalytics.tsx`** - Material usage analytics
+- **`MaterialTemplatesLibrary.tsx`** - Template library for materials
+- **`GradingManagement.tsx`** - Grade entry and management
+- **`ClassManagement.tsx`** - Class schedule and management
+- **`ELibrary.tsx`** - E-library browsing and access
+- **`StudentInsights.tsx`** - Student performance insights
+- **`CalendarView.tsx`** - Calendar with events and schedule
+- **`AICacheManager.tsx`** - AI cache management interface
+
+##### UI Components (`src/components/ui/`)
+- **Button**, **Input**, **Select**, **Textarea**, **FormGrid** - Form elements
+- **Modal**, **ConfirmationDialog**, **Dialog** - Dialog components
+- **Card**, **PageHeader**, **Section** - Layout components
+- **Table**, **DataTable**, **Pagination** - Data display
+- **Badge**, **ProgressBar**, **LoadingSpinner** - Status indicators
+- **Tab**, **Toggle**, **SearchInput** - Interactive components
+- **FileUploader**, **FileInput**, **FileUploader** - File handling
+- **Toast**, **ErrorBoundary**, **LoadingState** - Error/loading states
+- **SuspenseLoading**, **LoadingOverlay** - Loading states
+
+##### Section Components (`src/components/sections/`)
+- **`HeroSection.tsx`** - Landing page hero
+- **`ProfileSection.tsx`** - School profile section
+- **`ProgramsSection.tsx`** - Featured programs display
+- **`NewsSection.tsx`** - Latest news display
+- **`PPDBSection.tsx`** - PPDB information section
+- **`RelatedLinksSection.tsx`** - Related links display
+
+##### Layout Components
+- **`Header.tsx`** - Main navigation header
+- **`Footer.tsx`** - Page footer
+- **`LoginModal.tsx`** - Login form modal
+- **`ChatWindow.tsx`** - AI chat interface
+- **`Toast.tsx`** - Toast notification component
+- **`ThemeSelector.tsx`** - Theme selection modal
+- **`AccessDenied.tsx`** - Permission denied page
+- **`DocumentationPage.tsx`** - Documentation viewer
 
 #### Configuration (`src/config/`)
 - **`permissions.ts`** - Role permission matrix
@@ -110,17 +177,29 @@ All localStorage keys use `malnu_` prefix:
 #### Base URL
 - Configured via `VITE_API_BASE_URL` environment variable
 - Default: Cloudflare Worker endpoint
+- Production: `https://malnu-kananga-worker-prod.cpa01cmz.workers.dev`
 
 #### RESTful Endpoints
 ```
-/auth/*          - Authentication (login, logout, refresh)
-/users/*         - User management
-/content/*       - Content CRUD
-/materials/*     - Learning materials
+/auth/*          - Authentication (login, logout, refresh, password reset)
+/users/*         - User management (CRUD)
+/students/*      - Student records
+/teachers/*      - Teacher records
 /ppdb/*          - PPDB management
+/content/*       - Content CRUD (programs, news)
+/materials/*     - Learning materials
+/schedules/*     - Class schedules
+/grades/*        - Grade management
+/attendance/*    - Attendance records
+/e-library/*      - E-library resources
+/files/*         - File operations (upload, download, delete, list)
 /notifications/* - Push notifications
-/ai/*            - AI endpoints
+/email/*         - Email sending
+/ai/*            - AI endpoints (chat, embeddings)
 /ocr/*           - OCR processing
+/sessions/*      - Session management
+/events/*         - School events
+/inventory/*     - Inventory management
 ```
 
 ### PWA Architecture
@@ -211,9 +290,26 @@ All localStorage keys use `malnu_` prefix:
 - API service tests
 - Auth flow tests
 - Multi-component tests
+- Offline functionality tests
+- OCR validation tests
+
+#### Test Coverage (as of 2026-01-18)
+- **84 test files**
+- **1529 tests passing**
+- **10 tests skipped**
+- **Coverage areas**:
+  - All core services (auth, API, permissions)
+  - All UI components (30+ components)
+  - Voice services (recognition, synthesis)
+  - AI services (Gemini, cache management)
+  - OCR services (validation, enhancement)
+  - Notification services (push, email, unified)
+  - Offline services (data sync, action queue)
+  - Dashboard components (admin, teacher, student, parent)
 
 #### Test Commands
 - `npm test` - Run all tests
+- `npm run test:run` - Run tests once
 - `npm run test:ui` - Vitest UI
 - `npm run test:coverage` - Coverage report
 
@@ -223,11 +319,24 @@ All localStorage keys use `malnu_` prefix:
 - Build: `npm run build`
 - Deploy: `wrangler pages deploy dist --project-name=malnu-kananga`
 - Auto-deploy on main branch push
+- Production URL: https://ma-malnukananga.sch.id (configured)
 
 #### Backend (Cloudflare Workers)
 - Deploy: `wrangler deploy --env production`
-- Dev: `wrangler deploy --env=""` (uses dev DB)
+- Production worker: `malnu-kananga-worker-prod`
+- Production URL: https://malnu-kananga-worker-prod.cpa01cmz.workers.dev
+- Dev: `wrangler dev --env dev` (uses dev DB)
 - D1 database attached
+- Production DB: `malnu-kananga-db-prod` (ID: 7fbd7834-0fd2-475f-8787-55ce81988642)
+- Dev DB: `malnu-kananga-db-dev` (ID: 69605f72-4b69-4dd6-a72c-a17006f61254)
+
+#### CI/CD
+- GitHub Actions in `.github/workflows/`
+- Lint on PR
+- Test on PR
+- Type check on PR
+- Deploy on merge to main
+- Pre-commit hooks (Husky, lint-staged)
 
 #### CI/CD
 - GitHub Actions in `.github/workflows/`
