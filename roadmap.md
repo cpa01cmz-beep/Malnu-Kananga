@@ -90,7 +90,7 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 - [x] Material upload (PDF, DOCX, Video) (completed)
 - [x] Material categorization (completed)
 - [x] Material sharing permissions (completed)
-- [ ] Material search
+- [x] Material search (completed 2026-01-18)
 - [ ] Download tracking
 
 #### Assignments & Grades

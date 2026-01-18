@@ -12,6 +12,31 @@
 ## Completed Tasks ✅
 
 ### 2026-01-18
+- [x] **Material Search & Filtering** (MAT-002)
+  - Task ID: MAT-002
+  - Description: Implement advanced search and filtering for materials
+  - Priority: High
+  - Estimated: 2 days
+  - Status: **Completed**
+  - Completed: 2026-01-18
+  - Dependencies: MAT-001 (✅ completed)
+  - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
+  - Changes:
+    - Added search input with real-time filtering by title, description, category
+    - Added category filter dropdown (subjects-based)
+    - Added file type filter dropdown (PDF, DOCX, PPT, VIDEO)
+    - Added sharing status filter (Shared/Private toggle buttons)
+    - Implemented active filter chips display with individual clear buttons
+    - Added "Reset Filters" button with active filter count
+    - Updated material count display to reflect filtered results
+    - Added empty state message for filtered results
+    - All filters work independently and can be combined
+    - Comprehensive test coverage (60+ test cases) in MaterialUpload-search.test.tsx
+  - Files modified:
+    - src/components/MaterialUpload.tsx (added search/filter state and UI)
+  - Files created:
+    - src/components/__tests__/MaterialUpload-search.test.tsx (600+ lines, 60+ tests)
+
 - [x] **Bulk User Import** (USER-003)
   - Task ID: USER-003
   - Description: Build CSV import for batch user creation
@@ -264,12 +289,12 @@
 ### Medium Priority
 
 #### Learning Materials
-- [ ] **Material Search & Filtering**
+- [x] **Material Search & Filtering**
   - Task ID: MAT-002
   - Description: Implement advanced search and filtering for materials
   - Priority: Medium
   - Estimated: 2 days
-  - Status: **Pending**
+  - Status: **Completed** (2026-01-18)
   - Dependencies: MAT-001 (✅ completed)
 
 - [ ] **Material Sharing Permissions**

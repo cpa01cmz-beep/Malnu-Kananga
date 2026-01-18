@@ -111,7 +111,14 @@
 - **`PPDBRegistration.tsx`** - New student registration form
 - **`PPDBManagement.tsx`** - PPDB application management (PDF export, email integration, document preview, OCR results)
 - **`SiteEditor.tsx`** - WYSIWYG site content editor
-- **`MaterialUpload.tsx`** - Learning material upload interface
+- **`MaterialUpload.tsx`** - Learning material upload interface with advanced search and filtering:
+  - Real-time search by title, description, category
+  - Category filter (subjects-based dropdown)
+  - File type filter (PDF, DOCX, PPT, VIDEO)
+  - Sharing status filter (Shared/Private toggle)
+  - Active filter chips with individual clear buttons
+  - Reset all filters with count display
+  - Filtered material count in header
 - **`MaterialSharing.tsx`** - Material sharing with permissions
 - **`MaterialAnalytics.tsx`** - Material usage analytics
 - **`MaterialTemplatesLibrary.tsx`** - Template library for materials
@@ -388,8 +395,8 @@ All localStorage keys use `malnu_` prefix:
 - OCR validation tests
 
 #### Test Coverage (as of 2026-01-18)
-- **85 test files**
-- **1529+ tests passing**
+- **86 test files**
+- **1589+ tests passing**
 - **10 tests skipped**
 - **Coverage areas**:
   - All core services (auth, API, permissions)
@@ -401,6 +408,7 @@ All localStorage keys use `malnu_` prefix:
   - Notification services (push, email, unified)
   - Offline services (data sync, action queue)
   - Dashboard components (admin, teacher, student, parent)
+  - Material search and filtering (60+ test cases for MaterialUpload)
 
 #### Test Commands
 - `npm test` - Run all tests
