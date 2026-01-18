@@ -62,7 +62,7 @@
 - **`voiceMessageQueue.ts`** - Queue for voice commands/messages
 - **`voiceNotificationService.ts`** - Voice notification alerts
 - **`voiceCommandParser.ts`** - Voice command parsing and validation
-- **`ocrService.ts`** - OCR for PPDB documents
+- **`ocrService.ts`** - OCR for PPDB documents with automatic data extraction
 - **`ocrEnhancementService.ts`** - OCR result enhancement and validation
 
 #### Feature Services
@@ -87,8 +87,8 @@
 
 ##### Feature Components
 - **`UserManagement.tsx`** - User CRUD with permissions
-- **`PPDBRegistration.tsx`** - New student registration form
-- **`PPDBManagement.tsx`** - PPDB application management
+- **`PPDBRegistration.tsx`** - New student registration form with OCR support
+- **`PPDBManagement.tsx`** - PPDB application management with document OCR integration
 - **`SiteEditor.tsx`** - WYSIWYG site content editor
 - **`MaterialUpload.tsx`** - Learning material upload interface
 - **`MaterialSharing.tsx`** - Material sharing with permissions
