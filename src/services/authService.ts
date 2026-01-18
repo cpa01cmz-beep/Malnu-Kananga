@@ -130,4 +130,52 @@ export class AuthService {
       throw classifiedError;
     }
   }
+
+  async updateProfile(userId: string, profileData: Partial<User>): Promise<{ success: boolean; message?: string; data?: User; error?: string }> {
+    try {
+      const token = authAPI.getAuthToken();
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(profileData),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'updateProfile',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+  }
+
+  async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+      const token = authAPI.getAuthToken();
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${userId}/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'changePassword',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+  }
 }

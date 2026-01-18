@@ -92,6 +92,39 @@
 ## Completed Tasks ✅
 
 ### 2026-01-18
+- [x] **User Profile Management** (USER-002)
+  - Task ID: USER-002
+  - Description: Build user profile editing interface for all roles
+  - Priority: High
+  - Estimated: 2 days
+  - Status: **Completed**
+  - Completed: 2026-01-18
+  - Dependencies: None
+  - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
+  - Changes:
+    - Created UserProfileEditor.tsx component with full profile editing capabilities
+    - Extended User type in types.ts with profile fields (phone, address, bio, avatar, dateOfBirth)
+    - Extended authService with updateProfile and changePassword methods
+    - Created icon components: CameraIcon, SaveIcon, LockIcon
+    - Comprehensive tests: 15 test cases covering all functionality
+    - Features:
+      - Edit own profile or other users (admin only)
+      - Profile picture display with initials fallback
+      - Role and extra role badges
+      - Phone number with mask
+      - Password change modal with validation
+      - Real-time validation and error handling
+      - Unified notifications for profile updates and password changes
+    - Files created:
+      - src/components/UserProfileEditor.tsx (392 lines)
+      - src/components/icons/CameraIcon.tsx
+      - src/components/icons/SaveIcon.tsx
+      - src/components/icons/LockIcon.tsx
+      - src/components/__tests__/UserProfileEditor.test.tsx (337 lines, 15 tests)
+    - Files modified:
+      - src/types.ts (extended User interface)
+      - src/services/authService.ts (added updateProfile, changePassword)
+
 - [x] **Documentation Reconciliation** (DOC-004)
   - Task ID: DOC-004
   - Description: Synchronize documentation inconsistencies between roadmap.md, task.md, and actual implementation
@@ -182,13 +215,37 @@
 ### High Priority
 
 #### Core Features
-- [ ] **User Profile Management**
+- [x] **User Profile Management**
   - Task ID: USER-002
   - Description: Build user profile editing interface for all roles
   - Priority: High
   - Estimated: 2 days
-  - Status: **Pending**
+  - Status: **Completed** (2026-01-18)
   - Dependencies: None
+
+- [ ] **Profile Picture Upload** (USER-004)
+  - Task ID: USER-004
+  - Description: Integrate profile picture upload to R2 storage
+  - Priority: Medium
+  - Estimated: 1 day
+  - Status: **Pending**
+  - Dependencies: USER-002 (completed)
+
+- [ ] **Role-Specific Profile Data** (USER-005)
+  - Task ID: USER-005
+  - Description: Add role-specific fields to profile editor (NISN for students, NIP for teachers, children for parents)
+  - Priority: Medium
+  - Estimated: 2 days
+  - Status: **Pending**
+  - Dependencies: USER-002 (completed)
+
+- [ ] **Public Profile View** (USER-006)
+  - Task ID: USER-006
+  - Description: Build read-only profile view component for viewing other users' profiles
+  - Priority: Low
+  - Estimated: 1 day
+  - Status: **Pending**
+  - Dependencies: USER-002 (completed)
 
 - [ ] **Bulk User Import**
   - Task ID: USER-003

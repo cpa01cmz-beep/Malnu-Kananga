@@ -106,6 +106,7 @@
 
 ##### Feature Components
 - **`UserManagement.tsx`** - User CRUD with permissions
+- **`UserProfileEditor.tsx`** - User profile editing interface (self-service, admin override)
 - **`PPDBRegistration.tsx`** - New student registration form
 - **`PPDBManagement.tsx`** - PPDB application management (PDF export, email integration, document preview, OCR results)
 - **`SiteEditor.tsx`** - WYSIWYG site content editor
@@ -171,6 +172,7 @@
 #### Users
 - `id`, `username`, `email`, `password_hash`
 - `role`: admin, teacher, student, parent, staff, osis, wakasek, kepsek
+- `phone`, `address`, `bio`, `avatar`, `dateOfBirth`
 - `profile_data`, `created_at`, `updated_at`
 
 #### Password Reset

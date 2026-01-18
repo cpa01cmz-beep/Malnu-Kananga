@@ -134,6 +134,11 @@ export interface User {
   role: UserRole;
   extraRole?: UserExtraRole;
   status: 'active' | 'inactive';
+  phone?: string;
+  address?: string;
+  bio?: string;
+  avatar?: string;
+  dateOfBirth?: string;
 }
 
 export interface PPDBRegistrant {

@@ -70,7 +70,7 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 
 #### User Management
 - [x] User CRUD interface (admin) (completed)
-- [ ] User profile management
+- [x] User profile management (completed 2026-01-18)
 - [ ] Bulk user import (CSV)
 - [ ] User search & filtering
 - [ ] Activity log for users
