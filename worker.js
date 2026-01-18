@@ -106,7 +106,15 @@ const ERROR_MESSAGES = {
   WS_AUTH_FAILED: 'Autentikasi WebSocket gagal',
   WS_CONNECTION_LIMIT: 'Batas koneksi tercapai',
   WS_INVALID_MESSAGE: 'Pesan WebSocket tidak valid',
-  WS_UNAUTHORIZED: 'Tidak memiliki izin untuk berlangganan event ini'
+  WS_UNAUTHORIZED: 'Tidak memiliki izin untuk berlangganan event ini',
+  EMAIL_REQUIRED: 'Email diperlukan',
+  RESET_TOKEN_REQUIRED: 'Reset token diperlukan',
+  NEW_PASSWORD_REQUIRED: 'Password baru diperlukan',
+  INVALID_RESET_TOKEN: 'Token reset password tidak valid atau kadaluarsa',
+  USER_NOT_FOUND: 'Pengguna tidak ditemukan',
+  EMAIL_ALREADY_EXISTS: 'Email sudah terdaftar',
+  RESET_TOKEN_EXPIRED: 'Token reset password kadaluarsa',
+  SAME_PASSWORD_ERROR: 'Password baru tidak boleh sama dengan password lama'
 };
 
 const HTTP_STATUS_CODES = {
@@ -553,6 +561,19 @@ async function initDatabase(env) {
     `);
 
     await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        token TEXT UNIQUE NOT NULL,
+        email TEXT NOT NULL,
+        expires_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_used BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
       CREATE TABLE IF NOT EXISTS event_registrations (
         id TEXT PRIMARY KEY,
         event_id TEXT NOT NULL,
@@ -830,6 +851,268 @@ async function handleRefreshToken(request, env, corsHeaders) {
       status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
+  }
+}
+
+async function handleForgotPassword(request, env, corsHeaders) {
+  try {
+    const { email } = await request.json();
+
+    if (!email) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.EMAIL_REQUIRED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const user = await env.DB.prepare('SELECT id, email, name FROM users WHERE email = ? AND status = ?')
+      .bind(email, 'active')
+      .first();
+
+    if (!user) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.USER_NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const token = generateId();
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await env.DB.prepare(`
+      INSERT INTO password_reset_tokens (id, user_id, token, email, expires_at)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(generateId(), user.id, token, email, expiresAt.toISOString()).run();
+
+    const resetLink = `${request.headers.get('Origin') || 'https://ma-malnukananga.sch.id'}/reset-password?token=${token}`;
+
+    await sendPasswordResetEmail(env, user, resetLink);
+
+    return new Response(JSON.stringify(response.success({
+      message: 'Email reset password telah dikirim'
+    }, 'Jika email terdaftar, Anda akan menerima link reset password')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch {
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleVerifyResetToken(request, env, corsHeaders) {
+  try {
+    const { token } = await request.json();
+
+    if (!token) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.RESET_TOKEN_REQUIRED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const resetToken = await env.DB.prepare(`
+      SELECT * FROM password_reset_tokens
+      WHERE token = ? AND is_used = FALSE AND expires_at > CURRENT_TIMESTAMP
+    `).bind(token).first();
+
+    if (!resetToken) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INVALID_RESET_TOKEN, HTTP_STATUS_CODES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response(JSON.stringify(response.success({
+      valid: true,
+      email: resetToken.email
+    }, 'Token valid')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch {
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleResetPassword(request, env, corsHeaders) {
+  try {
+    const { token, password } = await request.json();
+
+    if (!token) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.RESET_TOKEN_REQUIRED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (!password) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NEW_PASSWORD_REQUIRED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const resetToken = await env.DB.prepare(`
+      SELECT * FROM password_reset_tokens
+      WHERE token = ? AND is_used = FALSE AND expires_at > CURRENT_TIMESTAMP
+    `).bind(token).first();
+
+    if (!resetToken) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INVALID_RESET_TOKEN, HTTP_STATUS_CODES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const user = await env.DB.prepare('SELECT password_hash FROM users WHERE id = ?')
+      .bind(resetToken.user_id)
+      .first();
+
+    if (!user) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.USER_NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const newPasswordHash = await hashPassword(password);
+
+    if (newPasswordHash === user.password_hash) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SAME_PASSWORD_ERROR, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    await env.DB.prepare('UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+      .bind(newPasswordHash, resetToken.user_id)
+      .run();
+
+    await env.DB.prepare('UPDATE password_reset_tokens SET is_used = TRUE WHERE id = ?')
+      .bind(resetToken.id)
+      .run();
+
+    await env.DB.prepare('UPDATE sessions SET is_revoked = TRUE WHERE user_id = ?')
+      .bind(resetToken.user_id)
+      .run();
+
+    return new Response(JSON.stringify(response.success(null, 'Password berhasil direset. Silakan login dengan password baru.')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch {
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function sendPasswordResetEmail(env, user, resetLink) {
+  try {
+    const emailData = {
+      to: [{ email: user.email, name: user.name }],
+      subject: 'Reset Password - MA Malnu Kananga',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Reset Password</title>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+            .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+            .button { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+            .warning { background: #fef3c7; padding: 10px; border-radius: 5px; margin: 10px 0; }
+            .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Reset Password</h1>
+            </div>
+            <div class="content">
+              <p>Yth. ${user.name},</p>
+              <p>Kami menerima permintaan untuk mereset password Anda.</p>
+              <p>Klik tombol di bawah ini untuk mereset password:</p>
+              <p><a href="${resetLink}" class="button">Reset Password</a></p>
+              <p>Atau copy link berikut ke browser:</p>
+              <p style="word-break: break-all; color: #2563eb;">${resetLink}</p>
+              <div class="warning">
+                <p><strong>Penting:</strong></p>
+                <ul>
+                  <li>Link ini hanya berlaku selama 1 jam</li>
+                  <li>Jika Anda tidak meminta reset password, abaikan email ini</li>
+                </ul>
+              </div>
+              <p>Terima kasih,</p>
+              <p><strong>MA Malnu Kananga</strong></p>
+            </div>
+            <div class="footer">
+              <p>Email ini dikirim secara otomatis, jangan balas ke email ini.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+      text: `Yth. ${user.name},
+
+Kami menerima permintaan untuk mereset password Anda.
+
+Klik link berikut untuk mereset password:
+${resetLink}
+
+Penting:
+- Link ini hanya berlaku selama 1 jam
+- Jika Anda tidak meminta reset password, abaikan email ini
+
+Terima kasih,
+MA Malnu Kananga
+
+Email ini dikirim secara otomatis, jangan balas ke email ini.`
+    };
+
+    const emailProvider = env.EMAIL_PROVIDER || 'cloudflare';
+
+    if (emailProvider === 'cloudflare' && env.SENDGRID_API_KEY) {
+      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.SENDGRID_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          personalizations: [{
+            to: emailData.to.map(r => ({ email: r.email, name: r.name || '' })),
+            subject: emailData.subject
+          }],
+          from: { email: env.EMAIL_FROM || 'noreply@ma-malnukananga.sch.id' },
+          content: [
+            { type: 'text/plain', value: emailData.text },
+            { type: 'text/html', value: emailData.html }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        logger.error('Failed to send password reset email via SendGrid:', await response.text());
+      } else {
+        logger.info('Password reset email sent to:', user.email);
+      }
+    } else {
+      logger.warn('Email provider not configured for password reset');
+    }
+  } catch (error) {
+    logger.error('Error sending password reset email:', error);
   }
 }
 
@@ -1975,6 +2258,9 @@ function mapTableToEventType(table, _row) {
       '/api/auth/login': handleLogin,
       '/api/auth/logout': handleLogout,
       '/api/auth/refresh': handleRefreshToken,
+      '/api/auth/forgot-password': handleForgotPassword,
+      '/api/auth/verify-reset-token': handleVerifyResetToken,
+      '/api/auth/reset-password': handleResetPassword,
       '/api/email/send': handleSendEmail,
       '/api/files/upload': handleFileUpload,
       '/api/files/download': handleFileDownload,

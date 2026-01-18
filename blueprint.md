@@ -124,6 +124,8 @@
 - **`Header.tsx`** - Main navigation header
 - **`Footer.tsx`** - Page footer
 - **`LoginModal.tsx`** - Login form modal
+- **`ForgotPassword.tsx`** - Forgot password modal (email input)
+- **`ResetPassword.tsx`** - Password reset form (token-based)
 - **`ChatWindow.tsx`** - AI chat interface
 - **`Toast.tsx`** - Toast notification component
 - **`ThemeSelector.tsx`** - Theme selection modal
@@ -142,6 +144,12 @@
 - `role`: admin, teacher, student, parent, staff, osis, wakasek, kepsek
 - `profile_data`, `created_at`, `updated_at`
 
+#### Password Reset
+- `password_reset_tokens` table stores secure reset tokens
+- Token expiration: 1 hour from creation
+- Tokens marked as `is_used` after successful reset
+- All sessions invalidated after password reset for security
+
 #### Content Management
 - Site pages, announcements, news
 - Learning materials, assignments
@@ -155,6 +163,7 @@
 ### Storage Architecture (`STORAGE_KEYS`)
 All localStorage keys use `malnu_` prefix:
 - Authentication: `malnu_auth_session`, `malnu_refresh_token`
+- Password Reset: URL parameter `?token=<token>` (not stored)
 - Users: `malnu_users`, `malnu_current_user`
 - Content: `malnu_site_content`, `malnu_materials`
 - Notifications: `malnu_notifications`
@@ -172,6 +181,21 @@ All localStorage keys use `malnu_` prefix:
 4. Token expires → Refresh via `apiService.refreshToken()`
 5. Refresh fails → Logout → Redirect to login
 
+### Password Reset Flow
+
+1. User clicks "Lupa Password?" in login form → Opens ForgotPassword modal
+2. User enters email → `authService.forgotPassword(email)` → `/api/auth/forgot-password`
+3. Backend validates email exists → Generates secure token (1 hour expiry)
+4. Token stored in `password_reset_tokens` table with email
+5. Password reset email sent with token via SendGrid/Cloudflare Email
+6. User clicks link in email → Opens `/reset-password?token=<token>`
+7. Backend verifies token → `/api/auth/verify-reset-token` → Returns email
+8. User enters new password → Validates strength requirements
+9. User confirms password → `/api/auth/reset-password`
+10. Backend validates token, checks password != old password → Updates password hash
+11. All user sessions invalidated → Forces re-login with new password
+12. Token marked as used → Cannot be reused
+
 ### API Architecture
 
 #### Base URL
@@ -182,6 +206,9 @@ All localStorage keys use `malnu_` prefix:
 #### RESTful Endpoints
 ```
 /auth/*          - Authentication (login, logout, refresh, password reset)
+  - POST /auth/forgot-password - Request password reset
+  - POST /auth/verify-reset-token - Validate reset token
+  - POST /auth/reset-password - Reset password with token
 /users/*         - User management (CRUD)
 /students/*      - Student records
 /teachers/*      - Teacher records

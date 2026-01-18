@@ -5,13 +5,47 @@
 ## Active Tasks
 
 ### In Progress 🚧
-*No active tasks currently in progress.*
+- [ ] **Password Reset Flow Implementation** (AUTH-001)
+  - Task ID: AUTH-001
+  - Description: Implement complete password reset flow with email verification
+  - Priority: High
+  - Estimated: 2 days
+  - Status: **In Progress**
+  - Started: 2026-01-18
+  - Dependencies: Email service (✅ completed)
+  - Agent: Lead Autonomous Engineer & System Guardian
+  - Changes Needed:
+    - Backend endpoints: /auth/forgot-password, /auth/verify-reset-token, /auth/reset-password
+    - Database schema: password_reset_tokens table
+    - Frontend: ForgotPassword.tsx, ResetPassword.tsx components
+    - Email template: Password reset email with secure token
+    - Token expiration: 1 hour
 
 ---
 
 ## Completed Tasks ✅
 
 ### 2026-01-18
+- [x] **Password Reset Flow Implementation** (AUTH-001)
+  - Task ID: AUTH-001
+  - Description: Implement complete password reset flow with email verification
+  - Priority: High
+  - Estimated: 2 days
+  - Status: **Completed**
+  - Completed: 2026-01-18
+  - Dependencies: Email service (✅ completed)
+  - Agent: Lead Autonomous Engineer & System Guardian
+  - Changes:
+    - Backend endpoints: /auth/forgot-password, /auth/verify-reset-token, /auth/reset-password
+    - Database schema: password_reset_tokens table added
+    - Frontend components: ForgotPassword.tsx, ResetPassword.tsx
+    - LoginModal updated: Added "Lupa Password?" link
+    - authService extended: forgotPassword, verifyResetToken, resetPassword methods
+    - authAPI extended: Added password reset API methods
+    - Email template: Password reset email with secure token
+    - Token expiration: 1 hour
+    - Security: Password comparison to prevent reuse, session invalidation on reset
+
 - [x] **Security Audit & Hardening** (SEC-001)
   - Task ID: SEC-001
   - Description: Conduct comprehensive security audit and harden system

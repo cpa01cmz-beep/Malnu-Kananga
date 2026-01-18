@@ -40,9 +40,9 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 - [x] **WebSocket Service** (Real-time communication infrastructure)
 - [x] **Offline Support** (Service worker, offline queue)
 - [x] **Security Audit & Hardening** (Dynamic coding, centralized URLs, proper error handling)
+- [x] **Password Reset Flow** (Email verification, secure tokens, 1 hour expiration)
 
 ### In Progress 🚧
-- [ ] Password reset flow implementation
 - [ ] Assignment management UI
 
 ---

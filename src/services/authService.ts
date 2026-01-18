@@ -64,4 +64,70 @@ export class AuthService {
   getRefreshToken(): string | null {
     return authAPI.getRefreshToken();
   }
+
+  async forgotPassword(email: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/forgot-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'forgotPassword',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+  }
+
+  async verifyResetToken(token: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/verify-reset-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'verifyResetToken',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+  }
+
+  async resetPassword(token: string, password: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token, password }),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'resetPassword',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+  }
 }
