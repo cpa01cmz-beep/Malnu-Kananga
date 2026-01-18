@@ -88,7 +88,7 @@
 ##### Feature Components
 - **`UserManagement.tsx`** - User CRUD with permissions
 - **`PPDBRegistration.tsx`** - New student registration form
-- **`PPDBManagement.tsx`** - PPDB application management
+- **`PPDBManagement.tsx`** - PPDB application management (PDF export, email integration, document preview)
 - **`SiteEditor.tsx`** - WYSIWYG site content editor
 - **`MaterialUpload.tsx`** - Learning material upload interface
 - **`MaterialSharing.tsx`** - Material sharing with permissions
@@ -159,6 +159,14 @@
 - Student registration data
 - Document uploads (OCR processed)
 - Status tracking
+- Admin management interface with:
+  - Filtering and sorting (status, date, score, school)
+  - Bulk actions (approve/reject)
+  - Scoring system with rubrics
+  - PDF generation for acceptance/rejection letters
+  - Email integration for notifications
+  - Document preview (images, PDFs)
+  - Statistics dashboard
 
 ### Storage Architecture (`STORAGE_KEYS`)
 All localStorage keys use `malnu_` prefix:
@@ -331,12 +339,13 @@ All localStorage keys use `malnu_` prefix:
 - OCR validation tests
 
 #### Test Coverage (as of 2026-01-18)
-- **84 test files**
-- **1529 tests passing**
+- **85 test files**
+- **1529+ tests passing**
 - **10 tests skipped**
 - **Coverage areas**:
   - All core services (auth, API, permissions)
   - All UI components (30+ components)
+  - PPDB components (registration, management with full test coverage)
   - Voice services (recognition, synthesis)
   - AI services (Gemini, cache management)
   - OCR services (validation, enhancement)

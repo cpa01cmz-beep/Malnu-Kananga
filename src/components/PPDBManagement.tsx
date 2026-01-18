@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole } from '../types';
+import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole, DocumentPreview } from '../types';
 
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
 import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+import { emailService } from '../services/emailService';
+import { pdfExportService } from '../services/pdfExportService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import IconButton from './ui/IconButton';
@@ -97,21 +99,49 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
       if (r.id === id) {
         const template = templates.find(t => t.id === templateId);
         if (template && template.type === (newStatus === 'approved' ? 'approval' : 'rejection')) {
-          logger.info('Sending email:', template.subject, template.body.replace('{fullName}', r.fullName));
-          
+          const body = template.body
+            .replace('{fullName}', r.fullName)
+            .replace('{registrationDate}', r.registrationDate);
+
+          // Send email
+          emailService.sendEmail({
+            recipients: [{
+              email: r.email,
+              name: r.fullName
+            }],
+            subject: template.subject,
+            html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2>${template.subject}</h2>
+              <p>Dear ${r.fullName},</p>
+              <div style="white-space: pre-wrap;">${body}</div>
+              <p>Terima kasih,</p>
+              <p><strong>Panitia PPDB MA Malnu Kananga</strong></p>
+            </div>`,
+            text: body,
+            data: {
+              templateId: template.id,
+              registrantId: r.id,
+              status: newStatus
+            }
+          }).then(() => {
+            logger.info('Email sent successfully to:', r.email);
+          }).catch((error) => {
+            logger.error('Failed to send email:', error);
+          });
+
           // Send push notification to applicant
           unifiedNotificationManager.showNotification({
             id: `ppdb-status-${id}-${Date.now()}`,
             type: 'ppdb',
             title: newStatus === 'approved' ? 'Selamat! Anda Diterima' : 'Hasil Seleksi PPDB',
-            body: newStatus === 'approved' 
+            body: newStatus === 'approved'
               ? `Selamat ${r.fullName}, Anda telah diterima di MA Malnu Kananga!`
               : `Terima kasih ${r.fullName} telah mendaftar. Mohon maaf, Anda belum dapat diterima pada tahun ajaran ini.`,
             icon: newStatus === 'approved' ? '✅' : '❌',
             timestamp: new Date().toISOString(),
             read: false,
             priority: 'high',
-            targetUsers: [r.userId || r.nisn], // Use userId or fallback to NISN
+            targetUsers: [r.userId || r.nisn],
             data: {
               action: 'view_ppdb_status',
               registrantId: r.id,
@@ -148,12 +178,27 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
   const generatePDFLetter = (registrant: PPDBRegistrant, type: 'approval' | 'rejection') => {
     const template = templates.find(t => t.type === type);
     if (!template) return;
-    
-    const letter = template.body
+
+    const body = template.body
       .replace('{fullName}', registrant.fullName)
       .replace('{registrationDate}', registrant.registrationDate);
 
-    logger.info('Generating PDF:', template.subject, letter);
+    pdfExportService.createReport({
+      title: template.subject,
+      studentName: registrant.fullName,
+      studentId: registrant.nisn,
+      date: registrant.registrationDate,
+      headers: [],
+      data: [[body]],
+      summary: {
+        'NISN': registrant.nisn,
+        'Nama Lengkap': registrant.fullName,
+        'Asal Sekolah': registrant.originSchool,
+        'Tanggal Pendaftaran': registrant.registrationDate,
+        'Status': type === 'approval' ? 'Diterima' : 'Ditolak'
+      }
+    });
+
     onShowToast(`Surat ${type === 'approval' ? 'penerimaan' : 'penolakan'} berhasil dibuat`, 'success');
   };
 
@@ -575,25 +620,118 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
         )}
 
         {/* Document Preview Modal */}
-        {showDocumentPreview && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <Card rounded="xl" padding="md" className="w-full max-w-2xl">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Preview Dokumen</h3>
-                <IconButton
-                  icon={<XMarkIcon className="w-5 h-5" />}
-                  ariaLabel="Tutup preview dokumen"
-                  variant="ghost"
-                  size="md"
-                  onClick={() => setShowDocumentPreview(null)}
-                />
-              </div>
-              <Card className={`bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4 ${HEIGHTS.CONTENT.TABLE} flex items-center justify-center`}>
-                <p className="text-neutral-500 dark:text-neutral-400">Preview dokumen akan ditampilkan di sini</p>
+        {showDocumentPreview && (() => {
+          const registrant = registrants.find(r => r.id === showDocumentPreview);
+          return (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <Card rounded="xl" padding="md" className="w-full max-w-4xl">
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Preview Dokumen</h3>
+                    <p className="text-sm text-neutral-500">{registrant?.fullName} - {registrant?.nisn}</p>
+                  </div>
+                  <IconButton
+                    icon={<XMarkIcon className="w-5 h-5" />}
+                    ariaLabel="Tutup preview dokumen"
+                    variant="ghost"
+                    size="md"
+                    onClick={() => setShowDocumentPreview(null)}
+                  />
+                </div>
+                <div className="space-y-4">
+                  {/* Document URL preview */}
+                  {registrant?.documentUrl && (
+                    <Card className="bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Dokumen</span>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => window.open(registrant.documentUrl, '_blank')}
+                        >
+                          Buka di Tab Baru
+                        </Button>
+                      </div>
+                      <div className={`${HEIGHTS.CONTENT.TABLE} overflow-hidden bg-white dark:bg-neutral-800 rounded-lg`}>
+                        {registrant.documentUrl.match(/\.(jpg|jpeg|png|gif)$/i) ? (
+                          <img
+                            src={registrant.documentUrl}
+                            alt="Document preview"
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              const errorMsg = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (errorMsg) errorMsg.style.display = 'block';
+                            }}
+                          />
+                        ) : null}
+                        {registrant.documentUrl.match(/\.(pdf)$/i) ? (
+                          <object
+                            data={registrant.documentUrl}
+                            type="application/pdf"
+                            className="w-full h-full"
+                          >
+                            <div className="flex items-center justify-center h-full p-4 text-center">
+                              <p className="text-neutral-500">Tidak dapat mempratinjau PDF. Silakan buka di tab baru.</p>
+                            </div>
+                          </object>
+                        ) : null}
+                        {!registrant.documentUrl.match(/\.(jpg|jpeg|png|gif|pdf)$/i) ? (
+                          <div className="hidden flex items-center justify-center h-full p-4 text-center">
+                            <p className="text-neutral-500">Format dokumen tidak didukung untuk preview. Silakan unduh file.</p>
+                          </div>
+                        ) : null}
+                        <div className="hidden text-center text-red-500 mt-2">
+                          Gagal memuat dokumen. Silakan buka di tab baru.
+                        </div>
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Document Previews */}
+                  {registrant?.documentPreviews && registrant.documentPreviews.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {registrant.documentPreviews.map((doc: DocumentPreview) => (
+                        <Card key={doc.id} className="bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300 truncate">{doc.name}</span>
+                            <span className="text-xs text-neutral-500">{(doc.size / 1024).toFixed(1)} KB</span>
+                          </div>
+                          <div className="h-64 overflow-hidden bg-white dark:bg-neutral-800 rounded-lg">
+                            {doc.type === 'image' ? (
+                              <img
+                                src={doc.url}
+                                alt={doc.name}
+                                className="w-full h-full object-contain"
+                              />
+                            ) : doc.type === 'pdf' ? (
+                              <object
+                                data={doc.url}
+                                type="application/pdf"
+                                className="w-full h-full"
+                              />
+                            ) : (
+                              <div className="flex items-center justify-center h-full">
+                                <DocumentTextIcon className="w-12 h-12 text-neutral-400" />
+                              </div>
+                            )}
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+
+                  {!registrant?.documentUrl && (!registrant?.documentPreviews || registrant.documentPreviews.length === 0) && (
+                    <Card className="bg-neutral-100 dark:bg-neutral-700 rounded-lg p-8 text-center">
+                      <DocumentTextIcon className="w-16 h-16 text-neutral-400 mx-auto mb-4" />
+                      <p className="text-neutral-500 dark:text-neutral-400">Tidak ada dokumen yang diunggah</p>
+                    </Card>
+                  )}
+                </div>
               </Card>
-            </Card>
-          </div>
-        )}
+            </div>
+          );
+        })()}
     </div>
   );
 };
