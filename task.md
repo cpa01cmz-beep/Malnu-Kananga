@@ -5,24 +5,18 @@
 ## Active Tasks
 
 ### In Progress 🚧
-- [x] **PPDB Document OCR Integration** (PPDB-002)
-  - Task ID: PPDB-002
-  - Description: Connect OCR service to PPDB document uploads for automatic text extraction
+- [ ] **Documentation Reconciliation** (DOC-004)
+  - Task ID: DOC-004
+  - Description: Synchronize documentation inconsistencies between roadmap.md, task.md, and actual implementation
   - Priority: Critical
-  - Estimated: 2 days
-  - Status: **Completed**
-  - Completed: 2026-01-18
-  - Dependencies: PPDB-001 (✅ completed), OCR service (✅ exists), PPDB-003 (✅ completed)
+  - Estimated: 1 day
+  - Status: **In Progress**
   - Agent: Lead Autonomous Engineer & System Guardian
-  - Changes:
-    - Updated PPDBRegistrant type to include ocrMetadata field
-    - PPDBRegistration now saves OCR results (extracted grades, fullName, NISN, school)
-    - PPDBRegistration saves OCR confidence, quality metrics, processing timestamp
-    - PPDBManagement displays OCR results in new modal
-    - PPDBManagement shows OCR quality indicators (confidence, accuracy, word count)
-    - PPDBManagement allows admins to re-run OCR on any document
-    - OCR results shown with extracted grades, quality badges, and processing status
-    - Files modified: src/types.ts, src/components/PPDBRegistration.tsx, src/components/PPDBManagement.tsx
+  - Changes Needed:
+    - Update roadmap.md: Mark completed items properly, remove inaccurate "In Progress" markers
+    - Update task.md: Move completed AUTH-001 from backlog to completed section
+    - Update blueprint.md: Clarify Assignment vs Grading system architecture
+    - Document current implementation state: Grading (direct entry) vs Assignment (full lifecycle)
 
 ---
 
@@ -178,14 +172,6 @@
 ### High Priority
 
 #### Core Features
-- [ ] **Auth Enhancement**
-  - Task ID: AUTH-001
-  - Description: Implement password reset flow with email verification
-  - Priority: High
-  - Estimated: 2 days
-  - Status: **Pending**
-  - Dependencies: Email service integration (✅ implemented, needs workflow)
-
 - [ ] **User Profile Management**
   - Task ID: USER-002
   - Description: Build user profile editing interface for all roles

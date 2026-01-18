@@ -81,21 +81,50 @@
 
 ##### Dashboard Components
 - **`AdminDashboard.tsx`** - Admin dashboard with management cards
+
+##### Admin Components
+- **`SystemStats.tsx`** - System statistics and monitoring
+- **`NotificationAnalytics.tsx`** - Notification analytics dashboard
+- **`NotificationCenter.tsx`** - Notification management center
+- **`BatchManagement.tsx`** - Batch operation management
+
+##### Teacher Components
 - **`TeacherDashboard.tsx`** - Teacher dashboard with class and grade management
-- **`StudentPortal.tsx`** - Student portal with grades, materials, schedule
-- **`ParentDashboard.tsx`** - Parent portal with child's academic data
+
+##### Student Components
+- **`StudentLearningModule.tsx`** - Student learning modules interface
+- **`AcademicGrades.tsx`** - Academic grades display for students
+
+##### Parent Components
+- **`ParentGradesView.tsx`** - Parent view of child's grades
+- **`ParentAttendanceView.tsx`** - Parent view of child's attendance
+- **`ParentScheduleView.tsx`** - Parent view of child's schedule
+- **`ParentMeetingsView.tsx`** - Parent-teacher meetings interface
+- **`ParentMessagingView.tsx`** - Parent messaging interface
+- **`ParentPaymentsView.tsx`** - Parent payment and fee view
+- **`ParentNotificationSettings.tsx`** - Parent notification preferences
 
 ##### Feature Components
 - **`UserManagement.tsx`** - User CRUD with permissions
 - **`PPDBRegistration.tsx`** - New student registration form
-- **`PPDBManagement.tsx`** - PPDB application management (PDF export, email integration, document preview)
+- **`PPDBManagement.tsx`** - PPDB application management (PDF export, email integration, document preview, OCR results)
 - **`SiteEditor.tsx`** - WYSIWYG site content editor
 - **`MaterialUpload.tsx`** - Learning material upload interface
 - **`MaterialSharing.tsx`** - Material sharing with permissions
 - **`MaterialAnalytics.tsx`** - Material usage analytics
 - **`MaterialTemplatesLibrary.tsx`** - Template library for materials
-- **`GradingManagement.tsx`** - Grade entry and management
+- **`GradingManagement.tsx`** - Grade entry and management (direct entry model)
 - **`ClassManagement.tsx`** - Class schedule and management
+- **`AcademicGrades.tsx`** - Academic grades display for students
+- **`ParentGradesView.tsx`** - Parent view of child's grades
+- **`ProgressAnalytics.tsx`** - Student progress and performance analytics
+- **`StudentLearningModule.tsx`** - Student learning modules interface
+- **`CalendarView.tsx`** - Calendar with events and schedule
+- **`ScheduleView.tsx`** - Class schedule display
+- **`AttendanceView.tsx`** - Attendance tracking and management
+- **`SchoolInventory.tsx`** - School inventory management
+- **`ELibrary.tsx`** - E-library browsing and access
+- **`StudentInsights.tsx`** - Student performance insights
 - **`ELibrary.tsx`** - E-library browsing and access
 - **`StudentInsights.tsx`** - Student performance insights
 - **`CalendarView.tsx`** - Calendar with events and schedule
@@ -169,6 +198,21 @@
   - **OCR results display** (extracted grades, confidence, quality metrics)
   - **Re-run OCR capability** for any document
   - Statistics dashboard
+
+#### Assignments & Grading
+- **Current Implementation**: Direct grade entry model (simplified)
+  - `GradingManagement.tsx`: Teachers enter grades directly with assignment metadata
+  - Database: `grades` table includes `assignment_type`, `assignment_name` fields
+  - No formal assignment creation → submission → grading workflow
+  - Students view grades via `AcademicGrades.tsx`
+  - Parents view grades via `ParentGradesView.tsx`
+  - Analytics via `ProgressAnalytics.tsx`
+
+- **Future Enhancement**: Full assignment lifecycle (in backlog as ASG-001 to ASG-004)
+  - Assignment creation UI (teachers)
+  - Student submission interface
+  - Assignment-specific grading workflow
+  - Enhanced assignment analytics
 
 ### Storage Architecture (`STORAGE_KEYS`)
 All localStorage keys use `malnu_` prefix:
