@@ -248,7 +248,7 @@ const response = {
 function corsHeaders(allowedOrigin, requestOrigin) {
   // Security: Prevent CSRF by validating origins
   const validOrigins = allowedOrigin ? allowedOrigin.split(',').map(o => o.trim()) : [];
-  
+
   // If no specific origins configured, deny all requests
   if (validOrigins.length === 0) {
     return {
@@ -258,19 +258,28 @@ function corsHeaders(allowedOrigin, requestOrigin) {
       'Access-Control-Max-Age': '0',
     };
   }
-  
+
   // Check if request origin is in allowed list
-  const isOriginAllowed = validOrigins.includes(requestOrigin) || 
+  const isOriginAllowed = validOrigins.includes(requestOrigin) ||
                           validOrigins.includes('*');
-  
-  // Only return credentials for specific origins, never with wildcard
-  const origin = isOriginAllowed ? (validOrigins.includes('*') ? requestOrigin : requestOrigin) : 'null';
-  
+
+  // SECURITY FIX: Never combine wildcard origin with credentials
+  // If '*' is in allowed origins, do NOT send credentials header
+  const shouldAllowCredentials = isOriginAllowed &&
+                             !validOrigins.includes('*') &&
+                             validOrigins.includes(requestOrigin);
+
+  // SECURITY FIX: Only echo back specific origins, not wildcard
+  const origin = isOriginAllowed ?
+                 (validOrigins.includes('*') && !validOrigins.includes(requestOrigin) ?
+                  'null' : requestOrigin) :
+                 'null';
+
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': isOriginAllowed ? 'GET, POST, PUT, DELETE, OPTIONS' : '',
     'Access-Control-Allow-Headers': isOriginAllowed ? 'Content-Type, Authorization' : '',
-    'Access-Control-Allow-Credentials': isOriginAllowed && validOrigins.includes(requestOrigin) ? 'true' : 'false',
+    'Access-Control-Allow-Credentials': shouldAllowCredentials ? 'true' : 'false',
     'Access-Control-Max-Age': isOriginAllowed ? '86400' : '0',
     'Vary': 'Origin'
   };
@@ -833,9 +842,68 @@ async function handleRefreshToken(request, env, corsHeaders) {
   }
 }
 
+// SECURITY: Whitelist of allowed tables for CRUD operations
+const ALLOWED_CRUD_TABLES = new Set([
+  'users',
+  'ppdb_registrants',
+  'inventory',
+  'school_events',
+  'event_registrations',
+  'event_budgets',
+  'event_photos',
+  'event_feedback',
+  'students',
+  'teachers',
+  'subjects',
+  'classes',
+  'schedules',
+  'grades',
+  'attendance',
+  'e_library',
+  'announcements'
+]);
+
+// SECURITY: Validate table name against whitelist
+function isValidTableName(table) {
+  if (!table || typeof table !== 'string') {
+    return false;
+  }
+  // Only allow alphanumeric and underscores
+  if (!/^[a-zA-Z0-9_]+$/.test(table)) {
+    return false;
+  }
+  // Check against whitelist
+  return ALLOWED_CRUD_TABLES.has(table);
+}
+
+// SECURITY: Sanitize and validate file paths
+function isValidFilePath(key) {
+  if (!key || typeof key !== 'string') {
+    return false;
+  }
+  // Prevent path traversal attacks
+  if (key.includes('..') || key.includes('~') || key.startsWith('/')) {
+    return false;
+  }
+  // Only allow alphanumeric, hyphens, underscores, forward slashes, and dots
+  if (!/^[a-zA-Z0-9_./-]+$/.test(key)) {
+    return false;
+  }
+  return true;
+}
+
 // Generic CRUD Handler
 async function handleCRUD(request, env, corsHeaders, table, _options = {}) {
   try {
+    // SECURITY: Validate table name to prevent SQL injection
+    if (!isValidTableName(table)) {
+      logger.warn(`CRUD: Invalid table name requested: ${table}`);
+      return new Response(JSON.stringify(response.error('Invalid resource requested', HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     const payload = await authenticate(request, env);
     if (!payload) {
       return new Response(JSON.stringify(response.unauthorized()), {
@@ -1085,9 +1153,29 @@ async function handleFileUpload(request, env, corsHeaders) {
 
     const timestamp = Date.now();
     const sanitizedFilename = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const defaultPath = `uploads/${payload.user_id}/${timestamp}`;
-    const path = customPath || defaultPath;
+
+    // SECURITY: Reject customPath parameter to prevent path manipulation
+    // Users cannot specify upload location - must use default structure
+    if (customPath && typeof customPath === 'string') {
+      logger.warn(`File upload: Custom path parameter rejected for user ${payload.user_id}`);
+      return new Response(JSON.stringify(response.error('Custom paths are not allowed', HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // SECURITY: Enforce fixed upload directory structure
+    const path = `uploads/${payload.user_id}/${timestamp}`;
     const key = `${path}/${sanitizedFilename}`;
+
+    // SECURITY: Validate final key to prevent path traversal
+    if (!isValidFilePath(key)) {
+      logger.warn(`File upload: Invalid file path generated: ${key}`);
+      return new Response(JSON.stringify(response.error('Invalid file path', HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
     const arrayBuffer = await file.arrayBuffer();
     await env.BUCKET.put(key, arrayBuffer, {
@@ -1139,7 +1227,19 @@ async function handleFileDownload(request, env, corsHeaders) {
       });
     }
 
-    const object = await env.BUCKET.get(key);
+    // SECURITY: Validate file path to prevent path traversal attacks
+    if (!isValidFilePath(key)) {
+      logger.warn(`File download: Invalid file path attempted: ${key}`);
+      return new Response(JSON.stringify(response.error('Invalid file path', HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // SECURITY: Normalize path to prevent directory traversal
+    const normalizedKey = key.replace(/\/+/g, '/').replace(/^\//, '');
+
+    const object = await env.BUCKET.get(normalizedKey);
 
     if (!object) {
       return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FILE_NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
@@ -1153,6 +1253,8 @@ async function handleFileDownload(request, env, corsHeaders) {
     headers.set('etag', object.httpEtag);
     headers.append('Content-Disposition', `inline; filename="${object.customMetadata?.originalName || 'download'}"`);
     headers.append('Access-Control-Allow-Origin', env.ALLOWED_ORIGIN || '*');
+
+    logger.info(`File downloaded: ${normalizedKey} by user`);
 
     return new Response(object.body, {
       headers,
@@ -1193,7 +1295,39 @@ async function handleFileDelete(request, env, corsHeaders) {
       });
     }
 
-    await env.BUCKET.delete(key);
+    // SECURITY: Validate file path to prevent path traversal attacks
+    if (!isValidFilePath(key)) {
+      logger.warn(`File delete: Invalid file path attempted: ${key}`);
+      return new Response(JSON.stringify(response.error('Invalid file path', HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // SECURITY: Normalize path to prevent directory traversal
+    const normalizedKey = key.replace(/\/+/g, '/').replace(/^\//, '');
+
+    // SECURITY: Verify user owns the file before deletion
+    const object = await env.BUCKET.get(normalizedKey);
+    if (!object) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.FILE_NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const uploadedBy = object.customMetadata?.uploadedBy;
+    if (uploadedBy !== payload.user_id) {
+      logger.warn(`File delete: Unauthorized deletion attempt by user ${payload.user_id} of file ${normalizedKey} owned by ${uploadedBy}`);
+      return new Response(JSON.stringify(response.error('You do not have permission to delete this file', HTTP_STATUS_CODES.FORBIDDEN)), {
+        status: HTTP_STATUS_CODES.FORBIDDEN,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    await env.BUCKET.delete(normalizedKey);
+
+    logger.info(`File deleted: ${normalizedKey} by user ${payload.user_id}`);
 
     return new Response(JSON.stringify(response.success(null, 'File deleted successfully')), {
       status: HTTP_STATUS_CODES.OK,

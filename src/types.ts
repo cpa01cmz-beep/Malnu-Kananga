@@ -152,6 +152,9 @@ export interface PPDBRegistrant {
   score?: number;
   rubricScores?: Record<string, number>;
   documentPreviews?: DocumentPreview[];
+  ocrResults?: OCRExtractionResult;
+  ocrProcessed?: boolean;
+  ocrConfidence?: number;
 }
 
 export interface DocumentPreview {
@@ -193,6 +196,34 @@ export interface PPDBRubric {
     maxScore: number;
     description: string;
   }[];
+}
+
+export interface OCRExtractionResult {
+  text: string;
+  confidence: number;
+  data: {
+    grades?: Record<string, number>;
+    fullName?: string;
+    nisn?: string;
+    schoolName?: string;
+  };
+  quality: OCRTextQuality;
+  extractedAt?: string;
+}
+
+export interface OCRTextQuality {
+  isSearchable: boolean;
+  isHighQuality: boolean;
+  estimatedAccuracy: number;
+  wordCount: number;
+  characterCount: number;
+  hasMeaningfulContent: boolean;
+  documentType: 'unknown' | 'academic' | 'administrative' | 'form' | 'certificate';
+}
+
+export interface OCRProgress {
+  status: string;
+  progress: number;
 }
 
 export interface InventoryItem {

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole } from '../types';
+import React, { useState, useCallback } from 'react';
+import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole, OCRExtractionResult, OCRProgress } from '../types';
 
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
 import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+import { ocrService } from '../services/ocrService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import IconButton from './ui/IconButton';
@@ -17,6 +18,9 @@ import DocumentTextIcon from './icons/DocumentTextIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { CheckIcon, XMarkIcon } from './icons/MaterialIcons';
 import { HEIGHTS } from '../config/heights';
+import Modal from './ui/Modal';
+import ProgressBar from './ui/ProgressBar';
+import { SparklesIcon } from './icons/SparklesIcon';
 
 interface PPDBManagementProps {
   onBack: () => void;
@@ -41,6 +45,11 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showDocumentPreview, setShowDocumentPreview] = useState<string | null>(null);
   const [showScoringModal, setShowScoringModal] = useState<string | null>(null);
+  const [showOCRModal, setShowOCRModal] = useState<string | null>(null);
+  const [ocrProgress, setOcrProgress] = useState<OCRProgress>({ status: 'Idle', progress: 0 });
+  const [isProcessingOCR, setIsProcessingOCR] = useState(false);
+  const [ocrResult, setOcrResult] = useState<OCRExtractionResult | null>(null);
+  const [showApplyOCRData, setShowApplyOCRData] = useState(false);
 
   // Default templates for bulk actions
   const [templates] = useState<PPDBTemplate[]>([
@@ -137,12 +146,87 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
       }
     });
 
-    const updated = registrants.map(r => 
+    const updated = registrants.map(r =>
       r.id === id ? { ...r, score: Math.round(totalScore), rubricScores } : r
     );
     setRegistrants(updated);
     onShowToast('Skor berhasil diperbarui', 'success');
     setShowScoringModal(null);
+  };
+
+  const processDocumentOCR = async (registrant: PPDBRegistrant) => {
+    if (!registrant.documentUrl) {
+      onShowToast('Tidak ada dokumen untuk diproses', 'error');
+      return;
+    }
+
+    setIsProcessingOCR(true);
+    setOcrProgress({ status: 'Initializing', progress: 0 });
+    setShowOCRModal(registrant.id);
+
+    try {
+      await ocrService.initialize((progress) => {
+        setOcrProgress(progress);
+      });
+
+      const fileUrl = registrant.documentUrl.startsWith('http')
+        ? registrant.documentUrl
+        : `${import.meta.env.VITE_R2_PUBLIC_URL || ''}/${registrant.documentUrl}`;
+
+      const response = await fetch(fileUrl);
+      if (!response.ok) throw new Error('Failed to fetch document');
+      const blob = await response.blob();
+      const file = new File([blob], `document-${registrant.id}`, { type: blob.type });
+
+      const result: OCRExtractionResult = await ocrService.extractTextFromImage(file, (progress) => {
+        setOcrProgress(progress);
+      });
+
+      setOcrResult(result);
+
+      const updated = registrants.map(r =>
+        r.id === registrant.id ? {
+          ...r,
+          ocrResults: result,
+          ocrProcessed: true,
+          ocrConfidence: result.confidence
+        } : r
+      );
+      setRegistrants(updated);
+
+      if (result.data.grades && Object.keys(result.data.grades).length > 0) {
+        setShowApplyOCRData(true);
+        onShowToast(`Berhasil mengekstrak ${Object.keys(result.data.grades).length} nilai dan data identitas`, 'success');
+      } else {
+        onShowToast('Dokumen berhasil diproses tetapi data terbatas', 'info');
+      }
+    } catch (error) {
+      logger.error('OCR processing error:', error);
+      onShowToast('Gagal memproses dokumen. Pastikan file berupa gambar dengan kualitas baik.', 'error');
+    } finally {
+      setIsProcessingOCR(false);
+    }
+  };
+
+  const applyOCRDataToRegistrant = (registrantId: string) => {
+    if (!ocrResult) return;
+
+    const registrant = registrants.find(r => r.id === registrantId);
+    if (!registrant) return;
+
+    const updatedData: Partial<PPDBRegistrant> = {
+      fullName: ocrResult.data.fullName || registrant.fullName,
+      nisn: ocrResult.data.nisn || registrant.nisn,
+      originSchool: ocrResult.data.schoolName || registrant.originSchool
+    };
+
+    const updated = registrants.map(r =>
+      r.id === registrantId ? { ...r, ...updatedData } : r
+    );
+    setRegistrants(updated);
+    setShowApplyOCRData(false);
+    setShowOCRModal(null);
+    onShowToast('Data dari OCR berhasil diterapkan', 'success');
   };
 
   const generatePDFLetter = (registrant: PPDBRegistrant, type: 'approval' | 'rejection') => {
@@ -401,7 +485,8 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                             <th className="px-6 py-4">Asal Sekolah</th>
                             <th className="px-6 py-4">Skor</th>
                             <th className="px-6 py-4">Status</th>
-                            <th className="px-6 py-4 text-right">Aksi</th>
+                             <th className="px-6 py-4 text-center">Dokumen</th>
+                             <th className="px-6 py-4 text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-neutral-200 dark:divide-neutral-700">
@@ -465,55 +550,66 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                             {reg.status === 'pending' ? 'Verifikasi' : reg.status === 'approved' ? 'Diterima' : 'Ditolak'}
                                         </Badge>
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="flex justify-end gap-2">
-                                            {reg.documentUrl && (
-                                              <IconButton
-                                                icon={<DocumentTextIcon className="w-5 h-5" />}
-                                                ariaLabel="Lihat dokumen untuk pendaftar ini"
-                                                tooltip="Lihat dokumen"
-                                                variant="default"
-                                                size="sm"
-                                                onClick={() => setShowDocumentPreview(reg.id)}
-                                              />
-                                            )}
-                                            {reg.status === 'pending' && canApprovePPDB && (
-                                              <>
-                                                <IconButton
-                                                  icon={<CheckIcon className="w-5 h-5" />}
-                                                  ariaLabel="Terima pendaftaran ini"
-                                                  tooltip="Terima"
-                                                  variant="success"
-                                                  size="sm"
-                                                  onClick={() => {
-                                                    updateStatus(reg.id, 'approved', 'approval-default');
-                                                    generatePDFLetter(reg, 'approval');
-                                                  }}
-                                                />
-                                                <IconButton
-                                                  icon={<XMarkIcon className="w-5 h-5" />}
-                                                  ariaLabel="Tolak pendaftaran ini"
-                                                  tooltip="Tolak"
-                                                  variant="danger"
-                                                  size="sm"
-                                                  onClick={() => {
-                                                    updateStatus(reg.id, 'rejected', 'rejection-default');
-                                                    generatePDFLetter(reg, 'rejection');
-                                                  }}
-                                                />
-                                              </>
-                                            )}
-                                        </div>
-                                    </td>
+                                     <td className="px-6 py-4">
+                                         <div className="flex items-center justify-end gap-2">
+                                             {reg.documentUrl && (
+                                               <>
+                                                 {reg.ocrProcessed && (
+                                                   <Badge variant="info" size="sm">
+                                                     OCR ✓
+                                                   </Badge>
+                                                 )}
+                                                 <IconButton
+                                                   icon={<DocumentTextIcon className="w-5 h-5" />}
+                                                   ariaLabel="Lihat dokumen untuk pendaftar ini"
+                                                   tooltip="Lihat dokumen"
+                                                   variant="default"
+                                                   size="sm"
+                                                   onClick={() => setShowDocumentPreview(reg.id)}
+                                                 />
+                                               </>
+                                             )}
+                                         </div>
+                                     </td>
+                                      <td className="px-6 py-4 text-right">
+                                         <div className="flex justify-end gap-2">
+                                             {reg.status === 'pending' && canApprovePPDB && (
+                                               <>
+                                                 <IconButton
+                                                   icon={<CheckIcon className="w-5 h-5" />}
+                                                   ariaLabel="Terima pendaftaran ini"
+                                                   tooltip="Terima"
+                                                   variant="success"
+                                                   size="sm"
+                                                   onClick={() => {
+                                                     updateStatus(reg.id, 'approved', 'approval-default');
+                                                     generatePDFLetter(reg, 'approval');
+                                                   }}
+                                                 />
+                                                 <IconButton
+                                                   icon={<XMarkIcon className="w-5 h-5" />}
+                                                   ariaLabel="Tolak pendaftaran ini"
+                                                   tooltip="Tolak"
+                                                   variant="danger"
+                                                   size="sm"
+                                                   onClick={() => {
+                                                     updateStatus(reg.id, 'rejected', 'rejection-default');
+                                                     generatePDFLetter(reg, 'rejection');
+                                                   }}
+                                                 />
+                                               </>
+                                             )}
+                                         </div>
+                                     </td>
                                 </tr>
                             ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={7}>
-                                        <EmptyState message="Belum ada data pendaftar" size="md" variant="minimal" />
-                                    </td>
-                                </tr>
-                            )}
+                             ) : (
+                                 <tr>
+                                     <td colSpan={8}>
+                                         <EmptyState message="Belum ada data pendaftar" size="md" variant="minimal" />
+                                     </td>
+                                 </tr>
+                             )}
                     </tbody>
                 </table>
             </div>
@@ -574,26 +670,201 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
           </div>
         )}
 
-        {/* Document Preview Modal */}
-        {showDocumentPreview && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <Card rounded="xl" padding="md" className="w-full max-w-2xl">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Preview Dokumen</h3>
-                <IconButton
-                  icon={<XMarkIcon className="w-5 h-5" />}
-                  ariaLabel="Tutup preview dokumen"
-                  variant="ghost"
-                  size="md"
-                  onClick={() => setShowDocumentPreview(null)}
-                />
+        {/* OCR Processing Modal */}
+        {showOCRModal && (() => {
+          const registrant = registrants.find(r => r.id === showOCRModal);
+          if (!registrant) return null;
+
+          return (
+            <Modal
+              isOpen={!!showOCRModal}
+              onClose={() => {
+                if (!isProcessingOCR) setShowOCRModal(null);
+              }}
+              title="OCR Document Processing"
+              size="lg"
+              closeOnBackdropClick={!isProcessingOCR}
+              closeOnEscape={!isProcessingOCR}
+            >
+              <div className="space-y-6">
+                {isProcessingOCR && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm text-neutral-600 dark:text-neutral-400">
+                      <span>{ocrProgress.status}</span>
+                      <span>{ocrProgress.progress.toFixed(0)}%</span>
+                    </div>
+                    <ProgressBar
+                      value={ocrProgress.progress}
+                      size="md"
+                      color="primary"
+                      aria-label={`OCR processing: ${ocrProgress.status}`}
+                    />
+                  </div>
+                )}
+
+                {!isProcessingOCR && ocrResult && (
+                  <div className="space-y-4">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <SparklesIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+                        <h4 className="text-sm font-bold text-blue-900 dark:text-blue-100">Hasil Ekstraksi OCR</h4>
+                      </div>
+                      <div className="text-xs space-y-1 text-blue-800 dark:text-blue-200">
+                        <p>Akurasi: <span className="font-semibold">{ocrResult.confidence.toFixed(1)}%</span></p>
+                        <p>Kata terdeteksi: <span className="font-semibold">{ocrResult.quality.wordCount}</span></p>
+                        <p>Jenis dokumen: <span className="font-semibold capitalize">{ocrResult.quality.documentType}</span></p>
+                        <p>Kualitas: <span className={`font-semibold ${ocrResult.quality.isHighQuality ? 'text-green-600' : 'text-amber-600'}`}>
+                          {ocrResult.quality.isHighQuality ? 'Tinggi' : 'Sedang'}
+                        </span></p>
+                      </div>
+                    </div>
+
+                    {ocrResult.data.grades && Object.keys(ocrResult.data.grades).length > 0 && (
+                      <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                        <h4 className="text-sm font-bold text-yellow-900 dark:text-yellow-100 mb-3">Nilai Terdeteksi</h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          {Object.entries(ocrResult.data.grades).map(([subject, grade]) => (
+                            <div
+                              key={subject}
+                              className="flex justify-between text-sm bg-white dark:bg-neutral-800 rounded px-2 py-1"
+                            >
+                              <span className="text-neutral-700 dark:text-neutral-300">{subject}</span>
+                              <span className="font-bold text-green-600 dark:text-green-400">{grade}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {showApplyOCRData && (
+                      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                        <h4 className="text-sm font-bold text-green-900 dark:text-green-100 mb-2">Data Identitas Tersedia</h4>
+                        <div className="text-xs space-y-1 text-green-800 dark:text-green-200">
+                          {ocrResult.data.fullName && <p>Nama: <span className="font-semibold">{ocrResult.data.fullName}</span></p>}
+                          {ocrResult.data.nisn && <p>NISN: <span className="font-semibold">{ocrResult.data.nisn}</span></p>}
+                          {ocrResult.data.schoolName && <p>Sekolah: <span className="font-semibold">{ocrResult.data.schoolName}</span></p>}
+                        </div>
+                        <div className="mt-3 flex space-x-2">
+                          <Button
+                            onClick={() => applyOCRDataToRegistrant(registrant.id)}
+                            variant="green-solid"
+                            size="sm"
+                          >
+                            Terapkan Data
+                          </Button>
+                          <Button
+                            onClick={() => setShowApplyOCRData(false)}
+                            variant="ghost"
+                            size="sm"
+                          >
+                            Tidak
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
+                      <h4 className="text-sm font-bold text-neutral-900 dark:text-white mb-2">Teks Penuh</h4>
+                      <div className="text-xs text-neutral-600 dark:text-neutral-300 max-h-60 overflow-y-auto whitespace-pre-wrap">
+                        {ocrResult.text || 'Tidak ada teks yang diekstrak'}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {!isProcessingOCR && !ocrResult && (
+                  <div className="text-center py-8">
+                    <DocumentTextIcon className="w-12 h-12 text-neutral-400 mx-auto mb-2" />
+                    <p className="text-sm text-neutral-500">Klik tombol di bawah untuk memproses dokumen</p>
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-2 pt-4 border-t border-neutral-200 dark:border-neutral-700">
+                  <Button
+                    onClick={() => processDocumentOCR(registrant)}
+                    variant="primary"
+                    size="md"
+                    disabled={isProcessingOCR || registrant.ocrProcessed}
+                    isLoading={isProcessingOCR}
+                  >
+                    {isProcessingOCR ? 'Memproses...' : registrant.ocrProcessed ? 'Sudah Diproses' : 'Proses dengan OCR'}
+                  </Button>
+                  <Button
+                    onClick={() => setShowOCRModal(null)}
+                    variant="ghost"
+                    size="md"
+                    disabled={isProcessingOCR}
+                  >
+                    Tutup
+                  </Button>
+                </div>
               </div>
-              <Card className={`bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4 ${HEIGHTS.CONTENT.TABLE} flex items-center justify-center`}>
-                <p className="text-neutral-500 dark:text-neutral-400">Preview dokumen akan ditampilkan di sini</p>
-              </Card>
-            </Card>
-          </div>
-        )}
+            </Modal>
+          );
+        })()}
+
+        {/* Document Preview Modal */}
+        {showDocumentPreview && (() => {
+          const registrant = registrants.find(r => r.id === showDocumentPreview);
+          if (!registrant) return null;
+
+          return (
+            <Modal
+              isOpen={!!showDocumentPreview}
+              onClose={() => setShowDocumentPreview(null)}
+              title="Preview Dokumen"
+              size="lg"
+            >
+              <div className="space-y-4">
+                <Card className={`bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4 ${HEIGHTS.CONTENT.TABLE} flex items-center justify-center`}>
+                  <p className="text-neutral-500 dark:text-neutral-400">Preview dokumen akan ditampilkan di sini</p>
+                </Card>
+
+                {registrant.ocrProcessed && registrant.ocrResults && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        <SparklesIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+                        <span className="text-sm font-bold text-blue-900 dark:text-blue-100">Dokumen telah diproses dengan OCR</span>
+                      </div>
+                      <Badge
+                        variant={registrant.ocrConfidence && registrant.ocrConfidence >= 80 ? 'success' : 'warning'}
+                        size="sm"
+                      >
+                        {registrant.ocrConfidence?.toFixed(0)}% Akurasi
+                      </Badge>
+                    </div>
+                    {registrant.ocrResults.data.grades && Object.keys(registrant.ocrResults.data.grades).length > 0 && (
+                      <p className="text-xs text-blue-800 dark:text-blue-200">
+                        {Object.keys(registrant.ocrResults.data.grades).length} nilai terdeteksi
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-2">
+                  <Button
+                    onClick={() => {
+                      setShowDocumentPreview(null);
+                      setShowOCRModal(registrant.id);
+                    }}
+                    variant="primary"
+                    size="md"
+                  >
+                    Proses dengan OCR
+                  </Button>
+                  <Button
+                    onClick={() => setShowDocumentPreview(null)}
+                    variant="ghost"
+                    size="md"
+                  >
+                    Tutup
+                  </Button>
+                </div>
+              </div>
+            </Modal>
+          );
+        })()}
     </div>
   );
 };

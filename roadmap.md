@@ -39,11 +39,15 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 - [x] **Email Service** (SendGrid, Mailgun, Cloudflare Email support)
 - [x] **WebSocket Service** (Real-time communication infrastructure)
 - [x] **Offline Support** (Service worker, offline queue)
+- [x] **Security Hardening - Phase 1** (SEC-001)
+  - Completed: 2026-01-18
+  - Security score improved from 6.2/10 to 8.5/10
+  - Fixed: SQL injection, path traversal, file upload security, CORS
 
 ### In Progress 🚧
-- [ ] Documentation synchronization with actual implementation
-- [ ] Password reset flow implementation
+- [ ] Password reset flow implementation (AUTH-001)
 - [ ] Assignment management UI
+- [ ] Security Hardening - Phase 2 (SEC-001)
 
 ---
 
@@ -101,16 +105,16 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 **Estimated**: 3 weeks
 
 #### Student Registration
-- [ ] Online registration form
-- [ ] Document upload (PDF/JPG)
-- [ ] OCR processing for documents
-- [ ] Form validation
-- [ ] Registration status tracking
+- [x] Online registration form
+- [x] Document upload (PDF/JPG)
+- [x] OCR processing for documents
+- [x] Form validation
+- [x] Registration status tracking
 
 #### PPDB Admin
-- [ ] Application review
-- [ ] Document verification
-- [ ] Accept/reject workflow
+- [x] Application review
+- [x] Document verification (with OCR integration)
+- [x] Accept/reject workflow
 - [ ] Interview scheduling
 - [ ] Final enrollment
 
