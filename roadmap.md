@@ -48,6 +48,18 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 *No tasks currently in progress*
 
 **Completed Today (2026-01-19)**:
+- [x] **Assignment Grading UI** (ASG-003)
+   - Full assignment grading interface for teachers
+   - Assignment list view (published/closed assignments)
+   - Submissions list with status filtering (all/ungraded/graded)
+   - Submission detail view with student work display
+   - Score input with validation (0 to max_score)
+   - Feedback textarea with previous values
+   - Download attachments functionality
+   - Notification integration (notifyGradeUpdate)
+   - Permission-based access control
+   - Comprehensive test coverage (30+ test cases)
+
 - [x] **Student Submissions UI** (ASG-002)
    - Full student submission interface for assignments
    - Assignment list with status indicators

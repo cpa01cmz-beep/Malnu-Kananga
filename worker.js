@@ -2718,18 +2718,31 @@ async function handleAssignmentSubmissions(request, env, corsHeaders) {
           });
         }
 
+        const now = new Date().toISOString();
+        const isGrading = body.score !== undefined || body.feedback !== undefined;
+
         await env.DB.prepare(`
           UPDATE assignment_submissions SET
-            submission_text = ?,
-            submitted_at = ?,
-            status = ?,
+            submission_text = COALESCE(?, submission_text),
+            submitted_at = COALESCE(?, submitted_at),
+            status = COALESCE(?, status),
+            score = COALESCE(?, score),
+            feedback = COALESCE(?, feedback),
+            graded_by = CASE WHEN ? IS NOT NULL THEN ? ELSE graded_by END,
+            graded_at = CASE WHEN ? IS NOT NULL THEN ? ELSE graded_at END,
             updated_at = ?
           WHERE id = ?
         `).bind(
           body.submissionText,
-          body.submittedAt || new Date().toISOString(),
+          body.submittedAt,
           body.status,
-          new Date().toISOString(),
+          body.score !== undefined ? body.score : null,
+          body.feedback,
+          body.gradedBy,
+          body.gradedBy,
+          body.gradedBy,
+          isGrading ? now : null,
+          now,
           id
         ).run();
 

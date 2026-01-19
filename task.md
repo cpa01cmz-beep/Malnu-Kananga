@@ -1,11 +1,49 @@
 # MA Malnu Kananga - Task Tracker
 
-**Last Updated**: 2026-01-19 (Student Submissions UI completed)
+**Last Updated**: 2026-01-19 (Assignment Grading UI completed)
 
 ## Active Tasks
 
-### In Progress 🚧
-*No tasks currently in progress*
+### Completed Tasks ✅
+
+### 2026-01-19
+- [x] **Grade Entry UI** (ASG-003)
+  - Task ID: ASG-003
+  - Description: Build interface for teachers to grade assignments
+  - Priority: Medium
+  - Estimated: 2 days
+  - Status: **Completed**
+  - Completed: 2026-01-19
+  - Dependencies: ASG-001 (✅ completed), ASG-002 (✅ completed)
+  - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
+  - Changes:
+    - Enhanced worker.js PUT method for assignment submissions to support grading fields
+    - Created AssignmentGrading.tsx component with full grading workflow
+    - Created ClockIcon.tsx and XCircleIcon.tsx components
+    - Integrated AssignmentGrading into TeacherDashboard with new view
+    - Added "Penilaian Tugas" card to TeacherDashboard
+    - Comprehensive test coverage (30+ test cases) in AssignmentGrading.test.tsx
+    - Features:
+      - Assignment list view (published/closed assignments)
+      - Submissions list view with status filtering
+      - Submission detail view with student work display
+      - Score input with validation (0 to max_score)
+      - Feedback textarea
+      - Previous grade/feedback display
+      - Download attachments functionality
+      - Notification integration (notifyGradeUpdate)
+      - Permission-based access control
+      - Offline support indicators
+  - Files created:
+    - src/components/AssignmentGrading.tsx (750+ lines)
+    - src/components/icons/ClockIcon.tsx
+    - src/components/icons/XCircleIcon.tsx
+    - src/components/__tests__/AssignmentGrading.test.tsx (900+ lines, 30+ tests)
+  - Files modified:
+    - worker.js (enhanced PUT method for grading)
+    - src/components/TeacherDashboard.tsx (added assignment-grading view and card)
+
+- [x] **Student Submissions UI** (ASG-002)
 
 ---
 
@@ -407,13 +445,7 @@
   - Status: **Completed** (2026-01-19)
   - Dependencies: ASG-001 (✅ completed)
 
-- [ ] **Grade Entry UI**
-  - Task ID: ASG-003
-  - Description: Build interface for teachers to grade assignments
-  - Priority: Medium
-  - Estimated: 2 days
-  - Status: **Pending**
-  - Dependencies: ASG-001, ASG-002
+- [ ] **Grade Analytics**
 
 - [ ] **Grade Analytics**
   - Task ID: ASG-004

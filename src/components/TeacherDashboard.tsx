@@ -9,6 +9,7 @@ import ClassManagement from './ClassManagement';
 import MaterialUpload from './MaterialUpload';
 import SchoolInventory from './SchoolInventory';
 import AssignmentCreation from './AssignmentCreation';
+import AssignmentGrading from './AssignmentGrading';
 import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
@@ -34,7 +35,7 @@ interface TeacherDashboardProps {
     extraRole: UserExtraRole;
 }
 
-type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments';
+type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading';
 
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<ViewState>('home');
@@ -389,6 +390,20 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         />
                     )}
 
+                    {checkPermission('academic.grades') && checkPermission('academic.assignments.create') && (
+                        <DashboardActionCard
+                            icon={<ClipboardDocumentCheckIcon />}
+                            title="Penilaian Tugas"
+                            description="Beri nilai dan feedback untuk tugas yang telah dikumpulkan."
+                            colorTheme="purple"
+                            statusBadge="Baru"
+                            offlineBadge="Mode Tertunda"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('assignment-grading')}
+                            ariaLabel="Buka Penilaian Tugas"
+                        />
+                    )}
+
                     {extraRole === 'staff' && checkPermission('inventory.manage') && (
                         <DashboardActionCard
                             icon={<ArchiveBoxIcon />}
@@ -424,6 +439,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'upload' && <MaterialUpload onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'inventory' && <SchoolInventory onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'assignments' && <AssignmentCreation onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
+        {currentView === 'assignment-grading' && <AssignmentGrading onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
 
         {/* Voice Commands Help Modal */}
         <VoiceCommandsHelp
