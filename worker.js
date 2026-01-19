@@ -512,6 +512,65 @@ async function initDatabase(env) {
     `);
 
     await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS assignments (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        type TEXT NOT NULL CHECK(type IN ('assignment', 'project', 'quiz', 'exam', 'lab_work', 'presentation', 'homework', 'other')),
+        subject_id TEXT NOT NULL,
+        class_id TEXT NOT NULL,
+        teacher_id TEXT NOT NULL,
+        academic_year TEXT NOT NULL,
+        semester TEXT NOT NULL,
+        max_score REAL NOT NULL DEFAULT 100,
+        due_date TIMESTAMP NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'published', 'closed', 'archived')),
+        instructions TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        published_at TIMESTAMP,
+        FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+        FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+        FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS assignment_attachments (
+        id TEXT PRIMARY KEY,
+        assignment_id TEXT NOT NULL,
+        file_name TEXT NOT NULL,
+        file_url TEXT NOT NULL,
+        file_type TEXT NOT NULL,
+        file_size INTEGER NOT NULL,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS assignment_rubrics (
+        id TEXT PRIMARY KEY,
+        assignment_id TEXT NOT NULL,
+        total_score REAL NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS rubric_criteria (
+        id TEXT PRIMARY KEY,
+        rubric_id TEXT NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT,
+        max_score REAL NOT NULL,
+        weight REAL NOT NULL CHECK(weight >= 0 AND weight <= 100),
+        FOREIGN KEY (rubric_id) REFERENCES assignment_rubrics(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
       CREATE TABLE IF NOT EXISTS e_library (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
@@ -2045,6 +2104,428 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
 }
 
 // ============================================
+// ASSIGNMENTS HANDLERS
+// ============================================
+
+async function handleAssignments(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
+    const method = request.method;
+    const subjectId = url.searchParams.get('subject_id');
+    const classId = url.searchParams.get('class_id');
+    const teacherId = url.searchParams.get('teacher_id');
+    const status = url.searchParams.get('status');
+
+    switch (method) {
+      case 'GET': {
+        if (id && id !== 'assignments') {
+          const assignment = await env.DB.prepare(`
+            SELECT 
+              a.*,
+              subj.name as subject_name,
+              c.name as class_name,
+              u.name as teacher_name
+            FROM assignments a
+            LEFT JOIN subjects subj ON a.subject_id = subj.id
+            LEFT JOIN classes c ON a.class_id = c.id
+            LEFT JOIN users u ON a.teacher_id = u.id
+            WHERE a.id = ?
+          `).bind(id).first();
+
+          if (!assignment) {
+            return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+              status: HTTP_STATUS_CODES.NOT_FOUND,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          }
+
+          assignment.attachments = await env.DB.prepare(`
+            SELECT * FROM assignment_attachments WHERE assignment_id = ?
+          `).bind(id).all();
+
+          if (assignment.rubric) {
+            assignment.rubric.criteria = await env.DB.prepare(`
+              SELECT * FROM rubric_criteria WHERE rubric_id = ?
+            `).bind(assignment.rubric.id).all();
+          }
+
+          return new Response(JSON.stringify(response.success(assignment)), {
+            status: HTTP_STATUS_CODES.OK,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        } else {
+          let query = `
+            SELECT 
+              a.*,
+              subj.name as subject_name,
+              c.name as class_name,
+              u.name as teacher_name
+            FROM assignments a
+            LEFT JOIN subjects subj ON a.subject_id = subj.id
+            LEFT JOIN classes c ON a.class_id = c.id
+            LEFT JOIN users u ON a.teacher_id = u.id
+            WHERE 1=1
+          `;
+          const params: string[] = [];
+
+          if (subjectId) {
+            query += ` AND a.subject_id = ?`;
+            params.push(subjectId);
+          }
+          if (classId) {
+            query += ` AND a.class_id = ?`;
+            params.push(classId);
+          }
+          if (teacherId) {
+            query += ` AND a.teacher_id = ?`;
+            params.push(teacherId);
+          }
+          if (status) {
+            query += ` AND a.status = ?`;
+            params.push(status);
+          }
+
+          query += ` ORDER BY a.created_at DESC`;
+
+          const stmt = env.DB.prepare(query);
+          const result = await stmt.bind(...params).all();
+
+          for (const assignment of result.results) {
+            assignment.attachments = await env.DB.prepare(`
+              SELECT * FROM assignment_attachments WHERE assignment_id = ?
+            `).bind(assignment.id).all();
+
+            const rubric = await env.DB.prepare(`
+              SELECT * FROM assignment_rubrics WHERE assignment_id = ?
+            `).bind(assignment.id).first();
+
+            if (rubric) {
+              rubric.criteria = await env.DB.prepare(`
+                SELECT * FROM rubric_criteria WHERE rubric_id = ?
+              `).bind(rubric.id).all();
+              assignment.rubric = rubric;
+            }
+          }
+
+          return new Response(JSON.stringify(response.success(result.results)), {
+            status: HTTP_STATUS_CODES.OK,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+      }
+
+      case 'POST': {
+        const body = await request.json();
+        const assignmentId = crypto.randomUUID();
+
+        await env.DB.prepare(`
+          INSERT INTO assignments (
+            id, title, description, type, subject_id, class_id, teacher_id,
+            academic_year, semester, max_score, due_date, status, instructions
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          assignmentId,
+          body.title,
+          body.description,
+          body.type,
+          body.subjectId,
+          body.classId,
+          body.teacherId,
+          body.academicYear,
+          body.semester,
+          body.maxScore,
+          body.dueDate,
+          body.status,
+          body.instructions || null
+        ).run();
+
+        if (body.attachments && body.attachments.length > 0) {
+          for (const attachment of body.attachments) {
+            await env.DB.prepare(`
+              INSERT INTO assignment_attachments (
+                id, assignment_id, file_name, file_url, file_type, file_size, uploaded_at
+              ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            `).bind(
+              crypto.randomUUID(),
+              assignmentId,
+              attachment.fileName,
+              attachment.fileUrl,
+              attachment.fileType,
+              attachment.fileSize,
+              attachment.uploadedAt
+            ).run();
+          }
+        }
+
+        if (body.rubric) {
+          const rubricId = crypto.randomUUID();
+          await env.DB.prepare(`
+            INSERT INTO assignment_rubrics (id, assignment_id, total_score, created_at)
+            VALUES (?, ?, ?, ?)
+          `).bind(
+            rubricId,
+            assignmentId,
+            body.rubric.totalScore,
+            new Date().toISOString()
+          ).run();
+
+          if (body.rubric.criteria && body.rubric.criteria.length > 0) {
+            for (const criteria of body.rubric.criteria) {
+              await env.DB.prepare(`
+                INSERT INTO rubric_criteria (
+                  id, rubric_id, name, description, max_score, weight
+                ) VALUES (?, ?, ?, ?, ?, ?)
+              `).bind(
+                criteria.id,
+                rubricId,
+                criteria.name,
+                criteria.description,
+                criteria.maxScore,
+                criteria.weight
+              ).run();
+            }
+          }
+        }
+
+        const created = await env.DB.prepare(`
+          SELECT 
+            a.*,
+            subj.name as subject_name,
+            c.name as class_name,
+            u.name as teacher_name
+          FROM assignments a
+          LEFT JOIN subjects subj ON a.subject_id = subj.id
+          LEFT JOIN classes c ON a.class_id = c.id
+          LEFT JOIN users u ON a.teacher_id = u.id
+          WHERE a.id = ?
+        `).bind(assignmentId).first();
+
+        return new Response(JSON.stringify(response.success(created, 'Tugas berhasil dibuat')), {
+          status: HTTP_STATUS_CODES.CREATED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      case 'PUT': {
+        const body = await request.json();
+
+        const existing = await env.DB.prepare(`
+          SELECT * FROM assignments WHERE id = ?
+        `).bind(id).first();
+
+        if (!existing) {
+          return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+            status: HTTP_STATUS_CODES.NOT_FOUND,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        await env.DB.prepare(`
+          UPDATE assignments SET
+            title = ?,
+            description = ?,
+            type = ?,
+            subject_id = ?,
+            class_id = ?,
+            max_score = ?,
+            due_date = ?,
+            instructions = ?,
+            updated_at = ?
+          WHERE id = ?
+        `).bind(
+          body.title,
+          body.description,
+          body.type,
+          body.subjectId,
+          body.classId,
+          body.maxScore,
+          body.dueDate,
+          body.instructions,
+          new Date().toISOString(),
+          id
+        ).run();
+
+        const updated = await env.DB.prepare(`
+          SELECT 
+            a.*,
+            subj.name as subject_name,
+            c.name as class_name,
+            u.name as teacher_name
+          FROM assignments a
+          LEFT JOIN subjects subj ON a.subject_id = subj.id
+          LEFT JOIN classes c ON a.class_id = c.id
+          LEFT JOIN users u ON a.teacher_id = u.id
+          WHERE a.id = ?
+        `).bind(id).first();
+
+        return new Response(JSON.stringify(response.success(updated, 'Tugas berhasil diperbarui')), {
+          status: HTTP_STATUS_CODES.OK,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      case 'DELETE': {
+        const existing = await env.DB.prepare(`
+          SELECT * FROM assignments WHERE id = ?
+        `).bind(id).first();
+
+        if (!existing) {
+          return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+            status: HTTP_STATUS_CODES.NOT_FOUND,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        await env.DB.prepare(`DELETE FROM assignments WHERE id = ?`).bind(id).run();
+
+        return new Response(JSON.stringify(response.success(null, 'Tugas berhasil dihapus')), {
+          status: HTTP_STATUS_CODES.OK,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      default:
+        return new Response(JSON.stringify(response.error(ERROR_MESSAGES.METHOD_NOT_ALLOWED)), {
+          status: HTTP_STATUS_CODES.METHOD_NOT_ALLOWED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+  } catch (e) {
+    logger.error('Assignment handler error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handlePublishAssignment(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').slice(0, -1).pop();
+
+    const existing = await env.DB.prepare(`
+      SELECT * FROM assignments WHERE id = ?
+    `).bind(id).first();
+
+    if (!existing) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    await env.DB.prepare(`
+      UPDATE assignments SET status = 'published', published_at = ?, updated_at = ?
+      WHERE id = ?
+    `).bind(
+      new Date().toISOString(),
+      new Date().toISOString(),
+      id
+    ).run();
+
+    const updated = await env.DB.prepare(`
+      SELECT 
+        a.*,
+        subj.name as subject_name,
+        c.name as class_name,
+        u.name as teacher_name
+      FROM assignments a
+      LEFT JOIN subjects subj ON a.subject_id = subj.id
+      LEFT JOIN classes c ON a.class_id = c.id
+      LEFT JOIN users u ON a.teacher_id = u.id
+      WHERE a.id = ?
+    `).bind(id).first();
+
+    return new Response(JSON.stringify(response.success(updated, 'Tugas berhasil dipublikasikan')), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Publish assignment error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleCloseAssignment(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').slice(0, -1).pop();
+
+    const existing = await env.DB.prepare(`
+      SELECT * FROM assignments WHERE id = ?
+    `).bind(id).first();
+
+    if (!existing) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    await env.DB.prepare(`
+      UPDATE assignments SET status = 'closed', updated_at = ?
+      WHERE id = ?
+    `).bind(
+      new Date().toISOString(),
+      id
+    ).run();
+
+    const updated = await env.DB.prepare(`
+      SELECT 
+        a.*,
+        subj.name as subject_name,
+        c.name as class_name,
+        u.name as teacher_name
+      FROM assignments a
+      LEFT JOIN subjects subj ON a.subject_id = subj.id
+      LEFT JOIN classes c ON a.class_id = c.id
+      LEFT JOIN users u ON a.teacher_id = u.id
+      WHERE a.id = ?
+    `).bind(id).first();
+
+    return new Response(JSON.stringify(response.success(updated, 'Tugas berhasil ditutup')), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Close assignment error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// ============================================
 // WEBSOCKET & REAL-TIME HANDLERS
 // ============================================
 
@@ -2281,6 +2762,9 @@ function mapTableToEventType(table, _row) {
       '/api/classes': (r, e, c) => handleCRUD(r, e, c, 'classes'),
       '/api/schedules': (r, e, c) => handleCRUD(r, e, c, 'schedules'),
       '/api/grades': (r, e, c) => handleCRUD(r, e, c, 'grades'),
+      '/api/assignments': handleAssignments,
+      '/api/assignments/*/publish': handlePublishAssignment,
+      '/api/assignments/*/close': handleCloseAssignment,
       '/api/attendance': (r, e, c) => handleCRUD(r, e, c, 'attendance'),
       '/api/e_library': (r, e, c) => handleCRUD(r, e, c, 'e_library'),
       '/api/announcements': (r, e, c) => handleCRUD(r, e, c, 'announcements'),

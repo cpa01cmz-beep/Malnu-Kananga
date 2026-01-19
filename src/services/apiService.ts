@@ -1,7 +1,7 @@
 // apiService.ts - Frontend API Service
 // Handles all backend API interactions
 
-import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, UserRole, UserExtraRole } from '../types';
+import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, UserRole, UserExtraRole, Assignment, AssignmentType, AssignmentStatus, AssignmentAttachment, AssignmentRubric, RubricCriteria, AssignmentSubmission, SubmissionAttachment } from '../types';
 import { logger } from '../utils/logger';
 import { permissionService } from './permissionService';
 import { STORAGE_KEYS } from '../constants';
@@ -1172,6 +1172,68 @@ export const gradesAPI = {
 };
 
 // ============================================
+// ASSIGNMENTS API
+// ============================================
+
+export const assignmentsAPI = {
+  async getAll(): Promise<ApiResponse<Assignment[]>> {
+    return request<Assignment[]>('/api/assignments');
+  },
+
+  async getById(id: string): Promise<ApiResponse<Assignment>> {
+    return request<Assignment>(`/api/assignments/${id}`);
+  },
+
+  async getBySubject(subjectId: string): Promise<ApiResponse<Assignment[]>> {
+    return request<Assignment[]>(`/api/assignments?subject_id=${subjectId}`);
+  },
+
+  async getByClass(classId: string): Promise<ApiResponse<Assignment[]>> {
+    return request<Assignment[]>(`/api/assignments?class_id=${classId}`);
+  },
+
+  async getByTeacher(teacherId: string): Promise<ApiResponse<Assignment[]>> {
+    return request<Assignment[]>(`/api/assignments?teacher_id=${teacherId}`);
+  },
+
+  async getByStatus(status: AssignmentStatus): Promise<ApiResponse<Assignment[]>> {
+    return request<Assignment[]>(`/api/assignments?status=${status}`);
+  },
+
+  async create(assignment: Partial<Assignment>): Promise<ApiResponse<Assignment>> {
+    return request<Assignment>('/api/assignments', {
+      method: 'POST',
+      body: JSON.stringify(assignment),
+    });
+  },
+
+  async update(id: string, assignment: Partial<Assignment>): Promise<ApiResponse<Assignment>> {
+    return request<Assignment>(`/api/assignments/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(assignment),
+    });
+  },
+
+  async delete(id: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/assignments/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  async publish(id: string): Promise<ApiResponse<Assignment>> {
+    return request<Assignment>(`/api/assignments/${id}/publish`, {
+      method: 'POST',
+    });
+  },
+
+  async close(id: string): Promise<ApiResponse<Assignment>> {
+    return request<Assignment>(`/api/assignments/${id}/close`, {
+      method: 'POST',
+    });
+  },
+};
+
+// ============================================
 // ATTENDANCE API
 // ============================================
 
@@ -1502,6 +1564,7 @@ export const apiService = {
   classes: classesAPI,
   schedules: schedulesAPI,
   grades: gradesAPI,
+  assignments: assignmentsAPI,
   attendance: attendanceAPI,
   eLibrary: eLibraryAPI,
   announcements: announcementsAPI,

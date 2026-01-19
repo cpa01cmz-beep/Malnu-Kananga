@@ -6,6 +6,7 @@ export const STORAGE_KEYS = {
     SITE_CONTENT: 'malnu_site_content',
     USERS: 'malnu_users',
     GRADES: 'malnu_grades',
+    ASSIGNMENTS: 'malnu_assignments',
     CLASS_DATA: 'malnu_class_data',
     PPDB_REGISTRANTS: 'malnu_ppdb_registrants',
     PPDB_DRAFT: 'malnu_ppdb_draft',

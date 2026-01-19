@@ -25,8 +25,25 @@ export interface LatestNews {
 
 export type UserRole = 'admin' | 'teacher' | 'student' | 'parent';
 
-// Role tambahan untuk tugas khusus
 export type UserExtraRole = 'staff' | 'osis' | 'wakasek' | 'kepsek' | null;
+
+export enum AssignmentType {
+  ASSIGNMENT = 'assignment',
+  PROJECT = 'project',
+  QUIZ = 'quiz',
+  EXAM = 'exam',
+  LAB_WORK = 'lab_work',
+  PRESENTATION = 'presentation',
+  HOMEWORK = 'homework',
+  OTHER = 'other',
+}
+
+export enum AssignmentStatus {
+  DRAFT = 'draft',
+  PUBLISHED = 'published',
+  CLOSED = 'closed',
+  ARCHIVED = 'archived',
+}
 
 export interface Student {
   id: string;
@@ -447,6 +464,80 @@ export interface Grade {
   createdBy: string;
   createdAt: string;
   subjectName?: string;
+}
+
+export interface Assignment {
+  id: string;
+  title: string;
+  description: string;
+  type: AssignmentType;
+  subjectId: string;
+  classId: string;
+  teacherId: string;
+  academicYear: string;
+  semester: string;
+  maxScore: number;
+  dueDate: string;
+  status: AssignmentStatus;
+  attachments?: AssignmentAttachment[];
+  rubric?: AssignmentRubric;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+  subjectName?: string;
+  className?: string;
+  teacherName?: string;
+}
+
+export interface AssignmentAttachment {
+  id: string;
+  assignmentId: string;
+  fileName: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  uploadedAt: string;
+}
+
+export interface AssignmentRubric {
+  id: string;
+  assignmentId: string;
+  criteria: RubricCriteria[];
+  totalScore: number;
+  createdAt: string;
+}
+
+export interface RubricCriteria {
+  id: string;
+  name: string;
+  description: string;
+  maxScore: number;
+  weight: number;
+}
+
+export interface AssignmentSubmission {
+  id: string;
+  assignmentId: string;
+  studentId: string;
+  studentName: string;
+  submissionText?: string;
+  attachments: SubmissionAttachment[];
+  submittedAt: string;
+  score?: number;
+  feedback?: string;
+  gradedBy?: string;
+  gradedAt?: string;
+  status: 'draft' | 'submitted' | 'late' | 'graded';
+}
+
+export interface SubmissionAttachment {
+  id: string;
+  submissionId: string;
+  fileName: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  uploadedAt: string;
 }
 
 export interface Attendance {

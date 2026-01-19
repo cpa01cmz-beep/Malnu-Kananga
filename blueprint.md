@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-18 (Documentation sanitization completed)
+**Last Updated**: 2026-01-19 (Assignment Creation UI completed)
 
 ## Architecture Overview
 
@@ -224,8 +224,28 @@
   - Parents view grades via `ParentGradesView.tsx`
   - Analytics via `ProgressAnalytics.tsx`
 
-- **Future Enhancement**: Full assignment lifecycle (in backlog as ASG-001 to ASG-004)
-  - Assignment creation UI (teachers)
+- **Assignment Creation**: Full assignment creation UI (completed 2026-01-19)
+  - `AssignmentCreation.tsx`: Comprehensive assignment creation interface
+  - Assignment types: ASSIGNMENT, PROJECT, QUIZ, EXAM, LAB_WORK, PRESENTATION, HOMEWORK, OTHER
+  - Assignment status: DRAFT, PUBLISHED, CLOSED, ARCHIVED
+  - Rubric creation with weighted criteria
+  - File attachment support
+  - Draft/Publish functionality
+
+- **Database**: Assignment tables (completed 2026-01-19)
+  - `assignments`: Assignment metadata (title, description, type, subject, class, teacher, academic_year, semester, max_score, due_date, status, instructions)
+  - `assignment_attachments`: File attachments for assignments
+  - `assignment_rubrics`: Rubric definitions
+  - `rubric_criteria`: Individual rubric criteria with weights
+
+- **API**: Assignment endpoints (completed 2026-01-19)
+  - GET/POST/PUT/DELETE `/api/assignments`
+  - GET `/api/assignments?subject_id=...&class_id=...&teacher_id=...&status=...`
+  - POST `/api/assignments/:id/publish`: Publish assignment
+  - POST `/api/assignments/:id/close`: Close assignment
+
+- **Future Enhancement**: Full assignment lifecycle (in backlog as ASG-002 to ASG-004)
+  - Assignment creation UI (teachers) - ✅ COMPLETED
   - Student submission interface
   - Assignment-specific grading workflow
   - Enhanced assignment analytics

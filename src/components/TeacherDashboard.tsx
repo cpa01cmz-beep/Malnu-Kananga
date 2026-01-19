@@ -8,6 +8,7 @@ import GradingManagement from './GradingManagement';
 import ClassManagement from './ClassManagement';
 import MaterialUpload from './MaterialUpload';
 import SchoolInventory from './SchoolInventory';
+import AssignmentCreation from './AssignmentCreation';
 import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
@@ -33,7 +34,7 @@ interface TeacherDashboardProps {
     extraRole: UserExtraRole;
 }
 
-type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory';
+type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments';
 
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<ViewState>('home');
@@ -374,6 +375,20 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         />
                     )}
 
+                    {checkPermission('academic.assignments.create') && (
+                        <DashboardActionCard
+                            icon={<ClipboardDocumentCheckIcon />}
+                            title="Buat Tugas"
+                            description="Buat tugas dengan rubrik dan lampiran."
+                            colorTheme="green"
+                            statusBadge="Baru"
+                            offlineBadge="Mode Tertunda"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('assignments')}
+                            ariaLabel="Buka Pembuatan Tugas"
+                        />
+                    )}
+
                     {extraRole === 'staff' && checkPermission('inventory.manage') && (
                         <DashboardActionCard
                             icon={<ArchiveBoxIcon />}
@@ -408,6 +423,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'class' && <ClassManagement onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'upload' && <MaterialUpload onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'inventory' && <SchoolInventory onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
+        {currentView === 'assignments' && <AssignmentCreation onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
 
         {/* Voice Commands Help Modal */}
         <VoiceCommandsHelp

@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Roadmap
 
-**Last Updated**: 2026-01-18 (Documentation sanitization completed)
+**Last Updated**: 2026-01-19 (Assignment Creation UI completed)
 
 ## Vision
 Transform MA Malnu Kananga into a fully integrated, AI-powered school management system with offline capability and real-time features.
@@ -47,7 +47,17 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 ### In Progress 🚧
 *No tasks currently in progress*
 
-**Completed Today (2026-01-18)**:
+**Completed Today (2026-01-19)**:
+- [x] **Assignment Creation UI** (ASG-001)
+   - Full assignment creation interface for teachers
+   - Assignment types, rubric creation, file attachments
+   - Draft/Publish functionality
+   - Integration with assignmentsAPI
+   - Backend tables and handlers for assignments
+   - Teacher dashboard integration
+   - Comprehensive test coverage
+
+**Completed Previously (2026-01-18)**:
 - [x] **PPDB Document OCR Integration** - Full OCR connection to PPDB uploads
    - OCR results saved with registrant data
    - Admin interface shows OCR metadata (confidence, quality, extracted data)
@@ -105,7 +115,7 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 - [ ] Download tracking
 
 #### Assignments & Grades
-- [ ] Assignment creation (in backlog as ASG-001)
+- [x] Assignment creation (completed 2026-01-19)
 - [ ] Student submission (in backlog as ASG-002)
 - [x] Grade entry (completed - GradingManagement.tsx)
 - [ ] Grade analytics (partial - ProgressAnalytics.tsx exists)

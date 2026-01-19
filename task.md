@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Task Tracker
 
-**Last Updated**: 2026-01-18 (Documentation inconsistencies resolved)
+**Last Updated**: 2026-01-19 (Assignment Creation UI completed)
 
 ## Active Tasks
 
@@ -237,10 +237,41 @@
   - 84 test files
   - 1529 tests passing
   - 10 tests skipped
-  - Comprehensive coverage of services, components, and integrations
-  - Status: **Completed**
+   - Comprehensive coverage of services, components, and integrations
+   - Status: **Completed**
+   
+   - [x] **Assignment Creation UI** (ASG-001)
+   - Task ID: ASG-001
+   - Description: Build interface for teachers to create assignments
+   - Priority: Medium
+   - Estimated: 3 days
+   - Status: **Completed**
+   - Completed: 2026-01-19
+   - Dependencies: None
+   - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
+   - Changes:
+     - Created AssignmentCreation.tsx component with full assignment creation capabilities
+     - Added Assignment, AssignmentType, AssignmentStatus, AssignmentAttachment, AssignmentRubric, RubricCriteria, AssignmentSubmission, SubmissionAttachment types to types.ts
+     - Created assignmentsAPI in apiService.ts with full CRUD operations
+     - Added ASSIGNMENTS storage key to constants.ts
+     - Updated worker.js with assignments, assignment_attachments, assignment_rubrics, and rubric_criteria tables
+     - Added backend handlers: handleAssignments, handlePublishAssignment, handleCloseAssignment
+     - Updated TeacherDashboard.tsx to include 'assignments' view and "Buat Tugas" card
+     - Added notifyAssignmentCreate to useEventNotifications and useUnifiedNotifications hooks
+     - Added comprehensive tests: AssignmentCreation.test.tsx (20+ test cases)
+   - Files created:
+     - src/components/AssignmentCreation.tsx (650+ lines)
+     - src/components/__tests__/AssignmentCreation.test.tsx (400+ lines, 20+ tests)
+   - Files modified:
+     - src/types.ts (added Assignment-related types and enums)
+     - src/services/apiService.ts (added assignmentsAPI and exports)
+     - src/constants.ts (added ASSIGNMENTS storage key)
+     - src/hooks/useEventNotifications.ts (added notifyAssignmentCreate)
+     - src/hooks/useUnifiedNotifications.ts (added notifyAssignmentCreate)
+     - src/components/TeacherDashboard.tsx (added assignments view and card)
+     - worker.js (added tables and handlers for assignments)
 
-- [x] **User Management UI** (USER-001)
+   - [x] **User Management UI** (USER-001)
   - Complete CRUD interface with permission-based access
   - Role and extra role management
   - Real-time notifications for role changes
@@ -316,12 +347,12 @@
   - Dependencies: MAT-001 (✅ completed)
 
 #### Assignments
-- [ ] **Assignment Creation UI**
+- [x] **Assignment Creation UI**
   - Task ID: ASG-001
   - Description: Build interface for teachers to create assignments
   - Priority: Medium
   - Estimated: 3 days
-  - Status: **Pending**
+  - Status: **Completed** (2026-01-19)
   - Dependencies: None
 
 - [ ] **Student Submissions UI**
@@ -330,7 +361,7 @@
   - Priority: Medium
   - Estimated: 2 days
   - Status: **Pending**
-  - Dependencies: ASG-001
+  - Dependencies: ASG-001 (✅ completed)
 
 - [ ] **Grade Entry UI**
   - Task ID: ASG-003
