@@ -29,6 +29,10 @@ export function useEventNotifications() {
     await unified.notifyAssignmentCreate(assignmentId, title);
   };
 
+  const notifyAssignmentSubmit = async (assignmentId: string, submissionId: string, title: string) => {
+    await unified.notifyAssignmentSubmit(assignmentId, submissionId, title);
+  };
+
   const notifyMeetingRequest = async (requesterName: string, meetingType: string) => {
     await unified.notifyMeetingRequest(requesterName, meetingType);
   };
@@ -58,6 +62,7 @@ export function useEventNotifications() {
     notifyPPDBStatus,
     notifyLibraryUpdate,
     notifyAssignmentCreate,
+    notifyAssignmentSubmit,
     notifyMeetingRequest,
     notifyScheduleChange,
     notifyAttendanceAlert,

@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Task Tracker
 
-**Last Updated**: 2026-01-19 (Assignment Creation UI completed)
+**Last Updated**: 2026-01-19 (Student Submissions UI completed)
 
 ## Active Tasks
 
@@ -10,6 +10,50 @@
 ---
 
 ## Completed Tasks ✅
+
+### 2026-01-19
+- [x] **Student Submissions UI** (ASG-002)
+  - Task ID: ASG-002
+  - Description: Build interface for students to submit assignments
+  - Priority: Medium
+  - Estimated: 2 days
+  - Status: **Completed**
+  - Completed: 2026-01-19
+  - Dependencies: ASG-001 (✅ completed)
+  - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
+  - Changes:
+    - Created StudentAssignments.tsx component with full assignment submission capabilities
+    - Added assignment_submissions and submission_attachments tables to database schema
+    - Created handleAssignmentSubmissions handler in worker.js
+    - Added /api/assignment-submissions routes
+    - Created assignmentSubmissionsAPI in apiService.ts with full CRUD operations
+    - Added ASSIGNMENT_SUBMISSIONS storage key to constants.ts
+    - Added notifyAssignmentSubmit to useEventNotifications and useUnifiedNotifications hooks
+    - Created AssignmentIcon.tsx component
+    - Integrated StudentAssignments into StudentPortal
+    - Added 'assignments' view to StudentPortal
+    - Added assignments menu item with voice command support
+    - Comprehensive test coverage (20+ test cases) in StudentAssignments.test.tsx
+    - Features:
+      - Assignment list view with status indicators (Belum Dikirim, Dikirim, Terlambat, Dinilai)
+      - Due date tracking with days remaining calculation
+      - Assignment detail view with instructions and attachments
+      - Submission form with text input and file attachments (max 10MB)
+      - Late submission auto-detection based on due date
+      - View graded submissions with score and feedback
+      - Offline support with queueing
+      - Permission-based access control
+  - Files created:
+    - src/components/StudentAssignments.tsx (650+ lines)
+    - src/components/icons/AssignmentIcon.tsx
+    - src/components/__tests__/StudentAssignments.test.tsx (500+ lines, 20+ tests)
+  - Files modified:
+    - src/constants.ts (added ASSIGNMENT_SUBMISSIONS storage key)
+    - src/services/apiService.ts (added assignmentSubmissionsAPI)
+    - src/hooks/useEventNotifications.ts (added notifyAssignmentSubmit)
+    - src/hooks/useUnifiedNotifications.ts (added notifyAssignmentSubmit)
+    - src/components/StudentPortal.tsx (added assignments view and menu item)
+    - worker.js (added submission tables, handleAssignmentSubmissions handler, routes)
 
 ### 2026-01-18
 - [x] **Documentation Sanitization** (DOC-005)
@@ -355,12 +399,12 @@
   - Status: **Completed** (2026-01-19)
   - Dependencies: None
 
-- [ ] **Student Submissions UI**
+- [x] **Student Submissions UI**
   - Task ID: ASG-002
   - Description: Build interface for students to submit assignments
   - Priority: Medium
   - Estimated: 2 days
-  - Status: **Pending**
+  - Status: **Completed** (2026-01-19)
   - Dependencies: ASG-001 (✅ completed)
 
 - [ ] **Grade Entry UI**

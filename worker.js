@@ -571,6 +571,38 @@ async function initDatabase(env) {
     `);
 
     await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS assignment_submissions (
+        id TEXT PRIMARY KEY,
+        assignment_id TEXT NOT NULL,
+        student_id TEXT NOT NULL,
+        student_name TEXT NOT NULL,
+        submission_text TEXT,
+        submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        score REAL,
+        feedback TEXT,
+        graded_by TEXT,
+        graded_at TIMESTAMP,
+        status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'submitted', 'late', 'graded')),
+        FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE,
+        FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+        FOREIGN KEY (graded_by) REFERENCES users(id) ON DELETE SET NULL
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS submission_attachments (
+        id TEXT PRIMARY KEY,
+        submission_id TEXT NOT NULL,
+        file_name TEXT NOT NULL,
+        file_url TEXT NOT NULL,
+        file_type TEXT NOT NULL,
+        file_size INTEGER NOT NULL,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (submission_id) REFERENCES assignment_submissions(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
       CREATE TABLE IF NOT EXISTS e_library (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
@@ -2500,7 +2532,7 @@ async function handleCloseAssignment(request, env, corsHeaders) {
     ).run();
 
     const updated = await env.DB.prepare(`
-      SELECT 
+      SELECT
         a.*,
         subj.name as subject_name,
         c.name as class_name,
@@ -2518,6 +2550,230 @@ async function handleCloseAssignment(request, env, corsHeaders) {
     });
   } catch (e) {
     logger.error('Close assignment error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleAssignmentSubmissions(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const method = request.method;
+    const id = url.pathname.split('/').pop();
+    const assignmentId = url.searchParams.get('assignment_id');
+    const studentId = url.searchParams.get('student_id');
+
+    switch (method) {
+      case 'GET': {
+        if (id && id !== 'submissions') {
+          const submission = await env.DB.prepare(`
+            SELECT s.*, a.title as assignment_title, a.due_date
+            FROM assignment_submissions s
+            LEFT JOIN assignments a ON s.assignment_id = a.id
+            WHERE s.id = ?
+          `).bind(id).first();
+
+          if (!submission) {
+            return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+              status: HTTP_STATUS_CODES.NOT_FOUND,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          }
+
+          submission.attachments = await env.DB.prepare(`
+            SELECT * FROM submission_attachments WHERE submission_id = ?
+          `).bind(id).all();
+
+          return new Response(JSON.stringify(response.success(submission)), {
+            status: HTTP_STATUS_CODES.OK,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        } else {
+          let query = `
+            SELECT s.*, a.title as assignment_title, a.due_date, a.max_score
+            FROM assignment_submissions s
+            LEFT JOIN assignments a ON s.assignment_id = a.id
+            WHERE 1=1
+          `;
+          const params: string[] = [];
+
+          if (assignmentId) {
+            query += ` AND s.assignment_id = ?`;
+            params.push(assignmentId);
+          }
+          if (studentId) {
+            query += ` AND s.student_id = ?`;
+            params.push(studentId);
+          }
+
+          query += ` ORDER BY s.submitted_at DESC`;
+
+          const stmt = env.DB.prepare(query);
+          const result = await stmt.bind(...params).all();
+
+          for (const submission of result.results) {
+            submission.attachments = await env.DB.prepare(`
+              SELECT * FROM submission_attachments WHERE submission_id = ?
+            `).bind(submission.id).all();
+          }
+
+          return new Response(JSON.stringify(response.success(result.results)), {
+            status: HTTP_STATUS_CODES.OK,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+      }
+
+      case 'POST': {
+        const body = await request.json();
+        const submissionId = crypto.randomUUID();
+
+        const assignment = await env.DB.prepare(`
+          SELECT * FROM assignments WHERE id = ?
+        `).bind(body.assignmentId).first();
+
+        if (!assignment) {
+          return new Response(JSON.stringify(response.error('Tugas tidak ditemukan')), {
+            status: HTTP_STATUS_CODES.NOT_FOUND,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const dueDate = new Date(assignment.due_date);
+        const submittedAt = new Date(body.submittedAt || new Date().toISOString());
+        const isLate = submittedAt > dueDate;
+        const status = isLate ? 'late' : 'submitted';
+
+        await env.DB.prepare(`
+          INSERT INTO assignment_submissions (
+            id, assignment_id, student_id, student_name,
+            submission_text, submitted_at, status
+          ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          submissionId,
+          body.assignmentId,
+          body.studentId,
+          body.studentName,
+          body.submissionText || null,
+          submittedAt.toISOString(),
+          status
+        ).run();
+
+        if (body.attachments && body.attachments.length > 0) {
+          for (const attachment of body.attachments) {
+            await env.DB.prepare(`
+              INSERT INTO submission_attachments (
+                id, submission_id, file_name, file_url, file_type, file_size, uploaded_at
+              ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            `).bind(
+              crypto.randomUUID(),
+              submissionId,
+              attachment.fileName,
+              attachment.fileUrl,
+              attachment.fileType,
+              attachment.fileSize,
+              attachment.uploadedAt
+            ).run();
+          }
+        }
+
+        const created = await env.DB.prepare(`
+          SELECT s.*, a.title as assignment_title, a.due_date, a.max_score
+          FROM assignment_submissions s
+          LEFT JOIN assignments a ON s.assignment_id = a.id
+          WHERE s.id = ?
+        `).bind(submissionId).first();
+
+        created.attachments = await env.DB.prepare(`
+          SELECT * FROM submission_attachments WHERE submission_id = ?
+        `).bind(submissionId).all();
+
+        return new Response(JSON.stringify(response.success(created, 'Tugas berhasil dikirim')), {
+          status: HTTP_STATUS_CODES.CREATED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      case 'PUT': {
+        const body = await request.json();
+
+        const existing = await env.DB.prepare(`
+          SELECT * FROM assignment_submissions WHERE id = ?
+        `).bind(id).first();
+
+        if (!existing) {
+          return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+            status: HTTP_STATUS_CODES.NOT_FOUND,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        await env.DB.prepare(`
+          UPDATE assignment_submissions SET
+            submission_text = ?,
+            submitted_at = ?,
+            status = ?,
+            updated_at = ?
+          WHERE id = ?
+        `).bind(
+          body.submissionText,
+          body.submittedAt || new Date().toISOString(),
+          body.status,
+          new Date().toISOString(),
+          id
+        ).run();
+
+        const updated = await env.DB.prepare(`
+          SELECT s.*, a.title as assignment_title, a.due_date, a.max_score
+          FROM assignment_submissions s
+          LEFT JOIN assignments a ON s.assignment_id = a.id
+          WHERE s.id = ?
+        `).bind(id).first();
+
+        return new Response(JSON.stringify(response.success(updated, 'Pengumpulan tugas berhasil diperbarui')), {
+          status: HTTP_STATUS_CODES.OK,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      case 'DELETE': {
+        const existing = await env.DB.prepare(`
+          SELECT * FROM assignment_submissions WHERE id = ?
+        `).bind(id).first();
+
+        if (!existing) {
+          return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+            status: HTTP_STATUS_CODES.NOT_FOUND,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        await env.DB.prepare(`DELETE FROM assignment_submissions WHERE id = ?`).bind(id).run();
+
+        return new Response(JSON.stringify(response.success(null, 'Pengumpulan tugas berhasil dihapus')), {
+          status: HTTP_STATUS_CODES.OK,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      default:
+        return new Response(JSON.stringify(response.error(ERROR_MESSAGES.METHOD_NOT_SUPPORTED)), {
+          status: HTTP_STATUS_CODES.METHOD_NOT_ALLOWED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+  } catch (e) {
+    logger.error('Assignment submissions handler error:', e);
     return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
       status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -2765,6 +3021,8 @@ function mapTableToEventType(table, _row) {
       '/api/assignments': handleAssignments,
       '/api/assignments/*/publish': handlePublishAssignment,
       '/api/assignments/*/close': handleCloseAssignment,
+      '/api/assignment-submissions': handleAssignmentSubmissions,
+      '/api/assignment-submissions/*': handleAssignmentSubmissions,
       '/api/attendance': (r, e, c) => handleCRUD(r, e, c, 'attendance'),
       '/api/e_library': (r, e, c) => handleCRUD(r, e, c, 'e_library'),
       '/api/announcements': (r, e, c) => handleCRUD(r, e, c, 'announcements'),

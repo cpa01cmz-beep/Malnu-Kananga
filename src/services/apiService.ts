@@ -1234,6 +1234,48 @@ export const assignmentsAPI = {
 };
 
 // ============================================
+// ASSIGNMENT SUBMISSIONS API
+// ============================================
+
+export const assignmentSubmissionsAPI = {
+  async getAll(): Promise<ApiResponse<AssignmentSubmission[]>> {
+    return request<AssignmentSubmission[]>('/api/assignment-submissions');
+  },
+
+  async getById(id: string): Promise<ApiResponse<AssignmentSubmission>> {
+    return request<AssignmentSubmission>(`/api/assignment-submissions/${id}`);
+  },
+
+  async getByAssignment(assignmentId: string): Promise<ApiResponse<AssignmentSubmission[]>> {
+    return request<AssignmentSubmission[]>(`/api/assignment-submissions?assignment_id=${assignmentId}`);
+  },
+
+  async getByStudent(studentId: string): Promise<ApiResponse<AssignmentSubmission[]>> {
+    return request<AssignmentSubmission[]>(`/api/assignment-submissions?student_id=${studentId}`);
+  },
+
+  async create(submission: Partial<AssignmentSubmission>): Promise<ApiResponse<AssignmentSubmission>> {
+    return request<AssignmentSubmission>('/api/assignment-submissions', {
+      method: 'POST',
+      body: JSON.stringify(submission),
+    });
+  },
+
+  async update(id: string, submission: Partial<AssignmentSubmission>): Promise<ApiResponse<AssignmentSubmission>> {
+    return request<AssignmentSubmission>(`/api/assignment-submissions/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(submission),
+    });
+  },
+
+  async delete(id: string): Promise<ApiResponse<null>> {
+    return request<null>(`/api/assignment-submissions/${id}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// ============================================
 // ATTENDANCE API
 // ============================================
 
@@ -1565,6 +1607,7 @@ export const apiService = {
   schedules: schedulesAPI,
   grades: gradesAPI,
   assignments: assignmentsAPI,
+  assignmentSubmissions: assignmentSubmissionsAPI,
   attendance: attendanceAPI,
   eLibrary: eLibraryAPI,
   announcements: announcementsAPI,

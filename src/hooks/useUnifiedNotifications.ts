@@ -168,6 +168,14 @@ export function useUnifiedNotifications() {
     );
   }, []);
 
+  const notifyAssignmentSubmit = useCallback(async (assignmentId: string, submissionId: string, title: string): Promise<void> => {
+    await unifiedNotificationManager.showNotification(
+      'academic',
+      'Tugas Berhasil Dikirim',
+      `${title} berhasil dikirim`
+    );
+  }, []);
+
   const notifyMeetingRequest = useCallback(async (requesterName: string, meetingType: string): Promise<void> => {
     await unifiedNotificationManager.notifyMeetingRequest(requesterName, meetingType);
   }, []);
@@ -375,6 +383,7 @@ export function useUnifiedNotifications() {
     notifyPPDBStatus,
     notifyLibraryUpdate,
     notifyAssignmentCreate,
+    notifyAssignmentSubmit,
     notifyMeetingRequest,
     notifyScheduleChange,
     notifyAttendanceAlert,
@@ -429,6 +438,7 @@ export const useEventNotifications = () => {
     notifyPPDBStatus: unified.notifyPPDBStatus,
     notifyLibraryUpdate: unified.notifyLibraryUpdate,
     notifyAssignmentCreate: unified.notifyAssignmentCreate,
+    notifyAssignmentSubmit: unified.notifyAssignmentSubmit,
     notifyMeetingRequest: unified.notifyMeetingRequest,
     notifyScheduleChange: unified.notifyScheduleChange,
     notifyAttendanceAlert: unified.notifyAttendanceAlert,

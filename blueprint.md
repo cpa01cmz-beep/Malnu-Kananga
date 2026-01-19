@@ -216,10 +216,12 @@
   - Statistics dashboard
 
 #### Assignments & Grading
-- **Current Implementation**: Direct grade entry model (simplified)
+- **Current Implementation**: Full assignment lifecycle model (enhanced 2026-01-19)
   - `GradingManagement.tsx`: Teachers enter grades directly with assignment metadata
+  - `AssignmentCreation.tsx`: Teachers create comprehensive assignments
+  - `StudentAssignments.tsx`: Students view and submit assignments (completed 2026-01-19)
   - Database: `grades` table includes `assignment_type`, `assignment_name` fields
-  - No formal assignment creation → submission → grading workflow
+  - Assignment creation → submission → grading workflow (fully implemented)
   - Students view grades via `AcademicGrades.tsx`
   - Parents view grades via `ParentGradesView.tsx`
   - Analytics via `ProgressAnalytics.tsx`
@@ -232,21 +234,36 @@
   - File attachment support
   - Draft/Publish functionality
 
+- **Student Submissions**: Full student submission interface (completed 2026-01-19)
+  - `StudentAssignments.tsx`: Comprehensive student assignment submission interface
+  - Assignment list view with status indicators (Belum Dikirim, Dikirim, Terlambat, Dinilai)
+  - Due date tracking with days remaining
+  - Assignment detail view with instructions and attachments
+  - Submission form with text input and file attachments
+  - Draft submission support
+  - Late submission detection (auto-marked as "Terlambat")
+  - View graded submissions with score and feedback
+
 - **Database**: Assignment tables (completed 2026-01-19)
   - `assignments`: Assignment metadata (title, description, type, subject, class, teacher, academic_year, semester, max_score, due_date, status, instructions)
   - `assignment_attachments`: File attachments for assignments
   - `assignment_rubrics`: Rubric definitions
   - `rubric_criteria`: Individual rubric criteria with weights
+  - `assignment_submissions`: Student submissions (submission_text, attachments, submitted_at, score, feedback, graded_by, graded_at, status)
+  - `submission_attachments`: File attachments for submissions
 
 - **API**: Assignment endpoints (completed 2026-01-19)
   - GET/POST/PUT/DELETE `/api/assignments`
   - GET `/api/assignments?subject_id=...&class_id=...&teacher_id=...&status=...`
   - POST `/api/assignments/:id/publish`: Publish assignment
   - POST `/api/assignments/:id/close`: Close assignment
+  - GET/POST/PUT/DELETE `/api/assignment-submissions`: Student submission CRUD
+  - GET `/api/assignment-submissions?assignment_id=...`: Get submissions for assignment
+  - GET `/api/assignment-submissions?student_id=...`: Get submissions by student
 
-- **Future Enhancement**: Full assignment lifecycle (in backlog as ASG-002 to ASG-004)
+- **Future Enhancement**: Assignment grading workflow (in backlog as ASG-003 to ASG-004)
   - Assignment creation UI (teachers) - ✅ COMPLETED
-  - Student submission interface
+  - Student submission interface - ✅ COMPLETED
   - Assignment-specific grading workflow
   - Enhanced assignment analytics
 

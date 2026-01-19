@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Roadmap
 
-**Last Updated**: 2026-01-19 (Assignment Creation UI completed)
+**Last Updated**: 2026-01-19 (Student Submissions UI completed)
 
 ## Vision
 Transform MA Malnu Kananga into a fully integrated, AI-powered school management system with offline capability and real-time features.
@@ -48,6 +48,30 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 *No tasks currently in progress*
 
 **Completed Today (2026-01-19)**:
+- [x] **Student Submissions UI** (ASG-002)
+   - Full student submission interface for assignments
+   - Assignment list with status indicators
+   - Due date tracking and late detection
+   - Submission form with text and file attachments
+   - View graded submissions with score and feedback
+   - Backend tables and handlers for submissions
+   - Student portal integration
+   - Notification integration
+   - Comprehensive test coverage
+
+- [x] **Assignment Creation UI** (ASG-001)
+- [x] **Student Submissions UI** (ASG-002)
+   - Full student assignment submission interface
+   - Assignment list view with status indicators
+   - Due date tracking and late detection
+   - Assignment detail view with instructions
+   - Submission form with text and file attachments
+   - View graded submissions with score and feedback
+   - Backend tables and handlers for submissions
+   - Student portal integration
+   - Notification integration
+   - Comprehensive test coverage
+
 - [x] **Assignment Creation UI** (ASG-001)
    - Full assignment creation interface for teachers
    - Assignment types, rubric creation, file attachments
@@ -116,7 +140,7 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 
 #### Assignments & Grades
 - [x] Assignment creation (completed 2026-01-19)
-- [ ] Student submission (in backlog as ASG-002)
+- [x] Student submission (completed 2026-01-19)
 - [x] Grade entry (completed - GradingManagement.tsx)
 - [ ] Grade analytics (partial - ProgressAnalytics.tsx exists)
 - [x] Parent grade access (completed - ParentGradesView.tsx)
