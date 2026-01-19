@@ -14,6 +14,7 @@ import AssignmentCreation from './AssignmentCreation';
 import AssignmentGrading from './AssignmentGrading';
 import GradeAnalytics from './GradeAnalytics';
 import QuizGenerator from './QuizGenerator';
+import DirectMessage from './DirectMessage';
 import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
@@ -33,13 +34,14 @@ import VoiceCommandsHelp from './VoiceCommandsHelp';
 import Badge from './ui/Badge';
 import SmallActionButton from './ui/SmallActionButton';
 import { pdfExportService } from '../services/pdfExportService';
+import { ChatBubbleLeftRightIcon } from './icons/ChatBubbleLeftRightIcon';
 
 interface TeacherDashboardProps {
     onShowToast?: (msg: string, type: ToastType) => void;
     extraRole: UserExtraRole;
 }
 
-type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics' | 'quiz-generator';
+type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics' | 'quiz-generator' | 'messages';
 
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<ViewState>('home');
@@ -61,6 +63,33 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
   const handleToast = useCallback((msg: string, type: ToastType) => {
       if (onShowToast) onShowToast(msg, type);
   }, [onShowToast]);
+
+  const getCurrentUserId = (): string => {
+    const userJSON = localStorage.getItem(STORAGE_KEYS.USER);
+    if (userJSON) {
+      const user = JSON.parse(userJSON);
+      return user.id || '';
+    }
+    return '';
+  };
+
+  const getCurrentUserName = (): string => {
+    const userJSON = localStorage.getItem(STORAGE_KEYS.USER);
+    if (userJSON) {
+      const user = JSON.parse(userJSON);
+      return user.name || '';
+    }
+    return '';
+  };
+
+  const getCurrentUserEmail = (): string => {
+    const userJSON = localStorage.getItem(STORAGE_KEYS.USER);
+    if (userJSON) {
+      const user = JSON.parse(userJSON);
+      return user.email || '';
+    }
+    return '';
+  };
 
   // Load dashboard data with offline support
   useEffect(() => {
@@ -436,6 +465,20 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         />
                     )}
 
+                    {checkPermission('communication.messages') && (
+                        <DashboardActionCard
+                            icon={<ChatBubbleLeftRightIcon />}
+                            title="Pesan"
+                            description="Kirim dan terima pesan langsung dengan pengguna lain."
+                            colorTheme="green"
+                            statusBadge="Real-time"
+                            offlineBadge="Offline"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('messages')}
+                            ariaLabel="Buka Pesan"
+                        />
+                    )}
+
                     {extraRole === 'staff' && checkPermission('inventory.manage') && (
                         <DashboardActionCard
                             icon={<ArchiveBoxIcon />}
@@ -451,7 +494,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             ariaLabel="Buka Inventaris"
                         />
                     )}
-                    
+
                     <DashboardActionCard
                         icon={<DocumentTextIcon />}
                         title="Laporan Konsolidasi"
@@ -474,6 +517,32 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'assignment-grading' && <AssignmentGrading onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'analytics' && <GradeAnalytics onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'quiz-generator' && <QuizGenerator onSuccess={() => { handleToast('Kuis berhasil dibuat!', 'success'); setCurrentView('home'); }} onCancel={() => setCurrentView('home')} />}
+        {currentView === 'messages' && (
+          <div className="animate-fade-in-up">
+            <div className="mb-4 flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setCurrentView('home')}
+                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali ke Dashboard
+              </button>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Pesan</h2>
+            </div>
+            <DirectMessage
+              currentUser={{
+                id: getCurrentUserId(),
+                name: getCurrentUserName(),
+                email: getCurrentUserEmail(),
+                role: 'teacher',
+                status: 'active',
+              }}
+            />
+          </div>
+        )}
 
         {/* Voice Commands Help Modal */}
         <VoiceCommandsHelp

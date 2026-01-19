@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-19 (Grade Analytics Dashboard completed)
+**Last Updated**: 2026-01-19 (Real-Time Messaging completed)
 
 ## Architecture Overview
 
@@ -73,12 +73,60 @@
 - **`emailQueueService.ts`** - Email sending queue and retry logic
 - **`emailTemplates.ts`** - Email template management
 - **`parentGradeNotificationService.ts`** - Parent grade change notifications
+- **`messagesAPI`** - Real-time messaging API service (completed 2026-01-19)
+  - Conversation CRUD operations
+  - Message CRUD operations
+  - File upload support
+  - Read receipts
+  - Typing indicators
+  - Unread count tracking
+  - Real-time WebSocket integration
 - **`themeManager.ts`** - Theme management and persistence
 - **`categoryService.ts`** - Category management for resources
 - **`pdfExportService.ts`** - PDF generation for reports and certificates
 - **`materialPermissionService.ts`** - Material sharing permissions and access control
 
 #### Frontend Components (`src/components/`)
+
+##### Messaging Components
+- **`DirectMessage.tsx`** - Main messaging interface with conversation list and thread (completed 2026-01-19)
+  - User selection for new conversations
+  - Conversation list with filtering (all/direct/group, search, unread)
+  - Real-time message updates via WebSocket
+  - Typing indicators support
+  - Read receipts
+  - File attachment support (max 10MB)
+  - Reply message functionality
+  - Offline support with drafts
+- **`MessageThread.tsx`** - Individual conversation view (completed 2026-01-19)
+  - Message display with sender identification
+  - Own vs. other message styling
+  - Message status indicators (sending, sent, delivered, read)
+  - Read receipt icons
+  - Reply preview and handling
+  - File attachment display
+  - Timestamp formatting
+  - Participant online status
+  - Auto-mark as read on incoming messages
+  - Auto-scroll to latest message
+- **`MessageList.tsx`** - Conversation list with search and filtering (completed 2026-01-19)
+  - Search by conversation name
+  - Filter by type (direct/group)
+  - Filter by unread status
+  - Unread count badges
+  - Last message preview
+  - Participant avatars
+  - Time formatting
+  - Loading, error, empty states
+- **`MessageInput.tsx`** - Message composer with file upload (completed 2026-01-19)
+  - Text input with Enter/Shift+Enter handling
+  - File upload (max 10MB)
+  - File preview with removal
+  - Reply preview display
+  - Draft auto-save to localStorage
+  - Draft auto-load
+  - Sending state indicator
+  - Disabled state handling
 
 ##### Quiz Components
 - **`QuizGenerator.tsx`** - AI-powered quiz generation from learning materials (completed 2026-01-19)
@@ -246,6 +294,18 @@
 - **StudentPerformance**: Individual student performance metrics and trends
 - **AssignmentAnalytics**: Assignment-level analytics with submission and grading data
 
+#### Messaging Data Models
+- **DirectMessage**: Individual message with sender, recipient, content, status, timestamp
+- **Conversation**: Conversation container with participants, metadata, last message
+- **Participant**: Conversation participant with online status, last seen
+- **MessageStatus**: Message status (sending, sent, delivered, read, failed)
+- **MessageType**: Message type (text, image, file, audio, video)
+- **ConversationType**: Conversation type (direct, group)
+- **MessageSendRequest**: Request payload for sending messages
+- **ConversationCreateRequest**: Request payload for creating conversations
+- **MessageReadReceipt**: Read receipt with message ID, user ID, timestamp
+- **TypingIndicator**: Typing status for conversation participants
+
 #### Password Reset
 - `password_reset_tokens` table stores secure reset tokens
 - Token expiration: 1 hour from creation
@@ -359,6 +419,13 @@ All localStorage keys use `malnu_` prefix:
 - PPDB: `malnu_ppdb_data`, `malnu_ppdb_status`
 - Offline: `malnu_offline_queue`
 - Analytics: `malnu_grade_analytics_export_{classId}` (dynamic factory function)
+- Messaging:
+  - `malnu_messages` - Message storage
+  - `malnu_conversations` - Conversation storage
+  - `malnu_active_conversation` - Currently active conversation
+  - `malnu_typing_indicators` - Typing status tracking
+  - `malnu_message_drafts_{conversationId}` - Message drafts per conversation (dynamic factory function)
+  - `malnu_unread_counts` - Unread message counts
 
 ### Authentication Flow
 
@@ -415,6 +482,18 @@ All localStorage keys use `malnu_` prefix:
 /events/*         - School events
 /inventory/*     - Inventory management
 /analytics/*     - Analytics endpoints (grade analytics, performance metrics) - TODO
+/messages/*      - Real-time messaging (completed 2026-01-19)
+  - GET/POST `/api/messages/conversations` - Conversation list and creation
+  - GET/PUT/DELETE `/api/messages/conversations/:id` - Conversation CRUD
+  - POST `/api/messages/conversations/:id/read` - Mark conversation as read
+  - GET `/api/messages/conversations/:id/messages` - Get conversation messages
+  - POST `/api/messages` - Send message (text + optional file)
+  - PUT `/api/messages/:id` - Update message
+  - DELETE `/api/messages/:id` - Delete message
+  - POST `/api/messages/:id/read` - Mark message as read
+  - GET `/api/messages/conversations/:id/typing` - Get typing indicators
+  - POST `/api/messages/conversations/:id/typing` - Send typing indicator
+  - GET `/api/messages/unread-count` - Get total unread count
 ```
 
 ### PWA Architecture
@@ -519,12 +598,12 @@ All localStorage keys use `malnu_` prefix:
 - OCR validation tests
 
 #### Test Coverage (as of 2026-01-19)
-- **88 test files** (GradeAnalytics tests added)
-- **1609+ tests passing** (20+ new tests)
+- **91 test files** (Messaging system tests added)
+- **1640+ tests passing** (30+ new tests)
 - **10 tests skipped**
 - **Coverage areas**:
   - All core services (auth, API, permissions)
-  - All UI components (35+ components)
+  - All UI components (40+ components)
   - PPDB components (registration, management with full test coverage)
   - Voice services (recognition, synthesis)
   - AI services (Gemini, cache management)
@@ -535,6 +614,7 @@ All localStorage keys use `malnu_` prefix:
   - Material search and filtering (60+ test cases for MaterialUpload)
   - Assignment system (creation, submission, grading)
   - Grade analytics (20+ test cases for GradeAnalytics)
+  - Messaging system (30+ test cases for MessageInput, MessageList, MessageThread, DirectMessage)
 
 #### Test Commands
 - `npm test` - Run all tests

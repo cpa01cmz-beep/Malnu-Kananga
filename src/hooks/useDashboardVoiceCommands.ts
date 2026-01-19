@@ -54,6 +54,8 @@ export const useDashboardVoiceCommands = ({
         commands.add('VIEW_ATTENDANCE');
         commands.add('CREATE_ANNOUNCEMENT');
         commands.add('VIEW_SCHEDULE');
+        commands.add('OPEN_MESSAGES');
+        commands.add('SEND_MESSAGE');
         break;
         
       case 'student':
@@ -138,6 +140,14 @@ export const useDashboardVoiceCommands = ({
           
         case 'VIEW_SCHEDULE':
           onAction('view_schedule');
+          return true;
+
+        case 'OPEN_MESSAGES':
+          onNavigate('messages');
+          return true;
+
+        case 'SEND_MESSAGE':
+          onNavigate('messages');
           return true;
 
         // Student commands

@@ -122,6 +122,14 @@ export const STORAGE_KEYS = {
     QUIZ_ATTEMPTS: (quizId: string) => `malnu_quiz_attempts_${quizId}`,
     QUIZ_ANALYTICS: (quizId: string) => `malnu_quiz_analytics_${quizId}`,
     QUIZ_GENERATION_CACHE: 'malnu_quiz_generation_cache',
+
+    // Messaging System (new)
+    MESSAGES: 'malnu_messages',
+    CONVERSATIONS: 'malnu_conversations',
+    ACTIVE_CONVERSATION: 'malnu_active_conversation',
+    TYPING_INDICATORS: 'malnu_typing_indicators',
+    MESSAGE_DRAFTS: (conversationId: string) => `malnu_message_draft_${conversationId}`,
+    UNREAD_COUNTS: 'malnu_unread_counts',
 } as const;
 
 export const USER_ROLES = {
