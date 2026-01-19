@@ -122,6 +122,7 @@ export const STORAGE_KEYS = {
     QUIZ_ATTEMPTS: (quizId: string) => `malnu_quiz_attempts_${quizId}`,
     QUIZ_ANALYTICS: (quizId: string) => `malnu_quiz_analytics_${quizId}`,
     QUIZ_GENERATION_CACHE: 'malnu_quiz_generation_cache',
+    AI_FEEDBACK_CACHE: 'malnu_ai_feedback_cache',
 
     // Messaging System (new)
     MESSAGES: 'malnu_messages',

@@ -86,6 +86,7 @@
 - **`categoryService.ts`** - Category management for resources
 - **`pdfExportService.ts`** - PDF generation for reports and certificates
 - **`materialPermissionService.ts`** - Material sharing permissions and access control
+- **`generateAssignmentFeedback()`** - AI-powered assignment feedback generation with strengths, improvements, and suggested scores
 
 #### Frontend Components (`src/components/`)
 
@@ -319,6 +320,11 @@
 - **ConversationCreateRequest**: Request payload for creating conversations
 - **MessageReadReceipt**: Read receipt with message ID, user ID, timestamp
 - **TypingIndicator**: Typing status for conversation participants
+
+#### AI Feedback Data Models
+- **AIFeedback**: AI-generated feedback with assignment/submission ID, feedback text, strengths, improvements, suggested score
+- **AssignmentFeedbackRequest**: Request payload for AI feedback generation
+- **AssignmentFeedbackResponse**: AI-generated feedback with confidence score
 
 #### Password Reset
 - `password_reset_tokens` table stores secure reset tokens

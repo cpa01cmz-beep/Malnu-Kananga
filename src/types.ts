@@ -540,6 +540,19 @@ export interface SubmissionAttachment {
   uploadedAt: string;
 }
 
+export interface AIFeedback {
+  id: string;
+  assignmentId: string;
+  submissionId: string;
+  feedback: string;
+  strengths: string[];
+  improvements: string[];
+  suggestedScore?: number;
+  generatedAt: string;
+  aiModel: string;
+  confidence: number;
+}
+
 export interface Attendance {
   id: string;
   studentId: string;

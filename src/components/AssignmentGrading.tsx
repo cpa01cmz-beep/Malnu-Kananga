@@ -1,28 +1,24 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { assignmentsAPI, assignmentSubmissionsAPI, FileUploadResponse } from '../services/apiService';
-import { Assignment, AssignmentStatus, AssignmentSubmission, User, UserRole, UserExtraRole } from '../types';
+import React, { useState, useEffect } from 'react';
+import { assignmentsAPI, assignmentSubmissionsAPI } from '../services/apiService';
+import { generateAssignmentFeedback } from '../services/geminiService';
+import { Assignment, AssignmentStatus, AssignmentSubmission, User, AIFeedback } from '../types';
 import { useEventNotifications } from '../hooks/useEventNotifications';
-import { useCanAccess } from '../hooks/useCanAccess';
 import { logger } from '../utils/logger';
-import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
-import { useNetworkStatus } from '../utils/networkStatus';
 import Button from './ui/Button';
 import AccessDenied from './AccessDenied';
 import Input from './ui/Input';
 import Textarea from './ui/Textarea';
-import { STORAGE_KEYS } from '../constants';
 import Modal from './ui/Modal';
 import Badge from './ui/Badge';
 import { EmptyState } from './ui/LoadingState';
 import FormGrid from './ui/FormGrid';
 import DocumentTextIcon from './icons/DocumentTextIcon';
-import UserIcon from './icons/UserIcon';
-import ClockIcon from './icons/ClockIcon';
+import { UserIcon } from './icons/UserIcon';
+import { ClockIcon } from './icons/ClockIcon';
 import { CheckCircleIcon, AlertCircleIcon } from './icons/StatusIcons';
-import XCircleIcon from './icons/XCircleIcon';
-import ExclamationTriangleIcon from './icons/ExclamationTriangleIcon';
-import ArrowDownTrayIcon from './icons/ArrowDownTrayIcon';
+import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
+import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 
 interface AssignmentGradingProps {
   onBack: () => void;
@@ -39,7 +35,6 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
 }) => {
   const { notifyGradeUpdate } = useEventNotifications();
   const { canAccess } = useCanAccess();
-  const { isOnline } = useNetworkStatus();
 
   const [currentView, setCurrentView] = useState<GradingView>('assignment-list');
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -56,7 +51,9 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  const { addAction } = useOfflineActionQueue();
+  const [aiFeedback, setAiFeedback] = useState<AIFeedback | null>(null);
+  const [generatingFeedback, setGeneratingFeedback] = useState(false);
+  const [showAiFeedback, setShowAiFeedback] = useState(false);
 
   const canGradeAssignments = canAccess('academic.grades');
 
@@ -186,10 +183,10 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
         setSubmissions(updatedSubmissions);
 
         notifyGradeUpdate(
-          selectedSubmission.studentId,
-          selectedAssignment.id,
+          selectedSubmission.studentName,
           selectedAssignment.title,
-          typeof score === 'number' ? score : 0
+          selectedSubmission.score,
+          typeof score === 'number' ? score : undefined
         );
 
         onShowToast('Nilai berhasil disimpan', 'success');
@@ -203,6 +200,72 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleGenerateAIFeedback = async () => {
+    if (!selectedSubmission || !selectedAssignment) {
+      return;
+    }
+
+    setGeneratingFeedback(true);
+    setShowAiFeedback(true);
+
+    try {
+      const feedbackData = await generateAssignmentFeedback(
+        {
+          title: selectedAssignment.title,
+          description: selectedAssignment.description,
+          type: selectedAssignment.type.toString(),
+          subjectName: selectedAssignment.subjectName,
+          maxScore: selectedAssignment.maxScore
+        },
+        {
+          studentName: selectedSubmission.studentName,
+          submissionText: selectedSubmission.submissionText,
+          attachments: selectedSubmission.attachments?.map(a => ({
+            fileName: a.fileName,
+            fileType: a.fileType
+          }))
+        },
+        typeof score === 'number' ? score : undefined
+      );
+
+      const feedbackId = `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      setAiFeedback({
+        id: feedbackId,
+        assignmentId: selectedAssignment.id,
+        submissionId: selectedSubmission.id,
+        feedback: feedbackData.feedback,
+        strengths: feedbackData.strengths,
+        improvements: feedbackData.improvements,
+        suggestedScore: feedbackData.suggestedScore,
+        generatedAt: new Date().toISOString(),
+        aiModel: 'gemini-3-pro-preview',
+        confidence: feedbackData.confidence
+      });
+
+      onShowToast('Feedback AI berhasil dibuat', 'success');
+    } catch (err) {
+      logger.error('Error generating AI feedback:', err);
+      onShowToast('Gagal membuat feedback AI', 'error');
+    } finally {
+      setGeneratingFeedback(false);
+    }
+  };
+
+  const handleApplyAIFeedback = () => {
+    if (!aiFeedback) {
+      return;
+    }
+
+    if (aiFeedback.suggestedScore !== undefined && selectedAssignment) {
+      setScore(Math.min(aiFeedback.suggestedScore, selectedAssignment.maxScore));
+    }
+
+    setFeedback(aiFeedback.feedback);
+    setShowAiFeedback(false);
+    onShowToast('Feedback AI diterapkan', 'success');
   };
 
   const getFilteredSubmissions = () => {
@@ -219,21 +282,29 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'submitted':
-        return <Badge variant="success" icon={<CheckCircleIcon className="w-4 h-4" />}>Dikirim</Badge>;
+        return (
+          <Badge variant="success">
+            <CheckCircleIcon className="w-4 h-4 mr-1" />
+            Dikirim
+          </Badge>
+        );
       case 'late':
-        return <Badge variant="warning" icon={<ClockIcon className="w-4 h-4" />}>Terlambat</Badge>;
+        return (
+          <Badge variant="warning">
+            <ClockIcon className="w-4 h-4 mr-1" />
+            Terlambat
+          </Badge>
+        );
       case 'graded':
-        return <Badge variant="info" icon={<CheckCircleIcon className="w-4 h-4" />}>Dinilai</Badge>;
+        return (
+          <Badge variant="info">
+            <CheckCircleIcon className="w-4 h-4 mr-1" />
+            Dinilai
+          </Badge>
+        );
       default:
-        return <Badge variant="default">{status}</Badge>;
+        return <Badge variant="neutral">{status}</Badge>;
     }
-  };
-
-  const getDaysRemaining = (dueDate: string) => {
-    const due = new Date(dueDate);
-    const now = new Date();
-    const diff = Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    return diff;
   };
 
   const downloadFile = (fileUrl: string, fileName: string) => {
@@ -258,7 +329,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
-        <ExclamationCircleIcon className="w-12 h-12 text-red-500" />
+        <AlertCircleIcon className="w-12 h-12 text-red-500" />
         <div className="text-gray-500">{error}</div>
         <Button onClick={fetchAssignments}>Coba Lagi</Button>
       </div>
@@ -281,8 +352,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
           {assignments.length === 0 ? (
             <EmptyState
               icon={<DocumentTextIcon className="w-12 h-12 text-gray-400" />}
-              title="Belum ada tugas"
-              description="Anda belum memiliki tugas untuk dinilai"
+              message="Anda belum memiliki tugas untuk dinilai"
             />
           ) : (
             assignments.map((assignment) => (
@@ -385,8 +455,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
         ) : filteredSubmissions.length === 0 ? (
           <EmptyState
             icon={<DocumentTextIcon className="w-12 h-12 text-gray-400" />}
-            title="Tidak ada pengumpulan"
-            description={
+            message={
               statusFilter === 'ungraded'
                 ? 'Semua pengumpulan telah dinilai'
                 : 'Belum ada pengumpulan untuk filter ini'
@@ -602,16 +671,16 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                   </label>
                   <Input
                     type="number"
-                    min="0"
+                    min={0}
                     max={selectedAssignment.maxScore}
-                    step="0.5"
+                    step={0.5}
                     value={score}
                     onChange={(e) => {
                       const val = e.target.value === '' ? '' : parseFloat(e.target.value);
                       setScore(val);
                     }}
                     placeholder={`Masukkan nilai (0-${selectedAssignment.maxScore})`}
-                    error={
+                    errorText={
                       typeof score === 'number' &&
                       (score < 0 || score > selectedAssignment.maxScore)
                         ? `Nilai harus antara 0 dan ${selectedAssignment.maxScore}`
@@ -621,9 +690,19 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Feedback (Opsional)
-                  </label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Feedback (Opsional)
+                    </label>
+                    <Button
+                      onClick={handleGenerateAIFeedback}
+                      disabled={generatingFeedback || !selectedSubmission.submissionText && (!selectedSubmission.attachments || selectedSubmission.attachments.length === 0)}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      {generatingFeedback ? 'Membuat...' : 'Buat Feedback AI'}
+                    </Button>
+                  </div>
                   <Textarea
                     value={feedback}
                     onChange={(e) => setFeedback(e.target.value)}
@@ -668,6 +747,98 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
             </div>
           </div>
         </div>
+
+        {showAiFeedback && aiFeedback && (
+          <Modal
+            isOpen={showAiFeedback}
+            onClose={() => setShowAiFeedback(false)}
+            title="Feedback AI"
+            size="lg"
+          >
+            <div className="space-y-6">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start space-x-3">
+                  <CheckCircleIcon className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium text-blue-900 mb-1">Feedback Utama</h4>
+                    <p className="text-sm text-blue-800">{aiFeedback.feedback}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <h4 className="font-medium text-green-900 mb-3 flex items-center">
+                    <CheckCircleIcon className="w-5 h-5 text-green-600 mr-2" />
+                    Kekuatan ({aiFeedback.strengths.length})
+                  </h4>
+                  <ul className="space-y-2">
+                    {aiFeedback.strengths.map((strength, index) => (
+                      <li key={index} className="text-sm text-green-800 flex items-start">
+                        <span className="mr-2">{index + 1}.</span>
+                        <span>{strength}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <h4 className="font-medium text-yellow-900 mb-3 flex items-center">
+                    <ExclamationTriangleIcon className="w-5 h-5 text-yellow-600 mr-2" />
+                    Perbaikan ({aiFeedback.improvements.length})
+                  </h4>
+                  <ul className="space-y-2">
+                    {aiFeedback.improvements.map((improvement, index) => (
+                      <li key={index} className="text-sm text-yellow-800 flex items-start">
+                        <span className="mr-2">{index + 1}.</span>
+                        <span>{improvement}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {aiFeedback.suggestedScore !== undefined && (
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                  <h4 className="font-medium text-purple-900 mb-2 flex items-center">
+                    <CheckCircleIcon className="w-5 h-5 text-purple-600 mr-2" />
+                    Saran Nilai
+                  </h4>
+                  <div className="flex items-center space-x-4">
+                    <div className="text-3xl font-bold text-purple-700">
+                      {aiFeedback.suggestedScore}/{selectedAssignment?.maxScore}
+                    </div>
+                    <div className="text-sm text-purple-600">
+                      Berdasarkan analisis AI dengan tingkat kepercayaan{' '}
+                      {Math.round(aiFeedback.confidence * 100)}%
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                <div className="text-xs text-gray-500">
+                  Dibuat pada: {new Date(aiFeedback.generatedAt).toLocaleString('id-ID')}
+                  {' • '}Model: {aiFeedback.aiModel}
+                </div>
+                <div className="flex space-x-3">
+                  <Button
+                    onClick={() => setShowAiFeedback(false)}
+                    variant="secondary"
+                  >
+                    Tutup
+                  </Button>
+                  <Button
+                    onClick={handleApplyAIFeedback}
+                    disabled={!aiFeedback.feedback}
+                  >
+                    Terapkan Feedback
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </Modal>
+        )}
       </div>
     );
   }

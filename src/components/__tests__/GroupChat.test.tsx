@@ -225,9 +225,10 @@ describe('GroupChat', () => {
 
       await waitFor(() => {
         const nameInput = screen.getByLabelText('Nama Grup');
-        fireEvent.change(nameInput, { target: { value: 'Test Group' });
+        fireEvent.change(nameInput, { target: { value: 'Test Group' } });
       });
 
+      await waitFor(() => {
         const userCheckbox = screen.getByText('Student 1');
         fireEvent.click(userCheckbox);
       });

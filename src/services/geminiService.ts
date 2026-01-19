@@ -443,6 +443,158 @@ export async function analyzeStudentPerformance(studentData: {
 
 export const initialGreeting = "Assalamualaikum! Saya Asisten AI MA Malnu Kananga. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?";
 
+export async function generateAssignmentFeedback(
+  assignment: {
+    title: string;
+    description: string;
+    type: string;
+    subjectName?: string;
+    maxScore: number;
+  },
+  submission: {
+    studentName: string;
+    submissionText?: string;
+    attachments?: Array<{ fileName: string; fileType: string }>;
+  },
+  submissionScore?: number
+): Promise<{
+  feedback: string;
+  strengths: string[];
+  improvements: string[];
+  suggestedScore?: number;
+  confidence: number;
+}> {
+  const cacheKey = {
+    operation: 'assignmentFeedback',
+    input: JSON.stringify({ assignment, submission, submissionScore }),
+    model: PRO_THINKING_MODEL
+  };
+
+  const cachedFeedback = analysisCache.get(cacheKey);
+  if (cachedFeedback) {
+    logger.debug('Returning cached assignment feedback');
+    return cachedFeedback;
+  }
+
+  const attachmentsInfo = submission.attachments?.length
+    ? `\nLampiran yang dikirim: ${submission.attachments.map(a => `- ${a.fileName} (${a.fileType})`).join('\n')}`
+    : '';
+
+  const prompt = `
+  Anda adalah asisten penilaian yang membantu guru memberikan feedback yang membangun untuk tugas siswa.
+
+  INFORMASI TUGAS:
+  - Judul: ${assignment.title}
+  - Deskripsi: ${assignment.description}
+  - Jenis: ${assignment.type}
+  - Mata Pelajaran: ${assignment.subjectName || 'Umum'}
+  - Nilai Maksimal: ${assignment.maxScore}
+
+  PENGUMPULAN SISWA:
+  - Nama Siswa: ${submission.studentName}
+  - Jawaban Teks: ${submission.submissionText || 'Tidak ada jawaban teks'}
+  ${attachmentsInfo}
+  ${submissionScore !== undefined ? `- Nilai saat ini: ${submissionScore}/${assignment.maxScore}` : '- Belum dinilai'}
+
+  INSTRUKSI:
+  Buatlah feedback yang membangun dan mendidik dengan format berikut:
+
+  1. **FEEDBACK UTAMA**: Ringkasan umum dalam 2-3 kalimat yang sopan dan memotivasi
+
+  2. **KEKUATAN (3-5 poin)**:
+     - Hal-hal yang dilakukan dengan baik oleh siswa
+     - Gunakan bahasa positif dan spesifik
+     - Sebutkan detail dari jawaban jika ada
+
+  3. **AREA PERBAIKAN (3-5 poin)**:
+     - Hal-hal yang perlu ditingkatkan
+     - Berikan saran yang konkret dan dapat dilakukan
+     - Fokus pada aspek pembelajaran, bukan kekurangan pribadi
+
+  4. **SARAN NILAI (opsional)**:
+     - Jika memungkinkan, berikan rekomendasi nilai berdasarkan kualitas jawaban
+     - Jelaskan alasan singkat (1 kalimat)
+
+  FORMAT OUTPUT (JSON):
+  {
+    "feedback": "Feedback utama yang ringkas dan memotivasi",
+    "strengths": [
+      "Kekuatan 1 dengan detail spesifik",
+      "Kekuatan 2 dengan detail spesifik",
+      "Kekuatan 3 dengan detail spesifik"
+    ],
+    "improvements": [
+      "Perbaikan 1 dengan saran konkret",
+      "Perbaikan 2 dengan saran konkret",
+      "Perbaikan 3 dengan saran konkret"
+    ],
+    "suggestedScore": 85,
+    "confidence": 0.85
+  }
+
+  PEDOMAN:
+  - Gunakan Bahasa Indonesia yang sopan dan membangun
+  - Hindari bahasa yang menghakimi atau merendahkan
+  - Fokus pada pembelajaran dan pengembangan
+  - Berikan saran yang praktis dan dapat diimplementasikan
+  - Confidence score (0-1) mengindikasikan seberapa yakin AI dengan analisisnya
+  - Jangan memberikan suggestedScore jika informasi tidak cukup
+  `;
+
+  const schema = {
+    type: Type.OBJECT,
+    properties: {
+      feedback: { type: Type.STRING },
+      strengths: {
+        type: Type.ARRAY,
+        items: { type: Type.STRING }
+      },
+      improvements: {
+        type: Type.ARRAY,
+        items: { type: Type.STRING }
+      },
+      suggestedScore: { type: Type.NUMBER },
+      confidence: { type: Type.NUMBER }
+    },
+    required: ['feedback', 'strengths', 'improvements', 'confidence']
+  };
+
+  try {
+    const response = await withCircuitBreaker(async () => {
+      return await ai.models.generateContent({
+        model: PRO_THINKING_MODEL,
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: schema,
+          thinkingConfig: { thinkingBudget: 32768 }
+        }
+      });
+    });
+
+    const jsonText = (response.text || '').trim();
+    const feedbackData = JSON.parse(jsonText);
+
+    feedbackData.id = `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    feedbackData.generatedAt = new Date().toISOString();
+    feedbackData.aiModel = PRO_THINKING_MODEL;
+
+    analysisCache.set(cacheKey, feedbackData);
+
+    return feedbackData;
+  } catch (error) {
+    const classifiedError = classifyError(error, {
+      operation: 'generateAssignmentFeedback',
+      timestamp: Date.now()
+    });
+    logError(classifiedError);
+    const message = getUserFriendlyMessage(classifiedError);
+    throw new Error(message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.'
+      ? "Gagal membuat feedback AI. Silakan coba lagi."
+      : message);
+  }
+}
+
 export async function generateQuiz(
   materials: Array<{ title: string; content?: string; category: string }>,
   options: {
@@ -477,7 +629,7 @@ export async function generateQuiz(
     model: PRO_THINKING_MODEL
   };
   
-  const cachedQuiz = analysisCache.get<any>(cacheKey);
+  const cachedQuiz = analysisCache.get(cacheKey);
   if (cachedQuiz) {
     logger.debug('Returning cached quiz generation');
     return cachedQuiz;

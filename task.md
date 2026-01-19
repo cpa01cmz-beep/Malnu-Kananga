@@ -154,6 +154,48 @@
     - src/constants.ts (added GRADE_ANALYTICS_EXPORT storage key)
     - src/components/TeacherDashboard.tsx (added analytics view, card, and import)
 
+### Completed Today (2026-01-19)
+- [x] **AI Assignment Feedback** (AI-002)
+  - Task ID: AI-002
+  - Description: Use AI to provide feedback on student assignments
+  - Priority: Medium
+  - Estimated: 4 days
+  - Status: **Completed**
+  - Completed: 2026-01-19
+  - Dependencies: AI-001 (✅ completed - geminiService exists)
+  - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
+  - Changes:
+    - Added generateAssignmentFeedback() method to geminiService.ts with AI-powered feedback generation
+    - Added AIFeedback type to types.ts for AI feedback structure
+    - Added AI_FEEDBACK_CACHE storage key to constants.ts
+    - Enhanced AssignmentGrading.tsx with AI feedback integration:
+      - "Buat Feedback AI" button in grading form
+      - AI feedback modal with strengths, improvements, and suggested score
+      - "Terapkan Feedback" button to apply AI-generated feedback
+      - Loading state while generating feedback
+      - Error handling for AI generation failures
+      - Confidence score display
+      - Disabled state when no submission content exists
+    - Features:
+      - AI analyzes assignment details, student submission text, and attachments
+      - Generates structured feedback with:
+        - Main feedback summary
+        - 3-5 strengths (things done well)
+        - 3-5 improvements (areas for improvement)
+        - Suggested score (optional, with confidence level)
+      - Caching mechanism to avoid duplicate API calls
+      - Context-aware feedback (considers subject, assignment type, max score)
+      - Teacher can review and edit AI feedback before applying
+      - Supports both text submissions and file attachments
+      - Passes current grade to AI for comparison
+    - Files created:
+      - src/components/__tests__/AssignmentGrading-ai-feedback.test.tsx (400+ lines, 9 test cases)
+    - Files modified:
+      - src/types.ts (added AIFeedback interface)
+      - src/constants.ts (added AI_FEEDBACK_CACHE key)
+      - src/services/geminiService.ts (added generateAssignmentFeedback function)
+      - src/components/AssignmentGrading.tsx (AI feedback UI integration)
+
 ### In Progress 🚧
 *No tasks currently in progress*
 

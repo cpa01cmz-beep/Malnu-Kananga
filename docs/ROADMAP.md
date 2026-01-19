@@ -240,6 +240,7 @@ src/
 - **AI Site Editor**: Natural language content editing
 - **Grade Analysis**: AI-powered performance insights
 - **Error Recovery**: Exponential backoff, circuit breaker
+- **AI Assignment Feedback**: AI-powered assignment grading with structured feedback (strengths, improvements, suggested score)
 
 ### 4.14 UI Component System (Phase 5 - COMPLETED)
 - **41 Reusable Components**: Comprehensive design system
