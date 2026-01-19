@@ -4,12 +4,14 @@ import DocumentTextIcon from './icons/DocumentTextIcon';
 import { UsersIcon } from './icons/UsersIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { ArchiveBoxIcon } from './icons/ArchiveBoxIcon';
+import { ChartLineIcon } from './icons/ChartLineIcon';
 import GradingManagement from './GradingManagement';
 import ClassManagement from './ClassManagement';
 import MaterialUpload from './MaterialUpload';
 import SchoolInventory from './SchoolInventory';
 import AssignmentCreation from './AssignmentCreation';
 import AssignmentGrading from './AssignmentGrading';
+import GradeAnalytics from './GradeAnalytics';
 import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
@@ -35,7 +37,7 @@ interface TeacherDashboardProps {
     extraRole: UserExtraRole;
 }
 
-type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading';
+type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics';
 
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<ViewState>('home');
@@ -144,7 +146,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     userRole: 'teacher',
     extraRole,
     onNavigate: (view: string) => {
-      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory'];
+      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory', 'analytics'];
       if (validViews.includes(view as ViewState)) {
         setCurrentView(view as ViewState);
         handleToast(`Navigasi ke ${view}`, 'success');
@@ -404,6 +406,20 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         />
                     )}
 
+                    {checkPermission('academic.grades') && (
+                        <DashboardActionCard
+                            icon={<ChartLineIcon />}
+                            title="Analitik Nilai"
+                            description="Analisis performa kelas, distribusi nilai, dan tren performa siswa."
+                            colorTheme="blue"
+                            statusBadge="Baru"
+                            offlineBadge="Mode Tertunda"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('analytics')}
+                            ariaLabel="Buka Analitik Nilai"
+                        />
+                    )}
+
                     {extraRole === 'staff' && checkPermission('inventory.manage') && (
                         <DashboardActionCard
                             icon={<ArchiveBoxIcon />}
@@ -440,6 +456,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'inventory' && <SchoolInventory onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'assignments' && <AssignmentCreation onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'assignment-grading' && <AssignmentGrading onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
+        {currentView === 'analytics' && <GradeAnalytics onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
 
         {/* Voice Commands Help Modal */}
         <VoiceCommandsHelp

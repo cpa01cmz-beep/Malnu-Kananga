@@ -99,6 +99,9 @@ export const STORAGE_KEYS = {
     // WebSocket sync timestamps
     LAST_SYNC_TIME: 'malnu_last_sync_time',
     
+    // Grade Analytics (new)
+    GRADE_ANALYTICS_EXPORT: (classId: string) => `malnu_grade_analytics_export_${classId}`,
+    
     // AI Analysis cache for offline support
     CACHED_AI_ANALYSES: 'malnu_cached_ai_analyses',
     
