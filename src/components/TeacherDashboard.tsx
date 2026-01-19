@@ -5,6 +5,7 @@ import { UsersIcon } from './icons/UsersIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { ArchiveBoxIcon } from './icons/ArchiveBoxIcon';
 import { ChartLineIcon } from './icons/ChartLineIcon';
+import SparklesIcon from './icons/SparklesIcon';
 import GradingManagement from './GradingManagement';
 import ClassManagement from './ClassManagement';
 import MaterialUpload from './MaterialUpload';
@@ -12,6 +13,7 @@ import SchoolInventory from './SchoolInventory';
 import AssignmentCreation from './AssignmentCreation';
 import AssignmentGrading from './AssignmentGrading';
 import GradeAnalytics from './GradeAnalytics';
+import QuizGenerator from './QuizGenerator';
 import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
@@ -37,7 +39,7 @@ interface TeacherDashboardProps {
     extraRole: UserExtraRole;
 }
 
-type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics';
+type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics' | 'quiz-generator';
 
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<ViewState>('home');
@@ -146,7 +148,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     userRole: 'teacher',
     extraRole,
     onNavigate: (view: string) => {
-      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory', 'analytics'];
+      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory', 'analytics', 'quiz-generator'];
       if (validViews.includes(view as ViewState)) {
         setCurrentView(view as ViewState);
         handleToast(`Navigasi ke ${view}`, 'success');
@@ -420,6 +422,20 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         />
                     )}
 
+                    {checkPermission('academic.assignments.create') && (
+                        <DashboardActionCard
+                            icon={<SparklesIcon />}
+                            title="Buat Kuis AI"
+                            description="Buat kuis otomatis dari materi pembelajaran dengan bantuan AI."
+                            colorTheme="purple"
+                            statusBadge="AI"
+                            offlineBadge="Mode Tertunda"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('quiz-generator')}
+                            ariaLabel="Buka Pembuat Kuis AI"
+                        />
+                    )}
+
                     {extraRole === 'staff' && checkPermission('inventory.manage') && (
                         <DashboardActionCard
                             icon={<ArchiveBoxIcon />}
@@ -457,6 +473,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'assignments' && <AssignmentCreation onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'assignment-grading' && <AssignmentGrading onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'analytics' && <GradeAnalytics onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
+        {currentView === 'quiz-generator' && <QuizGenerator onSuccess={() => { handleToast('Kuis berhasil dibuat!', 'success'); setCurrentView('home'); }} onCancel={() => setCurrentView('home')} />}
 
         {/* Voice Commands Help Modal */}
         <VoiceCommandsHelp

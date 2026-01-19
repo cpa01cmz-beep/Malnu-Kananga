@@ -80,6 +80,21 @@
 
 #### Frontend Components (`src/components/`)
 
+##### Quiz Components
+- **`QuizGenerator.tsx`** - AI-powered quiz generation from learning materials (completed 2026-01-19)
+  - Material selection from E-Library
+  - Quiz configuration (count, types, difficulty, points, focus areas)
+  - AI-powered question generation
+  - Real-time preview of generated questions
+  - Question editing and customization
+  - Add/delete questions
+- **`QuizPreview.tsx`** - Quiz preview and editing interface (completed 2026-01-19)
+  - Quiz metadata editing (title, description, duration, passing score)
+  - Question editing (text, type, difficulty, points, options, correct answer, explanation)
+  - Support for multiple question types (multiple choice, true/false, short answer, essay, fill blank)
+  - Add/delete questions with automatic points recalculation
+  - Add new questions manually
+
 ##### Dashboard Components
 - **`AdminDashboard.tsx`** - Admin dashboard with management cards
 
@@ -118,7 +133,19 @@
   - Assignment submission rates
   - Grade trends over time
   - Export analytics reports
-- **`GradeAnalytics.tsx`** - Comprehensive grade analytics dashboard for teachers (completed 2026-01-19)
+- **`QuizGenerator.tsx`** - AI-powered quiz generation from learning materials (completed 2026-01-19)
+  - Material selection from E-Library
+  - Quiz configuration (count, types, difficulty, points, focus areas)
+  - AI-powered question generation
+  - Real-time preview of generated questions
+  - Question editing and customization
+  - Add/delete questions
+- **`QuizPreview.tsx`** - Quiz preview and editing interface (completed 2026-01-19)
+  - Quiz metadata editing (title, description, duration, passing score)
+  - Question editing (text, type, difficulty, points, options, correct answer, explanation)
+  - Support for multiple question types (multiple choice, true/false, short answer, essay, fill blank)
+  - Add/delete questions with automatic points recalculation
+  - Add new questions manually
 
 ##### Feature Components
 - **`UserManagement.tsx`** - User CRUD with permissions

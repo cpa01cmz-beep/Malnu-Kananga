@@ -115,6 +115,13 @@ export const STORAGE_KEYS = {
     EMAIL_NOTIFICATION_SETTINGS: 'malnu_email_notification_settings',
     EMAIL_ANALYTICS: 'malnu_email_analytics',
     EMAIL_DELIVERY_HISTORY: 'malnu_email_delivery_history',
+    
+    // AI Quiz Generation (new)
+    QUIZZES: 'malnu_quizzes',
+    QUIZ_DRAFT: 'malnu_quiz_draft',
+    QUIZ_ATTEMPTS: (quizId: string) => `malnu_quiz_attempts_${quizId}`,
+    QUIZ_ANALYTICS: (quizId: string) => `malnu_quiz_analytics_${quizId}`,
+    QUIZ_GENERATION_CACHE: 'malnu_quiz_generation_cache',
 } as const;
 
 export const USER_ROLES = {
