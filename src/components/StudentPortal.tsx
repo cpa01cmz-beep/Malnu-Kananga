@@ -7,6 +7,7 @@ import { UsersIcon } from './icons/UsersIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { BrainIcon } from './icons/BrainIcon';
 import AssignmentIcon from './icons/AssignmentIcon';
+import { LightBulbIcon } from './icons/LightBulbIcon';
 import ScheduleView from './ScheduleView';
 import ELibrary from './ELibrary';
 import AcademicGrades from './AcademicGrades';
@@ -15,6 +16,7 @@ import StudentInsights from './StudentInsights';
 import OsisEvents from './OsisEvents';
 import StudentAssignments from './StudentAssignments';
 import { GroupChat } from './GroupChat';
+import StudyPlanGenerator from './StudyPlanGenerator';
 import { ToastType } from './Toast';
 import { UserExtraRole, Student } from '../types';
 import { UserRole, UserExtraRole as PermUserExtraRole } from '../types/permissions';
@@ -44,7 +46,7 @@ interface StudentPortalProps {
     extraRole: UserExtraRole;
 }
 
-type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'assignments' | 'attendance' | 'insights' | 'osis' | 'groups';
+type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'assignments' | 'attendance' | 'insights' | 'osis' | 'groups' | 'study-plan';
 
 const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<PortalView>('home');
@@ -284,7 +286,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
     userRole: 'student',
     extraRole,
     onNavigate: (view: string) => {
-      const validViews: PortalView[] = ['schedule', 'library', 'assignments', 'grades', 'attendance', 'insights', 'osis', 'groups'];
+      const validViews: PortalView[] = ['schedule', 'library', 'assignments', 'grades', 'attendance', 'insights', 'osis', 'groups', 'study-plan'];
       if (validViews.includes(view as PortalView)) {
         setCurrentView(view as PortalView);
         onShowToast(`Navigasi ke ${view}`, 'success');
@@ -413,16 +415,25 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
        permission: 'content.read',
        active: true
      },
-     {
-       title: 'My Insights',
-       description: 'Analisis AI performa akademik personal.',
-       icon: <BrainIcon />,
-       colorTheme: 'purple' as const,
-       action: () => setCurrentView('insights'),
-       permission: 'content.read',
-       active: true
-     },
-  ];
+      {
+        title: 'My Insights',
+        description: 'Analisis AI performa akademik personal.',
+        icon: <BrainIcon />,
+        colorTheme: 'purple' as const,
+        action: () => setCurrentView('insights'),
+        permission: 'content.read',
+        active: true
+      },
+      {
+        title: 'Rencana Belajar AI',
+        description: 'Buat rencana belajar personal berbasis AI.',
+        icon: <LightBulbIcon />,
+        colorTheme: 'yellow' as const,
+        action: () => setCurrentView('study-plan'),
+        permission: 'content.read',
+        active: true
+      },
+   ];
 
   // Filter menu items based on permissions
   const menuItems = allMenuItems.filter(item => checkPermission(item.permission));
@@ -725,9 +736,10 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
            />
          </div>
        )}
-       {currentView === 'attendance' && <AttendanceView onBack={() => setCurrentView('home')} />}
-        {currentView === 'insights' && <StudentInsights onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
-        {currentView === 'osis' && <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+        {currentView === 'attendance' && <AttendanceView onBack={() => setCurrentView('home')} />}
+         {currentView === 'insights' && <StudentInsights onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+         {currentView === 'osis' && <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+         {currentView === 'study-plan' && <StudyPlanGenerator onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
 
         {/* Voice Commands Help Modal */}
         <VoiceCommandsHelp

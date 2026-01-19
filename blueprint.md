@@ -65,6 +65,13 @@
 - **`ocrService.ts`** - OCR for PPDB documents
 - **`ocrEnhancementService.ts`** - OCR result enhancement and validation
 
+#### AI Functions (completed 2026-01-19)
+- **`analyzeStudentPerformance()`** - Analyze individual student performance with insights
+- **`analyzeClassPerformance()`** - Analyze class performance for teachers
+- **`generateQuiz()`** - Generate quiz questions from learning materials
+- **`generateAssignmentFeedback()`** - Generate AI feedback for student assignments
+- **`generateStudyPlan()`** - Generate personalized study plans based on student performance
+
 #### Feature Services
 - **`pushNotificationService.ts`** - PWA push notifications
 - **`unifiedNotificationManager.ts`** - Unified notification system
@@ -175,6 +182,15 @@
 - **`StudentLearningModule.tsx`** - Student learning modules interface
 - **`AcademicGrades.tsx`** - Academic grades display for students
 - **`ProgressAnalytics.tsx`** - Student progress and performance analytics (self-view)
+- **`StudyPlanGenerator.tsx`** - AI-powered study plan generation (completed 2026-01-19)
+  - Personalized study plan generation based on grades, attendance, and goals
+  - Priority-based subject planning (high/medium/low)
+  - Weekly schedule with day/time slots and activity types
+  - AI recommendations (study tips, time management, subject advice)
+  - Configurable duration (2, 4, 6, or 8 weeks)
+  - Tab-based interface (Overview, Subjects, Schedule, Recommendations)
+  - Local storage persistence
+  - Comprehensive test coverage (20+ test cases)
 
 ##### Parent Components
 - **`ParentGradesView.tsx`** - Parent view of child's grades
@@ -326,6 +342,12 @@
 - **AssignmentFeedbackRequest**: Request payload for AI feedback generation
 - **AssignmentFeedbackResponse**: AI-generated feedback with confidence score
 
+#### Study Plan Data Models
+- **StudyPlan**: Personalized study plan with ID, student info, title, description, subjects, schedule, recommendations, timestamps
+- **StudyPlanSubject**: Subject-specific plan with name, current grade, target grade, priority, weekly hours, focus areas, resources
+- **StudyPlanSchedule**: Weekly schedule with day, time slot, subject, activity type, duration
+- **StudyPlanRecommendation**: AI recommendations with category, title, description, priority
+
 #### Password Reset
 - `password_reset_tokens` table stores secure reset tokens
 - Token expiration: 1 hour from creation
@@ -446,6 +468,9 @@ All localStorage keys use `malnu_` prefix:
   - `malnu_typing_indicators` - Typing status tracking
   - `malnu_message_drafts_{conversationId}` - Message drafts per conversation (dynamic factory function)
   - `malnu_unread_counts` - Unread message counts
+- Study Plans:
+  - `malnu_study_plans_{studentId}` - Study plan storage (dynamic factory function)
+  - `malnu_active_study_plan_{studentId}` - Active study plan (dynamic factory function)
 
 ### Authentication Flow
 
@@ -618,15 +643,15 @@ All localStorage keys use `malnu_` prefix:
 - OCR validation tests
 
 #### Test Coverage (as of 2026-01-19)
-- **92 test files** (Messaging system tests added)
-- **1700+ tests passing** (60+ new tests)
+- **93 test files** (Study Plan Generator tests added)
+- **1750+ tests passing** (20+ new tests)
 - **10 tests skipped**
 - **Coverage areas**:
   - All core services (auth, API, permissions)
   - All UI components (40+ components)
   - PPDB components (registration, management with full test coverage)
   - Voice services (recognition, synthesis)
-  - AI services (Gemini, cache management)
+  - AI services (Gemini, cache management, study plan generation)
   - OCR services (validation, enhancement)
   - Notification services (push, email, unified)
   - Offline services (data sync, action queue)
@@ -636,6 +661,7 @@ All localStorage keys use `malnu_` prefix:
   - Grade analytics (20+ test cases for GradeAnalytics)
   - Messaging system (30+ test cases for MessageInput, MessageList, MessageThread, DirectMessage)
   - Group chat (25+ test cases for GroupChat)
+  - Study plan generation (20+ test cases for StudyPlanGenerator)
 
 #### Test Commands
 - `npm test` - Run all tests

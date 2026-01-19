@@ -1532,3 +1532,42 @@ export interface TypingIndicator {
   isTyping: boolean;
   timestamp: string;
 }
+
+export interface StudyPlan {
+  id: string;
+  studentId: string;
+  studentName: string;
+  title: string;
+  description: string;
+  subjects: StudyPlanSubject[];
+  schedule: StudyPlanSchedule[];
+  recommendations: StudyPlanRecommendation[];
+  createdAt: string;
+  validUntil: string;
+  status: 'active' | 'completed' | 'expired';
+}
+
+export interface StudyPlanSubject {
+  subjectName: string;
+  currentGrade: number;
+  targetGrade: string;
+  priority: 'high' | 'medium' | 'low';
+  weeklyHours: number;
+  focusAreas: string[];
+  resources: string[];
+}
+
+export interface StudyPlanSchedule {
+  dayOfWeek: string;
+  timeSlot: string;
+  subject: string;
+  activity: 'study' | 'practice' | 'review' | 'assignment';
+  duration: number;
+}
+
+export interface StudyPlanRecommendation {
+  category: 'study_tips' | 'time_management' | 'subject_advice' | 'general';
+  title: string;
+  description: string;
+  priority: number;
+}
