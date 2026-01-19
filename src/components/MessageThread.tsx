@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { apiService } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
 import { MessageInput } from './MessageInput';
@@ -7,7 +7,7 @@ import type { DirectMessage, Participant } from '../types';
 interface MessageThreadProps {
   conversationId: string;
   currentUser: { id: string; name: string; role: string };
-  participant: Participant;
+  participant?: Participant;
 }
 
 interface ReplyPreview {
@@ -22,11 +22,13 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
   const [error, setError] = useState<string | null>(null);
   const [replyTo, setReplyTo] = useState<ReplyPreview | undefined>();
   const [participants, setParticipants] = useState<Record<string, Participant>>({});
+  const [conversation, setConversation] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     loadMessages();
     loadParticipants();
+    loadConversation();
   }, [conversationId]);
 
   useEffect(() => {
@@ -74,6 +76,17 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
       }
     } catch (err) {
       console.error('Failed to load participants:', err);
+    }
+  };
+
+  const loadConversation = async () => {
+    try {
+      const response = await apiService.messages.getConversation(conversationId);
+      if (response.success && response.data) {
+        setConversation(response.data);
+      }
+    } catch (err) {
+      console.error('Failed to load conversation:', err);
     }
   };
 
@@ -153,24 +166,40 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center border-b border-gray-200 bg-white px-4 py-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-lg font-semibold text-white">
-          {participant.name.charAt(0).toUpperCase()}
-        </div>
-        <div className="ml-3">
-          <h3 className="font-semibold text-gray-900">{participant.name}</h3>
-          <p className="text-sm text-gray-500">
-            {participant.isOnline ? (
-              <span className="flex items-center gap-1 text-green-600">
-                <span className="h-2 w-2 rounded-full bg-green-600" />
-                Online
-              </span>
-            ) : (
-              <>
-                Terakhir dilihat {participant.lastSeen ? formatTime(participant.lastSeen) : 'lama'}
-              </>
-            )}
-          </p>
-        </div>
+        {participant ? (
+          <>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-lg font-semibold text-white">
+              {participant.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="ml-3">
+              <h3 className="font-semibold text-gray-900">{participant.name}</h3>
+              <p className="text-sm text-gray-500">
+                {participant.isOnline ? (
+                  <span className="flex items-center gap-1 text-green-600">
+                    <span className="h-2 w-2 rounded-full bg-green-600" />
+                    Online
+                  </span>
+                ) : (
+                  <>
+                    Terakhir dilihat {participant.lastSeen ? formatTime(participant.lastSeen) : 'lama'}
+                  </>
+                )}
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-600 text-lg font-semibold text-white">
+              {conversation?.name?.charAt(0).toUpperCase() || '#'}
+            </div>
+            <div className="ml-3">
+              <h3 className="font-semibold text-gray-900">{conversation?.name || 'Grup'}</h3>
+              <p className="text-sm text-gray-500">
+                {conversation?.participants?.length || 0} peserta
+              </p>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto bg-gray-50 p-4">

@@ -55,6 +55,7 @@ export const useDashboardVoiceCommands = ({
         commands.add('CREATE_ANNOUNCEMENT');
         commands.add('VIEW_SCHEDULE');
         commands.add('OPEN_MESSAGES');
+        commands.add('OPEN_GROUPS');
         commands.add('SEND_MESSAGE');
         break;
         
@@ -144,6 +145,10 @@ export const useDashboardVoiceCommands = ({
 
         case 'OPEN_MESSAGES':
           onNavigate('messages');
+          return true;
+
+        case 'OPEN_GROUPS':
+          onNavigate('groups');
           return true;
 
         case 'SEND_MESSAGE':

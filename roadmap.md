@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Roadmap
 
-**Last Updated**: 2026-01-19 (Real-Time Messaging completed)
+**Last Updated**: 2026-01-19 (Group Chats completed)
 
 ## Vision
 Transform MA Malnu Kananga into a fully integrated, AI-powered school management system with offline capability and real-time features.
@@ -237,7 +237,7 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 
 #### Messaging System
 - [x] User-to-user messaging (completed 2026-01-19)
-- [ ] Group chats (class, subject)
+- [x] Group chats (class, subject) (completed 2026-01-19)
 - [ ] Announcement broadcasts
 - [x] Message read receipts (completed 2026-01-19)
 - [x] File sharing in messages (completed 2026-01-19)

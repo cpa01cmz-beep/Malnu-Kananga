@@ -770,6 +770,84 @@ async function initDatabase(env) {
       );
     `);
 
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS conversations (
+        id TEXT PRIMARY KEY,
+        type TEXT NOT NULL CHECK(type IN ('direct', 'group')),
+        name TEXT,
+        description TEXT,
+        avatar TEXT,
+        created_by TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        metadata TEXT,
+        FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS conversation_participants (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_seen TIMESTAMP,
+        is_online BOOLEAN DEFAULT FALSE,
+        is_admin BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(conversation_id, user_id)
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL,
+        sender_id TEXT NOT NULL,
+        recipient_id TEXT,
+        message_type TEXT NOT NULL CHECK(message_type IN ('text', 'image', 'file', 'audio', 'video')),
+        content TEXT NOT NULL,
+        file_url TEXT,
+        file_name TEXT,
+        file_size INTEGER,
+        file_type TEXT,
+        status TEXT DEFAULT 'sent' CHECK(status IN ('sending', 'sent', 'delivered', 'read', 'failed')),
+        reply_to TEXT,
+        metadata TEXT,
+        read_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
+        FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS message_read_receipts (
+        id TEXT PRIMARY KEY,
+        message_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(message_id, user_id)
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS typing_indicators (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        user_name TEXT NOT NULL,
+        is_typing BOOLEAN DEFAULT FALSE,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
     // Seed initial admin user if not exists
     const adminExists = await env.DB.prepare('SELECT id FROM users WHERE email = ?')
       .bind('admin@malnu.sch.id')
@@ -2795,6 +2873,419 @@ async function handleAssignmentSubmissions(request, env, corsHeaders) {
 }
 
 // ============================================
+// MESSAGING API HANDLERS
+// ============================================
+
+async function handleConversations(request, env, corsHeaders) {
+  try {
+    const url = new URL(request.url);
+    const method = request.method;
+    const userId = await getUserIdFromRequest(request, env);
+
+    if (!userId) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const id = url.pathname.split('/').slice(0, -1).pop();
+
+    if (id) {
+      const conversation = await env.DB.prepare(`
+        SELECT * FROM conversations WHERE id = ?
+      `).bind(id).first();
+
+      if (!conversation) {
+        return new Response(JSON.stringify(response.error('Conversation not found')), {
+          status: HTTP_STATUS_CODES.NOT_FOUND,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (method === 'PUT') {
+        const body = await request.json();
+        const now = new Date().toISOString();
+
+        await env.DB.prepare(`
+          UPDATE conversations
+          SET name = COALESCE(?, name),
+              description = COALESCE(?, description),
+              avatar = COALESCE(?, avatar),
+              updated_at = ?,
+              metadata = COALESCE(?, metadata)
+          WHERE id = ?
+        `).bind(body.name, body.description, body.avatar, now, body.metadata ? JSON.stringify(body.metadata) : null, id).run();
+
+        return new Response(JSON.stringify(response.success({ id, ...body, updated_at: now })), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (method === 'DELETE') {
+        await env.DB.prepare('DELETE FROM conversations WHERE id = ?').bind(id).run();
+        return new Response(JSON.stringify(response.success({ success: true })), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (method === 'POST' && url.pathname.endsWith('/read')) {
+        await env.DB.prepare(`
+          UPDATE messages
+          SET read_at = ?, status = 'read'
+          WHERE conversation_id = ? AND sender_id != ? AND read_at IS NULL
+        `).bind(new Date().toISOString(), id, userId).run();
+
+        const unreadCount = await env.DB.prepare(`
+          SELECT COUNT(*) as count FROM messages
+          WHERE conversation_id = ? AND sender_id != ? AND read_at IS NULL
+        `).bind(id, userId).first();
+
+        return new Response(JSON.stringify(response.success({ success: true, unreadCount: unreadCount?.count || 0 })), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      const participants = await env.DB.prepare(`
+        SELECT cp.*, u.name, u.email, u.role, u.avatar
+        FROM conversation_participants cp
+        JOIN users u ON cp.user_id = u.id
+        WHERE cp.conversation_id = ?
+      `).bind(id).all();
+
+      const lastMessage = await env.DB.prepare(`
+        SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at DESC LIMIT 1
+      `).bind(id).first();
+
+      return new Response(JSON.stringify(response.success({
+        ...conversation,
+        participants,
+        lastMessage
+      })), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'POST') {
+      const body = await request.json();
+      const conversationId = generateId();
+      const now = new Date().toISOString();
+
+      await env.DB.prepare(`
+        INSERT INTO conversations (id, type, name, description, avatar, created_by, metadata)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).bind(conversationId, body.type, body.name || null, body.description || null, body.avatar || null, userId, body.metadata ? JSON.stringify(body.metadata) : null).run();
+
+      for (const participantId of body.participantIds) {
+        const participantIdClean = participantId;
+        await env.DB.prepare(`
+          INSERT INTO conversation_participants (id, conversation_id, user_id, is_admin)
+          VALUES (?, ?, ?, ?)
+        `).bind(generateId(), conversationId, participantIdClean, body.type === 'group' && participantIdClean === userId ? 1 : 0).run();
+      }
+
+      return new Response(JSON.stringify(response.success({
+        id: conversationId,
+        ...body,
+        created_by: userId,
+        created_at: now
+      })), {
+        status: HTTP_STATUS_CODES.CREATED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'GET') {
+      const type = url.searchParams.get('type');
+      const search = url.searchParams.get('search');
+      const unreadOnly = url.searchParams.get('unread_only') === 'true';
+
+      let query = `
+        SELECT c.*,
+          (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.sender_id != ? AND m.read_at IS NULL) as unread_count,
+          (SELECT m.* FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
+          (SELECT m.created_at FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message_at
+        FROM conversations c
+        JOIN conversation_participants cp ON c.id = cp.conversation_id
+        WHERE cp.user_id = ?
+      `;
+      const params = [userId, userId];
+
+      if (type) {
+        query += ' AND c.type = ?';
+        params.push(type);
+      }
+
+      if (search) {
+        query += ' AND (c.name LIKE ? OR c.description LIKE ?)';
+        const searchPattern = `%${search}%`;
+        params.push(searchPattern, searchPattern);
+      }
+
+      if (unreadOnly) {
+        query += ' HAVING unread_count > 0';
+      }
+
+      query += ' ORDER BY c.updated_at DESC';
+
+      const conversations = await env.DB.prepare(query).bind(...params).all();
+
+      for (const conv of conversations.results) {
+        const participants = await env.DB.prepare(`
+          SELECT cp.*, u.name, u.email, u.role, u.avatar
+          FROM conversation_participants cp
+          JOIN users u ON cp.user_id = u.id
+          WHERE cp.conversation_id = ?
+        `).bind(conv.id).all();
+
+        conv.participants = participants.results;
+        if (conv.metadata) {
+          conv.metadata = JSON.parse(conv.metadata);
+        }
+      }
+
+      return new Response(JSON.stringify(response.success(conversations.results)), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.METHOD_NOT_ALLOWED)), {
+      status: HTTP_STATUS_CODES.METHOD_NOT_ALLOWED,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Conversations handler error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleMessages(request, env, corsHeaders) {
+  try {
+    const url = new URL(request.url);
+    const method = request.method;
+    const userId = await getUserIdFromRequest(request, env);
+
+    if (!userId) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const id = url.pathname.split('/').pop();
+
+    if (id) {
+      if (method === 'PUT') {
+        const body = await request.json();
+        const now = new Date().toISOString();
+
+        await env.DB.prepare(`
+          UPDATE messages
+          SET content = COALESCE(?, content),
+              updated_at = ?
+          WHERE id = ? AND sender_id = ?
+        `).bind(body.content, now, id, userId).run();
+
+        return new Response(JSON.stringify(response.success({ id, content: body.content, updated_at: now })), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (method === 'DELETE') {
+        await env.DB.prepare('DELETE FROM messages WHERE id = ? AND sender_id = ?').bind(id, userId).run();
+        return new Response(JSON.stringify(response.success({ success: true })), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (method === 'POST' && url.pathname.endsWith('/read')) {
+        await env.DB.prepare(`
+          INSERT OR REPLACE INTO message_read_receipts (id, message_id, user_id, read_at)
+          VALUES (?, ?, ?, ?)
+        `).bind(generateId(), id, userId, new Date().toISOString()).run();
+
+        await env.DB.prepare(`
+          UPDATE messages SET read_at = ?, status = 'read' WHERE id = ?
+        `).bind(new Date().toISOString(), id).run();
+
+        const receipt = await env.DB.prepare(`
+          SELECT * FROM message_read_receipts WHERE message_id = ? AND user_id = ?
+        `).bind(id, userId).first();
+
+        return new Response(JSON.stringify(response.success(receipt)), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      const message = await env.DB.prepare(`
+        SELECT m.*, u.name as sender_name, u.role as sender_role, u.avatar as sender_avatar
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE m.id = ?
+      `).bind(id).first();
+
+      return new Response(JSON.stringify(response.success(message)), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'GET' && url.pathname.includes('/typing')) {
+      const conversationId = url.pathname.split('/').slice(0, -1).pop();
+
+      const indicators = await env.DB.prepare(`
+        SELECT * FROM typing_indicators
+        WHERE conversation_id = ? AND user_id != ? AND is_typing = TRUE AND timestamp > datetime('now', '-1 minute')
+      `).bind(conversationId, userId).all();
+
+      return new Response(JSON.stringify(response.success(indicators.results || [])), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'POST' && url.pathname.includes('/typing')) {
+      const conversationId = url.pathname.split('/').slice(0, -1).pop();
+      const body = await request.json();
+
+      await env.DB.prepare(`
+        INSERT OR REPLACE INTO typing_indicators (id, conversation_id, user_id, user_name, is_typing, timestamp)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `).bind(generateId(), conversationId, userId, body.userName || 'Unknown', body.isTyping, new Date().toISOString()).run();
+
+      return new Response(JSON.stringify(response.success({ success: true })), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'POST') {
+      const contentType = request.headers.get('content-type');
+      let conversationId, messageType, content, fileUrl, fileName, fileSize, fileType, replyTo;
+
+      if (contentType?.includes('multipart/form-data')) {
+        const formData = await request.formData();
+        conversationId = formData.get('conversationId') as string;
+        messageType = formData.get('messageType') as string;
+        content = formData.get('content') as string;
+        replyTo = formData.get('replyTo') as string;
+
+        const file = formData.get('file') as File | null;
+        if (file) {
+          const fileKey = `messages/${generateId()}-${file.name}`;
+          await env.R2.put(fileKey, file);
+          fileUrl = `${env.R2_PUBLIC_URL}/${fileKey}`;
+          fileName = file.name;
+          fileSize = file.size;
+          fileType = file.type;
+        }
+      } else {
+        const body = await request.json();
+        conversationId = body.conversationId;
+        messageType = body.messageType;
+        content = body.content;
+        replyTo = body.replyTo;
+      }
+
+      const messageId = generateId();
+      const now = new Date().toISOString();
+
+      await env.DB.prepare(`
+        INSERT INTO messages (id, conversation_id, sender_id, message_type, content, file_url, file_name, file_size, file_type, reply_to, status, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'sent', ?, ?)
+      `).bind(messageId, conversationId, userId, messageType, content, fileUrl || null, fileName || null, fileSize || null, fileType || null, replyTo || null, now, now).run();
+
+      const message = await env.DB.prepare(`
+        SELECT m.*, u.name as sender_name, u.role as sender_role, u.avatar as sender_avatar
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE m.id = ?
+      `).bind(messageId).first();
+
+      await env.DB.prepare(`
+        UPDATE conversations SET updated_at = ? WHERE id = ?
+      `).bind(now, conversationId).run();
+
+      return new Response(JSON.stringify(response.success(message)), {
+        status: HTTP_STATUS_CODES.CREATED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'GET' && url.pathname.includes('/messages')) {
+      const conversationId = url.pathname.split('/').slice(0, -1).pop();
+      const limit = parseInt(url.searchParams.get('limit') || '50');
+      const offset = parseInt(url.searchParams.get('offset') || '0');
+
+      const messages = await env.DB.prepare(`
+        SELECT m.*, u.name as sender_name, u.role as sender_role, u.avatar as sender_avatar
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE m.conversation_id = ?
+        ORDER BY m.created_at DESC
+        LIMIT ? OFFSET ?
+      `).bind(conversationId, limit, offset).all();
+
+      return new Response(JSON.stringify(response.success((messages.results || []).reverse())), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.METHOD_NOT_ALLOWED)), {
+      status: HTTP_STATUS_CODES.METHOD_NOT_ALLOWED,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Messages handler error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleMessagesUnreadCount(request, env, corsHeaders) {
+  try {
+    const userId = await getUserIdFromRequest(request, env);
+
+    if (!userId) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const totalResult = await env.DB.prepare(`
+      SELECT COUNT(*) as total
+      FROM messages m
+      JOIN conversation_participants cp ON m.conversation_id = cp.conversation_id
+      WHERE cp.user_id = ? AND m.sender_id != ? AND m.read_at IS NULL
+    `).bind(userId, userId).first();
+
+    const conversationsResult = await env.DB.prepare(`
+      SELECT m.conversation_id, COUNT(*) as count
+      FROM messages m
+      JOIN conversation_participants cp ON m.conversation_id = cp.conversation_id
+      WHERE cp.user_id = ? AND m.sender_id != ? AND m.read_at IS NULL
+      GROUP BY m.conversation_id
+    `).bind(userId, userId).all();
+
+    return new Response(JSON.stringify(response.success({
+      total: totalResult?.total || 0,
+      conversations: conversationsResult.results || []
+    })), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Unread count handler error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// ============================================
 // WEBSOCKET & REAL-TIME HANDLERS
 // ============================================
 
@@ -3036,6 +3527,11 @@ function mapTableToEventType(table, _row) {
       '/api/assignments/*/close': handleCloseAssignment,
       '/api/assignment-submissions': handleAssignmentSubmissions,
       '/api/assignment-submissions/*': handleAssignmentSubmissions,
+      '/api/messages/conversations': handleConversations,
+      '/api/messages/conversations/*': handleConversations,
+      '/api/messages': handleMessages,
+      '/api/messages/*': handleMessages,
+      '/api/messages/unread-count': handleMessagesUnreadCount,
       '/api/attendance': (r, e, c) => handleCRUD(r, e, c, 'attendance'),
       '/api/e_library': (r, e, c) => handleCRUD(r, e, c, 'e_library'),
       '/api/announcements': (r, e, c) => handleCRUD(r, e, c, 'announcements'),

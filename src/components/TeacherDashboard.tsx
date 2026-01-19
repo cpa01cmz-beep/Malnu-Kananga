@@ -15,6 +15,7 @@ import AssignmentGrading from './AssignmentGrading';
 import GradeAnalytics from './GradeAnalytics';
 import QuizGenerator from './QuizGenerator';
 import DirectMessage from './DirectMessage';
+import { GroupChat } from './GroupChat';
 import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
@@ -41,7 +42,7 @@ interface TeacherDashboardProps {
     extraRole: UserExtraRole;
 }
 
-type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics' | 'quiz-generator' | 'messages';
+type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics' | 'quiz-generator' | 'messages' | 'groups';
 
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<ViewState>('home');
@@ -177,7 +178,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     userRole: 'teacher',
     extraRole,
     onNavigate: (view: string) => {
-      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory', 'analytics', 'quiz-generator'];
+      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory', 'analytics', 'quiz-generator', 'messages', 'groups'];
       if (validViews.includes(view as ViewState)) {
         setCurrentView(view as ViewState);
         handleToast(`Navigasi ke ${view}`, 'success');
@@ -479,6 +480,20 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         />
                     )}
 
+                    {checkPermission('communication.messages') && (
+                        <DashboardActionCard
+                            icon={<UsersIcon />}
+                            title="Grup Diskusi"
+                            description="Buat dan kelola grup diskusi kelas atau mata pelajaran."
+                            colorTheme="blue"
+                            statusBadge="Grup"
+                            offlineBadge="Offline"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('groups')}
+                            ariaLabel="Buka Grup Diskusi"
+                        />
+                    )}
+
                     {extraRole === 'staff' && checkPermission('inventory.manage') && (
                         <DashboardActionCard
                             icon={<ArchiveBoxIcon />}
@@ -533,6 +548,33 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Pesan</h2>
             </div>
             <DirectMessage
+              currentUser={{
+                id: getCurrentUserId(),
+                name: getCurrentUserName(),
+                email: getCurrentUserEmail(),
+                role: 'teacher',
+                status: 'active',
+              }}
+            />
+          </div>
+        )}
+
+        {currentView === 'groups' && (
+          <div className="animate-fade-in-up">
+            <div className="mb-4 flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setCurrentView('home')}
+                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali ke Dashboard
+              </button>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Grup Diskusi</h2>
+            </div>
+            <GroupChat
               currentUser={{
                 id: getCurrentUserId(),
                 name: getCurrentUserName(),

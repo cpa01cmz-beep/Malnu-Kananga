@@ -1,19 +1,28 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
-import type { Conversation, ConversationFilter } from '../types';
+import type { Conversation, ConversationFilter, User } from '../types';
 
 interface MessageListProps {
-  onConversationSelect: (conversationId: string, participantId: string) => void;
+  onConversationSelect: (conversationId: string, participantId?: string) => void;
   selectedConversationId?: string;
+  currentUser?: User;
+  filter?: 'all' | 'direct' | 'group';
+  onManageGroup?: (conversation: Conversation) => void;
 }
 
-export function MessageList({ onConversationSelect, selectedConversationId }: MessageListProps) {
+export function MessageList({
+  onConversationSelect,
+  selectedConversationId,
+  currentUser,
+  filter: externalFilter,
+  onManageGroup,
+}: MessageListProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'direct' | 'group'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'direct' | 'group'>(externalFilter || 'all');
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
 
   useEffect(() => {
@@ -21,8 +30,20 @@ export function MessageList({ onConversationSelect, selectedConversationId }: Me
   }, []);
 
   useEffect(() => {
-    loadConversations();
+    if (externalFilter) {
+      setFilterType(externalFilter);
+    }
+  }, [externalFilter]);
+
+  useEffect(() => {
+    if (!externalFilter) {
+      loadConversations();
+    }
   }, [filterType, showUnreadOnly]);
+
+  useEffect(() => {
+    loadConversations();
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleWebSocketMessage = (event: CustomEvent) => {
@@ -62,13 +83,17 @@ export function MessageList({ onConversationSelect, selectedConversationId }: Me
   };
 
   const handleConversationClick = async (conversation: Conversation) => {
-    const otherParticipant = conversation.participants.find(p => p.userId !== getCurrentUserId());
-    if (otherParticipant) {
-      onConversationSelect(conversation.id, otherParticipant.userId);
-
-      if (conversation.unreadCount > 0) {
-        await markConversationAsRead(conversation.id);
+    if (conversation.type === 'direct') {
+      const otherParticipant = conversation.participants.find(p => p.userId !== getCurrentUserId());
+      if (otherParticipant) {
+        onConversationSelect(conversation.id, otherParticipant.userId);
       }
+    } else {
+      onConversationSelect(conversation.id);
+    }
+
+    if (conversation.unreadCount > 0) {
+      await markConversationAsRead(conversation.id);
     }
   };
 
@@ -174,52 +199,54 @@ export function MessageList({ onConversationSelect, selectedConversationId }: Me
             className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setFilterType('all')}
-            className={`rounded-lg px-3 py-1.5 text-sm ${
-              filterType === 'all'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Semua
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterType('direct')}
-            className={`rounded-lg px-3 py-1.5 text-sm ${
-              filterType === 'direct'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Pribadi
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterType('group')}
-            className={`rounded-lg px-3 py-1.5 text-sm ${
-              filterType === 'group'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Grup
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowUnreadOnly(!showUnreadOnly)}
-            className={`rounded-lg px-3 py-1.5 text-sm ${
-              showUnreadOnly
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            {showUnreadOnly ? 'Semua' : 'Belum Dibaca'}
-          </button>
-        </div>
+        {!externalFilter && (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setFilterType('all')}
+              className={`rounded-lg px-3 py-1.5 text-sm ${
+                filterType === 'all'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Semua
+            </button>
+            <button
+              type="button"
+              onClick={() => setFilterType('direct')}
+              className={`rounded-lg px-3 py-1.5 text-sm ${
+                filterType === 'direct'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Pribadi
+            </button>
+            <button
+              type="button"
+              onClick={() => setFilterType('group')}
+              className={`rounded-lg px-3 py-1.5 text-sm ${
+                filterType === 'group'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Grup
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowUnreadOnly(!showUnreadOnly)}
+              className={`rounded-lg px-3 py-1.5 text-sm ${
+                showUnreadOnly
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {showUnreadOnly ? 'Semua' : 'Belum Dibaca'}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto">
@@ -248,35 +275,56 @@ export function MessageList({ onConversationSelect, selectedConversationId }: Me
                     isSelected ? 'bg-blue-50' : ''
                   }`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-lg font-semibold text-white">
-                      {typeof avatar === 'string' && avatar.startsWith('http') ? (
-                        <img
-                          src={avatar}
-                          alt={name}
-                          className="h-full w-full rounded-full object-cover"
-                        />
-                      ) : (
-                        avatar
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <h4 className="truncate font-semibold text-gray-900">{name}</h4>
-                        <span className="ml-2 flex-shrink-0 text-xs text-gray-500">
-                          {conversation.lastMessageAt ? formatTime(conversation.lastMessageAt) : ''}
-                        </span>
-                      </div>
-                      <div className="mt-1 flex items-center justify-between">
-                        <p className="truncate text-sm text-gray-600">{lastMessage}</p>
-                        {conversation.unreadCount > 0 && (
-                          <span className="ml-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-blue-600 px-1.5 text-xs font-semibold text-white">
-                            {conversation.unreadCount}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                   <div className="flex items-start gap-3">
+                     <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-lg font-semibold text-white">
+                       {typeof avatar === 'string' && avatar.startsWith('http') ? (
+                         <img
+                           src={avatar}
+                           alt={name}
+                           className="h-full w-full rounded-full object-cover"
+                         />
+                       ) : (
+                         avatar
+                       )}
+                     </div>
+                     <div className="flex-1 min-w-0">
+                       <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-2">
+                           <h4 className="truncate font-semibold text-gray-900">{name}</h4>
+                           {conversation.type === 'group' && onManageGroup && (
+                             <span className="text-xs text-gray-500">
+                               ({conversation.participants?.length || 0})
+                             </span>
+                           )}
+                         </div>
+                         <div className="flex items-center gap-2">
+                           {conversation.type === 'group' && onManageGroup && (
+                             <button
+                               type="button"
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 onManageGroup(conversation);
+                               }}
+                               className="p-1 text-gray-400 hover:text-gray-600"
+                             >
+                               ⚙️
+                             </button>
+                           )}
+                           <span className="ml-2 flex-shrink-0 text-xs text-gray-500">
+                             {conversation.lastMessageAt ? formatTime(conversation.lastMessageAt) : ''}
+                           </span>
+                         </div>
+                       </div>
+                       <div className="mt-1 flex items-center justify-between">
+                         <p className="truncate text-sm text-gray-600">{lastMessage}</p>
+                         {conversation.unreadCount > 0 && (
+                           <span className="ml-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-blue-600 px-1.5 text-xs font-semibold text-white">
+                             {conversation.unreadCount}
+                           </span>
+                         )}
+                       </div>
+                     </div>
+                   </div>
                 </button>
               );
             })}

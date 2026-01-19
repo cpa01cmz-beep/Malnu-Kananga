@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-19 (Real-Time Messaging completed)
+**Last Updated**: 2026-01-19 (Group Chats completed)
 
 ## Architecture Overview
 
@@ -74,12 +74,13 @@
 - **`emailTemplates.ts`** - Email template management
 - **`parentGradeNotificationService.ts`** - Parent grade change notifications
 - **`messagesAPI`** - Real-time messaging API service (completed 2026-01-19)
-  - Conversation CRUD operations
+  - Conversation CRUD operations (direct and group)
   - Message CRUD operations
   - File upload support
   - Read receipts
   - Typing indicators
   - Unread count tracking
+  - Group management (add/remove participants, update metadata)
   - Real-time WebSocket integration
 - **`themeManager.ts`** - Theme management and persistence
 - **`categoryService.ts`** - Category management for resources
@@ -110,6 +111,19 @@
   - Auto-mark as read on incoming messages
   - Auto-scroll to latest message
 - **`MessageList.tsx`** - Conversation list with search and filtering (completed 2026-01-19)
+- **`MessageInput.tsx`** - Message composer with file upload (completed 2026-01-19)
+- **`GroupChat.tsx`** - Group chat interface with class/subject-based groups (completed 2026-01-19)
+  - Group creation based on classes (auto-adds students)
+  - Group creation based on subjects (auto-adds relevant students)
+  - Custom group creation with manual participant selection
+  - Group management (rename, description, add/remove participants)
+  - Group admin functionality
+  - Participant count display
+  - Real-time message updates via WebSocket
+  - File attachment support in groups
+  - Read receipts in groups
+  - Typing indicators
+  - Voice command support (OPEN_GROUPS)
   - Search by conversation name
   - Filter by type (direct/group)
   - Filter by unread status
@@ -598,8 +612,8 @@ All localStorage keys use `malnu_` prefix:
 - OCR validation tests
 
 #### Test Coverage (as of 2026-01-19)
-- **91 test files** (Messaging system tests added)
-- **1640+ tests passing** (30+ new tests)
+- **92 test files** (Messaging system tests added)
+- **1700+ tests passing** (60+ new tests)
 - **10 tests skipped**
 - **Coverage areas**:
   - All core services (auth, API, permissions)
@@ -615,6 +629,7 @@ All localStorage keys use `malnu_` prefix:
   - Assignment system (creation, submission, grading)
   - Grade analytics (20+ test cases for GradeAnalytics)
   - Messaging system (30+ test cases for MessageInput, MessageList, MessageThread, DirectMessage)
+  - Group chat (25+ test cases for GroupChat)
 
 #### Test Commands
 - `npm test` - Run all tests

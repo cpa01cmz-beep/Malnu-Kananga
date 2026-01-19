@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Task Tracker
 
-**Last Updated**: 2026-01-19 (MSG-001: Real-Time Messaging Completed)
+**Last Updated**: 2026-01-19 (MSG-002: Group Chats In Progress)
 
 ## Active Tasks
 
@@ -156,6 +156,55 @@
 
 ### In Progress 🚧
 *No tasks currently in progress*
+
+### Completed Tasks ✅
+
+### 2026-01-19
+- [x] **Group Chats** (MSG-002)
+  - Task ID: MSG-002
+  - Description: Build group chat for classes/subjects
+  - Priority: Medium
+  - Estimated: 3 days
+  - Status: **Completed**
+  - Completed: 2026-01-19
+  - Dependencies: MSG-001 (✅ completed - DirectMessage system exists)
+  - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
+  - Changes:
+    - Added messaging API routes to worker.js (/api/messages/conversations, /api/messages, /api/messages/unread-count)
+    - Added database tables for messaging (conversations, conversation_participants, messages, message_read_receipts, typing_indicators)
+    - Created handleConversations, handleMessages, handleMessagesUnreadCount backend handlers
+    - Added GroupChat.tsx component with full group management functionality
+    - Enhanced MessageList component to support group filtering and management
+    - Enhanced MessageThread component to handle both direct and group conversations
+    - Updated MessageThread to support optional participant prop
+    - Integrated GroupChat into TeacherDashboard (new 'groups' view and card)
+    - Integrated GroupChat into StudentPortal (new 'groups' view and menu item)
+    - Added OPEN_GROUPS voice command support
+    - Added 'groups' to valid views in both dashboards
+    - Features:
+      - Create groups based on classes (auto-adds all students in class)
+      - Create groups based on subjects (auto-adds students from relevant classes)
+      - Create custom groups with manual participant selection
+      - Group management (rename, change description, add/remove participants)
+      - Group admin functionality
+      - Participant count display
+      - Group typing indicators
+      - Real-time message updates via WebSocket
+      - File attachment support in groups
+      - Read receipts in groups
+      - Message thread shows sender names in groups
+  - Files created:
+    - src/components/GroupChat.tsx (650+ lines)
+  - Files modified:
+    - worker.js (added messaging tables, API routes, and handlers)
+    - src/components/MessageList.tsx (added currentUser, filter, onManageGroup props)
+    - src/components/MessageThread.tsx (made participant prop optional, added conversation loading)
+    - src/components/DirectMessage.tsx (updated to handle optional participant)
+    - src/components/TeacherDashboard.tsx (added groups view, card, import)
+    - src/components/StudentPortal.tsx (added groups view, menu item, import)
+    - src/hooks/useDashboardVoiceCommands.ts (added OPEN_GROUPS command)
+
+- [x] **Real-Time Messaging** (MSG-001)
 
 ### Completed Tasks ✅
 
@@ -609,12 +658,12 @@
   - Dependencies: ASG-003 (✅ completed)
 
 #### AI Features
-- [ ] **AI-Powered Quiz Generation**
+- [x] **AI-Powered Quiz Generation**
   - Task ID: AI-001
   - Description: Use Gemini API to generate quiz questions from materials
   - Priority: Medium
   - Estimated: 3 days
-  - Status: **Pending**
+  - Status: **Completed** (2026-01-19)
   - Dependencies: AI-002 (✅ completed - geminiService exists)
 
 - [ ] **AI Assignment Feedback**
@@ -623,7 +672,7 @@
   - Priority: Medium
   - Estimated: 4 days
   - Status: **Pending**
-  - Dependencies: AI-001
+  - Dependencies: AI-001 (✅ completed)
 
 - [ ] **Study Plan Generation**
   - Task ID: AI-003
@@ -634,23 +683,6 @@
   - Dependencies: ASG-004
 
 #### Communication
-- [ ] **Group Chats** (next priority after MSG-001 completion)
-  - Task ID: MSG-002
-  - Description: Build group chat for classes/subjects
-  - Priority: Medium
-  - Estimated: 3 days
-  - Status: **Pending**
-  - Dependencies: MSG-001 (✅ completed - DirectMessage system exists)
-- [ ] **Announcement System**
-
-- [ ] **Group Chats**
-  - Task ID: MSG-002
-  - Description: Build group chat for classes/subjects
-  - Priority: Medium
-  - Estimated: 3 days
-  - Status: **Pending**
-  - Dependencies: MSG-001
-
 - [ ] **Announcement System**
   - Task ID: MSG-003
   - Description: Build announcement broadcast with targeting

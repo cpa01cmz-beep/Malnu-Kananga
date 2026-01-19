@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageList } from './MessageList';
 import { MessageThread } from './MessageThread';
 import { apiService } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
-import { Modal } from './ui/Modal';
-import { Input } from './ui/Input';
-import { Button } from './ui/Button';
+import Modal from './ui/Modal';
+import Input from './ui/Input';
+import Button from './ui/Button';
 import type { Conversation, Participant, User } from '../types';
 
 interface DirectMessageProps {
@@ -94,7 +94,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
       </div>
 
       <div className="flex-1 border-l border-gray-200">
-        {selectedConversationId && selectedParticipant ? (
+        {selectedConversationId ? (
           <MessageThread
             conversationId={selectedConversationId}
             currentUser={currentUser}
