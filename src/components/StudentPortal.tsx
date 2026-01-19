@@ -17,6 +17,7 @@ import OsisEvents from './OsisEvents';
 import StudentAssignments from './StudentAssignments';
 import { GroupChat } from './GroupChat';
 import StudyPlanGenerator from './StudyPlanGenerator';
+import StudyPlanAnalytics from './StudyPlanAnalytics';
 import { ToastType } from './Toast';
 import { UserExtraRole, Student } from '../types';
 import { UserRole, UserExtraRole as PermUserExtraRole } from '../types/permissions';
@@ -46,7 +47,7 @@ interface StudentPortalProps {
     extraRole: UserExtraRole;
 }
 
-type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'assignments' | 'attendance' | 'insights' | 'osis' | 'groups' | 'study-plan';
+type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'assignments' | 'attendance' | 'insights' | 'osis' | 'groups' | 'study-plan' | 'study-analytics';
 
 const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<PortalView>('home');
@@ -286,7 +287,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
     userRole: 'student',
     extraRole,
     onNavigate: (view: string) => {
-      const validViews: PortalView[] = ['schedule', 'library', 'assignments', 'grades', 'attendance', 'insights', 'osis', 'groups', 'study-plan'];
+      const validViews: PortalView[] = ['schedule', 'library', 'assignments', 'grades', 'attendance', 'insights', 'osis', 'groups', 'study-plan', 'study-analytics'];
       if (validViews.includes(view as PortalView)) {
         setCurrentView(view as PortalView);
         onShowToast(`Navigasi ke ${view}`, 'success');
@@ -425,11 +426,20 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
         active: true
       },
       {
-        title: 'Rencana Belajar AI',
-        description: 'Buat rencana belajar personal berbasis AI.',
-        icon: <LightBulbIcon />,
-        colorTheme: 'yellow' as const,
-        action: () => setCurrentView('study-plan'),
+         title: 'Rencana Belajar AI',
+         description: 'Buat rencana belajar personal berbasis AI.',
+         icon: <LightBulbIcon />,
+         colorTheme: 'yellow' as const,
+         action: () => setCurrentView('study-plan'),
+         permission: 'content.read',
+         active: true
+       },
+      {
+        title: 'Analitik Rencana Belajar',
+        description: 'Lacak kemajuan dan efektivitas rencana belajar.',
+        icon: <ClipboardDocumentCheckIcon />,
+        colorTheme: 'blue' as const,
+        action: () => setCurrentView('study-analytics'),
         permission: 'content.read',
         active: true
       },
@@ -738,8 +748,9 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
        )}
         {currentView === 'attendance' && <AttendanceView onBack={() => setCurrentView('home')} />}
          {currentView === 'insights' && <StudentInsights onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
-         {currentView === 'osis' && <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
-         {currentView === 'study-plan' && <StudyPlanGenerator onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+          {currentView === 'osis' && <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+          {currentView === 'study-plan' && <StudyPlanGenerator onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+          {currentView === 'study-analytics' && <StudyPlanAnalytics onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
 
         {/* Voice Commands Help Modal */}
         <VoiceCommandsHelp

@@ -89,6 +89,9 @@ export const STORAGE_KEYS = {
     // Study Plans (dynamic factory function)
     STUDY_PLANS: (studentId: string) => `malnu_study_plans_${studentId}`,
     ACTIVE_STUDY_PLAN: (studentId: string) => `malnu_active_study_plan_${studentId}`,
+    STUDY_PLAN_ANALYTICS: (studentId: string) => `malnu_study_plan_analytics_${studentId}`,
+    STUDY_PLAN_HISTORY: (studentId: string) => `malnu_study_plan_history_${studentId}`,
+    WEEKLY_PROGRESS: (studentId: string, weekNumber: number) => `malnu_weekly_progress_${studentId}_${weekNumber}`,
     
     // Voice Notifications
     VOICE_NOTIFICATIONS_QUEUE: 'malnu_voice_notifications_queue',

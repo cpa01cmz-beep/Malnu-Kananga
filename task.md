@@ -241,7 +241,44 @@
       - src/components/AssignmentGrading.tsx (AI feedback UI integration)
 
 ### In Progress 🚧
-*No tasks currently in progress*
+
+- [x] **Study Plan Analytics** (AI-004)
+  - Task ID: AI-004
+  - Description: Track and analyze study plan effectiveness and progress
+  - Priority: Medium
+  - Estimated: 2 days
+  - Status: **Completed**
+  - Completed: 2026-01-19
+  - Dependencies: AI-003 (✅ completed)
+  - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
+  - Changes:
+    - Added StudyPlanAnalytics, PerformanceImprovement, SubjectImprovement, SubjectProgress, WeeklyActivity, AnalyticsRecommendation, StudyPlanHistory types to types.ts
+    - Added STUDY_PLAN_ANALYTICS, STUDY_PLAN_HISTORY, WEEKLY_PROGRESS storage keys to constants.ts (dynamic factory functions)
+    - Created StudyPlanAnalytics.tsx component with comprehensive analytics dashboard
+    - Integrated StudyPlanAnalytics into StudentPortal with new 'study-analytics' view and menu item
+    - Added 'study-analytics' to valid views for voice commands
+    - Comprehensive test coverage (20+ test cases) in StudyPlanAnalytics.test.tsx
+    - Features:
+      - Overview tab with key metrics (progress, completion rate, adherence rate, effectiveness score)
+      - Progress tracking over time with area charts
+      - Subject-based analytics with progress bars and charts
+      - Weekly activity tracking with detailed metrics
+      - AI-generated recommendations with actionable items
+      - Performance improvement analytics (subjects improved, declined, maintained)
+      - Effectiveness score calculation based on progress, adherence, and completion
+      - Export analytics to JSON functionality
+      - Refresh analytics functionality
+      - Tab navigation (Overview, Progress, Subjects, Activities, Recommendations)
+      - Loading, error, and empty state handling
+      - Recharts integration for visualizations
+      - Permission-based access control
+  - Files created:
+    - src/components/StudyPlanAnalytics.tsx (650+ lines)
+    - src/components/__tests__/StudyPlanAnalytics.test.tsx (550+ lines, 20+ tests)
+  - Files modified:
+    - src/types.ts (added StudyPlanAnalytics-related types and interfaces)
+    - src/constants.ts (added STUDY_PLAN_ANALYTICS, STUDY_PLAN_HISTORY, WEEKLY_PROGRESS storage keys)
+    - src/components/StudentPortal.tsx (added study-analytics view, menu item, import, and conditional rendering)
 
 ### Completed Tasks ✅
 

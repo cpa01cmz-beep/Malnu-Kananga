@@ -71,6 +71,7 @@
 - **`generateQuiz()`** - Generate quiz questions from learning materials
 - **`generateAssignmentFeedback()`** - Generate AI feedback for student assignments
 - **`generateStudyPlan()`** - Generate personalized study plans based on student performance
+- **Study Plan Analytics** - Track and analyze study plan effectiveness and progress
 
 #### Feature Services
 - **`pushNotificationService.ts`** - PWA push notifications
@@ -189,6 +190,18 @@
   - AI recommendations (study tips, time management, subject advice)
   - Configurable duration (2, 4, 6, or 8 weeks)
   - Tab-based interface (Overview, Subjects, Schedule, Recommendations)
+  - Local storage persistence
+  - Comprehensive test coverage (20+ test cases)
+- **`StudyPlanAnalytics.tsx`** - Study plan analytics and tracking (completed 2026-01-19)
+  - Overview tab with key metrics (progress, completion rate, adherence rate, effectiveness score)
+  - Progress tracking over time with area charts
+  - Subject-based analytics with progress bars and charts
+  - Weekly activity tracking with detailed metrics
+  - AI-generated recommendations with actionable items
+  - Performance improvement analytics (subjects improved, declined, maintained)
+  - Effectiveness score calculation
+  - Export analytics to JSON
+  - Tab navigation (Overview, Progress, Subjects, Activities, Recommendations)
   - Local storage persistence
   - Comprehensive test coverage (20+ test cases)
 
@@ -471,6 +484,9 @@ All localStorage keys use `malnu_` prefix:
 - Study Plans:
   - `malnu_study_plans_{studentId}` - Study plan storage (dynamic factory function)
   - `malnu_active_study_plan_{studentId}` - Active study plan (dynamic factory function)
+  - `malnu_study_plan_analytics_{studentId}` - Study plan analytics (dynamic factory function)
+  - `malnu_study_plan_history_{studentId}` - Study plan history (dynamic factory function)
+  - `malnu_weekly_progress_{studentId}_{weekNumber}` - Weekly progress tracking (dynamic factory function)
 
 ### Authentication Flow
 
