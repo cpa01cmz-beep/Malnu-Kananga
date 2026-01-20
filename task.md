@@ -324,8 +324,25 @@
       - src/services/geminiService.ts (added generateAssignmentFeedback function)
       - src/components/AssignmentGrading.tsx (AI feedback UI integration)
 
-### In Progress 🚧
-*No tasks currently in progress*
+### Completed Tasks ✅
+
+### 2026-01-20
+- [x] **Announcement System Fixes** (MSG-004)
+  - Task ID: MSG-004
+  - Description: Fix TypeScript type issues in AnnouncementManager (PushNotification interface)
+  - Priority: Medium
+  - Estimated: 1 hour
+  - Status: **Completed**
+  - Completed: 2026-01-20
+  - Dependencies: MSG-003 (✅ completed)
+  - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+  - Changes:
+    - Added missing `id` property to PushNotification object in showNotification call
+    - Added missing `timestamp` property to PushNotification object
+    - Added missing `read` property to PushNotification object
+    - Fixed line 150 in AnnouncementManager.tsx
+  - Files modified:
+    - src/components/AnnouncementManager.tsx (added id, timestamp, read properties)
 
 ### 2026-01-20
 - [x] **PR Rebase & Conflict Resolution** (OPT-001)

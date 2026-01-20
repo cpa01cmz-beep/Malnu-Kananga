@@ -180,7 +180,7 @@
 - **`TeacherDashboard.tsx`** - Teacher dashboard with class and grade management
 
 ##### Announcement Components
-- **`AnnouncementManager.tsx`** - Full announcement management system (completed 2026-01-20)
+- **`AnnouncementManager.tsx`** - Full announcement management system (completed 2026-01-20, TypeScript fixes 2026-01-20)
   - Create/edit/delete announcements
   - Targeting options (all users, by roles, by classes, specific users)
   - Category selection (umum, akademik, kegiatan, keuangan)
@@ -188,7 +188,7 @@
   - Announcement preview modal
   - Announcement analytics modal (read tracking, read rate)
   - Draft auto-save
-  - Push notification integration
+  - Push notification integration with complete PushNotification properties (id, timestamp, read)
   - Permission-based access control (announcements.manage, announcements.view)
   - Offline support indicators
   - Integrated into AdminDashboard

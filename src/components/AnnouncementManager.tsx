@@ -148,10 +148,13 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
         // Send push notification if enabled
         if (formData.sendNotification) {
           await unifiedNotificationManager.showNotification({
+            id: `notif-announcement-${response.data!.id}`,
             title: `📢 ${formData.title}`,
             body: formData.content,
             type: 'announcement',
             priority: 'normal',
+            timestamp: new Date().toISOString(),
+            read: false,
             data: {
               announcementId: response.data!.id,
               category: formData.category
