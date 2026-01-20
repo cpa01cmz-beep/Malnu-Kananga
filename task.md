@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Task Tracker
 
-**Last Updated**: 2026-01-20 (E2E Testing implementation - Playwright setup)
+**Last Updated**: 2026-01-20 (Documentation cleanup - removed duplicate TST-002 entry)
 
 ## Active Tasks
 
@@ -73,6 +73,24 @@
     - Updated task.md "Last Updated" date to 2026-01-20
   - Files modified:
     - task.md (removed 6 duplicate entries, updated 1 status, updated date)
+
+- [x] **Documentation Cleanup** (DOC-007)
+  - Task ID: DOC-007
+  - Description: Remove duplicate TST-002 entry from In Progress section
+  - Priority: Critical
+  - Estimated: 30 minutes
+  - Status: **Completed**
+  - Completed: 2026-01-20
+  - Dependencies: None
+  - Agent: Lead Autonomous Engineer & System Guardian (Scribe Mode)
+  - Changes:
+    - Removed duplicate TST-002 (E2E Tests) entry from "In Progress" section
+    - TST-002 was already in "Completed Tasks" (2026-01-20)
+    - Verified consistency between task.md and roadmap.md
+    - Both files now show "No tasks currently in progress"
+    - Ensured Single Source of Truth principle (Pillar 8: Documentation)
+  - Files modified:
+    - task.md (removed 1 duplicate entry from In Progress section)
 
 ### 2026-01-19
 - [x] **Study Plan Generation** (AI-003)
@@ -307,46 +325,7 @@
       - src/components/AssignmentGrading.tsx (AI feedback UI integration)
 
 ### In Progress 🚧
-
-### 2026-01-20
-- [ ] **E2E Tests** (TST-002)
-  - Task ID: TST-002
-  - Description: Set up Playwright for end-to-end testing
-  - Priority: Medium
-  - Estimated: 3 days
-  - Status: **In Progress**
-  - Dependencies: TST-001 (✅ completed)
-  - Agent: Lead Autonomous Engineer & System Guardian (Optimizer Mode)
-  - Changes:
-    - Installed @playwright/test package
-    - Created Playwright configuration (playwright.config.ts)
-    - Created E2E test directory structure (e2e/)
-    - Created test suites for:
-      - Authentication flow (10 tests)
-      - PPDB registration workflow (10 tests)
-      - Assignment lifecycle (9 tests)
-      - Messaging system (12 tests)
-      - AI features (10 tests)
-      - Role-based access control (16 tests)
-    - Added E2E test scripts to package.json (test:e2e, test:e2e:ui, test:e2e:headed, test:e2e:debug, test:e2e:install, test:all)
-    - Created test fixtures directory (e2e/fixtures/)
-  - Files created:
-    - playwright.config.ts (Playwright configuration)
-    - e2e/auth/auth.spec.ts (10 tests)
-    - e2e/ppdb/ppdb.spec.ts (10 tests)
-    - e2e/assignments/assignments.spec.ts (9 tests)
-    - e2e/messaging/messaging.spec.ts (12 tests)
-    - e2e/ai/ai.spec.ts (10 tests)
-    - e2e/dashboards/rbac.spec.ts (16 tests)
-    - e2e/fixtures/README.md (fixtures documentation)
-  - Files modified:
-    - package.json (added @playwright/test devDependency, added E2E test scripts)
-  - Next steps:
-    - Create test fixture files (test-document.pdf, test-image.jpg, large-file.pdf)
-    - Run E2E tests to verify setup
-    - Add data-testid attributes to components for testability
-    - Add visual regression tests
-    - Set up CI/CD integration for E2E tests
+*No tasks currently in progress*
 
 ### 2026-01-19
 - [x] **Group Chats** (MSG-002)
