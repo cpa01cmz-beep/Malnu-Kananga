@@ -1,0 +1,474 @@
+import React, { useState, useEffect } from 'react';
+import type { ELibrary, QuizDifficulty, QuizQuestionType } from '../types';
+import { generateQuiz } from '../services/geminiService';
+import { eLibraryAPI } from '../services/apiService';
+import { STORAGE_KEYS } from '../constants';
+import { logger } from '../utils/logger';
+import Button from './ui/Button';
+import Input from './ui/Input';
+import Select from './ui/Select';
+import Textarea from './ui/Textarea';
+import Card from './ui/Card';
+import Modal from './ui/Modal';
+import LoadingSpinner from './ui/LoadingSpinner';
+import Badge from './ui/Badge';
+import BookOpenIcon from './icons/BookOpenIcon';
+import { SparklesIcon } from './icons/SparklesIcon';
+import { ClockIcon } from './icons/ClockIcon';
+
+interface QuizGeneratorProps {
+  onSuccess?: (quiz: any) => void;
+  onCancel?: () => void;
+  defaultSubjectId?: string;
+  defaultClassId?: string;
+}
+
+interface GenerationOptions {
+  questionCount: number;
+  questionTypes: QuizQuestionType[];
+  difficulty: QuizDifficulty;
+  totalPoints: number;
+  focusAreas: string[];
+}
+
+export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultClassId }: QuizGeneratorProps) {
+  const [materials, setMaterials] = useState<ELibrary[]>([]);
+  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [step, setStep] = useState<'select' | 'options' | 'preview'>('select');
+  const [options, setOptions] = useState<GenerationOptions>({
+    questionCount: 10,
+    questionTypes: ['multiple_choice', 'true_false', 'short_answer'],
+    difficulty: 'medium',
+    totalPoints: 100,
+    focusAreas: [],
+  });
+  const [generatedQuiz, setGeneratedQuiz] = useState<any>(null);
+
+  useEffect(() => {
+    loadMaterials();
+  }, []);
+
+  const loadMaterials = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await eLibraryAPI.getAll();
+      setMaterials(response || []);
+    } catch (err) {
+      logger.error('Failed to load materials:', err);
+      setError('Gagal memuat materi pembelajaran. Silakan coba lagi.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleMaterial = (materialId: string) => {
+    setSelectedMaterials(prev => {
+      if (prev.includes(materialId)) {
+        return prev.filter(id => id !== materialId);
+      }
+      return [...prev, materialId];
+    });
+  };
+
+  const handleNextStep = () => {
+    if (step === 'select' && selectedMaterials.length === 0) {
+      setError('Silakan pilih minimal satu materi pembelajaran.');
+      return;
+    }
+    if (step === 'options') {
+      generateQuizContent();
+      return;
+    }
+    setStep('options' as any);
+  };
+
+  const handlePreviousStep = () => {
+    if (step === 'options') {
+      setStep('select');
+    } else if (step === 'preview') {
+      setStep('options');
+    }
+  };
+
+  const generateQuizContent = async () => {
+    if (selectedMaterials.length === 0) {
+      setError('Silakan pilih minimal satu materi pembelajaran.');
+      return;
+    }
+
+    try {
+      setGenerating(true);
+      setError(null);
+
+      const selectedMaterialData = materials.filter(m => selectedMaterials.includes(m.id));
+      
+      const quizData = await generateQuiz(selectedMaterialData, options);
+      
+      setGeneratedQuiz(quizData);
+      setStep('preview');
+    } catch (err) {
+      logger.error('Failed to generate quiz:', err);
+      setError(err instanceof Error ? err.message : 'Gagal membuat kuis. Silakan coba lagi.');
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleSaveQuiz = () => {
+    if (generatedQuiz) {
+      const quizWithMetadata = {
+        ...generatedQuiz,
+        subjectId: defaultSubjectId,
+        classId: defaultClassId,
+        materialIds: selectedMaterials,
+        aiGenerated: true,
+        status: 'draft',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      
+      onSuccess?.(quizWithMetadata);
+    }
+  };
+
+  const renderSelectMaterials = () => (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          Pilih Materi Pembelajaran
+        </h3>
+        <Badge variant="info">
+          {selectedMaterials.length} dipilih
+        </Badge>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-8">
+          <LoadingSpinner />
+        </div>
+      ) : error ? (
+        <Card className="border-red-200 dark:border-red-800">
+          <p className="text-red-600 dark:text-red-400">{error}</p>
+          <Button onClick={loadMaterials} className="mt-4">
+            Coba Lagi
+          </Button>
+        </Card>
+      ) : materials.length === 0 ? (
+        <Card className="text-center py-8">
+          <BookOpenIcon className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+          <p className="text-gray-600 dark:text-gray-400">
+            Belum ada materi pembelajaran. Silakan upload materi terlebih dahulu.
+          </p>
+        </Card>
+      ) : (
+        <div className="grid gap-4 max-h-96 overflow-y-auto">
+          {materials.map((material) => (
+            <Card
+              key={material.id}
+              className={`cursor-pointer transition-all ${
+                selectedMaterials.includes(material.id)
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                  : 'hover:border-blue-300 dark:hover:border-blue-700'
+              }`}
+              onClick={() => toggleMaterial(material.id)}
+            >
+              <div className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  checked={selectedMaterials.includes(material.id)}
+                  onChange={() => toggleMaterial(material.id)}
+                  className="mt-1 h-4 w-4 text-blue-600 rounded"
+                />
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                    {material.title}
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {material.category} • {material.fileType?.toUpperCase()}
+                  </p>
+                  {material.description && (
+                    <p className="text-sm text-gray-500 dark:text-gray-500 mt-1 line-clamp-2">
+                      {material.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  const renderOptions = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        Konfigurasi Kuis
+      </h3>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Jumlah Pertanyaan
+        </label>
+        <Input
+          type="number"
+          min="5"
+          max="50"
+          value={options.questionCount}
+          onChange={(e) => setOptions(prev => ({ ...prev, questionCount: parseInt(e.target.value) || 10 }))}
+          className="w-full"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Tingkat Kesulitan
+        </label>
+        <Select
+          value={options.difficulty}
+          onChange={(e) => setOptions(prev => ({ ...prev, difficulty: e.target.value as QuizDifficulty }))}
+          className="w-full"
+        >
+          <option value="easy">Mudah</option>
+          <option value="medium">Sedang</option>
+          <option value="hard">Sulit</option>
+        </Select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Jenis Pertanyaan
+        </label>
+        <div className="space-y-2">
+          {[
+            { value: 'multiple_choice', label: 'Pilihan Ganda' },
+            { value: 'true_false', label: 'Benar/Salah' },
+            { value: 'short_answer', label: 'Jawaban Singkat' },
+            { value: 'essay', label: 'Esai' },
+            { value: 'fill_blank', label: 'Isi Bagian Kosong' },
+          ].map((type) => (
+            <label key={type.value} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={options.questionTypes.includes(type.value as QuizQuestionType)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setOptions(prev => ({
+                      ...prev,
+                      questionTypes: [...prev.questionTypes, type.value as QuizQuestionType],
+                    }));
+                  } else {
+                    setOptions(prev => ({
+                      ...prev,
+                      questionTypes: prev.questionTypes.filter(t => t !== type.value),
+                    }));
+                  }
+                }}
+                className="h-4 w-4 text-blue-600 rounded"
+              />
+              <span className="text-gray-700 dark:text-gray-300">{type.label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Total Poin
+        </label>
+        <Input
+          type="number"
+          min="10"
+          max="500"
+          step="10"
+          value={options.totalPoints}
+          onChange={(e) => setOptions(prev => ({ ...prev, totalPoints: parseInt(e.target.value) || 100 }))}
+          className="w-full"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Topik Fokus (opsional)
+        </label>
+        <Textarea
+          placeholder="Contoh: Hukum Newton, Energi Kinematik, dll. (pisahkan dengan koma)"
+          value={options.focusAreas.join(', ')}
+          onChange={(e) => {
+            const areas = e.target.value.split(',').map(a => a.trim()).filter(Boolean);
+            setOptions(prev => ({ ...prev, focusAreas: areas }));
+          }}
+          className="w-full"
+          rows={3}
+        />
+      </div>
+
+      {error && (
+        <Card className="border-red-200 dark:border-red-800">
+          <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+        </Card>
+      )}
+
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <div className="flex items-start gap-3">
+          <SparklesIcon className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+              Tips Pembuatan Kuis
+            </p>
+            <ul className="text-sm text-blue-800 dark:text-blue-200 mt-2 space-y-1">
+              <li>• Pilih 2-5 materi yang relevan untuk hasil terbaik</li>
+              <li>• Gunakan campuran jenis pertanyaan untuk variasi</li>
+              <li>• Tentukan topik fokus untuk pertanyaan lebih spesifik</li>
+              <li>• AI akan membuat poin merata berdasarkan jumlah pertanyaan</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPreview = () => {
+    if (!generatedQuiz) return null;
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <SparklesIcon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {generatedQuiz.title}
+          </h3>
+          <Badge variant="success">AI Generated</Badge>
+        </div>
+
+        <Card className="bg-purple-50 dark:bg-purple-900/20">
+          <p className="text-gray-700 dark:text-gray-300">{generatedQuiz.description}</p>
+          <div className="flex items-center gap-4 mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-1">
+              <ClockIcon className="w-4 h-4" />
+              <span>{generatedQuiz.duration} menit</span>
+            </div>
+            <span>•</span>
+            <span>{generatedQuiz.questions.length} pertanyaan</span>
+            <span>•</span>
+            <span>{generatedQuiz.totalPoints} poin</span>
+            <span>•</span>
+            <span>Lulus: {generatedQuiz.passingScore} poin</span>
+          </div>
+        </Card>
+
+        <div className="space-y-4 max-h-96 overflow-y-auto">
+          {generatedQuiz.questions.map((question: any, index: number) => (
+            <Card key={question.id}>
+              <div className="flex items-start gap-2">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 flex items-center justify-center text-sm font-medium">
+                  {index + 1}
+                </span>
+                <div className="flex-1">
+                  <p className="font-medium text-gray-900 dark:text-gray-100">
+                    {question.question}
+                  </p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Badge variant="info" size="sm">
+                      {question.type}
+                    </Badge>
+                    <Badge variant="secondary" size="sm">
+                      {question.difficulty}
+                    </Badge>
+                    <Badge variant="outline" size="sm">
+                      {question.points} poin
+                    </Badge>
+                  </div>
+                  {question.options && (
+                    <ul className="mt-3 space-y-1 ml-4">
+                      {question.options.map((option: string, optIndex: number) => (
+                        <li
+                          key={optIndex}
+                          className={`text-sm ${
+                            option === question.correctAnswer
+                              ? 'text-green-700 dark:text-green-400 font-medium'
+                              : 'text-gray-700 dark:text-gray-300'
+                          }`}
+                        >
+                          {String.fromCharCode(65 + optIndex)}. {option}
+                          {option === question.correctAnswer && (
+                            <span className="ml-2 text-green-600 dark:text-green-400">✓</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {question.explanation && (
+                    <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                      <strong>Penjelasan:</strong> {question.explanation}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Buat Kuis dengan AI
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 mt-1">
+          Gunakan kecerdasan buatan untuk membuat kuis dari materi pembelajaran
+        </p>
+      </div>
+
+      <Card className="p-6">
+        {step === 'select' && renderSelectMaterials()}
+        {step === 'options' && renderOptions()}
+        {step === 'preview' && renderPreview()}
+
+        {error && step !== 'select' && (
+          <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+          </div>
+        )}
+
+        <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div>
+            {step !== 'select' && (
+              <Button variant="outline" onClick={handlePreviousStep}>
+                Kembali
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={onCancel}>
+              Batal
+            </Button>
+            {step === 'preview' ? (
+              <Button onClick={handleSaveQuiz} disabled={generating}>
+                Simpan Kuis
+              </Button>
+            ) : (
+              <Button onClick={handleNextStep} disabled={loading || generating || (step === 'select' && selectedMaterials.length === 0)}>
+                {generating ? (
+                  <>
+                    <LoadingSpinner className="mr-2 h-4 w-4" />
+                    Membuat Kuis...
+                  </>
+                ) : (
+                  step === 'select' ? 'Lanjut' : 'Buat Kuis'
+                )}
+              </Button>
+            )}
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}

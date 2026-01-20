@@ -19,6 +19,7 @@ import { initializeMonitoring, setMonitoringUser } from './utils/initializeMonit
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
 const SiteEditor = lazy(() => import('./components/SiteEditor'));
 const PPDBRegistration = lazy(() => import('./components/PPDBRegistration'));
+const ResetPassword = lazy(() => import('./components/ResetPassword'));
 
 // Lazy load heavy dashboard components
 const StudentPortal = lazy(() => import('./components/StudentPortal'));
@@ -66,6 +67,7 @@ const App: React.FC = () => {
   const [isThemeSelectorOpen, setIsThemeSelectorOpen] = useState(false);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [isSWUpdateConfirmOpen, setIsSWUpdateConfirmOpen] = useState(false);
+  const [resetToken, setResetToken] = useState<string | null>(null);
 
   // Auth State with Persistence via Hook
   const [authSession, setAuthSession] = useLocalStorage<AuthSession>(STORAGE_KEYS.AUTH_SESSION, {
@@ -90,6 +92,15 @@ const App: React.FC = () => {
       logger.info('Theme system initialized and ready');
     }
   }, [themeReady]);
+
+  useEffect(() => {
+    // Check URL for reset token
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+      setResetToken(token);
+    }
+  }, []);
 
   // Content State via Hook - lazy load defaults to reduce initial bundle
   const [siteContent, setSiteContent] = useLocalStorage<SiteContent>(STORAGE_KEYS.SITE_CONTENT, {
@@ -167,7 +178,7 @@ const App: React.FC = () => {
   };
 
   const hideToast = () => {
-    setToast(prev => ({ ...prev, isVisible: false }));
+    setToast((prev: typeof toast) => ({ ...prev, isVisible: false }));
   };
 
   const handleLoginSuccess = (role: UserRole, extraRole: UserExtraRole = null) => {
@@ -291,7 +302,12 @@ const App: React.FC = () => {
   return (
     <NotificationProvider>
       <ErrorBoundary>
-        <div className="w-full min-h-screen font-sans antialiased text-neutral-900 dark:text-neutral-100 bg-white dark:bg-neutral-900 transition-colors duration-300">
+        {resetToken ? (
+          <Suspense fallback={<SuspenseLoading message="Memuat halaman reset password..." />}>
+            <ResetPassword />
+          </Suspense>
+        ) : (
+          <div className="w-full min-h-screen font-sans antialiased text-neutral-900 dark:text-neutral-100 bg-white dark:bg-neutral-900 transition-colors duration-300">
       <SkipLink
         targets={[
           { id: 'main-nav', label: 'Langsung ke navigasi utama' },
@@ -426,6 +442,7 @@ const App: React.FC = () => {
         onCancel={() => setIsSWUpdateConfirmOpen(false)}
       />
       </div>
+      )}
       </ErrorBoundary>
     </NotificationProvider>
   );

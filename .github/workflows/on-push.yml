@@ -39,6 +39,24 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        continue-on-error: true
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm install
+
+      - name: Install OpenCode Tools Dependencies
+        continue-on-error: true
+        run: |
+          if [ -f ".opencode/package.json" ]; then
+            cd .opencode && npm install
+          fi
+
       - name: Setup OpenCode
         uses: ./.github/actions/opencode-setup
 

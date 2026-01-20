@@ -1,5 +1,6 @@
 
 import type { FeaturedProgram, LatestNews, User } from '../types';
+import { EXTERNAL_URLS } from '../constants';
 
 export const INITIAL_PROGRAMS: FeaturedProgram[] = [
   {
@@ -15,7 +16,7 @@ export const INITIAL_PROGRAMS: FeaturedProgram[] = [
   {
     title: 'Sains & Teknologi',
     description: 'Mengintegrasikan ilmu pengetahuan modern dengan nilai-nilai Islam untuk mencetak generasi unggul.',
-    imageUrl: 'https://placehold.co/600x400?text=Sains+&+Teknologi'
+    imageUrl: `${EXTERNAL_URLS.PLACEHOLDER_IMAGE_BASE}Sains+%26+Teknologi`
   }
 ];
 
@@ -63,25 +64,25 @@ export const getRelatedLinks = async () => {
     return [
         {
             name: 'RDM Malnu Kananga',
-            href: 'https://rdm.ma-malnukananga.sch.id',
+            href: EXTERNAL_URLS.RDM_PORTAL,
             icon: DocumentTextIcon,
             color: getColorIconClass('sky')
         },
         {
             name: 'Kemenag RI',
-            href: 'https://kemenag.go.id',
+            href: EXTERNAL_URLS.KEMENAG,
             icon: BuildingLibraryIcon,
             color: getColorIconClass('emerald')
         },
         {
             name: 'EMIS Pendis',
-            href: 'https://emis.kemenag.go.id',
+            href: EXTERNAL_URLS.EMIS,
             icon: ClipboardDocumentCheckIcon,
             color: getColorIconClass('amber')
         },
         {
             name: 'Simpatika',
-            href: 'https://simpatika.kemenag.go.id',
+            href: EXTERNAL_URLS.SIMPATIKA,
             icon: UsersIcon,
             color: getColorIconClass('indigo')
         }

@@ -64,4 +64,118 @@ export class AuthService {
   getRefreshToken(): string | null {
     return authAPI.getRefreshToken();
   }
+
+  async forgotPassword(email: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/forgot-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'forgotPassword',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+  }
+
+  async verifyResetToken(token: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/verify-reset-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'verifyResetToken',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+  }
+
+  async resetPassword(token: string, password: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token, password }),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'resetPassword',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+  }
+
+  async updateProfile(userId: string, profileData: Partial<User>): Promise<{ success: boolean; message?: string; data?: User; error?: string }> {
+    try {
+      const token = authAPI.getAuthToken();
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(profileData),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'updateProfile',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+  }
+
+  async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+      const token = authAPI.getAuthToken();
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${userId}/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'changePassword',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      throw classifiedError;
+    }
+  }
 }
