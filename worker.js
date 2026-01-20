@@ -102,7 +102,19 @@ const ERROR_MESSAGES = {
   FAILED_GET_SCHEDULE: 'Gagal mengambil jadwal',
   STUDENT_ID_REQUIRED: 'student_id parameter required',
   AI_SERVICE_UNAVAILABLE: 'Layanan AI tidak tersedia saat ini',
-  ENDPOINT_NOT_FOUND: 'Endpoint tidak ditemukan'
+  ENDPOINT_NOT_FOUND: 'Endpoint tidak ditemukan',
+  WS_AUTH_FAILED: 'Autentikasi WebSocket gagal',
+  WS_CONNECTION_LIMIT: 'Batas koneksi tercapai',
+  WS_INVALID_MESSAGE: 'Pesan WebSocket tidak valid',
+  WS_UNAUTHORIZED: 'Tidak memiliki izin untuk berlangganan event ini',
+  EMAIL_REQUIRED: 'Email diperlukan',
+  RESET_TOKEN_REQUIRED: 'Reset token diperlukan',
+  NEW_PASSWORD_REQUIRED: 'Password baru diperlukan',
+  INVALID_RESET_TOKEN: 'Token reset password tidak valid atau kadaluarsa',
+  USER_NOT_FOUND: 'Pengguna tidak ditemukan',
+  EMAIL_ALREADY_EXISTS: 'Email sudah terdaftar',
+  RESET_TOKEN_EXPIRED: 'Token reset password kadaluarsa',
+  SAME_PASSWORD_ERROR: 'Password baru tidak boleh sama dengan password lama'
 };
 
 const HTTP_STATUS_CODES = {
@@ -500,6 +512,97 @@ async function initDatabase(env) {
     `);
 
     await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS assignments (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        type TEXT NOT NULL CHECK(type IN ('assignment', 'project', 'quiz', 'exam', 'lab_work', 'presentation', 'homework', 'other')),
+        subject_id TEXT NOT NULL,
+        class_id TEXT NOT NULL,
+        teacher_id TEXT NOT NULL,
+        academic_year TEXT NOT NULL,
+        semester TEXT NOT NULL,
+        max_score REAL NOT NULL DEFAULT 100,
+        due_date TIMESTAMP NOT NULL,
+        status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'published', 'closed', 'archived')),
+        instructions TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        published_at TIMESTAMP,
+        FOREIGN KEY (subject_id) REFERENCES subjects(id) ON DELETE CASCADE,
+        FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE,
+        FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS assignment_attachments (
+        id TEXT PRIMARY KEY,
+        assignment_id TEXT NOT NULL,
+        file_name TEXT NOT NULL,
+        file_url TEXT NOT NULL,
+        file_type TEXT NOT NULL,
+        file_size INTEGER NOT NULL,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS assignment_rubrics (
+        id TEXT PRIMARY KEY,
+        assignment_id TEXT NOT NULL,
+        total_score REAL NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS rubric_criteria (
+        id TEXT PRIMARY KEY,
+        rubric_id TEXT NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT,
+        max_score REAL NOT NULL,
+        weight REAL NOT NULL CHECK(weight >= 0 AND weight <= 100),
+        FOREIGN KEY (rubric_id) REFERENCES assignment_rubrics(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS assignment_submissions (
+        id TEXT PRIMARY KEY,
+        assignment_id TEXT NOT NULL,
+        student_id TEXT NOT NULL,
+        student_name TEXT NOT NULL,
+        submission_text TEXT,
+        submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        score REAL,
+        feedback TEXT,
+        graded_by TEXT,
+        graded_at TIMESTAMP,
+        status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'submitted', 'late', 'graded')),
+        FOREIGN KEY (assignment_id) REFERENCES assignments(id) ON DELETE CASCADE,
+        FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+        FOREIGN KEY (graded_by) REFERENCES users(id) ON DELETE SET NULL
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS submission_attachments (
+        id TEXT PRIMARY KEY,
+        submission_id TEXT NOT NULL,
+        file_name TEXT NOT NULL,
+        file_url TEXT NOT NULL,
+        file_type TEXT NOT NULL,
+        file_size INTEGER NOT NULL,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (submission_id) REFERENCES assignment_submissions(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
       CREATE TABLE IF NOT EXISTS e_library (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
@@ -545,6 +648,19 @@ async function initDatabase(env) {
         is_revoked BOOLEAN DEFAULT FALSE,
         refresh_token TEXT UNIQUE,
         refresh_token_expires_at TIMESTAMP
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        token TEXT UNIQUE NOT NULL,
+        email TEXT NOT NULL,
+        expires_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_used BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       );
     `);
 
@@ -650,6 +766,84 @@ async function initDatabase(env) {
         status TEXT NOT NULL CHECK(status IN ('queued', 'sent', 'delivered', 'bounced', 'complained', 'opened', 'clicked')),
         provider TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS conversations (
+        id TEXT PRIMARY KEY,
+        type TEXT NOT NULL CHECK(type IN ('direct', 'group')),
+        name TEXT,
+        description TEXT,
+        avatar TEXT,
+        created_by TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        metadata TEXT,
+        FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS conversation_participants (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_seen TIMESTAMP,
+        is_online BOOLEAN DEFAULT FALSE,
+        is_admin BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(conversation_id, user_id)
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL,
+        sender_id TEXT NOT NULL,
+        recipient_id TEXT,
+        message_type TEXT NOT NULL CHECK(message_type IN ('text', 'image', 'file', 'audio', 'video')),
+        content TEXT NOT NULL,
+        file_url TEXT,
+        file_name TEXT,
+        file_size INTEGER,
+        file_type TEXT,
+        status TEXT DEFAULT 'sent' CHECK(status IN ('sending', 'sent', 'delivered', 'read', 'failed')),
+        reply_to TEXT,
+        metadata TEXT,
+        read_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
+        FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS message_read_receipts (
+        id TEXT PRIMARY KEY,
+        message_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(message_id, user_id)
+      );
+    `);
+
+    await env.DB.exec(`
+      CREATE TABLE IF NOT EXISTS typing_indicators (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        user_name TEXT NOT NULL,
+        is_typing BOOLEAN DEFAULT FALSE,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       );
     `);
@@ -826,6 +1020,268 @@ async function handleRefreshToken(request, env, corsHeaders) {
       status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
+  }
+}
+
+async function handleForgotPassword(request, env, corsHeaders) {
+  try {
+    const { email } = await request.json();
+
+    if (!email) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.EMAIL_REQUIRED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const user = await env.DB.prepare('SELECT id, email, name FROM users WHERE email = ? AND status = ?')
+      .bind(email, 'active')
+      .first();
+
+    if (!user) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.USER_NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const token = generateId();
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await env.DB.prepare(`
+      INSERT INTO password_reset_tokens (id, user_id, token, email, expires_at)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(generateId(), user.id, token, email, expiresAt.toISOString()).run();
+
+    const resetLink = `${request.headers.get('Origin') || 'https://ma-malnukananga.sch.id'}/reset-password?token=${token}`;
+
+    await sendPasswordResetEmail(env, user, resetLink);
+
+    return new Response(JSON.stringify(response.success({
+      message: 'Email reset password telah dikirim'
+    }, 'Jika email terdaftar, Anda akan menerima link reset password')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch {
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleVerifyResetToken(request, env, corsHeaders) {
+  try {
+    const { token } = await request.json();
+
+    if (!token) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.RESET_TOKEN_REQUIRED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const resetToken = await env.DB.prepare(`
+      SELECT * FROM password_reset_tokens
+      WHERE token = ? AND is_used = FALSE AND expires_at > CURRENT_TIMESTAMP
+    `).bind(token).first();
+
+    if (!resetToken) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INVALID_RESET_TOKEN, HTTP_STATUS_CODES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response(JSON.stringify(response.success({
+      valid: true,
+      email: resetToken.email
+    }, 'Token valid')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch {
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleResetPassword(request, env, corsHeaders) {
+  try {
+    const { token, password } = await request.json();
+
+    if (!token) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.RESET_TOKEN_REQUIRED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (!password) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NEW_PASSWORD_REQUIRED, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const resetToken = await env.DB.prepare(`
+      SELECT * FROM password_reset_tokens
+      WHERE token = ? AND is_used = FALSE AND expires_at > CURRENT_TIMESTAMP
+    `).bind(token).first();
+
+    if (!resetToken) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INVALID_RESET_TOKEN, HTTP_STATUS_CODES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const user = await env.DB.prepare('SELECT password_hash FROM users WHERE id = ?')
+      .bind(resetToken.user_id)
+      .first();
+
+    if (!user) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.USER_NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const newPasswordHash = await hashPassword(password);
+
+    if (newPasswordHash === user.password_hash) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SAME_PASSWORD_ERROR, HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    await env.DB.prepare('UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+      .bind(newPasswordHash, resetToken.user_id)
+      .run();
+
+    await env.DB.prepare('UPDATE password_reset_tokens SET is_used = TRUE WHERE id = ?')
+      .bind(resetToken.id)
+      .run();
+
+    await env.DB.prepare('UPDATE sessions SET is_revoked = TRUE WHERE user_id = ?')
+      .bind(resetToken.user_id)
+      .run();
+
+    return new Response(JSON.stringify(response.success(null, 'Password berhasil direset. Silakan login dengan password baru.')), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch {
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function sendPasswordResetEmail(env, user, resetLink) {
+  try {
+    const emailData = {
+      to: [{ email: user.email, name: user.name }],
+      subject: 'Reset Password - MA Malnu Kananga',
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Reset Password</title>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+            .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+            .button { display: inline-block; padding: 12px 24px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+            .warning { background: #fef3c7; padding: 10px; border-radius: 5px; margin: 10px 0; }
+            .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>Reset Password</h1>
+            </div>
+            <div class="content">
+              <p>Yth. ${user.name},</p>
+              <p>Kami menerima permintaan untuk mereset password Anda.</p>
+              <p>Klik tombol di bawah ini untuk mereset password:</p>
+              <p><a href="${resetLink}" class="button">Reset Password</a></p>
+              <p>Atau copy link berikut ke browser:</p>
+              <p style="word-break: break-all; color: #2563eb;">${resetLink}</p>
+              <div class="warning">
+                <p><strong>Penting:</strong></p>
+                <ul>
+                  <li>Link ini hanya berlaku selama 1 jam</li>
+                  <li>Jika Anda tidak meminta reset password, abaikan email ini</li>
+                </ul>
+              </div>
+              <p>Terima kasih,</p>
+              <p><strong>MA Malnu Kananga</strong></p>
+            </div>
+            <div class="footer">
+              <p>Email ini dikirim secara otomatis, jangan balas ke email ini.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+      text: `Yth. ${user.name},
+
+Kami menerima permintaan untuk mereset password Anda.
+
+Klik link berikut untuk mereset password:
+${resetLink}
+
+Penting:
+- Link ini hanya berlaku selama 1 jam
+- Jika Anda tidak meminta reset password, abaikan email ini
+
+Terima kasih,
+MA Malnu Kananga
+
+Email ini dikirim secara otomatis, jangan balas ke email ini.`
+    };
+
+    const emailProvider = env.EMAIL_PROVIDER || 'cloudflare';
+
+    if (emailProvider === 'cloudflare' && env.SENDGRID_API_KEY) {
+      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.SENDGRID_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          personalizations: [{
+            to: emailData.to.map(r => ({ email: r.email, name: r.name || '' })),
+            subject: emailData.subject
+          }],
+          from: { email: env.EMAIL_FROM || 'noreply@ma-malnukananga.sch.id' },
+          content: [
+            { type: 'text/plain', value: emailData.text },
+            { type: 'text/html', value: emailData.html }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        logger.error('Failed to send password reset email via SendGrid:', await response.text());
+      } else {
+        logger.info('Password reset email sent to:', user.email);
+      }
+    } else {
+      logger.warn('Email provider not configured for password reset');
+    }
+  } catch (error) {
+    logger.error('Error sending password reset email:', error);
   }
 }
 
@@ -1758,6 +2214,1262 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
 }
 
 // ============================================
+// ASSIGNMENTS HANDLERS
+// ============================================
+
+async function handleAssignments(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
+    const method = request.method;
+    const subjectId = url.searchParams.get('subject_id');
+    const classId = url.searchParams.get('class_id');
+    const teacherId = url.searchParams.get('teacher_id');
+    const status = url.searchParams.get('status');
+
+    switch (method) {
+      case 'GET': {
+        if (id && id !== 'assignments') {
+          const assignment = await env.DB.prepare(`
+            SELECT 
+              a.*,
+              subj.name as subject_name,
+              c.name as class_name,
+              u.name as teacher_name
+            FROM assignments a
+            LEFT JOIN subjects subj ON a.subject_id = subj.id
+            LEFT JOIN classes c ON a.class_id = c.id
+            LEFT JOIN users u ON a.teacher_id = u.id
+            WHERE a.id = ?
+          `).bind(id).first();
+
+          if (!assignment) {
+            return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+              status: HTTP_STATUS_CODES.NOT_FOUND,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          }
+
+          assignment.attachments = await env.DB.prepare(`
+            SELECT * FROM assignment_attachments WHERE assignment_id = ?
+          `).bind(id).all();
+
+          if (assignment.rubric) {
+            assignment.rubric.criteria = await env.DB.prepare(`
+              SELECT * FROM rubric_criteria WHERE rubric_id = ?
+            `).bind(assignment.rubric.id).all();
+          }
+
+          return new Response(JSON.stringify(response.success(assignment)), {
+            status: HTTP_STATUS_CODES.OK,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        } else {
+          let query = `
+            SELECT 
+              a.*,
+              subj.name as subject_name,
+              c.name as class_name,
+              u.name as teacher_name
+            FROM assignments a
+            LEFT JOIN subjects subj ON a.subject_id = subj.id
+            LEFT JOIN classes c ON a.class_id = c.id
+            LEFT JOIN users u ON a.teacher_id = u.id
+            WHERE 1=1
+          `;
+          const params: string[] = [];
+
+          if (subjectId) {
+            query += ` AND a.subject_id = ?`;
+            params.push(subjectId);
+          }
+          if (classId) {
+            query += ` AND a.class_id = ?`;
+            params.push(classId);
+          }
+          if (teacherId) {
+            query += ` AND a.teacher_id = ?`;
+            params.push(teacherId);
+          }
+          if (status) {
+            query += ` AND a.status = ?`;
+            params.push(status);
+          }
+
+          query += ` ORDER BY a.created_at DESC`;
+
+          const stmt = env.DB.prepare(query);
+          const result = await stmt.bind(...params).all();
+
+          for (const assignment of result.results) {
+            assignment.attachments = await env.DB.prepare(`
+              SELECT * FROM assignment_attachments WHERE assignment_id = ?
+            `).bind(assignment.id).all();
+
+            const rubric = await env.DB.prepare(`
+              SELECT * FROM assignment_rubrics WHERE assignment_id = ?
+            `).bind(assignment.id).first();
+
+            if (rubric) {
+              rubric.criteria = await env.DB.prepare(`
+                SELECT * FROM rubric_criteria WHERE rubric_id = ?
+              `).bind(rubric.id).all();
+              assignment.rubric = rubric;
+            }
+          }
+
+          return new Response(JSON.stringify(response.success(result.results)), {
+            status: HTTP_STATUS_CODES.OK,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+      }
+
+      case 'POST': {
+        const body = await request.json();
+        const assignmentId = crypto.randomUUID();
+
+        await env.DB.prepare(`
+          INSERT INTO assignments (
+            id, title, description, type, subject_id, class_id, teacher_id,
+            academic_year, semester, max_score, due_date, status, instructions
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          assignmentId,
+          body.title,
+          body.description,
+          body.type,
+          body.subjectId,
+          body.classId,
+          body.teacherId,
+          body.academicYear,
+          body.semester,
+          body.maxScore,
+          body.dueDate,
+          body.status,
+          body.instructions || null
+        ).run();
+
+        if (body.attachments && body.attachments.length > 0) {
+          for (const attachment of body.attachments) {
+            await env.DB.prepare(`
+              INSERT INTO assignment_attachments (
+                id, assignment_id, file_name, file_url, file_type, file_size, uploaded_at
+              ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            `).bind(
+              crypto.randomUUID(),
+              assignmentId,
+              attachment.fileName,
+              attachment.fileUrl,
+              attachment.fileType,
+              attachment.fileSize,
+              attachment.uploadedAt
+            ).run();
+          }
+        }
+
+        if (body.rubric) {
+          const rubricId = crypto.randomUUID();
+          await env.DB.prepare(`
+            INSERT INTO assignment_rubrics (id, assignment_id, total_score, created_at)
+            VALUES (?, ?, ?, ?)
+          `).bind(
+            rubricId,
+            assignmentId,
+            body.rubric.totalScore,
+            new Date().toISOString()
+          ).run();
+
+          if (body.rubric.criteria && body.rubric.criteria.length > 0) {
+            for (const criteria of body.rubric.criteria) {
+              await env.DB.prepare(`
+                INSERT INTO rubric_criteria (
+                  id, rubric_id, name, description, max_score, weight
+                ) VALUES (?, ?, ?, ?, ?, ?)
+              `).bind(
+                criteria.id,
+                rubricId,
+                criteria.name,
+                criteria.description,
+                criteria.maxScore,
+                criteria.weight
+              ).run();
+            }
+          }
+        }
+
+        const created = await env.DB.prepare(`
+          SELECT 
+            a.*,
+            subj.name as subject_name,
+            c.name as class_name,
+            u.name as teacher_name
+          FROM assignments a
+          LEFT JOIN subjects subj ON a.subject_id = subj.id
+          LEFT JOIN classes c ON a.class_id = c.id
+          LEFT JOIN users u ON a.teacher_id = u.id
+          WHERE a.id = ?
+        `).bind(assignmentId).first();
+
+        return new Response(JSON.stringify(response.success(created, 'Tugas berhasil dibuat')), {
+          status: HTTP_STATUS_CODES.CREATED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      case 'PUT': {
+        const body = await request.json();
+
+        const existing = await env.DB.prepare(`
+          SELECT * FROM assignments WHERE id = ?
+        `).bind(id).first();
+
+        if (!existing) {
+          return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+            status: HTTP_STATUS_CODES.NOT_FOUND,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        await env.DB.prepare(`
+          UPDATE assignments SET
+            title = ?,
+            description = ?,
+            type = ?,
+            subject_id = ?,
+            class_id = ?,
+            max_score = ?,
+            due_date = ?,
+            instructions = ?,
+            updated_at = ?
+          WHERE id = ?
+        `).bind(
+          body.title,
+          body.description,
+          body.type,
+          body.subjectId,
+          body.classId,
+          body.maxScore,
+          body.dueDate,
+          body.instructions,
+          new Date().toISOString(),
+          id
+        ).run();
+
+        const updated = await env.DB.prepare(`
+          SELECT 
+            a.*,
+            subj.name as subject_name,
+            c.name as class_name,
+            u.name as teacher_name
+          FROM assignments a
+          LEFT JOIN subjects subj ON a.subject_id = subj.id
+          LEFT JOIN classes c ON a.class_id = c.id
+          LEFT JOIN users u ON a.teacher_id = u.id
+          WHERE a.id = ?
+        `).bind(id).first();
+
+        return new Response(JSON.stringify(response.success(updated, 'Tugas berhasil diperbarui')), {
+          status: HTTP_STATUS_CODES.OK,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      case 'DELETE': {
+        const existing = await env.DB.prepare(`
+          SELECT * FROM assignments WHERE id = ?
+        `).bind(id).first();
+
+        if (!existing) {
+          return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+            status: HTTP_STATUS_CODES.NOT_FOUND,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        await env.DB.prepare(`DELETE FROM assignments WHERE id = ?`).bind(id).run();
+
+        return new Response(JSON.stringify(response.success(null, 'Tugas berhasil dihapus')), {
+          status: HTTP_STATUS_CODES.OK,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      default:
+        return new Response(JSON.stringify(response.error(ERROR_MESSAGES.METHOD_NOT_ALLOWED)), {
+          status: HTTP_STATUS_CODES.METHOD_NOT_ALLOWED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+  } catch (e) {
+    logger.error('Assignment handler error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handlePublishAssignment(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').slice(0, -1).pop();
+
+    const existing = await env.DB.prepare(`
+      SELECT * FROM assignments WHERE id = ?
+    `).bind(id).first();
+
+    if (!existing) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    await env.DB.prepare(`
+      UPDATE assignments SET status = 'published', published_at = ?, updated_at = ?
+      WHERE id = ?
+    `).bind(
+      new Date().toISOString(),
+      new Date().toISOString(),
+      id
+    ).run();
+
+    const updated = await env.DB.prepare(`
+      SELECT 
+        a.*,
+        subj.name as subject_name,
+        c.name as class_name,
+        u.name as teacher_name
+      FROM assignments a
+      LEFT JOIN subjects subj ON a.subject_id = subj.id
+      LEFT JOIN classes c ON a.class_id = c.id
+      LEFT JOIN users u ON a.teacher_id = u.id
+      WHERE a.id = ?
+    `).bind(id).first();
+
+    return new Response(JSON.stringify(response.success(updated, 'Tugas berhasil dipublikasikan')), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Publish assignment error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleCloseAssignment(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').slice(0, -1).pop();
+
+    const existing = await env.DB.prepare(`
+      SELECT * FROM assignments WHERE id = ?
+    `).bind(id).first();
+
+    if (!existing) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    await env.DB.prepare(`
+      UPDATE assignments SET status = 'closed', updated_at = ?
+      WHERE id = ?
+    `).bind(
+      new Date().toISOString(),
+      id
+    ).run();
+
+    const updated = await env.DB.prepare(`
+      SELECT
+        a.*,
+        subj.name as subject_name,
+        c.name as class_name,
+        u.name as teacher_name
+      FROM assignments a
+      LEFT JOIN subjects subj ON a.subject_id = subj.id
+      LEFT JOIN classes c ON a.class_id = c.id
+      LEFT JOIN users u ON a.teacher_id = u.id
+      WHERE a.id = ?
+    `).bind(id).first();
+
+    return new Response(JSON.stringify(response.success(updated, 'Tugas berhasil ditutup')), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Close assignment error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleAssignmentSubmissions(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const method = request.method;
+    const id = url.pathname.split('/').pop();
+    const assignmentId = url.searchParams.get('assignment_id');
+    const studentId = url.searchParams.get('student_id');
+
+    switch (method) {
+      case 'GET': {
+        if (id && id !== 'submissions') {
+          const submission = await env.DB.prepare(`
+            SELECT s.*, a.title as assignment_title, a.due_date
+            FROM assignment_submissions s
+            LEFT JOIN assignments a ON s.assignment_id = a.id
+            WHERE s.id = ?
+          `).bind(id).first();
+
+          if (!submission) {
+            return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+              status: HTTP_STATUS_CODES.NOT_FOUND,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          }
+
+          submission.attachments = await env.DB.prepare(`
+            SELECT * FROM submission_attachments WHERE submission_id = ?
+          `).bind(id).all();
+
+          return new Response(JSON.stringify(response.success(submission)), {
+            status: HTTP_STATUS_CODES.OK,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        } else {
+          let query = `
+            SELECT s.*, a.title as assignment_title, a.due_date, a.max_score
+            FROM assignment_submissions s
+            LEFT JOIN assignments a ON s.assignment_id = a.id
+            WHERE 1=1
+          `;
+          const params: string[] = [];
+
+          if (assignmentId) {
+            query += ` AND s.assignment_id = ?`;
+            params.push(assignmentId);
+          }
+          if (studentId) {
+            query += ` AND s.student_id = ?`;
+            params.push(studentId);
+          }
+
+          query += ` ORDER BY s.submitted_at DESC`;
+
+          const stmt = env.DB.prepare(query);
+          const result = await stmt.bind(...params).all();
+
+          for (const submission of result.results) {
+            submission.attachments = await env.DB.prepare(`
+              SELECT * FROM submission_attachments WHERE submission_id = ?
+            `).bind(submission.id).all();
+          }
+
+          return new Response(JSON.stringify(response.success(result.results)), {
+            status: HTTP_STATUS_CODES.OK,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+      }
+
+      case 'POST': {
+        const body = await request.json();
+        const submissionId = crypto.randomUUID();
+
+        const assignment = await env.DB.prepare(`
+          SELECT * FROM assignments WHERE id = ?
+        `).bind(body.assignmentId).first();
+
+        if (!assignment) {
+          return new Response(JSON.stringify(response.error('Tugas tidak ditemukan')), {
+            status: HTTP_STATUS_CODES.NOT_FOUND,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const dueDate = new Date(assignment.due_date);
+        const submittedAt = new Date(body.submittedAt || new Date().toISOString());
+        const isLate = submittedAt > dueDate;
+        const status = isLate ? 'late' : 'submitted';
+
+        await env.DB.prepare(`
+          INSERT INTO assignment_submissions (
+            id, assignment_id, student_id, student_name,
+            submission_text, submitted_at, status
+          ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          submissionId,
+          body.assignmentId,
+          body.studentId,
+          body.studentName,
+          body.submissionText || null,
+          submittedAt.toISOString(),
+          status
+        ).run();
+
+        if (body.attachments && body.attachments.length > 0) {
+          for (const attachment of body.attachments) {
+            await env.DB.prepare(`
+              INSERT INTO submission_attachments (
+                id, submission_id, file_name, file_url, file_type, file_size, uploaded_at
+              ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            `).bind(
+              crypto.randomUUID(),
+              submissionId,
+              attachment.fileName,
+              attachment.fileUrl,
+              attachment.fileType,
+              attachment.fileSize,
+              attachment.uploadedAt
+            ).run();
+          }
+        }
+
+        const created = await env.DB.prepare(`
+          SELECT s.*, a.title as assignment_title, a.due_date, a.max_score
+          FROM assignment_submissions s
+          LEFT JOIN assignments a ON s.assignment_id = a.id
+          WHERE s.id = ?
+        `).bind(submissionId).first();
+
+        created.attachments = await env.DB.prepare(`
+          SELECT * FROM submission_attachments WHERE submission_id = ?
+        `).bind(submissionId).all();
+
+        return new Response(JSON.stringify(response.success(created, 'Tugas berhasil dikirim')), {
+          status: HTTP_STATUS_CODES.CREATED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      case 'PUT': {
+        const body = await request.json();
+
+        const existing = await env.DB.prepare(`
+          SELECT * FROM assignment_submissions WHERE id = ?
+        `).bind(id).first();
+
+        if (!existing) {
+          return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+            status: HTTP_STATUS_CODES.NOT_FOUND,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const now = new Date().toISOString();
+        const isGrading = body.score !== undefined || body.feedback !== undefined;
+
+        await env.DB.prepare(`
+          UPDATE assignment_submissions SET
+            submission_text = COALESCE(?, submission_text),
+            submitted_at = COALESCE(?, submitted_at),
+            status = COALESCE(?, status),
+            score = COALESCE(?, score),
+            feedback = COALESCE(?, feedback),
+            graded_by = CASE WHEN ? IS NOT NULL THEN ? ELSE graded_by END,
+            graded_at = CASE WHEN ? IS NOT NULL THEN ? ELSE graded_at END,
+            updated_at = ?
+          WHERE id = ?
+        `).bind(
+          body.submissionText,
+          body.submittedAt,
+          body.status,
+          body.score !== undefined ? body.score : null,
+          body.feedback,
+          body.gradedBy,
+          body.gradedBy,
+          body.gradedBy,
+          isGrading ? now : null,
+          now,
+          id
+        ).run();
+
+        const updated = await env.DB.prepare(`
+          SELECT s.*, a.title as assignment_title, a.due_date, a.max_score
+          FROM assignment_submissions s
+          LEFT JOIN assignments a ON s.assignment_id = a.id
+          WHERE s.id = ?
+        `).bind(id).first();
+
+        return new Response(JSON.stringify(response.success(updated, 'Pengumpulan tugas berhasil diperbarui')), {
+          status: HTTP_STATUS_CODES.OK,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      case 'DELETE': {
+        const existing = await env.DB.prepare(`
+          SELECT * FROM assignment_submissions WHERE id = ?
+        `).bind(id).first();
+
+        if (!existing) {
+          return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND)), {
+            status: HTTP_STATUS_CODES.NOT_FOUND,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        await env.DB.prepare(`DELETE FROM assignment_submissions WHERE id = ?`).bind(id).run();
+
+        return new Response(JSON.stringify(response.success(null, 'Pengumpulan tugas berhasil dihapus')), {
+          status: HTTP_STATUS_CODES.OK,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      default:
+        return new Response(JSON.stringify(response.error(ERROR_MESSAGES.METHOD_NOT_SUPPORTED)), {
+          status: HTTP_STATUS_CODES.METHOD_NOT_ALLOWED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+  } catch (e) {
+    logger.error('Assignment submissions handler error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// ============================================
+// MESSAGING API HANDLERS
+// ============================================
+
+async function handleConversations(request, env, corsHeaders) {
+  try {
+    const url = new URL(request.url);
+    const method = request.method;
+    const userId = await getUserIdFromRequest(request, env);
+
+    if (!userId) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const id = url.pathname.split('/').slice(0, -1).pop();
+
+    if (id) {
+      const conversation = await env.DB.prepare(`
+        SELECT * FROM conversations WHERE id = ?
+      `).bind(id).first();
+
+      if (!conversation) {
+        return new Response(JSON.stringify(response.error('Conversation not found')), {
+          status: HTTP_STATUS_CODES.NOT_FOUND,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (method === 'PUT') {
+        const body = await request.json();
+        const now = new Date().toISOString();
+
+        await env.DB.prepare(`
+          UPDATE conversations
+          SET name = COALESCE(?, name),
+              description = COALESCE(?, description),
+              avatar = COALESCE(?, avatar),
+              updated_at = ?,
+              metadata = COALESCE(?, metadata)
+          WHERE id = ?
+        `).bind(body.name, body.description, body.avatar, now, body.metadata ? JSON.stringify(body.metadata) : null, id).run();
+
+        return new Response(JSON.stringify(response.success({ id, ...body, updated_at: now })), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (method === 'DELETE') {
+        await env.DB.prepare('DELETE FROM conversations WHERE id = ?').bind(id).run();
+        return new Response(JSON.stringify(response.success({ success: true })), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (method === 'POST' && url.pathname.endsWith('/read')) {
+        await env.DB.prepare(`
+          UPDATE messages
+          SET read_at = ?, status = 'read'
+          WHERE conversation_id = ? AND sender_id != ? AND read_at IS NULL
+        `).bind(new Date().toISOString(), id, userId).run();
+
+        const unreadCount = await env.DB.prepare(`
+          SELECT COUNT(*) as count FROM messages
+          WHERE conversation_id = ? AND sender_id != ? AND read_at IS NULL
+        `).bind(id, userId).first();
+
+        return new Response(JSON.stringify(response.success({ success: true, unreadCount: unreadCount?.count || 0 })), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      const participants = await env.DB.prepare(`
+        SELECT cp.*, u.name, u.email, u.role, u.avatar
+        FROM conversation_participants cp
+        JOIN users u ON cp.user_id = u.id
+        WHERE cp.conversation_id = ?
+      `).bind(id).all();
+
+      const lastMessage = await env.DB.prepare(`
+        SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at DESC LIMIT 1
+      `).bind(id).first();
+
+      return new Response(JSON.stringify(response.success({
+        ...conversation,
+        participants,
+        lastMessage
+      })), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'POST') {
+      const body = await request.json();
+      const conversationId = generateId();
+      const now = new Date().toISOString();
+
+      await env.DB.prepare(`
+        INSERT INTO conversations (id, type, name, description, avatar, created_by, metadata)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).bind(conversationId, body.type, body.name || null, body.description || null, body.avatar || null, userId, body.metadata ? JSON.stringify(body.metadata) : null).run();
+
+      for (const participantId of body.participantIds) {
+        const participantIdClean = participantId;
+        await env.DB.prepare(`
+          INSERT INTO conversation_participants (id, conversation_id, user_id, is_admin)
+          VALUES (?, ?, ?, ?)
+        `).bind(generateId(), conversationId, participantIdClean, body.type === 'group' && participantIdClean === userId ? 1 : 0).run();
+      }
+
+      return new Response(JSON.stringify(response.success({
+        id: conversationId,
+        ...body,
+        created_by: userId,
+        created_at: now
+      })), {
+        status: HTTP_STATUS_CODES.CREATED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'GET') {
+      const type = url.searchParams.get('type');
+      const search = url.searchParams.get('search');
+      const unreadOnly = url.searchParams.get('unread_only') === 'true';
+
+      let query = `
+        SELECT c.*,
+          (SELECT COUNT(*) FROM messages m WHERE m.conversation_id = c.id AND m.sender_id != ? AND m.read_at IS NULL) as unread_count,
+          (SELECT m.* FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message,
+          (SELECT m.created_at FROM messages m WHERE m.conversation_id = c.id ORDER BY m.created_at DESC LIMIT 1) as last_message_at
+        FROM conversations c
+        JOIN conversation_participants cp ON c.id = cp.conversation_id
+        WHERE cp.user_id = ?
+      `;
+      const params = [userId, userId];
+
+      if (type) {
+        query += ' AND c.type = ?';
+        params.push(type);
+      }
+
+      if (search) {
+        query += ' AND (c.name LIKE ? OR c.description LIKE ?)';
+        const searchPattern = `%${search}%`;
+        params.push(searchPattern, searchPattern);
+      }
+
+      if (unreadOnly) {
+        query += ' HAVING unread_count > 0';
+      }
+
+      query += ' ORDER BY c.updated_at DESC';
+
+      const conversations = await env.DB.prepare(query).bind(...params).all();
+
+      for (const conv of conversations.results) {
+        const participants = await env.DB.prepare(`
+          SELECT cp.*, u.name, u.email, u.role, u.avatar
+          FROM conversation_participants cp
+          JOIN users u ON cp.user_id = u.id
+          WHERE cp.conversation_id = ?
+        `).bind(conv.id).all();
+
+        conv.participants = participants.results;
+        if (conv.metadata) {
+          conv.metadata = JSON.parse(conv.metadata);
+        }
+      }
+
+      return new Response(JSON.stringify(response.success(conversations.results)), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.METHOD_NOT_ALLOWED)), {
+      status: HTTP_STATUS_CODES.METHOD_NOT_ALLOWED,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Conversations handler error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleMessages(request, env, corsHeaders) {
+  try {
+    const url = new URL(request.url);
+    const method = request.method;
+    const userId = await getUserIdFromRequest(request, env);
+
+    if (!userId) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const id = url.pathname.split('/').pop();
+
+    if (id) {
+      if (method === 'PUT') {
+        const body = await request.json();
+        const now = new Date().toISOString();
+
+        await env.DB.prepare(`
+          UPDATE messages
+          SET content = COALESCE(?, content),
+              updated_at = ?
+          WHERE id = ? AND sender_id = ?
+        `).bind(body.content, now, id, userId).run();
+
+        return new Response(JSON.stringify(response.success({ id, content: body.content, updated_at: now })), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (method === 'DELETE') {
+        await env.DB.prepare('DELETE FROM messages WHERE id = ? AND sender_id = ?').bind(id, userId).run();
+        return new Response(JSON.stringify(response.success({ success: true })), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (method === 'POST' && url.pathname.endsWith('/read')) {
+        await env.DB.prepare(`
+          INSERT OR REPLACE INTO message_read_receipts (id, message_id, user_id, read_at)
+          VALUES (?, ?, ?, ?)
+        `).bind(generateId(), id, userId, new Date().toISOString()).run();
+
+        await env.DB.prepare(`
+          UPDATE messages SET read_at = ?, status = 'read' WHERE id = ?
+        `).bind(new Date().toISOString(), id).run();
+
+        const receipt = await env.DB.prepare(`
+          SELECT * FROM message_read_receipts WHERE message_id = ? AND user_id = ?
+        `).bind(id, userId).first();
+
+        return new Response(JSON.stringify(response.success(receipt)), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      const message = await env.DB.prepare(`
+        SELECT m.*, u.name as sender_name, u.role as sender_role, u.avatar as sender_avatar
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE m.id = ?
+      `).bind(id).first();
+
+      return new Response(JSON.stringify(response.success(message)), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'GET' && url.pathname.includes('/typing')) {
+      const conversationId = url.pathname.split('/').slice(0, -1).pop();
+
+      const indicators = await env.DB.prepare(`
+        SELECT * FROM typing_indicators
+        WHERE conversation_id = ? AND user_id != ? AND is_typing = TRUE AND timestamp > datetime('now', '-1 minute')
+      `).bind(conversationId, userId).all();
+
+      return new Response(JSON.stringify(response.success(indicators.results || [])), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'POST' && url.pathname.includes('/typing')) {
+      const conversationId = url.pathname.split('/').slice(0, -1).pop();
+      const body = await request.json();
+
+      await env.DB.prepare(`
+        INSERT OR REPLACE INTO typing_indicators (id, conversation_id, user_id, user_name, is_typing, timestamp)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `).bind(generateId(), conversationId, userId, body.userName || 'Unknown', body.isTyping, new Date().toISOString()).run();
+
+      return new Response(JSON.stringify(response.success({ success: true })), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'POST') {
+      const contentType = request.headers.get('content-type');
+      let conversationId, messageType, content, fileUrl, fileName, fileSize, fileType, replyTo;
+
+      if (contentType?.includes('multipart/form-data')) {
+        const formData = await request.formData();
+        conversationId = formData.get('conversationId') as string;
+        messageType = formData.get('messageType') as string;
+        content = formData.get('content') as string;
+        replyTo = formData.get('replyTo') as string;
+
+        const file = formData.get('file') as File | null;
+        if (file) {
+          const fileKey = `messages/${generateId()}-${file.name}`;
+          await env.R2.put(fileKey, file);
+          fileUrl = `${env.R2_PUBLIC_URL}/${fileKey}`;
+          fileName = file.name;
+          fileSize = file.size;
+          fileType = file.type;
+        }
+      } else {
+        const body = await request.json();
+        conversationId = body.conversationId;
+        messageType = body.messageType;
+        content = body.content;
+        replyTo = body.replyTo;
+      }
+
+      const messageId = generateId();
+      const now = new Date().toISOString();
+
+      await env.DB.prepare(`
+        INSERT INTO messages (id, conversation_id, sender_id, message_type, content, file_url, file_name, file_size, file_type, reply_to, status, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'sent', ?, ?)
+      `).bind(messageId, conversationId, userId, messageType, content, fileUrl || null, fileName || null, fileSize || null, fileType || null, replyTo || null, now, now).run();
+
+      const message = await env.DB.prepare(`
+        SELECT m.*, u.name as sender_name, u.role as sender_role, u.avatar as sender_avatar
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE m.id = ?
+      `).bind(messageId).first();
+
+      await env.DB.prepare(`
+        UPDATE conversations SET updated_at = ? WHERE id = ?
+      `).bind(now, conversationId).run();
+
+      return new Response(JSON.stringify(response.success(message)), {
+        status: HTTP_STATUS_CODES.CREATED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (method === 'GET' && url.pathname.includes('/messages')) {
+      const conversationId = url.pathname.split('/').slice(0, -1).pop();
+      const limit = parseInt(url.searchParams.get('limit') || '50');
+      const offset = parseInt(url.searchParams.get('offset') || '0');
+
+      const messages = await env.DB.prepare(`
+        SELECT m.*, u.name as sender_name, u.role as sender_role, u.avatar as sender_avatar
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE m.conversation_id = ?
+        ORDER BY m.created_at DESC
+        LIMIT ? OFFSET ?
+      `).bind(conversationId, limit, offset).all();
+
+      return new Response(JSON.stringify(response.success((messages.results || []).reverse())), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.METHOD_NOT_ALLOWED)), {
+      status: HTTP_STATUS_CODES.METHOD_NOT_ALLOWED,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Messages handler error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleMessagesUnreadCount(request, env, corsHeaders) {
+  try {
+    const userId = await getUserIdFromRequest(request, env);
+
+    if (!userId) {
+      return new Response(JSON.stringify(response.error(ERROR_MESSAGES.UNAUTHORIZED)), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const totalResult = await env.DB.prepare(`
+      SELECT COUNT(*) as total
+      FROM messages m
+      JOIN conversation_participants cp ON m.conversation_id = cp.conversation_id
+      WHERE cp.user_id = ? AND m.sender_id != ? AND m.read_at IS NULL
+    `).bind(userId, userId).first();
+
+    const conversationsResult = await env.DB.prepare(`
+      SELECT m.conversation_id, COUNT(*) as count
+      FROM messages m
+      JOIN conversation_participants cp ON m.conversation_id = cp.conversation_id
+      WHERE cp.user_id = ? AND m.sender_id != ? AND m.read_at IS NULL
+      GROUP BY m.conversation_id
+    `).bind(userId, userId).all();
+
+    return new Response(JSON.stringify(response.success({
+      total: totalResult?.total || 0,
+      conversations: conversationsResult.results || []
+    })), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Unread count handler error:', e);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// ============================================
+// WEBSOCKET & REAL-TIME HANDLERS
+// ============================================
+
+async function handleWebSocket(request, env) {
+  try {
+    const url = new URL(request.url);
+    const token = url.searchParams.get('token');
+
+    if (!token) {
+      return new Response('Token required', { status: 401 });
+    }
+
+    const payload = await JWT.verify(token, env.JWT_SECRET || 'default_secret');
+    if (!payload) {
+      return new Response('Invalid token', { status: 401 });
+    }
+
+    const pair = new WebSocketPair();
+    const [client, server] = pair;
+
+    server.accept();
+
+    const connectionId = generateId();
+    const subscriptions = new Set();
+
+    logger.info(`WebSocket: Connection established - ${payload.role}/${payload.user_id} (${connectionId})`);
+
+    server.addEventListener('message', async (event) => {
+      try {
+        const data = JSON.parse(event.data);
+
+        switch (data.type) {
+          case 'subscribe':
+            subscriptions.add(data.eventType);
+            logger.debug(`WebSocket: User ${payload.user_id} subscribed to ${data.eventType}`);
+            break;
+
+          case 'unsubscribe':
+            subscriptions.delete(data.eventType);
+            logger.debug(`WebSocket: User ${payload.user_id} unsubscribed from ${data.eventType}`);
+            break;
+
+          case 'ping':
+            server.send(JSON.stringify({
+              type: 'pong',
+              timestamp: new Date().toISOString()
+            }));
+            break;
+
+          case 'disconnect':
+            server.close(1000, 'Client disconnect');
+            break;
+
+          default:
+            logger.warn(`WebSocket: Unknown message type: ${data.type}`);
+        }
+      } catch (error) {
+        logger.error('WebSocket: Message handling error:', error);
+        server.send(JSON.stringify({
+          type: 'error',
+          message: ERROR_MESSAGES.WS_INVALID_MESSAGE
+        }));
+      }
+    });
+
+    server.addEventListener('close', () => {
+      logger.info(`WebSocket: Connection closed - ${payload.user_id} (${connectionId})`);
+      subscriptions.clear();
+    });
+
+    return new Response(null, {
+      status: 101,
+      webSocket: client,
+    });
+
+  } catch (error) {
+    logger.error('WebSocket: Connection error:', error);
+    return new Response(ERROR_MESSAGES.SERVER_ERROR, { status: 500 });
+  }
+}
+
+async function handleUpdates(request, env, corsHeaders) {
+  try {
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const token = authHeader.substring(7);
+    const payload = await JWT.verify(token, env.JWT_SECRET || 'default_secret');
+
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const lastSync = request.headers.get('If-Modified-Since');
+    const lastSyncDate = lastSync ? new Date(lastSync) : new Date(0);
+
+    const updates = [];
+
+    const tables = [
+      'grades',
+      'attendance',
+      'announcements',
+      'e_library',
+      'school_events',
+      'users'
+    ];
+
+    for (const table of tables) {
+      try {
+        const hasUpdatedAt = await env.DB.prepare(`
+          PRAGMA table_info(${table})
+        `).all();
+
+        const updatedAtColumn = hasUpdatedAt.results?.some((col) => col.name === 'updated_at');
+
+        let query = '';
+        let params = [];
+
+        if (updatedAtColumn) {
+          query = `SELECT * FROM ${table} WHERE updated_at > ?`;
+          params = [lastSyncDate.toISOString()];
+        } else {
+          query = `SELECT * FROM ${table} LIMIT 100`;
+        }
+
+        const result = await env.DB.prepare(query).bind(...params).all();
+
+        if (result.results && result.results.length > 0) {
+          for (const row of result.results) {
+            const eventType = mapTableToEventType(table, row);
+            if (eventType) {
+              updates.push({
+                type: eventType,
+                entity: table.replace(/_/g, ''),
+                entityId: row.id,
+                data: row,
+                timestamp: row.updated_at || new Date().toISOString(),
+                userRole: payload.role,
+                userId: payload.user_id
+              });
+            }
+          }
+        }
+      } catch (error) {
+        logger.debug(`WebSocket: Failed to fetch updates from ${table}:`, error);
+      }
+    }
+
+    return new Response(JSON.stringify(response.success({ updates }, 'Updates retrieved')), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+
+  } catch (error) {
+    logger.error('WebSocket: Updates error:', error);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+function mapTableToEventType(table, _row) {
+  const entity = table.replace(/_/g, '');
+
+  if (entity === 'grades') return 'grade_updated';
+  if (entity === 'attendance') return 'attendance_updated';
+  if (entity === 'announcements') return 'announcement_updated';
+  if (entity === 'elibrary') return 'library_material_updated';
+  if (entity === 'schoolevents') return 'event_updated';
+  if (entity === 'users') return 'user_status_changed';
+
+  return null;
+}
+
+// ============================================
 // MAIN HANDLER
 // ============================================
 
@@ -1767,14 +3479,19 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
     const cors = corsHeaders(env.ALLOWED_ORIGIN, requestOrigin);
 
     logger.setLevel(env.LOG_LEVEL || 'info');
-    
+
     // Handle preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: cors });
     }
-    
+
     const url = new URL(request.url);
-    
+
+    // Handle WebSocket upgrade
+    if (url.pathname === '/ws' && request.headers.get('upgrade') === 'websocket') {
+      return handleWebSocket(request, env);
+    }
+
     // Route handlers
     const routes = {
       '/seed': handleSeed,
@@ -1782,11 +3499,15 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
       '/api/auth/login': handleLogin,
       '/api/auth/logout': handleLogout,
       '/api/auth/refresh': handleRefreshToken,
+      '/api/auth/forgot-password': handleForgotPassword,
+      '/api/auth/verify-reset-token': handleVerifyResetToken,
+      '/api/auth/reset-password': handleResetPassword,
       '/api/email/send': handleSendEmail,
       '/api/files/upload': handleFileUpload,
       '/api/files/download': handleFileDownload,
       '/api/files/delete': handleFileDelete,
       '/api/files/list': handleFileList,
+      '/api/updates': handleUpdates,
       '/api/users': (r, e, c) => handleCRUD(r, e, c, 'users'),
       '/api/ppdb_registrants': (r, e, c) => handleCRUD(r, e, c, 'ppdb_registrants'),
       '/api/inventory': (r, e, c) => handleCRUD(r, e, c, 'inventory'),
@@ -1801,6 +3522,16 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
       '/api/classes': (r, e, c) => handleCRUD(r, e, c, 'classes'),
       '/api/schedules': (r, e, c) => handleCRUD(r, e, c, 'schedules'),
       '/api/grades': (r, e, c) => handleCRUD(r, e, c, 'grades'),
+      '/api/assignments': handleAssignments,
+      '/api/assignments/*/publish': handlePublishAssignment,
+      '/api/assignments/*/close': handleCloseAssignment,
+      '/api/assignment-submissions': handleAssignmentSubmissions,
+      '/api/assignment-submissions/*': handleAssignmentSubmissions,
+      '/api/messages/conversations': handleConversations,
+      '/api/messages/conversations/*': handleConversations,
+      '/api/messages': handleMessages,
+      '/api/messages/*': handleMessages,
+      '/api/messages/unread-count': handleMessagesUnreadCount,
       '/api/attendance': (r, e, c) => handleCRUD(r, e, c, 'attendance'),
       '/api/e_library': (r, e, c) => handleCRUD(r, e, c, 'e_library'),
       '/api/announcements': (r, e, c) => handleCRUD(r, e, c, 'announcements'),

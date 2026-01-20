@@ -151,7 +151,13 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
     autoSaveActions.reset(initialFormData);
     setUploadedDocument(null);
     setDiplomaImage(null);
+    setExtractedGrades(null);
+    setOcrResult(null);
+    setShowGradesPreview(false);
     setOcrProgress({ status: 'Idle', progress: 0 });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   }, [autoSaveActions, initialFormData]);
 
   const [uploadedDocument, setUploadedDocument] = useState<FileUploadResponse | null>(null);
@@ -166,6 +172,7 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
   const [isProcessingOCR, setIsProcessingOCR] = useState(false);
   const [ocrProgress, setOcrProgress] = useState<OCRProgress>({ status: 'Idle', progress: 0 });
   const [extractedGrades, setExtractedGrades] = useState<Record<string, number> | null>(null);
+  const [ocrResult, setOcrResult] = useState<OCRExtractionResult | null>(null);
   const [showGradesPreview, setShowGradesPreview] = useState(false);
   const [diplomaImage, setDiplomaImage] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -281,6 +288,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
         setOcrProgress(progress);
       });
 
+      setOcrResult(result);
+
       if (result.data.grades && Object.keys(result.data.grades).length > 0) {
         setExtractedGrades(result.data.grades);
         setShowGradesPreview(true);
@@ -311,6 +320,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
   const clearDiplomaImage = () => {
     setDiplomaImage(null);
     setExtractedGrades(null);
+    setOcrResult(null);
     setShowGradesPreview(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -384,6 +394,15 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
       registrationDate: new Date().toISOString().split('T')[0],
       status: 'pending',
       documentUrl: uploadedDocument?.key,
+      ocrMetadata: ocrResult ? {
+        extractedGrades: ocrResult.data.grades,
+        extractedFullName: ocrResult.data.fullName,
+        extractedNisn: ocrResult.data.nisn,
+        extractedSchoolName: ocrResult.data.schoolName,
+        confidence: ocrResult.confidence,
+        quality: ocrResult.quality,
+        processedAt: new Date().toISOString(),
+      } : undefined,
     };
 
     try {

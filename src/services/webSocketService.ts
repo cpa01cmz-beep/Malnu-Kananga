@@ -7,7 +7,7 @@ import { apiService } from './apiService';
 import type { AuthPayload } from './apiService';
 import { logger } from '../utils/logger';
 import { DEFAULT_API_BASE_URL } from '../config';
-import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification } from '../types';
+import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification, DirectMessage, Conversation } from '../types';
 
 /* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
 
@@ -26,14 +26,16 @@ export interface RealTimeEvent {
   userId: string;
 }
 
-export type RealTimeEventType = 
+export type RealTimeEventType =
   | 'grade_created' | 'grade_updated' | 'grade_deleted'
   | 'attendance_marked' | 'attendance_updated'
   | 'announcement_created' | 'announcement_updated' | 'announcement_deleted'
   | 'library_material_added' | 'library_material_updated'
   | 'event_created' | 'event_updated' | 'event_deleted'
   | 'user_role_changed' | 'user_status_changed'
-  | 'message_created' | 'message_updated'
+  | 'message_created' | 'message_updated' | 'message_deleted'
+  | 'message_read'
+  | 'conversation_created' | 'conversation_updated' | 'conversation_deleted'
   | 'notification_created' | 'notification_read';
 
 export interface WebSocketConnectionState {
@@ -284,6 +286,10 @@ class WebSocketService {
         case 'notification':
           this.updateNotificationsData(event);
           break;
+        case 'message':
+        case 'conversation':
+          this.updateMessagesData(event);
+          break;
         default:
           logger.debug('WebSocket: No local storage update for entity', event.entity);
       }
@@ -396,15 +402,53 @@ private updateEventsData(event: RealTimeEvent): void {
     const notificationsJSON = localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS);
     const notifications: PushNotification[] = notificationsJSON ? JSON.parse(notificationsJSON) : [];
     const notificationData = event.data as PushNotification;
-    
+
     const index = notifications.findIndex((n: PushNotification) => n.id === notificationData.id);
     if (index !== -1) {
       notifications[index] = notificationData;
     } else if (event.type === 'notification_created') {
       notifications.push(notificationData);
     }
-    
+
     localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+  }
+
+  private updateMessagesData(event: RealTimeEvent): void {
+    if (event.entity === 'message') {
+      const messagesJSON = localStorage.getItem(STORAGE_KEYS.MESSAGES);
+      const messages: DirectMessage[] = messagesJSON ? JSON.parse(messagesJSON) : [];
+      const messageData = event.data as DirectMessage;
+
+      const index = messages.findIndex((m: DirectMessage) => m.id === messageData.id);
+      if (event.type === 'message_deleted') {
+        if (index !== -1) messages.splice(index, 1);
+      } else {
+        if (index !== -1) {
+          messages[index] = messageData;
+        } else if (event.type === 'message_created') {
+          messages.push(messageData);
+        }
+      }
+
+      localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(messages));
+    } else if (event.entity === 'conversation') {
+      const conversationsJSON = localStorage.getItem(STORAGE_KEYS.CONVERSATIONS);
+      const conversations: Conversation[] = conversationsJSON ? JSON.parse(conversationsJSON) : [];
+      const conversationData = event.data as Conversation;
+
+      const index = conversations.findIndex((c: Conversation) => c.id === conversationData.id);
+      if (event.type === 'conversation_deleted') {
+        if (index !== -1) conversations.splice(index, 1);
+      } else {
+        if (index !== -1) {
+          conversations[index] = conversationData;
+        } else if (event.type === 'conversation_created') {
+          conversations.push(conversationData);
+        }
+      }
+
+      localStorage.setItem(STORAGE_KEYS.CONVERSATIONS, JSON.stringify(conversations));
+    }
   }
 
   /**

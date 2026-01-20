@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { PlusIcon } from './icons/PlusIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { TrashIcon } from './icons/TrashIcon';
+import DocumentTextIcon from './icons/DocumentTextIcon';
 import { User, UserRole, UserExtraRole } from '../types';
 import Button from './ui/Button';
 import Input from './ui/Input';
@@ -9,6 +10,7 @@ import Select from './ui/Select';
 import Badge from './ui/Badge';
 import Modal from './ui/Modal';
 import ConfirmationDialog from './ui/ConfirmationDialog';
+import UserImport from './UserImport';
 import { api } from '../services/apiService';
 import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { useErrorHandler } from '../hooks/useErrorHandler';
@@ -35,6 +37,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -72,6 +75,10 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
       setCurrentUser({ role: 'student', status: 'active', extraRole: null });
       setIsEditing(false);
       setIsModalOpen(true);
+  };
+
+  const handleImportComplete = () => {
+    fetchUsers();
   };
 
   const handleEditUser = (user: User) => {
@@ -201,9 +208,14 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                 <h2 className="text-2xl sm:text-xl font-bold text-neutral-900 dark:text-white">Manajemen Pengguna</h2>
             </div>
             {canCreateUser && (
-                <Button onClick={handleAddUser} icon={<PlusIcon className="w-5 h-5" />}>
-                    <span className="hidden sm:inline">Tambah</span>
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="secondary" onClick={() => setIsImportModalOpen(true)} icon={<DocumentTextIcon className="w-5 h-5" />}>
+                        <span className="hidden sm:inline">Import CSV</span>
+                    </Button>
+                    <Button onClick={handleAddUser} icon={<PlusIcon className="w-5 h-5" />}>
+                        <span className="hidden sm:inline">Tambah</span>
+                    </Button>
+                </div>
             )}
         </div>
 
@@ -376,6 +388,12 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
             setIsDeleteDialogOpen(false);
             setUserToDelete(null);
           }}
+        />
+
+        <UserImport
+          isOpen={isImportModalOpen}
+          onClose={() => setIsImportModalOpen(false)}
+          onImportComplete={handleImportComplete}
         />
     </div>
   );
