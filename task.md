@@ -1,10 +1,32 @@
 # MA Malnu Kananga - Task Tracker
 
-**Last Updated**: 2026-01-19 (AI-003: Study Plan Generation Completed)
+**Last Updated**: 2026-01-20 (Documentation sanitization - removed duplicate task entries)
 
 ## Active Tasks
 
 ### Completed Tasks ✅
+
+### 2026-01-20
+- [x] **Documentation Cleanup** (DOC-006)
+  - Task ID: DOC-006
+  - Description: Remove duplicate task entries from task.md and ensure consistency
+  - Priority: Medium
+  - Estimated: 1 hour
+  - Status: **Completed**
+  - Completed: 2026-01-20
+  - Dependencies: None
+  - Agent: Lead Autonomous Engineer & System Guardian (Scribe Mode)
+  - Changes:
+    - Removed duplicate MSG-001 (Real-Time Messaging) entry
+    - Removed duplicate ASG-004 (Grade Analytics Dashboard) entry
+    - Removed duplicate AI-004 (Study Plan Analytics) entry from backlog (marked as completed)
+    - Removed duplicate ASG-002 (Student Submissions UI) entry
+    - Removed duplicate ASG-001 (Assignment Creation UI) entry
+    - Removed duplicate AI-003 (Study Plan Generation) entry
+    - Updated AI-004 status in backlog from "Pending" to "Completed"
+    - Updated task.md "Last Updated" date to 2026-01-20
+  - Files modified:
+    - task.md (removed 6 duplicate entries, updated 1 status, updated date)
 
 ### 2026-01-19
 - [x] **Study Plan Generation** (AI-003)
@@ -50,8 +72,7 @@
     - src/constants.ts (added STUDY_PLANS and ACTIVE_STUDY_PLAN storage keys)
     - src/components/StudentPortal.tsx (added study-plan view, menu item, import, and voice command support)
 
-- [x] **Real-Time Messaging** (MSG-001)
-- [x] **Real-Time Messaging** (MSG-001)
+ - [x] **Real-Time Messaging** (MSG-001)
   - Task ID: MSG-001
   - Description: Build WebSocket-based messaging between users
   - Priority: Medium
@@ -155,8 +176,7 @@
     - src/components/TeacherDashboard.tsx (added quiz-generator integration)
 
 ### 2026-01-19
-- [x] **Grade Analytics Dashboard** (ASG-004)
-- [x] **Grade Analytics Dashboard** (ASG-004)
+ - [x] **Grade Analytics Dashboard** (ASG-004)
   - Task ID: ASG-004
   - Description: Build comprehensive grade analytics dashboard for teachers and admins
   - Priority: Medium
@@ -241,46 +261,6 @@
       - src/components/AssignmentGrading.tsx (AI feedback UI integration)
 
 ### In Progress 🚧
-
-- [x] **Study Plan Analytics** (AI-004)
-  - Task ID: AI-004
-  - Description: Track and analyze study plan effectiveness and progress
-  - Priority: Medium
-  - Estimated: 2 days
-  - Status: **Completed**
-  - Completed: 2026-01-19
-  - Dependencies: AI-003 (✅ completed)
-  - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
-  - Changes:
-    - Added StudyPlanAnalytics, PerformanceImprovement, SubjectImprovement, SubjectProgress, WeeklyActivity, AnalyticsRecommendation, StudyPlanHistory types to types.ts
-    - Added STUDY_PLAN_ANALYTICS, STUDY_PLAN_HISTORY, WEEKLY_PROGRESS storage keys to constants.ts (dynamic factory functions)
-    - Created StudyPlanAnalytics.tsx component with comprehensive analytics dashboard
-    - Integrated StudyPlanAnalytics into StudentPortal with new 'study-analytics' view and menu item
-    - Added 'study-analytics' to valid views for voice commands
-    - Comprehensive test coverage (20+ test cases) in StudyPlanAnalytics.test.tsx
-    - Features:
-      - Overview tab with key metrics (progress, completion rate, adherence rate, effectiveness score)
-      - Progress tracking over time with area charts
-      - Subject-based analytics with progress bars and charts
-      - Weekly activity tracking with detailed metrics
-      - AI-generated recommendations with actionable items
-      - Performance improvement analytics (subjects improved, declined, maintained)
-      - Effectiveness score calculation based on progress, adherence, and completion
-      - Export analytics to JSON functionality
-      - Refresh analytics functionality
-      - Tab navigation (Overview, Progress, Subjects, Activities, Recommendations)
-      - Loading, error, and empty state handling
-      - Recharts integration for visualizations
-      - Permission-based access control
-  - Files created:
-    - src/components/StudyPlanAnalytics.tsx (650+ lines)
-    - src/components/__tests__/StudyPlanAnalytics.test.tsx (550+ lines, 20+ tests)
-  - Files modified:
-    - src/types.ts (added StudyPlanAnalytics-related types and interfaces)
-    - src/constants.ts (added STUDY_PLAN_ANALYTICS, STUDY_PLAN_HISTORY, WEEKLY_PROGRESS storage keys)
-    - src/components/StudentPortal.tsx (added study-analytics view, menu item, import, and conditional rendering)
-
-### Completed Tasks ✅
 
 ### 2026-01-19
 - [x] **Group Chats** (MSG-002)
@@ -375,48 +355,9 @@
 ## Completed Tasks ✅
 
 ### 2026-01-19
-- [x] **Student Submissions UI** (ASG-002)
-  - Task ID: ASG-002
-  - Description: Build interface for students to submit assignments
-  - Priority: Medium
-  - Estimated: 2 days
-  - Status: **Completed**
-  - Completed: 2026-01-19
-  - Dependencies: ASG-001 (✅ completed)
-  - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
-  - Changes:
-    - Created StudentAssignments.tsx component with full assignment submission capabilities
-    - Added assignment_submissions and submission_attachments tables to database schema
-    - Created handleAssignmentSubmissions handler in worker.js
-    - Added /api/assignment-submissions routes
-    - Created assignmentSubmissionsAPI in apiService.ts with full CRUD operations
-    - Added ASSIGNMENT_SUBMISSIONS storage key to constants.ts
-    - Added notifyAssignmentSubmit to useEventNotifications and useUnifiedNotifications hooks
-    - Created AssignmentIcon.tsx component
-    - Integrated StudentAssignments into StudentPortal
-    - Added 'assignments' view to StudentPortal
-    - Added assignments menu item with voice command support
-    - Comprehensive test coverage (20+ test cases) in StudentAssignments.test.tsx
-    - Features:
-      - Assignment list view with status indicators (Belum Dikirim, Dikirim, Terlambat, Dinilai)
-      - Due date tracking with days remaining calculation
-      - Assignment detail view with instructions and attachments
-      - Submission form with text input and file attachments (max 10MB)
-      - Late submission auto-detection based on due date
-      - View graded submissions with score and feedback
-      - Offline support with queueing
-      - Permission-based access control
-  - Files created:
-    - src/components/StudentAssignments.tsx (650+ lines)
-    - src/components/icons/AssignmentIcon.tsx
-    - src/components/__tests__/StudentAssignments.test.tsx (500+ lines, 20+ tests)
-  - Files modified:
-    - src/constants.ts (added ASSIGNMENT_SUBMISSIONS storage key)
-    - src/services/apiService.ts (added assignmentSubmissionsAPI)
-    - src/hooks/useEventNotifications.ts (added notifyAssignmentSubmit)
-    - src/hooks/useUnifiedNotifications.ts (added notifyAssignmentSubmit)
-    - src/components/StudentPortal.tsx (added assignments view and menu item)
-    - worker.js (added submission tables, handleAssignmentSubmissions handler, routes)
+---
+
+## Completed Tasks ✅
 
 ### 2026-01-18
 - [x] **Documentation Sanitization** (DOC-005)
@@ -645,40 +586,9 @@
   - 1529 tests passing
   - 10 tests skipped
    - Comprehensive coverage of services, components, and integrations
-   - Status: **Completed**
-   
-   - [x] **Assignment Creation UI** (ASG-001)
-   - Task ID: ASG-001
-   - Description: Build interface for teachers to create assignments
-   - Priority: Medium
-   - Estimated: 3 days
-   - Status: **Completed**
-   - Completed: 2026-01-19
-   - Dependencies: None
-   - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
-   - Changes:
-     - Created AssignmentCreation.tsx component with full assignment creation capabilities
-     - Added Assignment, AssignmentType, AssignmentStatus, AssignmentAttachment, AssignmentRubric, RubricCriteria, AssignmentSubmission, SubmissionAttachment types to types.ts
-     - Created assignmentsAPI in apiService.ts with full CRUD operations
-     - Added ASSIGNMENTS storage key to constants.ts
-     - Updated worker.js with assignments, assignment_attachments, assignment_rubrics, and rubric_criteria tables
-     - Added backend handlers: handleAssignments, handlePublishAssignment, handleCloseAssignment
-     - Updated TeacherDashboard.tsx to include 'assignments' view and "Buat Tugas" card
-     - Added notifyAssignmentCreate to useEventNotifications and useUnifiedNotifications hooks
-     - Added comprehensive tests: AssignmentCreation.test.tsx (20+ test cases)
-   - Files created:
-     - src/components/AssignmentCreation.tsx (650+ lines)
-     - src/components/__tests__/AssignmentCreation.test.tsx (400+ lines, 20+ tests)
-   - Files modified:
-     - src/types.ts (added Assignment-related types and enums)
-     - src/services/apiService.ts (added assignmentsAPI and exports)
-     - src/constants.ts (added ASSIGNMENTS storage key)
-     - src/hooks/useEventNotifications.ts (added notifyAssignmentCreate)
-     - src/hooks/useUnifiedNotifications.ts (added notifyAssignmentCreate)
-     - src/components/TeacherDashboard.tsx (added assignments view and card)
-     - worker.js (added tables and handlers for assignments)
+    - Status: **Completed**
 
-   - [x] **User Management UI** (USER-001)
+    - [x] **User Management UI** (USER-001)
   - Complete CRUD interface with permission-based access
   - Role and extra role management
   - Real-time notifications for role changes
@@ -797,22 +707,23 @@
    - Status: **Completed** (2026-01-19)
    - Dependencies: AI-001 (✅ completed)
 
- - [x] **Study Plan Generation**
-   - Task ID: AI-003
-   - Description: Generate personalized study plans based on student performance
-   - Priority: Medium
-   - Estimated: 3 days
-   - Status: **Completed** (2026-01-19)
-   - Dependencies: ASG-004 (✅ completed)
+  - [x] **Study Plan Generation**
+    - Task ID: AI-003
+    - Description: Generate personalized study plans based on student performance
+    - Priority: Medium
+    - Estimated: 3 days
+    - Status: **Completed**
+    - Completed: 2026-01-19
+    - Dependencies: ASG-004 (✅ completed)
 
- - [ ] **Study Plan Analytics**
-   - Task ID: AI-004
-   - Description: Track and analyze study plan effectiveness and progress
-   - Priority: Medium
-   - Estimated: 2 days
-   - Status: **Pending**
-   - Dependencies: AI-003 (✅ completed)
-
+  - [x] **Study Plan Analytics**
+    - Task ID: AI-004
+    - Description: Track and analyze study plan effectiveness and progress
+    - Priority: Medium
+    - Estimated: 2 days
+    - Status: **Completed**
+    - Completed: 2026-01-19
+    - Dependencies: AI-003 (✅ completed)
 
 #### Communication
 - [ ] **Announcement System**
