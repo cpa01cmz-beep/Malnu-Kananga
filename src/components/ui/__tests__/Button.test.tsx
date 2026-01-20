@@ -155,12 +155,28 @@ describe('Button', () => {
       expect(button).not.toHaveAttribute('aria-busy');
     });
 
-    it('should not have aria-label for regular button with icon', () => {
-      render(<Button icon={<MockIcon />}>Button with Icon</Button>);
-      
+    it('should have aria-label for regular button when ariaLabel prop is provided', () => {
+      render(<Button ariaLabel="Custom label">Button with Icon</Button>);
+
+      const button = screen.getByRole('button', { name: 'Custom label' });
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-label', 'Custom label');
+    });
+
+    it('should not have aria-label for regular button when ariaLabel prop is not provided', () => {
+      render(<Button>Button with Icon</Button>);
+
       const button = screen.getByRole('button', { name: 'Button with Icon' });
       expect(button).toBeInTheDocument();
       expect(button).not.toHaveAttribute('aria-label');
+    });
+
+    it('should have aria-label for regular button with icon when ariaLabel prop is provided', () => {
+      render(<Button icon={<MockIcon />} ariaLabel="Submit form">Submit</Button>);
+
+      const button = screen.getByRole('button', { name: 'Submit form' });
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-label', 'Submit form');
     });
 
     it('should have proper focus visible states', () => {
