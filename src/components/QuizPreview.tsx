@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import type { Quiz, QuizQuestion, QuizQuestionType, QuizDifficulty } from '../types';
-import { Button } from './ui/Button';
-import { Input } from './ui/Input';
-import { Select } from './ui/Select';
-import { Textarea } from './ui/Textarea';
-import { Card } from './ui/Card';
-import { Badge } from './ui/Badge';
-import { Modal } from './ui/Modal';
-import { TrashIcon, PencilIcon, PlusIcon, SparklesIcon } from './icons';
+import Button from './ui/Button';
+import Input from './ui/Input';
+import Select from './ui/Select';
+import Textarea from './ui/Textarea';
+import Card from './ui/Card';
+import Badge from './ui/Badge';
+import Modal from './ui/Modal';
+import { TrashIcon } from './icons/TrashIcon';
+import { PencilIcon } from './icons/PencilIcon';
+import { PlusIcon } from './icons/PlusIcon';
+import { SparklesIcon } from './icons/SparklesIcon';
 
 interface QuizPreviewProps {
   quiz: Quiz;

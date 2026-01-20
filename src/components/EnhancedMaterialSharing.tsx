@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { UsersIcon, GlobeAltIcon, LockClosedIcon, ChartBarIcon } from './icons/UsersIcon';
-import { ShareIcon, ShieldIcon, XMarkIcon, ClockIcon, UserIcon } from './icons/MaterialIcons';
+import { UsersIcon } from './icons/UsersIcon';
+import { ShareIcon, ShieldIcon, XMarkIcon, ClockIcon } from './icons/MaterialIcons';
+import { ChartBarIcon } from './icons/ChartBarIcon';
+import { UserIcon } from './icons/UserIcon';
+import { LockIcon } from './icons/LockIcon';
 import { ELibrary, UserRole, UserExtraRole, MaterialShareAudit } from '../types';
 import { materialPermissionService, MaterialShareAudit as ShareAudit } from '../services/materialPermissionService';
 import { logger } from '../utils/logger';
@@ -291,7 +294,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
             <div className="space-y-3">
               {permissionSummary.publicAccess && (
                 <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                  <GlobeAltIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <ShareIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-green-900 dark:text-green-100">
                       Dibagikan ke Publik
@@ -373,7 +376,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
 
               {!permissionSummary.publicAccess && !permissionSummary.userCount && !permissionSummary.roleCount && (
                 <div className="text-center py-8">
-                  <LockClosedIcon className="w-12 h-12 text-neutral-300 dark:text-neutral-600 mx-auto mb-3" />
+                  <LockIcon className="w-12 h-12 text-neutral-300 dark:text-neutral-600 mx-auto mb-3" />
                   <p className="text-sm text-neutral-500 dark:text-neutral-400">
                     Materi belum dibagikan
                   </p>
@@ -474,7 +477,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
                 >
                   {mode === 'users' && <UserIcon className="w-6 h-6 mx-auto mb-2 text-neutral-600 dark:text-neutral-400" />}
                   {mode === 'roles' && <UsersIcon className="w-6 h-6 mx-auto mb-2 text-neutral-600 dark:text-neutral-400" />}
-                  {mode === 'public' && <GlobeAltIcon className="w-6 h-6 mx-auto mb-2 text-neutral-600 dark:text-neutral-400" />}
+                  {mode === 'public' && <ShareIcon className="w-6 h-6 mx-auto mb-2 text-neutral-600 dark:text-neutral-400" />}
                   <p className="text-xs font-medium text-neutral-900 dark:text-white">
                     {mode === 'users' && 'Pengguna Spesifik'}
                     {mode === 'roles' && 'Berdasarkan Peran'}

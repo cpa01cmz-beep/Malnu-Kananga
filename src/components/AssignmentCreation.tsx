@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PlusIcon, XMarkIcon } from './icons/MaterialIcons';
+import { PlusIcon } from './icons/PlusIcon';
+import { XMarkIcon } from './icons/MaterialIcons';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { assignmentsAPI, FileUploadResponse } from '../services/apiService';
 import { 

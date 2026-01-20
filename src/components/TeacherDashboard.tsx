@@ -5,7 +5,7 @@ import { UsersIcon } from './icons/UsersIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { ArchiveBoxIcon } from './icons/ArchiveBoxIcon';
 import { ChartLineIcon } from './icons/ChartLineIcon';
-import SparklesIcon from './icons/SparklesIcon';
+import { SparklesIcon } from './icons/SparklesIcon';
 import GradingManagement from './GradingManagement';
 import ClassManagement from './ClassManagement';
 import MaterialUpload from './MaterialUpload';
@@ -13,8 +13,8 @@ import SchoolInventory from './SchoolInventory';
 import AssignmentCreation from './AssignmentCreation';
 import AssignmentGrading from './AssignmentGrading';
 import GradeAnalytics from './GradeAnalytics';
-import QuizGenerator from './QuizGenerator';
-import DirectMessage from './DirectMessage';
+import { QuizGenerator } from './QuizGenerator';
+import { DirectMessage } from './DirectMessage';
 import { GroupChat } from './GroupChat';
 import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
@@ -35,7 +35,7 @@ import VoiceCommandsHelp from './VoiceCommandsHelp';
 import Badge from './ui/Badge';
 import SmallActionButton from './ui/SmallActionButton';
 import { pdfExportService } from '../services/pdfExportService';
-import { ChatBubbleLeftRightIcon } from './icons/ChatBubbleLeftRightIcon';
+import ChatBubbleLeftRightIcon from './icons/ChatBubbleLeftRightIcon';
 
 interface TeacherDashboardProps {
     onShowToast?: (msg: string, type: ToastType) => void;

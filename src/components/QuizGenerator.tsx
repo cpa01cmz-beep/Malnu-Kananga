@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import type { ELibrary, QuizDifficulty, QuizQuestionType } from '../types';
 import { generateQuiz } from '../services/geminiService';
-import { materialsAPI } from '../services/apiService';
+import { eLibraryAPI } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
-import { Button } from './ui/Button';
-import { Input } from './ui/Input';
-import { Select } from './ui/Select';
-import { Textarea } from './ui/Textarea';
-import { Card } from './ui/Card';
-import { Modal } from './ui/Modal';
-import { LoadingSpinner } from './ui/LoadingSpinner';
-import { Badge } from './ui/Badge';
-import { BookOpenIcon, SparklesIcon, ClockIcon } from '../components/icons';
+import Button from './ui/Button';
+import Input from './ui/Input';
+import Select from './ui/Select';
+import Textarea from './ui/Textarea';
+import Card from './ui/Card';
+import Modal from './ui/Modal';
+import LoadingSpinner from './ui/LoadingSpinner';
+import Badge from './ui/Badge';
+import BookOpenIcon from './icons/BookOpenIcon';
+import { SparklesIcon } from './icons/SparklesIcon';
+import { ClockIcon } from './icons/ClockIcon';
 
 interface QuizGeneratorProps {
   onSuccess?: (quiz: any) => void;
@@ -53,7 +55,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
     try {
       setLoading(true);
       setError(null);
-      const response = await materialsAPI.getAll();
+      const response = await eLibraryAPI.getAll();
       setMaterials(response || []);
     } catch (err) {
       logger.error('Failed to load materials:', err);
