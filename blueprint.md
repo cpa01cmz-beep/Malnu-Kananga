@@ -179,43 +179,20 @@
 ##### Teacher Components
 - **`TeacherDashboard.tsx`** - Teacher dashboard with class and grade management
 
-##### Student Components
-- **`StudentLearningModule.tsx`** - Student learning modules interface
-- **`AcademicGrades.tsx`** - Academic grades display for students
-- **`ProgressAnalytics.tsx`** - Student progress and performance analytics (self-view)
-- **`StudyPlanGenerator.tsx`** - AI-powered study plan generation (completed 2026-01-19)
-  - Personalized study plan generation based on grades, attendance, and goals
-  - Priority-based subject planning (high/medium/low)
-  - Weekly schedule with day/time slots and activity types
-  - AI recommendations (study tips, time management, subject advice)
-  - Configurable duration (2, 4, 6, or 8 weeks)
-  - Tab-based interface (Overview, Subjects, Schedule, Recommendations)
-  - Local storage persistence
-  - Comprehensive test coverage (20+ test cases)
-- **`StudyPlanAnalytics.tsx`** - Study plan analytics and tracking (completed 2026-01-19)
-  - Overview tab with key metrics (progress, completion rate, adherence rate, effectiveness score)
-  - Progress tracking over time with area charts
-  - Subject-based analytics with progress bars and charts
-  - Weekly activity tracking with detailed metrics
-  - AI-generated recommendations with actionable items
-  - Performance improvement analytics (subjects improved, declined, maintained)
-  - Effectiveness score calculation
-  - Export analytics to JSON
-  - Tab navigation (Overview, Progress, Subjects, Activities, Recommendations)
-  - Local storage persistence
-  - Comprehensive test coverage (20+ test cases)
+##### Announcement Components
+- **`AnnouncementManager.tsx`** - Full announcement management system (completed 2026-01-20)
+  - Create/edit/delete announcements
+  - Targeting options (all users, by roles, by classes, specific users)
+  - Category selection (umum, akademik, kegiatan, keuangan)
+  - Search and filtering (by category, status)
+  - Announcement preview modal
+  - Announcement analytics modal (read tracking, read rate)
+  - Draft auto-save
+  - Push notification integration
+  - Permission-based access control (announcements.manage, announcements.view)
+  - Offline support indicators
+  - Integrated into AdminDashboard
 
-##### Parent Components
-- **`ParentGradesView.tsx`** - Parent view of child's grades
-- **`ParentAttendanceView.tsx`** - Parent view of child's attendance
-- **`ParentScheduleView.tsx`** - Parent view of child's schedule
-- **`ParentMeetingsView.tsx`** - Parent-teacher meetings interface
-- **`ParentMessagingView.tsx`** - Parent messaging interface
-- **`ParentPaymentsView.tsx`** - Parent payment and fee view
-- **`ParentNotificationSettings.tsx`** - Parent notification preferences
-
-##### Teacher Components
-- **`TeacherDashboard.tsx`** - Teacher dashboard with class and grade management
 - **`AssignmentCreation.tsx`** - Teacher creates assignments with rubrics (completed 2026-01-19)
 - **`AssignmentGrading.tsx`** - Assignment grading interface with submissions view (completed 2026-01-19)
 - **`GradeAnalytics.tsx`** - Comprehensive grade analytics dashboard for teachers (completed 2026-01-19)

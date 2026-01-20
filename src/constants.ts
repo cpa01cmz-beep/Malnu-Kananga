@@ -138,6 +138,12 @@ export const STORAGE_KEYS = {
     TYPING_INDICATORS: 'malnu_typing_indicators',
     MESSAGE_DRAFTS: (conversationId: string) => `malnu_message_draft_${conversationId}`,
     UNREAD_COUNTS: 'malnu_unread_counts',
+    
+    // Announcement System (new)
+    ANNOUNCEMENT_DRAFT: 'malnu_announcement_draft',
+    ANNOUNCEMENT_CACHE: 'malnu_announcement_cache',
+    ANNOUNCEMENT_READ: (announcementId: string, userId: string) => `malnu_announcement_read_${announcementId}_${userId}`,
+    ANNOUNCEMENT_ANALYTICS: (announcementId: string) => `malnu_announcement_analytics_${announcementId}`,
 } as const;
 
 export const USER_ROLES = {

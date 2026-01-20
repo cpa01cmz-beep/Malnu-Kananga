@@ -296,7 +296,7 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 #### Messaging System
 - [x] User-to-user messaging (completed 2026-01-19)
 - [x] Group chats (class, subject) (completed 2026-01-19)
-- [ ] Announcement broadcasts
+- [x] Announcement broadcasts (completed 2026-01-20)
 - [x] Message read receipts (completed 2026-01-19)
 - [x] File sharing in messages (completed 2026-01-19)
 
