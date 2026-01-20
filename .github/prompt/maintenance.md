@@ -37,8 +37,7 @@
             P0 | P1 | P2 | P3
 
           5. TOOL USAGE (MANDATORY)
-          - When analyzing PR or fixing issues, ALWAYS use custom tools from .opencode/tool/
-          - Examples: @check-console-logs, @find-untyped, @check-missing-error-handling
+          - When analyzing PR or fixing issues, your priority is to use custom tools from .opencode/tool/ (e.g @check-console-logs, @find-untyped, @check-missing-error-handling)
           - Tools provide automated analysis and fix suggestions
           - Report which tools you used and their results
           - If custom tools fail, focus on fixing the tools and make pull request from new branch
