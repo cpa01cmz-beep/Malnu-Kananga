@@ -575,6 +575,8 @@ All localStorage keys use `malnu_` prefix:
 
 ### Security Measures
 
+**Last Updated**: 2026-01-20 (Button accessibility fix for WCAG compliance)
+
 #### OWASP Top 10 Coverage
 1. **Injection**: Parameterized queries, input validation
 2. **Broken Auth**: JWT with refresh tokens, secure storage
@@ -599,6 +601,8 @@ All localStorage keys use `malnu_` prefix:
 - Zero `any` types in production code (TypeScript strict mode)
 - No console.log usage in production code (uses logger.ts)
 - All async functions have proper error handling with try-catch
+- WCAG accessibility compliance (2026-01-20: Button component aria-label fix)
+- ARIA labels available for all interactive elements
 - Centralized error handling in `errorHandler.ts`
 - Structured logging via `logger.ts`
 - Regular security scans (npm audit, SecretLint)

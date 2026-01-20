@@ -1,12 +1,39 @@
 # MA Malnu Kananga - Task Tracker
 
-**Last Updated**: 2026-01-20 (Completed systematic analysis of 12 conflicting PRs - PR #1156 created)
+**Last Updated**: 2026-01-20 (Completed A11Y-001: Button Component Accessibility Fixes)
 
 ## Active Tasks
+
+### In Progress 🚧
+*No tasks currently in progress*
 
 ### Completed Tasks ✅
 
 ### 2026-01-20
+- [x] **Button Component Accessibility Fixes** (A11Y-001)
+  - Task ID: A11Y-001
+  - Description: Fix aria-label behavior in Button component for WCAG compliance
+  - Priority: High (P1)
+  - Estimated: 1 hour
+  - Status: **Completed**
+  - Completed: 2026-01-20
+  - Dependencies: None
+  - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+  - Changes:
+    - Fixed aria-label behavior in src/components/ui/Button.tsx
+    - aria-label now available for all buttons (not just iconOnly)
+    - Changed computedAriaLabel to include ariaLabel prop for all buttons
+    - Conditionally apply aria-label attribute only when it exists
+    - Added 3 new test cases to verify aria-label behavior
+  - Files modified:
+    - src/components/ui/Button.tsx (lines 73-78)
+    - src/components/ui/__tests__/Button.test.tsx (added 3 test cases)
+  - Test Results:
+    - All 24 Button tests passing
+    - New tests verify: regular button with ariaLabel, without ariaLabel, with icon and ariaLabel
+  - Reference: Issue #1166, PRs #1135 and #1144 analysis
+
+- [x] **E2E Tests** (TST-002)
 - [x] **E2E Tests** (TST-002)
   - Task ID: TST-002
   - Description: Set up Playwright for end-to-end testing
