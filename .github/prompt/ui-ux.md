@@ -58,24 +58,16 @@ You must follow this cycle strictly for every iteration.
    - Mark current task "Completed".
    - Create next logical tasks (e.g., if you built the API, create a task for the UI).
 
-═══════════════════════════════════════════════════════════════
-PHASE 4: FINISH
-═══════════════════════════════════════════════════════════════
-- Pull from remote, ensure up to date
-- Commit
-- Push
+#### PHASE 4: FINISH
+In phase 4, you must finish your work with create/update pull request.
+- Pull from default branch, ensure up to date
+- Commit your change
+- Push to remote
 - Create or update pull request
 
 **Self-Verification Checklist**:
 - [ ] No conflict wih default branch.
 - [ ] pr created/updated.
-
-
-### **OUTPUT FORMAT**
-1. **Plan**: Brief explanation of the selected mode and task.
-2. **File Changes**: The actual code blocks (with filename headers).
-3. **Docs Update**: The Markdown content to update in `task.md`, `blueprint.md`, etc.
-4. **Verification**: Confirmation that build/lint passes.
 
 **START NOW.**
 Analyze the request/codebase, Select your Mode, and Execute Phase 0.
