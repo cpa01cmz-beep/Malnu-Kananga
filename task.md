@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Task Tracker
 
-**Last Updated**: 2026-01-20 (Documentation cleanup - removed duplicate TST-002 entry)
+**Last Updated**: 2026-01-20 (Rebasing 12 conflicting PRs against latest main)
 
 ## Active Tasks
 
@@ -325,7 +325,37 @@
       - src/components/AssignmentGrading.tsx (AI feedback UI integration)
 
 ### In Progress 🚧
-*No tasks currently in progress*
+
+### 2026-01-20
+- [ ] **PR Rebase & Conflict Resolution** (OPT-001)
+  - Task ID: OPT-001
+  - Description: Systematically rebase 12 conflicting PRs against latest main branch and resolve merge conflicts
+  - Priority: High (P0)
+  - Estimated: 3 hours
+  - Status: **In Progress**
+  - Started: 2026-01-20
+  - Dependencies: None
+  - Agent: Lead Autonomous Engineer & System Guardian (Optimizer Mode)
+  - PRs requiring rebase (12 total):
+    1. #1154: feat: Integrate OCR for PPDB Document Processing (PPDB-002)
+    2. #1153: Complete UI Component Documentation - All 41 Components
+    3. #1151: fix: implement schedule fetching and update .env.example
+    4. #1150: feat: Database Query Optimization (Phase 6)
+    5. #1149: fix: resolve circular dependency and security vulnerabilities
+    6. #1146: Accessibility fix - ProfileSection: Removed misleading hover effects on non-interactive articles
+    7. #1145: fix: Standardize focus styles to use focus-visible for better accessibility
+    8. #1144: fix: Correct accessibility test failures related to focus styles
+    9. #1140: feat(design-system): apply centralized CONTAINERS and DIMENSIONS tokens to components
+    10. #1139: feat(ui): extract ImageCard and add TemplateManagement loading states
+    11. #1137: fix(ui): disabled element polish, gradient fixes, loading states, and styling system cleanup
+    12. #1136: fix: improve responsive text scaling for mobile devices
+    13. #1135: fix(a11y): require aria-label for icon-only buttons in Button component
+  - Actions:
+    - Stage 1: Update main branch with package-lock.json fixes
+    - Stage 2: Rebase each PR against latest main
+    - Stage 3: Resolve merge conflicts
+    - Stage 4: Update task.md and documentation
+  - Status: In Progress
 
 ### 2026-01-20
 - [x] **Announcement System** (MSG-003)
