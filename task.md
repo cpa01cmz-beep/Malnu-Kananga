@@ -1,8 +1,82 @@
 # MA Malnu Kananga - Task Tracker
 
-**Last Updated**: 2026-01-20 (Documentation cleanup - removed duplicate TST-002 entry)
+**Last Updated**: 2026-01-20 (PR Rebase Task Added - TSK-001)
 
 ## Active Tasks
+
+### In Progress 🚧
+- [ ] **Systematic PR Rebase & Evaluation** (TSK-001)
+  - Task ID: TSK-001
+  - Description: Rebase and evaluate 13 PRs with merge conflicts against latest main
+  - Priority: Critical (P0)
+  - Estimated: 2-3 days
+  - Status: **In Progress**
+  - Started: 2026-01-20
+  - Dependencies: None
+  - Agent: Lead Autonomous Engineer & System Guardian (Optimizer Mode)
+  - PRs to evaluate:
+    1. PR 1154: Security fixes + OCR integration (2 commits ahead) - CONFLICTING
+    2. PR 1153: Component documentation (1 commit ahead) - UNKNOWN
+    3. PR 1151: Schedule fetching + .env.example (140 commits ahead) - UNKNOWN
+    4. PR 1150: Database optimization (134 commits ahead) - UNKNOWN
+    5. PR 1149: Circular dependency + undici security (127 commits ahead) - UNKNOWN
+    6. PR 1146: Accessibility hover fix (74 commits ahead) - UNKNOWN
+    7. PR 1145: Focus styles (70 commits ahead) - UNKNOWN
+    8. PR 1144: Focus styles test fixes (67 commits ahead) - UNKNOWN
+    9. PR 1140: Design token system (46 commits ahead) - UNKNOWN
+    10. PR 1139: ImageCard component (28 commits ahead) - UNKNOWN
+    11. PR 1137: Gradient fixes (25 commits ahead) - UNKNOWN
+    12. PR 1136: Responsive text (8 commits ahead) - UNKNOWN
+    13. PR 1135: Button accessibility (7 commits ahead) - UNKNOWN
+  - Strategy:
+    1. Investigate each PR to determine if changes are still relevant
+    2. Check if changes conflict with existing features in main
+    3. Identify security-critical fixes that must be merged
+    4. Determine which PRs should be closed as obsolete
+    5. Create consolidated PR with only still-applicable changes
+    6. Resolve conflicts manually where needed
+  - Analysis Results (2026-01-20):
+    **CRITICAL SECURITY VULNERABILITIES IDENTIFIED:**
+    - PR 1154 contains unmerged security fixes: SQL injection prevention (ALLOWED_CRUD_TABLES, isValidTableName), path traversal protection (isValidFilePath), file upload security (remove customPath parameter)
+    - These fixes are NOT in main - worker.js still vulnerable
+    - Status: **BLOCKING - CRITICAL P0**
+
+    **PR 1150 (Database Optimization):**
+    - QueryCache class NOT in main (potentially valuable)
+    - 25+ database indexes already exist in main
+    - Composite indexes need verification
+    - Status: **NEEDS DETAILED COMPARISON**
+
+    **PR 1149 (Circular Dependency):**
+    - Partially addressed in main
+    - Undici vulnerability fix needs verification
+    - Status: **NEEDS VERIFICATION**
+
+    **Remaining PRs (10):**
+    - All 7-140 commits behind main
+    - Likely superseded by recent feature merges:
+      * Study Plans (AI-003, AI-004)
+      * AI Features (AI-001, AI-002)
+      * Messaging (MSG-001, MSG-002, MSG-003)
+      * Assignments (ASG-001 through ASG-004)
+      * Accessibility improvements (extensive a11y work merged)
+    - Documentation PR likely outdated
+    - Status: **LIKELY OBSOLETE - NEEDS VERIFICATION**
+
+  - Consolidation Strategy:
+    1. **Create security-only fix PR** from PR 1154 (SQL injection, path traversal, file upload)
+    2. **Extract QueryCache** from PR 1150 if verified useful
+    3. **Verify undici fix** from PR 1149 and apply if needed
+    4. **Close obsolete PRs** after verifying superseded content
+    5. **Document all findings** in SECURITY_AUDIT_REPORT.md
+
+  - Next Steps:
+    1. Create feature/security-critical-fixes branch
+    2. Apply security fixes from PR 1154 (29de5f3 commit)
+    3. Run tests, typecheck, lint
+    4. Create PR for security fixes
+    5. Close obsolete PRs
+    6. Update documentation
 
 ### Completed Tasks ✅
 
