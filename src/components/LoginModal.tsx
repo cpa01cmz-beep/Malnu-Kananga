@@ -5,17 +5,18 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Alert from './ui/Alert';
 import IconButton from './ui/IconButton';
+import ForgotPassword from './ForgotPassword';
 import { api } from '../services/apiService';
 import { getGradientClass } from '../config/gradients';
 import Modal from './ui/Modal';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { 
-  validateEmailRealtime, 
-  validatePasswordRealtime, 
-  validateLoginForm, 
+import {
+  validateEmailRealtime,
+  validatePasswordRealtime,
+  validateLoginForm,
   classifyLoginError,
   announceValidation,
-  getPasswordRequirements 
+  getPasswordRequirements
 } from '../utils/validation';
 
 const EyeIcon = () => (
@@ -50,6 +51,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     email: false,
     password: false
   });
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
@@ -63,6 +65,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
             setPasswordError('');
             setShowPasswordRequirements(false);
             setTouchedFields({ email: false, password: false });
+            setShowForgotPassword(false);
         }, 300);
     }
   }, [isOpen]);
@@ -128,6 +131,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
   };
 
   return (
+    <>
     <Modal
       isOpen={isOpen}
       onClose={onClose}
@@ -202,30 +206,30 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                     >
                       Selesai
                    </Button>
-             </div>
-                ) : (
-                 <form onSubmit={handleSubmit} className="space-y-5">
+              </div>
+                 ) : (
+                  <form onSubmit={handleSubmit} className="space-y-5">
                    {error && (
                      <Alert variant="error" size="md" border="left">
                        {error}
                      </Alert>
                    )}
 <Input
-                     id="email"
-                     type="email"
-                     label="Alamat Email Terdaftar"
-                     placeholder="anda@email.com"
-                     value={email}
-                     onChange={(e) => setEmail(e.target.value)}
-                     onBlur={() => setTouchedFields(prev => ({ ...prev, email: true }))}
-                     errorText={touchedFields.email ? emailError : undefined}
-                     helperText={touchedFields.email && !emailError ? 'Format email valid' : undefined}
-                     state={touchedFields.email ? (emailError ? 'error' : 'success') : 'default'}
-                     required
-                     fullWidth
-                     aria-describedby={emailError ? 'email-error' : ''}
-                   />
-                    <div className="relative">
+                      id="email"
+                      type="email"
+                      label="Alamat Email Terdaftar"
+                      placeholder="anda@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onBlur={() => setTouchedFields(prev => ({ ...prev, email: true }))}
+                      errorText={touchedFields.email ? emailError : undefined}
+                      helperText={touchedFields.email && !emailError ? 'Format email valid' : undefined}
+                      state={touchedFields.email ? (emailError ? 'error' : 'success') : 'default'}
+                      required
+                      fullWidth
+                      aria-describedby={emailError ? 'email-error' : ''}
+                    />
+                   <div className="relative">
                       <Input
                         id="password"
                         type={showPassword ? 'text' : 'password'}
@@ -254,57 +258,78 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                         className="absolute right-3 top-[2.1rem] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
                       />
                     </div>
-                   
+
                    {/* Password Requirements Helper */}
                    {password && showPasswordRequirements && (
-                     <div 
-                       id="password-requirements"
-                       className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700"
-                       role="status"
-                       aria-live="polite"
-                     >
-                       <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
-                         Persyaratan Password:
-                       </h4>
-                       <ul className="space-y-1">
-                         {getPasswordRequirements(password).map((req, index) => (
-                           <li 
-                             key={index}
-                             className={`text-xs flex items-center gap-2 ${
-                               req.status === 'met' 
-                                 ? 'text-green-600 dark:text-green-400' 
-                                 : 'text-neutral-500 dark:text-neutral-400'
-                             }`}
-                           >
-                             <span className={req.status === 'met' ? '✓' : '○'}>
-                               {req.requirement}
-                             </span>
-                           </li>
-                         ))}
-                       </ul>
-                     </div>
-                   )}
+                      <div
+                        id="password-requirements"
+                        className="p-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-lg border border-neutral-200 dark:border-neutral-700"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        <h4 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
+                          Persyaratan Password:
+                        </h4>
+                        <ul className="space-y-1">
+                          {getPasswordRequirements(password).map((req, index) => (
+                            <li
+                              key={index}
+                              className={`text-xs flex items-center gap-2 ${
+                                req.status === 'met'
+                                  ? 'text-green-600 dark:text-green-400'
+                                  : 'text-neutral-500 dark:text-neutral-400'
+                              }`}
+                            >
+                              <span className={req.status === 'met' ? '✓' : '○'}>
+                                {req.requirement}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
                    {/* Network Error Distinction */}
                    {error && error.toLowerCase().includes('network') && (
-                     <Alert variant="warning" size="sm" border="left" className="mt-3">
-                       <div className="flex items-center gap-2">
-                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                         </svg>
-                         <span className="text-sm">
-                           Periksa koneksi internet Anda dan coba lagi.
-                         </span>
-                       </div>
-                     </Alert>
-                   )}
-                 <Button type="submit" disabled={formState === 'loading'} isLoading={formState === 'loading'} fullWidth className="py-3.5">
-                   {formState === 'loading' ? '' : 'Login'}
-                 </Button>
-               </form>
-            )}
-        </div>
+                      <Alert variant="warning" size="sm" border="left" className="mt-3">
+                        <div className="flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          <span className="text-sm">
+                            Periksa koneksi internet Anda dan coba lagi.
+                          </span>
+                        </div>
+                      </Alert>
+                    )}
+                  <Button type="submit" disabled={formState === 'loading'} isLoading={formState === 'loading'} fullWidth className="py-3.5">
+                    {formState === 'loading' ? '' : 'Login'}
+                  </Button>
+
+                  <div className="text-center pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowForgotPassword(true)}
+                      className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors font-medium"
+                    >
+                      Lupa Password?
+                    </button>
+                  </div>
+                </form>
+             )}
+         </div>
     </Modal>
+
+    <ForgotPassword
+      isOpen={showForgotPassword}
+      onClose={() => setShowForgotPassword(false)}
+      onSuccess={(resetEmail) => {
+        setShowForgotPassword(false);
+        setEmail(resetEmail);
+        setTouchedFields({ email: true, password: false });
+      }}
+    />
+    </>
   );
 };
 

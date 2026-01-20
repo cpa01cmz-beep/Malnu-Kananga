@@ -60,11 +60,23 @@ jobs:
           else
             git checkout -b agent-workspace
           fi
-          git merge origin/main --no-edit || echo "Merge conflict or already up to date"
+          if ! git merge origin/main --no-edit; then
+            echo "Merge conflict detected, aborting merge..."
+            git merge --abort
+            echo "Resetting to origin/main..."
+            git reset --hard origin/main
+          fi
 
       - name: Install Dependencies
         continue-on-error: true
-        run: npm ci
+        run: npm install
+
+      - name: Install OpenCode Tools Dependencies
+        continue-on-error: true
+        run: |
+          if [ -f ".opencode/package.json" ]; then
+            cd .opencode && npm install
+          fi
 
       - name: Setup OpenCode
         uses: ./.github/actions/opencode-setup

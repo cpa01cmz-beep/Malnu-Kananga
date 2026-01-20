@@ -15,11 +15,13 @@ import ConfirmationDialog from './components/ui/ConfirmationDialog';
 import { logger } from './utils/logger';
 import { useTheme } from './hooks/useTheme';
 import { HEIGHTS } from './config/heights';
+import { initializeMonitoring, setMonitoringUser } from './utils/initializeMonitoring';
 
 // Lazy load modal/dialog components
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
 const SiteEditor = lazy(() => import('./components/SiteEditor'));
 const PPDBRegistration = lazy(() => import('./components/PPDBRegistration'));
+const ResetPassword = lazy(() => import('./components/ResetPassword'));
 
 // Lazy load heavy dashboard components
 const StudentPortal = lazy(() => import('./components/StudentPortal'));
@@ -27,12 +29,13 @@ const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const TeacherDashboard = lazy(() => import('./components/TeacherDashboard'));
 const ParentDashboard = lazy(() => import('./components/ParentDashboard'));
 
-import HeroSection from './components/sections/HeroSection';
-import RelatedLinksSection from './components/sections/RelatedLinksSection';
-import ProfileSection from './components/sections/ProfileSection';
-import ProgramsSection from './components/sections/ProgramsSection';
-import NewsSection from './components/sections/NewsSection';
-import PPDBSection from './components/sections/PPDBSection';
+// Lazy load public sections to reduce initial bundle size
+const HeroSection = lazy(() => import('./components/sections/HeroSection'));
+const RelatedLinksSection = lazy(() => import('./components/sections/RelatedLinksSection'));
+const ProfileSection = lazy(() => import('./components/sections/ProfileSection'));
+const ProgramsSection = lazy(() => import('./components/sections/ProgramsSection'));
+const NewsSection = lazy(() => import('./components/sections/NewsSection'));
+const PPDBSection = lazy(() => import('./components/sections/PPDBSection'));
 
 import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './types';
 import { STORAGE_KEYS } from './constants';
@@ -66,6 +69,7 @@ const App: React.FC = () => {
   const [isThemeSelectorOpen, setIsThemeSelectorOpen] = useState(false);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [isSWUpdateConfirmOpen, setIsSWUpdateConfirmOpen] = useState(false);
+  const [resetToken, setResetToken] = useState<string | null>(null);
 
   // Auth State with Persistence via Hook
   const [authSession, setAuthSession] = useLocalStorage<AuthSession>(STORAGE_KEYS.AUTH_SESSION, {
@@ -78,13 +82,27 @@ const App: React.FC = () => {
 
   // Initialize Advanced Theme System using useTheme hook for proper sync
   const { isReady: themeReady } = useTheme();
-  
+
+  useEffect(() => {
+    // Initialize all monitoring services on app mount
+    initializeMonitoring();
+  }, []);
+
   useEffect(() => {
     // Ensure ThemeManager is available throughout app
     if (themeReady) {
       logger.info('Theme system initialized and ready');
     }
   }, [themeReady]);
+
+  useEffect(() => {
+    // Check URL for reset token
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+      setResetToken(token);
+    }
+  }, []);
 
   // Content State via Hook - lazy load defaults to reduce initial bundle
   const [siteContent, setSiteContent] = useLocalStorage<SiteContent>(STORAGE_KEYS.SITE_CONTENT, {
@@ -104,6 +122,13 @@ const App: React.FC = () => {
             loggedIn: true,
             role: user.role,
             extraRole: null
+          });
+          // Set monitoring user context
+          setMonitoringUser({
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            extraRole: user.extraRole,
           });
         }
       }
@@ -155,7 +180,7 @@ const App: React.FC = () => {
   };
 
   const hideToast = () => {
-    setToast(prev => ({ ...prev, isVisible: false }));
+    setToast((prev: typeof toast) => ({ ...prev, isVisible: false }));
   };
 
   const handleLoginSuccess = (role: UserRole, extraRole: UserExtraRole = null) => {
@@ -279,7 +304,12 @@ const App: React.FC = () => {
   return (
     <NotificationProvider>
       <ErrorBoundary>
-        <div className="w-full min-h-screen font-sans antialiased text-neutral-900 dark:text-neutral-100 bg-white dark:bg-neutral-900 transition-colors duration-300">
+        {resetToken ? (
+          <Suspense fallback={<SuspenseLoading message="Memuat halaman reset password..." />}>
+            <ResetPassword />
+          </Suspense>
+        ) : (
+          <div className="w-full min-h-screen font-sans antialiased text-neutral-900 dark:text-neutral-100 bg-white dark:bg-neutral-900 transition-colors duration-300">
       <SkipLink
         targets={[
           { id: 'main-nav', label: 'Langsung ke navigasi utama' },
@@ -309,17 +339,31 @@ const App: React.FC = () => {
         </main>
       ) : (
         <main id="main-content" tabIndex={-1}>
-          <HeroSection />
-          <RelatedLinksSection />
-          <ProfileSection />
-          <PPDBSection onRegisterClick={() => setIsPPDBOpen(true)} />
+          <Suspense fallback={<SuspenseLoading message="Memuat halaman..." />}>
+            <HeroSection />
+          </Suspense>
+          <Suspense fallback={<SuspenseLoading message="Memuat tautan..." />}>
+            <RelatedLinksSection />
+          </Suspense>
+          <Suspense fallback={<SuspenseLoading message="Memuat profil..." />}>
+            <ProfileSection />
+          </Suspense>
+          <Suspense fallback={<SuspenseLoading message="Memuat PPDB..." />}>
+            <PPDBSection onRegisterClick={() => setIsPPDBOpen(true)} />
+          </Suspense>
           {/* Robustness Fix: Added fallback to empty array to prevent crashes if localStorage data is corrupted/incomplete */}
-          <ProgramsSection programs={siteContent?.featuredPrograms || []} />
-          <NewsSection news={siteContent?.latestNews || []} />
+          <Suspense fallback={<SuspenseLoading message="Memuat program..." />}>
+            <ProgramsSection programs={siteContent?.featuredPrograms || []} />
+          </Suspense>
+          <Suspense fallback={<SuspenseLoading message="Memuat berita..." />}>
+            <NewsSection news={siteContent?.latestNews || []} />
+          </Suspense>
         </main>
       )}
 
-      <Footer onDocsClick={() => setIsDocsOpen(true)} />
+      <Footer
+        onDocsClick={() => setIsDocsOpen(true)}
+      />
 
       <div
         className={`fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2.5rem)] max-w-sm ${HEIGHTS.VIEWPORT.MEDIUM} ${HEIGHTS.VIEWPORT_MAX.COMPACT} transition-all duration-300 ease-in-out ${
@@ -400,6 +444,7 @@ const App: React.FC = () => {
         onCancel={() => setIsSWUpdateConfirmOpen(false)}
       />
       </div>
+      )}
       </ErrorBoundary>
     </NotificationProvider>
   );

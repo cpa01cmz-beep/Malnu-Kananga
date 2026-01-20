@@ -1,6 +1,6 @@
 import type { FeaturedProgram, LatestNews } from '../types';
 import { logger } from './logger';
-import { STORAGE_KEYS } from '../constants';
+import { EXTERNAL_URLS, STORAGE_KEYS } from '../constants';
 
 export interface AICommandValidationResult {
   isValid: boolean;
@@ -465,7 +465,7 @@ export function validateAIResponse(
           const program: FeaturedProgram = {
             title,
             description: description || '',
-            imageUrl: imageUrl || 'https://placehold.co/600x400?text=Program'
+            imageUrl: imageUrl || `${EXTERNAL_URLS.PLACEHOLDER_IMAGE_BASE}Program`
           };
           
           // Additional structural validation
@@ -513,7 +513,7 @@ export function validateAIResponse(
             title,
             date: date || new Date().toISOString().split('T')[0],
             category: category || 'Umum',
-            imageUrl: imageUrl || 'https://placehold.co/600x400?text=News'
+            imageUrl: imageUrl || `${EXTERNAL_URLS.PLACEHOLDER_IMAGE_BASE}News`
           };
           
           // Additional structural validation

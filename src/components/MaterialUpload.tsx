@@ -29,6 +29,7 @@ import FolderNavigation from './FolderNavigation';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import MaterialSharing from './MaterialSharing';
+import EnhancedMaterialSharing from './EnhancedMaterialSharing';
 import VersionControl from './VersionControl';
 import MaterialAnalytics from './MaterialAnalytics';
 import MaterialTemplatesLibrary from './MaterialTemplatesLibrary';
@@ -55,6 +56,12 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
   const [selectedView, setSelectedView] = useState<'upload' | 'templates' | 'management'>('upload');
   const [selectedMaterial, setSelectedMaterial] = useState<ELibraryType | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<MaterialFolder | undefined>(undefined);
+
+  // Search and filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [filterFileType, setFilterFileType] = useState<string>('all');
+  const [filterShared, setFilterShared] = useState<boolean | null>(null);
 
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
@@ -135,6 +142,62 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     } finally {
       setLoading(false);
     }
+  };
+
+  const getFilteredMaterials = (allMaterials: ELibraryType[]): ELibraryType[] => {
+    let filtered = allMaterials;
+
+    if (selectedFolder) {
+      filtered = filtered.filter(m => m.folderId === selectedFolder.id);
+    }
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(m =>
+        m.title.toLowerCase().includes(query) ||
+        m.description.toLowerCase().includes(query) ||
+        m.category.toLowerCase().includes(query)
+      );
+    }
+
+    if (filterCategory !== 'all') {
+      filtered = filtered.filter(m => m.category === filterCategory);
+    }
+
+    if (filterFileType !== 'all') {
+      const fileTypeMap: Record<string, string[]> = {
+        'PDF': ['pdf'],
+        'DOCX': ['doc', 'docx'],
+        'PPT': ['ppt', 'pptx'],
+        'VIDEO': ['video', 'mp4']
+      };
+      const extensions = fileTypeMap[filterFileType] || [];
+      filtered = filtered.filter(m =>
+        extensions.some(ext => m.fileType.toLowerCase().includes(ext))
+      );
+    }
+
+    if (filterShared !== null) {
+      filtered = filtered.filter(m => m.isShared === filterShared);
+    }
+
+    return filtered;
+  };
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setFilterCategory('all');
+    setFilterFileType('all');
+    setFilterShared(null);
+  };
+
+  const getActiveFilterCount = (): number => {
+    let count = 0;
+    if (searchQuery.trim()) count++;
+    if (filterCategory !== 'all') count++;
+    if (filterFileType !== 'all') count++;
+    if (filterShared !== null) count++;
+    return count;
   };
 
   const handleFileUploaded = (fileResponse: FileUploadResponse) => {
@@ -704,14 +767,137 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
 
           <div className="lg:col-span-1">
           <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 overflow-hidden">
-            <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50 flex justify-between items-center">
-              <h3 className="font-bold text-neutral-800 dark:text-white">
-                {selectedFolder ? selectedFolder.name : 'Semua Materi'} ({materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).length})
-              </h3>
+            <div className="p-4 border-b border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/50 flex flex-col gap-3">
+              <div className="flex justify-between items-center">
+                <h3 className="font-bold text-neutral-800 dark:text-white">
+                  {selectedFolder ? selectedFolder.name : 'Semua Materi'} ({getFilteredMaterials(materials).length})
+                </h3>
+                {getActiveFilterCount() > 0 && (
+                  <button
+                    onClick={clearFilters}
+                    className="text-xs text-red-600 hover:text-red-700 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 rounded px-2 py-1 transition-all"
+                    aria-label="Clear all filters"
+                  >
+                    Reset Filters ({getActiveFilterCount()})
+                  </button>
+                )}
+              </div>
+
+              <Input
+                type="search"
+                placeholder="Cari materi..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                size="sm"
+                fullWidth
+                autoComplete="off"
+              />
+
+              <div className="flex gap-2">
+                <Select
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                  size="sm"
+                  fullWidth
+                  options={[
+                    { value: 'all', label: 'Semua Kategori' },
+                    ...subjects.map((subject) => ({
+                      value: subject.name,
+                      label: subject.name
+                    }))
+                  ]}
+                />
+
+                <Select
+                  value={filterFileType}
+                  onChange={(e) => setFilterFileType(e.target.value)}
+                  size="sm"
+                  fullWidth
+                  options={[
+                    { value: 'all', label: 'Semua Tipe' },
+                    { value: 'PDF', label: 'PDF' },
+                    { value: 'DOCX', label: 'DOCX' },
+                    { value: 'PPT', label: 'PPT' },
+                    { value: 'VIDEO', label: 'Video' }
+                  ]}
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant={filterShared === true ? 'green-solid' : 'ghost'}
+                  onClick={() => setFilterShared(filterShared === true ? null : true)}
+                  className="flex-1"
+                >
+                  Dibagikan
+                </Button>
+                <Button
+                  size="sm"
+                  variant={filterShared === false ? 'blue-solid' : 'ghost'}
+                  onClick={() => setFilterShared(filterShared === false ? null : false)}
+                  className="flex-1"
+                >
+                  Privat
+                </Button>
+              </div>
+
+              {getActiveFilterCount() > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {searchQuery.trim() && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded-full text-xs">
+                      Search: {searchQuery.slice(0, 15)}{searchQuery.length > 15 ? '...' : ''}
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="ml-1 hover:text-blue-900 dark:hover:text-blue-100"
+                        aria-label="Clear search"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  {filterCategory !== 'all' && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 rounded-full text-xs">
+                      {filterCategory}
+                      <button
+                        onClick={() => setFilterCategory('all')}
+                        className="ml-1 hover:text-green-900 dark:hover:text-green-100"
+                        aria-label="Clear category filter"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  {filterFileType !== 'all' && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-full text-xs">
+                      {filterFileType}
+                      <button
+                        onClick={() => setFilterFileType('all')}
+                        className="ml-1 hover:text-purple-900 dark:hover:text-purple-100"
+                        aria-label="Clear file type filter"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                  {filterShared !== null && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 rounded-full text-xs">
+                      {filterShared ? 'Dibagikan' : 'Privat'}
+                      <button
+                        onClick={() => setFilterShared(null)}
+                        className="ml-1 hover:text-orange-900 dark:hover:text-orange-100"
+                        aria-label="Clear sharing filter"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             <div className={`divide-y divide-neutral-100 dark:divide-neutral-700 ${HEIGHT_CLASSES.MATERIAL.LIST} overflow-y-auto`}>
-              {materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).length > 0 ? (
-                materials.filter(m => !selectedFolder || m.folderId === selectedFolder.id).map((item) => (
+              {getFilteredMaterials(materials).length > 0 ? (
+                getFilteredMaterials(materials).map((item) => (
                   <div key={item.id} className="p-4 hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3 flex-1">
@@ -794,7 +980,12 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
               ) : (
                 <div className="p-8">
                   <EmptyState
-                    message={selectedFolder ? `Belum ada materi di folder "${selectedFolder.name}".` : 'Belum ada materi yang diunggah.'}
+                    message={getActiveFilterCount() > 0
+                      ? 'Tidak ada materi yang cocok dengan filter yang dipilih.'
+                      : selectedFolder
+                        ? `Belum ada materi di folder "${selectedFolder.name}".`
+                        : 'Belum ada materi yang diunggah.'
+                    }
                     size="md"
                   />
                 </div>
@@ -849,10 +1040,13 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Berbagi Materi</h4>
-                <MaterialSharing
+                <EnhancedMaterialSharing
                   material={selectedMaterial}
                   onShowToast={onShowToast}
                   onSharingUpdate={fetchMaterials}
+                  currentUserId="current_user"
+                  currentUserRole="teacher"
+                  currentUserName="Current User"
                 />
               </div>
               

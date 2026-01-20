@@ -25,8 +25,25 @@ export interface LatestNews {
 
 export type UserRole = 'admin' | 'teacher' | 'student' | 'parent';
 
-// Role tambahan untuk tugas khusus
 export type UserExtraRole = 'staff' | 'osis' | 'wakasek' | 'kepsek' | null;
+
+export enum AssignmentType {
+  ASSIGNMENT = 'assignment',
+  PROJECT = 'project',
+  QUIZ = 'quiz',
+  EXAM = 'exam',
+  LAB_WORK = 'lab_work',
+  PRESENTATION = 'presentation',
+  HOMEWORK = 'homework',
+  OTHER = 'other',
+}
+
+export enum AssignmentStatus {
+  DRAFT = 'draft',
+  PUBLISHED = 'published',
+  CLOSED = 'closed',
+  ARCHIVED = 'archived',
+}
 
 export interface Student {
   id: string;
@@ -134,6 +151,11 @@ export interface User {
   role: UserRole;
   extraRole?: UserExtraRole;
   status: 'active' | 'inactive';
+  phone?: string;
+  address?: string;
+  bio?: string;
+  avatar?: string;
+  dateOfBirth?: string;
 }
 
 export interface PPDBRegistrant {
@@ -152,6 +174,23 @@ export interface PPDBRegistrant {
   score?: number;
   rubricScores?: Record<string, number>;
   documentPreviews?: DocumentPreview[];
+  ocrMetadata?: {
+    extractedGrades?: Record<string, number>;
+    extractedFullName?: string;
+    extractedNisn?: string;
+    extractedSchoolName?: string;
+    confidence?: number;
+    quality?: {
+      isSearchable: boolean;
+      isHighQuality: boolean;
+      estimatedAccuracy: number;
+      wordCount: number;
+      characterCount: number;
+      hasMeaningfulContent: boolean;
+      documentType: 'unknown' | 'academic' | 'administrative' | 'form' | 'certificate';
+    };
+    processedAt?: string;
+  };
 }
 
 export interface DocumentPreview {
@@ -427,6 +466,93 @@ export interface Grade {
   subjectName?: string;
 }
 
+export interface Assignment {
+  id: string;
+  title: string;
+  description: string;
+  type: AssignmentType;
+  subjectId: string;
+  classId: string;
+  teacherId: string;
+  academicYear: string;
+  semester: string;
+  maxScore: number;
+  dueDate: string;
+  status: AssignmentStatus;
+  attachments?: AssignmentAttachment[];
+  rubric?: AssignmentRubric;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+  subjectName?: string;
+  className?: string;
+  teacherName?: string;
+}
+
+export interface AssignmentAttachment {
+  id: string;
+  assignmentId: string;
+  fileName: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  uploadedAt: string;
+}
+
+export interface AssignmentRubric {
+  id: string;
+  assignmentId: string;
+  criteria: RubricCriteria[];
+  totalScore: number;
+  createdAt: string;
+}
+
+export interface RubricCriteria {
+  id: string;
+  name: string;
+  description: string;
+  maxScore: number;
+  weight: number;
+}
+
+export interface AssignmentSubmission {
+  id: string;
+  assignmentId: string;
+  studentId: string;
+  studentName: string;
+  submissionText?: string;
+  attachments: SubmissionAttachment[];
+  submittedAt: string;
+  score?: number;
+  feedback?: string;
+  gradedBy?: string;
+  gradedAt?: string;
+  status: 'draft' | 'submitted' | 'late' | 'graded';
+}
+
+export interface SubmissionAttachment {
+  id: string;
+  submissionId: string;
+  fileName: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  uploadedAt: string;
+}
+
+export interface AIFeedback {
+  id: string;
+  assignmentId: string;
+  submissionId: string;
+  feedback: string;
+  strengths: string[];
+  improvements: string[];
+  suggestedScore?: number;
+  generatedAt: string;
+  aiModel: string;
+  confidence: number;
+}
+
 export interface Attendance {
   id: string;
   studentId: string;
@@ -473,10 +599,14 @@ export interface MaterialSharing {
   id: string;
   materialId: string;
   sharedWith: string[]; // User IDs
+  sharedRoles?: UserRole[]; // Role-based sharing
+  sharedExtraRoles?: UserExtraRole[]; // Extra role-based sharing
+  isPublic: boolean;
   sharedBy: string;
   permission: 'view' | 'edit' | 'admin';
   sharedAt: string;
   expiresAt?: string;
+  auditLog?: MaterialShareAudit[];
 }
 
 export interface MaterialTemplate {
@@ -514,6 +644,40 @@ export interface MaterialAnalytics {
   }[];
 }
 
+export interface MaterialSharePermission {
+  id: string;
+  userId?: string;
+  role?: UserRole;
+  extraRole?: UserExtraRole;
+  permission: 'view' | 'edit' | 'admin';
+  grantedBy: string;
+  grantedAt: string;
+  expiresAt?: string;
+  lastAccessed?: string;
+  accessCount: number;
+}
+
+export interface MaterialShareSettings {
+  isPublic: boolean;
+  allowAnonymous: boolean;
+  requirePassword: boolean;
+  password?: string;
+  publicLink?: string;
+  publicLinkExpiresAt?: string;
+}
+
+export interface MaterialShareAudit {
+  id: string;
+  materialId: string;
+  userId: string;
+  userName: string;
+  action: 'shared' | 'accessed' | 'downloaded' | 'revoked' | 'permission_changed';
+  details: string;
+  timestamp: string;
+  ipAddress?: string;
+  userAgent?: string;
+}
+
 export interface ELibrary {
   id: string;
   title: string;
@@ -530,6 +694,8 @@ export interface ELibrary {
   folderId?: string;
   isShared: boolean;
   sharedWith?: string[];
+  sharePermissions?: MaterialSharePermission[];
+  shareSettings?: MaterialShareSettings;
   currentVersion?: string;
   versions?: MaterialVersion[];
   analytics?: MaterialAnalytics;
@@ -671,16 +837,57 @@ export interface MaterialSearchFilters {
   minRating?: number;
 }
 
+export enum AnnouncementCategory {
+  UMUM = 'umum',
+  AKADEMIK = 'akademik',
+  KEGIATAN = 'kegiatan',
+  KEUANGAN = 'keuangan',
+}
+
+export enum AnnouncementTargetType {
+  ALL = 'all',
+  ROLES = 'roles',
+  CLASSES = 'classes',
+  SPECIFIC = 'specific',
+}
+
 export interface Announcement {
   id: string;
   title: string;
   content: string;
-  category: 'umum' | 'akademik' | 'kegiatan' | 'keuangan';
-  targetAudience: string;
+  category: AnnouncementCategory;
+  targetType: AnnouncementTargetType;
+  targetAudience?: string;
+  targetRoles?: string[];
+  targetClasses?: string[];
+  targetUsers?: string[];
   isActive: boolean;
   createdBy: string;
   createdAt: string;
-  expiresAt: string;
+  expiresAt?: string;
+  updatedAt?: string;
+  readBy?: string[];
+}
+
+export interface AnnouncementFormData {
+  title: string;
+  content: string;
+  category: AnnouncementCategory;
+  targetType: AnnouncementTargetType;
+  targetAudience?: string;
+  targetRoles?: string[];
+  targetClasses?: string[];
+  targetUsers?: string[];
+  expiresAt?: string;
+  sendNotification?: boolean;
+}
+
+export interface AnnouncementAnalytics {
+  totalSent: number;
+  readCount: number;
+  clickCount: number;
+  byRole: Record<string, number>;
+  byClass: Record<string, number>;
 }
 
 export enum VoiceLanguage {
@@ -1090,6 +1297,69 @@ export interface AttendanceGradeCorrelation {
   insights: string[];
 }
 
+export interface ClassGradeAnalytics {
+  classId: string;
+  className: string;
+  totalStudents: number;
+  averageScore: number;
+  highestScore: number;
+  lowestScore: number;
+  gradeDistribution: GradeDistribution;
+  submissionRate: number;
+  subjectBreakdown: SubjectAnalytics[];
+  topPerformers: StudentPerformance[];
+  needsAttention: StudentPerformance[];
+  lastUpdated: string;
+}
+
+export interface GradeDistribution {
+  A: number;
+  B: number;
+  C: number;
+  D: number;
+  F: number;
+}
+
+export interface SubjectAnalytics {
+  subjectId: string;
+  subjectName: string;
+  averageScore: number;
+  totalAssignments: number;
+  totalSubmissions: number;
+  submissionRate: number;
+  averageCompletionTime: number;
+  gradeDistribution: GradeDistribution;
+  trend: 'improving' | 'declining' | 'stable';
+}
+
+export interface StudentPerformance {
+  studentId: string;
+  studentName: string;
+  averageScore: number;
+  totalAssignments: number;
+  completedAssignments: number;
+  submissionRate: number;
+  gradeDistribution: GradeDistribution;
+  trend: 'improving' | 'declining' | 'stable';
+  lastSubmission?: string;
+}
+
+export interface AssignmentAnalytics {
+  assignmentId: string;
+  assignmentTitle: string;
+  subjectName: string;
+  totalStudents: number;
+  submittedCount: number;
+  gradedCount: number;
+  averageScore: number;
+  maxScore: number;
+  gradeDistribution: GradeDistribution;
+  submissionRate: number;
+  gradingProgress: number;
+  averageFeedbackLength: number;
+  lateSubmissions: number;
+}
+
 export interface OCRValidationEvent {
   id: string;
   type: 'validation-failure' | 'validation-warning' | 'validation-success';
@@ -1107,4 +1377,310 @@ export interface OCRValidationNotificationData extends OCRValidationEvent {
   requiresReview: boolean;
   automatedRetryCount?: number;
   nextAction?: 'review' | 'reprocess' | 'manual-entry';
+}
+
+export enum QuizDifficulty {
+  EASY = 'easy',
+  MEDIUM = 'medium',
+  HARD = 'hard',
+}
+
+export enum QuizQuestionType {
+  MULTIPLE_CHOICE = 'multiple_choice',
+  TRUE_FALSE = 'true_false',
+  SHORT_ANSWER = 'short_answer',
+  ESSAY = 'essay',
+  FILL_BLANK = 'fill_blank',
+  MATCHING = 'matching',
+}
+
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  type: QuizQuestionType;
+  difficulty: QuizDifficulty;
+  options?: string[];
+  correctAnswer: string | string[];
+  explanation?: string;
+  points: number;
+  materialReference?: string;
+  tags?: string[];
+}
+
+export interface Quiz {
+  id: string;
+  title: string;
+  description: string;
+  subjectId: string;
+  classId: string;
+  teacherId: string;
+  academicYear: string;
+  semester: string;
+  questions: QuizQuestion[];
+  totalPoints: number;
+  duration: number;
+  passingScore: number;
+  attempts: number;
+  status: 'draft' | 'published' | 'closed' | 'archived';
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+  subjectName?: string;
+  className?: string;
+  teacherName?: string;
+  materialIds?: string[];
+  aiGenerated: boolean;
+  aiConfidence?: number;
+}
+
+export interface QuizGenerationOptions {
+  materialIds: string[];
+  questionCount: number;
+  questionTypes: QuizQuestionType[];
+  difficulty: QuizDifficulty;
+  totalPoints?: number;
+  focusAreas?: string[];
+}
+
+export interface QuizAttempt {
+  id: string;
+  quizId: string;
+  studentId: string;
+  studentName: string;
+  answers: Record<string, string | string[]>;
+  score: number;
+  maxScore: number;
+  percentage: number;
+  passed: boolean;
+  startedAt: string;
+  submittedAt?: string;
+  timeSpent: number;
+  attemptNumber: number;
+}
+
+export interface QuizAnalytics {
+  quizId: string;
+  title: string;
+  totalAttempts: number;
+  averageScore: number;
+  averagePercentage: number;
+  passRate: number;
+  averageTimeSpent: number;
+  averageDuration: number;
+  questionPerformance: Array<{
+    questionId: string;
+    question: string;
+    correctRate: number;
+    averageScore: number;
+  }>;
+}
+
+export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
+
+export type MessageType = 'text' | 'image' | 'file' | 'audio' | 'video';
+
+export type ConversationType = 'direct' | 'group';
+
+export interface DirectMessage {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderName: string;
+  senderRole: string;
+  senderAvatar?: string;
+  recipientId: string;
+  recipientName: string;
+  recipientRole: string;
+  recipientAvatar?: string;
+  messageType: MessageType;
+  content: string;
+  fileUrl?: string;
+  fileName?: string;
+  fileSize?: number;
+  fileType?: string;
+  status: MessageStatus;
+  readAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  replyTo?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface Conversation {
+  id: string;
+  type: ConversationType;
+  participantIds: string[];
+  participants: Participant[];
+  lastMessage?: DirectMessage;
+  unreadCount: number;
+  lastMessageAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  name?: string;
+  avatar?: string;
+  description?: string;
+  createdBy: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface Participant {
+  userId: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar?: string;
+  joinedAt: string;
+  lastSeen?: string;
+  isOnline: boolean;
+  isAdmin?: boolean;
+}
+
+export interface ConversationFilter {
+  type?: ConversationType;
+  search?: string;
+  unreadOnly?: boolean;
+  archived?: boolean;
+}
+
+export interface MessageSendRequest {
+  conversationId: string;
+  messageType: MessageType;
+  content: string;
+  file?: File;
+  replyTo?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface ConversationCreateRequest {
+  type: ConversationType;
+  participantIds: string[];
+  name?: string;
+  description?: string;
+  avatar?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface MessageReadReceipt {
+  messageId: string;
+  userId: string;
+  readAt: string;
+}
+
+export interface TypingIndicator {
+  conversationId: string;
+  userId: string;
+  userName: string;
+  isTyping: boolean;
+  timestamp: string;
+}
+
+export interface StudyPlan {
+  id: string;
+  studentId: string;
+  studentName: string;
+  title: string;
+  description: string;
+  subjects: StudyPlanSubject[];
+  schedule: StudyPlanSchedule[];
+  recommendations: StudyPlanRecommendation[];
+  createdAt: string;
+  validUntil: string;
+  status: 'active' | 'completed' | 'expired';
+}
+
+export interface StudyPlanSubject {
+  subjectName: string;
+  currentGrade: number;
+  targetGrade: string;
+  priority: 'high' | 'medium' | 'low';
+  weeklyHours: number;
+  focusAreas: string[];
+  resources: string[];
+}
+
+export interface StudyPlanSchedule {
+  dayOfWeek: string;
+  timeSlot: string;
+  subject: string;
+  activity: 'study' | 'practice' | 'review' | 'assignment';
+  duration: number;
+}
+
+export interface StudyPlanRecommendation {
+  category: 'study_tips' | 'time_management' | 'subject_advice' | 'general';
+  title: string;
+  description: string;
+  priority: number;
+}
+
+export interface StudyPlanAnalytics {
+  planId: string;
+  studentId: string;
+  studentName: string;
+  planTitle: string;
+  overallProgress: number;
+  completionRate: number;
+  adherenceRate: number;
+  performanceImprovement: PerformanceImprovement;
+  subjectProgress: SubjectProgress[];
+  weeklyActivity: WeeklyActivity[];
+  effectivenessScore: number;
+  recommendations: AnalyticsRecommendation[];
+  lastUpdated: string;
+}
+
+export interface PerformanceImprovement {
+  averageGradeChange: number;
+  subjectsImproved: number;
+  subjectsDeclined: number;
+  subjectsMaintained: number;
+  topImprovements: SubjectImprovement[];
+}
+
+export interface SubjectImprovement {
+  subjectName: string;
+  previousGrade: number;
+  currentGrade: number;
+  improvement: number;
+}
+
+export interface SubjectProgress {
+  subjectName: string;
+  targetGrade: number;
+  currentGrade: number;
+  progress: number;
+  priority: 'high' | 'medium' | 'low';
+  sessionsCompleted: number;
+  sessionsTotal: number;
+  averageSessionDuration: number;
+}
+
+export interface WeeklyActivity {
+  weekNumber: number;
+  startDate: string;
+  endDate: string;
+  totalStudyHours: number;
+  scheduledHours: number;
+  adherenceRate: number;
+  subjectsStudied: string[];
+  activitiesCompleted: number;
+  activitiesTotal: number;
+}
+
+export interface AnalyticsRecommendation {
+  type: 'improvement' | 'maintenance' | 'warning' | 'success';
+  category: 'schedule' | 'subject' | 'habits' | 'goals';
+  title: string;
+  description: string;
+  actionable: boolean;
+}
+
+export interface StudyPlanHistory {
+  planId: string;
+  planTitle: string;
+  status: 'active' | 'completed' | 'expired';
+  createdAt: string;
+  completedAt?: string;
+  effectivenessScore?: number;
+  overallProgress: number;
 }

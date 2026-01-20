@@ -10,6 +10,8 @@ import SystemStats from './SystemStats';
 import PPDBManagement from './PPDBManagement'; // Import PPDB Component
 import PermissionManager from './admin/PermissionManager'; // Import Permission Manager
 import AICacheManager from './AICacheManager'; // Import AI Cache Manager
+import AnnouncementManager from './AnnouncementManager'; // Import Announcement Manager
+import MegaphoneIcon from './icons/MegaphoneIcon';
 import { ToastType } from './Toast';
 import { STORAGE_KEYS, OPACITY_TOKENS } from '../constants'; // Import constants
 import { logger } from '../utils/logger';
@@ -33,7 +35,7 @@ interface AdminDashboardProps {
     onShowToast: (msg: string, type: ToastType) => void;
 }
 
-type DashboardView = 'home' | 'users' | 'stats' | 'ppdb' | 'permissions' | 'ai-cache'; // Add 'ai-cache' view
+type DashboardView = 'home' | 'users' | 'stats' | 'ppdb' | 'permissions' | 'ai-cache' | 'announcements';
 
 interface PPDBRegistrant {
   status: 'pending' | 'approved' | 'rejected';
@@ -363,6 +365,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         />
                     )}
 
+                    {canAccess('announcements.manage').canAccess && (
+                        <DashboardActionCard
+                            icon={<MegaphoneIcon />}
+                            title="Pengumuman"
+                            description="Buat dan kelola pengumuman sekolah."
+                            colorTheme="purple"
+                            statusBadge="Aktif"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('announcements')}
+                            ariaLabel="Buka Manajemen Pengumuman"
+                        />
+                    )}
+
                     {canAccess('system.admin').canAccess && (
                         <button
                             onClick={() => setCurrentView('ai-cache')}
@@ -444,6 +459,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                 </div>
                 <AICacheManager />
             </div>
+        )}
+
+        {currentView === 'announcements' && (
+            <AnnouncementManager 
+                onBack={() => setCurrentView('home')} 
+                onShowToast={onShowToast} 
+            />
         )}
 
         {/* Voice Commands Help Modal */}

@@ -6,6 +6,8 @@ export const STORAGE_KEYS = {
     SITE_CONTENT: 'malnu_site_content',
     USERS: 'malnu_users',
     GRADES: 'malnu_grades',
+    ASSIGNMENTS: 'malnu_assignments',
+    ASSIGNMENT_SUBMISSIONS: 'malnu_assignment_submissions',
     CLASS_DATA: 'malnu_class_data',
     PPDB_REGISTRANTS: 'malnu_ppdb_registrants',
     PPDB_DRAFT: 'malnu_ppdb_draft',
@@ -83,6 +85,13 @@ export const STORAGE_KEYS = {
     // Student Insights (dynamic factory functions)
     STUDENT_INSIGHTS: (studentId: string) => `malnu_student_insights_${studentId}`,
     INSIGHTS_ENABLED: (studentId: string) => `malnu_insights_enabled_${studentId}`,
+
+    // Study Plans (dynamic factory function)
+    STUDY_PLANS: (studentId: string) => `malnu_study_plans_${studentId}`,
+    ACTIVE_STUDY_PLAN: (studentId: string) => `malnu_active_study_plan_${studentId}`,
+    STUDY_PLAN_ANALYTICS: (studentId: string) => `malnu_study_plan_analytics_${studentId}`,
+    STUDY_PLAN_HISTORY: (studentId: string) => `malnu_study_plan_history_${studentId}`,
+    WEEKLY_PROGRESS: (studentId: string, weekNumber: number) => `malnu_weekly_progress_${studentId}_${weekNumber}`,
     
     // Voice Notifications
     VOICE_NOTIFICATIONS_QUEUE: 'malnu_voice_notifications_queue',
@@ -97,6 +106,9 @@ export const STORAGE_KEYS = {
     // WebSocket sync timestamps
     LAST_SYNC_TIME: 'malnu_last_sync_time',
     
+    // Grade Analytics (new)
+    GRADE_ANALYTICS_EXPORT: (classId: string) => `malnu_grade_analytics_export_${classId}`,
+    
     // AI Analysis cache for offline support
     CACHED_AI_ANALYSES: 'malnu_cached_ai_analyses',
     
@@ -110,12 +122,34 @@ export const STORAGE_KEYS = {
     EMAIL_NOTIFICATION_SETTINGS: 'malnu_email_notification_settings',
     EMAIL_ANALYTICS: 'malnu_email_analytics',
     EMAIL_DELIVERY_HISTORY: 'malnu_email_delivery_history',
-    
+
     // Storage Migration
     STORAGE_MIGRATION_VERSION: 'malnu_storage_migration_version',
-    
+
     // AI Editor Audit
     AI_EDITOR_AUDIT_LOG: 'malnu_ai_editor_audit_log',
+
+    // AI Quiz Generation (new)
+    QUIZZES: 'malnu_quizzes',
+    QUIZ_DRAFT: 'malnu_quiz_draft',
+    QUIZ_ATTEMPTS: (quizId: string) => `malnu_quiz_attempts_${quizId}`,
+    QUIZ_ANALYTICS: (quizId: string) => `malnu_quiz_analytics_${quizId}`,
+    QUIZ_GENERATION_CACHE: 'malnu_quiz_generation_cache',
+    AI_FEEDBACK_CACHE: 'malnu_ai_feedback_cache',
+
+    // Messaging System (new)
+    MESSAGES: 'malnu_messages',
+    CONVERSATIONS: 'malnu_conversations',
+    ACTIVE_CONVERSATION: 'malnu_active_conversation',
+    TYPING_INDICATORS: 'malnu_typing_indicators',
+    MESSAGE_DRAFTS: (conversationId: string) => `malnu_message_draft_${conversationId}`,
+    UNREAD_COUNTS: 'malnu_unread_counts',
+
+    // Announcement System (new)
+    ANNOUNCEMENT_DRAFT: 'malnu_announcement_draft',
+    ANNOUNCEMENT_CACHE: 'malnu_announcement_cache',
+    ANNOUNCEMENT_READ: (announcementId: string, userId: string) => `malnu_announcement_read_${announcementId}_${userId}`,
+    ANNOUNCEMENT_ANALYTICS: (announcementId: string) => `malnu_announcement_analytics_${announcementId}`,
 } as const;
 
 export const USER_ROLES = {
@@ -144,6 +178,15 @@ export const APP_CONFIG = {
     SCHOOL_NAME: 'MA Malnu Kananga',
     SCHOOL_NPSN: '69881502',
 };
+
+export const EXTERNAL_URLS = {
+    MAKER_SUITE_API: 'https://makersuite.google.com/app/apikey',
+    PLACEHOLDER_IMAGE_BASE: 'https://placehold.co/600x400?text=',
+    RDM_PORTAL: 'https://rdm.ma-malnukananga.sch.id',
+    KEMENAG: 'https://kemenag.go.id',
+    EMIS: 'https://emis.kemenag.go.id',
+    SIMPATIKA: 'https://simpatika.kemenag.go.id',
+} as const;
 
 export const VOICE_CONFIG = {
     DEFAULT_RECOGNITION_CONFIG: {

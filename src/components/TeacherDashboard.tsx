@@ -4,10 +4,18 @@ import DocumentTextIcon from './icons/DocumentTextIcon';
 import { UsersIcon } from './icons/UsersIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { ArchiveBoxIcon } from './icons/ArchiveBoxIcon';
+import { ChartLineIcon } from './icons/ChartLineIcon';
+import { SparklesIcon } from './icons/SparklesIcon';
 import GradingManagement from './GradingManagement';
 import ClassManagement from './ClassManagement';
 import MaterialUpload from './MaterialUpload';
 import SchoolInventory from './SchoolInventory';
+import AssignmentCreation from './AssignmentCreation';
+import AssignmentGrading from './AssignmentGrading';
+import GradeAnalytics from './GradeAnalytics';
+import { QuizGenerator } from './QuizGenerator';
+import { DirectMessage } from './DirectMessage';
+import { GroupChat } from './GroupChat';
 import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
@@ -27,13 +35,14 @@ import VoiceCommandsHelp from './VoiceCommandsHelp';
 import Badge from './ui/Badge';
 import SmallActionButton from './ui/SmallActionButton';
 import { pdfExportService } from '../services/pdfExportService';
+import ChatBubbleLeftRightIcon from './icons/ChatBubbleLeftRightIcon';
 
 interface TeacherDashboardProps {
     onShowToast?: (msg: string, type: ToastType) => void;
     extraRole: UserExtraRole;
 }
 
-type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory';
+type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics' | 'quiz-generator' | 'messages' | 'groups';
 
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<ViewState>('home');
@@ -55,6 +64,33 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
   const handleToast = useCallback((msg: string, type: ToastType) => {
       if (onShowToast) onShowToast(msg, type);
   }, [onShowToast]);
+
+  const getCurrentUserId = (): string => {
+    const userJSON = localStorage.getItem(STORAGE_KEYS.USER);
+    if (userJSON) {
+      const user = JSON.parse(userJSON);
+      return user.id || '';
+    }
+    return '';
+  };
+
+  const getCurrentUserName = (): string => {
+    const userJSON = localStorage.getItem(STORAGE_KEYS.USER);
+    if (userJSON) {
+      const user = JSON.parse(userJSON);
+      return user.name || '';
+    }
+    return '';
+  };
+
+  const getCurrentUserEmail = (): string => {
+    const userJSON = localStorage.getItem(STORAGE_KEYS.USER);
+    if (userJSON) {
+      const user = JSON.parse(userJSON);
+      return user.email || '';
+    }
+    return '';
+  };
 
   // Load dashboard data with offline support
   useEffect(() => {
@@ -142,7 +178,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     userRole: 'teacher',
     extraRole,
     onNavigate: (view: string) => {
-      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory'];
+      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory', 'analytics', 'quiz-generator', 'messages', 'groups'];
       if (validViews.includes(view as ViewState)) {
         setCurrentView(view as ViewState);
         handleToast(`Navigasi ke ${view}`, 'success');
@@ -374,6 +410,90 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         />
                     )}
 
+                    {checkPermission('academic.assignments.create') && (
+                        <DashboardActionCard
+                            icon={<ClipboardDocumentCheckIcon />}
+                            title="Buat Tugas"
+                            description="Buat tugas dengan rubrik dan lampiran."
+                            colorTheme="green"
+                            statusBadge="Baru"
+                            offlineBadge="Mode Tertunda"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('assignments')}
+                            ariaLabel="Buka Pembuatan Tugas"
+                        />
+                    )}
+
+                    {checkPermission('academic.grades') && checkPermission('academic.assignments.create') && (
+                        <DashboardActionCard
+                            icon={<ClipboardDocumentCheckIcon />}
+                            title="Penilaian Tugas"
+                            description="Beri nilai dan feedback untuk tugas yang telah dikumpulkan."
+                            colorTheme="purple"
+                            statusBadge="Baru"
+                            offlineBadge="Mode Tertunda"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('assignment-grading')}
+                            ariaLabel="Buka Penilaian Tugas"
+                        />
+                    )}
+
+                    {checkPermission('academic.grades') && (
+                        <DashboardActionCard
+                            icon={<ChartLineIcon />}
+                            title="Analitik Nilai"
+                            description="Analisis performa kelas, distribusi nilai, dan tren performa siswa."
+                            colorTheme="blue"
+                            statusBadge="Baru"
+                            offlineBadge="Mode Tertunda"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('analytics')}
+                            ariaLabel="Buka Analitik Nilai"
+                        />
+                    )}
+
+                    {checkPermission('academic.assignments.create') && (
+                        <DashboardActionCard
+                            icon={<SparklesIcon />}
+                            title="Buat Kuis AI"
+                            description="Buat kuis otomatis dari materi pembelajaran dengan bantuan AI."
+                            colorTheme="purple"
+                            statusBadge="AI"
+                            offlineBadge="Mode Tertunda"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('quiz-generator')}
+                            ariaLabel="Buka Pembuat Kuis AI"
+                        />
+                    )}
+
+                    {checkPermission('communication.messages') && (
+                        <DashboardActionCard
+                            icon={<ChatBubbleLeftRightIcon />}
+                            title="Pesan"
+                            description="Kirim dan terima pesan langsung dengan pengguna lain."
+                            colorTheme="green"
+                            statusBadge="Real-time"
+                            offlineBadge="Offline"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('messages')}
+                            ariaLabel="Buka Pesan"
+                        />
+                    )}
+
+                    {checkPermission('communication.messages') && (
+                        <DashboardActionCard
+                            icon={<UsersIcon />}
+                            title="Grup Diskusi"
+                            description="Buat dan kelola grup diskusi kelas atau mata pelajaran."
+                            colorTheme="blue"
+                            statusBadge="Grup"
+                            offlineBadge="Offline"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('groups')}
+                            ariaLabel="Buka Grup Diskusi"
+                        />
+                    )}
+
                     {extraRole === 'staff' && checkPermission('inventory.manage') && (
                         <DashboardActionCard
                             icon={<ArchiveBoxIcon />}
@@ -389,7 +509,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             ariaLabel="Buka Inventaris"
                         />
                     )}
-                    
+
                     <DashboardActionCard
                         icon={<DocumentTextIcon />}
                         title="Laporan Konsolidasi"
@@ -408,6 +528,63 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'class' && <ClassManagement onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'upload' && <MaterialUpload onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'inventory' && <SchoolInventory onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
+        {currentView === 'assignments' && <AssignmentCreation onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
+        {currentView === 'assignment-grading' && <AssignmentGrading onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
+        {currentView === 'analytics' && <GradeAnalytics onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
+        {currentView === 'quiz-generator' && <QuizGenerator onSuccess={() => { handleToast('Kuis berhasil dibuat!', 'success'); setCurrentView('home'); }} onCancel={() => setCurrentView('home')} />}
+        {currentView === 'messages' && (
+          <div className="animate-fade-in-up">
+            <div className="mb-4 flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setCurrentView('home')}
+                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali ke Dashboard
+              </button>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Pesan</h2>
+            </div>
+            <DirectMessage
+              currentUser={{
+                id: getCurrentUserId(),
+                name: getCurrentUserName(),
+                email: getCurrentUserEmail(),
+                role: 'teacher',
+                status: 'active',
+              }}
+            />
+          </div>
+        )}
+
+        {currentView === 'groups' && (
+          <div className="animate-fade-in-up">
+            <div className="mb-4 flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setCurrentView('home')}
+                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali ke Dashboard
+              </button>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Grup Diskusi</h2>
+            </div>
+            <GroupChat
+              currentUser={{
+                id: getCurrentUserId(),
+                name: getCurrentUserName(),
+                email: getCurrentUserEmail(),
+                role: 'teacher',
+                status: 'active',
+              }}
+            />
+          </div>
+        )}
 
         {/* Voice Commands Help Modal */}
         <VoiceCommandsHelp

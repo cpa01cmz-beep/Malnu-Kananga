@@ -20,11 +20,11 @@ npm run build
 
 ## Documentation
 
-- **[Documentation Index](./docs/README.md)** - Complete documentation guide
-- **[User Guide](./docs/HOW_TO.md)** - How to use all features
-- **[Blueprint](./docs/BLUEPRINT.md)** - System design and architecture
-- **[Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)** - Production deployment
-- **[API Reference](./docs/api-reference.md)** - Complete API documentation
+ - **[Roadmap & Architecture](./docs/ROADMAP.md)** - Complete system documentation (Single Source of Truth)
+ - **[Documentation Index](./docs/README.md)** - Additional documentation guides
+ - **[User Guide](./docs/HOW_TO.md)** - How to use all features
+ - **[Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)** - Production deployment
+ - **[API Reference](./docs/api-reference.md)** - Complete API documentation
 
 ## Features
 
