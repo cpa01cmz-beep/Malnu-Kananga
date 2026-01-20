@@ -8,8 +8,10 @@ import {
   AssignmentType, 
   AssignmentStatus, 
   Subject, 
-  Class
+  Class,
+  User
 } from '../types';
+import { STORAGE_KEYS } from '../constants';
 import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import FileUpload from './FileUpload';
@@ -20,15 +22,12 @@ import {
   createToastHandler
 } from '../utils/teacherErrorHandler';
 import { useCanAccess } from '../hooks/useCanAccess';
-import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
-import { useNetworkStatus } from '../utils/networkStatus';
 import Button from './ui/Button';
 import AccessDenied from './AccessDenied';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
-import { STORAGE_KEYS } from '../constants';
 
 interface AssignmentCreationProps {
   onBack: () => void;
@@ -70,9 +69,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
   
   const [submitting, setSubmitting] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
-
-  const toast = createToastHandler(onShowToast);
-
+  
   const getCurrentUser = (): User | null => {
     const userJson = localStorage.getItem(STORAGE_KEYS.USER);
     return userJson ? JSON.parse(userJson) : null;
@@ -153,7 +150,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
   };
 
   const handleRemoveAttachment = (fileId: string) => {
-    setAttachments(attachments.filter(f => f.fileId !== fileId));
+    setAttachments(attachments.filter(f => f.key !== fileId));
   };
 
   const addRubricCriteria = () => {
@@ -196,12 +193,12 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
         dueDate,
         status: submitStatus,
         attachments: attachments.map(att => ({
-          id: att.fileId,
+          id: att.key,
           assignmentId: '',
-          fileName: att.fileName,
-          fileUrl: att.fileUrl,
-          fileType: att.fileType,
-          fileSize: att.fileSize,
+          fileName: att.name,
+          fileUrl: att.url,
+          fileType: att.type,
+          fileSize: att.size,
           uploadedAt: new Date().toISOString(),
         })),
       };
@@ -465,7 +462,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
               </h3>
               {attachments.map((attachment) => (
                 <div
-                  key={attachment.fileId}
+                  key={attachment.id}
                   className="flex items-center justify-between bg-gray-50 dark:bg-neutral-700 rounded-lg px-4 py-2"
                 >
                   <div className="flex items-center space-x-2">
@@ -477,7 +474,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleRemoveAttachment(attachment.fileId)}
+                    onClick={() => handleRemoveAttachment(attachment.id)}
                     disabled={submitting}
                     ariaLabel="Hapus lampiran"
                   >

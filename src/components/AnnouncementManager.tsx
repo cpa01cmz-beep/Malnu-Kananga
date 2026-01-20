@@ -301,13 +301,13 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <SearchInput
               value={searchQuery}
-              onChange={setSearchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari pengumuman..."
               className="w-full"
             />
             <Select
               value={filterCategory}
-              onChange={setFilterCategory}
+              onChange={(e) => setFilterCategory(e.target.value as 'all' | AnnouncementCategory)}
               options={[
                 { value: 'all', label: 'Semua Kategori' },
                 { value: AnnouncementCategory.UMUM, label: 'Umum' },
@@ -319,7 +319,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
             />
             <Select
               value={filterStatus}
-              onChange={setFilterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as 'all' | 'active' | 'inactive')}
               options={[
                 { value: 'all', label: 'Semua Status' },
                 { value: 'active', label: 'Aktif' },
@@ -338,7 +338,6 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
         ) : filteredAnnouncements.length === 0 ? (
           <EmptyState
             icon={<MegaphoneIcon className="w-16 h-16 text-neutral-400" />}
-            title="Tidak ada pengumuman"
             message={
               searchQuery || filterCategory !== 'all' || filterStatus !== 'all'
                 ? 'Coba ubah filter atau kata kunci pencarian'
@@ -390,6 +389,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                           onClick={() => handleMarkAsRead(announcement)}
                           icon={<EyeIcon className="w-5 h-5" />}
                           title="Tandai sebagai dibaca"
+                          ariaLabel="Tandai sebagai dibaca"
                           variant="ghost"
                         />
                       )}
@@ -397,6 +397,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                         onClick={() => setShowPreviewModal(announcement)}
                         icon={<EyeSlashIcon className="w-5 h-5" />}
                         title="Preview"
+                        ariaLabel="Preview"
                         variant="ghost"
                       />
                       {canManageAnnouncements && (
@@ -419,24 +420,28 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                             }}
                             icon={<PencilIcon className="w-5 h-5" />}
                             title="Edit"
+                            ariaLabel="Edit"
                             variant="ghost"
                           />
                           <IconButton
                             onClick={() => handleToggleStatus(announcement)}
                             icon={announcement.isActive ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
                             title={announcement.isActive ? 'Nonaktifkan' : 'Aktifkan'}
+                            ariaLabel={announcement.isActive ? 'Nonaktifkan' : 'Aktifkan'}
                             variant="ghost"
                           />
                           <IconButton
                             onClick={() => setShowAnalyticsModal(announcement)}
                             icon={<BellIcon className="w-5 h-5" />}
                             title="Analytics"
+                            ariaLabel="Analytics"
                             variant="ghost"
                           />
                           <IconButton
                             onClick={() => handleDelete(announcement.id)}
                             icon={<TrashIcon className="w-5 h-5" />}
                             title="Hapus"
+                            ariaLabel="Hapus"
                             variant="ghost"
                           />
                         </>
@@ -472,7 +477,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
           size="lg"
         >
           <div className="space-y-4">
-            <Section title="Informasi Dasar">
+            <Section id="info-dasar" title="Informasi Dasar">
               <div className="space-y-4">
                 <Input
                   label="Judul"
@@ -492,12 +497,12 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
               </div>
             </Section>
 
-            <Section title="Pengaturan Pengumuman">
+            <Section id="pengaturan-pengumuman" title="Pengaturan Pengumuman">
               <div className="space-y-4">
                 <Select
                   label="Kategori"
                   value={formData.category}
-                  onChange={(value) => setFormData({ ...formData, category: value as AnnouncementCategory })}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value as AnnouncementCategory })}
                   options={[
                     { value: AnnouncementCategory.UMUM, label: 'Umum' },
                     { value: AnnouncementCategory.AKADEMIK, label: 'Akademik' },
@@ -508,7 +513,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                 <Select
                   label="Target Pengumuman"
                   value={formData.targetType}
-                  onChange={(value) => setFormData({ ...formData, targetType: value as AnnouncementTargetType })}
+                  onChange={(e) => setFormData({ ...formData, targetType: e.target.value as AnnouncementTargetType })}
                   options={[
                     { value: AnnouncementTargetType.ALL, label: 'Semua Pengguna' },
                     { value: AnnouncementTargetType.ROLES, label: 'Berdasarkan Peran' },
