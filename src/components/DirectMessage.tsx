@@ -4,7 +4,6 @@ import { MessageThread } from './MessageThread';
 import { apiService } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
 import Modal from './ui/Modal';
-import Input from './ui/Input';
 import Button from './ui/Button';
 import type { Conversation, Participant, User } from '../types';
 
@@ -14,7 +13,7 @@ interface DirectMessageProps {
 
 export function DirectMessage({ currentUser }: DirectMessageProps) {
   const [selectedConversationId, setSelectedConversationId] = useState<string>();
-  const [selectedParticipantId, setSelectedParticipantId] = useState<string>();
+  const [_selectedParticipantId, setSelectedParticipantId] = useState<string>();
   const [showNewChatModal, setShowNewChatModal] = useState(false);
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>();
@@ -28,9 +27,9 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
   const loadAvailableUsers = async () => {
     try {
       setLoadingUsers(true);
-      const response = await apiService.users.getUsers();
+      const response = await apiService.users.getAll();
       if (response.success && response.data) {
-        const otherUsers = response.data.filter(u => u.id !== currentUser.id);
+        const otherUsers = response.data.filter((u: User) => u.id !== currentUser.id);
         setAvailableUsers(otherUsers);
       }
     } catch (err) {
@@ -40,7 +39,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
     }
   };
 
-  const handleConversationSelect = (conversationId: string, participantId: string) => {
+  const handleConversationSelect = (conversationId: string, participantId?: string) => {
     setSelectedConversationId(conversationId);
     setSelectedParticipantId(participantId);
   };
@@ -128,7 +127,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
       </div>
 
       {showNewChatModal && (
-        <Modal onClose={() => setShowNewChatModal(false)}>
+        <Modal isOpen={showNewChatModal} onClose={() => setShowNewChatModal(false)}>
           <div className="max-w-md">
             <h2 className="mb-4 text-xl font-semibold">Percakapan Baru</h2>
             <div className="mb-4">

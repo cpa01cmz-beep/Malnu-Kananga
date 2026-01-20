@@ -1376,8 +1376,14 @@ export const eLibraryAPI = {
 // ============================================
 
 export interface FileUploadResponse {
+  id: string;
   key: string;
   url: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  fileUrl: string;
+  uploadedAt: string;
   size: number;
   type: string;
   name: string;

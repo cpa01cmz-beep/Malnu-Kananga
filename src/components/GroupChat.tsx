@@ -52,7 +52,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
 
   const loadClasses = async () => {
     try {
-      const response = await apiService.classes.getClasses();
+      const response = await apiService.classes.getAll();
       if (response.success && response.data) {
         setClasses(response.data);
       }
@@ -63,7 +63,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
 
   const loadSubjects = async () => {
     try {
-      const response = await apiService.subjects.getSubjects();
+      const response = await apiService.subjects.getAll();
       if (response.success && response.data) {
         setSubjects(response.data);
       }
@@ -75,7 +75,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
   const loadAvailableUsers = async () => {
     try {
       setLoading(true);
-      const response = await apiService.users.getUsers();
+      const response = await apiService.users.getAll();
       if (response.success && response.data) {
         const otherUsers = response.data.filter(u => u.id !== currentUser.id);
         setAvailableUsers(otherUsers);
@@ -89,7 +89,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
 
   const loadClassParticipants = async (classId: string) => {
     try {
-      const response = await apiService.students.getStudents();
+      const response = await apiService.students.getAll();
       if (response.success && response.data) {
         const classStudents = response.data.filter(s => s.class === classId);
         const participantIds = classStudents.map(s => s.userId);
@@ -102,8 +102,8 @@ export function GroupChat({ currentUser }: GroupChatProps) {
 
   const loadSubjectParticipants = async (subjectId: string) => {
     try {
-      const students = await apiService.students.getStudents();
-      const schedules = await apiService.schedules.getSchedules();
+      const students = await apiService.students.getAll();
+      const schedules = await apiService.schedules.getAll();
 
       if (students.success && students.data && schedules.success && schedules.data) {
         const subjectSchedules = schedules.data.filter(s => s.subjectId === subjectId);

@@ -470,6 +470,7 @@ export interface Assignment {
   id: string;
   title: string;
   description: string;
+  instructions?: string;
   type: AssignmentType;
   subjectId: string;
   classId: string;

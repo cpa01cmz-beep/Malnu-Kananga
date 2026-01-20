@@ -51,6 +51,7 @@ export interface OperationResult {
   success: boolean;
   data?: unknown;
   error?: string;
+  message?: string;
   canRetry?: boolean;
 }
 

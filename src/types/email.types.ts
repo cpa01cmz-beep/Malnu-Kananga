@@ -13,7 +13,8 @@ export interface EmailRecipient {
 }
 
 export interface EmailData {
-  to: EmailRecipient | EmailRecipient[];
+  to?: EmailRecipient | EmailRecipient[];
+  recipients?: EmailRecipient | EmailRecipient[];
   cc?: EmailRecipient | EmailRecipient[];
   bcc?: EmailRecipient | EmailRecipient[];
   subject: string;

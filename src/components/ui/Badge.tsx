@@ -1,7 +1,7 @@
 import React from 'react';
 import { getColorClasses } from '../../config/colors';
 
-export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'secondary';
+export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'secondary' | 'outline';
 export type BadgeSize = 'sm' | 'md' | 'lg' | 'xl';
 export type BadgeStyle = 'solid' | 'outline';
 
@@ -43,6 +43,10 @@ const variantClasses: Record<BadgeVariant, Record<BadgeStyle, string>> = {
   secondary: {
     solid: getColorClasses('secondary', 'badge'),
     outline: "border-2 border-purple-600 text-purple-700 dark:border-purple-400 dark:text-purple-300",
+  },
+  outline: {
+    solid: getColorClasses('neutral', 'badge'),
+    outline: "border-2 border-neutral-500 text-neutral-700 dark:border-neutral-400 dark:text-neutral-300",
   },
 };
 

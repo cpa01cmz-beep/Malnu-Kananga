@@ -10,7 +10,7 @@ interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>
   size?: SelectSize;
   state?: SelectState;
   fullWidth?: boolean;
-  options: Array<{ value: string; label: string; disabled?: boolean }>;
+  options?: Array<{ value: string; label: string; disabled?: boolean }>;
   placeholder?: string;
 }
 
@@ -95,7 +95,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
               {placeholder}
             </option>
           )}
-          {options.map((option) => (
+          {options?.map((option) => (
             <option
               key={option.value}
               value={option.value}
