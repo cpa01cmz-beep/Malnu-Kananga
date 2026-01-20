@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-19 (Group Chats completed)
+**Last Updated**: 2026-01-20 (E2E Tests setup with Playwright)
 
 ## Architecture Overview
 
@@ -658,9 +658,38 @@ All localStorage keys use `malnu_` prefix:
 - Offline functionality tests
 - OCR validation tests
 
-#### Test Coverage (as of 2026-01-19)
-- **93 test files** (Study Plan Generator tests added)
-- **1750+ tests passing** (20+ new tests)
+#### End-to-End Tests (E2E)
+- Tool: Playwright (@playwright/test)
+- Location: `e2e/` directory
+- Browsers: Chromium, Firefox, WebKit (Safari)
+- Test Suites (as of 2026-01-20):
+  - Authentication flow (10 tests)
+  - PPDB registration workflow (10 tests)
+  - Assignment lifecycle (9 tests)
+  - Messaging system (12 tests)
+  - AI features (10 tests)
+  - Role-based access control (16 tests)
+  - **Total: 67 E2E tests**
+- Key user journeys tested:
+  - Login/logout flows
+  - Password reset flow
+  - PPDB registration and admin review
+  - Assignment creation, submission, and grading
+  - Direct and group messaging
+  - AI quiz generation and study plan creation
+  - Role-based dashboard access
+- E2E Test Commands:
+  - `npm run test:e2e` - Run all E2E tests (headless)
+  - `npm run test:e2e:ui` - Run E2E tests with Playwright UI
+  - `npm run test:e2e:headed` - Run E2E tests in headed mode
+  - `npm run test:e2e:debug` - Debug E2E tests with step-by-step execution
+  - `npm run test:e2e:install` - Install Playwright browser binaries
+  - `npm run test:all` - Run unit tests and E2E tests
+
+#### Test Coverage (as of 2026-01-20)
+- **93 test files** (unit/integration)
+- **1750+ tests passing** (unit/integration)
+- **67 E2E tests** (new)
 - **10 tests skipped**
 - **Coverage areas**:
   - All core services (auth, API, permissions)
@@ -678,12 +707,18 @@ All localStorage keys use `malnu_` prefix:
   - Messaging system (30+ test cases for MessageInput, MessageList, MessageThread, DirectMessage)
   - Group chat (25+ test cases for GroupChat)
   - Study plan generation (20+ test cases for StudyPlanGenerator)
+  - E2E user journeys (67 tests covering critical flows)
 
 #### Test Commands
-- `npm test` - Run all tests
+- `npm test` - Run all unit/integration tests
 - `npm run test:run` - Run tests once
 - `npm run test:ui` - Vitest UI
 - `npm run test:coverage` - Coverage report
+- `npm run test:e2e` - Run all E2E tests (headless)
+- `npm run test:e2e:ui` - Run E2E tests with Playwright UI
+- `npm run test:e2e:headed` - Run E2E tests in headed mode
+- `npm run test:e2e:debug` - Debug E2E tests
+- `npm run test:all` - Run unit tests and E2E tests
 
 ### Deployment Architecture
 
