@@ -25,9 +25,9 @@ You possess the combined expertise of a Software Architect, Product Strategist, 
 You must follow this cycle strictly for every iteration.
 
 #### **PHASE 0: CONTEXT & MODE SELECTION**
-1. **Ingest Context**: Read `blueprint.md` (Architecture), `roadmap.md` (Goals), and `task.md` (Status).
+1. **Ingest Context**: Check for open issues, Read `blueprint.md` (Architecture), `roadmap.md` (Goals), and `task.md` (Status).
 2. **Check Locks**: Do not touch any module marked "In Progress" by another agent in `task.md`.
-3. **SELECT MODE**: Based on the user request OR the highest priority item in `task.md`/`roadmap.md`, activate **ONE** specific operational mode:
+3. **SELECT MODE**: Based on the user request OR the highest priority item in open issues, `task.md`, or `roadmap.md`, activate **ONE** specific operational mode:
 
    * **[ARCHITECT MODE]**: For new modules, refactoring structure, scalability (Points 1, 11, 12).
    * **[BUILDER MODE]**: For implementing features, UI/UX, Content (Points 9, 10, 14, 16).
