@@ -71,6 +71,22 @@
   - Error handling and retry logic
   - Integration with speechRecognitionService and speechSynthesisService
 
+- **`FieldVoiceInput.tsx`** - Reusable voice input button component
+  - Wraps useVoiceInput hook with UI feedback
+  - Visual indicators for listening, error states
+  - Compact and normal size variants
+  - Accessibility features (aria-labels, tooltips)
+  - Supports disabled state
+
+#### Voice Input Integration (added 2026-01-21)
+- **`PPDBRegistration.tsx`** - PPDB registration form with voice input (Phase 2 Complete)
+  - Voice input for 7 form fields: fullName, nisn, originSchool, parentName, phoneNumber, email, address
+  - Inline VoiceButton component next to each form field
+  - Field-specific processing (title case for names, phone normalization, email normalization)
+  - Indonesian language voice feedback
+  - Real-time validation integration
+  - Visual feedback (listening pulse animation, error states)
+
 #### Real-Time Services (added 2026-01-21)
  - **`useRealtimeEvents.ts`** - Custom hook for WebSocket event subscription and management
    - Subscribes to real-time event types

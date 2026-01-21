@@ -3,10 +3,13 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { CloseIcon } from './icons/CloseIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
+import { MicrophoneIcon } from './icons/MicrophoneIcon';
+import { MicrophoneOffIcon } from './icons/MicrophoneOffIcon';
 import { ppdbAPI } from '../services/apiService';
 import { FileUploadResponse } from '../services/apiService';
 import type { PPDBRegistrant } from '../types';
 import { useEventNotifications } from '../hooks/useEventNotifications';
+import { useVoiceInput } from '../hooks/useVoiceInput';
 import FileUpload from './FileUpload';
 import { ocrService, type OCRExtractionResult, type OCRProgress } from '../services/ocrService';
 import Textarea from './ui/Textarea';
@@ -23,6 +26,7 @@ import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { standardValidationRules } from '../hooks/useFieldValidation';
 import { HEIGHT_CLASSES } from '../config/heights';
+import { VoiceLanguage } from '../types';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -159,6 +163,129 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
       fileInputRef.current.value = '';
     }
   }, [autoSaveActions, initialFormData]);
+
+  const voiceFullName = useVoiceInput({
+    fieldName: 'fullName',
+    fieldLabel: 'Nama Lengkap',
+    fieldType: { type: 'text' },
+    onValueChange: (value) => {
+      autoSaveActions.updateData((prev) => ({ ...prev, fullName: value }));
+    },
+    validationRules: validationRules.fullName,
+    language: VoiceLanguage.Indonesian,
+  });
+
+  const voiceNisn = useVoiceInput({
+    fieldName: 'nisn',
+    fieldLabel: 'NISN',
+    fieldType: { type: 'text', format: 'NISN' },
+    onValueChange: (value) => {
+      autoSaveActions.updateData((prev) => ({ ...prev, nisn: value }));
+    },
+    validationRules: validationRules.nisn,
+    language: VoiceLanguage.Indonesian,
+  });
+
+  const voiceOriginSchool = useVoiceInput({
+    fieldName: 'originSchool',
+    fieldLabel: 'Asal Sekolah',
+    fieldType: { type: 'text' },
+    onValueChange: (value) => {
+      autoSaveActions.updateData((prev) => ({ ...prev, originSchool: value }));
+    },
+    validationRules: validationRules.originSchool,
+    language: VoiceLanguage.Indonesian,
+  });
+
+  const voiceParentName = useVoiceInput({
+    fieldName: 'parentName',
+    fieldLabel: 'Nama Orang Tua',
+    fieldType: { type: 'text' },
+    onValueChange: (value) => {
+      autoSaveActions.updateData((prev) => ({ ...prev, parentName: value }));
+    },
+    validationRules: validationRules.parentName,
+    language: VoiceLanguage.Indonesian,
+  });
+
+  const voicePhoneNumber = useVoiceInput({
+    fieldName: 'phoneNumber',
+    fieldLabel: 'Nomor WhatsApp',
+    fieldType: { type: 'phone' },
+    onValueChange: (value) => {
+      autoSaveActions.updateData((prev) => ({ ...prev, phoneNumber: value }));
+    },
+    validationRules: validationRules.phoneNumber,
+    language: VoiceLanguage.Indonesian,
+  });
+
+  const voiceEmail = useVoiceInput({
+    fieldName: 'email',
+    fieldLabel: 'Email',
+    fieldType: { type: 'email' },
+    onValueChange: (value) => {
+      autoSaveActions.updateData((prev) => ({ ...prev, email: value }));
+    },
+    validationRules: validationRules.email,
+    language: VoiceLanguage.Indonesian,
+  });
+
+  const voiceAddress = useVoiceInput({
+    fieldName: 'address',
+    fieldLabel: 'Alamat Lengkap',
+    fieldType: { type: 'textarea' },
+    onValueChange: (value) => {
+      autoSaveActions.updateData((prev) => ({ ...prev, address: value }));
+    },
+    validationRules: validationRules.address,
+    language: VoiceLanguage.Indonesian,
+  });
+
+  const VoiceButton: React.FC<{
+    voiceState: typeof voiceFullName;
+    compact?: boolean;
+  }> = ({ voiceState, compact = false }) => {
+    const { isListening, isSupported, startListening, stopListening, clearError, error } = voiceState;
+
+    const handleClick = () => {
+      if (!isSupported) return;
+      if (isListening) {
+        stopListening();
+      } else {
+        clearError();
+        startListening();
+      }
+    };
+
+    const getButtonStyle = () => {
+      if (!isSupported) return 'bg-neutral-300 dark:bg-neutral-600 text-neutral-500 cursor-not-allowed';
+      if (error) return 'bg-red-500 hover:bg-red-600 text-white dark:hover:bg-red-700';
+      if (isListening) return 'bg-red-500 hover:bg-red-600 text-white dark:hover:bg-red-700 animate-pulse';
+      return 'bg-green-500 hover:bg-green-600 text-white dark:bg-green-600 dark:hover:bg-green-700 hover:scale-[1.02] active:scale-95';
+    };
+
+    const sizeClass = compact ? 'p-2' : 'p-3';
+    const iconSize = compact ? 'w-4 h-4' : 'w-5 h-5';
+
+    return (
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={!isSupported}
+        className={`${sizeClass} rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0 ${getButtonStyle()}`}
+        aria-label={isListening ? 'Berhenti merekam' : 'Mulai input suara'}
+        title={isListening ? 'Klik untuk berhenti' : 'Klik untuk input suara'}
+      >
+        {isListening ? (
+          <MicrophoneIcon className={iconSize} />
+        ) : error ? (
+          <MicrophoneOffIcon className={iconSize} />
+        ) : (
+          <MicrophoneIcon className={iconSize} />
+        )}
+      </button>
+    );
+  };
 
   const [uploadedDocument, setUploadedDocument] = useState<FileUploadResponse | null>(null);
 
@@ -634,50 +761,65 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                 <div className="space-y-4">
                     <h3 className="text-sm font-bold uppercase tracking-wide text-green-600 dark:text-green-400 border-b border-green-100 dark:border-green-900 pb-2">Data Calon Siswa</h3>
                      <FormGrid>
-                        <Input
-                            id="ppdb-fullName"
-                            name="fullName"
-                            label="Nama Lengkap"
-                            required
-                            type="text"
-                            value={autoSaveState.data.fullName}
-                            onChange={handleChange}
-                            autoComplete="name"
-                            size="md"
-                            fullWidth
-                            validationRules={validationRules.fullName}
-                            helperText={hasDraftRecovered && autoSaveState.data.fullName ? 'Data dari draft' : undefined}
-                        />
-                        <Input
-                            id="ppdb-nisn"
-                            name="nisn"
-                            label="NISN"
-                            required
-                            type="text"
-                            value={autoSaveState.data.nisn}
-                            onChange={handleChange}
-                            autoComplete="off"
-                            size="md"
-                            fullWidth
-                            validationRules={validationRules.nisn}
-                            customType="nisn"
-                            helperText={hasDraftRecovered && autoSaveState.data.nisn ? 'Data dari draft' : undefined}
-                         />
-                         <Input
-                            id="ppdb-originSchool"
-                            name="originSchool"
-                            label="Asal Sekolah"
-                            required
-                            type="text"
-                            value={autoSaveState.data.originSchool}
-                            onChange={handleChange}
-                            placeholder="SMP/MTs..."
-                            autoComplete="organization"
-                            size="md"
-                            fullWidth
-                            validationRules={validationRules.originSchool}
-                            helperText={hasDraftRecovered && autoSaveState.data.originSchool ? 'Data dari draft' : undefined}
-                        />
+                        <div className="relative">
+                          <Input
+                              id="ppdb-fullName"
+                              name="fullName"
+                              label="Nama Lengkap"
+                              required
+                              type="text"
+                              value={autoSaveState.data.fullName}
+                              onChange={handleChange}
+                              autoComplete="name"
+                              size="md"
+                              fullWidth
+                              validationRules={validationRules.fullName}
+                              helperText={hasDraftRecovered && autoSaveState.data.fullName ? 'Data dari draft' : undefined}
+                          />
+                          <div className="absolute top-6 right-2">
+                            <VoiceButton voiceState={voiceFullName} compact />
+                          </div>
+                        </div>
+                        <div className="relative">
+                          <Input
+                              id="ppdb-nisn"
+                              name="nisn"
+                              label="NISN"
+                              required
+                              type="text"
+                              value={autoSaveState.data.nisn}
+                              onChange={handleChange}
+                              autoComplete="off"
+                              size="md"
+                              fullWidth
+                              validationRules={validationRules.nisn}
+                              customType="nisn"
+                              helperText={hasDraftRecovered && autoSaveState.data.nisn ? 'Data dari draft' : undefined}
+                          />
+                          <div className="absolute top-6 right-2">
+                            <VoiceButton voiceState={voiceNisn} compact />
+                          </div>
+                        </div>
+                          <div className="relative">
+                            <Input
+                                id="ppdb-originSchool"
+                                name="originSchool"
+                                label="Asal Sekolah"
+                                required
+                                type="text"
+                                value={autoSaveState.data.originSchool}
+                                onChange={handleChange}
+                                placeholder="SMP/MTs..."
+                                autoComplete="organization"
+                                size="md"
+                                fullWidth
+                                validationRules={validationRules.originSchool}
+                                helperText={hasDraftRecovered && autoSaveState.data.originSchool ? 'Data dari draft' : undefined}
+                            />
+                            <div className="absolute top-6 right-2">
+                              <VoiceButton voiceState={voiceOriginSchool} compact />
+                            </div>
+                          </div>
                      </FormGrid>
                 </div>
 
@@ -685,36 +827,46 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                 <div className="space-y-4">
                      <h3 className="text-sm font-bold uppercase tracking-wide text-green-600 dark:text-green-400 border-b border-green-100 dark:border-green-900 pb-2">Data Orang Tua & Kontak</h3>
                     <FormGrid>
-                        <Input
-                            id="ppdb-parentName"
-                            name="parentName"
-                            label="Nama Orang Tua/Wali"
-                            required
-                            type="text"
-                            value={autoSaveState.data.parentName}
-                            onChange={handleChange}
-                            autoComplete="name"
-                            size="md"
-                            fullWidth
-                            validationRules={validationRules.parentName}
-                            helperText={hasDraftRecovered && autoSaveState.data.parentName ? 'Data dari draft' : undefined}
-                        />
-                        <Input
-                            id="ppdb-phoneNumber"
-                            name="phoneNumber"
-                            label="Nomor WhatsApp"
-                            required
-                            type="tel"
-                            value={autoSaveState.data.phoneNumber}
-                            onChange={handleChange}
-                            autoComplete="tel"
-                            size="md"
-                            fullWidth
-                            validationRules={validationRules.phoneNumber}
-                            customType="phone"
-                            helperText={hasDraftRecovered && autoSaveState.data.phoneNumber ? 'Data dari draft' : undefined}
-                        />
-                        <div className="md:col-span-2">
+                        <div className="relative">
+                          <Input
+                              id="ppdb-parentName"
+                              name="parentName"
+                              label="Nama Orang Tua/Wali"
+                              required
+                              type="text"
+                              value={autoSaveState.data.parentName}
+                              onChange={handleChange}
+                              autoComplete="name"
+                              size="md"
+                              fullWidth
+                              validationRules={validationRules.parentName}
+                              helperText={hasDraftRecovered && autoSaveState.data.parentName ? 'Data dari draft' : undefined}
+                          />
+                          <div className="absolute top-6 right-2">
+                            <VoiceButton voiceState={voiceParentName} compact />
+                          </div>
+                        </div>
+                        <div className="relative">
+                          <Input
+                              id="ppdb-phoneNumber"
+                              name="phoneNumber"
+                              label="Nomor WhatsApp"
+                              required
+                              type="tel"
+                              value={autoSaveState.data.phoneNumber}
+                              onChange={handleChange}
+                              autoComplete="tel"
+                              size="md"
+                              fullWidth
+                              validationRules={validationRules.phoneNumber}
+                              customType="phone"
+                              helperText={hasDraftRecovered && autoSaveState.data.phoneNumber ? 'Data dari draft' : undefined}
+                          />
+                          <div className="absolute top-6 right-2">
+                            <VoiceButton voiceState={voicePhoneNumber} compact />
+                          </div>
+                        </div>
+                        <div className="md:col-span-2 relative">
                             <Input
                                 id="ppdb-email"
                                 name="email"
@@ -729,20 +881,28 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                                 validationRules={validationRules.email}
                                 helperText={hasDraftRecovered && autoSaveState.data.email ? 'Data dari draft' : undefined}
                             />
+                            <div className="absolute top-6 right-2">
+                              <VoiceButton voiceState={voiceEmail} compact />
+                            </div>
                         </div>
                     </FormGrid>
-                    <Textarea
-                        name="address"
-                        label="Alamat Lengkap"
-                        required
-                        value={autoSaveState.data.address}
-                        onChange={handleChange}
-                        rows={3}
-                        size="md"
-                        fullWidth
-                        validationRules={validationRules.address}
-                        helperText={hasDraftRecovered && autoSaveState.data.address ? 'Data dari draft' : undefined}
-                    />
+                    <div className="relative">
+                      <Textarea
+                          name="address"
+                          label="Alamat Lengkap"
+                          required
+                          value={autoSaveState.data.address}
+                          onChange={handleChange}
+                          rows={3}
+                          size="md"
+                          fullWidth
+                          validationRules={validationRules.address}
+                          helperText={hasDraftRecovered && autoSaveState.data.address ? 'Data dari draft' : undefined}
+                      />
+                      <div className="absolute top-6 right-2">
+                        <VoiceButton voiceState={voiceAddress} compact />
+                      </div>
+                    </div>
                 </div>
 
                 {/* Upload Dokumen */}
