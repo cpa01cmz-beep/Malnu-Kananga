@@ -8,6 +8,7 @@ import { unifiedNotificationManager } from '../services/unifiedNotificationManag
 import { ocrService, OCRExtractionResult, OCRProgress } from '../services/ocrService';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { LightBulbIcon } from './icons/LightBulbIcon';
+import FieldVoiceInput from './FieldVoiceInput';
 import MarkdownRenderer from './MarkdownRenderer';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
@@ -33,7 +34,7 @@ import LoadingSpinner from './ui/LoadingSpinner';
 import Button from './ui/Button';
 import { TableSkeleton } from './ui/Skeleton';
 import AccessDenied from './AccessDenied';
-import { User, UserRole, UserExtraRole } from '../types';
+import { User, UserRole, UserExtraRole, VoiceLanguage } from '../types';
 import ErrorMessage from './ui/ErrorMessage';
 import { OfflineIndicator } from './OfflineIndicator';
 import SearchInput from './ui/SearchInput';
@@ -1283,38 +1284,71 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                     Batch Operations ({selectedStudents.size} selected):
                 </span>
 
-                <input
-                    type="number"
-                    id="batch-assignment-input"
-                    placeholder="Assignment"
-                    min="0"
-                    max="100"
-                    aria-label="Nilai Assignment untuk batch"
-                    onChange={(e) => handleBatchGradeInput('assignment', e.target.value)}
-                    className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
-                />
+                <div className="flex items-center gap-1">
+                    <input
+                        type="number"
+                        id="batch-assignment-input"
+                        placeholder="Assignment"
+                        min="0"
+                        max="100"
+                        aria-label="Nilai Assignment untuk batch"
+                        onChange={(e) => handleBatchGradeInput('assignment', e.target.value)}
+                        className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
+                    />
+                    <FieldVoiceInput
+                        fieldName="batch-assignment"
+                        fieldLabel="Nilai Tugas Batch"
+                        fieldType={{ type: 'number' }}
+                        onValueChange={(value) => handleBatchGradeInput('assignment', value)}
+                        language={VoiceLanguage.Indonesian}
+                        compact={true}
+                        showFeedback={false}
+                    />
+                </div>
 
-                <input
-                    type="number"
-                    id="batch-uts-input"
-                    placeholder="UTS"
-                    min="0"
-                    max="100"
-                    aria-label="Nilai UTS untuk batch"
-                    onChange={(e) => handleBatchGradeInput('midExam', e.target.value)}
-                    className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
-                />
+                <div className="flex items-center gap-1">
+                    <input
+                        type="number"
+                        id="batch-uts-input"
+                        placeholder="UTS"
+                        min="0"
+                        max="100"
+                        aria-label="Nilai UTS untuk batch"
+                        onChange={(e) => handleBatchGradeInput('midExam', e.target.value)}
+                        className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
+                    />
+                    <FieldVoiceInput
+                        fieldName="batch-uts"
+                        fieldLabel="Nilai UTS Batch"
+                        fieldType={{ type: 'number' }}
+                        onValueChange={(value) => handleBatchGradeInput('midExam', value)}
+                        language={VoiceLanguage.Indonesian}
+                        compact={true}
+                        showFeedback={false}
+                    />
+                </div>
 
-                <input
-                    type="number"
-                    id="batch-uas-input"
-                    placeholder="UAS"
-                    min="0"
-                    max="100"
-                    aria-label="Nilai UAS untuk batch"
-                    onChange={(e) => handleBatchGradeInput('finalExam', e.target.value)}
-                    className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
-                />
+                <div className="flex items-center gap-1">
+                    <input
+                        type="number"
+                        id="batch-uas-input"
+                        placeholder="UAS"
+                        min="0"
+                        max="100"
+                        aria-label="Nilai UAS untuk batch"
+                        onChange={(e) => handleBatchGradeInput('finalExam', e.target.value)}
+                        className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
+                    />
+                    <FieldVoiceInput
+                        fieldName="batch-uas"
+                        fieldLabel="Nilai UAS Batch"
+                        fieldType={{ type: 'number' }}
+                        onValueChange={(value) => handleBatchGradeInput('finalExam', value)}
+                        language={VoiceLanguage.Indonesian}
+                        compact={true}
+                        showFeedback={false}
+                    />
+                </div>
 
                 <Button
                     variant="blue-solid"
@@ -1436,69 +1470,102 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
                                     {/* Enhanced Input Columns - Always enabled */}
                                     <td className="px-2 py-4 text-center sm:px-4">
-                                        <div className="flex flex-col items-center gap-1">
-                                            <input
-                                                type="number"
-                                                value={student.assignment}
-                                                onChange={(e) => handleInputChange(student.id, 'assignment', e.target.value)}
-                                                min="0"
-                                                max="100"
-                                                aria-label={`Nilai assignment untuk ${student.name}`}
-                                                className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
-                                                  inlineErrors[student.id]?.assignment
-                                                    ? 'border-red-500 focus:ring-red-500'
-                                                    : 'border-neutral-200 dark:border-neutral-600 focus:ring-green-500'
-                                                }`}
+                                        <div className="flex flex-row items-center justify-center gap-2">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <input
+                                                    type="number"
+                                                    value={student.assignment}
+                                                    onChange={(e) => handleInputChange(student.id, 'assignment', e.target.value)}
+                                                    min="0"
+                                                    max="100"
+                                                    aria-label={`Nilai assignment untuk ${student.name}`}
+                                                    className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
+                                                      inlineErrors[student.id]?.assignment
+                                                        ? 'border-red-500 focus:ring-red-500'
+                                                        : 'border-neutral-200 dark:border-neutral-600 focus:ring-green-500'
+                                                    }`}
+                                                />
+                                                {inlineErrors[student.id]?.assignment && (
+                                                    <span className="text-xs text-red-600 dark:text-red-400 max-w-20 truncate">
+                                                        {inlineErrors[student.id]!.assignment}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <FieldVoiceInput
+                                                fieldName={`assignment-${student.id}`}
+                                                fieldLabel="Nilai Tugas"
+                                                fieldType={{ type: 'number' }}
+                                                onValueChange={(value) => handleInputChange(student.id, 'assignment', value)}
+                                                language={VoiceLanguage.Indonesian}
+                                                compact={true}
+                                                showFeedback={false}
                                             />
-                                            {inlineErrors[student.id]?.assignment && (
-                                                <span className="text-xs text-red-600 dark:text-red-400 max-w-20 truncate">
-                                                    {inlineErrors[student.id]!.assignment}
-                                                </span>
-                                            )}
                                         </div>
                                     </td>
                                     <td className="px-2 py-4 text-center sm:px-4">
-                                        <div className="flex flex-col items-center gap-1">
-                                            <input
-                                                type="number"
-                                                value={student.midExam}
-                                                onChange={(e) => handleInputChange(student.id, 'midExam', e.target.value)}
-                                                min="0"
-                                                max="100"
-                                                aria-label={`Nilai UTS untuk ${student.name}`}
-                                                className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
-                                                  inlineErrors[student.id]?.midExam
-                                                    ? 'border-red-500 focus:ring-red-500'
-                                                    : 'border-neutral-200 dark:border-neutral-600 focus:ring-green-500'
-                                                }`}
+                                        <div className="flex flex-row items-center justify-center gap-2">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <input
+                                                    type="number"
+                                                    value={student.midExam}
+                                                    onChange={(e) => handleInputChange(student.id, 'midExam', e.target.value)}
+                                                    min="0"
+                                                    max="100"
+                                                    aria-label={`Nilai UTS untuk ${student.name}`}
+                                                    className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
+                                                      inlineErrors[student.id]?.midExam
+                                                        ? 'border-red-500 focus:ring-red-500'
+                                                        : 'border-neutral-200 dark:border-neutral-600 focus:ring-green-500'
+                                                    }`}
+                                                />
+                                                {inlineErrors[student.id]?.midExam && (
+                                                    <span className="text-xs text-red-600 dark:text-red-400 max-w-20 truncate">
+                                                        {inlineErrors[student.id]!.midExam}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <FieldVoiceInput
+                                                fieldName={`midExam-${student.id}`}
+                                                fieldLabel="Nilai UTS"
+                                                fieldType={{ type: 'number' }}
+                                                onValueChange={(value) => handleInputChange(student.id, 'midExam', value)}
+                                                language={VoiceLanguage.Indonesian}
+                                                compact={true}
+                                                showFeedback={false}
                                             />
-                                            {inlineErrors[student.id]?.midExam && (
-                                                <span className="text-xs text-red-600 dark:text-red-400 max-w-20 truncate">
-                                                    {inlineErrors[student.id]!.midExam}
-                                                </span>
-                                            )}
                                         </div>
                                     </td>
                                     <td className="px-2 py-4 text-center sm:px-4">
-                                        <div className="flex flex-col items-center gap-1">
-                                            <input
-                                                type="number"
-                                                value={student.finalExam}
-                                                onChange={(e) => handleInputChange(student.id, 'finalExam', e.target.value)}
-                                                min="0"
-                                                max="100"
-                                                aria-label={`Nilai UAS untuk ${student.name}`}
-                                                className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
-                                                  inlineErrors[student.id]?.finalExam
-                                                    ? 'border-red-500 focus:ring-red-500'
-                                                    : 'border-neutral-200 dark:border-neutral-600 focus:ring-green-500'
-                                                }`}
+                                        <div className="flex flex-row items-center justify-center gap-2">
+                                            <div className="flex flex-col items-center gap-1">
+                                                <input
+                                                    type="number"
+                                                    value={student.finalExam}
+                                                    onChange={(e) => handleInputChange(student.id, 'finalExam', e.target.value)}
+                                                    min="0"
+                                                    max="100"
+                                                    aria-label={`Nilai UAS untuk ${student.name}`}
+                                                    className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
+                                                      inlineErrors[student.id]?.finalExam
+                                                        ? 'border-red-500 focus:ring-red-500'
+                                                        : 'border-neutral-200 dark:border-neutral-600 focus:ring-green-500'
+                                                    }`}
+                                                />
+                                                {inlineErrors[student.id]?.finalExam && (
+                                                    <span className="text-xs text-red-600 dark:text-red-400 max-w-20 truncate">
+                                                        {inlineErrors[student.id]!.finalExam}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <FieldVoiceInput
+                                                fieldName={`finalExam-${student.id}`}
+                                                fieldLabel="Nilai UAS"
+                                                fieldType={{ type: 'number' }}
+                                                onValueChange={(value) => handleInputChange(student.id, 'finalExam', value)}
+                                                language={VoiceLanguage.Indonesian}
+                                                compact={true}
+                                                showFeedback={false}
                                             />
-                                            {inlineErrors[student.id]?.finalExam && (
-                                                <span className="text-xs text-red-600 dark:text-red-400 max-w-20 truncate">
-                                                    {inlineErrors[student.id]!.finalExam}
-                                                </span>
-                                            )}
                                         </div>
                                     </td>
 
