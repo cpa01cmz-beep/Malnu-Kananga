@@ -72,7 +72,7 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
         fileInputRef.current.value = '';
       }
     } catch (error) {
-      console.error('Failed to send message:', error);
+      logger.error('Failed to send message:', error);
     } finally {
       setIsSending(false);
     }

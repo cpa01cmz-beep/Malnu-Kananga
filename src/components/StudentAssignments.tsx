@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { assignmentsAPI, assignmentSubmissionsAPI, FileUploadResponse } from '../services/apiService';
 import { Assignment, AssignmentType, AssignmentStatus, AssignmentSubmission, Student } from '../types';
@@ -10,11 +10,9 @@ import { OfflineIndicator } from './OfflineIndicator';
 import { useNetworkStatus } from '../utils/networkStatus';
 import Button from './ui/Button';
 import AccessDenied from './AccessDenied';
-import Input from './ui/Input';
 import Textarea from './ui/Textarea';
 import FileUpload from './FileUpload';
 import { STORAGE_KEYS } from '../constants';
-import Modal from './ui/Modal';
 import Badge from './ui/Badge';
 import { EmptyState } from './ui/LoadingState';
 import FormGrid from './ui/FormGrid';
@@ -82,7 +80,7 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
 
         setAssignments(studentAssignments);
 
-        await fetchSubmissions(studentAssignments.map((a) => a.id));
+        await fetchSubmissions();
       } else {
         setError('Gagal memuat data tugas');
       }
@@ -94,7 +92,7 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
     }
   };
 
-  const fetchSubmissions = async (assignmentIds: string[]) => {
+  const fetchSubmissions = async () => {
     try {
       const response = await assignmentSubmissionsAPI.getByStudent(studentId);
 
@@ -518,11 +516,10 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
 
               <div className="col-span-2">
                 <FileUpload
-                  label="Lampiran (Opsional)"
                   acceptedFileTypes=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png"
                   maxSizeMB={10}
-                  onFileUploaded={(file) => setAttachments([...attachments, { ...file, uploadDate: new Date().toISOString() }])}
-                  existingFiles={attachments.map(a => ({ id: a.key, key: a.key, name: a.name, size: a.size, type: a.type, uploadDate: a.uploadDate }))}
+                  onFileUploaded={(file) => setAttachments([...attachments, file])}
+                  existingFiles={attachments.map(a => ({ id: a.key, key: a.key, name: a.name, size: a.size, type: a.type, uploadDate: a.uploadedAt }))}
                   multiple
                 />
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">

@@ -50,6 +50,7 @@ export const STORAGE_KEYS = {
     
     // Site editor (refactored from hardcoded)
     SITE_EDITOR_HISTORY: 'malnu_site_editor_history',
+    AI_EDITOR_AUDIT_LOG: 'malnu_ai_editor_audit_log',
     
     // Category service cache keys (refactored from hardcoded)
     SUBJECTS_CACHE: 'malnu_subjects_cache',

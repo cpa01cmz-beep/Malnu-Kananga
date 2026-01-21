@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { User, UserRole, UserExtraRole } from '../types';
+import { STORAGE_KEYS } from '../constants';
 import { authService } from '../services/authService';
 import { usersAPI } from '../services/apiService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
@@ -141,7 +142,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
 
         if (isOwnProfile) {
           const updatedUser = { ...currentUser, ...result.data };
-          localStorage.setItem('malnu_current_user', JSON.stringify(updatedUser));
+          localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(updatedUser));
         }
 
         await unifiedNotificationManager.showLocalNotification({

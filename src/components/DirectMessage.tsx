@@ -3,6 +3,7 @@ import { MessageList } from './MessageList';
 import { MessageThread } from './MessageThread';
 import { apiService } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
+import { logger } from '../utils/logger';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
 import type { Conversation, Participant, User } from '../types';
@@ -33,7 +34,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
         setAvailableUsers(otherUsers);
       }
     } catch (err) {
-      console.error('Failed to load users:', err);
+      logger.error('Failed to load users:', err);
     } finally {
       setLoadingUsers(false);
     }
@@ -60,7 +61,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
         setSelectedUserId('');
       }
     } catch (err) {
-      console.error('Failed to create conversation:', err);
+      logger.error('Failed to create conversation:', err);
       alert('Gagal membuat percakapan baru');
     } finally {
       setCreatingConversation(false);

@@ -9,9 +9,6 @@ import { authAPI, gradesAPI, attendanceAPI, subjectsAPI } from '../services/apiS
 import { generateStudyPlan } from '../services/geminiService';
 import type {
   StudyPlan,
-  StudyPlanSubject,
-  StudyPlanSchedule,
-  StudyPlanRecommendation,
   SubjectPerformance,
   Goal,
   AttendanceGradeCorrelation,
@@ -23,6 +20,7 @@ import { ClockIcon } from './icons/ClockIcon';
 import BookOpenIcon from './icons/BookOpenIcon';
 import { CheckIcon } from './icons/CheckIcon';
 import { XCircleIcon } from './icons/XCircleIcon';
+import { CheckCircleIcon } from './icons/StatusIcons';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import { ChartBarIcon } from './icons/ChartBarIcon';
 

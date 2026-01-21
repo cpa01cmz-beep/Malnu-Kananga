@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
+import { logger } from '../utils/logger';
 import type { Conversation, ConversationFilter, User } from '../types';
 
 interface MessageListProps {
@@ -72,7 +73,7 @@ export function MessageList({
       }
     } catch (err) {
       setError('Gagal memuat percakapan');
-      console.error('Failed to load conversations:', err);
+      logger.error('Failed to load conversations:', err);
     } finally {
       setLoading(false);
     }
@@ -106,7 +107,7 @@ export function MessageList({
         )
       );
     } catch (err) {
-      console.error('Failed to mark conversation as read:', err);
+      logger.error('Failed to mark conversation as read:', err);
     }
   };
 
