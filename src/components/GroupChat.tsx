@@ -68,7 +68,49 @@ export function GroupChat({ currentUser }: GroupChatProps) {
         setSubjects(response.data);
       }
     } catch (err) {
-      logger.error('Failed to load users:', err);
+      logger.error('Failed to load subjects:', err);
+    }
+  };
+
+  const loadSubjectParticipants = async (subjectId: string) => {
+    try {
+      const response = await apiService.students.getAll();
+      if (response.success && response.data) {
+        const studentsInClass = response.data.filter(s => s.class === selectedClass);
+        const participantIds = studentsInClass.map(s => s.userId);
+        setSelectedParticipants(participantIds);
+      }
+    } catch (err) {
+      logger.error('Failed to load subject participants:', err);
+    }
+  };
+
+  const handleConversationSelect = (conversationId: string) => {
+    setSelectedConversationId(conversationId);
+  };
+
+  const handleCreateGroup = async () => {
+    if (!groupName || selectedParticipants.length === 0) return;
+
+    try {
+      setCreatingGroup(true);
+      const response = await apiService.messages.createConversation({
+        type: 'group',
+        name: groupName,
+        description: groupDescription,
+        participantIds: selectedParticipants,
+      });
+
+      if (response.success && response.data) {
+        setShowNewGroupModal(false);
+        setGroupName('');
+        setGroupDescription('');
+        setSelectedParticipants([]);
+      }
+    } catch (err) {
+      logger.error('Failed to create group:', err);
+    } finally {
+      setCreatingGroup(false);
     }
   };
 
@@ -179,6 +221,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
         <MessageList
           currentUser={currentUser}
           onConversationSelect={handleConversationSelect}
+          selectedConversationId={selectedConversationId}
           filter="group"
           onManageGroup={handleManageGroup}
         />

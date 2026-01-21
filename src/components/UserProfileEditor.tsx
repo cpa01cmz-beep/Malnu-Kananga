@@ -20,7 +20,6 @@ import AccessDenied from './AccessDenied';
 
 interface UserProfileEditorProps {
   userId?: string;
-  onBack?: () => void;
   onShowToast?: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 

@@ -3,7 +3,7 @@
  * Validates that environment configuration allows AI functionality
  */
 
-import { EXTERNAL_URLS } from './constants';
+import { EXTERNAL_URLS } from '../constants';
 
 export async function checkAIServiceHealth(): Promise<{
   status: 'healthy' | 'warning' | 'error';

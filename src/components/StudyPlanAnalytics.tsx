@@ -2,13 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   BarChart,
   Bar,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -18,13 +15,11 @@ import {
 } from 'recharts';
 import { authAPI, gradesAPI, subjectsAPI } from '../services/apiService';
 import {
-  StudyPlanAnalytics,
+  StudyPlanAnalytics as StudyPlanAnalyticsType,
   StudyPlan,
-  StudyPlanSubject,
   SubjectProgress,
   WeeklyActivity,
   PerformanceImprovement,
-  SubjectImprovement,
   AnalyticsRecommendation,
   StudyPlanHistory
 } from '../types';
@@ -55,7 +50,7 @@ const COLORS = [
   CHART_COLORS.pink,
 ];
 
-const StudyPlanAnalytics: React.FC<StudyPlanAnalyticsProps> = ({ onBack, onShowToast = () => {} }) => {
+const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack, onShowToast = () => {} }) => {
   const currentUser = authAPI.getCurrentUser();
   const STUDENT_ID = currentUser?.id || '';
   const STUDENT_NAME = currentUser?.name || 'Siswa';
@@ -808,5 +803,7 @@ const StudyPlanAnalytics: React.FC<StudyPlanAnalyticsProps> = ({ onBack, onShowT
     </div>
   );
 };
+
+export { StudyPlanAnalyticsComponent as StudyPlanAnalytics };;
 
 export default StudyPlanAnalytics;

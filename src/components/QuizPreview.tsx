@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import type { Quiz, QuizQuestion, QuizQuestionType, QuizDifficulty } from '../types';
+import type { Quiz, QuizQuestion } from '../types';
+import { QuizQuestionType, QuizDifficulty } from '../types';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
@@ -449,8 +450,8 @@ function AddQuestionModal({ onClose, onAdd }: AddQuestionModalProps) {
   const [newQuestion, setNewQuestion] = useState<QuizQuestion>({
     id: `q_${Date.now()}`,
     question: '',
-    type: 'multiple_choice',
-    difficulty: 'medium',
+    type: QuizQuestionType.MULTIPLE_CHOICE,
+    difficulty: QuizDifficulty.MEDIUM,
     options: ['', '', '', ''],
     correctAnswer: '',
     points: 10,
