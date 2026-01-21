@@ -139,7 +139,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   // Initialize grade history from localStorage on mount
   useEffect(() => {
     try {
-      const savedHistory = localStorage.getItem('malnu_grade_history');
+      const savedHistory = localStorage.getItem(STORAGE_KEYS.GRADE_HISTORY);
       if (savedHistory) {
         setGradeHistory(JSON.parse(savedHistory));
       }
@@ -358,7 +358,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
           
           // Persist grade history to localStorage
           try {
-            localStorage.setItem('malnu_grade_history', JSON.stringify(finalHistory));
+            localStorage.setItem(STORAGE_KEYS.GRADE_HISTORY, JSON.stringify(finalHistory));
           } catch (error) {
             logger.error('Failed to save grade history to localStorage:', error);
           }

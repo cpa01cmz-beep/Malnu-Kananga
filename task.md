@@ -5,6 +5,37 @@
 ## Active Tasks
 
 ### 2026-01-21
+- [x] **Fix Hardcoded localStorage Keys in Production Code** (TECH-1092)
+  - Task ID: TECH-1092
+  - Issue: #1182
+  - Description: Replace all hardcoded localStorage keys with STORAGE_KEYS constants
+  - Status: **Completed**
+  - Completed: 2026-01-21
+  - Priority: P2 (Medium)
+  - Domain: Code Quality & Dynamic Coding (Pillar 15)
+  - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+  - Dependencies: None
+  - Issues found in production code (4 instances):
+    - StudentPortal.tsx: 2 instances with 'malnu_materials'
+    - GradingManagement.tsx: 2 instances with 'malnu_grade_history'
+  - Implementation completed:
+    - ✅ Phase 1: Scan codebase for hardcoded localStorage keys (completed)
+    - ✅ Phase 2: Add GRADE_HISTORY key to STORAGE_KEYS (completed)
+    - ✅ Phase 3: Fix StudentPortal.tsx (completed - 2 instances fixed)
+    - ✅ Phase 4: Fix GradingManagement.tsx (completed - 2 instances fixed)
+    - ✅ Phase 5: Run tests and typecheck (completed)
+    - ✅ Phase 6: Update documentation (completed)
+  - Files modified:
+    - src/constants.ts (added GRADE_HISTORY key)
+    - src/components/StudentPortal.tsx (added STORAGE_KEYS import, replaced 2 hardcoded strings)
+    - src/components/GradingManagement.tsx (replaced 2 hardcoded strings)
+  - Quality checks:
+    - ✅ npm run typecheck: Passed (no errors)
+    - ✅ npm test -- StudentPortal GradingManagement: 62/63 tests passing (1 unrelated failure in useCanAccess.ts)
+  - Verification:
+    - ✅ No hardcoded 'malnu_' strings in production code (StudentPortal, GradingManagement)
+    - ✅ All localStorage access now uses STORAGE_KEYS constants
+
 - [x] **Fix Test Failures in QuizGenerator, StudyPlanGenerator, and GradeAnalytics** (BUG-1090)
   - Task ID: BUG-1090
   - Issue: #1181

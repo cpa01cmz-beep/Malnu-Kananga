@@ -25,6 +25,7 @@ import { authAPI, studentsAPI, gradesAPI, attendanceAPI } from '../services/apiS
 import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
+import { STORAGE_KEYS } from '../constants';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useOfflineDataService, useOfflineData, type CachedStudentData } from '../services/offlineDataService';
 import { StudentPortalValidator, type CacheFreshnessInfo, type ValidationResult } from '../utils/studentPortalValidator';
@@ -411,10 +412,10 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
 
     try {
       setRefreshingData(prev => ({ ...prev, materials: true }));
-      const materialsJSON = localStorage.getItem('malnu_materials');
+      const materialsJSON = localStorage.getItem(STORAGE_KEYS.MATERIALS);
       if (materialsJSON) {
         const materials = JSON.parse(materialsJSON);
-        localStorage.setItem('malnu_materials', JSON.stringify(materials));
+        localStorage.setItem(STORAGE_KEYS.MATERIALS, JSON.stringify(materials));
       }
       logger.info('Materials refreshed from real-time event');
     } catch (error) {

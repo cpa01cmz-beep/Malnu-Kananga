@@ -109,6 +109,9 @@ export const STORAGE_KEYS = {
     
     // Grade Analytics (new)
     GRADE_ANALYTICS_EXPORT: (classId: string) => `malnu_grade_analytics_export_${classId}`,
+
+    // Grade History for tracking changes (new)
+    GRADE_HISTORY: 'malnu_grade_history',
     
     // AI Analysis cache for offline support
     CACHED_AI_ANALYSES: 'malnu_cached_ai_analyses',
