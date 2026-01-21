@@ -4,7 +4,7 @@ import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { ShareIcon } from './icons/MaterialIcons';
 import { eLibraryAPI } from '../services/apiService';
-import { ELibrary as ELibraryType, Subject, MaterialFolder } from '../types';
+import { ELibrary as ELibraryType, Subject, MaterialFolder, VoiceLanguage } from '../types';
 import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import FileUpload from './FileUpload';
@@ -37,6 +37,7 @@ import { HEIGHT_CLASSES } from '../config/heights';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
+import FieldVoiceInput from './FieldVoiceInput';
 
 interface MaterialUploadProps {
   onBack: () => void;
@@ -615,27 +616,55 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Formulir Upload</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <Input
-                id="material-title"
-                name="title"
-                label="Judul Materi"
-                placeholder="Contoh: Modul Bab 3..."
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                fullWidth
-                required
-                autoComplete="off"
-              />
+              <div className="flex items-start gap-2">
+                <div className="flex-1">
+                  <Input
+                    id="material-title"
+                    name="title"
+                    label="Judul Materi"
+                    placeholder="Contoh: Modul Bab 3..."
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    fullWidth
+                    required
+                    autoComplete="off"
+                  />
+                </div>
+                <div className="mt-6">
+                  <FieldVoiceInput
+                    fieldName="materialTitle"
+                    fieldLabel="Judul Materi"
+                    onValueChange={setNewTitle}
+                    fieldType={{ type: 'text', textTransform: 'title-case' }}
+                    language={VoiceLanguage.Indonesian}
+                    enableFeedback={true}
+                  />
+                </div>
+              </div>
 
-              <Textarea
-                label="Deskripsi"
-                placeholder="Deskripsi singkat materi..."
-                value={newDescription}
-                onChange={(e) => setNewDescription(e.target.value)}
-                fullWidth
-                minRows={3}
-                maxRows={6}
-              />
+              <div className="flex items-start gap-2">
+                <div className="flex-1">
+                  <Textarea
+                    label="Deskripsi"
+                    placeholder="Deskripsi singkat materi..."
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                    fullWidth
+                    minRows={3}
+                    maxRows={6}
+                  />
+                </div>
+                <div className="mt-6">
+                  <FieldVoiceInput
+                    fieldName="materialDescription"
+                    fieldLabel="Deskripsi Materi"
+                    onValueChange={setNewDescription}
+                    fieldType={{ type: 'textarea' }}
+                    language={VoiceLanguage.Indonesian}
+                    enableFeedback={true}
+                  />
+                </div>
+              </div>
 
               <div>
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Kategori</label>

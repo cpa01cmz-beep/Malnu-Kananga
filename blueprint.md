@@ -87,6 +87,15 @@
   - Real-time validation integration
   - Visual feedback (listening pulse animation, error states)
 
+- **`MaterialUpload.tsx`** - Material upload form with voice input (Phase 4 Complete)
+  - Voice input for 2 form fields: Title, Description
+  - FieldVoiceInput component integrated next to each input field
+  - Title field: text type with title-case transformation
+  - Description field: textarea type
+  - Indonesian language voice feedback
+  - Flex layout for voice button placement next to inputs
+  - Visual feedback (listening, error states, success messages)
+
 #### Real-Time Services (added 2026-01-21)
  - **`useRealtimeEvents.ts`** - Custom hook for WebSocket event subscription and management
    - Subscribes to real-time event types
