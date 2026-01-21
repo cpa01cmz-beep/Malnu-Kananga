@@ -3,7 +3,6 @@ import { MessageList } from './MessageList';
 import { MessageThread } from './MessageThread';
 import { MessageInput } from './MessageInput';
 import { apiService, messagesAPI } from '../services/apiService';
-import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 import Modal from './ui/Modal';
 import Input from './ui/Input';
@@ -82,7 +81,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
         setAvailableUsers(otherUsers);
       }
     } catch (err) {
-      console.error('Failed to load users:', err);
+      logger.error('Failed to load users:', err);
     } finally {
       setLoading(false);
     }
@@ -134,8 +133,8 @@ export function GroupChat({ currentUser }: GroupChatProps) {
         });
       }
     } catch (err) {
-      console.error('Failed to add participant:', err);
-      alert('Gagal menambahkan peserta');
+      logger.error('Failed to add participant:', err);
+      logger.warn('Gagal menambahkan peserta');
     }
   };
 
@@ -154,8 +153,8 @@ export function GroupChat({ currentUser }: GroupChatProps) {
         });
       }
     } catch (err) {
-      console.error('Failed to remove participant:', err);
-      alert('Gagal menghapus peserta');
+      logger.error('Failed to remove participant:', err);
+      logger.warn('Gagal menghapus peserta');
     }
   };
 
@@ -502,7 +501,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
                       setShowManageGroupModal(false);
                     } catch (err) {
                       logger.error('Failed to update group:', err);
-                      alert('Gagal mengupdate grup');
+                      logger.warn('Gagal mengupdate grup');
                     }
                   }}
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
