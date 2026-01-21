@@ -595,7 +595,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
                           className="sr-only"
                         />
                         <span className="text-sm font-medium text-neutral-900 dark:text-white">
-                          {role.toUpperCase()}
+                          {role?.toUpperCase() || ''}
                         </span>
                       </label>
                     ))}

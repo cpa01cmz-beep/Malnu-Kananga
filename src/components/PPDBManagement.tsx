@@ -717,7 +717,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                       value={ocrProgress.progress}
                       size="md"
                       color="info"
-                      ariaLabel={`OCR processing: ${ocrProgress.status}`}
+                      aria-label={`OCR processing: ${ocrProgress.status}`}
                     />
                     <p className="text-xs text-blue-700 dark:text-blue-300 mt-2">{ocrProgress.status}</p>
                   </Card>

@@ -39,17 +39,17 @@ const ResetPassword = () => {
   });
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
 
-  useEffect(() => {
+    useEffect(() => {
     const validateToken = async () => {
       if (!token) {
         setFormState('error');
         setError('Token reset password tidak ditemukan');
         return;
       }
-
+      
       try {
         const response = await api.auth.verifyResetToken(token);
-        if (response.success && response.data?.valid) {
+        if (response.success && (response.data as any)?.valid) {
           setFormState('idle');
         } else {
           setFormState('error');
@@ -99,7 +99,7 @@ const ResetPassword = () => {
     setError('');
 
     try {
-      const response = await api.auth.resetPassword(token, password);
+      const response = await api.auth.resetPassword(token || '', password);
 
       if (response.success) {
         setFormState('success');

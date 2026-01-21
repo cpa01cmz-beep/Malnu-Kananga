@@ -18,8 +18,7 @@ import FileUpload from './FileUpload';
 import { logger } from '../utils/logger';
 import { categoryService } from '../services/categoryService';
 import {
-  executeWithRetry,
-  createToastHandler
+  executeWithRetry
 } from '../utils/teacherErrorHandler';
 import { useCanAccess } from '../hooks/useCanAccess';
 import { OfflineIndicator } from './OfflineIndicator';
@@ -219,11 +218,12 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
         };
       }
 
-      const response = await executeWithRetry(
-        () => assignmentsAPI.create(assignmentData),
-        'assignment creation',
-        onShowToast
-      );
+      const response = await executeWithRetry({
+        operation: () => assignmentsAPI.create(assignmentData),
+        onError: (error) => {
+          onShowToast(`Gagal membuat tugas: ${error.message}`, 'error');
+        }
+      });
 
       if (response.success && response.data) {
         await unifiedNotificationManager.showNotification(
@@ -450,8 +450,8 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
           
           <FileUpload
             onFileUploaded={handleFileUpload}
-            allowedTypes={['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'image/*', 'video/*']}
-            maxSize={10485760}
+            acceptedFileTypes=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.mp4"
+            maxSizeMB={10}
             disabled={submitting}
           />
 

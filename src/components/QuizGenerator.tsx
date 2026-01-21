@@ -55,7 +55,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
       setLoading(true);
       setError(null);
       const response = await eLibraryAPI.getAll();
-      setMaterials(response || []);
+      setMaterials(response?.data || []);
     } catch (err) {
       logger.error('Failed to load materials:', err);
       setError('Gagal memuat materi pembelajaran. Silakan coba lagi.');
@@ -107,7 +107,20 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
       
       const quizData = await generateQuiz(selectedMaterialData, options);
       
-      setGeneratedQuiz(quizData);
+      setGeneratedQuiz({
+        ...quizData,
+        id: `quiz-${Date.now()}`,
+        subjectId: defaultSubjectId || '',
+        classId: defaultClassId || '',
+        teacherId: '',
+        academicYear: '2025-2026',
+        semester: '1',
+        duration: 60,
+        passingScore: 70,
+        status: 'draft' as any,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      } as Quiz);
       setStep('preview');
     } catch (err) {
       logger.error('Failed to generate quiz:', err);
@@ -121,11 +134,11 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
     if (generatedQuiz) {
       const quizWithMetadata = {
         ...generatedQuiz,
-        subjectId: defaultSubjectId,
-        classId: defaultClassId,
+        subjectId: defaultSubjectId || generatedQuiz.subjectId || '',
+        classId: defaultClassId || generatedQuiz.classId || '',
         materialIds: selectedMaterials,
         aiGenerated: true,
-        status: 'draft',
+        status: 'draft' as any,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };

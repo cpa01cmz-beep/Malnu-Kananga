@@ -53,6 +53,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
           sharedBy: material.uploadedBy,
           permission: 'view',
           sharedAt: new Date().toISOString(),
+          isPublic: false,
         }
       ] : [];
       setSharing(mockSharing);
@@ -111,6 +112,7 @@ const MaterialSharingComponent: React.FC<MaterialSharingProps> = ({
         permission,
         sharedAt: new Date().toISOString(),
         expiresAt: expirationEnabled ? expirationDate : undefined,
+        isPublic: false,
       };
 
       setSharing([...sharing, newSharing]);

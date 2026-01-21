@@ -278,9 +278,9 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
           ) : assignments.length === 0 ? (
             <EmptyState
               icon={<DocumentTextIcon />}
-              title="Tidak Ada Tugas"
-              description="Belum ada tugas yang tersedia saat ini."
-              actionLabel="Refresh"
+              title="Tidak ada tugas"
+              submessage="Anda belum memiliki tugas yang perlu diselesaikan"
+              actionLabel="Coba Lagi"
               onAction={fetchAssignments}
             />
           ) : (
@@ -507,23 +507,22 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
               <div className="col-span-2">
                 <Textarea
                   id="submissionText"
-                  label="Jawaban Tugas"
+                  label="Teks Tugas"
+                  placeholder="Tulis jawaban Anda di sini..."
                   value={submissionText}
                   onChange={(e) => setSubmissionText(e.target.value)}
-                  placeholder="Tulis jawaban tugas Anda di sini..."
-                  rows={8}
+                  errorText={validationErrors.includes('Mohon isi teks tugas atau unggah lampiran') ? 'Mohon isi teks tugas atau unggah lampiran' : undefined}
                   required
-                  error={validationErrors.includes('Mohon isi teks tugas atau unggah lampiran')}
                 />
               </div>
 
               <div className="col-span-2">
                 <FileUpload
                   label="Lampiran (Opsional)"
-                  acceptedFileTypes={['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.jpg', '.jpeg', '.png']}
-                  maxFileSize={10485760}
-                  onFilesUploaded={(files) => setAttachments(files)}
-                  existingFiles={attachments}
+                  acceptedFileTypes=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png"
+                  maxSizeMB={10}
+                  onFileUploaded={(file) => setAttachments([...attachments, { ...file, uploadDate: new Date().toISOString() }])}
+                  existingFiles={attachments.map(a => ({ id: a.key, key: a.key, name: a.name, size: a.size, type: a.type, uploadDate: a.uploadDate }))}
                   multiple
                 />
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
@@ -545,13 +544,13 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
               >
                 Batal
               </Button>
-              <Button
-                variant="primary-solid"
-                onClick={handleSubmit}
-                disabled={submitting}
-              >
-                {submitting ? 'Mengirim...' : 'Kirim Tugas'}
-              </Button>
+          <Button
+            variant="primary"
+            onClick={handleSubmit}
+            disabled={submitting || (!submissionText && attachments.length === 0)}
+          >
+            {submitting ? 'Mengirim...' : 'Kirim Tugas'}
+          </Button>
             </div>
 
             {selectedAssignment.attachments && selectedAssignment.attachments.length > 0 && (

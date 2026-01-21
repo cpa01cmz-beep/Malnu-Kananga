@@ -106,7 +106,7 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
     try {
       const messageData = {
         conversationId,
-        messageType: file ? 'file' : 'text',
+        messageType: (file ? 'file' : 'text') as any,
         content,
         replyTo: replyTo?.id,
       };
@@ -290,7 +290,7 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
       <MessageInput
         onSendMessage={handleSendMessage}
         disabled={loading}
-        placeholder={`Kirim pesan ke ${participant.name}...`}
+        placeholder={`Kirim pesan ke ${participant?.name || 'participant'}...`}
         replyTo={replyTo}
         onCancelReply={() => setReplyTo(undefined)}
       />

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MessageList } from './MessageList';
 import { MessageThread } from './MessageThread';
 import { MessageInput } from './MessageInput';
-import { apiService } from '../services/apiService';
+import { apiService, messagesAPI } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
 import Modal from './ui/Modal';
 import Input from './ui/Input';
@@ -251,7 +251,14 @@ export function GroupChat({ currentUser }: GroupChatProps) {
             />
             <MessageInput
               currentUser={currentUser}
-              conversationId={selectedConversationId}
+              onSendMessage={async (content, file) => {
+                await messagesAPI.sendMessage({
+                  conversationId: selectedConversationId,
+                  content,
+                  messageType: file ? 'file' : 'text',
+                  file
+                });
+              }}
             />
           </div>
         ) : (
@@ -267,7 +274,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
       </div>
 
       {showNewGroupModal && (
-        <Modal onClose={() => setShowNewGroupModal(false)} title="Buat Grup Baru">
+        <Modal isOpen={true} onClose={() => setShowNewGroupModal(false)} title="Buat Grup Baru">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -422,6 +429,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
 
       {showManageGroupModal && selectedConversation && (
         <Modal
+          isOpen={true}
           onClose={() => setShowManageGroupModal(false)}
           title={`Kelola Grup: ${selectedConversation.name || 'Grup Tanpa Nama'}`}
         >
