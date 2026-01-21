@@ -3,7 +3,6 @@ import Papa from 'papaparse';
 import { User, UserRole, UserExtraRole } from '../types';
 import Button from './ui/Button';
 import Modal from './ui/Modal';
-import Table from './ui/Table';
 import Badge from './ui/Badge';
 import Alert from './ui/Alert';
 import ProgressBar from './ui/ProgressBar';
@@ -372,7 +371,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-neutral-900 divide-y divide-neutral-200 dark:divide-neutral-700">
-                {parsedUsers.map((user: any, index: number) => (
+                {parsedUsers.map((user: { isValid: boolean; name?: string; email?: string; role?: string; errors?: string[] }, index: number) => (
                   <tr key={index} className={user.isValid ? '' : 'bg-red-50 dark:bg-red-900/20'}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{index + 1}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-white">{user.name || '-'}</td>

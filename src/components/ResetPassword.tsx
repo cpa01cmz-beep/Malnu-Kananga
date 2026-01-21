@@ -49,7 +49,7 @@ const ResetPassword = () => {
       
       try {
         const response = await api.auth.verifyResetToken(token);
-        if (response.success && (response.data as any)?.valid) {
+        if (response.success && (response.data as { valid: boolean })?.valid) {
           setFormState('idle');
         } else {
           setFormState('error');

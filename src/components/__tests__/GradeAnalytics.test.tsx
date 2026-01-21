@@ -370,10 +370,15 @@ describe('GradeAnalytics', () => {
 
   it('exports analytics report', async () => {
     const mockLocalStorage = {
-      setItem: vi.fn()
+      setItem: vi.fn(),
+      getItem: vi.fn(),
+      removeItem: vi.fn(),
+      clear: vi.fn(),
+      length: 0,
+      key: vi.fn()
     };
-    
-   global.localStorage = mockLocalStorage;
+
+   (global as any).localStorage = mockLocalStorage;
 
     (gradesAPI.getAll as ReturnType<typeof vi.fn>).mockResolvedValue({
       success: true,
