@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-21 (BUILD-001 Complete: All TypeScript/ESLint errors resolved; stale issues closed)
+**Last Updated**: 2026-01-21 (GAP-112 Phase 1: Real-time events infrastructure - ActivityFeed and useRealtimeEvents hook)
 
 ## Architecture Overview
 
@@ -58,6 +58,23 @@
 - **`aiCacheService.ts`** - AI response caching and management
 - **`speechRecognitionService.ts`** - Web Speech API (Voice → Text)
 - **`speechSynthesisService.ts`** - Text-to-Speech (Text → Voice)
+
+#### Real-Time Services (added 2026-01-21)
+- **`useRealtimeEvents.ts`** - Custom hook for WebSocket event subscription and management
+  - Subscribes to real-time event types
+  - Provides connection status (connected, connecting, reconnect attempts)
+  - Event filtering support
+  - Automatic cleanup on unmount
+  - Connection state polling
+
+#### Dashboard Components (Enhanced 2026-01-21)
+- **`ActivityFeed.tsx`** - Real-time activity feed component (part of GAP-112)
+  - Displays recent activities grouped by time (Hari Ini, Kemarin, Minggu Ini)
+  - Activity filtering by type (all, unread, or specific type)
+  - Connection status indicator (online/offline)
+  - Visual indicators for unread activities
+  - Local storage persistence for activity history
+  - Supports activity types: grades, attendance, materials, announcements, events, messages
 - **`voiceSettingsBackup.ts`** - Voice settings persistence
 - **`voiceMessageQueue.ts`** - Queue for voice commands/messages
 - **`voiceNotificationService.ts`** - Voice notification alerts
@@ -458,6 +475,8 @@ All localStorage keys use `malnu_` prefix:
   - `malnu_typing_indicators` - Typing status tracking
   - `malnu_message_drafts_{conversationId}` - Message drafts per conversation (dynamic factory function)
   - `malnu_unread_counts` - Unread message counts
+- Real-Time:
+  - `malnu_activity_feed` - Activity feed storage (added 2026-01-21)
 - Study Plans:
   - `malnu_study_plans_{studentId}` - Study plan storage (dynamic factory function)
   - `malnu_active_study_plan_{studentId}` - Active study plan (dynamic factory function)

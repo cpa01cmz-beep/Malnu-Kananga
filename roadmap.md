@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Roadmap
 
-**Last Updated**: 2026-01-21 (BUILD-001 Complete: All TypeScript/ESLint errors resolved; 3 stale issues closed)
+**Last Updated**: 2026-01-21 (GAP-112 Phase 1 Complete: ActivityFeed and useRealtimeEvents infrastructure)
 
 ## Vision
 Transform MA Malnu Kananga into a fully integrated, AI-powered school management system with offline capability and real-time features.
@@ -319,11 +319,18 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 **Estimated**: 4 weeks
 
 #### Live Features
-- [ ] Real-time chat (WebSocket)
+- [x] Real-time chat (WebSocket) (completed 2026-01-19)
+- [x] Message read receipts (completed 2026-01-19)
 - [ ] Live class streaming
 - [ ] Online exams
 - [ ] Real-time grade updates
 - [ ] Attendance tracking
+
+#### Activity Feed (GAP-112)
+- [x] Activity feed component and useRealtimeEvents hook (completed 2026-01-21)
+- [ ] Integrate activity feed into dashboards (in progress)
+- [ ] Add visual indicators for new data (pending)
+- [ ] Implement real-time data refresh (pending)
 
 ---
 

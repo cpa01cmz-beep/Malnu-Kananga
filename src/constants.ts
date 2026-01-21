@@ -145,6 +145,9 @@ export const STORAGE_KEYS = {
     ANNOUNCEMENT_CACHE: 'malnu_announcement_cache',
     ANNOUNCEMENT_READ: (announcementId: string, userId: string) => `malnu_announcement_read_${announcementId}_${userId}`,
     ANNOUNCEMENT_ANALYTICS: (announcementId: string) => `malnu_announcement_analytics_${announcementId}`,
+
+    // Activity Feed (new)
+    ACTIVITY_FEED: 'malnu_activity_feed',
 } as const;
 
 export const USER_ROLES = {
