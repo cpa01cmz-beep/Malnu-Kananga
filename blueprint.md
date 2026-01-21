@@ -421,7 +421,7 @@
 
 #### Assignments & Grading
 - **Current Implementation**: Full assignment lifecycle model (enhanced 2026-01-19)
-   - `GradingManagement.tsx`: Teachers enter grades directly with assignment metadata
+   - `GradingManagement.tsx`: Teachers enter grades directly with assignment metadata (validation enhanced 2026-01-21, GAP-111)
    - `AssignmentCreation.tsx`: Teachers create comprehensive assignments (completed 2026-01-19)
    - `AssignmentGrading.tsx`: Assignment-specific grading workflow (completed 2026-01-19)
    - `StudentAssignments.tsx`: Students view and submit assignments (completed 2026-01-19)
@@ -432,6 +432,16 @@
    - Parents view grades via `ParentGradesView.tsx`
    - Student analytics via `ProgressAnalytics.tsx`
    - Teacher analytics via `GradeAnalytics.tsx`
+
+- **Grade Validation Enhancements** (completed 2026-01-21, GAP-111):
+  - Inline validation errors displayed next to input fields with red border highlighting
+  - Real-time grade feedback (error/warning/info messages)
+  - Class-level validation (checks if all students have grades before final save)
+  - Grade history tracking with audit trail (localStorage: `malnu_grade_history`)
+  - Enhanced CSV import with detailed success/failure reporting and summary dialog
+  - Validation utilities: `validateClassCompletion`, `validateCSVImport`, `getInlineValidationMessage`
+  - Comprehensive test coverage (19 test cases in `teacherValidation.enhanced.test.ts`)
+  - Storage: Grade history persisted to localStorage with max 100 entries (FIFO)
 
 - **Assignment Creation**: Full assignment creation UI (completed 2026-01-19)
    - `AssignmentCreation.tsx`: Comprehensive assignment creation interface

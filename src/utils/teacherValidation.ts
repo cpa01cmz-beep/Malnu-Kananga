@@ -1,5 +1,14 @@
 import type { Grade, Student, Subject, Class, Attendance, MaterialFolder, ELibrary, MaterialVersion } from '../types';
 
+export interface StudentGrade {
+  id: string;
+  name: string;
+  nis: string;
+  assignment: number;
+  midExam: number;
+  finalExam: number;
+}
+
 /**
  * Validation utilities for teacher workflow components
  */
@@ -802,4 +811,156 @@ export function validateBatchGradeUpdate(grades: Grade[], options: GradeValidati
     errors,
     warnings
   };
+}
+
+export interface GradeHistoryEntry {
+  studentId: string;
+  studentName: string;
+  field: 'assignment' | 'midExam' | 'finalExam';
+  oldValue: number;
+  newValue: number;
+  changedBy: string;
+  changedAt: string;
+  reason?: string;
+}
+
+export interface GradeImportResult {
+  successfulImports: number;
+  failedImports: number;
+  successDetails: Array<{
+    studentName: string;
+    nis: string;
+    assignment: number;
+    midExam: number;
+    finalExam: number;
+  }>;
+  errorDetails: Array<{
+    studentName: string;
+    nis: string;
+    errors: string[];
+  }>;
+}
+
+export interface ClassValidationResult {
+  isValid: boolean;
+  totalStudents: number;
+  studentsWithGrades: number;
+  studentsWithoutGrades: number;
+  studentsWithoutGradesList: string[];
+  warnings: string[];
+}
+
+export function validateClassCompletion(grades: StudentGrade[]): ClassValidationResult {
+  const warnings: string[] = [];
+  const studentsWithoutGradesList: string[] = [];
+
+  grades.forEach(grade => {
+    const hasAnyGrade = grade.assignment > 0 || grade.midExam > 0 || grade.finalExam > 0;
+    if (!hasAnyGrade) {
+      studentsWithoutGradesList.push(grade.name);
+    }
+  });
+
+  const studentsWithGrades = grades.length - studentsWithoutGradesList.length;
+
+  if (studentsWithoutGradesList.length > 0) {
+    warnings.push(
+      `${studentsWithoutGradesList.length} siswa belum memiliki nilai: ${studentsWithoutGradesList.slice(0, 5).join(', ')}${studentsWithoutGradesList.length > 5 ? '...' : ''}`
+    );
+  }
+
+  if (studentsWithGrades === grades.length) {
+    warnings.push('Semua siswa memiliki nilai. Siap untuk dipublikasikan.');
+  }
+
+  return {
+    isValid: studentsWithoutGradesList.length === 0,
+    totalStudents: grades.length,
+    studentsWithGrades,
+    studentsWithoutGrades: studentsWithoutGradesList.length,
+    studentsWithoutGradesList,
+    warnings
+  };
+}
+
+export function validateCSVImport(
+  csvData: Record<string, string>[],
+  existingGrades: StudentGrade[]
+): GradeImportResult {
+  const successfulImports: GradeImportResult['successDetails'] = [];
+  const failedImports: GradeImportResult['errorDetails'] = [];
+
+  existingGrades.forEach(existingGrade => {
+    const csvRow = csvData.find(
+      row =>
+        row.nis === existingGrade.nis ||
+        row.name?.toLowerCase() === existingGrade.name.toLowerCase()
+    );
+
+    if (csvRow) {
+      const assignment = sanitizeGradeInput(csvRow.assignment || csvRow.tugas || existingGrade.assignment);
+      const midExam = sanitizeGradeInput(csvRow.midExam || csvRow.uts || existingGrade.midExam);
+      const finalExam = sanitizeGradeInput(csvRow.finalExam || csvRow.uas || existingGrade.finalExam);
+
+      const assignmentValidation = validateGradeInput({ assignment });
+      const midExamValidation = validateGradeInput({ midExam });
+      const finalExamValidation = validateGradeInput({ finalExam });
+
+      const allErrors = [
+        ...assignmentValidation.errors,
+        ...midExamValidation.errors,
+        ...finalExamValidation.errors
+      ];
+
+      if (allErrors.length === 0) {
+        successfulImports.push({
+          studentName: existingGrade.name,
+          nis: existingGrade.nis,
+          assignment,
+          midExam,
+          finalExam
+        });
+      } else {
+        failedImports.push({
+          studentName: existingGrade.name,
+          nis: existingGrade.nis,
+          errors: allErrors
+        });
+      }
+    }
+  });
+
+  return {
+    successfulImports: successfulImports.length,
+    failedImports: failedImports.length,
+    successDetails: successfulImports,
+    errorDetails: failedImports
+  };
+}
+
+export function getInlineValidationMessage(
+  value: number,
+  _fieldName: string
+): { isValid: boolean; message?: string; severity: 'error' | 'warning' | 'info' } {
+  if (isNaN(value)) {
+    return { isValid: false, message: 'Nilai tidak valid', severity: 'error' };
+  }
+
+  if (value < 0) {
+    return { isValid: false, message: 'Nilai tidak boleh negatif', severity: 'error' };
+  }
+
+  if (value > 100) {
+    return { isValid: false, message: 'Nilai maksimal 100', severity: 'error' };
+  }
+
+  if (value === 0) {
+    return { isValid: true, message: 'Nilai belum diisi', severity: 'info' };
+  }
+
+  if (value < 60 && value > 0) {
+    return { isValid: true, message: 'Nilai rendah', severity: 'warning' };
+  }
+
+  return { isValid: true, message: undefined, severity: 'info' };
 }

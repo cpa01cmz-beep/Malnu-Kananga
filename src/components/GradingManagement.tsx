@@ -21,7 +21,11 @@ import {
   sanitizeGradeInput, 
   calculateGradeLetter, 
   calculateFinalGrade,
-  GradeInput 
+  GradeInput,
+  validateClassCompletion,
+  validateCSVImport,
+  getInlineValidationMessage,
+  type GradeHistoryEntry
 } from '../utils/teacherValidation';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { createToastHandler } from '../utils/teacherErrorHandler';
@@ -126,6 +130,24 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
   // Validation and Error Handling State
   const [isSaving, _setIsSaving] = useState(false);
+  const [inlineErrors, setInlineErrors] = useState<Record<string, Record<string, string> | undefined>>({});
+  
+  // Grade history tracking for audit trail (persisted to localStorage)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [gradeHistory, setGradeHistory] = useState<GradeHistoryEntry[]>([]);
+  
+  // Initialize grade history from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedHistory = localStorage.getItem('malnu_grade_history');
+      if (savedHistory) {
+        setGradeHistory(JSON.parse(savedHistory));
+      }
+    } catch (error) {
+      logger.error('Failed to load grade history from localStorage:', error);
+    }
+  }, []);
+  
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     title: string;
@@ -314,10 +336,55 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       const numValue = sanitizeGradeInput(value);
       const gradeInput: GradeInput = { [field]: numValue };
       const validation = validateGradeInput(gradeInput);
+      const inlineValidation = getInlineValidationMessage(numValue, field);
       
-      if (!validation.isValid) {
-        toast.error(validation.errors[0]);
-        return;
+      // Record grade history before change
+      const currentGrade = grades.find(g => g.id === id);
+      if (currentGrade && currentGrade[field] !== numValue) {
+        const historyEntry: GradeHistoryEntry = {
+          studentId: id,
+          studentName: currentGrade.name,
+          field: field as 'assignment' | 'midExam' | 'finalExam',
+          oldValue: currentGrade[field] as number,
+          newValue: numValue,
+          changedBy: authUser?.name || 'Unknown',
+          changedAt: new Date().toISOString()
+        };
+        
+        setGradeHistory(prev => {
+          const newHistory = [historyEntry, ...prev];
+          const maxHistoryEntries = 100;
+          const finalHistory = newHistory.length > maxHistoryEntries ? newHistory.slice(0, maxHistoryEntries) : newHistory;
+          
+          // Persist grade history to localStorage
+          try {
+            localStorage.setItem('malnu_grade_history', JSON.stringify(finalHistory));
+          } catch (error) {
+            logger.error('Failed to save grade history to localStorage:', error);
+          }
+          
+          return finalHistory;
+        });
+      }
+      
+      // Update inline errors state
+      if (!validation.isValid || !inlineValidation.isValid) {
+        setInlineErrors(prev => ({
+          ...prev,
+          [id]: {
+            ...prev[id],
+            [field]: inlineValidation.message || validation.errors[0]
+          }
+        }));
+      } else {
+        setInlineErrors(prev => {
+          const studentErrors = { ...prev[id] };
+          delete studentErrors[field];
+          return {
+            ...prev,
+            [id]: Object.keys(studentErrors).length > 0 ? studentErrors : undefined
+          };
+        });
       }
       
       if (validation.warnings.length > 0) {
@@ -499,39 +566,51 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       complete: (results) => {
         try {
           const csvData = results.data as Record<string, string>[];
-          const updatedGrades = grades.map(grade => {
-            const csvRow = csvData.find(row =>
-              row.nis === grade.nis ||
-              row.name?.toLowerCase() === grade.name.toLowerCase()
-            );
+          const importResult = validateCSVImport(csvData, grades);
 
-            if (csvRow) {
-              const assignment = sanitizeGradeInput(csvRow.assignment || csvRow.tugas || grade.assignment);
-              const midExam = sanitizeGradeInput(csvRow.midExam || csvRow.uts || grade.midExam);
-              const finalExam = sanitizeGradeInput(csvRow.finalExam || csvRow.uas || grade.finalExam);
-
-              const assignmentValidation = validateGradeInput({ assignment });
-              const midExamValidation = validateGradeInput({ midExam });
-              const finalExamValidation = validateGradeInput({ finalExam });
-
-              if (!assignmentValidation.isValid || !midExamValidation.isValid || !finalExamValidation.isValid) {
-                onShowToast(`Invalid grades for ${grade.name}: ${assignmentValidation.errors.concat(midExamValidation.errors, finalExamValidation.errors).join(', ')}`, 'error');
-                return grade;
+          if (importResult.failedImports > 0) {
+            const errorMessage = `Import selesai dengan beberapa kesalahan:\n\n✓ Berhasil: ${importResult.successfulImports} siswa\n✗ Gagal: ${importResult.failedImports} siswa\n\nDetail kesalahan:\n${importResult.errorDetails.slice(0, 5).map(
+              err => `- ${err.studentName} (${err.nis}): ${err.errors.join(', ')}`
+            ).join('\n')}${importResult.errorDetails.length > 5 ? '\n...' : ''}`;
+            
+            setConfirmDialog({
+              isOpen: true,
+              title: 'Validasi Import CSV',
+              message: errorMessage,
+              type: 'danger',
+              onConfirm: () => {
+                setGrades(prev => prev.map(grade => {
+                  const successfulImport = importResult.successDetails.find(s => s.nis === grade.nis);
+                  if (successfulImport) {
+                    return {
+                      ...grade,
+                      assignment: successfulImport.assignment,
+                      midExam: successfulImport.midExam,
+                      finalExam: successfulImport.finalExam
+                    };
+                  }
+                  return grade;
+                }));
+                setIsBatchMode(false);
+                onShowToast(`${importResult.successfulImports} nilai berhasil diimpor`, 'success');
               }
-
-              return {
-                ...grade,
-                assignment,
-                midExam,
-                finalExam
-              };
-            }
-            return grade;
-          });
-
-          setGrades(updatedGrades);
-          setIsBatchMode(false);
-          onShowToast('CSV import berhasil! Nilai diperbarui.', 'success');
+            });
+          } else {
+            setGrades(prev => prev.map(grade => {
+              const successfulImport = importResult.successDetails.find(s => s.nis === grade.nis);
+              if (successfulImport) {
+                return {
+                  ...grade,
+                  assignment: successfulImport.assignment,
+                  midExam: successfulImport.midExam,
+                  finalExam: successfulImport.finalExam
+                };
+              }
+              return grade;
+            }));
+            setIsBatchMode(false);
+            onShowToast(`CSV import berhasil! ${importResult.successfulImports} nilai diperbarui.`, 'success');
+          }
         } catch (err) {
           logger.error('CSV import error:', err);
           onShowToast('Gagal impor CSV. Mohon periksa format file.', 'error');
@@ -595,6 +674,24 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   };
 
   const handleSave = async () => {
+    // Class-level validation
+    const classValidation = validateClassCompletion(grades);
+    
+    if (!classValidation.isValid && classValidation.studentsWithoutGrades > 0) {
+      setConfirmDialog({
+        isOpen: true,
+        title: 'Peringatan: Kelas Belum Lengkap',
+        message: `${classValidation.warnings.join('\n\n')}\n\nApakah Anda ingin menyimpan tetap? Siswa tanpa nilai akan mendapat nilai 0.`,
+        type: 'warning',
+        onConfirm: () => doIndividualGradeValidationAndSave()
+      });
+      return;
+    }
+
+    doIndividualGradeValidationAndSave();
+  };
+
+  const doIndividualGradeValidationAndSave = () => {
     // Validate all grades before saving
     const validationErrors: string[] = [];
     const validationWarnings: string[] = [];
@@ -1339,34 +1436,70 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
                                     {/* Enhanced Input Columns - Always enabled */}
                                     <td className="px-2 py-4 text-center sm:px-4">
-                                        <input
-                                            type="number"
-                                            value={student.assignment}
-                                            onChange={(e) => handleInputChange(student.id, 'assignment', e.target.value)}
-                                            min="0"
-                                            max="100"
-                                            className="w-full sm:max-w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
-                                        />
+                                        <div className="flex flex-col items-center gap-1">
+                                            <input
+                                                type="number"
+                                                value={student.assignment}
+                                                onChange={(e) => handleInputChange(student.id, 'assignment', e.target.value)}
+                                                min="0"
+                                                max="100"
+                                                aria-label={`Nilai assignment untuk ${student.name}`}
+                                                className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
+                                                  inlineErrors[student.id]?.assignment
+                                                    ? 'border-red-500 focus:ring-red-500'
+                                                    : 'border-neutral-200 dark:border-neutral-600 focus:ring-green-500'
+                                                }`}
+                                            />
+                                            {inlineErrors[student.id]?.assignment && (
+                                                <span className="text-xs text-red-600 dark:text-red-400 max-w-20 truncate">
+                                                    {inlineErrors[student.id]!.assignment}
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-2 py-4 text-center sm:px-4">
-                                        <input
-                                            type="number"
-                                            value={student.midExam}
-                                            onChange={(e) => handleInputChange(student.id, 'midExam', e.target.value)}
-                                            min="0"
-                                            max="100"
-                                            className="w-full sm:max-w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
-                                        />
+                                        <div className="flex flex-col items-center gap-1">
+                                            <input
+                                                type="number"
+                                                value={student.midExam}
+                                                onChange={(e) => handleInputChange(student.id, 'midExam', e.target.value)}
+                                                min="0"
+                                                max="100"
+                                                aria-label={`Nilai UTS untuk ${student.name}`}
+                                                className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
+                                                  inlineErrors[student.id]?.midExam
+                                                    ? 'border-red-500 focus:ring-red-500'
+                                                    : 'border-neutral-200 dark:border-neutral-600 focus:ring-green-500'
+                                                }`}
+                                            />
+                                            {inlineErrors[student.id]?.midExam && (
+                                                <span className="text-xs text-red-600 dark:text-red-400 max-w-20 truncate">
+                                                    {inlineErrors[student.id]!.midExam}
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-2 py-4 text-center sm:px-4">
-                                        <input
-                                            type="number"
-                                            value={student.finalExam}
-                                            onChange={(e) => handleInputChange(student.id, 'finalExam', e.target.value)}
-                                            min="0"
-                                            max="100"
-                                            className="w-full sm:max-w-16 text-center p-1 rounded border border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800 focus:ring-2 focus:ring-green-500"
-                                        />
+                                        <div className="flex flex-col items-center gap-1">
+                                            <input
+                                                type="number"
+                                                value={student.finalExam}
+                                                onChange={(e) => handleInputChange(student.id, 'finalExam', e.target.value)}
+                                                min="0"
+                                                max="100"
+                                                aria-label={`Nilai UAS untuk ${student.name}`}
+                                                className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
+                                                  inlineErrors[student.id]?.finalExam
+                                                    ? 'border-red-500 focus:ring-red-500'
+                                                    : 'border-neutral-200 dark:border-neutral-600 focus:ring-green-500'
+                                                }`}
+                                            />
+                                            {inlineErrors[student.id]?.finalExam && (
+                                                <span className="text-xs text-red-600 dark:text-red-400 max-w-20 truncate">
+                                                    {inlineErrors[student.id]!.finalExam}
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
 
                                     {/* Calculated Columns */}
