@@ -15,8 +15,11 @@ describe('Rate Limiting Logic', () => {
       if (pathname.startsWith('/api/auth/')) {
         return RATE_LIMIT_CONFIG.auth;
       }
-      if (pathname === '/api/files/upload' || pathname === '/ws') {
+      if (pathname === '/api/files/upload') {
         return RATE_LIMIT_CONFIG.upload;
+      }
+      if (pathname === '/ws') {
+        return RATE_LIMIT_CONFIG.websocket;
       }
       if (pathname === '/api/email/send' || (pathname.startsWith('/api/users') && method !== 'GET')) {
         return RATE_LIMIT_CONFIG.sensitive;
@@ -40,9 +43,9 @@ describe('Rate Limiting Logic', () => {
       expect(config.maxRequests).toBe(10);
     });
 
-    test('should return upload config for WebSocket endpoint', () => {
+    test('should return websocket config for WebSocket endpoint', () => {
       const config = getRateLimitConfig('/ws', 'GET');
-      expect(config.maxRequests).toBe(10);
+      expect(config.maxRequests).toBe(30);
     });
 
     test('should return sensitive config for email send', () => {

@@ -120,6 +120,7 @@ class RateLimiter {
   }
 
   async getRateLimitInfo(identifier) {
+    // Note: This method is kept for debugging and future use
     const key = `${this.prefix}:${identifier}`;
     try {
       const existing = await this.kv.get(key, 'json');
@@ -166,8 +167,11 @@ function getRateLimitConfig(pathname, method) {
   if (pathname.startsWith('/api/auth/')) {
     return RATE_LIMIT_CONFIG.auth;
   }
-  if (pathname === '/api/files/upload' || pathname === '/ws') {
+  if (pathname === '/api/files/upload') {
     return RATE_LIMIT_CONFIG.upload;
+  }
+  if (pathname === '/ws') {
+    return RATE_LIMIT_CONFIG.websocket;
   }
   if (pathname === '/api/email/send' || pathname.startsWith('/api/users') && method !== 'GET') {
     return RATE_LIMIT_CONFIG.sensitive;
@@ -190,8 +194,12 @@ async function applyRateLimit(request, env) {
   if (authHeader && authHeader.startsWith('Bearer ')) {
     try {
       const token = authHeader.substring(7);
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      identifier = payload.userId || payload.sub;
+      const payload = await JWT.verify(token, env.JWT_SECRET);
+      if (payload && (payload.userId || payload.sub)) {
+        identifier = payload.userId || payload.sub;
+      } else {
+        identifier = request.headers.get('CF-Connecting-IP') || 'unknown';
+      }
     } catch (_e) {
       identifier = request.headers.get('CF-Connecting-IP') || 'unknown';
     }
@@ -3666,16 +3674,14 @@ function mapTableToEventType(table, _row) {
           method: request.method,
           limit: result.limit
         });
+        rateLimitHeaders.set('Content-Type', 'application/json');
         return new Response(JSON.stringify({
           error: ERROR_MESSAGES.RATE_LIMIT_EXCEEDED,
           message: ERROR_MESSAGES.RATE_LIMIT_EXCEEDED,
           retryAfter: result.retryAfter
         }), {
           status: HTTP_STATUS_CODES.TOO_MANY_REQUESTS,
-          headers: {
-            ...rateLimitHeaders,
-            'Content-Type': 'application/json'
-          }
+          headers: rateLimitHeaders
         });
       }
     }
