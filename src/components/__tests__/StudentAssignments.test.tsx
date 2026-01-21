@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import StudentAssignments from '../StudentAssignments';
 import { assignmentsAPI, assignmentSubmissionsAPI } from '../../services/apiService';
-import { AssignmentType, AssignmentStatus, Student } from '../../types';
+import { AssignmentType, AssignmentStatus, Student, Assignment } from '../../types';
 import { STORAGE_KEYS } from '../../constants';
 
 vi.mock('../../services/apiService');
@@ -85,6 +85,7 @@ describe('StudentAssignments', () => {
   describe('Rendering', () => {
     it('should render loading state initially', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
@@ -105,11 +106,13 @@ describe('StudentAssignments', () => {
 
     it('should render assignment list after loading', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });
@@ -132,6 +135,7 @@ describe('StudentAssignments', () => {
 
     it('should render empty state when no assignments', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });
@@ -154,11 +158,13 @@ describe('StudentAssignments', () => {
   describe('Assignment Display', () => {
     it('should display assignment details correctly', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });
@@ -181,11 +187,13 @@ describe('StudentAssignments', () => {
 
     it('should show correct assignment type badge', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });
@@ -207,11 +215,13 @@ describe('StudentAssignments', () => {
 
     it('should show days remaining correctly', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });
@@ -234,11 +244,13 @@ describe('StudentAssignments', () => {
   describe('Navigation', () => {
     it('should call onBack when back button is clicked', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });
@@ -261,11 +273,13 @@ describe('StudentAssignments', () => {
 
     it('should navigate to detail view when clicking submitted assignment', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: [{
           id: 'sub-1',
@@ -297,11 +311,13 @@ describe('StudentAssignments', () => {
   describe('Submission', () => {
     it('should show submission view for unsubmitted assignment', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });
@@ -328,11 +344,13 @@ describe('StudentAssignments', () => {
 
     it('should validate submission before submitting', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });
@@ -366,11 +384,13 @@ describe('StudentAssignments', () => {
   describe('Submission Status', () => {
     it('should show "Belum Dikirim" for unsubmitted assignments', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });
@@ -391,11 +411,13 @@ describe('StudentAssignments', () => {
 
     it('should show "Dikirim" for submitted assignments', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: [{
           id: 'sub-1',
@@ -424,11 +446,13 @@ describe('StudentAssignments', () => {
 
     it('should show "Dinilai" for graded assignments', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: [{
           id: 'sub-1',
@@ -479,11 +503,13 @@ describe('StudentAssignments', () => {
 
     it('should show error message on submission failure', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });
@@ -523,11 +549,13 @@ describe('StudentAssignments', () => {
   describe('Accessibility', () => {
     it('should have proper ARIA labels', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });
@@ -548,11 +576,13 @@ describe('StudentAssignments', () => {
 
     it('should be keyboard navigable', async () => {
       vi.mocked(assignmentsAPI.getByStatus).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: mockAssignments
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByStudent).mockResolvedValue({
+        message: 'Success',
         success: true,
         data: []
       });

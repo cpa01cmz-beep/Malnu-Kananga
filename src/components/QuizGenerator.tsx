@@ -82,7 +82,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
       generateQuizContent();
       return;
     }
-    setStep('options' as any);
+    setStep('options');
   };
 
   const handlePreviousStep = () => {
@@ -107,7 +107,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
       
       const quizData = await generateQuiz(selectedMaterialData, options);
       
-      setGeneratedQuiz({
+      const generatedQuizData: Quiz = {
         ...quizData,
         id: `quiz-${Date.now()}`,
         subjectId: defaultSubjectId || '',
@@ -117,10 +117,34 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         semester: '1',
         duration: 60,
         passingScore: 70,
-        status: 'draft' as any,
+        status: 'draft',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      } as Quiz);
+        totalPoints: quizData.totalPoints,
+        questions: quizData.questions.map((q) => ({
+          id: q.id,
+          question: q.question,
+          type: (q.type === 'multiple_choice' ? QuizQuestionType.MULTIPLE_CHOICE :
+                 q.type === 'true_false' ? QuizQuestionType.TRUE_FALSE :
+                 q.type === 'short_answer' ? QuizQuestionType.SHORT_ANSWER :
+                 q.type === 'essay' ? QuizQuestionType.ESSAY :
+                 q.type === 'fill_blank' ? QuizQuestionType.FILL_BLANK :
+                 q.type === 'matching' ? QuizQuestionType.MATCHING :
+                 QuizQuestionType.MULTIPLE_CHOICE),
+          difficulty: (q.difficulty === 'easy' ? QuizDifficulty.EASY :
+                    q.difficulty === 'hard' ? QuizDifficulty.HARD :
+                    QuizDifficulty.MEDIUM),
+          options: q.options,
+          correctAnswer: q.correctAnswer,
+          explanation: q.explanation,
+          points: q.points,
+          materialReference: q.materialReference,
+          tags: q.tags,
+        })),
+        attempts: 0,
+        aiGenerated: true,
+      };
+      setGeneratedQuiz(generatedQuizData);
       setStep('preview');
     } catch (err) {
       logger.error('Failed to generate quiz:', err);
@@ -132,17 +156,16 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
 
   const handleSaveQuiz = () => {
     if (generatedQuiz) {
-      const quizWithMetadata = {
+      const quizWithMetadata: Quiz = {
         ...generatedQuiz,
         subjectId: defaultSubjectId || generatedQuiz.subjectId || '',
         classId: defaultClassId || generatedQuiz.classId || '',
         materialIds: selectedMaterials,
-        aiGenerated: true,
-        status: 'draft' as any,
-        createdAt: new Date().toISOString(),
+        status: 'draft',
+        createdAt: generatedQuiz.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      
+
       onSuccess?.(quizWithMetadata);
     }
   };

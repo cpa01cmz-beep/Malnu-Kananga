@@ -41,8 +41,7 @@ const mockCurrentUser: User = {
   email: 'teacher@test.com',
   role: 'teacher',
   extraRole: null,
-  createdAt: '2024-01-01',
-  updatedAt: '2024-01-01'
+  status: 'active'
 };
 
 const mockAssignment: Assignment = {
@@ -392,9 +391,21 @@ describe('AssignmentGrading - AI Feedback Feature', () => {
   });
 
   it('should show loading state while generating AI feedback', async () => {
-    let resolveFeedback: ((value: any) => void) | null = null;
-    const pendingPromise = new Promise((resolve) => {
-      resolveFeedback = resolve;
+    let feedbackResolver: ((value: {
+      feedback: string;
+      strengths: string[];
+      improvements: string[];
+      suggestedScore?: number;
+      confidence: number;
+    }) => void) | null = null;
+    const pendingPromise: Promise<{
+      feedback: string;
+      strengths: string[];
+      improvements: string[];
+      suggestedScore?: number;
+      confidence: number;
+    }> = new Promise((resolve) => {
+      feedbackResolver = resolve;
     });
 
     vi.mocked(generateAssignmentFeedback).mockReturnValue(pendingPromise);
@@ -429,8 +440,8 @@ describe('AssignmentGrading - AI Feedback Feature', () => {
       expect(aiButton).toBeDisabled();
     });
 
-    if (resolveFeedback) {
-      resolveFeedback({
+    if (feedbackResolver) {
+      (feedbackResolver as any)({
         feedback: 'Test',
         strengths: [],
         improvements: [],

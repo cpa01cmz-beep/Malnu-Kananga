@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import EnhancedMaterialSharing from '../EnhancedMaterialSharing';
-import { ELibrary, UserRole, UserExtraRole, MaterialSharePermission, MaterialShareSettings } from '../../types';
+import { ELibrary, UserRole } from '../../types';
 import { materialPermissionService } from '../../services/materialPermissionService';
 
 vi.mock('../../services/materialPermissionService', () => ({

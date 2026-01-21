@@ -72,7 +72,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
     }
   };
 
-  const loadSubjectParticipants = async (subjectId: string) => {
+  const loadSubjectParticipants = async (_subjectId: string) => {
     try {
       const response = await apiService.students.getAll();
       if (response.success && response.data) {
@@ -219,7 +219,6 @@ export function GroupChat({ currentUser }: GroupChatProps) {
           </div>
         </div>
         <MessageList
-          currentUser={currentUser}
           onConversationSelect={handleConversationSelect}
           selectedConversationId={selectedConversationId}
           filter="group"

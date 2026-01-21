@@ -4,9 +4,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import '@testing-library/jest-dom';
 import StudyPlanAnalytics from '../StudyPlanAnalytics';
 import * as apiService from '../../services/apiService';
-import * as authAPI from '../../services/authService';
+import { authService } from '../../services/authService';
 import { STORAGE_KEYS } from '../../constants';
-import { logger } from '../../utils/logger';
 
 vi.mock('../../services/apiService');
 vi.mock('../../services/authService');
@@ -152,7 +151,7 @@ describe('StudyPlanAnalytics', () => {
     vi.clearAllMocks();
     localStorage.clear();
 
-    (authAPI.getCurrentUser as ReturnType<typeof vi.fn>).mockReturnValue({
+    (authService.getCurrentUser as ReturnType<typeof vi.fn>).mockReturnValue({
       id: 'student-123',
       name: 'Test Student',
       email: 'test@example.com',
@@ -498,7 +497,7 @@ describe('StudyPlanAnalytics', () => {
   });
 
   it('handles no current user gracefully', async () => {
-    (authAPI.getCurrentUser as ReturnType<typeof vi.fn>).mockReturnValue(null);
+    (authService.getCurrentUser as ReturnType<typeof vi.fn>).mockReturnValue(null);
 
     render(<StudyPlanAnalytics onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 

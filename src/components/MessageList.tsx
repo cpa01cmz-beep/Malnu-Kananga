@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
-import type { Conversation, ConversationFilter, User } from '../types';
+import type { Conversation, ConversationFilter } from '../types';
 
 interface MessageListProps {
   onConversationSelect: (conversationId: string, participantId?: string) => void;
   selectedConversationId?: string;
-  currentUser?: User;
   filter?: 'all' | 'direct' | 'group';
   onManageGroup?: (conversation: Conversation) => void;
 }
@@ -15,7 +14,6 @@ interface MessageListProps {
 export function MessageList({
   onConversationSelect,
   selectedConversationId,
-  currentUser,
   filter: externalFilter,
   onManageGroup,
 }: MessageListProps) {
@@ -49,7 +47,7 @@ export function MessageList({
   useEffect(() => {
     const handleWebSocketMessage = (event: Event) => {
       const customEvent = event as CustomEvent<Record<string, unknown>>;
-      const { type, entity } = customEvent.detail;
+      const { entity } = customEvent.detail;
       if (entity === 'message' || entity === 'conversation') {
         loadConversations();
       }

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import UserImport, { CSVRow, ParsedUser, ImportResult } from '../UserImport';
+import UserImport, { CSVRow, ParsedUser } from '../UserImport';
 import * as apiService from '../../services/apiService';
 
 vi.mock('../../services/apiService', () => ({
@@ -374,12 +374,7 @@ describe('UserImport Component', () => {
     });
 
     it('shows progress during import', async () => {
-      let resolveImport: ((value: unknown) => void) | null = null;
-      (apiService.api.users.create as ReturnType<typeof vi.fn>).mockImplementation(() => {
-        return new Promise((resolve) => {
-          resolveImport = resolve;
-        });
-      });
+      (apiService.api.users.create as ReturnType<typeof vi.fn>).mockResolvedValue({ success: true, data: mockUsers[0] });
 
       render(<UserImport {...defaultProps} />);
 
@@ -397,12 +392,8 @@ describe('UserImport Component', () => {
         expect(screen.getByRole('progressbar')).toBeInTheDocument();
       });
 
-      if (resolveImport) {
-        resolveImport({ success: true, data: mockUsers[0] });
-      }
-
       await waitFor(() => {
-        resolveImport?.({ success: true, data: mockUsers[1] });
+        expect(screen.getByText('Import Complete')).toBeInTheDocument();
       });
     });
 

@@ -4,19 +4,28 @@ import userEvent from '@testing-library/user-event';
 import { QuizGenerator } from '../QuizGenerator';
 import * as geminiService from '../../services/geminiService';
 import * as apiService from '../../services/apiService';
+import type { ELibrary } from '../../types';
 
 vi.mock('../../services/geminiService');
 vi.mock('../../services/apiService');
 vi.mock('../../utils/logger');
 
 describe('QuizGenerator', () => {
-  const mockMaterials = [
+  const now = new Date().toISOString();
+  const mockMaterials: ELibrary[] = [
     {
       id: 'm1',
       title: 'Fisika Dasar: Hukum Newton',
       category: 'Fisika',
       fileType: 'pdf',
       description: 'Pengantar hukum gerak Newton',
+      fileUrl: 'https://example.com/material1.pdf',
+      fileSize: 1024000,
+      subjectId: 'subject-1',
+      uploadedBy: 'teacher-1',
+      uploadedAt: now,
+      downloadCount: 0,
+      isShared: true,
     },
     {
       id: 'm2',
@@ -24,6 +33,13 @@ describe('QuizGenerator', () => {
       category: 'Fisika',
       fileType: 'docx',
       description: 'Konsep dasar energi dan momentum',
+      fileUrl: 'https://example.com/material2.docx',
+      fileSize: 512000,
+      subjectId: 'subject-1',
+      uploadedBy: 'teacher-1',
+      uploadedAt: now,
+      downloadCount: 0,
+      isShared: true,
     },
     {
       id: 'm3',
@@ -31,6 +47,13 @@ describe('QuizGenerator', () => {
       category: 'Fisika',
       fileType: 'pdf',
       description: 'Hukum termodinamika dasar',
+      fileUrl: 'https://example.com/material3.pdf',
+      fileSize: 1536000,
+      subjectId: 'subject-1',
+      uploadedBy: 'teacher-1',
+      uploadedAt: now,
+      downloadCount: 0,
+      isShared: true,
     },
   ];
 
@@ -87,7 +110,7 @@ describe('QuizGenerator', () => {
     });
 
     it('should show loading state when materials are loading', () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockImplementation(
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockImplementation(
         () => new Promise(() => {})
       );
 
@@ -97,7 +120,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should display empty state when no materials available', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue([]);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: [],
+      });
 
       render(<QuizGenerator />);
       
@@ -109,7 +136,11 @@ describe('QuizGenerator', () => {
 
   describe('Material Selection', () => {
     it('should display available materials', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
 
       render(<QuizGenerator />);
       
@@ -121,7 +152,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should allow selecting materials', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
 
       render(<QuizGenerator />);
       
@@ -136,7 +171,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should update selected material count', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
 
       render(<QuizGenerator />);
       
@@ -152,7 +191,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should prevent proceeding without selecting materials', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
 
       render(<QuizGenerator />);
       
@@ -167,7 +210,11 @@ describe('QuizGenerator', () => {
 
   describe('Quiz Options Configuration', () => {
     it('should display options form when materials are selected', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
 
       render(<QuizGenerator />);
       
@@ -183,7 +230,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should allow changing question count', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
 
       render(<QuizGenerator />);
       
@@ -201,7 +252,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should allow selecting difficulty level', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
 
       render(<QuizGenerator />);
       
@@ -218,7 +273,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should allow selecting multiple question types', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
 
       render(<QuizGenerator />);
       
@@ -239,7 +298,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should allow setting total points', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
 
       render(<QuizGenerator />);
       
@@ -257,7 +320,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should allow setting focus areas', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
 
       render(<QuizGenerator />);
       
@@ -276,7 +343,11 @@ describe('QuizGenerator', () => {
 
   describe('Quiz Generation', () => {
     it('should call generateQuiz with correct parameters', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
       vi.mocked(geminiService)?.generateQuiz.mockResolvedValue(mockGeneratedQuiz);
 
       render(<QuizGenerator />);
@@ -302,7 +373,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should show loading state during generation', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
       vi.mocked(geminiService)?.generateQuiz.mockImplementation(
         () => new Promise(() => {})
       );
@@ -322,7 +397,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should display generated quiz preview', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
       vi.mocked(geminiService)?.generateQuiz.mockResolvedValue(mockGeneratedQuiz);
 
       render(<QuizGenerator />);
@@ -342,7 +421,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should display quiz statistics', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
       vi.mocked(geminiService)?.generateQuiz.mockResolvedValue(mockGeneratedQuiz);
 
       render(<QuizGenerator />);
@@ -364,7 +447,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should display all questions', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
       vi.mocked(geminiService)?.generateQuiz.mockResolvedValue(mockGeneratedQuiz);
 
       render(<QuizGenerator />);
@@ -384,7 +471,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should display question types, difficulty, and points', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
       vi.mocked(geminiService)?.generateQuiz.mockResolvedValue(mockGeneratedQuiz);
 
       render(<QuizGenerator />);
@@ -405,7 +496,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should display correct answers', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
       vi.mocked(geminiService)?.generateQuiz.mockResolvedValue(mockGeneratedQuiz);
 
       render(<QuizGenerator />);
@@ -425,7 +520,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should display explanations', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
       vi.mocked(geminiService)?.generateQuiz.mockResolvedValue(mockGeneratedQuiz);
 
       render(<QuizGenerator />);
@@ -446,7 +545,11 @@ describe('QuizGenerator', () => {
 
   describe('Navigation and Actions', () => {
     it('should go back to previous step', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
 
       render(<QuizGenerator />);
       
@@ -473,7 +576,11 @@ describe('QuizGenerator', () => {
     });
 
     it('should call onSuccess when quiz is saved', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
       vi.mocked(geminiService)?.generateQuiz.mockResolvedValue(mockGeneratedQuiz);
       const onSuccess = vi.fn();
 
@@ -506,7 +613,7 @@ describe('QuizGenerator', () => {
 
   describe('Error Handling', () => {
     it('should display error when materials fail to load', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockRejectedValue(new Error('Network error'));
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockRejectedValue(new Error('Network error'));
 
       render(<QuizGenerator />);
       
@@ -516,8 +623,12 @@ describe('QuizGenerator', () => {
     });
 
     it('should allow retry after error', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockRejectedValueOnce(new Error('Network error'))
-        .mockResolvedValueOnce(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockRejectedValueOnce(new Error('Network error'))
+        .mockResolvedValueOnce({
+          success: true,
+          message: 'Success',
+          data: mockMaterials,
+        });
 
       render(<QuizGenerator />);
       
@@ -529,12 +640,16 @@ describe('QuizGenerator', () => {
       fireEvent.click(retryButton);
       
       await waitFor(() => {
-        expect(apiService.materialsAPI?.getAll).toHaveBeenCalledTimes(2);
+        expect(apiService.eLibraryAPI?.getAll).toHaveBeenCalledTimes(2);
       });
     });
 
     it('should display error when quiz generation fails', async () => {
-      vi.mocked(apiService.materialsAPI)?.getAll.mockResolvedValue(mockMaterials);
+      vi.mocked(apiService.eLibraryAPI)?.getAll.mockResolvedValue({
+        success: true,
+        message: 'Success',
+        data: mockMaterials
+      });
       vi.mocked(geminiService)?.generateQuiz.mockRejectedValue(new Error('AI error'));
 
       render(<QuizGenerator />);

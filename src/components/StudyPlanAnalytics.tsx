@@ -60,7 +60,6 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
 
   const [analytics, setAnalytics] = useState<StudyPlanAnalyticsType | null>(null);
   const [studyPlan, setStudyPlan] = useState<StudyPlan | null>(null);
-  const [history, setHistory] = useState<StudyPlanHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
@@ -266,7 +265,6 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
       }
 
       setStudyPlan(activePlan);
-      setHistory(loadStudyPlanHistory());
 
       const cachedAnalytics = await loadAnalytics();
       const shouldRecalculate = !cachedAnalytics || (new Date().getTime() - new Date(cachedAnalytics.lastUpdated).getTime() > 24 * 60 * 60 * 1000);
@@ -659,7 +657,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={(entry: any) => entry.name}
+                      label={(entry) => String(entry?.payload?.name || '')}
                       outerRadius={80}
                       dataKey="value"
                     >

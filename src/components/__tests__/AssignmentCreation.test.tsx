@@ -28,7 +28,7 @@ const mockUser = {
   email: 'guru@test.com',
   role: 'teacher' as const,
   status: 'active' as const,
-  extraRole: null as const
+  extraRole: null
 };
 
 vi.mock('../../services/apiService', () => ({
@@ -333,7 +333,8 @@ describe('AssignmentCreation', () => {
       maxScore: 100,
       dueDate: '2025-12-31T23:59',
       status: AssignmentStatus.DRAFT,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     vi.mocked(apiService.assignmentsAPI.create).mockResolvedValue({
@@ -379,7 +380,8 @@ describe('AssignmentCreation', () => {
       maxScore: 100,
       dueDate: '2025-12-31T23:59',
       status: AssignmentStatus.DRAFT,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     vi.mocked(apiService.assignmentsAPI.create).mockResolvedValue({
@@ -425,7 +427,8 @@ describe('AssignmentCreation', () => {
       maxScore: 100,
       dueDate: '2025-12-31T23:59',
       status: AssignmentStatus.DRAFT,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     vi.mocked(apiService.assignmentsAPI.create).mockResolvedValue({
@@ -470,8 +473,9 @@ describe('AssignmentCreation', () => {
       semester: '1',
       maxScore: 100,
       dueDate: '2025-12-31T23:59',
-      status: AssignmentStatus.PUBLISHED,
-      createdAt: new Date().toISOString()
+      status: AssignmentStatus.DRAFT,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     vi.mocked(apiService.assignmentsAPI.create).mockResolvedValue({

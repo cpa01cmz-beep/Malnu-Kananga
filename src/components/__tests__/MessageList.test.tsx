@@ -5,8 +5,14 @@ import * as apiService from '../../services/apiService';
 import { STORAGE_KEYS } from '../../constants';
 import type { Conversation, User } from '../../types';
 
-vi.mock('../../services/apiService');
-const mockedApiService = apiService as { messages: typeof apiService.messages };
+vi.mock('../../services/apiService', () => ({
+  messagesAPI: {
+    getConversations: vi.fn(),
+    getMessages: vi.fn(),
+    sendMessage: vi.fn(),
+    markAsRead: vi.fn(),
+  },
+}));
 
 const mockConversations: Conversation[] = [
   {
@@ -121,7 +127,7 @@ describe('MessageList', () => {
   });
 
   it('renders conversation list', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversations,
@@ -136,14 +142,14 @@ describe('MessageList', () => {
   });
 
   it('shows loading state', () => {
-    mockedApiService.messages.getConversations.mockImplementation(() => new Promise(() => {}));
+    vi.mocked(apiService.messagesAPI).getConversations.mockImplementation(() => new Promise(() => {}));
     render(<MessageList onConversationSelect={mockOnConversationSelect} />);
 
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('shows error state', async () => {
-    mockedApiService.messages.getConversations.mockRejectedValue(new Error('API Error'));
+    vi.mocked(apiService.messagesAPI).getConversations.mockRejectedValue(new Error('API Error'));
     render(<MessageList onConversationSelect={mockOnConversationSelect} />);
 
     await waitFor(() => {
@@ -152,7 +158,7 @@ describe('MessageList', () => {
   });
 
   it('shows empty state when no conversations', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: [],
@@ -166,12 +172,12 @@ describe('MessageList', () => {
   });
 
   it('calls onConversationSelect when conversation is clicked', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversations,
     });
-    mockedApiService.messages.markConversationAsRead.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).markConversationAsRead.mockResolvedValue({
       success: true,
       message: 'Success',
       data: { success: true, unreadCount: 0 },
@@ -186,12 +192,12 @@ describe('MessageList', () => {
 
     await waitFor(() => {
       expect(mockOnConversationSelect).toHaveBeenCalledWith('conv-1', 'user-2');
-      expect(mockedApiService.messages.markConversationAsRead).toHaveBeenCalledWith('conversations');
+      expect(vi.mocked(apiService.messagesAPI).markConversationAsRead).toHaveBeenCalledWith('conversations');
     });
   });
 
   it('marks conversation as selected', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversations,
@@ -206,7 +212,7 @@ describe('MessageList', () => {
   });
 
   it('shows unread count badge', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversations,
@@ -220,7 +226,7 @@ describe('MessageList', () => {
   });
 
   it('shows last message content', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversations,
@@ -247,7 +253,7 @@ describe('MessageList', () => {
       },
     ];
 
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: conversationsWithFile,
@@ -262,7 +268,7 @@ describe('MessageList', () => {
   });
 
   it('filters conversations by search', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversations,
@@ -274,14 +280,14 @@ describe('MessageList', () => {
       const searchInput = screen.getByPlaceholderText('Cari percakapan...');
       fireEvent.change(searchInput, { target: { value: 'Jane' } });
 
-      expect(mockedApiService.messages.getConversations).toHaveBeenCalledWith(
+      expect(vi.mocked(apiService.messagesAPI).getConversations).toHaveBeenCalledWith(
         expect.objectContaining({ search: 'Jane' })
       );
     });
   });
 
   it('filters conversations by type', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversations,
@@ -293,14 +299,14 @@ describe('MessageList', () => {
       const directButton = screen.getByText('Pribadi');
       fireEvent.click(directButton);
 
-      expect(mockedApiService.messages.getConversations).toHaveBeenCalledWith(
+      expect(vi.mocked(apiService.messagesAPI).getConversations).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'direct' })
       );
     });
   });
 
   it('filters unread conversations', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversations,
@@ -312,14 +318,14 @@ describe('MessageList', () => {
       const unreadButton = screen.getByText('Belum Dibaca');
       fireEvent.click(unreadButton);
 
-      expect(mockedApiService.messages.getConversations).toHaveBeenCalledWith(
+      expect(vi.mocked(apiService.messagesAPI).getConversations).toHaveBeenCalledWith(
         expect.objectContaining({ unreadOnly: true })
       );
     });
   });
 
   it('shows participant avatar as initials when no avatar URL', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversations,
@@ -340,7 +346,7 @@ describe('MessageList', () => {
       lastMessageAt: recentTime,
     };
 
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: [recentConversation],
@@ -354,7 +360,7 @@ describe('MessageList', () => {
   });
 
   it('updates conversation list on WebSocket message', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversations,
@@ -376,11 +382,11 @@ describe('MessageList', () => {
       })
     );
 
-    expect(mockedApiService.messages.getConversations).toHaveBeenCalled();
+    expect(vi.mocked(apiService.messagesAPI).getConversations).toHaveBeenCalled();
   });
 
   it('shows empty state for filtered results', async () => {
-    mockedApiService.messages.getConversations.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversations.mockResolvedValue({
       success: true,
       message: 'Success',
       data: [],

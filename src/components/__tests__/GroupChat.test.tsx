@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { GroupChat } from '../GroupChat';
 import * as apiService from '../../services/apiService';
-import { _STORAGE_KEYS } from '../../constants';
 import type { User, Class, Subject } from '../../types';
 
 describe('GroupChat', () => {
@@ -30,16 +29,19 @@ describe('GroupChat', () => {
   ];
 
   beforeEach(() => {
-    vi.spyOn(apiService.classes, 'getClasses').mockResolvedValue({
+    vi.spyOn(apiService.classesAPI, 'getAll').mockResolvedValue({
       success: true,
+      message: 'Success',
       data: mockClasses,
     });
-    vi.spyOn(apiService.subjects, 'getSubjects').mockResolvedValue({
+    vi.spyOn(apiService.subjectsAPI, 'getAll').mockResolvedValue({
       success: true,
+      message: 'Success',
       data: mockSubjects,
     });
-    vi.spyOn(apiService.users, 'getUsers').mockResolvedValue({
+    vi.spyOn(apiService.usersAPI, 'getAll').mockResolvedValue({
       success: true,
+      message: 'Success',
       data: mockUsers,
     });
     localStorage.clear();
@@ -68,8 +70,8 @@ describe('GroupChat', () => {
       render(<GroupChat currentUser={mockCurrentUser} />);
 
       await waitFor(() => {
-        expect(apiService.classes.getClasses).toHaveBeenCalled();
-        expect(apiService.subjects.getSubjects).toHaveBeenCalled();
+        expect(apiService.classesAPI.getAll).toHaveBeenCalled();
+        expect(apiService.subjectsAPI.getAll).toHaveBeenCalled();
       });
     });
   });
@@ -260,12 +262,19 @@ describe('GroupChat', () => {
     });
 
     it('should create custom group when form is submitted', async () => {
-      const createConversationSpy = vi.spyOn(apiService.messages, 'createConversation').mockResolvedValue({
+      const createConversationSpy = vi.spyOn(apiService.messagesAPI, 'createConversation').mockResolvedValue({
         success: true,
+        message: 'Success',
         data: {
           id: 'new-group-id',
           name: 'Test Group',
-          type: 'group',
+          type: 'group' as const,
+          participantIds: [],
+          participants: [],
+          unreadCount: 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          createdBy: mockCurrentUser.id,
         },
       });
 
@@ -342,8 +351,9 @@ describe('GroupChat', () => {
         },
       ];
 
-      vi.spyOn(apiService.messages, 'getConversations').mockResolvedValue({
+      vi.spyOn(apiService.messagesAPI, 'getConversations').mockResolvedValue({
         success: true,
+        message: 'Success',
         data: mockConversations,
       });
 
@@ -380,8 +390,9 @@ describe('GroupChat', () => {
         },
       ];
 
-      vi.spyOn(apiService.messages, 'getConversations').mockResolvedValue({
+      vi.spyOn(apiService.messagesAPI, 'getConversations').mockResolvedValue({
         success: true,
+        message: 'Success',
         data: mockConversations,
       });
 
@@ -417,8 +428,9 @@ describe('GroupChat', () => {
 
   describe('Error Handling', () => {
     it('should show error when group creation fails', async () => {
-      vi.spyOn(apiService.messages, 'createConversation').mockResolvedValue({
+      vi.spyOn(apiService.messagesAPI, 'createConversation').mockResolvedValue({
         success: false,
+        message: 'Failed to create group',
         error: 'Failed to create group',
       });
 
