@@ -26,6 +26,9 @@ interface LoadingStateProps {
 
 export interface EmptyStateProps {
   message: string;
+  submessage?: string;
+  subMessage?: string;
+  title?: string;
   icon?: ReactNode;
   action?: {
     label: string;
@@ -56,6 +59,9 @@ const iconSizeClasses: Record<LoadingStateSize, string> = {
 
 const EmptyState: React.FC<EmptyStateProps> = ({
   message,
+  submessage,
+  subMessage,
+  title,
   icon,
   action,
   size = 'md',
@@ -86,9 +92,19 @@ const EmptyState: React.FC<EmptyStateProps> = ({
             {icon}
           </div>
         )}
+        {title && (
+          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white animate-fade-in">
+            {title}
+          </h3>
+        )}
         <p className="text-neutral-600 dark:text-neutral-400 font-medium animate-fade-in">
           {message}
         </p>
+        {(submessage || subMessage) && (
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 animate-fade-in">
+            {submessage || subMessage}
+          </p>
+        )}
         {action && (
           <Button
             variant="primary"

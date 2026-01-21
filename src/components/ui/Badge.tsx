@@ -1,7 +1,7 @@
 import React from 'react';
 import { getColorClasses } from '../../config/colors';
 
-export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'secondary' | 'outline';
+export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'secondary' | 'outline' | 'default' | 'gray' | 'blue' | 'purple' | 'orange' | 'green' | 'red' | 'yellow';
 export type BadgeSize = 'sm' | 'md' | 'lg' | 'xl';
 export type BadgeStyle = 'solid' | 'outline';
 
@@ -47,6 +47,38 @@ const variantClasses: Record<BadgeVariant, Record<BadgeStyle, string>> = {
   outline: {
     solid: getColorClasses('neutral', 'badge'),
     outline: "border-2 border-neutral-500 text-neutral-700 dark:border-neutral-400 dark:text-neutral-300",
+  },
+  default: {
+    solid: getColorClasses('neutral', 'badge'),
+    outline: "border-2 border-neutral-500 text-neutral-700 dark:border-neutral-400 dark:text-neutral-300",
+  },
+  gray: {
+    solid: "bg-gray-600 text-white dark:bg-gray-500 dark:text-white",
+    outline: "border-2 border-gray-500 text-gray-700 dark:border-gray-400 dark:text-gray-300",
+  },
+  blue: {
+    solid: "bg-blue-600 text-white dark:bg-blue-500 dark:text-white",
+    outline: "border-2 border-blue-500 text-blue-700 dark:border-blue-400 dark:text-blue-300",
+  },
+  purple: {
+    solid: "bg-purple-600 text-white dark:bg-purple-500 dark:text-white",
+    outline: "border-2 border-purple-500 text-purple-700 dark:border-purple-400 dark:text-purple-300",
+  },
+  orange: {
+    solid: "bg-orange-600 text-white dark:bg-orange-500 dark:text-white",
+    outline: "border-2 border-orange-500 text-orange-700 dark:border-orange-400 dark:text-orange-300",
+  },
+  green: {
+    solid: "bg-green-600 text-white dark:bg-green-500 dark:text-white",
+    outline: "border-2 border-green-500 text-green-700 dark:border-green-400 dark:text-green-300",
+  },
+  red: {
+    solid: "bg-red-600 text-white dark:bg-red-500 dark:text-white",
+    outline: "border-2 border-red-500 text-red-700 dark:border-red-400 dark:text-red-300",
+  },
+  yellow: {
+    solid: "bg-yellow-600 text-white dark:bg-yellow-500 dark:text-white",
+    outline: "border-2 border-yellow-500 text-yellow-700 dark:border-yellow-400 dark:text-yellow-300",
   },
 };
 

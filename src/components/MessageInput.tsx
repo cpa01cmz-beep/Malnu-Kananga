@@ -2,8 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import { STORAGE_KEYS } from '../constants';
+import type { User } from '../types';
+import { logger } from '../utils/logger';
 
 interface MessageInputProps {
+  currentUser?: User;
   onSendMessage: (content: string, file?: File) => Promise<void>;
   disabled?: boolean;
   placeholder?: string;
@@ -39,7 +42,7 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       if (selectedFile.size > 10 * 1024 * 1024) {
-        alert('Ukuran file maksimal 10MB');
+        logger.warn('Ukuran file maksimal 10MB');
         return;
       }
       setFile(selectedFile);

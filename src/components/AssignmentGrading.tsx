@@ -3,6 +3,7 @@ import { assignmentsAPI, assignmentSubmissionsAPI } from '../services/apiService
 import { generateAssignmentFeedback } from '../services/geminiService';
 import { Assignment, AssignmentStatus, AssignmentSubmission, User, AIFeedback } from '../types';
 import { useEventNotifications } from '../hooks/useEventNotifications';
+import { useCanAccess } from '../hooks/useCanAccess';
 import { logger } from '../utils/logger';
 import { OfflineIndicator } from './OfflineIndicator';
 import Button from './ui/Button';
@@ -19,6 +20,7 @@ import { ClockIcon } from './icons/ClockIcon';
 import { CheckCircleIcon, AlertCircleIcon } from './icons/StatusIcons';
 import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
+import { STORAGE_KEYS } from '../constants';
 
 interface AssignmentGradingProps {
   onBack: () => void;

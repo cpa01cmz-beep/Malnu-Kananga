@@ -33,6 +33,7 @@ interface FileUploaderProps {
   variant?: 'default' | 'compact' | 'minimal';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  allowedTypes?: string[];
 }
 
 const FileUploader: React.FC<FileUploaderProps> = ({

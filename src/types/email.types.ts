@@ -17,6 +17,7 @@ export interface EmailData {
   recipients?: EmailRecipient | EmailRecipient[];
   cc?: EmailRecipient | EmailRecipient[];
   bcc?: EmailRecipient | EmailRecipient[];
+  data?: Record<string, unknown>;
   subject: string;
   html: string;
   text?: string;
