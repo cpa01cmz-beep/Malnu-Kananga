@@ -155,7 +155,7 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({ onBack, onShowT
 
   const calculateAttendanceGradeCorrelation = useCallback((gradeData: unknown[], attendanceData: unknown[]): AttendanceGradeCorrelation => {
     const totalAttendance = (attendanceData as Array<{ status: string }>).length;
-    const presentDays = attendanceData.filter((a: { status: string }) => a.status === 'hadir').length;
+    const presentDays = (attendanceData as Array<{ status: string }>).filter((a) => a.status === 'hadir').length;
     const attendancePercentage = totalAttendance > 0 ? (presentDays / totalAttendance) * 100 : 95;
 
     const totalGrades = (gradeData as Array<{ score: number }>).reduce((sum, g) => sum + g.score, 0);
