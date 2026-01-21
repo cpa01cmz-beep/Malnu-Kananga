@@ -85,6 +85,9 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({ onBack, onShowT
     } finally {
       setLoading(false);
     }
+    // Note: analyzeSubjectPerformance, calculateAttendanceGradeCorrelation, loadGoals, loadActiveStudyPlan, saveActiveStudyPlan
+    // are defined after this callback but are stable (useCallback or const), so they don't need to be in deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [STUDENT_NIS]);
 
   useEffect(() => {

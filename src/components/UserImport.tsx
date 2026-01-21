@@ -60,12 +60,12 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
     }
   }, [isOpen]);
 
-  const validateEmail = (email: string): boolean => {
+  const validateEmail = useCallback((email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
-  };
+  }, []);
 
-  const validateUser = (row: CSVRow, index: number): ParsedUser => {
+  const validateUser = useCallback((row: CSVRow, index: number): ParsedUser => {
     const errors: string[] = [];
     const name = row['name'] || row['Nama'] || row['NAMA'] || '';
     const email = row['email'] || row['Email'] || row['EMAIL'] || '';
@@ -107,7 +107,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
       errors,
       rowIndex: index + 2,
     };
-  };
+  }, [validateEmail]);
 
   const parseCSV = useCallback((file: File): Promise<CSVRow[]> => {
     return new Promise((resolve, reject) => {
