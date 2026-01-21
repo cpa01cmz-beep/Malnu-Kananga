@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-21 (GAP-112 Phase 3 Complete: Real-time data auto-refresh in all dashboards)
+**Last Updated**: 2026-01-21 (SEC-002 Complete: API Rate Limiting Implementation)
 
 ## Architecture Overview
 
@@ -13,6 +13,7 @@
 - **AI/ML**: Google Gemini API
 - **Testing**: Vitest + React Testing Library
 - **PWA**: vite-plugin-pwa with Workbox
+- **Rate Limiting**: Cloudflare Workers KV (Sliding Window Algorithm)
 
 ### System Architecture
 
@@ -638,11 +639,11 @@ All localStorage keys use `malnu_` prefix:
 
 ### Security Measures
 
-**Last Updated**: 2026-01-20 (Button accessibility fix for WCAG compliance)
+**Last Updated**: 2026-01-21 (API Rate Limiting Implementation)
 
 #### OWASP Top 10 Coverage
 1. **Injection**: Parameterized queries, input validation
-2. **Broken Auth**: JWT with refresh tokens, secure storage
+2. **Broken Auth**: JWT with refresh tokens, secure storage, rate limiting on auth endpoints
 3. **XSS**: React auto-escaping, CSP headers
 4. **SSRF**: No external URL fetching from user input
 5. **Security Misconfiguration**: Environment variables, .env.example
@@ -651,6 +652,24 @@ All localStorage keys use `malnu_` prefix:
 8. **Cryptographic Failures**: HTTPS, secure headers
 9. **Logging**: Structured logging (no sensitive data)
 10. **SSRF**: Same-origin policy, CORS restrictions
+
+#### API Rate Limiting (New - 2026-01-21)
+- **Implementation**: Sliding window algorithm using Cloudflare Workers KV
+- **Endpoint Categories**:
+  - Auth endpoints: 5 requests/minute (prevents brute force attacks)
+  - Upload endpoints: 10 requests/minute (controls resource usage)
+  - Sensitive endpoints: 20 requests/minute (limits user modifications)
+  - Default endpoints: 100 requests/minute (normal API usage)
+- **Identifier Selection**:
+  - Authenticated requests: Uses `user_id` from JWT token
+  - Unauthenticated requests: Uses client IP address (CF-Connecting-IP header)
+- **Response Headers**:
+  - `X-RateLimit-Limit`: Maximum requests per window
+  - `X-RateLimit-Remaining`: Requests remaining in current window
+  - `X-RateLimit-Reset`: Timestamp when window resets
+  - `Retry-After`: Seconds until retry (only when rate limited)
+- **Error Handling**: Fail-open strategy - allows requests if KV unavailable
+- **Documentation**: See `docs/API_RATE_LIMITING.md` for complete guide
 
 #### Secrets Management
 - `.env.example` for reference
