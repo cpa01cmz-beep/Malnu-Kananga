@@ -408,4 +408,78 @@ describe('useVoiceInput', () => {
       expect(result.current.isListening).toBe(false);
     });
   });
+
+  describe('textTransform functionality', () => {
+    it('should accept textTransform configuration', () => {
+      const { result } = renderHook(() =>
+        useVoiceInput({
+          fieldName: 'test',
+          fieldLabel: 'Test Field',
+          onValueChange: mockOnValueChange,
+          fieldType: { type: 'text', textTransform: 'title-case' },
+        })
+      );
+
+      expect(result.current.isValid).toBe(true);
+    });
+
+    it('should work without textTransform configuration', () => {
+      const { result } = renderHook(() =>
+        useVoiceInput({
+          fieldName: 'test',
+          fieldLabel: 'Test Field',
+          onValueChange: mockOnValueChange,
+          fieldType: { type: 'text' },
+        })
+      );
+
+      expect(result.current.isValid).toBe(true);
+    });
+  });
+
+  describe('enhanced number conversion', () => {
+    it('should initialize with number field type for Indonesian', () => {
+      const { result } = renderHook(() =>
+        useVoiceInput({
+          fieldName: 'test',
+          fieldLabel: 'Test Field',
+          onValueChange: mockOnValueChange,
+          fieldType: { type: 'number' },
+          language: VoiceLanguage.Indonesian,
+        })
+      );
+
+      expect(result.current.isValid).toBe(true);
+    });
+
+    it('should initialize with number field type for English', () => {
+      const { result } = renderHook(() =>
+        useVoiceInput({
+          fieldName: 'test',
+          fieldLabel: 'Test Field',
+          onValueChange: mockOnValueChange,
+          fieldType: { type: 'number' },
+          language: VoiceLanguage.English,
+        })
+      );
+
+      expect(result.current.isValid).toBe(true);
+    });
+  });
+
+  describe('error handling initialization', () => {
+    it('should initialize without error', () => {
+      const { result } = renderHook(() =>
+        useVoiceInput({
+          fieldName: 'test',
+          fieldLabel: 'Test Field',
+          onValueChange: mockOnValueChange,
+          fieldType: { type: 'text' },
+        })
+      );
+
+      expect(result.current.error).toBe(null);
+      expect(result.current.isValid).toBe(true);
+    });
+  });
 });

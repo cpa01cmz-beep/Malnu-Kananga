@@ -167,7 +167,7 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
   const voiceFullName = useVoiceInput({
     fieldName: 'fullName',
     fieldLabel: 'Nama Lengkap',
-    fieldType: { type: 'text' },
+    fieldType: { type: 'text', textTransform: 'title-case' },
     onValueChange: (value) => {
       autoSaveActions.updateData((prev) => ({ ...prev, fullName: value }));
     },
@@ -200,7 +200,7 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
   const voiceParentName = useVoiceInput({
     fieldName: 'parentName',
     fieldLabel: 'Nama Orang Tua',
-    fieldType: { type: 'text' },
+    fieldType: { type: 'text', textTransform: 'title-case' },
     onValueChange: (value) => {
       autoSaveActions.updateData((prev) => ({ ...prev, parentName: value }));
     },

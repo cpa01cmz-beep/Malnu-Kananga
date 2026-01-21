@@ -8,6 +8,7 @@ import { logger } from '../utils/logger';
 export interface VoiceInputFieldType {
   type: 'text' | 'number' | 'email' | 'phone' | 'textarea';
   format?: 'NISN' | 'phone' | 'email';
+  textTransform?: 'title-case';
 }
 
 export interface UseVoiceInputOptions {
@@ -99,7 +100,7 @@ export const useVoiceInput = (options: UseVoiceInputOptions): UseVoiceInputRetur
     switch (fieldType.type) {
       case 'text':
         processed = processed.replace(/\s+/g, ' ');
-        if (fieldName === 'fullName' || fieldName === 'parentName') {
+        if (fieldType.textTransform === 'title-case') {
           processed = toTitleCase(processed);
         }
         break;
@@ -166,14 +167,15 @@ export const useVoiceInput = (options: UseVoiceInputOptions): UseVoiceInputRetur
 
     let errorMessage = 'Terjadi kesalahan input suara';
 
-    const errorObj = error as Record<string, unknown>;
-
-    if (errorObj?.error === 'not-allowed') {
-      errorMessage = 'Izin mikrofon ditolak. Silakan izinkan akses mikrofon di pengaturan browser.';
-    } else if (errorObj?.error === 'no-speech') {
-      errorMessage = 'Tidak ada suara terdeteksi. Silakan coba lagi.';
-    } else if (errorObj?.error === 'audio-capture') {
-      errorMessage = 'Tidak dapat mengakses mikrofon. Periksa pengaturan perangkat Anda.';
+    if (typeof error === 'object' && error !== null && 'error' in error) {
+      const errorKey = (error as { error: string }).error;
+      if (errorKey === 'not-allowed') {
+        errorMessage = 'Izin mikrofon ditolak. Silakan izinkan akses mikrofon di pengaturan browser.';
+      } else if (errorKey === 'no-speech') {
+        errorMessage = 'Tidak ada suara terdeteksi. Silakan coba lagi.';
+      } else if (errorKey === 'audio-capture') {
+        errorMessage = 'Tidak dapat mengakses mikrofon. Periksa pengaturan perangkat Anda.';
+      }
     }
 
     setError(errorMessage);
@@ -250,7 +252,7 @@ export const useVoiceInput = (options: UseVoiceInputOptions): UseVoiceInputRetur
 
 function toTitleCase(str: string): string {
   return str.replace(/\w\S*/g, (txt) => {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
   });
 }
 
@@ -280,6 +282,15 @@ function textToNumber(text: string, language: VoiceLanguage): string {
 
   const englishMap: Record<string, string> = {
     'ten': '10',
+    'eleven': '11',
+    'twelve': '12',
+    'thirteen': '13',
+    'fourteen': '14',
+    'fifteen': '15',
+    'sixteen': '16',
+    'seventeen': '17',
+    'eighteen': '18',
+    'nineteen': '19',
     'twenty': '20',
     'thirty': '30',
     'forty': '40',
@@ -291,8 +302,34 @@ function textToNumber(text: string, language: VoiceLanguage): string {
     'hundred': '100',
   };
 
+  const indonesianCompoundMap: Record<string, string> = {
+    'sepuluh': '10',
+    'sebelas': '11',
+    'dua belas': '12',
+    'tiga belas': '13',
+    'empat belas': '14',
+    'lima belas': '15',
+    'enam belas': '16',
+    'tujuh belas': '17',
+    'delapan belas': '18',
+    'sembilan belas': '19',
+    'dua puluh': '20',
+    'tiga puluh': '30',
+    'empat puluh': '40',
+    'lima puluh': '50',
+    'enam puluh': '60',
+    'tujuh puluh': '70',
+    'delapan puluh': '80',
+    'sembilan puluh': '90',
+    'seratus': '100',
+  };
+
   if (language === VoiceLanguage.Indonesian) {
     let result = text.toLowerCase();
+
+    for (const [word, digit] of Object.entries(indonesianCompoundMap)) {
+      result = result.replace(new RegExp(`\\b${word}\\b`, 'g'), digit);
+    }
 
     for (const [word, digit] of Object.entries(digitMap)) {
       result = result.replace(new RegExp(`\\b${word}\\b`, 'g'), digit);
