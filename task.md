@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Task Tracker
 
-**Last Updated**: 2026-01-21 (BUILD-001 Phase 2d Complete - All ESLint errors fixed)
+**Last Updated**: 2026-01-21 (Closed stale BUILD-001 issues; All critical blockers resolved)
 
 ## Active Tasks
 
@@ -9,6 +9,22 @@
 ### Completed Tasks ✅
 
 ### 2026-01-21
+- [x] **Close Stale GitHub Issues (#1174, #1175, #1176)**
+  - Task ID: ISSUE-CLEANUP-001
+  - Description: Close BUILD-001 related issues that are resolved by Phase 2d
+  - Priority: **P1** (Medium)
+  - Status: **Completed**
+  - Completed: 2026-01-21
+  - Dependencies: None
+  - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+  - Changes:
+    - Closed #1174: BUILD-001-B (TypeScript component errors)
+    - Closed #1175: BUILD-001-C (TypeScript service/hook errors)
+    - Closed #1176: BUILD-002 (ESLint errors)
+    - All issues resolved by BUILD-001 Phase 2d (PR #1178)
+    - Current state confirmed: 0 TypeScript errors, 0 ESLint errors, 14 warnings
+    - Build status: All critical blockers resolved, PR merges unblocked
+
 - [x] **BUILD-001 Phase 2d: Fix all ESLint errors and remaining TypeScript issues**
   - Task ID: BUILD-001 (Phase 2d)
   - Description: Fix critical ESLint errors blocking all PR merges
