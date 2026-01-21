@@ -42,6 +42,8 @@ import Button from './ui/Button';
 import OfflineBanner from './ui/OfflineBanner';
 import Alert from './ui/Alert';
 import ActivityFeed, { type Activity } from './ActivityFeed';
+import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
+import { RealTimeEventType } from '../services/webSocketService';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -59,6 +61,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
   const [validationResults, setValidationResults] = useState<Record<string, ValidationResult>>({});
   const [cacheFreshness, setCacheFreshness] = useState<CacheFreshnessInfo | null>(null);
   const [showValidationDetails, setShowValidationDetails] = useState(false);
+  const [_refreshingData, setRefreshingData] = useState<Record<string, boolean>>({});
 
   // Initialize push notifications and offline services
   const { 
@@ -335,6 +338,118 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       onShowToast('Perintah tidak dikenali atau tidak tersedia', 'error');
     }
   }, [handleVoiceCommand, onShowToast]);
+
+  // Refresh specific data types when real-time events are received
+  const refreshGrades = useCallback(async () => {
+    if (!studentData || !isOnline) return;
+
+    try {
+      setRefreshingData(prev => ({ ...prev, grades: true }));
+      const response = await gradesAPI.getByStudent(studentData.id);
+      if (response.success && response.data) {
+        const gradesValidation = StudentPortalValidator.validateGradeCalculation(response.data);
+        setValidationResults(prev => ({ ...prev, grades: gradesValidation }));
+
+        if (offlineData) {
+          offlineDataService.cacheStudentData({
+            student: offlineData.student,
+            grades: response.data,
+            attendance: offlineData.attendance,
+            schedule: offlineData.schedule,
+          });
+        }
+
+        logger.info('Grades refreshed from real-time event');
+      }
+    } catch (error) {
+      logger.error('Failed to refresh grades:', error);
+    } finally {
+      setRefreshingData(prev => ({ ...prev, grades: false }));
+    }
+  }, [studentData, isOnline, offlineData, offlineDataService]);
+
+  const refreshAttendance = useCallback(async () => {
+    if (!studentData || !isOnline) return;
+
+    try {
+      setRefreshingData(prev => ({ ...prev, attendance: true }));
+      const response = await attendanceAPI.getByStudent(studentData.id);
+      if (response.success && response.data) {
+        const attendanceValidation = response.data.map(att =>
+          StudentPortalValidator.validateAttendanceRecord(att)
+        );
+
+        setValidationResults(prev => ({
+          ...prev,
+          attendance: {
+            isValid: attendanceValidation.every(v => v.isValid),
+            errors: attendanceValidation.flatMap(v => v.errors),
+            warnings: attendanceValidation.flatMap(v => v.warnings),
+          },
+        }));
+
+        if (offlineData) {
+          offlineDataService.cacheStudentData({
+            student: offlineData.student,
+            grades: offlineData.grades,
+            attendance: response.data,
+            schedule: offlineData.schedule,
+          });
+        }
+
+        logger.info('Attendance refreshed from real-time event');
+      }
+    } catch (error) {
+      logger.error('Failed to refresh attendance:', error);
+    } finally {
+      setRefreshingData(prev => ({ ...prev, attendance: false }));
+    }
+  }, [studentData, isOnline, offlineData, offlineDataService]);
+
+  const refreshMaterials = useCallback(async () => {
+    if (!isOnline) return;
+
+    try {
+      setRefreshingData(prev => ({ ...prev, materials: true }));
+      const materialsJSON = localStorage.getItem('malnu_materials');
+      if (materialsJSON) {
+        const materials = JSON.parse(materialsJSON);
+        localStorage.setItem('malnu_materials', JSON.stringify(materials));
+      }
+      logger.info('Materials refreshed from real-time event');
+    } catch (error) {
+      logger.error('Failed to refresh materials:', error);
+    } finally {
+      setRefreshingData(prev => ({ ...prev, materials: false }));
+    }
+  }, [isOnline]);
+
+  const { isConnected, isConnecting } = useRealtimeEvents({
+    eventTypes: [
+      'grade_updated',
+      'grade_created',
+      'attendance_marked',
+      'attendance_updated',
+      'library_material_added',
+      'library_material_updated',
+    ] as RealTimeEventType[],
+    enabled: isOnline,
+    onEvent: useCallback((event: unknown) => {
+      if (!studentData) return;
+      const typedEvent = event as { entity: string; data: { studentId: string } };
+      if (typedEvent.entity === 'grade') {
+        if (typedEvent.data.studentId === studentData.id) {
+          refreshGrades();
+        }
+      } else if (typedEvent.entity === 'attendance') {
+        if (typedEvent.data.studentId === studentData.id) {
+          refreshAttendance();
+        }
+      } else if (typedEvent.entity === 'library_material') {
+        refreshMaterials();
+      }
+    }, [studentData, refreshGrades, refreshAttendance, refreshMaterials]),
+  });
 
   // Handle manual sync
   const handleSync = async () => {
@@ -662,9 +777,9 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                   <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 sm:w-24 h-32 sm:h-24 bg-primary-500/10 rounded-full blur-2xl"></div>
 </div>
 
-                {/* Voice Commands Section */}
-                {voiceSupported && (
-                    <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up">
+                 {/* Voice Commands Section */}
+                 {voiceSupported && (
+                     <div className="bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
@@ -690,6 +805,14 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                                 />
                             </div>
                         </div>
+                        {isOnline && (
+                            <div className="mt-4 flex items-center gap-2 text-sm">
+                                <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-yellow-500'} ${isConnecting ? 'animate-pulse' : ''}`}></div>
+                                <span className="text-neutral-600 dark:text-neutral-400">
+                                    {isConnected ? 'Real-time Aktif' : isConnecting ? 'Menghubungkan...' : 'Tidak Terhubung'}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 )}
 
