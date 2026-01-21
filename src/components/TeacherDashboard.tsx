@@ -37,6 +37,8 @@ import SmallActionButton from './ui/SmallActionButton';
 import { pdfExportService } from '../services/pdfExportService';
 import ChatBubbleLeftRightIcon from './icons/ChatBubbleLeftRightIcon';
 import ActivityFeed, { type Activity } from './ActivityFeed';
+import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
+import { RealTimeEventType } from '../services/webSocketService';
 
 interface TeacherDashboardProps {
     onShowToast?: (msg: string, type: ToastType) => void;
@@ -52,6 +54,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
   const [dashboardData, setDashboardData] = useState<{ lastSync?: string } | null>(null);
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
   const [isExportingConsolidated, setIsExportingConsolidated] = useState(false);
+  const [_refreshingData, setRefreshingData] = useState<Record<string, boolean>>({});
 
   // Initialize push notifications
   const { 
@@ -220,6 +223,44 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     }
   }, [handleVoiceCommand, handleToast]);
 
+  const refreshDashboardData = useCallback(async () => {
+    if (!isOnline) return;
+
+    try {
+      setRefreshingData(prev => ({ ...prev, dashboard: true }));
+      const freshData = { lastSync: new Date().toISOString() };
+      setDashboardData(freshData);
+      localStorage.setItem(STORAGE_KEYS.TEACHER_DASHBOARD_CACHE, JSON.stringify(freshData));
+      logger.info('Dashboard data refreshed from real-time event');
+    } catch (error) {
+      logger.error('Failed to refresh dashboard data:', error);
+    } finally {
+      setRefreshingData(prev => ({ ...prev, dashboard: false }));
+    }
+  }, [isOnline]);
+
+  const { isConnected, isConnecting } = useRealtimeEvents({
+    eventTypes: [
+      'grade_updated',
+      'grade_created',
+      'announcement_created',
+      'announcement_updated',
+      'event_created',
+      'event_updated',
+      'message_created',
+      'message_updated',
+    ] as RealTimeEventType[],
+    enabled: isOnline,
+    onEvent: useCallback((event: unknown) => {
+      const typedEvent = event as { entity: string; type: string };
+      if (typedEvent.entity === 'grade' || typedEvent.entity === 'announcement' || typedEvent.entity === 'event') {
+        refreshDashboardData();
+      } else if (typedEvent.entity === 'message' && typedEvent.type === 'message_created') {
+        handleToast('Pesan baru diterima', 'success');
+      }
+    }, [refreshDashboardData, handleToast]),
+  });
+
   // Check permissions for teacher role with extra role
   const checkPermission = (permission: string) => {
     const result = permissionService.hasPermission('teacher' as UserRole, extraRole, permission);
@@ -337,9 +378,9 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                     </p>
                 </Card>
 
-                {/* Voice Commands Section */}
-                {voiceSupported && (
-                    <Card padding="lg" className={`mb-8 animate-fade-in-up`}>
+                 {/* Voice Commands Section */}
+                 {voiceSupported && (
+                     <Card padding="lg" className={`mb-8 animate-fade-in-up`}>
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
@@ -365,6 +406,14 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                                 />
                             </div>
                         </div>
+                        {isOnline && (
+                            <div className="mt-4 flex items-center gap-2 text-sm">
+                                <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-yellow-500'} ${isConnecting ? 'animate-pulse' : ''}`}></div>
+                                <span className="text-neutral-600 dark:text-neutral-400">
+                                    {isConnected ? 'Real-time Aktif' : isConnecting ? 'Menghubungkan...' : 'Tidak Terhubung'}
+                                </span>
+                            </div>
+                        )}
                     </Card>
                 )}
 

@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-21 (GAP-112 Phase 1: Real-time events infrastructure - ActivityFeed and useRealtimeEvents hook)
+**Last Updated**: 2026-01-21 (GAP-112 Phase 3 Complete: Real-time data auto-refresh in all dashboards)
 
 ## Architecture Overview
 
@@ -59,37 +59,56 @@
 - **`speechRecognitionService.ts`** - Web Speech API (Voice → Text)
 - **`speechSynthesisService.ts`** - Text-to-Speech (Text → Voice)
 
-#### Real-Time Services (added 2026-01-21)
-- **`useRealtimeEvents.ts`** - Custom hook for WebSocket event subscription and management
-  - Subscribes to real-time event types
-  - Provides connection status (connected, connecting, reconnect attempts)
-  - Event filtering support
-  - Automatic cleanup on unmount
-  - Connection state polling
+ #### Real-Time Services (added 2026-01-21)
+ - **`useRealtimeEvents.ts`** - Custom hook for WebSocket event subscription and management
+   - Subscribes to real-time event types
+   - Provides connection status (connected, connecting, reconnect attempts)
+   - Event filtering support
+   - Automatic cleanup on unmount
+   - Connection state polling
 
-#### Dashboard Components (Enhanced 2026-01-21)
-- **`ActivityFeed.tsx`** - Real-time activity feed component (completed 2026-01-21, Phase 1)
-  - Displays recent activities grouped by time (Hari Ini, Kemarin, Minggu Ini)
-  - Activity filtering by type (all, unread, or specific type)
-  - Connection status indicator (online/offline)
-  - Visual indicators for unread activities
-  - Local storage persistence for activity history
-  - Supports activity types: grades, attendance, materials, announcements, events, messages
-  - **Integrated into StudentPortal** (2026-01-21, Phase 2)
-    - Grade events navigate to Grades view
-    - Attendance events navigate to Attendance view
-    - Material events navigate to E-Library view
-    - Message events navigate to Groups view
-  - **Integrated into TeacherDashboard** (2026-01-21, Phase 2)
-    - Grade events navigate to Analytics view
-    - Announcement events show toast notifications
-    - Event events show toast notifications
-    - Message events navigate to Messages view
-  - **Integrated into ParentDashboard** (2026-01-21, Phase 2)
-    - Grade events navigate to Grades view
-    - Attendance events navigate to Attendance view
-    - Announcement events navigate to Events view
-    - Event events navigate to Events view
+ #### Dashboard Components (Enhanced 2026-01-21)
+ - **`ActivityFeed.tsx`** - Real-time activity feed component (completed 2026-01-21, Phase 1)
+   - Displays recent activities grouped by time (Hari Ini, Kemarin, Minggu Ini)
+   - Activity filtering by type (all, unread, or specific type)
+   - Connection status indicator (online/offline)
+   - Visual indicators for unread activities
+   - Local storage persistence for activity history
+   - Supports activity types: grades, attendance, materials, announcements, events, messages
+   - **Integrated into StudentPortal** (2026-01-21, Phase 2)
+     - Grade events navigate to Grades view
+     - Attendance events navigate to Attendance view
+     - Material events navigate to E-Library view
+     - Message events navigate to Groups view
+   - **Integrated into TeacherDashboard** (2026-01-21, Phase 2)
+     - Grade events navigate to Analytics view
+     - Announcement events show toast notifications
+     - Event events show toast notifications
+     - Message events navigate to Messages view
+   - **Integrated into ParentDashboard** (2026-01-21, Phase 2)
+     - Grade events navigate to Grades view
+     - Attendance events navigate to Attendance view
+     - Announcement events navigate to Events view
+     - Event events navigate to Events view
+
+- **`StudentPortal.tsx`** - Student dashboard with real-time data refresh (completed 2026-01-21, Phase 3)
+  - Auto-refreshes grades, attendance, and materials when events received
+  - Visual connection status indicator in Voice Commands section
+  - Offline mode handling (real-time disabled when offline)
+  - Cache updates on data refresh
+
+- **`TeacherDashboard.tsx`** - Teacher dashboard with real-time data refresh (completed 2026-01-21, Phase 3)
+  - Auto-refreshes dashboard data when grade/announcement/event events received
+  - Visual connection status indicator in Voice Commands section
+  - Toast notifications for new messages
+  - Offline mode handling (real-time disabled when offline)
+
+- **`ParentDashboard.tsx`** - Parent dashboard with real-time data refresh (completed 2026-01-21, Phase 3)
+  - Auto-refreshes child data when grade/attendance events received
+  - Visual connection status indicator
+  - Child-specific data refresh (only refreshes selected child's data)
+  - Cache updates on data refresh
+  - Offline mode handling (real-time disabled when offline)
 - **`voiceSettingsBackup.ts`** - Voice settings persistence
 - **`voiceMessageQueue.ts`** - Queue for voice commands/messages
 - **`voiceNotificationService.ts`** - Voice notification alerts

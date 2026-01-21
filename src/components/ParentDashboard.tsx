@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { UserIcon } from './icons/UserIcon';
 import ParentScheduleView from './ParentScheduleView';
 import ParentGradesView from './ParentGradesView';
@@ -30,6 +30,8 @@ import ParentNotificationSettings from './ParentNotificationSettings';
 import NotificationHistory from './NotificationHistory';
 import SuspenseLoading from './ui/SuspenseLoading';
 import ActivityFeed, { type Activity } from './ActivityFeed';
+import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
+import { RealTimeEventType } from '../services/webSocketService';
 
 interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -48,6 +50,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [showNotificationHistory, setShowNotificationHistory] = useState(false);
   const [offlineData, setOfflineData] = useState<CachedParentData | null>(null);
   const [syncInProgress, setSyncInProgress] = useState(false);
+  const [_refreshingData, setRefreshingData] = useState<Record<string, boolean>>({});
   
   const networkStatus = useNetworkStatus();
 
@@ -344,7 +347,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
 
     try {
       await offlineDataService.forceSync();
-      
+
       // Re-fetch data
       window.location.reload(); // Simple refresh to get fresh data
     } catch (error) {
@@ -354,6 +357,64 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       setSyncInProgress(false);
     }
   };
+
+  const refreshChildData = useCallback(async (childId: string) => {
+    if (!networkStatus.isOnline) return;
+
+    try {
+      setRefreshingData(prev => ({ ...prev, [`child-${childId}`]: true }));
+
+      const [gradesResponse, attendanceResponse] = await Promise.all([
+        gradesAPI.getByStudent(childId),
+        attendanceAPI.getByStudent(childId)
+      ]);
+
+      if (gradesResponse.success && attendanceResponse.success && offlineData) {
+        const updatedChildrenData = { ...offlineData.childrenData };
+        if (offlineData.childrenData[childId]) {
+          updatedChildrenData[childId] = {
+            ...offlineData.childrenData[childId],
+            grades: gradesResponse.data || [],
+            attendance: attendanceResponse.data || [],
+          };
+        }
+
+        offlineDataService.cacheParentData({
+          children: offlineData.children,
+          childrenData: updatedChildrenData,
+        });
+
+        onShowToast('Data anak diperbarui', 'success');
+        logger.info(`Child ${childId} data refreshed from real-time event`);
+      }
+    } catch (error) {
+      logger.error('Failed to refresh child data:', error);
+    } finally {
+      setRefreshingData(prev => ({ ...prev, [`child-${childId}`]: false }));
+    }
+  }, [networkStatus.isOnline, offlineData, offlineDataService, onShowToast]);
+
+  const { isConnected: _isConnected, isConnecting: _isConnecting } = useRealtimeEvents({
+    eventTypes: [
+      'grade_updated',
+      'grade_created',
+      'attendance_marked',
+      'attendance_updated',
+      'announcement_created',
+      'announcement_updated',
+      'event_created',
+      'event_updated',
+    ] as RealTimeEventType[],
+    enabled: networkStatus.isOnline,
+    onEvent: useCallback((event: unknown) => {
+      const typedEvent = event as { entity: string; data: { studentId: string } };
+      if (typedEvent.entity === 'grade' || typedEvent.entity === 'attendance') {
+        if (selectedChild && typedEvent.data.studentId === selectedChild.studentId) {
+          refreshChildData(selectedChild.studentId);
+        }
+      }
+    }, [selectedChild, refreshChildData]),
+  });
 
   
 

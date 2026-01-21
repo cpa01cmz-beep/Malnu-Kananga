@@ -31,10 +31,38 @@
     - src/components/TeacherDashboard.tsx
     - src/components/ParentDashboard.tsx
     - src/components/ActivityFeed.tsx (type fix)
-  - Files created:
-    - src/components/__tests__/StudentPortal-activity-feed.test.tsx
-    - src/components/__tests__/TeacherDashboard-activity-feed.test.tsx
-    - src/components/__tests__/ParentDashboard-activity-feed.test.tsx
+   - Files created:
+     - src/components/__tests__/StudentPortal-activity-feed.test.tsx
+     - src/components/__tests__/TeacherDashboard-activity-feed.test.tsx
+     - src/components/__tests__/ParentDashboard-activity-feed.test.tsx
+
+- [x] **Real-Time Data Auto-Refresh in Dashboards** (GAP-112 Phase 3)
+  - Task ID: GAP-112-3
+  - Description: Implement auto-refresh of dashboard data when WebSocket events are received
+  - Status: **Completed**
+  - Completed: 2026-01-21
+  - Agent: Lead Autonomous Engineer & System Guardian (Builder Mode)
+  - Implementation completed:
+    - ✅ Added useRealtimeEvents hook to StudentPortal with event handlers for grades, attendance, materials
+    - ✅ Added useRealtimeEvents hook to TeacherDashboard with event handlers for grades, announcements, events, messages
+    - ✅ Added useRealtimeEvents hook to ParentDashboard with event handlers for grades, attendance
+    - ✅ Implemented refresh functions for each data type (grades, attendance, materials, dashboard)
+    - ✅ Added visual connection status indicators (Real-time Aktif, Menghubungkan..., Tidak Terhubung)
+    - ✅ Proper cleanup of subscriptions on component unmount (handled by useRealtimeEvents hook)
+    - ✅ Error handling with try-catch blocks in all refresh functions
+    - ✅ Offline mode handling (events only enabled when online)
+    - ✅ Cache updates when data is refreshed
+  - Files modified:
+    - src/components/StudentPortal.tsx
+    - src/components/TeacherDashboard.tsx
+    - src/components/ParentDashboard.tsx
+  - Technical details:
+    - StudentPortal: Subscribes to grade_updated, grade_created, attendance_marked, attendance_updated, library_material_added, library_material_updated
+    - TeacherDashboard: Subscribes to grade_updated, grade_created, announcement_created/updated, event_created/updated, message_created/updated
+    - ParentDashboard: Subscribes to grade_updated/created, attendance_marked/updated, announcement_created/updated, event_created/updated
+    - Connection status displayed with animated green (connected) or yellow (connecting) indicators
+    - Data refreshes triggered based on student ID matching and event type
+    - Offline data cache updated when refresh occurs
 
 - [x] **Real-Time Events Infrastructure - Phase 1** (GAP-112 Phase 1)
 
