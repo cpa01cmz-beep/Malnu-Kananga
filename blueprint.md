@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-21 (SEC-002 Complete: API Rate Limiting Implementation)
+**Last Updated**: 2026-01-21 (GAP-104 Phase 1 Complete: Voice Input Hook)
 
 ## Architecture Overview
 
@@ -60,7 +60,34 @@
 - **`speechRecognitionService.ts`** - Web Speech API (Voice → Text)
 - **`speechSynthesisService.ts`** - Text-to-Speech (Text → Voice)
 
- #### Real-Time Services (added 2026-01-21)
+#### Voice Input Hook (added 2026-01-21)
+- **`useVoiceInput.ts`** - Field-level voice input hook for forms
+  - Provides voice-to-text transcription for form fields
+  - Supports different field types: text, number, email, phone, textarea
+  - Validates input after transcription
+  - Provides voice feedback (success/error messages)
+  - Indonesian language support
+  - Field-specific configuration (validation rules, labels)
+  - Error handling and retry logic
+  - Integration with speechRecognitionService and speechSynthesisService
+
+- **`FieldVoiceInput.tsx`** - Reusable voice input button component
+  - Wraps useVoiceInput hook with UI feedback
+  - Visual indicators for listening, error states
+  - Compact and normal size variants
+  - Accessibility features (aria-labels, tooltips)
+  - Supports disabled state
+
+#### Voice Input Integration (added 2026-01-21)
+- **`PPDBRegistration.tsx`** - PPDB registration form with voice input (Phase 2 Complete)
+  - Voice input for 7 form fields: fullName, nisn, originSchool, parentName, phoneNumber, email, address
+  - Inline VoiceButton component next to each form field
+  - Field-specific processing (title case for names, phone normalization, email normalization)
+  - Indonesian language voice feedback
+  - Real-time validation integration
+  - Visual feedback (listening pulse animation, error states)
+
+#### Real-Time Services (added 2026-01-21)
  - **`useRealtimeEvents.ts`** - Custom hook for WebSocket event subscription and management
    - Subscribes to real-time event types
    - Provides connection status (connected, connecting, reconnect attempts)
