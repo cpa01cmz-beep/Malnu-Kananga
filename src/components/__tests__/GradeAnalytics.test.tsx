@@ -373,7 +373,7 @@ describe('GradeAnalytics', () => {
       setItem: vi.fn()
     };
     
-    global.localStorage = mockLocalStorage as unknown as Storage;
+   global.localStorage = mockLocalStorage;
 
     (gradesAPI.getAll as ReturnType<typeof vi.fn>).mockResolvedValue({
       success: true,

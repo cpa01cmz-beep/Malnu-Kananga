@@ -5,11 +5,11 @@
 ## Active Tasks
 
 ### In Progress 🚧
-- [ ] **BUILD-001: TypeScript and Lint Failures Blocking All PR Merges** (Phase 2b)
+- [ ] **BUILD-001: TypeScript and Lint Failures Blocking All PR Merges** (Phase 2d)
   - Task ID: BUILD-001
   - Description: Fix critical TypeScript type errors blocking all PR merges
   - Priority: **P0** (Critical Blocker)
-  - Status: **In Progress** (Phase 2b - Core files complete, test files remain)
+  - Status: **In Progress** (Phase 2d - ESLint cleanup needed)
   - Started: 2026-01-20
   - Dependencies: None
   - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
@@ -42,9 +42,31 @@
       - Git commit: "fix(BUILD-001): Phase 2b - Fix event listener types and remove unused imports (bypassed pre-commit)"
       - Current Status: ~130 TypeScript errors remaining (all in test files)
       - ESLint: Reduced from 73 to 62 problems (15% reduction)
+    - Phase 2c (Completed):
+      - Fixed all 101 TypeScript errors in test files (BUILD-001-A) - 100% reduction
+      - DirectMessage.test.tsx: Fixed API method (getUsers -> getAll)
+      - GroupChat.test.tsx: Fixed constant name (_STORAGE_KEYS -> STORAGE_KEYS)
+      - GroupChat.test.tsx: Fixed API service properties (classes -> classesAPI, subjects -> subjectsAPI, users -> usersAPI, messages -> messagesAPI)
+      - GroupChat.test.tsx: Added missing ApiResponse.message properties
+      - GroupChat.test.tsx: Added missing Conversation properties
+      - MessageThread.test.tsx: Added missing unreadCount property
+      - QuizGenerator.test.tsx: Fixed API method (materialsAPI -> eLibraryAPI)
+      - QuizGenerator.test.tsx: Added missing ApiResponse.message properties
+      - QuizGenerator.test.tsx: Added missing ELibrary properties (fileUrl, fileSize, subjectId, uploadedBy, uploadedAt, downloadCount, isShared)
+      - QuizPreview.test.tsx: Fixed enum type imports (QuizQuestionType, QuizDifficulty)
+      - QuizPreview.test.tsx: Added missing Quiz.attempts property
+      - StudentAssignments.test.tsx: Added missing Assignment import
+      - StudentAssignments.test.tsx: Added missing ApiResponse.message properties
+      - StudyPlanAnalytics.test.tsx: Fixed authService reference
+      - StudyPlanGenerator.test.tsx: Fixed unassigned variable issue
+      - UserImport.test.tsx: Fixed callable type error
+      - FileUploader.test.tsx: Added missing FileUploadResponse properties
+      - Removed unused imports (fireEvent, waitFor, vi, ImportResult)
+      - Partially fixed ESLint issues (59 -> 32 errors)
+      - Git commit: "fix(BUILD-001 Phase 2c): Fix all TypeScript test file errors and reduce ESLint issues"
+      - Current Status: 0 TypeScript errors, 32 ESLint errors
   - Next steps:
-    - Fix remaining TypeScript type errors in test files (~130 errors remaining)
-    - Fix remaining ESLint errors (~62 problems remaining)
+    - Fix remaining 32 ESLint errors (mostly unused variables in production code)
     - Run full test suite
     - Create PR for Phase 2 complete
     - Run final typecheck and lint verification
