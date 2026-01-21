@@ -17,8 +17,8 @@ import {
   Area
 } from 'recharts';
 import { authAPI, gradesAPI, subjectsAPI } from '../services/apiService';
-import {
-  StudyPlanAnalytics,
+import type {
+  StudyPlanAnalytics as StudyPlanAnalyticsType,
   StudyPlan,
   StudyPlanSubject,
   SubjectProgress,
@@ -55,12 +55,12 @@ const COLORS = [
   CHART_COLORS.pink,
 ];
 
-const StudyPlanAnalytics: React.FC<StudyPlanAnalyticsProps> = ({ onBack, onShowToast = () => {} }) => {
+const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack, onShowToast = () => {} }) => {
   const currentUser = authAPI.getCurrentUser();
   const STUDENT_ID = currentUser?.id || '';
   const STUDENT_NAME = currentUser?.name || 'Siswa';
 
-  const [analytics, setAnalytics] = useState<StudyPlanAnalytics | null>(null);
+  const [analytics, setAnalytics] = useState<StudyPlanAnalyticsType | null>(null);
   const [studyPlan, setStudyPlan] = useState<StudyPlan | null>(null);
   const [history, setHistory] = useState<StudyPlanHistory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -102,13 +102,13 @@ const StudyPlanAnalytics: React.FC<StudyPlanAnalyticsProps> = ({ onBack, onShowT
     return [];
   }, [STUDENT_ID]);
 
-  const loadAnalytics = useCallback(async (): Promise<StudyPlanAnalytics | null> => {
+  const loadAnalytics = useCallback(async (): Promise<StudyPlanAnalyticsType | null> => {
     if (!STUDENT_ID) return null;
 
     try {
       const analyticsData = localStorage.getItem(STORAGE_KEYS.STUDY_PLAN_ANALYTICS(STUDENT_ID));
       if (analyticsData) {
-        const parsed: StudyPlanAnalytics = JSON.parse(analyticsData);
+        const parsed: StudyPlanAnalyticsType = JSON.parse(analyticsData);
         if (parsed.planId === studyPlan?.id) {
           return parsed;
         }
@@ -120,7 +120,7 @@ const StudyPlanAnalytics: React.FC<StudyPlanAnalyticsProps> = ({ onBack, onShowT
     return null;
   }, [STUDENT_ID, studyPlan]);
 
-  const calculateAnalytics = useCallback(async (plan: StudyPlan): Promise<StudyPlanAnalytics> => {
+  const calculateAnalytics = useCallback(async (plan: StudyPlan): Promise<StudyPlanAnalyticsType> => {
     try {
       const [gradesRes, subjectsRes] = await Promise.all([
         gradesAPI.getByStudent(STUDENT_ID),
@@ -224,7 +224,7 @@ const StudyPlanAnalytics: React.FC<StudyPlanAnalyticsProps> = ({ onBack, onShowT
         },
       ];
 
-      const analyticsData: StudyPlanAnalytics = {
+      const analyticsData: StudyPlanAnalyticsType = {
         planId: plan.id,
         studentId: STUDENT_ID,
         studentName: STUDENT_NAME,
@@ -809,4 +809,4 @@ const StudyPlanAnalytics: React.FC<StudyPlanAnalyticsProps> = ({ onBack, onShowT
   );
 };
 
-export default StudyPlanAnalytics;
+export default StudyPlanAnalyticsComponent;

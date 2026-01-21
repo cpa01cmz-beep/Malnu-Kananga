@@ -22,6 +22,7 @@ import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { ClockIcon } from './icons/ClockIcon';
 import BookOpenIcon from './icons/BookOpenIcon';
 import { CheckIcon } from './icons/CheckIcon';
+import { CheckCircleIcon } from './icons/StatusIcons';
 import { XCircleIcon } from './icons/XCircleIcon';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import { ChartBarIcon } from './icons/ChartBarIcon';

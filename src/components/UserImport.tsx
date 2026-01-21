@@ -11,6 +11,7 @@ import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import { CheckIcon } from './icons/CheckIcon';
 import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
 import { CloseIcon } from './icons/CloseIcon';
+import { XMarkIcon } from './icons/MaterialIcons';
 import { api } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError } from '../utils/errorHandler';
