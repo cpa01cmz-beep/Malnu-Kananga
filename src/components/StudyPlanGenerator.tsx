@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Button from './ui/Button';
 import ErrorMessage from './ui/ErrorMessage';
 import Card from './ui/Card';
-import ProgressBar from './ui/ProgressBar';
 import { EmptyState } from './ui/LoadingState';
 import Badge from './ui/Badge';
 import { authAPI, gradesAPI, attendanceAPI, subjectsAPI } from '../services/apiService';
@@ -18,7 +17,6 @@ import { logger } from '../utils/logger';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { ClockIcon } from './icons/ClockIcon';
 import BookOpenIcon from './icons/BookOpenIcon';
-import { CheckIcon } from './icons/CheckIcon';
 import { XCircleIcon } from './icons/XCircleIcon';
 import { CheckCircleIcon } from './icons/StatusIcons';
 import { LightBulbIcon } from './icons/LightBulbIcon';
@@ -156,12 +154,14 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({ onBack, onShowT
   }, []);
 
   const calculateAttendanceGradeCorrelation = useCallback((gradeData: unknown[], attendanceData: unknown[]): AttendanceGradeCorrelation => {
-    const totalAttendance = (attendanceData as Array<{ status: string }>).length;
-    const presentDays = attendanceData.filter((a: { status: string }) => a.status === 'hadir').length;
+    const attendanceArray = attendanceData as Array<{ status: string }>;
+    const totalAttendance = attendanceArray.length;
+    const presentDays = attendanceArray.filter((a: { status: string }) => a.status === 'hadir').length;
     const attendancePercentage = totalAttendance > 0 ? (presentDays / totalAttendance) * 100 : 95;
 
-    const totalGrades = (gradeData as Array<{ score: number }>).reduce((sum, g) => sum + g.score, 0);
-    const averageGrade = gradeData.length > 0 ? totalGrades / gradeData.length : 75;
+    const gradeArray = gradeData as Array<{ score: number }>;
+    const totalGrades = gradeArray.reduce((sum, g) => sum + g.score, 0);
+    const averageGrade = gradeArray.length > 0 ? totalGrades / gradeArray.length : 75;
 
     const correlationScore = Math.round((attendancePercentage / 100 * 0.3 + averageGrade / 100 * 0.7) * 100);
 

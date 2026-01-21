@@ -131,9 +131,9 @@ class EmailService {
 
     try {
       const to = Array.isArray(emailData.to) ? emailData.to : [emailData.to];
-      
+
       for (const recipient of to) {
-        if (!this.isValidEmail(recipient.email)) {
+        if (recipient && !this.isValidEmail(recipient.email)) {
           logger.error(`Invalid email address: ${recipient.email}`);
           return { success: false, error: `Invalid email address: ${recipient.email}` };
         }
@@ -142,7 +142,7 @@ class EmailService {
       if (emailData.cc) {
         const cc = Array.isArray(emailData.cc) ? emailData.cc : [emailData.cc];
         for (const recipient of cc) {
-          if (!this.isValidEmail(recipient.email)) {
+          if (recipient && !this.isValidEmail(recipient.email)) {
             logger.error(`Invalid CC email address: ${recipient.email}`);
             return { success: false, error: `Invalid CC email address: ${recipient.email}` };
           }

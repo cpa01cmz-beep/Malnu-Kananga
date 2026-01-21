@@ -227,23 +227,27 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
 
       if (result.success && result.data) {
         const responseData = result.data as { id: string; title: string };
-        await unifiedNotificationManager.showNotification(
-          'academic',
-          action === 'publish' ? 'Tugas Dipublikasikan' : 'Draft Tugas Disimpan',
-          `${title} berhasil ${action === 'publish' ? 'dipublikasikan' : 'disimpan'}`
-        );
+        await unifiedNotificationManager.showNotification({
+          id: `assignment-${action}-${responseData.id}`,
+          type: 'grade',
+          title: action === 'publish' ? 'Tugas Dipublikasikan' : 'Draft Tugas Disimpan',
+          body: `${title} berhasil ${action === 'publish' ? 'dipublikasikan' : 'disimpan'}`,
+          timestamp: new Date().toISOString(),
+          read: false,
+          priority: 'normal'
+        });
 
         await notifyAssignmentCreate(responseData.id, responseData.title);
-        
+
         onShowToast(
-          action === 'publish' 
-            ? 'Tugas berhasil dipublikasikan' 
+          action === 'publish'
+            ? 'Tugas berhasil dipublikasikan'
             : 'Draft tugas berhasil disimpan',
           'success'
         );
         onBack();
       } else {
-        throw new Error(response.message || 'Gagal membuat tugas');
+        throw new Error(result.message || 'Gagal membuat tugas');
       }
     } catch (err) {
       logger.error('Error creating assignment:', err);

@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import type { FeaturedProgram, LatestNews } from '../types';
+import type { FeaturedProgram, LatestNews, AIFeedback, StudyPlan } from '../types';
 import { WORKER_CHAT_ENDPOINT } from '../config';
 import { STORAGE_KEYS } from '../constants';
 import {
@@ -470,7 +470,7 @@ export async function generateAssignmentFeedback(
     model: PRO_THINKING_MODEL
   };
 
-  const cachedFeedback = analysisCache.get(cacheKey);
+  const cachedFeedback = analysisCache.get<AIFeedback>(cacheKey);
   if (cachedFeedback) {
     logger.debug('Returning cached assignment feedback');
     return cachedFeedback;
@@ -629,7 +629,25 @@ export async function generateQuiz(
     model: PRO_THINKING_MODEL
   };
   
-  const cachedQuiz = analysisCache.get(cacheKey);
+  const cachedQuiz = analysisCache.get<{
+    title: string;
+    description: string;
+    questions: Array<{
+      id: string;
+      question: string;
+      type: string;
+      difficulty: string;
+      options?: string[];
+      correctAnswer: string | string[];
+      explanation?: string;
+      points: number;
+      materialReference?: string;
+      tags?: string[];
+    }>;
+    totalPoints: number;
+    duration: number;
+    passingScore: number;
+  }>(cacheKey);
   if (cachedQuiz) {
     logger.debug('Returning cached quiz generation');
     return cachedQuiz;
@@ -799,7 +817,7 @@ export async function generateStudyPlan(
     model: PRO_THINKING_MODEL
   };
 
-  const cachedPlan = analysisCache.get(cacheKey);
+  const cachedPlan = analysisCache.get<StudyPlan>(cacheKey);
   if (cachedPlan) {
     logger.debug('Returning cached study plan');
     return cachedPlan;

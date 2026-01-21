@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { apiService } from '../services/apiService';
-import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 import { MessageInput } from './MessageInput';
-import type { DirectMessage, Participant } from '../types';
+import type { DirectMessage, Participant, Conversation } from '../types';
 
 interface MessageThreadProps {
   conversationId: string;
@@ -20,10 +19,10 @@ interface ReplyPreview {
 export function MessageThread({ conversationId, currentUser, participant }: MessageThreadProps) {
   const [messages, setMessages] = useState<DirectMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const [replyTo, setReplyTo] = useState<ReplyPreview | undefined>();
   const [participants, setParticipants] = useState<Record<string, Participant>>({});
-  const [conversation, setConversation] = useState<any>(null);
+  const [conversation, setConversation] = useState<Conversation | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,8 +36,9 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
   }, [messages]);
 
   useEffect(() => {
-    const handleWebSocketMessage = (event: CustomEvent) => {
-      const { type, data } = event.detail;
+    const handleWebSocketMessage = (event: Event) => {
+      const customEvent = event as CustomEvent<Record<string, unknown>>;
+      const { type, data } = customEvent.detail;
       if (type === 'message_created' && (data as DirectMessage).conversationId === conversationId) {
         setMessages(prev => [...prev, data as DirectMessage]);
         markMessageAsRead((data as DirectMessage).id);
@@ -46,8 +46,8 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
       }
     };
 
-    window.addMessageEvent('realtime-update', handleWebSocketMessage as MessageEvent);
-    return () => window.removeMessageEvent('realtime-update', handleWebSocketMessage as MessageEvent);
+    window.addEventListener('realtime-update', handleWebSocketMessage);
+    return () => window.removeEventListener('realtime-update', handleWebSocketMessage);
   }, [conversationId]);
 
   const loadMessages = async () => {
@@ -106,7 +106,7 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
     try {
       const messageData = {
         conversationId,
-        messageType: (file ? 'file' : 'text') as any,
+        messageType: (file ? 'file' : 'text') as import('../types').MessageType,
         content,
         replyTo: replyTo?.id,
       };

@@ -47,15 +47,16 @@ export function MessageList({
   }, [searchQuery]);
 
   useEffect(() => {
-    const handleWebSocketMessage = (event: CustomEvent) => {
-      const { type, entity, data } = event.detail;
+    const handleWebSocketMessage = (event: Event) => {
+      const customEvent = event as CustomEvent<Record<string, unknown>>;
+      const { type, entity } = customEvent.detail;
       if (entity === 'message' || entity === 'conversation') {
         loadConversations();
       }
     };
 
-    window.addMessageEvent('realtime-update', handleWebSocketMessage as MessageEvent);
-    return () => window.removeMessageEvent('realtime-update', handleWebSocketMessage as MessageEvent);
+    window.addEventListener('realtime-update', handleWebSocketMessage);
+    return () => window.removeEventListener('realtime-update', handleWebSocketMessage);
   }, []);
 
   const loadConversations = async () => {

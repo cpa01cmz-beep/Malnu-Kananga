@@ -161,19 +161,27 @@ export function useUnifiedNotifications() {
   }, []);
 
   const notifyAssignmentCreate = useCallback(async (assignmentId: string, title: string): Promise<void> => {
-    await unifiedNotificationManager.showNotification(
-      'academic',
-      'Tugas Baru Dibuat',
-      `${title} berhasil dibuat`
-    );
+    await unifiedNotificationManager.showNotification({
+      id: `assignment-create-${assignmentId}`,
+      type: 'grade',
+      title: 'Tugas Baru Dibuat',
+      body: `${title} berhasil dibuat`,
+      timestamp: new Date().toISOString(),
+      read: false,
+      priority: 'normal'
+    });
   }, []);
 
   const notifyAssignmentSubmit = useCallback(async (assignmentId: string, submissionId: string, title: string): Promise<void> => {
-    await unifiedNotificationManager.showNotification(
-      'academic',
-      'Tugas Berhasil Dikirim',
-      `${title} berhasil dikirim`
-    );
+    await unifiedNotificationManager.showNotification({
+      id: `assignment-submit-${submissionId}`,
+      type: 'grade',
+      title: 'Tugas Berhasil Dikirim',
+      body: `${title} berhasil dikirim`,
+      timestamp: new Date().toISOString(),
+      read: false,
+      priority: 'normal'
+    });
   }, []);
 
   const notifyMeetingRequest = useCallback(async (requesterName: string, meetingType: string): Promise<void> => {

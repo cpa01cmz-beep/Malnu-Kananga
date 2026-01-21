@@ -10,7 +10,7 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Textarea from './ui/Textarea';
 import Modal from './ui/Modal';
-import Badge from './ui/Badge';
+import Badge, { type BadgeVariant } from './ui/Badge';
 import Card from './ui/Card';
 import PageHeader from './ui/PageHeader';
 import { CameraIcon } from './icons/CameraIcon';
@@ -21,6 +21,7 @@ import AccessDenied from './AccessDenied';
 interface UserProfileEditorProps {
   userId?: string;
   onShowToast?: (msg: string, type: 'success' | 'info' | 'error') => void;
+  onBack?: () => void;
 }
 
 interface PasswordChangeForm {
@@ -29,7 +30,7 @@ interface PasswordChangeForm {
   confirmPassword: string;
 }
 
-const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, onShowToast }) => {
+const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, onShowToast, onBack }) => {
   const { user: currentUser } = useCanAccess();
   const { errorState, handleAsyncError, clearError } = useErrorHandler();
 
@@ -137,7 +138,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
       );
 
       if (result && result.success && result.data) {
-        setUser(result.data);
+        setUser(result.data as import('../types').User);
 
         if (isOwnProfile) {
           const updatedUser = { ...currentUser, ...result.data };
@@ -204,11 +205,11 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
     }
   };
 
-  const getRoleBadgeVariant = (role: UserRole): string => {
+  const getRoleBadgeVariant = (role: UserRole): BadgeVariant => {
     return role === 'admin' ? 'secondary' : role === 'teacher' ? 'info' : 'neutral';
   };
 
-  const getExtraRoleBadgeVariant = (extraRole: UserExtraRole | undefined): string => {
+  const getExtraRoleBadgeVariant = (extraRole: UserExtraRole | undefined): BadgeVariant => {
     if (!extraRole) return 'neutral';
     return extraRole === 'staff' ? 'info' :
            extraRole === 'osis' ? 'warning' :
