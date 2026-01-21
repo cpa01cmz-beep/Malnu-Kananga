@@ -277,9 +277,11 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
             <EmptyState
               icon={<DocumentTextIcon />}
               title="Tidak ada tugas"
-              submessage="Anda belum memiliki tugas yang perlu diselesaikan"
-              actionLabel="Coba Lagi"
-              onAction={fetchAssignments}
+              message="Anda belum memiliki tugas yang perlu diselesaikan"
+              action={{
+                label: "Coba Lagi",
+                onClick: fetchAssignments
+              }}
             />
           ) : (
             <div className="grid gap-4">
@@ -520,7 +522,6 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
                   maxSizeMB={10}
                   onFileUploaded={(file) => setAttachments([...attachments, file])}
                   existingFiles={attachments.map(a => ({ id: a.key, key: a.key, name: a.name, size: a.size, type: a.type, uploadDate: a.uploadedAt }))}
-                  multiple
                 />
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
                   Maksimal 10MB per file. Format yang diizinkan: PDF, DOC, DOCX, PPT, PPTX, JPG, JPEG, PNG

@@ -218,21 +218,22 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
         };
       }
 
-      const response = await executeWithRetry({
+      const result = await executeWithRetry({
         operation: () => assignmentsAPI.create(assignmentData),
         onError: (error) => {
           onShowToast(`Gagal membuat tugas: ${error.message}`, 'error');
         }
       });
 
-      if (response.success && response.data) {
+      if (result.success && result.data) {
+        const responseData = result.data as { id: string; title: string };
         await unifiedNotificationManager.showNotification(
           'academic',
           action === 'publish' ? 'Tugas Dipublikasikan' : 'Draft Tugas Disimpan',
           `${title} berhasil ${action === 'publish' ? 'dipublikasikan' : 'disimpan'}`
         );
-        
-        await notifyAssignmentCreate(response.data.id, response.data.title);
+
+        await notifyAssignmentCreate(responseData.id, responseData.title);
         
         onShowToast(
           action === 'publish' 

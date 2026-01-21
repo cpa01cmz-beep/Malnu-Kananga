@@ -56,7 +56,7 @@ const mockCSVData: CSVRow[] = [
   },
 ];
 
-const mockParsedUsers: ParsedUser[] = [
+const _mockParsedUsers: ParsedUser[] = [
   {
     name: 'John Doe',
     email: 'john@example.com',

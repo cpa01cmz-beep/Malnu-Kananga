@@ -231,10 +231,13 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
 
     if (result.success > 0) {
       unifiedNotificationManager.showNotification({
+        id: `bulk-import-${Date.now()}`,
         type: 'system',
         title: 'Bulk Import Complete',
         body: `${result.success} users imported successfully${result.failed > 0 ? `, ${result.failed} failed` : ''}`,
         priority: result.failed > 0 ? 'normal' : 'high',
+        timestamp: new Date().toISOString(),
+        read: false
       });
       onImportComplete?.();
     }
@@ -357,59 +360,36 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
           )}
 
           <div className="max-h-96 overflow-y-auto border border-neutral-200 dark:border-neutral-700 rounded-lg">
-            <Table
-              columns={[
-                { key: 'rowIndex', header: 'Row', sortable: false },
-                { key: 'name', header: 'Name', sortable: false },
-                { key: 'email', header: 'Email', sortable: false },
-                { key: 'role', header: 'Role', sortable: false },
-                { key: 'status', header: 'Status', sortable: false },
-                { key: 'errors', header: 'Status', sortable: false },
-              ]}
-              data={parsedUsers}
-              renderCell={(column, user) => {
-                if (column.key === 'rowIndex') {
-                  return <span className="text-neutral-500">#{user.rowIndex}</span>;
-                }
-                if (column.key === 'name') {
-                  return <span className="font-medium">{user.name || '-'}</span>;
-                }
-                if (column.key === 'email') {
-                  return <span className="text-sm">{user.email || '-'}</span>;
-                }
-                if (column.key === 'role') {
-                  return (
-                    <Badge variant={user.role === 'admin' ? 'danger' : user.role === 'teacher' ? 'warning' : 'default'}>
-                      {user.role || 'student'}
-                    </Badge>
-                  );
-                }
-                if (column.key === 'status') {
-                  return (
-                    <Badge variant={user.status === 'active' ? 'success' : 'default'}>
-                      {user.status || 'active'}
-                    </Badge>
-                  );
-                }
-                if (column.key === 'errors') {
-                  if (user.isValid) {
-                    return (
-                      <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                        <CheckIcon className="w-4 h-4" />
-                        Valid
-                      </span>
-                    );
-                  }
-                  return (
-                    <span className="flex items-center gap-1 text-red-600 dark:text-red-400">
-                      <ExclamationTriangleIcon className="w-4 h-4" />
-                      {user.errors.length} error(s)
-                    </span>
-                  );
-                }
-                return null;
-              }}
-            />
+            <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
+              <thead className="bg-neutral-50 dark:bg-neutral-800">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Row</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Email</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Role</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">Errors</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white dark:bg-neutral-900 divide-y divide-neutral-200 dark:divide-neutral-700">
+                {parsedUsers.map((user: any, index: number) => (
+                  <tr key={index} className={user.isValid ? '' : 'bg-red-50 dark:bg-red-900/20'}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{index + 1}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900 dark:text-white">{user.name || '-'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{user.email || '-'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{user.role || '-'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <Badge variant={user.isValid ? 'default' : 'error'} size="sm">
+                        {user.isValid ? 'Valid' : 'Invalid'}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-neutral-500">
+                      {user.errors && user.errors.length > 0 ? user.errors.join(', ') : '-'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           <div className="flex justify-between pt-4 border-t border-neutral-200 dark:border-neutral-700">

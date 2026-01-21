@@ -277,7 +277,7 @@ describe('PPDBManagement', () => {
     });
 
     const { permissionService } = require('../../services/permissionService');
-    permissionService.hasPermission.mockReturnValue({ granted: false });
+      permissionService.hasPermission.mockReturnValue({ granted: false });
 
     render(<PPDBManagement onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 

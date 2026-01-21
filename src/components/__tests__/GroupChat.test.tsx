@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { GroupChat } from '../GroupChat';
 import * as apiService from '../../services/apiService';
-import { STORAGE_KEYS } from '../../constants';
+import { _STORAGE_KEYS } from '../../constants';
 import type { User, Class, Subject } from '../../types';
 
 describe('GroupChat', () => {

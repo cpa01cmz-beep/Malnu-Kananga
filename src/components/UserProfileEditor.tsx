@@ -29,11 +29,11 @@ interface PasswordChangeForm {
   confirmPassword: string;
 }
 
-const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, onBack, onShowToast }) => {
+const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, onShowToast }) => {
   const { user: currentUser } = useCanAccess();
   const { errorState, handleAsyncError, clearError } = useErrorHandler();
 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<import('../types').User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -221,7 +221,6 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
       <div className="animate-fade-in">
         <PageHeader
           title="Memuat Profil..."
-          onBack={onBack}
         />
         <div className="flex justify-center items-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-neutral-200 border-t-primary-500" />
@@ -233,13 +232,12 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
   if (!user) {
     return (
       <div className="animate-fade-in">
-        <PageHeader
-          title="Pengguna Tidak Ditemukan"
-          onBack={onBack}
-        />
+      <PageHeader
+        title="Edit Profil"
+      />
         <Card className="p-8 text-center">
           <p className="text-neutral-600 dark:text-neutral-400 mb-4">Profil pengguna tidak ditemukan</p>
-          <Button onClick={onBack}>Kembali</Button>
+          <Button onClick={() => window.history.back()}>Kembali</Button>
         </Card>
       </div>
     );
@@ -247,10 +245,9 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
 
   return (
     <div className="animate-fade-in-up space-y-6">
-      <PageHeader
-        title={isOwnProfile ? 'Profil Saya' : 'Profil Pengguna'}
-        onBack={onBack}
-      />
+        <PageHeader
+          title="Ganti Password"
+        />
 
       {errorState.hasError && (
         <Card className="p-4 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700">
@@ -393,7 +390,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
           {isOwnProfile && (
             <Button
               type="button"
-              variant="neutral"
+              variant="secondary"
               icon={<LockIcon className="w-5 h-5" />}
               onClick={() => setIsPasswordModalOpen(true)}
             >

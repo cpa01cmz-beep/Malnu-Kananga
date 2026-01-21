@@ -54,8 +54,8 @@ export function MessageList({
       }
     };
 
-    window.addEventListener('realtime-update', handleWebSocketMessage as EventListener);
-    return () => window.removeEventListener('realtime-update', handleWebSocketMessage as EventListener);
+    window.addMessageEvent('realtime-update', handleWebSocketMessage as MessageEvent);
+    return () => window.removeMessageEvent('realtime-update', handleWebSocketMessage as MessageEvent);
   }, []);
 
   const loadConversations = async () => {

@@ -11,7 +11,10 @@ import {
   Pie,
   Cell,
   AreaChart,
-  Area
+  Area,
+  LineChart,
+  Line,
+  Legend
 } from 'recharts';
 import { authAPI, gradesAPI, subjectsAPI } from '../services/apiService';
 import {
@@ -55,13 +58,13 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
   const STUDENT_ID = currentUser?.id || '';
   const STUDENT_NAME = currentUser?.name || 'Siswa';
 
-  const [analytics, setAnalytics] = useState<StudyPlanAnalytics | null>(null);
+  const [analytics, setAnalytics] = useState<StudyPlanAnalyticsType | null>(null);
   const [studyPlan, setStudyPlan] = useState<StudyPlan | null>(null);
   const [history, setHistory] = useState<StudyPlanHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
-  const [selectedTimeRange, setSelectedTimeRange] = useState<'week' | 'month' | 'all'>('all');
+  const [_selectedTimeRange, _setSelectedTimeRange] = useState<'week' | 'month' | 'all'>('all');
 
   const showToast = useCallback((msg: string, type: 'success' | 'error' | 'warning' | 'info') => {
     onShowToast(msg, type);
@@ -97,13 +100,13 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
     return [];
   }, [STUDENT_ID]);
 
-  const loadAnalytics = useCallback(async (): Promise<StudyPlanAnalytics | null> => {
+  const loadAnalytics = useCallback(async (): Promise<StudyPlanAnalyticsType | null> => {
     if (!STUDENT_ID) return null;
 
     try {
       const analyticsData = localStorage.getItem(STORAGE_KEYS.STUDY_PLAN_ANALYTICS(STUDENT_ID));
       if (analyticsData) {
-        const parsed: StudyPlanAnalytics = JSON.parse(analyticsData);
+        const parsed: StudyPlanAnalyticsType = JSON.parse(analyticsData);
         if (parsed.planId === studyPlan?.id) {
           return parsed;
         }
@@ -115,7 +118,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
     return null;
   }, [STUDENT_ID, studyPlan]);
 
-  const calculateAnalytics = useCallback(async (plan: StudyPlan): Promise<StudyPlanAnalytics> => {
+  const calculateAnalytics = useCallback(async (plan: StudyPlan): Promise<StudyPlanAnalyticsType> => {
     try {
       const [gradesRes, subjectsRes] = await Promise.all([
         gradesAPI.getByStudent(STUDENT_ID),
@@ -219,7 +222,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
         },
       ];
 
-      const analyticsData: StudyPlanAnalytics = {
+      const analyticsData: StudyPlanAnalyticsType = {
         planId: plan.id,
         studentId: STUDENT_ID,
         studentName: STUDENT_NAME,
@@ -372,12 +375,11 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>}
             title="Tidak ada analitik tersedia"
-            description="Silakan buat rencana belajar terlebih dahulu untuk melihat analitik."
-            action={
-              <Button onClick={() => window.location.reload()}>
-                Buat Rencana Belajar
-              </Button>
-            }
+            message="Silakan buat rencana belajar terlebih dahulu untuk melihat analitik."
+            action={{
+              label: "Buat Rencana Belajar",
+              onClick: () => window.location.reload()
+            }}
           />
         </div>
       </div>
@@ -432,7 +434,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
           </div>
         </Card>
 
-        <Tab tabs={tabs} activeTab={activeTab} onTabChange={(tab) => setActiveTab(tab as ActiveTab)} />
+        <Tab options={tabs} activeTab={activeTab} onTabChange={(tab) => setActiveTab(tab as ActiveTab)} />
 
         {activeTab === 'overview' && (
           <div className="mt-6 space-y-6">
@@ -571,7 +573,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
             <Card>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Kemajuan Keseluruhan</h3>
               <div className="mb-6">
-                <ProgressBar progress={analytics.overallProgress} />
+                <ProgressBar value={analytics.overallProgress} />
                 <p className="text-sm text-gray-600 mt-2">{analytics.overallProgress.toFixed(1)}% selesai</p>
               </div>
 
@@ -638,7 +640,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
                           {subject.priority === 'high' ? 'Tinggi' : subject.priority === 'medium' ? 'Sedang' : 'Rendah'}
                         </Badge>
                       </div>
-                      <ProgressBar progress={subject.progress} />
+                      <ProgressBar value={subject.progress} />
                       <div className="flex justify-between text-sm text-gray-600 mt-2">
                         <span>Skor: {subject.currentGrade.toFixed(1)}/{subject.targetGrade}</span>
                         <span>Sesi: {subject.sessionsCompleted}/{subject.sessionsTotal}</span>
@@ -653,16 +655,15 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
-                      data={analytics.subjectProgress}
+                      data={analytics.subjectProgress.map(sp => ({ name: sp.subjectName, value: sp.sessionsCompleted }))}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={(entry) => `${entry.subjectName} (${entry.priority})`}
+                      label={(entry: any) => entry.name}
                       outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="sessionsCompleted"
+                      dataKey="value"
                     >
-                      {analytics.subjectProgress.map((entry, index) => (
+                      {analytics.subjectProgress.map((entry: SubjectProgress, index: number) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
@@ -701,7 +702,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
                   <Tooltip />
                   <Legend />
                   <Bar dataKey="totalStudyHours" fill={CHART_COLORS.blue} name="Jam Belajar" />
-                  <Bar dataKey="scheduledHours" fill={CHART_COLORS.gray} name="Jadwal" />
+                  <Bar dataKey="scheduledHours" fill={CHART_COLORS.primary} name="Jadwal" />
                 </BarChart>
               </ResponsiveContainer>
             </Card>
@@ -806,4 +807,4 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
 
 export { StudyPlanAnalyticsComponent as StudyPlanAnalytics };;
 
-export default StudyPlanAnalytics;
+export default StudyPlanAnalyticsComponent;

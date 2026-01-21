@@ -1596,7 +1596,7 @@ export const parentsAPI = {
 
 export const messagesAPI = {
   async getConversations(filter?: ConversationFilter): Promise<ApiResponse<Conversation[]>> {
-    const params = new URLSearchParams();
+    const params = new window.URLSearchParams();
     if (filter?.type) params.append('type', filter.type);
     if (filter?.search) params.append('search', filter.search);
     if (filter?.unreadOnly) params.append('unread_only', 'true');

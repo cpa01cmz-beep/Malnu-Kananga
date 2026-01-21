@@ -95,7 +95,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     // Check URL for reset token
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new window.URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     if (token) {
       setResetToken(token);

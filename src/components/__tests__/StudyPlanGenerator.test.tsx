@@ -11,7 +11,7 @@ vi.mock('../../services/geminiService');
 const mockOnBack = vi.fn();
 const mockOnShowToast = vi.fn();
 
-const mockSubjectPerformance = [
+const _mockSubjectPerformance = [
   {
     subject: 'Matematika',
     averageScore: 75,
@@ -41,7 +41,7 @@ const mockSubjectPerformance = [
   },
 ];
 
-const mockCorrelation = {
+const _mockCorrelation = {
   attendancePercentage: 95,
   averageGrade: 73,
   correlationScore: 80,

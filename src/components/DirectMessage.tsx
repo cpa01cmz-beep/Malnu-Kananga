@@ -62,7 +62,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
       }
     } catch (err) {
       logger.error('Failed to create conversation:', err);
-      alert('Gagal membuat percakapan baru');
+      window.alert('Gagal membuat percakapan baru');
     } finally {
       setCreatingConversation(false);
     }
