@@ -1,12 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MessageThread } from '../MessageThread';
 import * as apiService from '../../services/apiService';
 import { STORAGE_KEYS } from '../../constants';
 import type { DirectMessage, Participant, User } from '../../types';
 
-vi.mock('../../services/apiService');
-const mockedApiService = apiService as { messages: typeof apiService.messages };
+vi.mock('../../services/apiService', () => ({
+  messagesAPI: {
+    getMessages: vi.fn(),
+  },
+}));
 
 const mockCurrentUser: User = {
   id: 'user-1',
@@ -92,12 +95,12 @@ describe('MessageThread', () => {
   });
 
   it('renders message thread', async () => {
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockMessages,
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
@@ -118,7 +121,7 @@ describe('MessageThread', () => {
   });
 
   it('shows loading state', () => {
-    mockedApiService.messages.getMessages.mockImplementation(() => new Promise(() => {}));
+    vi.mocked(apiService.messagesAPI).getMessages.mockImplementation(() => new Promise(() => {}));
 
     render(
       <MessageThread
@@ -132,12 +135,12 @@ describe('MessageThread', () => {
   });
 
   it('shows empty state when no messages', async () => {
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: [],
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
@@ -157,12 +160,12 @@ describe('MessageThread', () => {
   });
 
   it('distinguishes own messages from others', async () => {
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockMessages,
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
@@ -189,12 +192,12 @@ describe('MessageThread', () => {
   });
 
   it('shows sender name for non-own messages', async () => {
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockMessages,
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
@@ -221,12 +224,12 @@ describe('MessageThread', () => {
       },
     ];
 
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: messageWithReply,
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
@@ -256,12 +259,12 @@ describe('MessageThread', () => {
       },
     ];
 
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: fileMessage,
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
@@ -288,12 +291,12 @@ describe('MessageThread', () => {
       },
     ];
 
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: recentMessage,
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
@@ -320,12 +323,12 @@ describe('MessageThread', () => {
       },
     ];
 
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: readMessage,
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
@@ -346,12 +349,12 @@ describe('MessageThread', () => {
   });
 
   it('shows participant online status', async () => {
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: [],
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
@@ -378,12 +381,12 @@ describe('MessageThread', () => {
       lastSeen: '2024-01-01T10:00:00Z',
     };
 
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: [],
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
@@ -404,17 +407,17 @@ describe('MessageThread', () => {
   });
 
   it('adds new message from WebSocket', async () => {
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockMessages,
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
     });
-    mockedApiService.messages.markMessageAsRead.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).markMessageAsRead.mockResolvedValue({
       success: true,
       message: 'Success',
       data: {
@@ -464,17 +467,17 @@ describe('MessageThread', () => {
 
     await waitFor(() => {
       expect(screen.getByText('New message!')).toBeInTheDocument();
-      expect(mockedApiService.messages.markMessageAsRead).toHaveBeenCalledWith('msg-3');
+      expect(vi.mocked(apiService.messagesAPI).markMessageAsRead).toHaveBeenCalledWith('msg-3');
     });
   });
 
   it('scrolls to bottom on new message', async () => {
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockMessages,
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,
@@ -523,12 +526,12 @@ describe('MessageThread', () => {
   });
 
   it('uses custom placeholder', async () => {
-    mockedApiService.messages.getMessages.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getMessages.mockResolvedValue({
       success: true,
       message: 'Success',
       data: [],
     });
-    mockedApiService.messages.getConversation.mockResolvedValue({
+    vi.mocked(apiService.messagesAPI).getConversation.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockConversation,

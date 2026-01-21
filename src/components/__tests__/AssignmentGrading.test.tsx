@@ -1,11 +1,10 @@
 import React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import AssignmentGrading from '../AssignmentGrading';
 import { assignmentsAPI, assignmentSubmissionsAPI } from '../../services/apiService';
-import * as offlineActionQueueService from '../../services/offlineActionQueueService';
 import * as useEventNotifications from '../../hooks/useEventNotifications';
+import { AssignmentType, AssignmentStatus } from '../../types';
 
 vi.mock('../../services/apiService', () => ({
   assignmentsAPI: {
@@ -49,8 +48,6 @@ const mockUser = {
   email: 'guru@malnu.sch.id',
   role: 'teacher',
   extraRole: null,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
 };
 
 const mockAssignments = [
@@ -58,7 +55,7 @@ const mockAssignments = [
     id: 'assignment-1',
     title: 'Matematika Bab 1',
     description: 'Selesaikan soal-soal berikut',
-    type: 'ASSIGNMENT' as const,
+    type: AssignmentType.ASSIGNMENT,
     subjectId: 'subject-1',
     classId: 'class-1',
     teacherId: 'teacher-1',
@@ -66,7 +63,7 @@ const mockAssignments = [
     semester: 'Ganjil',
     maxScore: 100,
     dueDate: new Date(Date.now() + 86400000 * 7).toISOString(),
-    status: 'PUBLISHED' as const,
+    status: AssignmentStatus.PUBLISHED,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     publishedAt: new Date().toISOString(),
@@ -78,7 +75,7 @@ const mockAssignments = [
     id: 'assignment-2',
     title: 'Fisika Dasar',
     description: 'Tugas fisika tentang hukum Newton',
-    type: 'PROJECT' as const,
+    type: AssignmentType.PROJECT,
     subjectId: 'subject-2',
     classId: 'class-1',
     teacherId: 'teacher-1',
@@ -86,7 +83,7 @@ const mockAssignments = [
     semester: 'Ganjil',
     maxScore: 100,
     dueDate: new Date(Date.now() - 86400000 * 2).toISOString(),
-    status: 'CLOSED' as const,
+    status: AssignmentStatus.CLOSED,
     createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 5).toISOString(),
     publishedAt: new Date(Date.now() - 86400000 * 10).toISOString(),
@@ -153,6 +150,7 @@ describe('AssignmentGrading Component', () => {
     it('renders assignment list with published and closed assignments', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
@@ -171,6 +169,7 @@ describe('AssignmentGrading Component', () => {
     it('shows empty state when no assignments', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: [],
       });
 
@@ -187,11 +186,13 @@ describe('AssignmentGrading Component', () => {
     it('handles assignment selection', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockSubmissions,
       });
 
@@ -214,6 +215,7 @@ describe('AssignmentGrading Component', () => {
     it('shows back button on assignment list', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
@@ -233,11 +235,13 @@ describe('AssignmentGrading Component', () => {
     it('renders submissions list with status badges', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockSubmissions,
       });
 
@@ -262,11 +266,13 @@ describe('AssignmentGrading Component', () => {
     it('shows submission count and filter options', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockSubmissions,
       });
 
@@ -292,11 +298,13 @@ describe('AssignmentGrading Component', () => {
     it('filters submissions by status', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockSubmissions,
       });
 
@@ -328,11 +336,13 @@ describe('AssignmentGrading Component', () => {
     it('handles submission selection', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockSubmissions,
       });
 
@@ -363,11 +373,13 @@ describe('AssignmentGrading Component', () => {
     it('renders submission details with assignment info', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: [mockSubmissions[0]],
       });
 
@@ -399,11 +411,13 @@ describe('AssignmentGrading Component', () => {
     it('renders submission with attachments', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: [mockSubmissions[0]],
       });
 
@@ -433,11 +447,13 @@ describe('AssignmentGrading Component', () => {
     it('pre-fills score and feedback for graded submission', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: [mockSubmissions[1]],
       });
 
@@ -467,11 +483,13 @@ describe('AssignmentGrading Component', () => {
     it('validates score input', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: [mockSubmissions[0]],
       });
 
@@ -510,11 +528,13 @@ describe('AssignmentGrading Component', () => {
     it('validates score range', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: [mockSubmissions[0]],
       });
 
@@ -553,16 +573,19 @@ describe('AssignmentGrading Component', () => {
     it('submits grade successfully', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: [mockSubmissions[0]],
       });
 
       vi.mocked(assignmentSubmissionsAPI.update).mockResolvedValue({
         success: true,
+        message: "Success",
         data: { ...mockSubmissions[0], score: 90, status: 'graded' as const },
       });
 
@@ -621,11 +644,13 @@ describe('AssignmentGrading Component', () => {
     it('shows previous feedback for graded submissions', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: [mockSubmissions[1]],
       });
 
@@ -657,11 +682,13 @@ describe('AssignmentGrading Component', () => {
     it('navigates back from submissions list to assignments', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockSubmissions,
       });
 
@@ -691,11 +718,13 @@ describe('AssignmentGrading Component', () => {
     it('navigates back from submission detail to submissions list', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockSubmissions,
       });
 
@@ -734,6 +763,7 @@ describe('AssignmentGrading Component', () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: false,
         error: 'Gagal memuat data',
+        message: 'Gagal memuat data',
       });
 
       const mockOnBack = vi.fn();
@@ -749,12 +779,14 @@ describe('AssignmentGrading Component', () => {
     it('shows error when submissions fail to load', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: false,
         error: 'Gagal memuat pengumpulan',
+        message: 'Gagal memuat pengumpulan',
       });
 
       const mockOnBack = vi.fn();
@@ -791,11 +823,13 @@ describe('AssignmentGrading Component', () => {
     it('shows loading state when submitting grade', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: [mockSubmissions[0]],
       });
 
@@ -838,11 +872,13 @@ describe('AssignmentGrading Component', () => {
     it('has proper ARIA labels on interactive elements', async () => {
       vi.mocked(assignmentsAPI.getByTeacher).mockResolvedValue({
         success: true,
+        message: "Success",
         data: mockAssignments,
       });
 
       vi.mocked(assignmentSubmissionsAPI.getByAssignment).mockResolvedValue({
         success: true,
+        message: "Success",
         data: [mockSubmissions[0]],
       });
 
