@@ -30,7 +30,8 @@ This document describes the API rate limiting implementation in the MA Malnu Kan
 | Category | Requests/Minute | Window | Endpoints |
 |----------|-----------------|---------|-----------|
 | **Auth** | 5 | 1 minute | `/api/auth/*` |
-| **Upload** | 10 | 1 minute | `/api/files/upload`, `/ws` |
+| **Upload** | 10 | 1 minute | `/api/files/upload` |
+| **WebSocket** | 30 | 1 minute | `/ws` |
 | **Sensitive** | 20 | 1 minute | `/api/email/send`, non-GET `/api/users` |
 | **Default** | 100 | 1 minute | All other endpoints |
 
