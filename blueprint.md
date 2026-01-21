@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-21 (GAP-104 Phase 1 Complete: Voice Input Hook)
+**Last Updated**: 2026-01-21 (BUG-1090: Test Fixes in QuizGenerator, Partial)
 
 ## Architecture Overview
 

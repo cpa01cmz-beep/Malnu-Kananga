@@ -164,10 +164,12 @@ describe('QuizGenerator', () => {
         expect(screen.getByText('Pilih Materi Pembelajaran')).toBeInTheDocument();
       });
 
-      const firstMaterialCheckbox = screen.getAllByRole('checkbox')[0];
-      await userEvent.click(firstMaterialCheckbox);
+      const checkboxes = screen.getAllByRole('checkbox');
+      await userEvent.click(checkboxes[0]);
       
-      expect(firstMaterialCheckbox).toBeChecked();
+      await waitFor(() => {
+        expect(checkboxes[0]).toBeChecked();
+      });
     });
 
     it('should update selected material count', async () => {
@@ -185,9 +187,16 @@ describe('QuizGenerator', () => {
 
       const checkboxes = screen.getAllByRole('checkbox');
       await userEvent.click(checkboxes[0]);
+      
+      await waitFor(() => {
+        expect(screen.getByText('1 dipilih')).toBeInTheDocument();
+      });
+
       await userEvent.click(checkboxes[1]);
       
-      expect(screen.getByText('2 dipilih')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('2 dipilih')).toBeInTheDocument();
+      });
     });
 
     it('should prevent proceeding without selecting materials', async () => {
@@ -248,7 +257,9 @@ describe('QuizGenerator', () => {
       await userEvent.clear(questionCountInput);
       await userEvent.type(questionCountInput, '15');
       
-      expect(questionCountInput).toHaveValue(15);
+      await waitFor(() => {
+        expect(questionCountInput).toHaveValue(15);
+      });
     });
 
     it('should allow selecting difficulty level', async () => {
@@ -269,7 +280,9 @@ describe('QuizGenerator', () => {
       const difficultySelect = screen.getByLabelText('Tingkat Kesulitan');
       await userEvent.selectOptions(difficultySelect, 'hard');
       
-      expect(difficultySelect).toHaveValue('hard');
+      await waitFor(() => {
+        expect(difficultySelect).toHaveValue('hard');
+      });
     });
 
     it('should allow selecting multiple question types', async () => {
@@ -293,8 +306,10 @@ describe('QuizGenerator', () => {
       await userEvent.click(mcCheckbox);
       await userEvent.click(tfCheckbox);
       
-      expect(mcCheckbox).toBeChecked();
-      expect(tfCheckbox).toBeChecked();
+      await waitFor(() => {
+        expect(mcCheckbox).toBeChecked();
+        expect(tfCheckbox).toBeChecked();
+      });
     });
 
     it('should allow setting total points', async () => {
@@ -316,7 +331,9 @@ describe('QuizGenerator', () => {
       await userEvent.clear(totalPointsInput);
       await userEvent.type(totalPointsInput, '150');
       
-      expect(totalPointsInput).toHaveValue(150);
+      await waitFor(() => {
+        expect(totalPointsInput).toHaveValue(150);
+      });
     });
 
     it('should allow setting focus areas', async () => {
@@ -337,7 +354,9 @@ describe('QuizGenerator', () => {
       const focusAreasTextarea = screen.getByLabelText('Topik Fokus (opsional)');
       await userEvent.type(focusAreasTextarea, 'Hukum Newton, Energi, Momentum');
       
-      expect(focusAreasTextarea).toHaveValue('Hukum Newton, Energi, Momentum');
+      await waitFor(() => {
+        expect(focusAreasTextarea).toHaveValue('Hukum Newton, Energi, Momentum');
+      });
     });
   });
 

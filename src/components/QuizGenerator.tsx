@@ -215,7 +215,13 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
                 <input
                   type="checkbox"
                   checked={selectedMaterials.includes(material.id)}
-                  onChange={() => toggleMaterial(material.id)}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    toggleMaterial(material.id);
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
                   className="mt-1 h-4 w-4 text-blue-600 rounded"
                 />
                 <div className="flex-1 min-w-0">
@@ -245,11 +251,12 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         Konfigurasi Kuis
       </h3>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+       <div>
+        <label htmlFor="question-count" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Jumlah Pertanyaan
         </label>
         <Input
+          id="question-count"
           type="number"
           min="5"
           max="50"
@@ -260,10 +267,11 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="difficulty" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Tingkat Kesulitan
         </label>
         <Select
+          id="difficulty"
           value={options.difficulty}
           onChange={(e) => setOptions(prev => ({ ...prev, difficulty: e.target.value as QuizDifficulty }))}
           className="w-full"
@@ -312,10 +320,11 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor="total-points" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Total Poin
         </label>
         <Input
+          id="total-points"
           type="number"
           min="10"
           max="500"
@@ -326,11 +335,12 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+       <div>
+        <label htmlFor="focus-areas" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Topik Fokus (opsional)
         </label>
         <Textarea
+          id="focus-areas"
           placeholder="Contoh: Hukum Newton, Energi Kinematik, dll. (pisahkan dengan koma)"
           value={options.focusAreas.join(', ')}
           onChange={(e) => {
@@ -467,7 +477,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         {step === 'options' && renderOptions()}
         {step === 'preview' && renderPreview()}
 
-        {error && step !== 'select' && (
+        {error && (
           <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
             <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
           </div>
