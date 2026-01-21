@@ -2,6 +2,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import PPDBManagement from '../PPDBManagement';
+import { permissionService } from '../../services/permissionService';
 import { STORAGE_KEYS } from '../../constants';
 import type { PPDBRegistrant } from '../../types';
 
@@ -276,8 +277,7 @@ describe('PPDBManagement', () => {
       return null;
     });
 
-    const { permissionService } = require('../../services/permissionService');
-      permissionService.hasPermission.mockReturnValue({ granted: false });
+    (permissionService.hasPermission as ReturnType<typeof vi.fn>).mockReturnValue({ granted: false });
 
     render(<PPDBManagement onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 

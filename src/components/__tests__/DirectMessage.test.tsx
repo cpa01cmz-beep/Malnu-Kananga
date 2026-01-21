@@ -85,7 +85,7 @@ describe('DirectMessage', () => {
   });
 
   it('renders welcome screen when no conversation selected', () => {
-    vi.mocked(apiService.usersAPI).getUsers.mockResolvedValue({
+    vi.mocked(apiService.usersAPI).getAll.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockOtherUsers,
@@ -99,7 +99,7 @@ describe('DirectMessage', () => {
   });
 
   it('loads available users', async () => {
-    vi.mocked(apiService.usersAPI).getUsers.mockResolvedValue({
+    vi.mocked(apiService.usersAPI).getAll.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockOtherUsers,
@@ -108,12 +108,12 @@ describe('DirectMessage', () => {
     render(<DirectMessage currentUser={mockCurrentUser} />);
 
     await waitFor(() => {
-      expect(vi.mocked(apiService.usersAPI).getUsers).toHaveBeenCalled();
+      expect(vi.mocked(apiService.usersAPI).getAll).toHaveBeenCalled();
     });
   });
 
   it('shows new chat modal when clicking Percakapan Baru button', async () => {
-    vi.mocked(apiService.usersAPI).getUsers.mockResolvedValue({
+    vi.mocked(apiService.usersAPI).getAll.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockOtherUsers,
@@ -130,7 +130,7 @@ describe('DirectMessage', () => {
   });
 
   it('shows user list in new chat modal', async () => {
-    vi.mocked(apiService.usersAPI).getUsers.mockResolvedValue({
+    vi.mocked(apiService.usersAPI).getAll.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockOtherUsers,
@@ -150,7 +150,7 @@ describe('DirectMessage', () => {
   });
 
   it('creates conversation when user is selected and confirmed', async () => {
-    vi.mocked(apiService.usersAPI).getUsers.mockResolvedValue({
+    vi.mocked(apiService.usersAPI).getAll.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockOtherUsers,
@@ -185,7 +185,7 @@ describe('DirectMessage', () => {
   });
 
   it('closes new chat modal when clicking Batal button', async () => {
-    vi.mocked(apiService.usersAPI).getUsers.mockResolvedValue({
+    vi.mocked(apiService.usersAPI).getAll.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockOtherUsers,
@@ -207,7 +207,7 @@ describe('DirectMessage', () => {
   });
 
   it('shows error message when conversation creation fails', async () => {
-    vi.mocked(apiService.usersAPI).getUsers.mockResolvedValue({
+    vi.mocked(apiService.usersAPI).getAll.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockOtherUsers,
@@ -239,7 +239,7 @@ describe('DirectMessage', () => {
   });
 
   it('disables create button when no user is selected', async () => {
-    vi.mocked(apiService.usersAPI).getUsers.mockResolvedValue({
+    vi.mocked(apiService.usersAPI).getAll.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockOtherUsers,
@@ -257,7 +257,7 @@ describe('DirectMessage', () => {
   });
 
   it('excludes current user from available users', async () => {
-    vi.mocked(apiService.usersAPI).getUsers.mockResolvedValue({
+    vi.mocked(apiService.usersAPI).getAll.mockResolvedValue({
       success: true,
       message: 'Success',
       data: [mockCurrentUser, ...mockOtherUsers],
@@ -277,7 +277,7 @@ describe('DirectMessage', () => {
   });
 
   it('shows loading state while fetching users', async () => {
-    vi.mocked(apiService.usersAPI).getUsers.mockImplementation(() => new Promise(() => {}));
+    vi.mocked(apiService.usersAPI).getAll.mockImplementation(() => new Promise(() => {}));
 
     render(<DirectMessage currentUser={mockCurrentUser} />);
 
@@ -290,7 +290,7 @@ describe('DirectMessage', () => {
   });
 
   it('shows loading state while creating conversation', async () => {
-    vi.mocked(apiService.usersAPI).getUsers.mockResolvedValue({
+    vi.mocked(apiService.usersAPI).getAll.mockResolvedValue({
       success: true,
       message: 'Success',
       data: mockOtherUsers,

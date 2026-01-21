@@ -330,15 +330,11 @@ describe('StudyPlanGenerator', () => {
 
       (apiService.attendanceAPI.getByStudent as ReturnType<typeof vi.fn>).mockResolvedValue({
         success: true,
+        message: 'Success',
         data: [],
       });
 
-      let resolveGeneration: (value: unknown) => void;
-      (geminiService.generateStudyPlan as ReturnType<typeof vi.fn>).mockImplementation(
-        () => new Promise((resolve) => {
-          resolveGeneration = resolve;
-        })
-      );
+      (geminiService.generateStudyPlan as ReturnType<typeof vi.fn>).mockResolvedValue(mockStudyPlan);
 
       render(<StudyPlanGenerator onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
@@ -351,10 +347,6 @@ describe('StudyPlanGenerator', () => {
       await waitFor(() => {
         expect(screen.getByText('Membuat Rencana...')).toBeInTheDocument();
       });
-
-      if (resolveGeneration) {
-        resolveGeneration(mockStudyPlan);
-      }
     });
 
     it('should handle study plan generation error', async () => {

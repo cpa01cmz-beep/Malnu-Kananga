@@ -134,17 +134,23 @@ it('shows loading state during upload', async () => {
     const { fileStorageAPI } = await import('../../../services/apiService');
     
     // Mock slow upload
-    vi.mocked(fileStorageAPI.upload).mockImplementation(() => 
+    vi.mocked(fileStorageAPI.upload).mockImplementation(() =>
       new Promise(resolve => setTimeout(() => resolve({
-success: true,
-      message: 'Upload successful',
-      data: {
-        key: 'test-file-key',
-        url: 'http://example.com/files/test-file-key',
-        name: 'test.pdf',
-        size: 1024,
-        type: 'application/pdf',
-      },
+        success: true,
+        message: 'Upload successful',
+        data: {
+          id: 'upload-1',
+          key: 'test-file-key',
+          url: 'http://example.com/files/test-file-key',
+          fileName: 'test.pdf',
+          name: 'test.pdf',
+          fileType: 'application/pdf',
+          fileSize: 1024,
+          fileUrl: 'http://example.com/files/test-file-key',
+          uploadedAt: new Date().toISOString(),
+          size: 1024,
+          type: 'application/pdf',
+        },
       }), 100))
     );
 

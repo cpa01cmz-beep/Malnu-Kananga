@@ -77,6 +77,7 @@ const mockConversation = {
     },
     mockParticipant,
   ],
+  unreadCount: 0,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T08:30:00Z',
   createdBy: 'user-1',

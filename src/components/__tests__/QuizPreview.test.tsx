@@ -1,8 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QuizPreview } from '../QuizPreview';
 import type { Quiz } from '../../types';
+import { QuizQuestionType, QuizDifficulty } from '../../types';
 
 describe('QuizPreview', () => {
   const mockQuiz: Quiz = {
@@ -18,8 +19,8 @@ describe('QuizPreview', () => {
       {
         id: 'q1',
         question: 'Apa yang dimaksud dengan Hukum Pertama Newton?',
-        type: 'multiple_choice',
-        difficulty: 'medium',
+        type: QuizQuestionType.MULTIPLE_CHOICE,
+        difficulty: QuizDifficulty.MEDIUM,
         options: ['Benda tetap diam', 'Benda bergerak lurus', 'Benda bergerak melingkar', 'Benda berhenti'],
         correctAnswer: 'Benda tetap diam',
         explanation: 'Hukum pertama Newton menyatakan bahwa benda akan tetap diam atau bergerak lurus beraturan jika gaya total nol',
@@ -28,8 +29,8 @@ describe('QuizPreview', () => {
       {
         id: 'q2',
         question: 'Energi kinetik dirumuskan sebagai...',
-        type: 'short_answer',
-        difficulty: 'easy',
+        type: QuizQuestionType.SHORT_ANSWER,
+        difficulty: QuizDifficulty.EASY,
         correctAnswer: '1/2 mv²',
         explanation: 'Energi kinetik = 1/2 × massa × kecepatan²',
         points: 10,
@@ -38,7 +39,8 @@ describe('QuizPreview', () => {
     totalPoints: 20,
     duration: 30,
     passingScore: 14,
-    status: 'draft',
+    attempts: 0,
+    status: 'draft' as const,
     createdAt: '2025-01-19T10:00:00Z',
     updatedAt: '2025-01-19T10:00:00Z',
     aiGenerated: true,
