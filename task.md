@@ -5,6 +5,53 @@
 ## Active Tasks
 
 ### 2026-01-21
+ - [ ] **Fix Critical Hook Mocking Issues Causing Test Failures** (BUG-1090-2)
+  - Task ID: BUG-1090-2
+  - Issue: #1181 (continued from BUG-1090)
+  - Description: Fix mock implementations for useEventNotifications, useCanAccess, and useOfflineActionQueue hooks
+  - Status: **In Progress** (Phase 2/6 complete)
+  - Started: 2026-01-21
+  - Priority: P1 (High)
+  - Domain: Testing & Stability (Pillars 3, 7)
+  - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+  - Dependencies: None
+  - Root causes identified:
+    - useEventNotifications mocked without implementation → returns undefined → destructuring fails
+    - useCanAccess mocked without implementation → returns undefined → permissions.map() fails
+    - useOfflineActionQueue mocked with incomplete implementation → missing getPendingCount/getFailedCount methods
+    - 16+ test files affected across multiple hook mocks
+  - Implementation plan:
+    - ✅ Phase 1: Analysis completed (identified 16+ affected test files)
+    - ✅ Phase 2: Fix StudentAssignments.test.tsx (add proper mock implementations) - COMPLETED
+      - Fixed useEventNotifications mock (all notification methods)
+      - Fixed useCanAccess mock (full return object)
+      - Fixed useNetworkStatus mock (isOnline property)
+      - Result: 12/17 tests passing (71% pass rate, up from 0%)
+    - ✅ Phase 3: Fix AssignmentGrading.test.tsx (add proper mock implementations) - PARTIAL COMPLETE
+      - Fixed useEventNotifications mock (all notification methods)
+      - Fixed useCanAccess mock (full return object)
+      - Fixed useOfflineActionQueue mock (added all missing methods)
+      - Result: Still has issues (2/22 passing) - needs further investigation
+    - ⏳ Phase 4: Fix all remaining test files with hook mocks
+      - UserProfileEditor.test.tsx (useCanAccess)
+      - ClassManagement.offline.test.tsx (useCanAccess)
+      - MaterialUpload-search.test.tsx (useEventNotifications, useCanAccess)
+      - EnhancedMaterialSharing.test.tsx (useEventNotifications, useCanAccess)
+      - AssignmentCreation.test.tsx (useEventNotifications, useCanAccess)
+      - MaterialUpload.offline.test.tsx (useEventNotifications, useCanAccess)
+      - ParentDashboard-activity-feed.test.tsx (useCanAccess)
+      - AssignmentGrading-ai-feedback.test.tsx (useEventNotifications, useCanAccess)
+    - ⏳ Phase 5: Run all tests and verify passing (current: 1807/2092 passing = 87%)
+    - ⏳ Phase 6: Update documentation (blueprint.md, roadmap.md)
+  - Files modified:
+    - ✅ src/components/__tests__/StudentAssignments.test.tsx
+    - ✅ src/components/__tests__/AssignmentGrading.test.tsx
+  - Next logical tasks:
+    - Fix remaining test files with same mock patterns
+    - Investigate AssignmentGrading.test.tsx remaining failures
+    - Fix UserProfileEditor.test.tsx network error issue
+    - Fix UserImport.test.tsx text matching issues
+    - Continue systematic fix of all 16 affected test files
 - [x] **Fix Hardcoded localStorage Keys in Production Code** (TECH-1092)
   - Task ID: TECH-1092
   - Issue: #1182

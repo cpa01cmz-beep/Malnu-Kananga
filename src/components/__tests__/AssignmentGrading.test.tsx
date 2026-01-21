@@ -25,11 +25,30 @@ vi.mock('../../services/offlineActionQueueService', () => ({
 vi.mock('../../hooks/useEventNotifications', () => ({
   useEventNotifications: vi.fn(() => ({
     notifyGradeUpdate: vi.fn(),
+    notifyPPDBStatus: vi.fn(),
+    notifyLibraryUpdate: vi.fn(),
+    notifyAssignmentCreate: vi.fn(),
+    notifyAssignmentSubmit: vi.fn(),
+    notifyMeetingRequest: vi.fn(),
+    notifyScheduleChange: vi.fn(),
+    notifyAttendanceAlert: vi.fn(),
+    notifyOCRValidation: vi.fn(),
+    useMonitorLocalStorage: vi.fn(),
+    useOCRValidationMonitor: vi.fn(),
   })),
 }));
 
 vi.mock('../../hooks/useCanAccess', () => ({
-  useCanAccess: vi.fn(() => ({ canAccess: vi.fn(() => true) })),
+  useCanAccess: vi.fn(() => ({
+    user: { id: 'teacher-1', role: 'teacher', name: 'Guru', email: 'guru@malnu.sch.id', status: 'active' },
+    userRole: 'teacher',
+    userExtraRole: null,
+    canAccess: vi.fn(() => ({ canAccess: true, requiredPermission: '' })),
+    canAccessAny: vi.fn(() => ({ canAccess: true, requiredPermission: '' })),
+    canAccessResource: vi.fn(() => ({ canAccess: true, requiredPermission: '' })),
+    userPermissions: [],
+    userPermissionIds: [],
+  })),
 }));
 
 vi.mock('../../utils/networkStatus', () => ({
@@ -39,6 +58,18 @@ vi.mock('../../utils/networkStatus', () => ({
 vi.mock('../../hooks/useOfflineActionQueue', () => ({
   useOfflineActionQueue: vi.fn(() => ({
     addAction: vi.fn(),
+    removeAction: vi.fn(),
+    getQueue: vi.fn(() => []),
+    getPendingCount: vi.fn(() => 0),
+    getFailedCount: vi.fn(() => 0),
+    clearCompletedActions: vi.fn(),
+    sync: vi.fn(),
+    retryFailedActions: vi.fn(),
+    resolveConflict: vi.fn(),
+    onSyncComplete: vi.fn(),
+    isOnline: true,
+    isSlow: false,
+    isSyncing: false,
   })),
 }));
 

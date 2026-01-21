@@ -6,10 +6,37 @@ import { AssignmentType, AssignmentStatus, Student, Assignment } from '../../typ
 import { STORAGE_KEYS } from '../../constants';
 
 vi.mock('../../services/apiService');
-vi.mock('../../hooks/useEventNotifications');
-vi.mock('../../hooks/useCanAccess');
+vi.mock('../../hooks/useEventNotifications', () => ({
+  useEventNotifications: () => ({
+    notifyGradeUpdate: vi.fn(),
+    notifyPPDBStatus: vi.fn(),
+    notifyLibraryUpdate: vi.fn(),
+    notifyAssignmentCreate: vi.fn(),
+    notifyAssignmentSubmit: vi.fn(),
+    notifyMeetingRequest: vi.fn(),
+    notifyScheduleChange: vi.fn(),
+    notifyAttendanceAlert: vi.fn(),
+    notifyOCRValidation: vi.fn(),
+    useMonitorLocalStorage: vi.fn(),
+    useOCRValidationMonitor: vi.fn(),
+  })
+}));
+vi.mock('../../hooks/useCanAccess', () => ({
+  useCanAccess: () => ({
+    user: { id: 'user-123', role: 'student', name: 'John Doe', email: 'john@example.com', status: 'active' },
+    userRole: 'student',
+    userExtraRole: null,
+    canAccess: vi.fn(() => ({ canAccess: true, requiredPermission: '' })),
+    canAccessAny: vi.fn(() => ({ canAccess: true, requiredPermission: '' })),
+    canAccessResource: vi.fn(() => ({ canAccess: true, requiredPermission: '' })),
+    userPermissions: [{ id: 'academic.assignments.submit', name: 'Submit Assignments', description: 'Submit assignment submissions', resource: 'academic.assignments', action: 'submit' }],
+    userPermissionIds: ['academic.assignments.submit'],
+  })
+}));
 vi.mock('../../services/offlineActionQueueService');
-vi.mock('../../utils/networkStatus');
+vi.mock('../../utils/networkStatus', () => ({
+  useNetworkStatus: () => ({ isOnline: true })
+}));
 
 describe('StudentAssignments', () => {
   const mockOnBack = vi.fn();
