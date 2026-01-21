@@ -27,7 +27,6 @@ import ConfirmationDialog from './ui/ConfirmationDialog';
 import FolderNavigation from './FolderNavigation';
 import { CardSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
-import MaterialSharing from './MaterialSharing';
 import EnhancedMaterialSharing from './EnhancedMaterialSharing';
 import VersionControl from './VersionControl';
 import MaterialAnalytics from './MaterialAnalytics';

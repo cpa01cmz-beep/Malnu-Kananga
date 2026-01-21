@@ -5,7 +5,6 @@ import { Assignment, AssignmentType, AssignmentStatus, AssignmentSubmission, Stu
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { useCanAccess } from '../hooks/useCanAccess';
 import { logger } from '../utils/logger';
-import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
 import { useNetworkStatus } from '../utils/networkStatus';
 import Button from './ui/Button';
@@ -48,8 +47,6 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  const { addAction } = useOfflineActionQueue();
-
   const canSubmitAssignments = canAccess('academic.assignments.submit');
 
   const getCurrentUser = (): Student | null => {
@@ -61,7 +58,7 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
 
   useEffect(() => {
     fetchAssignments();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAssignments = async () => {
     try {

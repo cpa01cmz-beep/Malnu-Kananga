@@ -68,7 +68,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
 
   useEffect(() => {
     fetchAssignments();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAssignments = async () => {
     try {

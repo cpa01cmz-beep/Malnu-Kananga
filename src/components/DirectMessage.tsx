@@ -23,7 +23,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
 
   useEffect(() => {
     loadAvailableUsers();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadAvailableUsers = async () => {
     try {

@@ -1,6 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import GradeAnalytics from '../GradeAnalytics';
+
+interface Storage {
+  setItem: (key: string, value: string) => void;
+  getItem: (key: string) => string | null;
+  removeItem: (key: string) => void;
+  clear: () => void;
+  length: number;
+  key: (index: number) => string | null;
+}
 import { gradesAPI, assignmentsAPI, assignmentSubmissionsAPI, subjectsAPI } from '../../services/apiService';
 import { authAPI } from '../../services/apiService';
 
@@ -370,10 +379,15 @@ describe('GradeAnalytics', () => {
 
   it('exports analytics report', async () => {
     const mockLocalStorage = {
-      setItem: vi.fn()
-    };
-    
-   global.localStorage = mockLocalStorage;
+      setItem: vi.fn(),
+      getItem: vi.fn(),
+      removeItem: vi.fn(),
+      clear: vi.fn(),
+      length: 0,
+      key: vi.fn()
+    } as unknown as Storage;
+     
+    global.localStorage = mockLocalStorage;
 
     (gradesAPI.getAll as ReturnType<typeof vi.fn>).mockResolvedValue({
       success: true,

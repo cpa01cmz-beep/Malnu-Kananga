@@ -35,7 +35,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
     loadClasses();
     loadSubjects();
     loadAvailableUsers();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (groupType === 'class' && selectedClass) {
@@ -48,7 +48,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
       setGroupName(subject?.name || '');
       setGroupDescription(`Grup diskusi untuk mata pelajaran ${subject?.name}`);
     }
-  }, [groupType, selectedClass, selectedSubject]);
+  }, [groupType, selectedClass, selectedSubject]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadClasses = async () => {
     try {
@@ -72,7 +72,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
     }
   };
 
-  const loadSubjectParticipants = async (subjectId: string) => {
+  const loadSubjectParticipants = async (_subjectId: string) => {
     try {
       const response = await apiService.students.getAll();
       if (response.success && response.data) {

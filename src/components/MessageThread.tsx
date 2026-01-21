@@ -29,7 +29,7 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
     loadMessages();
     loadParticipants();
     loadConversation();
-  }, [conversationId]);
+  }, [conversationId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     scrollToBottom();

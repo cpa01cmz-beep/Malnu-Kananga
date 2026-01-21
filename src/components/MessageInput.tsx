@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Button from './ui/Button';
-import Input from './ui/Input';
 import { STORAGE_KEYS } from '../constants';
 import type { User } from '../types';
 import { logger } from '../utils/logger';

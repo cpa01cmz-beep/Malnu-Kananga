@@ -4,7 +4,7 @@ import { ShareIcon, ShieldIcon, XMarkIcon, ClockIcon } from './icons/MaterialIco
 import { ChartBarIcon } from './icons/ChartBarIcon';
 import { UserIcon } from './icons/UserIcon';
 import { LockIcon } from './icons/LockIcon';
-import { ELibrary, UserRole, UserExtraRole, MaterialShareAudit } from '../types';
+import { ELibrary, UserRole, UserExtraRole } from '../types';
 import { materialPermissionService, MaterialShareAudit as ShareAudit } from '../services/materialPermissionService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
@@ -15,7 +15,6 @@ import ConfirmationDialog from './ui/ConfirmationDialog';
 import Card from './ui/Card';
 import Badge from './ui/Badge';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { useCanAccess } from '../hooks/useCanAccess';
 
 interface EnhancedMaterialSharingProps {
   material: ELibrary;
@@ -64,7 +63,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
   const [permission, setPermission] = useState<'view' | 'edit' | 'admin'>('view');
   const [expirationEnabled, setExpirationEnabled] = useState(false);
   const [expirationDate, setExpirationDate] = useState('');
-  const [isPublic, setIsPublic] = useState(false);
+  const [_isPublic, setIsPublic] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -75,15 +74,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [userToRevoke, setUserToRevoke] = useState<User | null>(null);
 
-  const { canAccess } = useCanAccess();
-
   const permissionSummary = materialPermissionService.getPermissionSummary(material);
-
-  useEffect(() => {
-    fetchUsers();
-    fetchAuditLog();
-    fetchAnalytics();
-  }, [material.id]);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -134,6 +125,12 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
     }
   }, [material.downloadCount, permissionSummary]);
 
+  useEffect(() => {
+    fetchUsers();
+    fetchAuditLog();
+    fetchAnalytics();
+  }, [material.id, fetchUsers, fetchAuditLog, fetchAnalytics]);
+
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -160,7 +157,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
 
     setLoading(true);
     try {
-      const auditLog = await materialPermissionService.logShareAudit({
+      await materialPermissionService.logShareAudit({
         materialId: material.id,
         materialTitle: material.title,
         userId: currentUserId,

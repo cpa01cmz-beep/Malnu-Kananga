@@ -15,7 +15,7 @@ interface MessageListProps {
 export function MessageList({
   onConversationSelect,
   selectedConversationId,
-  currentUser,
+  currentUser: _currentUser,
   filter: externalFilter,
   onManageGroup,
 }: MessageListProps) {
@@ -28,7 +28,7 @@ export function MessageList({
 
   useEffect(() => {
     loadConversations();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (externalFilter) {
@@ -40,16 +40,16 @@ export function MessageList({
     if (!externalFilter) {
       loadConversations();
     }
-  }, [filterType, showUnreadOnly]);
+  }, [filterType, showUnreadOnly, externalFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     loadConversations();
-  }, [searchQuery]);
+  }, [searchQuery]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handleWebSocketMessage = (event: Event) => {
       const customEvent = event as CustomEvent<Record<string, unknown>>;
-      const { type, entity } = customEvent.detail;
+      const { entity } = customEvent.detail;
       if (entity === 'message' || entity === 'conversation') {
         loadConversations();
       }
@@ -57,7 +57,7 @@ export function MessageList({
 
     window.addEventListener('realtime-update', handleWebSocketMessage);
     return () => window.removeEventListener('realtime-update', handleWebSocketMessage);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadConversations = async () => {
     try {

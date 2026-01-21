@@ -2,13 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   BarChart,
   Bar,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -24,7 +21,6 @@ import {
   ClassGradeAnalytics, 
   SubjectAnalytics, 
   StudentPerformance, 
-  AssignmentAnalytics,
   GradeDistribution
 } from '../types';
 import { logger } from '../utils/logger';
@@ -60,8 +56,8 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'subjects' | 'students' | 'assignments'>('overview');
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
-  const [selectedTimeRange, setSelectedTimeRange] = useState<'week' | 'month' | 'semester'>('semester');
+  const [_selectedSubject, _setSelectedSubject] = useState<string | null>(null);
+  const [_selectedTimeRange, _setSelectedTimeRange] = useState<'week' | 'month' | 'semester'>('semester');
 
   const showToast = useCallback((msg: string, type: 'success' | 'error' | 'warning' | 'info') => {
     onShowToast(msg, type);

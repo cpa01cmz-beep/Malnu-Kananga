@@ -7,7 +7,7 @@ import { permissionService } from '../services/permissionService';
 import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { emailService } from '../services/emailService';
 import { pdfExportService } from '../services/pdfExportService';
-import { ocrService, type OCRExtractionResult, type OCRProgress as OCRProgressType } from '../services/ocrService';
+import { ocrService, type OCRExtractionResult } from '../services/ocrService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import IconButton from './ui/IconButton';

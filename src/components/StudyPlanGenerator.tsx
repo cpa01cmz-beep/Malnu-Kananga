@@ -85,7 +85,7 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({ onBack, onShowT
     } finally {
       setLoading(false);
     }
-  }, [STUDENT_NIS]);
+  }, [STUDENT_NIS]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     fetchData();
