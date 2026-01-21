@@ -62,6 +62,172 @@ class WorkerLogger {
 const logger = new WorkerLogger();
 
 // ============================================
+// RATE LIMITING MIDDLEWARE
+// ============================================
+
+class RateLimiter {
+  constructor(kv, options = {}) {
+    this.kv = kv;
+    this.windowMs = options.windowMs || 60000; // Default: 1 minute
+    this.maxRequests = options.maxRequests || 100; // Default: 100 requests per window
+    this.prefix = options.prefix || 'rate_limit';
+  }
+
+  async check(identifier, options = {}) {
+    const windowMs = options.windowMs || this.windowMs;
+    const maxRequests = options.maxRequests || this.maxRequests;
+    const now = Date.now();
+    const windowStart = now - windowMs;
+    const key = `${this.prefix}:${identifier}`;
+
+    try {
+      const existing = await this.kv.get(key, 'json');
+      const requests = existing ? existing.filter(r => r.timestamp > windowStart) : [];
+
+      const _remaining = Math.max(0, maxRequests - requests.length);
+      const resetAt = requests.length > 0 ? requests[0].timestamp + windowMs : now + windowMs;
+
+      if (requests.length >= maxRequests) {
+        return {
+          success: false,
+          remaining: 0,
+          resetAt,
+          limit: maxRequests,
+          retryAfter: Math.ceil((resetAt - now) / 1000)
+        };
+      }
+
+      requests.push({ timestamp: now });
+      await this.kv.put(key, JSON.stringify(requests), {
+        expirationTtl: Math.ceil(windowMs / 1000)
+      });
+
+      return {
+        success: true,
+        remaining: maxRequests - requests.length,
+        resetAt,
+        limit: maxRequests
+      };
+    } catch (_error) {
+      logger.error('Rate limit check failed:', _error);
+      return {
+        success: true,
+        remaining: maxRequests,
+        resetAt: now + windowMs,
+        limit: maxRequests
+      };
+    }
+  }
+
+  async getRateLimitInfo(identifier) {
+    // Note: This method is kept for debugging and future use
+    const key = `${this.prefix}:${identifier}`;
+    try {
+      const existing = await this.kv.get(key, 'json');
+      if (!existing) {
+        return {
+          limit: this.maxRequests,
+          remaining: this.maxRequests,
+          resetAt: Date.now() + this.windowMs
+        };
+      }
+
+      const windowStart = Date.now() - this.windowMs;
+      const recentRequests = existing.filter(r => r.timestamp > windowStart);
+      const resetAt = recentRequests.length > 0
+        ? recentRequests[0].timestamp + this.windowMs
+        : Date.now() + this.windowMs;
+
+      return {
+        limit: this.maxRequests,
+        remaining: Math.max(0, this.maxRequests - recentRequests.length),
+        resetAt
+      };
+    } catch (_error) {
+      logger.error('Get rate limit info failed:', _error);
+      return {
+        limit: this.maxRequests,
+        remaining: this.maxRequests,
+        resetAt: Date.now() + this.windowMs
+      };
+    }
+  }
+}
+
+// Rate limit configuration per endpoint type
+const RATE_LIMIT_CONFIG = {
+  default: { windowMs: 60000, maxRequests: 100 },
+  auth: { windowMs: 60000, maxRequests: 5 },
+  sensitive: { windowMs: 60000, maxRequests: 20 },
+  upload: { windowMs: 60000, maxRequests: 10 },
+  websocket: { windowMs: 60000, maxRequests: 30 }
+};
+
+function getRateLimitConfig(pathname, method) {
+  if (pathname.startsWith('/api/auth/')) {
+    return RATE_LIMIT_CONFIG.auth;
+  }
+  if (pathname === '/api/files/upload') {
+    return RATE_LIMIT_CONFIG.upload;
+  }
+  if (pathname === '/ws') {
+    return RATE_LIMIT_CONFIG.websocket;
+  }
+  if (pathname === '/api/email/send' || pathname.startsWith('/api/users') && method !== 'GET') {
+    return RATE_LIMIT_CONFIG.sensitive;
+  }
+  return RATE_LIMIT_CONFIG.default;
+}
+
+async function applyRateLimit(request, env) {
+  if (!env.RATE_LIMIT_KV) {
+    return null;
+  }
+
+  const rateLimiter = new RateLimiter(env.RATE_LIMIT_KV);
+  const pathname = new URL(request.url).pathname;
+  const method = request.method;
+  const config = getRateLimitConfig(pathname, method);
+
+  let identifier;
+  const authHeader = request.headers.get('Authorization');
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      const token = authHeader.substring(7);
+      const payload = await JWT.verify(token, env.JWT_SECRET);
+      if (payload && (payload.userId || payload.sub)) {
+        identifier = payload.userId || payload.sub;
+      } else {
+        identifier = request.headers.get('CF-Connecting-IP') || 'unknown';
+      }
+    } catch (_e) {
+      identifier = request.headers.get('CF-Connecting-IP') || 'unknown';
+    }
+  } else {
+    identifier = request.headers.get('CF-Connecting-IP') || 'unknown';
+  }
+
+  const result = await rateLimiter.check(identifier, config);
+
+  return {
+    result,
+    identifier
+  };
+}
+
+function setRateLimitHeaders(headers, result) {
+  headers.set('X-RateLimit-Limit', result.limit.toString());
+  headers.set('X-RateLimit-Remaining', result.remaining.toString());
+  headers.set('X-RateLimit-Reset', new Date(result.resetAt).toISOString());
+
+  if (!result.success) {
+    headers.set('Retry-After', result.retryAfter.toString());
+  }
+
+  return headers;
+}
+
+// ============================================
 // ERROR MESSAGE CONSTANTS
 // ============================================
 
@@ -114,7 +280,8 @@ const ERROR_MESSAGES = {
   USER_NOT_FOUND: 'Pengguna tidak ditemukan',
   EMAIL_ALREADY_EXISTS: 'Email sudah terdaftar',
   RESET_TOKEN_EXPIRED: 'Token reset password kadaluarsa',
-  SAME_PASSWORD_ERROR: 'Password baru tidak boleh sama dengan password lama'
+  SAME_PASSWORD_ERROR: 'Password baru tidak boleh sama dengan password lama',
+  RATE_LIMIT_EXCEEDED: 'Terlalu banyak permintaan. Silakan coba lagi nanti.'
 };
 
 const HTTP_STATUS_CODES = {
@@ -126,6 +293,7 @@ const HTTP_STATUS_CODES = {
   NOT_FOUND: 404,
   CONFLICT: 409,
   UNPROCESSABLE_ENTITY: 422,
+  TOO_MANY_REQUESTS: 429,
   INTERNAL_SERVER_ERROR: 500
 };
 
@@ -3474,26 +3642,52 @@ function mapTableToEventType(table, _row) {
 // ============================================
 
  export default {
-  async fetch(request, env, _ctx) {
-    const requestOrigin = request.headers.get('Origin') || 'null';
-    const cors = corsHeaders(env.ALLOWED_ORIGIN, requestOrigin);
+   async fetch(request, env, _ctx) {
+     const requestOrigin = request.headers.get('Origin') || 'null';
+     const cors = corsHeaders(env.ALLOWED_ORIGIN, requestOrigin);
 
-    logger.setLevel(env.LOG_LEVEL || 'info');
+     logger.setLevel(env.LOG_LEVEL || 'info');
 
-    // Handle preflight
-    if (request.method === 'OPTIONS') {
-      return new Response(null, { headers: cors });
+     // Handle preflight
+     if (request.method === 'OPTIONS') {
+       return new Response(null, { headers: cors });
+     }
+
+     const url = new URL(request.url);
+
+     // Handle WebSocket upgrade
+     if (url.pathname === '/ws' && request.headers.get('upgrade') === 'websocket') {
+       return handleWebSocket(request, env);
+     }
+
+     // Apply rate limiting
+     const rateLimitCheck = await applyRateLimit(request, env);
+     let rateLimitHeaders = new Headers(cors);
+
+    if (rateLimitCheck) {
+      const { result, identifier } = rateLimitCheck;
+      rateLimitHeaders = setRateLimitHeaders(rateLimitHeaders, result);
+
+      if (!result.success) {
+        logger.warn(`Rate limit exceeded for ${identifier}`, {
+          path: url.pathname,
+          method: request.method,
+          limit: result.limit
+        });
+        rateLimitHeaders.set('Content-Type', 'application/json');
+        return new Response(JSON.stringify({
+          error: ERROR_MESSAGES.RATE_LIMIT_EXCEEDED,
+          message: ERROR_MESSAGES.RATE_LIMIT_EXCEEDED,
+          retryAfter: result.retryAfter
+        }), {
+          status: HTTP_STATUS_CODES.TOO_MANY_REQUESTS,
+          headers: rateLimitHeaders
+        });
+      }
     }
 
-    const url = new URL(request.url);
-
-    // Handle WebSocket upgrade
-    if (url.pathname === '/ws' && request.headers.get('upgrade') === 'websocket') {
-      return handleWebSocket(request, env);
-    }
-
-    // Route handlers
-    const routes = {
+     // Route handlers
+     const routes = {
       '/seed': handleSeed,
       '/api/chat': handleChat,
       '/api/auth/login': handleLogin,
@@ -3543,13 +3737,26 @@ function mapTableToEventType(table, _row) {
 
     for (const [path, handler] of Object.entries(routes)) {
       if (url.pathname.startsWith(path)) {
-        return await handler(request, env, cors);
+        const response = await handler(request, env, cors);
+
+        // Apply rate limit headers to successful responses
+        if (response && response.headers && rateLimitCheck) {
+          setRateLimitHeaders(response.headers, rateLimitCheck.result);
+        }
+
+        return response;
       }
     }
 
-    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.ENDPOINT_NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
+    const notFoundResponse = new Response(JSON.stringify(response.error(ERROR_MESSAGES.ENDPOINT_NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
       status: HTTP_STATUS_CODES.NOT_FOUND,
       headers: { ...cors, 'Content-Type': 'application/json' }
     });
+
+    if (rateLimitCheck) {
+      setRateLimitHeaders(notFoundResponse.headers, rateLimitCheck.result);
+    }
+
+    return notFoundResponse;
   },
 };

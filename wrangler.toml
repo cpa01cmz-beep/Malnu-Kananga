@@ -21,6 +21,11 @@ binding = "DB"
 database_name = "malnu-kananga-db-dev"
 database_id = "69605f72-4b69-4dd6-a72c-a17006f61254"
 
+# KV namespace for rate limiting - create with: wrangler kv:namespace create "RATE_LIMIT_KV"
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "rate-limit-dev"  # Replace with actual KV namespace ID after creation
+
 [vars]
 ALLOWED_ORIGIN = "*"
 NODE_ENV = "development"
@@ -36,6 +41,11 @@ binding = "DB"
 database_name = "malnu-kananga-db-prod"
 # Production D1 database ID
 database_id = "7fbd7834-0fd2-475f-8787-55ce81988642"
+
+# KV namespace for rate limiting (production) - create with: wrangler kv:namespace create "RATE_LIMIT_KV" --env production
+[[env.production.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "rate-limit-prod"  # Replace with actual KV namespace ID after creation
 
 # Vectorize index bindings - create with: wrangler vectorize create malnu-kananga-index --dimensions=768 --metric=cosine
 # Note: Vectorize is optional. If not configured, AI chat features will be disabled gracefully.
@@ -70,6 +80,11 @@ binding = "DB"
 database_name = "malnu-kananga-db-dev"
 # Dev D1 database ID
 database_id = "69605f72-4b69-4dd6-a72c-a17006f61254"
+
+# KV namespace for rate limiting (dev) - create with: wrangler kv:namespace create "RATE_LIMIT_KV" --env dev
+[[env.dev.kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "rate-limit-dev"  # Replace with actual KV namespace ID after creation
 
 # Vectorize index bindings - create with: wrangler vectorize create malnu-kananga-index-dev --dimensions=768 --metric=cosine
 # Note: Vectorize is optional. If not configured, AI chat features will be disabled gracefully.
