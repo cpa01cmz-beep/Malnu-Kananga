@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { apiService } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
+import { logger } from '../utils/logger';
 import { MessageInput } from './MessageInput';
 import type { DirectMessage, Participant } from '../types';
 
@@ -57,8 +58,7 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
         setMessages(response.data);
       }
     } catch (err) {
-      setError('Gagal memuat pesan');
-      console.error('Failed to load messages:', err);
+      logger.error('Failed to load messages:', err);
     } finally {
       setLoading(false);
     }
@@ -75,7 +75,7 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
         setParticipants(participantMap);
       }
     } catch (err) {
-      console.error('Failed to load participants:', err);
+      logger.error('Failed to load participants:', err);
     }
   };
 
@@ -86,7 +86,7 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
         setConversation(response.data);
       }
     } catch (err) {
-      console.error('Failed to load conversation:', err);
+      logger.error('Failed to load conversation:', err);
     }
   };
 
@@ -94,7 +94,7 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
     try {
       await apiService.messages.markMessageAsRead(messageId);
     } catch (err) {
-      console.error('Failed to mark message as read:', err);
+      logger.error('Failed to mark message as read:', err);
     }
   };
 
@@ -118,7 +118,7 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
         scrollToBottom();
       }
     } catch (err) {
-      console.error('Failed to send message:', err);
+      logger.error('Failed to send message:', err);
       throw err;
     }
   };

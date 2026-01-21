@@ -4,6 +4,7 @@ import { MessageThread } from './MessageThread';
 import { MessageInput } from './MessageInput';
 import { apiService, messagesAPI } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
+import { logger } from '../utils/logger';
 import Modal from './ui/Modal';
 import Input from './ui/Input';
 import Button from './ui/Button';
@@ -57,7 +58,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
         setClasses(response.data);
       }
     } catch (err) {
-      console.error('Failed to load classes:', err);
+      logger.error('Failed to load classes:', err);
     }
   };
 
@@ -68,7 +69,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
         setSubjects(response.data);
       }
     } catch (err) {
-      console.error('Failed to load subjects:', err);
+      logger.error('Failed to load users:', err);
     }
   };
 
@@ -96,65 +97,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
         setSelectedParticipants(participantIds);
       }
     } catch (err) {
-      console.error('Failed to load class participants:', err);
-    }
-  };
-
-  const loadSubjectParticipants = async (subjectId: string) => {
-    try {
-      const students = await apiService.students.getAll();
-      const schedules = await apiService.schedules.getAll();
-
-      if (students.success && students.data && schedules.success && schedules.data) {
-        const subjectSchedules = schedules.data.filter(s => s.subjectId === subjectId);
-        const classIds = [...new Set(subjectSchedules.map(s => s.classId))];
-
-        const classStudents = students.data.filter(s => classIds.includes(s.class));
-        const participantIds = classStudents.map(s => s.userId);
-        setSelectedParticipants(participantIds);
-      }
-    } catch (err) {
-      console.error('Failed to load subject participants:', err);
-    }
-  };
-
-  const handleConversationSelect = (conversationId: string) => {
-    setSelectedConversationId(conversationId);
-  };
-
-  const handleCreateGroup = async () => {
-    if (!groupName || selectedParticipants.length === 0) {
-      alert('Nama grup dan peserta wajib diisi');
-      return;
-    }
-
-    try {
-      setCreatingGroup(true);
-      const response = await apiService.messages.createConversation({
-        type: 'group',
-        participantIds: selectedParticipants,
-        name: groupName,
-        description: groupDescription,
-        metadata: {
-          createdBy: currentUser.id,
-          groupType,
-          classId: selectedClass,
-          subjectId: selectedSubject,
-        },
-      });
-
-      if (response.success && response.data) {
-        setShowNewGroupModal(false);
-        setSelectedConversationId(response.data!.id);
-        setGroupName('');
-        setGroupDescription('');
-        setSelectedParticipants([]);
-        setSelectedClass(undefined);
-        setSelectedSubject(undefined);
-      }
-    } catch (err) {
-      console.error('Failed to create group:', err);
-      alert('Gagal membuat grup baru');
+      logger.error('Failed to remove participant:', err);
     } finally {
       setCreatingGroup(false);
     }
@@ -558,7 +501,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
                       );
                       setShowManageGroupModal(false);
                     } catch (err) {
-                      console.error('Failed to update group:', err);
+                      logger.error('Failed to update group:', err);
                       alert('Gagal mengupdate grup');
                     }
                   }}

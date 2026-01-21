@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { ELibrary, Quiz } from '../types';
+import type { ELibrary, Quiz, QuizQuestion } from '../types';
 import { QuizDifficulty, QuizQuestionType } from '../types';
 import { generateQuiz } from '../services/geminiService';
 import { eLibraryAPI } from '../services/apiService';
@@ -374,7 +374,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         </Card>
 
         <div className="space-y-4 max-h-96 overflow-y-auto">
-          {generatedQuiz.questions.map((question: any, index: number) => (
+          {generatedQuiz.questions.map((question: QuizQuestion, index: number) => (
             <Card key={question.id}>
               <div className="flex items-start gap-2">
                 <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 flex items-center justify-center text-sm font-medium">
