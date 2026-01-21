@@ -2,16 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Button from './ui/Button';
 import ErrorMessage from './ui/ErrorMessage';
 import Card from './ui/Card';
-import ProgressBar from './ui/ProgressBar';
 import { EmptyState } from './ui/LoadingState';
 import Badge from './ui/Badge';
 import { authAPI, gradesAPI, attendanceAPI, subjectsAPI } from '../services/apiService';
 import { generateStudyPlan } from '../services/geminiService';
 import type {
   StudyPlan,
-  StudyPlanSubject,
-  StudyPlanSchedule,
-  StudyPlanRecommendation,
   SubjectPerformance,
   Goal,
   AttendanceGradeCorrelation,
@@ -21,7 +17,6 @@ import { logger } from '../utils/logger';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { ClockIcon } from './icons/ClockIcon';
 import BookOpenIcon from './icons/BookOpenIcon';
-import { CheckIcon } from './icons/CheckIcon';
 import { CheckCircleIcon } from './icons/StatusIcons';
 import { XCircleIcon } from './icons/XCircleIcon';
 import { LightBulbIcon } from './icons/LightBulbIcon';

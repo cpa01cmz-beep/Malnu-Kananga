@@ -10,7 +10,6 @@ import ProgressBar from './ui/ProgressBar';
 import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import { CheckIcon } from './icons/CheckIcon';
 import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
-import { CloseIcon } from './icons/CloseIcon';
 import { XMarkIcon } from './icons/MaterialIcons';
 import { api } from '../services/apiService';
 import { logger } from '../utils/logger';
@@ -42,7 +41,6 @@ interface UserImportProps {
 
 const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComplete }) => {
   const [step, setStep] = useState<'upload' | 'preview' | 'importing' | 'complete'>('upload');
-  const [csvData, setCsvData] = useState<CSVRow[]>([]);
   const [parsedUsers, setParsedUsers] = useState<ParsedUser[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [importProgress, setImportProgress] = useState(0);
@@ -54,7 +52,6 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
   useEffect(() => {
     if (!isOpen) {
       setStep('upload');
-      setCsvData([]);
       setParsedUsers([]);
       setFile(null);
       setImportProgress(0);
@@ -137,31 +134,30 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
     if (!selectedFile) return;
 
     if (!selectedFile.name.endsWith('.csv')) {
-      alert('Please select a CSV file');
+      logger.error('Please select a CSV file');
       return;
     }
 
     try {
       const data = await parseCSV(selectedFile);
       if (data.length === 0) {
-        alert('CSV file is empty');
+        logger.error('CSV file is empty');
         return;
       }
 
       const validatedUsers = data.map((row, index) => validateUser(row, index));
       setParsedUsers(validatedUsers);
-      setCsvData(data);
       setFile(selectedFile);
       setStep('preview');
     } catch (error) {
-      const classifiedError = classifyError(error, {
-        operation: 'parseCSV',
-        timestamp: Date.now(),
-      });
-      logError(classifiedError);
-      alert('Failed to parse CSV file. Please check the format and try again.');
+        const classifiedError = classifyError(error, {
+          operation: 'parseCSV',
+          timestamp: Date.now(),
+        });
+        logError(classifiedError);
+        logger.error('Failed to parse CSV file. Please check the format and try again.');
     }
-  }, [parseCSV]);
+  }, [parseCSV, validateUser]);
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -187,7 +183,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
     const validUsers = parsedUsers.filter((user) => user.isValid);
 
     if (validUsers.length === 0) {
-      alert('No valid users to import');
+      logger.error('No valid users to import');
       return;
     }
 
@@ -234,10 +230,13 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
     setStep('complete');
 
     if (result.success > 0) {
-      unifiedNotificationManager.sendNotification({
+      unifiedNotificationManager.showNotification({
+        id: `import-${Date.now()}`,
         type: 'system',
         title: 'Bulk Import Complete',
         body: `${result.success} users imported successfully${result.failed > 0 ? `, ${result.failed} failed` : ''}`,
+        timestamp: new Date().toISOString(),
+        read: false,
         priority: result.failed > 0 ? 'normal' : 'high',
       });
       onImportComplete?.();

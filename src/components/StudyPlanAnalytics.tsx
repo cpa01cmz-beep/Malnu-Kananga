@@ -20,11 +20,9 @@ import { authAPI, gradesAPI, subjectsAPI } from '../services/apiService';
 import type {
   StudyPlanAnalytics as StudyPlanAnalyticsType,
   StudyPlan,
-  StudyPlanSubject,
   SubjectProgress,
   WeeklyActivity,
   PerformanceImprovement,
-  SubjectImprovement,
   AnalyticsRecommendation,
   StudyPlanHistory
 } from '../types';
@@ -62,11 +60,9 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
 
   const [analytics, setAnalytics] = useState<StudyPlanAnalyticsType | null>(null);
   const [studyPlan, setStudyPlan] = useState<StudyPlan | null>(null);
-  const [history, setHistory] = useState<StudyPlanHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
-  const [selectedTimeRange, setSelectedTimeRange] = useState<'week' | 'month' | 'all'>('all');
 
   const showToast = useCallback((msg: string, type: 'success' | 'error' | 'warning' | 'info') => {
     onShowToast(msg, type);
@@ -268,7 +264,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
       }
 
       setStudyPlan(activePlan);
-      setHistory(loadStudyPlanHistory());
+      loadStudyPlanHistory();
 
       const cachedAnalytics = await loadAnalytics();
       const shouldRecalculate = !cachedAnalytics || (new Date().getTime() - new Date(cachedAnalytics.lastUpdated).getTime() > 24 * 60 * 60 * 1000);
