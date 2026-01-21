@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
+import React from 'react';
 import ActivityFeed, { ActivityType, Activity } from '../ActivityFeed';
-import { STORAGE_KEYS } from '../../constants';
 
 vi.unmock('react');
 

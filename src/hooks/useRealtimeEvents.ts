@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { webSocketService } from '../services/webSocketService';
 import type { RealTimeEvent, RealTimeEventType, RealTimeSubscription } from '../services/webSocketService';
 import { logger } from '../utils/logger';

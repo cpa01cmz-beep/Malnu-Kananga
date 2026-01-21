@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import type { RealTimeEvent } from '../services/webSocketService';
+import type { RealTimeEvent, RealTimeEventType } from '../services/webSocketService';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
 import Card from './ui/Card';
 import Badge from './ui/Badge';
@@ -12,7 +12,6 @@ import AcademicCapIcon from './icons/AcademicCapIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import MegaphoneIcon from './icons/MegaphoneIcon';
 import ChatBubbleLeftRightIcon from './icons/ChatBubbleLeftRightIcon';
-import DocumentTextIcon from './icons/DocumentTextIcon';
 
 export type ActivityType =
   | 'grade_updated'
@@ -170,8 +169,8 @@ const ActivityItem: React.FC<{ activity: Activity; onClick?: () => void }> = ({ 
 };
 
 const ActivityFeed: React.FC<ActivityFeedProps> = ({
-  userId,
-  userRole,
+  userId: _userId,
+  userRole: _userRole,
   eventTypes,
   showFilter = true,
   maxActivities = 50,
@@ -182,7 +181,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
   const [unreadCount, setUnreadCount] = useState(0);
 
   const { isConnected, isConnecting } = useRealtimeEvents({
-    eventTypes: eventTypes as any,
+    eventTypes: eventTypes as RealTimeEventType[],
     enabled: true,
     onEvent: (event) => {
       const newActivity: Activity = {

@@ -29,6 +29,7 @@ import VoiceCommandsHelp from './VoiceCommandsHelp';
 import ParentNotificationSettings from './ParentNotificationSettings';
 import NotificationHistory from './NotificationHistory';
 import SuspenseLoading from './ui/SuspenseLoading';
+import ActivityFeed, { type Activity } from './ActivityFeed';
 
 interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -443,6 +444,41 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 </div>
               </Card>
             )}
+
+            {/* Activity Feed */}
+            <Card className="mb-8 animate-fade-in-up">
+              <ActivityFeed
+                userId={authAPI.getCurrentUser()?.id || ''}
+                userRole="parent"
+                eventTypes={[
+                  'grade_updated',
+                  'grade_created',
+                  'attendance_marked',
+                  'attendance_updated',
+                  'announcement_created',
+                  'announcement_updated',
+                  'event_created',
+                  'event_updated',
+                ]}
+                showFilter
+                maxActivities={50}
+                onActivityClick={(activity: Activity) => {
+                  if (activity.type === 'grade_updated' || activity.type === 'grade_created') {
+                    setCurrentView('grades');
+                    onShowToast('Navigasi ke nilai anak', 'success');
+                  } else if (activity.type === 'attendance_marked' || activity.type === 'attendance_updated') {
+                    setCurrentView('attendance');
+                    onShowToast('Navigasi ke absensi anak', 'success');
+                  } else if (activity.type === 'announcement_created' || activity.type === 'announcement_updated') {
+                    setCurrentView('events');
+                    onShowToast('Navigasi ke pengumuman', 'success');
+                  } else if (activity.type === 'event_created' || activity.type === 'event_updated') {
+                    setCurrentView('events');
+                    onShowToast('Navigasi ke acara', 'success');
+                  }
+                }}
+              />
+            </Card>
           </>
         )}
         {currentView === 'schedule' && selectedChild && (

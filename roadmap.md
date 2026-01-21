@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Roadmap
 
-**Last Updated**: 2026-01-21 (GAP-112 Phase 1 Complete: ActivityFeed and useRealtimeEvents infrastructure)
+**Last Updated**: 2026-01-21 (GAP-112 Phase 2 Complete: ActivityFeed integrated into all dashboards)
 
 ## Vision
 Transform MA Malnu Kananga into a fully integrated, AI-powered school management system with offline capability and real-time features.
@@ -327,10 +327,13 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 - [ ] Attendance tracking
 
 #### Activity Feed (GAP-112)
-- [x] Activity feed component and useRealtimeEvents hook (completed 2026-01-21)
-- [ ] Integrate activity feed into dashboards (in progress)
-- [ ] Add visual indicators for new data (pending)
-- [ ] Implement real-time data refresh (pending)
+- [x] Activity feed component and useRealtimeEvents hook (completed 2026-01-21, Phase 1)
+- [x] Integrate activity feed into dashboards (completed 2026-01-21, Phase 2)
+  - StudentPortal: Grade, Attendance, Material, Message events
+  - TeacherDashboard: Grade, Announcement, Event, Message events
+  - ParentDashboard: Grade, Attendance, Announcement, Event events
+- [x] Add visual indicators for new data (completed 2026-01-21, Phase 2)
+- [ ] Implement real-time data refresh (future enhancement)
 
 ---
 

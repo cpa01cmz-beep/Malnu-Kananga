@@ -41,6 +41,7 @@ import VoiceCommandsHelp from './VoiceCommandsHelp';
 import Button from './ui/Button';
 import OfflineBanner from './ui/OfflineBanner';
 import Alert from './ui/Alert';
+import ActivityFeed, { type Activity } from './ActivityFeed';
 
 interface StudentPortalProps {
     onShowToast: (msg: string, type: ToastType) => void;
@@ -691,6 +692,41 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                         </div>
                     </div>
                 )}
+
+                {/* Activity Feed */}
+                <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up">
+                  <ActivityFeed
+                    userId={studentData?.id || ''}
+                    userRole="student"
+                    eventTypes={[
+                      'grade_updated',
+                      'grade_created',
+                      'attendance_marked',
+                      'attendance_updated',
+                      'library_material_added',
+                      'library_material_updated',
+                      'message_created',
+                      'message_updated',
+                    ]}
+                    showFilter
+                    maxActivities={50}
+                    onActivityClick={(activity: Activity) => {
+                      if (activity.type === 'grade_updated' || activity.type === 'grade_created') {
+                        setCurrentView('grades');
+                        onShowToast('Navigasi ke nilai', 'success');
+                      } else if (activity.type === 'attendance_marked' || activity.type === 'attendance_updated') {
+                        setCurrentView('attendance');
+                        onShowToast('Navigasi ke absensi', 'success');
+                      } else if (activity.type === 'library_material_added' || activity.type === 'library_material_updated') {
+                        setCurrentView('library');
+                        onShowToast('Navigasi ke e-library', 'success');
+                      } else if (activity.type === 'message_created' || activity.type === 'message_updated') {
+                        setCurrentView('groups');
+                        onShowToast('Navigasi ke grup diskusi', 'success');
+                      }
+                    }}
+                  />
+                </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                    {menuItems.map((item) => (

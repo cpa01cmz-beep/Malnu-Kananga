@@ -68,13 +68,28 @@
   - Connection state polling
 
 #### Dashboard Components (Enhanced 2026-01-21)
-- **`ActivityFeed.tsx`** - Real-time activity feed component (part of GAP-112)
+- **`ActivityFeed.tsx`** - Real-time activity feed component (completed 2026-01-21, Phase 1)
   - Displays recent activities grouped by time (Hari Ini, Kemarin, Minggu Ini)
   - Activity filtering by type (all, unread, or specific type)
   - Connection status indicator (online/offline)
   - Visual indicators for unread activities
   - Local storage persistence for activity history
   - Supports activity types: grades, attendance, materials, announcements, events, messages
+  - **Integrated into StudentPortal** (2026-01-21, Phase 2)
+    - Grade events navigate to Grades view
+    - Attendance events navigate to Attendance view
+    - Material events navigate to E-Library view
+    - Message events navigate to Groups view
+  - **Integrated into TeacherDashboard** (2026-01-21, Phase 2)
+    - Grade events navigate to Analytics view
+    - Announcement events show toast notifications
+    - Event events show toast notifications
+    - Message events navigate to Messages view
+  - **Integrated into ParentDashboard** (2026-01-21, Phase 2)
+    - Grade events navigate to Grades view
+    - Attendance events navigate to Attendance view
+    - Announcement events navigate to Events view
+    - Event events navigate to Events view
 - **`voiceSettingsBackup.ts`** - Voice settings persistence
 - **`voiceMessageQueue.ts`** - Queue for voice commands/messages
 - **`voiceNotificationService.ts`** - Voice notification alerts

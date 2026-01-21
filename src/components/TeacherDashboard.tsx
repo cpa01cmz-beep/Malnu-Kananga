@@ -36,6 +36,7 @@ import Badge from './ui/Badge';
 import SmallActionButton from './ui/SmallActionButton';
 import { pdfExportService } from '../services/pdfExportService';
 import ChatBubbleLeftRightIcon from './icons/ChatBubbleLeftRightIcon';
+import ActivityFeed, { type Activity } from './ActivityFeed';
 
 interface TeacherDashboardProps {
     onShowToast?: (msg: string, type: ToastType) => void;
@@ -366,6 +367,39 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         </div>
                     </Card>
                 )}
+
+                {/* Activity Feed */}
+                <Card padding="lg" className={`mb-8 animate-fade-in-up`}>
+                  <ActivityFeed
+                    userId={getCurrentUserId()}
+                    userRole="teacher"
+                    eventTypes={[
+                      'grade_updated',
+                      'grade_created',
+                      'announcement_created',
+                      'announcement_updated',
+                      'event_created',
+                      'event_updated',
+                      'message_created',
+                      'message_updated',
+                    ]}
+                    showFilter
+                    maxActivities={50}
+                    onActivityClick={(activity: Activity) => {
+                      if (activity.type === 'grade_updated' || activity.type === 'grade_created') {
+                        setCurrentView('analytics');
+                        handleToast('Navigasi ke analitik nilai', 'success');
+                      } else if (activity.type === 'announcement_created' || activity.type === 'announcement_updated') {
+                        handleToast('Pengumuman baru tersedia', 'success');
+                      } else if (activity.type === 'event_created' || activity.type === 'event_updated') {
+                        handleToast('Acara baru tersedia', 'success');
+                      } else if (activity.type === 'message_created' || activity.type === 'message_updated') {
+                        setCurrentView('messages');
+                        handleToast('Navigasi ke pesan', 'success');
+                      }
+                    }}
+                  />
+                </Card>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
                     {checkPermission('academic.classes') && (
