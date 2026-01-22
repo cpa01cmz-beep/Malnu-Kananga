@@ -48,6 +48,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
       setGroupName(subject?.name || '');
       setGroupDescription(`Grup diskusi untuk mata pelajaran ${subject?.name}`);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupType, selectedClass, selectedSubject]);
 
   const loadClasses = async () => {

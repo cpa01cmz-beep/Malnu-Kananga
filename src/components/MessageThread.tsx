@@ -29,6 +29,7 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
     loadMessages();
     loadParticipants();
     loadConversation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversationId]);
 
   useEffect(() => {

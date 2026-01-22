@@ -75,12 +75,6 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
 
   const permissionSummary = materialPermissionService.getPermissionSummary(material);
 
-  useEffect(() => {
-    fetchUsers();
-    fetchAuditLog();
-    fetchAnalytics();
-  }, [material.id]);
-
   const fetchUsers = useCallback(async () => {
     try {
       const mockUsers: User[] = [
@@ -129,6 +123,12 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
       logger.error('Error fetching analytics:', err);
     }
   }, [material.downloadCount, permissionSummary]);
+
+  useEffect(() => {
+    fetchUsers();
+    fetchAuditLog();
+    fetchAnalytics();
+  }, [material.id, fetchUsers, fetchAuditLog, fetchAnalytics]);
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

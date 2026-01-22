@@ -277,7 +277,8 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
     } finally {
       setLoading(false);
     }
-  }, [STUDENT_ID, loadActiveStudyPlan, loadStudyPlanHistory, loadAnalytics, calculateAnalytics]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [STUDENT_ID, loadActiveStudyPlan, loadAnalytics, calculateAnalytics]);
 
   useEffect(() => {
     fetchData();

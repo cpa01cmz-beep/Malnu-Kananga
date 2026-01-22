@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { assignmentsAPI, assignmentSubmissionsAPI } from '../services/apiService';
 import { generateAssignmentFeedback } from '../services/geminiService';
 import { Assignment, AssignmentStatus, AssignmentSubmission, User, AIFeedback } from '../types';
@@ -66,11 +66,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
 
   const currentUser = getCurrentUser();
 
-  useEffect(() => {
-    fetchAssignments();
-  }, []);
-
-  const fetchAssignments = async () => {
+  const fetchAssignments = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -96,7 +92,11 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser]);
+
+  useEffect(() => {
+    fetchAssignments();
+  }, [fetchAssignments]);
 
   const fetchSubmissions = async (assignmentId: string) => {
     try {

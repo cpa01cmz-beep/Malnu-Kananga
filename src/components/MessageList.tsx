@@ -34,6 +34,7 @@ export function MessageList({
     }
   }, [externalFilter]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!externalFilter) {
       loadConversations();

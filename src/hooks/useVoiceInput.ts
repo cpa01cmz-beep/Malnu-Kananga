@@ -41,7 +41,7 @@ export interface UseVoiceInputReturn {
 
 export const useVoiceInput = (options: UseVoiceInputOptions): UseVoiceInputReturn => {
   const {
-    fieldName,
+    fieldName: _fieldName,
     fieldLabel,
     onValueChange,
     fieldType,
@@ -126,7 +126,7 @@ export const useVoiceInput = (options: UseVoiceInputOptions): UseVoiceInputRetur
     }
 
     return processed;
-  }, [fieldType, fieldName, language]);
+  }, [fieldType, language]);
 
   const onTranscriptHandler = useCallback((transcript: string, isFinal: boolean): void => {
     if (!isFinal) return;

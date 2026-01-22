@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { MessageList } from './MessageList';
 import { MessageThread } from './MessageThread';
 import { apiService } from '../services/apiService';
@@ -21,11 +21,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
   const [creatingConversation, setCreatingConversation] = useState(false);
   const [loadingUsers, setLoadingUsers] = useState(false);
 
-  useEffect(() => {
-    loadAvailableUsers();
-  }, []);
-
-  const loadAvailableUsers = async () => {
+  const loadAvailableUsers = useCallback(async () => {
     try {
       setLoadingUsers(true);
       const response = await apiService.users.getAll();
@@ -38,7 +34,11 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
     } finally {
       setLoadingUsers(false);
     }
-  };
+  }, [currentUser]);
+
+  useEffect(() => {
+    loadAvailableUsers();
+  }, [loadAvailableUsers]);
 
   const handleConversationSelect = (conversationId: string, participantId?: string) => {
     setSelectedConversationId(conversationId);

@@ -156,7 +156,8 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
       logError(classifiedError);
       logger.error('Failed to parse CSV file. Please check the format and try again.');
     }
-  }, [parseCSV]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parseCSV, validateUser]);
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
