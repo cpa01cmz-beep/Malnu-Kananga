@@ -261,7 +261,10 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
           min="5"
           max="50"
           value={options.questionCount}
-          onChange={(e) => setOptions(prev => ({ ...prev, questionCount: parseInt(e.target.value) || 10 }))}
+          onChange={(e) => {
+            const value = e.target.value;
+            setOptions(prev => ({ ...prev, questionCount: value === '' ? 0 : parseInt(value) || 10 }));
+          }}
           className="w-full"
         />
       </div>
@@ -330,7 +333,10 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
           max="500"
           step="10"
           value={options.totalPoints}
-          onChange={(e) => setOptions(prev => ({ ...prev, totalPoints: parseInt(e.target.value) || 100 }))}
+          onChange={(e) => {
+            const value = e.target.value;
+            setOptions(prev => ({ ...prev, totalPoints: value === '' ? 0 : parseInt(value) || 100 }));
+          }}
           className="w-full"
         />
       </div>
@@ -500,7 +506,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
                 Simpan Kuis
               </Button>
             ) : (
-              <Button onClick={handleNextStep} disabled={loading || generating || (step === 'select' && selectedMaterials.length === 0)}>
+              <Button onClick={handleNextStep} disabled={loading || generating || step !== 'select'}>
                 {generating ? (
                   <>
                     <LoadingSpinner className="mr-2 h-4 w-4" />
