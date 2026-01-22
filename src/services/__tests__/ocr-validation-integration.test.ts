@@ -2,6 +2,7 @@
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { ocrService } from '../ocrService';
+import { logger } from '../../utils/logger';
 // OCR service is mocked above
 
 // Mock localStorage
@@ -64,7 +65,7 @@ const ocrEvents: Array<{
 vi.mock('../ocrService', () => ({
   ocrService: {
     extractTextFromImage: vi.fn().mockImplementation(async (file, progressCallback, options) => {
-      console.log('Mock OCR called with options:', options);
+      logger.debug('Mock OCR called with options:', options);
       
       // Directly store the event in our test storage
       const mockEvent = {
