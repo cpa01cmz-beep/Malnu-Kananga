@@ -5,6 +5,25 @@
      ## Active Tasks
 
      ### 2026-01-22
+        - [ ] **Merge BUG-1216 and Related Test Fixes to Main** (MERGE-1218) - IN PROGRESS
+           - Task ID: MERGE-1218
+           - Issue: #1219, #1216
+           - Description: Merge BUG-1216 QuizGenerator test fixes and related test improvements to main branch
+           - Status: **In Progress**
+           - Started: 2026-01-22
+           - Priority: P1 (High)
+           - Domain: Testing & Stability (Pillars 3, 7)
+           - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+           - Dependencies: None
+           - Changes to merge:
+             - [ba30d9c] BUG-1216: Fix QuizGenerator test failures and component bugs
+             - [527012e] BUG-1209: Fix React act() warnings in multiple test files
+             - [594b26d] Remove unused 'act' import in AssignmentGrading.test.tsx
+           - Branch: fix/BUG-1208-studyplan-generator-tests
+           - Notes:
+             - PR #1218 was closed with "CONFLICTING" status
+             - Branch is clean and up to date with main
+             - All quality checks passing locally
         - [x] **Consolidate Documentation and Fix Version Inconsistencies** (DOCS-1213-1211) - COMPLETED
            - Task ID: DOCS-1213-1211
            - Issues: #1213, #1211
