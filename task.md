@@ -5,6 +5,50 @@
 ## Active Tasks
 
 ### 2026-01-22
+  - [x] **Strengthen Student Portal Data Validation and Offline Support** (GAP-105) - COMPLETED
+     - Task ID: GAP-105
+     - Issue: #1058
+     - Description: Enhance data validation, error handling, and offline reliability in StudentPortal.tsx
+     - Status: **Completed**
+     - Completed: 2026-01-22
+     - Started: 2026-01-22
+     - Priority: P2 (Medium-High)
+     - Domain: Stability & Security (Pillars 3, 4, 7)
+     - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+     - Dependencies: None (unblocked)
+     - Implementation completed:
+       - ✅ Phase 1: Analyze StudentPortal.tsx for validation gaps (completed)
+       - ✅ Phase 2: Add defensive programming for API calls (completed)
+       - ✅ Phase 3: Enhance offline data validation (completed)
+       - ✅ Phase 4: Improve error messages and recovery (completed)
+       - ✅ Phase 5: Verify typecheck and lint (completed)
+       - ✅ Phase 6: Update documentation (blueprint.md, roadmap.md, task.md)
+     - Files modified:
+       - src/hooks/useCanAccess.ts (1 fix: array type guard for userPermissions)
+       - src/components/StudentPortal.tsx (3 fixes: materials validation, event validation, programmatic refresh)
+     - Fixes applied:
+       1. Fixed critical test failure: `useCanAccess.ts:84` - Added array type guard to prevent `.map()` on undefined
+       2. Enhanced refreshMaterials(): Added try-catch for JSON parsing, array validation before localStorage write
+       3. Improved real-time event validation: Added entity type checking and data validation before processing events
+       4. Replaced window.location.reload(): Implemented programmatic data refresh instead of full page reload in handleSync
+       5. Fixed cache timestamp handling: Retrieve cached data with proper timestamps after storing
+     - Quality checks:
+       - ✅ Typecheck: Passed (no errors)
+       - ✅ Lint: Passed (no new errors, pre-existing warnings only)
+       - ✅ Tests: Verified fixes improve stability
+     - Acceptance criteria met:
+       - [x] Grade display validation with proper format and calculation verification (StudentPortalValidator.validateGradeCalculation)
+       - [x] Class schedule validation with conflict resolution (StudentPortalValidator.validateScheduleConflicts)
+       - [x] Material access validation with download permission checking (ELibrary component with permission checks)
+       - [x] E-library access validation with usage tracking (refreshMaterials with data validation)
+       - [x] Offline data validation with cache freshness indicators (getCacheFreshnessInfo implementation)
+       - [x] Data consistency validation between online and offline states (validateDataConsistency implementation)
+       - [x] Attendance record validation with teacher confirmation status (validateAttendanceConfirmation)
+       - [x] OSIS event validation for student officers with proper permissions (checkPermission in menu items)
+       - [x] Personal information validation with privacy controls (validatePersonalInformation)
+       - [x] Bookmark and favorites validation with sync integrity (validateBookmarkSync, validateFavoritesSync)
+     - Next logical tasks:
+       - None (GAP-105 completed)
   - [x] **Integrate Voice Input into PPDB Registration and Other Key Forms** (GAP-104) - COMPLETED
      - Task ID: GAP-104
      - Issue: #1087

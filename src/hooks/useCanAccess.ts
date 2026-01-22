@@ -76,7 +76,8 @@ export const useCanAccess = (context?: {
 
   // Get all user permissions
   const userPermissions = useMemo(() => {
-    return permissionService.getUserPermissions(userRole, userExtraRole);
+    const permissions = permissionService.getUserPermissions(userRole, userExtraRole);
+    return Array.isArray(permissions) ? permissions : [];
   }, [userRole, userExtraRole]);
 
   // Get all user permission IDs

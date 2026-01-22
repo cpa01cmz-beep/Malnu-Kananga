@@ -414,8 +414,17 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       setRefreshingData(prev => ({ ...prev, materials: true }));
       const materialsJSON = localStorage.getItem(STORAGE_KEYS.MATERIALS);
       if (materialsJSON) {
-        const materials = JSON.parse(materialsJSON);
-        localStorage.setItem(STORAGE_KEYS.MATERIALS, JSON.stringify(materials));
+        try {
+          const materials = JSON.parse(materialsJSON);
+          if (Array.isArray(materials)) {
+            localStorage.setItem(STORAGE_KEYS.MATERIALS, JSON.stringify(materials));
+            logger.info(`Materials refreshed: ${materials.length} items`);
+          } else {
+            logger.warn('Invalid materials data format in localStorage');
+          }
+        } catch (parseError) {
+          logger.error('Failed to parse materials data:', parseError);
+        }
       }
       logger.info('Materials refreshed from real-time event');
     } catch (error) {
@@ -437,16 +446,27 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
     enabled: isOnline,
     onEvent: useCallback((event: unknown) => {
       if (!studentData) return;
-      const typedEvent = event as { entity: string; data: { studentId: string } };
-      if (typedEvent.entity === 'grade') {
-        if (typedEvent.data.studentId === studentData.id) {
+
+      const typedEvent = event as Record<string, unknown>;
+      const entity = typedEvent.entity as string;
+      const data = typedEvent.data as Record<string, unknown> | undefined;
+
+      if (!entity || typeof entity !== 'string') {
+        logger.warn('Invalid real-time event: missing or invalid entity', { event });
+        return;
+      }
+
+      if (entity === 'grade') {
+        const studentId = data?.studentId as string;
+        if (studentId && studentId === studentData.id) {
           refreshGrades();
         }
-      } else if (typedEvent.entity === 'attendance') {
-        if (typedEvent.data.studentId === studentData.id) {
+      } else if (entity === 'attendance') {
+        const studentId = data?.studentId as string;
+        if (studentId && studentId === studentData.id) {
           refreshAttendance();
         }
-      } else if (typedEvent.entity === 'library_material') {
+      } else if (entity === 'library_material') {
         refreshMaterials();
       }
     }, [studentData, refreshGrades, refreshAttendance, refreshMaterials]),
@@ -464,11 +484,63 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
 
     try {
       await offlineDataService.forceSync();
-      
-      // Re-fetch data
+
+      // Re-fetch data programmatically instead of reloading page
       const currentUser = authAPI.getCurrentUser();
       if (currentUser) {
-        window.location.reload(); // Simple refresh to get fresh data
+        try {
+          const studentResponse = await studentsAPI.getByUserId(currentUser.id);
+          if (studentResponse.success && studentResponse.data) {
+            setStudentData(studentResponse.data);
+
+            const [gradesResponse, attendanceResponse] = await Promise.all([
+              gradesAPI.getByStudent(studentResponse.data.id),
+              attendanceAPI.getByStudent(studentResponse.data.id)
+            ]);
+
+            if (gradesResponse.success && attendanceResponse.success) {
+              const dataToCache = {
+                student: studentResponse.data,
+                grades: gradesResponse.data || [],
+                attendance: attendanceResponse.data || [],
+                schedule: [],
+              };
+
+              offlineDataService.cacheStudentData(dataToCache);
+
+              // Get the cached data with timestamps
+              const cachedData = offlineDataService.getCachedStudentData(studentResponse.data.id);
+
+              const studentValidation = StudentPortalValidator.validatePersonalInformation(studentResponse.data);
+              const gradesValidation = StudentPortalValidator.validateGradeCalculation(gradesResponse.data || []);
+              const attendanceValidation = (attendanceResponse.data || []).map(att =>
+                StudentPortalValidator.validateAttendanceRecord(att)
+              );
+
+              setValidationResults({
+                student: studentValidation,
+                grades: gradesValidation,
+                attendance: {
+                  isValid: attendanceValidation.every(v => v.isValid),
+                  errors: attendanceValidation.flatMap(v => v.errors),
+                  warnings: attendanceValidation.flatMap(v => v.warnings)
+                }
+              });
+
+              if (cachedData) {
+                setCacheFreshness(StudentPortalValidator.getCacheFreshnessInfo(
+                  cachedData.lastUpdated,
+                  cachedData.expiresAt
+                ));
+              }
+
+              onShowToast('Sinkronisasi berhasil', 'success');
+            }
+          }
+        } catch (syncError) {
+          logger.error('Failed to re-fetch data after sync:', syncError);
+          onShowToast('Data berhasil disinkronkan, silakan muat ulang halaman', 'info');
+        }
       }
     } catch (error) {
       logger.error('Failed to sync:', error);
