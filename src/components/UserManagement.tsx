@@ -141,49 +141,49 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
               
               response = await api.users.update(userData.id!, userData);
               
-              if (response.success && roleChanged) {
-                // Send notification about role change
-                await unifiedNotificationManager.showLocalNotification({
-                  id: `role-change-${userData.id}-${Date.now()}`,
-                  type: 'system',
-                  title: 'Perubahan Hak Akses',
-                  body: `Peran Anda telah diubah menjadi ${userData.role}${userData.extraRole ? ` (${userData.extraRole})` : ''}`,
-                  icon: '🔐',
-                  timestamp: new Date().toISOString(),
-                  read: false,
-                  priority: 'high',
-                  targetUsers: [userData.id!],
-                  data: {
-                    action: 'login_required',
-                    oldRole: previousUserData.role,
-                    newRole: userData.role,
-                    oldExtraRole: previousUserData.extraRole,
-                    newExtraRole: userData.extraRole
-                  }
-                });
-              }
+               if (response.success && roleChanged) {
+                 // Send notification about role change
+                 await unifiedNotificationManager.showLocalNotification({
+                   id: `role-change-${userData.id}-${Date.now()}`,
+                   type: 'system',
+                   title: SUCCESS_MESSAGES.ROLE_CHANGE_TITLE,
+                   body: SUCCESS_MESSAGES.ROLE_CHANGE_BODY(userData.role, userData.extraRole || undefined),
+                   icon: '🔐',
+                   timestamp: new Date().toISOString(),
+                   read: false,
+                   priority: 'high',
+                   targetUsers: [userData.id!],
+                   data: {
+                     action: 'login_required',
+                     oldRole: previousUserData.role,
+                     newRole: userData.role,
+                     oldExtraRole: previousUserData.extraRole,
+                     newExtraRole: userData.extraRole
+                   }
+                 });
+               }
           } else {
               response = await api.users.create(userData);
               
-              if (response.success) {
-                // Send welcome notification to new user
-                await unifiedNotificationManager.showLocalNotification({
-                  id: `welcome-${userData.id}-${Date.now()}`,
-                  type: 'system',
-                  title: 'Selamat Datang!',
-                  body: `Akun Anda telah dibuat. Selamat menggunakan sistem MA Malnu Kananga.`,
-                  icon: '👋',
-                  timestamp: new Date().toISOString(),
-                  read: false,
-                  priority: 'normal',
-                  targetUsers: [userData.id!],
-                  data: {
-                    action: 'welcome',
-                    role: userData.role,
-                    extraRole: userData.extraRole
-                  }
-                });
-              }
+               if (response.success) {
+                 // Send welcome notification to new user
+                 await unifiedNotificationManager.showLocalNotification({
+                   id: `welcome-${userData.id}-${Date.now()}`,
+                   type: 'system',
+                   title: 'Selamat Datang!',
+                   body: SUCCESS_MESSAGES.WELCOME_USER,
+                   icon: '👋',
+                   timestamp: new Date().toISOString(),
+                   read: false,
+                   priority: 'normal',
+                   targetUsers: [userData.id!],
+                   data: {
+                     action: 'welcome',
+                     role: userData.role,
+                     extraRole: userData.extraRole
+                   }
+                 });
+               }
           }
 
            if (response && response.success && response.data) {
@@ -416,14 +416,14 @@ const UserManagement: React.FC<UserManagementProps> = (props) => {
   ]);
 
   if (!userManagementAccess.canAccess) {
-    return (
-      <AccessDenied 
-        onBack={props.onBack} 
-        requiredPermission={userManagementAccess.requiredPermission}
-        message="You don't have permission to manage users"
-      />
-    );
-  }
+     return (
+       <AccessDenied
+         onBack={props.onBack}
+         requiredPermission={userManagementAccess.requiredPermission}
+         message={API_ERROR_MESSAGES.PERMISSION_DENIED_MANAGE_USERS}
+       />
+     );
+   }
 
   return <UserManagementContent {...props} />;
 };

@@ -24,7 +24,8 @@ import {
   AUTO_SAVE_MESSAGES,
   FILE_ERROR_MESSAGES,
   DATA_MESSAGES,
-  VALIDATION_MESSAGES
+  VALIDATION_MESSAGES,
+  SUCCESS_MESSAGES
 } from '../utils/errorMessages';
 import ProgressBar from './ui/ProgressBar';
 import { HEIGHT_CLASSES } from '../config/heights';
@@ -847,12 +848,12 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       }
       
       if (failureCount === 0) {
-        toast.success(`Berhasil menyimpan nilai untuk ${successCount} siswa.`);
+        toast.success(SUCCESS_MESSAGES.BATCH_SAVE_SUCCESS(successCount));
         setIsEditing(null);
       } else if (successCount > 0) {
-        toast.warning(`Berhasil menyimpan ${successCount} siswa, gagal ${failureCount} siswa. Silakan periksa kembali.`);
+        toast.warning(SUCCESS_MESSAGES.BATCH_SAVE_PARTIAL(successCount, failureCount));
       } else {
-        toast.error(`Gagal menyimpan semua nilai. ${failureDetails[0]}`);
+        toast.error(SUCCESS_MESSAGES.BATCH_SAVE_FAILED(failureDetails[0] || 'Terjadi kesalahan'));
       }
       
       // Show detailed error dialog if there are failures
@@ -867,7 +868,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       }
     } catch (error) {
       logger.error('Error in batch save:', error);
-      toast.error('Terjadi kesalahan sistem saat menyimpan nilai');
+      toast.error(API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     } finally {
       _setIsSaving(false);
     }
@@ -989,9 +990,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             extractedText: ocrText,
             confidence
           });
-        } else {
-          toast.warning('Siswa tidak ditemukan. Silakan periksa nama atau NIS yang diekstrak.');
-          setOcrReviewData({
+         } else {
+           toast.warning(VALIDATION_MESSAGES.STUDENT_NAME_REQUIRED + '. Silakan periksa nama atau NIS yang diekstrak.');
+           setOcrReviewData({
             assignment: extractedData.assignment,
             midExam: extractedData.midExam,
             finalExam: extractedData.finalExam,
@@ -999,13 +1000,13 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             confidence
           });
         }
-      } else {
-        toast.warning('Tidak dapat mengenali format nilai. Silakan periksa dokumen.');
-      }
+       } else {
+         toast.warning(AI_MESSAGES.OCR_PROCESS_FAILED);
+       }
 
     } catch (error) {
       logger.error('AI Processing Error:', error);
-      toast.error('Gagal memproses hasil OCR dengan AI');
+      toast.error(AI_MESSAGES.OCR_PROCESS_FAILED);
     }
   };
 
@@ -1031,15 +1032,16 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
 
     if (studentId) {
       // Update specific student's grades
-      const updatedGrades = grades.map(g => 
-        g.id === studentId 
+      const updatedGrades = grades.map(g =>
+        g.id === studentId
           ? { ...g, assignment: assignment || g.assignment, midExam: midExam || g.midExam, finalExam: finalExam || g.finalExam }
           : g
       );
       setGrades(updatedGrades);
-      toast.success(`Nilai untuk ${grades.find(g => g.id === studentId)?.name} berhasil diperbarui dari OCR`);
+      const studentName = grades.find(g => g.id === studentId)?.name || 'Siswa';
+      toast.success(SUCCESS_MESSAGES.GRADE_OCR_SUCCESS(studentName));
     } else {
-      toast.warning('Tidak ada siswa yang cocok. Silakan periksa kembali data yang diekstrak.');
+      toast.warning(VALIDATION_MESSAGES.STUDENT_NAME_REQUIRED + '. Silakan periksa kembali data yang diekstrak.');
     }
 
     // Store OCR audit trail

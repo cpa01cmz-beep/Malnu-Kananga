@@ -126,6 +126,9 @@ export const API_ERROR_MESSAGES = {
 
   // API-specific errors
   JSON_PARSE_ERROR: 'Format data tidak valid. Hubungi administrator jika masalah berlanjut.',
+
+  // User/Permission errors
+  PERMISSION_DENIED_MANAGE_USERS: 'Anda tidak memiliki izin untuk mengelola pengguna.',
 } as const;
 
 export const USER_GUIDANCE = {
@@ -154,6 +157,12 @@ export const USER_GUIDANCE = {
   UNSAVED_CHANGES: 'Ada perubahan yang belum disimpan. Yakin ingin keluar?',
   CONFIRM_DELETE: 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.',
   CONFIRM_RESET: 'Apakah Anda yakin ingin mereset formulir? Semua data yang telah diisi akan hilang.',
+
+  // Additional guidance
+  CONFIRM_SAVE: 'Simpan perubahan yang ada?',
+  CONFIRM_DISCARD: 'Batalkan perubahan yang belum disimpan?',
+  RESOLVE_CONFLICT: 'Konflik data terdeteksi. Silakan refresh halaman.',
+  RECOMMENDATION: 'Rekomendasi:',
 } as const;
 
 export const SUCCESS_MESSAGES = {
@@ -194,6 +203,34 @@ export const SUCCESS_MESSAGES = {
   USER_CREATED: 'Pengguna berhasil dibuat',
   USER_UPDATED: 'Pengguna berhasil diperbarui',
   USER_DELETED: 'Pengguna berhasil dihapus',
+
+  // Batch operations success
+  BATCH_SAVE_SUCCESS: (count: number): string => `Berhasil menyimpan nilai untuk ${count} siswa.`,
+  BATCH_SAVE_PARTIAL: (success: number, failed: number): string => `Berhasil menyimpan ${success} siswa, gagal ${failed} siswa. Silakan periksa kembali.`,
+  BATCH_SAVE_FAILED: (detail: string): string => `Gagal menyimpan semua nilai. ${detail}`,
+
+  // Role/Permission success
+  ROLE_CHANGED: 'Peran pengguna berhasil diubah',
+  ROLE_CHANGE_NOTIFICATION: 'Peran Anda telah diubah. Silakan login kembali.',
+  WELCOME_NEW_USER: 'Selamat datang di sistem MA Malnu Kananga.',
+  WELCOME_USER: 'Akun Anda telah dibuat. Selamat menggunakan sistem MA Malnu Kananga.',
+  ROLE_CHANGE_TITLE: 'Perubahan Hak Akses',
+  ROLE_CHANGE_BODY: (role: string, extraRole?: string): string => `Peran Anda telah diubah menjadi ${role}${extraRole ? ` (${extraRole})` : ''}`,
+
+  // Grade-specific success
+  GRADE_UPDATED: 'Nilai berhasil diperbarui',
+  GRADE_OCR_SUCCESS: (studentName: string): string => `Nilai untuk ${studentName} berhasil diperbarui dari OCR`,
+  GRADE_IMPORTED_SUCCESS: 'Import nilai berhasil',
+  GRADE_EXPORTED_SUCCESS: 'Export nilai berhasil',
+
+  // AI success
+  AI_ANALYSIS_COMPLETE: 'Analisis AI selesai',
+  AI_ANALYSIS_SUCCESS: 'Analisis kelas berhasil dilakukan',
+
+  // System success
+  OPERATION_COMPLETE: 'Operasi selesai',
+  SYNC_COMPLETE: 'Sinkronisasi selesai',
+  CANCEL_COMPLETE: 'Operasi dibatalkan',
 } as const;
 
 export const VOICE_ERROR_MESSAGES = {
