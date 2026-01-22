@@ -64,13 +64,12 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
     return userJson ? JSON.parse(userJson) : null;
   };
 
-  const currentUser = getCurrentUser();
-
   const fetchAssignments = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
+      const currentUser = getCurrentUser();
       if (!currentUser) {
         setError('User tidak ditemukan');
         return;
@@ -92,7 +91,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [currentUser]);
+  }, []);
 
   useEffect(() => {
     fetchAssignments();
@@ -166,6 +165,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
     setSubmitting(true);
 
     try {
+      const currentUser = getCurrentUser();
       const gradeData: Partial<AssignmentSubmission> = {
         score: typeof score === 'number' ? score : 0,
         feedback: feedback || undefined,

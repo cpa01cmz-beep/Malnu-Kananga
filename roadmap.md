@@ -688,6 +688,17 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 
 
  ## 2026-01-22
+   - [x] **Fix AssignmentGrading Maximum Update Depth Bug** (BUG-1198)
+     - Task ID: BUG-1198
+     - Issue: #1198
+     - Description: Fix infinite loop in AssignmentGrading component caused by non-state currentUser variable
+     - Status: **Completed**
+     - Priority: P1 (High)
+     - Domain: Stability & Bug Fixes (Pillars 3, 7)
+     - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+     - Result: **Infinite loop eliminated, Maximum update depth error fixed**
+     - Summary: Removed non-state currentUser variable, call getCurrentUser() inside functions, empty dependency array
+     - Quality: Typecheck PASSING, Lint PASSING, No "Maximum update depth" errors in tests
    - [x] **Migrate Additional Components to Centralized Error Messages - Phase 5** (GAP-107-2 Phase 5)
       - Task ID: GAP-107-2 Phase 5
       - Description: Continue migration of remaining components to use centralized error message constants

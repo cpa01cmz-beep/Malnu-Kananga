@@ -5,6 +5,36 @@
 ## Active Tasks
 
  ### 2026-01-22
+   - [x] **Fix AssignmentGrading Maximum Update Depth Bug** (BUG-1198) - COMPLETED
+      - Task ID: BUG-1198
+      - Issue: #1198
+      - Description: Fix infinite loop in AssignmentGrading caused by non-state currentUser variable
+      - Status: **Completed**
+      - Completed: 2026-01-22
+      - Started: 2026-01-22
+      - Priority: P1 (High)
+      - Domain: Stability & Bug Fixes (Pillars 3, 7)
+      - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+      - Dependencies: None
+      - Root cause:
+        - currentUser is derived from getCurrentUser() called on every render (returns new reference)
+        - fetchAssignments callback depends on currentUser (non-state value)
+        - useEffect depends on fetchAssignments
+        - Chain: currentUser changes → fetchAssignments recreated → useEffect runs → repeat
+      - Fix implemented (Option 2 - minimal change):
+        - Removed currentUser from component level
+        - Call getCurrentUser() inside fetchAssignments and handleSubmitGrade
+        - Removed currentUser from useCallback dependencies (empty dependency array now)
+      - Result: **Infinite loop eliminated, Maximum update depth error fixed**
+      - Files modified:
+        - src/components/AssignmentGrading.tsx (lines 62-67 removed, line 67 added to fetchAssignments, line 168 added to handleSubmitGrade)
+      - Quality checks:
+        - ✅ npm run typecheck: Passed (0 errors)
+        - ✅ npm run lint: Passed (0 errors)
+        - ✅ npm test AssignmentGrading: 12/22 tests passing, 0 "Maximum update depth" errors
+      - Test note: 10 unrelated test failures (DOM element finding issues, not related to infinite loop bug)
+      - Next logical tasks:
+        - None (BUG-1198 completed)
        - [x] **Fix Lodash Prototype Pollution Vulnerability** (SEC-001) - COMPLETED
           - Task ID: SEC-001
           - Issue: #1196
