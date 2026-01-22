@@ -7,13 +7,13 @@ import { ChartBarIcon } from './icons/ChartBarIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import UserManagement from './UserManagement';
 import SystemStats from './SystemStats';
-import PPDBManagement from './PPDBManagement'; // Import PPDB Component
-import PermissionManager from './admin/PermissionManager'; // Import Permission Manager
-import AICacheManager from './AICacheManager'; // Import AI Cache Manager
-import AnnouncementManager from './AnnouncementManager'; // Import Announcement Manager
+import PPDBManagement from './PPDBManagement';
+import PermissionManager from './admin/PermissionManager';
+import AICacheManager from './AICacheManager';
+import AnnouncementManager from './AnnouncementManager';
 import MegaphoneIcon from './icons/MegaphoneIcon';
 import { ToastType } from './Toast';
-import { STORAGE_KEYS, OPACITY_TOKENS } from '../constants'; // Import constants
+import { STORAGE_KEYS, OPACITY_TOKENS } from '../constants';
 import { logger } from '../utils/logger';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
@@ -22,6 +22,8 @@ import ErrorMessage from './ui/ErrorMessage';
 import DashboardActionCard from './ui/DashboardActionCard';
 import { CardSkeleton } from './ui/Skeleton';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
+import { useOfflineActionQueue } from '../services/offlineActionQueueService';
+import { retryWithBackoff, classifyError, ErrorType } from '../utils/errorHandler';
 import type { VoiceCommand } from '../types';
 import VoiceInputButton from './VoiceInputButton';
 import VoiceCommandsHelp from './VoiceCommandsHelp';
@@ -36,22 +38,22 @@ interface AdminDashboardProps {
 }
 
 type DashboardView = 'home' | 'users' | 'stats' | 'ppdb' | 'permissions' | 'ai-cache' | 'announcements';
+type SyncStatus = 'idle' | 'syncing' | 'synced' | 'failed';
 
 interface PPDBRegistrant {
   status: 'pending' | 'approved' | 'rejected';
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToast }) => {
-  // ALL hooks first
   const { user: _user, canAccess } = useCanAccess();
   const [currentView, setCurrentView] = useState<DashboardView>('home');
   const [pendingPPDB, setPendingPPDB] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ type: ErrorType; message: string } | null>(null);
   const [dashboardData, setDashboardData] = useState<{ lastSync?: string; stats?: Record<string, unknown> } | null>(null);
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
 
-  // Initialize push notifications
   const { 
     showNotification, 
     createNotification,
@@ -59,41 +61,69 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
   } = usePushNotifications();
 
   const { isOnline, isSlow } = useNetworkStatus();
+  
+  const {
+    getPendingCount,
+    getFailedCount,
+    sync,
+    isSyncing: isActionQueueSyncing
+  } = useOfflineActionQueue();
 
-  // Load dashboard data with offline support
+  // Load dashboard data with offline support and automatic retry
   useEffect(() => {
     const loadDashboardData = async () => {
       if (!isOnline) {
-        // Try to load cached data
         const cachedData = localStorage.getItem(STORAGE_KEYS.ADMIN_DASHBOARD_CACHE);
         if (cachedData) {
-          setDashboardData(JSON.parse(cachedData));
-          setError(getOfflineMessage());
+          try {
+            setDashboardData(JSON.parse(cachedData));
+            setError({ type: ErrorType.OFFLINE_ERROR, message: getOfflineMessage() });
+          } catch (parseError) {
+            logger.error('Failed to parse cached dashboard data:', parseError);
+            setError({ type: ErrorType.OFFLINE_ERROR, message: 'Data cache tidak tersedia. ' + getOfflineMessage() });
+          }
         } else {
-          setError(getOfflineMessage());
+          setError({ type: ErrorType.OFFLINE_ERROR, message: 'Data cache tidak tersedia. ' + getOfflineMessage() });
         }
         setLoading(false);
+        setSyncStatus('idle');
         return;
       }
 
       setLoading(true);
       setError(null);
+      setSyncStatus('syncing');
 
       try {
-        // Load fresh data and cache for offline use
-        const freshData = { lastSync: new Date().toISOString(), stats: {} };
-        setDashboardData(freshData);
-        localStorage.setItem(STORAGE_KEYS.ADMIN_DASHBOARD_CACHE, JSON.stringify(freshData));
+        await retryWithBackoff(
+          async () => {
+            const freshData = { lastSync: new Date().toISOString(), stats: {} };
+            setDashboardData(freshData);
+            localStorage.setItem(STORAGE_KEYS.ADMIN_DASHBOARD_CACHE, JSON.stringify(freshData));
+          },
+          'loadDashboardData',
+          { maxAttempts: 3, baseDelayMs: 1000, maxDelayMs: 5000, backoffMultiplier: 2 }
+        );
+        setSyncStatus('synced');
       } catch (err) {
         logger.error('Failed to load admin dashboard data:', err);
-        setError('Gagal memuat data dashboard. Silakan coba lagi.');
+        const appError = classifyError(err, { operation: 'loadDashboardData', timestamp: Date.now() });
         
-        // Try cached data as fallback
+        setError({ type: appError.type, message: appError.message });
+        
         const cachedData = localStorage.getItem(STORAGE_KEYS.ADMIN_DASHBOARD_CACHE);
         if (cachedData) {
-          setDashboardData(JSON.parse(cachedData));
-          setError('Data terakhir dari cache. ' + getOfflineMessage());
+          try {
+            setDashboardData(JSON.parse(cachedData));
+            setError({ 
+              type: appError.type, 
+              message: `Data terakhir dari cache. ${appError.type === ErrorType.NETWORK_ERROR ? getOfflineMessage() : 'Silakan cek koneksi atau coba lagi nanti.'}` 
+            });
+          } catch (parseError) {
+            logger.error('Failed to parse cached dashboard data:', parseError);
+          }
         }
+        setSyncStatus('failed');
       } finally {
         setLoading(false);
       }
@@ -179,6 +209,24 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
     }
   }, [handleVoiceCommand, onShowToast]);
 
+  const handleManualSync = useCallback(async () => {
+    if (!isOnline) {
+      onShowToast('Tidak dapat sinkronisasi saat offline', 'error');
+      return;
+    }
+
+    setSyncStatus('syncing');
+    try {
+      await sync();
+      setSyncStatus('synced');
+      onShowToast('Sinkronisasi berhasil', 'success');
+    } catch (syncError) {
+      logger.error('Manual sync failed:', syncError);
+      setSyncStatus('failed');
+      onShowToast('Sinkronisasi gagal. Silakan coba lagi', 'error');
+    }
+  }, [isOnline, sync, onShowToast]);
+
   // Notify admin of new PPDB registrations
   useEffect(() => {
     if (currentView === 'home') {
@@ -249,7 +297,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
         {/* Offline/ Error State */}
         {error && (
           <ErrorMessage 
-            message={error}
+            message={error.message}
             variant="card"
             className="mb-6"
           />
@@ -258,18 +306,67 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
         {currentView === 'home' && (
             <>
                 <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 ${!isOnline ? 'animate-pulse' : 'animate-fade-in-up'}`}>
-                    <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">
-                        Dashboard Administrator
-                        {!isOnline && <span className="ml-2 text-sm font-normal text-amber-600 dark:text-amber-400">(Offline)</span>}
-                    </h1>
-                    <p className="mt-3 text-base text-neutral-600 dark:text-neutral-300 leading-relaxed font-medium">
-                        Selamat datang, Admin. Kelola konten website dan pengguna dari sini.
-                        {dashboardData?.lastSync && (
-                            <span className="text-xs text-neutral-500 dark:text-neutral-400 block mt-1">
-                                Terakhir diperbarui: {new Date(dashboardData.lastSync).toLocaleString('id-ID')}
-                            </span>
-                        )}
-                    </p>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">
+                                Dashboard Administrator
+                                {!isOnline && <span className="ml-2 text-sm font-normal text-amber-600 dark:text-amber-400">(Offline)</span>}
+                            </h1>
+                            <p className="mt-3 text-base text-neutral-600 dark:text-neutral-300 leading-relaxed font-medium">
+                                Selamat datang, Admin. Kelola konten website dan pengguna dari sini.
+                                {dashboardData?.lastSync && (
+                                    <span className="text-xs text-neutral-500 dark:text-neutral-400 block mt-1">
+                                        Terakhir diperbarui: {new Date(dashboardData.lastSync).toLocaleString('id-ID')}
+                                    </span>
+                                )}
+                            </p>
+                        </div>
+                        
+                        {/* Sync Controls */}
+                        <div className="flex items-center gap-3">
+                            {/* Sync Status Indicator */}
+                            {syncStatus !== 'idle' && (
+                                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
+                                    syncStatus === 'syncing' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' :
+                                    syncStatus === 'synced' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' :
+                                    'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                                }`}>
+                                    {syncStatus === 'syncing' && (
+                                        <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    )}
+                                    {syncStatus === 'synced' && '✓ Sinkronisasi Selesai'}
+                                    {syncStatus === 'failed' && '✕ Gagal Sinkronisasi'}
+                                </div>
+                            )}
+                            
+                            {/* Offline Action Queue Badge */}
+                            {(getPendingCount() > 0 || getFailedCount() > 0) && (
+                                <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-sm font-medium">
+                                    <span className="flex items-center gap-1">
+                                        {getPendingCount() > 0 && `${getPendingCount()} menunggu`}
+                                        {getPendingCount() > 0 && getFailedCount() > 0 && ' • '}
+                                        {getFailedCount() > 0 && `${getFailedCount()} gagal`}
+                                    </span>
+                                </div>
+                            )}
+                            
+                            {/* Manual Sync Button */}
+                            <SmallActionButton
+                                onClick={handleManualSync}
+                                disabled={syncStatus === 'syncing' || isActionQueueSyncing || !isOnline}
+                                title={isOnline ? 'Sinkronisasi manual' : 'Memerlukan koneksi internet'}
+                                className="flex items-center gap-2"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Sync
+                            </SmallActionButton>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Voice Commands Section */}
