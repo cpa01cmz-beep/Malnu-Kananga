@@ -115,8 +115,8 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         teacherId: '',
         academicYear: '2025-2026',
         semester: '1',
-        duration: 60,
-        passingScore: 70,
+        duration: quizData.duration || 60,
+        passingScore: quizData.passingScore || 70,
         status: 'draft',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -132,8 +132,9 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
                  q.type === 'matching' ? QuizQuestionType.MATCHING :
                  QuizQuestionType.MULTIPLE_CHOICE),
           difficulty: (q.difficulty === 'easy' ? QuizDifficulty.EASY :
-                    q.difficulty === 'hard' ? QuizDifficulty.HARD :
-                    QuizDifficulty.MEDIUM),
+                     q.difficulty === 'medium' ? QuizDifficulty.MEDIUM :
+                     q.difficulty === 'hard' ? QuizDifficulty.HARD :
+                     QuizDifficulty.MEDIUM),
           options: q.options,
           correctAnswer: q.correctAnswer,
           explanation: q.explanation,
@@ -483,12 +484,6 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         {step === 'options' && renderOptions()}
         {step === 'preview' && renderPreview()}
 
-        {error && (
-          <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
-          </div>
-        )}
-
         <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
           <div>
             {step !== 'select' && (
@@ -506,7 +501,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
                 Simpan Kuis
               </Button>
             ) : (
-              <Button onClick={handleNextStep} disabled={loading || generating || step !== 'select'}>
+              <Button onClick={handleNextStep} disabled={loading || generating}>
                 {generating ? (
                   <>
                     <LoadingSpinner className="mr-2 h-4 w-4" />
