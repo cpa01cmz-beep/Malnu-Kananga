@@ -1,6 +1,6 @@
 import type { FeaturedProgram, LatestNews } from '../types';
 import { logger } from './logger';
-import { EXTERNAL_URLS } from '../constants';
+import { EXTERNAL_URLS, STORAGE_KEYS } from '../constants';
 
 export interface AICommandValidationResult {
   isValid: boolean;
@@ -178,7 +178,6 @@ const RATE_LIMIT_WINDOW = 60000; // 1 minute in milliseconds
 const MAX_REQUESTS_PER_MINUTE = 10;
 
 // Audit log storage
-const AUDIT_LOG_KEY = 'malnu_ai_editor_audit_log';
 const MAX_AUDIT_ENTRIES = 100;
 
 export interface AuditLogEntry {
@@ -228,12 +227,12 @@ function checkRateLimit(userId: string): { allowed: boolean; remaining?: number;
 
 function logAuditEntry(entry: AuditLogEntry): void {
   try {
-    const logs = JSON.parse(localStorage.getItem(AUDIT_LOG_KEY) || '[]');
+    const logs = JSON.parse(localStorage.getItem(STORAGE_KEYS.AI_EDITOR_AUDIT_LOG) || '[]');
     logs.unshift(entry);
     const trimmedLogs = logs.slice(0, MAX_AUDIT_ENTRIES);
-    localStorage.setItem(AUDIT_LOG_KEY, JSON.stringify(trimmedLogs));
+    localStorage.setItem(STORAGE_KEYS.AI_EDITOR_AUDIT_LOG, JSON.stringify(trimmedLogs));
   } catch (error) {
-    // Silently fail audit logging to not block the main functionality
+    // Silently fail audit logging to not block main functionality
     logger.warn('Failed to log audit entry:', error);
   }
 }
