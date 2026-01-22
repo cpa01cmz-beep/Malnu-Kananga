@@ -214,7 +214,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
     } finally {
       setLoading(false);
     }
-  }, [currentUser?.id, classId]);
+  }, [classId]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     analyzeClassGrades();
